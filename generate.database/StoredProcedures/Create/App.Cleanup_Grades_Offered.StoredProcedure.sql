@@ -8,6 +8,7 @@ AS
 BEGIN
 
 	/*
+	Test
 	This procedure allows for the deletion of incorrectly added Grade Level records from the 
 	rds.BridgeLeaGradeLevels table or the rds.BridgeK12SchoolGradeLevels tables as required.
 	
