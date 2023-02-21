@@ -1,0 +1,7 @@
+﻿VersionUpdates\\2.5_hotfix01\\Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+VersionUpdates\\2.5_hotfix01\\Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+VersionUpdates\\2.5_hotfix01\\StoredProcedures\\Drop,RDS.Migrate_DimPersonnel.StoredProcedure.sql,0
+VersionUpdates\\2.5_hotfix01\\StoredProcedures\\Create,RDS.Migrate_DimPersonnel.StoredProcedure.sql,0
+VersionUpdates\\2.5_hotfix01,c099_fix.sql,0
+VersionUpdates\\2.5_hotfix01,discipline_updates.sql,0
+VersionUpdates\\2.5_hotfix01,UpdateDbVersion.sql,0

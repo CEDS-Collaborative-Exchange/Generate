@@ -1,0 +1,41 @@
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Organization', @level2type=N'COLUMN',@level2name=N'OrganizationRelationshipId_SchoolToPrimaryCharterSchoolAuthorizer'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Organization', @level2type=N'COLUMN',@level2name=N'OrganizationRelationshipId_SchoolToSecondaryCharterSchoolAuthorizer'
+	--
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12ProgramParticipation', @level2type=N'COLUMN',@level2name=N'OrganizationId'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12ProgramParticipation', @level2type=N'COLUMN',@level2name=N'PersonId'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12ProgramParticipation', @level2type=N'COLUMN',@level2name=N'ProgramOrganizationId'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12ProgramParticipation', @level2type=N'COLUMN',@level2name=N'OrganizationPersonRoleId'
+	EXEC sys.sp_addextendedproperty @name=N'TableType', @value=N'Migration' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12ProgramParticipation'
+	--
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12SchoolComprehensiveSupportIdentificationType', @level2type=N'COLUMN',@level2name=N'K12SchoolId'
+	--
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12SchoolTargetedSupportIdentificationType', @level2type=N'COLUMN',@level2name=N'K12SchoolId'
+	--
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationCalendarSession', @level2type=N'COLUMN',@level2name=N'OrganizationId'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationCalendarSession', @level2type=N'COLUMN',@level2name=N'OrganizationCalendarId'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationCalendarSession', @level2type=N'COLUMN',@level2name=N'OrganizationCalendarSessionId'
+	EXEC sys.sp_addextendedproperty @name=N'TableType', @value=N'Migration' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationCalendarSession'
+	--
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationProgramType', @level2type=N'COLUMN',@level2name=N'OrganizationId'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationProgramType', @level2type=N'COLUMN',@level2name=N'ProgramOrganizationId'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationProgramType', @level2type=N'COLUMN',@level2name=N'ProgramTypeId'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationProgramType', @level2type=N'COLUMN',@level2name=N'OrganizationProgramTypeId'
+	EXEC sys.sp_addextendedproperty @name=N'TableType', @value=N'Migration' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationProgramType'
+	--
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonRace', @level2type=N'COLUMN',@level2name=N'PersonId'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonRace', @level2type=N'COLUMN',@level2name=N'OrganizationId'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonRace', @level2type=N'COLUMN',@level2name=N'RefRaceId'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonRace', @level2type=N'COLUMN',@level2name=N'RefAcademicTermDesignatorId'
+	--
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'OrganizationID_IEU'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'OrganizationPersonRoleID_IEU'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'OrganizationID_IEU_Program_Foster'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'OrganizationPersonRoleID_IEU_Program_Foster'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'OrganizationID_IEU_Program_Section504'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'OrganizationPersonRoleID_IEU_Program_Section504'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'OrganizationID_IEU_Program_Immigrant'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'OrganizationPersonRoleID_IEU_Program_Immigrant'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'OrganizationPersonRoleID_IEU_SPED'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'OrganizationID_IEU_Program_Homeless'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'OrganizationPersonRoleID_IEU_Program_Homeless'
+	EXEC sys.sp_addextendedproperty @name=N'Identifier', @value=N'IDS' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'PersonStatus', @level2type=N'COLUMN',@level2name=N'PersonStatusId_PerkinsLEP'

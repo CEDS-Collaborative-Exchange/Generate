@@ -1,0 +1,3 @@
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'App' AND ROUTINE_NAME = 'Rollover_All_Metadata_up_to_SchoolYear') BEGIN
+	DROP PROCEDURE [App].[Rollover_All_Metadata_up_to_SchoolYear]
+END
