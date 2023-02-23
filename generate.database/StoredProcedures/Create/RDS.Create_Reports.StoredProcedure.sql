@@ -437,16 +437,15 @@ begin try
 			if @factTypeCode = 'titleIIIELSY'
 			begin
 
-				   -- Uses new .Net ETL
-                --if exists (select 'c' from app.GenerateReports where ReportCode = 'c045' and IsLocked = 1 and UseLegacyReportMigration = 1)
-                --begin
-				---- Log history
-				--insert into app.DataMigrationHistories
-				--(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
-				--values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c045')
+                if exists (select 'c' from app.GenerateReports where ReportCode = 'c045' and IsLocked = 1 and UseLegacyReportMigration = 1)
+                begin
+				-- Log history
+				insert into app.DataMigrationHistories
+				(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
+				values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c045')
 
-				--exec [RDS].[Create_ReportData]	@reportCode = 'c045', @runAsTest = @runAsTest
-                --end
+					exec [RDS].[Create_ReportData]	@reportCode = 'c045', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
+                end
 
 				if exists (select 'c' from app.GenerateReports where ReportCode = 'c204' and IsLocked = 1 and UseLegacyReportMigration = 1)
                 begin			
