@@ -8694,8 +8694,10 @@ ALTER TABLE [RDS].[DimK12OrganizationStatuses] ALTER COLUMN [McKinneyVentoSubgra
 
 GO
 /*
+--TODO: Verify this is correct
 The column [RDS].[DimK12Schools].[CharterSchoolAuthorizerIdPrimary] is being dropped, data loss could occur.
 
+--TODO: Verify this is correct
 The column [RDS].[DimK12Schools].[CharterSchoolAuthorizerIdSecondary] is being dropped, data loss could occur.
 
 The column [RDS].[DimK12Schools].[IeuIdentifierState] is being dropped, data loss could occur.
@@ -9002,37 +9004,37 @@ CREATE TABLE [RDS].[tmp_ms_xx_DimK12SchoolStatuses] (
     CONSTRAINT [tmp_ms_xx_constraint_PK_DimSchoolStatuses1] PRIMARY KEY CLUSTERED ([DimK12SchoolStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
-IF EXISTS (SELECT TOP 1 1 
-           FROM   [RDS].[DimK12SchoolStatuses])
-    BEGIN
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimK12SchoolStatuses] ON;
-        INSERT INTO [RDS].[tmp_ms_xx_DimK12SchoolStatuses] ([DimK12SchoolStatusId], [MagnetOrSpecialProgramEmphasisSchoolCode], [MagnetOrSpecialProgramEmphasisSchoolDescription], [MagnetOrSpecialProgramEmphasisSchoolEdFactsCode], [NslpStatusCode], [NslpStatusDescription], [NslpStatusEdFactsCode], [SharedTimeIndicatorCode], [SharedTimeIndicatorDescription], [SharedTimeIndicatorEdFactsCode], [VirtualSchoolStatusCode], [VirtualSchoolStatusDescription], [VirtualSchoolStatusEdFactsCode], [SchoolImprovementStatusCode], [SchoolImprovementStatusDescription], [SchoolImprovementStatusEdFactsCode], [PersistentlyDangerousStatusCode], [PersistentlyDangerousStatusDescription], [PersistentlyDangerousStatusEdFactsCode], [StatePovertyDesignationCode], [StatePovertyDesignationDescription], [StatePovertyDesignationEdFactsCode])
-        SELECT   [DimK12SchoolStatusId],
-                 [MagnetOrSpecialProgramEmphasisSchoolCode],
-                 [MagnetOrSpecialProgramEmphasisSchoolDescription],
-                 [MagnetOrSpecialProgramEmphasisSchoolEdFactsCode],
-                 [NslpStatusCode],
-                 [NslpStatusDescription],
-                 [NslpStatusEdFactsCode],
-                 [SharedTimeIndicatorCode],
-                 [SharedTimeIndicatorDescription],
-                 [SharedTimeIndicatorEdFactsCode],
-                 [VirtualSchoolStatusCode],
-                 [VirtualSchoolStatusDescription],
-                 [VirtualSchoolStatusEdFactsCode],
-                 [SchoolImprovementStatusCode],
-                 [SchoolImprovementStatusDescription],
-                 [SchoolImprovementStatusEdFactsCode],
-                 [PersistentlyDangerousStatusCode],
-                 [PersistentlyDangerousStatusDescription],
-                 [PersistentlyDangerousStatusEdFactsCode],
-                 [StatePovertyDesignationCode],
-                 [StatePovertyDesignationDescription],
-                 [StatePovertyDesignationEdFactsCode]
-        FROM     [RDS].[DimK12SchoolStatuses]
-        ORDER BY [DimK12SchoolStatusId] ASC;
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimK12SchoolStatuses] OFF;
-    END
+--IF EXISTS (SELECT TOP 1 1 
+--           FROM   [RDS].[DimK12SchoolStatuses])
+--    BEGIN
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimK12SchoolStatuses] ON;
+--        INSERT INTO [RDS].[tmp_ms_xx_DimK12SchoolStatuses] ([DimK12SchoolStatusId], [MagnetOrSpecialProgramEmphasisSchoolCode], [MagnetOrSpecialProgramEmphasisSchoolDescription], [MagnetOrSpecialProgramEmphasisSchoolEdFactsCode], [NslpStatusCode], [NslpStatusDescription], [NslpStatusEdFactsCode], [SharedTimeIndicatorCode], [SharedTimeIndicatorDescription], [SharedTimeIndicatorEdFactsCode], [VirtualSchoolStatusCode], [VirtualSchoolStatusDescription], [VirtualSchoolStatusEdFactsCode], [SchoolImprovementStatusCode], [SchoolImprovementStatusDescription], [SchoolImprovementStatusEdFactsCode], [PersistentlyDangerousStatusCode], [PersistentlyDangerousStatusDescription], [PersistentlyDangerousStatusEdFactsCode], [StatePovertyDesignationCode], [StatePovertyDesignationDescription], [StatePovertyDesignationEdFactsCode])
+--        SELECT   [DimK12SchoolStatusId],
+--                 [MagnetOrSpecialProgramEmphasisSchoolCode],
+--                 [MagnetOrSpecialProgramEmphasisSchoolDescription],
+--                 [MagnetOrSpecialProgramEmphasisSchoolEdFactsCode],
+--                 [NslpStatusCode],
+--                 [NslpStatusDescription],
+--                 [NslpStatusEdFactsCode],
+--                 [SharedTimeIndicatorCode],
+--                 [SharedTimeIndicatorDescription],
+--                 [SharedTimeIndicatorEdFactsCode],
+--                 [VirtualSchoolStatusCode],
+--                 [VirtualSchoolStatusDescription],
+--                 [VirtualSchoolStatusEdFactsCode],
+--                 [SchoolImprovementStatusCode],
+--                 [SchoolImprovementStatusDescription],
+--                 [SchoolImprovementStatusEdFactsCode],
+--                 [PersistentlyDangerousStatusCode],
+--                 [PersistentlyDangerousStatusDescription],
+--                 [PersistentlyDangerousStatusEdFactsCode],
+--                 [StatePovertyDesignationCode],
+--                 [StatePovertyDesignationDescription],
+--                 [StatePovertyDesignationEdFactsCode]
+--        FROM     [RDS].[DimK12SchoolStatuses]
+--        ORDER BY [DimK12SchoolStatusId] ASC;
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimK12SchoolStatuses] OFF;
+--    END
 
 DROP TABLE [RDS].[DimK12SchoolStatuses];
 
@@ -9189,22 +9191,22 @@ CREATE TABLE [RDS].[tmp_ms_xx_DimK12StaffStatuses] (
     CONSTRAINT [tmp_ms_xx_constraint_PK_DimK12StaffStatuses1] PRIMARY KEY CLUSTERED ([DimK12StaffStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
-IF EXISTS (SELECT TOP 1 1 
-           FROM   [RDS].[DimK12StaffStatuses])
-    BEGIN
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimK12StaffStatuses] ON;
-        INSERT INTO [RDS].[tmp_ms_xx_DimK12StaffStatuses] ([DimK12StaffStatusId], [SpecialEducationAgeGroupTaughtCode], [SpecialEducationAgeGroupTaughtDescription], [SpecialEducationAgeGroupTaughtEdFactsCode], [K12StaffClassificationCode], [K12StaffClassificationDescription], [K12StaffClassificationEdFactsCode])
-        SELECT   [DimK12StaffStatusId],
-                 [SpecialEducationAgeGroupTaughtCode],
-                 [SpecialEducationAgeGroupTaughtDescription],
-                 [SpecialEducationAgeGroupTaughtEdFactsCode],
-                 [K12StaffClassificationCode],
-                 [K12StaffClassificationDescription],
-                 [K12StaffClassificationEdFactsCode]
-        FROM     [RDS].[DimK12StaffStatuses]
-        ORDER BY [DimK12StaffStatusId] ASC;
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimK12StaffStatuses] OFF;
-    END
+--IF EXISTS (SELECT TOP 1 1 
+--           FROM   [RDS].[DimK12StaffStatuses])
+--    BEGIN
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimK12StaffStatuses] ON;
+--        INSERT INTO [RDS].[tmp_ms_xx_DimK12StaffStatuses] ([DimK12StaffStatusId], [SpecialEducationAgeGroupTaughtCode], [SpecialEducationAgeGroupTaughtDescription], [SpecialEducationAgeGroupTaughtEdFactsCode], [K12StaffClassificationCode], [K12StaffClassificationDescription], [K12StaffClassificationEdFactsCode])
+--        SELECT   [DimK12StaffStatusId],
+--                 [SpecialEducationAgeGroupTaughtCode],
+--                 [SpecialEducationAgeGroupTaughtDescription],
+--                 [SpecialEducationAgeGroupTaughtEdFactsCode],
+--                 [K12StaffClassificationCode],
+--                 [K12StaffClassificationDescription],
+--                 [K12StaffClassificationEdFactsCode]
+--        FROM     [RDS].[DimK12StaffStatuses]
+--        ORDER BY [DimK12StaffStatusId] ASC;
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimK12StaffStatuses] OFF;
+--    END
 
 DROP TABLE [RDS].[DimK12StaffStatuses];
 
@@ -9302,6 +9304,7 @@ GO
 PRINT N'Altering Table [RDS].[DimK12StudentStatuses]...';
 
 
+-- TODO: Need to repopulate this DIM
 GO
 ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeId], COLUMN [MobilityStatus12moCode], COLUMN [MobilityStatus12moDescription], COLUMN [MobilityStatus12moEdFactsCode], COLUMN [MobilityStatus12moId], COLUMN [MobilityStatus36moCode], COLUMN [MobilityStatus36moDescription], COLUMN [MobilityStatus36moEdFactsCode], COLUMN [MobilityStatus36moId], COLUMN [MobilityStatusSYCode], COLUMN [MobilityStatusSYDescription], COLUMN [MobilityStatusSYEdFactsCode], COLUMN [MobilityStatusSYId], COLUMN [NSLPDirectCertificationIndicatorCode], COLUMN [NSLPDirectCertificationIndicatorDescription], COLUMN [NSLPDirectCertificationIndicatorEdFactsCode], COLUMN [NSLPDirectCertificationIndicatorId], COLUMN [PlacementStatusCode], COLUMN [PlacementStatusDescription], COLUMN [PlacementStatusEdFactsCode], COLUMN [PlacementStatusId], COLUMN [PlacementTypeCode], COLUMN [PlacementTypeDescription], COLUMN [PlacementTypeEdFactsCode], COLUMN [PlacementTypeId], COLUMN [ReferralStatusCode], COLUMN [ReferralStatusDescription], COLUMN [ReferralStatusEdFactsCode], COLUMN [ReferralStatusId];
 
@@ -9310,6 +9313,7 @@ GO
 PRINT N'Altering Table [RDS].[DimLanguages]...';
 
 
+-- TODO: Review these column name changes.
 GO
 ALTER TABLE [RDS].[DimLanguages] DROP COLUMN [Iso6392LanguageCode], COLUMN [Iso6392LanguageDescription], COLUMN [Iso6392LanguageEdFactsCode];
 
@@ -9452,41 +9456,41 @@ CREATE TABLE [RDS].[tmp_ms_xx_DimLeas] (
     CONSTRAINT [tmp_ms_xx_constraint_PK_DimLeas1] PRIMARY KEY CLUSTERED ([DimLeaID] ASC)
 );
 
-IF EXISTS (SELECT TOP 1 1 
-           FROM   [RDS].[DimLeas])
-    BEGIN
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimLeas] ON;
-        INSERT INTO [RDS].[tmp_ms_xx_DimLeas] ([DimLeaID], [OperationalStatusEffectiveDate], [LeaIdentifierNces], [StateAnsiCode], [StateAbbreviationCode], [StateAbbreviationDescription], [LeaSupervisoryUnionIdentificationNumber], [ReportedFederally], [LeaTypeCode], [LeaTypeDescription], [LeaTypeEdFactsCode], [MailingAddressCity], [MailingAddressPostalCode], [PhysicalAddressCity], [PhysicalAddressPostalCode], [OutOfStateIndicator], [RecordStartDateTime], [RecordEndDateTime], [LeaOperationalStatus], [LeaOperationalStatusEdFactsCode], [CharterLeaStatus], [ReconstitutedStatus], [McKinneyVentoSubgrantRecipient], [NameOfInstitution], [Longitude], [Latitude])
-        SELECT   [DimLeaID],
-                 [OperationalStatusEffectiveDate],
-                 [LeaIdentifierNces],
-                 [StateAnsiCode],
-                 [StateAbbreviationCode],
-                 [StateAbbreviationDescription],
-                 [LeaSupervisoryUnionIdentificationNumber],
-                 [ReportedFederally],
-                 [LeaTypeCode],
-                 [LeaTypeDescription],
-                 [LeaTypeEdFactsCode],
-                 [MailingAddressCity],
-                 [MailingAddressPostalCode],
-                 [PhysicalAddressCity],
-                 [PhysicalAddressPostalCode],
-                 [OutOfStateIndicator],
-                 [RecordStartDateTime],
-                 [RecordEndDateTime],
-                 [LeaOperationalStatus],
-                 [LeaOperationalStatusEdFactsCode],
-                 [CharterLeaStatus],
-                 [ReconstitutedStatus],
-                 [McKinneyVentoSubgrantRecipient],
-                 [NameOfInstitution],
-                 [Longitude],
-                 [Latitude]
-        FROM     [RDS].[DimLeas]
-        ORDER BY [DimLeaID] ASC;
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimLeas] OFF;
-    END
+--IF EXISTS (SELECT TOP 1 1 
+--           FROM   [RDS].[DimLeas])
+--    BEGIN
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimLeas] ON;
+--        INSERT INTO [RDS].[tmp_ms_xx_DimLeas] ([DimLeaID], [OperationalStatusEffectiveDate], [LeaIdentifierNces], [StateAnsiCode], [StateAbbreviationCode], [StateAbbreviationDescription], [LeaSupervisoryUnionIdentificationNumber], [ReportedFederally], [LeaTypeCode], [LeaTypeDescription], [LeaTypeEdFactsCode], [MailingAddressCity], [MailingAddressPostalCode], [PhysicalAddressCity], [PhysicalAddressPostalCode], [OutOfStateIndicator], [RecordStartDateTime], [RecordEndDateTime], [LeaOperationalStatus], [LeaOperationalStatusEdFactsCode], [CharterLeaStatus], [ReconstitutedStatus], [McKinneyVentoSubgrantRecipient], [NameOfInstitution], [Longitude], [Latitude])
+--        SELECT   [DimLeaID],
+--                 [OperationalStatusEffectiveDate],
+--                 [LeaIdentifierNces],
+--                 [StateAnsiCode],
+--                 [StateAbbreviationCode],
+--                 [StateAbbreviationDescription],
+--                 [LeaSupervisoryUnionIdentificationNumber],
+--                 [ReportedFederally],
+--                 [LeaTypeCode],
+--                 [LeaTypeDescription],
+--                 [LeaTypeEdFactsCode],
+--                 [MailingAddressCity],
+--                 [MailingAddressPostalCode],
+--                 [PhysicalAddressCity],
+--                 [PhysicalAddressPostalCode],
+--                 [OutOfStateIndicator],
+--                 [RecordStartDateTime],
+--                 [RecordEndDateTime],
+--                 [LeaOperationalStatus],
+--                 [LeaOperationalStatusEdFactsCode],
+--                 [CharterLeaStatus],
+--                 [ReconstitutedStatus],
+--                 [McKinneyVentoSubgrantRecipient],
+--                 [NameOfInstitution],
+--                 [Longitude],
+--                 [Latitude]
+--        FROM     [RDS].[DimLeas]
+--        ORDER BY [DimLeaID] ASC;
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimLeas] OFF;
+--    END
 
 DROP TABLE [RDS].[DimLeas];
 
@@ -10055,25 +10059,25 @@ CREATE TABLE [RDS].[tmp_ms_xx_DimSeas] (
     CONSTRAINT [tmp_ms_xx_constraint_PK_DimSeas1] PRIMARY KEY CLUSTERED ([DimSeaId] ASC)
 );
 
-IF EXISTS (SELECT TOP 1 1 
-           FROM   [RDS].[DimSeas])
-    BEGIN
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimSeas] ON;
-        INSERT INTO [RDS].[tmp_ms_xx_DimSeas] ([DimSeaId], [StateAnsiCode], [StateAbbreviationCode], [StateAbbreviationDescription], [MailingAddressCity], [MailingAddressPostalCode], [PhysicalAddressCity], [PhysicalAddressPostalCode], [RecordStartDateTime], [RecordEndDateTime])
-        SELECT   [DimSeaId],
-                 [StateAnsiCode],
-                 [StateAbbreviationCode],
-                 [StateAbbreviationDescription],
-                 [MailingAddressCity],
-                 [MailingAddressPostalCode],
-                 [PhysicalAddressCity],
-                 [PhysicalAddressPostalCode],
-                 [RecordStartDateTime],
-                 [RecordEndDateTime]
-        FROM     [RDS].[DimSeas]
-        ORDER BY [DimSeaId] ASC;
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimSeas] OFF;
-    END
+--IF EXISTS (SELECT TOP 1 1 
+--           FROM   [RDS].[DimSeas])
+--    BEGIN
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimSeas] ON;
+--        INSERT INTO [RDS].[tmp_ms_xx_DimSeas] ([DimSeaId], [StateAnsiCode], [StateAbbreviationCode], [StateAbbreviationDescription], [MailingAddressCity], [MailingAddressPostalCode], [PhysicalAddressCity], [PhysicalAddressPostalCode], [RecordStartDateTime], [RecordEndDateTime])
+--        SELECT   [DimSeaId],
+--                 [StateAnsiCode],
+--                 [StateAbbreviationCode],
+--                 [StateAbbreviationDescription],
+--                 [MailingAddressCity],
+--                 [MailingAddressPostalCode],
+--                 [PhysicalAddressCity],
+--                 [PhysicalAddressPostalCode],
+--                 [RecordStartDateTime],
+--                 [RecordEndDateTime]
+--        FROM     [RDS].[DimSeas]
+--        ORDER BY [DimSeaId] ASC;
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimSeas] OFF;
+--    END
 
 DROP TABLE [RDS].[DimSeas];
 
@@ -10186,25 +10190,25 @@ CREATE TABLE [RDS].[tmp_ms_xx_DimTitleIIIStatuses] (
     CONSTRAINT [tmp_ms_xx_constraint_PK_DimTitleIIIStatuses1] PRIMARY KEY CLUSTERED ([DimTitleIIIStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
-IF EXISTS (SELECT TOP 1 1 
-           FROM   [RDS].[DimTitleIIIStatuses])
-    BEGIN
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimTitleIIIStatuses] ON;
-        INSERT INTO [RDS].[tmp_ms_xx_DimTitleIIIStatuses] ([DimTitleIIIStatusId], [FormerEnglishLearnerYearStatusCode], [FormerEnglishLearnerYearStatusDescription], [FormerEnglishLearnerYearStatusEdFactsCode], [ProficiencyStatusCode], [ProficiencyStatusDescription], [ProficiencyStatusEdFactsCode], [TitleiiiAccountabilityProgressStatusCode], [TitleiiiAccountabilityProgressStatusDescription], [TitleiiiAccountabilityProgressStatusEdFactsCode])
-        SELECT   [DimTitleIIIStatusId],
-                 [FormerEnglishLearnerYearStatusCode],
-                 [FormerEnglishLearnerYearStatusDescription],
-                 [FormerEnglishLearnerYearStatusEdFactsCode],
-                 [ProficiencyStatusCode],
-                 [ProficiencyStatusDescription],
-                 [ProficiencyStatusEdFactsCode],
-                 [TitleiiiAccountabilityProgressStatusCode],
-                 [TitleiiiAccountabilityProgressStatusDescription],
-                 [TitleiiiAccountabilityProgressStatusEdFactsCode]
-        FROM     [RDS].[DimTitleIIIStatuses]
-        ORDER BY [DimTitleIIIStatusId] ASC;
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimTitleIIIStatuses] OFF;
-    END
+--IF EXISTS (SELECT TOP 1 1 
+--           FROM   [RDS].[DimTitleIIIStatuses])
+--    BEGIN
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimTitleIIIStatuses] ON;
+--        INSERT INTO [RDS].[tmp_ms_xx_DimTitleIIIStatuses] ([DimTitleIIIStatusId], [FormerEnglishLearnerYearStatusCode], [FormerEnglishLearnerYearStatusDescription], [FormerEnglishLearnerYearStatusEdFactsCode], [ProficiencyStatusCode], [ProficiencyStatusDescription], [ProficiencyStatusEdFactsCode], [TitleiiiAccountabilityProgressStatusCode], [TitleiiiAccountabilityProgressStatusDescription], [TitleiiiAccountabilityProgressStatusEdFactsCode])
+--        SELECT   [DimTitleIIIStatusId],
+--                 [FormerEnglishLearnerYearStatusCode],
+--                 [FormerEnglishLearnerYearStatusDescription],
+--                 [FormerEnglishLearnerYearStatusEdFactsCode],
+--                 [ProficiencyStatusCode],
+--                 [ProficiencyStatusDescription],
+--                 [ProficiencyStatusEdFactsCode],
+--                 [TitleiiiAccountabilityProgressStatusCode],
+--                 [TitleiiiAccountabilityProgressStatusDescription],
+--                 [TitleiiiAccountabilityProgressStatusEdFactsCode]
+--        FROM     [RDS].[DimTitleIIIStatuses]
+--        ORDER BY [DimTitleIIIStatusId] ASC;
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimTitleIIIStatuses] OFF;
+--    END
 
 DROP TABLE [RDS].[DimTitleIIIStatuses];
 
@@ -10432,6 +10436,7 @@ CREATE TABLE [RDS].[tmp_ms_xx_FactK12ProgramParticipations] (
     CONSTRAINT [tmp_ms_xx_constraint_PK_FactK12ProgramParticipations1] PRIMARY KEY CLUSTERED ([FactK12ProgramParticipationId] ASC)
 );
 
+--TODO: These are all renames of existing columns, so link them back up properly. 
 IF EXISTS (SELECT TOP 1 1 
            FROM   [RDS].[FactK12ProgramParticipations])
     BEGIN
@@ -10641,26 +10646,26 @@ CREATE TABLE [RDS].[tmp_ms_xx_FactK12StaffCounts] (
     CONSTRAINT [tmp_ms_xx_constraint_PK_FactK12StaffCounts1] PRIMARY KEY CLUSTERED ([FactK12StaffCountId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
-IF EXISTS (SELECT TOP 1 1 
-           FROM   [RDS].[FactK12StaffCounts])
-    BEGIN
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StaffCounts] ON;
-        INSERT INTO [RDS].[tmp_ms_xx_FactK12StaffCounts] ([FactK12StaffCountId], [SchoolYearId], [FactTypeId], [K12StaffId], [K12StaffStatusId], [K12SchoolId], [StaffCount], [K12StaffCategoryId], [TitleIIIStatusId], [LeaId], [SeaId])
-        SELECT   [FactK12StaffCountId],
-                 [SchoolYearId],
-                 [FactTypeId],
-                 [K12StaffId],
-                 [K12StaffStatusId],
-                 [K12SchoolId],
-                 [StaffCount],
-                 [K12StaffCategoryId],
-                 [TitleIIIStatusId],
-                 [LeaId],
-                 [SeaId]
-        FROM     [RDS].[FactK12StaffCounts]
-        ORDER BY [FactK12StaffCountId] ASC;
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StaffCounts] OFF;
-    END
+--IF EXISTS (SELECT TOP 1 1 
+--           FROM   [RDS].[FactK12StaffCounts])
+--    BEGIN
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StaffCounts] ON;
+--        INSERT INTO [RDS].[tmp_ms_xx_FactK12StaffCounts] ([FactK12StaffCountId], [SchoolYearId], [FactTypeId], [K12StaffId], [K12StaffStatusId], [K12SchoolId], [StaffCount], [K12StaffCategoryId], [TitleIIIStatusId], [LeaId], [SeaId])
+--        SELECT   [FactK12StaffCountId],
+--                 [SchoolYearId],
+--                 [FactTypeId],
+--                 [K12StaffId],
+--                 [K12StaffStatusId],
+--                 [K12SchoolId],
+--                 [StaffCount],
+--                 [K12StaffCategoryId],
+--                 [TitleIIIStatusId],
+--                 [LeaId],
+--                 [SeaId]
+--        FROM     [RDS].[FactK12StaffCounts]
+--        ORDER BY [FactK12StaffCountId] ASC;
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StaffCounts] OFF;
+--    END
 
 DROP TABLE [RDS].[FactK12StaffCounts];
 
@@ -10818,30 +10823,30 @@ CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentAssessments] (
     CONSTRAINT [tmp_ms_xx_constraint_PK_FactK12StudentAssessments1] PRIMARY KEY CLUSTERED ([FactK12StudentAssessmentId] ASC) WITH (FILLFACTOR = 80)
 );
 
-IF EXISTS (SELECT TOP 1 1 
-           FROM   [RDS].[FactK12StudentAssessments])
-    BEGIN
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentAssessments] ON;
-        INSERT INTO [RDS].[tmp_ms_xx_FactK12StudentAssessments] ([FactK12StudentAssessmentId], [AssessmentCount], [AssessmentId], [SchoolYearId], [K12DemographicId], [FactTypeId], [IdeaStatusId], [K12SchoolId], [K12StudentId], [TitleIIIStatusId], [K12StudentStatusId], [LeaId], [CteStatusId], [SeaId], [IeuId])
-        SELECT   [FactK12StudentAssessmentId],
-                 [AssessmentCount],
-                 [AssessmentId],
-                 [SchoolYearId],
-                 [K12DemographicId],
-                 [FactTypeId],
-                 [IdeaStatusId],
-                 [K12SchoolId],
-                 [K12StudentId],
-                 [TitleIIIStatusId],
-                 [K12StudentStatusId],
-                 [LeaId],
-                 [CteStatusId],
-                 [SeaId],
-                 [IeuId]
-        FROM     [RDS].[FactK12StudentAssessments]
-        ORDER BY [FactK12StudentAssessmentId] ASC;
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentAssessments] OFF;
-    END
+--IF EXISTS (SELECT TOP 1 1 
+--           FROM   [RDS].[FactK12StudentAssessments])
+--    BEGIN
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentAssessments] ON;
+--        INSERT INTO [RDS].[tmp_ms_xx_FactK12StudentAssessments] ([FactK12StudentAssessmentId], [AssessmentCount], [AssessmentId], [SchoolYearId], [K12DemographicId], [FactTypeId], [IdeaStatusId], [K12SchoolId], [K12StudentId], [TitleIIIStatusId], [K12StudentStatusId], [LeaId], [CteStatusId], [SeaId], [IeuId])
+--        SELECT   [FactK12StudentAssessmentId],
+--                 [AssessmentCount],
+--                 [AssessmentId],
+--                 [SchoolYearId],
+--                 [K12DemographicId],
+--                 [FactTypeId],
+--                 [IdeaStatusId],
+--                 [K12SchoolId],
+--                 [K12StudentId],
+--                 [TitleIIIStatusId],
+--                 [K12StudentStatusId],
+--                 [LeaId],
+--                 [CteStatusId],
+--                 [SeaId],
+--                 [IeuId]
+--        FROM     [RDS].[FactK12StudentAssessments]
+--        ORDER BY [FactK12StudentAssessmentId] ASC;
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentAssessments] OFF;
+--    END
 
 DROP TABLE [RDS].[FactK12StudentAssessments];
 
@@ -11123,38 +11128,38 @@ CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentCounts] (
     CONSTRAINT [tmp_ms_xx_constraint_PK_FactStudentCounts1] PRIMARY KEY CLUSTERED ([FactK12StudentCountId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
-IF EXISTS (SELECT TOP 1 1 
-           FROM   [RDS].[FactK12StudentCounts])
-    BEGIN
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentCounts] ON;
-        INSERT INTO [RDS].[tmp_ms_xx_FactK12StudentCounts] ([FactK12StudentCountId], [AgeId], [SchoolYearId], [K12DemographicId], [FactTypeId], [GradeLevelId], [IdeaStatusId], [K12SchoolId], [K12StudentId], [StudentCount], [LanguageId], [K12StudentStatusId], [TitleIStatusId], [TitleIIIStatusId], [LeaId], [AttendanceId], [CohortStatusId], [RaceId], [CteStatusId], [K12EnrollmentStatusId], [SeaId], [IeuId], [SpecialEducationServicesExitDateId])
-        SELECT   [FactK12StudentCountId],
-                 [AgeId],
-                 [SchoolYearId],
-                 [K12DemographicId],
-                 [FactTypeId],
-                 [GradeLevelId],
-                 [IdeaStatusId],
-                 [K12SchoolId],
-                 [K12StudentId],
-                 [StudentCount],
-                 [LanguageId],
-                 [K12StudentStatusId],
-                 [TitleIStatusId],
-                 [TitleIIIStatusId],
-                 [LeaId],
-                 [AttendanceId],
-                 [CohortStatusId],
-                 [RaceId],
-                 [CteStatusId],
-                 [K12EnrollmentStatusId],
-                 [SeaId],
-                 [IeuId],
-                 [SpecialEducationServicesExitDateId]
-        FROM     [RDS].[FactK12StudentCounts]
-        ORDER BY [FactK12StudentCountId] ASC;
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentCounts] OFF;
-    END
+--IF EXISTS (SELECT TOP 1 1 
+--           FROM   [RDS].[FactK12StudentCounts])
+--    BEGIN
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentCounts] ON;
+--        INSERT INTO [RDS].[tmp_ms_xx_FactK12StudentCounts] ([FactK12StudentCountId], [AgeId], [SchoolYearId], [K12DemographicId], [FactTypeId], [GradeLevelId], [IdeaStatusId], [K12SchoolId], [K12StudentId], [StudentCount], [LanguageId], [K12StudentStatusId], [TitleIStatusId], [TitleIIIStatusId], [LeaId], [AttendanceId], [CohortStatusId], [RaceId], [CteStatusId], [K12EnrollmentStatusId], [SeaId], [IeuId], [SpecialEducationServicesExitDateId])
+--        SELECT   [FactK12StudentCountId],
+--                 [AgeId],
+--                 [SchoolYearId],
+--                 [K12DemographicId],
+--                 [FactTypeId],
+--                 [GradeLevelId],
+--                 [IdeaStatusId],
+--                 [K12SchoolId],
+--                 [K12StudentId],
+--                 [StudentCount],
+--                 [LanguageId],
+--                 [K12StudentStatusId],
+--                 [TitleIStatusId],
+--                 [TitleIIIStatusId],
+--                 [LeaId],
+--                 [AttendanceId],
+--                 [CohortStatusId],
+--                 [RaceId],
+--                 [CteStatusId],
+--                 [K12EnrollmentStatusId],
+--                 [SeaId],
+--                 [IeuId],
+--                 [SpecialEducationServicesExitDateId]
+--        FROM     [RDS].[FactK12StudentCounts]
+--        ORDER BY [FactK12StudentCountId] ASC;
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentCounts] OFF;
+--    END
 
 DROP TABLE [RDS].[FactK12StudentCounts];
 
@@ -11437,6 +11442,7 @@ CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_TitleIStatusId]
     ON [RDS].[FactK12StudentCounts]([TitleIStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
+-- TODO: Do this with renames rather than drops/creates
 GO
 /*
 The column [RDS].[FactK12StudentCourseSections].[DateId] is being dropped, data loss could occur.
@@ -11708,29 +11714,29 @@ CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentDisciplines] (
     CONSTRAINT [tmp_ms_xx_constraint_PK_FactK12StudentDisciplines1] PRIMARY KEY CLUSTERED ([FactK12StudentDisciplineId] ASC) WITH (FILLFACTOR = 80)
 );
 
-IF EXISTS (SELECT TOP 1 1 
-           FROM   [RDS].[FactK12StudentDisciplines])
-    BEGIN
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentDisciplines] ON;
-        INSERT INTO [RDS].[tmp_ms_xx_FactK12StudentDisciplines] ([FactK12StudentDisciplineId], [AgeId], [SchoolYearId], [K12DemographicId], [FactTypeId], [IdeaStatusId], [K12SchoolId], [K12StudentId], [DisciplineCount], [GradeLevelId], [LeaId], [CteStatusId], [SeaId], [IeuId])
-        SELECT   [FactK12StudentDisciplineId],
-                 [AgeId],
-                 [SchoolYearId],
-                 [K12DemographicId],
-                 [FactTypeId],
-                 [IdeaStatusId],
-                 [K12SchoolId],
-                 [K12StudentId],
-                 [DisciplineCount],
-                 [GradeLevelId],
-                 [LeaId],
-                 [CteStatusId],
-                 [SeaId],
-                 [IeuId]
-        FROM     [RDS].[FactK12StudentDisciplines]
-        ORDER BY [FactK12StudentDisciplineId] ASC;
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentDisciplines] OFF;
-    END
+--IF EXISTS (SELECT TOP 1 1 
+--           FROM   [RDS].[FactK12StudentDisciplines])
+--    BEGIN
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentDisciplines] ON;
+--        INSERT INTO [RDS].[tmp_ms_xx_FactK12StudentDisciplines] ([FactK12StudentDisciplineId], [AgeId], [SchoolYearId], [K12DemographicId], [FactTypeId], [IdeaStatusId], [K12SchoolId], [K12StudentId], [DisciplineCount], [GradeLevelId], [LeaId], [CteStatusId], [SeaId], [IeuId])
+--        SELECT   [FactK12StudentDisciplineId],
+--                 [AgeId],
+--                 [SchoolYearId],
+--                 [K12DemographicId],
+--                 [FactTypeId],
+--                 [IdeaStatusId],
+--                 [K12SchoolId],
+--                 [K12StudentId],
+--                 [DisciplineCount],
+--                 [GradeLevelId],
+--                 [LeaId],
+--                 [CteStatusId],
+--                 [SeaId],
+--                 [IeuId]
+--        FROM     [RDS].[FactK12StudentDisciplines]
+--        ORDER BY [FactK12StudentDisciplineId] ASC;
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentDisciplines] OFF;
+--    END
 
 DROP TABLE [RDS].[FactK12StudentDisciplines];
 
@@ -12106,27 +12112,28 @@ CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentEnrollments] (
     CONSTRAINT [tmp_ms_xx_constraint_PK_FactK12StudentEnrollments1] PRIMARY KEY NONCLUSTERED ([FactK12StudentEnrollmentId] ASC)
 );
 
-IF EXISTS (SELECT TOP 1 1 
-           FROM   [RDS].[FactK12StudentEnrollments])
-    BEGIN
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentEnrollments] ON;
-        INSERT INTO [RDS].[tmp_ms_xx_FactK12StudentEnrollments] ([FactK12StudentEnrollmentId], [SchoolYearId], [DataCollectionId], [SeaId], [IeuId], [K12StudentId], [K12EnrollmentStatusId], [EntryGradeLevelId], [ExitGradeLevelId], [ProjectedGraduationDateId], [K12DemographicId], [IdeaStatusId], [StudentCount])
-        SELECT [FactK12StudentEnrollmentId],
-               [SchoolYearId],
-               [DataCollectionId],
-               [SeaId],
-               [IeuId],
-               [K12StudentId],
-               [K12EnrollmentStatusId],
-               [EntryGradeLevelId],
-               [ExitGradeLevelId],
-               [ProjectedGraduationDateId],
-               [K12DemographicId],
-               [IdeaStatusId],
-               [StudentCount]
-        FROM   [RDS].[FactK12StudentEnrollments];
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentEnrollments] OFF;
-    END
+-- TODO: Determine what to do with this table
+--IF EXISTS (SELECT TOP 1 1 
+--           FROM   [RDS].[FactK12StudentEnrollments])
+--    BEGIN
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentEnrollments] ON;
+--        INSERT INTO [RDS].[tmp_ms_xx_FactK12StudentEnrollments] ([FactK12StudentEnrollmentId], [SchoolYearId], [DataCollectionId], [SeaId], [IeuId], [K12StudentId], [K12EnrollmentStatusId], [EntryGradeLevelId], [ExitGradeLevelId], [ProjectedGraduationDateId], [K12DemographicId], [IdeaStatusId], [StudentCount])
+--        SELECT [FactK12StudentEnrollmentId],
+--               [SchoolYearId],
+--               [DataCollectionId],
+--               [SeaId],
+--               [IeuId],
+--               [K12StudentId],
+--               [K12EnrollmentStatusId],
+--               [EntryGradeLevelId],
+--               [ExitGradeLevelId],
+--               [ProjectedGraduationDateId],
+--               [K12DemographicId],
+--               [IdeaStatusId],
+--               [StudentCount]
+--        FROM   [RDS].[FactK12StudentEnrollments];
+--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactK12StudentEnrollments] OFF;
+--    END
 
 DROP TABLE [RDS].[FactK12StudentEnrollments];
 
