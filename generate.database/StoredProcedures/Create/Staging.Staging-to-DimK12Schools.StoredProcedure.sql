@@ -61,7 +61,6 @@ BEGIN
 		, SchoolIdentifierNces					VARCHAR(50)
 		, SchoolIdentifierState					VARCHAR(50)
 		, PriorSchoolIdentifierState			VARCHAR(50) -- CIID-4060
-		, SchoolPriorLEAIdentifierState			varchar(50)
 		, NameOfInstitution						VARCHAR(200)
 		, SchOperationalStatus					VARCHAR(50)
 		, SchOperationalEdfactsStatus			VARCHAR(50)
@@ -120,7 +119,6 @@ BEGIN
 			, sko.School_Identifier_NCES
 			, sko.School_Identifier_State
 			, sko.Prior_School_Identifier_State -- CIID-4060
-			, sko.School_Prior_LEA_Identifier_State -- CIID-5691
 			, sko.School_Name
 			, sssrd1.OutputCode -- SchoolOperationalStatus
 			, CASE sssrd1.OutputCode
@@ -274,7 +272,7 @@ BEGIN
 			        trgt.LeaName = src.LeaOrganizationName,
 					trgt.LeaIdentifierNces = src.LeaIdentifierNces,
 					trgt.LeaIdentifierState = src.LeaIdentifierState,
-					trgt.PriorLEAIdentifierState = src.SchoolPriorLEAIdentifierState, --CIID-5691
+					trgt.PriorLEAIdentifierState = src.PriorLEAIdentifierState, --CIID-4060
 					trgt.NameOfInstitution = src.NameOfInstitution,
 					trgt.SchoolOperationalStatus = src.SchOperationalStatus,
 					trgt.SchoolOperationalStatusEdFactsCode = src.SchOperationalEdfactsStatus,
@@ -384,7 +382,7 @@ BEGIN
 		, src.SeaIdentifierState
 		, src.LeaIdentifierNces
 		, src.LeaIdentifierState
-		, src.SchoolPriorLEAIdentifierState --CIID-4060
+		, src.PriorLEAIdentifierState --CIID-4060
 		, src.LeaOrganizationName
 		, src.SchoolIdentifierNces
 		, src.SchoolIdentifierState
