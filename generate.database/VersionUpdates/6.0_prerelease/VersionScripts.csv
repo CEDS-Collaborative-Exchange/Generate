@@ -1,5 +1,8 @@
 VersionUpdates\\6.0_prerelease,Restore 5.3.sql,0
 StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.ValidateStagingData.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.ValidateStagingData.StoredProcedure.sql,0
+VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
 VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0
 
