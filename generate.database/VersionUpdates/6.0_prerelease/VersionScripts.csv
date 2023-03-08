@@ -1,5 +1,11 @@
 VersionUpdates\\6.0_prerelease,Restore 5.3.sql,0
 VersionUpdates\\6.0_prerelease,AddColumnInK12Organization.sql,0
+Views\\Drop,RDS.vwDimLanguages.View.sql,0
+Views\\Create,RDS.vwDimLanguages.View.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
@@ -8,4 +14,3 @@ StoredProcedures\\Drop,Staging.ValidateStagingData.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.ValidateStagingData.StoredProcedure.sql,0
 VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
 VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0
-
