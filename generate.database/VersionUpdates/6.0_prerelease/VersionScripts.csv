@@ -6,6 +6,9 @@ StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.ValidateStagingData.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.ValidateStagingData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Homeless.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Homeless.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Wrapper_Migrate_Homeless_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Wrapper_Migrate_Homeless_to_RDS.StoredProcedure.sql,0
 VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
 VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0
-
