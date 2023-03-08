@@ -62,7 +62,7 @@ BEGIN
 		return;
 	end
 
-	--pull the report together
+	--pull the report data together
 	SELECT 
 		  CAST(ROW_NUMBER() OVER(ORDER BY ISNULL(a.OrganizationName, b.OrganizationName) ASC) AS INT) as FactCustomCountId
 		, @reportCode as ReportCode
