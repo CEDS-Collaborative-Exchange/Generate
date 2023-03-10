@@ -199,10 +199,10 @@ JOIN RDS.DimDates rdsesed ON f.SpecialEducationServicesExitDateId = rdsesed.DimD
 
 /*******************************************************************************************************/
 
-
+--Should LeaId be switched to the new field LeaAccountabilityId
+	--from work in states, I think having both Accountability and Attending would be good
 --Why is Race not in the new table
 --We have other statuses but not Military Connected or Section504, is that correct
-
 
 /*
 CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentDisciplines] (
@@ -300,10 +300,6 @@ CREATE TABLE Upgrade.FactK12StudentDisciplines (
 	, SingleParentOrSinglePregnantWomanCode NVARCHAR(200)
 	)
 
-
-
-
-
 INSERT INTO Upgrade.FactK12StudentDisciplines
 SELECT 
 	f.DisciplineCount
@@ -364,7 +360,6 @@ JOIN RDS.DimSchoolYears rdsy ON f.SchoolYearId = rdsy.DimSchoolYearId
 JOIN RDS.DimGradeLevels rdgl ON f.GradeLevelId = rdgl.DimGradeLevelId
 JOIN RDS.DimAges rda ON f.AgeId = rda.DimAgeId
 JOIN RDS.DimRaces rdr ON f.RaceId = rdr.DimRaceId
---JOIN RDS.DimFactTypes rdft ON f.FactTypeId = rdft.DimFactTypeId
 JOIN RDS.DimDisciplines rdd ON f.DisciplineId = rdd.DimDisciplineId
 JOIN RDS.DimFirearms rdf ON f.FirearmsId = rdf.DimFirearmsId
 JOIN RDS.DimFirearmDisciplines rdfd ON f.FirearmDisciplineId = rdfd.DimFirearmDisciplineId
