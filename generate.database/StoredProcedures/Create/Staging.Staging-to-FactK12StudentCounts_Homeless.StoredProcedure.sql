@@ -238,7 +238,7 @@ BEGIN
 				ON ske.GradeLevel = rgls.GradeLevelMap
 				AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
 			LEFT JOIN #vwRaces rdr
-				ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
+				ON ISNULL(rdr.RaceCode, rdr.RaceMap) =
 					CASE
 						when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
 						WHEN spr.RaceCode IS NOT NULL THEN spr.RaceCode
