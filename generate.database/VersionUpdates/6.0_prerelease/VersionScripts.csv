@@ -14,6 +14,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.Stored
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_YearToYearExitCountReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_YearToYearExitCountReportData.StoredProcedure.sql,0
 VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
 VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0
 
