@@ -8,6 +8,8 @@ StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.ValidateStagingData.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.ValidateStagingData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_YearToYearExitCountReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_YearToYearExitCountReportData.StoredProcedure.sql,0
 VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
 VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0
 
