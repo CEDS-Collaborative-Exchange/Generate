@@ -1,7 +1,22 @@
-DROP TABLE IF EXISTS Upgrade.FactK12StudentCounts
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentCounts')
+	DROP TABLE Upgrade.FactK12StudentCounts
+END
 GO
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentDisciplines')
+	DROP TABLE Upgrade.FactK12StudentDisciplines
+END
+GO
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StaffCounts')
+	DROP TABLE Upgrade.FactK12StaffCounts
+END
+GO
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentAssessments')
+	DROP TABLE Upgrade.FactK12StudentAssessments
+END
 
-DROP SCHEMA IF EXISTS Upgrade
+IF EXISTS (select * from INFORMATION_SCHEMA.SCHEMATA where schema_name = 'Upgrade') BEGIN
+	DROP SCHEMA Upgrade
+END
 GO
 
 CREATE SCHEMA Upgrade
@@ -694,3 +709,188 @@ JOIN RDS.DimCteStatuses rdctes ON f.CteStatusId = rdctes.DimCteStatusId
 JOIN RDS.DimK12EnrollmentStatuses rdkes ON f.K12EnrollmentStatusId = rdkes.DimK12EnrollmentStatusId
 JOIN RDS.DimTitleIStatuses rdtis ON f.TitleIStatusId = rdtis.DimTitleIStatusId
 
+
+/*******************************************************************************************************/
+
+CREATE TABLE Upgrade.FactOrganizationCounts (
+	-- Fact table
+	  TitleIParentalInvolveRes
+	, TitleIPartAAllocations
+	, SchoolImprovementFunds
+	, FederalFundAllocationType
+	, FederalProgramCode
+	, FederalFundAllocated
+	--DimSchoolYears
+	, SchoolYear
+	--DimFactTypes
+	, FactTypeCode
+	--DimLeas
+	, LeaIdentifierState
+	, RecordStartDateTime
+	, RecordEndDateTime
+	--DimK12Staff
+	, StaffMemberIdentifierState
+	, RecordStartDateTime
+	, RecordEndDateTime
+	--DimK12Schools
+	, SchoolIdentifierState
+	, RecordStartDateTime
+	, RecordEndDateTime
+	--DimK12SchoolStatuses
+	, DimK12SchoolStatusId
+	, MagnetOrSpecialProgramEmphasisSchoolCode
+	, NslpStatusCode
+	, PersistentlyDangerousStatusCode
+	, ProgressAchievingEnglishLanguageCode
+	, SchoolImprovementStatusCode
+	, SharedTimeIndicatorCode
+	, StatePovertyDesignationCode
+	, VirtualSchoolStatusCode
+	--DimSeas
+	, DimSeaId
+	, RecordStartDateTime
+	, RecordEndDateTime
+	--DimTitleIStatus
+	, DimTitleIStatusId
+	, TitleIInstructionalServicesCode
+	, TitleIProgramTypeCode
+	, TitleISchoolStatusCode
+	, TitleISupportServicesCode
+	--DimCharterSchoolAuthorizers - Primary
+	, StateIdentifier	 
+	, RecordStartDateTime 
+	, RecordEndDateTime	 
+	--DimCharterSchoolManagementOrganizations
+	, StateIdentifier
+	, RecordStartDateTime
+	, RecordEndDateTime
+	--DimCharterSchoolAuthorizers - Secondary
+	, StateIdentifier
+	, RecordStartDateTime
+	, RecordEndDateTime
+	--DimCharterSchoolManagementOrganizations - Updated
+	, StateIdentifier
+	, RecordStartDateTime
+	, RecordEndDateTime
+	--DimK12OrganizationStatuses
+	, GunFreeSchoolsActReportingStatusCode
+	, HighSchoolGraduationRateIndicatorStatusCode
+	, McKinneyVentoSubgrantRecipientCode
+	, ReapAlternativeFundingStatusCode
+	--DimK12SchoolStateStatuses
+	, SchoolStateStatusCode
+	--DimComprehensiveAndTargetedSupports
+	, AdditionalTargetedSupportandImprovementCode
+	, ComprehensiveAndTargetedSupportCode
+	, ComprehensiveSupportCode
+	, ComprehensiveSupportImprovementCode
+	, TargetedSupportCode
+	, TargetedSupportImprovementCode
+	--DimSubgroups
+	, SubgroupCode
+	--DimComprehensiveSupportReasonApplicabilities
+	, ComprehensiveSupportReasonApplicabilityCode
+
+
+)
+
+INSERT INTO Upgrade.FactOrganizationCounts
+SELECT 
+	-- Fact table
+	  f.TitleIParentalInvolveRes
+	, f.TitleIPartAAllocations
+	, f.SchoolImprovementFunds
+	, f.FederalFundAllocationType
+	, f.FederalProgramCode
+	, f.FederalFundAllocated
+	--DimSchoolYears
+	, rdsy.SchoolYear
+	--DimFactTypes
+	, rdft.FactTypeCode
+	--DimLeas
+	, rdl.LeaIdentifierState
+	, rdl.RecordStartDateTime
+	, rdl.RecordEndDateTime
+	--DimK12Staff
+	, rdksta.StaffMemberIdentifierState
+	, rdksta.RecordStartDateTime
+	, rdksta.RecordEndDateTime
+	--DimK12Schools
+	, rdksch.SchoolIdentifierState
+	, rdksch.RecordStartDateTime
+	, rdksch.RecordEndDateTime
+	--DimK12SchoolStatuses
+	, rdkss.DimK12SchoolStatusId
+	, rdkss.MagnetOrSpecialProgramEmphasisSchoolCode
+	, rdkss.NslpStatusCode
+	, rdkss.PersistentlyDangerousStatusCode
+	, rdkss.ProgressAchievingEnglishLanguageCode
+	, rdkss.SchoolImprovementStatusCode
+	, rdkss.SharedTimeIndicatorCode
+	, rdkss.StatePovertyDesignationCode
+	, rdkss.VirtualSchoolStatusCode
+	--DimSeas
+	, rds.DimSeaId
+	, rds.RecordStartDateTime
+	, rds.RecordEndDateTime
+	--DimTitleIStatus
+	, rdtis.DimTitleIStatusId
+	, rdtis.TitleIInstructionalServicesCode
+	, rdtis.TitleIProgramTypeCode
+	, rdtis.TitleISchoolStatusCode
+	, rdtis.TitleISupportServicesCode
+	--DimCharterSchoolAuthorizers - Primary
+	, rdcsap.StateIdentifier	 
+	, rdcsap.RecordStartDateTime 
+	, rdcsap.RecordEndDateTime	 
+	--DimCharterSchoolManagementOrganizations
+	, rdcsmo.StateIdentifier
+	, rdcsmo.RecordStartDateTime
+	, rdcsmo.RecordEndDateTime
+	--DimCharterSchoolAuthorizers - Secondary
+	, rdcsas.StateIdentifier
+	, rdcsas.RecordStartDateTime
+	, rdcsas.RecordEndDateTime
+	--DimCharterSchoolManagementOrganizations - Updated
+	, rdcsumo.StateIdentifier
+	, rdcsumo.RecordStartDateTime
+	, rdcsumo.RecordEndDateTime
+	--DimK12OrganizationStatuses
+	, rdkos.GunFreeSchoolsActReportingStatusCode
+	, rdkos.HighSchoolGraduationRateIndicatorStatusCode
+	, rdkos.McKinneyVentoSubgrantRecipientCode
+	, rdkos.ReapAlternativeFundingStatusCode
+	--DimK12SchoolStateStatuses
+	, rdksss.SchoolStateStatusCode
+	--DimComprehensiveAndTargetedSupports
+	, rdcats.AdditionalTargetedSupportandImprovementCode
+	, rdcats.ComprehensiveAndTargetedSupportCode
+	, rdcats.ComprehensiveSupportCode
+	, rdcats.ComprehensiveSupportImprovementCode
+	, rdcats.TargetedSupportCode
+	, rdcats.TargetedSupportImprovementCode
+	--DimSubgroups
+	, rdsub.SubgroupCode
+	--DimComprehensiveSupportReasonApplicabilities
+	, rdcsra.ComprehensiveSupportReasonApplicabilityCode
+FROM RDS.FactOrganizationCounts f
+JOIN RDS.DimSchoolYears rdsy ON f.SchoolYearId = rdsy.DimSchoolYearId
+JOIN RDS.DimFactTypes rdft ON f.FactTypeId = rdft.DimFactTypeId
+JOIN RDS.DimLeas rdl ON f.LeaId = rdl.DimLeaID
+JOIN RDS.DimK12Staff rdksta ON f.K12StaffId = rdksta.DimK12StaffId
+JOIN RDS.DimK12Schools rdksch ON f.K12SchoolId = rdksch.DimK12SchoolId
+JOIN RDS.DimK12SchoolStatuses rdkss ON f.SchoolStateStatusId = rdkss.DimK12SchoolStatusId
+JOIN RDS.DimSeas rds ON f.SeaId = rds.DimSeaId
+JOIN RDS.DimTitleIStatuses rdtis ON f.TitleIStatusId = rdtis.DimTitleIStatusId
+JOIN RDS.DimCharterSchoolAuthorizers rdcsap ON f.CharterSchoolApproverAgencyId = rdcsap.DimCharterSchoolAuthorizerId
+JOIN RDS.DimCharterSchoolManagementOrganizations rdcsmo ON f.CharterSchoolManagerOrganizationId = rdcsmo.DimCharterSchoolManagementOrganizationId
+JOIN RDS.DimCharterSchoolAuthorizers rdcsas ON f.CharterSchoolSecondaryApproverAgencyId = rdcsas.DimCharterSchoolAuthorizerId
+JOIN RDS.DimCharterSchoolManagementOrganizations rdcsumo ON f.CharterSchoolUpdatedManagerOrganizationId = rdcsumo.DimCharterSchoolManagementOrganizationId
+JOIN RDS.DimK12OrganizationStatuses rdkos ON f.OrganizationStatusId = rdkos.DimK12OrganizationStatusId
+JOIN RDS.DimK12SchoolStateStatuses rdksss ON f.SchoolStateStatusId = rdksss.DimK12SchoolStateStatusId
+JOIN RDS.DimComprehensiveAndTargetedSupports rdcats ON f.ComprehensiveAndTargetedSupportId = rdcats.DimComprehensiveAndTargetedSupportId
+JOIN RDS.DimSubgroups rdsub ON f.DimSubgroupId = f.DimSubgroupId
+JOIN RDS.DimComprehensiveSupportReasonApplicabilities rdcsra ON f.DimComprehensiveSupportReasonApplicabilityId = rdcsra.DimComprehensiveSupportReasonApplicabilityId
+
+
+/*******************************************************************************************************/

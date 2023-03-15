@@ -7472,10 +7472,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels] (
@@ -7499,10 +7495,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels]', N'BridgeK12SchoolGradeLevels';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_BridgeK12SchoolGradeLevels1]', N'PK_BridgeK12SchoolGradeLevels', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -7534,10 +7526,7 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
+	
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_BridgeK12StudentCourseSectionK12Staff] (
@@ -7567,10 +7556,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_BridgeK12StudentCourseSectionK12Staff]', N'BridgeK12StudentCourseSectionK12Staff';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_BridgeK12StudentCourseSectionK12Staff1]', N'PK_BridgeK12StudentCourseSectionK12Staff', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -7624,10 +7609,7 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
+	
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_BridgeLeaGradeLevels] (
@@ -7652,9 +7634,6 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_BridgeLeaGradeLevels1]', N'PK_BridgeLeaGradeLevels', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -7703,55 +7682,47 @@
 		ON [RDS].[BridgePsStudentEnrollmentRaces]([RaceId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
-	-- GO
-	-- PRINT N'Starting rebuilding table [RDS].[DimAcademicTermDesignators]...';
+	GO
+	PRINT N'Starting rebuilding table [RDS].[DimAcademicTermDesignators]...';
 
 
-	-- GO
-	-- BEGIN TRANSACTION;
+	GO
+	SET XACT_ABORT ON;
 
-	-- SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+	CREATE TABLE [RDS].[tmp_ms_xx_DimAcademicTermDesignators] (
+	    [DimAcademicTermDesignatorId]       INT            IDENTITY (1, 1) NOT NULL,
+	    [AcademicTermDesignatorCode]        NVARCHAR (50)  NULL,
+	    [AcademicTermDesignatorDescription] NVARCHAR (MAX) NULL,
+	    CONSTRAINT [tmp_ms_xx_constraint_PK_DimAcademicTermDesignators1] PRIMARY KEY CLUSTERED ([DimAcademicTermDesignatorId] ASC) WITH (DATA_COMPRESSION = PAGE)
+	);
 
-	-- SET XACT_ABORT ON;
+	IF EXISTS (SELECT TOP 1 1 
+	           FROM   [RDS].[DimAcademicTermDesignators])
+	    BEGIN
+	        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimAcademicTermDesignators] ON;
+	        INSERT INTO [RDS].[tmp_ms_xx_DimAcademicTermDesignators] ([DimAcademicTermDesignatorId], [AcademicTermDesignatorCode], [AcademicTermDesignatorDescription])
+	        SELECT   [DimAcademicTermDesignatorId],
+	                 [AcademicTermDesignatorCode],
+	                 [AcademicTermDesignatorDescription]
+	        FROM     [RDS].[DimAcademicTermDesignators]
+	        ORDER BY [DimAcademicTermDesignatorId] ASC;
+	        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimAcademicTermDesignators] OFF;
+	    END
 
-	-- CREATE TABLE [RDS].[tmp_ms_xx_DimAcademicTermDesignators] (
-	--     [DimAcademicTermDesignatorId]       INT            IDENTITY (1, 1) NOT NULL,
-	--     [AcademicTermDesignatorCode]        NVARCHAR (50)  NULL,
-	--     [AcademicTermDesignatorDescription] NVARCHAR (MAX) NULL,
-	--     CONSTRAINT [tmp_ms_xx_constraint_PK_DimAcademicTermDesignators1] PRIMARY KEY CLUSTERED ([DimAcademicTermDesignatorId] ASC) WITH (DATA_COMPRESSION = PAGE)
-	-- );
+	DROP TABLE [RDS].[DimAcademicTermDesignators];
 
-	-- -- IF EXISTS (SELECT TOP 1 1 
-	-- --            FROM   [RDS].[DimAcademicTermDesignators])
-	-- --     BEGIN
-	-- --         SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimAcademicTermDesignators] ON;
-	-- --         INSERT INTO [RDS].[tmp_ms_xx_DimAcademicTermDesignators] ([DimAcademicTermDesignatorId], [AcademicTermDesignatorCode], [AcademicTermDesignatorDescription])
-	-- --         SELECT   [DimAcademicTermDesignatorId],
-	-- --                  [AcademicTermDesignatorCode],
-	-- --                  [AcademicTermDesignatorDescription]
-	-- --         FROM     [RDS].[DimAcademicTermDesignators]
-	-- --         ORDER BY [DimAcademicTermDesignatorId] ASC;
-	-- --         SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimAcademicTermDesignators] OFF;
-	-- --     END
+	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_DimAcademicTermDesignators]', N'DimAcademicTermDesignators';
 
-	-- DROP TABLE [RDS].[DimAcademicTermDesignators];
-
-	-- EXECUTE sp_rename N'[RDS].[tmp_ms_xx_DimAcademicTermDesignators]', N'DimAcademicTermDesignators';
-
-	-- EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_DimAcademicTermDesignators1]', N'PK_DimAcademicTermDesignators', N'OBJECT';
-
-	-- COMMIT TRANSACTION;
-
-	-- SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_DimAcademicTermDesignators1]', N'PK_DimAcademicTermDesignators', N'OBJECT';
 
 
-	-- GO
-	-- PRINT N'Creating Index [RDS].[DimAcademicTermDesignators].[IX_DimAcademicTermDesignators_AcademicTermDesignatorCode]...';
+	GO
+	PRINT N'Creating Index [RDS].[DimAcademicTermDesignators].[IX_DimAcademicTermDesignators_AcademicTermDesignatorCode]...';
 
 
-	-- GO
-	-- CREATE NONCLUSTERED INDEX [IX_DimAcademicTermDesignators_AcademicTermDesignatorCode]
-	--     ON [RDS].[DimAcademicTermDesignators]([AcademicTermDesignatorCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+	GO
+	CREATE NONCLUSTERED INDEX [IX_DimAcademicTermDesignators_AcademicTermDesignatorCode]
+	    ON [RDS].[DimAcademicTermDesignators]([AcademicTermDesignatorCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 	-- GO
@@ -7821,10 +7792,7 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
+	
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_DimAssessments] (
@@ -7860,9 +7828,6 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_DimAssessments1]', N'PK_DimAssessments', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -7927,9 +7892,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 	SET XACT_ABORT ON;
 
@@ -7973,9 +7935,6 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_DimAssessmentStatuses1]', N'PK_DimAssessmentStatuses', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -8132,10 +8091,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_DimCteStatuses] (
@@ -8194,9 +8149,6 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_DimCteStatuses1]', N'PK_DimCteStatuses', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -8268,9 +8220,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 	SET XACT_ABORT ON;
 
@@ -8315,9 +8264,6 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_DimIdeaStatuses1]', N'PK_DimIdeaStatuses', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -8505,9 +8451,6 @@
 	The column [RDS].[DimCharterSchoolAuthorizers].[SchoolStateIdentifier] dropped.
 	*/
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 	SET XACT_ABORT ON;
 
@@ -8644,9 +8587,6 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_PK_DimCharterSchoolAuthorizer]', N'PK_DimCharterSchoolAuthorizers', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 	GO
 
@@ -8654,9 +8594,6 @@
 	PRINT N'Altering Table [RDS].[DimCharterSchoolManagementOrganizations]...';
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 	SET XACT_ABORT ON;
 
@@ -8792,9 +8729,6 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_PK_DimCharterSchoolManagementOrganization]', N'PK_DimCharterSchoolManagementOrganizations', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 	/*
 	The column [RDS].[DimK12Schools].[CharterSchoolAuthorizerIdPrimary] is being dropped.
@@ -8944,9 +8878,6 @@
 	PRINT N'Starting rebuilding table [RDS].[DimIeus]...';
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 	SET XACT_ABORT ON;
 
@@ -9054,10 +8985,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_DimIeus]', N'DimIeus';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_PK_DimIeus]', N'PK_DimIeus', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -9220,9 +9147,6 @@
 	*/
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 	SET XACT_ABORT ON;
 
@@ -9278,9 +9202,6 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_DimK12StaffStatuses1]', N'PK_DimK12StaffStatuses', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -9441,9 +9362,6 @@
 	PRINT N'Starting rebuilding table [RDS].[DimLeas]...';
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 	SET XACT_ABORT ON;
 
@@ -9598,9 +9516,6 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_PK_DimLeas]', N'PK_DimLeas', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 	GO
 
@@ -9757,9 +9672,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 	SET XACT_ABORT ON;
 
@@ -9802,10 +9714,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_DimPsInstitutionStatuses]', N'DimPsInstitutionStatuses';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_DimPsInstitutionStatuses1]', N'PK_DimPsInstitutionStatuses', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -10027,10 +9935,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactK12ProgramParticipations] (
@@ -10082,10 +9986,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactK12ProgramParticipations]', N'FactK12ProgramParticipations';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactK12ProgramParticipations1]', N'PK_FactK12ProgramParticipations', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -10243,10 +10143,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactK12StaffCounts] (
@@ -10292,11 +10188,7 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactK12StaffCounts1]', N'PK_FactK12StaffCounts', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
-
+	
 	GO
 	PRINT N'Creating Index [RDS].[FactK12StaffCounts].[IXFK_FactK12StaffCounts_FactTypeId]...';
 
@@ -10399,10 +10291,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentAssessments] (
@@ -10473,11 +10361,7 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactK12StudentAssessments1]', N'PK_FactK12StudentAssessments', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
-
+	
 	GO
 	PRINT N'Creating Index [RDS].[FactK12StudentAssessments].[IXFK_FactK12StudentAssessments_AssessmentAdministrationId]...';
 
@@ -10705,10 +10589,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentCounts] (
@@ -10787,9 +10667,6 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactStudentCounts1]', N'PK_FactStudentCounts', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -11076,10 +10953,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentCourseSections] (
@@ -11134,10 +11007,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactK12StudentCourseSections]', N'FactK12StudentCourseSections';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactK12StudentCourseSections1]', N'PK_FactK12StudentCourseSections', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -11289,10 +11158,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentDisciplines] (
@@ -11363,10 +11228,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactK12StudentDisciplines]', N'FactK12StudentDisciplines';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactK12StudentDisciplines1]', N'PK_FactK12StudentDisciplines', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -11665,10 +11526,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentEnrollments] (
@@ -11760,10 +11617,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactK12StudentEnrollments]', N'FactK12StudentEnrollments';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactK12StudentEnrollments1]', N'PK_FactK12StudentEnrollments', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -12283,10 +12136,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactOrganizationCounts] (
@@ -12350,11 +12199,7 @@
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactOrganizationCounts1]', N'PK_FactOrganizationCounts', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
-
+	
 	GO
 	/*
 	The column [RDS].[FactOrganizationStatusCounts].[DimEcoDisStatusId] is being dropped, data loss could occur.
@@ -12367,10 +12212,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactOrganizationStatusCounts] (
@@ -12413,10 +12254,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactOrganizationStatusCounts]', N'FactOrganizationStatusCounts';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactOrganizationStatusCount1]', N'PK_FactOrganizationStatusCount', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -12505,10 +12342,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactPsStudentAcademicAwards] (
@@ -12543,10 +12376,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactPsStudentAcademicAwards]', N'FactPsStudentAcademicAwards';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactPsStudentAcademicAwards1]', N'PK_FactPsStudentAcademicAwards', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -12607,10 +12436,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactPsStudentAcademicRecords] (
@@ -12641,10 +12466,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactPsStudentAcademicRecords]', N'FactPsStudentAcademicRecords';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactPsStudentAcademicRecords1]', N'PK_FactPsStudentAcademicRecords', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -12750,10 +12571,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactPsStudentEnrollments] (
@@ -12795,10 +12612,6 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactPsStudentEnrollments]', N'FactPsStudentEnrollments';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactPsStudentEnrollments1]', N'PK_FactPsStudentEnrollments', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -13019,10 +12832,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_ReportPsAttainment] (
@@ -13077,10 +12886,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_AssessmentResult] (
@@ -13151,10 +12956,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_Discipline] (
@@ -13205,11 +13006,7 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_Discipline1]', N'PK_Discipline', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
-
+	
 	GO
 	/*
 	The column [Staging].[K12Enrollment].[LastName] is being renamed
@@ -13222,9 +13019,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 	SET XACT_ABORT ON;
 
@@ -13283,9 +13077,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_K12Enrollment1]', N'PK_K12Enrollment', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -13367,10 +13158,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_K12Organization] (
@@ -13461,10 +13248,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_K12Organization1]', N'PK_K12Organization', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 
 	GO
 	/*
@@ -13481,10 +13264,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_K12ProgramParticipation] (
@@ -13535,10 +13314,6 @@
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_K12ProgramParticipation]', N'K12ProgramParticipation';
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_K12ProgramParticipation1]', N'PK_K12ProgramParticipation', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -13618,10 +13393,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_K12StudentCourseSection] (
@@ -13661,10 +13432,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_K12StudentCourseSection1]', N'PK_K12StudentCourseSection', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 
 	GO
 	PRINT N'Creating Index [Staging].[K12StudentCourseSection].[IX_Staging_K12StudentCourseSection_DataCollectionName_WithIdentifiers]...';
@@ -13698,10 +13465,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_Migrant] (
@@ -13746,10 +13509,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_Migrant1]', N'PK_Migrant', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 
 	GO
 	/*
@@ -13762,10 +13521,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_OrganizationAddress] (
@@ -13798,10 +13553,6 @@
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_OrganizationAddress]', N'OrganizationAddress';
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_OrganizationAddress1]', N'PK_OrganizationAddress', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -13860,10 +13611,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_OrganizationPhone] (
@@ -13890,10 +13637,6 @@
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_OrganizationPhone]', N'OrganizationPhone';
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_OrganizationPhone1]', N'PK_OrganizationPhone', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -13963,9 +13706,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 	SET XACT_ABORT ON;
 
@@ -13987,10 +13727,6 @@
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_OrganizationSchoolComprehensiveAndTargetedSupport]', N'OrganizationSchoolComprehensiveAndTargetedSupport';
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_OrganizationSchoolComprehensiveAndTargetedSupport1]', N'PK_OrganizationSchoolComprehensiveAndTargetedSupport', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -14016,10 +13752,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_PersonStatus] (
@@ -14120,10 +13852,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_PersonStatus1]', N'PK_PersonStatus', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 
 	GO
 	PRINT N'Creating Index [Staging].[PersonStatus].[IX_PersonStatus_OrganizationId_LEA]...';
@@ -14178,10 +13906,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationCTE] (
@@ -14263,10 +13987,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_ProgramParticipationCTE1]', N'PK_ProgramParticipationCTE', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 
 	GO
 	PRINT N'Creating Index [Staging].[ProgramParticipationCTE].[IX_Staging_ProgramParticipationCTE_RecordId]...';
@@ -14300,10 +14020,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationNorD] (
@@ -14363,10 +14079,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_ProgramParticipationNorD1]', N'PK_ProgramParticipationNorD', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 
 	GO
 	/*
@@ -14388,10 +14100,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationSpecialEducation] (
@@ -14451,10 +14159,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_ProgramParticipationSpecialEducation1]', N'PK_ProgramParticipationSpecialEducation', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 
 	GO
 	/*
@@ -14480,10 +14184,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationTitleI] (
@@ -14535,10 +14235,6 @@
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_ProgramParticipationTitleI]', N'ProgramParticipationTitleI';
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_ProgramParticipationTitleI1]', N'PK_ProgramParticipationTitleI', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
@@ -14610,10 +14306,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationTitleIII] (
@@ -14678,10 +14370,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_ProgramParticipationTitleIII1]', N'PK_ProgramParticipationTitleIII', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 
 	GO
 	PRINT N'Creating Index [Staging].[ProgramParticipationTitleIII].[IX_Staging_ProgramParticipationTitleIII_RecordId]...';
@@ -14701,10 +14389,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_PsInstitution] (
@@ -14763,10 +14447,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_PsInstitution1]', N'PK_PsInstitution', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 
 	GO
 	/*
@@ -14780,10 +14460,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_PsStudentAcademicAward] (
@@ -14837,10 +14513,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_PsStudentAcademicAward1]', N'PK_PsStudentAcademicAward', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 
 	GO
 	/*
@@ -14854,10 +14526,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_PsStudentAcademicRecord] (
@@ -14911,10 +14579,6 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_PsStudentAcademicRecord1]', N'PK_PsStudentAcademicRecord', N'OBJECT';
 
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 
 	GO
 	PRINT N'Creating Index [Staging].[PsStudentAcademicRecord].[IX_PsStudentAcademicRecord_AcademicTermDesignator]...';
@@ -14950,10 +14614,6 @@
 
 
 	GO
-	BEGIN TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_PsStudentEnrollment] (
@@ -15015,10 +14675,6 @@
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_PsStudentEnrollment]', N'PsStudentEnrollment';
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_PsTermEnrollment1]', N'PK_PsTermEnrollment', N'OBJECT';
-
-	COMMIT TRANSACTION;
-
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 
 	GO
