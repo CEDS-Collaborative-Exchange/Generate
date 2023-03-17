@@ -209,7 +209,7 @@ BEGIN
 				WHEN School_CharterSchoolIndicator = 1 THEN 'YES'
 				WHEN School_CharterSchoolIndicator = 0 THEN 'NO'
 			  END AS CharterSchoolStatus
-			, upper(sssrd4.OutputCode) -- School_ReconstitutedStatus
+			, sssrd4.OutputCode -- School_ReconstitutedStatus
 			, sssrd5.OutputCode -- Administrative Funding Control Code
 			, CASE sssrd5.OutputCode -- Administrative Funding Control Description
 				WHEN 'Public' THEN 'Public School'
