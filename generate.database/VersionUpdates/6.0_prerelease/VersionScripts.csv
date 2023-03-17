@@ -1,5 +1,6 @@
 VersionUpdates\\6.0_prerelease,Restore 5.3.sql,0
 VersionUpdates\\6.0_prerelease,AddColumnInK12Organization.sql,0
+VersionUpdates\\6.0_prerelease,UpdateDimK12StudentStatuses.sql,0
 StoredProcedures\\Drop,RDS.Get_YearToYearEnvironmentCountReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_YearToYearEnvironmentCountReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
@@ -14,6 +15,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.Stored
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_GraduatesCompleters.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_GraduatesCompleters.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_YearToYearExitCountReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_YearToYearExitCountReportData.StoredProcedure.sql,0
 VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
