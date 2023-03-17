@@ -41,6 +41,8 @@
 		
 */    
 
+	SET NOCOUNT ON;
+	GO 
 
 	------------------------------------------------
 	-- Populate DimAeDemgraphics				 ---
@@ -580,6 +582,9 @@
 	WHERE main.RaceCode IS NULL
 		AND ceds.CedsElementTechnicalName = 'Race'
 
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimRaces WHERE RaceCode = 'HispanicOrLatinoEthnicity') BEGIN
+		INSERT INTO RDS.DimRaces (RaceCode, RaceDescription, RaceEdFactsCode) VALUES ('HispanicorLatinoEthnicity', 'Hispanic', 'HI7')
+	END
 
 	-------------------
 	-- Populate DimAges
@@ -645,6 +650,30 @@
 			VALUES (-1, -1, '1/1/1900', '1/1/1900')
 
 		SET IDENTITY_INSERT RDS.DimSchoolYears OFF
+	END
+
+	-- Set the start and end years
+	DECLARE @startYear INT = 1900;
+	DECLARE @endYear INT = 2100;
+
+	-- Initialize a counter variable
+	DECLARE @year INT = @startYear;
+
+	-- Loop through all the years and insert into the table
+	WHILE @year <= @endYear
+	BEGIN
+		-- Calculate the session begin and end dates for each year
+		DECLARE @beginDate DATE = DATEFROMPARTS(@year - 1, 7, 1);
+		DECLARE @endDate DATE = DATEFROMPARTS(@year, 6, 30);
+		
+		-- Insert the data into the table
+		IF NOT EXISTS (SELECT 1 FROM RDS.DimSchoolYears WHERE SchoolYear = @year) BEGIN
+			INSERT INTO RDS.DimSchoolYears (SchoolYear, SessionBeginDate, SessionEndDate)
+			VALUES (@year, @beginDate, @endDate);
+		END
+
+		-- Increment the counter variable
+		SET @year = @year + 1;
 	END
 
 	------------------------------------------------
@@ -1321,10 +1350,10 @@
 		  END
 	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'TitleIIIAccountability'
 
-	CREATE TABLE #TitleIIILanguageInstructionProgramType (TitleiiiLanguageInstructionCode VARCHAR(50), TitleiiiLanguageInstructionDescription VARCHAR(200), TitleiiiLanguageInstructionEdFactsCode VARCHAR(50))
+	CREATE TABLE #TitleiiiLanguageInstruction (TitleiiiLanguageInstructionCode VARCHAR(50), TitleiiiLanguageInstructionDescription VARCHAR(200), TitleiiiLanguageInstructionEdFactsCode VARCHAR(50))
 
-	INSERT INTO #TitleIIILanguageInstructionProgramType VALUES ('MISSING', 'MISSING', 'MISSING')
-	INSERT INTO #TitleIIILanguageInstructionProgramType
+	INSERT INTO #TitleiiiLanguageInstruction VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #TitleiiiLanguageInstruction
 	SELECT 
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
@@ -1375,7 +1404,7 @@
 	FROM (VALUES('Yes', 'Limited English proficient (LEP) Student', 'LEP'),('No', 'Non-limited English proficient (non-LEP) Student', 'NLEP'),('MISSING', 'MISSING', 'MISSING')) EnglishLearner (CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN (VALUES('YES', 'Perkins LEP students', 'LEPP'),('NO', 'Not Perkins LEP students','MISSING'),('MISSING', 'MISSING', 'MISSING')) PerkinsLEP (CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN #TitleIIIAccountability ta
-	CROSS JOIN #TitleIIILanguageInstructionProgramType tlipt
+	CROSS JOIN #TitleiiiLanguageInstruction tlipt
 	LEFT JOIN rds.DimEnglishLearnerStatuses dels
 	ON EnglishLearner.CedsOptionSetCode = dels.EnglishLearnerStatusCode
 		AND PerkinsLEP.CedsOptionSetCode = dels.PerkinsLEPStatusCode
@@ -1384,7 +1413,6 @@
 	WHERE dels.DimEnglishLearnerStatusId IS NULL
 
 	DROP TABLE #TitleIIIAccountability
-	DROP TABLE #TitleIIILanguageInstructionProgramType
 
 	
 	-----------------------------------------------------
@@ -2953,6 +2981,748 @@
 		AND tsc.TitleIProgramStaffCategoryCode = dfd.TitleIProgramStaffCategoryCode
 	WHERE dfd.DimK12StaffCategoryId IS NULL
 
-	DROP TABLE #K12StaffClassification
 	DROP TABLE #SpecialEducationSupportServicesCategory
 	DROP TABLE #TitleIProgramStaffCategory
+
+		------------------------------------------------
+	-- Populate DimAcademicTermDesignators		 ---
+	------------------------------------------------
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimAcademicTermDesignators d WHERE d.AcademicTermDesignatorCode = 'MISSING') BEGIN
+		SET IDENTITY_INSERT RDS.DimAcademicTermDesignators ON
+
+		INSERT INTO RDS.DimAcademicTermDesignators (DimAcademicTermDesignatorId, AcademicTermDesignatorCode, AcademicTermDesignatorDescription)
+			VALUES (-1, 'MISSING', 'MISSING')
+
+		SET IDENTITY_INSERT RDS.DimAcademicTermDesignators OFF
+	END
+
+	INSERT INTO RDS.DimAcademicTermDesignators
+		(
+			  AcademicTermDesignatorCode
+			, AcademicTermDesignatorDescription		
+		)
+	SELECT 
+		  ceds.CedsOptionSetCode
+		, ceds.CedsOptionSetDescription
+	FROM CEDS.CedsOptionSetMapping ceds
+	LEFT JOIN RDS.DimAcademicTermDesignators main
+		ON ceds.CedsOptionSetCode = main.AcademicTermDesignatorCode
+	WHERE main.DimAcademicTermDesignatorId IS NULL
+		AND ceds.CedsElementTechnicalName = 'AcademicTermDesignator'
+
+
+	-----------------------------------------------------
+	-- Populate DimPsDemographics                     --
+	-----------------------------------------------------
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimPsDemographics d WHERE d.DimPsDemographicId = -1) BEGIN
+		SET IDENTITY_INSERT RDS.DimPsDemographics ON
+
+		INSERT INTO [RDS].[DimPsDemographics]
+           ([DimPsDemographicId]
+           ,[SexCode]
+           ,[SexDescription]
+		   )
+			VALUES (
+				  -1
+				, 'MISSING'
+				, 'MISSING'
+				)
+
+		SET IDENTITY_INSERT RDS.DimPsDemographics OFF
+
+	END
+
+
+		CREATE TABLE #PsSex (SexCode VARCHAR(50), SexDescription VARCHAR(200))
+
+		INSERT INTO #PsSex VALUES ('MISSING', 'MISSING')
+		INSERT INTO #PsSex 
+		SELECT 
+			  CedsOptionSetCode
+			, CedsOptionSetDescription
+		FROM CEDS.CedsOptionSetMapping
+		WHERE CedsElementTechnicalName = 'Sex'
+
+
+		INSERT INTO [RDS].[DimPsDemographics]
+           ([SexCode]
+           ,[SexDescription]
+		   )
+		SELECT DISTINCT
+			  h.SexCode
+			, h.SexDescription
+		FROM #PsSex h
+		LEFT JOIN rds.DimPsDemographics main
+			ON  h.SexCode = main.SexCode
+		WHERE main.DimPsDemographicId IS NULL
+
+	DROP TABLE #PsSex
+
+	------------------------------------------------
+	-- Populate DimDisciplineStatuses			 ---
+	------------------------------------------------
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimDisciplineStatuses 
+			WHERE DisciplinaryActionTakenCode = 'MISSING'
+			AND DisciplineMethodOfChildrenWithDisabilitiesCode = 'MISSING'
+			AND IdeaInterimRemovalReasonCode = 'MISSING'
+			AND EducationalServicesAfterRemovalCode = 'MISSING'
+			AND IdeaInterimRemovalCode = 'MISSING') BEGIN
+		SET IDENTITY_INSERT RDS.DimDisciplineStatuses ON
+
+		INSERT INTO RDS.DimDisciplineStatuses (
+			  DimDisciplineStatusId
+			, DisciplinaryActionTakenCode
+			, DisciplinaryActionTakenDescription
+			, DisciplinaryActionTakenEdFactsCode
+			, DisciplineMethodOfChildrenWithDisabilitiesCode
+			, DisciplineMethodOfChildrenWithDisabilitiesDescription
+			, DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode
+			, EducationalServicesAfterRemovalCode
+			, EducationalServicesAfterRemovalDescription
+			, EducationalServicesAfterRemovalEdFactsCode
+			, IdeaInterimRemovalReasonCode
+			, IdeaInterimRemovalReasonDescription
+			, IdeaInterimRemovalReasonEdFactsCode
+			, IdeaInterimRemovalCode
+			, IdeaInterimRemovalDescription
+			, IdeaInterimRemovalEdFactsCode)
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+
+		SET IDENTITY_INSERT RDS.DimDisciplineStatuses OFF
+	END
+
+	IF OBJECT_ID('tempdb..#DisciplinaryActionTaken') IS NOT NULL BEGIN
+		DROP TABLE #DisciplinaryActionTaken
+	END
+
+	CREATE TABLE #DisciplinaryActionTaken (DisciplinaryActionTakenCode VARCHAR(50), DisciplinaryActionTakenDescription VARCHAR(200), DisciplinaryActionTakenEdFactsCode VARCHAR(50))
+
+	INSERT INTO #DisciplinaryActionTaken VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #DisciplinaryActionTaken 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'DisciplinaryActionTaken'
+
+	IF OBJECT_ID('tempdb..#DisciplineMethodOfChildrenWithDisabilities') IS NOT NULL BEGIN
+		DROP TABLE #DisciplineMethodOfChildrenWithDisabilities
+	END
+
+	CREATE TABLE #DisciplineMethodOfChildrenWithDisabilities (DisciplineMethodOfChildrenWithDisabilitiesCode VARCHAR(50), DisciplineMethodOfChildrenWithDisabilitiesDescription VARCHAR(200), DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode VARCHAR(50))
+
+	INSERT INTO #DisciplineMethodOfChildrenWithDisabilities VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #DisciplineMethodOfChildrenWithDisabilities 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'DisciplineMethodOfChildrenWithDisabilities'
+
+	IF OBJECT_ID('tempdb..#EducationalServicesAfterRemoval') IS NOT NULL BEGIN
+		DROP TABLE #EducationalServicesAfterRemoval
+	END
+
+	CREATE TABLE #EducationalServicesAfterRemoval (EducationalServicesAfterRemovalCode VARCHAR(50), EducationalServicesAfterRemovalDescription VARCHAR(200), EducationalServicesAfterRemovalEdFactsCode VARCHAR(50))
+
+	INSERT INTO #EducationalServicesAfterRemoval VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #EducationalServicesAfterRemoval 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'EducationalServicesAfterRemoval'
+	
+	IF OBJECT_ID('tempdb..#IdeaInterimRemovalReason') IS NOT NULL BEGIN
+		DROP TABLE #IdeaInterimRemovalReason
+	END
+
+	CREATE TABLE #IdeaInterimRemovalReason (IdeaInterimRemovalReasonCode VARCHAR(50), IdeaInterimRemovalReasonDescription VARCHAR(200), IdeaInterimRemovalReasonEdFactsCode VARCHAR(50))
+
+	INSERT INTO #IdeaInterimRemovalReason VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #IdeaInterimRemovalReason 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'IdeaInterimRemovalReason'
+
+	IF OBJECT_ID('tempdb..#IdeaInterimRemoval') IS NOT NULL BEGIN
+		DROP TABLE #IdeaInterimRemoval
+	END
+	CREATE TABLE #IdeaInterimRemoval (IdeaInterimRemovalCode VARCHAR(50), IdeaInterimRemovalDescription VARCHAR(200), IdeaInterimRemovalEdFactsCode VARCHAR(50))
+
+	INSERT INTO #IdeaInterimRemoval VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #IdeaInterimRemoval 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'IdeaInterimRemoval'
+
+	   
+	INSERT INTO RDS.DimDisciplineStatuses
+		(
+			  DisciplinaryActionTakenCode
+			, DisciplinaryActionTakenDescription
+			, DisciplinaryActionTakenEdFactsCode
+			, DisciplineMethodOfChildrenWithDisabilitiesCode
+			, DisciplineMethodOfChildrenWithDisabilitiesDescription
+			, DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode
+			, EducationalServicesAfterRemovalCode
+			, EducationalServicesAfterRemovalDescription
+			, EducationalServicesAfterRemovalEdFactsCode
+			, IdeaInterimRemovalReasonCode
+			, IdeaInterimRemovalReasonDescription
+			, IdeaInterimRemovalReasonEdFactsCode
+			, IdeaInterimRemovalCode
+			, IdeaInterimRemovalDescription
+			, IdeaInterimRemovalEdFactsCode   
+		)
+	SELECT 
+		  dat.DisciplinaryActionTakenCode
+		, dat.DisciplinaryActionTakenDescription
+		, dat.DisciplinaryActionTakenEdFactsCode
+		, dmocwd.DisciplineMethodOfChildrenWithDisabilitiesCode
+		, dmocwd.DisciplineMethodOfChildrenWithDisabilitiesDescription
+		, dmocwd.DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode
+		, esar.EducationalServicesAfterRemovalCode
+		, esar.EducationalServicesAfterRemovalDescription
+		, esar.EducationalServicesAfterRemovalEdFactsCode
+		, iirr.IdeaInterimRemovalReasonCode
+		, iirr.IdeaInterimRemovalReasonDescription
+		, iirr.IdeaInterimRemovalReasonEdFactsCode
+		, iir.IdeaInterimRemovalCode
+		, iir.IdeaInterimRemovalDescription
+		, iir.IdeaInterimRemovalEdFactsCode
+	FROM #DisciplinaryActionTaken dat
+	CROSS JOIN #DisciplineMethodOfChildrenWithDisabilities dmocwd
+	CROSS JOIN #EducationalServicesAfterRemoval esar
+	CROSS JOIN #IdeaInterimRemovalReason iirr
+	CROSS JOIN #IdeaInterimRemoval iir
+	LEFT JOIN rds.DimDisciplineStatuses main
+		ON dat.DisciplinaryActionTakenCode = main.DisciplinaryActionTakenCode
+		AND dmocwd.DisciplineMethodOfChildrenWithDisabilitiesCode = main.DisciplineMethodOfChildrenWithDisabilitiesCode
+		AND esar.EducationalServicesAfterRemovalCode = main.EducationalServicesAfterRemovalCode
+		AND iirr.IdeaInterimRemovalReasonCode = main.IdeaInterimRemovalReasonCode
+		AND iir.IdeaInterimRemovalCode = main.IdeaInterimRemovalCode
+	WHERE main.DimDisciplineStatusId IS NULL
+
+	DROP TABLE #DisciplinaryActionTaken
+	DROP TABLE #DisciplineMethodOfChildrenWithDisabilities
+	DROP TABLE #EducationalServicesAfterRemoval
+	DROP TABLE #IdeaInterimRemovalReason
+	DROP TABLE #IdeaInterimRemoval
+	
+	------------------------------------------------
+	-- Populate DimK12StaffStatuses			 ---
+	------------------------------------------------
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12StaffStatuses 
+			WHERE SpecialEducationAgeGroupTaughtCode = 'MISSING'
+			AND EdFactsCertificationStatusCode = 'MISSING'
+			AND K12StaffClassificationCode = 'MISSING'
+			AND HighlyQualifiedTeacherIndicatorCode = 'MISSING'
+			AND EdFactsTeacherInexperiencedStatusCode = 'MISSING'
+			AND TeachingCredentialTypeCode = 'MISSING'
+			AND EdFactsTeacherOutOfFieldStatusCode = 'MISSING'
+			AND SpecialEducationTeacherQualificationStatusCode = 'MISSING') BEGIN
+		SET IDENTITY_INSERT RDS.DimK12StaffStatuses ON
+
+		INSERT INTO RDS.DimK12StaffStatuses (
+			  DimK12StaffStatusId
+			, SpecialEducationAgeGroupTaughtCode
+			, SpecialEducationAgeGroupTaughtDescription
+			, SpecialEducationAgeGroupTaughtEdFactsCode
+			, EdFactsCertificationStatusCode
+			, EdFactsCertificationStatusDescription
+			, EdFactsCertificationStatusEdFactsCode
+			, K12StaffClassificationCode
+			, K12StaffClassificationDescription
+			, K12StaffClassificationEdFactsCode
+			, HighlyQualifiedTeacherIndicatorCode
+			, HighlyQualifiedTeacherIndicatorDescription
+			, HighlyQualifiedTeacherIndicatorEdFactsCode
+			, EdFactsTeacherInexperiencedStatusCode
+			, EdFactsTeacherInexperiencedStatusDescription
+			, EdFactsTeacherInexperiencedStatusEdFactsCode
+			, TeachingCredentialTypeCode
+			, TeachingCredentialTypeDescription
+			, TeachingCredentialTypeEdFactsCode
+			, EdFactsTeacherOutOfFieldStatusCode
+			, EdFactsTeacherOutOfFieldStatusDescription
+			, EdFactsTeacherOutOfFieldStatusEdFactsCode
+			, SpecialEducationTeacherQualificationStatusCode
+			, SpecialEducationTeacherQualificationStatusDescription
+			, SpecialEducationTeacherQualificationStatusEdFactsCode)
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+
+		SET IDENTITY_INSERT RDS.DimK12StaffStatuses OFF
+	END
+
+	IF OBJECT_ID('tempdb..#SpecialEducationAgeGroupTaught') IS NOT NULL BEGIN
+		DROP TABLE #SpecialEducationAgeGroupTaught
+	END
+
+	CREATE TABLE #SpecialEducationAgeGroupTaught (SpecialEducationAgeGroupTaughtCode VARCHAR(50), SpecialEducationAgeGroupTaughtDescription VARCHAR(200), SpecialEducationAgeGroupTaughtEdFactsCode VARCHAR(50))
+
+	INSERT INTO #SpecialEducationAgeGroupTaught VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #SpecialEducationAgeGroupTaught 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'SpecialEducationAgeGroupTaught'
+
+	IF OBJECT_ID('tempdb..#EdFactsCertificationStatus') IS NOT NULL BEGIN
+		DROP TABLE #EdFactsCertificationStatus
+	END
+
+	IF OBJECT_ID('tempdb..#EdFactsCertificationStatus') IS NOT NULL BEGIN
+		DROP TABLE #EdFactsCertificationStatus
+	END
+
+	CREATE TABLE #EdFactsCertificationStatus (EdFactsCertificationStatusCode VARCHAR(50), EdFactsCertificationStatusDescription VARCHAR(200), EdFactsCertificationStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #EdFactsCertificationStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #EdFactsCertificationStatus
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'EdFactsCertificationStatus'
+
+	INSERT INTO #K12StaffClassification VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #K12StaffClassification 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'K12StaffClassification'
+	
+	IF OBJECT_ID('tempdb..#HighlyQualifiedTeacherIndicator') IS NOT NULL BEGIN
+		DROP TABLE #HighlyQualifiedTeacherIndicator
+	END
+
+	CREATE TABLE #HighlyQualifiedTeacherIndicator (HighlyQualifiedTeacherIndicatorCode VARCHAR(50), HighlyQualifiedTeacherIndicatorDescription VARCHAR(200), HighlyQualifiedTeacherIndicatorEdFactsCode VARCHAR(50))
+
+	INSERT INTO #HighlyQualifiedTeacherIndicator VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #HighlyQualifiedTeacherIndicator 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'HighlyQualifiedTeacherIndicator'
+
+	IF OBJECT_ID('tempdb..#EdFactsTeacherInexperiencedStatus') IS NOT NULL BEGIN
+		DROP TABLE #EdFactsTeacherInexperiencedStatus
+	END
+	CREATE TABLE #EdFactsTeacherInexperiencedStatus (EdFactsTeacherInexperiencedStatusCode VARCHAR(50), EdFactsTeacherInexperiencedStatusDescription VARCHAR(200), EdFactsTeacherInexperiencedStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #EdFactsTeacherInexperiencedStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #EdFactsTeacherInexperiencedStatus 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'EdFactsTeacherInexperiencedStatus'
+
+	IF OBJECT_ID('tempdb..#TeachingCredentialType') IS NOT NULL BEGIN
+		DROP TABLE #TeachingCredentialType
+	END
+	CREATE TABLE #TeachingCredentialType (TeachingCredentialTypeCode VARCHAR(50), TeachingCredentialTypeDescription VARCHAR(200), TeachingCredentialTypeEdFactsCode VARCHAR(50))
+
+	INSERT INTO #TeachingCredentialType VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #TeachingCredentialType 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'TeachingCredentialType'
+
+	IF OBJECT_ID('tempdb..#EdFactsTeacherOutOfFieldStatus') IS NOT NULL BEGIN
+		DROP TABLE #EdFactsTeacherOutOfFieldStatus
+	END
+	CREATE TABLE #EdFactsTeacherOutOfFieldStatus (EdFactsTeacherOutOfFieldStatusCode VARCHAR(50), EdFactsTeacherOutOfFieldStatusDescription VARCHAR(200), EdFactsTeacherOutOfFieldStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #EdFactsTeacherOutOfFieldStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #EdFactsTeacherOutOfFieldStatus 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'EdFactsTeacherOutOfFieldStatus'
+
+	IF OBJECT_ID('tempdb..#SpecialEducationTeacherQualificationStatus') IS NOT NULL BEGIN
+		DROP TABLE #SpecialEducationTeacherQualificationStatus
+	END
+	CREATE TABLE #SpecialEducationTeacherQualificationStatus (SpecialEducationTeacherQualificationStatusCode VARCHAR(50), SpecialEducationTeacherQualificationStatusDescription VARCHAR(200), SpecialEducationTeacherQualificationStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #SpecialEducationTeacherQualificationStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #SpecialEducationTeacherQualificationStatus 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'SpecialEducationTeacherQualificationStatus'
+
+	   
+	INSERT INTO RDS.DimK12StaffStatuses
+		(
+			  SpecialEducationAgeGroupTaughtCode
+			, SpecialEducationAgeGroupTaughtDescription
+			, SpecialEducationAgeGroupTaughtEdFactsCode
+			, EdFactsCertificationStatusCode
+			, EdFactsCertificationStatusDescription
+			, EdFactsCertificationStatusEdFactsCode
+			, K12StaffClassificationCode
+			, K12StaffClassificationDescription
+			, K12StaffClassificationEdFactsCode
+			, HighlyQualifiedTeacherIndicatorCode
+			, HighlyQualifiedTeacherIndicatorDescription
+			, HighlyQualifiedTeacherIndicatorEdFactsCode
+			, EdFactsTeacherInexperiencedStatusCode
+			, EdFactsTeacherInexperiencedStatusDescription
+			, EdFactsTeacherInexperiencedStatusEdFactsCode
+			, TeachingCredentialTypeCode
+			, TeachingCredentialTypeDescription
+			, TeachingCredentialTypeEdFactsCode
+			, EdFactsTeacherOutOfFieldStatusCode
+			, EdFactsTeacherOutOfFieldStatusDescription
+			, EdFactsTeacherOutOfFieldStatusEdFactsCode
+			, SpecialEducationTeacherQualificationStatusCode
+			, SpecialEducationTeacherQualificationStatusDescription
+			, SpecialEducationTeacherQualificationStatusEdFactsCode		)
+	SELECT 
+		  seagt.SpecialEducationAgeGroupTaughtCode 
+		, seagt.SpecialEducationAgeGroupTaughtDescription
+		, seagt.SpecialEducationAgeGroupTaughtEdFactsCode
+		, efcs.EdFactsCertificationStatusCode
+		, efcs.EdFactsCertificationStatusDescription
+		, efcs.EdFactsCertificationStatusEdFactsCode
+		, ksc.K12StaffClassificationCode
+		, ksc.K12StaffClassificationDescription
+		, ksc.K12StaffClassificationEdFactsCode
+		, hqti.HighlyQualifiedTeacherIndicatorCode
+		, hqti.HighlyQualifiedTeacherIndicatorDescription
+		, hqti.HighlyQualifiedTeacherIndicatorEdFactsCode
+		, dftis.EdFactsTeacherInexperiencedStatusCode
+		, dftis.EdFactsTeacherInexperiencedStatusDescription
+		, dftis.EdFactsTeacherInexperiencedStatusEdFactsCode
+		, tct.TeachingCredentialTypeCode
+		, tct.TeachingCredentialTypeDescription
+		, tct.TeachingCredentialTypeEdFactsCode
+		, eftoofs.EdFactsTeacherOutOfFieldStatusCode
+		, eftoofs.EdFactsTeacherOutOfFieldStatusDescription
+		, eftoofs.EdFactsTeacherOutOfFieldStatusEdFactsCode
+		, setqs.SpecialEducationTeacherQualificationStatusCode
+		, setqs.SpecialEducationTeacherQualificationStatusDescription
+		, setqs.SpecialEducationTeacherQualificationStatusEdFactsCode	
+	FROM #SpecialEducationAgeGroupTaught seagt
+	CROSS JOIN #EdFactsCertificationStatus efcs
+	CROSS JOIN #K12StaffClassification ksc
+	CROSS JOIN #HighlyQualifiedTeacherIndicator hqti
+	CROSS JOIN #EdFactsTeacherInexperiencedStatus dftis
+	CROSS JOIN #TeachingCredentialType tct
+	CROSS JOIN #EdFactsTeacherOutOfFieldStatus eftoofs
+	CROSS JOIN #SpecialEducationTeacherQualificationStatus setqs
+	LEFT JOIN rds.DimK12StaffStatuses main
+		ON seagt.SpecialEducationAgeGroupTaughtCode = main.SpecialEducationAgeGroupTaughtCode
+		AND efcs.EdFactsCertificationStatusCode = main.EdFactsCertificationStatusCode
+		AND ksc.K12StaffClassificationCode = main.K12StaffClassificationCode
+		AND hqti.HighlyQualifiedTeacherIndicatorCode = main.HighlyQualifiedTeacherIndicatorCode
+		AND dftis.EdFactsTeacherInexperiencedStatusCode = main.EdFactsTeacherInexperiencedStatusCode
+		AND tct.TeachingCredentialTypeCode = main.TeachingCredentialTypeCode
+		AND eftoofs.EdFactsTeacherOutOfFieldStatusCode = main.EdFactsTeacherOutOfFieldStatusCode
+		AND setqs.SpecialEducationTeacherQualificationStatusCode = main.SpecialEducationTeacherQualificationStatusCode
+	WHERE main.DimK12StaffStatusId IS NULL
+
+	DROP TABLE #SpecialEducationAgeGroupTaught
+	DROP TABLE #EdFactsCertificationStatus
+	DROP TABLE #K12StaffClassification
+	DROP TABLE #HighlyQualifiedTeacherIndicator
+	DROP TABLE #EdFactsTeacherInexperiencedStatus
+	DROP TABLE #TeachingCredentialType
+	DROP TABLE #EdFactsTeacherOutOfFieldStatus
+	DROP TABLE #SpecialEducationTeacherQualificationStatus
+	------------------------------------------------
+	-- Populate DimNOrDStatuses			 ---
+	------------------------------------------------
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimNOrDStatuses 
+			WHERE NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
+			AND NeglectedOrDelinquentProgramTypeCode = 'MISSING') BEGIN
+		SET IDENTITY_INSERT RDS.DimNOrDStatuses ON
+
+		INSERT INTO RDS.DimNOrDStatuses (
+			  DimNOrDStatusId
+			, NeglectedOrDelinquentLongTermStatusCode
+			, NeglectedOrDelinquentLongTermStatusDescription
+			, NeglectedOrDelinquentLongTermStatusEdFactsCode
+			, NeglectedOrDelinquentProgramTypeCode
+			, NeglectedOrDelinquentProgramTypeDescription
+			, NeglectedOrDelinquentProgramTypeEdFactsCode)
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+
+		SET IDENTITY_INSERT RDS.DimNOrDStatuses OFF
+	END
+
+	IF OBJECT_ID('tempdb..#NeglectedOrDelinquentLongTermStatus') IS NOT NULL BEGIN
+		DROP TABLE #NeglectedOrDelinquentLongTermStatus
+	END
+
+	CREATE TABLE #NeglectedOrDelinquentLongTermStatus (NeglectedOrDelinquentLongTermStatusCode VARCHAR(50), NeglectedOrDelinquentLongTermStatusDescription VARCHAR(200), NeglectedOrDelinquentLongTermStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #NeglectedOrDelinquentLongTermStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #NeglectedOrDelinquentLongTermStatus 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName like 'neglect'
+
+	IF OBJECT_ID('tempdb..#NeglectedOrDelinquentProgramType') IS NOT NULL BEGIN
+		DROP TABLE #NeglectedOrDelinquentProgramType
+	END
+
+	CREATE TABLE #NeglectedOrDelinquentProgramType (NeglectedOrDelinquentProgramTypeCode VARCHAR(50), NeglectedOrDelinquentProgramTypeDescription VARCHAR(200), NeglectedOrDelinquentProgramTypeEdFactsCode VARCHAR(50))
+
+	INSERT INTO #NeglectedOrDelinquentProgramType VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #NeglectedOrDelinquentProgramType
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'NeglectedOrDelinquentProgramType'
+
+	   
+	INSERT INTO RDS.DimNOrDStatuses
+		(
+			  NeglectedOrDelinquentLongTermStatusCode
+			, NeglectedOrDelinquentLongTermStatusDescription
+			, NeglectedOrDelinquentLongTermStatusEdFactsCode
+			, NeglectedOrDelinquentProgramTypeCode
+			, NeglectedOrDelinquentProgramTypeDescription
+			, NeglectedOrDelinquentProgramTypeEdFactsCode
+		)
+	SELECT 
+		  nodlts.NeglectedOrDelinquentLongTermStatusCode 
+		, nodlts.NeglectedOrDelinquentLongTermStatusDescription
+		, nodlts.NeglectedOrDelinquentLongTermStatusEdFactsCode
+		, nodpt.NeglectedOrDelinquentProgramTypeCode
+		, nodpt.NeglectedOrDelinquentProgramTypeDescription
+		, nodpt.NeglectedOrDelinquentProgramTypeEdFactsCode
+	FROM #NeglectedOrDelinquentLongTermStatus nodlts
+	CROSS JOIN #NeglectedOrDelinquentProgramType nodpt
+	LEFT JOIN rds.DimNOrDStatuses main
+		ON nodlts.NeglectedOrDelinquentLongTermStatusCode = main.NeglectedOrDelinquentLongTermStatusCode
+		AND nodpt.NeglectedOrDelinquentProgramTypeCode = main.NeglectedOrDelinquentProgramTypeCode
+	WHERE main.DimNOrDStatusId IS NULL
+
+	DROP TABLE #NeglectedOrDelinquentLongTermStatus
+	DROP TABLE #NeglectedOrDelinquentProgramType
+
+
+	------------------------------------------------
+	-- Populate DimTitleIIIStatuses			 ---
+	------------------------------------------------
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimTitleIIIStatuses 
+			WHERE ProgramParticipationTitleIIICode = 'MISSING'
+			AND TitleIIIImmigrantParticipationStatusCode = 'MISSING'
+			AND FormerEnglishLearnerYearStatusCode = 'MISSING'
+			AND ProficiencyStatusCode = 'MISSING'
+			AND TitleIIIAccountabilityProgressStatusCode = 'MISSING'
+			AND TitleIIILanguageInstructionProgramTypeCode = 'MISSING') BEGIN
+		SET IDENTITY_INSERT RDS.DimTitleIIIStatuses ON
+
+		INSERT INTO RDS.DimTitleIIIStatuses (
+			  DimTitleIIIStatusId
+			, ProgramParticipationTitleIIICode
+			, ProgramParticipationTitleIIIDescription
+			, ProgramParticipationTitleIIIEdFactsCode
+			, TitleIIIImmigrantParticipationStatusCode
+			, TitleIIIImmigrantParticipationStatusDescription
+			, TitleIIIImmigrantParticipationStatusEdFactsCode
+			, FormerEnglishLearnerYearStatusCode
+			, FormerEnglishLearnerYearStatusDescription
+			, FormerEnglishLearnerYearStatusEdFactsCode
+			, ProficiencyStatusCode
+			, ProficiencyStatusDescription
+			, ProficiencyStatusEdFactsCode
+			, TitleIIIAccountabilityProgressStatusCode
+			, TitleIIIAccountabilityProgressStatusDescription
+			, TitleIIIAccountabilityProgressStatusEdFactsCode
+			, TitleIIILanguageInstructionProgramTypeCode
+			, TitleIIILanguageInstructionProgramTypeDescription
+			, TitleIIILanguageInstructionProgramTypeEdFactsCode)
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+
+		SET IDENTITY_INSERT RDS.DimTitleIIIStatuses OFF
+	END
+
+	IF OBJECT_ID('tempdb..#ProgramParticipationTitleIII') IS NOT NULL BEGIN
+		DROP TABLE #ProgramParticipationTitleIII
+	END
+
+	CREATE TABLE #ProgramParticipationTitleIII (ProgramParticipationTitleIIICode VARCHAR(50), ProgramParticipationTitleIIIDescription VARCHAR(200), ProgramParticipationTitleIIIEdFactsCode VARCHAR(50))
+
+	INSERT INTO #ProgramParticipationTitleIII VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #ProgramParticipationTitleIII 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = ''
+
+	IF OBJECT_ID('tempdb..#TitleIIIImmigrantParticipationStatus') IS NOT NULL BEGIN
+		DROP TABLE #TitleIIIImmigrantParticipationStatus
+	END
+
+	CREATE TABLE #TitleIIIImmigrantParticipationStatus (TitleIIIImmigrantParticipationStatusCode VARCHAR(50), TitleIIIImmigrantParticipationStatusDescription VARCHAR(200), TitleIIIImmigrantParticipationStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #TitleIIIImmigrantParticipationStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #TitleIIIImmigrantParticipationStatus
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'TitleIIIImmigrantParticipationStatus'
+
+	IF OBJECT_ID('tempdb..#FormerEnglishLearnerYearStatus') IS NOT NULL BEGIN
+		DROP TABLE #FormerEnglishLearnerYearStatus
+	END
+
+	CREATE TABLE #FormerEnglishLearnerYearStatus (FormerEnglishLearnerYearStatusCode VARCHAR(50), FormerEnglishLearnerYearStatusDescription VARCHAR(200), FormerEnglishLearnerYearStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #FormerEnglishLearnerYearStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #FormerEnglishLearnerYearStatus
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'FormerEnglishLearnerYearStatus'
+
+	IF OBJECT_ID('tempdb..#ProficiencyStatus') IS NOT NULL BEGIN
+		DROP TABLE #ProficiencyStatus
+	END
+
+	CREATE TABLE #ProficiencyStatus (ProficiencyStatusCode VARCHAR(50), ProficiencyStatusDescription VARCHAR(200), ProficiencyStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #ProficiencyStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #ProficiencyStatus
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'ProficiencyStatus'
+
+	IF OBJECT_ID('tempdb..#TitleIIIAccountabilityProgressStatus') IS NOT NULL BEGIN
+		DROP TABLE #TitleIIIAccountabilityProgressStatus
+	END
+
+	CREATE TABLE #TitleIIIAccountabilityProgressStatus (TitleIIIAccountabilityProgressStatusCode VARCHAR(50), TitleIIIAccountabilityProgressStatusDescription VARCHAR(200), TitleIIIAccountabilityProgressStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #TitleIIIAccountabilityProgressStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #TitleIIIAccountabilityProgressStatus
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'TitleIIIAccountabilityProgressStatus'
+
+	IF OBJECT_ID('tempdb..#TitleIIILanguageInstructionProgramType') IS NOT NULL BEGIN
+		DROP TABLE #TitleIIILanguageInstructionProgramType
+	END
+
+	CREATE TABLE #TitleIIILanguageInstructionProgramType (TitleIIILanguageInstructionProgramTypeCode VARCHAR(50), TitleIIILanguageInstructionProgramTypeDescription VARCHAR(200), TitleIIILanguageInstructionProgramTypeEdFactsCode VARCHAR(50))
+
+	INSERT INTO #TitleIIILanguageInstructionProgramType VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #TitleIIILanguageInstructionProgramType
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'TitleIIILanguageInstructionProgramType'
+
+	   
+	INSERT INTO RDS.DimTitleIIIStatuses
+		(
+			  ProgramParticipationTitleIIICode
+			, ProgramParticipationTitleIIIDescription
+			, ProgramParticipationTitleIIIEdFactsCode
+			, TitleIIIImmigrantParticipationStatusCode
+			, TitleIIIImmigrantParticipationStatusDescription
+			, TitleIIIImmigrantParticipationStatusEdFactsCode
+			, FormerEnglishLearnerYearStatusCode
+			, FormerEnglishLearnerYearStatusDescription
+			, FormerEnglishLearnerYearStatusEdFactsCode
+			, ProficiencyStatusCode
+			, ProficiencyStatusDescription
+			, ProficiencyStatusEdFactsCode
+			, TitleIIIAccountabilityProgressStatusCode
+			, TitleIIIAccountabilityProgressStatusDescription
+			, TitleIIIAccountabilityProgressStatusEdFactsCode
+			, TitleIIILanguageInstructionProgramTypeCode
+			, TitleIIILanguageInstructionProgramTypeDescription
+			, TitleIIILanguageInstructionProgramTypeEdFactsCode		)
+	SELECT 
+			  ppt.ProgramParticipationTitleIIICode
+			, ppt.ProgramParticipationTitleIIIDescription
+			, ppt.ProgramParticipationTitleIIIEdFactsCode
+			, tips.TitleIIIImmigrantParticipationStatusCode
+			, tips.TitleIIIImmigrantParticipationStatusDescription
+			, tips.TitleIIIImmigrantParticipationStatusEdFactsCode
+			, feys.FormerEnglishLearnerYearStatusCode
+			, feys.FormerEnglishLearnerYearStatusDescription
+			, feys.FormerEnglishLearnerYearStatusEdFactsCode
+			, ps.ProficiencyStatusCode
+			, ps.ProficiencyStatusDescription
+			, ps.ProficiencyStatusEdFactsCode
+			, taps.TitleIIIAccountabilityProgressStatusCode
+			, taps.TitleIIIAccountabilityProgressStatusDescription
+			, taps.TitleIIIAccountabilityProgressStatusEdFactsCode
+			, tlip.TitleIIILanguageInstructionProgramTypeCode
+			, tlip.TitleIIILanguageInstructionProgramTypeDescription
+			, tlip.TitleIIILanguageInstructionProgramTypeEdFactsCode		
+	FROM #ProgramParticipationTitleIII ppt
+	CROSS JOIN #TitleIIIImmigrantParticipationStatus tips
+	CROSS JOIN #FormerEnglishLearnerYearStatus feys
+	CROSS JOIN #ProficiencyStatus ps
+	CROSS JOIN #TitleIIIAccountabilityProgressStatus taps
+	CROSS JOIN #TitleIIILanguageInstructionProgramType tlip
+	LEFT JOIN rds.DimTitleIIIStatuses main
+		ON ppt.ProgramParticipationTitleIIICode = main.ProgramParticipationTitleIIICode
+		AND tips.TitleIIIImmigrantParticipationStatusCode = main.TitleIIIImmigrantParticipationStatusCode
+		AND feys.FormerEnglishLearnerYearStatusCode = main.FormerEnglishLearnerYearStatusCode
+		AND ps.ProficiencyStatusCode = main.ProficiencyStatusCode
+		AND taps.TitleIIIAccountabilityProgressStatusCode = main.TitleIIIAccountabilityProgressStatusCode
+		AND tlip.TitleIIILanguageInstructionProgramTypeCode = main.TitleIIILanguageInstructionProgramTypeCode
+	WHERE main.DimTitleIIIStatusId IS NULL
+
+	DROP TABLE #ProgramParticipationTitleIII
+	DROP TABLE #TitleIIIImmigrantParticipationStatus
+	DROP TABLE #FormerEnglishLearnerYearStatus
+	DROP TABLE #ProficiencyStatus
+	DROP TABLE #TitleIIIAccountabilityProgressStatus
+	DROP TABLE #TitleIIILanguageInstructionProgramType

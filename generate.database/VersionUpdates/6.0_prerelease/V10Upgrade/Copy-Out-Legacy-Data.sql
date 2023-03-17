@@ -1,16 +1,19 @@
-IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentCounts')
+SET NOCOUNT ON;
+GO 
+
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentCounts') BEGIN
 	DROP TABLE Upgrade.FactK12StudentCounts
 END
 GO
-IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentDisciplines')
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentDisciplines') BEGIN
 	DROP TABLE Upgrade.FactK12StudentDisciplines
 END
 GO
-IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StaffCounts')
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StaffCounts') BEGIN
 	DROP TABLE Upgrade.FactK12StaffCounts
 END
 GO
-IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentAssessments')
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentAssessments') BEGIN
 	DROP TABLE Upgrade.FactK12StudentAssessments
 END
 
@@ -298,14 +301,13 @@ CREATE TABLE Upgrade.FactK12StudentDisciplines (
 	, IdeaIndicatorCode NVARCHAR(200)
 	, PrimaryDisabilityTypeCode NVARCHAR(200)
 
-	, rdps.EligibilityStatusForSchoolFoodServiceProgramCode
-	, rdps.FosterCareProgramCode
-	, rdps.HomelessServicedIndicatorCode
-	, rdps.Section504StatusCode
-	, rdps.TitleIIIImmigrantParticipationStatusCode
-	, rdps.TitleiiiProgramParticipationCode
+	, EligibilityStatusForSchoolFoodServiceProgramCode  NVARCHAR(200)
+	, FosterCareProgramCode NVARCHAR(200)
+	, HomelessServicedIndicatorCode NVARCHAR(200)
+	, Section504StatusCode NVARCHAR(200)
+	, TitleIIIImmigrantParticipationStatusCode NVARCHAR(200)
+	, TitleiiiProgramParticipationCode NVARCHAR(200)
 
-	, LepPerkinsStatusCode NVARCHAR(200)
 	, CteAeDisplacedHomemakerIndicatorCode NVARCHAR(200)
 	, CteGraduationRateInclusionCode NVARCHAR(200)
 	, CteNontraditionalGenderStatusCode NVARCHAR(200)
@@ -445,9 +447,9 @@ CREATE TABLE Upgrade.FactK12StaffCounts (
 	, SchoolIdentifierState NVARCHAR(200)
 	, SCH_RecordStartDateTime DATETIME
 	, SCH_RecordEndDateTime	  DATETIME
-	, StateStudentIdentifier NVARCHAR(200)
-	, STU_RecordStartDateTime DATETIME
-	, STU_RecordEndDateTime	  DATETIME
+	, StaffMemberIdentifierState NVARCHAR(200)
+	, STA_RecordStartDateTime DATETIME
+	, STA_RecordEndDateTime	  DATETIME
 	--K12StaffStatus	
 	, SpecialEducationAgeGroupTaughtCode NVARCHAR(200)
 	, CertificationStatusCode NVARCHAR(200)
@@ -484,9 +486,9 @@ SELECT
 	, rdksch.SchoolIdentifierState
 	, rdksch.RecordStartDateTime AS SCH_RecordStartDateTime
 	, rdksch.RecordEndDateTime	 AS SCH_RecordEndDateTime
-	, rdkstu.StateStudentIdentifier
-	, rdkstu.RecordStartDateTime  AS STU_RecordStartDateTime
-	, rdkstu.RecordEndDateTime	  AS STU_RecordEndDateTime
+	, rdksta.StaffMemberIdentifierState
+	, rdksta.RecordStartDateTime  AS STU_RecordStartDateTime
+	, rdksta.RecordEndDateTime	  AS STU_RecordEndDateTime
 
 	, rdkss.SpecialEducationAgeGroupTaughtCode
 	, rdkss.CertificationStatusCode
@@ -513,17 +515,17 @@ JOIN RDS.DimFactTypes rdft ON f.FactTypeId = rdft.DimFactTypeId
 JOIN RDS.DimSeas rds ON f.SeaId = rds.DimSeaId
 JOIN RDS.DimLeas rdlea ON f.LeaId = rdlea.DimLeaID
 JOIN RDS.DimK12Schools rdksch ON f.K12SchoolId = rdksch.DimK12SchoolId
-JOIN RDS.DimK12Students rdkstu ON f.K12StudentId = rdkstu.DimK12StudentId
+JOIN RDS.DimK12Staff rdksta ON f.K12StaffId = rdksta.DimK12StaffId
 
 JOIN RDS.DimK12StaffStatuses rdkss ON f.K12StaffStatusId = rdkss.DimK12StaffStatusId
-JOIN RDS.DimK12StaffCategories rdksc ON f.K12StaffCategoryId = rdkss.DimK12StaffCategoryId
-JOIN RDS.DimTitleIIIStatuses rdtiiis ON f.TitleIIIStatusId = rdkss.DimTitleIIIStatusId
+JOIN RDS.DimK12StaffCategories rdksc ON f.K12StaffCategoryId = rdksc.DimK12StaffCategoryId
+JOIN RDS.DimTitleIIIStatuses rdtiiis ON f.TitleIIIStatusId = rdtiiis.DimTitleIIIStatusId
 
 /*******************************************************************************************************/
 
 CREATE TABLE Upgrade.FactK12StudentAssessments (
-	AssessmentCount
-    , AssessmentId
+	  AssessmentCount	INT
+    , AssessmentId		INT
 	, SchoolYear SMALLINT
 	, FactType NVARCHAR(200)
 	, GradeLevelCode NVARCHAR(200)
@@ -546,70 +548,70 @@ CREATE TABLE Upgrade.FactK12StudentAssessments (
 	, STU_RecordEndDateTime	  DATETIME
 
 	--K12Demographic
-	, rdkd.EconomicDisadvantageStatusCode NVARCHAR(200)
-	, rdkd.EnglishLearnerStatusCode NVARCHAR(200)
-	, rdkd.HomelessnessStatusCode NVARCHAR(200)
-	, rdkd.HomelessPrimaryNighttimeResidenceCode NVARCHAR(200)
-	, rdkd.HomelessUnaccompaniedYouthStatusCode NVARCHAR(200)
-	, rdkd.MigrantStatusCode NVARCHAR(200)
-	, rdkd.MilitaryConnectedStudentIndicatorCode NVARCHAR(200)
+	, EconomicDisadvantageStatusCode NVARCHAR(200)
+	, EnglishLearnerStatusCode NVARCHAR(200)
+	, HomelessnessStatusCode NVARCHAR(200)
+	, HomelessPrimaryNighttimeResidenceCode NVARCHAR(200)
+	, HomelessUnaccompaniedYouthStatusCode NVARCHAR(200)
+	, MigrantStatusCode NVARCHAR(200)
+	, MilitaryConnectedStudentIndicatorCode NVARCHAR(200)
 	--IdeaStatus
-	, rdis.IdeaEducationalEnvironmentCode NVARCHAR(200)
-	, rdis.IdeaIndicatorCode NVARCHAR(200)
-	, rdis.PrimaryDisabilityTypeCode NVARCHAR(200)
-	, rdis.SpecialEducationExitReasonCode NVARCHAR(200)
+	, IdeaEducationalEnvironmentCode NVARCHAR(200)
+	, IdeaIndicatorCode NVARCHAR(200)
+	, PrimaryDisabilityTypeCode NVARCHAR(200)
+	, SpecialEducationExitReasonCode NVARCHAR(200)
 	--ProgramStatus
-	, rdps.EligibilityStatusForSchoolFoodServiceProgramCode NVARCHAR(200)
-	, rdps.FosterCareProgramCode NVARCHAR(200)
-	, rdps.HomelessServicedIndicatorCode NVARCHAR(200)
-	, rdps.Section504StatusCode NVARCHAR(200)
-	, rdps.TitleIIIImmigrantParticipationStatusCode NVARCHAR(200)
-	, rdps.TitleiiiProgramParticipationCode NVARCHAR(200)
+	, EligibilityStatusForSchoolFoodServiceProgramCode NVARCHAR(200)
+	, FosterCareProgramCode NVARCHAR(200)
+	, HomelessServicedIndicatorCode NVARCHAR(200)
+	, Section504StatusCode NVARCHAR(200)
+	, TitleIIIImmigrantParticipationStatusCode NVARCHAR(200)
+	, TitleiiiProgramParticipationCode NVARCHAR(200)
 	--AssessmentStatus
 	, AssessedFirstTimeCode NVARCHAR(200)
 	, AssessmentProgressLevelCode NVARCHAR(200)
 	--TitleIIIStatus
-	, rdtiiis.FormerEnglishLearnerYearStatusCode NVARCHAR(200)
-	, rdtiiis.ProficiencyStatusCode NVARCHAR(200)
-	, rdtiiis.TitleiiiAccountabilityProgressStatusCode NVARCHAR(200)
-	, rdtiiis.TitleiiiLanguageInstructionCode NVARCHAR(200)
+	, FormerEnglishLearnerYearStatusCode NVARCHAR(200)
+	, ProficiencyStatusCode NVARCHAR(200)
+	, TitleiiiAccountabilityProgressStatusCode NVARCHAR(200)
+	, TitleiiiLanguageInstructionCode NVARCHAR(200)
 	--K12StudentStatus
-	, rdkss.HighSchoolDiplomaTypeCode NVARCHAR(200)
-	, rdkss.MobilityStatus12moCode NVARCHAR(200)
-	, rdkss.MobilityStatus36moCode NVARCHAR(200)
-	, rdkss.MobilityStatusSYCode NVARCHAR(200)
-	, rdkss.NSLPDirectCertificationIndicatorCode NVARCHAR(200)
-	, rdkss.PlacementStatusCode NVARCHAR(200)
-	, rdkss.PlacementTypeCode NVARCHAR(200)
-	, rdkss.ReferralStatusCode NVARCHAR(200)
+	, HighSchoolDiplomaTypeCode NVARCHAR(200)
+	, MobilityStatus12moCode NVARCHAR(200)
+	, MobilityStatus36moCode NVARCHAR(200)
+	, MobilityStatusSYCode NVARCHAR(200)
+	, NSLPDirectCertificationIndicatorCode NVARCHAR(200)
+	, PlacementStatusCode NVARCHAR(200)
+	, PlacementTypeCode NVARCHAR(200)
+	, ReferralStatusCode NVARCHAR(200)
 	--NOrDProgramStatus
-	, rdnodps.LongTermStatusCode NVARCHAR(200)
-	, rdnodps.NeglectedOrDelinquentProgramTypeCode NVARCHAR(200)
+	, LongTermStatusCode NVARCHAR(200)
+	, NeglectedOrDelinquentProgramTypeCode NVARCHAR(200)
 	--CteStatus
-	, rdctes.CteAeDisplacedHomemakerIndicatorCode NVARCHAR(200)
-	, rdctes.CteGraduationRateInclusionCode NVARCHAR(200)
-	, rdctes.CteNontraditionalGenderStatusCode NVARCHAR(200)
-	, rdctes.CteProgramCode NVARCHAR(200)
-	, rdctes.LepPerkinsStatusCode NVARCHAR(200)
-	, rdctes.RepresentationStatusCode NVARCHAR(200)
-	, rdctes.SingleParentOrSinglePregnantWomanCode NVARCHAR(200)
+	, CteAeDisplacedHomemakerIndicatorCode NVARCHAR(200)
+	, CteGraduationRateInclusionCode NVARCHAR(200)
+	, CteNontraditionalGenderStatusCode NVARCHAR(200)
+	, CteProgramCode NVARCHAR(200)
+	, LepPerkinsStatusCode NVARCHAR(200)
+	, RepresentationStatusCode NVARCHAR(200)
+	, SingleParentOrSinglePregnantWomanCode NVARCHAR(200)
 	--EnrollmentStatus
-	, rdkes.AcademicOrVocationalExitOutcomeCode NVARCHAR(200)
-	, rdkes.AcademicOrVocationalOutcomeCode NVARCHAR(200)
-	, rdkes.EnrollmentStatusCode NVARCHAR(200)
-	, rdkes.EntryTypeCode NVARCHAR(200)
-	, rdkes.ExitOrWithdrawalTypeCode NVARCHAR(200)
-	, rdkes.PostSecondaryEnrollmentStatusCode NVARCHAR(200)
+	, AcademicOrVocationalExitOutcomeCode NVARCHAR(200)
+	, AcademicOrVocationalOutcomeCode NVARCHAR(200)
+	, EnrollmentStatusCode NVARCHAR(200)
+	, EntryTypeCode NVARCHAR(200)
+	, ExitOrWithdrawalTypeCode NVARCHAR(200)
+	, PostSecondaryEnrollmentStatusCode NVARCHAR(200)
 	--TitleIStatus
-	, rdtis.TitleIInstructionalServicesCode NVARCHAR(200)
-	, rdtis.TitleIProgramTypeCode NVARCHAR(200)
-	, rdtis.TitleISchoolStatusCode NVARCHAR(200)
-	, rdtis.TitleISupportServicesCode NVARCHAR(200)
+	, TitleIInstructionalServicesCode NVARCHAR(200)
+	, TitleIProgramTypeCode NVARCHAR(200)
+	, TitleISchoolStatusCode NVARCHAR(200)
+	, TitleISupportServicesCode NVARCHAR(200)
 	)
 
 INSERT INTO Upgrade.FactK12StudentAssessments
 SELECT 
-	f.StaffCount
+	  f.AssessmentCount
 	, rdsy.SchoolYear
 	, rdft.FactTypeCode
 
@@ -706,7 +708,7 @@ JOIN RDS.DimTitleIIIStatuses rdtiiis ON f.TitleIIIStatusId = rdtiiis.DimTitleIII
 JOIN RDS.DimK12StudentStatuses rdkss ON f.K12StudentStatusId = rdkss.DimK12StudentStatusId
 JOIN RDS.DimNOrDProgramStatuses rdnodps ON f.NOrDProgramStatusId = rdnodps.DimNOrDProgramStatusId
 JOIN RDS.DimCteStatuses rdctes ON f.CteStatusId = rdctes.DimCteStatusId
-JOIN RDS.DimK12EnrollmentStatuses rdkes ON f.K12EnrollmentStatusId = rdkes.DimK12EnrollmentStatusId
+JOIN RDS.DimK12EnrollmentStatuses rdkes ON f.EnrollmentStatusId = rdkes.DimK12EnrollmentStatusId
 JOIN RDS.DimTitleIStatuses rdtis ON f.TitleIStatusId = rdtis.DimTitleIStatusId
 
 
@@ -714,82 +716,82 @@ JOIN RDS.DimTitleIStatuses rdtis ON f.TitleIStatusId = rdtis.DimTitleIStatusId
 
 CREATE TABLE Upgrade.FactOrganizationCounts (
 	-- Fact table
-	  TitleIParentalInvolveRes
-	, TitleIPartAAllocations
-	, SchoolImprovementFunds
-	, FederalFundAllocationType
-	, FederalProgramCode
-	, FederalFundAllocated
+	  TitleIParentalInvolveRes			VARCHAR(500)
+	, TitleIPartAAllocations								VARCHAR(500)
+	, SchoolImprovementFunds	VARCHAR(500)
+	, FederalFundAllocationType	VARCHAR(500)
+	, FederalProgramCode	VARCHAR(500)
+	, FederalFundAllocated	VARCHAR(500)
 	--DimSchoolYears
-	, SchoolYear
-	--DimFactTypes
-	, FactTypeCode
-	--DimLeas
-	, LeaIdentifierState
-	, RecordStartDateTime
-	, RecordEndDateTime
+	, SchoolYear	VARCHAR(500)
+	--DimFactTypes	
+	, FactTypeCode	VARCHAR(500)
+	--DimLeas	
+	, LeaIdentifierState	VARCHAR(500)
+	, LEA_RecordStartDateTime	VARCHAR(500)
+	, LEA_RecordEndDateTime	VARCHAR(500)
 	--DimK12Staff
-	, StaffMemberIdentifierState
-	, RecordStartDateTime
-	, RecordEndDateTime
+	, StaffMemberIdentifierState	VARCHAR(500)
+	, STA_RecordStartDateTime	VARCHAR(500)
+	, STA_RecordEndDateTime	VARCHAR(500)
 	--DimK12Schools
-	, SchoolIdentifierState
-	, RecordStartDateTime
-	, RecordEndDateTime
+	, SchoolIdentifierState	VARCHAR(500)
+	, SCH_RecordStartDateTime	VARCHAR(500)
+	, SCH_RecordEndDateTime	VARCHAR(500)
 	--DimK12SchoolStatuses
-	, DimK12SchoolStatusId
-	, MagnetOrSpecialProgramEmphasisSchoolCode
-	, NslpStatusCode
-	, PersistentlyDangerousStatusCode
-	, ProgressAchievingEnglishLanguageCode
-	, SchoolImprovementStatusCode
-	, SharedTimeIndicatorCode
-	, StatePovertyDesignationCode
-	, VirtualSchoolStatusCode
+	, DimK12SchoolStatusId	VARCHAR(500)
+	, MagnetOrSpecialProgramEmphasisSchoolCode	VARCHAR(500)
+	, NslpStatusCode	VARCHAR(500)
+	, PersistentlyDangerousStatusCode	VARCHAR(500)
+	, ProgressAchievingEnglishLanguageCode	VARCHAR(500)
+	, SchoolImprovementStatusCode	VARCHAR(500)
+	, SharedTimeIndicatorCode	VARCHAR(500)
+	, StatePovertyDesignationCode	VARCHAR(500)
+	, VirtualSchoolStatusCode	VARCHAR(500)
 	--DimSeas
-	, DimSeaId
-	, RecordStartDateTime
-	, RecordEndDateTime
+	, DimSeaId	VARCHAR(500)
+	, RecordStartDateTime	VARCHAR(500)
+	, RecordEndDateTime	VARCHAR(500)
 	--DimTitleIStatus
-	, DimTitleIStatusId
-	, TitleIInstructionalServicesCode
-	, TitleIProgramTypeCode
-	, TitleISchoolStatusCode
-	, TitleISupportServicesCode
+	, DimTitleIStatusId	VARCHAR(500)
+	, TitleIInstructionalServicesCode	VARCHAR(500)
+	, TitleIProgramTypeCode	VARCHAR(500)
+	, TitleISchoolStatusCode	VARCHAR(500)
+	, TitleISupportServicesCode	VARCHAR(500)
 	--DimCharterSchoolAuthorizers - Primary
-	, StateIdentifier	 
-	, RecordStartDateTime 
-	, RecordEndDateTime	 
+	, CSAP_StateIdentifier	 	VARCHAR(500)
+	, CSAP_RecordStartDateTime 	VARCHAR(500)
+	, CSAP_RecordEndDateTime	 	VARCHAR(500)
 	--DimCharterSchoolManagementOrganizations
-	, StateIdentifier
-	, RecordStartDateTime
-	, RecordEndDateTime
+	, CSMO_StateIdentifier	VARCHAR(500)
+	, CSMO_RecordStartDateTime	VARCHAR(500)
+	, CSMO_RecordEndDateTime	VARCHAR(500)
 	--DimCharterSchoolAuthorizers - Secondary
-	, StateIdentifier
-	, RecordStartDateTime
-	, RecordEndDateTime
+	, CSAS_StateIdentifier	VARCHAR(500)
+	, CSAS_RecordStartDateTime	VARCHAR(500)
+	, CSAS_RecordEndDateTime	VARCHAR(500)
 	--DimCharterSchoolManagementOrganizations - Updated
-	, StateIdentifier
-	, RecordStartDateTime
-	, RecordEndDateTime
+	, CSASU_StateIdentifier	VARCHAR(500)
+	, CSASU_RecordStartDateTime	VARCHAR(500)
+	, CSASU_RecordEndDateTime	VARCHAR(500)
 	--DimK12OrganizationStatuses
-	, GunFreeSchoolsActReportingStatusCode
-	, HighSchoolGraduationRateIndicatorStatusCode
-	, McKinneyVentoSubgrantRecipientCode
-	, ReapAlternativeFundingStatusCode
+	, GunFreeSchoolsActReportingStatusCode	VARCHAR(500)
+	, HighSchoolGraduationRateIndicatorStatusCode	VARCHAR(500)
+	, McKinneyVentoSubgrantRecipientCode	VARCHAR(500)
+	, ReapAlternativeFundingStatusCode	VARCHAR(500)
 	--DimK12SchoolStateStatuses
-	, SchoolStateStatusCode
+	, SchoolStateStatusCode	VARCHAR(500)
 	--DimComprehensiveAndTargetedSupports
-	, AdditionalTargetedSupportandImprovementCode
-	, ComprehensiveAndTargetedSupportCode
-	, ComprehensiveSupportCode
-	, ComprehensiveSupportImprovementCode
-	, TargetedSupportCode
-	, TargetedSupportImprovementCode
+	, AdditionalTargetedSupportandImprovementCode	VARCHAR(500)
+	, ComprehensiveAndTargetedSupportCode	VARCHAR(500)
+	, ComprehensiveSupportCode	VARCHAR(500)
+	, ComprehensiveSupportImprovementCode	VARCHAR(500)
+	, TargetedSupportCode	VARCHAR(500)
+	, TargetedSupportImprovementCode	VARCHAR(500)
 	--DimSubgroups
-	, SubgroupCode
+	, SubgroupCode	VARCHAR(500)
 	--DimComprehensiveSupportReasonApplicabilities
-	, ComprehensiveSupportReasonApplicabilityCode
+	, ComprehensiveSupportReasonApplicabilityCode	VARCHAR(500)
 
 
 )
