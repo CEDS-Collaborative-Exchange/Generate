@@ -22,12 +22,16 @@ capability is available.
 
 The file will be named as follows: [@SchemaName].[@ReportCode_@ReportLevel_@SubmissionYear + optional '_Label']
 
-*****************************************************************************************/
+UPDATED
+March 15, 2023 - Added logic to delete header row from target table
+
+*****************************************************************************************/	select @FileType = isnull(@FileType, 'Tab')
 	select @FileType = isnull(@FileType, 'Tab')
 
 	-- LOAD THE TABLE --
 	declare 
-		@InsertSQL varchar(max)
+		@InsertSQL varchar(max),
+		@DeleteSQL varchar(max)
 		
 	select @InsertSQL = 'BULK INSERT ' + @TargetTableName + char(10)
 	select @InsertSQL = @InsertSQL + 'FROM ' + '''' + @SourceFilePathAndName + ''''
@@ -39,12 +43,19 @@ The file will be named as follows: [@SchemaName].[@ReportCode_@ReportLevel_@Subm
 			--select @InsertSQL = @InsertSQL + ' WITH (FORMAT = ''CSV'')' + char(10)
 
 		end
+
+	-- SQL TO DELETE HEADER ROW
+	select @DeleteSQL = 'DELETE FROM ' + @TargetTableName + char(10)
+	select @DeleteSQL = @DeleteSQL + 'WHERE isnumeric(FileRecordNumber) = 0' + char(10)
+
 	
 	if @ShowSQL = 1
 		begin
-			select @InsertSQL
+			select 'INSERT SQL', @InsertSQL
+			select 'DELETE HEADER ROW SQL', @DeleteSQL
 			return
 		end
+
 
 	begin try
 		exec (@InsertSQL)
@@ -54,4 +65,16 @@ The file will be named as follows: [@SchemaName].[@ReportCode_@ReportLevel_@Subm
 		insert into App.DataMigrationHistories select getdate(), 'ERROR - FAILED TO LOAD TABLE ' + isnull(@TargetTableName,''), 4
 		print 'FAILED TO LOAD TABLE ' + isnull(@TargetTableName,'') + ' - ' + ERROR_MESSAGE()
 	end catch
+
+	-- DELETE HEADER ROW FROM TABLE ------------------
+
+	begin try
+		exec (@DeleteSQL)
+		insert into App.DataMigrationHistories select getdate(), 'Header row deleted from ' + @TargetTableName, 4
+	end try
+	begin catch
+		insert into App.DataMigrationHistories select getdate(), 'ERROR - FAILED TO DELETE HEADER ROW FROM TABLE ' + isnull(@TargetTableName,''), 4
+		print 'FAILED TO DELETE HEADER ROW FROM TABLE ' + isnull(@TargetTableName,'') + ' - ' + ERROR_MESSAGE()
+	end catch
+
 end
