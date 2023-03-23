@@ -79,3 +79,16 @@ where ske.Student_Identifier_State is null
 'One or more records in PersonStatus do not have a student record in K12Enrollment',
 'Warning'
 
+-- StateDetail must have SchoolYear
+insert into staging.StagingValidationRules
+select 
+	'Directory, ChildCount, Exiting, Discipline, Personnel, Assessment, Membership',
+	'Generate',
+	'StateDetail',
+	'SchoolYear',
+	'Null Value',
+	NULL,
+	NULL,
+	NULL,
+	'SchoolYear is missing',
+	'Critical'
