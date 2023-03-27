@@ -144,23 +144,25 @@ BEGIN
 				ELSE 'MISSING'
 			  END AS SexEdFactsCode,
 		CASE 
-			WHEN @ChildCountDate
-				BETWEEN ISNULL(EL.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
-				AND ISNULL(EL.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
-			THEN ISNULL(EL.EnglishLearnerStatus, 0)
-		ELSE 0
-			  END AS EnglishLearnerStatus,
+			WHEN ISNULL(el.EnglishLearnerStatus, '') <> '' 
+				AND @ChildCountDate
+					BETWEEN ISNULL(EL.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
+					AND ISNULL(EL.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
+			THEN EL.EnglishLearnerStatus
+			ELSE -1
+		END AS EnglishLearnerStatus,
 		CASE
-			WHEN @ChildCountDate
-				BETWEEN ISNULL(EL.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
-				AND ISNULL(EL.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
+			WHEN ISNULL(el.EnglishLearnerStatus, '') <> '' 
+				AND @ChildCountDate
+					BETWEEN ISNULL(EL.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
+					AND ISNULL(EL.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
 			THEN 
 				CASE 
 					WHEN EL.EnglishLearnerStatus = 1 THEN 'LEP'
-				ELSE 'NLEP'
-							END
-				ELSE 'NLEP'
-			  END AS EnglishLearnerStatusEdFactsCode
+					ELSE 'NLEP'
+				END
+			ELSE 'MISSING'
+		END AS EnglishLearnerStatusEdFactsCode
 
 		INTO #c002Staging
 		FROM Staging.K12Enrollment ske
@@ -874,7 +876,7 @@ BEGIN
 
 		/**********************************************************************
 		Test Case 13:
-		Subtotal 1 at the SEA level
+		CSE at the SEA level
 		Student Count by:
 			SexEdFactsCode
 			PrimaryDisabilityType
@@ -932,7 +934,7 @@ BEGIN
 
 		/**********************************************************************
 		Test Case 14:
-		Subtotal 1 at the LEA level
+		CSE at the LEA level
 		Student Count by:
 			SexEdFactsCode
 			PrimaryDisabilityType
@@ -993,7 +995,7 @@ BEGIN
 
 		/**********************************************************************
 		Test Case 15:
-		Subtotal 1 at the School level
+		CSE at the School level
 		Student Count by:
 			SexEdFactsCode
 			PrimaryDisabilityType
