@@ -2,7 +2,6 @@
 February 17, 2022
 End to End Test for FS002
 ************************************************************************/
-
 CREATE PROCEDURE [app].[FS002_TestCase] 
 	@SchoolYear INT
 AS
@@ -871,7 +870,6 @@ BEGIN
 			AND rreksd.CategorySetCode = 'CSD'
 	
 		DROP TABLE #SCH_CSD
-
 
 
 		/**********************************************************************
@@ -2158,6 +2156,5 @@ BEGIN
 			AND rreksd.CategorySetCode = 'TOT'
 
 		DROP TABLE #SCH_TOT
-
 
 END
