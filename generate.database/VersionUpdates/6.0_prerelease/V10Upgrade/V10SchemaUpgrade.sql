@@ -14728,11 +14728,11 @@
 
 
 	GO
-	PRINT N'Creating Table [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes]...';
+	PRINT N'Creating Table [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes]...';
 
 
 	GO
-	CREATE TABLE [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes] (
+	CREATE TABLE [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes] (
 		[BridgeK12EnrollmentsIdeaDisabilityTypeId] INT    IDENTITY (1, 1) NOT NULL,
 		[FactK12StudentEnrollmentId]               BIGINT NOT NULL,
 		[IdeaDisabilityTypeId]                     INT    NOT NULL,
@@ -14741,21 +14741,21 @@
 
 
 	GO
-	PRINT N'Creating Index [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes].[IXFK_BridgeK12EnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollments]...';
+	PRINT N'Creating Index [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes].[IXFK_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollments]...';
 
 
 	GO
-	CREATE NONCLUSTERED INDEX [IXFK_BridgeK12EnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollments]
-		ON [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes]([FactK12StudentEnrollmentId] ASC);
+	CREATE NONCLUSTERED INDEX [IXFK_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollments]
+		ON [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes]([FactK12StudentEnrollmentId] ASC);
 
 
 	GO
-	PRINT N'Creating Index [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes].[IXFK_BridgeK12EnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId]...';
+	PRINT N'Creating Index [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes].[IXFK_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId]...';
 
 
 	GO
-	CREATE NONCLUSTERED INDEX [IXFK_BridgeK12EnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId]
-		ON [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes]([IdeaDisabilityTypeId] ASC);
+	CREATE NONCLUSTERED INDEX [IXFK_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId]
+		ON [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes]([IdeaDisabilityTypeId] ASC);
 
 
 	GO
@@ -15546,6 +15546,8 @@
 		[OrganizationTypeCode]              NVARCHAR (100) NOT NULL,
 		[OrganizationTypeDescription]       NVARCHAR (300) NOT NULL,
 		[OrganizationName]                  NVARCHAR (60)  NOT NULL,
+		[RecordStartDateTime]               DATETIME       NOT NULL,
+		[RecordEndDateTime]                 DATETIME       NULL,
 		CONSTRAINT [PK_DimEducationOrganizationNetworkId] PRIMARY KEY CLUSTERED ([DimEducationOrganizationNetworkId] ASC)
 	);
 
@@ -18129,21 +18131,21 @@
 
 
 	GO
-	PRINT N'Creating Default Constraint [RDS].[DF_BridgeK12EnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollmentId]...';
+	PRINT N'Creating Default Constraint [RDS].[DF_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollmentId]...';
 
 
 	GO
-	ALTER TABLE [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes]
-		ADD CONSTRAINT [DF_BridgeK12EnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollmentId] DEFAULT ((-1)) FOR [FactK12StudentEnrollmentId];
+	ALTER TABLE [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes]
+		ADD CONSTRAINT [DF_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollmentId] DEFAULT ((-1)) FOR [FactK12StudentEnrollmentId];
 
 
 	GO
-	PRINT N'Creating Default Constraint [RDS].[DF_BridgeK12EnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId]...';
+	PRINT N'Creating Default Constraint [RDS].[DF_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId]...';
 
 
 	GO
-	ALTER TABLE [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes]
-		ADD CONSTRAINT [DF_BridgeK12EnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId] DEFAULT ((-1)) FOR [IdeaDisabilityTypeId];
+	ALTER TABLE [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes]
+		ADD CONSTRAINT [DF_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId] DEFAULT ((-1)) FOR [IdeaDisabilityTypeId];
 
 
 	GO
@@ -18170,7 +18172,7 @@
 
 	GO
 	ALTER TABLE [RDS].[BridgeK12StudentAssessmentRaces]
-		ADD CONSTRAINT [DF_CONSTRAINT [DF_BridgeK12StudentAssessmentAccommodations_FactK12StudentAssessmentId] DEFAULT ((-1)) FOR [FactK12StudentAssessmentId];
+		ADD CONSTRAINT [DF_CONSTRAINT [DF_BridgeK12StudentAssessmentRaces_FactK12StudentAssessmentId] DEFAULT ((-1)) FOR [FactK12StudentAssessmentId];
 
 
 	GO
@@ -18179,7 +18181,7 @@
 
 	GO
 	ALTER TABLE [RDS].[BridgeK12StudentAssessmentRaces]
-		ADD CONSTRAINT [DF_CONSTRAINT [DF_BridgeK12StudentAssessmentAccommodations_RaceId] DEFAULT ((-1)) FOR [RaceId];
+		ADD CONSTRAINT [DF_CONSTRAINT [DF_BridgeK12StudentAssessmentRaces_RaceId] DEFAULT ((-1)) FOR [RaceId];
 
 
 	GO
@@ -21402,21 +21404,21 @@
 
 
 	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_BridgeK12EnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollmentId]...';
+	PRINT N'Creating Foreign Key [RDS].[FK_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollmentId]...';
 
 
 	GO
-	ALTER TABLE [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes] WITH NOCHECK
-		ADD CONSTRAINT [FK_BridgeK12EnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollmentId] FOREIGN KEY ([FactK12StudentEnrollmentId]) REFERENCES [RDS].[FactK12StudentEnrollments] ([FactK12StudentEnrollmentId]);
+	ALTER TABLE [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes] WITH NOCHECK
+		ADD CONSTRAINT [FK_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollmentId] FOREIGN KEY ([FactK12StudentEnrollmentId]) REFERENCES [RDS].[FactK12StudentEnrollments] ([FactK12StudentEnrollmentId]);
 
 
 	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_BridgeK12EnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId]...';
+	PRINT N'Creating Foreign Key [RDS].[FK_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId]...';
 
 
 	GO
-	ALTER TABLE [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes] WITH NOCHECK
-		ADD CONSTRAINT [FK_BridgeK12EnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId] FOREIGN KEY ([IdeaDisabilityTypeId]) REFERENCES [RDS].[DimIdeaDisabilityTypes] ([DimIdeaDisabilityTypeId]);
+	ALTER TABLE [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes] WITH NOCHECK
+		ADD CONSTRAINT [FK_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId] FOREIGN KEY ([IdeaDisabilityTypeId]) REFERENCES [RDS].[DimIdeaDisabilityTypes] ([DimIdeaDisabilityTypeId]);
 
 
 	GO
@@ -63931,9 +63933,9 @@
 
 	ALTER TABLE [RDS].[BridgeAeStudentEnrollmentRaces] WITH CHECK CHECK CONSTRAINT [FK_BridgeAeStudentEnrollmentRaces_RaceId];
 
-	ALTER TABLE [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12EnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollmentId];
+	ALTER TABLE [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_FactK12StudentEnrollmentId];
 
-	ALTER TABLE [RDS].[BridgeK12EnrollmentsIdeaDisabilityTypes] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12EnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId];
+	ALTER TABLE [RDS].[BridgeK12StudentEnrollmentsIdeaDisabilityTypes] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12StudentEnrollmentsIdeaDisabilityTypes_IdeaDisabilityTypeId];
 
 	ALTER TABLE [RDS].[BridgeK12StudentAssessmentAccommodations] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12StudentAssessmentAccommodations_AssessmentAccommodationId];
 
