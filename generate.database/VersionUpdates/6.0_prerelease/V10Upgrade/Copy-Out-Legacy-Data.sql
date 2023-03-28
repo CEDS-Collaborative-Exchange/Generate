@@ -104,7 +104,7 @@ CREATE TABLE Upgrade.FactK12StudentCounts (
 	, IEU_RecordStartDateTime DATETIME
 	, IEU_RecordEndDateTime	  DATETIME
 	, SpecialEducationServicesExitDate DATE
-	)
+)
 
 
 INSERT INTO Upgrade.FactK12StudentCounts
@@ -315,7 +315,7 @@ CREATE TABLE Upgrade.FactK12StudentDisciplines (
 	, LepPerkinsStatusCode NVARCHAR(200)
 	, RepresentationStatusCode NVARCHAR(200)
 	, SingleParentOrSinglePregnantWomanCode NVARCHAR(200)
-	)
+)
 
 INSERT INTO Upgrade.FactK12StudentDisciplines
 SELECT 
@@ -469,7 +469,7 @@ CREATE TABLE Upgrade.FactK12StaffCounts (
 	, TitleiiiLanguageInstructionCode NVARCHAR(200)
 
 	, StaffFTE DECIMAL(18,2)
-	)
+)
 
 INSERT INTO Upgrade.FactK12StaffCounts
 SELECT 
@@ -607,7 +607,7 @@ CREATE TABLE Upgrade.FactK12StudentAssessments (
 	, TitleIProgramTypeCode NVARCHAR(200)
 	, TitleISchoolStatusCode NVARCHAR(200)
 	, TitleISupportServicesCode NVARCHAR(200)
-	)
+)
 
 INSERT INTO Upgrade.FactK12StudentAssessments
 SELECT 
@@ -792,8 +792,6 @@ CREATE TABLE Upgrade.FactOrganizationCounts (
 	, SubgroupCode	VARCHAR(500)
 	--DimComprehensiveSupportReasonApplicabilities
 	, ComprehensiveSupportReasonApplicabilityCode	VARCHAR(500)
-
-
 )
 
 INSERT INTO Upgrade.FactOrganizationCounts
