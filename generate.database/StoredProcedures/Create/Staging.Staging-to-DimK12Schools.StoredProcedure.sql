@@ -9,7 +9,7 @@ BEGIN
 	select @StateName = (select [Description] from dbo.RefState where Code = @StateCode)
 	select @StateANSICode = (select Code from dbo.RefStateANSICode where [Description] = @StateName)
 
-	--create the 'missing' row if it doesn't exist
+
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12Schools WHERE DimK12SchoolId = -1)
 	BEGIN
 		SET IDENTITY_INSERT RDS.DimK12Schools ON
@@ -61,7 +61,6 @@ BEGIN
 		, SchoolIdentifierNces					VARCHAR(50)
 		, SchoolIdentifierState					VARCHAR(50)
 		, PriorSchoolIdentifierState			VARCHAR(50) -- CIID-4060
-		, SchoolPriorLEAIdentifierState			varchar(50)
 		, NameOfInstitution						VARCHAR(200)
 		, SchOperationalStatus					VARCHAR(50)
 		, SchOperationalEdfactsStatus			VARCHAR(50)
@@ -120,7 +119,6 @@ BEGIN
 			, sko.School_Identifier_NCES
 			, sko.School_Identifier_State
 			, sko.Prior_School_Identifier_State -- CIID-4060
-			, sko.School_Prior_LEA_Identifier_State -- CIID-5691
 			, sko.School_Name
 			, sssrd1.OutputCode -- SchoolOperationalStatus
 			, CASE sssrd1.OutputCode
@@ -201,7 +199,7 @@ BEGIN
 				WHEN 'Reportable' THEN 5
 				ELSE -1
 			  END AS SchoolTypeEdfactsCode
-			, NULL --SchoolTypeId
+			, null --SchoolTypeId
 			, sop.TelephoneNumber
 			, sko.School_WebSiteAddress
 			, CASE
@@ -209,7 +207,7 @@ BEGIN
 				WHEN School_CharterSchoolIndicator = 1 THEN 'YES'
 				WHEN School_CharterSchoolIndicator = 0 THEN 'NO'
 			  END AS CharterSchoolStatus
-			, upper(sssrd4.OutputCode) -- School_ReconstitutedStatus
+			, sssrd4.OutputCode -- School_ReconstitutedStatus
 			, sssrd5.OutputCode -- Administrative Funding Control Code
 			, CASE sssrd5.OutputCode -- Administrative Funding Control Description
 				WHEN 'Public' THEN 'Public School'
@@ -269,53 +267,53 @@ BEGIN
 			ON trgt.SchoolIdentifierState = src.SchoolIdentifierState
 			AND ISNULL(trgt.RecordStartDateTime, '') = ISNULL(src.RecordStartDateTime, '')
 	WHEN MATCHED THEN 
-	UPDATE SET trgt.IeuName = src.IeuName,
-				trgt.IeuIdentifierState = src.IeuStateIdentifier,
-				trgt.LeaName = src.LeaOrganizationName,
-				trgt.LeaIdentifierNces = src.LeaIdentifierNces,
-				trgt.LeaIdentifierState = src.LeaIdentifierState,
-				trgt.PriorLEAIdentifierState = src.SchoolPriorLEAIdentifierState, --CIID-5691
-				trgt.NameOfInstitution = src.NameOfInstitution,
-				trgt.SchoolOperationalStatus = src.SchOperationalStatus,
-				trgt.SchoolOperationalStatusEdFactsCode = src.SchOperationalEdfactsStatus,
-				trgt.SchoolOperationalStatusEffectiveDate = src.OperationalStatusEffectiveDate,
-				trgt.CharterSchoolIndicator = src.CharterSchoolIndicator,
-				trgt.CharterSchoolContractIdNumber = src.CharterSchoolContractIdNumber,
-				trgt.CharterSchoolContractApprovalDate = src.CharterSchoolContractApprovalDate,
-				trgt.CharterSchoolContractRenewalDate = src.CharterSchoolContractRenewalDate,
-				trgt.ReportedFederally = src.ReportedFederally,
-				trgt.LeaTypeCode = src.LeaTypeCode,
-				trgt.LeaTypeDescription = src.LeaTypeDescription,
-				trgt.LeaTypeEdFactsCode = src.LeaTypeEdFactsCode,
-				trgt.LeaTypeId = src.LeaTypeId,
-				trgt.OutOfStateIndicator = src.OutOfState,
-				trgt.MailingAddressStreet = src.MailingAddressStreet,
-				trgt.MailingAddressStreet2 = src.MailingAddressStreet2,
-				trgt.MailingAddressCity = src.MailingAddressCity,
-				trgt.MailingCountyAnsiCode = src.MailingAddressCountyAnsiCode,
-				trgt.MailingAddressState = src.MailingAddressState,
-				trgt.MailingAddressPostalCode = src.MailingAddressPostalCode,
-				trgt.PhysicalAddressStreet = src.PhysicalAddressStreet,
-				trgt.PhysicalAddressStreet2 = src.PhysicalAddressStreet2,
-				trgt.PhysicalAddressCity = src.PhysicalAddressCity,
-				trgt.PhysicalCountyAnsiCode = src.PhysicalAddressCountyAnsiCode,
-				trgt.PhysicalAddressState = src.PhysicalAddressStateCode,
-				trgt.PhysicalAddressPostalCode = src.PhysicalAddressPostalCode,
-				trgt.Longitude = src.Longitude,
-				trgt.Latitude = src.Latitude,
-				trgt.Telephone = src.TelephoneNumber,
-				trgt.Website = src.Website,
-				trgt.SchoolTypeCode = src.SchoolTypeCode,
-				trgt.SchoolTypeDescription = src.SchoolTypeDescription,
-				trgt.SchoolTypeEdFactsCode = src.SchoolTypeEdFactsCode,
-				trgt.SchoolTypeId = src.SchoolTypeId,
-				trgt.SchoolIdentifierNces = src.SchoolIdentifierNces,
-				trgt.PriorSchoolIdentifierState = src.PriorSchoolIdentifierState, --CIID-4060
-				trgt.CharterSchoolStatus = src.CharterSchoolStatus,
-				trgt.ReconstitutedStatus = src.ReconstitutedStatus,
-				trgt.AdministrativeFundingControlCode = src.AdministrativeFundingControlCode,
-				trgt.AdministrativeFundingControlDescription = src.AdministrativeFundingControlDescription,
-				trgt.RecordEndDateTime = src.RecordEndDateTime
+			UPDATE SET trgt.IeuName = src.IeuName,
+					trgt.IeuIdentifierState = src.IeuStateIdentifier,
+			        trgt.LeaName = src.LeaOrganizationName,
+					trgt.LeaIdentifierNces = src.LeaIdentifierNces,
+					trgt.LeaIdentifierState = src.LeaIdentifierState,
+					trgt.PriorLEAIdentifierState = src.PriorLEAIdentifierState, --CIID-4060
+					trgt.NameOfInstitution = src.NameOfInstitution,
+					trgt.SchoolOperationalStatus = src.SchOperationalStatus,
+					trgt.SchoolOperationalStatusEdFactsCode = src.SchOperationalEdfactsStatus,
+					trgt.SchoolOperationalStatusEffectiveDate = src.OperationalStatusEffectiveDate,
+					trgt.CharterSchoolIndicator = src.CharterSchoolIndicator,
+					trgt.CharterSchoolContractIdNumber = src.CharterSchoolContractIdNumber,
+					trgt.CharterSchoolContractApprovalDate = src.CharterSchoolContractApprovalDate,
+					trgt.CharterSchoolContractRenewalDate = src.CharterSchoolContractRenewalDate,
+					trgt.ReportedFederally = src.ReportedFederally,
+					trgt.LeaTypeCode = src.LeaTypeCode,
+					trgt.LeaTypeDescription = src.LeaTypeDescription,
+					trgt.LeaTypeEdFactsCode = src.LeaTypeEdFactsCode,
+					trgt.LeaTypeId = src.LeaTypeId,
+					trgt.OutOfStateIndicator = src.OutOfState,
+					trgt.MailingAddressStreet = src.MailingAddressStreet,
+					trgt.MailingAddressStreet2 = src.MailingAddressStreet2,
+					trgt.MailingAddressCity = src.MailingAddressCity,
+					trgt.MailingCountyAnsiCode = src.MailingAddressCountyAnsiCode,
+					trgt.MailingAddressState = src.MailingAddressState,
+					trgt.MailingAddressPostalCode = src.MailingAddressPostalCode,
+					trgt.PhysicalAddressStreet = src.PhysicalAddressStreet,
+					trgt.PhysicalAddressStreet2 = src.PhysicalAddressStreet2,
+					trgt.PhysicalAddressCity = src.PhysicalAddressCity,
+					trgt.PhysicalCountyAnsiCode = src.PhysicalAddressCountyAnsiCode,
+					trgt.PhysicalAddressState = src.PhysicalAddressStateCode,
+					trgt.PhysicalAddressPostalCode = src.PhysicalAddressPostalCode,
+					trgt.Longitude = src.Longitude,
+					trgt.Latitude = src.Latitude,
+					trgt.Telephone = src.TelephoneNumber,
+					trgt.Website = src.Website,
+					trgt.SchoolTypeCode = src.SchoolTypeCode,
+					trgt.SchoolTypeDescription = src.SchoolTypeDescription,
+					trgt.SchoolTypeEdFactsCode = src.SchoolTypeEdFactsCode,
+					trgt.SchoolTypeId = src.SchoolTypeId,
+					trgt.SchoolIdentifierNces = src.SchoolIdentifierNces,
+					trgt.PriorSchoolIdentifierState = src.PriorSchoolIdentifierState, --CIID-4060
+					trgt.CharterSchoolStatus = src.CharterSchoolStatus,
+					trgt.ReconstitutedStatus = src.ReconstitutedStatus,
+					trgt.AdministrativeFundingControlCode = src.AdministrativeFundingControlCode,
+					trgt.AdministrativeFundingControlDescription = src.AdministrativeFundingControlDescription,
+					trgt.RecordEndDateTime = src.RecordEndDateTime
 	WHEN NOT MATCHED BY TARGET THEN     --- Records Exists IN Source but NOT IN Target
 	INSERT (
 		  IeuName
@@ -372,9 +370,8 @@ BEGIN
 		, AdministrativeFundingControlCode
 		, AdministrativeFundingControlDescription
 		, RecordStartDateTime
-		, RecordEndDateTime
-	) 
-	VALUES (
+		, RecordEndDateTime) 
+	VALUES(
 		  src.IeuName
 		, src.IeuStateIdentifier
 		, src.StateCode
@@ -385,7 +382,7 @@ BEGIN
 		, src.SeaIdentifierState
 		, src.LeaIdentifierNces
 		, src.LeaIdentifierState
-		, src.SchoolPriorLEAIdentifierState --CIID-4060
+		, src.PriorLEAIdentifierState --CIID-4060
 		, src.LeaOrganizationName
 		, src.SchoolIdentifierNces
 		, src.SchoolIdentifierState
@@ -429,38 +426,37 @@ BEGIN
 		, src.AdministrativeFundingControlCode
 		, src.AdministrativeFundingControlDescription
 		, src.RecordStartDateTime
-		, src.RecordEndDateTime
-	);
+		, src.RecordEndDateTime);
 
-	;WITH upd AS(
-		SELECT 
-			startd.SchoolIdentifierState
-			, startd.RecordStartDateTime 
-			, min(endd.RecordStartDateTime) - 1 AS RecordEndDateTime
-		FROM rds.DimK12Schools startd
-		JOIN rds.DimK12Schools endd
-			ON startd.SchoolIdentifierState = endd.SchoolIdentifierState
-			AND startd.RecordStartDateTime < endd.RecordStartDateTime
-		GROUP BY  startd.SchoolIdentifierState, startd.RecordStartDateTime
-	) 
-	UPDATE school SET RecordEndDateTime = upd.RecordEndDateTime
-	FROM rds.DimK12Schools school
-	JOIN upd	
-		ON school.SchoolIdentifierState = upd.SchoolIdentifierState
-		AND school.RecordStartDateTime = upd.RecordStartDateTime
-	WHERE upd.RecordEndDateTime <> '1900-01-01 00:00:00.000'
+		;WITH upd AS(
+			SELECT 
+				  startd.SchoolIdentifierState
+				, startd.RecordStartDateTime 
+				, min(endd.RecordStartDateTime) - 1 AS RecordEndDateTime
+			FROM rds.DimK12Schools startd
+			JOIN rds.DimK12Schools endd
+				ON startd.SchoolIdentifierState = endd.SchoolIdentifierState
+				AND startd.RecordStartDateTime < endd.RecordStartDateTime
+			GROUP BY  startd.SchoolIdentifierState, startd.RecordStartDateTime
+		) 
+		UPDATE school SET RecordEndDateTime = upd.RecordEndDateTime
+		FROM rds.DimK12Schools school
+		JOIN upd	
+			ON school.SchoolIdentifierState = upd.SchoolIdentifierState
+			AND school.RecordStartDateTime = upd.RecordStartDateTime
+		WHERE upd.RecordEndDateTime <> '1900-01-01 00:00:00.000'
 
 
 -- School Grade Levels
 	CREATE TABLE #gradeLevels
 	(
-		DimK12SchoolId INT
+		  DimK12SchoolId INT
 		, DimGradeLevelId INT
 	)
 
 	INSERT INTO #gradeLevels
 	SELECT distinct 
-		rdks.DimK12SchoolId
+		  rdks.DimK12SchoolId
 		, rdgl.DimGradeLevelId 
 	FROM rds.DimK12Schools rdks
 	JOIN staging.OrganizationGradeOffered  sogo
@@ -475,8 +471,8 @@ BEGIN
 
 	MERGE rds.BridgeK12SchoolGradeLevels AS trgt
 	USING #gradeLevels AS src
-		ON trgt.K12SchoolId = src.DimK12SchoolId
-		AND trgt.GradeLevelId = src.DimGradeLevelId
+					ON trgt.K12SchoolId = src.DimK12SchoolId
+					AND trgt.GradeLevelId = src.DimGradeLevelId
 	WHEN NOT MATCHED THEN
 	INSERT(K12SchoolId, GradeLevelId) values(src.DimK12SchoolId, src.DimGradeLevelId);
 
@@ -486,24 +482,24 @@ BEGIN
 		
 	;WITH CTE as
 	(
-		SELECT 
-		distinct 
-			rdl.DimLeaID
-			, rdgl.DimGradeLevelId 
-		FROM RDS.DimK12Schools rdks
-		JOIN RDS.DimLeas rdl
-			ON rdks.LeaIdentifierState = rdl.LeaIdentifierState
-			AND rdks.RecordStartDateTime BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
-		JOIN Staging.K12Organization sko
-			on sko.LEA_Identifier_State = rdl.LeaIdentifierState
-			and rdks.SchoolIdentifierState = sko.School_Identifier_State
-		JOIN Staging.OrganizationGradeOffered sogo
-			ON rdks.SchoolIdentifierState = sogo.OrganizationIdentifier
-			
-		JOIN RDS.vwDimGradeLevels rdgl
-			ON sogo.GradeOffered = rdgl.GradeLevelMap
-			AND rdgl.GradeLevelTypeCode = '000131'
-			AND rdgl.SchoolYear = sogo.SchoolYear	
+	SELECT 
+	distinct 
+		  rdl.DimLeaID
+		, rdgl.DimGradeLevelId 
+	FROM RDS.DimK12Schools rdks
+	JOIN RDS.DimLeas rdl
+		ON rdks.LeaIdentifierState = rdl.LeaIdentifierState
+		AND rdks.RecordStartDateTime BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
+	JOIN Staging.K12Organization sko
+		on sko.LEA_Identifier_State = rdl.LeaIdentifierState
+		and rdks.SchoolIdentifierState = sko.School_Identifier_State
+	JOIN Staging.OrganizationGradeOffered sogo
+		ON rdks.SchoolIdentifierState = sogo.OrganizationIdentifier
+		
+	JOIN RDS.vwDimGradeLevels rdgl
+		ON sogo.GradeOffered = rdgl.GradeLevelMap
+		AND rdgl.GradeLevelTypeCode = '000131'
+		AND rdgl.SchoolYear = sogo.SchoolYear	
 	)
 
 

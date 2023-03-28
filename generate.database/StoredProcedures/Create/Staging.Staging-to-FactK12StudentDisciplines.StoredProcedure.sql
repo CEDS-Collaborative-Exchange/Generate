@@ -210,7 +210,7 @@ BEGIN
 			AND ISNULL(ske.Lea_Identifier_State, '') = ISNULL(idea.Lea_Identifier_State, '')
 			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(idea.School_Identifier_State, '')
 			AND sd.DisciplinaryActionStartDate BETWEEN idea.IDEA_StatusStartDate AND ISNULL(idea.IDEA_StatusEndDate, @EndDate)
-		LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  Using a view that resolves multiple race records by returning the value TwoOrMoreRaces
+		LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  Using a view that resolves multiple race records by returinging the value TwoOrMoreRaces
 			ON ske.SchoolYear = spr.SchoolYear
 			AND ske.Student_Identifier_State = spr.Student_Identifier_State
 			AND (spr.OrganizationType in (SELECT SeaOrganizationType FROM #seaOrganizationTypes)
@@ -268,13 +268,13 @@ BEGIN
 			ON rsy.SchoolYear = rgls.SchoolYear
 			AND ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
-		LEFT JOIN #vwRaces rdr
-			ON ISNULL(rdr.RaceCode, rdr.RaceMap) =
-				CASE
+		LEFT JOIN #vwDimRaces rdr
+			ON rsy.SchoolYear = rdr.SchoolYear
+			AND CASE 
 					WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HispanicorLatinoEthnicity'
-					WHEN spr.RaceCode IS NOT NULL THEN spr.RaceCode
-					ELSE 'Missing'
-				END
+					ELSE spr.RaceCode
+				END = rdr.RaceMap
+				
 
 		IF EXISTS (SELECT 1 FROM Staging.ProgramParticipationCTE) BEGIN
 

@@ -252,9 +252,9 @@ BEGIN
 					END = ISNULL(rdis.IdeaEducationalEnvironmentMap, rdis.IdeaEducationalEnvironmentCode)
 				AND rdis.SpecialEducationExitReasonCode = 'MISSING'
 			LEFT JOIN #vwRaces rdr
-				ON ISNULL(rdr.RaceCode, rdr.RaceMap) =
+				ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
 					CASE
-						WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HispanicorLatinoEthnicity'
+						when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
 						WHEN spr.RaceCode IS NOT NULL THEN spr.RaceCode
 						ELSE 'Missing'
 					END

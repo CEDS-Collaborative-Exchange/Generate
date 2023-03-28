@@ -21,9 +21,6 @@ This procedure creates and populates a comparison table for the specified table 
 
 The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@ReportLevel_@SubmissionYear_COMPARISON]
 
-MODIFIED
-March 15, 2023 - Added alternate comparisons for OutOfStateInd and ChrtSchoolLEAStatusId to handle multiple options
-
 *****************************************************************************************/
 	SET NOCOUNT ON
 
@@ -81,7 +78,7 @@ March 15, 2023 - Added alternate comparisons for OutOfStateInd and ChrtSchoolLEA
 		end
 
 	-- CREATE THE DROP TABLE SQL -------------------------------------------------------------------------------------------
-	select @DropSQL = 'IF EXISTS(SELECT 1 FROM [' + @DatabaseName + '].INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ''' + @SchemaName + ''' AND TABLE_NAME = ''' + @TableName + ''')' + char(10)
+	select @DropSQL = 'IF EXISTS(SELECT 1 FROM ' + @DatabaseName + '.INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ''' + @SchemaName + ''' AND TABLE_NAME = ''' + @TableName + ''')' + char(10)
 	select @DropSQL = @DropSQL + 'BEGIN' + char(10)
 	select @DropSQL = @DropSQL + char(9) + 'DROP TABLE ' + @ComparisonResultsTableName + char(10)
 	select @DropSQL = @DropSQL + 'END'
@@ -124,20 +121,8 @@ March 15, 2023 - Added alternate comparisons for OutOfStateInd and ChrtSchoolLEA
 					or (@ReportLevel = 'LEA' and @ColumnName <> 'StateLEAIDNumber')
 					or (@ReportLevel = 'SCH' and @ColumnName <> 'StateSchoolIDNumber')
 				then
-					case 
-						when @ColumnName = 'OutOfStateInd'
-							then char(9) +
-							'CASE WHEN ISNULL(L.' + @ColumnName + ',''NO'') <> ISNULL(G.' + @ColumnName + ','''') 
-							THEN ''' + @ColumnName + ' | '' else '''' end + ' + char(10)
-						when @ColumnName = 'ChrtSchoolLEAStatusId'
-							then char(9) +
-							'CASE WHEN ISNULL(L.' + @ColumnName + ',''NO'') <> ISNULL(G.' + @ColumnName + ','''')
-							AND L.' + @ColumnName + ' <> ''NOTCHR'' AND G.' + @ColumnName + ' <> ''NA''
-							THEN ''' + @ColumnName + ' | '' else '''' end + ' + char(10)
-					else
-						char(9) + 
-						'CASE WHEN ISNULL(L.' + @ColumnName + ','''') <> ISNULL(G.' + @ColumnName + ','''') THEN ''' + @ColumnName + ' | '' else '''' end + ' + char(10)
-					end
+				char(9) + 
+				'CASE WHEN ISNULL(L.' + @ColumnName + ','''') <> ISNULL(G.' + @ColumnName + ','''') THEN ''' + @ColumnName + ' | '' else '''' end + ' + char(10)
 				else ''
 				end
 			select @ID +=1

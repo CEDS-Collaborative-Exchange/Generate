@@ -26,7 +26,6 @@ BEGIN
 		@Id int,
 		@InsertDate datetime = getdate(), 
 		@RecordCount int,
-		@RuleCount int,
 		@TableName varchar(100),
 		@ColumnName varchar(100),
 		@RefTableName varchar(100),
@@ -36,7 +35,7 @@ BEGIN
 		@Condition varchar(500),
 		@ValidationMessage varchar(500),
 		@Severity varchar(20),
-		@LogMessage nvarchar(max),
+		@ErrorMessage varchar(500),
 		@ShowRecordsSQL varchar(max),
 		@ReportGroup varchar(50),
 		@ReportCode varchar(10),
@@ -45,17 +44,7 @@ BEGIN
 		@NoRecords varchar(20) = 'No Records',
 		@BadValue varchar(20) = 'Bad Value',
 		@OptionNotMapped varchar(25) = 'Option Not Mapped',
-		@CEDSOptionMismatch varchar(25) = 'CEDS Option Mismatch',
-
-		@TryCatchError tinyint = 0,
-		@MigrationType int = (select DataMigrationTypeId from App.DataMigrationTypes where DataMigrationTypeCode = 'StagingValidation')
-
-	-- INSERT INTO APP.DATAMIGRATIONHISTORIES
-	select @LogMessage = 'Executing Staging Validation for ' 
-	select @LogMessage = @LogMessage +  @ReportGroupOrCodeParm + ' - ' + convert(varchar, @SchoolYear)
-	insert into App.DataMigrationHistories select getdate(), @LogMessage, @MigrationType
-
-
+		@CEDSOptionMismatch varchar(25) = 'CEDS Option Mismatch'
 
 
 	-- This may be changed to retain history ------------------------
@@ -74,19 +63,18 @@ BEGIN
 		where ssvr.ReportGroupOrCodes like '%' + @ReportGroupOrCodeParm + '%' 
 		or (ssvr.ReportGroupOrCodes like '%' + (select distinct ReportGroup from App.vwReportCode_StagingTables where ReportCode = @ReportGroupOrCodeParm)  + '%'
 		and v.ReportCode like '%' + @ReportGroupOrCodeParm + '%')
-		or (ssvr.ReportGroupOrCodes in (select distinct ReportCode from App.vwReportCode_StagingTables where ReportGroup = @ReportGroupOrCodeParm)  )
 
-		select @RuleCount = @@ROWCOUNT
+	
 		--select * from #Rules
-		--return
 
 	while exists (select top 1 * from #Rules)
 	begin
 		select @Id = (select top 1 StagingValidationRuleId from #Rules)
+
 		select 
 			@TableName = StagingTableName,
 			@ColumnName = ColumnName,
-			@ValidationType = ValidationType,
+			@ValidationType = case when @ColumnName is null then @NoRecords else ValidationType end,
 			@RefTableName = RefTableName,
 			@TableFilter = TableFilter,
 			@Condition = Condition,
@@ -95,8 +83,9 @@ BEGIN
 			@ReportGroup = ReportGroupOrCodes
 		from #Rules
 		where StagingValidationRuleId = @Id
+
 		-- Build and execute dynamic SQL
-		if @ColumnName is null and @ValidationType <> @BadValue -- TABLE LEVEL VALIDATION
+		if @ColumnName is null -- TABLE LEVEL VALIDATION
 			begin
 				select @SQL = 'if not exists(select top 1 * from staging.' + @TableName + ')' + char(10)
 				select @SQL = @SQL + '	begin' + char(10)
@@ -107,20 +96,18 @@ BEGIN
 				select @SQL = @SQL + @NoRecords + case when @ValidationMessage is not null then  ' - ' else '' end 
 				select @SQL = @SQL + isnull(@ValidationMessage,'') + ''', 0, NULL, ''' 
 				select @SQL = @SQL + convert(varchar, @InsertDate, 121) + '''' + char(10)
-				select @SQL = @SQL + ', ' + convert(varchar, @Id)
 				select @SQL = @SQL + '	end'
 
 				begin try
 					exec (@SQL)
 				end try
 				begin catch
-					select @TryCatchError = @TryCatchError + 1
-					select @LogMessage = '*** STAGING VALIDATION TRY/CATCH ERROR ***' + char(10)
-					select @LogMessage = @LogMessage + ERROR_MESSAGE()	+ char(10)
-					select @LogMessage = @LogMessage + 'StagingValidateRuleId: ' + convert(varchar, @Id) + char(10)
-					select @LogMessage = @LogMessage + 'SQL: ' + char(10) + @SQL
-
-					insert into App.DataMigrationHistories select getdate(), @LogMessage, @MigrationType
+					select @ErrorMessage = ERROR_MESSAGE()	
+					print '** ERROR **'
+					print @ErrorMessage
+					print ''
+					print @SQL
+					return
 				end catch
 			end
 		else -- COLUMN-LEVEL VALIDATION
@@ -137,7 +124,7 @@ BEGIN
 							select @SQL = @SQL + 'if @RecordCount > 0' + char(10)
 							select @SQL = @SQL + '	begin' + char(10)
 							select @SQL = @SQL + '		insert into Staging.StagingValidationResults' + char(10)
-							select @SQL = @SQL + '		select ''' + convert(varchar, @SchoolYear) + ''',''' + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', ''' + isnull(@Severity,'') + ''', ''' + @NullValue + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ''' + isnull(@ShowRecordsSQL,'') + ''', ''' + convert(varchar, @InsertDate, 121) + ''',' + convert(varchar, @Id) + char(10)
+							select @SQL = @SQL + '		select ''' + convert(varchar, @SchoolYear) + ''',''' + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', ''' + isnull(@Severity,'') + ''', ''' + @NullValue + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ''' + isnull(@ShowRecordsSQL,'') + ''', ''' + convert(varchar, @InsertDate, 121) + '''' + char(10)
 							select @SQL = @SQL + '	end' + char(10)
 
 
@@ -145,41 +132,39 @@ BEGIN
 								exec (@SQL)
 							end try
 							begin catch
-								select @TryCatchError = @TryCatchError + 1
-								select @LogMessage = '*** STAGING VALIDATION TRY/CATCH ERROR ***' + char(10)
-								select @LogMessage = @LogMessage + ERROR_MESSAGE()	+ char(10)
-								select @LogMessage = @LogMessage + 'StagingValidateRuleId: ' + convert(varchar, @Id) + char(10)
-								select @LogMessage = @LogMessage + 'SQL: ' + char(10) + @SQL
-
-								insert into App.DataMigrationHistories select getdate(), @LogMessage, @MigrationType
+								select @ErrorMessage = ERROR_MESSAGE()	
+								print '** ERROR **'
+								print @ErrorMessage
+								print ''
+								print @SQL
+								return
 							end catch
-								end
+						end
 
 				-- CONDITIONAL CHECKING FOR A BAD VALUE ---------------------------------------------------------------
-				if @ValidationType = @BadValue 
+				if @ValidationType = @BadValue
 					begin
-
 						select @ShowRecordsSQL = 'select * from Staging.' + @TableName + char(10) + @Condition + char(10)
-							
+
+	
 						select @SQL = 'declare @RecordCount int' + char(10)
 						select @SQL = @SQL + 'select @RecordCount = (select count(*) from Staging.' + @TableName + ' ' + @Condition + ')' + char(10)
 						select @SQL = @SQL + 'if @RecordCount > 0' + char(10)
 						select @SQL = @SQL + '	begin' + char(10)
 						select @SQL = @SQL + '		insert into Staging.StagingValidationResults' + char(10)
-						select @SQL = @SQL + '		select ''' + convert(varchar, @SchoolYear) + ''',''' + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + isnull(@ColumnName,'') + ''', ''' + isnull(@Severity,'') + ''', ''' + @BadValue + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ''' + replace(isnull(@ShowRecordsSQL,''),'''','''''') + ''', ''' + convert(varchar, @InsertDate, 121) + ''',' + convert(varchar, @Id) + char(10)
+						select @SQL = @SQL + '		select ''' + convert(varchar, @SchoolYear) + ''',''' + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', ''' + isnull(@Severity,'') + ''', ''' + @BadValue + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ''' + replace(isnull(@ShowRecordsSQL,''),'''','''''') + ''', ''' + convert(varchar, @InsertDate, 121) + '''' + char(10)
 						select @SQL = @SQL + '	end' + char(10)
 
 						begin try
 							exec (@SQL)
 						end try
 						begin catch
-							select @TryCatchError = @TryCatchError + 1
-							select @LogMessage = '*** STAGING VALIDATION TRY/CATCH ERROR ***' + char(10)
-							select @LogMessage = @LogMessage + ERROR_MESSAGE()	+ char(10)
-							select @LogMessage = @LogMessage + 'StagingValidateRuleId: ' + convert(varchar, @Id) + char(10)
-							select @LogMessage = @LogMessage + 'SQL: ' + char(10) + @SQL
-
-							insert into App.DataMigrationHistories select getdate(), @LogMessage, @MigrationType
+							select @ErrorMessage = ERROR_MESSAGE()	
+							print '** ERROR **'
+							print @ErrorMessage
+							print ''
+							print @SQL
+							return
 						end catch
 					end
 
@@ -221,20 +206,19 @@ BEGIN
 						select @SQL = @SQL + 'if @RecordCount > 0' + char(10)
 						select @SQL = @SQL + '	begin' + char(10)
 						select @SQL = @SQL + '		insert into Staging.StagingValidationResults' + char(10)
-						select @SQL = @SQL + '		select ''' + convert(varchar, @SchoolYear) + ''',''' + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', ''' + isnull(@Severity,'') + ''', ''' + @OptionNotMapped + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ''' + isnull(@ShowRecordsSQL,'') + ''', ''' + convert(varchar, @InsertDate, 121) + ''',' + convert(varchar, @Id) + char(10)
+						select @SQL = @SQL + '		select ''' + convert(varchar, @SchoolYear) + ''',''' + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', ''' + isnull(@Severity,'') + ''', ''' + @OptionNotMapped + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ''' + isnull(@ShowRecordsSQL,'') + ''', ''' + convert(varchar, @InsertDate, 121) + '''' + char(10)
 						select @SQL = @SQL + '	end'
 
 						begin try
 							exec (@SQL)
 						end try
 						begin catch
-							select @TryCatchError = @TryCatchError + 1
-							select @LogMessage = '*** STAGING VALIDATION TRY/CATCH ERROR ***' + char(10)
-							select @LogMessage = @LogMessage + ERROR_MESSAGE()	+ char(10)
-							select @LogMessage = @LogMessage + 'StagingValidateRuleId: ' + convert(varchar, @Id) + char(10)
-							select @LogMessage = @LogMessage + 'SQL: ' + char(10) + @SQL
-
-							insert into App.DataMigrationHistories select getdate(), @LogMessage, @MigrationType
+							select @ErrorMessage = ERROR_MESSAGE()	
+							print '** ERROR **'
+							print @ErrorMessage
+							print ''
+							print @SQL
+							return
 						end catch
 				
 					-- 2. Show which columns have a missing or undefined CEDS value as the Output code in SourceSystemReferenceData
@@ -312,20 +296,18 @@ BEGIN
 						select @SQL = @SQL +		+ '''' + isnull(@ShowRecordsSQL,'') + ''', ' + char(10) -- Need to do something to add extra quotes around RefTableName value 
 
 						select @SQL = @SQL +		'''' + convert(varchar, @InsertDate, 121) + '''' + char(10)
-						select @SQL = @SQL + ', ' + convert(varchar, @Id)
 						select @SQL = @SQL + '	end'
 
 						begin try
 							exec (@SQL)
 						end try
 						begin catch
-							select @TryCatchError = @TryCatchError + 1
-							select @LogMessage = '*** STAGING VALIDATION TRY/CATCH ERROR ***' + char(10)
-							select @LogMessage = @LogMessage + ERROR_MESSAGE()	+ char(10)
-							select @LogMessage = @LogMessage + 'StagingValidateRuleId: ' + convert(varchar, @Id) + char(10)
-							select @LogMessage = @LogMessage + 'SQL: ' + char(10) + @SQL
-
-							insert into App.DataMigrationHistories select getdate(), @LogMessage, @MigrationType
+							select @ErrorMessage = ERROR_MESSAGE()	
+							print '** ERROR **'
+							print @ErrorMessage
+							print ''
+							print @SQL
+							return
 						end catch
 					end
 			end
@@ -333,19 +315,5 @@ BEGIN
 		delete from #Rules 
 		where StagingValidationRuleId = @Id
 	end
-
-	-- INSERT INTO APP.DATAMIGRATIONHISTORIES
-	select @LogMessage = convert(varchar, @RuleCount - @TryCatchError) + ' of ' + convert(varchar, @RuleCount) + ' staging validation rules executed for ' 
-	select @LogMessage = @LogMessage + @ReportGroupOrCodeParm + ' - ' + convert(varchar, @SchoolYear)
-	insert into App.DataMigrationHistories select getdate(), @LogMessage, @MigrationType
-
-
-	if @TryCatchError <> 0
-		begin
-			PRINT 'Staging validation completed, but ' + convert(varchar, @TryCatchError) +
-				case when @TryCatchError = 1 then ' error ' else 'errors ' end +
-			'did not execute due to errors in the rules.'
-			PRINT 'Please query table App.DataMigrationHistories where DataMigrationTypeId=5 for more information'
-		end
 
 END

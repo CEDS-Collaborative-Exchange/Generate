@@ -244,7 +244,7 @@ BEGIN
 			AND ISNULL(ske.Lea_Identifier_State, '') = ISNULL(idea.Lea_Identifier_State, '')
 			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(idea.School_Identifier_State, '')
 			AND rdd.DateValue BETWEEN idea.IDEA_StatusStartDate AND CASE WHEN idea.IDEA_StatusEndDate IS NULL THEN GETDATE() ELSE idea.IDEA_StatusEndDate END
-		LEFT JOIN RDS.vwUnduplicatedRaceMap spr
+		LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  from [Staging-to-FactK12StudentCounts_SpecEdExit]
 			ON ske.SchoolYear = spr.SchoolYear
 			AND ske.Student_Identifier_State = spr.Student_Identifier_State
 			AND (spr.OrganizationType in (SELECT SeaOrganizationType FROM #seaOrganizationTypes)
@@ -284,13 +284,12 @@ BEGIN
 			AND ISNULL(idea.PrimaryDisabilityType, 'MISSING') = ISNULL(rdis.PrimaryDisabilityTypeMap, rdis.PrimaryDisabilityTypeCode)
 			AND rdis.IdeaEducationalEnvironmentCode = 'MISSING'
 			AND ISNULL(sppse.SpecialEducationExitReason, 'MISSING') = ISNULL(rdis.SpecialEducationExitReasonMap, rdis.SpecialEducationExitReasonCode)
-		LEFT JOIN #vwRaces rdr
-			ON ISNULL(rdr.RaceCode, rdr.RaceMap) =
-				CASE
-					when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
-					WHEN spr.RaceCode IS NOT NULL THEN spr.RaceCode
-					ELSE 'Missing'
-				END
+		LEFT JOIN #vwDimRaces rdr
+			ON rsy.SchoolYear = rdr.SchoolYear
+			AND CASE 
+					WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HispanicorLatinoEthnicity'
+					ELSE spr.RaceCode
+				END = rdr.RaceMap
 		JOIN RDS.DimK12Students rdks
 			ON ske.Student_Identifier_State = rdks.StateStudentIdentifier
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdks.FirstName, '')

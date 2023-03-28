@@ -145,7 +145,7 @@ BEGIN
 		LEFT JOIN Staging.OrganizationAddress smap
 			ON ssd.SeaStateIdentifier = smap.OrganizationIdentifier
 			AND smap.AddressTypeForOrganization = (select PhysicalAddressType from #organizationLocationTypes lt WHERE lt.SchoolYear = smap.SchoolYear)
-			AND smap.OrganizationType in (select SeaOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = smap.SchoolYear)
+			AND smap.OrganizationType in (select SeaOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = smam.SchoolYear)
 		LEFT JOIN Staging.OrganizationPhone sop
 			ON ssd.SeaStateIdentifier = sop.OrganizationIdentifier
 			AND sop.PrimaryTelephoneNumberIndicator = 1

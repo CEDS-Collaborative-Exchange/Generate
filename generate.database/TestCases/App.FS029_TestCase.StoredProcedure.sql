@@ -54,7 +54,6 @@ BEGIN TRY
 		SELECT
 		DISTINCT 
 		   sko.LEA_Identifier_State
-		  ,sko.Prior_LEA_Identifier_State
 		  ,sko.LEA_Identifier_NCES
 		  ,sko.LEA_SupervisoryUnionIdentificationNumber
 		  ,sko.LEA_Name
@@ -104,7 +103,6 @@ BEGIN TRY
 
 		select	 distinct
 		   OrganizationStateId
-			, PriorLeaStateIdentifier
 		  ,OrganizationNcesId
 		  ,SupervisoryUnionIdentificationNumber
 		  ,OrganizationName
@@ -517,37 +515,12 @@ BEGIN TRY
 		 left JOIN #leas_reporting r 
 			 ON s.LEA_Identifier_State = r.OrganizationStateId
 
-		INSERT INTO App.SqlUnitTestCASEResult 
-		 (
-			 [SqlUnitTestId]
-			 ,[TestCASEName]
-			 ,[TestCASEDetails]
-			 ,[ExpectedResult]
-			 ,[ActualResult]
-			 ,[Passed]
-			 ,[TestDateTime]
-		 )
-		 SELECT distinct
-			  @SqlUnitTestId
-			 ,'Prior LEA Identifier State Match' 
-			 ,'Prior LEA Identifier State Match ' + s.LEA_Identifier_State
-			 ,s.Prior_LEA_Identifier_State
-			 ,r.PriorLeaStateIdentifier
-			 ,CASE WHEN ISNULL(s.Prior_LEA_Identifier_State, '') = ISNULL(r.PriorLeaStateIdentifier, '') THEN 1 
-				   ELSE 0 END
-			 ,GETDATE()
-		 FROM #leas_staging s
-		 left JOIN #leas_reporting r 
-			 ON s.LEA_Identifier_State = r.OrganizationStateId
-
 
 		SELECT
 		DISTINCT 
 		   sko.LEA_Identifier_State
 		  ,sko.LEA_Identifier_NCES
 		  ,sko.School_Identifier_State
-		  ,sko.Prior_School_Identifier_State
-		  ,sko.School_Prior_LEA_Identifier_State
 		  ,sko.School_Identifier_NCES
 		  ,sko.School_Name
 		  ,sko.School_WebSiteAddress
@@ -563,11 +536,7 @@ BEGIN TRY
 				ELSE NULL
 			end as School_OperationalStatus
 		  ,sko.School_OperationalStatusEffectiveDate
-		  ,CASE 
-				WHEN sko.School_CharterSchoolIndicator is null then 'MISSING'
-				WHEN sko.School_CharterSchoolIndicator = 1 then 'YES' 
-				ELSE 'NO' 
-			END as School_CharterSchoolStatus
+		  ,CASE WHEN isnull(sko.School_CharterSchoolIndicator,0) = 1 then 'YES' ELSE 'NO' END as School_CharterSchoolStatus
 		  ,CASE sssrd3.OutputCode 
 				WHEN 'Regular' THEN 1
 				WHEN 'Special' THEN 2
@@ -613,8 +582,6 @@ BEGIN TRY
 		   ParentOrganizationStateId
 		  ,ParentOrganizationNcesId
 		  ,OrganizationStateId
-		  ,PriorSchoolStateIdentifier
-		  ,PriorLeaStateIdentifier
 		  ,OrganizationNcesId
 		  ,OrganizationName
 		  ,WebSite
@@ -732,6 +699,28 @@ BEGIN TRY
 			 ON s.School_Identifier_State = r.OrganizationStateId
 
 
+		 INSERT INTO App.SqlUnitTestCASEResult 
+		 (
+			 [SqlUnitTestId]
+			 ,[TestCASEName]
+			 ,[TestCASEDetails]
+			 ,[ExpectedResult]
+			 ,[ActualResult]
+			 ,[Passed]
+			 ,[TestDateTime]
+		 )
+		 SELECT distinct
+			  @SqlUnitTestId
+			 ,'School CharterSchoolIndicator Match'
+			 ,'School CharterSchoolIndicator Match ' + s.School_Identifier_State
+			 ,s.School_CharterSchoolStatus
+			 ,r.CharterSchoolStatus
+			 ,CASE WHEN isnull(s.School_CharterSchoolStatus,'') = isnull(r.CharterSchoolStatus,'') THEN 1 
+				   ELSE 0 END
+			 ,GETDATE()
+		 FROM #schools_staging s
+		 left JOIN #schools_reporting r 
+			 ON s.School_Identifier_State = r.OrganizationStateId
 
 		 INSERT INTO App.SqlUnitTestCASEResult 
 		 (
@@ -968,74 +957,7 @@ BEGIN TRY
 		 left JOIN #schools_reporting r 
 			 ON s.School_Identifier_State = r.OrganizationStateId
 
-		INSERT INTO App.SqlUnitTestCASEResult 
-		 (
-			 [SqlUnitTestId]
-			 ,[TestCASEName]
-			 ,[TestCASEDetails]
-			 ,[ExpectedResult]
-			 ,[ActualResult]
-			 ,[Passed]
-			 ,[TestDateTime]
-		 )
-		 SELECT distinct
-			  @SqlUnitTestId
-			 ,'Prior School Identifier State Match'
-			 ,'Prior School Identifier State Match ' + s.School_Identifier_State
-			 ,s.Prior_School_Identifier_State
-			 ,r.PriorSchoolStateIdentifier
-			 ,CASE WHEN ISNULL(s.Prior_School_Identifier_State, '') = ISNULL(r.PriorSchoolStateIdentifier, '') THEN 1 
-				   ELSE 0 END
-			 ,GETDATE()
-		 FROM #schools_staging s
-		 left JOIN #schools_reporting r 
-			 ON s.School_Identifier_State = r.OrganizationStateId
 
-		INSERT INTO App.SqlUnitTestCASEResult 
-		 (
-			 [SqlUnitTestId]
-			 ,[TestCASEName]
-			 ,[TestCASEDetails]
-			 ,[ExpectedResult]
-			 ,[ActualResult]
-			 ,[Passed]
-			 ,[TestDateTime]
-		 )
-		 SELECT distinct
-			  @SqlUnitTestId
-			 ,'Prior School Identifier State Match'
-			 ,'Prior School Identifier State Match ' + s.School_Identifier_State
-			 ,s.Prior_School_Identifier_State
-			 ,r.PriorSchoolStateIdentifier
-			 ,CASE WHEN ISNULL(s.Prior_School_Identifier_State, '') = ISNULL(r.PriorSchoolStateIdentifier, '') THEN 1 
-				   ELSE 0 END
-			 ,GETDATE()
-		 FROM #schools_staging s
-		 left JOIN #schools_reporting r 
-			 ON s.School_Identifier_State = r.OrganizationStateId
-
-		INSERT INTO App.SqlUnitTestCASEResult 
-		 (
-			 [SqlUnitTestId]
-			 ,[TestCASEName]
-			 ,[TestCASEDetails]
-			 ,[ExpectedResult]
-			 ,[ActualResult]
-			 ,[Passed]
-			 ,[TestDateTime]
-		 )
-		 SELECT distinct
-			  @SqlUnitTestId
-			 ,'Prior School LEA Identifier State Match'
-			 ,'Prior School LEA Identifier State Match ' + s.School_Identifier_State
-			 ,s.School_Prior_LEA_Identifier_State
-			 ,r.PriorLEAStateIdentifier
-			 ,CASE WHEN ISNULL(s.School_Prior_LEA_Identifier_State, '') = ISNULL(r.PriorLEAStateIdentifier, '') THEN 1 
-				   ELSE 0 END
-			 ,GETDATE()
-		 FROM #schools_staging s
-		 left JOIN #schools_reporting r 
-			 ON s.School_Identifier_State = r.OrganizationStateId
 
 
 
