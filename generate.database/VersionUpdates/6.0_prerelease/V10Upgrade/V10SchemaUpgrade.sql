@@ -2669,13 +2669,13 @@
 		ON [RDS].[BridgeK12ProgramParticipationRaces];
 
 
-	GO
-	PRINT N'Dropping Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]...';
+	-- GO
+	-- PRINT N'Dropping Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]...';
 
 
-	GO
-	DROP INDEX [IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]
-		ON [RDS].[BridgeK12SchoolGradeLevels];
+	-- GO
+	-- DROP INDEX [IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]
+	-- 	ON [RDS].[BridgeK12SchoolGradeLevels];
 
 
 	GO
@@ -4702,20 +4702,20 @@
 	ALTER TABLE [RDS].[FactOrganizationCountReports] DROP CONSTRAINT [DF__FactOrgan__Title__1022305E];
 
 
-	GO
-	PRINT N'Dropping Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_DimGradeLevels_DimGradeLevelId]...';
+	-- GO
+	-- PRINT N'Dropping Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_DimGradeLevels_DimGradeLevelId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] DROP CONSTRAINT [FK_BridgeK12SchoolGradeLevels_DimGradeLevels_DimGradeLevelId];
+	-- GO
+	-- ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] DROP CONSTRAINT [FK_BridgeK12SchoolGradeLevels_DimGradeLevels_DimGradeLevelId];
 
 
-	GO
-	PRINT N'Dropping Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_DimK12Schools_DimK12SchoolId]...';
+	-- GO
+	-- PRINT N'Dropping Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_DimK12Schools_DimK12SchoolId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] DROP CONSTRAINT [FK_BridgeK12SchoolGradeLevels_DimK12Schools_DimK12SchoolId];
+	-- GO
+	-- ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] DROP CONSTRAINT [FK_BridgeK12SchoolGradeLevels_DimK12Schools_DimK12SchoolId];
 
 
 	GO
@@ -7129,26 +7129,26 @@
 	DROP TABLE [Staging].[K12StaffAssignment];
 
 
-	GO
-	PRINT N'Dropping Table [Staging].[StagingValidationResults]...';
+	-- GO
+	-- PRINT N'Dropping Table [Staging].[StagingValidationResults]...';
 
 
-	--TODO: Review if this should happen
-	GO
-	DROP TABLE [Staging].[StagingValidationResults];
+	-- --TODO: Review if this should happen
+	-- GO
+	-- DROP TABLE [Staging].[StagingValidationResults];
 
 
-	GO
-	PRINT N'Dropping Table [Staging].[StagingValidationRules]...';
+	-- GO
+	-- PRINT N'Dropping Table [Staging].[StagingValidationRules]...';
 
 
-	--TODO: Review if this should happen
-	GO
-	DROP TABLE [Staging].[StagingValidationRules];
+	-- --TODO: Review if this should happen
+	-- GO
+	-- DROP TABLE [Staging].[StagingValidationRules];
 
 
-	GO
-	PRINT N'Dropping Procedure [RDS].[Create_CustomReportData]...';
+	-- GO
+	-- PRINT N'Dropping Procedure [RDS].[Create_CustomReportData]...';
 
 
 	--GO
@@ -7467,52 +7467,52 @@
 	DROP TABLE [Staging].[PersonRace];
 
 
-	GO
-	PRINT N'Starting rebuilding table [RDS].[BridgeK12SchoolGradeLevels]...';
+	-- GO
+	-- PRINT N'Starting rebuilding table [RDS].[BridgeK12SchoolGradeLevels]...';
 
 
-	GO
-	SET XACT_ABORT ON;
+	-- GO
+	-- SET XACT_ABORT ON;
 
-	CREATE TABLE [RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels] (
-		[BridgeK12SchoolGradeLevelId] INT IDENTITY (1, 1) NOT NULL,
-		[K12SchoolId]                 INT CONSTRAINT [DF_BridgeK12SchoolGradeLevels_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-		[GradeLevelId]                INT CONSTRAINT [DF_BridgeK12SchoolGradeLevels_GradeLevelId] DEFAULT ((-1)) NOT NULL,
-		CONSTRAINT [tmp_ms_xx_constraint_PK_BridgeK12SchoolGradeLevels1] PRIMARY KEY CLUSTERED ([BridgeK12SchoolGradeLevelId] ASC)
-	);
+	-- CREATE TABLE [RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels] (
+	-- 	[BridgeK12SchoolGradeLevelId] INT IDENTITY (1, 1) NOT NULL,
+	-- 	[K12SchoolId]                 INT CONSTRAINT [DF_BridgeK12SchoolGradeLevels_K12SchoolId] DEFAULT ((-1)) NOT NULL,
+	-- 	[GradeLevelId]                INT CONSTRAINT [DF_BridgeK12SchoolGradeLevels_GradeLevelId] DEFAULT ((-1)) NOT NULL,
+	-- 	CONSTRAINT [tmp_ms_xx_constraint_PK_BridgeK12SchoolGradeLevels1] PRIMARY KEY CLUSTERED ([BridgeK12SchoolGradeLevelId] ASC)
+	-- );
 
-	IF EXISTS (SELECT TOP 1 1 
-			   FROM   [RDS].[BridgeK12SchoolGradeLevels])
-		BEGIN
-			INSERT INTO [RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels] ([K12SchoolId], [GradeLevelId])
-			SELECT [K12SchoolId],
-				   [GradeLevelId]
-			FROM   [RDS].[BridgeK12SchoolGradeLevels];
-		END
+	-- IF EXISTS (SELECT TOP 1 1 
+	-- 		   FROM   [RDS].[BridgeK12SchoolGradeLevels])
+	-- 	BEGIN
+	-- 		INSERT INTO [RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels] ([K12SchoolId], [GradeLevelId])
+	-- 		SELECT [K12SchoolId],
+	-- 			   [GradeLevelId]
+	-- 		FROM   [RDS].[BridgeK12SchoolGradeLevels];
+	-- 	END
 
-	DROP TABLE [RDS].[BridgeK12SchoolGradeLevels];
+	-- DROP TABLE [RDS].[BridgeK12SchoolGradeLevels];
 
-	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels]', N'BridgeK12SchoolGradeLevels';
+	-- EXECUTE sp_rename N'[RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels]', N'BridgeK12SchoolGradeLevels';
 
-	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_BridgeK12SchoolGradeLevels1]', N'PK_BridgeK12SchoolGradeLevels', N'OBJECT';
-
-
-	GO
-	PRINT N'Creating Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_DimK12Schools]...';
+	-- EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_BridgeK12SchoolGradeLevels1]', N'PK_BridgeK12SchoolGradeLevels', N'OBJECT';
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IXFK_BridgeK12SchoolGradeLevels_DimK12Schools]
-		ON [RDS].[BridgeK12SchoolGradeLevels]([K12SchoolId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+	-- GO
+	-- PRINT N'Creating Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_DimK12Schools]...';
 
 
-	GO
-	PRINT N'Creating Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_GradeLevelId]...';
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IXFK_BridgeK12SchoolGradeLevels_DimK12Schools]
+	-- 	ON [RDS].[BridgeK12SchoolGradeLevels]([K12SchoolId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IXFK_BridgeK12SchoolGradeLevels_GradeLevelId]
-		ON [RDS].[BridgeK12SchoolGradeLevels]([GradeLevelId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+	-- GO
+	-- PRINT N'Creating Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_GradeLevelId]...';
+
+
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IXFK_BridgeK12SchoolGradeLevels_GradeLevelId]
+	-- 	ON [RDS].[BridgeK12SchoolGradeLevels]([GradeLevelId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 	GO
@@ -10620,8 +10620,8 @@
 		[PrimaryDisabilityTypeId]               INT CONSTRAINT [DF_FactK12StudentCounts_PrimaryDisabilityType] DEFAULT ((-1)) NOT NULL,
 		[RaceId]                                INT CONSTRAINT [DF_FactK12StudentCounts_RaceId] DEFAULT ((-1)) NOT NULL,
 		[SpecialEducationServicesExitDateId]    INT CONSTRAINT [DF_FactK12StudentCounts_SpecialEducationServicesExitDateId] DEFAULT ((-1)) NOT NULL,
-		[MigrantStudentQualifyingArrivalDateId] INT NOT NULL,
-		[LastQualifyingMoveDateId]              INT NOT NULL,
+		[MigrantStudentQualifyingArrivalDateId] INT CONSTRAINT [DF_FactK12StudentCounts_MigrantStudentQualifyingArrivalDateId] DEFAULT ((-1)) NOT NULL,
+		[LastQualifyingMoveDateId]              INT CONSTRAINT [DF_FactK12StudentCounts_LastQualifyingMoveDateId] DEFAULT ((-1)) NOT NULL,
 		[TitleIStatusId]                        INT CONSTRAINT [DF_FactK12StudentCounts_TitleIStatusId] DEFAULT ((-1)) NOT NULL,
 		[TitleIIIStatusId]                      INT CONSTRAINT [DF_FactK12StudentCounts_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
 		[StudentCount]                          INT CONSTRAINT [DF_FactK12StudentCounts_StudentCount] DEFAULT ((1)) NOT NULL,
@@ -19165,22 +19165,22 @@
 		ADD CONSTRAINT [DF_BridgePsStudentEnrollmentRaces_RaceId] DEFAULT ((-1)) FOR [RaceId];
 
 
-	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_GradeLevelId]...';
+	-- GO
+	-- PRINT N'Creating Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_GradeLevelId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] WITH NOCHECK
-		ADD CONSTRAINT [FK_BridgeK12SchoolGradeLevels_GradeLevelId] FOREIGN KEY ([GradeLevelId]) REFERENCES [RDS].[DimK12Schools] ([DimK12SchoolId]);
+	-- GO
+	-- ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] WITH NOCHECK
+	-- 	ADD CONSTRAINT [FK_BridgeK12SchoolGradeLevels_GradeLevelId] FOREIGN KEY ([GradeLevelId]) REFERENCES [RDS].[DimK12Schools] ([DimK12SchoolId]);
 
 
-	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_K12SchoolId]...';
+	-- GO
+	-- PRINT N'Creating Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_K12SchoolId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] WITH NOCHECK
-		ADD CONSTRAINT [FK_BridgeK12SchoolGradeLevels_K12SchoolId] FOREIGN KEY ([K12SchoolId]) REFERENCES [RDS].[DimGradeLevels] ([DimGradeLevelId]);
+	-- GO
+	-- ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] WITH NOCHECK
+	-- 	ADD CONSTRAINT [FK_BridgeK12SchoolGradeLevels_K12SchoolId] FOREIGN KEY ([K12SchoolId]) REFERENCES [RDS].[DimGradeLevels] ([DimGradeLevelId]);
 
 
 	GO
@@ -63479,9 +63479,9 @@
 
 
 	GO
-	ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12SchoolGradeLevels_GradeLevelId];
+	-- ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12SchoolGradeLevels_GradeLevelId];
 
-	ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12SchoolGradeLevels_K12SchoolId];
+	-- ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12SchoolGradeLevels_K12SchoolId];
 
 	ALTER TABLE [RDS].[BridgeK12StudentCourseSectionK12Staff] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12StudentCourseSectionK12Staff_FactK12StudentCourseSections];
 

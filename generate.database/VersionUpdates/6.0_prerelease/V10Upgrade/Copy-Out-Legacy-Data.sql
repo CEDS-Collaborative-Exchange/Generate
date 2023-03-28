@@ -25,11 +25,51 @@ GO
 CREATE SCHEMA Upgrade
 GO 
 
+CREATE TABLE Upgrade.DimK12Students (
+	  FirstName NVARCHAR(200)
+	, MiddleName NVARCHAR(200)
+	, LastOrSurname NVARCHAR(200)
+	, BirthDate DATE
+	, K12StudentStudentIdentifierState NVARCHAR(200)
+)
+INSERT INTO Upgrade.DimK12Students
+SELECT
+	  s.FirstName
+	, s.MiddleName
+	, s.LastName
+	, s.BirthDate
+	, s.StateStudentIdentifier
+FROM RDS.DimK12Students s
+
+GO
+
+CREATE TABLE Upgrade.DimK12Staff (
+	  FirstName NVARCHAR(200)
+	, MiddleName NVARCHAR(200)
+	, LastOrSurname NVARCHAR(200)
+	, BirthDate DATE
+	, StaffIdentifierState NVARCHAR(200)
+)
+
+INSERT INTO Upgrade.DimK12Staff
+SELECT
+	  FirstName
+	, MiddleName
+	, LastOrSurname
+	, BirthDate
+	, StaffMemberIdentifierState
+FROM RDS.DimK12Staff s
+
+GO
+
+
 CREATE TABLE Upgrade.FactK12StudentCounts (
 	  StudentCutOverStartDate DATE
 	, StudentCount INT
 	, AgeCode NVARCHAR(200)
 	, SchoolYear SMALLINT
+	, FactTypeId INT
+	, SexCode NVARCHAR(200)
 	, EconomicDisadvantageStatusCode NVARCHAR(200)
 	, EnglishLearnerStatusCode NVARCHAR(200)
 	, HomelessnessStatusCode NVARCHAR(200)
@@ -109,10 +149,12 @@ CREATE TABLE Upgrade.FactK12StudentCounts (
 
 INSERT INTO Upgrade.FactK12StudentCounts
 SELECT 
-	  f.StudentCutOverStartDate
+	  f.StudentCutOverStartDate													
 	, f.StudentCount
 	, rda.AgeCode
 	, rdsy.SchoolYear
+	, f.FactTypeId
+	, rdkstu.SexCode
 	, rdkd.EconomicDisadvantageStatusCode
 	, rdkd.EnglishLearnerStatusCode
 	, rdkd.HomelessnessStatusCode
@@ -188,30 +230,30 @@ SELECT
 	, rdi.RecordEndDateTime	  AS IEU_RecordEndDateTime
 	, rdsesed.DateValue AS SpecialEducationServicesExitDate
 FROM RDS.FactK12StudentCounts f
-JOIN RDS.DimAges rda ON f.AgeId = rda.DimAgeId
-JOIN RDS.DimSchoolYears rdsy ON F.SchoolYearId = rdsy.DimSchoolYearId
-JOIN RDS.DimK12Demographics rdkd ON f.K12DemographicId = rdkd.DimK12DemographicId
-JOIN RDS.DimFactTypes rdft ON f.FactTypeId = rdft.DimFactTypeId
-JOIN RDS.DimGradeLevels rdgl ON f.GradeLevelId = rdgl.DimGradeLevelId
-JOIN RDS.DimIdeaStatuses rdis ON f.IdeaStatusId = rdis.DimIdeaStatusId
-JOIN RDS.DimProgramStatuses rdps ON f.ProgramStatusId = rdps.DimProgramStatusId
-JOIN RDS.DimK12Schools rdksch ON f.K12SchoolId = rdksch.DimK12SchoolId
-JOIN RDS.DimK12Students rdkstu ON f.K12StudentId = rdkstu.DimK12StudentId
-JOIN RDS.DimLanguages rdl ON f.LanguageId = rdl.DimLanguageId
-JOIN RDS.DimMigrants rdm ON f.MigrantId = rdm.DimMigrantId
-JOIN RDS.DimK12StudentStatuses rdkss ON f.K12StudentStatusId = rdkss.DimK12StudentStatusId
-JOIN RDS.DimTitleIStatuses rdtis ON f.TitleIStatusId = rdtis.DimTitleIStatusId
-JOIN RDS.DimTitleIIIStatuses rdtiiis ON f.TitleIIIStatusId = rdtiiis.DimTitleIIIStatusId
-JOIN RDS.DimLeas rdlea ON f.LeaId = rdlea.DimLeaID
-JOIN RDS.DimAttendance rdatt ON f.AttendanceId = rdatt.DimAttendanceId
-JOIN RDS.DimCohortStatuses rdcs ON f.CohortStatusId = rdcs.DimCohortStatusId
-JOIN RDS.DimNOrDProgramStatuses rdnodps ON f.NOrDProgramStatusId = rdnodps.DimNOrDProgramStatusId
-JOIN RDS.DimRaces rdr ON f.RaceId = rdr.DimRaceId
-JOIN RDS.DimCteStatuses rdctes ON f.CteStatusId = rdctes.DimCteStatusId
-JOIN RDS.DimK12EnrollmentStatuses rdkes ON f.K12EnrollmentStatusId = rdkes.DimK12EnrollmentStatusId
-JOIN RDS.DimSeas rds ON f.SeaId = rds.DimSeaId
-JOIN RDS.DimIeus rdi ON f.IeuId = rdi.DimIeuId
-JOIN RDS.DimDates rdsesed ON f.SpecialEducationServicesExitDateId = rdsesed.DimDateId
+LEFT JOIN RDS.DimAges rda ON f.AgeId = rda.DimAgeId
+LEFT JOIN RDS.DimSchoolYears rdsy ON F.SchoolYearId = rdsy.DimSchoolYearId
+LEFT JOIN RDS.DimK12Demographics rdkd ON f.K12DemographicId = rdkd.DimK12DemographicId
+LEFT JOIN RDS.DimFactTypes rdft ON f.FactTypeId = rdft.DimFactTypeId
+LEFT JOIN RDS.DimGradeLevels rdgl ON f.GradeLevelId = rdgl.DimGradeLevelId
+LEFT JOIN RDS.DimIdeaStatuses rdis ON f.IdeaStatusId = rdis.DimIdeaStatusId
+LEFT JOIN RDS.DimProgramStatuses rdps ON f.ProgramStatusId = rdps.DimProgramStatusId
+LEFT JOIN RDS.DimK12Schools rdksch ON f.K12SchoolId = rdksch.DimK12SchoolId
+LEFT JOIN RDS.DimK12Students rdkstu ON f.K12StudentId = rdkstu.DimK12StudentId
+LEFT JOIN RDS.DimLanguages rdl ON f.LanguageId = rdl.DimLanguageId
+LEFT JOIN RDS.DimMigrants rdm ON f.MigrantId = rdm.DimMigrantId
+LEFT JOIN RDS.DimK12StudentStatuses rdkss ON f.K12StudentStatusId = rdkss.DimK12StudentStatusId
+LEFT JOIN RDS.DimTitleIStatuses rdtis ON f.TitleIStatusId = rdtis.DimTitleIStatusId
+LEFT JOIN RDS.DimTitleIIIStatuses rdtiiis ON f.TitleIIIStatusId = rdtiiis.DimTitleIIIStatusId
+LEFT JOIN RDS.DimLeas rdlea ON f.LeaId = rdlea.DimLeaID
+LEFT JOIN RDS.DimAttendance rdatt ON f.AttendanceId = rdatt.DimAttendanceId
+LEFT JOIN RDS.DimCohortStatuses rdcs ON f.CohortStatusId = rdcs.DimCohortStatusId
+LEFT JOIN RDS.DimNOrDProgramStatuses rdnodps ON f.NOrDProgramStatusId = rdnodps.DimNOrDProgramStatusId
+LEFT JOIN RDS.DimRaces rdr ON f.RaceId = rdr.DimRaceId
+LEFT JOIN RDS.DimCteStatuses rdctes ON f.CteStatusId = rdctes.DimCteStatusId
+LEFT JOIN RDS.DimK12EnrollmentStatuses rdkes ON f.K12EnrollmentStatusId = rdkes.DimK12EnrollmentStatusId
+LEFT JOIN RDS.DimSeas rds ON f.SeaId = rds.DimSeaId
+LEFT JOIN RDS.DimIeus rdi ON f.IeuId = rdi.DimIeuId
+LEFT JOIN RDS.DimDates rdsesed ON f.SpecialEducationServicesExitDateId = rdsesed.DimDateId
 
 
 
@@ -297,6 +339,7 @@ CREATE TABLE Upgrade.FactK12StudentDisciplines (
 	, LEA_RecordStartDateTime DATETIME
 	, LEA_RecordEndDateTime	  DATETIME
 
+	, EconomicallyDisadvantagedStatusCode NVARCHAR(200)
 	, EnglishLearnerStatusCode NVARCHAR(200)
 	, IdeaIndicatorCode NVARCHAR(200)
 	, PrimaryDisabilityTypeCode NVARCHAR(200)
@@ -525,7 +568,6 @@ JOIN RDS.DimTitleIIIStatuses rdtiiis ON f.TitleIIIStatusId = rdtiiis.DimTitleIII
 
 CREATE TABLE Upgrade.FactK12StudentAssessments (
 	  AssessmentCount	INT
-    , AssessmentId		INT
 	, SchoolYear SMALLINT
 	, FactType NVARCHAR(200)
 	, GradeLevelCode NVARCHAR(200)
@@ -614,10 +656,15 @@ SELECT
 	  f.AssessmentCount
 	, rdsy.SchoolYear
 	, rdft.FactTypeCode
+	, rdgl.GradeLevelCode
+	, rdr.RaceCode
 
 	, rds.SeaIdentifierState
 	, rds.RecordStartDateTime AS SEA_RecordStartDateTime
 	, rds.RecordEndDateTime   AS SEA_RecordEndDateTime
+	, rdi.IeuIdentifierState
+	, rdi.RecordStartDateTime AS IEU_RecordStartDateTime
+	, rdi.RecordEndDateTime	AS IEU_RecordEndDateTime
 	, rdlea.LeaIdentifierState
 	, rdlea.RecordStartDateTime AS LEA_RecordStartDateTime
 	, rdlea.RecordEndDateTime	AS LEA_RecordEndDateTime
