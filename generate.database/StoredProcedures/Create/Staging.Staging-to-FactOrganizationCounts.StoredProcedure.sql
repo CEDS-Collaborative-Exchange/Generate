@@ -416,7 +416,7 @@ BEGIN
 				AND isnull(s.NslpStatusMap, s.NslpStatusCode) = isnull(sk12o.School_NationalSchoolLunchProgramStatus, 'MISSING')
 				AND isnull(s.SharedTimeIndicatorMap, s.SharedTimeIndicatorCode) = isnull(sk12o.School_SharedTimeIndicator, 'MISSING')
 				AND isnull(s.VirtualSchoolStatusMap, s.VirtualSchoolStatusCode) = isnull(sk12o.School_VirtualSchoolStatus, 'MISSING')
-				--AND s.SchoolImprovementStatusCode = sk12o.ImprovementStatusCode -- JW Can't find this in sk12o
+				AND s.SchoolImprovementStatusCode = 'MISSING' -- sk12o.ImprovementStatusCode -- JW Can't find this in sk12o
 				AND isnull(s.PersistentlyDangerousStatusMap, s.PersistentlyDangerousStatusCode) = isnull(sk12o.School_SchoolDangerousStatus, 'MISSING')
 				AND isnull(s.StatePovertyDesignationMap, s.StatePovertyDesignationCode) = isnull(sk12o.School_StatePovertyDesignation, 'MISSING')
 				AND isnull(s.ProgressAchievingEnglishLanguageMap, s.ProgressAchievingEnglishLanguageCode) = isnull(sk12o.School_ProgressAchievingEnglishLanguageProficiencyIndicatorStatus, 'MISSING')

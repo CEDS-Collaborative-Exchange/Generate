@@ -56,4 +56,4 @@ AS
 		ON rdkss.StatePovertyDesignationCode = sssrd7.OutputCode
 		AND sssrd7.TableName = 'RefStatePovertyDesignation'
 		AND rsy.SchoolYear = sssrd7.SchoolYear
-	where rdkss.SchoolImprovementStatusCode = 'Missing'
+	
