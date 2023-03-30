@@ -345,7 +345,7 @@ BEGIN
 			PRINT 'Staging validation completed, but ' + convert(varchar, @TryCatchError) +
 				case when @TryCatchError = 1 then ' error ' else 'errors ' end +
 			'did not execute due to errors in the rules.'
-			PRINT 'Please query table App.DataMigrationHistories where DataMigrationTypeId=5 for more information'
+			PRINT 'Please query table App.DataMigrationHistories where DataMigrationTypeId= ' + convert(varchar, @MigrationType) + ' for more information'
 		end
 
 END
