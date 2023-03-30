@@ -35,6 +35,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProced
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimSeas.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimSeas.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_YearToYearExitCountReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_YearToYearExitCountReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.CompareSubmissionFiles_C029.StoredProcedure.sql,0

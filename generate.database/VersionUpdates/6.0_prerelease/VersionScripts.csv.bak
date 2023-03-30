@@ -1,7 +1,0 @@
-VersionUpdates\\6.0_prerelease,Restore 5.3.sql,0
-VersionUpdates\\6.0_prerelease\V10Upgrade,CEDS-Elements.sql,0
-VersionUpdates\\6.0_prerelease\V10Upgrade,Junk-Table-Dimension-Population.sql,0
-StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
-StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql,0
-VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0
-

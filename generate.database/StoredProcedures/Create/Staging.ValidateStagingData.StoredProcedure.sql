@@ -316,4 +316,18 @@ BEGIN
 		where StagingValidationRuleId = @Id
 	end
 
+	-- INSERT INTO APP.DATAMIGRATIONHISTORIES
+	select @LogMessage = convert(varchar, @RuleCount - @TryCatchError) + ' of ' + convert(varchar, @RuleCount) + ' staging validation rules executed for ' 
+	select @LogMessage = @LogMessage + @ReportGroupOrCodeParm + ' - ' + convert(varchar, @SchoolYear)
+	insert into App.DataMigrationHistories select getdate(), @LogMessage, @MigrationType
+
+
+	if @TryCatchError <> 0
+		begin
+			PRINT 'Staging validation completed, but ' + convert(varchar, @TryCatchError) +
+				case when @TryCatchError = 1 then ' error ' else 'errors ' end +
+			'did not execute due to errors in the rules.'
+			PRINT 'Please query table App.DataMigrationHistories where DataMigrationTypeId= ' + convert(varchar, @MigrationType) + ' for more information'
+		end
+
 END

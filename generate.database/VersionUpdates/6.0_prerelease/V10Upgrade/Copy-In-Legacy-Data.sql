@@ -1,6 +1,50 @@
 SET NOCOUNT ON;
 GO 
 
+INSERT INTO RDS.DimPeople (
+	  FirstName
+	, MiddleName
+	, LastOrSurname
+	, BirthDate 
+    , IsActiveK12Student
+	, K12StudentStudentIdentifierState 
+   	, RecordStartDateTime 
+	, RecordEndDateTime 
+)
+SELECT 
+	  FirstName
+	, MiddleName
+	, LastOrSurname
+	, BirthDate 
+    , 1
+	, K12StudentStudentIdentifierState 
+   	, RecordStartDateTime 
+	, RecordEndDateTime 
+FROM Upgrade.DimK12Students
+
+
+INSERT INTO RDS.DimPeople (
+	  FirstName
+	, MiddleName
+	, LastOrSurname
+	, BirthDate 
+    , IsActiveK12Staff
+	, K12StaffStaffMemberIdentifierState 
+   	, RecordStartDateTime 
+	, RecordEndDateTime 
+)
+SELECT 
+	  FirstName
+	, MiddleName
+	, LastOrSurname
+	, BirthDate 
+    , 1
+	, K12StaffStaffMemberIdentifierState 
+   	, RecordStartDateTime 
+	, RecordEndDateTime 
+FROM Upgrade.DimK12Staff
+
+
 INSERT INTO RDS.FactK12StudentCounts
     (
 	  SchoolYearId

@@ -3726,3 +3726,302 @@
 	DROP TABLE #ProficiencyStatus
 	DROP TABLE #TitleIIIAccountabilityProgressStatus
 	DROP TABLE #TitleIIILanguageInstructionProgramType
+
+	-----------------------------------------------------
+	-- Populate DimAttendances                     --
+	-----------------------------------------------------
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimAttendances d WHERE d.DimAttendanceId = -1) BEGIN
+		SET IDENTITY_INSERT RDS.DimAttendances ON
+
+		INSERT INTO [RDS].[DimAttendances]
+           ([DimAttendanceId]
+           ,[AbsenteeismCode]
+           ,[AbsenteeismDescription]
+		   ,[AbsenteeismEdFactsCode]
+		   )
+			VALUES (
+				  -1
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				)
+
+		SET IDENTITY_INSERT RDS.DimAttendances OFF
+
+	END
+
+
+		CREATE TABLE #AbsenteeismCode (AbsenteeismCode VARCHAR(50), AbsenteeismDescription VARCHAR(200), AbsenteeismEdFactsCode VARCHAR(50))
+
+		INSERT INTO #AbsenteeismCode VALUES ('MISSING', 'MISSING', 'MISSING')
+		INSERT INTO #AbsenteeismCode 
+		SELECT 
+			  CedsOptionSetCode
+			, CedsOptionSetDescription
+			, EdFactsOptionSetCode
+		FROM CEDS.CedsOptionSetMapping
+		WHERE CedsElementTechnicalName = 'AbsenteeismCode'
+
+
+		INSERT INTO [RDS].[DimAttendances]
+           ([AbsenteeismCode]
+           ,[AbsenteeismDescription]
+		   ,[AbsenteeismEdFactsCode]
+		   )
+		SELECT DISTINCT
+			  h.AbsenteeismCode
+			, h.AbsenteeismDescription
+			, h.AbsenteeismEdFactsCode
+		FROM #AbsenteeismCode h
+		LEFT JOIN rds.DimAttendances main
+			ON  h.AbsenteeismCode = main.AbsenteeismCode
+		WHERE main.DimAttendanceId IS NULL
+
+	DROP TABLE #AbsenteeismCode
+
+	------------------------------------------------
+	-- Populate DimCteStatuses			 ---
+	------------------------------------------------
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimCteStatuses 
+			WHERE CteAeDisplacedHomemakerIndicatorCode = 'MISSING'
+			AND CteNontraditionalGenderStatusCode = 'MISSING'
+			AND CteNontraditionalCompletionCode = 'MISSING'
+			AND SingleParentOrSinglePregnantWomanStatusCode = 'MISSING'
+			AND CteGraduationRateInclusionCode = 'MISSING'
+			AND PerkinsLEPStatusCode = 'MISSING'
+			AND CteParticipantCode = 'MISSING'
+			AND CteConcentratorCode = 'MISSING') BEGIN
+		SET IDENTITY_INSERT RDS.DimCteStatuses ON
+
+		INSERT INTO RDS.DimCteStatuses (
+			  DimCteStatusId
+			, CteAeDisplacedHomemakerIndicatorCode
+			, CteAeDisplacedHomemakerIndicatorDescription
+			, CteAeDisplacedHomemakerIndicatorEdFactsCode
+			, CteNontraditionalGenderStatusCode
+			, CteNontraditionalGenderStatusDescription
+			, CteNontraditionalGenderStatusEdFactsCode
+			, CteNontraditionalCompletionCode
+			, CteNontraditionalCompletionDescription
+			, CteNontraditionalCompletionEdFactsCode
+			, SingleParentOrSinglePregnantWomanStatusCode
+			, SingleParentOrSinglePregnantWomanStatusDescription
+			, SingleParentOrSinglePregnantWomanStatusEdFactsCode
+			, CteGraduationRateInclusionCode
+			, CteGraduationRateInclusionDescription
+			, CteGraduationRateInclusionEdFactsCode
+			, PerkinsLEPStatusCode
+			, PerkinsLEPStatusEdFactsCode
+			, PerkinsLEPStatusDescription
+			, CteParticipantCode
+			, CteParticipantDescription
+			, CteParticipantEdFactsCode
+			, CteConcentratorCode
+			, CteConcentratorDescription
+			, CteConcentratorEdFactsCode)
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+
+		SET IDENTITY_INSERT RDS.DimCteStatuses OFF
+	END
+
+	IF OBJECT_ID('tempdb..#CteAeDisplacedHomemakerIndicator') IS NOT NULL BEGIN
+		DROP TABLE #CteAeDisplacedHomemakerIndicator
+	END
+
+	CREATE TABLE #CteAeDisplacedHomemakerIndicator (CteAeDisplacedHomemakerIndicatorCode VARCHAR(50), CteAeDisplacedHomemakerIndicatorDescription VARCHAR(200), CteAeDisplacedHomemakerIndicatorEdFactsCode VARCHAR(50))
+
+	INSERT INTO #CteAeDisplacedHomemakerIndicator VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #CteAeDisplacedHomemakerIndicator 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'CteAeDisplacedHomemakerIndicator'
+
+	IF OBJECT_ID('tempdb..#CteNontraditionalGenderStatus') IS NOT NULL BEGIN
+		DROP TABLE #CteNontraditionalGenderStatus
+	END
+
+	CREATE TABLE #CteNontraditionalGenderStatus (CteNontraditionalGenderStatusCode VARCHAR(50), CteNontraditionalGenderStatusDescription VARCHAR(200), CteNontraditionalGenderStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #CteNontraditionalGenderStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #CteNontraditionalGenderStatus
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'CteNontraditionalGenderStatus'
+
+	IF OBJECT_ID('tempdb..#CteNontraditionalCompletion') IS NOT NULL BEGIN
+		DROP TABLE #CteNontraditionalCompletion
+	END
+
+	CREATE TABLE #CteNontraditionalCompletion (CteNontraditionalCompletionCode VARCHAR(50), CteNontraditionalCompletionDescription VARCHAR(200), CteNontraditionalCompletionEdFactsCode VARCHAR(50))
+
+	INSERT INTO #CteNontraditionalCompletion VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #CteNontraditionalCompletion
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'CteNontraditionalCompletion'
+
+	IF OBJECT_ID('tempdb..#SingleParentOrSinglePregnantWomanStatus') IS NOT NULL BEGIN
+		DROP TABLE #SingleParentOrSinglePregnantWomanStatus
+	END
+
+	CREATE TABLE #SingleParentOrSinglePregnantWomanStatus (SingleParentOrSinglePregnantWomanStatusCode VARCHAR(50), SingleParentOrSinglePregnantWomanStatusDescription VARCHAR(200), SingleParentOrSinglePregnantWomanStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #SingleParentOrSinglePregnantWomanStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #SingleParentOrSinglePregnantWomanStatus
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'SingleParentOrSinglePregnantWomanStatus'
+
+	IF OBJECT_ID('tempdb..#CteGraduationRateInclusion') IS NOT NULL BEGIN
+		DROP TABLE #CteGraduationRateInclusion
+	END
+
+	CREATE TABLE #CteGraduationRateInclusion (CteGraduationRateInclusionCode VARCHAR(50), CteGraduationRateInclusionDescription VARCHAR(200), CteGraduationRateInclusionEdFactsCode VARCHAR(50))
+
+	INSERT INTO #CteGraduationRateInclusion VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #CteGraduationRateInclusion
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'CteGraduationRateInclusion'
+
+	IF OBJECT_ID('tempdb..#PerkinsLEPStatus') IS NOT NULL BEGIN
+		DROP TABLE #PerkinsLEPStatus
+	END
+
+	CREATE TABLE #PerkinsLEPStatus (PerkinsLEPStatusCode VARCHAR(50), PerkinsLEPStatusDescription VARCHAR(200), PerkinsLEPStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #PerkinsLEPStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #PerkinsLEPStatus
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'PerkinsLEPStatus'
+
+	IF OBJECT_ID('tempdb..#CteParticipant') IS NOT NULL BEGIN
+		DROP TABLE #CteParticipant
+	END
+
+	CREATE TABLE #CteParticipant (CteParticipantCode VARCHAR(50), CteParticipantDescription VARCHAR(200), CteParticipantEdFactsCode VARCHAR(50))
+
+	INSERT INTO #CteParticipant VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #CteParticipant
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'CteParticipant'
+
+	IF OBJECT_ID('tempdb..#CteConcentrator') IS NOT NULL BEGIN
+		DROP TABLE #CteConcentrator
+	END
+
+	CREATE TABLE #CteConcentrator (CteConcentratorCode VARCHAR(50), CteConcentratorDescription VARCHAR(200), CteConcentratorEdFactsCode VARCHAR(50))
+
+	INSERT INTO #CteConcentrator VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #CteConcentrator
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'CteConcentrator'
+
+	   
+	INSERT INTO RDS.DimCteStatuses
+		(
+			  CteAeDisplacedHomemakerIndicatorCode
+			, CteAeDisplacedHomemakerIndicatorDescription
+			, CteAeDisplacedHomemakerIndicatorEdFactsCode
+			, CteNontraditionalGenderStatusCode
+			, CteNontraditionalGenderStatusDescription
+			, CteNontraditionalGenderStatusEdFactsCode
+			, CteNontraditionalCompletionCode
+			, CteNontraditionalCompletionDescription
+			, CteNontraditionalCompletionEdFactsCode
+			, SingleParentOrSinglePregnantWomanStatusCode
+			, SingleParentOrSinglePregnantWomanStatusDescription
+			, SingleParentOrSinglePregnantWomanStatusEdFactsCode
+			, CteGraduationRateInclusionCode
+			, CteGraduationRateInclusionDescription
+			, CteGraduationRateInclusionEdFactsCode
+			, PerkinsLEPStatusCode
+			, PerkinsLEPStatusEdFactsCode
+			, PerkinsLEPStatusDescription
+			, CteParticipantCode
+			, CteParticipantDescription
+			, CteParticipantEdFactsCode
+			, CteConcentratorCode
+			, CteConcentratorDescription
+			, CteConcentratorEdFactsCode
+		)
+	SELECT 
+			  cadhi.CteAeDisplacedHomemakerIndicatorCode
+			, cadhi.CteAeDisplacedHomemakerIndicatorDescription
+			, cadhi.CteAeDisplacedHomemakerIndicatorEdFactsCode
+			, cngs.CteNontraditionalGenderStatusCode
+			, cngs.CteNontraditionalGenderStatusDescription
+			, cngs.CteNontraditionalGenderStatusEdFactsCode
+			, cnc.CteNontraditionalCompletionCode
+			, cnc.CteNontraditionalCompletionDescription
+			, cnc.CteNontraditionalCompletionEdFactsCode
+			, spospws.SingleParentOrSinglePregnantWomanStatusCode
+			, spospws.SingleParentOrSinglePregnantWomanStatusDescription
+			, spospws.SingleParentOrSinglePregnantWomanStatusEdFactsCode
+			, cgri.CteGraduationRateInclusionCode
+			, cgri.CteGraduationRateInclusionDescription
+			, cgri.CteGraduationRateInclusionEdFactsCode
+			, pls.PerkinsLEPStatusCode
+			, pls.PerkinsLEPStatusEdFactsCode
+			, pls.PerkinsLEPStatusDescription
+			, cp.CteParticipantCode
+			, cp.CteParticipantDescription
+			, cp.CteParticipantEdFactsCode
+			, cc.CteConcentratorCode
+			, cc.CteConcentratorDescription
+			, cc.CteConcentratorEdFactsCode	
+	FROM #CteAeDisplacedHomemakerIndicator cadhi
+	CROSS JOIN #CteNontraditionalGenderStatus cngs
+	CROSS JOIN #CteNontraditionalCompletion cnc
+	CROSS JOIN #SingleParentOrSinglePregnantWomanStatus spospws
+	CROSS JOIN #CteGraduationRateInclusion cgri
+	CROSS JOIN #PerkinsLEPStatus pls
+	CROSS JOIN #CteParticipant cp
+	CROSS JOIN #CteConcentrator cc
+	LEFT JOIN rds.DimCteStatuses main
+		ON cadhi.CteAeDisplacedHomemakerIndicatorCode = main.CteAeDisplacedHomemakerIndicatorCode
+		AND cngs.CteNontraditionalGenderStatusCode = main.CteNontraditionalGenderStatusCode
+		AND cnc.CteNontraditionalCompletionCode = main.CteNontraditionalCompletionCode
+		AND spospws.SingleParentOrSinglePregnantWomanStatusCode = main.SingleParentOrSinglePregnantWomanStatusCode
+		AND cgri.CteGraduationRateInclusionCode = main.CteGraduationRateInclusionCode
+		AND pls.PerkinsLEPStatusCode = main.PerkinsLEPStatusCode
+		AND cp.CteParticipantCode = main.CteParticipantCode
+		AND cc.CteConcentratorCode = main.CteConcentratorCode
+	WHERE main.DimCteStatusId IS NULL
+
+	DROP TABLE #CteAeDisplacedHomemakerIndicator
+	DROP TABLE #CteNontraditionalGenderStatus
+	DROP TABLE #CteNontraditionalCompletion
+	DROP TABLE #SingleParentOrSinglePregnantWomanStatus
+	DROP TABLE #CteGraduationRateInclusion
+	DROP TABLE #PerkinsLEPStatus
+	DROP TABLE #CteParticipant
+	DROP TABLE #CteConcentrator

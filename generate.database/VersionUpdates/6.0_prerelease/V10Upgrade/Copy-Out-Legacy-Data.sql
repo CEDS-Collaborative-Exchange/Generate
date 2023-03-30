@@ -31,6 +31,8 @@ CREATE TABLE Upgrade.DimK12Students (
 	, LastOrSurname NVARCHAR(200)
 	, BirthDate DATE
 	, K12StudentStudentIdentifierState NVARCHAR(200)
+	, RecordStartDateTime DATE
+	, RecordEndDateTime DATE NULL
 )
 INSERT INTO Upgrade.DimK12Students
 SELECT
@@ -39,6 +41,8 @@ SELECT
 	, s.LastName
 	, s.BirthDate
 	, s.StateStudentIdentifier
+	, RecordStartDateTime 
+	, RecordEndDateTime 
 FROM RDS.DimK12Students s
 
 GO
@@ -48,16 +52,20 @@ CREATE TABLE Upgrade.DimK12Staff (
 	, MiddleName NVARCHAR(200)
 	, LastOrSurname NVARCHAR(200)
 	, BirthDate DATE
-	, StaffIdentifierState NVARCHAR(200)
+	, K12StaffStaffMemberIdentifierState NVARCHAR(200)
+	, RecordStartDateTime DATE
+	, RecordEndDateTime DATE NULL
 )
 
 INSERT INTO Upgrade.DimK12Staff
-SELECT
+SELECT 
 	  FirstName
 	, MiddleName
 	, LastOrSurname
 	, BirthDate
 	, StaffMemberIdentifierState
+	, RecordStartDateTime 
+	, RecordEndDateTime 
 FROM RDS.DimK12Staff s
 
 GO
