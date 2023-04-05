@@ -34,7 +34,7 @@ BEGIN
 		AND TableFilter = '001156' 
 		AND OutputCode = 'SEA'
 
-		INSERT INTO #organizationLocationTypes
+	INSERT INTO #organizationLocationTypes
 	SELECT 
 		  mail.SchoolYear
 		, mail.InputCode
@@ -112,6 +112,68 @@ BEGIN
 				WHEN 'AE' THEN 'Armed Forces Africa, Canada, Europe, and Mideast'
 				WHEN 'AP' THEN 'Armed Forces Pacific'
 			  END AS StateDescription
+			, CASE ssd.StateCode
+				WHEN 'AK' THEN '02'
+				WHEN 'AL' THEN '01'
+				WHEN 'AR' THEN '05'
+				WHEN 'AS' THEN '60'
+				WHEN 'AZ' THEN '04'
+				WHEN 'CA' THEN '06'
+				WHEN 'CO' THEN '08'
+				WHEN 'CT' THEN '09'
+				WHEN 'DC' THEN '11'
+				WHEN 'DE' THEN '10'
+				WHEN 'FL' THEN '12'
+				WHEN 'FM' THEN '64'
+				WHEN 'GA' THEN '13'
+				WHEN 'GU' THEN '66'
+				WHEN 'HI' THEN '15'
+				WHEN 'IA' THEN '19'
+				WHEN 'ID' THEN '16'
+				WHEN 'IL' THEN '17'
+				WHEN 'IN' THEN '18'
+				WHEN 'KS' THEN '20'
+				WHEN 'KY' THEN '21'
+				WHEN 'LA' THEN '22'
+				WHEN 'MA' THEN '25'
+				WHEN 'MD' THEN '24'
+				WHEN 'ME' THEN '23'
+				WHEN 'MH' THEN '68'
+				WHEN 'MI' THEN '26'
+				WHEN 'MN' THEN '27'
+				WHEN 'MO' THEN '29'
+				WHEN 'MP' THEN '69'
+				WHEN 'MS' THEN '28'
+				WHEN 'MT' THEN '30'
+				WHEN 'NC' THEN '37'
+				WHEN 'ND' THEN '38'
+				WHEN 'NE' THEN '31'
+				WHEN 'NH' THEN '33'
+				WHEN 'NJ' THEN '34'
+				WHEN 'NM' THEN '35'
+				WHEN 'NV' THEN '32'
+				WHEN 'NY' THEN '36'
+				WHEN 'OH' THEN '39'
+				WHEN 'OK' THEN '40'
+				WHEN 'OR' THEN '41'
+				WHEN 'PA' THEN '42'
+				WHEN 'PR' THEN '72'
+				WHEN 'PW' THEN '70'
+				WHEN 'RI' THEN '44'
+				WHEN 'SC' THEN '45'
+				WHEN 'SD' THEN '46'
+				WHEN 'TN' THEN '47'
+				WHEN 'TX' THEN '48'
+				WHEN 'UT' THEN '49'
+				WHEN 'VA' THEN '51'
+				WHEN 'VI' THEN '78'
+				WHEN 'VT' THEN '50'
+				WHEN 'WA' THEN '53'
+				WHEN 'WI' THEN '55'
+				WHEN 'WV' THEN '54'
+				WHEN 'WY' THEN '56'
+				ELSE NULL
+			  END AS StateANSICode
 			, ssd.SeaName
 			, ssd.SeaShortName
 			, ssd.SeaStateIdentifier
@@ -159,9 +221,9 @@ BEGIN
 		AND ISNULL(trgt.RecordStartDateTime, '') = ISNULL(src.RecordStartDateTime, '')
 	WHEN MATCHED THEN 
 		UPDATE SET 
-			  [SeaName]						 = src.[SeaName]							
-			, [SeaIdentifierState]			 = src.[SeaStateIdentifier]
-			, [StateAnsiCode]				 = src.[SeaStateIdentifier]
+			[SeaName]						 = src.[SeaName]							
+			, [SeaIdentifierState]			 = '01'  --This is the expected value for EDFacts reporting
+			, [StateAnsiCode]				 = src.[StateANSICode]
 			, [StateAbbreviationCode]		 = src.[StateCode]
 			, [StateAbbreviationDescription] = src.[StateDescription]
 			, [MailingAddressCity]			 = src.[MailingAddressCity]
@@ -182,7 +244,7 @@ BEGIN
 			, [PhysicalCountyAnsiCode]		 = src.[PhysicalCountyAnsiCode]
 	WHEN NOT MATCHED BY TARGET THEN     --- Records Exists IN Source but NOT IN Target
 	INSERT (
-		  [SeaName]						
+		[SeaName]						
 		, [SeaIdentifierState]			
 		, [StateAnsiCode]				
 		, [StateAbbreviationCode]		
@@ -203,11 +265,11 @@ BEGIN
 		, [PhysicalAddressStreet2]		
 		, [MailingCountyAnsiCode]		
 		, [PhysicalCountyAnsiCode]		
-		) 	
+	) 	
 	VALUES (
-		  src.[SeaName]						
-		, src.[SeaStateIdentifier]
-		, src.[SeaStateIdentifier]
+		src.[SeaName]						
+		, '01'	--This is the expected value for EDFacts reporting
+		, src.[StateANSICode]
 		, src.[StateCode]
 		, src.[StateDescription]
 		, src.[MailingAddressCity]
@@ -226,7 +288,7 @@ BEGIN
 		, src.[PhysicalAddressStreet2]
 		, src.[MailingCountyAnsiCode]
 		, src.[PhysicalCountyAnsiCode]
-		);
+	);
 
 	--update the RecordEndDate of the previous record (if one exists)
 	;WITH upd AS(
