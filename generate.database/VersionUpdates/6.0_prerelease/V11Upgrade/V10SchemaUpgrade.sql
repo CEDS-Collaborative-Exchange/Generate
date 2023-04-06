@@ -7531,7 +7531,7 @@
 
 	CREATE TABLE [RDS].[tmp_ms_xx_BridgeK12StudentCourseSectionK12Staff] (
 		[BridgeK12StudentCourseSectionK12StaffId] INT    IDENTITY (1, 1) NOT NULL,
-		[K12StaffId]                              INT    CONSTRAINT [DF_CONSTRAINT [DF_BridgeK12StudentCourseSectionK12Staff_K12StaffId] DEFAULT ((-1)) NOT NULL,
+		[K12StaffId]                              BIGINT    CONSTRAINT [DF_CONSTRAINT [DF_BridgeK12StudentCourseSectionK12Staff_K12StaffId] DEFAULT ((-1)) NOT NULL,
 		[FactK12StudentCourseSectionId]           BIGINT CONSTRAINT [DF_CONSTRAINT [DF_BridgeK12StudentCourseSectionK12Staff_FactK12StudentCourseSectionId] DEFAULT ((-1)) NOT NULL,
 		[TeacherOfRecord]                         BIT    NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_BridgeK12StudentCourseSectionK12Staff1] PRIMARY KEY CLUSTERED ([BridgeK12StudentCourseSectionK12StaffId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
@@ -9291,7 +9291,7 @@
 
 	-- TODO: Need to repopulate this DIM
 	GO
-	ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeId], COLUMN [MobilityStatus12moCode], COLUMN [MobilityStatus12moDescription], COLUMN [MobilityStatus12moEdFactsCode], COLUMN [MobilityStatus12moId], COLUMN [MobilityStatus36moCode], COLUMN [MobilityStatus36moDescription], COLUMN [MobilityStatus36moEdFactsCode], COLUMN [MobilityStatus36moId], COLUMN [MobilityStatusSYCode], COLUMN [MobilityStatusSYDescription], COLUMN [MobilityStatusSYEdFactsCode], COLUMN [MobilityStatusSYId], COLUMN [NSLPDirectCertificationIndicatorCode], COLUMN [NSLPDirectCertificationIndicatorDescription], COLUMN [NSLPDirectCertificationIndicatorEdFactsCode], COLUMN [NSLPDirectCertificationIndicatorId], COLUMN [PlacementStatusCode], COLUMN [PlacementStatusDescription], COLUMN [PlacementStatusEdFactsCode], COLUMN [PlacementStatusId], COLUMN [PlacementTypeCode], COLUMN [PlacementTypeDescription], COLUMN [PlacementTypeEdFactsCode], COLUMN [PlacementTypeId], COLUMN [ReferralStatusCode], COLUMN [ReferralStatusDescription], COLUMN [ReferralStatusEdFactsCode], COLUMN [ReferralStatusId];
+	ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeId], COLUMN [NSLPDirectCertificationIndicatorCode], COLUMN [NSLPDirectCertificationIndicatorDescription];
 
 
 	GO
@@ -9949,7 +9949,7 @@
 		[LeaGraduationId]                     INT    CONSTRAINT [DF_FactK12ProgramParticipations_LeaGraduationId] DEFAULT ((-1)) NOT NULL,
 		[LeaIndividualizedEducationProgramId] INT    CONSTRAINT [DF_FactK12ProgramParticipations_LeaIndividualizedEducationProgramId] DEFAULT ((-1)) NOT NULL,
 		[K12SchoolId]                         INT    CONSTRAINT [DF_FactK12ProgramParticipations_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-		[K12StudentId]                        INT    CONSTRAINT [DF_FactK12ProgramParticipations_K12StudentId] DEFAULT ((-1)) NOT NULL,
+		[K12StudentId]                        BIGINT    CONSTRAINT [DF_FactK12ProgramParticipations_K12StudentId] DEFAULT ((-1)) NOT NULL,
 		[IdeaStatusId]                        INT    CONSTRAINT [DF_FactK12ProgramParticipations_IdeaStatusId] DEFAULT ((-1)) NOT NULL,
 		[K12DemographicId]                    INT    CONSTRAINT [DF_FactK12ProgramParticipations_K12DemographicId] DEFAULT ((-1)) NOT NULL,
 		[K12ProgramTypeId]                    INT    CONSTRAINT [DF_FactK12ProgramParticipations_K12ProgramTypeId] DEFAULT ((-1)) NOT NULL,
@@ -10152,7 +10152,7 @@
 		[SeaId]                    INT             CONSTRAINT [DF_FactK12StaffCounts_SeaId] DEFAULT ((-1)) NOT NULL,
 		[LeaId]                    INT             CONSTRAINT [DF_FactK12StaffCounts_LeaId] DEFAULT ((-1)) NOT NULL,
 		[K12SchoolId]              INT             CONSTRAINT [DF_FactK12StaffCounts_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-		[K12StaffId]               INT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
+		[K12StaffId]               BIGINT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
 		[K12StaffStatusId]         INT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffStatusId] DEFAULT ((-1)) NOT NULL,
 		[K12StaffCategoryId]       INT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffCategoryId] DEFAULT ((-1)) NOT NULL,
 		[TitleIIIStatusId]         INT             CONSTRAINT [DF_FactK12StaffCounts_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
@@ -10302,7 +10302,7 @@
 		[IeuId]                                   INT           CONSTRAINT [DF_FactK12StudentAssessments_IeuId] DEFAULT ((-1)) NOT NULL,
 		[LeaId]                                   INT           CONSTRAINT [DF_FactK12StudentAssessments_LeaId] DEFAULT ((-1)) NOT NULL,
 		[K12SchoolId]                             INT           CONSTRAINT [DF_FactK12StudentAssessments_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-		[K12StudentId]                            INT           CONSTRAINT [DF_FactK12StudentAssessments_K12StudentId] DEFAULT ((-1)) NOT NULL,
+		[K12StudentId]                            BIGINT           CONSTRAINT [DF_FactK12StudentAssessments_K12StudentId] DEFAULT ((-1)) NOT NULL,
 		[AssessmentId]                            INT           CONSTRAINT [DF_FactK12StudentAssessments_AssessmentId] DEFAULT ((-1)) NOT NULL,
 		[AssessmentSubtestId]                     INT           CONSTRAINT [DF_FactK12StudentAssessments_AssessmentSubtestId] DEFAULT ((-1)) NOT NULL,
 		[AssessmentAdministrationId]              INT           CONSTRAINT [DF_FactK12StudentAssessments_AssessmentAdministrationId] DEFAULT ((-1)) NOT NULL,
@@ -10599,7 +10599,7 @@
 		[IeuId]                                 INT CONSTRAINT [DF_FactK12StudentCounts_IeuId] DEFAULT ((-1)) NOT NULL,
 		[LeaId]                                 INT CONSTRAINT [DF_FactK12StudentCounts_LeaId] DEFAULT ((-1)) NOT NULL,
 		[K12SchoolId]                           INT CONSTRAINT [DF_FactK12StudentCounts_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-		[K12StudentId]                          INT CONSTRAINT [DF_FactK12StudentCounts_K12StudentId] DEFAULT ((-1)) NOT NULL,
+		[K12StudentId]                          BIGINT CONSTRAINT [DF_FactK12StudentCounts_K12StudentId] DEFAULT ((-1)) NOT NULL,
 		[AgeId]                                 INT CONSTRAINT [DF_FactK12StudentCounts_AgeId] DEFAULT ((-1)) NOT NULL,
 		[AttendanceId]                          INT CONSTRAINT [DF_FactK12StudentCounts_AttendanceId] DEFAULT ((-1)) NOT NULL,
 		[CohortStatusId]                        INT CONSTRAINT [DF_FactK12StudentCounts_CohortStatusId] DEFAULT ((-1)) NOT NULL,
@@ -10967,7 +10967,7 @@
 		[LeaGraduationId]                     INT    CONSTRAINT [DF_FactK12StudentCourseSections_LeaGraduationId] DEFAULT ((-1)) NOT NULL,
 		[LeaIndividualizedEducationProgramId] INT    CONSTRAINT [DF_FactK12StudentCourseSections_LeaIndividualizedEducationProgramId] DEFAULT ((-1)) NOT NULL,
 		[K12SchoolId]                         INT    CONSTRAINT [DF_FactK12StudentCourseSections_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-		[K12StudentId]                        INT    CONSTRAINT [DF_FactK12StudentCourseSections_K12StudentId] DEFAULT ((-1)) NOT NULL,
+		[K12StudentId]                        BIGINT    CONSTRAINT [DF_FactK12StudentCourseSections_K12StudentId] DEFAULT ((-1)) NOT NULL,
 		[K12DemographicId]                    INT    CONSTRAINT [DF_FactK12StudentCourseSections_K12DemographicId] DEFAULT ((-1)) NOT NULL,
 		[K12CourseId]                         INT    CONSTRAINT [DF_FactK12StudentCourseSections_K12CourseId] DEFAULT ((-1)) NOT NULL,
 		[K12CourseStatusId]                   INT    CONSTRAINT [DF_FactK12StudentCourseSections_K12CourseStatusId] DEFAULT ((-1)) NOT NULL,
@@ -11164,11 +11164,12 @@
 		[FactK12StudentDisciplineId]        INT             IDENTITY (1, 1) NOT NULL,
 		[SchoolYearId]                      INT             CONSTRAINT [DF_FactK12StudentDisciplines_SchoolYearId] DEFAULT ((-1)) NOT NULL,
 		[FactTypeId]                        INT             CONSTRAINT [DF_FactK12StudentDisciplines_FactTypeId] DEFAULT ((-1)) NOT NULL,
+		[DataCollectionId]                  INT             CONSTRAINT [DF_FactK12StudentDisciplines_DataCollectionId] DEFAULT ((-1)) NOT NULL,
 		[SeaId]                             INT             CONSTRAINT [DF_FactK12StudentDisciplines_SeaId] DEFAULT ((-1)) NOT NULL,
 		[IeuId]                             INT             CONSTRAINT [DF_FactK12StudentDisciplines_IeuId] DEFAULT ((-1)) NOT NULL,
 		[LeaId]                             INT             CONSTRAINT [DF_FactK12StudentDisciplines_LeaId] DEFAULT ((-1)) NOT NULL,
 		[K12SchoolId]                       INT             CONSTRAINT [DF_FactK12StudentDisciplines_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-		[K12StudentId]                      INT             CONSTRAINT [DF_FactK12StudentDisciplines_K12StudentId] DEFAULT ((-1)) NOT NULL,
+		[K12StudentId]                      BIGINT             CONSTRAINT [DF_FactK12StudentDisciplines_K12StudentId] DEFAULT ((-1)) NOT NULL,
 		[AgeId]                             INT             CONSTRAINT [DF_FactK12StudentDisciplines_AgeId] DEFAULT ((-1)) NOT NULL,
 		[CteStatusId]                       INT             CONSTRAINT [DF_FactK12StudentDisciplines_CteStatusId] DEFAULT ((-1)) NOT NULL,
 		[DisabilityStatusId]                INT             CONSTRAINT [DF_FactK12StudentDisciplines_DisabilityStatusId] DEFAULT ((-1)) NOT NULL,
@@ -11228,6 +11229,15 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactK12StudentDisciplines]', N'FactK12StudentDisciplines';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactK12StudentDisciplines1]', N'PK_FactK12StudentDisciplines', N'OBJECT';
+
+
+	GO
+	PRINT N'Creating Index [RDS].[FactK12StudentDisciplines].[IXFK_FactK12StudentDisciplines_DataCollectionId]...';
+
+
+	GO
+	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentDisciplines_DataCollectionId]
+		ON [RDS].[FactK12StudentDisciplines]([DataCollectionId] ASC) WITH (FILLFACTOR = 80);
 
 
 	GO
@@ -11531,11 +11541,11 @@
 	CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentEnrollments] (
 		[FactK12StudentEnrollmentId]                 BIGINT         IDENTITY (1, 1) NOT NULL,
 		[SchoolYearId]                               INT            CONSTRAINT [DF_FactK12StudentEnrollments_SchoolYearId] DEFAULT ((-1)) NOT NULL,
-		[CountDateId]                                INT            NOT NULL,
+		[CountDateId]                                INT            CONSTRAINT [DF_FactK12StudentEnrollments_CountDateId] DEFAULT ((-1)) NOT NULL,
 		[DataCollectionId]                           INT            CONSTRAINT [DF_FactK12StudentEnrollments_DataCollectionId] DEFAULT ((-1)) NOT NULL,
 		[SeaId]                                      INT            CONSTRAINT [DF_FactK12StudentEnrollments_SeaId] DEFAULT ((-1)) NOT NULL,
 		[IeuId]                                      INT            CONSTRAINT [DF_FactK12StudentEnrollments_IeuId] DEFAULT ((-1)) NOT NULL,
-		[K12StudentId]                               INT            CONSTRAINT [DF_FactK12StudentEnrollments_K12StudentId] DEFAULT ((-1)) NOT NULL,
+		[K12StudentId]                               BIGINT         CONSTRAINT [DF_FactK12StudentEnrollments_K12StudentId] DEFAULT ((-1)) NOT NULL,
 		[LeaAccountabilityId]                        INT            CONSTRAINT [DF_FactK12StudentEnrollments_LeaAccountabilityId] DEFAULT ((-1)) NOT NULL,
 		[LeaAttendanceId]                            INT            CONSTRAINT [DF_FactK12StudentEnrollments_LeaAttendanceId] DEFAULT ((-1)) NOT NULL,
 		[LeaFundingId]                               INT            CONSTRAINT [DF_FactK12StudentEnrollments_LeaFundingId] DEFAULT ((-1)) NOT NULL,
@@ -12144,7 +12154,7 @@
 		[FactTypeId]                                        INT           CONSTRAINT [DF_FactOrganizationCounts_FactTypeId] DEFAULT ((-1)) NOT NULL,
 		[SeaId]                                             INT           CONSTRAINT [DF_FactOrganizationCounts_SeaId] DEFAULT ((-1)) NOT NULL,
 		[LeaId]                                             INT           CONSTRAINT [DF_FactOrganizationCounts_LeaId] DEFAULT ((-1)) NOT NULL,
-		[K12StaffId]                                        INT           CONSTRAINT [DF_FactOrganizationCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
+		[K12StaffId]                                        BIGINT           CONSTRAINT [DF_FactOrganizationCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
 		[K12SchoolId]                                       INT           CONSTRAINT [DF_FactOrganizationCounts_K12SchoolId] DEFAULT ((-1)) NOT NULL,
 		[AuthorizingBodyCharterSchoolAuthorizerId]          INT           CONSTRAINT [DF_FactOrganizationCounts_AuthorizingBodyCharterSchoolAuthorizerId] DEFAULT ((-1)) NOT NULL,
 		[CharterSchoolManagementOrganizationId]             INT           CONSTRAINT [DF_FactOrganizationCounts_CharterSchoolManagementOrganizationId] DEFAULT ((-1)) NOT NULL,
@@ -12347,7 +12357,7 @@
 	CREATE TABLE [RDS].[tmp_ms_xx_FactPsStudentAcademicAwards] (
 		[FactPsStudentAcademicAwardId] INT IDENTITY (1, 1) NOT NULL,
 		[PsInstitutionID]              INT CONSTRAINT [DF_FactPsStudentAcademicAwards_PsInstitutionId] DEFAULT ((-1)) NOT NULL,
-		[PsStudentId]                  INT CONSTRAINT [DF_FactPsStudentAcademicAwards_PsStudentId] DEFAULT ((-1)) NOT NULL,
+		[PsStudentId]                  BIGINT CONSTRAINT [DF_FactPsStudentAcademicAwards_PsStudentId] DEFAULT ((-1)) NOT NULL,
 		[PsAcademicAwardTitleId]       INT CONSTRAINT [DF_FactPsStudentAcademicAwards_PsAcademicAwardTitleId] DEFAULT ((-1)) NOT NULL,
 		[AcademicAwardDateId]          INT CONSTRAINT [DF_FactPsStudentAcademicAwards_AcademicAwardDateId] DEFAULT ((-1)) NOT NULL,
 		[PsAcademicAwardStatusId]      INT CONSTRAINT [DF_FactPsStudentAcademicAwards_PsAcademicAwardStatusId] DEFAULT ((-1)) NOT NULL,
@@ -12444,7 +12454,7 @@
 		[CountDateId]                            INT            NOT NULL,
 		[SeaId]                                  INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_SeaId] DEFAULT ((-1)) NOT NULL,
 		[PsInstitutionID]                        INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_PsInstitutionId] DEFAULT ((-1)) NOT NULL,
-		[PsStudentId]                            INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_PsStudentId] DEFAULT ((-1)) NOT NULL,
+		[PsStudentId]                            BIGINT            CONSTRAINT [DF_FactPsStudentAcademicRecords_PsStudentId] DEFAULT ((-1)) NOT NULL,
 		[AcademicTermDesignatorId]               INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_AcademicTermDesignatorId] DEFAULT ((-1)) NOT NULL,
 		[PsInstitutionStatusId]                  INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_PsInstitutionStatusId] DEFAULT ((-1)) NOT NULL,
 		[PsEnrollmentStatusId]                   BIGINT         CONSTRAINT [DF_FactPsStudentAcademicRecords_PsEnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
@@ -12578,7 +12588,7 @@
 		[DataCollectionId]             INT    CONSTRAINT [DF_FactPsStudentEnrollments_DataCollectionId] DEFAULT ((-1)) NOT NULL,
 		[SchoolYearId]                 INT    CONSTRAINT [DF_FactPsStudentEnrollments_SchoolYearId] DEFAULT ((-1)) NOT NULL,
 		[PsInstitutionID]              INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionId] DEFAULT ((-1)) NOT NULL,
-		[PsStudentId]                  INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsStudentId] DEFAULT ((-1)) NOT NULL,
+		[PsStudentId]                  BIGINT    CONSTRAINT [DF_FactPsStudentEnrollments_PsStudentId] DEFAULT ((-1)) NOT NULL,
 		[AcademicTermDesignatorId]     INT    CONSTRAINT [DF_FactPsStudentEnrollments_AcademicTermDesignatorId] DEFAULT ((-1)) NOT NULL,
 		[EntryDateIntoPostSecondaryId] INT    CONSTRAINT [DF_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId] DEFAULT ((-1)) NOT NULL,
 		[EnrollmentEntryDateId]        INT    CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentEntryDateId] DEFAULT ((-1)) NOT NULL,
@@ -12871,68 +12881,6 @@
 	GO
 	ALTER INDEX [PK_Assessment]
 		ON [Staging].[Assessment] REBUILD WITH(DATA_COMPRESSION = PAGE);
-
-
-	GO
-	/*
-	The column [Staging].[AssessmentResult].[DataCollectionId] is being renamed
-	The column [Staging].[AssessmentResult].[LEA_Identifier_State] is being renamed
-	The column [Staging].[AssessmentResult].[School_Identifier_State] is being renamed
-	The column [Staging].[AssessmentResult].[Student_Identifier_State] is being renamed
-	The type for column DataCollectionName in table [Staging].[AssessmentResult] is currently  NVARCHAR (100) NULL but is being changed to  VARCHAR (100) NULL. Data loss could occur and deployment may fail if the column contains data that is incompatible with type  VARCHAR (100) NULL.
-	*/
-	GO
-	PRINT N'Starting rebuilding table [Staging].[AssessmentResult]...';
-
-
-	GO
-	SET XACT_ABORT ON;
-
-	CREATE TABLE [Staging].[tmp_ms_xx_AssessmentResult] (
-		[Id]                                                   INT            IDENTITY (1, 1) NOT NULL,
-		[StudentIdentifierState]                               VARCHAR (100)  NULL,
-		[LeaIdentifierSeaAccountability]                       NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                           NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                              NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                           NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram]       NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                                  VARCHAR (100)  NULL,
-		[AssessmentTitle]                                      VARCHAR (100)  NULL,
-		[AssessmentAcademicSubject]                            VARCHAR (100)  NULL,
-		[AssessmentPurpose]                                    VARCHAR (100)  NULL,
-		[AssessmentType]                                       VARCHAR (100)  NULL,
-		[AssessmentTypeAdministeredToChildrenWithDisabilities] VARCHAR (100)  NULL,
-		[AssessmentAdministrationStartDate]                    DATE           NULL,
-		[AssessmentAdministrationFinishDate]                   DATE           NULL,
-		[AssessmentRegistrationParticipationIndicator]         BIT            NULL,
-		[GradeLevelWhenAssessed]                               VARCHAR (100)  NULL,
-		[ScoreValue]                                           VARCHAR (50)   NULL,
-		[StateFullAcademicYear]                                VARCHAR (100)  NULL,
-		[LEAFullAcademicYear]                                  VARCHAR (100)  NULL,
-		[SchoolFullAcademicYear]                               VARCHAR (100)  NULL,
-		[AssessmentRegistrationReasonNotCompleting]            VARCHAR (100)  NULL,
-		[AssessmentPerformanceLevelIdentifier]                 VARCHAR (100)  NULL,
-		[AssessmentPerformanceLevelLabel]                      VARCHAR (100)  NULL,
-		[AssessmentScoreMetricType]                            VARCHAR (100)  NULL,
-		[SchoolYear]                                           VARCHAR (100)  NULL,
-		[DataCollectionName]                                   VARCHAR (100)  NULL,
-		[DataCollectionId]                                     INT            NULL,
-		[AssessmentRegistrationId]                             INT            NULL,
-		[AssessmentAdministrationId]                           INT            NULL,
-		[AssessmentId]                                         INT            NULL,
-		[PersonId]                                             INT            NULL,
-		[AssessmentFormId]                                     INT            NULL,
-		[AssessmentSubtestId]                                  INT            NULL,
-		[AssessmentPerformanceLevelId]                         INT            NULL,
-		[AssessmentResultId]                                   INT            NULL,
-		[AssessmentResult_PerformanceLevelId]                  INT            NULL,
-		[OrganizationID_LEA]                                   INT            NULL,
-		[OrganizationPersonRoleId_LEA]                         INT            NULL,
-		[OrganizationID_School]                                INT            NULL,
-		[OrganizationPersonRoleId_School]                      INT            NULL,
-		[RunDateTime]                                          DATETIME       NULL,
-		CONSTRAINT [tmp_ms_xx_constraint_PK_AssessmentResult1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
-	);
 
 
 	GO
@@ -15854,7 +15802,7 @@
 
 	GO
 	CREATE TABLE [RDS].[DimPeople] (
-		[DimPersonId]                                      INT           IDENTITY (1, 1) NOT NULL,
+		[DimPersonId]                                      BIGINT        IDENTITY (1, 1) NOT NULL,
 		[FirstName]                                        NVARCHAR (50) NULL,
 		[MiddleName]                                       NVARCHAR (50) NULL,
 		[LastOrSurname]                                    NVARCHAR (50) NULL,
@@ -16113,7 +16061,7 @@
 		[FactAeStudentEnrollmentId]           INT            IDENTITY (1, 1) NOT NULL,
 		[AeProgramYearId]                     INT            NOT NULL,
 		[DataCollectionId]                    INT            NOT NULL,
-		[AeStudentId]                         INT            NOT NULL,
+		[AeStudentId]                         BIGINT            NOT NULL,
 		[AeProviderId]                        INT            NOT NULL,
 		[AeProgramTypeId]                     INT            NOT NULL,
 		[AeStudentStatusId]                   INT            NOT NULL,
@@ -16347,7 +16295,7 @@
 		[SeaId]                          INT             NOT NULL,
 		[LeaId]                          INT             NOT NULL,
 		[K12SchoolId]                    INT             NOT NULL,
-		[K12StudentId]                   INT             NOT NULL,
+		[K12StudentId]                   BIGINT             NOT NULL,
 		[AttendanceId]                   INT             NOT NULL,
 		[K12DemographicId]               INT             NOT NULL,
 		[StudentAttendanceRate]          DECIMAL (18, 3) NULL
@@ -16442,7 +16390,7 @@
 		[IeuId]                                INT NOT NULL,
 		[LeaId]                                INT NOT NULL,
 		[K12SchoolId]                          INT NOT NULL,
-		[K12StudentId]                         INT NOT NULL,
+		[K12StudentId]                         BIGINT NOT NULL,
 		[K12DemographicId]                     INT NOT NULL,
 		[EconomicallyDisadvantagedStatusId]    INT NOT NULL,
 		[K12StudentStatusId]                   INT NOT NULL,
@@ -16684,7 +16632,7 @@
 		[LeaIEPServiceProviderId]                            INT            NOT NULL,
 		[K12SchoolId]                                        INT            NOT NULL,
 		[ResponsibleSchoolTypeId]                            INT            NOT NULL,
-		[K12StudentId]                                       INT            NOT NULL,
+		[K12StudentId]                                       BIGINT            NOT NULL,
 		[EnrollmentEntryDateId]                              INT            NOT NULL,
 		[EnrollmentExitDateId]                               INT            NOT NULL,
 		[ConsentToEvaluationDateId]                          INT            NOT NULL,
@@ -20148,6 +20096,7 @@
 
 	GO
 	ALTER TABLE [RDS].[FactK12StudentCourseSections] NOCHECK CONSTRAINT [FK_FactK12StudentCourseSections_K12CourseId];
+
 
 
 	GO

@@ -143,41 +143,88 @@ LEFT JOIN RDS.DimAttendances rdab
 LEFT JOIN RDS.DimCohortStatuses rdcs 
     ON f.CohortStatusCode = rdcs.CohortStatusCode
 LEFT JOIN RDS.DimCteStatuses rdctes
-    ON  f.CteAeDisplacedHomemakerIndicatorCode = rdctes.CteAeDisplacedHomemakerIndicatorCode
-    AND f.CteNontraditionalGenderStatusCode = rdctes.CteNontraditionalGenderStatusCode
-    AND 'MISSING' = rdctes.CteNontraditionalCompletionCode
-    AND f.SingleParentOrSinglePregnantWomanCode = rdctes.SingleParentOrSinglePregnantWomanStatusCode
-    AND f.CteGraduationRateInclusionCode = rdctes.CteGraduationRateInclusionCode
-    AND f.LepPerkinsStatusCode  = rdctes.PerkinsLEPStatusCode
+    ON  CASE f.CteAeDisplacedHomemakerIndicatorCode
+            WHEN 'DH' THEN 'Yes'
+            ELSE 'MISSING'
+        END = rdctes.CteAeDisplacedHomemakerIndicatorCode
+    AND CASE f.CteNontraditionalGenderStatusCode
+            WHEN 'MEM' THEN 'Underrepresented'
+            WHEN 'NM' THEN 'NotUnderrepresented'
+            ELSE 'MISSING'
+        END = rdctes.CteNontraditionalCompletionCode
+    AND CASE f.CteNontraditionalGenderStatusCode
+            WHEN 'NTE' THEN 'Yes'
+            ELSE 'MISSING'
+        END = rdctes.CteNontraditionalCompletionCode
+    AND CASE f.SingleParentOrSinglePregnantWomanCode
+            WHEN 'SPPT' THEN 'Yes'
+            ELSE 'MISSING'
+        END = rdctes.SingleParentOrSinglePregnantWomanStatusCode
+    AND CASE f.CteGraduationRateInclusionCode
+            WHEN 'GRAD' THEN 'IncludedAsGraduated'
+            WHEN 'NOTG' THEN 'NotIncludedAsGraduated'
+            ELSE 'MISSING'
+        END = rdctes.CteGraduationRateInclusionCode
+    AND CASE f.PerkinsLEPStatusCode
+            WHEN 'LEPP' THEN 'Yes'
+            ELSE 'MISSING'
+        END = rdctes.PerkinsLEPStatusCode
     AND CASE f.CteProgramCode 
             WHEN 'CTEPART' THEN 'Yes'
             WHEN 'NONCTEPART' THEN 'No'
             ELSE 'MISSING'
         END = rdctes.CteParticipantCode
-    AND 'MISSING' = rdctes.CteConcentratorCode
+    AND CASE f.CteProgramCode 
+            WHEN 'CTECONC' THEN 'Yes'
+            WHEN 'NONCTEPART' THEN 'No'
+            ELSE 'MISSING'
+        END = rdctes.CteParticipantCode
 LEFT JOIN RDS.DimEnglishLearnerStatuses rdels
-    ON  f.EnglishLearnerStatusCode = rdels.EnglishLearnerStatusCode
-    AND f.LepPerkinsStatusCode = rdels.PerkinsLEPStatusCode
-    AND f.TitleiiiAccountabilityProgressStatusCode = rdels.TitleIIIAccountabilityProgressStatusCode	
-    AND f.TitleiiiLanguageInstructionCode = rdels.TitleIIILanguageInstructionProgramTypeCode
+    ON  CASE f.EnglishLearnerStatusCode  
+            WHEN 'LEP' THEN 'Yes'
+            WHEN 'NLEP' THEN 'No'
+            ELSE 'MISSING'
+        END = rdels.EnglishLearnerStatusCode
+    AND CASE f.PerkinsLEPStatusCode
+            WHEN 'LEPP' THEN 'Yes'
+            WHEN 'NLEP' THEN 'No'
+            ELSE 'MISSING'
+        END = rdels.PerkinsLEPStatusCode
+    AND f.TitleiiiAccountabilityProgressStatusCode = rdels.TitleIIIAccountabilityProgressStatusCode	--Codes are the same
+    AND f.TitleiiiLanguageInstructionCode = rdels.TitleIIILanguageInstructionProgramTypeCode --Codes are the same
 LEFT JOIN RDS.DimGradeLevels rdgl
-    ON  f.GradeLevelCode = rdgl.GradeLevelCode
+    ON  f.GradeLevelCode = rdgl.GradeLevelCode --Codes are the same
 LEFT JOIN RDS.DimHomelessnessStatuses rdhs
-    ON  f.HomelessnessStatusCode = rdhs.HomelessnessStatusCode
-    AND f.HomelessPrimaryNighttimeResidenceCode = rdhs.HomelessPrimaryNighttimeResidenceCode
-    AND f.HomelessServicedIndicatorCode = rdhs.HomelessServicedIndicatorCode
-    AND f.HomelessUnaccompaniedYouthStatusCode = rdhs.HomelessUnaccompaniedYouthStatusCode
+    ON  f.HomelessnessStatusCode = rdhs.HomelessnessStatusCode --Codes are the same
+    AND f.HomelessPrimaryNighttimeResidenceCode = rdhs.HomelessPrimaryNighttimeResidenceCode --Codes are the same
+    AND f.HomelessServicedIndicatorCode = rdhs.HomelessServicedIndicatorCode --Codes are the same
+    AND f.HomelessUnaccompaniedYouthStatusCode = rdhs.HomelessUnaccompaniedYouthStatusCode --Codes are the same
 LEFT JOIN RDS.DimEconomicallyDisadvantagedStatuses rdeds
-    ON  f.EconomicDisadvantageStatusCode = rdeds.EconomicDisadvantageStatusCode
-    AND f.EligibilityStatusForSchoolFoodServiceProgramCode = rdeds.EligibilityStatusForSchoolFoodServiceProgramsCode
-    AND f.NSLPDirectCertificationIndicatorCode = rdeds.NationalSchoolLunchProgramDirectCertificationIndicatorCode
+    ON  f.EconomicDisadvantageStatusCode = rdeds.EconomicDisadvantageStatusCode --Codes are the same
+    AND f.EligibilityStatusForSchoolFoodServiceProgramCode = rdeds.EligibilityStatusForSchoolFoodServiceProgramsCode --Codes are the same
+    AND f.NSLPDirectCertificationIndicatorCode = rdeds.NationalSchoolLunchProgramDirectCertificationIndicatorCode --Codes are the same
 LEFT JOIN RDS.DimFosterCareStatuses rdfcs
-    ON f.FosterCareProgramCode = rdfcs.ProgramParticipationFosterCareCode
+    ON CASE f.FosterCareProgramCode
+            WHEN 'FOSTERCARE' THEN 'Yes'
+            WHEN 'NONFOSTERCARE' THEN 'No'
+            ELSE 'MISSING'
+        END = rdfcs.ProgramParticipationFosterCareCode
 LEFT JOIN RDS.DimIdeaStatuses rdis
-    ON  f.SpecialEducationExitReasonCode = rdis.SpecialEducationExitReasonCode
-    AND f.IdeaEducationalEnvironmentCode = rdis.IdeaEducationalEnvironmentForSchoolAgeCode
-    AND f.IdeaIndicatorCode = rdis.IdeaIndicatorCode
-    AND f.IdeaEducationalEnvironmentCode = rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode
+    ON  f.SpecialEducationExitReasonCode = rdis.SpecialEducationExitReasonCode --Codes are the same
+    AND CASE f.IdeaIndicatorCode
+            WHEN 'IDEA' THEN 'Yes'
+            ELSE 'MISSING'
+        END = rdis.IdeaIndicatorCode
+    AND CASE WHEN (f.AgeCode >= 6 AND f.AgeCode <= 21)
+                OR (f.AgeCode = 5 and f.GradeLevelCode NOT IN ('MISSING','PK'))
+                    THEN f.IdeaEducationalEnvironmentCode 
+            ELSE 'MISSING'
+        END = rdis.IdeaEducationalEnvironmentForSchoolAgeCode
+    AND CASE WHEN (f.AgeCode < 5 AND AgeCode >= 3)
+                OR (f.AgeCode = 5 and f.GradeLevelCode IN ('MISSING','PK'))
+                    THEN f.IdeaEducationalEnvironmentCode 
+            ELSE 'MISSING'
+        END = rdis.rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode
 LEFT JOIN RDS.DimImmigrantStatuses rdimms
     -- I think
     ON  f.TitleiiiProgramParticipationCode = rdimms.TitleIIIImmigrantStatusCode
@@ -191,20 +238,34 @@ LEFT JOIN RDS.DimK12EnrollmentStatuses rdkes
     AND f.PostSecondaryEnrollmentStatusCode = rdkes.PostSecondaryEnrollmentStatusCode
     AND f.AcademicOrVocationalOutcomeCode = rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
     AND f.AcademicOrVocationalExitOutcomeCode = rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
-LEFT JOIN RDS.DimK12StudentStatuses rdkss   
-    ON f.HighSchoolDiplomaTypeCode = rdkss.HighSchoolDiplomaTypeCode
+LEFT JOIN RDS.DimK12StudentStatuses rdkss   -- Will probably change to DimK12AcademicAwardStatuses since this is the only field in DimK12StudentStatuses.  
+    ON f.HighSchoolDiplomaTypeCode = rdkss.HighSchoolDiplomaTypeEdFactsCode -- Codeset has completely changed, but the old codes map were the EDFacts Codes & there are only 3 with a value != 'MISSING', so this mapping works. 
 LEFT JOIN RDS.DimLanguages rdlang
     ON f.Iso6392LanguageCode = rdlang.Iso6392LanguageCodeCode
 LEFT JOIN RDS.DimMigrantStatuses rdms
-	ON  f.MigrantStatusCode = rdms.MigrantStatusCode
+	ON  f.MigrantStatusCode = rdms.MigrantStatusCode --Codes are the same
 	AND 'MISSING' = rdms.MigrantEducationProgramEnrollmentTypeCode
-	AND f.ContinuationOfServicesReasonCode = rdms.ContinuationOfServicesReasonCode
-	AND f.ConsolidatedMepFundsStatusCode = rdms.ConsolidatedMepFundsStatusCode
+	AND CASE f.ContinuationOfServicesReasonCode
+            WHEN 'CONTINUED' THEN '01' -- The best we can do. 
+            ELSE 'MISSING'
+        END = rdms.ContinuationOfServicesReasonCode
+	AND f.ConsolidatedMepFundsStatusCode = rdms.ConsolidatedMepFundsStatusCode --Codes are the same
 	AND 'MISSING' = rdms.MigrantEducationProgramServicesTypeCode
-	AND f.MigrantPrioritizedForServicesCode = rdms.MigrantPrioritizedForServicesCode
+	AND CASE f.MigrantPrioritizedForServicesCode
+            WHEN 'PS' THEN 'Yes'
+            ELSE 'MISSING'
+        END = rdms.MigrantPrioritizedForServicesCode
 LEFT JOIN RDS.DimNOrDStatuses rdnords
-	ON  f.LongTermStatusCode = rdnords.NeglectedOrDelinquentLongTermStatusCode
-	AND f.NeglectedOrDelinquentProgramTypeCode = rdnords.NeglectedOrDelinquentProgramTypeCode
+	ON  'MISSING' = rdnords.NeglectedOrDelinquentLongTermStatusCode -- f.LongTermStatusCode, need to create CEDS element for this value
+	AND CASE f.NeglectedOrDelinquentProgramTypeCode
+            WHEN 'ADLTCORR' THEN 'AdultCorrection'
+            WHEN 'ATRISK' THEN 'AtRiskPrograms'
+            WHEN 'JUVCORR' THEN 'JuvenileCorrection'
+            WHEN 'JUVDET' THEN 'JuvenileDetention'
+            WHEN 'NEGLECT' THEN 'NeglectedPrograms'
+            WHEN 'OTHER' THEN 'OtherPrograms'
+            ELSE 'MISSING'
+        END = rdnords.NeglectedOrDelinquentProgramTypeCode
 LEFT JOIN RDS.DimIdeaDisabilityTypes rdidt
 	ON f.PrimaryDisabilityTypeCode = rdidt.IdeaDisabilityTypeCode
 LEFT JOIN RDS.DimRaces rdr

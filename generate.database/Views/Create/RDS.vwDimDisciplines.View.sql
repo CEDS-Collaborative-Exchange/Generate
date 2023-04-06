@@ -1,49 +1,41 @@
-create VIEW RDS.vwDimDisciplines 
+CREATE VIEW RDS.vwDimDisciplineStatuses 
 AS
 	SELECT
-		  DimDisciplineId
-		, rsy.SchoolYear
-		, DisciplinaryActionTakenCode
-		, sssrd1.InputCode AS DisciplinaryActionTakenMap
+		  DimDisciplineStatusId
+		, sssrd1.SchoolYear
+		, rdds.DisciplinaryActionTakenCode
+		, ISNULL(sssrd1.InputCode, 'MISSING') AS DisciplinaryActionTakenMap
 		, DisciplineMethodOfChildrenWithDisabilitiesCode
-		, sssrd2.InputCode AS DisciplineMethodOfChildrenWithDisabilitiesMap
+		, ISNULL(sssrd2.InputCode, 'MISSING') AS DisciplineMethodOfChildrenWithDisabilitiesMap
 		, EducationalServicesAfterRemovalCode
 		, CASE EducationalServicesAfterRemovalCode
-			WHEN 'SERVPROV' THEN 1 
+			WHEN 'SERVPROV' THEN 1
 			WHEN 'SERVNOTPROV' THEN 0
-			WHEN 'MISSING' THEN NULL
+			WHEN 'MISSING' THEN -1
 		  END AS EducationalServicesAfterRemovalMap
 		, IdeaInterimRemovalReasonCode
-		, sssrd4.InputCode as IdeaInterimRemovalReasonMap
+		, ISNULL(sssrd3.InputCode, 'MISSING') AS IdeaInterimRemovalReasonMap
 		, IdeaInterimRemovalCode
-		, sssrd3.InputCode AS IdeaInterimRemovalMap
-		, DisciplineELStatusCode
-		, CASE DisciplineELStatusCode
-			WHEN 'LEP' THEN 1 
-			WHEN 'NLEP' THEN 0
-			WHEN 'MISSING' THEN NULL
-		  END AS DisciplineELStatusMap
-	FROM rds.DimDisciplines rdd
+		, ISNULL(sssrd4.InputCode, 'MISSING') AS IdeaInterimRemovalMap
+	FROM rds.DimDisciplineStatuses rdds
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
-		ON rdd.DisciplinaryActionTakenCode = sssrd1.OutputCode
+		ON rdds.DisciplinaryActionTakenCode = sssrd1.OutputCode
 		AND sssrd1.TableName = 'RefDisciplinaryActionTaken'
 		AND rsy.SchoolYear = sssrd1.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd2
-		ON rdd.DisciplineMethodOfChildrenWithDisabilitiesCode = sssrd2.OutputCode
+		ON rdds.DisciplineMethodOfChildrenWithDisabilitiesCode = sssrd2.OutputCode
 		AND sssrd2.TableName = 'RefDisciplineMethodOfCwd'
 		AND rsy.SchoolYear = sssrd2.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd3
-		ON rdd.IdeaInterimRemovalCode = sssrd3.OutputCode
-		AND sssrd3.TableName = 'RefIdeaInterimRemoval'
+		ON CASE rdds.IdeaInterimRemovalReasonCode 
+			  WHEN 'D' THEN 'Drugs'
+			  WHEN 'W' THEN 'Weapons'
+			  WHEN 'SBI' THEN 'SeriousBodilyInjury' 
+			END = sssrd3.OutputCode
+		AND sssrd3.TableName = 'RefIdeaInterimRemovalReason'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd4
-		ON 
-		CASE IdeaInterimRemovalReasonCode
-			WHEN 'SBI' THEN 'SeriousBodilyInjury' 
-			WHEN 'W' THEN 'Weapons'
-			WHEN 'D' THEN 'Drugs'
-			WHEN 'MISSING' THEN NULL
-		end = sssrd4.OutputCode
-		AND sssrd4.TableName = 'RefIDEAInterimRemovalReason'
+		ON rdds.IdeaInterimRemovalCode = sssrd4.OutputCode
+		AND sssrd4.TableName = 'RefIdeaInterimRemoval'
 		AND rsy.SchoolYear = sssrd4.SchoolYear

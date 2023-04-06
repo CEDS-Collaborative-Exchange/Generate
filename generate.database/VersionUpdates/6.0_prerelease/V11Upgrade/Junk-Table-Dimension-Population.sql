@@ -1343,12 +1343,8 @@
 	SELECT 
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, CASE CedsOptionSetCode
-			WHEN 'PROGRESS' THEN 'PROGRESS'
-			WHEN 'NOPROGRESS' THEN 'NOPROGRESS'
-			WHEN 'PROFICIENT' THEN 'PROFICIENT'
-		  END
-	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'TitleIIIAccountability'
+		, CedsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'TitleIIIAccountabilityProgressStatus'
 
 	CREATE TABLE #TitleiiiLanguageInstruction (TitleiiiLanguageInstructionCode VARCHAR(50), TitleiiiLanguageInstructionDescription VARCHAR(200), TitleiiiLanguageInstructionEdFactsCode VARCHAR(50))
 
@@ -1756,7 +1752,7 @@
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12AcademicAwardStatuses d WHERE d.HighSchoolDiplomaTypeCode = 'MISSING') BEGIN
 		SET IDENTITY_INSERT RDS.DimK12AcademicAwardStatuses ON
 
-		INSERT INTO RDS.DimK12AcademicAwardStatuses (DimK12AcademicAwardStatusId, HighSchoolDiplomaTypeCode, HighSchoolDiplomaTypeDescription)
+		INSERT INTO RDS.DimK12AcademicAwardStatuses (DimK12AcademicAwardStatusId, HighSchoolDiplomaTypeCode, HighSchoolDiplomaTypeDescription, HighSchoolDiplomaTypeCode)
 			VALUES (-1, 'MISSING', 'MISSING')
 
 		SET IDENTITY_INSERT RDS.DimK12AcademicAwardStatuses OFF
