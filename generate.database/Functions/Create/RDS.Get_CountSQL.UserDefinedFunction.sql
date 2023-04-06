@@ -94,9 +94,9 @@ BEGIN
 	where q.EmapsQuestionAbbrv = 'CHDCTDTE'
 
 	IF LEN(ISNULL(@toggleChildCountDate,'')) <= 0
-	BEGIN
-		set @toggleChildCountDate = '11/01/' + CAST(@year as varchar(4))
-	END
+		set @toggleChildCountDate = '11/01/' + CAST(@year - 1 as varchar(4))
+	ELSE 
+		set @toggleChildCountDate = CAST(MONTH(@toggleChildCountDate) AS VARCHAR(2)) + '/' + CAST(DAY(@toggleChildCountDate) AS VARCHAR(2)) + '/' + CAST(@Year - 1 AS CHAR(4))
 
 	select @calculatedMemberDate = r.ResponseValue
 	from app.ToggleResponses r
@@ -104,9 +104,9 @@ BEGIN
 	where q.EmapsQuestionAbbrv = 'MEMBERDTE'
 
 	IF LEN(ISNULL(@calculatedMemberDate,'')) <= 0
-	BEGIN
-		set @calculatedMemberDate = '10/01/' + CAST(@year as varchar(4))
-	END
+		set @calculatedMemberDate = '10/01/' + CAST(@year - 1 as varchar(4))
+	ELSE 
+		set @calculatedMemberDate = CAST(MONTH(@calculatedMemberDate) AS VARCHAR(2)) + '/' + CAST(DAY(@calculatedMemberDate) AS VARCHAR(2)) + '/' + CAST(@Year - 1 AS CHAR(4))
 
 	select @toggleUngraded = ISNULL( case when r.ResponseValue = 'true' then 1 else 0 end,0) 
 	from app.ToggleQuestions q 
