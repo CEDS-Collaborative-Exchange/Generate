@@ -82,8 +82,5 @@ Views\\Drop,RDS.vwDimTitleIIIStatuses.View.sql,0
 Views\\Create,RDS.vwDimTitleIIIStatuses.View.sql,0
 Views\\Drop,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Create,RDS.vwDimTitleIStatuses.View.sql,0
-
-
-
 VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
 VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0
