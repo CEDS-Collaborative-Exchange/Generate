@@ -222,7 +222,7 @@ BEGIN
 	WHEN MATCHED THEN 
 		UPDATE SET 
 			[SeaName]						 = src.[SeaName]							
-			, [SeaIdentifierState]			 = '01'  --This is the expected value for EDFacts reporting
+			, [SeaIdentifierState]			 = src.[SeaStateIdentifier]
 			, [StateAnsiCode]				 = src.[StateANSICode]
 			, [StateAbbreviationCode]		 = src.[StateCode]
 			, [StateAbbreviationDescription] = src.[StateDescription]
@@ -268,7 +268,7 @@ BEGIN
 	) 	
 	VALUES (
 		src.[SeaName]						
-		, '01'	--This is the expected value for EDFacts reporting
+		, src.[SeaStateIdentifier]
 		, src.[StateANSICode]
 		, src.[StateCode]
 		, src.[StateDescription]
