@@ -6,9 +6,9 @@ VersionUpdates\\6.0_prerelease\V11Upgrade,V11SchemaUpgrade.sql,0
 VersionUpdates\\6.0_prerelease\V11Upgrade,CEDS-Elements.sql,0
 VersionUpdates\\6.0_prerelease\V11Upgrade,Junk-Table-Dimension-Population.sql,0
 VersionUpdates\\6.0_prerelease\V11Upgrade,Copy-In-Legacy-Data.sql,0
-VersionUpdates\\6.0_prerelease\V10Upgrade,Metadata-FactTable-Updates.sql,0
-VersionUpdates\\6.0_prerelease\V10Upgrade,Metadata-DimensionTable-Updates.sql,0
-VersionUpdates\\6.0_prerelease\V10Upgrade,Metadata-Fact-Dimension-Table-Updates.sql,0
+VersionUpdates\\6.0_prerelease\V11Upgrade,Metadata-FactTable-Updates.sql,0
+VersionUpdates\\6.0_prerelease\V11Upgrade,Metadata-DimensionTable-Updates.sql,0
+VersionUpdates\\6.0_prerelease\V11Upgrade,Metadata-Fact-Dimension-Table-Updates.sql,0
 VersionUpdates\\6.0_prerelease,AddColumnInK12Organization.sql,0
 Views\\Drop,RDS.vwDimK12StudentStatuses.View.sql,0
 Views\\Create,RDS.vwDimK12StudentStatuses.View.sql,0
