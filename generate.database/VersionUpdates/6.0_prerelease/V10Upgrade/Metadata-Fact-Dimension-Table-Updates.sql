@@ -29,3 +29,107 @@ SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE Dimens
 SELECT @newDimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimPeople'
 
 Update app.FactTable_DimensionTables SET DimensionTableId = @newDimensionTableId WHERE FactTableId = @factTableId AND DimensionTableId = @dimensionTableId
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentCounts'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimEconomicallyDisadvantagedStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentCounts'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimEnglishLearnerStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentCounts'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimFosterCareStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentCounts'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimImmigrantStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentDisciplines'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimDisabilityStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentDisciplines'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimEconomicallyDisadvantagedStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentDisciplines'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimEnglishLearnerStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentDisciplines'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimFosterCareStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentDisciplines'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimHomelessnessStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentDisciplines'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimImmigrantStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentDisciplines'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimIncidentStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentDisciplines'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimTitleIStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentDisciplines'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimTitleIIIStatuses'
+
+IF NOT EXISTS(SELECT 1 FROM app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
+END

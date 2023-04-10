@@ -7,6 +7,8 @@ VersionUpdates\\6.0_prerelease\V10Upgrade,Copy-In-Legacy-Data.sql,0
 VersionUpdates\\6.0_prerelease\V10Upgrade,Metadata-FactTable-Updates.sql,0
 VersionUpdates\\6.0_prerelease\V10Upgrade,Metadata-DimensionTable-Updates.sql,0
 VersionUpdates\\6.0_prerelease\V10Upgrade,Metadata-Fact-Dimension-Table-Updates.sql,0
+VersionUpdates\\6.0_prerelease\V10Upgrade,Metadata-Dimension-Updates.sql,0
+VersionUpdates\\6.0_prerelease\V10Upgrade,Metadata-FileColumn-Dimension-Updates,0
 VersionUpdates\\6.0_prerelease,AddColumnInK12Organization.sql,0
 Views\\Drop,RDS.vwDimK12StudentStatuses.View.sql,0
 Views\\Create,RDS.vwDimK12StudentStatuses.View.sql,0
