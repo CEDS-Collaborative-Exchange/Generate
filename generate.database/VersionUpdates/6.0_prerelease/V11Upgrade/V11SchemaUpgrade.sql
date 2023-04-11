@@ -291,8 +291,6 @@ EXECUTE sp_rename @objname = N'[RDS].[DimResponsibleSchoolTypes].[ResponsibleSch
 
 
 GO
-PRINT N'The following operation was generated from a refactoring log file ce010ded-9d30-4747-8f7c-5be4e8a5d2a7, 2ff875e9-8200-43d8-92c0-6443ff8d2ae4';
-
 PRINT N'Rename [RDS].[DimResponsibleSchoolTypes].[ResponsibleSchoolTypeDescription] to ResponsibleSchoolTypeAccountabilityCode';
 
 
@@ -301,63 +299,36 @@ EXECUTE sp_rename @objname = N'[RDS].[DimResponsibleSchoolTypes].[ResponsibleSch
 
 
 GO
-PRINT N'Rename refactoring operation with key 817b190c-5fac-4beb-89a8-6c7948a59295 is skipped, element [RDS].[FactK12StudentEnrollments].[ResponsibleSchooTypelId] (SqlSimpleColumn) will not be renamed to ResponsibleSchoolTypelId';
+ALTER TABLE [RDS].[DimResponsibleSchoolTypes] ADD
+	  ResponsibleSchoolTypeAccountabilityDescription						NVARCHAR(1000) NOT NULL
+	, ResponsibleSchoolTypeAttendance										NVARCHAR(10) NOT NULL
+	, ResponsibleSchoolTypeAttendanceCode									NVARCHAR(100) NOT NULL
+	, ResponsibleSchoolTypeAttendanceDescription							NVARCHAR(1000) NOT NULL
+	, ResponsibleSchoolTypeFunding											NVARCHAR(10) NOT NULL
+	, ResponsibleSchoolTypeFundingCode										NVARCHAR(100) NOT NULL
+	, ResponsibleSchoolTypeFundingDescription								NVARCHAR(1000) NOT NULL
+	, ResponsibleSchoolTypeGraduation										NVARCHAR(10) NOT NULL
+	, ResponsibleSchoolTypeGraduationCode									NVARCHAR(100) NOT NULL
+	, ResponsibleSchoolTypeGraduationDescription							NVARCHAR(1000) NOT NULL
+	, ResponsibleSchoolTypeIndividualizedEducationProgram					NVARCHAR(10) NOT NULL
+	, ResponsibleSchoolTypeIndividualizedEducationProgramCode				NVARCHAR(100) NOT NULL
+	, ResponsibleSchoolTypeIndividualizedEducationProgramDescription		NVARCHAR(1000) NOT NULL
+	, ResponsibleSchoolTypeTransportation									NVARCHAR(10) NOT NULL
+	, ResponsibleSchoolTypeTransportationCode								NVARCHAR(100) NOT NULL
+	, ResponsibleSchoolTypeTransportationDescription						NVARCHAR(1000) NOT NULL
+	, ResponsibleSchoolTypeIepServiceProvider								NVARCHAR(10) NOT NULL
+	, ResponsibleSchoolTypeIepServiceProviderCode							NVARCHAR(100) NOT NULL
+	, ResponsibleSchoolTypeIepServiceProviderDescription					NVARCHAR(1000) NOT NULL
+
+GO
+CREATE NONCLUSTERED INDEX [IX_DimResponsibleSchoolTypes_YesNoCodes]
+    ON [RDS].[DimResponsibleSchoolTypes](ResponsibleSchoolTypeAccountability ASC, ResponsibleSchoolTypeAttendance ASC, ResponsibleSchoolTypeFunding ASC, ResponsibleSchoolTypeGraduation ASC, ResponsibleSchoolTypeIndividualizedEducationProgram ASC, ResponsibleSchoolTypeTransportation ASC, ResponsibleSchoolTypeIepServiceProvider ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+GO
 
 
 GO
-PRINT N'Rename refactoring operation with key 78810cc9-347c-4162-856f-b346aa337bc6 is skipped, element [RDS].[DimResponsibleSchoolTypes].[ResponsibleSchoolTypeAttendanceCode] (SqlSimpleColumn) will not be renamed to ResponsibleSchoolTypeAccountabilityDescription';
+PRINT N'The following operation was generated from a refactoring log file ce010ded-9d30-4747-8f7c-5be4e8a5d2a7, 2ff875e9-8200-43d8-92c0-6443ff8d2ae4';
 
-
-GO
-PRINT N'Rename refactoring operation with key 183713fc-3021-4695-ab51-92574037582e is skipped, element [RDS].[DimResponsibleSchoolTypes].[ResponsibleSchoolTypeAttendanceDescription] (SqlSimpleColumn) will not be renamed to ResponsibleSchoolTypeAttendance';
-
-
-GO
-PRINT N'Rename refactoring operation with key cc54d77d-485a-46ee-94c7-1910b9101768 is skipped, element [Staging].[K12Enrollment].[ResponsibleSchoolTypeAccountability] (SqlSimpleColumn) will not be renamed to SchoolIdentifierSeaAccountability';
-
-
-GO
-PRINT N'Rename refactoring operation with key 0686d8e8-c5af-4689-a221-90e17b4e8836 is skipped, element [Staging].[K12Enrollment].[ResponsibleSchoolTypeAttendance] (SqlSimpleColumn) will not be renamed to SchoolIdentifierSeaAttendance';
-
-
-GO
-PRINT N'Rename refactoring operation with key 35b9a1eb-3263-4a08-8219-0dbe81dd9bf7 is skipped, element [Staging].[K12Enrollment].[ResponsibleSchoolTypeFunding] (SqlSimpleColumn) will not be renamed to SchoolIdentifierSeaFunding';
-
-
-GO
-PRINT N'Rename refactoring operation with key a6397978-7b20-41dd-9e8a-4c9de866c866 is skipped, element [Staging].[K12Enrollment].[ResponsibleSchoolTypeGraduation] (SqlSimpleColumn) will not be renamed to SchoolIdentifierSeaGraduation';
-
-
-GO
-PRINT N'Rename refactoring operation with key 660fe36e-fafe-42ab-894c-770ebc60ab45 is skipped, element [Staging].[K12Enrollment].[ResponsibleSchoolTypeIndividualizedEducationProgram] (SqlSimpleColumn) will not be renamed to SchoolIdentifierSeaIndividualizedEducationProgram';
-
-
-GO
-PRINT N'Rename refactoring operation with key 4b0003bd-c374-47fe-acfb-3a5b854d0ccb is skipped, element [Staging].[K12Enrollment].[ResponsibleSchoolTypeTransportation] (SqlSimpleColumn) will not be renamed to SchoolIdentifierSeaTransportation';
-
-
-GO
-PRINT N'Rename refactoring operation with key 98104ad8-1633-4850-a426-ae2a70807f83 is skipped, element [Staging].[K12Enrollment].[ResponsibleSchoolTypeIepServiceProvider] (SqlSimpleColumn) will not be renamed to SchoolIdentifierSeaIepServiceProvider';
-
-
-GO
-PRINT N'Rename refactoring operation with key 9ec8f97c-3675-420f-a2bf-80eade3c3ab1 is skipped, element [RDS].[FactK12StudentEnrollments].[AccountableK12SchoolId] (SqlSimpleColumn) will not be renamed to K12SchoolId';
-
-
-GO
-PRINT N'Rename refactoring operation with key c9221ad0-b228-4e96-b4d2-4fca277dae33 is skipped, element [Staging].[K12Enrollment].[LeaMembershipResident] (SqlSimpleColumn) will not be renamed to LeaIdentifierSeaMembershipResident';
-
-
-GO
-PRINT N'Rename refactoring operation with key 3ad56c0e-75cf-46a7-8cfb-3ed13c5931d4 is skipped, element [Staging].[EducationOrganizationNetwork].[EducationOrganizationNetworkOrganization_Name] (SqlSimpleColumn) will not be renamed to [EducationOrganizationNetworkOrganizationName]';
-
-
-GO
-PRINT N'Rename refactoring operation with key 4ca4d4d6-c0dc-4328-83a1-8c7d5716e2ba is skipped, element [Staging].[EducationOrganizationNetwork].[EducationOrganizationNetworkOrganization_Type] (SqlSimpleColumn) will not be renamed to [EducationOrganizationNetworkTypeCode]';
-
-
-GO
-PRINT N'Rename refactoring operation with key a8fa1951-22c1-4638-833c-087a5b5459e5 is skipped, element [Staging].[EducationOrganizationNetwork].[OrganizationIdentifier] (SqlSimpleColumn) will not be renamed to [EducationOrganizationNetworkIdentifierSea]';
 
 
 GO
@@ -5745,6 +5716,17 @@ GO
 ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeCode];
 ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeDescription];
 ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeEdFactsCode];
+ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [NSLPDirectCertificationIndicatorEdFactsCode];
+ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [NSLPDirectCertificationIndicatorId];
+
+
+GO
+DELETE FROM [RDS].[DimK12StudentStatuses]
+
+
+GO
+DBCC CHECKIDENT ('RDS.DimK12StudentStatuses', RESEED, 1);
+
 
 
 GO

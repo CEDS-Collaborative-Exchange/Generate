@@ -102,18 +102,25 @@
 		SELECT 
 			  CedsOptionSetCode
 			, CedsOptionSetDescription
-			, EdFactsOptionSetCode
+			, CASE CedsOptionSetCode
+				WHEN 'Yes' THEN 'ECODIS'
+				ELSE 'MISSING'
+			  END
 		FROM CEDS.CedsOptionSetMapping
 		WHERE CedsElementTechnicalName = 'EconomicDisadvantageStatus'
 
 		DROP TABLE IF EXISTS #HomelessnessStatus
-		CREATE TABLE #HomelessnessStatus (HomelessnessStatusCode VARCHAR(50), HomelessnessStatusDescription VARCHAR(200))
+		CREATE TABLE #HomelessnessStatus (HomelessnessStatusCode VARCHAR(50), HomelessnessStatusDescription VARCHAR(200), HomelessnessStatusEdFactsCode VARCHAR(50))
 
-		INSERT INTO #HomelessnessStatus VALUES ('MISSING', 'MISSING')
+		INSERT INTO #HomelessnessStatus VALUES ('MISSING', 'MISSING', 'MISSING')
 		INSERT INTO #HomelessnessStatus 
 		SELECT 
 			  CedsOptionSetCode
 			, CedsOptionSetDescription
+			, CASE CedsOptionSetCode
+				WHEN 'Yes' THEN 'ECODIS'
+				ELSE 'MISSING'
+			  END
 		FROM CEDS.CedsOptionSetMapping
 		WHERE CedsElementTechnicalName = 'HomelessnessStatus'
 
@@ -1776,28 +1783,69 @@
 	-- Populate DimResponsibleSchoolTypes		 ---
 	------------------------------------------------
 
-	IF NOT EXISTS (SELECT 1 FROM RDS.DimResponsibleSchoolTypes d WHERE d.ResponsibleSchoolTypeCode = 'MISSING') BEGIN
-		SET IDENTITY_INSERT RDS.DimResponsibleSchoolTypes ON
-
-		INSERT INTO RDS.DimResponsibleSchoolTypes (DimResponsibleSchoolTypeId, ResponsibleSchoolTypeCode, ResponsibleSchoolTypeDescription)
-			VALUES (-1, 'MISSING', 'MISSING')
-
-		SET IDENTITY_INSERT RDS.DimResponsibleSchoolTypes OFF
-	END
 
 	INSERT INTO RDS.DimResponsibleSchoolTypes
 		(
-			  ResponsibleSchoolTypeCode
-			, ResponsibleSchoolTypeDescription		
+			  ResponsibleSchoolTypeAccountability
+			, ResponsibleSchoolTypeAccountabilityCode
+			, ResponsibleSchoolTypeAccountabilityDescription
+			, ResponsibleSchoolTypeAttendance
+			, ResponsibleSchoolTypeAttendanceCode
+			, ResponsibleSchoolTypeAttendanceDescription
+			, ResponsibleSchoolTypeFunding
+			, ResponsibleSchoolTypeFundingCode
+			, ResponsibleSchoolTypeFundingDescription
+			, ResponsibleSchoolTypeGraduation
+			, ResponsibleSchoolTypeGraduationCode
+			, ResponsibleSchoolTypeGraduationDescription
+			, ResponsibleSchoolTypeIndividualizedEducationProgram
+			, ResponsibleSchoolTypeIndividualizedEducationProgramCode
+			, ResponsibleSchoolTypeIndividualizedEducationProgramDescription
+			, ResponsibleSchoolTypeTransportation
+			, ResponsibleSchoolTypeTransportationCode
+			, ResponsibleSchoolTypeTransportationDescription
+			, ResponsibleSchoolTypeIepServiceProvider
+			, ResponsibleSchoolTypeIepServiceProviderCode
+			, ResponsibleSchoolTypeIepServiceProviderDescription
 		)
 	SELECT 
-		  ceds.CedsOptionSetCode
-		, ceds.CedsOptionSetDescription
-	FROM CEDS.CedsOptionSetMapping ceds
-	LEFT JOIN RDS.DimResponsibleSchoolTypes main
-		ON ceds.CedsOptionSetCode = main.ResponsibleSchoolTypeCode
-	WHERE main.DimResponsibleSchoolTypeId IS NULL
-		AND ceds.CedsElementTechnicalName = 'ResponsibleSchoolType'
+		  Accountability.CedsOptionSetValue
+		, Accountability.CedsOptionSetCode
+		, Accountability.CedsOptionSetDescription
+		, Attendance.CedsOptionSetValue
+		, Attendance.CedsOptionSetCode
+		, Attendance.CedsOptionSetDescription
+		, Funding.CedsOptionSetValue
+		, Funding.CedsOptionSetCode
+		, Funding.CedsOptionSetDescription
+		, Graduation.CedsOptionSetValue
+		, Graduation.CedsOptionSetCode
+		, Graduation.CedsOptionSetDescription
+		, IndividualizedEducationProgram.CedsOptionSetValue
+		, IndividualizedEducationProgram.CedsOptionSetCode
+		, IndividualizedEducationProgram.CedsOptionSetDescription
+		, Transportation.CedsOptionSetValue
+		, Transportation.CedsOptionSetCode
+		, Transportation.CedsOptionSetDescription
+		, IEPServiceProvider.CedsOptionSetValue
+		, IEPServiceProvider.CedsOptionSetCode
+		, IEPServiceProvider.CedsOptionSetDescription
+	FROM (VALUES(1, 'Accountability', 'The role/relationship type assigned to an organization, institution, or agency responsible for student learning under Federal ESEA and State accountability plans.  (e.g. for AYP reporting)'),(0, 'Accountability', 'The role/relationship type assigned to an organization, institution, or agency responsible for student learning under Federal ESEA and State accountability plans.  (e.g. for AYP reporting)')) Accountability(CedsOptionSetValue, CedsOptionSetCode, CedsOptionSetDescription)
+	CROSS JOIN (VALUES(1, 'Attendance', 'The role/relationship assigned to an organization, institution, or agency operating the physical or virtual site in which delivery of educational services take place.'), (0, 'Attendance', 'The role/relationship assigned to an organization, institution, or agency operating the physical or virtual site in which delivery of educational services take place.')) Attendance(CedsOptionSetValue, CedsOptionSetCode, CedsOptionSetDescription)
+	CROSS JOIN (VALUES(1, 'Funding', 'The role/relationship assigned to an organization, institution, or agency responsible for funding related to a student enrollment.'), (0, 'Funding', 'The role/relationship assigned to an organization, institution, or agency responsible for funding related to a student enrollment.')) Funding(CedsOptionSetValue, CedsOptionSetCode, CedsOptionSetDescription)
+	CROSS JOIN (VALUES(1, 'Graduation', 'The role/relationship assigned to an organization, institution, or agency responsible for issuing/awarding diplomas.  (e.g. for graduation-rate reporting)'), (0, 'Graduation', 'The role/relationship assigned to an organization, institution, or agency responsible for issuing/awarding diplomas.  (e.g. for graduation-rate reporting)')) Graduation(CedsOptionSetValue, CedsOptionSetCode, CedsOptionSetDescription)
+	CROSS JOIN (VALUES(1, 'Individualized education program (IEP)', 'The role/relationship type assigned to an organization, institution, or agency responsible for creating and maintaining the student''s IEP, a written instructional plan for students with disabilities designated as special education students under the Individuals with Disabilities Education Act (IDEA-Part B) which includes: 1) a statement of present levels of educational performance of a child; 2) a statement of annual goals including short-term instructional objectives; 3) a statement of specific education and related services to be provided and the extent to which the child will be able to participate in regular educational programs; 4) a projected date for initiation and anticipated duration of services; and 5) appropriate objectives, criteria and evaluation procedures and schedules for determining, on at least an annual basis, whether instructional objectives are being achieved.'), (0, 'Individualized education program (IEP)', 'The role/relationship type assigned to an organization, institution, or agency responsible for creating and maintaining the student''s IEP, a written instructional plan for students with disabilities designated as special education students under the Individuals with Disabilities Education Act (IDEA-Part B) which includes: 1) a statement of present levels of educational performance of a child; 2) a statement of annual goals including short-term instructional objectives; 3) a statement of specific education and related services to be provided and the extent to which the child will be able to participate in regular educational programs; 4) a projected date for initiation and anticipated duration of services; and 5) appropriate objectives, criteria and evaluation procedures and schedules for determining, on at least an annual basis, whether instructional objectives are being achieved.')) IndividualizedEducationProgram(CedsOptionSetValue, CedsOptionSetCode, CedsOptionSetDescription)
+	CROSS JOIN (VALUES(1, 'Transportation', 'The role/relationship type assigned to an organization, institution, or agency responsible for transporting the student to the physical location of the school or facility in which educational services are delivered.'), (0, 'Transportation', 'The role/relationship type assigned to an organization, institution, or agency responsible for transporting the student to the physical location of the school or facility in which educational services are delivered.')) Transportation(CedsOptionSetValue, CedsOptionSetCode, CedsOptionSetDescription)
+	CROSS JOIN (VALUES(1, 'Individualized education program service provider', 'The role/relationship type assigned to an organization, institution, or agency responsible for providing services to meet the requirements of the student''s Individualized Education Program (IEP).'), (0, 'Individualized education program service provider', 'The role/relationship type assigned to an organization, institution, or agency responsible for providing services to meet the requirements of the student''s Individualized Education Program (IEP).')) IEPServiceProvider(CedsOptionSetValue, CedsOptionSetCode, CedsOptionSetDescription)
+	LEFT JOIN RDS.DimResponsibleSchoolTypes rdrst
+		ON  Accountability.CedsOptionSetValue = rdrst.ResponsibleSchoolTypeAccountability
+		AND Attendance.CedsOptionSetValue = rdrst.ResponsibleSchoolTypeAttendance
+		AND Funding.CedsOptionSetValue = rdrst.ResponsibleSchoolTypeFunding
+		AND Graduation.CedsOptionSetValue = rdrst.ResponsibleSchoolTypeGraduation
+		AND IndividualizedEducationProgram.CedsOptionSetValue = rdrst.ResponsibleSchoolTypeIndividualizedEducationProgram
+		AND Transportation.CedsOptionSetValue = rdrst.ResponsibleSchoolTypeTransportation
+		AND IEPServiceProvider.CedsOptionSetValue = rdrst.ResponsibleSchoolTypeIepServiceProvider
+	WHERE rdrst.DimResponsibleSchoolTypeId IS NULL
 
 
 
@@ -1850,7 +1898,10 @@
 		SELECT 
 			  CedsOptionSetCode
 			, CedsOptionSetDescription
-			, EdFactsOptionSetCode
+			, CASE CedsOptionSetCode
+				WHEN '' THEN ''
+				ELSE 'MISSING'
+			  END 
 		FROM CEDS.CedsOptionSetMapping
 		WHERE CedsElementTechnicalName = 'SpecialEducationExitReason'
 

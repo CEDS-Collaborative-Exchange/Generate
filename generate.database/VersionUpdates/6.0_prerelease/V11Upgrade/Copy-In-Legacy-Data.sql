@@ -246,7 +246,7 @@ LEFT JOIN RDS.DimMigrantStatuses rdms
 	ON  f.MigrantStatusCode = rdms.MigrantStatusCode --Codes are the same
 	AND 'MISSING' = rdms.MigrantEducationProgramEnrollmentTypeCode
 	AND CASE f.ContinuationOfServicesReasonCode
-            WHEN 'CONTINUED' THEN '01' -- The best we can do. 
+            WHEN 'CONTINUED' THEN '01' -- The best we can do. NOTE: This data may not be used, so may not need to be upgraded. 
             ELSE 'MISSING'
         END = rdms.ContinuationOfServicesReasonCode
 	AND f.ConsolidatedMepFundsStatusCode = rdms.ConsolidatedMepFundsStatusCode --Codes are the same
