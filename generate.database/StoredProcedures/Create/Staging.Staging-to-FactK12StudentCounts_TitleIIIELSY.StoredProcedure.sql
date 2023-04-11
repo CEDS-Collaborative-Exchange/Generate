@@ -131,23 +131,28 @@ BEGIN
 				ON ske.Student_Identifier_State = immigrant.Student_Identifier_State
 				AND ISNULL(ske.Lea_Identifier_State, '') = ISNULL(immigrant.Lea_Identifier_State, '')
 				AND ISNULL(ske.School_Identifier_State, '') = ISNULL(immigrant.School_Identifier_State, '')
-				AND immigrant.Immigrant_ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
+				AND immigrant.Immigrant_ProgramParticipationStartDate >= ske.EnrollmentEntryDate 
+				AND immigrant.Immigrant_ProgramParticipationStartDate <= ISNULL(ske.EnrollmentExitDate, GETDATE())
 			JOIN RDS.DimSchoolYears rsy
 				ON ske.SchoolYear = rsy.SchoolYear
 			LEFT JOIN RDS.DimLeas rdl
 				ON ske.LEA_Identifier_State = rdl.LeaIdentifierState
-				AND immigrant.Immigrant_ProgramParticipationStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
+				AND immigrant.Immigrant_ProgramParticipationStartDate >= rdl.RecordStartDateTime 
+				AND immigrant.Immigrant_ProgramParticipationStartDate <= ISNULL(rdl.RecordEndDateTime, GETDATE())
 			LEFT JOIN RDS.DimK12Schools rdksch
 				ON ske.School_Identifier_State = rdksch.SchoolIdentifierState
-				AND immigrant.Immigrant_ProgramParticipationStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
+				AND immigrant.Immigrant_ProgramParticipationStartDate >= rdksch.RecordStartDateTime 
+				AND immigrant.Immigrant_ProgramParticipationStartDate <= ISNULL(rdksch.RecordEndDateTime, GETDATE())
 			JOIN RDS.DimSeas rds
-				ON immigrant.Immigrant_ProgramParticipationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+				ON immigrant.Immigrant_ProgramParticipationStartDate >= convert(date, rds.RecordStartDateTime)
+				AND immigrant.Immigrant_ProgramParticipationStartDate <= ISNULL(convert(date, rds.RecordEndDateTime), GETDATE())
 		--english learner
 			LEFT JOIN Staging.PersonStatus el 
 				ON ske.Student_Identifier_State = el.Student_Identifier_State
 				AND ISNULL(ske.LEA_Identifier_State, '') = ISNULL(el.LEA_Identifier_State, '') 
 				AND ISNULL(ske.School_Identifier_State, '') = ISNULL(el.School_Identifier_State, '')
-				AND immigrant.Immigrant_ProgramParticipationStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
+				AND immigrant.Immigrant_ProgramParticipationStartDate >= el.EnglishLearner_StatusStartDate 
+				AND el.EnglishLearner_StatusStartDate <= ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
 			LEFT JOIN #vwK12Demographics rdkd
  				ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdkd.EnglishLearnerStatusMap AS SMALLINT), -1)
 				AND rdkd.EconomicDisadvantageStatusCode = 'MISSING'
@@ -173,9 +178,11 @@ BEGIN
 				AND ISNULL(ske.MiddleName, '') = ISNULL(rdks.MiddleName, '')
 				AND ISNULL(ske.LastName, 'MISSING') = rdks.LastName
 				AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdks.BirthDate, '1/1/1900')
-				AND immigrant.Immigrant_ProgramParticipationStartDate BETWEEN rdks.RecordStartDateTime AND ISNULL(rdks.RecordEndDateTime, GETDATE())
+				AND immigrant.Immigrant_ProgramParticipationStartDate >= rdks.RecordStartDateTime 
+				AND immigrant.Immigrant_ProgramParticipationStartDate <= ISNULL(rdks.RecordEndDateTime, GETDATE())
 			WHERE immigrant.ProgramType_Immigrant = 1 
-			AND immigrant.Immigrant_ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
+			AND immigrant.Immigrant_ProgramParticipationStartDate >= ske.EnrollmentEntryDate 
+			AND immigrant.Immigrant_ProgramParticipationStartDate <= ISNULL(ske.EnrollmentExitDate, GETDATE())
 
 			--Final insert into RDS.FactK12StudentCounts table 
 			INSERT INTO RDS.FactK12StudentCounts (
