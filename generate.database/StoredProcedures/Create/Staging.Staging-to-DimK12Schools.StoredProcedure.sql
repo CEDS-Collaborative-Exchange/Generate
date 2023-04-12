@@ -264,7 +264,7 @@ BEGIN
 	-- SchoolIdentifierState and RecordStartDateTime must always be unique in Staging.K12Organaization
 	MERGE rds.DimK12Schools AS trgt 
 	USING #K12Schools AS src
-			ON trgt.SchoolIdentifierState = src.SchoolIdentifierState
+			ON trgt.SchoolIdentifierSea = src.SchoolIdentifierState
 			AND ISNULL(trgt.RecordStartDateTime, '') = ISNULL(src.RecordStartDateTime, '')
 	WHEN MATCHED THEN 
 			UPDATE SET trgt.IeuName = src.IeuName,
@@ -329,7 +329,7 @@ BEGIN
 		, PriorLEAIdentifierState --CIID-4060
 		, LeaName
 		, SchoolIdentifierNces
-		, SchoolIdentifierState
+		, SchoolIdentifierSea
 		, PriorSchoolIdentifierState --CIID-4060
 		, NameOfInstitution
 		, SchoolOperationalStatus
@@ -430,19 +430,19 @@ BEGIN
 
 		;WITH upd AS(
 			SELECT 
-				  startd.SchoolIdentifierState
+				  startd.SchoolIdentifierSea
 				, startd.RecordStartDateTime 
 				, min(endd.RecordStartDateTime) - 1 AS RecordEndDateTime
 			FROM rds.DimK12Schools startd
 			JOIN rds.DimK12Schools endd
-				ON startd.SchoolIdentifierState = endd.SchoolIdentifierState
+				ON startd.SchoolIdentifierSea = endd.SchoolIdentifierSea
 				AND startd.RecordStartDateTime < endd.RecordStartDateTime
 			GROUP BY  startd.SchoolIdentifierState, startd.RecordStartDateTime
 		) 
 		UPDATE school SET RecordEndDateTime = upd.RecordEndDateTime
 		FROM rds.DimK12Schools school
 		JOIN upd	
-			ON school.SchoolIdentifierState = upd.SchoolIdentifierState
+			ON school.SchoolIdentifierSea = upd.SchoolIdentifierSea
 			AND school.RecordStartDateTime = upd.RecordStartDateTime
 		WHERE upd.RecordEndDateTime <> '1900-01-01 00:00:00.000'
 
