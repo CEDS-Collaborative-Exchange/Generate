@@ -172,148 +172,148 @@
 	EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'CharterSchoolAuthorizer', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerType';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[SchoolYear].[Required]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[SchoolYear].[Required]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'SchoolYear';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'SchoolYear';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[LEA_Identifier_State].[Required]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[LEA_Identifier_State].[Required]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'LEA_Identifier_State';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'LEA_Identifier_State';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[School_Identifier_State].[Required]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[School_Identifier_State].[Required]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'School_Identifier_State';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'School_Identifier_State';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[ComprehensiveSupport].[Lookup]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[ComprehensiveSupport].[Lookup]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'ComprehensiveSupport';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'ComprehensiveSupport';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[ComprehensiveSupportReasonApplicability].[Lookup]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[ComprehensiveSupportReasonApplicability].[Lookup]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'ComprehensiveSupportReasonApplicability';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'ComprehensiveSupportReasonApplicability';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[ComprehensiveSupportReasonApplicability].[Required]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[ComprehensiveSupportReasonApplicability].[Required]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'ComprehensiveSupportReasonApplicability';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'ComprehensiveSupportReasonApplicability';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[RecordStartDateTime].[Required]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[RecordStartDateTime].[Required]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[OrganizationId].[Identifier]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[OrganizationId].[Identifier]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Identifier', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'OrganizationId';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Identifier', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'OrganizationId';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[K12SchoolId].[Identifier]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolComprehensiveSupportIdentificationType].[K12SchoolId].[Identifier]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Identifier', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'K12SchoolId';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Identifier', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolComprehensiveSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'K12SchoolId';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[SchoolYear].[Required]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[SchoolYear].[Required]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'SchoolYear';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'SchoolYear';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[LEA_Identifier_State].[Required]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[LEA_Identifier_State].[Required]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'LEA_Identifier_State';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'LEA_Identifier_State';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[School_Identifier_State].[Required]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[School_Identifier_State].[Required]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'School_Identifier_State';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'School_Identifier_State';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[Subgroup].[Lookup]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[Subgroup].[Lookup]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'Subgroup';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'Subgroup';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[ComprehensiveSupportReasonApplicability].[Lookup]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[ComprehensiveSupportReasonApplicability].[Lookup]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'ComprehensiveSupportReasonApplicability';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'ComprehensiveSupportReasonApplicability';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[ComprehensiveSupportReasonApplicability].[Required]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[ComprehensiveSupportReasonApplicability].[Required]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'ComprehensiveSupportReasonApplicability';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'ComprehensiveSupportReasonApplicability';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[RecordStartDateTime].[Required]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[RecordStartDateTime].[Required]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[OrganizationId].[Identifier]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[OrganizationId].[Identifier]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Identifier', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'OrganizationId';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Identifier', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'OrganizationId';
 
 
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[K12SchoolId].[Identifier]...';
+	-- GO
+	-- PRINT N'Dropping Extended Property [Staging].[K12SchoolTargetedSupportIdentificationType].[K12SchoolId].[Identifier]...';
 
 
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Identifier', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'K12SchoolId';
+	-- GO
+	-- EXECUTE sp_dropextendedproperty @name = N'Identifier', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12SchoolTargetedSupportIdentificationType', @level2type = N'COLUMN', @level2name = N'K12SchoolId';
 
 
 	GO
@@ -7102,22 +7102,22 @@
 	DROP TABLE [RDS].[FactOrganizationStatusCountReports];
 
 
-	GO
-	PRINT N'Dropping Table [Staging].[K12SchoolComprehensiveSupportIdentificationType]...';
+	-- GO
+	-- PRINT N'Dropping Table [Staging].[K12SchoolComprehensiveSupportIdentificationType]...';
+
+
+	-- --TODO: Review if this should happen
+	-- GO
+	-- DROP TABLE [Staging].[K12SchoolComprehensiveSupportIdentificationType];
 
 
 	--TODO: Review if this should happen
-	GO
-	DROP TABLE [Staging].[K12SchoolComprehensiveSupportIdentificationType];
+	-- GO
+	-- PRINT N'Dropping Table [Staging].[K12SchoolTargetedSupportIdentificationType]...';
 
 
-	--TODO: Review if this should happen
-	GO
-	PRINT N'Dropping Table [Staging].[K12SchoolTargetedSupportIdentificationType]...';
-
-
-	GO
-	DROP TABLE [Staging].[K12SchoolTargetedSupportIdentificationType];
+	-- GO
+	-- DROP TABLE [Staging].[K12SchoolTargetedSupportIdentificationType];
 
 
 	GO
