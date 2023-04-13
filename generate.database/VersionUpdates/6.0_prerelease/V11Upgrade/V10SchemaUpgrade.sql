@@ -7949,9 +7949,9 @@
 		[CteGraduationRateInclusionCode]                     NVARCHAR (450) NULL,
 		[CteGraduationRateInclusionDescription]              NVARCHAR (200) NULL,
 		[CteGraduationRateInclusionEdFactsCode]              NVARCHAR (50)  NULL,
-		[PerkinsLEPStatusCode]                               NVARCHAR (50)  NULL,
-		[PerkinsLEPStatusEdFactsCode]                        NVARCHAR (50)  NULL,
-		[PerkinsLEPStatusDescription]                        NVARCHAR (100) NULL,
+		[PerkinsELStatusCode] 	                             NVARCHAR (50)  NULL,
+		[PerkinsELStatusEdFactsCode]                         NVARCHAR (50)  NULL,
+		[PerkinsELStatusDescription]                         NVARCHAR (100) NULL,
 		[CteParticipantCode]                                 NVARCHAR (50)  NULL,
 		[CteParticipantDescription]                          NVARCHAR (200) NULL,
 		[CteParticipantEdFactsCode]                          NVARCHAR (50)  NULL,
@@ -11427,8 +11427,8 @@
 		[StatusEndDateMigrantId]                     INT            CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDateMigrantId] DEFAULT ((-1)) NOT NULL,
 		[StatusStartDateMilitaryConnectedStudentId]  INT            CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDateMilitaryConnectedStudentId] DEFAULT ((-1)) NOT NULL,
 		[StatusEndDateMilitaryConnectedStudentId]    INT            CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDateMilitaryConnectedStudentId] DEFAULT ((-1)) NOT NULL,
-		[StatusStartDatePerkinsLepId]                INT            CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDatePerkinsId] DEFAULT ((-1)) NOT NULL,
-		[StatusEndDatePerkinsLepId]                  INT            CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDatePerkinsId] DEFAULT ((-1)) NOT NULL,
+		[StatusStartDatePerkinsELId]                 INT            CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDatePerkinsELId] DEFAULT ((-1)) NOT NULL,
+		[StatusEndDatePerkinsELId]  	             INT            CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDatePerkinsELId] DEFAULT ((-1)) NOT NULL,
 		[StatusEndDateTitleIIIImmigrantId]           INT            CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDateTitleIIIImmigrantId] DEFAULT ((-1)) NOT NULL,
 		[StatusStartDateTitleIIIImmigrantId]         INT            CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDateTitleIIIImmigrantId] DEFAULT ((-1)) NOT NULL,
 		[TitleIIIStatusId]                           INT            CONSTRAINT [DF_FactK12StudentEnrollments_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
@@ -11848,12 +11848,12 @@
 
 
 	GO
-	PRINT N'Creating Index [RDS].[FactK12StudentEnrollments].[IXFK_FactK12StudentEnrollments_StatusEndDatePerkinsLepId]...';
+	PRINT N'Creating Index [RDS].[FactK12StudentEnrollments].[IXFK_FactK12StudentEnrollments_StatusEndDatePerkinsELId]...';
 
 
 	GO
-	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentEnrollments_StatusEndDatePerkinsLepId]
-		ON [RDS].[FactK12StudentEnrollments]([StatusEndDatePerkinsLepId] ASC);
+	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentEnrollments_StatusEndDatePerkinsELId]
+		ON [RDS].[FactK12StudentEnrollments]([StatusEndDatePerkinsELId] ASC);
 
 
 	GO
@@ -11920,12 +11920,12 @@
 
 
 	GO
-	PRINT N'Creating Index [RDS].[FactK12StudentEnrollments].[IXFK_FactK12StudentEnrollments_StatusStartDatePerkinsLepId]...';
+	PRINT N'Creating Index [RDS].[FactK12StudentEnrollments].[IXFK_FactK12StudentEnrollments_StatusStartDatePerkinsELId]...';
 
 
 	GO
-	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentEnrollments_StatusStartDatePerkinsLepId]
-		ON [RDS].[FactK12StudentEnrollments]([StatusStartDatePerkinsLepId] ASC);
+	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentEnrollments_StatusStartDatePerkinsELId]
+		ON [RDS].[FactK12StudentEnrollments]([StatusStartDatePerkinsELId] ASC);
 
 
 	GO
@@ -12588,7 +12588,7 @@
 	GO
 	PRINT N'Starting rebuilding table [RDS].[ReportEDFactsK12StudentCounts]...';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAM]', N'ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[LEPPERKINSSTATUS]', N'PERKINSLEPSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[LEPPERKINSSTATUS]', N'PERKINSELSTATUS';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[OrganizationNcesId]', N'OrganizationIdentifierNces';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[OrganizationStateId]', N'OrganizationIdentifierSea';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[ParentOrganizationStateId]', N'ParentOrganizationIdentifierSea';
@@ -12635,7 +12635,7 @@
 	GO
 	PRINT N'Starting rebuilding table [RDS].[ReportEDFactsK12StudentDisciplines]...';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAM]', N'ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[LEPPERKINSSTATUS]', N'PERKINSLEPSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[LEPPERKINSSTATUS]', N'PERKINSELSTATUS';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[OrganizationNcesId]', N'OrganizationIdentifierNces';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[OrganizationStateId]', N'OrganizationIdentifierSea';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[ParentOrganizationStateId]', N'ParentOrganizationIdentifierSea';
@@ -13530,7 +13530,7 @@
 	The column [Staging].[PersonStatus].[OrganizationPersonRoleID_IEU_Program_Immigrant] is being dropped, data loss could occur.
 	The column [Staging].[PersonStatus].[OrganizationPersonRoleID_IEU_Program_Section504] is being dropped, data loss could occur.
 	The column [Staging].[PersonStatus].[OrganizationPersonRoleID_IEU_SPED] is being dropped, data loss could occur.
-	The column [Staging].[PersonStatus].[PersonStatusId_PerkinsLEP] is being dropped, data loss could occur.
+	The column [Staging].[PersonStatus].[PersonStatusId_PerkinsEL] is being dropped, data loss could occur.
 	The column [Staging].[PersonStatus].[School_Identifier_State] is being dropped, data loss could occur.
 	The column [Staging].[PersonStatus].[Student_Identifier_State] is being dropped, data loss could occur.
 	*/
@@ -13582,14 +13582,11 @@
 		[EnglishLearner_StatusStartDate]                         DATE           NULL,
 		[EnglishLearner_StatusEndDate]                           DATE           NULL,
 		[ISO_639_2_NativeLanguage]                               NVARCHAR (100) NULL,
-		[PerkinsLEPStatus]                                       NVARCHAR (100) NULL,
-		[PerkinsLEPStatus_StatusStartDate]                       DATE           NULL,
-		[PerkinsLEPStatus_StatusEndDate]                         DATE           NULL,
-		[IDEAIndicator]                                          BIT            NULL,
-		[IDEA_StatusStartDate]                                   DATE           NULL,
-		[IDEA_StatusEndDate]                                     DATE           NULL,
-		[PrimaryDisabilityType]                                  NVARCHAR (100) NULL,
-		[SecondaryDisabilityType]                                NVARCHAR (100) NULL,
+		[PerkinsELStatus]                                        NVARCHAR (100) NULL,
+		[PerkinsELStatus_StatusStartDate]                        DATE           NULL,
+		[PerkinsELStatus_StatusEndDate]                          DATE           NULL,
+		[DataCollectionName]                                     NVARCHAR (100) NULL,
+		[DataCollectionId]                                       INT            NULL,
 		[PersonId]                                               INT            NULL,
 		[OrganizationID_LEA]                                     INT            NULL,
 		[OrganizationPersonRoleID_LEA]                           INT            NULL,
@@ -13626,8 +13623,6 @@
 		[PersonMilitaryId]                                       INT            NULL,
 		[PersonHomelessnessId]                                   INT            NULL,
 		[OrganizationPersonRoleID_Program_Foster]                INT            NULL,
-		[DataCollectionName]                                     NVARCHAR (100) NULL,
-		[DataCollectionId]                                       INT            NULL,
 		[RunDateTime]                                            DATETIME       NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_PersonStatus1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
@@ -15349,9 +15344,9 @@
 		[EnglishLearnerStatusCode]                          NVARCHAR (100) NOT NULL,
 		[EnglishLearnerStatusDescription]                   NVARCHAR (300) NOT NULL,
 		[EnglishLearnerStatusEdFactsCode]                   NVARCHAR (50)  NOT NULL,
-		[PerkinsLEPStatusCode]                              NVARCHAR (100) NOT NULL,
-		[PerkinsLEPStatusDescription]                       NVARCHAR (300) NOT NULL,
-		[PerkinsLEPStatusEdfactsCode]                       VARCHAR (50)   NOT NULL,
+		[PerkinsELStatusCode]                               NVARCHAR (100) NOT NULL,
+		[PerkinsELStatusDescription]                        NVARCHAR (300) NOT NULL,
+		[PerkinsELStatusEdfactsCode]                        VARCHAR (50)   NOT NULL,
 		[TitleIIIAccountabilityProgressStatusCode]          NVARCHAR (50)  NOT NULL,
 		[TitleIIIAccountabilityProgressStatusDescription]   NVARCHAR (100) NOT NULL,
 		[TitleIIIAccountabilityProgressStatusEdFactsCode]   NVARCHAR (50)  NOT NULL,
@@ -17007,7 +17002,7 @@
 		[ACADEMICORVOCATIONALEXITOUTCOME]               NVARCHAR (50)   NULL,
 		[ACADEMICORVOCATIONALOUTCOME]                   NVARCHAR (50)   NULL,
 		[HOMELESSSERVICEDINDICATOR]                     NVARCHAR (50)   NULL,
-		[PERKINSLEPSTATUS]                              NVARCHAR (50)   NULL,
+		[PerkinsELSTATUS]                              NVARCHAR (50)   NULL,
 		[IDEAINDICATOR]                                 VARCHAR (50)    NULL,
 		[TITLEISUPPORTSERVICES]                         VARCHAR (50)    NULL,
 		[TITLEIINSTRUCTIONALSERVICES]                   VARCHAR (50)    NULL,
@@ -20556,12 +20551,12 @@
 
 
 	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsLepId]...';
+	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsELId]...';
 
 
 	GO
 	ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsLepId] FOREIGN KEY ([StatusEndDatePerkinsLepId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+		ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsELId] FOREIGN KEY ([StatusEndDatePerkinsELId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 	GO
@@ -20619,12 +20614,12 @@
 
 
 	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsLepId]...';
+	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsELId]...';
 
 
 	GO
 	ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsLepId] FOREIGN KEY ([StatusStartDatePerkinsLepId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+		ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsELId] FOREIGN KEY ([StatusStartDatePerkinsELId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 	GO
@@ -26095,123 +26090,123 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusCode].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusCode].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusCode].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsLEPStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusCode].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusCode].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusCode].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusEdFactsCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusEdFactsCode].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdFactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusEdFactsCode].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusEdFactsCode].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsLEPStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdFactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusEdFactsCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusEdFactsCode].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdFactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusEdFactsCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusEdFactsCode].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdFactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusEdFactsCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusEdFactsCode].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdFactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusDescription].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusDescription].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusDescription].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusDescription].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsLEPStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusDescription].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusDescription].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusDescription].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusDescription].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsLEPStatusDescription].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusDescription].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
 
 
 	GO
@@ -40463,43 +40458,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PERKINSLEPSTATUS].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PerkinsELSTATUS].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PERKINSLEPSTATUS].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PerkinsELSTATUS].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsLEPStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PERKINSLEPSTATUS].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PerkinsELSTATUS].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PERKINSLEPSTATUS].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PerkinsELSTATUS].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PERKINSLEPSTATUS].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PerkinsELSTATUS].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
@@ -41783,43 +41778,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PERKINSLEPSTATUS].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PerkinsELSTATUS].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PERKINSLEPSTATUS].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PerkinsELSTATUS].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsLEPStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PERKINSLEPSTATUS].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PerkinsELSTATUS].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PERKINSLEPSTATUS].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PerkinsELSTATUS].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PERKINSLEPSTATUS].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PerkinsELSTATUS].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
@@ -50383,123 +50378,123 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusCode].[CEDS_Element]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_Element]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusDescription].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusDescription].[CEDS_Element]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_Element]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusDescription].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusDescription].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusDescription].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusEdfactsCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusEdfactsCode].[CEDS_Element]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_Element]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusEdfactsCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusEdfactsCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsLEPStatusEdfactsCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsLEPStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
 
 
 	GO
@@ -57943,43 +57938,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PERKINSLEPSTATUS].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PerkinsELSTATUS].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PERKINSLEPSTATUS].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PerkinsELSTATUS].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsLEPStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PERKINSLEPSTATUS].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PerkinsELSTATUS].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PERKINSLEPSTATUS].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PerkinsELSTATUS].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PERKINSLEPSTATUS].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PerkinsELSTATUS].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PERKINSLEPSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
 
 
 	GO
@@ -63563,7 +63558,7 @@
 
 	ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDateMilitaryConnectedStudentId ];
 
-	ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsLepId];
+	ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsELId];
 
 	ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDateTitleIIIImmigrantId];
 
@@ -63577,7 +63572,7 @@
 
 	ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDateMilitaryConnectedStudentId];
 
-	ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsLepId];
+	ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsELId];
 
 	ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDateTitleIIIImmigrantId];
 

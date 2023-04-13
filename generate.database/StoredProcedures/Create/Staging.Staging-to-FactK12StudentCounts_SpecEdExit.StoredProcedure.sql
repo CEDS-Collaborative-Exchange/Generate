@@ -1,7 +1,7 @@
 /**********************************************************************
 Author: AEM Corp
 Date:	3/1/2022
-Description: Migrates Child Count Data from Staging to RDS.FactK12StudentCounts
+Description: Migrates Exiting Data from Staging to RDS.FactK12StudentCounts
 
 ************************************************************************/
 CREATE PROCEDURE  [Staging].[Staging-to-FactK12StudentCounts_SpecEdExit] 
@@ -131,8 +131,8 @@ BEGIN
 		FROM RDS.vwDimCteStatuses
 		WHERE SchoolYear = @SchoolYear
 		
-		CREATE INDEX IX_vwDimCteStatuses ON #vwDimCteStatuses(SchoolYear, CteAeDisplacedHomemakerIndicatorMap, CteNontraditionalGenderStatusMap, [SingleParentOrSinglePregnantWomanStatusMap, CteGraduationRateInclusionMap, PerkinsLEPStatusMap) 
-			INCLUDE (CteAeDisplacedHomemakerIndicatorCode, CteNontraditionalGenderStatusCode, [SingleParentOrSinglePregnantWomanStatusCode], CteGraduationRateInclusionCode, PerkinsLEPStatusCode)
+		CREATE INDEX IX_vwDimCteStatuses ON #vwDimCteStatuses(SchoolYear, CteAeDisplacedHomemakerIndicatorMap, CteNontraditionalGenderStatusMap, SingleParentOrSinglePregnantWomanStatusMap) 
+			INCLUDE (CteAeDisplacedHomemakerIndicatorCode, CteNontraditionalGenderStatusCode, SingleParentOrSinglePregnantWomanStatusCode)
 
 		IF OBJECT_ID('tempdb..#vwDimTitleIStatuses') IS NOT NULL 
 			DROP TABLE #vwDimTitleIStatuses		
@@ -267,11 +267,18 @@ BEGIN
 			AND rdd.DateValue BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
 		JOIN RDS.DimSeas rds
 			ON rdd.DateValue BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
-		JOIN Staging.PersonStatus idea
+		JOIN Staging.ProgramParticipationSpecialEducation idea
 			ON ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
-			AND rdd.DateValue BETWEEN idea.IDEA_StatusStartDate AND CASE WHEN idea.IDEA_StatusEndDate IS NULL THEN GETDATE() ELSE idea.IDEA_StatusEndDate END
+			AND rdd.DateValue BETWEEN idea.ProgramParticipationBeginDate AND ISNULL(idea.ProgramParticipationEndDate, GETDATE())
+		JOIN Staging.IdeaDisabilityType sidt	
+			ON ske.SchoolYear = sidt.SchoolYear
+			AND sidt.StudentIdentifierState = idea.StudentIdentifierState
+			AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
+			AND sidt.IsPrimaryDisability = 1
+			AND rdd.DateValue BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  from [Staging-to-FactK12StudentCounts_SpecEdExit]
 			ON ske.SchoolYear = spr.SchoolYear
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState
@@ -313,9 +320,9 @@ BEGIN
 			ON RDS.Get_Age(ske.Birthdate, IIF(rdd.DateValue < @ChildCountDate, @PreviousChildCountDate, @ChildCountDate)) = rda.AgeValue
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON ske.SchoolYear = rdis.SchoolYear
-			AND ISNULL(idea.PrimaryDisabilityType, 'MISSING') = ISNULL(PrimaryDisabilityTypeMap, PrimaryDisabilityTypeCode)
-			AND ISNULL(CAST(idea.IDEAIndicator AS SMALLINT), -1) = rdis.IdeaIndicatorMap
+			AND ISNULL(sidt.IdeaDisabilityType, 'MISSING') = ISNULL(PrimaryDisabilityTypeMap, PrimaryDisabilityTypeCode)
 			AND ISNULL(sppse.SpecialEducationExitReason, 'MISSING') = ISNULL(rdis.SpecialEducationExitReasonMap, rdis.SpecialEducationExitReasonCode)
+			AND IdeaIndicatorCode = 'Yes'
 			AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
 		LEFT JOIN #vwDimRaces rdr
 			ON rsy.SchoolYear = rdr.SchoolYear
