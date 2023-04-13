@@ -28,7 +28,7 @@ INSERT INTO RDS.DimPeople (
 	, MiddleName
 	, LastOrSurname
 	, BirthDate 
-    , IsActiveK12Staff
+    , IsActiveK12StaffMember
 	, K12StaffStaffMemberIdentifierState 
    	, RecordStartDateTime 
 	, RecordEndDateTime 
@@ -165,7 +165,7 @@ LEFT JOIN RDS.DimCteStatuses rdctes
             WHEN 'NOTG' THEN 'NotIncludedAsGraduated'
             ELSE 'MISSING'
         END = rdctes.CteGraduationRateInclusionCode
-    AND CASE f.PerkinsLEPStatusCode
+    AND CASE f.LepPerkinsStatusCode
             WHEN 'LEPP' THEN 'Yes'
             ELSE 'MISSING'
         END = rdctes.PerkinsLEPStatusCode
@@ -185,7 +185,7 @@ LEFT JOIN RDS.DimEnglishLearnerStatuses rdels
             WHEN 'NLEP' THEN 'No'
             ELSE 'MISSING'
         END = rdels.EnglishLearnerStatusCode
-    AND CASE f.PerkinsLEPStatusCode
+    AND CASE f.LepPerkinsStatusCode
             WHEN 'LEPP' THEN 'Yes'
             WHEN 'NLEP' THEN 'No'
             ELSE 'MISSING'
@@ -220,11 +220,11 @@ LEFT JOIN RDS.DimIdeaStatuses rdis
                     THEN f.IdeaEducationalEnvironmentCode 
             ELSE 'MISSING'
         END = rdis.IdeaEducationalEnvironmentForSchoolAgeCode
-    AND CASE WHEN (f.AgeCode < 5 AND AgeCode >= 3)
+    AND CASE WHEN (f.AgeCode < 5 AND f.AgeCode >= 3)
                 OR (f.AgeCode = 5 and f.GradeLevelCode IN ('MISSING','PK'))
                     THEN f.IdeaEducationalEnvironmentCode 
             ELSE 'MISSING'
-        END = rdis.rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode
+        END = rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode
 LEFT JOIN RDS.DimImmigrantStatuses rdimms
     -- I think
     ON  f.TitleiiiProgramParticipationCode = rdimms.TitleIIIImmigrantStatusCode
@@ -239,7 +239,7 @@ LEFT JOIN RDS.DimK12EnrollmentStatuses rdkes
     AND f.AcademicOrVocationalOutcomeCode = rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
     AND f.AcademicOrVocationalExitOutcomeCode = rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
 LEFT JOIN RDS.DimK12StudentStatuses rdkss   -- Will probably change to DimK12AcademicAwardStatuses since this is the only field in DimK12StudentStatuses.  
-    ON f.HighSchoolDiplomaTypeCode = rdkss.HighSchoolDiplomaTypeEdFactsCode -- Codeset has completely changed, but the old codes map were the EDFacts Codes & there are only 3 with a value != 'MISSING', so this mapping works. 
+    ON f.HighSchoolDiplomaTypeCode = rdkss.DiplomaCredentialTypeEdFactsCode -- Codeset has completely changed, but the old codes map were the EDFacts Codes & there are only 3 with a value != 'MISSING', so this mapping works. 
 LEFT JOIN RDS.DimLanguages rdlang
     ON f.Iso6392LanguageCode = rdlang.Iso6392LanguageCodeCode
 LEFT JOIN RDS.DimMigrantStatuses rdms
