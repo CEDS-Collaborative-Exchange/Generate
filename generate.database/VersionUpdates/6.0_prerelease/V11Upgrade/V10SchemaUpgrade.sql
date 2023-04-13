@@ -341,107 +341,11 @@
 
 
 	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[FirstName].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'FirstName';
-
-
-	GO
 	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[LastName].[Required]...';
 
 
 	GO
 	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'LastName';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[MiddleName].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'MiddleName';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[BirthDate].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'BirthDate';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[Sex].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'Sex';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[PositionTitle].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'PositionTitle';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[FullTimeEquivalency].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'FullTimeEquivalency';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[SpecialEducationStaffCategory].[Lookup]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'SpecialEducationStaffCategory';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[SpecialEducationStaffCategory].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'SpecialEducationStaffCategory';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[K12StaffClassification].[Lookup]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'K12StaffClassification';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[K12StaffClassification].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'K12StaffClassification';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[TitleIProgramStaffCategory].[Lookup]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'TitleIProgramStaffCategory';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[TitleIProgramStaffCategory].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'TitleIProgramStaffCategory';
 
 
 	GO
@@ -461,67 +365,11 @@
 
 
 	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[CredentialExpirationDate].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'CredentialExpirationDate';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[ParaprofessionalQualification].[Lookup]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualification';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[ParaprofessionalQualification].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualification';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[SpecialEducationAgeGroupTaught].[Lookup]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'SpecialEducationAgeGroupTaught';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[SpecialEducationAgeGroupTaught].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'SpecialEducationAgeGroupTaught';
-
-
-	GO
 	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[HighlyQualifiedTeacherIndicator].[Required]...';
 
 
 	GO
 	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'HighlyQualifiedTeacherIndicator';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[AssignmentStartDate].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'AssignmentStartDate';
-
-
-	GO
-	PRINT N'Dropping Extended Property [Staging].[K12StaffAssignment].[AssignmentEndDate].[Required]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'K12StaffAssignment', @level2type = N'COLUMN', @level2name = N'AssignmentEndDate';
 
 
 	GO
@@ -7118,15 +6966,6 @@
 
 	GO
 	DROP TABLE [Staging].[K12SchoolTargetedSupportIdentificationType];
-
-
-	GO
-	PRINT N'Dropping Table [Staging].[K12StaffAssignment]...';
-
-
-	--TODO: Review if this should happen
-	GO
-	DROP TABLE [Staging].[K12StaffAssignment];
 
 
 	-- GO
@@ -17661,6 +17500,8 @@
 		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
 		[SchoolIdentifierSea]                            NVARCHAR (100) NULL,
 		[IdeaDisabilityType]                             NVARCHAR (100) NULL,
+		[IsPrimaryDisability]							 BIT NULL,	
+		[IsSecondaryDisability]							 BIT NULL,	
 		[DataCollectionName]                             NVARCHAR (100) NULL,
 		CONSTRAINT [PK_IdeaDisabilityType] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
@@ -17722,31 +17563,6 @@
 		[RefRaceId]                                      INT            NULL,
 		[RunDateTime]                                    DATETIME       NULL,
 		CONSTRAINT [PK_K12PersonRace] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80)
-	);
-
-
-	GO
-	PRINT N'Creating Table [Staging].[Person]...';
-
-
-	GO
-	CREATE TABLE [Staging].[Person] (
-		[Id]                      INT            IDENTITY (1, 1) NOT NULL,
-		[Identifier]              VARCHAR (100)  NULL,
-		[FirstName]               VARCHAR (100)  NULL,
-		[LastOrSurname]           VARCHAR (100)  NULL,
-		[MiddleName]              VARCHAR (100)  NULL,
-		[Birthdate]               DATE           NULL,
-		[Sex]                     VARCHAR (30)   NULL,
-		[HispanicLatinoEthnicity] BIT            NULL,
-		[Role]                    VARCHAR (30)   NULL,
-		[SchoolYear]              VARCHAR (100)  NULL,
-		[DataCollectionName]      NVARCHAR (100) NULL,
-		[DataCollectionId]        INT            NULL,
-		[PersonId]                INT            NULL,
-		[OrganizationId]          INT            NULL,
-		[RunDateTime]             DATETIME       NULL,
-		CONSTRAINT [PK_Person] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
 
@@ -17887,42 +17703,24 @@
 
 
 	GO
-	PRINT N'Creating Table [Staging].[StaffAssignment]...';
+	PRINT N'Altering Table Name for [Staging].[K12StaffAssignment]...';
+
+	GO
+	EXECUTE sp_rename N'[Staging].[K12StaffAssignment]', N'StaffAssignment';
 
 
 	GO
-	CREATE TABLE [Staging].[StaffAssignment] (
-		[ID]                                INT            IDENTITY (1, 1) NOT NULL,
-		[Personnel_Identifier_State]        VARCHAR (100)  NULL,
-		[LeaIdentifierSea]                  VARCHAR (100)  NULL,
-		[SchoolIdentifierSea]               VARCHAR (100)  NULL,
-		[FullTimeEquivalency]               DECIMAL (5, 4) NULL,
-		[SpecialEducationStaffCategory]     VARCHAR (100)  NULL,
-		[K12StaffClassification]            VARCHAR (100)  NULL,
-		[TitleIProgramStaffCategory]        VARCHAR (100)  NULL,
-		[CredentialType]                    VARCHAR (100)  NULL,
-		[CredentialIssuanceDate]            DATE           NULL,
-		[CredentialExpirationDate]          DATE           NULL,
-		[ParaprofessionalQualification]     VARCHAR (100)  NULL,
-		[SpecialEducationAgeGroupTaught]    VARCHAR (100)  NULL,
-		[HighlyQualifiedTeacherIndicator]   BIT            NULL,
-		[AssignmentStartDate]               DATE           NULL,
-		[AssignmentEndDate]                 DATE           NULL,
-		[EdFactsTeacherInexperiencedStatus] VARCHAR (100)  NULL,
-		[TeachingCredentialType]            VARCHAR (100)  NULL,
-		[EDFactsTeacherOutOfFieldStatus]    VARCHAR (100)  NULL,
-		[RecordStartDateTime]               DATE           NULL,
-		[RecordEndDateTime]                 DATE           NULL,
-		[DataCollectionName]                NVARCHAR (100) NULL,
-		[PersonId]                          INT            NULL,
-		[OrganizationId_LEA]                INT            NULL,
-		[OrganizationPersonRoleId_LEA]      INT            NULL,
-		[OrganizationId_School]             INT            NULL,
-		[OrganizationPersonRoleId_School]   INT            NULL,
-		[ProgramTypeCode]                   VARCHAR (100)  NULL,
-		[RunDateTime]                       DATETIME       NULL,
-		CONSTRAINT [PK_StaffAssignment] PRIMARY KEY CLUSTERED ([ID] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
-	);
+	PRINT N'Altering Columns in Table [Staging].[StaffAssignment]...';
+
+
+	GO
+	EXECUTE sp_rename N'[Staging].[StaffAssignment].[Personnel_Identifier_State]', N'StaffMemberIdentifierSea';
+	EXECUTE sp_rename N'[Staging].[StaffAssignment].[LEA_Identifier_State]', N'LeaIdentifierSea';
+	EXECUTE sp_rename N'[Staging].[StaffAssignment].[School_Identifier_State]', N'SchoolIdentifierSea';
+	EXECUTE sp_rename N'[Staging].[StaffAssignment].[LastName]', N'LastOrSurname';
+	EXECUTE sp_rename N'[Staging].[StaffAssignment].[InexperiencedStatus]', N'EdFactsTeacherInexperiencedStatus';
+	EXECUTE sp_rename N'[Staging].[StaffAssignment].[OutOfFieldStatus]', N'EDFactsTeacherOutOfFieldStatus';
+	EXECUTE sp_rename N'[Staging].[StaffAssignment].[CredentialType]', N'TeachingCredentialType';
 
 
 	GO

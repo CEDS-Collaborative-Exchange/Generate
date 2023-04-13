@@ -52,7 +52,8 @@ BEGIN
 			ON tq.ToggleQuestionId = tr.ToggleQuestionId
 		WHERE tq.EmapsQuestionAbbrv = 'DEFEXREFPER'
 
-		IF (@UsesDefaultReferenceDates = 'false') BEGIN
+		IF (@UsesDefaultReferenceDates = 'false') 
+		BEGIN
 			SELECT @ToggleStartDate = tr.ResponseValue
 			FROM App.ToggleQuestions tq
 			JOIN App.ToggleResponses tr
