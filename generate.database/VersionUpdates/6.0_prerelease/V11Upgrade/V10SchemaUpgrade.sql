@@ -7127,7 +7127,7 @@
 	--TODO: Review if this should happen
 	GO
 	DROP TABLE [Staging].[K12StaffAssignment];
-
+	
 
 	-- GO
 	-- PRINT N'Dropping Table [Staging].[StagingValidationResults]...';
@@ -17722,31 +17722,6 @@
 		[RefRaceId]                                      INT            NULL,
 		[RunDateTime]                                    DATETIME       NULL,
 		CONSTRAINT [PK_K12PersonRace] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80)
-	);
-
-
-	GO
-	PRINT N'Creating Table [Staging].[Person]...';
-
-
-	GO
-	CREATE TABLE [Staging].[Person] (
-		[Id]                      INT            IDENTITY (1, 1) NOT NULL,
-		[Identifier]              VARCHAR (100)  NULL,
-		[FirstName]               VARCHAR (100)  NULL,
-		[LastOrSurname]           VARCHAR (100)  NULL,
-		[MiddleName]              VARCHAR (100)  NULL,
-		[Birthdate]               DATE           NULL,
-		[Sex]                     VARCHAR (30)   NULL,
-		[HispanicLatinoEthnicity] BIT            NULL,
-		[Role]                    VARCHAR (30)   NULL,
-		[SchoolYear]              VARCHAR (100)  NULL,
-		[DataCollectionName]      NVARCHAR (100) NULL,
-		[DataCollectionId]        INT            NULL,
-		[PersonId]                INT            NULL,
-		[OrganizationId]          INT            NULL,
-		[RunDateTime]             DATETIME       NULL,
-		CONSTRAINT [PK_Person] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
 
