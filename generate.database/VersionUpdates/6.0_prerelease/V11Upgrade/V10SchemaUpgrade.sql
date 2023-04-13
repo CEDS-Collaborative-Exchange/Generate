@@ -63335,68 +63335,6 @@
 	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimTitleIStatuses', @level2type = N'COLUMN', @level2name = N'TitleISupportServicesEdFactsCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [Staging].[Person].[Identifier].[Required]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'Required', @value = N'True', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'Person', @level2type = N'COLUMN', @level2name = N'Identifier';
-
-
-	GO
-	PRINT N'Creating Extended Property [Staging].[Person].[FirstName].[Required]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'Required', @value = N'True', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'Person', @level2type = N'COLUMN', @level2name = N'FirstName';
-
-
-	GO
-	PRINT N'Creating Extended Property [Staging].[Person].[LastOrSurname].[Required]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'Required', @value = N'True', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'Person', @level2type = N'COLUMN', @level2name = N'LastOrSurname';
-
-
-	GO
-	PRINT N'Creating Extended Property [Staging].[Person].[Birthdate].[Required]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'Required', @value = N'True', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'Person', @level2type = N'COLUMN', @level2name = N'Birthdate';
-
-
-	GO
-	PRINT N'Creating Extended Property [Staging].[Person].[Sex].[Required]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'Required', @value = N'True', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'Person', @level2type = N'COLUMN', @level2name = N'Sex';
-
-
-	GO
-	PRINT N'Creating Extended Property [Staging].[Person].[HispanicLatinoEthnicity].[Required]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'Required', @value = N'True', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'Person', @level2type = N'COLUMN', @level2name = N'HispanicLatinoEthnicity';
-
-
-	GO
-	PRINT N'Creating Extended Property [Staging].[Person].[Role].[Lookup]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'Lookup', @value = N'Role', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'Person', @level2type = N'COLUMN', @level2name = N'Role';
-
-
-	GO
-	PRINT N'Creating Extended Property [Staging].[Person].[Role].[Required]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'Required', @value = N'True', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'Person', @level2type = N'COLUMN', @level2name = N'Role';
 
 
 	GO
