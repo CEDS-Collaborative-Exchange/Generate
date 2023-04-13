@@ -1759,8 +1759,8 @@
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12AcademicAwardStatuses d WHERE d.HighSchoolDiplomaTypeCode = 'MISSING') BEGIN
 		SET IDENTITY_INSERT RDS.DimK12AcademicAwardStatuses ON
 
-		INSERT INTO RDS.DimK12AcademicAwardStatuses (DimK12AcademicAwardStatusId, HighSchoolDiplomaTypeCode, HighSchoolDiplomaTypeDescription, HighSchoolDiplomaTypeCode)
-			VALUES (-1, 'MISSING', 'MISSING')
+		INSERT INTO RDS.DimK12AcademicAwardStatuses (DimK12AcademicAwardStatusId, HighSchoolDiplomaTypeCode, HighSchoolDiplomaTypeDescription, HighSchoolDiplomaTypeEdFactsCode)
+			VALUES (-1, 'MISSING', 'MISSING', 'MISSING')
 
 		SET IDENTITY_INSERT RDS.DimK12AcademicAwardStatuses OFF
 	END
@@ -1769,15 +1769,32 @@
 		(
 			  HighSchoolDiplomaTypeCode
 			, HighSchoolDiplomaTypeDescription		
+			, HighSchoolDiplomaTypeEdFactsCode
 		)
 	SELECT 
-		  ceds.CedsOptionSetCode
-		, ceds.CedsOptionSetDescription
-	FROM CEDS.CedsOptionSetMapping ceds
+		  c.CedsOptionSetCode
+		, c.CedsOptionSetDescription
+		, CASE c.CedsOptionSetCode
+			WHEN '00806' THEN 'REGDIP'
+			WHEN '00807' THEN 'REGDIP'
+			WHEN '00808' THEN 'REGDIP'
+			WHEN '00809' THEN 'REGDIP'
+			WHEN '00810' THEN 'OTHCOM'
+			WHEN '00811' THEN 'OTHCOM'
+			WHEN '00812' THEN 'MISSING'
+			WHEN '00813' THEN 'MISSING'
+			WHEN '00814' THEN 'MISSING'
+			WHEN '00815' THEN 'HSDGED'
+			WHEN '00816' THEN 'HSDGED'
+			WHEN '00818' THEN 'MISSING'
+			WHEN '00819' THEN 'MISSING'
+			ELSE 'MISSING'
+		  END
+	FROM CEDS.CedsOptionSetMapping c
 	LEFT JOIN RDS.DimK12AcademicAwardStatuses main
-		ON ceds.CedsOptionSetCode = main.HighSchoolDiplomaTypeCode
+		ON c.CedsOptionSetCode = main.HighSchoolDiplomaTypeCode
 	WHERE main.DimK12AcademicAwardStatusId IS NULL
-		AND ceds.CedsElementTechnicalName = 'HighSchoolDiplomaType'
+		AND c.CedsElementTechnicalName = 'HighSchoolDiplomaType'
 
 	------------------------------------------------
 	-- Populate DimResponsibleSchoolTypes		 ---
