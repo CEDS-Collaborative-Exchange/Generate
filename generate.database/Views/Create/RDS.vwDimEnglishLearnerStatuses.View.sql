@@ -9,12 +9,12 @@ AS
 			WHEN 'No' THEN 0
 			ELSE -1
 		  END AS EnglishLearnerStatusMap
-		, rdels.PerkinsLEPStatusCode
-		, CASE rdels.PerkinsLEPStatusCode 
+		, rdels.PerkinsELStatusCode
+		, CASE rdels.PerkinsELStatusCode 
 			WHEN 'Yes' THEN 1 
 			WHEN 'No' THEN 0
 			ELSE -1
-		  END AS PerkinsLEPStatusMap
+		  END AS PerkinsELStatusMap
 		, rdels.TitleIIIAccountabilityProgressStatusCode
 		, sssrd1.OutputCode AS TitleIIIAccountabilityProgressStatusMap
 		, rdels.TitleIIILanguageInstructionProgramTypeCode

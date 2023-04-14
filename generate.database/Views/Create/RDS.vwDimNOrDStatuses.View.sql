@@ -3,8 +3,8 @@ AS
 	SELECT
 		  rdnods.DimNOrDStatusId
 		, rsy.SchoolYear
-		, rdnods.LongTermStatusCode
-		, '?' AS LongTermStatusMap 
+		, rdnods.NeglectedOrDelinquentLongTermStatusCode
+		, '?' AS NeglectedOrDelinquentLongTermStatusMap 
 		, rdnods.NeglectedOrDelinquentProgramTypeCode
 		, sssrd.InputCode AS NeglectedOrDelinquentProgramTypeMap
 	FROM rds.DimNOrDStatuses rdnods

@@ -3443,19 +3443,19 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12Student
 
 
 GO
-PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusStartDatePerkinsId]...';
+PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusStartDatePerkinsLEPId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDatePerkinsId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDatePerkinsLEPId];
 
 
 GO
-PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusEndDatePerkinsId]...';
+PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusEndDatePerkinsLEPId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDatePerkinsId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDatePerkinsLEPId];
 
 
 GO

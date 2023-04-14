@@ -30,16 +30,14 @@ Views\\Drop,RDS.vwDimFosterCareStatuses.View.sql,0
 Views\\Create,RDS.vwDimFosterCareStatuses.View.sql,0
 Views\\Drop,RDS.vwDimHomelessnessStatuses.View.sql,0
 Views\\Create,RDS.vwDimHomelessnessStatuses.View.sql,0
-Views\\Drop,RDS.cwDimIdeaStatuses.View.sql,0
-Views\\Create,RDS.cwDimIdeaStatuses.View.sql,0
+Views\\Drop,RDS.vwDimIdeaStatuses.View.sql,0
+Views\\Create,RDS.vwDimIdeaStatuses.View.sql,0
 Views\\Drop,RDS.vwDimIdeaDisabilityTypes.View.sql,0
 Views\\Create,RDS.vwDimIdeaDisabilityTypes.View.sql,0
 Views\\Drop,RDS.vwDimImmigrantStatuses.View.sql,0
 Views\\Create,RDS.vwDimImmigrantStatuses.View.sql,0
 Views\\Drop,RDS.vwDimK12Demographics.View.sql,0
 Views\\Create,RDS.vwDimK12Demographics.View.sql,0
-Views\\Drop,RDS.vwDimK12EnrollmentStatuses.View.sql,0
-Views\\Create,RDS.vwDimK12EnrollmentStatuses.View.sql,0
 Views\\Drop,RDS.vwDimMigrantStatuses.View.sql,0
 Views\\Create,RDS.vwDimMigrantStatuses.View.sql,0
 Views\\Drop,RDS.vwDimMilitaryStatuses.View.sql,0
@@ -50,6 +48,8 @@ Views\\Drop,RDS.vwDimTitleIIIStatuses.View.sql,0
 Views\\Create,RDS.vwDimTitleIIIStatuses.View.sql,0
 Views\\Drop,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Create,RDS.vwDimTitleIStatuses.View.sql,0
+Views\\Drop,RDS.vwUnduplicatedRaceMap.View.sql,0
+Views\\Create,RDS.vwUnduplicatedRaceMap.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0

@@ -2,8 +2,8 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 	SELECT
 		  rdt3s.DimTitleIIIStatusId
 		, rsy.SchoolYear
-		, rdt3s.TitleIIIProgramParticipationCode
-		, CASE rdt3s.TitleIIIProgramParticipationCode
+		, rdt3s.ProgramParticipationTitleIIICode
+		, CASE rdt3s.ProgramParticipationTitleIIICode
 			WHEN 'Yes' THEN 1 
 			WHEN 'No' THEN 0
 			ELSE -1

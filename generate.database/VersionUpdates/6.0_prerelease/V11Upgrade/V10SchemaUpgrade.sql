@@ -15659,9 +15659,9 @@
 		[IsActivePsStudent]                                BIT           NULL,
 		[IsActiveAeStudent]                                BIT           NULL,
 		[IsActiveWorkforceProgramParticipant]              BIT           NULL,
-		[IsActiveELStaff]                                  BIT           NULL,
-		[IsActiveK12Staff]                                 BIT           NULL,
-		[IsActivePsStaff]                                  BIT           NULL,
+		[IsActiveELStaffMember]                            BIT           NULL,
+		[IsActiveK12StaffMember]                           BIT           NULL,
+		[IsActivePsStaffMember]                            BIT           NULL,
 		[RecordStartDateTime]                              DATE          NULL,
 		[RecordEndDateTime]                                DATE          NULL,
 		CONSTRAINT [PK_DimPersonId] PRIMARY KEY CLUSTERED ([DimPersonId] ASC)
@@ -17497,6 +17497,8 @@
 		[IdeaDisabilityType]                             NVARCHAR (100) NULL,
 		[IsPrimaryDisability]							 BIT NULL,	
 		[IsSecondaryDisability]							 BIT NULL,	
+		[RecordStartDateTime]                            DATETIME       NULL,
+		[RecordEndDateTime]                              DATETIME       NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
 		CONSTRAINT [PK_IdeaDisabilityType] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
@@ -17709,7 +17711,7 @@
 
 
 	GO
-	EXECUTE sp_rename N'[Staging].[StaffAssignment].[Personnel_Identifier_State]', N'StaffMemberIdentifierSea';
+	EXECUTE sp_rename N'[Staging].[StaffAssignment].[Personnel_Identifier_State]', N'StaffMemberIdentifierState';
 	EXECUTE sp_rename N'[Staging].[StaffAssignment].[LEA_Identifier_State]', N'LeaIdentifierSea';
 	EXECUTE sp_rename N'[Staging].[StaffAssignment].[School_Identifier_State]', N'SchoolIdentifierSea';
 	EXECUTE sp_rename N'[Staging].[StaffAssignment].[LastName]', N'LastOrSurname';

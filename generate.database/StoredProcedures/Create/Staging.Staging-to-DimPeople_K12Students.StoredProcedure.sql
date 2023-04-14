@@ -1,4 +1,4 @@
-CREATE PROCEDURE [Staging].[Staging-To-DimPeople_K12Student]
+CREATE PROCEDURE [Staging].[Staging-To-DimPeople_K12Students]
 	@dataCollectionId AS INT = NULL
 AS
 BEGIN
@@ -92,7 +92,7 @@ BEGIN
 			SELECT 
 				  startd.K12StudentStudentIdentifierState
 				, startd.RecordStartDateTime
-				, min(endd.RecordStartDateTime) - 1 AS RecordEndDateTime
+				, dateadd(day, -1, min(endd.RecordStartDateTime)) AS RecordEndDateTime
 			FROM rds.DimPeople startd
 			JOIN rds.DimPeople endd
 				ON startd.K12StudentStudentIdentifierState = endd.K12StudentStudentIdentifierState
