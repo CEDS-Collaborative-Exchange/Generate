@@ -151,8 +151,8 @@ BEGIN
 		FROM RDS.vwDimMigrantStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE INDEX ix_vwDimMigrantStatuses ON #vwDimMigrantStatuses (ContinuationOfServicesReasonMap, ConsolidatedMepFundsStatusMap, MepServicesTypeMap, MigrantPrioritizedForServicesMap, MepEnrollmentTypeMap)
-			INCLUDE (ContinuationOfServicesReasonCode, ConsolidatedMepFundsStatusCode, MepServicesTypeCode, MigrantPrioritizedForServicesCode, MepEnrollmentTypeCode);
+		CREATE INDEX ix_vwDimMigrantStatuses ON #vwDimMigrantStatuses (ContinuationOfServicesReasonMap, ConsolidatedMepFundsStatusMap, MigrantEducationProgramServicesTypeMap, MigrantPrioritizedForServicesMap, MigrantEducationProgramEnrollmentTypeMap)
+			INCLUDE (ContinuationOfServicesReasonCode, ConsolidatedMepFundsStatusCode, MigrantEducationProgramServicesTypeCode, MigrantPrioritizedForServicesCode, MigrantEducationProgramEnrollmentTypeCode);
 
 
 		SELECT @FactTypeId = DimFactTypeId 
@@ -516,7 +516,7 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
-		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_ChildCount', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', NULL, ERROR_MESSAGE(), 1, NULL, GETDATE())
+		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_SpecEdExit', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', NULL, ERROR_MESSAGE(), 1, NULL, GETDATE())
 	END CATCH
 
 		
