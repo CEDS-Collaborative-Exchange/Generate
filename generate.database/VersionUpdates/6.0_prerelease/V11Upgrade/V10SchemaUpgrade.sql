@@ -11008,7 +11008,7 @@
 		[IeuId]                             INT             CONSTRAINT [DF_FactK12StudentDisciplines_IeuId] DEFAULT ((-1)) NOT NULL,
 		[LeaId]                             INT             CONSTRAINT [DF_FactK12StudentDisciplines_LeaId] DEFAULT ((-1)) NOT NULL,
 		[K12SchoolId]                       INT             CONSTRAINT [DF_FactK12StudentDisciplines_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-		[K12StudentId]                      BIGINT             CONSTRAINT [DF_FactK12StudentDisciplines_K12StudentId] DEFAULT ((-1)) NOT NULL,
+		[K12StudentId]                      BIGINT          CONSTRAINT [DF_FactK12StudentDisciplines_K12StudentId] DEFAULT ((-1)) NOT NULL,
 		[AgeId]                             INT             CONSTRAINT [DF_FactK12StudentDisciplines_AgeId] DEFAULT ((-1)) NOT NULL,
 		[CteStatusId]                       INT             CONSTRAINT [DF_FactK12StudentDisciplines_CteStatusId] DEFAULT ((-1)) NOT NULL,
 		[DisabilityStatusId]                INT             CONSTRAINT [DF_FactK12StudentDisciplines_DisabilityStatusId] DEFAULT ((-1)) NOT NULL,
@@ -12712,6 +12712,17 @@
 	WITH (DATA_COMPRESSION = PAGE);
 
 
+	GO
+	/*
+	The column [Staging].[StateDetail].[StateCode] is being renamed.
+	The column [Staging].[StateDetail].[SeaName] is being renamed.
+	The column [Staging].[StateDetail].[SeaStateIdentifier] is being renamed.
+	*/
+
+	EXECUTE sp_rename N'[Staging].[StateDetail].[StateCode]', N'StateAbbreviationCode';
+	EXECUTE sp_rename N'[Staging].[StateDetail].[SeaName]', N'SeaOrganizationName';
+	EXECUTE sp_rename N'[Staging].[StateDetail].[SeaStateIdentifier]', N'SeaOrganizationIdentifierSea';
+
 
 	GO
 	PRINT N'Altering Primary Key [Staging].[PK_Assessment]...';
@@ -12939,6 +12950,10 @@
 	The column [Staging].[K12Organization].[School_Identifier_State_ChangedIdentifier] is being renamed.
 	The column [Staging].[K12Organization].[School_Identifier_State_Identifier_Old] is being renamed.
 	The column [Staging].[K12Organization].[School_IsReportedFederally] is being renamed.
+	The column [Staging].[K12Organization].[ConsolidatedMepFundsStatus] is being renamed.
+	The column [Staging].[K12Organization].[MepProjectType] is being renamed.
+	The column [Staging].[K12Organization].[TitleIPartASchoolDesignation] is being renamed.
+	The column [Staging].[K12Organization].[AdministrativeFundingControl] is being renamed.
 	*/
 	GO
 	PRINT N'Starting rebuilding table [Staging].[K12Organization]...';
@@ -13003,19 +13018,19 @@
 		[School_CharterPrimaryAuthorizer]                                      VARCHAR (100)  NULL,
 		[School_CharterSecondaryAuthorizer]                                    VARCHAR (100)  NULL,
 		[School_StatePovertyDesignation]                                       VARCHAR (100)  NULL,
-		[SchoolImprovementAllocation]                                          MONEY          NULL,
+		[School_SchoolImprovementAllocation]                                   MONEY          NULL,
 		[School_IndicatorStatusType]                                           VARCHAR (100)  NULL,
 		[School_GunFreeSchoolsActReportingStatus]                              VARCHAR (100)  NULL,
 		[School_ProgressAchievingEnglishLanguageProficiencyIndicatorStatus]    VARCHAR (100)  NULL,
 		[School_ProgressAchievingEnglishLanguageProficiencyStateDefinedStatus] VARCHAR (100)  NULL,
 		[School_SchoolDangerousStatus]                                         VARCHAR (100)  NULL,
-		[TitleIPartASchoolDesignation]                                         VARCHAR (100)  NULL,
 		[School_ComprehensiveAndTargetedSupport]                               VARCHAR (100)  NULL,
 		[School_ComprehensiveSupport]                                          VARCHAR (100)  NULL,
 		[School_TargetedSupport]                                               VARCHAR (100)  NULL,
-		[ConsolidatedMepFundsStatus]                                           BIT            NULL,
-		[School_MepProjectType]                                                VARCHAR (100)  NULL,
-		[AdministrativeFundingControl]                                         NVARCHAR (100) NULL,
+		[School_ConsolidatedMigrantEducationProgramFundsStatus]                BIT            NULL,
+		[School_MigrantEducationProgramProjectType]                            VARCHAR (100)  NULL,
+		[School_TitleIPartASchoolDesignation]                                  VARCHAR (100)  NULL,
+		[School_AdministrativeFundingControl]                                  NVARCHAR (100) NULL,
 		[School_IsReportedFederally]										   BIT			  NULL,
 		[School_RecordStartDateTime]                                           DATETIME       NULL,
 		[School_RecordEndDateTime]                                             DATETIME       NULL,
@@ -13363,8 +13378,9 @@
 	PRINT N'Altering Table [Staging].[OrganizationGradeOffered]...';
 
 
+	--We need to verify this change, commented out for now.
 	GO
-	ALTER TABLE [Staging].[OrganizationGradeOffered] DROP COLUMN [RecordEndDateTime], COLUMN [RecordStartDateTime];
+--	ALTER TABLE [Staging].[OrganizationGradeOffered] DROP COLUMN [RecordEndDateTime], COLUMN [RecordStartDateTime];
 
 
 	GO

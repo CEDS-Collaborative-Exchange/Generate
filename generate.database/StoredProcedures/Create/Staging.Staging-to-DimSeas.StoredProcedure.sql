@@ -47,8 +47,8 @@ BEGIN
 	;WITH CTE AS 
 	( 
 		SELECT DISTINCT	
-			  ssd.StateCode
-			, CASE ssd.StateCode
+			ssd.StateAbbreviationCode
+			, CASE ssd.StateAbbreviationCode
 				WHEN 'AK' THEN 'Alaska'
 				WHEN 'AL' THEN 'Alabama'
 				WHEN 'AR' THEN 'Arkansas'
@@ -111,8 +111,8 @@ BEGIN
 				WHEN 'AA' THEN 'Armed Forces America'
 				WHEN 'AE' THEN 'Armed Forces Africa, Canada, Europe, and Mideast'
 				WHEN 'AP' THEN 'Armed Forces Pacific'
-			  END AS StateDescription
-			, CASE ssd.StateCode
+			END AS StateAbbreviationDescription
+			, CASE ssd.StateAbbreviationCode
 				WHEN 'AK' THEN '02'
 				WHEN 'AL' THEN '01'
 				WHEN 'AR' THEN '05'
@@ -173,10 +173,10 @@ BEGIN
 				WHEN 'WV' THEN '54'
 				WHEN 'WY' THEN '56'
 				ELSE NULL
-			  END AS StateANSICode
-			, ssd.SeaName
+			END AS StateANSICode
+			, ssd.SeaOrganizationName
 			, ssd.SeaShortName
-			, ssd.SeaStateIdentifier
+			, ssd.SeaOrganizationIdentifierSea
 			, ssd.Sea_WebSiteAddress
 			, ssd.SeaContact_FirstName
 			, ssd.SeaContact_LastOrSurname
@@ -201,15 +201,15 @@ BEGIN
 			, ssd.RecordEndDateTime 
 		FROM Staging.StateDetail ssd
 		LEFT JOIN Staging.OrganizationAddress smam
-			ON ssd.SeaStateIdentifier = smam.OrganizationIdentifier
+			ON ssd.SeaOrganizationIdentifierSea = smam.OrganizationIdentifier
 			AND smam.AddressTypeForOrganization = (select MailingAddressType from #organizationLocationTypes lt WHERE lt.SchoolYear = smam.SchoolYear)
 			AND smam.OrganizationType in (select SeaOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = smam.SchoolYear)
 		LEFT JOIN Staging.OrganizationAddress smap
-			ON ssd.SeaStateIdentifier = smap.OrganizationIdentifier
+			ON ssd.SeaOrganizationIdentifierSea = smap.OrganizationIdentifier
 			AND smap.AddressTypeForOrganization = (select PhysicalAddressType from #organizationLocationTypes lt WHERE lt.SchoolYear = smap.SchoolYear)
 			AND smap.OrganizationType in (select SeaOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = smam.SchoolYear)
 		LEFT JOIN Staging.OrganizationPhone sop
-			ON ssd.SeaStateIdentifier = sop.OrganizationIdentifier
+			ON ssd.SeaOrganizationIdentifierSea = sop.OrganizationIdentifier
 			AND sop.PrimaryTelephoneNumberIndicator = 1
 			AND sop.OrganizationType in (select SeaOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = smam.SchoolYear)
 		WHERE @DataCollectionName IS NULL	
@@ -217,61 +217,61 @@ BEGIN
 	)
 	MERGE rds.DimSeas AS trgt
 	USING CTE AS src
-		ON trgt.SeaIdentifierState = src.SeaStateIdentifier
+		ON trgt.SeaOrganizationIdentifierSea = src.SeaOrganizationIdentifierSea
 		AND ISNULL(trgt.RecordStartDateTime, '') = ISNULL(src.RecordStartDateTime, '')
 	WHEN MATCHED THEN 
 		UPDATE SET 
-			[SeaName]						 = src.[SeaName]							
-			, [SeaIdentifierState]			 = src.[SeaStateIdentifier]
-			, [StateAnsiCode]				 = src.[StateANSICode]
-			, [StateAbbreviationCode]		 = src.[StateCode]
-			, [StateAbbreviationDescription] = src.[StateDescription]
-			, [MailingAddressCity]			 = src.[MailingAddressCity]
-			, [MailingAddressPostalCode]	 = src.[MailingAddressPostalCode]
-			, [MailingAddressState]			 = src.[MailingAddressState]
-			, [MailingAddressStreet]		 = src.[MailingAddressStreet]
-			, [PhysicalAddressCity]			 = src.[PhysicalAddressCity]
-			, [PhysicalAddressPostalCode]	 = src.[PhysicalAddressPostalCode]
-			, [PhysicalAddressState]		 = src.[PhysicalAddressState]
-			, [PhysicalAddressStreet]		 = src.[PhysicalAddressStreet]
-			, [Telephone]					 = src.[TelephoneNumber]
-			, [Website]						 = src.[Sea_WebSiteAddress]
-			, [RecordStartDateTime]			 = src.[RecordStartDateTime]
-			, [RecordEndDateTime]			 = src.[RecordEndDateTime]
-			, [MailingAddressStreet2]		 = src.[MailingAddressStreet2]
-			, [PhysicalAddressStreet2]		 = src.[PhysicalAddressStreet2]
-			, [MailingCountyAnsiCode]		 = src.[MailingCountyAnsiCode]
-			, [PhysicalCountyAnsiCode]		 = src.[PhysicalCountyAnsiCode]
+			[SeaOrganizationName]			 				= src.[SeaOrganizationName]							
+			, [SeaOrganizationIdentifierSea] 				= src.[SeaOrganizationIdentifierSea]
+			, [StateAnsiCode]				 				= src.[StateANSICode]
+			, [StateAbbreviationCode]		 				= src.[StateAbbreviationCode]
+			, [StateAbbreviationDescription] 				= src.[StateAbbreviationDescription]
+			, [MailingAddressCity]			 				= src.[MailingAddressCity]
+			, [MailingAddressPostalCode]	 				= src.[MailingAddressPostalCode]
+			, [MailingAddressStateAbbreviation]			 	= src.[MailingAddressState]
+			, [MailingAddressStreetNumberAndName]		 	= src.[MailingAddressStreet]
+			, [PhysicalAddressCity]			 				= src.[PhysicalAddressCity]
+			, [PhysicalAddressPostalCode]	 				= src.[PhysicalAddressPostalCode]
+			, [PhysicalAddressStateAbbreviation]		 	= src.[PhysicalAddressState]
+			, [PhysicalAddressStreetNumberAndName]		 	= src.[PhysicalAddressStreet]
+			, [TelephoneNumber]				 				= src.[TelephoneNumber]
+			, [WebsiteAddress]				 				= src.[Sea_WebSiteAddress]
+			, [RecordStartDateTime]			 				= src.[RecordStartDateTime]
+			, [RecordEndDateTime]			 				= src.[RecordEndDateTime]
+			, [MailingAddressApartmentRoomOrSuiteNumber]	= src.[MailingAddressStreet2]
+			, [PhysicalAddressApartmentRoomOrSuiteNumber]	= src.[PhysicalAddressStreet2]
+			, [MailingAddressCountyAnsiCodeCode]		 	= src.[MailingCountyAnsiCode]
+			, [PhysicalAddressCountyAnsiCodeCode]		 	= src.[PhysicalCountyAnsiCode]
 	WHEN NOT MATCHED BY TARGET THEN     --- Records Exists IN Source but NOT IN Target
 	INSERT (
-		[SeaName]						
-		, [SeaIdentifierState]			
-		, [StateAnsiCode]				
-		, [StateAbbreviationCode]		
+		[SeaOrganizationName]
+		, [SeaOrganizationIdentifierSea]
+		, [StateAnsiCode]
+		, [StateAbbreviationCode]
 		, [StateAbbreviationDescription]
-		, [MailingAddressCity]			
-		, [MailingAddressPostalCode]	
-		, [MailingAddressState]			
-		, [MailingAddressStreet]		
-		, [PhysicalAddressCity]			
-		, [PhysicalAddressPostalCode]	
-		, [PhysicalAddressState]		
-		, [PhysicalAddressStreet]		
-		, [Telephone]					
-		, [Website]						
-		, [RecordStartDateTime]			
-		, [RecordEndDateTime]			
-		, [MailingAddressStreet2]		
-		, [PhysicalAddressStreet2]		
-		, [MailingCountyAnsiCode]		
-		, [PhysicalCountyAnsiCode]		
+		, [MailingAddressCity]
+		, [MailingAddressPostalCode]
+		, [MailingAddressStateAbbreviation]
+		, [MailingAddressStreetNumberAndName]
+		, [PhysicalAddressCity]
+		, [PhysicalAddressPostalCode]
+		, [PhysicalAddressStateAbbreviation]
+		, [PhysicalAddressStreetNumberAndName]
+		, [TelephoneNumber]
+		, [WebsiteAddress]
+		, [RecordStartDateTime]
+		, [RecordEndDateTime]
+		, [MailingAddressApartmentRoomOrSuiteNumber]
+		, [PhysicalAddressApartmentRoomOrSuiteNumber]
+		, [MailingAddressCountyAnsiCodeCode]
+		, [PhysicalAddressCountyAnsiCodeCode]
 	) 	
 	VALUES (
-		src.[SeaName]						
-		, src.[SeaStateIdentifier]
+		src.[SeaOrganizationName]						
+		, src.[SeaOrganizationIdentifierSea]
 		, src.[StateANSICode]
-		, src.[StateCode]
-		, src.[StateDescription]
+		, src.[StateAbbreviationCode]
+		, src.[StateAbbreviationDescription]
 		, src.[MailingAddressCity]
 		, src.[MailingAddressPostalCode]
 		, src.[MailingAddressState]
@@ -293,19 +293,19 @@ BEGIN
 	--update the RecordEndDate of the previous record (if one exists)
 	;WITH upd AS(
 		SELECT 
-			  startd.SeaIdentifierState
+			  startd.SeaOrganizationIdentifierSea
 			, startd.RecordStartDateTime 
 			, min(endd.RecordStartDateTime) - 1 AS RecordEndDateTime
 		FROM rds.DimSeas startd
 		JOIN rds.DimSeas endd
-			ON startd.SeaIdentifierState = endd.SeaIdentifierState
+			ON startd.SeaOrganizationIdentifierSea = endd.SeaOrganizationIdentifierSea
 			AND startd.RecordStartDateTime < endd.RecordStartDateTime
-		GROUP BY  startd.SeaIdentifierState, startd.RecordStartDateTime
+		GROUP BY  startd.SeaOrganizationIdentifierSea, startd.RecordStartDateTime
 	) 
 	UPDATE sea SET RecordEndDateTime = upd.RecordEndDateTime 
 	FROM rds.DimSeas sea
 	JOIN upd	
-		ON sea.SeaIdentifierState = upd.SeaIdentifierState
+		ON sea.SeaOrganizationIdentifierSea = upd.SeaOrganizationIdentifierSea
 		AND sea.RecordStartDateTime = upd.RecordStartDateTime
 	
 	--cleanup
