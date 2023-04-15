@@ -64,8 +64,6 @@ StoredProcedures\\Drop,RDS.Get_YearToYearEnvironmentCountReportData.StoredProced
 StoredProcedures\\Create,RDS.Get_YearToYearEnvironmentCountReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql,0
-StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
-StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql,0

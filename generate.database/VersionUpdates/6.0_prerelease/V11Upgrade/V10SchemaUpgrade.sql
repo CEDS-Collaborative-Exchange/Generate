@@ -7270,12 +7270,12 @@
 
 
 	GO
-	PRINT N'Dropping Table [RDS].[DimSchoolYearDataMigrationTypes]...';
-
-
 	--TODO: Review if this should happen
+--	PRINT N'Dropping Table [RDS].[DimSchoolYearDataMigrationTypes]...';
+
+
 	GO
-	DROP TABLE [RDS].[DimSchoolYearDataMigrationTypes];
+--	DROP TABLE [RDS].[DimSchoolYearDataMigrationTypes];
 
 
 	GO
