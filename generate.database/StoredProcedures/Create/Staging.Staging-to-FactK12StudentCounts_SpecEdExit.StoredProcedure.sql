@@ -221,7 +221,7 @@ BEGIN
 			, -1														IEUId
 			, ISNULL(rdl.DimLeaID, -1)									LEAId
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
-			, ISNULL(rdks.DimK12StudentId, -1)							K12StudentId
+			, ISNULL(rdp.DimPersonId, -1)								K12StudentId
 
 			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId
 			, -1														LanguageId
@@ -239,8 +239,7 @@ BEGIN
 			, ISNULL(rdeds.DimEconomicallyDisadvantagedStatusId, -1)	EconomicallyDisadvantagedStatusId
 			, -1														FosterCareStatusId
 			, -1														ImmigrantStatusId
-			, -1														PrimaryDisabilityTypeId
-
+			, ISNULL(rdidt.DimIdeaDisabilityTypeId, -1)					PrimaryDisabilityTypeId
 			, ISNULL(rdd.DimDateId, -1)									SpecialEducationServicesExitDateId
 			, -1														MigrantStudentQualifyingArrivalDateId
 			, -1														LastQualifyingMoveDateId
@@ -301,10 +300,10 @@ BEGIN
 		JOIN RDS.vwDimK12Demographics rdkd
  			ON rsy.SchoolYear = rdkd.SchoolYear
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
-		JOIN RDS.vwDimEconomicallyDisadvantagedStatuses rdeds
+		LEFT JOIN RDS.vwDimEconomicallyDisadvantagedStatuses rdeds
  			ON rsy.SchoolYear = rdeds.SchoolYear
 			AND ISNULL(CAST(econ.EconomicDisadvantageStatus AS SMALLINT), -1) = ISNULL(rdeds.EconomicDisadvantageStatusMap, -1)
-		JOIN RDS.vwDimHomelessnessStatuses rdhs
+		LEFT JOIN RDS.vwDimHomelessnessStatuses rdhs
  			ON rsy.SchoolYear = rdhs.SchoolYear
 			AND ISNULL(CAST(homeless.HomelessnessStatus AS SMALLINT), -1) = ISNULL(rdhs.HomelessnessStatusMap, -1)
 			AND rdhs.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
@@ -329,7 +328,7 @@ BEGIN
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastName, 'MISSING') = rdp.LastOrSurname
+			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND rdd.DateValue BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
 			AND IsActiveK12Student = 1
