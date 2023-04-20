@@ -131,8 +131,8 @@ BEGIN
 		FROM RDS.vwDimCteStatuses
 		WHERE SchoolYear = @SchoolYear
 		
-		CREATE INDEX IX_vwDimCteStatuses ON #vwDimCteStatuses(SchoolYear, CteAeDisplacedHomemakerIndicatorMap, CteNontraditionalGenderStatusMap, SingleParentOrSinglePregnantWomanStatusMap, PerkinsELStatusMap) 
-			INCLUDE (CteAeDisplacedHomemakerIndicatorCode, CteNontraditionalGenderStatusCode, SingleParentOrSinglePregnantWomanStatusCode, PerkinsELStatusCode)
+		CREATE INDEX IX_vwDimCteStatuses ON #vwDimCteStatuses(SchoolYear, CteAeDisplacedHomemakerIndicatorMap, CteNontraditionalGenderStatusMap, SingleParentOrSinglePregnantWomanStatusMap) 
+			INCLUDE (CteAeDisplacedHomemakerIndicatorCode, CteNontraditionalGenderStatusCode, SingleParentOrSinglePregnantWomanStatusCode)
 
 		IF OBJECT_ID('tempdb..#vwDimTitleIStatuses') IS NOT NULL 
 			DROP TABLE #vwDimTitleIStatuses		
@@ -355,11 +355,6 @@ BEGIN
 			AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_sp.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sppc_sp.SchoolIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN sppc_sp.SingleParent_StatusStartDate AND ISNULL(sppc_sp.SingleParent_StatusEndDate, @EndDate)
-		LEFT JOIN Staging.PersonStatus sps
-			ON sppse.StudentIdentifierState = sps.StudentIdentifierState
-			AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(sps.LeaIdentifierSeaAccountability, '')
-			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sps.SchoolIdentifierSea, '')
-			AND sppse.ProgramParticipationEndDate BETWEEN sps.PerkinsELStatus_StatusStartDate AND ISNULL(sps.PerkinsELStatus_StatusEndDate, @EndDate)
 		LEFT JOIN #vwDimCteStatuses rdcs
 			ON  ISNULL(CAST(sppc_part_conc.CteParticipant AS SMALLINT), -1)					= ISNULL(rdcs.CteParticipantMap, -1)
 			AND ISNULL(CAST(sppc_part_conc.CteConcentrator AS SMALLINT), -1)				= ISNULL(rdcs.CteConcentratorMap, -1)
@@ -368,12 +363,11 @@ BEGIN
 			AND ISNULL(CAST(sppc_part_conc.NonTraditionalGenderStatus AS SMALLINT), -1)		= ISNULL(rdcs.CteNontraditionalGenderStatusMap, -1)
 			AND ISNULL(CAST(sppc_sp.SingleParentIndicator AS SMALLINT), -1)					= ISNULL(rdcs.SingleParentOrSinglePregnantWomanStatusMap, -1)
 			AND ISNULL(CAST(sppc_sp.SingleParentIndicator AS SMALLINT), -1)					= ISNULL(rdcs.SingleParentOrSinglePregnantWomanStatusMap, -1)
-			AND ISNULL(CAST(sps.PerkinsELStatus AS SMALLINT), -1)							= ISNULL(rdcs.PerkinsELStatusMap, -1)
 
 	--Get a unique set of Lea IDs to match against for Title I and Migrant update
 		IF OBJECT_ID('tempdb..#uniqueLEAs') IS NOT NULL 
 			DROP TABLE #uniqueLEAs		
-		SELECT DISTINCT Lea_Identifier_State, LEA_RecordStartDateTime, LEA_RecordEndDateTime, LEA_TitleIProgramType, LEA_TitleIinstructionalService, LEA_K12LeaTitleISupportService
+		SELECT DISTINCT LeaIdentifierSea, LEA_RecordStartDateTime, LEA_RecordEndDateTime, LEA_TitleIProgramType, LEA_TitleIinstructionalService, LEA_K12LeaTitleISupportService
 		INTO #uniqueLEAs
 		FROM Staging.K12Organization
 		WHERE LEA_IsReportedFederally = 1
@@ -385,11 +379,11 @@ BEGIN
 		JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON fact.StagingId = sppse.Id
 		JOIN #uniqueLEAs lea
-			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.Lea_Identifier_State, '')
+			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN lea.LEA_RecordStartDateTime AND ISNULL(lea.LEA_RecordEndDateTime, @EndDate)
 		LEFT JOIN Staging.K12Organization sch
-			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.Lea_Identifier_State, '')
-			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sch.School_Identifier_State, '')
+			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSea, '')
+			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sch.SchoolIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN sch.School_RecordStartDateTime AND ISNULL(sch.School_RecordEndDateTime, @EndDate)
 		LEFT JOIN #vwDimTitleIStatuses rdtis
 			ON ISNULL(lea.LEA_TitleIProgramType, 'MISSING') = ISNULL(rdtis.TitleIProgramTypeMap, rdtis.TitleIProgramTypeCode)
@@ -404,11 +398,11 @@ BEGIN
 		JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON fact.StagingId = sppse.Id
 		JOIN #uniqueLEAs lea
-			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.Lea_Identifier_State, '')
+			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN lea.LEA_RecordStartDateTime AND ISNULL(lea.LEA_RecordEndDateTime, @EndDate)
 		JOIN Staging.K12Organization sch
-			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.Lea_Identifier_State, '')
-			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sch.School_Identifier_State, '')
+			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSea, '')
+			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sch.SchoolIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN sch.School_RecordStartDateTime AND ISNULL(sch.School_RecordEndDateTime, @EndDate)
 		JOIN Staging.Migrant sm
 			ON sppse.StudentIdentifierState = sm.StudentIdentifierState

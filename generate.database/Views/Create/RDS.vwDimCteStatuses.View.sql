@@ -23,12 +23,6 @@ AS
 			WHEN 'No' THEN 0
 			ELSE -1
 		  END AS SingleParentOrSinglePregnantWomanStatusMap
-		, rdcs.PerkinsELStatusCode
-		, CASE rdcs.PerkinsELStatusCode
-			WHEN 'Yes' THEN 1 
-			WHEN 'No' THEN 0
-			ELSE -1
-		END AS PerkinsELStatusMap
 		, rdcs.CteParticipantCode
 		, CASE rdcs.CteParticipantCode 
 			WHEN 'Yes' THEN 1 

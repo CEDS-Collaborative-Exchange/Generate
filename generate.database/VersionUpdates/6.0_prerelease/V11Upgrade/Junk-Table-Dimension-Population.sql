@@ -2284,52 +2284,52 @@
 	-- Populate DimK12StudentStatuses	               --
 	-----------------------------------------------------
 
-	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12StudentStatuses d WHERE d.DimK12StudentStatusId = -1) BEGIN
-		SET IDENTITY_INSERT RDS.DimK12StudentStatuses ON
+	-- IF NOT EXISTS (SELECT 1 FROM RDS.DimK12StudentStatuses d WHERE d.DimK12StudentStatusId = -1) BEGIN
+	-- 	SET IDENTITY_INSERT RDS.DimK12StudentStatuses ON
 
-		INSERT INTO [RDS].[DimK12StudentStatuses]
-           ([DimK12StudentStatusId]
-		   ,[HighSchoolDiplomaTypeCode]
-           ,[HighSchoolDiplomaTypeDescription]
-           ,[HighSchoolDiplomaTypeEdFactsCode]
-			)
-			VALUES (
-				  -1
-				, 'MISSING'
-				, 'MISSING'
-				, 'MISSING'
-				)
+	-- 	INSERT INTO [RDS].[DimK12StudentStatuses]
+    --        ([DimK12StudentStatusId]
+	-- 	   ,[HighSchoolDiplomaTypeCode]
+    --        ,[HighSchoolDiplomaTypeDescription]
+    --        ,[HighSchoolDiplomaTypeEdFactsCode]
+	-- 		)
+	-- 		VALUES (
+	-- 			  -1
+	-- 			, 'MISSING'
+	-- 			, 'MISSING'
+	-- 			, 'MISSING'
+	-- 			)
 
-		SET IDENTITY_INSERT RDS.DimK12StudentStatuses OFF
+	-- 	SET IDENTITY_INSERT RDS.DimK12StudentStatuses OFF
 
-	END
+	-- END
 
-		CREATE TABLE #HighSchoolDiplomaType (HighSchoolDiplomaTypeCode VARCHAR(50), HighSchoolDiplomaTypeDescription VARCHAR(200), HighSchoolDiplomaTypeEdFactsCode VARCHAR(200))
+	-- 	CREATE TABLE #HighSchoolDiplomaType (HighSchoolDiplomaTypeCode VARCHAR(50), HighSchoolDiplomaTypeDescription VARCHAR(200), HighSchoolDiplomaTypeEdFactsCode VARCHAR(200))
 
-		INSERT INTO #HighSchoolDiplomaType VALUES ('MISSING', 'MISSING', 'MISSING')
-		INSERT INTO #HighSchoolDiplomaType 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-			, EdFactsOptionSetCode
-		FROM CEDS.CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'HighSchoolDiplomaType'
+	-- 	INSERT INTO #HighSchoolDiplomaType VALUES ('MISSING', 'MISSING', 'MISSING')
+	-- 	INSERT INTO #HighSchoolDiplomaType 
+	-- 	SELECT 
+	-- 		  CedsOptionSetCode
+	-- 		, CedsOptionSetDescription
+	-- 		, EdFactsOptionSetCode
+	-- 	FROM CEDS.CedsOptionSetMapping
+	-- 	WHERE CedsElementTechnicalName = 'HighSchoolDiplomaType'
 
 
-		INSERT INTO [RDS].[DimK12StudentStatuses]
-           ([HighSchoolDiplomaTypeCode]
-           ,[HighSchoolDiplomaTypeDescription]
-           ,[HighSchoolDiplomaTypeEdFactsCode])
-		SELECT DISTINCT
-			  a.HighSchoolDiplomaTypeCode
-			, a.HighSchoolDiplomaTypeDescription
-			, a.HighSchoolDiplomaTypeEdFactsCode
-		FROM #HighSchoolDiplomaType a
-		LEFT JOIN rds.DimK12StudentStatuses main
-			ON a.HighSchoolDiplomaTypeCode = main.HighSchoolDiplomaTypeCode
-		WHERE main.DimK12StudentStatusId IS NULL
+	-- 	INSERT INTO [RDS].[DimK12StudentStatuses]
+    --        ([HighSchoolDiplomaTypeCode]
+    --        ,[HighSchoolDiplomaTypeDescription]
+    --        ,[HighSchoolDiplomaTypeEdFactsCode])
+	-- 	SELECT DISTINCT
+	-- 		  a.HighSchoolDiplomaTypeCode
+	-- 		, a.HighSchoolDiplomaTypeDescription
+	-- 		, a.HighSchoolDiplomaTypeEdFactsCode
+	-- 	FROM #HighSchoolDiplomaType a
+	-- 	LEFT JOIN rds.DimK12StudentStatuses main
+	-- 		ON a.HighSchoolDiplomaTypeCode = main.HighSchoolDiplomaTypeCode
+	-- 	WHERE main.DimK12StudentStatusId IS NULL
 
-	DROP TABLE #HighSchoolDiplomaType
+	-- DROP TABLE #HighSchoolDiplomaType
 
 		
 
@@ -3853,9 +3853,9 @@
 			AND CteNontraditionalCompletionCode = 'MISSING'
 			AND SingleParentOrSinglePregnantWomanStatusCode = 'MISSING'
 			AND CteGraduationRateInclusionCode = 'MISSING'
-			AND PerkinsELStatusCode = 'MISSING'
 			AND CteParticipantCode = 'MISSING'
-			AND CteConcentratorCode = 'MISSING') BEGIN
+			AND CteConcentratorCode = 'MISSING') 
+	BEGIN
 		SET IDENTITY_INSERT RDS.DimCteStatuses ON
 
 		INSERT INTO RDS.DimCteStatuses (
@@ -3875,16 +3875,13 @@
 			, CteGraduationRateInclusionCode
 			, CteGraduationRateInclusionDescription
 			, CteGraduationRateInclusionEdFactsCode
-			, PerkinsELStatusCode
-			, PerkinsELStatusEdFactsCode
-			, PerkinsELStatusDescription
 			, CteParticipantCode
 			, CteParticipantDescription
 			, CteParticipantEdFactsCode
 			, CteConcentratorCode
 			, CteConcentratorDescription
 			, CteConcentratorEdFactsCode)
-		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
 
 		SET IDENTITY_INSERT RDS.DimCteStatuses OFF
 	END
@@ -3964,20 +3961,22 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'CteGraduationRateInclusion'
 
-	IF OBJECT_ID('tempdb..#PerkinsELStatus') IS NOT NULL BEGIN
-		DROP TABLE #PerkinsELStatus
-	END
+--No longer populated in DimCteStatuses
 
-	CREATE TABLE #PerkinsELStatus (PerkinsELStatusCode VARCHAR(50), PerkinsELStatusDescription VARCHAR(200), PerkinsELStatusEdFactsCode VARCHAR(50))
+	-- IF OBJECT_ID('tempdb..#PerkinsELStatus') IS NOT NULL BEGIN
+	-- 	DROP TABLE #PerkinsELStatus
+	-- END
 
-	INSERT INTO #PerkinsELStatus VALUES ('MISSING', 'MISSING', 'MISSING')
-	INSERT INTO #PerkinsELStatus
-	SELECT
-		  CedsOptionSetCode
-		, CedsOptionSetDescription
-		, EdFactsOptionSetCode
-	FROM CEDS.CedsOptionSetMapping
-	WHERE CedsElementTechnicalName = 'PerkinsELStatus'
+	-- CREATE TABLE #PerkinsELStatus (PerkinsELStatusCode VARCHAR(50), PerkinsELStatusDescription VARCHAR(200), PerkinsELStatusEdFactsCode VARCHAR(50))
+
+	-- INSERT INTO #PerkinsELStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	-- INSERT INTO #PerkinsELStatus
+	-- SELECT
+	-- 	  CedsOptionSetCode
+	-- 	, CedsOptionSetDescription
+	-- 	, EdFactsOptionSetCode
+	-- FROM CEDS.CedsOptionSetMapping
+	-- WHERE CedsElementTechnicalName = 'PerkinsELStatus'
 
 	IF OBJECT_ID('tempdb..#CteParticipant') IS NOT NULL BEGIN
 		DROP TABLE #CteParticipant
@@ -4027,9 +4026,6 @@
 			, CteGraduationRateInclusionCode
 			, CteGraduationRateInclusionDescription
 			, CteGraduationRateInclusionEdFactsCode
-			, PerkinsELStatusCode
-			, PerkinsELStatusEdFactsCode
-			, PerkinsELStatusDescription
 			, CteParticipantCode
 			, CteParticipantDescription
 			, CteParticipantEdFactsCode
@@ -4053,9 +4049,6 @@
 			, cgri.CteGraduationRateInclusionCode
 			, cgri.CteGraduationRateInclusionDescription
 			, cgri.CteGraduationRateInclusionEdFactsCode
-			, pls.PerkinsELStatusCode
-			, pls.PerkinsELStatusEdFactsCode
-			, pls.PerkinsELStatusDescription
 			, cp.CteParticipantCode
 			, cp.CteParticipantDescription
 			, cp.CteParticipantEdFactsCode
@@ -4067,7 +4060,7 @@
 	CROSS JOIN #CteNontraditionalCompletion cnc
 	CROSS JOIN #SingleParentOrSinglePregnantWomanStatus spospws
 	CROSS JOIN #CteGraduationRateInclusion cgri
-	CROSS JOIN #PerkinsLEPStatus pls
+--	CROSS JOIN #PerkinsLEPStatus pls
 	CROSS JOIN #CteParticipant cp
 	CROSS JOIN #CteConcentrator cc
 	LEFT JOIN rds.DimCteStatuses main
@@ -4076,7 +4069,7 @@
 		AND cnc.CteNontraditionalCompletionCode = main.CteNontraditionalCompletionCode
 		AND spospws.SingleParentOrSinglePregnantWomanStatusCode = main.SingleParentOrSinglePregnantWomanStatusCode
 		AND cgri.CteGraduationRateInclusionCode = main.CteGraduationRateInclusionCode
-		AND pls.PerkinsELStatusCode = main.PerkinsELStatusCode
+--		AND pls.PerkinsELStatusCode = main.PerkinsELStatusCode
 		AND cp.CteParticipantCode = main.CteParticipantCode
 		AND cc.CteConcentratorCode = main.CteConcentratorCode
 	WHERE main.DimCteStatusId IS NULL
@@ -4086,6 +4079,5 @@
 	DROP TABLE #CteNontraditionalCompletion
 	DROP TABLE #SingleParentOrSinglePregnantWomanStatus
 	DROP TABLE #CteGraduationRateInclusion
-	DROP TABLE #PerkinsELStatus
 	DROP TABLE #CteParticipant
 	DROP TABLE #CteConcentrator

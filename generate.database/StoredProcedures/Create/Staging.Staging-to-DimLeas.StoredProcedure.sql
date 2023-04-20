@@ -13,7 +13,7 @@ BEGIN
 
 	--Get the count of LEAs that are marked as Charter
 	declare @charterLeaCount as int
-	select @charterLeaCount = count(LEA_Identifier_State) from staging.K12Organization where LEA_CharterSchoolIndicator = 1
+	select @charterLeaCount = count(LEAIdentifierSea) from staging.K12Organization where LEA_CharterSchoolIndicator = 1
 
 	--Insert the default 'missing' row if it doesn't exist
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimLeas WHERE DimLeaID = -1)
@@ -61,10 +61,10 @@ BEGIN
 			, ssd.SeaOrganizationName
 			, @StateName 'StateAbbreviationDescription'
 			, ssd.SeaOrganizationIdentifierSea
-			, sko.LEA_Name AS LeaOrganizationName
-			, sko.LEA_Identifier_NCES AS LEAIdentifierNCES
-			, sko.LEA_Identifier_State AS LEAIdentifierSea
-			, sko.Prior_LEA_Identifier_State as PriorLEAIdentifierSea
+			, sko.LEAOrganizationName
+			, sko.LEAIdentifierNCES
+			, sko.LEAIdentifierSea
+			, sko.PriorLEAIdentifierSea
 			, sko.LEA_SupervisoryUnionIdentificationNumber AS SupervisoryUnionIdentificationNumber
 			, sssrd4.OutputCode AS LeaTypeCode
 			, CASE sssrd4.OutputCode 
@@ -140,15 +140,15 @@ BEGIN
 		INNER JOIN Staging.StateDetail ssd
 			ON sko.SchoolYear = ssd.SchoolYear
 		LEFT JOIN Staging.OrganizationAddress smam
-			ON sko.LEA_Identifier_State = smam.OrganizationIdentifier
+			ON sko.LEAIdentifierSea = smam.OrganizationIdentifier
 			AND smam.OrganizationType in (select LeaOrganizationType from #organizationTypes ot where ot.SchoolYear = sko.SchoolYear)
 			AND smam.AddressTypeForOrganization in (select MailingAddressType from #organizationLocationTypes lt where lt.SchoolYear = sko.SchoolYear)
 		LEFT JOIN Staging.OrganizationAddress smap
-			ON sko.LEA_Identifier_State = smap.OrganizationIdentifier
+			ON sko.LEAIdentifierSea = smap.OrganizationIdentifier
 			AND smap.OrganizationType in (select LeaOrganizationType from #organizationTypes ot where ot.SchoolYear = sko.SchoolYear)
 			AND smap.AddressTypeForOrganization in (select PhysicalAddressType from #organizationLocationTypes lt where lt.SchoolYear = sko.SchoolYear)
 		LEFT JOIN Staging.OrganizationPhone sop
-			ON sko.LEA_Identifier_State = sop.OrganizationIdentifier
+			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
 			AND sop.OrganizationType in (select LeaOrganizationType from #organizationTypes ot where ot.SchoolYear = sko.SchoolYear)
 		LEFT JOIN staging.SourceSystemReferenceData sssrd1
 			ON sko.Lea_OperationalStatus = sssrd1.InputCode
@@ -179,42 +179,42 @@ BEGIN
 	)
 	MERGE rds.DimLeas AS trgt
 	USING CTE AS src
-		ON trgt.LeaIdentifierSea = src.StateIdentifier
+		ON trgt.LeaIdentifierSea = src.LeaIdentifierSea
 		AND ISNULL(trgt.RecordStartDateTime, '') = ISNULL(src.RecordStartDateTime, '')
 	WHEN MATCHED THEN 
 		UPDATE SET 
-			trgt.LeaOrganizationName = src.LeaOrganizationName
-			, trgt.PriorLEAIdentifierSea = src.PriorLEAIdentifierSea
-			, trgt.MailingAddressStreet = src.MailingAddressStreetNumberAndName
-			, trgt.MailingAddressStreet2 = src.MailingAddressApartmentRoomOrSuiteNumber
-			, trgt.MailingAddressCity = src.MailingAddressCity
-			, trgt.MailingCountyAnsiCode = src.MailingAddressCountyAnsiCodeCode
-			, trgt.MailingAddressState = src.MailingAddressState
-			, trgt.MailingAddressPostalCode = src.MailingAddressPostalCode
-			, trgt.PhysicalAddressStreet = src.PhysicalAddressStreetNumberAndName
-			, trgt.PhysicalAddressStreet2 = src.PhysicalAddressApartmentRoomOrSuiteNumber
-			, trgt.PhysicalAddressCity = src.PhysicalAddressCity
-			, trgt.PhysicalCountyAnsiCode = src.PhysicalAddressCountyAnsiCodeCode
-			, trgt.PhysicalAddressState = src.PhysicalAddressState
-			, trgt.PhysicalAddressPostalCode = src.PhysicalAddressPostalCode
-			, trgt.Telephone = src.TelephoneNumber
-			, trgt.Website = src.WebSiteAddress
-			, trgt.Longitude = src.Longitude
-			, trgt.Latitude = src.Latitude
-			, trgt.LeaSupervisoryUnionIdentificationNumber = src.SupervisoryUnionIdentificationNumber
-			, trgt.LeaOperationalStatus = src.LeaOperationalStatus
-			, trgt.LeaOperationalStatusEdFactsCode = src.LeaOperationalStatusEdfactsCode
-			, trgt.OperationalStatusEffectiveDate = src.OperationalStatusEffectiveDate
-			, trgt.ReportedFederally = src.ReportedFederally
-			, trgt.LeaTypeCode = src.LeaTypeCode
-			, trgt.LeaTypeDescription = src.LeaTypeDescription
-			, trgt.LeaTypeEdFactsCode = src.LeaTypeEdFactsCode
-			, trgt.OutOfStateIndicator = src.OutOfStateIndicator
-			, trgt.LeaIdentifierNces = src.LeaIdentifierNces
-			, trgt.CharterLeaStatus = src.CharterLeaStatus
-			, trgt.ReconstitutedStatus = src.ReconstitutedStatus
-			, trgt.McKinneyVentoSubgrantRecipient = src.McKinneyVentoSubgrantRecipient
-			, trgt.RecordEndDateTime = src.RecordEndDateTime 
+			trgt.LeaOrganizationName 						= src.LeaOrganizationName
+			, trgt.PriorLEAIdentifierSea 					= src.PriorLEAIdentifierSea
+			, trgt.MailingAddressStreet 					= src.MailingAddressStreetNumberAndName
+			, trgt.MailingAddressStreet2 					= src.MailingAddressApartmentRoomOrSuiteNumber
+			, trgt.MailingAddressCity 						= src.MailingAddressCity
+			, trgt.MailingCountyAnsiCode 					= src.MailingAddressCountyAnsiCodeCode
+			, trgt.MailingAddressState 						= src.MailingAddressState
+			, trgt.MailingAddressPostalCode 				= src.MailingAddressPostalCode
+			, trgt.PhysicalAddressStreet 					= src.PhysicalAddressStreetNumberAndName
+			, trgt.PhysicalAddressStreet2 					= src.PhysicalAddressApartmentRoomOrSuiteNumber
+			, trgt.PhysicalAddressCity 						= src.PhysicalAddressCity
+			, trgt.PhysicalCountyAnsiCode		 			= src.PhysicalAddressCountyAnsiCodeCode
+			, trgt.PhysicalAddressState 					= src.PhysicalAddressState
+			, trgt.PhysicalAddressPostalCode 				= src.PhysicalAddressPostalCode
+			, trgt.Telephone 								= src.TelephoneNumber
+			, trgt.Website 									= src.WebSiteAddress
+			, trgt.Longitude 								= src.Longitude
+			, trgt.Latitude 								= src.Latitude
+			, trgt.LeaSupervisoryUnionIdentificationNumber 	= src.SupervisoryUnionIdentificationNumber
+			, trgt.LeaOperationalStatus 					= src.LeaOperationalStatus
+			, trgt.LeaOperationalStatusEdFactsCode 			= src.LeaOperationalStatusEdfactsCode
+			, trgt.OperationalStatusEffectiveDate 			= src.OperationalStatusEffectiveDate
+			, trgt.ReportedFederally 						= src.ReportedFederally
+			, trgt.LeaTypeCode 								= src.LeaTypeCode
+			, trgt.LeaTypeDescription 						= src.LeaTypeDescription
+			, trgt.LeaTypeEdFactsCode 						= src.LeaTypeEdFactsCode
+			, trgt.OutOfStateIndicator 						= src.OutOfStateIndicator
+			, trgt.LeaIdentifierNces 						= src.LeaIdentifierNces
+			, trgt.CharterLeaStatus 						= src.CharterLeaStatus
+			, trgt.ReconstitutedStatus 						= src.ReconstitutedStatus
+			, trgt.McKinneyVentoSubgrantRecipient 			= src.McKinneyVentoSubgrantRecipient
+			, trgt.RecordEndDateTime 						= src.RecordEndDateTime 
 	WHEN NOT MATCHED BY TARGET THEN     --- Records Exists IN Source but NOT IN Target
 	INSERT (
 		LeaName
@@ -258,7 +258,7 @@ BEGIN
 		, RecordEndDateTime
 	) 	
 	VALUES (
-		src.LEA_Name
+		src.LEA_OrganizationName
 		, src.NCESIdentifier
 		, src.StateIdentifier
 		, src.PriorLEAIdentifierState

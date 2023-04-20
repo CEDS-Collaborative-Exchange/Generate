@@ -20,6 +20,16 @@ WHERE DimensionFieldName = 'TitleIIIProgramParticipation'
 Update app.Dimensions SET DimensionFieldName = 'AssessmentAcademicSubject' WHERE DimensionFieldName = 'AssessmentSubject'
 SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimAssessmentStatuses'
 
+--Drop Perkins LEP from DimCteStatuses
+SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimCteStatuses'
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionTableId = @dimensionTableId AND DimensionFieldName = 'PerkinsLEPStatus'
+SELECT @categoryId = CategoryId FROM app.Category_Dimensions WHERE DimensionId = @dimensionId
+
+DELETE FROM app.Categories WHERE CategoryId = @categoryId
+DELETE FROM app.Category_Dimensions WHERE CategoryId = @categoryId
+DELETE FROM app.Dimensions WHERE DimensionTableId = @dimensionTableId AND DimensionId = @dimensionId
+
+
 IF NOT EXISTS(SELECT 1 FROM app.Dimensions where DimensionFieldName = 'AssessmentTypeAdministered')
 BEGIN
 	INSERT INTO [App].[Dimensions]([DimensionFieldName],[DimensionTableId],[IsCalculated],[IsOrganizationLevelSpecific])

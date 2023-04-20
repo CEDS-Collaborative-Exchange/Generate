@@ -7949,9 +7949,6 @@
 		[CteGraduationRateInclusionCode]                     NVARCHAR (450) NULL,
 		[CteGraduationRateInclusionDescription]              NVARCHAR (200) NULL,
 		[CteGraduationRateInclusionEdFactsCode]              NVARCHAR (50)  NULL,
-		[PerkinsELStatusCode] 	                             NVARCHAR (50)  NULL,
-		[PerkinsELStatusEdFactsCode]                         NVARCHAR (50)  NULL,
-		[PerkinsELStatusDescription]                         NVARCHAR (100) NULL,
 		[CteParticipantCode]                                 NVARCHAR (50)  NULL,
 		[CteParticipantDescription]                          NVARCHAR (200) NULL,
 		[CteParticipantEdFactsCode]                          NVARCHAR (50)  NULL,
@@ -8309,16 +8306,16 @@
 	FROM [RDS].[DimCharterSchoolAuthorizers]
 
 
-	CREATE TABLE [RDS].[tmp_ms_xx_DimCharterSchoolAuthorizers](
+	CREATE TABLE [RDS].[tmp_ms_xx_DimCharterSchoolAuthorizers] (
 		[DimCharterSchoolAuthorizerId] [int] IDENTITY(1,1) NOT NULL,
 		[CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea] [nvarchar](max) NULL,
-		[StateAbbreviationDescription] [nvarchar](max) NULL,
-		[StateAbbreviationCode] [nvarchar](max) NULL,
 		[CharterSchoolAuthorizingOrganizationOrganizationName] [nvarchar](max) NULL,
-		[StateANSICode] [nvarchar](max) NULL,
 		[CharterSchoolAuthorizerTypeCode] [nvarchar](50) NULL,
 		[CharterSchoolAuthorizerTypeDescription] [nvarchar](100) NULL,
 		[CharterSchoolAuthorizerTypeEdfactsCode] [nvarchar](50) NULL,
+		[StateAbbreviationCode] [nvarchar](max) NULL,
+		[StateANSICode] [nvarchar](max) NULL,
+		[StateAbbreviationDescription] [nvarchar](max) NULL,
 		[MailingAddressStreetNumberAndName] [nvarchar](150) NULL,
 		[MailingAddressApartmentRoomOrSuiteNumber] [varchar](40) NULL,
 		[MailingAddressCity] [nvarchar](30) NULL,
@@ -12963,83 +12960,79 @@
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [Staging].[tmp_ms_xx_K12Organization] (
-		[Id]                                                                   INT            IDENTITY (1, 1) NOT NULL,
-		[IeuIdentifierSea]                                                     NVARCHAR (100) NULL,
-		[IEU_Name]                                                             NVARCHAR (256) NULL,
-		[IEU_OperationalStatusEffectiveDate]                                   DATETIME       NULL,
-		[IEU_OrganizationOperationalStatus]                                    VARCHAR (100)  NULL,
-		[IEU_WebSiteAddress]                                                   NVARCHAR (300) NULL,
-		[IEU_RecordStartDateTime]                                              DATETIME       NULL,
-		[IEU_RecordEndDateTime]                                                DATETIME       NULL,
-		[LEA_Identifier_State]                                                 VARCHAR (100)  NULL,
-		[Prior_LEA_Identifier_State]                                           VARCHAR (100)  NULL,
-		[LEA_Identifier_NCES]                                                  VARCHAR (100)  NULL,
-		[LEA_SupervisoryUnionIdentificationNumber]                             VARCHAR (100)  NULL,
-		[LEA_Name]                                                             VARCHAR (256)  NULL,
-		[LEA_WebSiteAddress]                                                   VARCHAR (300)  NULL,
-		[LEA_OperationalStatus]                                                VARCHAR (100)  NULL,
-		[LEA_UpdatedOperationalStatus]                                         VARCHAR (100)  NULL,
-		[LEA_OperationalStatusEffectiveDate]                                   DATETIME       NULL,
-		[LEA_UpdatedOperationalStatusEffectiveDate]                            VARCHAR (100)  NULL,
-		[LEA_CharterLeaStatus]                                                 VARCHAR (100)  NULL,
-		[LEA_CharterSchoolIndicator]                                           BIT            NULL,
-		[LEA_Type]                                                             VARCHAR (100)  NULL,
-		[LEA_McKinneyVentoSubgrantRecipient]                                   BIT            NULL,
-		[LEA_GunFreeSchoolsActReportingStatus]                                 VARCHAR (100)  NULL,
-		[LEA_TitleIinstructionalService]                                       VARCHAR (100)  NULL,
-		[LEA_TitleIProgramType]                                                VARCHAR (100)  NULL,
-		[LEA_K12LeaTitleISupportService]                                       VARCHAR (100)  NULL,
-		[LEA_MepProjectType]                                                   VARCHAR (100)  NULL,
-		[LEA_IsReportedFederally]                                              BIT			  NULL,
-		[LEA_RecordStartDateTime]                                              DATETIME       NULL,
-		[LEA_RecordEndDateTime]                                                DATETIME       NULL,
-		[School_Identifier_State]                                              VARCHAR (100)  NULL,
-		[Prior_School_Identifier_State]                                        VARCHAR (100)  NULL,
-		[School_Identifier_NCES]                                               VARCHAR (100)  NULL,
-		[School_Name]                                                          VARCHAR (256)  NULL,
-		[School_WebSiteAddress]                                                VARCHAR (300)  NULL,
-		[School_OperationalStatus]                                             VARCHAR (100)  NULL,
-		[School_UpdatedOperationalStatus]                                      VARCHAR (100)  NULL,
-		[School_OperationalStatusEffectiveDate]                                DATETIME       NULL,
-		[School_UpdatedOperationalStatusEffectiveDate]                         VARCHAR (100)  NULL,
-		[School_Type]                                                          VARCHAR (100)  NULL,
-		[School_MagnetOrSpecialProgramEmphasisSchool]                          VARCHAR (100)  NULL,
-		[School_SharedTimeIndicator]                                           VARCHAR (100)  NULL,
-		[School_VirtualSchoolStatus]                                           VARCHAR (100)  NULL,
-		[School_NationalSchoolLunchProgramStatus]                              VARCHAR (100)  NULL,
-		[School_ReconstitutedStatus]                                           VARCHAR (100)  NULL,
-		[School_CharterSchoolIndicator]                                        BIT            NULL,
-		[School_CharterSchoolOpenEnrollmentIndicator]                          BIT            NULL,
-		[School_CharterSchoolFEIN]                                             VARCHAR (100)  NULL,
-		[School_CharterSchoolFEIN_Update]                                      VARCHAR (100)  NULL,
-		[School_CharterContractIDNumber]                                       VARCHAR (100)  NULL,
-		[School_CharterContractApprovalDate]                                   DATETIME       NULL,
-		[School_CharterContractRenewalDate]                                    DATETIME       NULL,
-		[School_CharterPrimaryAuthorizer]                                      VARCHAR (100)  NULL,
-		[School_CharterSecondaryAuthorizer]                                    VARCHAR (100)  NULL,
-		[School_StatePovertyDesignation]                                       VARCHAR (100)  NULL,
-		[School_SchoolImprovementAllocation]                                   MONEY          NULL,
-		[School_IndicatorStatusType]                                           VARCHAR (100)  NULL,
-		[School_GunFreeSchoolsActReportingStatus]                              VARCHAR (100)  NULL,
-		[School_ProgressAchievingEnglishLanguageProficiencyIndicatorStatus]    VARCHAR (100)  NULL,
-		[School_ProgressAchievingEnglishLanguageProficiencyStateDefinedStatus] VARCHAR (100)  NULL,
-		[School_SchoolDangerousStatus]                                         VARCHAR (100)  NULL,
-		[School_ComprehensiveAndTargetedSupport]                               VARCHAR (100)  NULL,
-		[School_ComprehensiveSupport]                                          VARCHAR (100)  NULL,
-		[School_TargetedSupport]                                               VARCHAR (100)  NULL,
-		[School_ConsolidatedMigrantEducationProgramFundsStatus]                BIT            NULL,
-		[School_MigrantEducationProgramProjectType]                            VARCHAR (100)  NULL,
-		[School_TitleIPartASchoolDesignation]                                  VARCHAR (100)  NULL,
-		[School_AdministrativeFundingControl]                                  NVARCHAR (100) NULL,
-		[School_IsReportedFederally]										   BIT			  NULL,
-		[School_RecordStartDateTime]                                           DATETIME       NULL,
-		[School_RecordEndDateTime]                                             DATETIME       NULL,
-		[SchoolYear]                                                           VARCHAR (100)  NULL,
-		[DataCollectionName]                                                   NVARCHAR (100) NULL,
-		[NewIEU]                                                               BIT            NULL,
-		[NewLEA]                                                               BIT            NULL,
-		[NewSchool]                                                            BIT            NULL,
-		[RunDateTime]                                                          DATETIME       NULL,
+		[Id]                                                                	INT            IDENTITY (1, 1) NOT NULL,
+		[IeuIdentifierSea]                                                  	NVARCHAR (100) NULL,
+		[IEU_OrganizationName]                                                 	NVARCHAR (256) NULL,
+		[IEU_OperationalStatusEffectiveDate]                                	DATETIME       NULL,
+		[IEU_OrganizationOperationalStatus]                                 	VARCHAR (100)  NULL,
+		[IEU_WebSiteAddress]                                                	NVARCHAR (300) NULL,
+		[IEU_RecordStartDateTime]                                           	DATETIME       NULL,
+		[IEU_RecordEndDateTime]                                             	DATETIME       NULL,
+		[LEAIdentifierSea]		          										VARCHAR (100)  NULL,
+		[PriorLEAIdentifierSea]		                                        	VARCHAR (100)  NULL,
+		[LEAIdentifierNCES] 	                                              	VARCHAR (100)  NULL,
+		[LEA_SupervisoryUnionIdentificationNumber]                          	VARCHAR (100)  NULL,
+		[LEA_OrganizationName]                                                 	VARCHAR (256)  NULL,
+		[LEA_WebSiteAddress]                                                	VARCHAR (300)  NULL,
+		[LEA_OperationalStatus]                                             	VARCHAR (100)  NULL,
+		[LEA_OperationalStatusEffectiveDate]                                	DATETIME       NULL,
+		[LEA_CharterLeaStatus]                                              	VARCHAR (100)  NULL,
+		[LEA_CharterSchoolIndicator]                                        	BIT            NULL,
+		[LEA_Type]                                                          	VARCHAR (100)  NULL,
+		[LEA_McKinneyVentoSubgrantRecipient]                                	BIT            NULL,
+		[LEA_GunFreeSchoolsActReportingStatus]                              	VARCHAR (100)  NULL,
+		[LEA_TitleIinstructionalService]                                    	VARCHAR (100)  NULL,
+		[LEA_TitleIProgramType]                                             	VARCHAR (100)  NULL,
+		[LEA_K12LeaTitleISupportService]                                    	VARCHAR (100)  NULL,
+		[LEA_MepProjectType]                                                	VARCHAR (100)  NULL,
+		[LEA_IsReportedFederally]                                           	BIT			  NULL,
+		[LEA_RecordStartDateTime]                                           	DATETIME       NULL,
+		[LEA_RecordEndDateTime]                                             	DATETIME       NULL,
+		[SchoolIdentifierSea]		                                           	VARCHAR (100)  NULL,
+		[PriorSchoolIdentifierSea]		                                     	VARCHAR (100)  NULL,
+		[SchoolIdentifierNCES] 		                                           	VARCHAR (100)  NULL,
+		[School_OrganizationName]                                              	VARCHAR (256)  NULL,
+		[School_WebSiteAddress]                                             	VARCHAR (300)  NULL,
+		[School_OperationalStatus]                                          	VARCHAR (100)  NULL,
+		[School_OperationalStatusEffectiveDate]                             	DATETIME       NULL,
+		[School_Type]                                                       	VARCHAR (100)  NULL,
+		[School_MagnetOrSpecialProgramEmphasisSchool]                       	VARCHAR (100)  NULL,
+		[School_SharedTimeIndicator]                                        	VARCHAR (100)  NULL,
+		[School_VirtualSchoolStatus]                                        	VARCHAR (100)  NULL,
+		[School_NationalSchoolLunchProgramStatus]                           	VARCHAR (100)  NULL,
+		[School_ReconstitutedStatus]                                        	VARCHAR (100)  NULL,
+		[School_CharterSchoolIndicator]                                     	BIT            NULL,
+		[School_CharterSchoolOpenEnrollmentIndicator]                       	BIT            NULL,
+		[School_CharterSchoolFEIN]                                          	VARCHAR (100)  NULL,
+		[School_CharterSchoolFEIN_Update]                                   	VARCHAR (100)  NULL,
+		[School_CharterContractIDNumber]                                    	VARCHAR (100)  NULL,
+		[School_CharterContractApprovalDate]                                	DATETIME       NULL,
+		[School_CharterContractRenewalDate]                                 	DATETIME       NULL,
+		[School_CharterPrimaryAuthorizer]                                   	VARCHAR (100)  NULL,
+		[School_CharterSecondaryAuthorizer]                                 	VARCHAR (100)  NULL,
+		[School_StatePovertyDesignation]                                    	VARCHAR (100)  NULL,
+		[School_SchoolImprovementAllocation]                                	MONEY          NULL,
+		[School_IndicatorStatusType]                                        	VARCHAR (100)  NULL,
+		[School_GunFreeSchoolsActReportingStatus]                           	VARCHAR (100)  NULL,
+		[School_ProgressAchievingEnglishLanguageProficiencyIndicatorStatus] 	VARCHAR (100)  NULL,
+		[School_ProgressAchievingEnglishLanguageProficiencyStateDefinedStatus] 	VARCHAR (100)  NULL,
+		[School_SchoolDangerousStatus]                                      	VARCHAR (100)  NULL,
+		[School_ComprehensiveAndTargetedSupport]                               	VARCHAR (100)  NULL,
+		[School_ComprehensiveSupport]                                          	VARCHAR (100)  NULL,
+		[School_TargetedSupport]                                               	VARCHAR (100)  NULL,
+		[School_ConsolidatedMigrantEducationProgramFundsStatus]                	BIT            NULL,
+		[School_MigrantEducationProgramProjectType]                            	VARCHAR (100)  NULL,
+		[School_TitleIPartASchoolDesignation]                                  	VARCHAR (100)  NULL,
+		[School_AdministrativeFundingControl]                                  	NVARCHAR (100) NULL,
+		[School_IsReportedFederally]										   	BIT			  NULL,
+		[School_RecordStartDateTime]                                           	DATETIME       NULL,
+		[School_RecordEndDateTime]                                             	DATETIME       NULL,
+		[SchoolYear]                                                           	VARCHAR (100)  NULL,
+		[DataCollectionName]                                                   	NVARCHAR (100) NULL,
+		[NewIEU]                                                               	BIT            NULL,
+		[NewLEA]                                                               	BIT            NULL,
+		[NewSchool]                                                            	BIT            NULL,
+		[RunDateTime]                                                          	DATETIME       NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_K12Organization1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 100, STATISTICS_NORECOMPUTE = ON, DATA_COMPRESSION = PAGE)
 	);
 
@@ -17018,7 +17011,7 @@
 		[ACADEMICORVOCATIONALEXITOUTCOME]               NVARCHAR (50)   NULL,
 		[ACADEMICORVOCATIONALOUTCOME]                   NVARCHAR (50)   NULL,
 		[HOMELESSSERVICEDINDICATOR]                     NVARCHAR (50)   NULL,
-		[PerkinsELSTATUS]                              NVARCHAR (50)   NULL,
+		[PERKINSELSTATUS]                              NVARCHAR (50)   NULL,
 		[IDEAINDICATOR]                                 VARCHAR (50)    NULL,
 		[TITLEISUPPORTSERVICES]                         VARCHAR (50)    NULL,
 		[TITLEIINSTRUCTIONALSERVICES]                   VARCHAR (50)    NULL,
@@ -17400,21 +17393,57 @@
 
 
 	GO
-	PRINT N'Creating Table [Staging].[CharterSchoolApprovalAgency]...';
+	PRINT N'Modifying Table [Staging].[CharterSchoolManagementOrganization]...';
 
 
 	GO
-	CREATE TABLE [Staging].[CharterSchoolApprovalAgency] (
-		[Id]                               INT            IDENTITY (1, 1) NOT NULL,
-		[CharterSchoolApprovalAgencyType]  VARCHAR (100)  NULL,
-		[CharterSchoolApprovalAgency_Name] VARCHAR (100)  NULL,
-		[DataCollectionName]               NVARCHAR (100) NULL,
-		[DataCollectionId]                 INT            NULL,
-		[CharterSchoolId]                  INT            NOT NULL,
-		[CharterSchoolApprovalAgencyId]    INT            NOT NULL,
-		[RunDateTime]                      DATETIME       NULL,
-		CONSTRAINT [PK_CharterSchoolApprovalAgency] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
-	);
+	EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganization_Identifier_EIN]', N'CharterSchoolManagementOrganizationOrganizationIdentifierEIN';
+	EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganization_Type]', N'CharterSchoolManagementOrganizationType';
+	EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganization_Name]', N'CharterSchoolManagementOrganizationOrganizationName';
+	EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganizationId]', N'CharterSchoolManagementOrganizationOrganizationId';
+
+	-- CREATE TABLE [Staging].[CharterSchoolManagementOrganization] (
+	-- 	[Id]                               								INT            IDENTITY (1, 1) NOT NULL,
+	-- 	[CharterSchoolManagementOrganizationOrganizationIdentifierEIN]  VARCHAR (100)  NULL,
+	-- 	[CharterSchoolManagementOrganizationType] 						VARCHAR (100)  NULL,
+	-- 	[CharterSchoolManagementOrganizationOrganizationName]			VARCHAR (100)  NULL,
+	-- 	[OrganizationIdentifier]							  			VARCHAR (100)  NULL,
+	-- 	[RecordStartDateTime]			            					DATETIME       NULL,
+	-- 	[RecordEndDateTime]             			            		DATETIME       NULL,
+	-- 	[DataCollectionName]               								NVARCHAR (100) NULL,
+	-- 	[DataCollectionId]                 								INT            NULL,
+	-- 	[CharterSchoolManagementOrganizationOrganizationId] 			INT            NOT NULL,
+	-- 	[CharterSchoolId]                  								INT            NOT NULL,
+	-- 	[RunDateTime]                      								DATETIME       NULL,
+	-- 	CONSTRAINT [PK_CharterSchoolManagementOrganization] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
+	-- );
+
+
+	GO
+	PRINT N'Modify Table [Staging].[CharterSchoolAuthorizer]...';
+
+
+	GO
+	EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizer_Identifier_State]', N'CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea';
+	EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizerType]', N'CharterSchoolAuthorizingOrganizationType';
+	EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizer_Name]', N'CharterSchoolAuthorizingOrganizationOrganizationName';
+	EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizerOrganizationId]', N'CharterSchoolAuthorizingOrganizationOrganizationId';
+
+
+	-- CREATE TABLE [Staging].[CharterSchoolAuthorizer] (
+	-- 	[Id]                               									INT            IDENTITY (1, 1) NOT NULL,
+	-- 	[CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea]  	VARCHAR (100)  NULL,
+	-- 	[CharterSchoolAuthorizingOrganizationType]							VARCHAR (100)  NULL,
+	-- 	[CharterSchoolAuthorizingOrganizationOrganizationName]				VARCHAR (100)  NULL,
+	-- 	[RecordStartDateTime]                       						DATETIME       NULL,
+	-- 	[RecordEndDateTime]                         						DATETIME       NULL,
+	-- 	[DataCollectionName]               									NVARCHAR (100) NULL,
+	-- 	[DataCollectionId]                 									INT            NULL,
+	-- 	[CharterSchoolId]                  									INT            NOT NULL,
+	-- 	[CharterSchoolAuthorizingOrganizationOrganizationId] 				INT            NOT NULL,
+	-- 	[RunDateTime]                      									DATETIME       NULL,
+	-- 	CONSTRAINT [PK_CharterSchoolAuthorizer] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
+	-- );
 
 
 	GO
@@ -17564,9 +17593,9 @@
 		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
 		[SchoolIdentifierSea]                            VARCHAR (100)  NULL,
 		[RaceType]                                       VARCHAR (100)  NULL,
+		[SchoolYear]                                     VARCHAR (100)  NULL,
 		[RecordStartDateTime]                            DATETIME       NULL,
 		[RecordEndDateTime]                              DATETIME       NULL,
-		[SchoolYear]                                     VARCHAR (100)  NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
 		[DataCollectionId]                               INT            NULL,
 		[PersonId]                                       INT            NULL,
@@ -26105,126 +26134,6 @@
 
 	GO
 	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'CteGraduationRateInclusionEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusCode].[CEDS_Def_Desc]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusCode].[CEDS_ElementTechnicalName]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusCode].[CEDS_GlobalId]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusCode].[CEDS_URL]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusCode].[MS_Description]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusEdFactsCode].[CEDS_Def_Desc]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusEdFactsCode].[CEDS_ElementTechnicalName]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusEdFactsCode].[CEDS_GlobalId]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusEdFactsCode].[CEDS_URL]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusEdFactsCode].[MS_Description]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusDescription].[CEDS_Def_Desc]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusDescription].[CEDS_ElementTechnicalName]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusDescription].[CEDS_GlobalId]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusDescription].[CEDS_URL]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimCteStatuses].[PerkinsELStatusDescription].[MS_Description]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCteStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
 
 
 	GO

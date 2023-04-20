@@ -165,10 +165,6 @@ LEFT JOIN RDS.DimCteStatuses rdctes
             WHEN 'NOTG' THEN 'NotIncludedAsGraduated'
             ELSE 'MISSING'
         END = rdctes.CteGraduationRateInclusionCode
-    AND CASE f.LepPerkinsStatusCode
-            WHEN 'LEPP' THEN 'Yes'
-            ELSE 'MISSING'
-        END = rdctes.PerkinsELStatusCode
     AND CASE f.CteProgramCode 
             WHEN 'CTEPART' THEN 'Yes'
             WHEN 'NONCTEPART' THEN 'No'
@@ -185,11 +181,6 @@ LEFT JOIN RDS.DimEnglishLearnerStatuses rdels
             WHEN 'NLEP' THEN 'No'
             ELSE 'MISSING'
         END = rdels.EnglishLearnerStatusCode
-    AND CASE f.LepPerkinsStatusCode
-            WHEN 'LEPP' THEN 'Yes'
-            WHEN 'NLEP' THEN 'No'
-            ELSE 'MISSING'
-        END = rdels.PerkinsELStatusCode
     AND f.TitleiiiAccountabilityProgressStatusCode = rdels.TitleIIIAccountabilityProgressStatusCode	--Codes are the same
     AND f.TitleiiiLanguageInstructionCode = rdels.TitleIIILanguageInstructionProgramTypeCode --Codes are the same
 LEFT JOIN RDS.DimGradeLevels rdgl

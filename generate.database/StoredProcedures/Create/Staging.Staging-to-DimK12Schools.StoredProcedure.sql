@@ -109,13 +109,13 @@ BEGIN
 		, @StateName 'StateAbbreviationDescription'
 		, ssd.SeaOrganizationIdentifierSea
 
-		, sko.IEU_Name
-		, sko.IEU_Identifier_State
+		, sko.IEU_OrganizationName
+		, sko.IEUIdentifierSea
 
-		, sko.LEA_Identifier_NCES
-		, sko.LEA_Identifier_State
-		, sko.Prior_LEA_Identifier_State 
-		, sko.LEA_Name
+		, sko.LEAIdentifierNCES
+		, sko.LEAIdentifierSea
+		, sko.PriorLEAIdentifierSea 
+		, sko.LEA_OrganizationName
 		, sssrd2.OutputCode AS LeaTypeCode-- LEA_Type
 		, CASE sssrd2.OutputCode 
 				WHEN 'RegularNotInSupervisoryUnion' THEN 'Regular public school district that is NOT a component of a supervisory union'
@@ -142,10 +142,10 @@ BEGIN
 				ELSE -1
 		END AS LeaTypeEdfactsCode
 
-		, sko.School_Identifier_NCES
-		, sko.School_Identifier_State
-		, sko.Prior_School_Identifier_State
-		, sko.School_Name
+		, sko.SchoolIdentifierNCES
+		, sko.SchoolIdentifierSea
+		, sko.PriorSchoolIdentifierSea
+		, sko.School_OrganizationName
 		, sssrd1.OutputCode -- SchoolOperationalStatus
 		, CASE sssrd1.OutputCode
 			WHEN 'Open' THEN 1 
@@ -220,15 +220,15 @@ BEGIN
 	JOIN Staging.StateDetail ssd
 		ON sko.SchoolYear = ssd.SchoolYear
 	LEFT JOIN Staging.OrganizationAddress smam
-		ON sko.School_Identifier_State = smam.OrganizationIdentifier
+		ON sko.SchoolIdentifierSea = smam.OrganizationIdentifier
 		AND smam.AddressTypeForOrganization = (select MailingAddressType from #organizationLocationTypes lt WHERE lt.SchoolYear = smam.SchoolYear)
 		AND smam.OrganizationType in (select K12SchoolOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = smam.SchoolYear)
 	LEFT JOIN Staging.OrganizationAddress smap
-		ON sko.School_Identifier_State = smap.OrganizationIdentifier
+		ON sko.SchoolIdentifierSea = smap.OrganizationIdentifier
 		AND smap.AddressTypeForOrganization = (select PhysicalAddressType from #organizationLocationTypes lt WHERE lt.SchoolYear = smam.SchoolYear)
 		AND smap.OrganizationType in (select K12SchoolOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = smap.SchoolYear)
 	LEFT JOIN Staging.OrganizationPhone sop
-		ON sko.School_Identifier_State = sop.OrganizationIdentifier
+		ON sko.SchoolIdentifierSea = sop.OrganizationIdentifier
 		AND sop.OrganizationType in (select K12SchoolOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = sop.SchoolYear)
 		AND isnull(sko.DataCollectionName,'') = isnull(sop.DataCollectionName,'')
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
@@ -269,51 +269,51 @@ BEGIN
 			AND ISNULL(trgt.RecordStartDateTime, '') = ISNULL(src.RecordStartDateTime, '')
 	WHEN MATCHED THEN 
 		UPDATE SET 
-			trgt.IeuOrganizationName = src.IeuOrganizationName,
-			trgt.IeuOrganizationIdentifierSea = src.IeuOrganizationIdentifierSea,
-			trgt.LeaOrganizationName = src.LeaOrganizationName,
-			trgt.LeaIdentifierNces = src.LeaIdentifierNces,
-			trgt.LeaIdentifierSea = src.LeaIdentifierSea,
-			trgt.PriorLEAIdentifierSea = src.PriorLEAIdentifierSea,
-			trgt.LeaTypeCode = src.LeaTypeCode,
-			trgt.LeaTypeDescription = src.LeaTypeDescription,
-			trgt.LeaTypeEdFactsCode = src.LeaTypeEdFactsCode,
-			trgt.SchoolIdentifierNces = src.SchoolIdentifierNces,
-			trgt.PriorSchoolIdentifierSea = src.PriorSchoolIdentifierSea,
-			trgt.SchoolTypeCode = src.SchoolTypeCode,
-			trgt.SchoolTypeDescription = src.SchoolTypeDescription,
-			trgt.SchoolTypeEdFactsCode = src.SchoolTypeEdFactsCode,
-			trgt.NameOfInstitution = src.NameOfInstitution,
-			trgt.SchoolOperationalStatus = src.SchOperationalStatus,
-			trgt.SchoolOperationalStatusEdFactsCode = src.SchOperationalEdfactsStatus,
-			trgt.SchoolOperationalStatusEffectiveDate = src.OperationalStatusEffectiveDate,
-			trgt.CharterSchoolIndicator = src.CharterSchoolIndicator,
-			trgt.CharterSchoolContractIdNumber = src.CharterSchoolContractIdNumber,
-			trgt.CharterSchoolContractApprovalDate = src.CharterSchoolContractApprovalDate,
-			trgt.CharterSchoolContractRenewalDate = src.CharterSchoolContractRenewalDate,
-			trgt.ReportedFederally = src.ReportedFederally,
-			trgt.OutOfStateIndicator = src.OutOfStateIndicator,
-			trgt.MailingAddressStreetNumberAndName = src.MailingAddressStreetNumberAndName,
-			trgt.MailingAddressApartmentRoomOrSuiteNumber = src.MailingAddressApartmentRoomOrSuiteNumber,
-			trgt.MailingAddressCity = src.MailingAddressCity,
-			trgt.MailingAddressCountyAnsiCodeCode = src.MailingAddressCountyAnsiCodeCode,
-			trgt.MailingAddressStateAbbreviation = src.MailingAddressStateAbbreviation,
-			trgt.MailingAddressPostalCode = src.MailingAddressPostalCode,
-			trgt.PhysicalAddressStreetNumberAndName = src.PhysicalAddressStreetNumberAndName,
-			trgt.PhysicalAddressApartmentRoomOrSuiteNumber = src.PhysicalAddressApartmentRoomOrSuiteNumber,
-			trgt.PhysicalAddressCity = src.PhysicalAddressCity,
-			trgt.PhysicalAddressCountyAnsiCodeCode = src.PhysicalAddressCountyAnsiCodeCode,
-			trgt.PhysicalAddressStateAbbreviation = src.PhysicalAddressStateAbbreviation,
-			trgt.PhysicalAddressPostalCode = src.PhysicalAddressPostalCode,
-			trgt.Longitude = src.Longitude,
-			trgt.Latitude = src.Latitude,
-			trgt.TelephoneNumber = src.TelephoneNumber,
-			trgt.WebsiteAddress = src.WebsiteAddress,
-			trgt.CharterSchoolStatus = src.CharterSchoolStatus,
-			trgt.ReconstitutedStatus = src.ReconstitutedStatus,
-			trgt.AdministrativeFundingControlCode = src.AdministrativeFundingControlCode,
-			trgt.AdministrativeFundingControlDescription = src.AdministrativeFundingControlDescription,
-			trgt.RecordEndDateTime = src.RecordEndDateTime
+			trgt.IeuOrganizationName 						= src.IeuOrganizationName,
+			trgt.IeuOrganizationIdentifierSea 				= src.IeuOrganizationIdentifierSea,
+			trgt.LeaOrganizationName 						= src.LeaOrganizationName,
+			trgt.LeaIdentifierNces 							= src.LeaIdentifierNces,
+			trgt.LeaIdentifierSea 							= src.LeaIdentifierSea,
+			trgt.PriorLEAIdentifierSea 						= src.PriorLEAIdentifierSea,
+			trgt.LeaTypeCode 								= src.LeaTypeCode,
+			trgt.LeaTypeDescription 						= src.LeaTypeDescription,
+			trgt.LeaTypeEdFactsCode 						= src.LeaTypeEdFactsCode,
+			trgt.SchoolIdentifierNces 						= src.SchoolIdentifierNces,
+			trgt.PriorSchoolIdentifierSea 					= src.PriorSchoolIdentifierSea,
+			trgt.SchoolTypeCode 							= src.SchoolTypeCode,
+			trgt.SchoolTypeDescription 						= src.SchoolTypeDescription,
+			trgt.SchoolTypeEdFactsCode 						= src.SchoolTypeEdFactsCode,
+			trgt.NameOfInstitution 							= src.NameOfInstitution,
+			trgt.SchoolOperationalStatus 					= src.SchOperationalStatus,
+			trgt.SchoolOperationalStatusEdFactsCode 		= src.SchOperationalEdfactsStatus,
+			trgt.SchoolOperationalStatusEffectiveDate 		= src.OperationalStatusEffectiveDate,
+			trgt.CharterSchoolIndicator 					= src.CharterSchoolIndicator,
+			trgt.CharterSchoolContractIdNumber 				= src.CharterSchoolContractIdNumber,
+			trgt.CharterSchoolContractApprovalDate 			= src.CharterSchoolContractApprovalDate,
+			trgt.CharterSchoolContractRenewalDate 			= src.CharterSchoolContractRenewalDate,
+			trgt.ReportedFederally 							= src.ReportedFederally,
+			trgt.OutOfStateIndicator 						= src.OutOfStateIndicator,
+			trgt.MailingAddressStreetNumberAndName 			= src.MailingAddressStreetNumberAndName,
+			trgt.MailingAddressApartmentRoomOrSuiteNumber 	= src.MailingAddressApartmentRoomOrSuiteNumber,
+			trgt.MailingAddressCity 						= src.MailingAddressCity,
+			trgt.MailingAddressCountyAnsiCodeCode 			= src.MailingAddressCountyAnsiCodeCode,
+			trgt.MailingAddressStateAbbreviation 			= src.MailingAddressStateAbbreviation,
+			trgt.MailingAddressPostalCode 					= src.MailingAddressPostalCode,
+			trgt.PhysicalAddressStreetNumberAndName 		= src.PhysicalAddressStreetNumberAndName,
+			trgt.PhysicalAddressApartmentRoomOrSuiteNumber 	= src.PhysicalAddressApartmentRoomOrSuiteNumber,
+			trgt.PhysicalAddressCity 						= src.PhysicalAddressCity,
+			trgt.PhysicalAddressCountyAnsiCodeCode 			= src.PhysicalAddressCountyAnsiCodeCode,
+			trgt.PhysicalAddressStateAbbreviation 			= src.PhysicalAddressStateAbbreviation,
+			trgt.PhysicalAddressPostalCode 					= src.PhysicalAddressPostalCode,
+			trgt.Longitude 									= src.Longitude,
+			trgt.Latitude 									= src.Latitude,
+			trgt.TelephoneNumber 							= src.TelephoneNumber,
+			trgt.WebsiteAddress 							= src.WebsiteAddress,
+			trgt.CharterSchoolStatus 						= src.CharterSchoolStatus,
+			trgt.ReconstitutedStatus 						= src.ReconstitutedStatus,
+			trgt.AdministrativeFundingControlCode 			= src.AdministrativeFundingControlCode,
+			trgt.AdministrativeFundingControlDescription 	= src.AdministrativeFundingControlDescription,
+			trgt.RecordEndDateTime					 		= src.RecordEndDateTime
 	WHEN NOT MATCHED BY TARGET THEN     --- Records Exists IN Source but NOT IN Target
 	INSERT (
 		StateAbbreviationCode	
@@ -485,8 +485,8 @@ BEGIN
 			ON rdks.LeaIdentifierSea = rdl.LeaIdentifierSea
 			AND rdks.RecordStartDateTime BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
 		JOIN Staging.K12Organization sko
-			ON sko.LEA_Identifier_State = rdl.LeaIdentifierSea
-			AND rdks.SchoolIdentifierSea = sko.School_Identifier_State
+			ON sko.LEAIdentifierSea = rdl.LeaIdentifierSea
+			AND rdks.SchoolIdentifierSea = sko.SchoolIdentifierSea
 		JOIN Staging.OrganizationGradeOffered sogo
 			ON rdks.SchoolIdentifierSea = sogo.OrganizationIdentifier
 		JOIN RDS.vwDimGradeLevels rdgl
