@@ -330,6 +330,7 @@ BEGIN
 		, LastOrSurname							NVARCHAR(50) NULL
 		, MiddleName							NVARCHAR(50) NULL
 		, K12StaffStaffMemberIdentifierState	NVARCHAR(50) NULL
+		, IsActiveK12StaffMember				BIT NULL
 		, ElectronicMailAddressOrganizational	NVARCHAR(124) NULL
 		, TelephoneNumberWork					NVARCHAR(24) NULL
 		, PositionTitle							VARCHAR(50) NULL
@@ -343,6 +344,7 @@ BEGIN
 		, LastOrSurname
 		, MiddleName
 		, K12StaffStaffMemberIdentifierState
+		, IsActiveK12StaffMember
 		, ElectronicMailAddressOrganizational
 		, TelephoneNumberWork
 		, PositionTitle
@@ -355,75 +357,75 @@ BEGIN
 		, ISNULL(SeaContact_LastOrSurname, 'MISSING') 	AS LastOrSurname
 		, NULL 											AS MiddleName
 		, SeaContact_Identifier							AS K12StaffStaffMemberIdentifierState
-		, SeaContact_ElectronicMailAddress				
-		, 'Chief State School Officer' K12StaffRole
-		, SeaContact_PhoneNumber TelephoneNumber
-		, SeaContact_PositionTitle
-		, RecordStartDateTime
-		, RecordEndDateTime
+		, 1 											AS IsActiveK12StaffMember
+		, SeaContact_ElectronicMailAddress				AS ElectronicMailAddressOrganizational
+		, SeaContact_PhoneNumber 						AS TelephoneNumberWork
+		, SeaContact_PositionTitle						AS PositionTitle
+		, RecordStartDateTime							AS RecordStartDateTime
+		, RecordEndDateTime								AS RecordEndDateTime
 	FROM Staging.StateDetail
 
-	MERGE rds.DimK12Staff AS trgt
-	USING #K12Staff AS src
-			ON  trgt.StaffMemberIdentifierState = src.StaffMemberIdentifierState
-			AND ISNULL(trgt.FirstName, '') = ISNULL(src.FirstName, '')
-			AND ISNULL(trgt.LastOrSurname, '') = ISNULL(src.LastName, '')
-			AND ISNULL(trgt.MiddleName, '') = ISNULL(src.MiddleName, '')
-			AND ISNULL(trgt.PositionTitle, '') = ISNULL(src.PositionTitle, '')
-			AND ISNULL(trgt.BirthDate, '1900-01-01') = ISNULL(src.BirthDate, '1900-01-01')
-			AND trgt.RecordStartDateTime = src.RecordStartDateTime
+	MERGE rds.DimPeople AS trgt
+	USING #People AS src
+			ON  trgt.K12StaffStaffMemberIdentifierState = src.K12StaffStaffMemberIdentifierState
+			AND ISNULL(trgt.FirstName, '') 				= ISNULL(src.FirstName, '')
+			AND ISNULL(trgt.LastOrSurname, '') 			= ISNULL(src.LastOrSurname, '')
+			AND ISNULL(trgt.MiddleName, '') 			= ISNULL(src.MiddleName, '')
+			AND ISNULL(trgt.PositionTitle, '') 			= ISNULL(src.PositionTitle, '')
+			AND ISNULL(trgt.BirthDate, '1900-01-01') 	= ISNULL(src.BirthDate, '1900-01-01')
+			AND trgt.RecordStartDateTime 				= src.RecordStartDateTime
 	WHEN NOT MATCHED BY TARGET THEN     --- Records Exists in Source but NOT in Target
 	INSERT (
-		[BirthDate]
-		, [FirstName]
+		BirthDate
+		, FirstName
 		, LastOrSurname
-		, [MiddleName]
-		, [StaffMemberIdentifierState]
-		, ElectronicMailAddress
-		, K12StaffRole
-		, TelephoneNumber
+		, MiddleName
+		, K12StaffStaffMemberIdentifierState
+		, IsActiveK12StaffMember
+		, ElectronicMailAddressOrganizational
+		, TelephoneNumberWork
 		, PositionTitle
 		, RecordStartDateTime
-		)
+	)
 	VALUES (
 		src.Birthdate
 		, src.FirstName
-		, src.LastName
+		, src.LastOrSurname
 		, src.MiddleName
-		, src.StaffMemberIdentifierState
-		, src.ElectronicMailAddress
-		, K12StaffRole
-		, TelephoneNumber
+		, src.K12StaffStaffMemberIdentifierState
+		, 1
+		, src.ElectronicMailAddressOrganizational
+		, TelephoneNumberWork
 		, src.PositionTitle
 		, src.RecordStartDateTime
-		);
+	);
 
-	UPDATE staff 
-	SET RecordEndDateTime = NULL
-	FROM rds.DimK12Staff staff
+	-- UPDATE staff 
+	-- SET RecordEndDateTime = NULL
+	-- FROM rds.DimPeople staff
 
 	--set the RecordEndDate for previous records (if they exist)
 	;WITH upd AS (
 		SELECT 
-			startd.StaffMemberIdentifierState
+			startd.K12StaffStaffMemberIdentifierState
 			, startd.RecordStartDateTime
 			, min(endd.RecordStartDateTime) - 1 AS RecordEndDateTime
-		FROM rds.DimK12Staff startd
-		JOIN rds.DimK12Staff endd
-			ON startd.StaffMemberIdentifierState = endd.StaffMemberIdentifierState
+		FROM rds.DimPeople startd
+		JOIN rds.DimPeople endd
+			ON startd.K12StaffStaffMemberIdentifierState = endd.K12StaffStaffMemberIdentifierState
 			AND startd.RecordStartDateTime < endd.RecordStartDateTime
-		GROUP BY startd.StaffMemberIdentifierState, startd.RecordStartDateTime
+		GROUP BY startd.K12StaffStaffMemberIdentifierState, startd.RecordStartDateTime
 	) 
 	UPDATE staff 
 	SET RecordEndDateTime = upd.RecordEndDateTime
-	FROM rds.DimK12Staff staff
+	FROM rds.DimPeople staff
 	INNER JOIN upd
-		ON staff.StaffMemberIdentifierState = upd.StaffMemberIdentifierState
+		ON staff.K12StaffStaffMemberIdentifierState = upd.K12StaffStaffMemberIdentifierState
 		AND staff.RecordStartDateTime = upd.RecordStartDateTime
 	WHERE upd.RecordEndDateTime <> '1900-01-01 00:00:00.000'
 		AND staff.RecordEndDateTime IS NULL	
 
 	--cleanup
-	DROP TABLE #K12Staff
+	DROP TABLE #People
 
 END 
