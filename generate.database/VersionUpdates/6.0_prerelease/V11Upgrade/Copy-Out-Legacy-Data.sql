@@ -13,10 +13,22 @@ IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade
 	DROP TABLE Upgrade.FactK12StaffCounts
 END
 GO
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactOrganizationCounts') BEGIN
+	DROP TABLE Upgrade.FactOrganizationCounts
+END
+GO
 IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentAssessments') BEGIN
 	DROP TABLE Upgrade.FactK12StudentAssessments
 END
-
+GO
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'DimK12Students') BEGIN
+	DROP TABLE Upgrade.DimK12Students
+END
+GO
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'DimK12Staff') BEGIN
+	DROP TABLE Upgrade.DimK12Staff
+END
+GO
 IF EXISTS (select * from INFORMATION_SCHEMA.SCHEMATA where schema_name = 'Upgrade') BEGIN
 	DROP SCHEMA Upgrade
 END
