@@ -315,52 +315,47 @@ BEGIN
 	-----------------------------------------------------
 	-- Insert DimK12Staff for State Officer
 	-----------------------------------------------------
-	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12Staff WHERE DimK12StaffId = -1)
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimPeople WHERE DimPersonId = -1)
 	BEGIN
 		--Insert the default 'missing' row if it doesn't exist
-		SET IDENTITY_INSERT RDS.DimK12Staff ON
-		INSERT INTO RDS.DimK12Staff (DimK12StaffId) VALUES (-1)
-		SET IDENTITY_INSERT RDS.DimK12Staff off
+		SET IDENTITY_INSERT RDS.DimPeople ON
+		INSERT INTO RDS.DimPeople (DimPersonId) VALUES (-1)
+		SET IDENTITY_INSERT RDS.DimPeople OFF
 	END
 
 	--Create and populate the temp table for staff data	
-	CREATE TABLE #K12Staff (
-		BirthDate						DATE NULL
-		, FirstName						NVARCHAR(50) NULL
-		, LastName						NVARCHAR(50) NULL
-		, MiddleName					NVARCHAR(50) NULL
-		, StaffMemberIdentifierState	NVARCHAR(50) NULL
-		, ElectronicMailAddress			NVARCHAR(124) NULL
-		, K12StaffRole					NVARCHAR(50) NULL
-		, TelephoneNumber				NVARCHAR(24) NULL
-		, PositionTitle					VARCHAR(50) NULL
-		, RecordStartDateTime			DATETIME	
-		, RecordEndDateTime				DATETIME	NULL
+	CREATE TABLE #People (
+		BirthDate								DATE NULL
+		, FirstName								NVARCHAR(50) NULL
+		, LastOrSurname							NVARCHAR(50) NULL
+		, MiddleName							NVARCHAR(50) NULL
+		, K12StaffStaffMemberIdentifierState	NVARCHAR(50) NULL
+		, ElectronicMailAddressOrganizational	NVARCHAR(124) NULL
+		, TelephoneNumberWork					NVARCHAR(24) NULL
+		, PositionTitle							VARCHAR(50) NULL
+		, RecordStartDateTime					DATETIME	
+		, RecordEndDateTime						DATETIME	NULL
 	)
 		
-	declare @k12StaffRole varchar(50) = 'K12 Personnel'
-
-	INSERT INTO #K12Staff
-	(
+	INSERT INTO #People (
 		BirthDate
 		, FirstName
-		, LastName
+		, LastOrSurname
 		, MiddleName
-		, StaffMemberIdentifierState
-		, ElectronicMailAddress
-		, K12StaffRole
-		, TelephoneNumber
+		, K12StaffStaffMemberIdentifierState
+		, ElectronicMailAddressOrganizational
+		, TelephoneNumberWork
 		, PositionTitle
 		, RecordStartDateTime
 		, RecordEndDateTime
 	)		
 	SELECT DISTINCT
-		NULL -- Birthdate
-		, SeaContact_FirstName
-		, ISNULL(SeaContact_LastOrSurname, 'MISSING') as LastName
-		, NULL -- MiddleName
-		, SeaContact_Identifier
-		, SeaContact_ElectronicMailAddress
+		NULL 											AS Birthdate
+		, SeaContact_FirstName							AS FirstName
+		, ISNULL(SeaContact_LastOrSurname, 'MISSING') 	AS LastOrSurname
+		, NULL 											AS MiddleName
+		, SeaContact_Identifier							AS K12StaffStaffMemberIdentifierState
+		, SeaContact_ElectronicMailAddress				
 		, 'Chief State School Officer' K12StaffRole
 		, SeaContact_PhoneNumber TelephoneNumber
 		, SeaContact_PositionTitle

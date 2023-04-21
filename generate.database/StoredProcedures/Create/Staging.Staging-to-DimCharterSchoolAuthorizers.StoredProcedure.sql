@@ -5,26 +5,26 @@ AS
 BEGIN
 
 	-- This is a general cleanup of any records that were erroneously added with NULL SchoolStateIdentifier
-		delete from rds.dimcharterschoolauthorizers
-		where SchoolStateIdentifier is null
+		DELETE FROM rds.dimcharterschoolauthorizers
+		WHERE SchoolStateIdentifier IS NULL
 	--------------------------------------------------------------------------------------------------------
 
 	IF OBJECT_ID(N'tempdb..#CharterSchoolAuthorizers') IS NOT NULL DROP TABLE #CharterSchoolAuthorizers
 
-	declare @StateCode varchar(2), @StateName varchar(50), @StateANSICode varchar(5), @SchoolYear int
-	select @StateCode = (select StateAbbreviationCode from Staging.StateDetail)
-	select @StateName = (select [Description] from dbo.RefState where Code = @StateCode)
-	select @StateANSICode = (select Code from dbo.RefStateANSICode where [Description] = @StateName)
-	select @SchoolYear = (select SchoolYear from Staging.StateDetail)
+	DECLARE @StateCode varchar(2), @StateName varchar(50), @StateANSICode varchar(5), @SchoolYear int
+	SELECT @StateCode = (select StateAbbreviationCode from Staging.StateDetail)
+	SELECT @StateName = (select [Description] from dbo.RefState where Code = @StateCode)
+	SELECT @StateANSICode = (select Code from dbo.RefStateANSICode where [Description] = @StateName)
+	SELECT @SchoolYear = (select SchoolYear from Staging.StateDetail)
 
 
 	CREATE TABLE #organizationTypes (
-		  SchoolYear							SMALLINT
+		SchoolYear									SMALLINT
 		, CharterSchoolAuthorizingOrganization		VARCHAR(50)
 	)
 
 	CREATE TABLE #organizationLocationTypes (
-		  SchoolYear							SMALLINT
+		SchoolYear								SMALLINT
 		, MailingAddressType					VARCHAR(20)
 		, PhysicalAddressType					VARCHAR(20)
 	)
@@ -204,6 +204,7 @@ BEGIN
 			ON charter.CharterSchoolAuthorizingOrganizaionIdentifierSea = upd.CharterSchoolAuthorizingOrganizaionIdentifierSea
 			AND charter.RecordStartDateTime = upd.RecordStartDateTime
 		WHERE upd.RecordEndDateTime <> '1900-01-01 00:00:00.000'
+	
 	END TRY
 	BEGIN CATCH
 		INSERT INTO app.DataMigrationHistories(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
@@ -211,5 +212,4 @@ BEGIN
 
 	END CATCH
 	
-
 END

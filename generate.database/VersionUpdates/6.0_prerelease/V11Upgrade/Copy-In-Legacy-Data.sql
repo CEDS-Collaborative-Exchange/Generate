@@ -34,7 +34,7 @@ INSERT INTO RDS.DimPeople (
 	, RecordEndDateTime 
 )
 SELECT 
-	  FirstName
+    FirstName
 	, MiddleName
 	, LastOrSurname
 	, BirthDate 
@@ -45,9 +45,8 @@ SELECT
 FROM Upgrade.DimK12Staff
 
 
-INSERT INTO RDS.FactK12StudentCounts
-    (
-	  SchoolYearId
+INSERT INTO RDS.FactK12StudentCounts (
+    SchoolYearId
 	, FactTypeId
 	, SeaId
 	, IeuId
@@ -229,8 +228,8 @@ LEFT JOIN RDS.DimK12EnrollmentStatuses rdkes
     AND f.PostSecondaryEnrollmentStatusCode = rdkes.PostSecondaryEnrollmentStatusCode
     AND f.AcademicOrVocationalOutcomeCode = rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
     AND f.AcademicOrVocationalExitOutcomeCode = rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
-LEFT JOIN RDS.DimK12StudentStatuses rdkss   -- Will probably change to DimK12AcademicAwardStatuses since this is the only field in DimK12StudentStatuses.  
-    ON f.HighSchoolDiplomaTypeCode = rdkss.HighSchoolDiplomaTypeEdFactsCode -- Codeset has completely changed, but the old codes map were the EDFacts Codes & there are only 3 with a value != 'MISSING', so this mapping works. 
+LEFT JOIN RDS.DimK12AcademicAwardStatuses rdkaas   -- Will probably change to DimK12AcademicAwardStatuses since this is the only field in DimK12StudentStatuses.  
+    ON f.HighSchoolDiplomaTypeCode = rdkaas.HighSchoolDiplomaTypeEdFactsCode -- Codeset has completely changed, but the old codes map were the EDFacts Codes & there are only 3 with a value != 'MISSING', so this mapping works. 
 LEFT JOIN RDS.DimLanguages rdlang
     ON f.Iso6392LanguageCode = rdlang.Iso6392LanguageCodeCode
 LEFT JOIN RDS.DimMigrantStatuses rdms

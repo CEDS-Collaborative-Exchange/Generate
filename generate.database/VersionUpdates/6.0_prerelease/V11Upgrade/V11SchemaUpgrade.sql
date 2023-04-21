@@ -5799,9 +5799,9 @@ GO
 EXECUTE sp_rename N'[RDS].[DimPeople].[ELChildChildIdentifierState]', N'EarlyLearningChildChildIdentifierState', N'COLUMN';
 EXECUTE sp_rename N'[RDS].[DimPeople].[ELStaffStaffMemberIdentifierState]', N'EarlyLearningStaffStaffMemberIdentifierState', N'COLUMN';
 EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveELChild]', N'IsActiveEarlyLearningChild', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveELStaff]', N'IsActiveEarlyLearningStaffMember', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveK12Staff]', N'IsActiveK12StaffMember', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActivePsStaff]', N'IsActivePsStaffMember', N'COLUMN';
+EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveELStaffMember]', N'IsActiveEarlyLearningStaffMember', N'COLUMN';
+EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveK12StaffMember]', N'IsActiveK12StaffMember', N'COLUMN';
+EXECUTE sp_rename N'[RDS].[DimPeople].[IsActivePsStaffMember]', N'IsActivePsStaffMember', N'COLUMN';
 
 
 GO
@@ -7899,7 +7899,6 @@ CREATE TABLE [Staging].[tmp_ms_xx_PsStudentAcademicRecord] (
     [OrganizationId]                             INT             NULL,
     [OrganizationPersonRoleId]                   INT             NULL,
     [PsStudentAcademicRecordId]                  INT             NULL,
-    [DataCollectionId]                           INT             NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_PsStudentAcademicRecord1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 

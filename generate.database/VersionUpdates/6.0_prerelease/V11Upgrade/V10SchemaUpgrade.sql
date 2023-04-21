@@ -8294,7 +8294,6 @@
 		  [CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea] [nvarchar](max) NULL
 		, [RecordStartDateTime] [datetime] NULL
 		, [RecordEndDateTime] [datetime] NULL
-		, [SchoolStateIdentifier] [nvarchar](50) NULL
 	)
 
 	INSERT INTO [RDS].[tmp_ciid_xx_DimCharterSchoolAuthorizers]
@@ -8302,7 +8301,6 @@
 		  [StateIdentifier]
 		, [RecordStartDateTime]
 		, [RecordEndDateTime]
-		, [SchoolStateIdentifier]
 	FROM [RDS].[DimCharterSchoolAuthorizers]
 
 
@@ -8310,9 +8308,9 @@
 		[DimCharterSchoolAuthorizerId] [int] IDENTITY(1,1) NOT NULL,
 		[CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea] [nvarchar](max) NULL,
 		[CharterSchoolAuthorizingOrganizationOrganizationName] [nvarchar](max) NULL,
-		[CharterSchoolAuthorizerTypeCode] [nvarchar](50) NULL,
-		[CharterSchoolAuthorizerTypeDescription] [nvarchar](100) NULL,
-		[CharterSchoolAuthorizerTypeEdfactsCode] [nvarchar](50) NULL,
+		[CharterSchoolAuthorizingOrganizationTypeCode] [nvarchar](50) NULL,
+		[CharterSchoolAuthorizingOrganizationTypeDescription] [nvarchar](100) NULL,
+		[CharterSchoolAuthorizingOrganizationTypeEdfactsCode] [nvarchar](50) NULL,
 		[StateAbbreviationCode] [nvarchar](max) NULL,
 		[StateANSICode] [nvarchar](max) NULL,
 		[StateAbbreviationDescription] [nvarchar](max) NULL,
@@ -8347,9 +8345,9 @@
 					, [StateAbbreviationCode]
 					, [CharterSchoolAuthorizingOrganizationOrganizationName]
 					, [StateANSICode]
-					, [CharterSchoolAuthorizerTypeCode]
-					, [CharterSchoolAuthorizerTypeDescription]
-					, [CharterSchoolAuthorizerTypeEdfactsCode]
+					, [CharterSchoolAuthorizingOrganizationTypeCode]
+					, [CharterSchoolAuthorizingOrganizationTypeDescription]
+					, [CharterSchoolAuthorizingOrganizationTypeEdfactsCode]
 					, [MailingAddressStreetNumberAndName]
 					, [MailingAddressCity]
 					, [MailingAddressPostalCode]
@@ -8374,7 +8372,7 @@
 					, [StateANSICode]
 					, [CharterSchoolAuthorizerTypeCode]
 					, [CharterSchoolAuthorizerTypeDescription]
-					, [CharterSchoolAuthorizerTypeEdfactsCode]
+					, [CharterSchoolAuthorizerTypeEdFactsCode]
 					, [MailingAddressStreet]
 					, [MailingAddressCity]
 					, [MailingAddressPostalCode]
@@ -8398,7 +8396,7 @@
 					, [StateANSICode]
 					, [CharterSchoolAuthorizerTypeCode]
 					, [CharterSchoolAuthorizerTypeDescription]
-					, [CharterSchoolAuthorizerTypeEdfactsCode]
+					, [CharterSchoolAuthorizerTypeEdFactsCode]
 					, [MailingAddressStreet]
 					, [MailingAddressCity]
 					, [MailingAddressPostalCode]
@@ -8438,7 +8436,6 @@
 		  [CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea] [nvarchar](max) NULL
 		, [RecordStartDateTime] [datetime] NULL
 		, [RecordEndDateTime] [datetime] NULL
-		, [SchoolStateIdentifier] [nvarchar](50) NULL
 	)
 
 	INSERT INTO [RDS].[tmp_ciid_xx_DimCharterSchoolManagementOrganizations]
@@ -8446,7 +8443,6 @@
 		  [StateIdentifier]
 		, [RecordStartDateTime]
 		, [RecordEndDateTime]
-		, [SchoolStateIdentifier]
 	FROM [RDS].[DimCharterSchoolManagementOrganizations]
 
 	CREATE TABLE [RDS].[tmp_ms_xx_DimCharterSchoolManagementOrganizations](
@@ -12718,6 +12714,7 @@
 
 	EXECUTE sp_rename N'[Staging].[StateDetail].[StateCode]', N'StateAbbreviationCode';
 	EXECUTE sp_rename N'[Staging].[StateDetail].[SeaName]', N'SeaOrganizationName';
+	EXECUTE sp_rename N'[Staging].[StateDetail].[SeaShortName]', N'SeaOrganizationShortName';
 	EXECUTE sp_rename N'[Staging].[StateDetail].[SeaStateIdentifier]', N'SeaOrganizationIdentifierSea';
 
 
@@ -12925,6 +12922,7 @@
 	The column [Staging].[K12Organization].[LEA_Identifier_State] is being renamed.
 	The column [Staging].[K12Organization].[LEA_Identifier_State_ChangedIdentifier] is being renamed.
 	The column [Staging].[K12Organization].[LEA_Identifier_State_Identifier_Old] is being renamed.
+	The column [Staging].[K12Organization].[LEA_Identifier_Name] is being renamed.
 	The column [Staging].[K12Organization].[OrganizationId_IEU] is being dropped, data loss could occur.
 	The column [Staging].[K12Organization].[OrganizationId_LEA] is being dropped, data loss could occur.
 	The column [Staging].[K12Organization].[OrganizationId_School] is being dropped, data loss could occur.
@@ -12972,7 +12970,7 @@
 		[PriorLEAIdentifierSea]		                                        	VARCHAR (100)  NULL,
 		[LEAIdentifierNCES] 	                                              	VARCHAR (100)  NULL,
 		[LEA_SupervisoryUnionIdentificationNumber]                          	VARCHAR (100)  NULL,
-		[LEA_OrganizationName]                                                 	VARCHAR (256)  NULL,
+		[LEAOrganizationName]                                                 	VARCHAR (256)  NULL,
 		[LEA_WebSiteAddress]                                                	VARCHAR (300)  NULL,
 		[LEA_OperationalStatus]                                             	VARCHAR (100)  NULL,
 		[LEA_OperationalStatusEffectiveDate]                                	DATETIME       NULL,
@@ -12991,7 +12989,7 @@
 		[SchoolIdentifierSea]		                                           	VARCHAR (100)  NULL,
 		[PriorSchoolIdentifierSea]		                                     	VARCHAR (100)  NULL,
 		[SchoolIdentifierNCES] 		                                           	VARCHAR (100)  NULL,
-		[School_OrganizationName]                                              	VARCHAR (256)  NULL,
+		[SchoolOrganizationName]                                              	VARCHAR (256)  NULL,
 		[School_WebSiteAddress]                                             	VARCHAR (300)  NULL,
 		[School_OperationalStatus]                                          	VARCHAR (100)  NULL,
 		[School_OperationalStatusEffectiveDate]                             	DATETIME       NULL,
@@ -23497,123 +23495,123 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeCode].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of agency that authorized the establishment or continuation of a charter school.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of agency that authorized the establishment or continuation of a charter school.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeCode].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeCode].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'CharterSchoolAuthorizerType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'CharterSchoolAuthorizerType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeCode].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'001292', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'001292', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeCode].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermxTopicId=62301', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermxTopicId=62301', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeCode].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeDescription].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeDescription].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of agency that authorized the establishment or continuation of a charter school.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of agency that authorized the establishment or continuation of a charter school.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeDescription].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeDescription].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'CharterSchoolAuthorizerType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'CharterSchoolAuthorizerType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeDescription].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeDescription].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'001292', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'001292', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeDescription].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeDescription].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermxTopicId=62301', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermxTopicId=62301', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeDescription].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeDescription].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeDescription';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeEdFactsCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeEdFactsCode].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of agency that authorized the establishment or continuation of a charter school.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of agency that authorized the establishment or continuation of a charter school.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeEdFactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeEdFactsCode].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeEdFactsCode].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'CharterSchoolAuthorizerType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'CharterSchoolAuthorizerType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeEdFactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeEdFactsCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeEdFactsCode].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'001292', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'001292', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeEdFactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeEdFactsCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeEdFactsCode].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermxTopicId=62301', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermxTopicId=62301', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeEdFactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizerTypeEdFactsCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimCharterSchoolAuthorizers].[CharterSchoolAuthorizingOrganizationTypeEdFactsCode].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizerTypeEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimCharterSchoolAuthorizers', @level2type = N'COLUMN', @level2name = N'CharterSchoolAuthorizingOrganizationTypeEdFactsCode';
 
 
 	GO

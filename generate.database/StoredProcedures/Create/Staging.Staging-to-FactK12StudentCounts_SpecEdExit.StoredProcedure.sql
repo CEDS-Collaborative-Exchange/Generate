@@ -81,7 +81,7 @@ BEGIN
 		)
 
 		CREATE TABLE #schoolOrganizationTypes (
-			K12SchoolOrganizationType				VARCHAR(20)
+			K12SchoolOrganizationType			VARCHAR(20)
 		)
 
 		INSERT INTO #seaOrganizationTypes

@@ -100,7 +100,7 @@ BEGIN
 		, RecordStartDateTime						DATETIME
 		, RecordEndDateTime							DATETIME
 	)
-	CREATE CLUSTERED INDEX IX_K12Schools ON #K12Schools (SchoolIdentifierState, RecordStartDateTime)
+	CREATE CLUSTERED INDEX IX_K12Schools ON #K12Schools (SchoolIdentifierSea, RecordStartDateTime)
 
 	INSERT INTO #K12Schools
 	SELECT DISTINCT
@@ -115,7 +115,7 @@ BEGIN
 		, sko.LEAIdentifierNCES
 		, sko.LEAIdentifierSea
 		, sko.PriorLEAIdentifierSea 
-		, sko.LEA_OrganizationName
+		, sko.LEAOrganizationName
 		, sssrd2.OutputCode AS LeaTypeCode-- LEA_Type
 		, CASE sssrd2.OutputCode 
 				WHEN 'RegularNotInSupervisoryUnion' THEN 'Regular public school district that is NOT a component of a supervisory union'
@@ -145,7 +145,7 @@ BEGIN
 		, sko.SchoolIdentifierNCES
 		, sko.SchoolIdentifierSea
 		, sko.PriorSchoolIdentifierSea
-		, sko.School_OrganizationName
+		, sko.SchoolOrganizationName
 		, sssrd1.OutputCode -- SchoolOperationalStatus
 		, CASE sssrd1.OutputCode
 			WHEN 'Open' THEN 1 
@@ -182,22 +182,22 @@ BEGIN
 		, sko.School_CharterContractRenewalDate
 		, sko.School_CharterContractIDNumber
 
-		, smam.AddressStreetNumberAndName AS MailingAddressStreetNumberAndName
-		, smam.AddressApartmentRoomOrSuite AS MailingAddressApartmentRoomOrSuiteNumber
-		, smam.AddressCity AS MailingAddressCity
-		, smam.StateAbbreviation AS MailingAddressStateAbbreviation
-		, smam.AddressPostalCode AS MailingAddressPostalCode
-		, smam.AddressCountyAnsiCode AS MailingAddressCountyAnsiCodeCode
+		, smam.AddressStreetNumberAndName 			AS MailingAddressStreetNumberAndName
+		, smam.AddressApartmentRoomOrSuiteNumber 	AS MailingAddressApartmentRoomOrSuiteNumber
+		, smam.AddressCity	 						AS MailingAddressCity
+		, smam.StateAbbreviation 					AS MailingAddressStateAbbreviation
+		, smam.AddressPostalCode 					AS MailingAddressPostalCode
+		, smam.AddressCountyAnsiCodeCode			AS MailingAddressCountyAnsiCodeCode
 		, CASE 
-			WHEN smam.StateAbbreviation <> smap.StateAbbreviation THEN 1
+			WHEN ssd.StateAbbreviationCode <> smap.StateAbbreviation THEN 1
 			ELSE 0
 		END AS OutOfStateIndicator
-		, smap.AddressStreetNumberAndName AS PhysicalAddressStreetNumberAndName
-		, smap.AddressApartmentRoomOrSuite AS PhysicalAddressApartmentRoomOrSuiteNumber
-		, smap.AddressCity AS PhysicalAddressCity
-		, smap.StateAbbreviation AS PhysicalAddressState
-		, smap.AddressPostalCode AS PhysicalAddressPostalCode
-		, smap.AddressCountyAnsiCode AS PhysicalAddressCountyAnsiCodeCode
+		, smap.AddressStreetNumberAndName 			AS PhysicalAddressStreetNumberAndName
+		, smap.AddressApartmentRoomOrSuiteNumber 	AS PhysicalAddressApartmentRoomOrSuiteNumber
+		, smap.AddressCity 							AS PhysicalAddressCity
+		, smap.StateAbbreviation 					AS PhysicalAddressState
+		, smap.AddressPostalCode 					AS PhysicalAddressPostalCode
+		, smap.AddressCountyAnsiCodeCode			AS PhysicalAddressCountyAnsiCodeCode
 		, NULL
 		, NULL
 		, sop.TelephoneNumber
@@ -249,7 +249,7 @@ BEGIN
 		AND sssrd4.TableName = 'RefReconstitutedStatus'
 		AND sko.SchoolYear = sssrd4.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd5
-		ON sko.AdministrativeFundingControl = sssrd5.InputCode
+		ON sko.AdminisSchool_AdministrativeFundingControl = sssrd5.InputCode
 		AND sssrd5.TableName = 'RefAdministrativeFundingControl'
 		AND sko.SchoolYear = sssrd5.SchoolYear
 	WHERE @DataCollectionName IS NULL	
@@ -284,9 +284,9 @@ BEGIN
 			trgt.SchoolTypeDescription 						= src.SchoolTypeDescription,
 			trgt.SchoolTypeEdFactsCode 						= src.SchoolTypeEdFactsCode,
 			trgt.NameOfInstitution 							= src.NameOfInstitution,
-			trgt.SchoolOperationalStatus 					= src.SchOperationalStatus,
-			trgt.SchoolOperationalStatusEdFactsCode 		= src.SchOperationalEdfactsStatus,
-			trgt.SchoolOperationalStatusEffectiveDate 		= src.OperationalStatusEffectiveDate,
+			trgt.SchoolOperationalStatus 					= src.SchoolOperationalStatus,
+			trgt.SchoolOperationalStatusEdFactsCode 		= src.SchoolOperationalEdfactsStatus,
+			trgt.SchoolOperationalStatusEffectiveDate 		= src.School_OperationalStatusEffectiveDate,
 			trgt.CharterSchoolIndicator 					= src.CharterSchoolIndicator,
 			trgt.CharterSchoolContractIdNumber 				= src.CharterSchoolContractIdNumber,
 			trgt.CharterSchoolContractApprovalDate 			= src.CharterSchoolContractApprovalDate,
@@ -320,7 +320,7 @@ BEGIN
 		, StateAbbreviationDescription
 		, StateANSICode					
 		, SeaOrganizationName						
-		, SeaShortName								
+		, SeaOrganizationShortName								
 		, SeaOrganizationIdentifierSea				
 		, IeuOrganizationName						
 		, IeuOrganizationIdentifierSea				
@@ -337,7 +337,7 @@ BEGIN
 		, NameOfInstitution							
 		, SchoolOperationalStatus					
 		, SchoolOperationalEdfactsStatus			
-		, SchoolOperationalStatusEffectiveDate		
+		, OperationalStatusEffectiveDate		
 		, SchoolTypeCode							
 		, SchoolTypeDescription						
 		, SchoolTypeEdfactsCode						
