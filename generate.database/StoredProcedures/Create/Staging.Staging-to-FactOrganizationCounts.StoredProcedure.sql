@@ -91,9 +91,8 @@ BEGIN
 		WHERE SchoolYearId = @SchoolYearId
 --*****************************************************************/
 
-		SELECT @DimK12StaffId = MAX(p.DimK12StaffId) 
-		FROM rds.DimK12Staff p
-		JOIN dbo.[Role] r ON p.K12StaffRole = r.Name
+		SELECT @DimK12StaffId = MAX(rdp.DimK12StaffId) 
+		FROM rds.DimPeople rdp
 		WHERE r.roleId = @CSSORoleId AND p.RecordEndDateTime IS NULL -- = 2
 
 
