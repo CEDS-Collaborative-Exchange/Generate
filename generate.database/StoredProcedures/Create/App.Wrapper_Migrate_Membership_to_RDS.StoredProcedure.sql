@@ -15,7 +15,8 @@ BEGIN
 
 		--Populate DimStudents
 		--exec [rds].[Migrate_DimK12Students] NULL
-		exec [Staging].[Staging-to-DimK12Students] NULL
+		--exec [Staging].[Staging-to-DimK12Students] NULL
+		exec Staging.[Staging-To-DimPeople_K12Students] NULL
 
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
