@@ -409,7 +409,7 @@ BEGIN
 		SELECT 
 			startd.K12StaffStaffMemberIdentifierState
 			, startd.RecordStartDateTime
-			, min(endd.RecordStartDateTime) - 1 AS RecordEndDateTime
+			, convert(datetime, min(endd.RecordStartDateTime)) - 1 AS RecordEndDateTime
 		FROM rds.DimPeople startd
 		JOIN rds.DimPeople endd
 			ON startd.K12StaffStaffMemberIdentifierState = endd.K12StaffStaffMemberIdentifierState
