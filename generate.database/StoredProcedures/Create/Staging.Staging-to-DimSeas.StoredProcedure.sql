@@ -186,17 +186,17 @@ BEGIN
 			, ssd.SeaContact_Identifier
 			, ssd.SeaContact_PositionTitle
 			, smam.AddressStreetNumberAndName AS MailingAddressStreet
-			, smam.AddressApartmentRoomOrSuite AS MailingAddressStreet2
+			, smam.AddressApartmentRoomOrSuiteNumber AS MailingAddressStreet2
 			, smam.AddressCity AS MailingAddressCity
 			, smam.StateAbbreviation AS MailingAddressState
 			, smam.AddressPostalCode AS MailingAddressPostalCode
-			, smam.AddressCountyAnsiCode AS MailingCountyAnsiCode
+			, smam.AddressCountyAnsiCodeCode AS MailingCountyAnsiCode
 			, smap.AddressStreetNumberAndName AS PhysicalAddressStreet
-			, smap.AddressApartmentRoomOrSuite AS PhysicalAddressStreet2
+			, smap.AddressApartmentRoomOrSuiteNumber AS PhysicalAddressStreet2
 			, smap.AddressCity AS PhysicalAddressCity
 			, smap.StateAbbreviation AS PhysicalAddressState
 			, smap.AddressPostalCode AS PhysicalAddressPostalCode
-			, smap.AddressCountyAnsiCode AS PhysicalCountyAnsiCode
+			, smap.AddressCountyAnsiCodeCode AS PhysicalCountyAnsiCode
 			, ssd.RecordStartDateTime 
 			, ssd.RecordEndDateTime 
 		FROM Staging.StateDetail ssd
@@ -409,7 +409,7 @@ BEGIN
 		SELECT 
 			startd.K12StaffStaffMemberIdentifierState
 			, startd.RecordStartDateTime
-			, min(endd.RecordStartDateTime) - 1 AS RecordEndDateTime
+			, convert(datetime, min(endd.RecordStartDateTime)) - 1 AS RecordEndDateTime
 		FROM rds.DimPeople startd
 		JOIN rds.DimPeople endd
 			ON startd.K12StaffStaffMemberIdentifierState = endd.K12StaffStaffMemberIdentifierState

@@ -133,7 +133,7 @@ BEGIN
 				ELSE IIF(@charterLeaCount > 0,'NOTCHR','NA') 
 			END 											AS CharterLeaStatus
 			, ISNULL(sssrd2.OutputCode, 'MISSING') 			AS ReconstitutedStatus
-			, sko.McKinneyVentoSubgrantRecipient 
+			, sko.LEA_McKinneyVentoSubgrantRecipient 
 			, sko.LEA_RecordStartDateTime 					AS RecordStartDateTime
 			, sko.LEA_RecordEndDateTime 					AS RecordEndDateTime
 		FROM Staging.K12Organization sko
@@ -195,7 +195,7 @@ BEGIN
 			, trgt.LeaTypeEdFactsCode 							= src.LeaTypeEdFactsCode
 			, trgt.CharterLeaStatus 							= src.CharterLeaStatus
 			, trgt.ReconstitutedStatus 							= src.ReconstitutedStatus
-			, trgt.McKinneyVentoSubgrantRecipient 				= src.McKinneyVentoSubgrantRecipient
+			, trgt.McKinneyVentoSubgrantRecipient 				= src.LEA_McKinneyVentoSubgrantRecipient
 			, trgt.ReportedFederally 							= src.ReportedFederally
 			, trgt.MailingAddressStreetNumberAndName			= src.MailingAddressStreetNumberAndName
 			, trgt.MailingAddressApartmentRoomOrSuiteNumber		= src.MailingAddressApartmentRoomOrSuiteNumber
@@ -206,7 +206,7 @@ BEGIN
 			, trgt.PhysicalAddressStreetNumberAndName			= src.PhysicalAddressStreetNumberAndName
 			, trgt.PhysicalAddressApartmentRoomOrSuiteNumber	= src.PhysicalAddressApartmentRoomOrSuiteNumber
 			, trgt.PhysicalAddressCity 							= src.PhysicalAddressCity
-			, trgt.PhysicalCountyAnsiCodeCode	 				= src.PhysicalAddressCountyAnsiCodeCode
+			, trgt.PhysicalAddressCountyAnsiCodeCode	 		= src.PhysicalAddressCountyAnsiCodeCode
 			, trgt.PhysicalAddressStateAbbreviation				= src.PhysicalAddressStateAbbreviation
 			, trgt.PhysicalAddressPostalCode 					= src.PhysicalAddressPostalCode
 			, trgt.TelephoneNumber								= src.TelephoneNumber
@@ -217,12 +217,12 @@ BEGIN
 			, trgt.RecordEndDateTime 							= src.RecordEndDateTime 
 	WHEN NOT MATCHED BY TARGET THEN     --- Records Exists IN Source but NOT IN Target
 	INSERT (
-		LeaName
+		LeaOrganizationName
 		, LeaIdentifierNces
-		, LeaIdentifierState
-		, PriorLEAIdentifierState
-		, SeaName
-		, SeaIdentifierState
+		, LeaIdentifierSea
+		, PriorLEAIdentifierSea
+		, SeaOrganizationName
+		, SeaOrganizationIdentifierSea
 		, StateANSICode
 		, StateAbbreviationCode
 		, StateAbbreviationDescription
@@ -234,21 +234,21 @@ BEGIN
 		, LeaTypeCode
 		, LeaTypeDescription
 		, LeaTypeEdFactsCode
-		, MailingAddressStreet
-		, MailingAddressStreet2
+		, MailingAddressStreetNumberAndName
+		, MailingAddressApartmentRoomOrSuiteNumber
 		, MailingAddressCity
-		, MailingCountyAnsiCode
-		, MailingAddressState
+		, MailingAddressCountyAnsiCodeCode
+		, MailingAddressStateAbbreviation
 		, MailingAddressPostalCode
 		, OutOfStateIndicator
-		, PhysicalAddressStreet
-		, PhysicalAddressStreet2
+		, PhysicalAddressStreetNumberAndName
+		, PhysicalAddressApartmentRoomOrSuiteNumber
 		, PhysicalAddressCity
-		, PhysicalCountyAnsiCode
-		, PhysicalAddressState
+		, PhysicalAddressCountyAnsiCodeCode
+		, PhysicalAddressStateAbbreviation
 		, PhysicalAddressPostalCode
-		, Telephone
-		, Website
+		, TelephoneNumber
+		, WebsiteAddress
 		, Longitude
 		, Latitude
 		, CharterLeaStatus
@@ -258,10 +258,10 @@ BEGIN
 		, RecordEndDateTime
 	) 	
 	VALUES (
-		src.LEA_OrganizationName
-		, src.NCESIdentifier
-		, src.StateIdentifier
-		, src.PriorLEAIdentifierState
+		src.LEAOrganizationName
+		, src.LEAIdentifierNCES
+		, src.LEAIdentifierSea
+		, src.PriorLEAIdentifierSea
 		, src.SeaOrganizationName
 		, src.SeaOrganizationIdentifierSea
 		, @StateANSICode
@@ -269,24 +269,24 @@ BEGIN
 		, @StateName
 		, src.SupervisoryUnionIdentificationNumber
 		, src.LeaOperationalStatus
-		, src.LeaOperationalEdfactsStatus
+		, src.LeaOperationalStatusEdFactsCode
 		, src.OperationalStatusEffectiveDate
 		, src.ReportedFederally
 		, src.LeaTypeCode
 		, src.LeaTypeDescription
 		, src.LeaTypeEdfactsCode
-		, src.MailingAddressStreet
-		, src.MailingAddressStreet2
+		, src.MailingAddressStreetNumberAndName
+		, src.MailingAddressApartmentRoomOrSuiteNumber
 		, src.MailingAddressCity
-		, src.MailingAddressCountyAnsiCode
-		, src.MailingAddressState
+		, src.MailingAddressCountyAnsiCodeCode
+		, src.MailingAddressStateAbbreviation
 		, src.MailingAddressPostalCode
-		, src.OutOfState
-		, src.PhysicalAddressStreet
-		, src.PhysicalAddressStreet2
+		, src.OutOfStateIndicator
+		, src.PhysicalAddressStreetNumberAndName
+		, src.PhysicalAddressApartmentRoomOrSuiteNumber
 		, src.PhysicalAddressCity
-		, src.PhysicalAddressCountyAnsiCode
-		, src.PhysicalAddressState
+		, src.PhysicalAddressCountyAnsiCodeCode
+		, src.PhysicalAddressStateAbbreviation
 		, src.PhysicalAddressPostalCode
 		, src.TelephoneNumber
 		, src.WebsiteAddress
@@ -294,7 +294,7 @@ BEGIN
 		, src.Latitude
 		, src.CharterLeaStatus
 		, src.ReconstitutedStatus
-		, src.McKinneyVentoSubgrantRecipient
+		, src.LEA_McKinneyVentoSubgrantRecipient
 		, src.RecordStartDateTime
 		, src.RecordEndDateTime
 	);
