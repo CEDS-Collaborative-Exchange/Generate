@@ -249,7 +249,7 @@ BEGIN
 		AND sssrd4.TableName = 'RefReconstitutedStatus'
 		AND sko.SchoolYear = sssrd4.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd5
-		ON sko.AdminisSchool_AdministrativeFundingControl = sssrd5.InputCode
+		ON sko.School_AdministrativeFundingControl = sssrd5.InputCode
 		AND sssrd5.TableName = 'RefAdministrativeFundingControl'
 		AND sko.SchoolYear = sssrd5.SchoolYear
 	WHERE @DataCollectionName IS NULL	
@@ -286,7 +286,7 @@ BEGIN
 			trgt.NameOfInstitution 							= src.NameOfInstitution,
 			trgt.SchoolOperationalStatus 					= src.SchoolOperationalStatus,
 			trgt.SchoolOperationalStatusEdFactsCode 		= src.SchoolOperationalEdfactsStatus,
-			trgt.SchoolOperationalStatusEffectiveDate 		= src.School_OperationalStatusEffectiveDate,
+			trgt.SchoolOperationalStatusEffectiveDate 		= src.SchoolOperationalStatusEffectiveDate,
 			trgt.CharterSchoolIndicator 					= src.CharterSchoolIndicator,
 			trgt.CharterSchoolContractIdNumber 				= src.CharterSchoolContractIdNumber,
 			trgt.CharterSchoolContractApprovalDate 			= src.CharterSchoolContractApprovalDate,
@@ -320,7 +320,7 @@ BEGIN
 		, StateAbbreviationDescription
 		, StateANSICode					
 		, SeaOrganizationName						
-		, SeaOrganizationShortName								
+		--, SeaOrganizationShortName								
 		, SeaOrganizationIdentifierSea				
 		, IeuOrganizationName						
 		, IeuOrganizationIdentifierSea				
@@ -336,8 +336,8 @@ BEGIN
 		, PriorSchoolIdentifierSea					
 		, NameOfInstitution							
 		, SchoolOperationalStatus					
-		, SchoolOperationalEdfactsStatus			
-		, OperationalStatusEffectiveDate		
+		, SchoolOperationalStatusEdFactsCode			
+		, SchoolOperationalStatusEffectiveDate		
 		, SchoolTypeCode							
 		, SchoolTypeDescription						
 		, SchoolTypeEdfactsCode						
@@ -375,7 +375,7 @@ BEGIN
 		, @StateName
 		, @StateANSICode
 		, SeaOrganizationName						
-		, SeaShortName								
+		--, SeaShortName								
 		, SeaOrganizationIdentifierSea				
 		, IeuOrganizationName						
 		, IeuOrganizationIdentifierSea				
