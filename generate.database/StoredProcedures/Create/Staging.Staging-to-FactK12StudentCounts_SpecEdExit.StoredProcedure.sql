@@ -1,7 +1,7 @@
 /**********************************************************************
 Author: AEM Corp
 Date:	3/1/2022
-Description: Migrates Child Count Data from Staging to RDS.FactK12StudentCounts
+Description: Migrates Exiting Data from Staging to RDS.FactK12StudentCounts
 
 ************************************************************************/
 CREATE PROCEDURE  [Staging].[Staging-to-FactK12StudentCounts_SpecEdExit] 
@@ -52,7 +52,8 @@ BEGIN
 			ON tq.ToggleQuestionId = tr.ToggleQuestionId
 		WHERE tq.EmapsQuestionAbbrv = 'DEFEXREFPER'
 
-		IF (@UsesDefaultReferenceDates = 'false') BEGIN
+		IF (@UsesDefaultReferenceDates = 'false') 
+		BEGIN
 			SELECT @ToggleStartDate = tr.ResponseValue
 			FROM App.ToggleQuestions tq
 			JOIN App.ToggleResponses tr
@@ -80,7 +81,7 @@ BEGIN
 		)
 
 		CREATE TABLE #schoolOrganizationTypes (
-			K12SchoolOrganizationType				VARCHAR(20)
+			K12SchoolOrganizationType			VARCHAR(20)
 		)
 
 		INSERT INTO #seaOrganizationTypes
@@ -130,8 +131,8 @@ BEGIN
 		FROM RDS.vwDimCteStatuses
 		WHERE SchoolYear = @SchoolYear
 		
-		CREATE INDEX IX_vwDimCteStatuses ON #vwDimCteStatuses(SchoolYear, CteAeDisplacedHomemakerIndicatorMap, CteNontraditionalGenderStatusMap, [SingleParentOrSinglePregnantWomanStatusMap, CteGraduationRateInclusionMap, PerkinsLEPStatusMap) 
-			INCLUDE (CteAeDisplacedHomemakerIndicatorCode, CteNontraditionalGenderStatusCode, [SingleParentOrSinglePregnantWomanStatusCode], CteGraduationRateInclusionCode, PerkinsLEPStatusCode)
+		CREATE INDEX IX_vwDimCteStatuses ON #vwDimCteStatuses(SchoolYear, CteAeDisplacedHomemakerIndicatorMap, CteNontraditionalGenderStatusMap, SingleParentOrSinglePregnantWomanStatusMap) 
+			INCLUDE (CteAeDisplacedHomemakerIndicatorCode, CteNontraditionalGenderStatusCode, SingleParentOrSinglePregnantWomanStatusCode)
 
 		IF OBJECT_ID('tempdb..#vwDimTitleIStatuses') IS NOT NULL 
 			DROP TABLE #vwDimTitleIStatuses		
@@ -150,8 +151,8 @@ BEGIN
 		FROM RDS.vwDimMigrantStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE INDEX ix_vwDimMigrantStatuses ON #vwDimMigrantStatuses (ContinuationOfServicesReasonMap, ConsolidatedMepFundsStatusMap, MepServicesTypeMap, MigrantPrioritizedForServicesMap, MepEnrollmentTypeMap)
-			INCLUDE (ContinuationOfServicesReasonCode, ConsolidatedMepFundsStatusCode, MepServicesTypeCode, MigrantPrioritizedForServicesCode, MepEnrollmentTypeCode);
+		CREATE INDEX ix_vwDimMigrantStatuses ON #vwDimMigrantStatuses (ContinuationOfServicesReasonMap, MigrantEducationProgramServicesTypeMap, MigrantPrioritizedForServicesMap, MigrantEducationProgramEnrollmentTypeMap)
+			INCLUDE (ContinuationOfServicesReasonCode, MigrantEducationProgramServicesTypeCode, MigrantPrioritizedForServicesCode, MigrantEducationProgramEnrollmentTypeCode);
 
 
 		SELECT @FactTypeId = DimFactTypeId 
@@ -183,7 +184,6 @@ BEGIN
 			, K12StudentId							int null
 
 			, IdeaStatusId							int null
-			, ProgramStatusId						int null
 			, LanguageId							int null
 			, MigrantStatusId						int null
 			, K12StudentStatusId					int null
@@ -202,51 +202,47 @@ BEGIN
 			, PrimaryDisabilityTypeId				int null
 
 			, SpecialEducationServicesExitDateId	int null
-			, StudentCutoverStartDate				date null
 			, MigrantStudentQualifyingArrivalDateId	int null
 			, LastQualifyingMoveDateId				int null
 		)
 
 		INSERT INTO #Facts
 		SELECT
-			sppse.Id									StagingId
-			, rsy.DimSchoolYearId						SchoolYearId
-			, @FactTypeId								FactTypeId
-			, -1										GradeLevelId
-			, rda.DimAgeId								AgeId
-			, ISNULL(rdr.DimRaceId, -1)					RaceId
-			, ISNULL(rdkd.DimK12DemographicId, -1)		K12DemographicId
-			, 1											StudentCount
+			sppse.Id													StagingId
+			, rsy.DimSchoolYearId										SchoolYearId
+			, @FactTypeId												FactTypeId
+			, -1														GradeLevelId
+			, rda.DimAgeId												AgeId
+			, ISNULL(rdr.DimRaceId, -1)									RaceId
+			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId
+			, 1															StudentCount
 
-			, ISNULL(rds.DimSeaId, -1)					SEAId
-			, -1										IEUId
-			, ISNULL(rdl.DimLeaID, -1)					LEAId
-			, ISNULL(rdksch.DimK12SchoolId, -1)			K12SchoolId
-			, ISNULL(rdks.DimK12StudentId, -1)			K12StudentId
+			, ISNULL(rds.DimSeaId, -1)									SEAId
+			, -1														IEUId
+			, ISNULL(rdl.DimLeaID, -1)									LEAId
+			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
+			, ISNULL(rdp.DimPersonId, -1)								K12StudentId
 
-			, ISNULL(rdis.DimIdeaStatusId, -1)			IdeaStatusId
-			, -1										ProgramStatusId
-			, -1										LanguageId
-			, -1										MigrantStatusId
-			, -1										K12StudentStatusId
-			, -1										TitleIStatusId
-			, -1										TitleIIIStatusId
-			, -1										AttendanceId
-			, -1										CohortStatusId
-			, -1										NOrDStatusId
-			, -1										CTEStatusId
-			, -1										K12EnrollmentStatusId
-			, ISNULL(rdels.DimEnglishLearnerStatusId, -1) 	EnglishLearnerStatusId
-			, ISNULL(rdhs.DimHomelessnessStatusId, -1)		HomelessnessStatusId
-			, ISNULL(rdeds.DimEconomicallyDisadvantagedStatusId, -1)										EconomicallyDisadvantagedStatusId
-			, -1										FosterCareStatusId
-			, -1										ImmigrantStatusId
-			, -1										PrimaryDisabilityTypeId
-
-			, ISNULL(rdd.DimDateId, -1)					SpecialEducationServicesExitDateId
-			, NULL										StudentCutoverStartDate
-			, -1										MigrantStudentQualifyingArrivalDateId
-			, -1										LastQualifyingMoveDateId
+			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId
+			, -1														LanguageId
+			, -1														MigrantStatusId
+			, -1														K12StudentStatusId
+			, -1														TitleIStatusId
+			, -1														TitleIIIStatusId
+			, -1														AttendanceId
+			, -1														CohortStatusId
+			, -1														NOrDStatusId
+			, -1														CTEStatusId
+			, -1														K12EnrollmentStatusId
+			, ISNULL(rdels.DimEnglishLearnerStatusId, -1) 				EnglishLearnerStatusId
+			, ISNULL(rdhs.DimHomelessnessStatusId, -1)					HomelessnessStatusId
+			, ISNULL(rdeds.DimEconomicallyDisadvantagedStatusId, -1)	EconomicallyDisadvantagedStatusId
+			, -1														FosterCareStatusId
+			, -1														ImmigrantStatusId
+			, ISNULL(rdidt.DimIdeaDisabilityTypeId, -1)					PrimaryDisabilityTypeId
+			, ISNULL(rdd.DimDateId, -1)									SpecialEducationServicesExitDateId
+			, -1														MigrantStudentQualifyingArrivalDateId
+			, -1														LastQualifyingMoveDateId
 
 		FROM Staging.ProgramParticipationSpecialEducation sppse
 		JOIN RDS.DimDates rdd
@@ -259,26 +255,30 @@ BEGIN
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 		LEFT JOIN RDS.DimLeas rdl
-			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierState
+			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
 			AND rdd.DateValue BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
 		LEFT JOIN RDS.DimK12Schools rdksch
-			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierState
+			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND rdd.DateValue BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
 		JOIN RDS.DimSeas rds
 			ON rdd.DateValue BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
-		JOIN Staging.PersonStatus idea
+		JOIN Staging.ProgramParticipationSpecialEducation idea
 			ON ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
-			AND rdd.DateValue BETWEEN idea.IDEA_StatusStartDate AND CASE WHEN idea.IDEA_StatusEndDate IS NULL THEN GETDATE() ELSE idea.IDEA_StatusEndDate END
-		LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  from [Staging-to-FactK12StudentCounts_SpecEdExit]
+			AND rdd.DateValue BETWEEN idea.ProgramParticipationBeginDate AND ISNULL(idea.ProgramParticipationEndDate, GETDATE())
+		JOIN Staging.IdeaDisabilityType sidt	
+			ON ske.SchoolYear = sidt.SchoolYear
+			AND sidt.StudentIdentifierState = idea.StudentIdentifierState
+			AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
+			AND sidt.IsPrimaryDisability = 1
+			AND rdd.DateValue BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+		LEFT JOIN RDS.vwUnduplicatedRaceMap spr
 			ON ske.SchoolYear = spr.SchoolYear
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState
-			AND (spr.OrganizationType in (SELECT SeaOrganizationType FROM #seaOrganizationTypes)
-				OR (ske.LeaIdentifierSeaAccountability = spr.OrganizationIdentifier
-					AND spr.OrganizationType in (SELECT LeaOrganizationType FROM #leaOrganizationTypes))
-				OR (ske.SchoolIdentifierSea = spr.OrganizationIdentifier
-					AND spr.OrganizationType in (SELECT K12SchoolOrganizationType FROM #schoolOrganizationTypes)))
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(spr.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(spr.SchoolIdentifierSea, '')
 		LEFT JOIN Staging.PersonStatus el 
 			ON ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
@@ -300,10 +300,10 @@ BEGIN
 		JOIN RDS.vwDimK12Demographics rdkd
  			ON rsy.SchoolYear = rdkd.SchoolYear
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
-		JOIN RDS.vwDimEconomicallyDisadvantagedStatuses rdeds
+		LEFT JOIN RDS.vwDimEconomicallyDisadvantagedStatuses rdeds
  			ON rsy.SchoolYear = rdeds.SchoolYear
 			AND ISNULL(CAST(econ.EconomicDisadvantageStatus AS SMALLINT), -1) = ISNULL(rdeds.EconomicDisadvantageStatusMap, -1)
-		JOIN RDS.vwDimHomelessnessStatuses rdhs
+		LEFT JOIN RDS.vwDimHomelessnessStatuses rdhs
  			ON rsy.SchoolYear = rdhs.SchoolYear
 			AND ISNULL(CAST(homeless.HomelessnessStatus AS SMALLINT), -1) = ISNULL(rdhs.HomelessnessStatusMap, -1)
 			AND rdhs.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
@@ -312,10 +312,12 @@ BEGIN
 			ON RDS.Get_Age(ske.Birthdate, IIF(rdd.DateValue < @ChildCountDate, @PreviousChildCountDate, @ChildCountDate)) = rda.AgeValue
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON ske.SchoolYear = rdis.SchoolYear
-			AND ISNULL(idea.PrimaryDisabilityType, 'MISSING') = ISNULL(PrimaryDisabilityTypeMap, PrimaryDisabilityTypeCode)
-			AND ISNULL(CAST(idea.IDEAIndicator AS SMALLINT), -1) = rdis.IdeaIndicatorMap
 			AND ISNULL(sppse.SpecialEducationExitReason, 'MISSING') = ISNULL(rdis.SpecialEducationExitReasonMap, rdis.SpecialEducationExitReasonCode)
+			AND IdeaIndicatorCode = 'Yes'
 			AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
+		LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
+			ON ske.SchoolYear = rdis.SchoolYear
+			AND ISNULL(sidt.IdeaDisabilityType, 'MISSING') = ISNULL(IdeaDisabilityTypeMap, IdeaDisabilityTypeCode)
 		LEFT JOIN #vwDimRaces rdr
 			ON rsy.SchoolYear = rdr.SchoolYear
 			AND CASE 
@@ -326,7 +328,7 @@ BEGIN
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastName, 'MISSING') = rdp.LastOrSurname
+			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND rdd.DateValue BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
 			AND IsActiveK12Student = 1
@@ -353,25 +355,19 @@ BEGIN
 			AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_sp.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sppc_sp.SchoolIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN sppc_sp.SingleParent_StatusStartDate AND ISNULL(sppc_sp.SingleParent_StatusEndDate, @EndDate)
-		LEFT JOIN Staging.PersonStatus sps
-			ON sppse.StudentIdentifierState = sps.StudentIdentifierState
-			AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(sps.LeaIdentifierSeaAccountability, '')
-			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sps.SchoolIdentifierSea, '')
-			AND sppse.ProgramParticipationEndDate BETWEEN sps.PerkinsLEPStatus_StatusStartDate AND ISNULL(sps.PerkinsLEPStatus_StatusEndDate, @EndDate)
 		LEFT JOIN #vwDimCteStatuses rdcs
 			ON  ISNULL(CAST(sppc_part_conc.CteParticipant AS SMALLINT), -1)					= ISNULL(rdcs.CteParticipantMap, -1)
 			AND ISNULL(CAST(sppc_part_conc.CteConcentrator AS SMALLINT), -1)				= ISNULL(rdcs.CteConcentratorMap, -1)
 			AND ISNULL(CAST(sppc_dhm.DisplacedHomeMakerIndicator AS SMALLINT), -1)			= ISNULL(rdcs.CteAeDisplacedHomemakerIndicatorMap, -1)
 			AND ISNULL(CAST(sppc_part_conc.NonTraditionalGenderStatus AS SMALLINT), -1)		= ISNULL(rdcs.CteNontraditionalGenderStatusMap, -1)
-			AND ISNULL(CAST(sppc_part_conc.NonTraditionalGenderStatus AS SMALLINT), -1)		= ISNULL(rdcs.RepresentationStatusMap, -1)
-			AND ISNULL(CAST(sppc_sp.SingleParentIndicator AS SMALLINT), -1)					= ISNULL(rdcs.SingleParentOrSinglePregnantWomanMap, -1)
-			AND ISNULL(CAST(sppc_sp.SingleParentIndicator AS SMALLINT), -1)					= ISNULL(rdcs.SingleParentOrSinglePregnantWomanMap, -1)
-			AND ISNULL(CAST(sps.PerkinsLEPStatus AS SMALLINT), -1)							= ISNULL(rdcs.PerkinsLEPStatusMap, -1)
+			AND ISNULL(CAST(sppc_part_conc.NonTraditionalGenderStatus AS SMALLINT), -1)		= ISNULL(rdcs.CteNontraditionalGenderStatusMap, -1)
+			AND ISNULL(CAST(sppc_sp.SingleParentIndicator AS SMALLINT), -1)					= ISNULL(rdcs.SingleParentOrSinglePregnantWomanStatusMap, -1)
+			AND ISNULL(CAST(sppc_sp.SingleParentIndicator AS SMALLINT), -1)					= ISNULL(rdcs.SingleParentOrSinglePregnantWomanStatusMap, -1)
 
 	--Get a unique set of Lea IDs to match against for Title I and Migrant update
 		IF OBJECT_ID('tempdb..#uniqueLEAs') IS NOT NULL 
 			DROP TABLE #uniqueLEAs		
-		SELECT DISTINCT Lea_Identifier_State, LEA_RecordStartDateTime, LEA_RecordEndDateTime, LEA_TitleIProgramType, LEA_TitleIinstructionalService, LEA_K12LeaTitleISupportService
+		SELECT DISTINCT LeaIdentifierSea, LEA_RecordStartDateTime, LEA_RecordEndDateTime, LEA_TitleIProgramType, LEA_TitleIinstructionalService, LEA_K12LeaTitleISupportService
 		INTO #uniqueLEAs
 		FROM Staging.K12Organization
 		WHERE LEA_IsReportedFederally = 1
@@ -383,17 +379,17 @@ BEGIN
 		JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON fact.StagingId = sppse.Id
 		JOIN #uniqueLEAs lea
-			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSeaAccountability, '')
+			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN lea.LEA_RecordStartDateTime AND ISNULL(lea.LEA_RecordEndDateTime, @EndDate)
 		LEFT JOIN Staging.K12Organization sch
-			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSeaAccountability, '')
+			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSea, '')
 			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sch.SchoolIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN sch.School_RecordStartDateTime AND ISNULL(sch.School_RecordEndDateTime, @EndDate)
 		LEFT JOIN #vwDimTitleIStatuses rdtis
 			ON ISNULL(lea.LEA_TitleIProgramType, 'MISSING') = ISNULL(rdtis.TitleIProgramTypeMap, rdtis.TitleIProgramTypeCode)
 			AND ISNULL(lea.LEA_TitleIinstructionalService, 'MISSING') = ISNULL(rdtis.TitleIInstructionalServicesMap, rdtis.TitleIInstructionalServicesCode)
 			AND ISNULL(lea.LEA_K12LeaTitleISupportService, 'MISSING') = ISNULL(rdtis.TitleISupportServicesMap, rdtis.TitleISupportServicesCode)
-			AND ISNULL(sch.TitleIPartASchoolDesignation, 'MISSING') = ISNULL(rdtis.TitleISchoolStatusCode, rdtis.TitleISchoolStatusMap)
+			AND ISNULL(sch.School_TitleIPartASchoolDesignation, 'MISSING') = ISNULL(rdtis.TitleISchoolStatusCode, rdtis.TitleISchoolStatusMap)
 
 	--Update Migrant
 		UPDATE #Facts
@@ -402,10 +398,10 @@ BEGIN
 		JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON fact.StagingId = sppse.Id
 		JOIN #uniqueLEAs lea
-			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSeaAccountability, '')
+			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN lea.LEA_RecordStartDateTime AND ISNULL(lea.LEA_RecordEndDateTime, @EndDate)
 		JOIN Staging.K12Organization sch
-			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSeaAccountability, '')
+			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSea, '')
 			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sch.SchoolIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN sch.School_RecordStartDateTime AND ISNULL(sch.School_RecordEndDateTime, @EndDate)
 		JOIN Staging.Migrant sm
@@ -436,7 +432,6 @@ BEGIN
 			, [K12SchoolId]
 			, [K12StudentId]
 			, [IdeaStatusId]
-			, [ProgramStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]
 			, [K12StudentStatusId]
@@ -454,7 +449,6 @@ BEGIN
 			, [ImmigrantStatusId]
 			, [PrimaryDisabilityTypeId]
 			, [SpecialEducationServicesExitDateId]
-			, [StudentCutoverStartDate]
 			, [MigrantStudentQualifyingArrivalDateId]
 			, [LastQualifyingMoveDateId]
 		)
@@ -472,7 +466,6 @@ BEGIN
 			, [K12SchoolId]
 			, [K12StudentId]
 			, [IdeaStatusId]
-			, [ProgramStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]
 			, [K12StudentStatusId]
@@ -490,7 +483,6 @@ BEGIN
 			, [ImmigrantStatusId]
 			, [PrimaryDisabilityTypeId]
 			, [SpecialEducationServicesExitDateId]
-			, [StudentCutoverStartDate]
 			, [MigrantStudentQualifyingArrivalDateId]
 			, [LastQualifyingMoveDateId]
 		FROM #Facts
@@ -509,10 +501,9 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
-		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_ChildCount', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', NULL, ERROR_MESSAGE(), 1, NULL, GETDATE())
+		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_SpecEdExit', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', NULL, ERROR_MESSAGE(), 1, NULL, GETDATE())
 	END CATCH
 
-		
 END
 
 	

@@ -3443,19 +3443,19 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12Student
 
 
 GO
-PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusStartDatePerkinsId]...';
+PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDatePerkinsId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId];
 
 
 GO
-PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusEndDatePerkinsId]...';
+PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDatePerkinsId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId];
 
 
 GO
@@ -5035,11 +5035,11 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12Student
 
 
 GO
-PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsLepId]...';
+PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsLepId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId];
 
 
 GO
@@ -5091,11 +5091,11 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12Student
 
 
 GO
-PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsLepId]...';
+PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsLepId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId];
 
 
 GO
@@ -5709,6 +5709,27 @@ EXECUTE sp_rename @objname = N'[RDS].[BridgeAeStudentEnrollmentRaces].[BridgeAeS
 
 
 GO
+PRINT N'Altering Table [RDS].[DimCteStatuses]...';
+
+
+GO
+
+ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusCode];
+ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusDescription];
+ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusEdFactsCode];
+
+
+GO
+PRINT N'Altering Table [RDS].[DimEnglishLearnerStatuses]...';
+
+
+GO
+
+EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode]', @newname = N'PerkinsEnglishLearnerStatusCode', @objtype = N'COLUMN';
+EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription]', @newname = N'PerkinsEnglishLearnerStatusDescription', @objtype = N'COLUMN';
+EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdFactsCode]', @newname = N'PerkinsEnglishLearnerStatusEdFactsCode', @objtype = N'COLUMN';
+
+GO
 PRINT N'Altering Table [RDS].[DimK12StudentStatuses]...';
 
 
@@ -5799,9 +5820,9 @@ GO
 EXECUTE sp_rename N'[RDS].[DimPeople].[ELChildChildIdentifierState]', N'EarlyLearningChildChildIdentifierState', N'COLUMN';
 EXECUTE sp_rename N'[RDS].[DimPeople].[ELStaffStaffMemberIdentifierState]', N'EarlyLearningStaffStaffMemberIdentifierState', N'COLUMN';
 EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveELChild]', N'IsActiveEarlyLearningChild', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveELStaff]', N'IsActiveEarlyLearningStaffMember', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveK12Staff]', N'IsActiveK12StaffMember', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActivePsStaff]', N'IsActivePsStaffMember', N'COLUMN';
+EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveELStaffMember]', N'IsActiveEarlyLearningStaffMember', N'COLUMN';
+EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveK12StaffMember]', N'IsActiveK12StaffMember', N'COLUMN';
+EXECUTE sp_rename N'[RDS].[DimPeople].[IsActivePsStaffMember]', N'IsActivePsStaffMember', N'COLUMN';
 
 
 GO
@@ -6807,6 +6828,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_AssessmentResult] (
     [AssessmentScoreMetricType]                            VARCHAR (100)  NULL,
     [SchoolYear]                                           VARCHAR (100)  NULL,
     [DataCollectionName]                                   VARCHAR (100)  NULL,
+    [DataCollectionId]                                     INT            NULL,
     [AssessmentRegistrationId]                             INT            NULL,
     [AssessmentAdministrationId]                           INT            NULL,
     [AssessmentId]                                         INT            NULL,
@@ -6861,26 +6883,28 @@ PRINT N'Starting rebuilding table [Staging].[IdeaDisabilityType]...';
 
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_IdeaDisabilityType] (
-    [Id]                                                  INT            IDENTITY (1, 1) NOT NULL,
-    [SchoolYear]                                          SMALLINT       NULL,
-    [StudentIdentifierState]                              NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                                 NVARCHAR (100) NULL,
-    [ResponsibleSchoolTypeAccountability]                 BIT            NULL,
-    [ResponsibleSchoolTypeAttendance]                     BIT            NULL,
-    [ResponsibleSchoolTypeFunding]                        BIT            NULL,
-    [ResponsibleSchoolTypeGraduation]                     BIT            NULL,
-    [ResponsibleSchoolTypeIndividualizedEducationProgram] BIT            NULL,
-    [ResponsibleSchoolTypeTransportation]                 BIT            NULL,
-    [ResponsibleSchoolTypeIepServiceProvider]             BIT            NULL,
-    [IdeaDisabilityType]                                  NVARCHAR (100) NOT NULL,
-    [DataCollectionName]                                  NVARCHAR (100) NULL,
-    [RecordStartDateTime]                                 DATETIME       NOT NULL,
-    [RecordEndDateTime]                                   DATETIME       NULL,
+    [Id]                                                    INT             IDENTITY (1, 1) NOT NULL,
+    [StudentIdentifierState]                                NVARCHAR (100)  NULL,
+    [LeaIdentifierSeaAccountability]                        NVARCHAR (100)  NULL,
+    [LeaIdentifierSeaAttendance]                            NVARCHAR (100)  NULL,
+    [LeaIdentifierSeaFunding]                               NVARCHAR (100)  NULL,
+    [LeaIdentifierSeaGraduation]                            NVARCHAR (100)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]        NVARCHAR (100)  NULL,
+    [SchoolIdentifierSea]                                   NVARCHAR (100)  NULL,
+    [ResponsibleSchoolTypeAccountability]                   BIT             NULL,
+    [ResponsibleSchoolTypeAttendance]                       BIT             NULL,
+    [ResponsibleSchoolTypeFunding]                          BIT             NULL,
+    [ResponsibleSchoolTypeGraduation]                       BIT             NULL,
+    [ResponsibleSchoolTypeIndividualizedEducationProgram]   BIT             NULL,
+    [ResponsibleSchoolTypeTransportation]                   BIT             NULL,
+    [ResponsibleSchoolTypeIepServiceProvider]               BIT             NULL,
+    [IdeaDisabilityType]                                    NVARCHAR (100)  NOT NULL,
+    [IsPrimaryDisability]   							    BIT             NULL,	
+    [IsSecondaryDisability]	    						    BIT             NULL,	
+    [SchoolYear]                                            SMALLINT        NULL,
+    [RecordStartDateTime]                                   DATETIME        NOT NULL,
+    [RecordEndDateTime]                                     DATETIME        NULL,
+    [DataCollectionName]                                    NVARCHAR (100)  NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_IdeaDisabilityType1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
@@ -6956,9 +6980,17 @@ CREATE TABLE [Staging].[tmp_ms_xx_K12Enrollment] (
     [HighSchoolDiplomaType]                               NVARCHAR (100) NULL,
     [LanguageNative]                                      NVARCHAR (100) NULL,
     [LanguadeHome]                                        NVARCHAR (100) NULL,
-    [DataCollectionName]                                  NVARCHAR (100) NULL,
+    [NumberOfSchoolDays]                                  DECIMAL (9, 2) NULL,
+    [NumberOfDaysAbsent]                                  DECIMAL (9, 2) NULL,
+    [AttendanceRate]                                      DECIMAL (5, 4) NULL,
+    [PostSecondaryEnrollmentStatus]                       NVARCHAR (100) NULL,
+    [DiplomaOrCredentialAwardDate]                        DATE           NULL,
+    [FoodServiceEligibility]                              NVARCHAR (100) NULL,
+    [SchoolYear]                                          NVARCHAR (100) NULL,
     [RecordStartDateTime]                                 DATETIME       NULL,
     [RecordEndDateTime]                                   DATETIME       NULL,
+    [DataCollectionName]                                  NVARCHAR (100) NULL,
+    [DataCollectionId]                                    INT            NULL,
     [PersonId]                                            INT            NULL,
     [OrganizationID_LEA]                                  INT            NULL,
     [OrganizationPersonRoleId_LEA]                        INT            NULL,
@@ -6966,14 +6998,6 @@ CREATE TABLE [Staging].[tmp_ms_xx_K12Enrollment] (
     [OrganizationPersonRoleId_School]                     INT            NULL,
     [OrganizationPersonRoleRelationshipId]                INT            NULL,
     [RunDateTime]                                         DATETIME       NULL,
-    [SchoolYear]                                          NVARCHAR (100) NULL,
-    [NumberOfSchoolDays]                                  DECIMAL (9, 2) NULL,
-    [NumberOfDaysAbsent]                                  DECIMAL (9, 2) NULL,
-    [AttendanceRate]                                      DECIMAL (5, 4) NULL,
-    [PostSecondaryEnrollmentStatus]                       NVARCHAR (100) NULL,
-    [DiplomaOrCredentialAwardDate]                        DATE           NULL,
-    [FoodServiceEligibility]                              NVARCHAR (100) NULL,
-    [DataCollectionId]                                    INT            NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_K12Enrollment1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
@@ -7037,9 +7061,9 @@ CREATE TABLE [Staging].[tmp_ms_xx_K12PersonRace] (
     [RaceType]                                            VARCHAR (100)  NULL,
     [EnrollmentEntryDate]                                 DATE           NULL,
     [EnrollmentExitDate]                                  DATE           NULL,
+    [SchoolYear]                                          VARCHAR (100)  NULL,
     [RecordStartDateTime]                                 DATETIME       NULL,
     [RecordEndDateTime]                                   DATETIME       NULL,
-    [SchoolYear]                                          VARCHAR (100)  NULL,
     [DataCollectionName]                                  NVARCHAR (100) NULL,
     [DataCollectionId]                                    INT            NULL,
     [PersonId]                                            INT            NULL,
@@ -7055,7 +7079,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_K12PersonRace] (
 DROP TABLE [Staging].[K12PersonRace];
 
 EXECUTE sp_rename N'[Staging].[tmp_ms_xx_K12PersonRace]', N'K12PersonRace';
-
+                               
 EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_K12PersonRace1]', N'PK_K12PersonRace', N'OBJECT';
 
 
@@ -7067,6 +7091,7 @@ GO
 
 CREATE TABLE [Staging].[tmp_ms_xx_K12ProgramParticipation] (
     [Id]                                                  INT            IDENTITY (1, 1) NOT NULL,
+    [StudentIdentifierState]                              NVARCHAR (100) NULL,
     [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
     [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
     [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
@@ -7080,20 +7105,19 @@ CREATE TABLE [Staging].[tmp_ms_xx_K12ProgramParticipation] (
     [ResponsibleSchoolTypeIndividualizedEducationProgram] BIT            NULL,
     [ResponsibleSchoolTypeTransportation]                 BIT            NULL,
     [ResponsibleSchoolTypeIepServiceProvider]             BIT            NULL,
-    [StudentIdentifierState]                              NVARCHAR (100) NULL,
     [ProgramType]                                         NVARCHAR (100) NULL,
     [EntryDate]                                           DATETIME       NULL,
     [ExitDate]                                            DATETIME       NULL,
-    [DataCollectionName]                                  NVARCHAR (100) NULL,
     [SchoolYear]                                          VARCHAR (100)  NULL,
+    [DataCollectionName]                                  NVARCHAR (100) NULL,
+    [DataCollectionId]                                    INT            NULL,
     [OrganizationId_LEA]                                  INT            NULL,
     [OrganizationId_School]                               INT            NULL,
     [PersonId]                                            INT            NULL,
     [ProgramOrganizationId_LEA]                           INT            NULL,
     [ProgramOrganizationId_School]                        INT            NULL,
-    [OrganizationPersonRoleId_LEA]                        NCHAR (10)     NULL,
-    [OrganizationPersonRoleId_School]                     NCHAR (10)     NULL,
-    [DataCollectionId]                                    INT            NULL,
+    [OrganizationPersonRoleId_LEA]                        INT            NULL,
+    [OrganizationPersonRoleId_School]                     INT            NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_K12ProgramParticipation1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
@@ -7185,18 +7209,18 @@ CREATE TABLE [Staging].[tmp_ms_xx_K12StudentCourseSection] (
     [LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
     [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
     [SchoolIdentifierSea]                            VARCHAR (100)  NULL,
-    [SchoolYear]                                     INT            NULL,
     [CourseGradeLevel]                               VARCHAR (100)  NULL,
     [ScedCourseCode]                                 NVARCHAR (50)  NULL,
     [CourseRecordStartDateTime]                      DATETIME       NULL,
     [CourseLevelCharacteristic]                      NVARCHAR (50)  NULL,
     [EntryDate]                                      DATETIME       NULL,
     [ExitDate]                                       DATETIME       NULL,
-    [DataCollectionName]                             NVARCHAR (100) NULL,
+    [SchoolYear]                                     INT            NULL,
     [RecordStartDateTime]                            DATETIME       NULL,
     [RecordEndDateTime]                              DATETIME       NULL,
-    [PersonId]                                       INT            NULL,
+    [DataCollectionName]                             NVARCHAR (100) NULL,
     [DataCollectionId]                               INT            NULL,
+    [PersonId]                                       INT            NULL,
     [OrganizationID_LEA]                             INT            NULL,
     [OrganizationPersonRoleId_LEA]                   INT            NULL,
     [OrganizationID_School]                          INT            NULL,
@@ -7251,17 +7275,17 @@ GO
 CREATE TABLE [Staging].[tmp_ms_xx_OrganizationCustomSchoolIndicatorStatusType] (
     [Id]                                     INT            IDENTITY (1, 1) NOT NULL,
     [SchoolIdentifierSea]                    VARCHAR (100)  NOT NULL,
-    [SchoolYear]                             VARCHAR (100)  NULL,
     [IndicatorStatusType]                    VARCHAR (100)  NULL,
     [IndicatorStatus]                        VARCHAR (100)  NULL,
     [IndicatorStatusSubgroupType]            VARCHAR (100)  NULL,
     [IndicatorStatusSubgroup]                VARCHAR (100)  NULL,
     [StatedDefinedIndicatorStatus]           VARCHAR (100)  NULL,
     [StatedDefinedCustomIndicatorStatusType] VARCHAR (100)  NULL,
+    [SchoolYear]                             VARCHAR (100)  NULL,
+    [RecordStartDateTime]                    DATETIME       NULL,
+    [RecordEndDateTime]                      DATETIME       NULL,
     [DataCollectionName]                     NVARCHAR (100) NULL,
     [DataCollectionId]                       INT            NULL,
-    [RecordStartDateTime]                    DATE           NULL,
-    [RecordEndDateTime]                      DATE           NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_OrganizationCustomSchoolIndicatorStatusType1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
@@ -7280,13 +7304,13 @@ CREATE TABLE [Staging].[tmp_ms_xx_OrganizationGradeOffered] (
     [Id]                      INT            IDENTITY (1, 1) NOT NULL,
     [OrganizationIdentifier]  VARCHAR (100)  NULL,
     [GradeOffered]            VARCHAR (100)  NULL,
-    [SchoolYear]              VARCHAR (100)  NULL,
-    [DataCollectionName]      NVARCHAR (100) NULL,
-    [DataCollectionId]        INT            NULL,
-    [OrganizationId]          VARCHAR (100)  NULL,
     [K12SchoolGradeOfferedId] INT            NULL,
+    [SchoolYear]              VARCHAR (100)  NULL,
     [RecordStartDateTime]     DATETIME       NULL,
     [RecordEndDateTime]       DATETIME       NULL,
+    [DataCollectionName]      NVARCHAR (100) NULL,
+    [DataCollectionId]        INT            NULL,
+    [OrganizationId]          INT            NULL,
     [RunDateTime]             DATETIME       NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_OrganizationGradeOffered1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 100, STATISTICS_NORECOMPUTE = ON, DATA_COMPRESSION = PAGE)
 );
@@ -7324,16 +7348,16 @@ GO
 CREATE TABLE [Staging].[tmp_ms_xx_OrganizationSchoolIndicatorStatus] (
     [Id]                           INT            IDENTITY (1, 1) NOT NULL,
     [SchoolIdentifierSea]          VARCHAR (100)  NOT NULL,
-    [SchoolYear]                   VARCHAR (100)  NULL,
     [IndicatorStatusType]          VARCHAR (100)  NULL,
     [IndicatorStatus]              VARCHAR (100)  NULL,
     [IndicatorStatusSubgroupType]  VARCHAR (100)  NULL,
     [IndicatorStatusSubgroup]      VARCHAR (100)  NULL,
     [StatedDefinedIndicatorStatus] VARCHAR (100)  NULL,
+    [SchoolYear]                   VARCHAR (100)  NULL,
+    [RecordStartDateTime]          DATETIME       NULL,
+    [RecordEndDateTime]            DATETIME       NULL,
     [DataCollectionName]           NVARCHAR (100) NULL,
     [DataCollectionId]             INT            NULL,
-    [RecordStartDateTime]          DATE           NULL,
-    [RecordEndDateTime]            DATE           NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_OrganizationSchoolIndicatorStatus1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
@@ -7479,17 +7503,13 @@ CREATE TABLE [Staging].[tmp_ms_xx_PersonStatus] (
     [EnglishLearner_StatusEndDate]                           DATE           NULL,
     [ISO_639_2_NativeLanguage]                               NVARCHAR (100) NULL,
     [ISO_639_2_HomeLanguage]                                 NVARCHAR (100) NULL,
-    [PerkinsLEPStatus]                                       NVARCHAR (100) NULL,
-    [PerkinsLEPStatus_StatusStartDate]                       DATE           NULL,
-    [PerkinsLEPStatus_StatusEndDate]                         DATE           NULL,
-    [IDEAIndicator]                                          BIT            NULL,
-    [IDEA_StatusStartDate]                                   DATE           NULL,
-    [IDEA_StatusEndDate]                                     DATE           NULL,
-    [PrimaryDisabilityType]                                  NVARCHAR (100) NULL,
-    [SecondaryDisabilityType]                                NVARCHAR (100) NULL,
+    [PerkinsEnglishLearnerStatus]                                        NVARCHAR (100) NULL,
+    [PerkinsEnglishLearnerStatus_StatusStartDate]                        DATE           NULL,
+    [PerkinsEnglishLearnerStatus_StatusEndDate]                          DATE           NULL,
+    [RecordStartDatetime]                                    DATETIME       NULL,
+    [RecordEndDateTime]                                      DATETIME       NULL,
     [DataCollectionName]                                     NVARCHAR (100) NULL,
     [DataCollectionId]                                       INT            NULL,
-    [RecordStartDatetime]                                    DATETIME       NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_PersonStatus1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
@@ -7521,6 +7541,7 @@ SET XACT_ABORT ON;
 CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationCTE] (
     [ID]                                                  INT            IDENTITY (1, 1) NOT NULL,
     [RecordId]                                            VARCHAR (100)  NULL,
+    [StudentIdentifierState]                              VARCHAR (100)  NULL,
     [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
     [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
     [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
@@ -7534,7 +7555,6 @@ CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationCTE] (
     [ResponsibleSchoolTypeIndividualizedEducationProgram] BIT            NULL,
     [ResponsibleSchoolTypeTransportation]                 BIT            NULL,
     [ResponsibleSchoolTypeIepServiceProvider]             BIT            NULL,
-    [StudentIdentifierState]                              VARCHAR (100)  NULL,
     [ProgramParticipationBeginDate]                       DATE           NULL,
     [ProgramParticipationEndDate]                         DATE           NULL,
     [DiplomaCredentialType]                               VARCHAR (100)  NULL,
@@ -7554,14 +7574,15 @@ CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationCTE] (
     [TechnicalSkillsAssessmentType]                       VARCHAR (100)  NULL,
     [NonTraditionalGenderStatus]                          BIT            NULL,
     [CTENontraditionalCompletion]                         BIT            NULL,
+    [CteExitReason]                                       VARCHAR (100)  NULL,
     [DataCollectionName]                                  NVARCHAR (100) NULL,
+    [DataCollectionID]                                    INT            NULL,
     [PersonID]                                            INT            NULL,
     [OrganizationID_School]                               INT            NULL,
     [OrganizationPersonRoleID_School]                     INT            NULL,
     [OrganizationPersonRoleID_CTEProgram]                 INT            NULL,
     [OrganizationID_CTEProgram]                           INT            NULL,
     [PersonProgramParticipationId]                        INT            NULL,
-    [CteExitReason]                                       VARCHAR (100)  NULL,
     [RunDateTime]                                         DATETIME       NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_ProgramParticipationCTE1] PRIMARY KEY CLUSTERED ([ID] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
@@ -7631,6 +7652,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationNorD] (
     [NeglectedOrDelinquentAcademicOutcomeIndicator]       NVARCHAR (100) NULL,
     [DiplomaCredentialAwardDate]                          DATE           NULL,
     [DataCollectionName]                                  NVARCHAR (100) NULL,
+    [DataCollectionID]                                    INT            NULL,
     [PersonID]                                            INT            NULL,
     [OrganizationID_School]                               INT            NULL,
     [OrganizationID_LEA]                                  INT            NULL,
@@ -7689,6 +7711,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationSpecialEducation] (
     [IDEAEducationalEnvironmentForSchoolAge]              NVARCHAR (100) NULL,
     [SpecialEducationFTE]                                 DECIMAL (5, 2) NULL,
     [DataCollectionName]                                  NVARCHAR (100) NULL,
+    [DataCollectionID]                                    INT            NULL,
     [PersonID]                                            INT            NULL,
     [OrganizationID_School]                               INT            NULL,
     [OrganizationID_LEA]                                  INT            NULL,
@@ -7746,6 +7769,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationTitleI] (
     [StudentIdentifierState]                              NVARCHAR (100) NULL,
     [TitleIIndicator]                                     NVARCHAR (100) NULL,
     [DataCollectionName]                                  NVARCHAR (100) NULL,
+    [DataCollectionID]                                    INT            NULL,
     [PersonID]                                            INT            NULL,
     [OrganizationID_LEA]                                  INT            NULL,
     [OrganizationID_School]                               INT            NULL,
@@ -7846,6 +7870,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationTitleIII] (
     [TitleIIIImmigrantStatus_StartDate]                   DATE           NULL,
     [TitleIIIImmigrantStatus_EndDate]                     DATE           NULL,
     [DataCollectionName]                                  NVARCHAR (100) NULL,
+    [DataCollectionID]                                    INT            NULL,
     [PersonID]                                            INT            NULL,
     [OrganizationID_School]                               INT            NULL,
     [OrganizationPersonRoleID_TitleIIIProgram]            INT            NULL,
@@ -7890,11 +7915,11 @@ CREATE TABLE [Staging].[tmp_ms_xx_PsStudentAcademicRecord] (
     [EntryDate]                                  DATETIME        NULL,
     [ExitDate]                                   DATETIME        NULL,
     [DataCollectionName]                         NVARCHAR (50)   NULL,
-    [OrganizationId]                             INT             NULL,
+    [DataCollectionID]                           INT            NULL,
     [PersonId]                                   INT             NULL,
+    [OrganizationId]                             INT             NULL,
     [OrganizationPersonRoleId]                   INT             NULL,
     [PsStudentAcademicRecordId]                  INT             NULL,
-    [DataCollectionId]                           INT             NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_PsStudentAcademicRecord1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
@@ -7950,14 +7975,14 @@ CREATE TABLE [Staging].[tmp_ms_xx_PsStudentEnrollment] (
     [EntryDate]                         DATETIME       NULL,
     [ExitDate]                          DATETIME       NULL,
     [AcademicTermDesignator]            VARCHAR (100)  NULL,
-    [DataCollectionName]                NVARCHAR (100) NULL,
+    [SchoolYear]                        VARCHAR (100)  NULL,
     [RecordStartDateTime]               DATETIME       NULL,
     [RecordEndDateTime]                 DATETIME       NULL,
-    [OrganizationId_PsInstitution]      INT            NULL,
-    [SchoolYear]                        VARCHAR (100)  NULL,
+    [DataCollectionName]                NVARCHAR (100) NULL,
+    [DataCollectionId]                  INT            NULL,
     [PersonId]                          INT            NULL,
     [OrganizationPersonRoleId]          INT            NULL,
-    [DataCollectionId]                  INT            NULL,
+    [OrganizationId_PsInstitution]      INT            NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_PsTermEnrollment1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
 
@@ -8001,11 +8026,10 @@ PRINT N'Starting rebuilding table [Staging].[StateDetail]...';
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_StateDetail] (
     [Id]                               INT            IDENTITY (1, 1) NOT NULL,
-    [OrganizationId]                   INT            NULL,
-    [StateCode]                        CHAR (2)       NULL,
+    [StateAbbreviationCode]            CHAR (2)       NULL,
     [SeaOrganizationName]              NVARCHAR (250) NULL,
     [SeaShortName]                     NVARCHAR (20)  NULL,
-    [SeaIdentifierSea]                 NVARCHAR (7)   NULL,
+    [SeaOrganizationIdentifierSea]     NVARCHAR (7)   NULL,
     [Sea_WebSiteAddress]               NVARCHAR (300) NULL,
     [SeaContact_FirstName]             NVARCHAR (100) NULL,
     [SeaContact_LastOrSurname]         NVARCHAR (100) NULL,
@@ -8021,6 +8045,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_StateDetail] (
     [DataCollectionName]               NVARCHAR (100) NULL,
     [DataCollectionId]                 INT            NULL,
     [PersonId]                         INT            NULL,
+    [OrganizationId]                   INT            NULL,
     [RunDateTime]                      DATETIME       NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_StateDetail1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
@@ -9376,12 +9401,12 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH NOCHECK
 
 
 GO
-PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsLepId]...';
+PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId]...';
 
 
 GO
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH NOCHECK
-    ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsLepId] FOREIGN KEY ([StatusEndDatePerkinsLepId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+    ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId] FOREIGN KEY ([StatusEndDatePerkinsEnglishLearnerId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 GO
@@ -9439,12 +9464,12 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH NOCHECK
 
 
 GO
-PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsLepId]...';
+PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId]...';
 
 
 GO
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH NOCHECK
-    ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsLepId] FOREIGN KEY ([StatusStartDatePerkinsLepId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+    ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId] FOREIGN KEY ([StatusStartDatePerkinsEnglishLearnerId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 GO
@@ -12058,7 +12083,7 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_Fa
 
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDateMilitaryConnectedStudentId ];
 
-ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsLepId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId];
 
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDateTitleIIIImmigrantId];
 
@@ -12072,7 +12097,7 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_Fa
 
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDateMilitaryConnectedStudentId];
 
-ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsLepId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId];
 
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDateTitleIIIImmigrantId];
 

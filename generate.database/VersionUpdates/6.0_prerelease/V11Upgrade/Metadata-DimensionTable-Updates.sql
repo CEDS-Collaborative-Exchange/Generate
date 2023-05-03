@@ -210,3 +210,14 @@ BEGIN
 	INSERT INTO [App].[DimensionTables]([DimensionTableName],[IsReportingDimension])
     VALUES('DimPsDemographics', 1)
 END
+
+--Remove Perkins LEP field from DimCTEStatuses dimension
+IF EXISTS (SELECT 1
+               FROM   INFORMATION_SCHEMA.COLUMNS
+               WHERE  TABLE_NAME = 'Dimensions'
+                      AND COLUMN_NAME = 'PerkinsLEPStatus'
+                      AND TABLE_SCHEMA = 'App')
+	BEGIN
+    	DELETE FROM App.Dimensions WHERE DimensionFieldName = 'PerkinsLEPStatus'
+	END
+

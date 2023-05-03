@@ -6048,7 +6048,26 @@ BEGIN
 					'
 			END
 
-			IF @reportCode = 'c089' and @reportLevel ='LEA' BEGIN
+			IF @year < 2023 AND @reportCode = 'c089' and @reportLevel ='LEA'
+			BEGIN 
+				SET @sql = @sql + ' 
+
+				delete a from @reportData a
+                where a.StudentCount = 0
+                AND OrganizationStateId NOT IN
+                (
+                SELECT DISTINCT dl.LeaIdentifierState
+                FROM RDS.BridgeLeaGradeLevels blgl
+                JOIN RDS.DimLeas dl
+                    ON blgl.LeaId = dl.DimLeaID
+                JOIN RDS.DimGradeLevels dgl
+                    ON blgl.GradeLevelId = dgl.DimGradeLevelId
+                WHERE GradeLevelCode IN (''KG'', ''PK'')
+                )
+				'
+			END
+			ELSE IF @year >= 2023 AND @reportCode = 'c089' and @reportLevel ='LEA'
+			BEGIN
 				SET @sql = @sql + ' 
 					
 				delete a from @reportData a
@@ -6061,7 +6080,7 @@ BEGIN
                     ON blgl.LeaId = dl.DimLeaID
                 JOIN RDS.DimGradeLevels dgl
                     ON blgl.GradeLevelId = dgl.DimGradeLevelId
-                WHERE GradeLevelCode IN (''KG'', ''PK'')
+                WHERE GradeLevelCode IN (''PK'')
                 )
 				'
 			END 
