@@ -3443,19 +3443,19 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12Student
 
 
 GO
-PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusStartDatePerkinsELId]...';
+PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDatePerkinsELId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId];
 
 
 GO
-PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusEndDatePerkinsELId]...';
+PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDatePerkinsELId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId];
 
 
 GO
@@ -5035,11 +5035,11 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12Student
 
 
 GO
-PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsELId]...';
+PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsELId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId];
 
 
 GO
@@ -5091,11 +5091,11 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12Student
 
 
 GO
-PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsELId]...';
+PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsELId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId];
 
 
 GO
@@ -5707,6 +5707,27 @@ PRINT N'Rename table [RDS].[BridgeAeStudentEnrollmentRaces].[BridgeAeStudentEnro
 EXECUTE sp_rename @objname = N'[RDS].[BridgeAeStudentEnrollmentRaces].[BridgeAeStudentEnrollmentRaceId]', @newname = N'BridgeFactAeStudentEnrollmentRaceId', @objtype = N'COLUMN';
 
 
+
+GO
+PRINT N'Altering Table [RDS].[DimCteStatuses]...';
+
+
+GO
+
+ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusCode];
+ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusDescription];
+ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusEdFactsCode];
+
+
+GO
+PRINT N'Altering Table [RDS].[DimEnglishLearnerStatuses]...';
+
+
+GO
+
+EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode]', @newname = N'PerkinsEnglishLearnerStatusCode', @objtype = N'COLUMN';
+EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription]', @newname = N'PerkinsEnglishLearnerStatusDescription', @objtype = N'COLUMN';
+EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdFactsCode]', @newname = N'PerkinsEnglishLearnerStatusEdFactsCode', @objtype = N'COLUMN';
 
 GO
 PRINT N'Altering Table [RDS].[DimK12StudentStatuses]...';
@@ -7482,9 +7503,9 @@ CREATE TABLE [Staging].[tmp_ms_xx_PersonStatus] (
     [EnglishLearner_StatusEndDate]                           DATE           NULL,
     [ISO_639_2_NativeLanguage]                               NVARCHAR (100) NULL,
     [ISO_639_2_HomeLanguage]                                 NVARCHAR (100) NULL,
-    [PerkinsELStatus]                                        NVARCHAR (100) NULL,
-    [PerkinsELStatus_StatusStartDate]                        DATE           NULL,
-    [PerkinsELStatus_StatusEndDate]                          DATE           NULL,
+    [PerkinsEnglishLearnerStatus]                                        NVARCHAR (100) NULL,
+    [PerkinsEnglishLearnerStatus_StatusStartDate]                        DATE           NULL,
+    [PerkinsEnglishLearnerStatus_StatusEndDate]                          DATE           NULL,
     [RecordStartDatetime]                                    DATETIME       NULL,
     [RecordEndDateTime]                                      DATETIME       NULL,
     [DataCollectionName]                                     NVARCHAR (100) NULL,
@@ -9380,12 +9401,12 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH NOCHECK
 
 
 GO
-PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsELId]...';
+PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId]...';
 
 
 GO
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH NOCHECK
-    ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsELId] FOREIGN KEY ([StatusEndDatePerkinsELId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+    ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId] FOREIGN KEY ([StatusEndDatePerkinsEnglishLearnerId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 GO
@@ -9443,12 +9464,12 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH NOCHECK
 
 
 GO
-PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsELId]...';
+PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId]...';
 
 
 GO
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH NOCHECK
-    ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsELId] FOREIGN KEY ([StatusStartDatePerkinsELId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+    ADD CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId] FOREIGN KEY ([StatusStartDatePerkinsEnglishLearnerId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 GO
@@ -12062,7 +12083,7 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_Fa
 
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDateMilitaryConnectedStudentId ];
 
-ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsELId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId];
 
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDateTitleIIIImmigrantId];
 
@@ -12076,7 +12097,7 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_Fa
 
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDateMilitaryConnectedStudentId];
 
-ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsELId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId];
 
 ALTER TABLE [RDS].[FactK12StudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDateTitleIIIImmigrantId];
 

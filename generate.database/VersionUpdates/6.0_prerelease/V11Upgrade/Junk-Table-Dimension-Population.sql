@@ -1315,9 +1315,9 @@
 						, EnglishLearnerStatusCode
 						, EnglishLearnerStatusDescription
 						, EnglishLearnerStatusEdFactsCode
-						, PerkinsELStatusCode
-						, PerkinsELStatusDescription
-						, PerkinsELStatusEdfactsCode
+						, PerkinsEnglishLearnerStatusCode
+						, PerkinsEnglishLearnerStatusDescription
+						, PerkinsEnglishLearnerStatusEdfactsCode
 						, TitleiiiAccountabilityProgressStatusCode
 						, TitleiiiAccountabilityProgressStatusDescription
 						, TitleiiiAccountabilityProgressStatusEdFactsCode
@@ -1381,9 +1381,9 @@
 			EnglishLearnerStatusCode
 			, EnglishLearnerStatusDescription
 			, EnglishLearnerStatusEdFactsCode
-			, PerkinsELStatusCode
-			, PerkinsELStatusDescription
-			, PerkinsELStatusEdfactsCode
+			, PerkinsEnglishLearnerStatusCode
+			, PerkinsEnglishLearnerStatusDescription
+			, PerkinsEnglishLearnerStatusEdfactsCode
 			, TitleiiiAccountabilityProgressStatusCode
 			, TitleiiiAccountabilityProgressStatusDescription
 			, TitleiiiAccountabilityProgressStatusEdFactsCode
@@ -1395,9 +1395,9 @@
 		  EnglishLearner.CedsOptionSetCode
 		, EnglishLearner.CedsOptionSetDescription
 		, EnglishLearner.EdFactsCode
-		, PerkinsEL.CedsOptionSetCode
-		, PerkinsEL.CedsOptionSetDescription
-		, PerkinsEL.EdFactsCode
+		, PerkinsEnglishLearner.CedsOptionSetCode
+		, PerkinsEnglishLearner.CedsOptionSetDescription
+		, PerkinsEnglishLearner.EdFactsCode
 		, ta.TitleiiiAccountabilityProgressStatusCode
 		, ta.TitleiiiAccountabilityProgressStatusDescription
 		, ta.TitleiiiAccountabilityProgressStatusEdFactsCode
@@ -1405,12 +1405,12 @@
 		, tlipt.TitleiiiLanguageInstructionDescription
 		, tlipt.TitleiiiLanguageInstructionEdFactsCode
 	FROM (VALUES('Yes', 'Limited English proficient (LEP) Student', 'LEP'),('No', 'Non-limited English proficient (non-LEP) Student', 'NLEP'),('MISSING', 'MISSING', 'MISSING')) EnglishLearner (CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
-	CROSS JOIN (VALUES('YES', 'Perkins EL students', 'LEPP'),('NO', 'Not Perkins EL students','MISSING'),('MISSING', 'MISSING', 'MISSING')) PerkinsEL (CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
+	CROSS JOIN (VALUES('YES', 'Perkins EL students', 'LEPP'),('NO', 'Not Perkins EL students','MISSING'),('MISSING', 'MISSING', 'MISSING')) PerkinsEnglishLearner (CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN #TitleIIIAccountability ta
 	CROSS JOIN #TitleiiiLanguageInstruction tlipt
 	LEFT JOIN rds.DimEnglishLearnerStatuses dels
 	ON EnglishLearner.CedsOptionSetCode = dels.EnglishLearnerStatusCode
-		AND PerkinsEL.CedsOptionSetCode = dels.PerkinsELStatusCode
+		AND PerkinsEnglishLearner.CedsOptionSetCode = dels.PerkinsEnglishLearnerStatusCode
 		AND ta.TitleiiiAccountabilityProgressStatusCode = dels.TitleiiiAccountabilityProgressStatusCode
 		AND tlipt.TitleiiiLanguageInstructionCode = dels.TitleIIILanguageInstructionProgramTypeCode
 	WHERE dels.DimEnglishLearnerStatusId IS NULL
@@ -3963,20 +3963,20 @@
 
 --No longer populated in DimCteStatuses
 
-	-- IF OBJECT_ID('tempdb..#PerkinsELStatus') IS NOT NULL BEGIN
-	-- 	DROP TABLE #PerkinsELStatus
+	-- IF OBJECT_ID('tempdb..#PerkinsEnglishLearnerStatus') IS NOT NULL BEGIN
+	-- 	DROP TABLE #PerkinsEnglishLearnerStatus
 	-- END
 
-	-- CREATE TABLE #PerkinsELStatus (PerkinsELStatusCode VARCHAR(50), PerkinsELStatusDescription VARCHAR(200), PerkinsELStatusEdFactsCode VARCHAR(50))
+	-- CREATE TABLE #PerkinsEnglishLearnerStatus (PerkinsEnglishLearnerStatusCode VARCHAR(50), PerkinsEnglishLearnerStatusDescription VARCHAR(200), PerkinsEnglishLearnerStatusEdFactsCode VARCHAR(50))
 
-	-- INSERT INTO #PerkinsELStatus VALUES ('MISSING', 'MISSING', 'MISSING')
-	-- INSERT INTO #PerkinsELStatus
+	-- INSERT INTO #PerkinsEnglishLearnerStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	-- INSERT INTO #PerkinsEnglishLearnerStatus
 	-- SELECT
 	-- 	  CedsOptionSetCode
 	-- 	, CedsOptionSetDescription
 	-- 	, EdFactsOptionSetCode
 	-- FROM CEDS.CedsOptionSetMapping
-	-- WHERE CedsElementTechnicalName = 'PerkinsELStatus'
+	-- WHERE CedsElementTechnicalName = 'PerkinsEnglishLearnerStatus'
 
 	IF OBJECT_ID('tempdb..#CteParticipant') IS NOT NULL BEGIN
 		DROP TABLE #CteParticipant
@@ -4069,7 +4069,7 @@
 		AND cnc.CteNontraditionalCompletionCode = main.CteNontraditionalCompletionCode
 		AND spospws.SingleParentOrSinglePregnantWomanStatusCode = main.SingleParentOrSinglePregnantWomanStatusCode
 		AND cgri.CteGraduationRateInclusionCode = main.CteGraduationRateInclusionCode
---		AND pls.PerkinsELStatusCode = main.PerkinsELStatusCode
+--		AND pls.PerkinsEnglishLearnerStatusCode = main.PerkinsEnglishLearnerStatusCode
 		AND cp.CteParticipantCode = main.CteParticipantCode
 		AND cc.CteConcentratorCode = main.CteConcentratorCode
 	WHERE main.DimCteStatusId IS NULL
