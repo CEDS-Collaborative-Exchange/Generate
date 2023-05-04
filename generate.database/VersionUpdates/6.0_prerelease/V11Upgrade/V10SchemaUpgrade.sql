@@ -11986,7 +11986,7 @@
 		[FactTypeId]                                        INT           CONSTRAINT [DF_FactOrganizationCounts_FactTypeId] DEFAULT ((-1)) NOT NULL,
 		[SeaId]                                             INT           CONSTRAINT [DF_FactOrganizationCounts_SeaId] DEFAULT ((-1)) NOT NULL,
 		[LeaId]                                             INT           CONSTRAINT [DF_FactOrganizationCounts_LeaId] DEFAULT ((-1)) NOT NULL,
-		[K12StaffId]                                        BIGINT           CONSTRAINT [DF_FactOrganizationCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
+		[K12StaffId]                                        BIGINT        CONSTRAINT [DF_FactOrganizationCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
 		[K12SchoolId]                                       INT           CONSTRAINT [DF_FactOrganizationCounts_K12SchoolId] DEFAULT ((-1)) NOT NULL,
 		[AuthorizingBodyCharterSchoolAuthorizerId]          INT           CONSTRAINT [DF_FactOrganizationCounts_AuthorizingBodyCharterSchoolAuthorizerId] DEFAULT ((-1)) NOT NULL,
 		[CharterSchoolManagementOrganizationId]             INT           CONSTRAINT [DF_FactOrganizationCounts_CharterSchoolManagementOrganizationId] DEFAULT ((-1)) NOT NULL,
@@ -15669,8 +15669,8 @@
 		[IsActiveELStaffMember]                            BIT           NULL,
 		[IsActiveK12StaffMember]                           BIT           NULL,
 		[IsActivePsStaffMember]                            BIT           NULL,
-		[RecordStartDateTime]                              DATE          NULL,
-		[RecordEndDateTime]                                DATE          NULL,
+		[RecordStartDateTime]                              DATETIME      NULL,
+		[RecordEndDateTime]                                DATETIME      NULL,
 		CONSTRAINT [PK_DimPersonId] PRIMARY KEY CLUSTERED ([DimPersonId] ASC)
 	);
 
@@ -17704,8 +17704,8 @@
 		[SchoolQualityOrStudentSuccessIndicatorType]   VARCHAR (100)  NULL,
 		[DataCollectionName]                           NVARCHAR (100) NULL,
 		[DataCollectionId]                             INT            NULL,
-		[RecordStartDateTime]                          DATE           NULL,
-		[RecordEndDateTime]                            DATE           NULL,
+		[RecordStartDateTime]                          DATETIME       NULL,
+		[RecordEndDateTime]                            DATETIME       NULL,
 		CONSTRAINT [PK_SchoolPerformanceIndicators] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
@@ -17761,6 +17761,12 @@
 	EXECUTE sp_rename N'[Staging].[StaffAssignment].[InexperiencedStatus]', N'EdFactsTeacherInexperiencedStatus';
 	EXECUTE sp_rename N'[Staging].[StaffAssignment].[OutOfFieldStatus]', N'EDFactsTeacherOutOfFieldStatus';
 	EXECUTE sp_rename N'[Staging].[StaffAssignment].[CredentialType]', N'TeachingCredentialType';
+
+	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER COLUMN RecordStartDateTime Datetime NULL
+
+	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER COLUMN RecordEndDateTime Datetime NULL
 
 
 	GO
