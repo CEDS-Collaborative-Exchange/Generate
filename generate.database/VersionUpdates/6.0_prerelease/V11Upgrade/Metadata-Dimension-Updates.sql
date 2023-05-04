@@ -29,7 +29,7 @@ DELETE FROM app.Categories WHERE CategoryId = @categoryId
 DELETE FROM app.Category_Dimensions WHERE CategoryId = @categoryId
 DELETE FROM app.Dimensions WHERE DimensionTableId = @dimensionTableId AND DimensionId = @dimensionId
 
-
+SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimAssessmentStatuses'
 IF NOT EXISTS(SELECT 1 FROM app.Dimensions where DimensionFieldName = 'AssessmentTypeAdministered')
 BEGIN
 	INSERT INTO [App].[Dimensions]([DimensionFieldName],[DimensionTableId],[IsCalculated],[IsOrganizationLevelSpecific])
@@ -65,7 +65,7 @@ WHERE DimensionFieldName = 'PerformanceLevel'
 Update app.Dimensions SET DimensionFieldName = 'ProgressLevel' WHERE DimensionFieldName = 'AssessmentProgressLevel'
 
 Update app.Dimensions SET DimensionFieldName = 'CteParticipant' WHERE DimensionFieldName = 'CteProgram'
-Update app.Dimensions SET DimensionFieldName = 'PerkinsLEPStatus' WHERE DimensionFieldName = 'LepPerkinsStatus'
+Update app.Dimensions SET DimensionFieldName = 'PerkinsEnglishLearnerStatus' WHERE DimensionFieldName = 'LepPerkinsStatus'
 
 Update app.Dimensions SET DimensionFieldName = 'SingleParentOrSinglePregnantWomanStatus' 
 WHERE DimensionFieldName = 'SingleParentOrSinglePregnantWoman'
