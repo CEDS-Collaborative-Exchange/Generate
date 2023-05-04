@@ -47,10 +47,10 @@ BEGIN
 			StateANSICode,
 			StateAbbreviationCode,
 			StateAbbreviationDescription,			
-			OrganizationNcesId,
-			OrganizationStateId,
+			OrganizationIdentifierNces,
+			OrganizationIdentifierSea,
 			OrganizationName,
-			ParentOrganizationStateId,
+			ParentOrganizationIdentifierSea,
 			Category1,
 			Category2,
 			Category3,
@@ -206,10 +206,10 @@ BEGIN
 			[StateAbbreviationCode] [nvarchar](100) NOT NULL,
 			[StateAbbreviationDescription] [nvarchar](500) NOT NULL,
 			
-			[OrganizationNcesId] [nvarchar](100) NULL,
-			[OrganizationStateId] [nvarchar](100) NULL,
+			[OrganizationIdentifierNces] [nvarchar](100) NULL,
+			[OrganizationIdentifierSea] [nvarchar](100) NULL,
 			[OrganizationName] [nvarchar](1000) NULL,
-			[ParentOrganizationStateId] [nvarchar](100) NULL,
+			[ParentOrganizationIdentifierSea] [nvarchar](100) NULL,
 
 			[CategorySetCode] [nvarchar](40) NOT NULL,
 			[TableTypeAbbrv] [nvarchar](100) NOT NULL,
@@ -246,10 +246,10 @@ BEGIN
 			StateANSICode,
 			StateAbbreviationCode,
 			StateAbbreviationDescription,			
-			OrganizationNcesId,
-			OrganizationStateId,
+			OrganizationIdentifierNces,
+			OrganizationIdentifierSea,
 			OrganizationName,
-			ParentOrganizationStateId,
+			ParentOrganizationIdentifierSea,
 			TableTypeAbbrv,
 			TotalIndicator,
 		'
@@ -258,12 +258,12 @@ BEGIN
 	set @sqlSelectBeginning = '
 		select	DISTINCT		
 			f.StateANSICode,
-			f.StateCode,
-			f.StateName,			
-			f.OrganizationNcesId,
-			f.OrganizationStateId,
+			f.StateAbbreviationCode,
+			f.StateAbbreviationDescription,			
+			f.OrganizationIdentifierNces,
+			f.OrganizationIdentifierSea,
 			f.OrganizationName,
-			f.ParentOrganizationStateId,
+			f.ParentOrganizationIdentifierSea,
 			f.TableTypeAbbrv ,
 			f.TotalIndicator,
 		'
@@ -282,7 +282,7 @@ BEGIN
 
 	DECLARE reportField_cursor CURSOR FOR 
 	SELECT ReportField
-	FROM @ReportFieldsInFactTable
+	FROM @ReportFieldsInCategorySet
 
 	OPEN reportField_cursor
 	FETCH NEXT FROM reportField_cursor INTO @reportField
@@ -439,10 +439,10 @@ BEGIN
 							[StateCode] [nvarchar](100) NOT NULL,
 							[StateName] [nvarchar](500) NOT NULL,
 							
-							[OrganizationNcesId] [nvarchar](100) NULL,
-							[OrganizationStateId] [nvarchar](100) NULL,
+							[OrganizationIdentifierNces] [nvarchar](100) NULL,
+							[OrganizationIdentifierSea] [nvarchar](100) NULL,
 							[OrganizationName] [nvarchar](1000) NULL,
-							[ParentOrganizationStateId] [nvarchar](100) NULL,
+							[ParentOrganizationIdentifierSea] [nvarchar](100) NULL,
 
 							[CategorySetCode] [nvarchar](40) NOT NULL,
 							[TableTypeAbbrv] [nvarchar](100) NOT NULL,
@@ -567,10 +567,10 @@ BEGIN
 						-- Exclude the Category Set A for Schools if there are no students
 						set @sql = @sql + 'delete a from @reportData a
 							inner join 
-							(select OrganizationStateId, TableTypeAbbrv, CategorySetCode, sum(StudentCount) as totalStudentCount 
-							from @reportData group by OrganizationStateId, CategorySetCode, TableTypeAbbrv 
+							(select OrganizationIdentifierSea, TableTypeAbbrv, CategorySetCode, sum(StudentCount) as totalStudentCount 
+							from @reportData group by OrganizationIdentifierSea, CategorySetCode, TableTypeAbbrv 
 							having sum(StudentCount) < 1 and CategorySetCode <> ''TOT'' and TableTypeAbbrv = ''LUNCHFREERED''	) b
-							on a.CategorySetCode = b.CategorySetCode and a.OrganizationStateId = b.OrganizationStateId and a.TableTypeAbbrv = b.TableTypeAbbrv'
+							on a.CategorySetCode = b.CategorySetCode and a.OrganizationIdentifierSea = b.OrganizationIdentifierSea and a.TableTypeAbbrv = b.TableTypeAbbrv'
 													
 					END
 
@@ -579,14 +579,14 @@ BEGIN
 						-- Exclude the Category Set A and SubTotals for the LEA or Schools if there are no students
 						set @sql = @sql + 'delete a from @reportData a
 							inner join 
-							(select OrganizationStateId, CategorySetCode, sum(StudentCount) as totalStudentCount from @reportData group by OrganizationStateId, CategorySetCode having sum(StudentCount) < 1 and CategorySetCode <> ''TOT''	) b
-							on a.CategorySetCode = b.CategorySetCode and a.OrganizationStateId = b.OrganizationStateId'
+							(select OrganizationIdentifierSea, CategorySetCode, sum(StudentCount) as totalStudentCount from @reportData group by OrganizationIdentifierSea, CategorySetCode having sum(StudentCount) < 1 and CategorySetCode <> ''TOT''	) b
+							on a.CategorySetCode = b.CategorySetCode and a.OrganizationIdentifierSea = b.OrganizationIdentifierSea'
 
 						set @sql = @sql + ' delete a from @reportData a 
 							inner join 
-							(select OrganizationStateId, GRADELEVEL, CategorySetCode, sum(StudentCount) as totalStudentCount from @reportData group by OrganizationStateId, GRADELEVEL, CategorySetCode having sum(StudentCount) < 1 and 
+							(select OrganizationIdentifierSea, GRADELEVEL, CategorySetCode, sum(StudentCount) as totalStudentCount from @reportData group by OrganizationIdentifierSea, GRADELEVEL, CategorySetCode having sum(StudentCount) < 1 and 
 							CategorySetCode in (''CSA'', ''ST1'', ''ST2'' )) b
-							on a.CategorySetCode = b.CategorySetCode and a.OrganizationStateId = b.OrganizationStateId  and a.GRADELEVEL = b.GRADELEVEL
+							on a.CategorySetCode = b.CategorySetCode and a.OrganizationIdentifierSea = b.OrganizationIdentifierSea  and a.GRADELEVEL = b.GRADELEVEL
 						'
 					END
 				end
@@ -680,10 +680,10 @@ BEGIN
 		StateANSICode,
 		StateAbbreviationCode,
 		StateAbbreviationDescription,		
-		OrganizationNcesId,
-		OrganizationStateId,
+		OrganizationIdentifierNces,
+		OrganizationIdentifierSea,
 		OrganizationName,
-		ParentOrganizationStateId,
+		ParentOrganizationIdentifierSea,
 		TableTypeAbbrv,
 		TotalIndicator, 
 		'+ @sqlIncludedFieldList + '

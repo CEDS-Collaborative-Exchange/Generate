@@ -13,11 +13,11 @@ BEGIN
 	SET NOCOUNT ON;
 
 	BEGIN TRY
-		IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_Staging_K12PersonRace_StudentId_SchoolYear' AND object_id = OBJECT_ID('Staging.K12PersonRace')) BEGIN
-			CREATE NONCLUSTERED INDEX [IX_Staging_PersonRace_StudentId_SchoolYear]
-			ON [Staging].[K12PersonRace] ([StudentIdentifierState],[SchoolYear])
-			INCLUDE ([RaceType])
-		END
+		-- IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_Staging_K12PersonRace_StudentId_SchoolYear' AND object_id = OBJECT_ID('Staging.K12PersonRace')) BEGIN
+		-- 	CREATE NONCLUSTERED INDEX [IX_Staging_PersonRace_StudentId_SchoolYear]
+		-- 	ON [Staging].[K12PersonRace] ([StudentIdentifierState],[SchoolYear])
+		-- 	INCLUDE ([RaceType])
+		-- END
 					
 		DECLARE 
 		@FactTypeId INT,

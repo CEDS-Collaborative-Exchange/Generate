@@ -12565,7 +12565,9 @@
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StateCode]', N'StateAbbreviationCode';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StateName]', N'StateAbbreviationDescription';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[UNEXPERIENCEDSTATUS]', N'EDFACTSTEACHERINEXPERIENCEDSTATUS';
-
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[CERTIFICATIONSTATUS]', N'EDFACTSCERTIFICATIONSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[QUALIFICATIONSTATUS]', N'SPECIALEDUCATIONTEACHERQUALIFICATIONSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION]', N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 
 
 	GO
@@ -12581,12 +12583,33 @@
 	GO
 	PRINT N'Starting rebuilding table [RDS].[ReportEDFactsK12StudentCounts]...';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAM]', N'ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[LEPPERKINSSTATUS]', N'PERKINSELSTATUS';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[OrganizationNcesId]', N'OrganizationIdentifierNces';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[OrganizationStateId]', N'OrganizationIdentifierSea';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[ParentOrganizationStateId]', N'ParentOrganizationIdentifierSea';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[StateCode]', N'StateAbbreviationCode';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[StateName]', N'StateAbbreviationDescription';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[CTEPROGRAM]', N'CTEPARTICIPANT';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[PRIMARYDISABILITYTYPE]', N'IDEADISABILITYTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[IDEAEDUCATIONALENVIRONMENT]', N'IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[FOSTERCAREPROGRAM]', N'PROGRAMPARTICIPATIONFOSTERCARE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[MEPSERVICESTYPE]', N'MIGRANTEDUCATIONPROGRAMSERVICESTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[MEPENROLLMENTTYPE]', N'MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[TITLEIIILANGUAGEINSTRUCTION]', N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[TITLEIIIPROGRAMPARTICIPATION]', N'TITLEIIIIMMIGRANTSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[SINGLEPARENTORSINGLEPREGNANTWOMAN]', N'SINGLEPARENTORSINGLEPREGNANTWOMANSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[IMPROVEMENTSTATUSCODE]', N'SCHOOLIMPROVEMENTSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[StudentRate]', N'ADJUSTEDCOHORTGRADUATIONRATE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[ACADEMICORVOCATIONALOUTCOME]', N'EDFACTSACADEMICORCAREERANDTECHNICALOUTCOMETYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[LONGTERMSTATUS]', N'NEGLECTEDORDELINQUENTLONGTERMSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[ASSESSMENTPROGRESSLEVEL]', N'PROGRESSLEVEL';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[ASSESSMENTSUBJECT]', N'ASSESSMENTACADEMICSUBJECT';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[ACADEMICORVOCATIONALEXITOUTCOME]', N'EDFACTSACADEMICORCAREERANDTECHNICALOUTCOMEEXITTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[LEPPERKINSSTATUS]', N'PERKINSENGLISHLEARNERSTATUS';
+
+	GO
+
+	ALTER TABLE [RDS].[ReportEDFactsK12StudentCounts] ADD CTECONCENTRATOR NVARCHAR(50);
+	ALTER TABLE [RDS].[ReportEDFactsK12StudentCounts] ADD IDEAEDUCATIONALENVIRONMENTFOREARLYCHILDHOOD NVARCHAR(50);
 
 
 	GO
@@ -12628,15 +12651,26 @@
 	GO
 	PRINT N'Starting rebuilding table [RDS].[ReportEDFactsK12StudentDisciplines]...';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAM]', N'ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[LEPPERKINSSTATUS]', N'PERKINSELSTATUS';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[OrganizationNcesId]', N'OrganizationIdentifierNces';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[OrganizationStateId]', N'OrganizationIdentifierSea';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[ParentOrganizationStateId]', N'ParentOrganizationIdentifierSea';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[StateCode]', N'StateAbbreviationCode';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[StateName]', N'StateAbbreviationDescription';
-
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[CTEPROGRAM]', N'CTEPARTICIPANT';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[PRIMARYDISABILITYTYPE]', N'IDEADISABILITYTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[IDEAEDUCATIONALENVIRONMENT]', N'IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[FOSTERCAREPROGRAM]', N'PROGRAMPARTICIPATIONFOSTERCARE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[TITLEIIIPROGRAMPARTICIPATION]', N'TITLEIIIIMMIGRANTSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[SINGLEPARENTORSINGLEPREGNANTWOMAN]', N'SINGLEPARENTORSINGLEPREGNANTWOMANSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentDisciplines].[LEPPERKINSSTATUS]', N'PERKINSENGLISHLEARNERSTATUS';
 
 	GO
+
+	ALTER TABLE [RDS].[ReportEDFactsK12StudentDisciplines] ADD CTECONCENTRATOR NVARCHAR(50);
+	ALTER TABLE [RDS].[ReportEDFactsK12StudentDisciplines] ADD IDEAEDUCATIONALENVIRONMENTFOREARLYCHILDHOOD NVARCHAR(50);
+
+	GO
+
 	PRINT N'Creating Index [RDS].[ReportEDFactsK12StudentDisciplines].[IX_FactStudentDisciplineReports_ReportCode_ReportYear_ReportLevel_CategorySetCode]...';
 
 

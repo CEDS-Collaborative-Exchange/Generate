@@ -11,7 +11,7 @@ BEGIN
 	--Populate the RDS tables from ODS data
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Membership - Start Staging-to-DimK12Students')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Membership - Start Staging-to-DimPeople_K12Students')
 
 		--Populate DimStudents
 		--exec [rds].[Migrate_DimK12Students] NULL
@@ -39,11 +39,7 @@ BEGIN
 		--Populate DimK12Schools
 		exec [Staging].[Staging-to-DimK12Schools] NULL, 0
 
-			--write out message to DataMigrationHistories
-			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Membership - Start Empty_RDS for the Submission reports')
-
-
+	
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Membership - Start Empty_RDS for the Submission reports')
@@ -51,7 +47,18 @@ BEGIN
 		----clear the data from the fact table
 		exec [rds].[Empty_RDS] 'membership'
 
-		
+	
+			--write out message to DataMigrationHistories
+			insert into app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Membership - Start Staging-to-FactK12StudentCounts_Membership')
+	
+
+		if cursor_status('global','selectedYears_cursor') >= -1
+			begin
+				deallocate selectedYears_cursor
+			end
+
+
 		DECLARE @submissionYear AS VARCHAR(50)
 		DECLARE selectedYears_cursor CURSOR FOR 
 		SELECT d.SchoolYear
