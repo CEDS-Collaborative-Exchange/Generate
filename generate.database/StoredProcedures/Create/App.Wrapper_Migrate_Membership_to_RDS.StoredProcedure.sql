@@ -11,7 +11,7 @@ BEGIN
 	--Populate the RDS tables from ODS data
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Membership - Start Staging-to-DimK12Students')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Membership - Start Staging-to-DimPeople_K12Students')
 
 		--Populate DimStudents
 		--exec [rds].[Migrate_DimK12Students] NULL
