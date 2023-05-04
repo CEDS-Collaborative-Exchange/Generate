@@ -1,4 +1,4 @@
-create VIEW RDS.vwDimK12SchoolStatuses
+CREATE VIEW RDS.vwDimK12SchoolStatuses
 AS
 -- 9/26/2022 --
 	SELECT
@@ -12,7 +12,7 @@ AS
 		, CASE SharedTimeIndicatorCode
 			WHEN 'Yes' THEN 'Yes' 
 			WHEN 'No' THEN 'No'
-			ELSE NULL
+			ELSE 'MISSING'
 		  END AS SharedTimeIndicatorMap
 		, VirtualSchoolStatusCode
 		, sssrd3.InputCode AS VirtualSchoolStatusMap
