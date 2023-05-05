@@ -1,8 +1,7 @@
 CREATE VIEW RDS.vwDimK12SchoolStatuses
 AS
--- 9/26/2022 --
 	SELECT
-		  DimK12SchoolStatusId
+		DimK12SchoolStatusId
 		, rsy.SchoolYear
 		, rdkss.MagnetOrSpecialProgramEmphasisSchoolCode
 		, sssrd1.InputCode AS MagnetOrSpecialProgramEmphasisSchoolMap
@@ -13,7 +12,7 @@ AS
 			WHEN 'Yes' THEN 'Yes' 
 			WHEN 'No' THEN 'No'
 			ELSE 'MISSING'
-		  END AS SharedTimeIndicatorMap
+		END AS SharedTimeIndicatorMap
 		, VirtualSchoolStatusCode
 		, sssrd3.InputCode AS VirtualSchoolStatusMap
 		, SchoolImprovementStatusCode

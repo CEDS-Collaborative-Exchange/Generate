@@ -8,11 +8,11 @@ CREATE VIEW [Debug].[vwK12Staff_FactTable] AS
 				, [K12StaffCategoryId]	
 				, [TitleIIIStatusId]	
 				, [StaffCount]
-				, [StaffFTE]
+				, [StaffFullTimeEquivalency]
 
 	FROM		RDS.FactK12StaffCounts			Fact
 	JOIN		RDS.DimSchoolYears				SchoolYears		ON Fact.SchoolYearId		= SchoolYears.DimSchoolYearId	
-	LEFT JOIN	RDS.DimK12Staff					Staff			ON  Fact.K12StaffId			= Staff.DimK12StaffId
+	LEFT JOIN	RDS.DimPeople					Staff			ON  Fact.K12StaffId			= Staff.DimPersonId
 	LEFT JOIN	RDS.DimLeas						LEAs			ON  Fact.LeaId				= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools				Schools			ON  Fact.K12SchoolId		= Schools.DimK12SchoolId
 
