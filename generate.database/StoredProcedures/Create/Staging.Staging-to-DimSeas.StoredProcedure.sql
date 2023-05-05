@@ -175,7 +175,7 @@ BEGIN
 				ELSE NULL
 			END AS StateANSICode
 			, ssd.SeaOrganizationName
-			, ssd.SeaShortName
+			, ssd.SeaOrganizationShortName
 			, ssd.SeaOrganizationIdentifierSea
 			, ssd.Sea_WebSiteAddress
 			, ssd.SeaContact_FirstName
@@ -331,9 +331,6 @@ BEGIN
 		, MiddleName							NVARCHAR(50) NULL
 		, K12StaffStaffMemberIdentifierState	NVARCHAR(50) NULL
 		, IsActiveK12StaffMember				BIT NULL
-		, ElectronicMailAddressOrganizational	NVARCHAR(124) NULL
-		, TelephoneNumberWork					NVARCHAR(24) NULL
-		, PositionTitle							VARCHAR(50) NULL
 		, RecordStartDateTime					DATETIME	
 		, RecordEndDateTime						DATETIME	NULL
 	)
@@ -345,9 +342,6 @@ BEGIN
 		, MiddleName
 		, K12StaffStaffMemberIdentifierState
 		, IsActiveK12StaffMember
-		, ElectronicMailAddressOrganizational
-		, TelephoneNumberWork
-		, PositionTitle
 		, RecordStartDateTime
 		, RecordEndDateTime
 	)		
@@ -358,9 +352,6 @@ BEGIN
 		, NULL 											AS MiddleName
 		, SeaContact_Identifier							AS K12StaffStaffMemberIdentifierState
 		, 1 											AS IsActiveK12StaffMember
-		, SeaContact_ElectronicMailAddress				AS ElectronicMailAddressOrganizational
-		, SeaContact_PhoneNumber 						AS TelephoneNumberWork
-		, SeaContact_PositionTitle						AS PositionTitle
 		, RecordStartDateTime							AS RecordStartDateTime
 		, RecordEndDateTime								AS RecordEndDateTime
 	FROM Staging.StateDetail
@@ -371,9 +362,9 @@ BEGIN
 			AND ISNULL(trgt.FirstName, '') 				= ISNULL(src.FirstName, '')
 			AND ISNULL(trgt.LastOrSurname, '') 			= ISNULL(src.LastOrSurname, '')
 			AND ISNULL(trgt.MiddleName, '') 			= ISNULL(src.MiddleName, '')
-			AND ISNULL(trgt.PositionTitle, '') 			= ISNULL(src.PositionTitle, '')
 			AND ISNULL(trgt.BirthDate, '1900-01-01') 	= ISNULL(src.BirthDate, '1900-01-01')
 			AND trgt.RecordStartDateTime 				= src.RecordStartDateTime
+			AND src.IsActiveK12StaffMember = 1
 	WHEN NOT MATCHED BY TARGET THEN     --- Records Exists in Source but NOT in Target
 	INSERT (
 		BirthDate
@@ -382,9 +373,6 @@ BEGIN
 		, MiddleName
 		, K12StaffStaffMemberIdentifierState
 		, IsActiveK12StaffMember
-		, ElectronicMailAddressOrganizational
-		, TelephoneNumberWork
-		, PositionTitle
 		, RecordStartDateTime
 	)
 	VALUES (
@@ -394,9 +382,6 @@ BEGIN
 		, src.MiddleName
 		, src.K12StaffStaffMemberIdentifierState
 		, 1
-		, src.ElectronicMailAddressOrganizational
-		, TelephoneNumberWork
-		, src.PositionTitle
 		, src.RecordStartDateTime
 	);
 

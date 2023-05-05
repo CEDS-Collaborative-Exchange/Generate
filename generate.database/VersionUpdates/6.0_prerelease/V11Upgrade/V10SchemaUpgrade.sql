@@ -8616,6 +8616,8 @@
 	EXECUTE sp_rename N'[RDS].[DimK12Schools].[Telephone]', N'TelephoneNumber';
 	EXECUTE sp_rename N'[RDS].[DimK12Schools].[Website]', N'WebSiteAddress';
 
+	ALTER TABLE [RDS].[DimK12Schools] 
+	ALTER COLUMN [OutOfStateIndicator] BIT NULL
 
 	GO
 	PRINT N'Creating Index [RDS].[DimK12Schools].[IX_DimK12Schools_RecordStartDateTime]...';
@@ -9231,7 +9233,7 @@
 		[Latitude] [nvarchar](20) NULL,
 		[TelephoneNumber] [nvarchar](24) NULL,
 		[WebSiteAddress] [nvarchar](300) NULL,
-		[OutOfStateIndicator] [bit] NOT NULL,
+		[OutOfStateIndicator] [bit] NULL,
 		[LeaOperationalStatus] [nvarchar](50) NULL,
 		[LeaOperationalStatusEdFactsCode] [int] NULL,
 		[OperationalStatusEffectiveDate] [datetime2](7) NULL,
