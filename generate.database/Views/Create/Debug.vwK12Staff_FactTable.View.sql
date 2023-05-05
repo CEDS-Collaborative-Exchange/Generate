@@ -10,18 +10,24 @@ CREATE VIEW [Debug].[vwK12Staff_FactTable] AS
 				, [StaffCount]
 				, [StaffFullTimeEquivalency]
 
-	FROM		RDS.FactK12StaffCounts			Fact
-	JOIN		RDS.DimSchoolYears				SchoolYears		ON Fact.SchoolYearId		= SchoolYears.DimSchoolYearId	
-	LEFT JOIN	RDS.DimPeople					Staff			ON  Fact.K12StaffId			= Staff.DimPersonId
-	LEFT JOIN	RDS.DimLeas						LEAs			ON  Fact.LeaId				= LEAs.DimLeaId
-	LEFT JOIN	RDS.DimK12Schools				Schools			ON  Fact.K12SchoolId		= Schools.DimK12SchoolId
+	FROM		RDS.FactK12StaffCounts				Fact
+	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId		= SchoolYears.DimSchoolYearId	
+	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid		
+	LEFT JOIN	RDS.DimPeople						Staff			ON  Fact.K12StaffId			= Staff.DimPersonId					AND Students.IsActiveK12StaffMember = 1
+	LEFT JOIN	RDS.DimLeas							LEAs			ON  Fact.LeaId				= LEAs.DimLeaId
+	LEFT JOIN	RDS.DimK12Schools					Schools			ON  Fact.K12SchoolId		= Schools.DimK12SchoolId
 
-	LEFT JOIN	RDS.DimK12StaffStatuses			StaffStatus		ON  Fact.K12StaffStatusId	= StaffStatus.DimK12StaffStatusId
-	LEFT JOIN	RDS.DimK12StaffCategories		StaffCat		ON  Fact.K12StaffCategoryId	= StaffCat.DimK12StaffCategoryId
-	LEFT JOIN	RDS.DimTitleIIIStatuses			TitleIII		ON  Fact.TitleIIIStatusId	= TitleIII.DimTitleIIIStatusId      
+	LEFT JOIN	RDS.DimK12StaffStatuses				StaffStatus		ON  Fact.K12StaffStatusId	= StaffStatus.DimK12StaffStatusId
+	LEFT JOIN	RDS.DimK12StaffCategories			StaffCat		ON  Fact.K12StaffCategoryId	= StaffCat.DimK12StaffCategoryId
+	LEFT JOIN	RDS.DimTitleIIIStatuses				TitleIII		ON  Fact.TitleIIIStatusId	= TitleIII.DimTitleIIIStatusId      
     --uncomment/modify the where clause conditions as necessary for validation
     WHERE 1 = 1
-	AND SchoolYears.SchoolYear = 2022
+	--2 ways to select by SchoolYear, use 1 or the other, not both
+	--the next 2 conditions set the SchoolYear selected to the one from the most recent RDS migration
+		AND DMT.IsSelected = 1
+		AND DMT.DataMigrationTypeId = 2
+	--or comment out the lines above and just set the SchoolYear
+		--AND SchoolYears.SchoolYear = 2023
 	--AND Staff.StaffMemberIdentifierState = '12345678'	
 	--AND LEAs.LeaIdentifierState = '123'
 	--AND Schools.SchoolIdentifierState = '456'

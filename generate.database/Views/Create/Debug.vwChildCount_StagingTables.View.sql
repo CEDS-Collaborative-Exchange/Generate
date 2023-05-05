@@ -1,5 +1,5 @@
-CREATE VIEW [Debug].[vwChildCount_StagingTables] AS
-
+CREATE VIEW [Debug].[vwChildCount_StagingTables] 
+AS
 	SELECT		DISTINCT 
 				enrollment.StudentIdentifierState
 				,enrollment.LEAIdentifierSeaAccountability
