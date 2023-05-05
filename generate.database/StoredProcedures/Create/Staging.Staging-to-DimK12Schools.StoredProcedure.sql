@@ -173,9 +173,9 @@ BEGIN
 			, smam.AddressPostalCode AS MailingAddressPostalCode
 			, smam.AddressCountyAnsiCode AS MailingAddressCountyAnsiCode
 			, CASE 
-				WHEN smam.StateAbbreviation <> smap.StateAbbreviation THEN 1
+				WHEN ssd.StateCode <> smap.StateAbbreviation THEN 1
 				ELSE 0
-			  END AS OutOfState
+			END AS OutOfState
 			, smap.AddressStreetNumberAndName AS PhysicalAddressStreet
 			, smap.AddressApartmentRoomOrSuite AS PhysicalAddressStreet2			
 			, smap.AddressCity AS PhysicalAddressCity
@@ -219,7 +219,8 @@ BEGIN
 			, sko.School_RecordStartDateTime
 			, sko.School_RecordEndDateTime
 		FROM Staging.K12Organization sko
-		CROSS JOIN Staging.StateDetail ssd
+		JOIN Staging.StateDetail ssd
+			ON ssd.SchoolYear = sko.SchoolYear
 		LEFT JOIN Staging.OrganizationAddress smam
 			ON sko.School_Identifier_State = smam.OrganizationIdentifier
 			AND smam.AddressTypeForOrganization = (select MailingAddressType from #organizationLocationTypes lt WHERE lt.SchoolYear = smam.SchoolYear)
