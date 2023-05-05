@@ -1,11 +1,8 @@
-create PROCEDURE Staging.[Staging-to-FactOrganizationCounts]
-
+CREATE PROCEDURE Staging.[Staging-to-FactOrganizationCounts]
 	@SchoolYear smallint 
 
 AS   
 BEGIN
-
--- 9/27/2022 --
 
 	BEGIN TRY
 
@@ -63,12 +60,6 @@ BEGIN
 		DECLARE @factTypeId AS INT
 		SELECT @factTypeId = DimFactTypeId FROM rds.DimFactTypes WHERE FactTypeCode = 'directory'
 
-		DECLARE @CSSORoleId AS INT
-		SELECT @CSSORoleId = RoleId
-		FROM dbo.[Role] WHERE Name = 'Chief State School Officer'
-		--select @CSSORoleId = 3
-
-
 		DECLARE @dimSeaId AS INT, @DimK12StaffId INT, @DimIeuId INT, @dimLeaId INT, @DimK12SchoolId INT, @IsCharterSchool AS BIT, 
 			@leaOrganizationId AS INT, 
 			@schoolOrganizationId AS INT
@@ -85,21 +76,24 @@ BEGIN
 		
 		SELECT @charterLeaCount = count(OrganizationId) FROM dbo.K12Lea WHERE CharterSchoolIndicator = 1
 	
---/****************************************************************
+
 		-- DELETE RECORDS FOR SCHOOL YEAR FROM FACT TABLE
 		DELETE FROM rds.FactOrganizationCounts 
 		WHERE SchoolYearId = @SchoolYearId
---*****************************************************************/
 
-		SELECT @DimK12StaffId = MAX(rdp.DimK12StaffId) 
-		FROM rds.DimPeople rdp
-		WHERE r.roleId = @CSSORoleId AND p.RecordEndDateTime IS NULL -- = 2
+		--Get the ID for the State School Officer
+		SELECT @DimK12StaffId = MAX(rdp.DimPersonId)
+		FROM RDS.DimPeople rdp
+		JOIN Staging.StateDetail ssd
+			ON rdp.K12StaffStaffMemberIdentifierState = ssd.SeaContact_Identifier
+			AND rdp.IsActiveK12StaffMember = 1
+			AND (ssd.RecordStartDateTime >= Staging.GetFiscalYearStartDate(@SchoolYear)
+				AND ISNULL(ssd.RecordEndDateTime, Staging.GetFiscalYearEndDate(@SchoolYear)) <= Staging.GetFiscalYearEndDate(@SchoolYear))
 
 
 		-------------------------------
 		--SEA
 		-------------------------------
-
 		INSERT INTO [RDS].[FactOrganizationCounts] (
 			[SchoolYearId]
 			, [FactTypeId]
@@ -148,15 +142,13 @@ BEGIN
 			, -1  															AS K12SchoolstateStatusId
 			, ISNULL(soff.FederalProgramFundingAllocationType, 'MISSING') 	AS FederalProgramsFundingAllocationType
 			, ISNULL(soff.FederalProgramCode, 'MISSING') 					AS FederalProgramCode
-			, convert(int, ISNULL(soff.FederalProgramsFundingAllocation,0))	AS FederalProgramsFundingAllocation
+			, CONVERT(int, ISNULL(soff.FederalProgramsFundingAllocation,0))	AS FederalProgramsFundingAllocation
 			, -1 															AS ComprehensiveAndTargetedSupportId
 			, -1 															AS CharterSchoolStatusId
 			, -1 															AS SubgroupId
 			, 1 															AS OrganizationCount
 
-	--into ##Fact
 		FROM Staging.StateDetail ssd
-
 		INNER JOIN RDS.DimSeas Sea
 			ON ssd.SeaOrganizationIdentifierSea = Sea.SeaOrganizationIdentifierSea
 			AND isnull(Sea.RecordEndDateTime, '6/30/' + convert(varchar, @SchoolYear)) >= '6/30/' + convert(varchar, @SchoolYear)
@@ -242,7 +234,7 @@ BEGIN
 			, -1															AS K12SchoolstateStatusId
 			, ISNULL(soff.FederalProgramFundingAllocationType, 'MISSING')	AS FederalProgramsFundingAllocationType
 			, ISNULL(soff.FederalProgramCode, 'MISSING')					AS FederalProgramCode
-			, convert(int, ISNULL(soff.FederalProgramsFundingAllocation,0))	AS FederalProgramsFundingAllocation
+			, CONVERT(int, ISNULL(soff.FederalProgramsFundingAllocation,0))	AS FederalProgramsFundingAllocation
 			, -1															AS ComprehensiveAndTargetedSupportId
 			, -1															AS CharterSchoolStatusId
 			, -1															AS SubgroupId
@@ -418,27 +410,25 @@ BEGIN
 			AND isnull(s.NslpStatusMap, s.NslpStatusCode) = isnull(sk12o.School_NationalSchoolLunchProgramStatus, 'MISSING')
 			AND isnull(s.SharedTimeIndicatorMap, s.SharedTimeIndicatorCode) = isnull(sk12o.School_SharedTimeIndicator, 'MISSING')
 			AND isnull(s.VirtualSchoolStatusMap, s.VirtualSchoolStatusCode) = isnull(sk12o.School_VirtualSchoolStatus, 'MISSING')
-			AND s.SchoolImprovementStatusCode = 'MISSING' -- sk12o.ImprovementStatusCode -- JW Can't find this in sk12o
+			AND s.SchoolImprovementStatusCode = 'MISSING' 
 			AND isnull(s.PersistentlyDangerousStatusMap, s.PersistentlyDangerousStatusCode) = isnull(sk12o.School_SchoolDangerousStatus, 'MISSING')
 			AND isnull(s.StatePovertyDesignationMap, s.StatePovertyDesignationCode) = isnull(sk12o.School_StatePovertyDesignation, 'MISSING')
-			AND isnull(s.ProgressAchievingEnglishLanguageMap, s.ProgressAchievingEnglishLanguageCode) = isnull(sk12o.School_ProgressAchievingEnglishLanguageProficiencyIndicatorStatus, 'MISSING')
-		--LEFT JOIN rds.DimK12SchoolstateStatuses dss 
-		--	ON dss.SchoolStateStatusCode=sk12o.School_IndicatorStatusType -- This isn't used, and if it was, we should include it in vwDimK12SchoolStatuses 
+			AND isnull(s.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeMap, s.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode) = isnull(sk12o.School_ProgressAchievingEnglishLanguageProficiencyIndicatorType, 'MISSING')
 		LEFT JOIN rds.DimTitleIStatuses t 
-			ON t.TitleIInstructionalServicesCode = NULL-- sk12o.TitleIinstructionalServiceCode
-			AND t.TitleIProgramTypeCode = NULL --sk12o.Title1ProgramTypeCode
-			AND t.TitleISchoolStatusCode = NULL --sk12o.TitleISchoolStatusCode
-			AND t.TitleISupportServicesCode = NULL --sk12o.Title1SupportServiceCode
+			ON t.TitleIInstructionalServicesCode = NULL
+			AND t.TitleIProgramTypeCode = NULL 
+			AND t.TitleISchoolStatusCode = NULL 
+			AND t.TitleISupportServicesCode = NULL 
 		LEFT JOIN rds.vwDimK12OrganizationStatuses organizationStatus 
 			ON organizationStatus.SchoolYear = sk12o.SchoolYear
 			AND isnull(sk12o.School_GunFreeSchoolsActReportingStatus, 'MISSING') = isnull(organizationStatus.GunFreeSchoolsActReportingStatusMap, organizationStatus.GunFreeSchoolsActReportingStatusCode)
-			AND organizationStatus.HighSchoolGraduationRateIndicatorStatusCode = 'Missing' --sk12o.GraduationRateCode
-			AND organizationStatus.REAPAlternativeFundingStatusCode = 'Missing' -- sk12o.REAPAlternativeFundingStatusCode
-			AND organizationStatus.McKinneyVentoSubgrantRecipientCode = 'Missing' -- sk12o.McKinneyVentoSubgrantRecipient
+			AND organizationStatus.HighSchoolGraduationRateIndicatorStatusCode = 'MISSING' 
+			AND organizationStatus.REAPAlternativeFundingStatusCode = 'MISSING' 
+			AND organizationStatus.McKinneyVentoSubgrantRecipientCode = 'MISSING' 
 		LEFT JOIN #DimCharterSchoolAuthorizers_Primary CSAP
-			ON CSAP.School_Identifier_State = sk12o.School_Identifier_State
+			ON CSAP.SchoolIdentifierSea = sk12o.SchoolIdentifierSea
 		LEFT JOIN #DimCharterSchoolAuthorizers_Secondary CSAS
-			ON CSAS.School_Identifier_State = sk12o.School_Identifier_State
+			ON CSAS.SchoolIdentifierSea = sk12o.SchoolIdentifierSea
 
 	END TRY
 	BEGIN CATCH

@@ -13052,7 +13052,7 @@
 		[School_SchoolImprovementAllocation]                                	MONEY          NULL,
 		[School_IndicatorStatusType]                                        	VARCHAR (100)  NULL,
 		[School_GunFreeSchoolsActReportingStatus]                           	VARCHAR (100)  NULL,
-		[School_ProgressAchievingEnglishLanguageProficiencyIndicatorStatus] 	VARCHAR (100)  NULL,
+		[School_ProgressAchievingEnglishLanguageProficiencyIndicatorType]	 	VARCHAR (100)  NULL,
 		[School_ProgressAchievingEnglishLanguageProficiencyStateDefinedStatus] 	VARCHAR (100)  NULL,
 		[School_SchoolDangerousStatus]                                      	VARCHAR (100)  NULL,
 		[School_ComprehensiveAndTargetedSupport]                               	VARCHAR (100)  NULL,
