@@ -8888,6 +8888,15 @@ ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH NOCHECK
 
 
 GO
+PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentDisciplines_IdeaDisabilityStatusId]...';
+
+
+GO
+ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH NOCHECK
+    ADD CONSTRAINT [FK_FactK12StudentDisciplines_IdeaDisabilityStatusId] FOREIGN KEY ([IdeaDisabilityStatusId]) REFERENCES [RDS].[DimIdeaDisabilityStatuses] ([DimIdeaDisabilityStatusId]);
+
+
+GO
 PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentDisciplines_IeuId]...';
 
 
@@ -8957,6 +8966,15 @@ PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentDisciplines_MigrantStatusId
 GO
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH NOCHECK
     ADD CONSTRAINT [FK_FactK12StudentDisciplines_MigrantStatusId] FOREIGN KEY ([MigrantStatusId]) REFERENCES [RDS].[DimMigrantStatuses] ([DimMigrantStatusId]);
+
+
+GO
+PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentDisciplines_MilitaryStatusId]...';
+
+
+GO
+ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH NOCHECK
+    ADD CONSTRAINT [FK_FactK12StudentDisciplines_MilitaryStatusId] FOREIGN KEY ([MilitaryStatusId]) REFERENCES [RDS].[DimMilitaryStatuses] ([DimMilitaryStatusId]);
 
 
 GO
@@ -11969,6 +11987,8 @@ ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_Fa
 
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_IdeaStatusId];
 
+ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_IdeaDisabilityStatusId];
+
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_IeuId];
 
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_ImmigrantStatusId];
@@ -11984,6 +12004,8 @@ ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_Fa
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_LeaID];
 
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_MigrantStatusId];
+
+ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_MilitaryStatusId];
 
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_NOrDStatusId];
 

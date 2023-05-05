@@ -10442,6 +10442,7 @@
 		[EconomicallyDisadvantagedStatusId]     INT CONSTRAINT [DF_FactK12StudentCounts_EconomicallyDisadvantagedStatusId] DEFAULT ((-1)) NOT NULL,
 		[FosterCareStatusId]                    INT CONSTRAINT [DF_FactK12StudentCounts_FosterCareStatusId] DEFAULT ((-1)) NOT NULL,
 		[IdeaStatusId]                          INT CONSTRAINT [DF_FactK12StudentCounts_IdeaStatusId] DEFAULT ((-1)) NOT NULL,
+		[IdeaDisabilityTypeId]  				INT CONSTRAINT [DF_FactK12StudentCounts_IdeaDisabilityTypeId] DEFAULT ((-1)) NOT NULL,
 		[ImmigrantStatusId]                     INT CONSTRAINT [DF_FactK12StudentCounts_ImmigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[K12DemographicId]                      INT CONSTRAINT [DF_FactK12StudentCounts_K12Demographic] DEFAULT ((-1)) NOT NULL,
 		[K12EnrollmentStatusId]                 INT CONSTRAINT [DF_FactK12StudentCounts_EnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
@@ -11016,13 +11017,16 @@
 		[GradeLevelId]                      INT             CONSTRAINT [DF_FactK12StudentDisciplines_GradeLevelId] DEFAULT ((-1)) NOT NULL,
 		[HomelessnessStatusId]              INT             CONSTRAINT [DF_FactK12StudentDisciplines_HomelessnessStatusId] DEFAULT ((-1)) NOT NULL,
 		[IdeaStatusId]                      INT             CONSTRAINT [DF_FactK12StudentDisciplines_IdeaStatusId] DEFAULT ((-1)) NOT NULL,
+		[IdeaDisabilityTypeId]   			INT             CONSTRAINT [DF_FactK12StudentDisciplines_IdeaDisabilityTypeId] DEFAULT ((-1)) NOT NULL,
 		[ImmigrantStatusId]                 INT             CONSTRAINT [DF_FactK12StudentDisciplines_ImmigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[IncidentIdentifier]                NVARCHAR (40)   NULL,
 		[IncidentStatusId]                  INT             CONSTRAINT [DF_FactK12StudentDisciplines_IncidentStatusId] DEFAULT ((-1)) NOT NULL,
 		[IncidentDateId]                    INT             CONSTRAINT [DF_FactK12StudentDisciplines_IncidentDateId] DEFAULT ((-1)) NOT NULL,
 		[K12DemographicId]                  INT             CONSTRAINT [DF_FactK12StudentDisciplines_K12DemographicId] DEFAULT ((-1)) NOT NULL,
 		[MigrantStatusId]                   INT             CONSTRAINT [DF_FactK12StudentDisciplines_MigrantId] DEFAULT ((-1)) NOT NULL,
+		[MilitaryStatusId]                  INT             CONSTRAINT [DF_FactK12StudentDisciplines_MilitaryId] DEFAULT ((-1)) NOT NULL,
 		[NOrDStatusId]                      INT             CONSTRAINT [DF_FactK12StudentDisciplines_NOrDStatusId] DEFAULT ((-1)) NOT NULL,
+		[RaceId]                            INT 			CONSTRAINT [DF_FactK12StudentDisciplines_RaceId] DEFAULT ((-1)) NOT NULL,
 		[PrimaryDisabilityTypeId]           INT             CONSTRAINT [DF_FactK12StudentDisciplines_PrimaryDisabilityTypeId] DEFAULT ((-1)) NOT NULL,
 		[SecondaryDisabilityTypeId]         INT             CONSTRAINT [DF_FactK12StudentDisciplines_SecondaryDisabilityTypeId] DEFAULT ((-1)) NOT NULL,
 		[TitleIStatusId]                    INT             CONSTRAINT [DF_FactK12StudentDisciplines_TitleIStatusId] DEFAULT ((-1)) NOT NULL,
@@ -19611,6 +19615,15 @@
 	GO
 	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
 		ADD CONSTRAINT [FK_FactK12StudentCounts_IdeaStatusId] FOREIGN KEY ([IdeaStatusId]) REFERENCES [RDS].[DimIdeaStatuses] ([DimIdeaStatusId]);
+
+
+	GO
+	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_IdeaDisabilityTypeId]...';
+
+
+	GO
+	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+		ADD CONSTRAINT [FK_FactK12StudentCounts_IdeaDisabilityTypeId] FOREIGN KEY ([IdeaDisabilityTypeId]) REFERENCES [RDS].[DimIdeaDisabilityTypes] ([DimIdeaDisabilityTypeId]);
 
 
 	GO
@@ -63260,6 +63273,8 @@
 	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_HomelessnessStatusId];
 
 	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_IdeaStatusId];
+
+	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_IdeaDisabilityTypeId];
 
 	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_IeuId];
 

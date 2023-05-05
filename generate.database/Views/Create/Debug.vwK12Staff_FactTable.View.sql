@@ -1,25 +1,38 @@
-CREATE VIEW [Debug].[vwK12Staff_FactTable] AS
-
+CREATE VIEW [Debug].[vwK12Staff_FactTable] 
+AS
 	SELECT		DISTINCT  
-				[K12StaffId]			
-				, [LeaId]
-				, [K12SchoolId]
-				, [K12StaffStatusId]	
-				, [K12StaffCategoryId]	
-				, [TitleIIIStatusId]	
-				, [StaffCount]
-				, [StaffFullTimeEquivalency]
+				Staff.K12StaffStaffMemberIdentifierState
+				, LEAs.LeaIdentifierSea
+				, LEAs.LeaIdentifierNces
+				, LEAs.LeaOrganizationName
+				, Schools.SchoolIdentifierSea
+				, Schools.NameOfInstitution
+
+				, StaffStatus.SpecialEducationAgeGroupTaughtEdFactsCode
+				, StaffStatus.EdFactsCertificationStatusEdFactsCode
+				, StaffStatus.K12StaffClassificationEdFactsCode
+				, StaffStatus.HighlyQualifiedTeacherIndicatorEdFactsCode
+				, StaffStatus.EdFactsTeacherInexperiencedStatusEdFactsCode
+				, StaffStatus.TeachingCredentialTypeEdFactsCode
+				, StaffStatus.EdFactsTeacherOutOfFieldStatusEdFactsCode
+				, StaffStatus.SpecialEducationTeacherQualificationStatusEdFactsCode
+
+--				, StaffCat.K12StaffClassificationEdFactsCode
+				, StaffCat.SpecialEducationSupportServicesCategoryEdFactsCode
+				, StaffCat.TitleIProgramStaffCategoryEdFactsCode
+
+				, Fact.StaffCount
+				, Fact.StaffFullTimeEquivalency
 
 	FROM		RDS.FactK12StaffCounts				Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId		= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid		
-	LEFT JOIN	RDS.DimPeople						Staff			ON  Fact.K12StaffId			= Staff.DimPersonId					AND Students.IsActiveK12StaffMember = 1
+	LEFT JOIN	RDS.DimPeople						Staff			ON  Fact.K12StaffId			= Staff.DimPersonId					AND Staff.IsActiveK12StaffMember = 1
 	LEFT JOIN	RDS.DimLeas							LEAs			ON  Fact.LeaId				= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools					Schools			ON  Fact.K12SchoolId		= Schools.DimK12SchoolId
 
 	LEFT JOIN	RDS.DimK12StaffStatuses				StaffStatus		ON  Fact.K12StaffStatusId	= StaffStatus.DimK12StaffStatusId
 	LEFT JOIN	RDS.DimK12StaffCategories			StaffCat		ON  Fact.K12StaffCategoryId	= StaffCat.DimK12StaffCategoryId
-	LEFT JOIN	RDS.DimTitleIIIStatuses				TitleIII		ON  Fact.TitleIIIStatusId	= TitleIII.DimTitleIIIStatusId      
     --uncomment/modify the where clause conditions as necessary for validation
     WHERE 1 = 1
 	--2 ways to select by SchoolYear, use 1 or the other, not both
@@ -48,10 +61,5 @@ CREATE VIEW [Debug].[vwK12Staff_FactTable] AS
 																								--,'PEANDREC','PHYSTHERAP','PSYCH','SOCIALWORK','SPEECHPATH', 'MISSING')
 	--AND StaffCat.TitleIProgramStaffCategoryCode = 'TitleIAdministrator'					--('TitleISupportStaff','TitleIAdministrator','TitleIOtherParaprofessional'
 																								--,'TitleIParaprofessional','TitleITeacher', 'MISSING')
-	--AND TitleIII.FormerEnglishLearnerYearStatusEdFactsCode = '1YEAR'						--('1YEAR','2YEAR','3YEAR','4YEAR','5YEAR', 'MISSING')
-	--AND TitleIII.ProficiencyStatusEdFactsCode = 'PROFICIENT'								--('PROFICIENT','NOTPROFICIENT', 'MISSING')
-	--AND TitleIII.TitleiiiAccountabilityProgressStatusEdFactsCode = 'PROGRESS'				--('NOPROGRESS','PROFICIENT','PROGRESS', 'MISSING')','
-	--AND TitleIII.TitleiiiLanguageInstructionCode = 'DualLanguage'							--('ContentBasedESL','DualLanguage','NewcomerPrograms','Other','PullOutESL'
-																								--,'TransitionalBilingual','TwoWayImmersion', 'MISSING')
 
 	
