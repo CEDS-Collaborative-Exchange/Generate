@@ -201,7 +201,7 @@ BEGIN
 	
 	set @sql = @sql + '
 		declare @reportData as table (
-			[' + @factReportDtoId + '] [int] identity NOT NULL,
+			[' + @factReportId + '] [int] identity NOT NULL,
 			[StateANSICode] [nvarchar](100) NOT NULL,
 			[StateAbbreviationCode] [nvarchar](100) NOT NULL,
 			[StateAbbreviationDescription] [nvarchar](500) NOT NULL,
@@ -211,6 +211,7 @@ BEGIN
 			[OrganizationName] [nvarchar](1000) NULL,
 			[ParentOrganizationIdentifierSea] [nvarchar](100) NULL,
 
+			[Categories] [nvarchar](300) NULL,
 			[CategorySetCode] [nvarchar](40) NOT NULL,
 			[TableTypeAbbrv] [nvarchar](100) NOT NULL,
 			[TotalIndicator] [nvarchar](5) NOT NULL,
@@ -227,7 +228,7 @@ BEGIN
 			begin
 				set @sqlInsertDefinition = @sqlInsertDefinition + '
 					[' + @factField + '] [int] NOT NULL, 
-					[StudentRate] [decimal](18,2) NOT NULL
+					[ADJUSTEDCOHORTGRADUATIONRATE] [decimal](18,2) NOT NULL
 				)'
 			end
 		else
@@ -250,6 +251,7 @@ BEGIN
 			OrganizationIdentifierSea,
 			OrganizationName,
 			ParentOrganizationIdentifierSea,
+			Categories,
 			TableTypeAbbrv,
 			TotalIndicator,
 		'
@@ -264,6 +266,7 @@ BEGIN
 			f.OrganizationIdentifierSea,
 			f.OrganizationName,
 			f.ParentOrganizationIdentifierSea,
+			f.Categories,
 			f.TableTypeAbbrv ,
 			f.TotalIndicator,
 		'
@@ -282,7 +285,7 @@ BEGIN
 
 	DECLARE reportField_cursor CURSOR FOR 
 	SELECT ReportField
-	FROM @ReportFieldsInCategorySet
+	FROM @ReportFieldsInFactTable
 
 	OPEN reportField_cursor
 	FETCH NEXT FROM reportField_cursor INTO @reportField
@@ -322,7 +325,7 @@ BEGIN
 		end
 	else if(@factReportTable = 'ReportEDFactsK12StudentCounts')
 		begin
-			set @sql = @sql + 'StudentRate, '
+			set @sql = @sql + 'ADJUSTEDCOHORTGRADUATIONRATE, '
 		end
 
 	set @sql = @sql + '
@@ -340,7 +343,7 @@ BEGIN
 		end
 	else if(@factReportTable = 'ReportEDFactsK12StudentCounts')
 	begin
-		set @sql = @sql + 'ISNULL(f.StudentRate,0.0) as StudentRate,'
+		set @sql = @sql + 'ISNULL(f.ADJUSTEDCOHORTGRADUATIONRATE,0.0) as ADJUSTEDCOHORTGRADUATIONRATE,'
 	end
 
 	set @sql = @sql + '
@@ -676,7 +679,9 @@ BEGIN
 		end
 
 	set @sql = @sql + '
-		select ' + @factReportDtoId + ',
+		select ' + @factReportId + ',' + '''' + @reportCode + ''' as ReportCode'
+		+ ',' + '''' + @reportLevel +  ''' as ReportLevel' + ',' 
+		+ '''' + @reportYear +  ''' as ReportYear' + ',
 		StateANSICode,
 		StateAbbreviationCode,
 		StateAbbreviationDescription,		
@@ -684,6 +689,8 @@ BEGIN
 		OrganizationIdentifierSea,
 		OrganizationName,
 		ParentOrganizationIdentifierSea,
+		Categories,
+		CategorySetCode,
 		TableTypeAbbrv,
 		TotalIndicator, 
 		'+ @sqlIncludedFieldList + '
@@ -696,7 +703,7 @@ BEGIN
 		end
 	else if(@factReportTable = 'ReportEDFactsK12StudentCounts')
 	begin
-		set @sql = @sql + ', StudentRate'
+		set @sql = @sql + ', ADJUSTEDCOHORTGRADUATIONRATE'
 	end
 	
 	set @sql = @sql + '

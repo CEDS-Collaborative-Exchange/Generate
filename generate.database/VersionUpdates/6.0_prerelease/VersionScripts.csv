@@ -17,7 +17,7 @@ Views\\Drop,Debug.vwChildCount_FactTable.View.sql,0
 Views\\Create,Debug.vwChildCount_FactTable.View.sql,0
 Views\\Drop,Debug.vwDiscipline_FactTable.View.sql,0
 Views\\Create,Debug.vwDiscipline_FactTable.View.sql,0
-Views\\Drop,Debug.vwExitingt_FactTable.View.sql,0
+Views\\Drop,Debug.vwExiting_FactTable.View.sql,0
 Views\\Create,Debug.vwExiting_FactTable.View.sql,0
 Views\\Drop,Debug.vwK12Staff_FactTable.View.sql,0
 Views\\Create,Debug.vwK12Staff_FactTable.View.sql,0
@@ -25,7 +25,7 @@ Views\\Drop,Debug.vwChildCount_StagingTables.View.sql,0
 Views\\Create,Debug.vwChildCount_StagingTables.View.sql,0
 Views\\Drop,Debug.vwDiscipline_StagingTables.View.sql,0
 Views\\Create,Debug.vwDiscipline_StagingTables.View.sql,0
-Views\\Drop,Debug.vwExitingt_StagingTables.View.sql,0
+Views\\Drop,Debug.vwExiting_StagingTables.View.sql,0
 Views\\Create,Debug.vwExiting_StagingTables.View.sql,0
 Views\\Drop,Debug.vwK12Staff_StagingTables.View.sql,0
 Views\\Create,Debug.vwK12Staff_StagingTables.View.sql,0
@@ -113,5 +113,7 @@ StoredProcedures\\Drop,Utilities.CompareSubmissionFiles_C029.StoredProcedure.sql
 StoredProcedures\\Create,Utilities.CompareSubmissionFiles_C029.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.LoadSubmissionFileTable.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.LoadSubmissionFileTable.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
 VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
 VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0
