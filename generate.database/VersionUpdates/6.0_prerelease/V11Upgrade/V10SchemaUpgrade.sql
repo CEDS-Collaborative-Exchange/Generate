@@ -12820,7 +12820,6 @@
 		[WeaponType]                                     NVARCHAR (100) NULL,
 		[FirearmType]                                    NVARCHAR (100) NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
-		[DataCollectionId]                               INT            NULL,
 		[PersonId]                                       INT            NULL,
 		[OrganizationID_LEA]                             INT            NULL,
 		[OrganizationPersonRoleId_LEA]                   INT            NULL,
@@ -12881,6 +12880,13 @@
 		[HighSchoolDiplomaType]                          NVARCHAR (100) NULL,
 		[LanguageNative]                                 NVARCHAR (100) NULL,
 		[LanguadeHome]                                   NVARCHAR (100) NULL,
+		[NumberOfSchoolDays]                             DECIMAL (9, 2) NULL,
+		[NumberOfDaysAbsent]                             DECIMAL (9, 2) NULL,
+		[AttendanceRate]                                 DECIMAL (5, 4) NULL,
+		[PostSecondaryEnrollment]                        BIT            NULL,
+		[DiplomaOrCredentialAwardDate]                   DATE           NULL,
+		[FoodServiceEligibility]                         NVARCHAR (100) NULL,
+		[SchoolYear]                                     NVARCHAR (100) NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
 		[RecordStartDateTime]                            DATETIME       NULL,
 		[RecordEndDateTime]                              DATETIME       NULL,
@@ -12891,14 +12897,6 @@
 		[OrganizationPersonRoleId_School]                INT            NULL,
 		[OrganizationPersonRoleRelationshipId]           INT            NULL,
 		[RunDateTime]                                    DATETIME       NULL,
-		[SchoolYear]                                     NVARCHAR (100) NULL,
-		[NumberOfSchoolDays]                             DECIMAL (9, 2) NULL,
-		[NumberOfDaysAbsent]                             DECIMAL (9, 2) NULL,
-		[AttendanceRate]                                 DECIMAL (5, 4) NULL,
-		[PostSecondaryEnrollment]                        BIT            NULL,
-		[DiplomaOrCredentialAwardDate]                   DATE           NULL,
-		[FoodServiceEligibility]                         NVARCHAR (100) NULL,
-		[DataCollectionId]                               INT            NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_K12Enrollment1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
@@ -12931,22 +12929,12 @@
 
 
 	GO
-	PRINT N'Creating Index [Staging].[K12Enrollment].[IX_Staging_K12Enrollment_DataCollectionName_WithIdentifiers]...';
-
-
-	GO
-	CREATE NONCLUSTERED INDEX [IX_Staging_K12Enrollment_DataCollectionName_WithIdentifiers]
-		ON [Staging].[K12Enrollment]([DataCollectionId] ASC)
-		INCLUDE([StudentIdentifierState], [LeaIdentifierSeaAccountability], [LeaIdentifierSeaAttendance], [LeaIdentifierSeaFunding], [LeaIdentifierSeaGraduation], [LeaIdentifierSeaIndividualizedEducationProgram], [SchoolIdentifierSea]) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
-
-	GO
 	PRINT N'Creating Index [Staging].[K12Enrollment].[IX_Staging_K12Enrollment_WithIdentifiers]...';
 
 
 	GO
 	CREATE NONCLUSTERED INDEX [IX_Staging_K12Enrollment_WithIdentifiers]
-		ON [Staging].[K12Enrollment]([StudentIdentifierState] ASC, [LeaIdentifierSeaAccountability] ASC, [LeaIdentifierSeaAttendance] ASC, [LeaIdentifierSeaFunding] ASC, [LeaIdentifierSeaGraduation] ASC, [LeaIdentifierSeaIndividualizedEducationProgram] ASC, [SchoolIdentifierSea] ASC, [EnrollmentEntryDate] ASC, [DataCollectionId] ASC)
+		ON [Staging].[K12Enrollment]([StudentIdentifierState] ASC, [LeaIdentifierSeaAccountability] ASC, [LeaIdentifierSeaAttendance] ASC, [LeaIdentifierSeaFunding] ASC, [LeaIdentifierSeaGraduation] ASC, [LeaIdentifierSeaIndividualizedEducationProgram] ASC, [SchoolIdentifierSea] ASC, [EnrollmentEntryDate] ASC)
 		INCLUDE([Birthdate], [Sex], [EnrollmentExitDate], [DataCollectionName], [SchoolYear]);
 
 
@@ -13120,7 +13108,6 @@
 		[ProgramOrganizationId_School]                   INT            NULL,
 		[OrganizationPersonRoleId_LEA]                   NCHAR (10)     NULL,
 		[OrganizationPersonRoleId_School]                NCHAR (10)     NULL,
-		[DataCollectionId]                               INT            NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_K12ProgramParticipation1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
@@ -13128,14 +13115,13 @@
 	--            FROM   [Staging].[K12ProgramParticipation])
 	--     BEGIN
 	--         SET IDENTITY_INSERT [Staging].[tmp_ms_xx_K12ProgramParticipation] ON;
-	--         INSERT INTO [Staging].[tmp_ms_xx_K12ProgramParticipation] ([Id], [ProgramType], [EntryDate], [ExitDate], [SchoolYear], [DataCollectionName], [DataCollectionId], [PersonId])
+	--         INSERT INTO [Staging].[tmp_ms_xx_K12ProgramParticipation] ([Id], [ProgramType], [EntryDate], [ExitDate], [SchoolYear], [DataCollectionName], [PersonId])
 	--         SELECT   [Id],
 	--                  [ProgramType],
 	--                  [EntryDate],
 	--                  [ExitDate],
 	--                  [SchoolYear],
 	--                  [DataCollectionName],
-	--                  [DataCollectionId],
 	--                  [PersonId]
 	--         FROM     [Staging].[K12ProgramParticipation]
 	--         ORDER BY [Id] ASC;
@@ -13169,24 +13155,6 @@
 
 
 	GO
-	PRINT N'Creating Index [Staging].[K12ProgramParticipation].[IX_K12ProgramParticipation_EntryDate_PersonId_ProgramOrganizationId_LEA_DataCollectionId]...';
-
-
-	GO
-	CREATE NONCLUSTERED INDEX [IX_K12ProgramParticipation_EntryDate_PersonId_ProgramOrganizationId_LEA_DataCollectionId]
-		ON [Staging].[K12ProgramParticipation]([EntryDate] ASC, [PersonId] ASC, [ProgramOrganizationId_LEA] ASC, [DataCollectionId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
-
-	GO
-	PRINT N'Creating Index [Staging].[K12ProgramParticipation].[IX_K12ProgramParticipation_EntryDate_PersonId_ProgramOrganizationId_School_DataCollectionId]...';
-
-
-	GO
-	CREATE NONCLUSTERED INDEX [IX_K12ProgramParticipation_EntryDate_PersonId_ProgramOrganizationId_School_DataCollectionId]
-		ON [Staging].[K12ProgramParticipation]([EntryDate] ASC, [PersonId] ASC, [ProgramOrganizationId_School] ASC, [DataCollectionId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
-
-	GO
 	PRINT N'Creating Index [Staging].[K12ProgramParticipation].[IX_K12ProgramParticipation_OrganizationType_ProgramType]...';
 
 
@@ -13203,7 +13171,7 @@
 	GO
 	CREATE NONCLUSTERED INDEX [IX_K12ProgramParticipation_ProgramType]
 		ON [Staging].[K12ProgramParticipation]([ProgramType] ASC)
-		INCLUDE([SchoolYear], [OrganizationId_LEA], [OrganizationId_School], [DataCollectionId]) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+		INCLUDE([SchoolYear], [OrganizationId_LEA], [OrganizationId_School]) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 	GO
@@ -13246,7 +13214,6 @@
 		[ExitDate]                                       DATETIME       NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
 		[PersonId]                                       INT            NULL,
-		[DataCollectionId]                               INT            NULL,
 		[OrganizationID_LEA]                             INT            NULL,
 		[OrganizationPersonRoleId_LEA]                   INT            NULL,
 		[OrganizationID_School]                          INT            NULL,
@@ -13373,7 +13340,6 @@
 		[DataCollectionName]                NVARCHAR (100) NULL,
 		[RecordStartDateTime]               DATETIME       NULL,
 		[RecordEndDateTime]                 DATETIME       NULL,
-		[DataCollectionId]                  INT            NULL,
 		[RefStateId]                        INT            NULL,
 		[OrganizationId]                    VARCHAR (100)  NULL,
 		[LocationId]                        VARCHAR (100)  NULL,
@@ -13456,7 +13422,6 @@
 		[PrimaryTelephoneNumberIndicator] BIT            NULL,
 		[SchoolYear]                      VARCHAR (100)  NULL,
 		[DataCollectionName]              NVARCHAR (100) NULL,
-		[DataCollectionId]                INT            NULL,
 		[RecordStartDateTime]             DATETIME       NULL,
 		[RecordEndDateTime]               DATETIME       NULL,
 		[OrganizationId]                  VARCHAR (100)  NULL,
@@ -13496,8 +13461,7 @@
 
 	GO
 	CREATE NONCLUSTERED INDEX [IX_OrganizationProgramType_OrganizationId_ProgramOrganizationId]
-		ON [Staging].[OrganizationProgramType]([OrganizationId] ASC, [ProgramOrganizationId] ASC)
-		INCLUDE([DataCollectionId]) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+		ON [Staging].[OrganizationProgramType]([OrganizationId] ASC, [ProgramOrganizationId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 	GO
@@ -13551,7 +13515,6 @@
 		[School_ComprehensiveSupport]            VARCHAR (100)  NULL,
 		[School_TargetedSupport]                 VARCHAR (100)  NULL,
 		[DataCollectionName]                     NVARCHAR (100) NULL,
-		[DataCollectionId]                       INT            NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_OrganizationSchoolComprehensiveAndTargetedSupport1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
@@ -13633,13 +13596,12 @@
 		[PerkinsELStatus_StatusStartDate]                        DATE           NULL,
 		[PerkinsELStatus_StatusEndDate]                          DATE           NULL,
 		[DataCollectionName]                                     NVARCHAR (100) NULL,
-		[DataCollectionId]                                       INT            NULL,
 		[PersonId]                                               INT            NULL,
 		[OrganizationID_LEA]                                     INT            NULL,
 		[OrganizationPersonRoleID_LEA]                           INT            NULL,
 		[OrganizationID_School]                                  INT            NULL,
-		[OrganizationID_Program_Foster]                          INT            NULL,
 		[OrganizationPersonRoleID_School]                        INT            NULL,
+		[OrganizationID_Program_Foster]                          INT            NULL,
 		[OrganizationID_LEA_Program_Foster]                      INT            NULL,
 		[OrganizationPersonRoleID_LEA_Program_Foster]            INT            NULL,
 		[OrganizationID_School_Program_Foster]                   INT            NULL,
@@ -13657,8 +13619,8 @@
 		[OrganizationPersonRoleID_LEA_SPED]                      INT            NULL,
 		[OrganizationPersonRoleID_School_SPED]                   INT            NULL,
 		[OrganizationID_LEA_Program_Homeless]                    INT            NULL,
-		[OrganizationID_School_Program_Homeless]                 INT            NULL,
 		[OrganizationPersonRoleID_LEA_Program_Homeless]          INT            NULL,
+		[OrganizationID_School_Program_Homeless]                 INT            NULL,
 		[OrganizationPersonRoleID_School_Program_Homeless]       INT            NULL,
 		[PersonStatusId_Homeless]                                INT            NULL,
 		[PersonHomelessNightTimeResidenceId]                     INT            NULL,
@@ -13669,7 +13631,6 @@
 		[PersonStatusId_Migrant]                                 INT            NULL,
 		[PersonMilitaryId]                                       INT            NULL,
 		[PersonHomelessnessId]                                   INT            NULL,
-		[OrganizationPersonRoleID_Program_Foster]                INT            NULL,
 		[RunDateTime]                                            DATETIME       NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_PersonStatus1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
@@ -13861,13 +13822,14 @@
 		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
 		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
 		[SchoolIdentifierSea]                            VARCHAR (100)  NULL,
+		[ProgramParticipationNorD]                       VARCHAR (100)  NULL,
 		[ProgramParticipationBeginDate]                  DATE           NULL,
 		[ProgramParticipationEndDate]                    DATE           NULL,
-		[ProgramParticipationNorD]                       VARCHAR (100)  NULL,
 		[ProgressLevel_Reading]                          VARCHAR (100)  NULL,
 		[ProgressLevel_Math]                             VARCHAR (100)  NULL,
 		[Outcome]                                        VARCHAR (100)  NULL,
 		[DiplomaCredentialAwardDate]                     DATE           NULL,
+		[DataCollectionName]                             NVARCHAR (100) NULL,
 		[PersonID]                                       INT            NULL,
 		[OrganizationID_School]                          INT            NULL,
 		[OrganizationID_LEA]                             INT            NULL,
@@ -14025,6 +13987,8 @@
 		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
 		[SchoolIdentifierSea]                            VARCHAR (100)  NULL,
 		[StudentIdentifierState]                         VARCHAR (100)  NULL,
+		[ProgramParticipationBeginDate]                  DATE           NULL,
+		[ProgramParticipationEndDate]                    DATE           NULL,
 		[TitleIIndicator]                                VARCHAR (100)  NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
 		[PersonID]                                       INT            NULL,
@@ -14229,11 +14193,10 @@
 		[OperationalStatusEffectiveDate]      DATETIME       NULL,
 		[MostPrevalentLevelOfInstitutionCode] NVARCHAR (50)  NULL,
 		[PredominantCalendarSystem]           VARCHAR (100)  NULL,
+		[SchoolYear]                          VARCHAR (100)  NULL,
 		[DataCollectionName]                  NVARCHAR (100) NULL,
-		[DataCollectionId]                    INT            NULL,
 		[RecordStartDateTime]                 DATETIME       NULL,
 		[RecordEndDateTime]                   DATETIME       NULL,
-		[SchoolYear]                          VARCHAR (100)  NULL,
 		[OrganizationId]                      INT            NULL,
 		[OrganizationOperationalStatusId]     INT            NULL,
 		[OperationalStatusId]                 INT            NULL,
@@ -14246,7 +14209,7 @@
 	--            FROM   [Staging].[PsInstitution])
 	--     BEGIN
 	--         SET IDENTITY_INSERT [Staging].[tmp_ms_xx_PsInstitution] ON;
-	--         INSERT INTO [Staging].[tmp_ms_xx_PsInstitution] ([Id], [OrganizationName], [InstitutionIpedsUnitId], [Website], [OrganizationOperationalStatus], [OperationalStatusEffectiveDate], [MostPrevalentLevelOfInstitutionCode], [PredominantCalendarSystem], [RecordStartDateTime], [RecordEndDateTime], [SchoolYear], [DataCollectionName], [DataCollectionId], [OrganizationId], [OrganizationOperationalStatusId], [OperationalStatusId], [MostPrevalentLevelOfInstitutionId], [PredominantCalendarSystemId])
+	--         INSERT INTO [Staging].[tmp_ms_xx_PsInstitution] ([Id], [OrganizationName], [InstitutionIpedsUnitId], [Website], [OrganizationOperationalStatus], [OperationalStatusEffectiveDate], [MostPrevalentLevelOfInstitutionCode], [PredominantCalendarSystem], [RecordStartDateTime], [RecordEndDateTime], [SchoolYear], [DataCollectionName], [OrganizationId], [OrganizationOperationalStatusId], [OperationalStatusId], [MostPrevalentLevelOfInstitutionId], [PredominantCalendarSystemId])
 	--         SELECT   [Id],
 	--                  [OrganizationName],
 	--                  [InstitutionIpedsUnitId],
@@ -14255,11 +14218,10 @@
 	--                  [OperationalStatusEffectiveDate],
 	--                  [MostPrevalentLevelOfInstitutionCode],
 	--                  [PredominantCalendarSystem],
+	--                  [SchoolYear],
 	--                  [RecordStartDateTime],
 	--                  [RecordEndDateTime],
-	--                  [SchoolYear],
 	--                  [DataCollectionName],
-	--                  [DataCollectionId],
 	--                  [OrganizationId],
 	--                  [OrganizationOperationalStatusId],
 	--                  [OperationalStatusId],
@@ -14307,7 +14269,6 @@
 		[PersonId]                                   INT            NULL,
 		[OrganizationPersonRoleId]                   INT            NULL,
 		[PsStudentAcademicAwardId]                   INT            NULL,
-		[DataCollectionId]                           INT            NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_PsStudentAcademicAward1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
@@ -14315,7 +14276,7 @@
 	--            FROM   [Staging].[PsStudentAcademicAward])
 	--     BEGIN
 	--         SET IDENTITY_INSERT [Staging].[tmp_ms_xx_PsStudentAcademicAward] ON;
-	--         INSERT INTO [Staging].[tmp_ms_xx_PsStudentAcademicAward] ([Id], [InstitutionIpedsUnitId], [ProfessionalOrTechnicalCredentialConferred], [AcademicAwardDate], [PescAwardLevelType], [AcademicAwardTitle], [EntryDate], [ExitDate], [SchoolYear], [DataCollectionName], [DataCollectionId], [OrganizationId], [PersonId], [OrganizationPersonRoleId], [PsStudentAcademicAwardId])
+	--         INSERT INTO [Staging].[tmp_ms_xx_PsStudentAcademicAward] ([Id], [InstitutionIpedsUnitId], [ProfessionalOrTechnicalCredentialConferred], [AcademicAwardDate], [PescAwardLevelType], [AcademicAwardTitle], [EntryDate], [ExitDate], [SchoolYear], [DataCollectionName], [OrganizationId], [PersonId], [OrganizationPersonRoleId], [PsStudentAcademicAwardId])
 	--         SELECT   [Id],
 	--                  [InstitutionIpedsUnitId],
 	--                  [ProfessionalOrTechnicalCredentialConferred],
@@ -14326,7 +14287,6 @@
 	--                  [ExitDate],
 	--                  [SchoolYear],
 	--                  [DataCollectionName],
-	--                  [DataCollectionId],
 	--                  [OrganizationId],
 	--                  [PersonId],
 	--                  [OrganizationPersonRoleId],
@@ -14364,15 +14324,14 @@
 		[DiplomaOrCredentialAwardDate]               DATETIME      NULL,
 		[AcademicTermDesignator]                     NVARCHAR (50) NULL,
 		[ProfessionalOrTechnicalCredentialConferred] VARCHAR (50)  NULL,
-		[SchoolYear]                                 NVARCHAR (50) NULL,
 		[EntryDate]                                  DATETIME      NULL,
 		[ExitDate]                                   DATETIME      NULL,
+		[SchoolYear]                                 NVARCHAR (50) NULL,
 		[DataCollectionName]                         NVARCHAR (50) NULL,
 		[OrganizationId]                             INT           NULL,
 		[PersonId]                                   INT           NULL,
 		[OrganizationPersonRoleId]                   INT           NULL,
 		[PsStudentAcademicRecordId]                  INT           NULL,
-		[DataCollectionId]                           INT           NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_PsStudentAcademicRecord1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
@@ -14380,7 +14339,7 @@
 	--            FROM   [Staging].[PsStudentAcademicRecord])
 	--     BEGIN
 	--         SET IDENTITY_INSERT [Staging].[tmp_ms_xx_PsStudentAcademicRecord] ON;
-	--         INSERT INTO [Staging].[tmp_ms_xx_PsStudentAcademicRecord] ([Id], [InstitutionIpedsUnitId], [DiplomaOrCredentialAwardDate], [AcademicTermDesignator], [ProfessionalOrTechnicalCredentialConferred], [EntryDate], [ExitDate], [SchoolYear], [DataCollectionName], [DataCollectionId], [OrganizationId], [PersonId], [OrganizationPersonRoleId], [PsStudentAcademicRecordId])
+	--         INSERT INTO [Staging].[tmp_ms_xx_PsStudentAcademicRecord] ([Id], [InstitutionIpedsUnitId], [DiplomaOrCredentialAwardDate], [AcademicTermDesignator], [ProfessionalOrTechnicalCredentialConferred], [EntryDate], [ExitDate], [SchoolYear], [DataCollectionName], [OrganizationId], [PersonId], [OrganizationPersonRoleId], [PsStudentAcademicRecordId])
 	--         SELECT   [Id],
 	--                  [InstitutionIpedsUnitId],
 	--                  [DiplomaOrCredentialAwardDate],
@@ -14390,7 +14349,6 @@
 	--                  [ExitDate],
 	--                  [SchoolYear],
 	--                  [DataCollectionName],
-	--                  [DataCollectionId],
 	--                  [OrganizationId],
 	--                  [PersonId],
 	--                  [OrganizationPersonRoleId],
@@ -14417,7 +14375,7 @@
 	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='IX_PsStudentAcademicRecord_AcademicTermDesignator') BEGIN
 		CREATE NONCLUSTERED INDEX [IX_PsStudentAcademicRecord_AcademicTermDesignator]
 			ON [Staging].[PsStudentAcademicRecord]([AcademicTermDesignator] ASC)
-			INCLUDE([StudentIdentifierState], [SchoolYear], [EntryDate], [OrganizationId], [DataCollectionId]) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+			INCLUDE([StudentIdentifierState], [SchoolYear], [EntryDate], [OrganizationId]) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 	END
 
 
@@ -14460,14 +14418,13 @@
 		[EntryDate]                         DATETIME       NULL,
 		[ExitDate]                          DATETIME       NULL,
 		[AcademicTermDesignator]            VARCHAR (100)  NULL,
-		[DataCollectionName]                NVARCHAR (100) NULL,
 		[RecordStartDateTime]               DATETIME       NULL,
 		[RecordEndDateTime]                 DATETIME       NULL,
+		[DataCollectionName]                NVARCHAR (100) NULL,
 		[OrganizationId_PsInstitution]      INT            NULL,
 		[SchoolYear]                        VARCHAR (100)  NULL,
 		[PersonId]                          INT            NULL,
 		[OrganizationPersonRoleId]          INT            NULL,
-		[DataCollectionId]                  INT            NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_PsTermEnrollment1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
@@ -14475,7 +14432,7 @@
 	--            FROM   [Staging].[PsStudentEnrollment])
 	--     BEGIN
 	--         SET IDENTITY_INSERT [Staging].[tmp_ms_xx_PsStudentEnrollment] ON;
-	--         INSERT INTO [Staging].[tmp_ms_xx_PsStudentEnrollment] ([Id], [InstitutionIpedsUnitId], [FirstName], [MiddleName], [Birthdate], [Sex], [HispanicLatinoEthnicity], [PostsecondaryExitOrWithdrawalType], [EntryDateIntoPostsecondary], [EntryDate], [ExitDate], [AcademicTermDesignator], [SchoolYear], [DataCollectionName], [DataCollectionId], [OrganizationId_PsInstitution], [PersonId], [OrganizationPersonRoleId])
+	--         INSERT INTO [Staging].[tmp_ms_xx_PsStudentEnrollment] ([Id], [InstitutionIpedsUnitId], [FirstName], [MiddleName], [Birthdate], [Sex], [HispanicLatinoEthnicity], [PostsecondaryExitOrWithdrawalType], [EntryDateIntoPostsecondary], [EntryDate], [ExitDate], [AcademicTermDesignator], [SchoolYear], [DataCollectionName], [OrganizationId_PsInstitution], [PersonId], [OrganizationPersonRoleId])
 	--         SELECT   [Id],
 	--                  [InstitutionIpedsUnitId],
 	--                  [FirstName],
@@ -14490,7 +14447,6 @@
 	--                  [AcademicTermDesignator],
 	--                  [SchoolYear],
 	--                  [DataCollectionName],
-	--                  [DataCollectionId],
 	--                  [OrganizationId_PsInstitution],
 	--                  [PersonId],
 	--                  [OrganizationPersonRoleId]
@@ -17440,6 +17396,17 @@
 	EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganization_Name]', N'CharterSchoolManagementOrganizationOrganizationName';
 	EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganizationId]', N'CharterSchoolManagementOrganizationOrganizationId';
 
+	IF EXISTS (SELECT *
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = 'Staging'
+				AND TABLE_NAME = 'CharterSchoolManagementOrganization' 
+				AND COLUMN_NAME = 'DataCollectionId' 
+			)
+    BEGIN
+       ALTER TABLE Staging.CharterSchoolManagementOrganization DROP COLUMN DataCollectionId;
+    END;
+
+
 	-- CREATE TABLE [Staging].[CharterSchoolManagementOrganization] (
 	-- 	[Id]                               								INT            IDENTITY (1, 1) NOT NULL,
 	-- 	[CharterSchoolManagementOrganizationOrganizationIdentifierEIN]  VARCHAR (100)  NULL,
@@ -17449,7 +17416,6 @@
 	-- 	[RecordStartDateTime]			            					DATETIME       NULL,
 	-- 	[RecordEndDateTime]             			            		DATETIME       NULL,
 	-- 	[DataCollectionName]               								NVARCHAR (100) NULL,
-	-- 	[DataCollectionId]                 								INT            NULL,
 	-- 	[CharterSchoolManagementOrganizationOrganizationId] 			INT            NOT NULL,
 	-- 	[CharterSchoolId]                  								INT            NOT NULL,
 	-- 	[RunDateTime]                      								DATETIME       NULL,
@@ -17467,6 +17433,15 @@
 	EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizer_Name]', N'CharterSchoolAuthorizingOrganizationOrganizationName';
 	EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizerOrganizationId]', N'CharterSchoolAuthorizingOrganizationOrganizationId';
 
+	IF EXISTS (SELECT *
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = 'Staging'
+				AND TABLE_NAME = 'CharterSchoolAuthorizer' 
+				AND COLUMN_NAME = 'DataCollectionId' 
+			)
+    BEGIN
+       ALTER TABLE Staging.CharterSchoolAuthorizer DROP COLUMN DataCollectionId;
+    END;
 
 	-- CREATE TABLE [Staging].[CharterSchoolAuthorizer] (
 	-- 	[Id]                               									INT            IDENTITY (1, 1) NOT NULL,
@@ -17476,7 +17451,6 @@
 	-- 	[RecordStartDateTime]                       						DATETIME       NULL,
 	-- 	[RecordEndDateTime]                         						DATETIME       NULL,
 	-- 	[DataCollectionName]               									NVARCHAR (100) NULL,
-	-- 	[DataCollectionId]                 									INT            NULL,
 	-- 	[CharterSchoolId]                  									INT            NOT NULL,
 	-- 	[CharterSchoolAuthorizingOrganizationOrganizationId] 				INT            NOT NULL,
 	-- 	[RunDateTime]                      									DATETIME       NULL,
@@ -17635,7 +17609,6 @@
 		[RecordStartDateTime]                            DATETIME       NULL,
 		[RecordEndDateTime]                              DATETIME       NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
-		[DataCollectionId]                               INT            NULL,
 		[PersonId]                                       INT            NULL,
 		[PersonDemographicRaceId]                        INT            NULL,
 		[OrganizationID_LEA]                             INT            NULL,
@@ -17656,12 +17629,11 @@
 		[StudentIdentifierState]      VARCHAR (100)  NULL,
 		[InstitutionIpedsUnitId]      VARCHAR (100)  NULL,
 		[RaceType]                    VARCHAR (100)  NULL,
-		[RecordStartDateTime]         DATETIME       NULL,
-		[RecordEndDateTime]           DATETIME       NULL,
 		[AcademicTermDesignator]      VARCHAR (100)  NULL,
 		[SchoolYear]                  VARCHAR (100)  NULL,
+		[RecordStartDateTime]         DATETIME       NULL,
+		[RecordEndDateTime]           DATETIME       NULL,
 		[DataCollectionName]          NVARCHAR (100) NULL,
-		[DataCollectionId]            INT            NULL,
 		[PersonId]                    INT            NULL,
 		[PersonDemographicRaceId]     INT            NULL,
 		[OrganizationId]              INT            NULL,
@@ -17670,16 +17642,6 @@
 		[RunDateTime]                 DATETIME       NULL,
 		CONSTRAINT [PK_PsPersonRace] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
-
-
-	GO
-	PRINT N'Creating Index [Staging].[PsPersonRace].[IX_PsPersonRace_DataCollectionId]...';
-
-
-	GO
-	CREATE NONCLUSTERED INDEX [IX_PsPersonRace_DataCollectionId]
-		ON [Staging].[PsPersonRace]([DataCollectionId] ASC)
-		INCLUDE([DataCollectionName]) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 	GO
@@ -17742,10 +17704,9 @@
 		[SubgroupCode]                                 VARCHAR (100)  NULL,
 		[SchoolPerformanceIndicatorType]               VARCHAR (100)  NULL,
 		[SchoolQualityOrStudentSuccessIndicatorType]   VARCHAR (100)  NULL,
-		[DataCollectionName]                           NVARCHAR (100) NULL,
-		[DataCollectionId]                             INT            NULL,
 		[RecordStartDateTime]                          DATETIME       NULL,
 		[RecordEndDateTime]                            DATETIME       NULL,
+		[DataCollectionName]                           NVARCHAR (100) NULL,
 		CONSTRAINT [PK_SchoolPerformanceIndicators] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
