@@ -12574,6 +12574,7 @@
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[CERTIFICATIONSTATUS]', N'EDFACTSCERTIFICATIONSTATUS';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[QUALIFICATIONSTATUS]', N'SPECIALEDUCATIONTEACHERQUALIFICATIONSTATUS';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION]', N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StaffFTE]', N'StaffFullTimeEquivalency';
 
 
 	GO
@@ -17205,6 +17206,10 @@
 		[ComprehensiveAndTargetedSupportCode]     NVARCHAR (50)   NULL,
 		[ComprehensiveSupportCode]                NVARCHAR (50)   NULL,
 		[TargetedSupportCode]                     NVARCHAR (50)   NULL,
+		[ComprehensiveSupportImprovementCode]	  NVARCHAR (50)   NULL,
+		[TargetedSupportImprovementCode] 		  NVARCHAR (50)   NULL,
+		[AdditionalTargetedSupportandImprovementCode] NVARCHAR (50)   NULL,
+		[AppropriationMethodCode]				  NVARCHAR (50)   NULL,
 		CONSTRAINT [PK_ReportEDFactsOrganizationCounts] PRIMARY KEY CLUSTERED ([ReportEDFactsOrganizationCountId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 

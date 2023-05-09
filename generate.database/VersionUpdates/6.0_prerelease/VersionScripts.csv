@@ -71,6 +71,8 @@ Views\\Drop,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Create,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Drop,RDS.vwUnduplicatedRaceMap.View.sql,0
 Views\\Create,RDS.vwUnduplicatedRaceMap.View.sql,0
+Functions\\Drop, RDS.MaxRecordStartDateTime.UserDefinedFunction.sql,0
+Functions\\Create, RDS.MaxRecordStartDateTime.UserDefinedFunction.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
@@ -113,6 +115,10 @@ StoredProcedures\\Drop,Utilities.CompareSubmissionFiles_C029.StoredProcedure.sql
 StoredProcedures\\Create,Utilities.CompareSubmissionFiles_C029.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.LoadSubmissionFileTable.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.LoadSubmissionFileTable.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_OrganizationStatusReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_OrganizationStatusReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
 VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
