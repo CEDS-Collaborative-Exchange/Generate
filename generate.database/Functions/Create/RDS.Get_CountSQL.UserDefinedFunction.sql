@@ -3897,13 +3897,14 @@ BEGIN
 				inner join rds.DimGradeLevels gl 
 					on fact.GradeLevelId = gl.DimGradeLevelId
 				inner join (
-							SELECT distinct OrganizationStateId, GRADELEVEL 
-							From rds.FactOrganizationCountReports c39 where c39.ReportCode = ''C039''
-								and c39.reportLevel = ''' + @reportLevel +
-								''' and c39.reportyear = ''' + @reportyear + '''										
-							) grades on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-								and grades.OrganizationStateId = ' + case when  @reportLevel = 'lea' then ' s.LeaIdentifierState '
-																	else ' s.SchoolIdentifierState' end + ')'
+					select distinct OrganizationStateId, GRADELEVEL 
+					from rds.FactOrganizationCountReports c39 
+					where c39.ReportCode = ''C039''
+						and c39.reportLevel = ''' + @reportLevel +
+						''' and c39.reportyear = ''' + @reportyear + '''										
+				) grades 
+					on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
+					and grades.OrganizationStateId = s.LeaIdentifierState '
 		END
 		ELSE if @reportLevel in ('sch')
 		BEGIN 
@@ -3921,13 +3922,14 @@ BEGIN
 				inner join rds.DimGradeLevels gl 
 					on fact.GradeLevelId = gl.DimGradeLevelId
 				inner join (
-							SELECT distinct OrganizationStateId, GRADELEVEL 
-							From rds.FactOrganizationCountReports c39 where c39.ReportCode = ''C039''
-								and c39.reportLevel = ''' + @reportLevel +
-								''' and c39.reportyear = ''' + @reportyear + '''										
-							) grades on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-								and grades.OrganizationStateId = ' + case when  @reportLevel = 'lea' then ' s.LeaIdentifierState '
-																	else ' s.SchoolIdentifierState' end + ')'
+					select distinct OrganizationStateId, GRADELEVEL 
+					from rds.FactOrganizationCountReports c39 
+					where c39.ReportCode = ''C039''
+						and c39.reportLevel = ''' + @reportLevel +
+						''' and c39.reportyear = ''' + @reportyear + '''										
+				) grades 
+					on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
+					and grades.OrganizationStateId = s.SchoolIdentifierState '
 		END		
 	END
 	else if @reportCode in ('c070')
