@@ -3904,7 +3904,7 @@ BEGIN
 						''' and c39.reportyear = ''' + @reportyear + '''										
 				) grades 
 					on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-					and grades.OrganizationStateId = s.LeaIdentifierState '
+					and grades.OrganizationStateId = s.LeaIdentifierState) '
 		END
 		ELSE if @reportLevel in ('sch')
 		BEGIN 
@@ -3929,7 +3929,7 @@ BEGIN
 						''' and c39.reportyear = ''' + @reportyear + '''										
 				) grades 
 					on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-					and grades.OrganizationStateId = s.SchoolIdentifierState '
+					and grades.OrganizationStateId = s.SchoolIdentifierState) '
 		END		
 	END
 	else if @reportCode in ('c070')
