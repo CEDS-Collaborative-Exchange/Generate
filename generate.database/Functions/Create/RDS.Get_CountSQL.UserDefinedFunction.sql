@@ -3881,38 +3881,92 @@ BEGIN
 					and gl.GradeLevelEdFactsCode in (' + 	@MembershipgradeList + '					
 										))'
 
-			END 
-			ELSE if @reportLevel in ('lea', 'sch')
-			BEGIN 
-				set @queryFactFilter = '
-					and 
-					fact.K12StudentId in (
-					select distinct fact.K12StudentId
-					from rds.' + @factTable + ' fact '
-					+ case when @reportLevel = 'lea' then 'inner join rds.DimLeas s on fact.LeaId = s.DimLeaId'
-					else 'inner join rds.DimK12Schools s on fact.K12SchoolId = s.DimK12SchoolId' end  +
-					'
+		END 
+		ELSE if @reportLevel in ('lea')
+		BEGIN 
+			set @queryFactFilter = '
+				and 
+				fact.K12StudentId in (
+				select distinct fact.K12StudentId
+				from rds.' + @factTable + ' fact 
+				inner join rds.DimLeas s 
+					on fact.LeaId = s.DimLeaId
 					and fact.SchoolYearId = @dimDateId
 					and fact.FactTypeId = @dimFactTypeId
-					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-					inner join rds.DimGradeLevels gl 
-						on fact.GradeLevelId = gl.DimGradeLevelId
-					inner join (
-								SELECT distinct OrganizationStateId, GRADELEVEL 
-								From rds.FactOrganizationCountReports c39 where c39.ReportCode = ''C039''
-									and c39.reportLevel = ''' + @reportLevel +
-									''' and c39.reportyear = ''' + @reportyear + '''										
-								) grades on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-									and grades.OrganizationStateId = ' + case when  @reportLevel = 'lea' then ' s.LeaIdentifierState '
-																		else ' s.SchoolIdentifierState' end + ')'
-			END
+					and fact.LeaId <> -1
+				inner join rds.DimGradeLevels gl 
+					on fact.GradeLevelId = gl.DimGradeLevelId
+				inner join (
+					select distinct OrganizationStateId, GRADELEVEL 
+					from rds.FactOrganizationCountReports c39 
+					where c39.ReportCode = ''C039''
+						and c39.reportLevel = ''' + @reportLevel +
+						''' and c39.reportyear = ''' + @reportyear + '''										
+				) grades 
+					on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
+					and grades.OrganizationStateId = s.LeaIdentifierState) '
 		END
-		else if @reportCode in ('c070')
-			begin
+		ELSE if @reportLevel in ('sch')
+		BEGIN 
+			set @queryFactFilter = '
+				and 
+				fact.K12StudentId in (
+				select distinct fact.K12StudentId
+				from rds.' + @factTable + ' fact 
+				inner join rds.DimK12Schools s 
+					on fact.K12SchoolId = s.DimK12SchoolId
+					and s.SchoolTypeCode <> ''Reportable''
+					and fact.SchoolYearId = @dimDateId
+					and fact.FactTypeId = @dimFactTypeId
+					and fact.K12SchoolId <> -1
+				inner join rds.DimGradeLevels gl 
+					on fact.GradeLevelId = gl.DimGradeLevelId
+				inner join (
+					select distinct OrganizationStateId, GRADELEVEL 
+					from rds.FactOrganizationCountReports c39 
+					where c39.ReportCode = ''C039''
+						and c39.reportLevel = ''' + @reportLevel +
+						''' and c39.reportyear = ''' + @reportyear + '''										
+				) grades 
+					on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
+					and grades.OrganizationStateId = s.SchoolIdentifierState) '
+		END		
+	END
+	else if @reportCode in ('c070')
+		begin
 		
-				set @sqlCountJoins = @sqlCountJoins + '
-					inner join (
-						SELECT distinct fact.K12StaffId, s.DimK12StaffCategoryId
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join (
+					SELECT distinct fact.K12StaffId, s.DimK12StaffCategoryId
+				from rds.' + @factTable + ' fact '
+
+				if @reportLevel in ('lea', 'sch')
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join #Cat_Organizations org 
+						on fact.' +
+					case when @reportLevel = 'lea' then 'LeaId'
+						else 'K12SchoolId' end + ' = org.OrganizationId'
+				end
+
+			set @sqlCountJoins = @sqlCountJoins + '
+					inner join rds.DimK12StaffCategories s 
+						on fact.K12StaffCategoryId = s.DimK12StaffCategoryId				
+						and fact.SchoolYearId = @dimDateId
+						and fact.FactTypeId = @dimFactTypeId
+						and fact.LeaId <> -1
+					where s.K12StaffClassificationCode = ''SpecialEducationTeachers''
+				) rules
+				on fact.K12StaffId = rules.K12StaffId 
+				and fact.K12StaffCategoryId = rules.DimK12StaffCategoryId'
+
+		end
+		else if @reportCode in ('c112')
+		begin
+		
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join (
+					SELECT distinct fact.K12StaffId, s.DimK12StaffCategoryId
 					from rds.' + @factTable + ' fact '
 
 					if @reportLevel in ('lea', 'sch')
@@ -3925,46 +3979,17 @@ BEGIN
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-						inner join rds.DimK12StaffCategories s 
-							on fact.K12StaffCategoryId = s.DimK12StaffCategoryId				
-							and fact.SchoolYearId = @dimDateId
-							and fact.FactTypeId = @dimFactTypeId
-							and fact.LeaId <> -1
-						where s.K12StaffClassificationCode = ''SpecialEducationTeachers''
-					) rules
+					inner join rds.DimK12StaffCategories s 
+						on fact.K12StaffCategoryId = s.DimK12StaffCategoryId				
+						and fact.SchoolYearId = @dimDateId
+						and fact.FactTypeId = @dimFactTypeId
+						and fact.LeaId <> -1
+					where s.K12StaffClassificationCode = ''Paraprofessionals''
+				) rules
 					on fact.K12StaffId = rules.K12StaffId 
 					and fact.K12StaffCategoryId = rules.DimK12StaffCategoryId'
 
-			end
-			else if @reportCode in ('c112')
-			begin
-		
-				set @sqlCountJoins = @sqlCountJoins + '
-					inner join (
-						SELECT distinct fact.K12StaffId, s.DimK12StaffCategoryId
-						from rds.' + @factTable + ' fact '
-
-						if @reportLevel in ('lea', 'sch')
-						begin
-							set @sqlCountJoins = @sqlCountJoins + '
-							inner join #Cat_Organizations org 
-								on fact.' +
-							case when @reportLevel = 'lea' then 'LeaId'
-								else 'K12SchoolId' end + ' = org.OrganizationId'
-						end
-
-					set @sqlCountJoins = @sqlCountJoins + '
-						inner join rds.DimK12StaffCategories s 
-							on fact.K12StaffCategoryId = s.DimK12StaffCategoryId				
-							and fact.SchoolYearId = @dimDateId
-							and fact.FactTypeId = @dimFactTypeId
-							and fact.LeaId <> -1
-						where s.K12StaffClassificationCode = ''Paraprofessionals''
-					) rules
-						on fact.K12StaffId = rules.K12StaffId 
-						and fact.K12StaffCategoryId = rules.DimK12StaffCategoryId'
-
-			end
+		end
 		else if @reportCode in ('c067')
 		BEGIN
 
