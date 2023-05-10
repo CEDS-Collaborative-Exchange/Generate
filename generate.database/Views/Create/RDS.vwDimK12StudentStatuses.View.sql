@@ -2,7 +2,7 @@ CREATE VIEW [RDS].[vwDimK12StudentStatuses]
 AS
 	SELECT DISTINCT
 		  DimK12StudentStatusId
-		, rsy.SchoolYear
+--		, rsy.SchoolYear
 
 --have to find these
 		, MobilityStatus12moCode
@@ -35,10 +35,10 @@ AS
 		, PlacementTypeCode AS PlacementTypeMap
 --
 
-		, NSLPDirectCertificationIndicatorCode
-		, CASE NSLPDirectCertificationIndicatorCode 
-			WHEN 'YES' THEN 1 
-			WHEN 'NO' THEN 0
-			ELSE -1
-		  END AS NSLPDirectCertificationIndicatorMap
+		--, NSLPDirectCertificationIndicatorCode
+		--, CASE NSLPDirectCertificationIndicatorCode 
+		--	WHEN 'YES' THEN 1 
+		--	WHEN 'NO' THEN 0
+		--	ELSE -1
+		--  END AS NSLPDirectCertificationIndicatorMap
 	FROM rds.DimK12StudentStatuses rdkss
