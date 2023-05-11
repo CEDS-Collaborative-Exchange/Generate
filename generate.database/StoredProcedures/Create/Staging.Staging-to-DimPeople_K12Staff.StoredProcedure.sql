@@ -1,5 +1,5 @@
 CREATE PROCEDURE [Staging].[Staging-To-DimPeople_K12Staff]
-	@dataCollectionId AS INT = NULL
+	@dataCollectionId INT = NULL
 AS
 BEGIN
 
@@ -28,7 +28,6 @@ BEGIN
 			, BirthDate										DATE NULL
 			, K12StaffStaffMemberIdentifierState			NVARCHAR(40) NULL
 			, IsActiveK12StaffMember						BIT NULL
-			, PositionTitle									NVARCHAR(200) NULL
 			, RecordStartDateTime							DATE NULL
 			, RecordEndDateTime								DATE NULL
 		)
@@ -40,7 +39,6 @@ BEGIN
 			, BirthDate
 			, K12StaffStaffMemberIdentifierState
 			, IsActiveK12StaffMember
-			, PositionTitle
 			, RecordStartDateTime
 			, RecordEndDateTime
 		)		
@@ -51,7 +49,6 @@ BEGIN
 			, BirthDate
 			, StaffMemberIdentifierState
 			, 1
-			, PositionTitle
 			, RecordStartDateTime
 			, RecordEndDateTime
 		FROM Staging.StaffAssignment sa
@@ -63,6 +60,7 @@ BEGIN
 				AND ISNULL(trgt.LastOrSurname, '') = ISNULL(src.LastOrSurname, '')
 				AND ISNULL(trgt.MiddleName, '') = ISNULL(src.MiddleName, '')
 				AND ISNULL(trgt.BirthDate, '1900-01-01') = ISNULL(src.BirthDate, '1900-01-01')
+				AND trgt.IsActiveK12StaffMember = 1
 				AND trgt.RecordStartDateTime = src.RecordStartDateTime
 		WHEN NOT MATCHED BY TARGET THEN     --- Records Exists in Source but NOT in Target
 		INSERT (
@@ -72,7 +70,6 @@ BEGIN
 			, BirthDate
 			, K12StaffStaffMemberIdentifierState
 			, IsActiveK12StaffMember
-			, PositionTitle
 			, RecordStartDateTime
 			, RecordEndDateTime
 		)
@@ -83,11 +80,11 @@ BEGIN
 			, src.Birthdate
 			, src.K12StaffStaffMemberIdentifierState
 			, src.IsActiveK12StaffMember
-			, src.PositionTitle
 			, src.RecordStartDateTime
 			, src.RecordEndDateTime
 		);
 
+		--End date previous records
 		;WITH upd AS (
 			SELECT 
 				  startd.K12StaffStaffMemberIdentifierState

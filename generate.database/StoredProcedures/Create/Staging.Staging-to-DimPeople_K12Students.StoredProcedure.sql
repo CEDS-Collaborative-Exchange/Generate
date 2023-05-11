@@ -1,5 +1,5 @@
 CREATE PROCEDURE [Staging].[Staging-To-DimPeople_K12Students]
-	@dataCollectionId AS INT = NULL
+	@dataCollectionId INT = NULL
 AS
 BEGIN
 
@@ -60,6 +60,7 @@ BEGIN
 				AND ISNULL(trgt.LastOrSurname, '') = ISNULL(src.LastOrSurname, '')
 				AND ISNULL(trgt.MiddleName, '') = ISNULL(src.MiddleName, '')
 				AND ISNULL(trgt.BirthDate, '1900-01-01') = ISNULL(src.BirthDate, '1900-01-01')
+				AND trgt.IsActiveK12Student = 1
 				AND trgt.RecordStartDateTime = src.RecordStartDateTime
 		WHEN NOT MATCHED BY TARGET THEN     --- Records Exists in Source but NOT in Target
 		INSERT (
@@ -83,11 +84,7 @@ BEGIN
 			, src.RecordEndDateTime
 		);
 
---Not sure why we were updating RecordEndDateTime like this  		
-		-- UPDATE student 
-		-- SET RecordEndDateTime = NULL
-		-- FROM rds.DimPeople student
-
+		--End date previous records
 		;WITH upd AS (
 			SELECT 
 				  startd.K12StudentStudentIdentifierState
@@ -127,7 +124,6 @@ BEGIN
 		RAISERROR(@msg, @sev, 1)
 
 	END CATCH
-
 
 	SET NOCOUNT OFF;
 

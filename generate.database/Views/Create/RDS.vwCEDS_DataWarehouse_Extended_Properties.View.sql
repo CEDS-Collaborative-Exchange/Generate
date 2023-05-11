@@ -1,21 +1,43 @@
 CREATE VIEW [rds].[vwCEDS_DataWarehouse_Extended_Properties] 
 AS
 
-	SELECT	DISTINCT  
-			s.name			AS SchemaName
-			, t.name		AS TableName
-			, c.name		AS ColumnName
-			, ep.name		AS PropertyName
-			, ep.value		AS PropertyValue
-	FROM		sys.extended_properties		ep		
-	LEFT JOIN	sys.tables					t		ON ep.major_id	= t.object_id 
-	LEFT JOIN	sys.schemas					s		ON t.schema_id	= s.schema_id
-	LEFT JOIN	sys.columns					c		ON ep.major_id	= c.object_id	AND ep.minor_id	= c.column_id
+	--get the extended properties for the columns in the tables
+	SELECT 
+		c.TABLE_NAME							[TableName]
+		, c.COLUMN_NAME							[ColumnName]
+		, c.data_type							[DataType]
+		, c.character_maximum_length			[MaxLength]
+		, c.ORDINAL_POSITION					[ColumnPostion]
+		, CAST(gi.value as varchar(max))		[GlobalId]
+		, CAST(el.value as varchar(max))		[ElementTechnicalName]
+		, CAST(de.value as varchar(max))		[Description]
+		, CAST(ur.value as varchar(max))		[Url]
+	FROM		INFORMATION_SCHEMA.COLUMNS	c 
+	INNER JOIN	INFORMATION_SCHEMA.TABLES	t ON t.TABLE_NAME = c.TABLE_NAME 
+	OUTER APPLY fn_listextendedproperty ('CEDS_Def_Desc', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) de
+	OUTER APPLY fn_listextendedproperty ('CEDS_ElementTechnicalName', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) el
+	OUTER APPLY fn_listextendedproperty ('CEDS_URL', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) ur
+	OUTER APPLY fn_listextendedproperty ('CEDS_GlobalId', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) gi
+	WHERE t.table_type = 'BASE TABLE'
+		AND (de.value IS NOT NULL OR gi.value IS NOT NULL)
 
-	WHERE 	s.name = 'RDS'
-	AND		ep.name like '%CEDS%'
-	--uncomment/modify the where clause conditions as necessary
-	--AND	o.name = ''									--Fact or Dimension table name (FactK12StudentCounts, DimK12EnrollmentStatuses, etc...)
-	--AND	c.name like '%Entry%'						--Wildcard search for Column Name in a Fact or Dimension Table 
-	--AND	ep.name = ''								--The specific extended property (CEDS_Def_Desc, CEDS_ElementTechnicalName, CEDS_GlobalId, CEDS_URL)
-	--AND 	convert(varchar(max), ep.value) like '% %'	--Wildcard search in the Extended Property value (search for CEDS Global IDs, strings in the definition or the technical name)
+	UNION
+
+	--get the extended properties for the tables
+	SELECT 
+		  t.TABLE_NAME							[TableName]
+		, NULL									[ColumnName]
+		, NULL									[DataType]
+		, NULL									[MaxLength]
+		, NULL									[ColumnPostion]
+		, CAST(gi.value as varchar(max))		[GlobalId]
+		, CAST(el.value as varchar(max))		[ElementTechnicalName]
+		, CAST(de.value as varchar(max))		[Description]
+		, CAST(ur.value as varchar(max))		[Url]
+	FROM		INFORMATION_SCHEMA.TABLES	t 
+	OUTER APPLY fn_listextendedproperty ('CEDS_Def_Desc', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) de
+	OUTER APPLY fn_listextendedproperty ('CEDS_ElementTechnicalName', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) el
+	OUTER APPLY fn_listextendedproperty ('CEDS_URL', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) ur
+	OUTER APPLY fn_listextendedproperty ('CEDS_GlobalId', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) gi
+	WHERE t.table_type = 'BASE TABLE'
+		AND (de.value IS NOT NULL OR gi.value IS NOT NULL)

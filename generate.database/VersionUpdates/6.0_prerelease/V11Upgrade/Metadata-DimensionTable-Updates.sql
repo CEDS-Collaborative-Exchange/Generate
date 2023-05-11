@@ -138,9 +138,10 @@ BEGIN
     VALUES('DimFosterCareStatuses', 1)
 END
 
-IF EXISTS (SELECT 1 FROM app.[DimensionTables] WHERE [DimensionTableName] = 'DimIdeaStatuses')
+IF NOT EXISTS (SELECT 1 FROM app.[DimensionTables] WHERE [DimensionTableName] = 'DimIdeaDisabilityTypes')
 BEGIN
-	Update [App].[DimensionTables] SET [DimensionTableName] = 'DimIdeaDisabilityTypes' WHERE [DimensionTableName] = 'DimIdeaStatuses'
+	INSERT INTO [App].[DimensionTables]([DimensionTableName],[IsReportingDimension])
+    VALUES('DimIdeaDisabilityTypes', 1)
 END
 
 IF NOT EXISTS (SELECT 1 FROM app.[DimensionTables] WHERE [DimensionTableName] = 'DimIeus')

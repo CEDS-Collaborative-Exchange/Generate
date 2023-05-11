@@ -47,10 +47,10 @@ BEGIN
 			StateANSICode,
 			StateAbbreviationCode,
 			StateAbbreviationDescription,			
-			OrganizationNcesId,
-			OrganizationStateId,
+			OrganizationIdentifierNces,
+			OrganizationIdentifierSea,
 			OrganizationName,
-			ParentOrganizationStateId,
+			ParentOrganizationIdentifierSea,
 			Category1,
 			Category2,
 			Category3,
@@ -201,16 +201,17 @@ BEGIN
 	
 	set @sql = @sql + '
 		declare @reportData as table (
-			[' + @factReportDtoId + '] [int] identity NOT NULL,
+			[' + @factReportId + '] [int] identity NOT NULL,
 			[StateANSICode] [nvarchar](100) NOT NULL,
 			[StateAbbreviationCode] [nvarchar](100) NOT NULL,
 			[StateAbbreviationDescription] [nvarchar](500) NOT NULL,
 			
-			[OrganizationNcesId] [nvarchar](100) NULL,
-			[OrganizationStateId] [nvarchar](100) NULL,
+			[OrganizationIdentifierNces] [nvarchar](100) NULL,
+			[OrganizationIdentifierSea] [nvarchar](100) NULL,
 			[OrganizationName] [nvarchar](1000) NULL,
-			[ParentOrganizationStateId] [nvarchar](100) NULL,
+			[ParentOrganizationIdentifierSea] [nvarchar](100) NULL,
 
+			[Categories] [nvarchar](300) NULL,
 			[CategorySetCode] [nvarchar](40) NOT NULL,
 			[TableTypeAbbrv] [nvarchar](100) NOT NULL,
 			[TotalIndicator] [nvarchar](5) NOT NULL,
@@ -227,7 +228,7 @@ BEGIN
 			begin
 				set @sqlInsertDefinition = @sqlInsertDefinition + '
 					[' + @factField + '] [int] NOT NULL, 
-					[StudentRate] [decimal](18,2) NOT NULL
+					[ADJUSTEDCOHORTGRADUATIONRATE] [decimal](18,2) NOT NULL
 				)'
 			end
 		else
@@ -246,10 +247,11 @@ BEGIN
 			StateANSICode,
 			StateAbbreviationCode,
 			StateAbbreviationDescription,			
-			OrganizationNcesId,
-			OrganizationStateId,
+			OrganizationIdentifierNces,
+			OrganizationIdentifierSea,
 			OrganizationName,
-			ParentOrganizationStateId,
+			ParentOrganizationIdentifierSea,
+			Categories,
 			TableTypeAbbrv,
 			TotalIndicator,
 		'
@@ -258,12 +260,13 @@ BEGIN
 	set @sqlSelectBeginning = '
 		select	DISTINCT		
 			f.StateANSICode,
-			f.StateCode,
-			f.StateName,			
-			f.OrganizationNcesId,
-			f.OrganizationStateId,
+			f.StateAbbreviationCode,
+			f.StateAbbreviationDescription,			
+			f.OrganizationIdentifierNces,
+			f.OrganizationIdentifierSea,
 			f.OrganizationName,
-			f.ParentOrganizationStateId,
+			f.ParentOrganizationIdentifierSea,
+			f.Categories,
 			f.TableTypeAbbrv ,
 			f.TotalIndicator,
 		'
@@ -322,7 +325,7 @@ BEGIN
 		end
 	else if(@factReportTable = 'ReportEDFactsK12StudentCounts')
 		begin
-			set @sql = @sql + 'StudentRate, '
+			set @sql = @sql + 'ADJUSTEDCOHORTGRADUATIONRATE, '
 		end
 
 	set @sql = @sql + '
@@ -340,7 +343,7 @@ BEGIN
 		end
 	else if(@factReportTable = 'ReportEDFactsK12StudentCounts')
 	begin
-		set @sql = @sql + 'ISNULL(f.StudentRate,0.0) as StudentRate,'
+		set @sql = @sql + 'ISNULL(f.ADJUSTEDCOHORTGRADUATIONRATE,0.0) as ADJUSTEDCOHORTGRADUATIONRATE,'
 	end
 
 	set @sql = @sql + '
@@ -439,10 +442,10 @@ BEGIN
 							[StateCode] [nvarchar](100) NOT NULL,
 							[StateName] [nvarchar](500) NOT NULL,
 							
-							[OrganizationNcesId] [nvarchar](100) NULL,
-							[OrganizationStateId] [nvarchar](100) NULL,
+							[OrganizationIdentifierNces] [nvarchar](100) NULL,
+							[OrganizationIdentifierSea] [nvarchar](100) NULL,
 							[OrganizationName] [nvarchar](1000) NULL,
-							[ParentOrganizationStateId] [nvarchar](100) NULL,
+							[ParentOrganizationIdentifierSea] [nvarchar](100) NULL,
 
 							[CategorySetCode] [nvarchar](40) NOT NULL,
 							[TableTypeAbbrv] [nvarchar](100) NOT NULL,
@@ -567,10 +570,10 @@ BEGIN
 						-- Exclude the Category Set A for Schools if there are no students
 						set @sql = @sql + 'delete a from @reportData a
 							inner join 
-							(select OrganizationStateId, TableTypeAbbrv, CategorySetCode, sum(StudentCount) as totalStudentCount 
-							from @reportData group by OrganizationStateId, CategorySetCode, TableTypeAbbrv 
+							(select OrganizationIdentifierSea, TableTypeAbbrv, CategorySetCode, sum(StudentCount) as totalStudentCount 
+							from @reportData group by OrganizationIdentifierSea, CategorySetCode, TableTypeAbbrv 
 							having sum(StudentCount) < 1 and CategorySetCode <> ''TOT'' and TableTypeAbbrv = ''LUNCHFREERED''	) b
-							on a.CategorySetCode = b.CategorySetCode and a.OrganizationStateId = b.OrganizationStateId and a.TableTypeAbbrv = b.TableTypeAbbrv'
+							on a.CategorySetCode = b.CategorySetCode and a.OrganizationIdentifierSea = b.OrganizationIdentifierSea and a.TableTypeAbbrv = b.TableTypeAbbrv'
 													
 					END
 
@@ -579,14 +582,14 @@ BEGIN
 						-- Exclude the Category Set A and SubTotals for the LEA or Schools if there are no students
 						set @sql = @sql + 'delete a from @reportData a
 							inner join 
-							(select OrganizationStateId, CategorySetCode, sum(StudentCount) as totalStudentCount from @reportData group by OrganizationStateId, CategorySetCode having sum(StudentCount) < 1 and CategorySetCode <> ''TOT''	) b
-							on a.CategorySetCode = b.CategorySetCode and a.OrganizationStateId = b.OrganizationStateId'
+							(select OrganizationIdentifierSea, CategorySetCode, sum(StudentCount) as totalStudentCount from @reportData group by OrganizationIdentifierSea, CategorySetCode having sum(StudentCount) < 1 and CategorySetCode <> ''TOT''	) b
+							on a.CategorySetCode = b.CategorySetCode and a.OrganizationIdentifierSea = b.OrganizationIdentifierSea'
 
 						set @sql = @sql + ' delete a from @reportData a 
 							inner join 
-							(select OrganizationStateId, GRADELEVEL, CategorySetCode, sum(StudentCount) as totalStudentCount from @reportData group by OrganizationStateId, GRADELEVEL, CategorySetCode having sum(StudentCount) < 1 and 
+							(select OrganizationIdentifierSea, GRADELEVEL, CategorySetCode, sum(StudentCount) as totalStudentCount from @reportData group by OrganizationIdentifierSea, GRADELEVEL, CategorySetCode having sum(StudentCount) < 1 and 
 							CategorySetCode in (''CSA'', ''ST1'', ''ST2'' )) b
-							on a.CategorySetCode = b.CategorySetCode and a.OrganizationStateId = b.OrganizationStateId  and a.GRADELEVEL = b.GRADELEVEL
+							on a.CategorySetCode = b.CategorySetCode and a.OrganizationIdentifierSea = b.OrganizationIdentifierSea  and a.GRADELEVEL = b.GRADELEVEL
 						'
 					END
 				end
@@ -676,14 +679,18 @@ BEGIN
 		end
 
 	set @sql = @sql + '
-		select ' + @factReportDtoId + ',
+		select ' + @factReportId + ',' + '''' + @reportCode + ''' as ReportCode'
+		+ ',' + '''' + @reportLevel +  ''' as ReportLevel' + ',' 
+		+ '''' + @reportYear +  ''' as ReportYear' + ',
 		StateANSICode,
 		StateAbbreviationCode,
 		StateAbbreviationDescription,		
-		OrganizationNcesId,
-		OrganizationStateId,
+		OrganizationIdentifierNces,
+		OrganizationIdentifierSea,
 		OrganizationName,
-		ParentOrganizationStateId,
+		ParentOrganizationIdentifierSea,
+		Categories,
+		CategorySetCode,
 		TableTypeAbbrv,
 		TotalIndicator, 
 		'+ @sqlIncludedFieldList + '
@@ -696,7 +703,7 @@ BEGIN
 		end
 	else if(@factReportTable = 'ReportEDFactsK12StudentCounts')
 	begin
-		set @sql = @sql + ', StudentRate'
+		set @sql = @sql + ', ADJUSTEDCOHORTGRADUATIONRATE'
 	end
 	
 	set @sql = @sql + '

@@ -1,20 +1,17 @@
-CREATE VIEW [Debug].[vwChildCount_StagingTables] AS
-
+CREATE VIEW [Debug].[vwChildCount_StagingTables] 
+AS
 	SELECT		DISTINCT 
-				enrollment.Student_Identifier_State
-				,enrollment.LEA_Identifier_State
-				,enrollment.School_Identifier_State
+				enrollment.StudentIdentifierState
+				,enrollment.LEAIdentifierSeaAccountability
+				,enrollment.SchoolIdentifierSea
 				,enrollment.FirstName
-				,enrollment.LastName
+				,enrollment.LastOrSurname
 				,enrollment.MiddleName
 				,enrollment.Sex
 				,enrollment.BirthDate
 				,[RDS].[Get_Age] (enrollment.BirthDate, Toggle.ChildCountDate) AS CalculatedAge 
 
-				,idea.IDEAIndicator
-				,idea.IDEA_StatusStartDate
-				,idea.IDEA_StatusEndDate
-				,idea.PrimaryDisabilityType
+				,ideaDisability.IdeaDisabilityType
 
 				,programparticipation.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
 				,programparticipation.ProgramParticipationEndDate		AS IDEAProgramParticipationEndDate
@@ -45,54 +42,49 @@ CREATE VIEW [Debug].[vwChildCount_StagingTables] AS
 	) toggle on toggle.SchoolYear = enrollment.SchoolYear
 
 	LEFT JOIN Staging.ProgramParticipationSpecialEducation	programparticipation
-			ON		enrollment.Student_Identifier_State				=	programparticipation.Student_Identifier_State
-			AND		ISNULL(enrollment.LEA_Identifier_State, '')		=	ISNULL(programparticipation.LEA_Identifier_State, '') 
-			AND		ISNULL(enrollment.School_Identifier_State, '')	=	ISNULL(programparticipation.School_Identifier_State, '')
+			ON		enrollment.StudentIdentifierState						=	programparticipation.StudentIdentifierState
+			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(programparticipation.LEAIdentifierSeaAccountability, '') 
+			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(programparticipation.SchoolIdentifierSea, '')
 			AND		(programparticipation.ProgramParticipationBeginDate  <= toggle.ChildCountDate 
 				AND ISNULL(programparticipation.ProgramParticipationEndDate, GETDATE()) > toggle.ChildCountDate)
 			AND		programparticipation.ProgramParticipationBeginDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 
-	LEFT JOIN Staging.PersonStatus							idea
-			ON		enrollment.Student_Identifier_State				=	idea.Student_Identifier_State
-			AND		ISNULL(enrollment.Lea_Identifier_State, '')		=	ISNULL(idea.Lea_Identifier_State, '')
-			AND		ISNULL(enrollment.School_Identifier_State, '')	=	ISNULL(idea.School_Identifier_State, '')
-			AND		(idea.IDEA_StatusStartDate  <= Toggle.ChildCountDate 
-				AND ISNULL(idea.IDEA_StatusEndDate, GETDATE()) > Toggle.ChildCountDate)
-			AND		idea.IDEA_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+	LEFT JOIN Staging.IdeaDisabilityType					ideaDisability
+			ON		enrollment.StudentIdentifierState						=	ideaDisability.StudentIdentifierState
+			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(ideaDisability.LEAIdentifierSeaAccountability, '')
+			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(ideaDisability.SchoolIdentifierSea, '')
+			AND 	ideaDisability.IsPrimaryDisability = 1
+			AND		(ideaDisability.RecordStartDateTime  <= Toggle.ChildCountDate 
+				AND ISNULL(ideaDisability.RecordStartDateTime, GETDATE()) > Toggle.ChildCountDate)
+			AND		ideaDisability.RecordStartDateTime  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 
-	LEFT JOIN Staging.PersonRace							race
-			ON		enrollment.SchoolYear							=	race.SchoolYear
-			AND		enrollment.Student_Identifier_State				=	race.Student_Identifier_State
-			AND		(race.OrganizationType = 'SEA'
-				OR (enrollment.LEA_Identifier_State = race.OrganizationIdentifier
-					AND race.OrganizationType = 'LEA')
-				OR (enrollment.School_Identifier_State = race.OrganizationIdentifier
-					AND race.OrganizationType = 'K12School'))
+	LEFT JOIN Staging.K12PersonRace							race
+			ON		enrollment.SchoolYear									=	race.SchoolYear
+			AND		enrollment.StudentIdentifierState						=	race.StudentIdentifierState
+			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(ideaDisability.LEAIdentifierSeaAccountability, '')
+			AND		ISNULL(enrollment.SchoolIdentifierSea, '')	=	ISNULL(ideaDisability.SchoolIdentifierSea, '')
 			AND		(race.RecordStartDateTime  <= Toggle.ChildCountDate 
 				AND ISNULL(race.RecordEndDateTime, GETDATE()) > Toggle.ChildCountDate)
 			AND		race.RecordStartDateTime  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 
 	LEFT JOIN Staging.PersonStatus							el
-			ON		enrollment.Student_Identifier_State				=	el.Student_Identifier_State
-			AND		ISNULL(enrollment.LEA_Identifier_State, '')		=	ISNULL(el.LEA_Identifier_State, '')
-			AND		ISNULL(enrollment.School_Identifier_State, '')	=	ISNULL(el.School_Identifier_State, '')
+			ON		enrollment.StudentIdentifierState						=	el.StudentIdentifierState
+			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(el.LEAIdentifierSeaAccountability, '')
+			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(el.SchoolIdentifierSea, '')
 			AND		(el.EnglishLearner_StatusStartDate  <= Toggle.ChildCountDate 
 				AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) > Toggle.ChildCountDate)
 			AND		el.EnglishLearner_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 
 	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1
-	--AND Students.StateStudentIdentifier = '12345678'	
-	--AND LEAs.LeaIdentifierState = '123'
-	--AND Schools.SchoolIdentifierState = '456'
+	--AND Students.StudentIdentifierState = '12345678'	
+	--AND LEAs.LeaIdentifierSeaAccountability = '123'
+	--AND Schools.SchoolIdentifierSea = '456'
 	--AND [RDS].[Get_Age] (enrollment.BirthDate, dates.ResponseValue) = '12'
 	--AND enrollment.FirstName = ''
-	--AND enrollment.LastName = ''
+	--AND enrollment.LastOrSurname = ''
 	--AND enrollment.BirthDate = ''
-	--AND idea.IDEAIndicator = ''	--0 or 1
-	--AND idea.IDEA_StatusStartDate = ''
-	--AND idea.IDEA_StatusEndDate = ''
-	--AND idea.PrimaryDisabilityType = ''
+	--AND ideaDisability.IdeaDisabilityType = ''
 	--AND programparticipation.ProgramParticipationBeginDate = ''
 	--AND programparticipation.ProgramParticipationEndDate = ''
 	--AND programparticipation.IDEAEducationalEnvironmentForSchoolAge = ''

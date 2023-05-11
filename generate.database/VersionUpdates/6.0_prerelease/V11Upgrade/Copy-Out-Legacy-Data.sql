@@ -795,16 +795,16 @@ CREATE TABLE Upgrade.FactOrganizationCounts (
 	, FactTypeCode	VARCHAR(500)
 	--DimLeas	
 	, LeaIdentifierState	VARCHAR(500)
-	, LEA_RecordStartDateTime	VARCHAR(500)
-	, LEA_RecordEndDateTime	VARCHAR(500)
+	, LEA_RecordStartDateTime	DATETIME
+	, LEA_RecordEndDateTime	DATETIME
 	--DimK12Staff
 	, StaffMemberIdentifierState	VARCHAR(500)
-	, STA_RecordStartDateTime	VARCHAR(500)
-	, STA_RecordEndDateTime	VARCHAR(500)
+	, STA_RecordStartDateTime	DATETIME
+	, STA_RecordEndDateTime	DATETIME
 	--DimK12Schools
 	, SchoolIdentifierState	VARCHAR(500)
-	, SCH_RecordStartDateTime	VARCHAR(500)
-	, SCH_RecordEndDateTime	VARCHAR(500)
+	, SCH_RecordStartDateTime	DATETIME
+	, SCH_RecordEndDateTime	DATETIME
 	--DimK12SchoolStatuses
 	, DimK12SchoolStatusId	VARCHAR(500)
 	, MagnetOrSpecialProgramEmphasisSchoolCode	VARCHAR(500)
@@ -817,8 +817,8 @@ CREATE TABLE Upgrade.FactOrganizationCounts (
 	, VirtualSchoolStatusCode	VARCHAR(500)
 	--DimSeas
 	, DimSeaId	VARCHAR(500)
-	, RecordStartDateTime	VARCHAR(500)
-	, RecordEndDateTime	VARCHAR(500)
+	, RecordStartDateTime	DATETIME
+	, RecordEndDateTime	DATETIME
 	--DimTitleIStatus
 	, DimTitleIStatusId	VARCHAR(500)
 	, TitleIInstructionalServicesCode	VARCHAR(500)
@@ -827,20 +827,20 @@ CREATE TABLE Upgrade.FactOrganizationCounts (
 	, TitleISupportServicesCode	VARCHAR(500)
 	--DimCharterSchoolAuthorizers - Primary
 	, CSAP_StateIdentifier	 	VARCHAR(500)
-	, CSAP_RecordStartDateTime 	VARCHAR(500)
-	, CSAP_RecordEndDateTime	 	VARCHAR(500)
+	, CSAP_RecordStartDateTime 	DATETIME
+	, CSAP_RecordEndDateTime	 	DATETIME
 	--DimCharterSchoolManagementOrganizations
 	, CSMO_StateIdentifier	VARCHAR(500)
-	, CSMO_RecordStartDateTime	VARCHAR(500)
-	, CSMO_RecordEndDateTime	VARCHAR(500)
+	, CSMO_RecordStartDateTime	DATETIME
+	, CSMO_RecordEndDateTime	DATETIME
 	--DimCharterSchoolAuthorizers - Secondary
 	, CSAS_StateIdentifier	VARCHAR(500)
-	, CSAS_RecordStartDateTime	VARCHAR(500)
-	, CSAS_RecordEndDateTime	VARCHAR(500)
+	, CSAS_RecordStartDateTime	DATETIME
+	, CSAS_RecordEndDateTime	DATETIME
 	--DimCharterSchoolManagementOrganizations - Updated
 	, CSASU_StateIdentifier	VARCHAR(500)
-	, CSASU_RecordStartDateTime	VARCHAR(500)
-	, CSASU_RecordEndDateTime	VARCHAR(500)
+	, CSASU_RecordStartDateTime	DATETIME
+	, CSASU_RecordEndDateTime	DATETIME
 	--DimK12OrganizationStatuses
 	, GunFreeSchoolsActReportingStatusCode	VARCHAR(500)
 	, HighSchoolGraduationRateIndicatorStatusCode	VARCHAR(500)

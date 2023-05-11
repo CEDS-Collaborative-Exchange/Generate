@@ -10,10 +10,11 @@ BEGIN
 	--Populate the RDS tables from ODS data
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Exiting - Start MigrateDimStudents')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Exiting - Start Staging-to-DimPeople_K12Students')
 
 		--Populate DimStudents
-		exec [Staging].[Staging-to-DimK12Students] NULL
+		--exec [Staging].[Staging-to-DimK12Students] NULL
+		exec [Staging].[Staging-to-DimPeople_K12Students] NULL
 
 
 			--write out message to DataMigrationHistories
@@ -47,7 +48,7 @@ BEGIN
 
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Exiting - Start Migrate_StudentCounts for Submission reports')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Exiting - Start Staging-to-FactK12StudentCounts_SpecEdExit for Submission reports')
 
 		--populate the fact table for the submission report
 		DECLARE @submissionYear AS VARCHAR(50)
@@ -55,7 +56,7 @@ BEGIN
 		SELECT d.SchoolYear
 			FROM rds.DimSchoolYears d
 			JOIN rds.DimSchoolYearDataMigrationTypes dd ON dd.DimSchoolYearId = d.DimSchoolYearId
-			JOIN rds.DimDataMigrationTypes b ON b.DimDataMigrationTypeId=dd.DataMigrationTypeId 
+			JOIN App.DataMigrationTypes b ON b.DataMigrationTypeId=dd.DataMigrationTypeId 
 			WHERE d.DimSchoolYearId <> -1 
 			AND dd.IsSelected=1 AND DataMigrationTypeCode='RDS'
 

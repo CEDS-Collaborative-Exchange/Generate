@@ -173,7 +173,7 @@ BEGIN
 		
 	/*  Creating and load #Facts temp table */
 		CREATE TABLE #Facts (
-			StagingId int IDENTITY(1,1) NOT NULL,
+			StagingId int NOT NULL,
 			SchoolYearId int  NULL,
 			FactTypeId int  NULL,
 			SeaId int  NULL,
@@ -261,25 +261,28 @@ BEGIN
 			JOIN RDS.DimSeas rds
 				ON @MembershipDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
 			
-			LEFT JOIN Staging.PersonStatus foodService
-				ON ske.StudentIdentifierState = foodService.StudentIdentifierState
-				AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(foodService.LeaIdentifierSeaAccountability, '')
-				AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(foodService.SchoolIdentifierSea, '')
+			LEFT JOIN Staging.PersonStatus sps	
+				ON ske.StudentIdentifierState = sps.StudentIdentifierState
+				AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sps.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sps.SchoolIdentifierSea, '')
 			
 			LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
 				ON ske.SchoolYear = spr.SchoolYear
 				AND ske.StudentIdentifierState = spr.StudentIdentifierState
 				AND (ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability
 						OR ske.SchoolIdentifierSea = spr.SchoolIdentifierSea)
+			
 			JOIN RDS.DimAges rda
 				ON RDS.Get_Age(ske.Birthdate, @MembershipDate) = rda.AgeValue
 			
 			LEFT JOIN #vwGradeLevels rgls
-				ON ske.GradeLevel = rgls.GradeLevelMap
+				ON rgls.SchoolYear = ske.SchoolYear
+				AND ske.GradeLevel = rgls.GradeLevelMap
 				AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
 			
 			LEFT JOIN #vwRaces rdr
-				ON ISNULL(rdr.RaceCode, rdr.RaceMap) =
+				ON rdr.SchoolYear = ske.SchoolYear
+					AND ISNULL(rdr.RaceCode, rdr.RaceMap) =
 					CASE
 						when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
 						WHEN spr.RaceCode IS NOT NULL THEN spr.RaceCode
@@ -287,7 +290,7 @@ BEGIN
 					END
 			
 			LEFT JOIN #vwK12StudentStatuses rkss
- 				ON ISNULL(CAST(foodService.NationalSchoolLunchProgramDirectCertificationIndicator AS SMALLINT), -1) = rkss.NSLPDirectCertificationIndicatorMap
+ 				ON rkss.SchoolYear = ske.SchoolYear
 				AND rkss.DiplomaCredentialTypeCode = 'MISSING'
 				AND rkss.MobilityStatus12moCode = 'MISSING'
 				AND rkss.MobilityStatusSYCode = 'MISSING'	
@@ -297,17 +300,26 @@ BEGIN
 				AND rkss.PlacementTypeCode = 'MISSING'
 
 			LEFT JOIN #vwEconomicallyDisadvantagedStatuses vecon
-				ON ISNULL(foodService.EligibilityStatusForSchoolFoodServicePrograms, 'MISSING') = ISNULL(vecon.EligibilityStatusForSchoolFoodServiceProgramsMap, 'MISSING')
-				AND ISNULL(vecon.EconomicDisadvantageStatusCode, 'MISSING') = 'MISSING'
+				ON vecon.SchoolYear = ske.SchoolYear
+				AND ISNULL(sps.EligibilityStatusForSchoolFoodServicePrograms, 'MISSING') = ISNULL(vecon.EligibilityStatusForSchoolFoodServiceProgramsMap, 'MISSING')
+				AND ISNULL(CAST(sps.NationalSchoolLunchProgramDirectCertificationIndicator AS SMALLINT), -1)  = isnull(vecon.NationalSchoolLunchProgramDirectCertificationIndicatorMap, -1)
+				AND ISNULL(CAST(sps.EconomicDisadvantageStatus as SMALLINT), -1) = ISNULL(vecon.EconomicDisadvantageStatusMap, -1)
 
 			LEFT JOIN #vwFosterCareStatuses vfoster
-				ON ISNULL(vfoster.ProgramParticipationFosterCareCode, 'MISSING') = 'MISSING'
+				ON vfoster.SchoolYear = ske.SchoolYear
+				AND ISNULL(CAST(sps.ProgramType_FosterCare AS SMALLINT), -1) = ISNULL(vfoster.ProgramParticipationFosterCareMap, -1)
 
 			LEFT JOIN #vwHomelessnessStatuses vhomeless
-				ON ISNULL(vhomeless.HomelessnessStatusCode, 'MISSING') = 'NO'
+				ON vhomeless.SchoolYear = ske.SchoolYear
+				AND ISNULL(CAST(sps.HomelessnessStatus AS SMALLINT), -1) = ISNULL(vhomeless.HomelessnessStatusMap, -1)
+				AND ISNULL(sps.HomelessNightTimeResidence, 'MISSING') = ISNULL(vhomeless.HomelessPrimaryNighttimeResidenceMap, 'MISSING')
+				AND ISNULL(CAST(sps.HomelessServicedIndicator AS SMALLINT), -1) = ISNULL(vhomeless.HomelessServicedIndicatorMap, -1)
+				AND ISNULL(CAST(sps.HomelessUnaccompaniedYouth AS SMALLINT), -1) = ISNULL(vhomeless.HomelessUnaccompaniedYouthStatusMap, -1)
+
 
 			LEFT JOIN #vwImmigrantStatuses vimmigrant
-				ON ISNULL(vimmigrant.TitleIIIImmigrantParticipationStatusCode, 'MISSING') = 'MISSING'
+				ON vimmigrant.SchoolYear = ske.SchoolYear
+				AND ISNULL(CAST(sps.ProgramType_Immigrant AS SMALLINT), -1) = ISNULL(vimmigrant.TitleIIIImmigrantParticipationStatusMap, -1)
 
 			JOIN RDS.DimPeople rdp
 				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
