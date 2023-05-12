@@ -226,3 +226,11 @@ AND ISNULL(@dimensionTableId, '') <> ''
 BEGIN
 	INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId]) VALUES(@factTableId, @dimensionTableId)
 END
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentDisciplines'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimTitleIStatuses'
+delete from app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId
+
+SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12StudentDisciplines'
+SELECT @dimensionTableId= DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimTitleIIIStatuses'
+delete from app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId
