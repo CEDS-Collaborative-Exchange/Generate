@@ -63828,7 +63828,7 @@
 
 	GO
 
--- JW 5/11/2023
+-- CIID-5765 JW
 alter table RDS.DimK12StudentStatuses 
 	drop 
 		column PlacementStatusCode,
@@ -63841,7 +63841,7 @@ alter table RDS.DimK12StudentStatuses
 		column PlacementTypeId
 	GO	
 
--- JW 5/11/2023
+-- CIID-5765 JW
 alter table RDS.ReportEdFactsK12StudentCounts
 	drop
 		column PLACEMENTSTATUS,

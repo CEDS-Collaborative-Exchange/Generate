@@ -25,6 +25,7 @@ AS
 			WHEN 'QAD36' THEN 1 
 			ELSE -1
 		  END AS MobilityStatus36moMap
+-- CIID-5765 JW
 --		, PlacementStatusCode
 --		, CASE PlacementStatusCode
 --			WHEN 'Placed' THEN 1 

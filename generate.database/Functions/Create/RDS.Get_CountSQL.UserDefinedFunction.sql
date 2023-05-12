@@ -3588,6 +3588,7 @@ BEGIN
 					on fact.K12EnrollmentStatusId = enrStatus.DimK12EnrollmentStatusId
 				where cteStatus.CteProgramCode =''CTECONC'' 
 				and enrStatus.ExitOrWithdrawalTypeCode = ''01921'' 
+				-- CIID-5765 JW
 				--and studentStatus.PlacementStatusCode <> ''MISSING''
 			) rules
 				on fact.K12StudentId = rules.K12StudentId 
@@ -3627,6 +3628,7 @@ BEGIN
 					on fact.K12EnrollmentStatusId = enrStatus.DimK12EnrollmentStatusId
 				where cteStatus.CteProgramCode =''CTECONC'' 
 				and enrStatus.ExitOrWithdrawalTypeCode = ''01921'' 
+				-- CIID-5765 JW
 				--and studentStatus.PlacementTypeCode <> ''MISSING''
 			) rules
 				on fact.K12StudentId = rules.K12StudentId  
