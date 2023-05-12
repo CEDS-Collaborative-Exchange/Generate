@@ -1,3 +1,6 @@
+SET NOCOUNT ON;
+GO 
+
 DECLARE @factTableId as INT, @dimensionTableId as INT, @newDimensionTableId as INT
 
 SELECT @factTableId = FactTableId FROM app.FactTables WHERE FactTableName = 'FactK12ProgramParticipations'

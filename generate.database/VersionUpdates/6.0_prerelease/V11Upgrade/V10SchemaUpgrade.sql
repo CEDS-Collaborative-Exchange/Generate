@@ -38367,43 +38367,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[StaffFTE].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[StaffFullTimeEquivalency].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The ratio between the hours of work expected in a position and the hours of work normally expected in a full-time position in the same setting.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'StaffFTE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The ratio between the hours of work expected in a position and the hours of work normally expected in a full-time position in the same setting.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'StaffFullTimeEquivalency';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[StaffFTE].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[StaffFullTimeEquivalency].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'StaffFullTimeEquivalency', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'StaffFTE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'StaffFullTimeEquivalency', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'StaffFullTimeEquivalency';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[StaffFTE].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[StaffFullTimeEquivalency].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000118', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'StaffFTE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000118', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'StaffFullTimeEquivalency';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[StaffFTE].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[StaffFullTimeEquivalency].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17118', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'StaffFTE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17118', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'StaffFullTimeEquivalency';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[StaffFTE].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[StaffFullTimeEquivalency].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'StaffFTE';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'StaffFullTimeEquivalency';
 
 
 	GO

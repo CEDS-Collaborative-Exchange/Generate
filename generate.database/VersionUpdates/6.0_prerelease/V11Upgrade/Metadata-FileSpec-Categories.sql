@@ -1,3 +1,6 @@
+	SET NOCOUNT ON;
+	GO 
+
 delete co
 from app.CategorySets cs 
 inner join app.CategorySet_Categories csc on cs.CategorySetId = csc.CategorySetId
