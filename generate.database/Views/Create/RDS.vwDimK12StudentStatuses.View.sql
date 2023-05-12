@@ -25,14 +25,14 @@ AS
 			WHEN 'QAD36' THEN 1 
 			ELSE -1
 		  END AS MobilityStatus36moMap
-		, PlacementStatusCode
-		, CASE PlacementStatusCode
-			WHEN 'Placed' THEN 1 
-			WHEN 'NotPlaced' THEN 0 
-			ELSE -1
-		  END AS PlacementStatusMap
-		, PlacementTypeCode		--ADVTRAIN, EMPLOYMENT, MILITARY, POSTSEC
-		, PlacementTypeCode AS PlacementTypeMap
+--		, PlacementStatusCode
+--		, CASE PlacementStatusCode
+--			WHEN 'Placed' THEN 1 
+--			WHEN 'NotPlaced' THEN 0 
+--			ELSE -1
+--		  END AS PlacementStatusMap
+--		, PlacementTypeCode		--ADVTRAIN, EMPLOYMENT, MILITARY, POSTSEC
+--		, PlacementTypeCode AS PlacementTypeMap
 --
 
 		--, NSLPDirectCertificationIndicatorCode

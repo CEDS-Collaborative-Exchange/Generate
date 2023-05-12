@@ -63827,6 +63827,30 @@
 
 
 	GO
+
+-- JW 5/11/2023
+alter table RDS.DimK12StudentStatuses 
+	drop 
+		column PlacementStatusCode,
+		column PlacementStatusDescription,
+		column PlacementStatusEdFactsCode,
+		column PlacementStatusId,
+		column PlacementTypeCode,
+		column PlacementTypeDescription,
+		column PlacementTypeEdFactsCode,
+		column PlacementTypeId
+	GO	
+
+-- JW 5/11/2023
+alter table RDS.ReportEdFactsK12StudentCounts
+	drop
+		column PLACEMENTSTATUS,
+		column PLACEMENTTYPE
+
+GO
+
+
+
 	PRINT N'Update complete.';
 
 
