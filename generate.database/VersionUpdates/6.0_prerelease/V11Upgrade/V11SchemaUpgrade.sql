@@ -283,6 +283,23 @@ PRINT N'Rename refactoring operation with key a15a9d6d-8e47-46df-be81-fea62393f6
 GO
 PRINT N'The following operation was generated from a refactoring log file bae0d115-83cc-4a9a-8047-a4077a10a082';
 
+
+GO
+PRINT N'Create Index IX_DimAeDemographics_Codes';
+
+GO
+CREATE NONCLUSTERED INDEX [IX_DimAeDemographics_Codes]
+ON [RDS].[DimAeDemographics] ([EconomicDisadvantageStatusCode],[HomelessnessStatusCode],[EnglishLearnerStatusCode],[MigrantStatusCode],[MilitaryConnectedStudentIndicatorCode],[HomelessPrimaryNighttimeResidenceCode],[HomelessUnaccompaniedYouthStatusCode],[SexCode])
+
+GO
+PRINT N'Create Index IX_DimDisabilityStatuses_Codes';
+
+
+CREATE NONCLUSTERED INDEX [IX_DimDisabilityStatuses_Codes]
+ON [RDS].[DimDisabilityStatuses] ([DisabilityStatusCode],[Section504StatusCode],[DisabilityConditionTypeCode],[DisabilityDeterminationSourceTypeCode])
+
+
+GO
 PRINT N'Rename [RDS].[DimResponsibleSchoolTypes].[ResponsibleSchoolTypeCode] to ResponsibleSchoolTypeAccountability';
 
 
@@ -6820,7 +6837,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_IdeaDisabilityType] (
     [ResponsibleSchoolTypeIndividualizedEducationProgram]   BIT             NULL,
     [ResponsibleSchoolTypeTransportation]                   BIT             NULL,
     [ResponsibleSchoolTypeIepServiceProvider]               BIT             NULL,
-    [IdeaDisabilityType]                                    NVARCHAR (100)  NOT NULL,
+    [IdeaDisabilityTypeCode]                                    NVARCHAR (100)  NOT NULL,
     [IsPrimaryDisability]   							    BIT             NULL,	
     [IsSecondaryDisability]	    						    BIT             NULL,	
     [SchoolYear]                                            SMALLINT        NULL,
@@ -7628,6 +7645,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationSpecialEducation] (
     [ResponsibleSchoolTypeIepServiceProvider]             BIT            NULL,
     [ProgramParticipationBeginDate]                       DATE           NULL,
     [ProgramParticipationEndDate]                         DATE           NULL,
+    [IDEAIndicator]                                       BIT            NULL,
     [SpecialEducationExitReason]                          NVARCHAR (100) NULL,
     [IDEAEducationalEnvironmentForEarlyChildhood]         NVARCHAR (100) NULL,
     [IDEAEducationalEnvironmentForSchoolAge]              NVARCHAR (100) NULL,
@@ -8384,6 +8402,14 @@ GO
 CREATE NONCLUSTERED INDEX [IX_PsInstitution_DataCollectionName_SchoollYear_InstitutionIpedsUnitId]
     ON [Staging].[PsInstitution]([DataCollectionName] ASC, [SchoolYear] ASC, [InstitutionIpedsUnitId] ASC)
     INCLUDE([MostPrevalentLevelOfInstitutionCode]);
+
+GO
+PRINT N'Creating Index [RDS].[DimAeStudentStatuses].[IX_DimAeStudentStatuses_Codes]...';
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_DimAeStudentStatuses_Codes]
+ON [RDS].[DimAeStudentStatuses] ([AeFunctioningLevelAtIntakeCode],[AeFunctioningLevelAtPosttestCode],[AePostsecondaryTransitionActionCode],[EmployedWhileEnrolledCode],[EmployedAfterExitCode],[AdultEducationCredentialAttainmentPostsecondaryEnrollmentIndicatorCode],[AdultEducationCredentialAttainmentEmployedIndicatorCode],[AdultEducationCredentialAttainmentPostsecondaryCredentialIndicatorCode])
 
 
 GO
