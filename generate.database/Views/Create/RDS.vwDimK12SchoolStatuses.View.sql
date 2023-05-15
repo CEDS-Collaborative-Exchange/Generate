@@ -11,7 +11,11 @@ AS
 		, CASE SharedTimeIndicatorCode
 			WHEN 'Yes' THEN 'Yes' 
 			WHEN 'No' THEN 'No'
+			-- CIID-5783 JW -------------
+			-- ELSE NULL 
 			ELSE 'MISSING'
+			----------------------------
+
 		END AS SharedTimeIndicatorMap
 		, VirtualSchoolStatusCode
 		, sssrd3.InputCode AS VirtualSchoolStatusMap

@@ -1,3 +1,5 @@
+SET NOCOUNT ON;
+
 DECLARE @dimensionTableId as INT, @categoryId as INT, @dimensionId as INT
 
 SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimEconomicallyDisadvantagedStatuses'

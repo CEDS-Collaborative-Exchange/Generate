@@ -331,2388 +331,2308 @@ PRINT N'The following operation was generated from a refactoring log file ce010d
 
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimBuildingSpaceDesignTypes].[BuildingSpaceDesignTypeCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimBuildingSpaceDesignTypes', @level2type = N'COLUMN', @level2name = N'BuildingSpaceDesignTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimBuildingSpaceDesignTypes].[BuildingSpaceDesignTypeCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimBuildingSpaceDesignTypes', @level2type = N'COLUMN', @level2name = N'BuildingSpaceDesignTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimBuildingSpaceDesignTypes].[BuildingSpaceDesignTypeCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimBuildingSpaceDesignTypes', @level2type = N'COLUMN', @level2name = N'BuildingSpaceDesignTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimBuildingSpaceDesignTypes].[BuildingSpaceDesignTypeCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimBuildingSpaceDesignTypes', @level2type = N'COLUMN', @level2name = N'BuildingSpaceDesignTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimBuildingSpaceDesignTypes].[BuildingSpaceDesignTypeCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimBuildingSpaceDesignTypes', @level2type = N'COLUMN', @level2name = N'BuildingSpaceDesignTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimBuildingSpaceDesignTypes].[BuildingSpaceDesignTypeDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimBuildingSpaceDesignTypes', @level2type = N'COLUMN', @level2name = N'BuildingSpaceDesignTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimBuildingSpaceDesignTypes].[BuildingSpaceDesignTypeDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeDescription].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimBuildingSpaceDesignTypes', @level2type = N'COLUMN', @level2name = N'BuildingSpaceDesignTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimBuildingSpaceDesignTypes].[BuildingSpaceDesignTypeDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimBuildingSpaceDesignTypes', @level2type = N'COLUMN', @level2name = N'BuildingSpaceDesignTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimBuildingSpaceDesignTypes].[BuildingSpaceDesignTypeDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimBuildingSpaceDesignTypes', @level2type = N'COLUMN', @level2name = N'BuildingSpaceDesignTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimBuildingSpaceDesignTypes].[BuildingSpaceDesignTypeDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimBuildingSpaceDesignTypes', @level2type = N'COLUMN', @level2name = N'BuildingSpaceDesignTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeDescription].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityConditionTypeDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityConditionTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusDescription].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityDeterminationSourceTypeDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityDeterminationSourceTypeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusDescription].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[DisabilityStatusDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'DisabilityStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusEdFactsCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusEdFactsCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusEdFactsCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusEdFactsCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusEdFactsCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusEdFactsCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusEdFactsCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusEdFactsCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusEdFactsCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusEdFactsCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeCode].[CEDS_ElementTechnicalName]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusEdFactsCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusEdFactsCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusEdFactsCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeDescription].[CEDS_ElementTechnicalName]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusEdFactsCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusEdFactsCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusEdFactsCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusEdFactsCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusEdFactsCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimDisabilityStatuses].[Section504StatusEdFactsCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimDisabilityStatuses', @level2type = N'COLUMN', @level2name = N'Section504StatusEdFactsCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeEdFactsCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeEdFactsCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeCode].[CEDS_ElementTechnicalName]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeEdFactsCode].[CEDS_ElementTechnicalName]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeEdFactsCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeEdFactsCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeEdFactsCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeEdFactsCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeEdFactsCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeEdFactsCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeEdFactsCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[AeStudentStudentIdentifierState].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'AeStudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeDescription].[CEDS_ElementTechnicalName]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[AeStudentStudentIdentifierState].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'AeStudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[AeStudentStudentIdentifierState].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'AeStudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[AeStudentStudentIdentifierState].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'AeStudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[AeStudentStudentIdentifierState].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'AeStudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeEdFactsCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELChildChildIdentifierState].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeEdFactsCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELChildChildIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeEdFactsCode].[CEDS_ElementTechnicalName]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELChildChildIdentifierState].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeEdFactsCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELChildChildIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeEdFactsCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELChildChildIdentifierState].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeEdFactsCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELChildChildIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeEdFactsCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELChildChildIdentifierState].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeEdFactsCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELChildChildIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimLanguages].[Iso6392LanguageCodeEdFactsCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELChildChildIdentifierState].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimLanguages', @level2type = N'COLUMN', @level2name = N'Iso6392LanguageCodeEdFactsCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELChildChildIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[AeStudentStudentIdentifierState].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELStaffStaffMemberIdentifierState].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'AeStudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELStaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[AeStudentStudentIdentifierState].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELStaffStaffMemberIdentifierState].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'AeStudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELStaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[AeStudentStudentIdentifierState].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELStaffStaffMemberIdentifierState].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'AeStudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELStaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[AeStudentStudentIdentifierState].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELStaffStaffMemberIdentifierState].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'AeStudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELStaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[AeStudentStudentIdentifierState].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELStaffStaffMemberIdentifierState].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'AeStudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELStaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELChildChildIdentifierState].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierDistrict].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELChildChildIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierDistrict';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELChildChildIdentifierState].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierDistrict].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELChildChildIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierDistrict';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELChildChildIdentifierState].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierDistrict].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELChildChildIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierDistrict';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELChildChildIdentifierState].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierDistrict].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELChildChildIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierDistrict';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELChildChildIdentifierState].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierDistrict].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELChildChildIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierDistrict';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELStaffStaffMemberIdentifierState].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierState].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELStaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELStaffStaffMemberIdentifierState].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierState].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELStaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELStaffStaffMemberIdentifierState].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierState].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELStaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELStaffStaffMemberIdentifierState].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierState].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELStaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[ELStaffStaffMemberIdentifierState].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierState].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'ELStaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierDistrict].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierDistrict].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierDistrict';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierDistrict';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierDistrict].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierDistrict].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierDistrict';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierDistrict';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierDistrict].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierDistrict].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierDistrict';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierDistrict';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierDistrict].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierDistrict].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierDistrict';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierDistrict';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierDistrict].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierDistrict].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierDistrict';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierDistrict';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierState].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierNationalMigrant].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierNationalMigrant';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierState].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierNationalMigrant].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierNationalMigrant';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierState].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierNationalMigrant].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierNationalMigrant';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierState].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierNationalMigrant].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierNationalMigrant';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StaffStaffMemberIdentifierState].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierNationalMigrant].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierNationalMigrant';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierDistrict].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierState].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierDistrict';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierDistrict].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierState].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierDistrict';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierDistrict].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierState].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierDistrict';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierDistrict].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierState].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierDistrict';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierDistrict].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierState].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierDistrict';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierNationalMigrant].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStaffStaffMemberIdentifierState].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierNationalMigrant';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierNationalMigrant].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStaffStaffMemberIdentifierState].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierNationalMigrant';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierNationalMigrant].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStaffStaffMemberIdentifierState].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierNationalMigrant';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierNationalMigrant].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStaffStaffMemberIdentifierState].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierNationalMigrant';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierNationalMigrant].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStaffStaffMemberIdentifierState].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierNationalMigrant';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStaffStaffMemberIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierState].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStudentStudentIdentifierState].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierState].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStudentStudentIdentifierState].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierState].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStudentStudentIdentifierState].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierState].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStudentStudentIdentifierState].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[K12StudentStudentIdentifierState].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStudentStudentIdentifierState].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'K12StudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStudentStudentIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStaffStaffMemberIdentifierState].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[WorkforceProgramParticipantPersonIdentifierState].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'WorkforceProgramParticipantPersonIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStaffStaffMemberIdentifierState].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[WorkforceProgramParticipantPersonIdentifierState].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'WorkforceProgramParticipantPersonIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStaffStaffMemberIdentifierState].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[WorkforceProgramParticipantPersonIdentifierState].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'WorkforceProgramParticipantPersonIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStaffStaffMemberIdentifierState].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[WorkforceProgramParticipantPersonIdentifierState].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'WorkforceProgramParticipantPersonIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStaffStaffMemberIdentifierState].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[WorkforceProgramParticipantPersonIdentifierState].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStaffStaffMemberIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'WorkforceProgramParticipantPersonIdentifierState';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStudentStudentIdentifierState].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[BirthDate].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'BirthDate';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStudentStudentIdentifierState].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[BirthDate].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'BirthDate';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStudentStudentIdentifierState].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[BirthDate].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'BirthDate';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStudentStudentIdentifierState].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[BirthDate].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'BirthDate';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PsStudentStudentIdentifierState].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[BirthDate].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PsStudentStudentIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'BirthDate';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[WorkforceProgramParticipantPersonIdentifierState].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[FirstName].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'WorkforceProgramParticipantPersonIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'FirstName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[WorkforceProgramParticipantPersonIdentifierState].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[FirstName].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'WorkforceProgramParticipantPersonIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'FirstName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[WorkforceProgramParticipantPersonIdentifierState].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[FirstName].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'WorkforceProgramParticipantPersonIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'FirstName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[WorkforceProgramParticipantPersonIdentifierState].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[FirstName].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'WorkforceProgramParticipantPersonIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'FirstName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[WorkforceProgramParticipantPersonIdentifierState].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[FirstName].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'WorkforceProgramParticipantPersonIdentifierState';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'FirstName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[BirthDate].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[LastOrSurname].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'BirthDate';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'LastOrSurname';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[BirthDate].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[LastOrSurname].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'BirthDate';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'LastOrSurname';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[BirthDate].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[LastOrSurname].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'BirthDate';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'LastOrSurname';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[BirthDate].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[LastOrSurname].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'BirthDate';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'LastOrSurname';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[BirthDate].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[LastOrSurname].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'BirthDate';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'LastOrSurname';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[FirstName].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[MiddleName].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'FirstName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'MiddleName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[FirstName].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[MiddleName].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'FirstName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'MiddleName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[FirstName].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[MiddleName].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'FirstName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'MiddleName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[FirstName].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[MiddleName].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'FirstName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'MiddleName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[FirstName].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[MiddleName].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'FirstName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'MiddleName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[LastOrSurname].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PersonIdentifierDriversLicense].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'LastOrSurname';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PersonIdentifierDriversLicense';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[LastOrSurname].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PersonIdentifierDriversLicense].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'LastOrSurname';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PersonIdentifierDriversLicense';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[LastOrSurname].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PersonIdentifierDriversLicense].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'LastOrSurname';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PersonIdentifierDriversLicense';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[LastOrSurname].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PersonIdentifierDriversLicense].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'LastOrSurname';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PersonIdentifierDriversLicense';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[LastOrSurname].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[PersonIdentifierDriversLicense].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'LastOrSurname';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PersonIdentifierDriversLicense';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[MiddleName].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordEndDateTime].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'MiddleName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordEndDateTime';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[MiddleName].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordEndDateTime].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'MiddleName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordEndDateTime';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[MiddleName].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordEndDateTime].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'MiddleName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordEndDateTime';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[MiddleName].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordEndDateTime].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'MiddleName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordEndDateTime';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[MiddleName].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordEndDateTime].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'MiddleName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordEndDateTime';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PersonIdentifierDriversLicense].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordStartDateTime].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PersonIdentifierDriversLicense';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PersonIdentifierDriversLicense].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordStartDateTime].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PersonIdentifierDriversLicense';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PersonIdentifierDriversLicense].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordStartDateTime].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PersonIdentifierDriversLicense';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PersonIdentifierDriversLicense].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordStartDateTime].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PersonIdentifierDriversLicense';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[PersonIdentifierDriversLicense].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordStartDateTime].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'PersonIdentifierDriversLicense';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordEndDateTime].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordEndDateTime';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordEndDateTime].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordEndDateTime';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordEndDateTime].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordEndDateTime';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordEndDateTime].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordEndDateTime';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordEndDateTime].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordEndDateTime';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordStartDateTime].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordStartDateTime].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusDescription].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordStartDateTime].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordStartDateTime].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPeople].[RecordStartDateTime].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPeople', @level2type = N'COLUMN', @level2name = N'RecordStartDateTime';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusDescription].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EconomicDisadvantageStatusDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EconomicDisadvantageStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusDescription].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[EnglishLearnerStatusDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'EnglishLearnerStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceDescription].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessnessStatusDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessnessStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusDescription].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessPrimaryNighttimeResidenceDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessPrimaryNighttimeResidenceDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusDescription].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[HomelessUnaccompaniedYouthStatusDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'HomelessUnaccompaniedYouthStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorDescription].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorDescription].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorDescription].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorDescription].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MigrantStatusDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorDescription].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MigrantStatusDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorDescription';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressApartmentRoomOrSuiteNumber].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressApartmentRoomOrSuiteNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressApartmentRoomOrSuiteNumber].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressApartmentRoomOrSuiteNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressApartmentRoomOrSuiteNumber].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressApartmentRoomOrSuiteNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressApartmentRoomOrSuiteNumber].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressApartmentRoomOrSuiteNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressApartmentRoomOrSuiteNumber].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressApartmentRoomOrSuiteNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorDescription].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressCountyAnsiCodeCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorDescription].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressCountyAnsiCodeCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorDescription].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressCountyAnsiCodeCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorDescription].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressCountyAnsiCodeCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsDemographics].[MilitaryConnectedStudentIndicatorDescription].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressCountyAnsiCodeCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsDemographics', @level2type = N'COLUMN', @level2name = N'MilitaryConnectedStudentIndicatorDescription';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressApartmentRoomOrSuiteNumber].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStreetNumberAndName].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressApartmentRoomOrSuiteNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStreetNumberAndName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressApartmentRoomOrSuiteNumber].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStreetNumberAndName].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressApartmentRoomOrSuiteNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStreetNumberAndName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressApartmentRoomOrSuiteNumber].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStreetNumberAndName].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressApartmentRoomOrSuiteNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStreetNumberAndName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressApartmentRoomOrSuiteNumber].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStreetNumberAndName].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressApartmentRoomOrSuiteNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStreetNumberAndName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressApartmentRoomOrSuiteNumber].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStreetNumberAndName].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressApartmentRoomOrSuiteNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStreetNumberAndName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressCountyAnsiCodeCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressApartmentRoomOrSuiteNumber].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressApartmentRoomOrSuiteNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressCountyAnsiCodeCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressApartmentRoomOrSuiteNumber].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressApartmentRoomOrSuiteNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressCountyAnsiCodeCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressApartmentRoomOrSuiteNumber].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressApartmentRoomOrSuiteNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressCountyAnsiCodeCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressApartmentRoomOrSuiteNumber].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressApartmentRoomOrSuiteNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressCountyAnsiCodeCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressApartmentRoomOrSuiteNumber].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressApartmentRoomOrSuiteNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStreetNumberAndName].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressCountyAnsiCodeCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStreetNumberAndName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStreetNumberAndName].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressCountyAnsiCodeCode].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStreetNumberAndName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStreetNumberAndName].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressCountyAnsiCodeCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStreetNumberAndName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStreetNumberAndName].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressCountyAnsiCodeCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStreetNumberAndName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStreetNumberAndName].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressCountyAnsiCodeCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStreetNumberAndName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressApartmentRoomOrSuiteNumber].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStreetNumberAndName].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressApartmentRoomOrSuiteNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStreetNumberAndName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressApartmentRoomOrSuiteNumber].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStreetNumberAndName].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressApartmentRoomOrSuiteNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStreetNumberAndName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressApartmentRoomOrSuiteNumber].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStreetNumberAndName].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressApartmentRoomOrSuiteNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStreetNumberAndName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressApartmentRoomOrSuiteNumber].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStreetNumberAndName].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressApartmentRoomOrSuiteNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStreetNumberAndName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressApartmentRoomOrSuiteNumber].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStreetNumberAndName].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressApartmentRoomOrSuiteNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStreetNumberAndName';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressCountyAnsiCodeCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStateAbbreviation].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStateAbbreviation';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressCountyAnsiCodeCode].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStateAbbreviation].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStateAbbreviation';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressCountyAnsiCodeCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStateAbbreviation].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStateAbbreviation';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressCountyAnsiCodeCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStateAbbreviation].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStateAbbreviation';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressCountyAnsiCodeCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStateAbbreviation].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStateAbbreviation';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStreetNumberAndName].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStateAbbreviation].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStreetNumberAndName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStateAbbreviation';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStreetNumberAndName].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStateAbbreviation].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStreetNumberAndName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStateAbbreviation';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStreetNumberAndName].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStateAbbreviation].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStreetNumberAndName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStateAbbreviation';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStreetNumberAndName].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStateAbbreviation].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStreetNumberAndName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStateAbbreviation';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStreetNumberAndName].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStateAbbreviation].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStreetNumberAndName';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStateAbbreviation';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStateAbbreviation].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[TelephoneNumber].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStateAbbreviation';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'TelephoneNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStateAbbreviation].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[TelephoneNumber].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStateAbbreviation';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'TelephoneNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStateAbbreviation].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[TelephoneNumber].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStateAbbreviation';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'TelephoneNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStateAbbreviation].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[TelephoneNumber].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStateAbbreviation';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'TelephoneNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[MailingAddressStateAbbreviation].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[TelephoneNumber].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'MailingAddressStateAbbreviation';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'TelephoneNumber';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStateAbbreviation].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[WebsiteAddress].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStateAbbreviation';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'WebsiteAddress';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStateAbbreviation].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[WebsiteAddress].[CEDS_Element]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStateAbbreviation';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'WebsiteAddress';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStateAbbreviation].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[WebsiteAddress].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStateAbbreviation';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'WebsiteAddress';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStateAbbreviation].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[WebsiteAddress].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStateAbbreviation';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'WebsiteAddress';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[PhysicalAddressStateAbbreviation].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[WebsiteAddress].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'PhysicalAddressStateAbbreviation';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'WebsiteAddress';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[TelephoneNumber].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[MailingAddressCountyAnsiCodeCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'TelephoneNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[TelephoneNumber].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[MailingAddressCountyAnsiCodeCode].[CEDS_ElementTechnicalName]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'TelephoneNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[TelephoneNumber].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[MailingAddressCountyAnsiCodeCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'TelephoneNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[TelephoneNumber].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[MailingAddressCountyAnsiCodeCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'TelephoneNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[TelephoneNumber].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[MailingAddressCountyAnsiCodeCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'TelephoneNumber';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[WebsiteAddress].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[PhysicalAddressCountyAnsiCodeCode].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'WebsiteAddress';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[WebsiteAddress].[CEDS_Element]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[PhysicalAddressCountyAnsiCodeCode].[CEDS_ElementTechnicalName]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Element', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'WebsiteAddress';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[WebsiteAddress].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[PhysicalAddressCountyAnsiCodeCode].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'WebsiteAddress';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[WebsiteAddress].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[PhysicalAddressCountyAnsiCodeCode].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'WebsiteAddress';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimPsInstitutions].[WebsiteAddress].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[PhysicalAddressCountyAnsiCodeCode].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimPsInstitutions', @level2type = N'COLUMN', @level2name = N'WebsiteAddress';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[MailingAddressCountyAnsiCodeCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[SeaOrganizationIdentifierSea].[CEDS_Def_Desc]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'SeaOrganizationIdentifierSea';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[MailingAddressCountyAnsiCodeCode].[CEDS_ElementTechnicalName]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[SeaOrganizationIdentifierSea].[CEDS_ElementTechnicalName]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'SeaOrganizationIdentifierSea';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[MailingAddressCountyAnsiCodeCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[SeaOrganizationIdentifierSea].[CEDS_GlobalId]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'SeaOrganizationIdentifierSea';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[MailingAddressCountyAnsiCodeCode].[CEDS_URL]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[SeaOrganizationIdentifierSea].[CEDS_URL]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'SeaOrganizationIdentifierSea';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[MailingAddressCountyAnsiCodeCode].[MS_Description]...';
+-- GO
+-- PRINT N'Dropping Extended Property [RDS].[DimSeas].[SeaOrganizationIdentifierSea].[MS_Description]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'MailingAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'SeaOrganizationIdentifierSea';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[PhysicalAddressCountyAnsiCodeCode].[CEDS_Def_Desc]...';
+-- GO
+-- PRINT N'Dropping Extended Property [Staging].[OrganizationCustomSchoolIndicatorStatusType].[TableType]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'TableType', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'OrganizationCustomSchoolIndicatorStatusType';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[PhysicalAddressCountyAnsiCodeCode].[CEDS_ElementTechnicalName]...';
+-- GO
+-- PRINT N'Dropping Extended Property [Staging].[OrganizationSchoolIndicatorStatus].[TableType]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'TableType', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'OrganizationSchoolIndicatorStatus';
 
 
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[PhysicalAddressCountyAnsiCodeCode].[CEDS_GlobalId]...';
+-- GO
+-- PRINT N'Dropping Extended Property [Staging].[ProgramParticipationNorD].[RecordId].[Required]...';
 
 
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
-
-
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[PhysicalAddressCountyAnsiCodeCode].[CEDS_URL]...';
-
-
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
-
-
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[PhysicalAddressCountyAnsiCodeCode].[MS_Description]...';
-
-
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'PhysicalAddressCountyAnsiCodeCode';
-
-
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[SeaOrganizationIdentifierSea].[CEDS_Def_Desc]...';
-
-
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_Def_Desc', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'SeaOrganizationIdentifierSea';
-
-
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[SeaOrganizationIdentifierSea].[CEDS_ElementTechnicalName]...';
-
-
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_ElementTechnicalName', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'SeaOrganizationIdentifierSea';
-
-
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[SeaOrganizationIdentifierSea].[CEDS_GlobalId]...';
-
-
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_GlobalId', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'SeaOrganizationIdentifierSea';
-
-
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[SeaOrganizationIdentifierSea].[CEDS_URL]...';
-
-
-GO
-EXECUTE sp_dropextendedproperty @name = N'CEDS_URL', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'SeaOrganizationIdentifierSea';
-
-
-GO
-PRINT N'Dropping Extended Property [RDS].[DimSeas].[SeaOrganizationIdentifierSea].[MS_Description]...';
-
-
-GO
-EXECUTE sp_dropextendedproperty @name = N'MS_Description', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimSeas', @level2type = N'COLUMN', @level2name = N'SeaOrganizationIdentifierSea';
-
-
-GO
-PRINT N'Dropping Extended Property [Staging].[OrganizationCustomSchoolIndicatorStatusType].[TableType]...';
-
-
-GO
-EXECUTE sp_dropextendedproperty @name = N'TableType', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'OrganizationCustomSchoolIndicatorStatusType';
-
-
-GO
-PRINT N'Dropping Extended Property [Staging].[OrganizationSchoolIndicatorStatus].[TableType]...';
-
-
-GO
-EXECUTE sp_dropextendedproperty @name = N'TableType', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'OrganizationSchoolIndicatorStatus';
-
-
-GO
-PRINT N'Dropping Extended Property [Staging].[ProgramParticipationNorD].[RecordId].[Required]...';
-
-
-GO
-EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'ProgramParticipationNorD', @level2type = N'COLUMN', @level2name = N'RecordId';
+-- GO
+-- EXECUTE sp_dropextendedproperty @name = N'Required', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'ProgramParticipationNorD', @level2type = N'COLUMN', @level2name = N'RecordId';
 
 
 GO
@@ -2733,13 +2653,13 @@ DROP INDEX [IX_DimLanguages_LanguageEdFactsCode]
     ON [RDS].[DimLanguages];
 
 
-GO
-PRINT N'Dropping Index [Staging].[PsPersonRace].[IX_PsPersonRace_DataCollectionId]...';
+-- GO
+-- PRINT N'Dropping Index [Staging].[PsPersonRace].[IX_PsPersonRace_DataCollectionId]...';
 
 
-GO
-DROP INDEX [IX_PsPersonRace_DataCollectionId]
-    ON [Staging].[PsPersonRace];
+-- GO
+-- DROP INDEX [IX_PsPersonRace_DataCollectionId]
+--     ON [Staging].[PsPersonRace];
 
 
 GO
@@ -2796,13 +2716,13 @@ DROP INDEX [IX_Staging_K12Enrollment_DataCollectionName]
     ON [Staging].[K12Enrollment];
 
 
-GO
-PRINT N'Dropping Index [Staging].[K12Enrollment].[IX_Staging_K12Enrollment_DataCollectionName_WithIdentifiers]...';
+-- GO
+-- PRINT N'Dropping Index [Staging].[K12Enrollment].[IX_Staging_K12Enrollment_DataCollectionName_WithIdentifiers]...';
 
 
-GO
-DROP INDEX [IX_Staging_K12Enrollment_DataCollectionName_WithIdentifiers]
-    ON [Staging].[K12Enrollment];
+-- GO
+-- DROP INDEX [IX_Staging_K12Enrollment_DataCollectionName_WithIdentifiers]
+--     ON [Staging].[K12Enrollment];
 
 
 GO
@@ -3443,19 +3363,19 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12Student
 
 
 GO
-PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId]...';
+PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusStartDatePerkinsELId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusStartDatePerkinsELId];
 
 
 GO
-PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId]...';
+PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_StatusEndDatePerkinsELId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_StatusEndDatePerkinsELId];
 
 
 GO
@@ -5035,11 +4955,11 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12Student
 
 
 GO
-PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId]...';
+PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusEndDatePerkinsELId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsEnglishLearnerId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusEndDatePerkinsELId];
 
 
 GO
@@ -5091,11 +5011,11 @@ ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12Student
 
 
 GO
-PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId]...';
+PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentEnrollments_StatusStartDatePerkinsELId]...';
 
 
 GO
-ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsEnglishLearnerId];
+ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [FK_FactK12StudentEnrollments_StatusStartDatePerkinsELId];
 
 
 GO
@@ -5709,14 +5629,14 @@ EXECUTE sp_rename @objname = N'[RDS].[BridgeAeStudentEnrollmentRaces].[BridgeAeS
 
 
 GO
-PRINT N'Altering Table [RDS].[DimCteStatuses]...';
+-- PRINT N'Altering Table [RDS].[DimCteStatuses]...';
 
 
-GO
+-- GO
 
-ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusCode];
-ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusDescription];
-ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusEdFactsCode];
+-- ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusCode];
+-- ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusDescription];
+-- ALTER TABLE [RDS].[DimCteStatuses] DROP COLUMN [PerkinsLEPStatusEdFactsCode];
 
 
 GO
@@ -5891,6 +5811,8 @@ GO
 PRINT N'Starting rebuilding table [RDS].[FactK12StudentEnrollments]...';
 
 EXECUTE sp_rename @objname = N'[RDS].[FactK12StudentEnrollments].[K12SchoolAccountabilityId]', @newname = N'K12SchoolId', @objtype = N'COLUMN';
+EXECUTE sp_rename @objname = N'[RDS].[FactK12StudentEnrollments].[StatusStartDatePerkinsELId]', @newname = N'StatusStartDatePerkinsEnglishLearnerId', @objtype = N'COLUMN';
+EXECUTE sp_rename @objname = N'[RDS].[FactK12StudentEnrollments].[StatusEndDatePerkinsELId]', @newname = N'StatusEndDatePerkinsEnglishLearnerId', @objtype = N'COLUMN';
 ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP COLUMN [TitleIStatusId]
 
 ALTER TABLE [RDS].[FactK12StudentEnrollments] ADD 
@@ -8406,13 +8328,13 @@ CREATE TABLE [Staging].[Military] (
 
 
 GO
-PRINT N'Creating Index [Staging].[PsPersonRace].[IX_PsPersonRace_DataCollectionId]...';
+PRINT N'Creating Index [Staging].[PsPersonRace].[IX_PsPersonRace_DataCollectionName]...';
 
 
 GO
-CREATE NONCLUSTERED INDEX [IX_PsPersonRace_DataCollectionId]
-    ON [Staging].[PsPersonRace]([DataCollectionId] ASC)
-    INCLUDE([AcademicTermDesignator], [DataCollectionName], [InstitutionIpedsUnitId], [RaceType], [RecordEndDateTime], [RecordStartDateTime], [SchoolYear], [StudentIdentifierState]);
+CREATE NONCLUSTERED INDEX [IX_PsPersonRace_DataCollectionName]
+    ON [Staging].[PsPersonRace]([DataCollectionName] ASC)
+    INCLUDE([AcademicTermDesignator], [InstitutionIpedsUnitId], [RaceType], [RecordEndDateTime], [RecordStartDateTime], [SchoolYear], [StudentIdentifierState]);
 
 
 GO
@@ -8885,15 +8807,6 @@ PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentDisciplines_IdeaStatusId]..
 GO
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH NOCHECK
     ADD CONSTRAINT [FK_FactK12StudentDisciplines_IdeaStatusId] FOREIGN KEY ([IdeaStatusId]) REFERENCES [RDS].[DimIdeaStatuses] ([DimIdeaStatusId]);
-
-
-GO
-PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentDisciplines_IdeaDisabilityStatusId]...';
-
-
-GO
-ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH NOCHECK
-    ADD CONSTRAINT [FK_FactK12StudentDisciplines_IdeaDisabilityStatusId] FOREIGN KEY ([IdeaDisabilityStatusId]) REFERENCES [RDS].[DimIdeaDisabilityStatuses] ([DimIdeaDisabilityStatusId]);
 
 
 GO
@@ -11986,8 +11899,6 @@ ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_Fa
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_HomelessnessStatusId];
 
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_IdeaStatusId];
-
-ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_IdeaDisabilityStatusId];
 
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentDisciplines_IeuId];
 

@@ -4081,3 +4081,35 @@
 	DROP TABLE #CteGraduationRateInclusion
 	DROP TABLE #CteParticipant
 	DROP TABLE #CteConcentrator
+
+
+	-- Create MISSING record 
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimLanguages WHERE DimLanguageId = -1) BEGIN 
+		SET IDENTITY_INSERT RDS.DimLanguages ON;
+		INSERT INTO RDS.DimLanguages (DimLanguageId) VALUES (-1)
+		SET IDENTITY_INSERT RDS.DimLanguages OFF;  
+	END
+
+	Insert Into rds.DimLanguages
+	(
+		Iso6392LanguageCode
+		,Iso6392LanguageDescription
+		,Iso6392LanguageEdFactsCode
+		,Iso6393LanguageCode
+		,Iso6393LanguageDescription
+	)
+	Select 
+		iso2.CedsOptionSetCode as Iso6392LanguageCode, 
+		iso2.CedsOptionSetDescription as Iso6392LanguageDescription, 
+		iso2.CedsOptionSetCode as Iso6392LanguageEdFactsCode,
+		iso3.CedsOptionSetCode as Iso6393LanguageCode, 
+		iso3.CedsOptionSetDescription as Iso6393LanguageDescription
+	From CEDS.CedsOptionSetMapping iso2
+		full outer join CEDS.CedsOptionSetMapping iso3
+			on iso2.CedsOptionSetCode = iso3.CedsOptionSetCode
+		left outer join rds.DimLanguages dl
+			on isnull(dl.Iso6392LanguageCode,'')=isnull(iso2.CedsOptionSetCode,'')
+				and isnull(dl.Iso6393LanguageCode,'')=isnull(iso3.CedsOptionSetCode,'')
+	Where iso2.CedsGlobalId = '000317'
+		and iso3.CedsGlobalId = '001637'
+		and dl.DimLanguageId is null
