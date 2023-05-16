@@ -1,15 +1,15 @@
 CREATE VIEW [Debug].[vwExiting_FactTable] AS
 
 	SELECT	Fact.K12StudentId
-			,Students.StudentIdentifierState
+			,Students.K12StudentStudentIdentifierState
 			,Students.BirthDate
 			,Students.FirstName
 			,Students.LastOrSurname
 			,Students.MiddleName
-			,Students.SexCode
+			,Demo.SexCode
 			,LEAs.LeaIdentifierSea
 			,LEAs.LeaIdentifierNces
-			,LEAs.LeaName
+			,LEAs.LeaOrganizationName
 			,Schools.SchoolIdentifierSea
 			,Schools.NameOfInstitution
 
@@ -24,7 +24,7 @@ CREATE VIEW [Debug].[vwExiting_FactTable] AS
 			--Exit Reason
 			,IDEAStatus.SpecialEducationExitReasonEdFactsCode
 			--English Learner
-			,Demo.EnglishLearnerStatusEdFactsCode
+			,ELStatus.EnglishLearnerStatusEdFactsCode
 
  	FROM		RDS.FactK12StudentCounts   			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears			ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
@@ -35,6 +35,7 @@ CREATE VIEW [Debug].[vwExiting_FactTable] AS
 	LEFT JOIN	RDS.DimIdeaStatuses					IDEAStatus			ON Fact.IdeaStatusId			= IDEAStatus.DimIdeaStatusId
     LEFT JOIN   RDS.DimIdeaDisabilityTypes         	IDEADisability  	ON Fact.IdeaDisabilityTypeId   	= IDEADisability.DimIdeaDisabilityTypeId
 	LEFT JOIN	RDS.DimK12Demographics				Demo				ON Fact.K12DemographicId		= Demo.DimK12DemographicId
+	LEFT JOIN	RDS.DimEnglishLearnerStatuses		ELStatus			ON Fact.EnglishLearnerStatusId	= ELStatus.DimEnglishLearnerStatusId
 	LEFT JOIN	RDS.DimAges							Ages				ON Fact.AgeId					= Ages.DimAgeId      
 	LEFT JOIN	RDS.DimRaces						Races				ON Fact.RaceId					= Races.DimRaceId
 	LEFT JOIN	RDS.DimGradeLevels					Grades				ON Fact.GradeLevelId			= Grades.DimGradeLevelId
@@ -53,8 +54,9 @@ CREATE VIEW [Debug].[vwExiting_FactTable] AS
 	--AND Schools.SchoolIdentifierSea = '456'
 	--AND Ages.AgeEdFactsCode = '12'
 	--AND Grades.GradeLevelEdFactsCode = '07'
+	--AND Demo.SexCode = 'M'										--('Male','Female','NotSelected','MISSING')
 	--AND Races.RaceEdFactsCode = 'AM7'								--('AM7','AS7','BL7','PI7','WH7','MU7','HI7',NULL)
-	--AND Demo.EnglishLearnerStatusEdFactsCode = 'LEP'				--('LEP', 'NLEP', 'MISSING')
+	--AND ELStatus.EnglishLearnerStatusEdFactsCode = 'LEP'			--('LEP', 'NLEP', 'MISSING')
 	--AND IDEAStatus.IdeaIndicatorEdFactsCode = 'IDEA'				--('IDEA', 'MISSING')
 	--AND IDEAStatus.SpecialEducationExitReasonEdFactsCode = 'MKN'  --('GHS','GRADALTDPL','RC','RMA','MKC','TRAN','DROPOUT','D','MISSING')
 	--AND IDEADisability.IdeaDisabilityTypeEdFactsCode = 'EMN'		--('AUT','DB','DD','EMN','HI','ID','MD','OHI','OI','SLD','SLI','TBI','VI','MISSING')

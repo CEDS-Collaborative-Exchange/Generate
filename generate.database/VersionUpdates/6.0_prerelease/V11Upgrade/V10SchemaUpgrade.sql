@@ -13020,6 +13020,7 @@
 		[LEA_RecordEndDateTime]                                             	DATETIME       NULL,
 		[SchoolIdentifierSea]		                                           	VARCHAR (100)  NULL,
 		[PriorSchoolIdentifierSea]		                                     	VARCHAR (100)  NULL,
+		[School_PriorLeaIdentifierSea]	                                     	VARCHAR (100)  NULL,
 		[SchoolIdentifierNCES] 		                                           	VARCHAR (100)  NULL,
 		[SchoolOrganizationName]                                              	VARCHAR (256)  NULL,
 		[School_WebSiteAddress]                                             	VARCHAR (300)  NULL,
@@ -17399,36 +17400,43 @@
 
 
 	GO
-	EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganization_Identifier_EIN]', N'CharterSchoolManagementOrganizationOrganizationIdentifierEIN';
-	EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganization_Type]', N'CharterSchoolManagementOrganizationType';
-	EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganization_Name]', N'CharterSchoolManagementOrganizationOrganizationName';
-	EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganizationId]', N'CharterSchoolManagementOrganizationOrganizationId';
+	-- EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganization_Identifier_EIN]', N'CharterSchoolManagementOrganizationOrganizationIdentifierEIN';
+	-- EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganization_Type]', N'CharterSchoolManagementOrganizationType';
+	-- EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganization_Name]', N'CharterSchoolManagementOrganizationOrganizationName';
+	-- EXECUTE sp_rename N'[Staging].[CharterSchoolManagementOrganization].[CharterSchoolManagementOrganizationId]', N'CharterSchoolManagementOrganizationOrganizationId';
 
-	IF EXISTS (SELECT *
-                FROM INFORMATION_SCHEMA.COLUMNS
-                WHERE TABLE_SCHEMA = 'Staging'
-				AND TABLE_NAME = 'CharterSchoolManagementOrganization' 
-				AND COLUMN_NAME = 'DataCollectionId' 
-			)
-    BEGIN
-       ALTER TABLE Staging.CharterSchoolManagementOrganization DROP COLUMN DataCollectionId;
-    END;
+	-- IF EXISTS (SELECT *
+    --             FROM INFORMATION_SCHEMA.COLUMNS
+    --             WHERE TABLE_SCHEMA = 'Staging'
+	-- 			AND TABLE_NAME = 'CharterSchoolManagementOrganization' 
+	-- 			AND COLUMN_NAME = 'DataCollectionId' 
+	-- 		)
+    -- BEGIN
+    --    ALTER TABLE Staging.CharterSchoolManagementOrganization DROP COLUMN DataCollectionId;
+    -- END;
 
 
-	-- CREATE TABLE [Staging].[CharterSchoolManagementOrganization] (
-	-- 	[Id]                               								INT            IDENTITY (1, 1) NOT NULL,
-	-- 	[CharterSchoolManagementOrganizationOrganizationIdentifierEIN]  VARCHAR (100)  NULL,
-	-- 	[CharterSchoolManagementOrganizationType] 						VARCHAR (100)  NULL,
-	-- 	[CharterSchoolManagementOrganizationOrganizationName]			VARCHAR (100)  NULL,
-	-- 	[OrganizationIdentifier]							  			VARCHAR (100)  NULL,
-	-- 	[RecordStartDateTime]			            					DATETIME       NULL,
-	-- 	[RecordEndDateTime]             			            		DATETIME       NULL,
-	-- 	[DataCollectionName]               								NVARCHAR (100) NULL,
-	-- 	[CharterSchoolManagementOrganizationOrganizationId] 			INT            NOT NULL,
-	-- 	[CharterSchoolId]                  								INT            NOT NULL,
-	-- 	[RunDateTime]                      								DATETIME       NULL,
-	-- 	CONSTRAINT [PK_CharterSchoolManagementOrganization] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
-	-- );
+	CREATE TABLE [Staging].[tmp_ms_xx_CharterSchoolManagementOrganization] (
+		[Id]                               								INT            IDENTITY (1, 1) NOT NULL,
+		[CharterSchoolManagementOrganizationOrganizationIdentifierEIN]  VARCHAR (100)  NULL,
+		[CharterSchoolManagementOrganizationType] 						VARCHAR (100)  NULL,
+		[CharterSchoolManagementOrganizationOrganizationName]			VARCHAR (100)  NULL,
+		[OrganizationIdentifier]							  			VARCHAR (100)  NULL,
+		[SchoolYear]				                                    SMALLINT       NULL,
+		[RecordStartDateTime]			            					DATETIME       NULL,
+		[RecordEndDateTime]             			            		DATETIME       NULL,
+		[DataCollectionName]               								NVARCHAR (100) NULL,
+		[CharterSchoolManagementOrganizationOrganizationId] 			INT            NOT NULL,
+		[CharterSchoolId]                  								INT            NOT NULL,
+		[RunDateTime]                      								DATETIME       NULL,
+		CONSTRAINT [tmp_ms_xx_constraint_PK_CharterSchoolManagementOrganization] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
+	);
+
+	DROP TABLE [Staging].[CharterSchoolManagementOrganization];
+
+	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_CharterSchoolManagementOrganization]', N'CharterSchoolManagementOrganization';
+
+	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_CharterSchoolManagementOrganization]', N'PK_CharterSchoolManagementOrganization', N'OBJECT';
 
 
 	GO
@@ -17436,34 +17444,42 @@
 
 
 	GO
-	EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizer_Identifier_State]', N'CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea';
-	EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizerType]', N'CharterSchoolAuthorizingOrganizationType';
-	EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizer_Name]', N'CharterSchoolAuthorizingOrganizationOrganizationName';
-	EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizerOrganizationId]', N'CharterSchoolAuthorizingOrganizationOrganizationId';
+	-- EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizer_Identifier_State]', N'CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea';
+	-- EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizerType]', N'CharterSchoolAuthorizingOrganizationType';
+	-- EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizer_Name]', N'CharterSchoolAuthorizingOrganizationOrganizationName';
+	-- EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizerOrganizationId]', N'CharterSchoolAuthorizingOrganizationOrganizationId';
 
-	IF EXISTS (SELECT *
-                FROM INFORMATION_SCHEMA.COLUMNS
-                WHERE TABLE_SCHEMA = 'Staging'
-				AND TABLE_NAME = 'CharterSchoolAuthorizer' 
-				AND COLUMN_NAME = 'DataCollectionId' 
-			)
-    BEGIN
-       ALTER TABLE Staging.CharterSchoolAuthorizer DROP COLUMN DataCollectionId;
-    END;
+	-- IF EXISTS (SELECT *
+    --             FROM INFORMATION_SCHEMA.COLUMNS
+    --             WHERE TABLE_SCHEMA = 'Staging'
+	-- 			AND TABLE_NAME = 'CharterSchoolAuthorizer' 
+	-- 			AND COLUMN_NAME = 'DataCollectionId' 
+	-- 		)
+    -- BEGIN
+    --    ALTER TABLE Staging.CharterSchoolAuthorizer DROP COLUMN DataCollectionId;
+    -- END;
 
-	-- CREATE TABLE [Staging].[CharterSchoolAuthorizer] (
-	-- 	[Id]                               									INT            IDENTITY (1, 1) NOT NULL,
-	-- 	[CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea]  	VARCHAR (100)  NULL,
-	-- 	[CharterSchoolAuthorizingOrganizationType]							VARCHAR (100)  NULL,
-	-- 	[CharterSchoolAuthorizingOrganizationOrganizationName]				VARCHAR (100)  NULL,
-	-- 	[RecordStartDateTime]                       						DATETIME       NULL,
-	-- 	[RecordEndDateTime]                         						DATETIME       NULL,
-	-- 	[DataCollectionName]               									NVARCHAR (100) NULL,
-	-- 	[CharterSchoolId]                  									INT            NOT NULL,
-	-- 	[CharterSchoolAuthorizingOrganizationOrganizationId] 				INT            NOT NULL,
-	-- 	[RunDateTime]                      									DATETIME       NULL,
-	-- 	CONSTRAINT [PK_CharterSchoolAuthorizer] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
-	-- );
+	CREATE TABLE [Staging].[tmp_ms_xx_CharterSchoolAuthorizer] (
+		[Id]                               									INT            IDENTITY (1, 1) NOT NULL,
+		[CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea]  	VARCHAR (100)  NULL,
+		[CharterSchoolAuthorizingOrganizationType]							VARCHAR (100)  NULL,
+		[CharterSchoolAuthorizingOrganizationOrganizationName]				VARCHAR (100)  NULL,
+		[SchoolYear]					                                    SMALLINT       NULL,
+		[RecordStartDateTime]                       						DATETIME       NULL,
+		[RecordEndDateTime]                         						DATETIME       NULL,
+		[DataCollectionName]               									NVARCHAR (100) NULL,
+		[CharterSchoolId]                  									INT            NOT NULL,
+		[CharterSchoolAuthorizingOrganizationOrganizationId] 				INT            NOT NULL,
+		[RunDateTime]                      									DATETIME       NULL,
+		CONSTRAINT [tmp_ms_xx_constraint_PK_CharterSchoolAuthorizer] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
+	);
+
+
+	DROP TABLE [Staging].[CharterSchoolAuthorizer];
+
+	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_CharterSchoolAuthorizer]', N'CharterSchoolAuthorizer';
+
+	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_CharterSchoolAuthorizer]', N'PK_CharterSchoolAuthorizer', N'OBJECT';
 
 
 	GO
