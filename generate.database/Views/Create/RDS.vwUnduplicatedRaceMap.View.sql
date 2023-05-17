@@ -1,31 +1,31 @@
 CREATE   VIEW [RDS].[vwUnduplicatedRaceMap] 
 AS 
        SELECT 
-                Student_Identifier_State
-              , OrganizationIdentifier
-			  , OrganizationType
+              StudentIdentifierState
+              , LeaIdentifierSeaAccountability
+		, SchoolIdentifierSea
               , rdr.RaceCode
               , SchoolYear
        FROM (
               SELECT 
-                       Student_Identifier_State
-                     , OrganizationIdentifier
-                     , OrganizationType
+                     StudentIdentifierState
+                     , LeaIdentifierSeaAccountability
+                     , SchoolIdentifierSea
 					
                      , CASE 
                            WHEN COUNT(OutputCode) > 1 THEN 'TwoOrMoreRaces'
                            ELSE MAX(OutputCode)
                        END as RaceCode
                      , spr.SchoolYear
-              FROM staging.PersonRace spr
+              FROM staging.K12PersonRace spr
               JOIN Staging.SourceSystemReferenceData sssrd
                      ON spr.RaceType = sssrd.InputCode
                      AND spr.SchoolYear = sssrd.SchoolYear
                      AND sssrd.TableName = 'RefRace'
               GROUP BY
-                       Student_Identifier_State
-                     , OrganizationIdentifier
-                     , OrganizationType
+                     StudentIdentifierState
+                     , LeaIdentifierSeaAccountability
+                     , SchoolIdentifierSea
                      , spr.SchoolYear
 					 
        ) AS stagingRaces

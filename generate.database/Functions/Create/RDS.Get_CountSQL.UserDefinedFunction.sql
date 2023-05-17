@@ -1,4 +1,4 @@
-create FUNCTION [RDS].[Get_CountSQL]
+CREATE FUNCTION [RDS].[Get_CountSQL]
 (
 	@reportCode as nvarchar(150),
 	@reportLevel as nvarchar(10),
@@ -279,26 +279,26 @@ BEGIN
 	if @reportLevel = 'sea'
 	  begin
 		set @idFieldsSQL = '
-		s.StateANSICode as OrganizationNcesId,
-		s.SeaIdentifierState as OrganizationStateId,
-		s.SeaName as OrganizationName,
-		null as ParentOrganizationStateId'
+		s.StateANSICode as OrganizationIdentifierNces,
+		s.SeaOrganizationIdentifierSea as OrganizationIdentifierSea,
+		s.SeaOrganizationName as OrganizationName,
+		null as ParentOrganizationIdentifierSea'
 	end
 	else if @reportLevel = 'lea'
 	  begin
 		set @idFieldsSQL = '
-		s.LeaIdentifierNces as OrganizationNcesId,
-		s.LeaIdentifierState as OrganizationStateId,
-		s.LeaName as OrganizationName,
-		s.StateANSICode as ParentOrganizationStateId'
+		s.LeaIdentifierNces as OrganizationIdentifierNces,
+		s.LeaIdentifierSea as OrganizationIdentifierSea,
+		s.LeaOrganizationName as OrganizationName,
+		s.StateANSICode as ParentOrganizationIdentifierSea'
 	end
 	else if @reportLevel = 'sch'
 	  begin
 		set @idFieldsSQL = '
-			s.SchoolIdentifierNces as OrganizationNcesId,
-			s.SchoolIdentifierState as OrganizationStateId,
-			s.NameOfInstitution as OrganizationName,
-			s.LeaIdentifierState as ParentOrganizationStateId'
+			s.SchoolIdentifierNces as OrganizationIdentifierNces,
+			s.SchoolIdentifierSea as OrganizationIdentifierSea,
+			s.SeaOrganizationName as OrganizationName,
+			s.LeaIdentifierSea as ParentOrganizationIdentifierSea'
 	end
 
 	-- not Actual sql types
@@ -322,12 +322,12 @@ BEGIN
 				[StateANSICode] [nvarchar](100) NULL,
 				[StateAbbreviationCode] [nvarchar](100) NULL,
 				[StateAbbreviationDescription] [nvarchar](500) NULL,
-				[OrganizationNcesId] [nvarchar](100) NULL,
-				[OrganizationStateId] [nvarchar](100) NULL,
+				[OrganizationIdentifierNces] [nvarchar](100) NULL,
+				[OrganizationIdentifierSea] [nvarchar](100) NULL,
 				[OrganizationName] [nvarchar](1000) NULL,
-				[ParentOrganizationStateId] [nvarchar](100) NULL
+				[ParentOrganizationIdentifierSea] [nvarchar](100) NULL
 			)
-			CREATE INDEX IDX_CAT_Organizations ON #CAT_Organizations (OrganizationStateId)
+			CREATE INDEX IDX_CAT_Organizations ON #CAT_Organizations (OrganizationIdentifierSea)
 
 			truncate table #CAT_Organizations
 
@@ -344,14 +344,14 @@ BEGIN
 			' inner join (
 			select ' +  
 			case when @reportLevel = 'lea' 
-				 then 'LEAIdentifierState as stateIdentifier, max(OperationalStatusEffectiveDate) as OperationalStatusEffectiveDate'  
-				 else 'SchoolIdentifierState as stateIdentifier, max(SchoolOperationalStatusEffectiveDate) as OperationalStatusEffectiveDate' end  +  
+				 then 'LEAIdentifierSea as stateIdentifier, max(OperationalStatusEffectiveDate) as OperationalStatusEffectiveDate'  
+				 else 'SchoolIdentifierSea as stateIdentifier, max(SchoolOperationalStatusEffectiveDate) as OperationalStatusEffectiveDate' end  +  
 			' from rds.FactOrganizationCounts f inner join ' + case when @reportLevel = 'lea' then 'rds.DimLeas l'  else 'rds.DimK12Schools l' end  +  
 			' on ' +  case when @reportLevel = 'lea' then 'f.LeaId = l.DimLeaId '  else 'f.K12SchoolId = l.DimK12SchoolId ' end  +
 			' where f.SchoolYearId = ' + CAST(@dimDateId as varchar(10)) +
-			' group by ' +  case when @reportLevel = 'lea' then 'LEAIdentifierState'  else 'SchoolIdentifierState' end + 
+			' group by ' +  case when @reportLevel = 'lea' then 'LEAIdentifierSea'  else 'SchoolIdentifierSea' end + 
 			') status on status.OperationalStatusEffectiveDate = ' +  case when @reportLevel = 'lea' then 's.OperationalStatusEffectiveDate'  else 's.SchoolOperationalStatusEffectiveDate' end 
-			+ '	AND status.stateIdentifier = s.' +  case when @reportLevel = 'lea' then 'LEAIdentifierState'  else 'SchoolIdentifierState' end
+			+ '	AND status.stateIdentifier = s.' +  case when @reportLevel = 'lea' then 'LEAIdentifierSea'  else 'SchoolIdentifierSea' end
 			+ ' where s.ReportedFederally = 1 and ' + case when @reportLevel = 'lea' then 's.DimLeaId <> -1 
 			and s.LEAOperationalStatus not in (''Closed'', ''Future'', ''Inactive'', ''MISSING'')'
 			else 's.DimK12SchoolId <> -1 
@@ -3588,7 +3588,8 @@ BEGIN
 					on fact.K12EnrollmentStatusId = enrStatus.DimK12EnrollmentStatusId
 				where cteStatus.CteProgramCode =''CTECONC'' 
 				and enrStatus.ExitOrWithdrawalTypeCode = ''01921'' 
-				and studentStatus.PlacementStatusCode <> ''MISSING''
+				-- CIID-5765 JW
+				--and studentStatus.PlacementStatusCode <> ''MISSING''
 			) rules
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.CteStatusId = rules.DimCteStatusId 
@@ -3627,7 +3628,8 @@ BEGIN
 					on fact.K12EnrollmentStatusId = enrStatus.DimK12EnrollmentStatusId
 				where cteStatus.CteProgramCode =''CTECONC'' 
 				and enrStatus.ExitOrWithdrawalTypeCode = ''01921'' 
-				and studentStatus.PlacementTypeCode <> ''MISSING''
+				-- CIID-5765 JW
+				--and studentStatus.PlacementTypeCode <> ''MISSING''
 			) rules
 				on fact.K12StudentId = rules.K12StudentId  
 				and fact.CteStatusId = rules.DimCteStatusId 
@@ -3894,17 +3896,15 @@ BEGIN
 					and fact.SchoolYearId = @dimDateId
 					and fact.FactTypeId = @dimFactTypeId
 					and fact.LeaId <> -1
-				inner join rds.DimGradeLevels gl 
-					on fact.GradeLevelId = gl.DimGradeLevelId
-				inner join (
-					select distinct OrganizationStateId, GRADELEVEL 
-					from rds.FactOrganizationCountReports c39 
-					where c39.ReportCode = ''C039''
-						and c39.reportLevel = ''' + @reportLevel +
-						''' and c39.reportyear = ''' + @reportyear + '''										
-				) grades 
-					on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-					and grades.OrganizationStateId = s.LeaIdentifierState) '
+					inner join rds.DimGradeLevels gl 
+						on fact.GradeLevelId = gl.DimGradeLevelId
+					inner join (
+								SELECT distinct OrganizationStateId, GRADELEVEL 
+								From rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''C039''
+									and c39.reportLevel = ''' + @reportLevel +
+									''' and c39.reportyear = ''' + @reportyear + '''										
+								) grades on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
+									and grades.OrganizationStateId = s.LeaIdentifierState) '
 		END
 		ELSE if @reportLevel in ('sch')
 		BEGIN 
@@ -5239,10 +5239,10 @@ BEGIN
 						StateANSICode,
 						StateCode,
 						StateName,
-						OrganizationNcesId,
-						OrganizationStateId,
+						OrganizationIdentifierNces,
+						OrganizationIdentifierSea,
 						OrganizationName,
-						ParentOrganizationStateId,
+						ParentOrganizationIdentifierSea,
 						TableTypeAbbrv,
 						TotalIndicator
 						' + @sqlCategoryFields + ',
@@ -5259,7 +5259,7 @@ BEGIN
 				end
 				else if(@reportCode in ('c150'))
 				begin
-					set @sql = @sql + ',StudentRate'
+					set @sql = @sql + ',ADJUSTEDCOHORTGRADUATIONRATE'
 				end
 
 				set @sql = @sql + '
@@ -5273,10 +5273,10 @@ BEGIN
 						sea.StateANSICode,
 						sea.StateAbbreviationCode,
 						sea.StateAbbreviationDescription,
-						isnull(sea.StateANSICode,'''') as OrganizationNcesId,
-						sea.SeaIdentifierState as OrganizationStateId,
+						isnull(sea.StateANSICode,'''') as OrganizationIdentifierNces,
+						sea.SeaIdentifierState as OrganizationIdentifierSea,
 						sea.SeaName as OrganizationName,
-						null as ParentOrganizationStateId,
+						null as ParentOrganizationIdentifierSea,
 						''' + @tableTypeAbbrv + ''' as TableTypeAbbrv,
 						''' + @totalIndicator + ''' as TotalIndicator' +
 						@sqlCategoryFields + ', 
@@ -5306,7 +5306,7 @@ BEGIN
 
 				if(@reportCode in ('c150'))
 					begin
-						set @sql = @sql + ', cast(' + @sumOperation + ' / @CohortTotal * 100 as Decimal(9,2)) as StudentRate '
+						set @sql = @sql + ', cast(' + @sumOperation + ' / @CohortTotal * 100 as Decimal(9,2)) as ADJUSTEDCOHORTGRADUATIONRATE '
 					end
 
 				set @sql = @sql + '
@@ -5391,10 +5391,10 @@ BEGIN
 								StateANSICode,
 								StateCode,
 								StateName,
-								OrganizationNcesId,
-								OrganizationStateId,
+								OrganizationIdentifierNces,
+								OrganizationIdentifierSea,
 								OrganizationName,
-								ParentOrganizationStateId,
+								ParentOrganizationIdentifierSea,
 								TableTypeAbbrv,
 								TotalIndicator
 								' + @sqlCategoryFields + ',
@@ -5409,7 +5409,7 @@ BEGIN
 						-- add StudentRate  field for c150
 						if(@reportCode in ('c150'))
 							begin
-								set @sql = @sql + ',StudentRate'
+								set @sql = @sql + ',ADJUSTEDCOHORTGRADUATIONRATE'
 							end
 			
 						set @sql = @sql + '
@@ -5423,10 +5423,10 @@ BEGIN
 								lea.StateANSICode,
 								lea.StateAbbreviationCode,
 								lea.StateAbbreviationDescription,
-								isnull(lea.LeaIdentifierNces,'''') as OrganizationNcesId,
-								lea.LeaIdentifierState as OrganizationStateId,
+								isnull(lea.LeaIdentifierNces,'''') as OrganizationIdentifierNces,
+								lea.LeaIdentifierState as OrganizationIdentifierSea,
 								lea.LeaName as OrganizationName,
-								lea.StateANSICode as ParentOrganizationStateId,
+								lea.StateANSICode as ParentOrganizationIdentifierSea,
 								''' + @tableTypeAbbrv + ''' as TableTypeAbbrv,
 								''' + @totalIndicator + ''' as TotalIndicator' +
 								@sqlCategoryFields + ', 
@@ -5448,7 +5448,7 @@ BEGIN
 						-- add calculation for StudentRate for c150
 						if(@reportCode in ('c150'))
 							begin
-								set @sql = @sql + ', cast(' + @sumOperation + ' / @CohortTotal * 100 as Decimal(9,2)) as StudentRate '
+								set @sql = @sql + ', cast(' + @sumOperation + ' / @CohortTotal * 100 as Decimal(9,2)) as ADJUSTEDCOHORTGRADUATIONRATE '
 							end
 
 						if @categorySetCode = 'TOT'
@@ -5531,10 +5531,10 @@ BEGIN
 								StateANSICode,
 								StateCode,
 								StateName,
-								OrganizationNcesId,
-								OrganizationStateId,
+								OrganizationIdentifierNces,
+								OrganizationIdentifierSea,
 								OrganizationName,
-								ParentOrganizationStateId,
+								ParentOrganizationIdentifierSea,
 								TableTypeAbbrv,
 								TotalIndicator
 								' + @sqlCategoryFields + ',
@@ -5561,10 +5561,10 @@ BEGIN
 									lea.StateANSICode,
 									lea.StateAbbreviationCode,
 									lea.StateAbbreviationDescription,
-									isnull(lea.LeaIdentifierNces,'''') as OrganizationNcesId,
-									lea.LeaIdentifierState as OrganizationStateId,
+									isnull(lea.LeaIdentifierNces,'''') as OrganizationIdentifierNces,
+									lea.LeaIdentifierState as OrganizationIdentifierSea,
 									lea.LeaName as OrganizationName,
-									lea.StateANSICode as ParentOrganizationStateId,
+									lea.StateANSICode as ParentOrganizationIdentifierSea,
 									''' + @tableTypeAbbrv + ''' as TableTypeAbbrv,
 									''' + @totalIndicator + ''' as TotalIndicator' +
 									@sqlCategoryFields + ', 
@@ -5636,10 +5636,10 @@ BEGIN
 						StateANSICode,
 						StateCode,
 						StateName,
-						OrganizationNcesId,
-						OrganizationStateId,
+						OrganizationIdentifierNces,
+						OrganizationIdentifierSea,
 						OrganizationName,
-						ParentOrganizationStateId,
+						ParentOrganizationIdentifierSea,
 						TableTypeAbbrv,
 						TotalIndicator
 						' + @sqlCategoryFields + ',
@@ -5657,7 +5657,7 @@ BEGIN
 				-- add StudentRate  field for c150
 				if(@reportCode in ('c150'))
 					begin
-						set @sql = @sql + ', StudentRate'
+						set @sql = @sql + ', ADJUSTEDCOHORTGRADUATIONRATE'
 					end
 
 				set @sql = @sql + '
@@ -5671,10 +5671,10 @@ BEGIN
 						sch.StateANSICode,
 						sch.StateAbbreviationCode,
 						sch.StateAbbreviationDescription,
-						isnull(sch.SchoolIdentifierNces,'''') as OrganizationNcesId,
-						sch.SchoolIdentifierState as OrganizationStateId,
+						isnull(sch.SchoolIdentifierNces,'''') as OrganizationIdentifierNces,
+						sch.SchoolIdentifierState as OrganizationIdentifierSea,
 						sch.NameOfInstitution as OrganizationName,
-						sch.LeaIdentifierState as ParentOrganizationStateId,
+						sch.LeaIdentifierState as ParentOrganizationIdentifierSea,
 						''' + @tableTypeAbbrv + ''' as TableTypeAbbrv,
 						''' + @totalIndicator + ''' as TotalIndicator' +
 						@sqlCategoryFields + ', 
@@ -5703,7 +5703,7 @@ BEGIN
 				-- add calculation for StudentRate for c150
 				if(@reportCode in ('c150'))
 					begin
-						set @sql = @sql + ', cast(' + @sumOperation + ' / @CohortTotal * 100 as Decimal(9,2)) as StudentRate '
+						set @sql = @sql + ', cast(' + @sumOperation + ' / @CohortTotal * 100 as Decimal(9,2)) as ADJUSTEDCOHORTGRADUATIONRATE '
 					end
 
 
@@ -5843,10 +5843,10 @@ BEGIN
 			insert into #performanceData_' + @categorySetCode  + '(StateANSICode,
 				StateAbbreviationCode,
 				StateAbbreviationDescription,
-				OrganizationNcesId,
-				OrganizationStateId,
+				OrganizationIdentifierNces,
+				OrganizationIdentifierSea,
 				OrganizationName,
-				ParentOrganizationStateId,
+				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
 				AssessmentSubject,
@@ -5855,10 +5855,10 @@ BEGIN
 			select StateANSICode,
 				StateAbbreviationCode,
 				StateAbbreviationDescription,
-				OrganizationNcesId,
-				OrganizationStateId,
+				OrganizationIdentifierNces,
+				OrganizationIdentifierSea,
 				OrganizationName,
-				ParentOrganizationStateId,
+				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
 				AssessmentSubject,
@@ -5867,10 +5867,10 @@ BEGIN
 			from ( select StateANSICode,
 				StateAbbreviationCode,
 				StateAbbreviationDescription,
-				OrganizationNcesId,
-				OrganizationStateId,
+				OrganizationIdentifierNces,
+				OrganizationIdentifierSea,
 				OrganizationName,
-				ParentOrganizationStateId,
+				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
 				AssessmentSubject,
@@ -5880,10 +5880,10 @@ BEGIN
 			group by StateANSICode,
 				StateAbbreviationCode,
 				StateAbbreviationDescription,
-				OrganizationNcesId,
-				OrganizationStateId,
+				OrganizationIdentifierNces,
+				OrganizationIdentifierSea,
 				OrganizationName,
-				ParentOrganizationStateId,
+				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
 				AssessmentSubject,
@@ -5895,11 +5895,11 @@ BEGIN
 
 			set @sql = @sql + '
 			delete a from #performanceData_' + @categorySetCode + ' a
-			inner join ( select OrganizationStateId' + @sqlCategoryFields + 
+			inner join ( select OrganizationIdentifierSea' + @sqlCategoryFields + 
 			' from @reportData
-			group by OrganizationStateId,CategorySetCode' + @sqlCategoryFields +
+			group by OrganizationIdentifierSea,CategorySetCode' + @sqlCategoryFields +
 			' having  CategorySetCode =  ''' + @categorySetCode + ''') b 
-			on ' + @sqlPerformanceLevelJoins + ' and a.PERFORMANCELEVEL = b.PERFORMANCELEVEL and a.OrganizationStateId = b.OrganizationStateId
+			on ' + @sqlPerformanceLevelJoins + ' and a.PERFORMANCELEVEL = b.PERFORMANCELEVEL and a.OrganizationIdentifierSea = b.OrganizationIdentifierSea
 			'
 
 			set @sql = @sql + '
@@ -5918,10 +5918,10 @@ BEGIN
 				StateANSICode,
 				StateAbbreviationCode,
 				StateAbbreviationDescription,
-				OrganizationNcesId,
-				OrganizationStateId,
+				OrganizationIdentifierNces,
+				OrganizationIdentifierSea,
 				OrganizationName,
-				ParentOrganizationStateId,
+				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
 				ASSESSMENTSUBJECT,
@@ -5933,10 +5933,10 @@ BEGIN
 			select StateANSICode,
 				StateAbbreviationCode,
 				StateAbbreviationDescription,
-				OrganizationNcesId,
-				OrganizationStateId,
+				OrganizationIdentifierNces,
+				OrganizationIdentifierSea,
 				OrganizationName,
-				ParentOrganizationStateId,
+				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
 				ASSESSMENTSUBJECT,
@@ -5964,10 +5964,10 @@ BEGIN
 			StateANSICode,
 			StateAbbreviationCode,
 			StateAbbreviationDescription,
-			OrganizationNcesId,
-			OrganizationStateId,
+			OrganizationIdentifierNces,
+			OrganizationIdentifierSea,
 			OrganizationName,
-			ParentOrganizationStateId,
+			ParentOrganizationIdentifierSea,
 			TableTypeAbbrv,
 			TotalIndicator,
 			CategorySetCode
@@ -5975,7 +5975,7 @@ BEGIN
 		
 		if(@factReportTable = 'ReportEDFactsK12StudentCounts')
 			begin
-				set @sql = @sql + ', StudentRate '
+				set @sql = @sql + ', ADJUSTEDCOHORTGRADUATIONRATE '
 			end
 		
 		
@@ -5993,10 +5993,10 @@ BEGIN
 			select CAT_Organizations.StateANSICode,
 			CAT_Organizations.StateAbbreviationCode,
 			CAT_Organizations.StateAbbreviationDescription,
-			CAT_Organizations.OrganizationNcesId,
-			CAT_Organizations.OrganizationStateId,
+			CAT_Organizations.OrganizationIdentifierNces,
+			CAT_Organizations.OrganizationIdentifierSea,
 			CAT_Organizations.OrganizationName,
-			CAT_Organizations.ParentOrganizationStateId,
+			CAT_Organizations.ParentOrganizationIdentifierSea,
 			' + case when @tableTypeAbbrv is null then '''''' else '''' + @tableTypeAbbrv + '''' end + ',
 			''' + @totalIndicator + ''',
 			''' + @categorySetCode + '''
@@ -6009,7 +6009,7 @@ BEGIN
 			end
 		else if(@factReportTable = 'ReportEDFactsK12StudentCounts')
 			begin
-				set @sql = @sql + ' 0 as ' + @factField + ', 0.0 as StudentRate'
+				set @sql = @sql + ' 0 as ' + @factField + ', 0.0 as ADJUSTEDCOHORTGRADUATIONRATE'
 			end
 		else
 			begin
@@ -6030,7 +6030,7 @@ BEGIN
 			begin
 				set @sqlCategoryOptionJoins = @sqlCategoryOptionJoins + ' inner join (select distinct GRADELEVEL,OrganizationStateId
 				from rds.FactOrganizationCountReports where reportCode =''C039'' AND reportLevel = ''' + @reportLevel +''' AND reportyear = ''' + @reportyear +''') b
-				on CAT_GRADELEVEL.Code = b.GRADELEVEL and CAT_Organizations.OrganizationStateId = b.OrganizationStateId'
+				on CAT_GRADELEVEL.Code = b.GRADELEVEL and CAT_Organizations.OrganizationIdentifierSea = b.OrganizationStateId'
 			end	
 
 		if @reportCode in ('c033')
@@ -6043,10 +6043,10 @@ BEGIN
 		set @sql = @sql + '
 			from #CAT_Organizations CAT_Organizations' + @sqlCategoryOptionJoins + '
 			LEFT JOIN @reportdata rd
-				ON rd.OrganizationStateId = CAT_Organizations.OrganizationStateId
+				ON rd.OrganizationIdentifierSea = CAT_Organizations.OrganizationIdentifierSea
 				' + @sqlZeroCountConditions + '
 				and rd.' + @FactField + ' > 0
-		' + 'WHERE rd.OrganizationStateId IS NULL
+		' + 'WHERE rd.OrganizationIdentifierSea IS NULL
 		'
 		set @sqlZeroCountConditions = REPLACE(@sqlZeroCountConditions, 'and rd.', 'and ')
 
@@ -6079,7 +6079,7 @@ BEGIN
 
 				delete a from @reportData a
                 where a.StudentCount = 0
-                AND OrganizationStateId NOT IN
+                AND OrganizationIdentifierSea NOT IN
                 (
                 SELECT DISTINCT dl.LeaIdentifierState
                 FROM RDS.BridgeLeaGradeLevels blgl
@@ -6097,7 +6097,7 @@ BEGIN
 					
 				delete a from @reportData a
                 where a.StudentCount = 0
-                AND OrganizationStateId NOT IN
+                AND OrganizationIdentifierSea NOT IN
                 (
                 SELECT DISTINCT dl.LeaIdentifierState
                 FROM RDS.BridgeLeaGradeLevels blgl
@@ -6296,10 +6296,10 @@ BEGIN
 			StateANSICode,
 			StateAbbreviationCode,
 			StateAbbreviationDescription,
-			OrganizationNcesId,
-			OrganizationStateId,
+			OrganizationIdentifierNces,
+			OrganizationIdentifierSea,
 			OrganizationName,
-			ParentOrganizationStateId,
+			ParentOrganizationIdentifierSea,
 			PERFORMANCELEVEL,
 			PARTICIPATIONSTATUS,
 			ECODISSTATUS,
@@ -6310,10 +6310,10 @@ BEGIN
 		select CAT_Organizations.StateANSICode,
 			CAT_Organizations.StateAbbreviationCode,
 			CAT_Organizations.StateAbbreviationDescription,
-			CAT_Organizations.OrganizationNcesId,
-			CAT_Organizations.OrganizationStateId,
+			CAT_Organizations.OrganizationIdentifierNces,
+			CAT_Organizations.OrganizationIdentifierSea,
 			CAT_Organizations.OrganizationName,
-			CAT_Organizations.ParentOrganizationStateId,
+			CAT_Organizations.ParentOrganizationIdentifierSea,
 			CAT_PERFORMANCELEVEL.Code,
 			CAT_PARTICIPATIONSTATUS.Code,
 			CAT_ECODISSTATUS.Code,
@@ -6327,7 +6327,7 @@ BEGIN
 		cross join  #cat_RACE CAT_RACE
 		' + @dynamicCategoryJoin + '
 		where not exists (select 1 from #reportCounts
-		where OrganizationStateId = CAT_Organizations.OrganizationStateId
+		where OrganizationIdentifierSea = CAT_Organizations.OrganizationIdentifierSea
 		and PERFORMANCELEVEL = CAT_PERFORMANCELEVEL.Code 
 		and PARTICIPATIONSTATUS = CAT_PARTICIPATIONSTATUS.Code 
 		and ECODISSTATUS = CAT_ECODISSTATUS.Code 
@@ -6383,10 +6383,10 @@ BEGIN
 			StateANSICode,
 			StateAbbreviationCode,
 			StateAbbreviationDescription,
-			OrganizationNcesId,
-			OrganizationStateId,
+			OrganizationIdentifierNces,
+			OrganizationIdentifierSea,
 			OrganizationName,
-			ParentOrganizationStateId, 
+			ParentOrganizationIdentifierSea, 
 			REMOVALLENGTH, 
 			DisciplineMethodOfChildrenWithDisabilities, 
 			IdeaInterimRemovalReason, 
@@ -6395,10 +6395,10 @@ BEGIN
 		select CAT_Organizations.StateANSICode,
 			CAT_Organizations.StateAbbreviationCode,
 			CAT_Organizations.StateAbbreviationDescription,
-			CAT_Organizations.OrganizationNcesId,
-			CAT_Organizations.OrganizationStateId,
+			CAT_Organizations.OrganizationIdentifierNces,
+			CAT_Organizations.OrganizationIdentifierSea,
 			CAT_Organizations.OrganizationName,
-			CAT_Organizations.ParentOrganizationStateId, 
+			CAT_Organizations.ParentOrganizationIdentifierSea, 
 			CAT_REMOVALLENGTH.Code, 
 			CAT_DisciplineMethodOfChildrenWithDisabilities.Code, 
 			CAT_IdeaInterimRemovalReason.Code,
@@ -6410,7 +6410,7 @@ BEGIN
 		cross join  #cat_IdeaInterimRemovalReason CAT_IdeaInterimRemovalReason
 		' + @dynamicCategoryJoin + '
 		where not exists (select 1 from #reportCounts
-		where OrganizationStateId = CAT_Organizations.OrganizationStateId
+		where OrganizationIdentifierSea = CAT_Organizations.OrganizationIdentifierSea
 		and REMOVALLENGTH = CAT_REMOVALLENGTH.Code 
 		and DisciplineMethodOfChildrenWithDisabilities = CAT_DisciplineMethodOfChildrenWithDisabilities.Code 
 		and IdeaInterimRemovalReason = CAT_IdeaInterimRemovalReason.Code 
@@ -6453,20 +6453,20 @@ BEGIN
 			StateANSICode,
 			StateAbbreviationCode,
 			StateAbbreviationDescription,
-			OrganizationNcesId,
-			OrganizationStateId,
+			OrganizationIdentifierNces,
+			OrganizationIdentifierSea,
 			OrganizationName,
-			ParentOrganizationStateId, 
+			ParentOrganizationIdentifierSea, 
 			IdeaEducationalEnvironment, 
 			Category, 
 			StudentCount)
 		select CAT_Organizations.StateANSICode,
 			CAT_Organizations.StateAbbreviationCode,
 			CAT_Organizations.StateAbbreviationDescription,
-			CAT_Organizations.OrganizationNcesId,
-			CAT_Organizations.OrganizationStateId,
+			CAT_Organizations.OrganizationIdentifierNces,
+			CAT_Organizations.OrganizationIdentifierSea,
 			CAT_Organizations.OrganizationName,
-			CAT_Organizations.ParentOrganizationStateId, 
+			CAT_Organizations.ParentOrganizationIdentifierSea, 
 			CAT_IdeaEducationalEnvironment.Code, 
 			' + @dynamicCategorySelect + ',
 			0 as StudentCount
@@ -6474,7 +6474,7 @@ BEGIN
 		cross join  #cat_IdeaEducationalEnvironment CAT_IdeaEducationalEnvironment
 		' + @dynamicCategoryJoin + '
 		where not exists (select 1 from #reportCounts
-		where OrganizationStateId = CAT_Organizations.OrganizationStateId 
+		where OrganizationIdentifierSea = CAT_Organizations.OrganizationIdentifierSea 
 		and IdeaEducationalEnvironment = CAT_IdeaEducationalEnvironment.Code 
 		' + @dynamicCategoryCondition + '
 		)
@@ -6496,10 +6496,10 @@ BEGIN
 			StateANSICode,
 			StateAbbreviationCode,
 			StateAbbreviationDescription,
-			OrganizationNcesId,
-			OrganizationStateId,
+			OrganizationIdentifierNces,
+			OrganizationIdentifierSea,
 			OrganizationName,
-			ParentOrganizationStateId,
+			ParentOrganizationIdentifierSea,
 			TitleISchoolStatus, 
 			HOMELESSSTATUS, 
 			MIGRANTSTATUS, 
@@ -6513,10 +6513,10 @@ BEGIN
 		select CAT_Organizations.StateANSICode,
 			CAT_Organizations.StateAbbreviationCode,
 			CAT_Organizations.StateAbbreviationDescription,
-			CAT_Organizations.OrganizationNcesId,
-			CAT_Organizations.OrganizationStateId,
+			CAT_Organizations.OrganizationIdentifierNces,
+			CAT_Organizations.OrganizationIdentifierSea,
 			CAT_Organizations.OrganizationName,
-			CAT_Organizations.ParentOrganizationStateId,
+			CAT_Organizations.ParentOrganizationIdentifierSea,
 			CAT_TitleISchoolStatus.Code, 
 			CAT_HOMELESSSTATUS.Code, 
 			CAT_MIGRANTSTATUS.Code, 
@@ -6538,7 +6538,7 @@ BEGIN
 		cross join  #cat_EligibilityStatusForSchoolFoodServiceProgram CAT_EligibilityStatusForSchoolFoodServiceProgram
 		cross join  #cat_FOSTERCAREPROGRAM CAT_FOSTERCAREPROGRAM
 		where not exists (select 1 from @reportCounts
-		where OrganizationStateId = CAT_Organizations.OrganizationStateId 
+		where OrganizationIdentifierSea = CAT_Organizations.OrganizationIdentifierSea 
 		and TitleISchoolStatus = CAT_TitleISchoolStatus.Code 
 		and HOMELESSSTATUS = CAT_HOMELESSSTATUS.Code 
 		and MIGRANTSTATUS = CAT_MIGRANTSTATUS.Code 

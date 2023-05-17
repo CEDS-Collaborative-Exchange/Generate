@@ -1,10 +1,8 @@
 CREATE VIEW [RDS].[vwDimK12StudentStatuses] 
 AS
-	SELECT distinct
+	SELECT DISTINCT
 		  DimK12StudentStatusId
 		, rsy.SchoolYear
-		, HighSchoolDiplomaTypeCode
-		, sssrd1.InputCode AS HighSchoolDiplomaTypeMap
 
 --have to find these
 		, MobilityStatus12moCode
@@ -27,24 +25,13 @@ AS
 			WHEN 'QAD36' THEN 1 
 			ELSE -1
 		  END AS MobilityStatus36moMap
-		, PlacementStatusCode
-		, CASE PlacementStatusCode
-			WHEN 'Placed' THEN 1 
-			WHEN 'NotPlaced' THEN 0 
-			ELSE -1
-		  END AS PlacementStatusMap
-		, PlacementTypeCode		--ADVTRAIN, EMPLOYMENT, MILITARY, POSTSEC
-		, PlacementTypeCode AS PlacementTypeMap
+--
 
-
-		, NSLPDirectCertificationIndicatorCode
-		, CASE NSLPDirectCertificationIndicatorCode 
-			WHEN 'YES' THEN 1 
-			ELSE -1
-		  END AS NSLPDirectCertificationIndicatorMap
+		, DiplomaCredentialTypeCode
+		, sssrd1.InputCode AS DiplomaCredentialTypeMap
 	FROM rds.DimK12StudentStatuses rdkss
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
-		ON rdkss.HighSchoolDiplomaTypeCode = sssrd1.OutputCode
+		ON rdkss.DiplomaCredentialTypeCode = sssrd1.OutputCode
 		AND sssrd1.TableName = 'RefHighSchoolDiplomaType'
 		AND rsy.SchoolYear = sssrd1.SchoolYear

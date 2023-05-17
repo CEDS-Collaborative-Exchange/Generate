@@ -1,6 +1,6 @@
 CREATE VIEW [RDS].[vwDimProgramStatuses] 
 AS
-	SELECT distinct
+	SELECT DISTINCT
 		  DimProgramStatusId
 		, rsy.SchoolYear
 		, EligibilityStatusForSchoolFoodServiceProgramCode

@@ -16,21 +16,21 @@ BEGIN
 
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Child Count - Start Staging-to-DimSeas')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper titleIIIELSY - Start Migrate_DimSeas')
 
 		--Populate DimSeas
 		exec [Staging].[Staging-to-DimSeas] 'directory', NULL, 0
 
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Child Count - Start Staging-to-DimLeas')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper titleIIIELSY - Start Migrate_DimLeas')
 
 		--Populate DimLeas
 		exec [Staging].[Staging-to-DimLeas] 'directory', NULL, 0
 
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Child Count - Start Staging-to-DimK12Schools')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper titleIIIELSY - Start Migrate_DimK12Schools')
 
 		--Populate DimK12Schools
 		exec [Staging].[Staging-to-DimK12Schools] NULL, 0
@@ -64,7 +64,7 @@ BEGIN
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 		
-			EXEC [Staging].[Staging-to-FactK12StudentCounts_TitleIIIELSY] @submissionYear
+			EXEC Staging.[Staging-to-FactK12StudentCounts_TitleIII] @submissionYear
 
 			FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
 		END
@@ -85,3 +85,6 @@ BEGIN
 	SET NOCOUNT OFF;
 
 END
+
+
+
