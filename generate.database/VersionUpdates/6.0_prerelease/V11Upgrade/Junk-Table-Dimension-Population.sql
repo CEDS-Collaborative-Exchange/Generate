@@ -3897,7 +3897,10 @@
 	SELECT
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, EdFactsOptionSetCode
+		, CASE CedsOptionSetCode	
+			WHEN 'Yes' THEN 'DH'
+			ELSE 'MISSING'
+		  END
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'CteAeDisplacedHomemakerIndicator'
 
@@ -3912,7 +3915,11 @@
 	SELECT
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, EdFactsOptionSetCode
+		, CASE CedsOptionSetCode
+			WHEN 'NotUnderrepresented' THEN 'NM'
+			WHEN 'Underrepresented' THEN 'MEM'
+			ELSE 'MISSING'
+		  END 
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'CteNontraditionalGenderStatus'
 
@@ -3927,7 +3934,11 @@
 	SELECT
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, EdFactsOptionSetCode
+		, CASE CedsOptionSetCode
+			WHEN 'No' THEN 'NM'
+			WHEN 'Yes' THEN 'MEM'
+			ELSE 'MISSING'
+		  END 
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'CteNontraditionalCompletion'
 
@@ -3942,7 +3953,10 @@
 	SELECT
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, EdFactsOptionSetCode
+		, CASE CedsOptionSetCode
+			WHEN 'Yes' THEN 'SPPT'
+			ELSE 'MISSING'
+		  END
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'SingleParentOrSinglePregnantWomanStatus'
 
@@ -3957,7 +3971,11 @@
 	SELECT
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, EdFactsOptionSetCode
+		, CASE CedsOptionSetCode
+			WHEN 'IncludedAsGraduated' THEN 'GRAD'
+			WHEN 'NotIncludedAsGraduated' THEN 'NOTG'
+			ELSE 'MISSING'
+		  END
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'CteGraduationRateInclusion'
 
