@@ -4007,7 +4007,11 @@
 	SELECT
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, EdFactsOptionSetCode
+		, CASE CedsOptionSetCode
+			WHEN 'IncludedAsGraduated' THEN 'GRAD'
+			WHEN 'NotIncludedAsGraduated' THEN 'NOTG'
+			ELSE 'MISSING'
+		  END
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'CteParticipant'
 
@@ -4131,3 +4135,54 @@
 	Where iso2.CedsGlobalId = '000317'
 		and iso3.CedsGlobalId = '001637'
 		and dl.DimLanguageId is null
+
+
+
+	------------------------------------------------
+	-- Populate DimComprehensiveAndTargetedSupports			 ---
+	------------------------------------------------
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimComprehensiveAndTargetedSupports
+			WHERE ComprehensiveSupportIdentificationTypeCode = 'MISSING'
+			AND AdditionalTargetedSupportAndImprovementStatusCode = 'MISSING'
+			AND ComprehensiveSupportAndImprovementStatusCode = 'MISSING'
+			AND TargetedSupportAndImprovementStatusCode = 'MISSING') 
+	BEGIN
+		SET IDENTITY_INSERT RDS.DimComprehensiveAndTargetedSupports ON
+
+		INSERT INTO RDS.DimCteStatuses (
+			  DimComprehensiveAndTargetedSupportId
+			, ComprehensiveSupportIdentificationTypeCode
+			, ComprehensiveSupportIdentificationTypeDescription
+			, ComprehensiveSupportIdentificationTypeEdFactsCode
+			, AdditionalTargetedSupportAndImprovementStatusCode
+			, AdditionalTargetedSupportAndImprovementStatusDescription
+			, AdditionalTargetedSupportAndImprovementStatusEDFactsCode
+			, ComprehensiveSupportAndImprovementStatusCode
+			, ComprehensiveSupportAndImprovementStatusDescription
+			, ComprehensiveSupportAndImprovementStatusEdFactsCode
+			, TargetedSupportAndImprovementStatusCode
+			, TargetedSupportAndImprovementStatusDescription
+			, TargetedSupportAndImprovementStatusEdFactsCode)
+
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+
+		SET IDENTITY_INSERT RDS.DimComprehensiveAndTargetedSupports OFF
+	END
+
+	IF OBJECT_ID('tempdb..#ComprehensiveSupportIdentificationType') IS NOT NULL BEGIN
+		DROP TABLE #ComprehensiveSupportIdentificationType
+	END
+
+	CREATE TABLE #ComprehensiveSupportIdentificationType (ComprehensiveSupportIdentificationTypeCode VARCHAR(50), ComprehensiveSupportIdentificationTypeDescription VARCHAR(200), ComprehensiveSupportIdentificationTypeEdFactsCode VARCHAR(50))
+
+	INSERT INTO #ComprehensiveSupportIdentificationType VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #ComprehensiveSupportIdentificationType 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CASE CedsOptionSetCode	
+			WHEN 'Yes' THEN 'DH'
+			ELSE 'MISSING'
+		  END
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'ComprehensiveSupportIdentificationType'
