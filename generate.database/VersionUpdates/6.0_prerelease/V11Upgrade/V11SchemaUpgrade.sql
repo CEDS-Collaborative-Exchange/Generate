@@ -6752,7 +6752,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_AssessmentResult] (
     [AssessmentAcademicSubject]                            VARCHAR (100)  NULL,
     [AssessmentPurpose]                                    VARCHAR (100)  NULL,
     [AssessmentType]                                       VARCHAR (100)  NULL,
-    [AssessmentTypeAdministeredToChildrenWithDisabilities] VARCHAR (100)  NULL,
+    [AssessmentTypeAdministered]                           VARCHAR (100)  NULL,
     [AssessmentAdministrationStartDate]                    DATE           NULL,
     [AssessmentAdministrationFinishDate]                   DATE           NULL,
     [AssessmentRegistrationParticipationIndicator]         BIT            NULL,

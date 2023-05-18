@@ -1,4 +1,5 @@
 SET NOCOUNT ON;
+GO 
 
 DECLARE @dimensionTableId as INT, @categoryId as INT, @dimensionId as INT
 

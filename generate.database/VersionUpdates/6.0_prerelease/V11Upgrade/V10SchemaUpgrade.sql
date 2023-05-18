@@ -1917,14 +1917,6 @@
 
 
 	GO
-	PRINT N'Dropping Extended Property [Staging].[PersonStatus].[PrimaryDisabilityType].[Lookup]...';
-
-
-	GO
-	EXECUTE sp_dropextendedproperty @name = N'Lookup', @level0type = N'SCHEMA', @level0name = N'Staging', @level1type = N'TABLE', @level1name = N'PersonStatus', @level2type = N'COLUMN', @level2name = N'PrimaryDisabilityType';
-
-
-	GO
 	PRINT N'Dropping Extended Property [Staging].[PersonStatus].[TableType]...';
 
 
@@ -12575,6 +12567,7 @@
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[QUALIFICATIONSTATUS]', N'SPECIALEDUCATIONTEACHERQUALIFICATIONSTATUS';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION]', N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StaffFTE]', N'StaffFullTimeEquivalency';
+	GO
 
 
 	GO
@@ -16954,7 +16947,7 @@
 		[CTEPROGRAM]                                    NVARCHAR (50)   NULL,
 		[Categories]                                    NVARCHAR (300)  NULL,
 		[CategorySetCode]                               NVARCHAR (40)   NOT NULL,
-		[PRIMARYDISABILITYTYPE]                         NVARCHAR (50)   NULL,
+		[IDEADISABILITYTYPE]                            NVARCHAR (50)   NULL,
 		[ECONOMICDISADVANTAGESTATUS]                    NVARCHAR (50)   NULL,
 		[IDEAEDUCATIONALENVIRONMENT]                    NVARCHAR (50)   NULL,
 		[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS] NVARCHAR (50)   NULL,
@@ -16987,7 +16980,7 @@
 		[MILITARYCONNECTEDSTUDENTINDICATOR]             NVARCHAR (50)   NULL,
 		[PROFICIENCYSTATUS]                             NVARCHAR (50)   NULL,
 		[TITLEIIIACCOUNTABILITYPROGRESSSTATUS]          NVARCHAR (50)   NULL,
-		[TITLEIIILANGUAGEINSTRUCTION]                   NVARCHAR (50)   NULL,
+		[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE]        NVARCHAR (50)   NULL,
 		[TITLEIIIPROGRAMPARTICIPATION]                  NVARCHAR (50)   NULL,
 		[CTEAEDISPLACEDHOMEMAKERINDICATOR]              NVARCHAR (50)   NULL,
 		[CTENONTRADITIONALGENDERSTATUS]                 NVARCHAR (50)   NULL,
@@ -17003,14 +16996,14 @@
 		[TESTRESULT]                                    NVARCHAR (50)   NULL,
 		[HOMELESSPRIMARYNIGHTTIMERESIDENCE]             NVARCHAR (50)   NULL,
 		[HOMELESSUNACCOMPANIEDYOUTHSTATUS]              NVARCHAR (50)   NULL,
-		[ASSESSMENTPROGRESSLEVEL]                       NVARCHAR (50)   NULL,
+		[PROGRESSLEVEL]                       			NVARCHAR (50)   NULL,
 		[YEAR]                                          NVARCHAR (50)   NULL,
 		[LONGTERMSTATUS]                                NVARCHAR (50)   NULL,
 		[HIGHSCHOOLDIPLOMATYPE]                         NVARCHAR (50)   NULL,
 		[ACADEMICORVOCATIONALEXITOUTCOME]               NVARCHAR (50)   NULL,
 		[ACADEMICORVOCATIONALOUTCOME]                   NVARCHAR (50)   NULL,
 		[HOMELESSSERVICEDINDICATOR]                     NVARCHAR (50)   NULL,
-		[PERKINSELSTATUS]                              NVARCHAR (50)   NULL,
+		[PERKINSENGLISHLEARNERSTATUS]                   NVARCHAR (50)   NULL,
 		[IDEAINDICATOR]                                 VARCHAR (50)    NULL,
 		[TITLEISUPPORTSERVICES]                         VARCHAR (50)    NULL,
 		[TITLEIINSTRUCTIONALSERVICES]                   VARCHAR (50)    NULL,
@@ -17468,8 +17461,8 @@
 		[RecordStartDateTime]                       						DATETIME       NULL,
 		[RecordEndDateTime]                         						DATETIME       NULL,
 		[DataCollectionName]               									NVARCHAR (100) NULL,
-		[CharterSchoolId]                  									INT            NOT NULL,
-		[CharterSchoolAuthorizingOrganizationOrganizationId] 				INT            NOT NULL,
+		[CharterSchoolId]                  									INT            NULL,
+		[CharterSchoolAuthorizingOrganizationOrganizationId] 				INT            NULL,
 		[RunDateTime]                      									DATETIME       NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_CharterSchoolAuthorizer] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
@@ -38702,44 +38695,6 @@
 	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIIACCOUNTABILITYPROGRESSSTATUS';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_Def_Desc]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of Title III language instructional education programs.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_ElementTechnicalName]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'TitleIIILanguageInstructionProgramType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_GlobalId]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000447', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_URL]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17437', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION].[MS_Description]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StaffCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
 
 
 	GO
@@ -38827,7 +38782,7 @@
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The major or overriding disability condition that best describes a person''s impairment.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The major or overriding disability condition that best describes a person''s impairment.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
@@ -38835,7 +38790,7 @@
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PrimaryDisabilityType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PrimaryDisabilityType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
@@ -38843,7 +38798,7 @@
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
@@ -38851,7 +38806,7 @@
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
@@ -38859,7 +38814,7 @@
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
@@ -39583,43 +39538,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MEPSERVICESTYPE].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MIGRANTEDUCATIONPROGRAMSERVICESTYPE].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of services received by participating migrant students in the migrant education program (MEP).', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MEPSERVICESTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of services received by participating migrant students in the migrant education program (MEP).', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MIGRANTEDUCATIONPROGRAMSERVICESTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MEPSERVICESTYPE].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MIGRANTEDUCATIONPROGRAMSERVICESTYPE].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'MigrantEducationProgramServicesType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MEPSERVICESTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'MigrantEducationProgramServicesType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MIGRANTEDUCATIONPROGRAMSERVICESTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MEPSERVICESTYPE].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MIGRANTEDUCATIONPROGRAMSERVICESTYPE].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000186', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MEPSERVICESTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000186', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MIGRANTEDUCATIONPROGRAMSERVICESTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MEPSERVICESTYPE].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MIGRANTEDUCATIONPROGRAMSERVICESTYPE].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17186', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MEPSERVICESTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17186', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MIGRANTEDUCATIONPROGRAMSERVICESTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MEPSERVICESTYPE].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MIGRANTEDUCATIONPROGRAMSERVICESTYPE].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MEPSERVICESTYPE';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MIGRANTEDUCATIONPROGRAMSERVICESTYPE';
 
 
 	GO
@@ -39823,43 +39778,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MEPENROLLMENTTYPE].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of school/migrant education project in which instruction and/or support services are provided.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MEPENROLLMENTTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of school/migrant education project in which instruction and/or support services are provided.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MEPENROLLMENTTYPE].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'MigrantEducationProgramEnrollmentType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MEPENROLLMENTTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'MigrantEducationProgramEnrollmentType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MEPENROLLMENTTYPE].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000437', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MEPENROLLMENTTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000437', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MEPENROLLMENTTYPE].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17427', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MEPENROLLMENTTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17427', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MEPENROLLMENTTYPE].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MEPENROLLMENTTYPE';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE';
 
 
 	GO
@@ -39983,43 +39938,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of Title III language instructional education programs.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of Title III language instructional education programs.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'TitleIIILanguageInstructionProgramType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'TitleIIILanguageInstructionProgramType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000447', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000447', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17437', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17437', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[TITLEIIILANGUAGEINSTRUCTION].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 
 
 	GO
@@ -40343,43 +40298,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ASSESSMENTPROGRESSLEVEL].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PROGRESSLEVEL].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The amount of progress shown in academic subjects.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ASSESSMENTPROGRESSLEVEL';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The amount of progress shown in academic subjects.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PROGRESSLEVEL';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ASSESSMENTPROGRESSLEVEL].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PROGRESSLEVEL].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'ProgressLevel', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ASSESSMENTPROGRESSLEVEL';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'ProgressLevel', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PROGRESSLEVEL';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ASSESSMENTPROGRESSLEVEL].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PROGRESSLEVEL].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000561', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ASSESSMENTPROGRESSLEVEL';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000561', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PROGRESSLEVEL';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ASSESSMENTPROGRESSLEVEL].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PROGRESSLEVEL].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17553', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ASSESSMENTPROGRESSLEVEL';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17553', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PROGRESSLEVEL';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ASSESSMENTPROGRESSLEVEL].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PROGRESSLEVEL].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ASSESSMENTPROGRESSLEVEL';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PROGRESSLEVEL';
 
 
 	GO
@@ -40423,43 +40378,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PerkinsELSTATUS].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PERKINSENGLISHLEARNERSTATUS].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PerkinsELSTATUS].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PERKINSENGLISHLEARNERSTATUS].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PERKINSENGLISHLEARNERSTATUS', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PerkinsELSTATUS].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PERKINSENGLISHLEARNERSTATUS].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PerkinsELSTATUS].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PERKINSENGLISHLEARNERSTATUS].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PerkinsELSTATUS].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[PERKINSENGLISHLEARNERSTATUS].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
@@ -40543,43 +40498,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PRIMARYDISABILITYTYPE].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[IDEADISABILITYTYPE].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The major or overriding disability condition that best describes a person''s impairment.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The major or overriding disability condition that best describes a person''s impairment.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PRIMARYDISABILITYTYPE].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[IDEADISABILITYTYPE].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PrimaryDisabilityType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'IDEADISABILITYTYPE', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PRIMARYDISABILITYTYPE].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[IDEADISABILITYTYPE].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PRIMARYDISABILITYTYPE].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[IDEADISABILITYTYPE].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PRIMARYDISABILITYTYPE].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[IDEADISABILITYTYPE].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
@@ -41743,43 +41698,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PerkinsELSTATUS].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PERKINSENGLISHLEARNERSTATUS].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PerkinsELSTATUS].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PERKINSENGLISHLEARNERSTATUS].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PERKINSENGLISHLEARNERSTATUS', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PerkinsELSTATUS].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PERKINSENGLISHLEARNERSTATUS].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PerkinsELSTATUS].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PERKINSENGLISHLEARNERSTATUS].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PerkinsELSTATUS].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentDisciplines].[PERKINSENGLISHLEARNERSTATUS].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentDisciplines', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
@@ -51155,7 +51110,7 @@
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PrimaryDisabilityType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimIdeaDisabilityTypes', @level2type = N'COLUMN', @level2name = N'IdeaDisabilityTypeCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'IDEADISABILITYTYPE', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimIdeaDisabilityTypes', @level2type = N'COLUMN', @level2name = N'IdeaDisabilityTypeCode';
 
 
 	GO
@@ -51203,7 +51158,7 @@
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PrimaryDisabilityType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimIdeaDisabilityTypes', @level2type = N'COLUMN', @level2name = N'IdeaDisabilityTypeDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'IDEADISABILITYTYPE', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimIdeaDisabilityTypes', @level2type = N'COLUMN', @level2name = N'IdeaDisabilityTypeDescription';
 
 
 	GO
@@ -51235,7 +51190,7 @@
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PrimaryDisabilityType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimIdeaDisabilityTypes', @level2type = N'COLUMN', @level2name = N'IdeaDisabilityTypeEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'IDEADISABILITYTYPE', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimIdeaDisabilityTypes', @level2type = N'COLUMN', @level2name = N'IdeaDisabilityTypeEdFactsCode';
 
 
 	GO
@@ -56783,43 +56738,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PRIMARYDISABILITYTYPE].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[IDEADISABILITYTYPE].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The major or overriding disability condition that best describes a person''s impairment.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The major or overriding disability condition that best describes a person''s impairment.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PRIMARYDISABILITYTYPE].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[IDEADISABILITYTYPE].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PrimaryDisabilityType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'IDEADISABILITYTYPE', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PRIMARYDISABILITYTYPE].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[IDEADISABILITYTYPE].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PRIMARYDISABILITYTYPE].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[IDEADISABILITYTYPE].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17218', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PRIMARYDISABILITYTYPE].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[IDEADISABILITYTYPE].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PRIMARYDISABILITYTYPE';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'IDEADISABILITYTYPE';
 
 
 	GO
@@ -57503,43 +57458,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of Title III language instructional education programs.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of Title III language instructional education programs.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'TitleIIILanguageInstructionProgramType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'TitleIIILanguageInstructionProgramType', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000447', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000447', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTION].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17437', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17437', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTION].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTION';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 
 
 	GO
@@ -57783,43 +57738,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[ASSESSMENTPROGRESSLEVEL].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PROGRESSLEVEL].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The amount of progress shown in academic subjects.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'ASSESSMENTPROGRESSLEVEL';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The amount of progress shown in academic subjects.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PROGRESSLEVEL';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[ASSESSMENTPROGRESSLEVEL].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PROGRESSLEVEL].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'ProgressLevel', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'ASSESSMENTPROGRESSLEVEL';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'ProgressLevel', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PROGRESSLEVEL';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[ASSESSMENTPROGRESSLEVEL].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PROGRESSLEVEL].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000561', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'ASSESSMENTPROGRESSLEVEL';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000561', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PROGRESSLEVEL';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[ASSESSMENTPROGRESSLEVEL].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PROGRESSLEVEL].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17553', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'ASSESSMENTPROGRESSLEVEL';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17553', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PROGRESSLEVEL';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[ASSESSMENTPROGRESSLEVEL].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PROGRESSLEVEL].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'ASSESSMENTPROGRESSLEVEL';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PROGRESSLEVEL';
 
 
 	GO
@@ -57903,43 +57858,43 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PerkinsELSTATUS].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PERKINSENGLISHLEARNERSTATUS].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is ""a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PerkinsELSTATUS].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PERKINSENGLISHLEARNERSTATUS].[CEDS_ElementTechnicalName]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PerkinsELStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'PERKINSENGLISHLEARNERSTATUS', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PerkinsELSTATUS].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PERKINSENGLISHLEARNERSTATUS].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PerkinsELSTATUS].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PERKINSENGLISHLEARNERSTATUS].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PerkinsELSTATUS].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentAssessments].[PERKINSENGLISHLEARNERSTATUS].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PerkinsELSTATUS';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentAssessments', @level2type = N'COLUMN', @level2name = N'PERKINSENGLISHLEARNERSTATUS';
 
 
 	GO
