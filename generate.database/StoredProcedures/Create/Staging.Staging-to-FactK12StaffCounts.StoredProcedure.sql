@@ -8,8 +8,7 @@ CREATE PROCEDURE  [Staging].[Staging-to-FactK12StaffCounts]
 	@SchoolYear SMALLINT
 AS
 BEGIN
-	 --SET NOCOUNT ON added to prevent extra result sets from
-	 --interfering with SELECT statements.
+	 --SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
 
 	BEGIN TRY
@@ -39,79 +38,79 @@ BEGIN
 		WHERE SchoolYearId = @SchoolYearId 
 			AND FactTypeId = @FactTypeId
 
-		INSERT INTO RDS.FactK12StaffCounts
-			( SchoolYearId
+		INSERT INTO RDS.FactK12StaffCounts ( 
+			SchoolYearId
 			, FactTypeId
+			, SeaId
+			, LeaId
+			, K12SchoolId
 			, K12StaffId
 			, K12StaffStatusId
-			, K12SchoolId
-			, StaffCount
-			, StaffFTE
 			, K12StaffCategoryId
 			, TitleIIIStatusId
-			, LeaId
-			, SeaId
-			)
+			, StaffCount
+			, StaffFullTimeEquivalency
+		)
 		SELECT
-			  rsy.DimSchoolYearId						SchoolYearId
+			rsy.DimSchoolYearId							SchoolYearId
 			, @FactTypeId								FactTypeId
+			, ISNULL(rds.DimSeaId, -1)					SeaId
+			, ISNULL(rdl.DimLeaID, -1)					LeaId
+			, ISNULL(rdksch.DimK12SchoolId, -1)			K12SchoolId
 			, ISNULL(rdks.DimK12StaffId, -1)			K12StaffId
 			, ISNULL(rdkss.DimK12StaffStatusId, -1)		K12StaffStatusId
-			, ISNULL(rdksch.DimK12SchoolId, -1)			K12SchoolId
-			, 1											StaffCounts
-			, FullTimeEquivalency						StaffFTE
 			, ISNULL(rdksc.DimK12StaffCategoryId, -1)	K12StaffCategoryId
 			, -1										TitleIIIStatusId
-			, ISNULL(rdl.DimLeaID, -1)					LeaId
-			, ISNULL(rds.DimSeaId, -1)					SeaId
-		FROM Staging.K12StaffAssignment sksa
+			, 1											StaffCounts
+			, FullTimeEquivalency						StaffFullTimeEquivalency
+		FROM Staging.StaffAssignment ssa
 		JOIN RDS.DimSchoolYears rsy
-			ON sksa.SchoolYear = rsy.SchoolYear
+			ON ssa.SchoolYear = rsy.SchoolYear
 		LEFT JOIN RDS.DimLeas rdl
-			ON sksa.LEA_Identifier_State = rdl.LeaIdentifierState
+			ON ssa.LeaIdentifierSea = rdl.LeaIdentifierSea
 			AND @ChildCountDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
 		LEFT JOIN RDS.DimK12Schools rdksch
-			ON sksa.School_Identifier_State = rdksch.SchoolIdentifierState
+			ON ssa.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND @ChildCountDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
 		LEFT JOIN RDS.DimSeas rds
 			ON @ChildCountDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
 		LEFT JOIN RDS.vwDimK12StaffCategories rdksc 
 			ON rsy.SchoolYear = rdksc.SchoolYear
-			AND ISNULL(sksa.K12StaffClassification, 'MISSING') = ISNULL(rdksc.K12StaffClassificationMap, rdksc.K12StaffClassificationCode)
-			AND ISNULL(sksa.SpecialEducationStaffCategory, 'MISSING') = ISNULL(rdksc.SpecialEducationSupportServicesCategoryMap, rdksc.SpecialEducationSupportServicesCategoryCode)
-			AND ISNULL(sksa.TitleIProgramStaffCategory, 'MISSING') = ISNULL(rdksc.TitleIProgramStaffCategoryMap, rdksc.TitleIProgramStaffCategoryCode)
+			AND ISNULL(ssa.K12StaffClassification, 'MISSING') = ISNULL(rdksc.K12StaffClassificationMap, rdksc.K12StaffClassificationCode)
+			AND ISNULL(ssa.SpecialEducationStaffCategory, 'MISSING') = ISNULL(rdksc.SpecialEducationSupportServicesCategoryMap, rdksc.SpecialEducationSupportServicesCategoryCode)
+			AND ISNULL(ssa.TitleIProgramStaffCategory, 'MISSING') = ISNULL(rdksc.TitleIProgramStaffCategoryMap, rdksc.TitleIProgramStaffCategoryCode)
 		LEFT JOIN RDS.vwDimK12StaffStatuses rdkss
 			ON rsy.SchoolYear = rdkss.SchoolYear
-			AND ISNULL(sksa.SpecialEducationAgeGroupTaught, 'MISSING') = ISNULL(rdkss.SpecialEducationAgeGroupTaughtMap, rdkss.SpecialEducationAgeGroupTaughtCode)
-			AND ISNULL(sksa.EmergencyorProvisionalCredentialStatus, 'MISSING') = ISNULL(rdkss.EmergencyOrProvisionalCredentialStatusMap, rdkss.EmergencyOrProvisionalCredentialStatusCode)
-			AND ISNULL(sksa.OutOfFieldStatus, 'MISSING') = ISNULL(rdkss.OutOfFieldStatusMap, rdkss.OutOfFieldStatusCode)
+			AND ISNULL(ssa.SpecialEducationAgeGroupTaught, 'MISSING') = ISNULL(rdkss.SpecialEducationAgeGroupTaughtMap, rdkss.SpecialEducationAgeGroupTaughtCode)
+--			AND ISNULL(ssa.EmergencyorProvisionalCredentialStatus, 'MISSING') = ISNULL(rdkss.EmergencyOrProvisionalCredentialStatusMap, rdkss.EmergencyOrProvisionalCredentialStatusCode)
+			AND ISNULL(ssa.EDFactsTeacherOutOfFieldStatus, 'MISSING') = ISNULL(rdkss.EDFactsTeacherOutOfFieldStatusMap, rdkss.EDFactsTeacherOutOfFieldStatusCode)
 			AND CASE 
-					WHEN rdksc.K12StaffClassificationCode = 'Paraprofessionals' THEN sksa.ParaprofessionalQualification
-					WHEN sksa.HighlyQualifiedTeacherIndicator = 1 THEN 'SPEDTCHFULCRT'
-					WHEN sksa.HighlyQualifiedTeacherIndicator = 0 THEN 'SPEDTCHNFULCRT'
+					WHEN rdksc.K12StaffClassificationCode = 'Paraprofessionals' THEN ssa.ParaprofessionalQualification
+					WHEN ssa.HighlyQualifiedTeacherIndicator = 1 THEN 'SPEDTCHFULCRT'
+					WHEN ssa.HighlyQualifiedTeacherIndicator = 0 THEN 'SPEDTCHNFULCRT'
 					ELSE 'MISSING'
 				END = ISNULL(rdkss.QualificationStatusMap, rdkss.QualificationStatusCode)
-			AND ISNULL(sksa.InexperiencedStatus, 'MISSING') = ISNULL(rdkss.UnexperiencedStatusMap, rdkss.UnexperiencedStatusCode)
+			AND ISNULL(ssa.EdFactsTeacherInexperiencedStatus, 'MISSING') = ISNULL(rdkss.EdFactsTeacherInexperiencedStatusMap, rdkss.EdFactsTeacherInexperiencedStatusCode)
 			AND CASE 
-				WHEN sksa.CredentialType in ('Certification', 'Licensure')
-					AND sksa.CredentialIssuanceDate <= CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
-					AND isnull(sksa.CredentialExpirationDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) >= CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
+				WHEN ssa.TeachingCredentialType in ('Certification', 'Licensure')
+					AND ssa.CredentialIssuanceDate <= CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
+					AND isnull(ssa.CredentialExpirationDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) >= CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
 					THEN 'FC'
 				ELSE 'NFC'
-				END = rdkss.CertificationStatusEdFactsCode
-		JOIN RDS.DimK12Staff rdks
-			ON sksa.Personnel_Identifier_State = rdks.StaffMemberIdentifierState
-			AND ISNULL(sksa.FirstName, 'MISSING') = ISNULL(rdks.FirstName, 'MISSING')
-			AND ISNULL(sksa.MiddleName, 'MISSING') = ISNULL(rdks.MiddleName, 'MISSING')
-			AND ISNULL(sksa.LastName, 'MISSING') = ISNULL(rdks.LastOrSurname, 'MISSING')
-			AND @ChildCountDate BETWEEN rdks.RecordStartDateTime AND ISNULL(rdks.RecordEndDateTime, GETDATE())
-			AND @ChildCountDate BETWEEN sksa.AssignmentStartDate AND ISNULL(sksa.AssignmentEndDate, GETDATE())
+				END = rdkss.EdFactsCertificationStatusEdFactsCode
+		JOIN RDS.DimPeople rdp
+			ON ssa.StaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState
+			AND rdp.IsActiveK12StaffMember = 1
+			AND ISNULL(ssa.FirstName, 'MISSING') = ISNULL(rdp.FirstName, 'MISSING')
+			AND ISNULL(ssa.MiddleName, 'MISSING') = ISNULL(rdp.MiddleName, 'MISSING')
+			AND ISNULL(ssa.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
+			AND @ChildCountDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
+			AND @ChildCountDate BETWEEN ssa.AssignmentStartDate AND ISNULL(ssa.AssignmentEndDate, GETDATE())
 		ALTER INDEX ALL ON RDS.FactK12StaffCounts REBUILD
 
 	END TRY
 	BEGIN CATCH
 		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StaffCounts', 'RDS.FactK12StaffCounts', 'FactK12StaffCounts', NULL, ERROR_MESSAGE(), 1, NULL, GETDATE())
 	END CATCH
-
 		
 END
