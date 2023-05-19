@@ -106,6 +106,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_ChildCount.Stored
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimSeas.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimSeas.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
