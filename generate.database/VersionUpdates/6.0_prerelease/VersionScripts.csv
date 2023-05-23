@@ -16,6 +16,12 @@ VersionUpdates\\6.0_prerelease\V11Upgrade,Metadata-Fact-Dimension-Table-Updates.
 VersionUpdates\\6.0_prerelease\V11Upgrade,Metadata-Dimension-Updates.sql,0
 VersionUpdates\\6.0_prerelease\V11Upgrade,Metadata-FileColumn-Dimension-Updates.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
+Tables\\Drop,Staging.StagingValidationRules.Table.sql,0
+Tables\\Create,Staging.StagingValidationRules.Table.sql,0
+Tables\\Drop,Staging.StagingValidationResults.Table.sql,0
+Tables\\Create,Staging.StagingValidationResults.Table.sql,0
+VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
+VersionUpdates\\6.0_prerelease,AddStagingValidationRules.sql,0
 Views\\Drop,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql,0
 Views\\Create,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql,0
 Views\\Drop,Debug.vwChildCount_FactTable.View.sql,0
@@ -100,6 +106,8 @@ StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.ValidateStagingData.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.ValidateStagingData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.ValidateStagingData_GetResults.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.ValidateStagingData_GetResults.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql,0
