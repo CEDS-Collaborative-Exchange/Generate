@@ -130,5 +130,7 @@ StoredProcedures\\Drop,RDS.Get_OrganizationStatusReportData.StoredProcedure.sql,
 StoredProcedures\\Create,RDS.Get_OrganizationStatusReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
 VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
 VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0

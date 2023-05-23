@@ -280,8 +280,8 @@ BEGIN
 	  begin
 		set @idFieldsSQL = '
 		s.StateANSICode as OrganizationIdentifierNces,
-		s.SeaOrganizationIdentifierSea as OrganizationIdentifierSea,
-		s.SeaOrganizationName as OrganizationName,
+		sea.SeaOrganizationIdentifierSea as OrganizationIdentifierSea,
+		sea.StateAbbreviationDescription as OrganizationName,
 		null as ParentOrganizationIdentifierSea'
 	end
 	else if @reportLevel = 'lea'
@@ -5233,8 +5233,8 @@ BEGIN
 						CategorySetCode,
 						Categories,
 						StateANSICode,
-						StateCode,
-						StateName,
+						StateAbbreviationCode,
+						StateAbbreviationDescription,
 						OrganizationIdentifierNces,
 						OrganizationIdentifierSea,
 						OrganizationName,
@@ -5270,8 +5270,8 @@ BEGIN
 						sea.StateAbbreviationCode,
 						sea.StateAbbreviationDescription,
 						isnull(sea.StateANSICode,'''') as OrganizationIdentifierNces,
-						sea.SeaIdentifierState as OrganizationIdentifierSea,
-						sea.SeaName as OrganizationName,
+						sea.SeaOrganizationIdentifierSea as OrganizationIdentifierSea,
+						sea.SeaOrganizationName as OrganizationName,
 						null as ParentOrganizationIdentifierSea,
 						''' + @tableTypeAbbrv + ''' as TableTypeAbbrv,
 						''' + @totalIndicator + ''' as TotalIndicator' +
@@ -5359,8 +5359,8 @@ BEGIN
 						sea.StateANSICode,
 						sea.StateAbbreviationCode,
 						sea.StateAbbreviationDescription,
-						sea.SeaIdentifierState,
-						sea.SeaName ' +
+						sea.SeaOrganizationIdentifierSea,
+						sea.SeaOrganizationName ' +
 						@sqlCategoryFields
 				
 				set @sql = @sql + '
@@ -5385,8 +5385,8 @@ BEGIN
 								CategorySetCode,
 								Categories,
 								StateANSICode,
-								StateCode,
-								StateName,
+								StateAbbreviationCode,
+								StateAbbreviationDescription,
 								OrganizationIdentifierNces,
 								OrganizationIdentifierSea,
 								OrganizationName,
@@ -5420,8 +5420,8 @@ BEGIN
 								lea.StateAbbreviationCode,
 								lea.StateAbbreviationDescription,
 								isnull(lea.LeaIdentifierNces,'''') as OrganizationIdentifierNces,
-								lea.LeaIdentifierState as OrganizationIdentifierSea,
-								lea.LeaName as OrganizationName,
+								lea.LeaIdentifierSea as OrganizationIdentifierSea,
+								lea.LeaOrganizationName as OrganizationName,
 								lea.StateANSICode as ParentOrganizationIdentifierSea,
 								''' + @tableTypeAbbrv + ''' as TableTypeAbbrv,
 								''' + @totalIndicator + ''' as TotalIndicator' +
@@ -5503,8 +5503,8 @@ BEGIN
 								lea.StateAbbreviationCode,
 								lea.StateAbbreviationDescription,
 								lea.LeaIdentifierNces,
-								lea.LeaIdentifierState,
-								lea.LeaName ' +
+								lea.LeaIdentifierSea,
+								lea.LeaOrganizationName ' +
 								@sqlCategoryFields
 
 
@@ -5525,8 +5525,8 @@ BEGIN
 								CategorySetCode,
 								Categories,
 								StateANSICode,
-								StateCode,
-								StateName,
+								StateAbbreviationCode,
+								StateAbbreviationDescription,
 								OrganizationIdentifierNces,
 								OrganizationIdentifierSea,
 								OrganizationName,
@@ -5558,8 +5558,8 @@ BEGIN
 									lea.StateAbbreviationCode,
 									lea.StateAbbreviationDescription,
 									isnull(lea.LeaIdentifierNces,'''') as OrganizationIdentifierNces,
-									lea.LeaIdentifierState as OrganizationIdentifierSea,
-									lea.LeaName as OrganizationName,
+									lea.LeaIdentifierSea as OrganizationIdentifierSea,
+									lea.LeaOrganizationName as OrganizationName,
 									lea.StateANSICode as ParentOrganizationIdentifierSea,
 									''' + @tableTypeAbbrv + ''' as TableTypeAbbrv,
 									''' + @totalIndicator + ''' as TotalIndicator' +
@@ -5610,8 +5610,8 @@ BEGIN
 									lea.StateAbbreviationCode,
 									lea.StateAbbreviationDescription,
 									lea.LeaIdentifierNces,
-									lea.LeaIdentifierState,
-									lea.LeaName ' +
+									lea.LeaIdentifierSea,
+									lea.LeaOrganizationName ' +
 									@sqlCategoryFields + '
 								having sum(' + @factField + ') > 0'
 
@@ -5668,9 +5668,9 @@ BEGIN
 						sch.StateAbbreviationCode,
 						sch.StateAbbreviationDescription,
 						isnull(sch.SchoolIdentifierNces,'''') as OrganizationIdentifierNces,
-						sch.SchoolIdentifierState as OrganizationIdentifierSea,
+						sch.SchoolIdentifierSea as OrganizationIdentifierSea,
 						sch.NameOfInstitution as OrganizationName,
-						sch.LeaIdentifierState as ParentOrganizationIdentifierSea,
+						sch.LeaIdentifierSea as ParentOrganizationIdentifierSea,
 						''' + @tableTypeAbbrv + ''' as TableTypeAbbrv,
 						''' + @totalIndicator + ''' as TotalIndicator' +
 						@sqlCategoryFields + ', 
@@ -5726,9 +5726,9 @@ BEGIN
 								sch.StateAbbreviationCode,
 								sch.StateAbbreviationDescription,
 								sch.SchoolIdentifierNces,
-								sch.SchoolIdentifierState,
+								sch.SchoolIdentifierSea,
 								sch.NameOfInstitution ,
-								sch.LeaIdentifierState' +
+								sch.LeaIdentifierSea' +
 								@sqlCategoryFields + '
 							having sum(' + @factField + ') > 0'
 					end
@@ -5755,9 +5755,9 @@ BEGIN
 								sch.StateAbbreviationCode,
 								sch.StateAbbreviationDescription,
 								sch.SchoolIdentifierNces,
-								sch.SchoolIdentifierState,
+								sch.SchoolIdentifierSea,
 								sch.NameOfInstitution ,
-								sch.LeaIdentifierState ' +
+								sch.LeaIdentifierSea ' +
 								@sqlCategoryFields + '
 							having sum(' + @factField + ') > 0'
 					end
