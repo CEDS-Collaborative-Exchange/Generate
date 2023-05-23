@@ -145,7 +145,7 @@ BEGIN
 			, -1														NOrDStatusId							
 			, -1														CTEStatusId							
 			, -1														K12EnrollmentStatusId					
-			, -1														EnglishLearnerStatusId				
+			, ISNULL(rdels.DimEnglishLearnerStatusId, -1)				EnglishLearnerStatusId				
 			, ISNULL(rdhs.DimHomelessnessStatusId, -1)					HomelessnessStatusId					
 			, ISNULL(rdeds.DimEconomicallyDisadvantagedStatusId, -1)	EconomicallyDisadvantagedStatusId		
 			, -1														FosterCareStatusId					
@@ -154,9 +154,6 @@ BEGIN
 			, -1 														SpecialEducationServicesExitDateId	
 			, -1														MigrantStudentQualifyingArrivalDateId	
 			, -1														LastQualifyingMoveDateId				
-
-	--migrant (RDS)
-		LEFT JOIN #vwMigrantStatuses rdms
 
 		FROM Staging.K12Enrollment ske
 		JOIN RDS.DimSchoolYears rsy
@@ -221,10 +218,9 @@ BEGIN
 			AND rkss.ReferralStatusCode = 'MISSING'	
 			AND rkss.MobilityStatus36moCode = 'MISSING'
 	--english learner (RDS)
-		LEFT JOIN #vwEnglishLearnerStatus rdels
-			ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdkd.HomelessnessStatusMap AS SMALLINT), -1)
-			AND ISNULL(hmNight.HomelessNightTimeResidence, 'MISSING') = ISNULL(rdkd.HomelessPrimaryNighttimeResidenceMap, 'MISSING')
-			AND ISNULL(CAST(hmStatus.HomelessUnaccompaniedYouth AS SMALLINT), -1) = ISNULL(CAST(rdkd.HomelessUnaccompaniedYouthStatusMap AS SMALLINT), -1)
+		LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
+			ON rsy.SchoolYear = rdels.SchoolYear
+			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 	--disability status (RDS)
 		LEFT JOIN #vwIdeaStatuses rdis
 			ON rdis.IdeaIndicatorCode = 'Yes'
@@ -238,7 +234,9 @@ BEGIN
 			AND rdhs.HomelessUnaccompaniedYouthStatusCode = 'MISSING'
 	--economically disadvantaged (RDS)
 		LEFT JOIN #vwEconomicallyDisadvantagedStatuses rdeds
-			ON rdeds.EconomicDisadvantageStatusCode = 'MISSING'
+			ON ISNULL(CAST(ecoDis.EconomicDisadvantageStatus AS SMALLINT), -1) = ISNULL(rdeds.EconomicDisadvantageStatusMap, -1)
+			AND rdeds.EligibilityStatusForSchoolFoodServiceProgramsCode = 'MISSING'
+			AND rdeds.NationalSchoolLunchProgramDirectCertificationIndicatorCode = 'MISSING'
 	--migrant (RDS)
 		LEFT JOIN #vwMigrantStatuses rdms
 			ON ISNULL(CAST(migrant.MigrantStatus AS SMALLINT), -1) = ISNULL(CAST(rdms.MigrantStatusMap AS SMALLINT), -1)
