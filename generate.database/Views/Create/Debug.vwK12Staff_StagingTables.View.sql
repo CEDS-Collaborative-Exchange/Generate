@@ -1,42 +1,42 @@
 CREATE VIEW [Debug].[vwK12Staff_StagingTables] AS
 
 	SELECT		DISTINCT 
-				Personnel_Identifier_State
-				,LEA_Identifier_State
-				,School_Identifier_State
-				,FirstName
-				,LastName
-				,MiddleName
-				,BirthDate
-				,Sex
-				,PositionTitle
-				,FullTimeEquivalency
-				,SpecialEducationStaffCategory
-				,K12StaffClassification
-				,TitleIProgramStaffCategory
-				,CredentialType
-				,CredentialIssuanceDate
-				,CredentialExpirationDate
-				,ParaprofessionalQualification
-				,SpecialEducationAgeGroupTaught
-				,HighlyQualifiedTeacherIndicator
-				,AssignmentStartDate
-				,AssignmentEndDate
-				,InexperiencedStatus
-				,EmergencyorProvisionalCredentialStatus
-				,OutOfFieldStatus
-				,RecordStartDateTime
-				,RecordEndDateTime
+				StaffMemberIdentifierState
+				, LeaIdentifierSea
+				, SchoolIdentifierSea
+				, FirstName
+				, LastOrSurname
+				, MiddleName
+				, BirthDate
+				, Sex
+				, PositionTitle
+				, FullTimeEquivalency
+				, SpecialEducationStaffCategory
+				, K12StaffClassification
+				, TitleIProgramStaffCategory
+				, TeachingCredentialType
+				, CredentialIssuanceDate
+				, CredentialExpirationDate
+				, ParaprofessionalQualification
+				, SpecialEducationAgeGroupTaught
+				, HighlyQualifiedTeacherIndicator
+				, AssignmentStartDate
+				, AssignmentEndDate
+				, EdFactsTeacherInexperiencedStatus
+				, EmergencyorProvisionalCredentialStatus
+				, EDFactsTeacherOutOfFieldStatus
+				, RecordStartDateTime
+				, RecordEndDateTime
 
-	FROM Staging.K12StaffAssignment							staff		
+	FROM Staging.StaffAssignment							staff		
 	
 	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1
-	--AND Personnel_Identifier_State = ''
-	--AND LEA_Identifier_State = ''
-	--AND School_Identifier_State = ''
+	--AND StaffMemberIdentifierState = ''
+	--AND LeaIdentifierSea = ''
+	--AND SchoolIdentifierSea = ''
 	--AND FirstName = ''
-	--AND LastName = ''
+	--AND LastOrSurname = ''
 	--AND MiddleName = ''
 	--AND BirthDate = ''
 	--AND Sex = ''
@@ -45,7 +45,7 @@ CREATE VIEW [Debug].[vwK12Staff_StagingTables] AS
 	--AND SpecialEducationStaffCategory = ''
 	--AND K12StaffClassification = ''
 	--AND TitleIProgramStaffCategory = ''
-	--AND CredentialType = ''
+	--AND TeachingCredentialType = ''
 	--AND CredentialIssuanceDate = ''
 	--AND CredentialExpirationDate = ''
 	--AND ParaprofessionalQualification = ''
@@ -53,9 +53,9 @@ CREATE VIEW [Debug].[vwK12Staff_StagingTables] AS
 	--AND HighlyQualifiedTeacherIndicator = ''
 	--AND AssignmentStartDate = ''
 	--AND AssignmentEndDate = ''
-	--AND InexperiencedStatus = ''
+	--AND EdFactsTeacherInexperiencedStatus = ''
 	--AND EmergencyorProvisionalCredentialStatus = ''
-	--AND OutOfFieldStatus = ''
+	--AND EDFactsTeacherOutOfFieldStatus = ''
 	--AND RecordStartDateTime = ''
 	--AND RecordEndDateTime = ''
 

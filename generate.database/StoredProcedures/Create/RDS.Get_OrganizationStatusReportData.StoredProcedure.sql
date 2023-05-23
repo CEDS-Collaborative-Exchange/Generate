@@ -29,7 +29,7 @@ BEGIN
 					when RACE = 'BlackorAfricanAmerican' then 'MB'
 					when RACE = 'NativeHawaiianorOtherPacificIslander' then 'MNP'
 					when RACE = 'TwoorMoreRaces' then 'MM'
-					when RACE = 'HispanicLatinoEthnicity' then 'MHL'
+					when RACE = 'HI' then 'MHL'
 					when RACE = 'White' then 'MW'
 					else 'MISSING'
 			end as RACE,
@@ -48,7 +48,7 @@ BEGIN
 			OrganizationStatusCount,
 			STATEDEFINEDCUSTOMINDICATORCODE,
 			INDICATORSTATUSTYPECODE
-		from rds.FactOrganizationStatusCountReports fact
+		from rds.ReportEDFactsOrganizationStatusCounts fact
 		where reportcode = @reportCode and ReportLevel = @reportLevel 
 		and ReportYear = @reportYear and [CategorySetCode] = isnull(@categorySetCode,CategorySetCode)
 		) organizationInfo

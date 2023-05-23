@@ -34,7 +34,7 @@ BEGIN
 		AND TableFilter = '001156' 
 		AND OutputCode = 'SEA'
 
-		INSERT INTO #organizationLocationTypes
+	INSERT INTO #organizationLocationTypes
 	SELECT 
 		  mail.SchoolYear
 		, mail.InputCode
@@ -47,8 +47,8 @@ BEGIN
 	;WITH CTE AS 
 	( 
 		SELECT DISTINCT	
-			  ssd.StateCode
-			, CASE ssd.StateCode
+			ssd.StateAbbreviationCode
+			, CASE ssd.StateAbbreviationCode
 				WHEN 'AK' THEN 'Alaska'
 				WHEN 'AL' THEN 'Alabama'
 				WHEN 'AR' THEN 'Arkansas'
@@ -111,10 +111,72 @@ BEGIN
 				WHEN 'AA' THEN 'Armed Forces America'
 				WHEN 'AE' THEN 'Armed Forces Africa, Canada, Europe, and Mideast'
 				WHEN 'AP' THEN 'Armed Forces Pacific'
-			  END AS StateDescription
-			, ssd.SeaName
-			, ssd.SeaShortName
-			, ssd.SeaStateIdentifier
+			END AS StateAbbreviationDescription
+			, CASE ssd.StateAbbreviationCode
+				WHEN 'AK' THEN '02'
+				WHEN 'AL' THEN '01'
+				WHEN 'AR' THEN '05'
+				WHEN 'AS' THEN '60'
+				WHEN 'AZ' THEN '04'
+				WHEN 'CA' THEN '06'
+				WHEN 'CO' THEN '08'
+				WHEN 'CT' THEN '09'
+				WHEN 'DC' THEN '11'
+				WHEN 'DE' THEN '10'
+				WHEN 'FL' THEN '12'
+				WHEN 'FM' THEN '64'
+				WHEN 'GA' THEN '13'
+				WHEN 'GU' THEN '66'
+				WHEN 'HI' THEN '15'
+				WHEN 'IA' THEN '19'
+				WHEN 'ID' THEN '16'
+				WHEN 'IL' THEN '17'
+				WHEN 'IN' THEN '18'
+				WHEN 'KS' THEN '20'
+				WHEN 'KY' THEN '21'
+				WHEN 'LA' THEN '22'
+				WHEN 'MA' THEN '25'
+				WHEN 'MD' THEN '24'
+				WHEN 'ME' THEN '23'
+				WHEN 'MH' THEN '68'
+				WHEN 'MI' THEN '26'
+				WHEN 'MN' THEN '27'
+				WHEN 'MO' THEN '29'
+				WHEN 'MP' THEN '69'
+				WHEN 'MS' THEN '28'
+				WHEN 'MT' THEN '30'
+				WHEN 'NC' THEN '37'
+				WHEN 'ND' THEN '38'
+				WHEN 'NE' THEN '31'
+				WHEN 'NH' THEN '33'
+				WHEN 'NJ' THEN '34'
+				WHEN 'NM' THEN '35'
+				WHEN 'NV' THEN '32'
+				WHEN 'NY' THEN '36'
+				WHEN 'OH' THEN '39'
+				WHEN 'OK' THEN '40'
+				WHEN 'OR' THEN '41'
+				WHEN 'PA' THEN '42'
+				WHEN 'PR' THEN '72'
+				WHEN 'PW' THEN '70'
+				WHEN 'RI' THEN '44'
+				WHEN 'SC' THEN '45'
+				WHEN 'SD' THEN '46'
+				WHEN 'TN' THEN '47'
+				WHEN 'TX' THEN '48'
+				WHEN 'UT' THEN '49'
+				WHEN 'VA' THEN '51'
+				WHEN 'VI' THEN '78'
+				WHEN 'VT' THEN '50'
+				WHEN 'WA' THEN '53'
+				WHEN 'WI' THEN '55'
+				WHEN 'WV' THEN '54'
+				WHEN 'WY' THEN '56'
+				ELSE NULL
+			END AS StateANSICode
+			, ssd.SeaOrganizationName
+			, ssd.SeaOrganizationShortName
+			, ssd.SeaOrganizationIdentifierSea
 			, ssd.Sea_WebSiteAddress
 			, ssd.SeaContact_FirstName
 			, ssd.SeaContact_LastOrSurname
@@ -124,30 +186,30 @@ BEGIN
 			, ssd.SeaContact_Identifier
 			, ssd.SeaContact_PositionTitle
 			, smam.AddressStreetNumberAndName AS MailingAddressStreet
-			, smam.AddressApartmentRoomOrSuite AS MailingAddressStreet2
+			, smam.AddressApartmentRoomOrSuiteNumber AS MailingAddressStreet2
 			, smam.AddressCity AS MailingAddressCity
 			, smam.StateAbbreviation AS MailingAddressState
 			, smam.AddressPostalCode AS MailingAddressPostalCode
-			, smam.AddressCountyAnsiCode AS MailingCountyAnsiCode
+			, smam.AddressCountyAnsiCodeCode AS MailingCountyAnsiCode
 			, smap.AddressStreetNumberAndName AS PhysicalAddressStreet
-			, smap.AddressApartmentRoomOrSuite AS PhysicalAddressStreet2
+			, smap.AddressApartmentRoomOrSuiteNumber AS PhysicalAddressStreet2
 			, smap.AddressCity AS PhysicalAddressCity
 			, smap.StateAbbreviation AS PhysicalAddressState
 			, smap.AddressPostalCode AS PhysicalAddressPostalCode
-			, smap.AddressCountyAnsiCode AS PhysicalCountyAnsiCode
+			, smap.AddressCountyAnsiCodeCode AS PhysicalCountyAnsiCode
 			, ssd.RecordStartDateTime 
 			, ssd.RecordEndDateTime 
 		FROM Staging.StateDetail ssd
 		LEFT JOIN Staging.OrganizationAddress smam
-			ON ssd.SeaStateIdentifier = smam.OrganizationIdentifier
+			ON ssd.SeaOrganizationIdentifierSea = smam.OrganizationIdentifier
 			AND smam.AddressTypeForOrganization = (select MailingAddressType from #organizationLocationTypes lt WHERE lt.SchoolYear = smam.SchoolYear)
 			AND smam.OrganizationType in (select SeaOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = smam.SchoolYear)
 		LEFT JOIN Staging.OrganizationAddress smap
-			ON ssd.SeaStateIdentifier = smap.OrganizationIdentifier
+			ON ssd.SeaOrganizationIdentifierSea = smap.OrganizationIdentifier
 			AND smap.AddressTypeForOrganization = (select PhysicalAddressType from #organizationLocationTypes lt WHERE lt.SchoolYear = smap.SchoolYear)
 			AND smap.OrganizationType in (select SeaOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = smam.SchoolYear)
 		LEFT JOIN Staging.OrganizationPhone sop
-			ON ssd.SeaStateIdentifier = sop.OrganizationIdentifier
+			ON ssd.SeaOrganizationIdentifierSea = sop.OrganizationIdentifier
 			AND sop.PrimaryTelephoneNumberIndicator = 1
 			AND sop.OrganizationType in (select SeaOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = smam.SchoolYear)
 		WHERE @DataCollectionName IS NULL	
@@ -155,61 +217,61 @@ BEGIN
 	)
 	MERGE rds.DimSeas AS trgt
 	USING CTE AS src
-		ON trgt.SeaIdentifierState = src.SeaStateIdentifier
+		ON trgt.SeaOrganizationIdentifierSea = src.SeaOrganizationIdentifierSea
 		AND ISNULL(trgt.RecordStartDateTime, '') = ISNULL(src.RecordStartDateTime, '')
 	WHEN MATCHED THEN 
 		UPDATE SET 
-			  [SeaName]						 = src.[SeaName]							
-			, [SeaIdentifierState]			 = src.[SeaStateIdentifier]
-			, [StateAnsiCode]				 = src.[SeaStateIdentifier]
-			, [StateAbbreviationCode]		 = src.[StateCode]
-			, [StateAbbreviationDescription] = src.[StateDescription]
-			, [MailingAddressCity]			 = src.[MailingAddressCity]
-			, [MailingAddressPostalCode]	 = src.[MailingAddressPostalCode]
-			, [MailingAddressState]			 = src.[MailingAddressState]
-			, [MailingAddressStreet]		 = src.[MailingAddressStreet]
-			, [PhysicalAddressCity]			 = src.[PhysicalAddressCity]
-			, [PhysicalAddressPostalCode]	 = src.[PhysicalAddressPostalCode]
-			, [PhysicalAddressState]		 = src.[PhysicalAddressState]
-			, [PhysicalAddressStreet]		 = src.[PhysicalAddressStreet]
-			, [Telephone]					 = src.[TelephoneNumber]
-			, [Website]						 = src.[Sea_WebSiteAddress]
-			, [RecordStartDateTime]			 = src.[RecordStartDateTime]
-			, [RecordEndDateTime]			 = src.[RecordEndDateTime]
-			, [MailingAddressStreet2]		 = src.[MailingAddressStreet2]
-			, [PhysicalAddressStreet2]		 = src.[PhysicalAddressStreet2]
-			, [MailingCountyAnsiCode]		 = src.[MailingCountyAnsiCode]
-			, [PhysicalCountyAnsiCode]		 = src.[PhysicalCountyAnsiCode]
+			[SeaOrganizationName]			 				= src.[SeaOrganizationName]							
+			, [SeaOrganizationIdentifierSea] 				= src.[SeaOrganizationIdentifierSea]
+			, [StateAnsiCode]				 				= src.[StateANSICode]
+			, [StateAbbreviationCode]		 				= src.[StateAbbreviationCode]
+			, [StateAbbreviationDescription] 				= src.[StateAbbreviationDescription]
+			, [MailingAddressCity]			 				= src.[MailingAddressCity]
+			, [MailingAddressPostalCode]	 				= src.[MailingAddressPostalCode]
+			, [MailingAddressStateAbbreviation]			 	= src.[MailingAddressState]
+			, [MailingAddressStreetNumberAndName]		 	= src.[MailingAddressStreet]
+			, [PhysicalAddressCity]			 				= src.[PhysicalAddressCity]
+			, [PhysicalAddressPostalCode]	 				= src.[PhysicalAddressPostalCode]
+			, [PhysicalAddressStateAbbreviation]		 	= src.[PhysicalAddressState]
+			, [PhysicalAddressStreetNumberAndName]		 	= src.[PhysicalAddressStreet]
+			, [TelephoneNumber]				 				= src.[TelephoneNumber]
+			, [WebsiteAddress]				 				= src.[Sea_WebSiteAddress]
+			, [RecordStartDateTime]			 				= src.[RecordStartDateTime]
+			, [RecordEndDateTime]			 				= src.[RecordEndDateTime]
+			, [MailingAddressApartmentRoomOrSuiteNumber]	= src.[MailingAddressStreet2]
+			, [PhysicalAddressApartmentRoomOrSuiteNumber]	= src.[PhysicalAddressStreet2]
+			, [MailingAddressCountyAnsiCodeCode]		 	= src.[MailingCountyAnsiCode]
+			, [PhysicalAddressCountyAnsiCodeCode]		 	= src.[PhysicalCountyAnsiCode]
 	WHEN NOT MATCHED BY TARGET THEN     --- Records Exists IN Source but NOT IN Target
 	INSERT (
-		  [SeaName]						
-		, [SeaIdentifierState]			
-		, [StateAnsiCode]				
-		, [StateAbbreviationCode]		
+		[SeaOrganizationName]
+		, [SeaOrganizationIdentifierSea]
+		, [StateAnsiCode]
+		, [StateAbbreviationCode]
 		, [StateAbbreviationDescription]
-		, [MailingAddressCity]			
-		, [MailingAddressPostalCode]	
-		, [MailingAddressState]			
-		, [MailingAddressStreet]		
-		, [PhysicalAddressCity]			
-		, [PhysicalAddressPostalCode]	
-		, [PhysicalAddressState]		
-		, [PhysicalAddressStreet]		
-		, [Telephone]					
-		, [Website]						
-		, [RecordStartDateTime]			
-		, [RecordEndDateTime]			
-		, [MailingAddressStreet2]		
-		, [PhysicalAddressStreet2]		
-		, [MailingCountyAnsiCode]		
-		, [PhysicalCountyAnsiCode]		
-		) 	
+		, [MailingAddressCity]
+		, [MailingAddressPostalCode]
+		, [MailingAddressStateAbbreviation]
+		, [MailingAddressStreetNumberAndName]
+		, [PhysicalAddressCity]
+		, [PhysicalAddressPostalCode]
+		, [PhysicalAddressStateAbbreviation]
+		, [PhysicalAddressStreetNumberAndName]
+		, [TelephoneNumber]
+		, [WebsiteAddress]
+		, [RecordStartDateTime]
+		, [RecordEndDateTime]
+		, [MailingAddressApartmentRoomOrSuiteNumber]
+		, [PhysicalAddressApartmentRoomOrSuiteNumber]
+		, [MailingAddressCountyAnsiCodeCode]
+		, [PhysicalAddressCountyAnsiCodeCode]
+	) 	
 	VALUES (
-		  src.[SeaName]						
-		, src.[SeaStateIdentifier]
-		, src.[SeaStateIdentifier]
-		, src.[StateCode]
-		, src.[StateDescription]
+		src.[SeaOrganizationName]						
+		, src.[SeaOrganizationIdentifierSea]
+		, src.[StateANSICode]
+		, src.[StateAbbreviationCode]
+		, src.[StateAbbreviationDescription]
 		, src.[MailingAddressCity]
 		, src.[MailingAddressPostalCode]
 		, src.[MailingAddressState]
@@ -226,24 +288,24 @@ BEGIN
 		, src.[PhysicalAddressStreet2]
 		, src.[MailingCountyAnsiCode]
 		, src.[PhysicalCountyAnsiCode]
-		);
+	);
 
 	--update the RecordEndDate of the previous record (if one exists)
 	;WITH upd AS(
 		SELECT 
-			  startd.SeaIdentifierState
+			  startd.SeaOrganizationIdentifierSea
 			, startd.RecordStartDateTime 
 			, min(endd.RecordStartDateTime) - 1 AS RecordEndDateTime
 		FROM rds.DimSeas startd
 		JOIN rds.DimSeas endd
-			ON startd.SeaIdentifierState = endd.SeaIdentifierState
+			ON startd.SeaOrganizationIdentifierSea = endd.SeaOrganizationIdentifierSea
 			AND startd.RecordStartDateTime < endd.RecordStartDateTime
-		GROUP BY  startd.SeaIdentifierState, startd.RecordStartDateTime
+		GROUP BY  startd.SeaOrganizationIdentifierSea, startd.RecordStartDateTime
 	) 
 	UPDATE sea SET RecordEndDateTime = upd.RecordEndDateTime 
 	FROM rds.DimSeas sea
 	JOIN upd	
-		ON sea.SeaIdentifierState = upd.SeaIdentifierState
+		ON sea.SeaOrganizationIdentifierSea = upd.SeaOrganizationIdentifierSea
 		AND sea.RecordStartDateTime = upd.RecordStartDateTime
 	
 	--cleanup
@@ -253,120 +315,102 @@ BEGIN
 	-----------------------------------------------------
 	-- Insert DimK12Staff for State Officer
 	-----------------------------------------------------
-	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12Staff WHERE DimK12StaffId = -1)
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimPeople WHERE DimPersonId = -1)
 	BEGIN
 		--Insert the default 'missing' row if it doesn't exist
-		SET IDENTITY_INSERT RDS.DimK12Staff ON
-		INSERT INTO RDS.DimK12Staff (DimK12StaffId) VALUES (-1)
-		SET IDENTITY_INSERT RDS.DimK12Staff off
+		SET IDENTITY_INSERT RDS.DimPeople ON
+		INSERT INTO RDS.DimPeople (DimPersonId) VALUES (-1)
+		SET IDENTITY_INSERT RDS.DimPeople OFF
 	END
 
 	--Create and populate the temp table for staff data	
-	CREATE TABLE #K12Staff (
-		BirthDate						DATE NULL
-		, FirstName						NVARCHAR(50) NULL
-		, LastName						NVARCHAR(50) NULL
-		, MiddleName					NVARCHAR(50) NULL
-		, StaffMemberIdentifierState	NVARCHAR(50) NULL
-		, ElectronicMailAddress			NVARCHAR(124) NULL
-		, K12StaffRole					NVARCHAR(50) NULL
-		, TelephoneNumber				NVARCHAR(24) NULL
-		, PositionTitle					VARCHAR(50) NULL
-		, RecordStartDateTime			DATETIME	
-		, RecordEndDateTime				DATETIME	NULL
+	CREATE TABLE #People (
+		BirthDate								DATE NULL
+		, FirstName								NVARCHAR(50) NULL
+		, LastOrSurname							NVARCHAR(50) NULL
+		, MiddleName							NVARCHAR(50) NULL
+		, K12StaffStaffMemberIdentifierState	NVARCHAR(50) NULL
+		, IsActiveK12StaffMember				BIT NULL
+		, RecordStartDateTime					DATETIME	
+		, RecordEndDateTime						DATETIME	NULL
 	)
 		
-	declare @k12StaffRole varchar(50) = 'K12 Personnel'
-
-	INSERT INTO #K12Staff
-	(
+	INSERT INTO #People (
 		BirthDate
 		, FirstName
-		, LastName
+		, LastOrSurname
 		, MiddleName
-		, StaffMemberIdentifierState
-		, ElectronicMailAddress
-		, K12StaffRole
-		, TelephoneNumber
-		, PositionTitle
+		, K12StaffStaffMemberIdentifierState
+		, IsActiveK12StaffMember
 		, RecordStartDateTime
 		, RecordEndDateTime
 	)		
 	SELECT DISTINCT
-		NULL -- Birthdate
-		, SeaContact_FirstName
-		, ISNULL(SeaContact_LastOrSurname, 'MISSING') as LastName
-		, NULL -- MiddleName
-		, SeaContact_Identifier
-		, SeaContact_ElectronicMailAddress
-		, 'Chief State School Officer' K12StaffRole
-		, SeaContact_PhoneNumber TelephoneNumber
-		, SeaContact_PositionTitle
-		, RecordStartDateTime
-		, RecordEndDateTime
+		NULL 											AS Birthdate
+		, SeaContact_FirstName							AS FirstName
+		, ISNULL(SeaContact_LastOrSurname, 'MISSING') 	AS LastOrSurname
+		, NULL 											AS MiddleName
+		, SeaContact_Identifier							AS K12StaffStaffMemberIdentifierState
+		, 1 											AS IsActiveK12StaffMember
+		, RecordStartDateTime							AS RecordStartDateTime
+		, RecordEndDateTime								AS RecordEndDateTime
 	FROM Staging.StateDetail
 
-	MERGE rds.DimK12Staff AS trgt
-	USING #K12Staff AS src
-			ON  trgt.StaffMemberIdentifierState = src.StaffMemberIdentifierState
-			AND ISNULL(trgt.FirstName, '') = ISNULL(src.FirstName, '')
-			AND ISNULL(trgt.LastOrSurname, '') = ISNULL(src.LastName, '')
-			AND ISNULL(trgt.MiddleName, '') = ISNULL(src.MiddleName, '')
-			AND ISNULL(trgt.PositionTitle, '') = ISNULL(src.PositionTitle, '')
-			AND ISNULL(trgt.BirthDate, '1900-01-01') = ISNULL(src.BirthDate, '1900-01-01')
-			AND trgt.RecordStartDateTime = src.RecordStartDateTime
+	MERGE rds.DimPeople AS trgt
+	USING #People AS src
+			ON  trgt.K12StaffStaffMemberIdentifierState = src.K12StaffStaffMemberIdentifierState
+			AND ISNULL(trgt.FirstName, '') 				= ISNULL(src.FirstName, '')
+			AND ISNULL(trgt.LastOrSurname, '') 			= ISNULL(src.LastOrSurname, '')
+			AND ISNULL(trgt.MiddleName, '') 			= ISNULL(src.MiddleName, '')
+			AND ISNULL(trgt.BirthDate, '1900-01-01') 	= ISNULL(src.BirthDate, '1900-01-01')
+			AND trgt.RecordStartDateTime 				= src.RecordStartDateTime
+			AND src.IsActiveK12StaffMember = 1
 	WHEN NOT MATCHED BY TARGET THEN     --- Records Exists in Source but NOT in Target
 	INSERT (
-		[BirthDate]
-		, [FirstName]
+		BirthDate
+		, FirstName
 		, LastOrSurname
-		, [MiddleName]
-		, [StaffMemberIdentifierState]
-		, ElectronicMailAddress
-		, K12StaffRole
-		, TelephoneNumber
-		, PositionTitle
+		, MiddleName
+		, K12StaffStaffMemberIdentifierState
+		, IsActiveK12StaffMember
 		, RecordStartDateTime
-		)
+	)
 	VALUES (
 		src.Birthdate
 		, src.FirstName
-		, src.LastName
+		, src.LastOrSurname
 		, src.MiddleName
-		, src.StaffMemberIdentifierState
-		, src.ElectronicMailAddress
-		, K12StaffRole
-		, TelephoneNumber
-		, src.PositionTitle
+		, src.K12StaffStaffMemberIdentifierState
+		, 1
 		, src.RecordStartDateTime
-		);
+	);
 
-	UPDATE staff 
-	SET RecordEndDateTime = NULL
-	FROM rds.DimK12Staff staff
+	-- UPDATE staff 
+	-- SET RecordEndDateTime = NULL
+	-- FROM rds.DimPeople staff
 
 	--set the RecordEndDate for previous records (if they exist)
 	;WITH upd AS (
 		SELECT 
-			startd.StaffMemberIdentifierState
+			startd.K12StaffStaffMemberIdentifierState
 			, startd.RecordStartDateTime
-			, min(endd.RecordStartDateTime) - 1 AS RecordEndDateTime
-		FROM rds.DimK12Staff startd
-		JOIN rds.DimK12Staff endd
-			ON startd.StaffMemberIdentifierState = endd.StaffMemberIdentifierState
+			, convert(datetime, min(endd.RecordStartDateTime)) - 1 AS RecordEndDateTime
+		FROM rds.DimPeople startd
+		JOIN rds.DimPeople endd
+			ON startd.K12StaffStaffMemberIdentifierState = endd.K12StaffStaffMemberIdentifierState
 			AND startd.RecordStartDateTime < endd.RecordStartDateTime
-		GROUP BY startd.StaffMemberIdentifierState, startd.RecordStartDateTime
+		GROUP BY startd.K12StaffStaffMemberIdentifierState, startd.RecordStartDateTime
 	) 
 	UPDATE staff 
 	SET RecordEndDateTime = upd.RecordEndDateTime
-	FROM rds.DimK12Staff staff
+	FROM rds.DimPeople staff
 	INNER JOIN upd
-		ON staff.StaffMemberIdentifierState = upd.StaffMemberIdentifierState
+		ON staff.K12StaffStaffMemberIdentifierState = upd.K12StaffStaffMemberIdentifierState
 		AND staff.RecordStartDateTime = upd.RecordStartDateTime
 	WHERE upd.RecordEndDateTime <> '1900-01-01 00:00:00.000'
 		AND staff.RecordEndDateTime IS NULL	
 
 	--cleanup
-	DROP TABLE #K12Staff
+	DROP TABLE #People
 
 END 

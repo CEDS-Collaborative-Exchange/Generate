@@ -1,8 +1,7 @@
-create VIEW RDS.vwDimK12SchoolStatuses
+CREATE VIEW RDS.vwDimK12SchoolStatuses
 AS
--- 9/26/2022 --
 	SELECT
-		  DimK12SchoolStatusId
+		DimK12SchoolStatusId
 		, rsy.SchoolYear
 		, rdkss.MagnetOrSpecialProgramEmphasisSchoolCode
 		, sssrd1.InputCode AS MagnetOrSpecialProgramEmphasisSchoolMap
@@ -12,8 +11,12 @@ AS
 		, CASE SharedTimeIndicatorCode
 			WHEN 'Yes' THEN 'Yes' 
 			WHEN 'No' THEN 'No'
-			ELSE NULL
-		  END AS SharedTimeIndicatorMap
+			-- CIID-5783 JW -------------
+			-- ELSE NULL 
+			ELSE 'MISSING'
+			----------------------------
+
+		END AS SharedTimeIndicatorMap
 		, VirtualSchoolStatusCode
 		, sssrd3.InputCode AS VirtualSchoolStatusMap
 		, SchoolImprovementStatusCode
@@ -21,8 +24,8 @@ AS
 		, PersistentlyDangerousStatusCode
 		, sssrd5.InputCode PersistentlyDangerousStatusMap
 		, sssrd5.InputCode AS PersistentlyDangerousStatusMap_InputCode
-		, ProgressAchievingEnglishLanguageCode
-		, sssrd6.InputCode AS ProgressAchievingEnglishLanguageMap
+		, ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode
+		, sssrd6.InputCode AS ProgressAchievingEnglishLanguageProficiencyIndicatorTypeMap
 		, StatePovertyDesignationCode
 		, sssrd7.InputCode as StatePovertyDesignationMap
 
@@ -49,10 +52,11 @@ AS
 		AND sssrd5.TableName = 'RefSchoolDangerousStatus'
 		AND rsy.SchoolYear = sssrd5.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd6
-		ON rdkss.ProgressAchievingEnglishLanguageCode = sssrd6.OutputCode
+		ON rdkss.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode = sssrd6.OutputCode
 		AND sssrd6.TableName = 'RefProgressAchievingEnglishLanguageProficiencyIndicatorStatus'
 		AND rsy.SchoolYear = sssrd6.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd7
 		ON rdkss.StatePovertyDesignationCode = sssrd7.OutputCode
 		AND sssrd7.TableName = 'RefStatePovertyDesignation'
 		AND rsy.SchoolYear = sssrd7.SchoolYear
+	

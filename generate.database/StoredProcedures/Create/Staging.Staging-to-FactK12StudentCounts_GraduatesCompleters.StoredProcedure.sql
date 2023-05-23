@@ -14,21 +14,20 @@ BEGIN
 
 	BEGIN TRY
 
-		--create indexes to improve query performance
-		IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_Staging_PersonRace_StudentId_SchoolYear' AND object_id = OBJECT_ID('Staging.PersonRace')) BEGIN
-			CREATE NONCLUSTERED INDEX [IX_Staging_PersonRace_StudentId_SchoolYear]
-			ON [Staging].[PersonRace] ([Student_Identifier_State],[SchoolYear])
-			INCLUDE ([OrganizationIdentifier],[OrganizationType],[RaceType])
-		END
+	-- Drop temp tables.  This allows for running the procedure as a script while debugging
+		IF OBJECT_ID(N'tempdb..#vwStudentStatuses') IS NOT NULL DROP TABLE #vwStudentStatuses
+		IF OBJECT_ID(N'tempdb..#vwK12Demographics') IS NOT NULL DROP TABLE #vwK12Demographics
+		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
+		IF OBJECT_ID(N'tempdb..#vwIdeaStatuses') IS NOT NULL DROP TABLE #vwIdeaStatuses
 
-
+	--create indexes to improve query performance
 		IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_Staging_PersonStatus_IdeaStatusStartDate_WithIncludes2' AND object_id = OBJECT_ID('Staging.PersonStatus')) BEGIN
 			CREATE NONCLUSTERED INDEX [IX_Staging_PersonStatus_IdeaStatusStartDate_WithIncludes2]
 			ON [Staging].[PersonStatus] ([IDEA_StatusStartDate])
 			INCLUDE ([Student_Identifier_State],[LEA_Identifier_State],[School_Identifier_State],[IDEAIndicator],[IDEA_StatusEndDate],[PrimaryDisabilityType])
 		END
 
-		--Set the standard variables used throughout
+	--Set the standard variables used throughout
 		DECLARE 
 		@FactTypeId int,
 		@SchoolYearId int,
@@ -43,47 +42,7 @@ BEGIN
 		SELECT @ReportingStartDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-10-01'AS DATE)
 		SELECT @ReportingEndDate = CAST(CAST(@SchoolYear AS CHAR(4)) + '-09-30'AS DATE)
 
-		--create/populate the temp tables for Organization types
-		CREATE TABLE #seaOrganizationTypes (
-			SeaOrganizationType					VARCHAR(20)
-		)
-
-		CREATE TABLE #leaOrganizationTypes (
-			LeaOrganizationType					VARCHAR(20)
-		)
-
-		CREATE TABLE #schoolOrganizationTypes (
-			K12SchoolOrganizationType			VARCHAR(20)
-		)
-
-		INSERT INTO #seaOrganizationTypes
-		SELECT 
-			InputCode
-		FROM Staging.SourceSystemReferenceData 
-		WHERE TableName = 'RefOrganizationType' 
-			AND TableFilter = '001156' 
-			AND OutputCode = 'SEA'
-			AND SchoolYear = @SchoolYear
-
-		INSERT INTO #leaOrganizationTypes
-		SELECT 
-			InputCode
-		FROM Staging.SourceSystemReferenceData 
-		WHERE TableName = 'RefOrganizationType' 
-			AND TableFilter = '001156' 
-			AND OutputCode = 'LEA'
-			AND SchoolYear = @SchoolYear
-
-		INSERT INTO #schoolOrganizationTypes
-		SELECT 
-			InputCode
-		FROM Staging.SourceSystemReferenceData 
-		WHERE TableName = 'RefOrganizationType' 
-			AND TableFilter = '001156' 
-			AND OutputCode = 'K12School'
-			AND SchoolYear = @SchoolYear
-
-		--Create the temp views (and any relevant indexes) needed for this domain
+	--Create the temp views (and any relevant indexes) needed for this domain
 		SELECT *
 		INTO #vwK12StudentStatuses
 		FROM RDS.vwDimK12StudentStatuses
@@ -112,7 +71,7 @@ BEGIN
 
 		CREATE CLUSTERED INDEX ix_tempvwRaces ON #vwRaces (RaceMap);
 
-		--Set the correct Fact Type
+	--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'Grad'
@@ -121,154 +80,169 @@ BEGIN
 		WHERE SchoolYearId = @SchoolYearId 
 			AND FactTypeId = @FactTypeId
 
-		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL DROP TABLE #Facts
+		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
+			DROP TABLE #Facts
 		
-		--Create and load #Facts temp table
+	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
-				StagingId 								int not null
-				, AgeId									int null
-				, SchoolYearId							int null
-				, K12DemographicId						int null
-				, FactTypeId							int null
-				, GradeLevelId							int null
-				, IdeaStatusId							int null
-				, ProgramStatusId						int null
-				, K12SchoolId							int null
-				, K12StudentId							int null
-				, StudentCount							int null
-				, LanguageId							int null
-				, MigrantId								int null
-				, K12StudentStatusId					int null
-				, TitleIStatusId						int null
-				, TitleIIIStatusId						int null
-				, LEAId									int null
-				, AttendanceId							int null
-				, CohortStatusId						int null
-				, NorDProgramStatusId					int null
-				, StudentCutoverStartDate				date null
-				, RaceId								int null
-				, CTEStatusId							int null
-				, K12EnrollmentStatusId					int null
-				, SEAId									int null
-				, IEUId									int null
-				, SpecialEducationServicesExitDateId	int null
-
-			)
+			  StagingId									int not null
+			, SchoolYearId								int null
+			, FactTypeId								int null
+			, GradeLevelId								int null
+			, AgeId										int null
+			, RaceId									int null
+			, K12DemographicId							int null
+			, StudentCount								int null
+			, SEAId										int null
+			, IEUId										int null
+			, LEAId										int null
+			, K12SchoolId								int null
+			, K12StudentId								int null
+			, IdeaStatusId								int null
+			, LanguageId								int null
+			, MigrantStatusId							int null
+			, K12StudentStatusId						int null
+			, TitleIStatusId							int null
+			, TitleIIIStatusId							int null
+			, AttendanceId								int null
+			, CohortStatusId							int null
+			, NOrDStatusId								int null
+			, CTEStatusId								int null
+			, K12EnrollmentStatusId						int null
+			, EnglishLearnerStatusId					int null
+			, HomelessnessStatusId						int null
+			, EconomicallyDisadvantagedStatusId			int null
+			, FosterCareStatusId						int null
+			, ImmigrantStatusId							int null
+			, PrimaryDisabilityTypeId					int null
+			, SpecialEducationServicesExitDateId		int null
+			, MigrantStudentQualifyingArrivalDateId		int null
+			, LastQualifyingMoveDateId					int null
+		)
 		INSERT INTO #Facts
 		SELECT DISTINCT
-			ske.id										StagingId
-			, -1										AgeId
-			, rsy.DimSchoolYearId						SchoolYearId
-			, ISNULL(rdkd.DimK12DemographicId, -1)		K12DemographicId
-			, @FactTypeId								FactTypeId
-			, -1										GradeLevelId
-			, ISNULL(rdis.DimIdeaStatusId, -1)			IdeaStatusId
-			, -1										ProgramStatusId
-			, ISNULL(rdksch.DimK12SchoolId, -1)			K12SchoolId
-			, ISNULL(rdks.DimK12StudentId, -1)			K12StudentId
-			, 1											StudentCount
-			, -1										LanguageId
-			, -1										MigrantId
-			, ISNULL(rkss.DimK12StudentStatusId, -1)	K12StudentStatusId
-			, -1										TitleIStatusId
-			, -1										TitleIIIStatusId
-			, ISNULL(rdl.DimLeaID, -1)					LEAId
-			, -1										AttendanceId
-			, -1										CohortStatusId
-			, -1										NorDProgramStatusId
-			, NULL										StudentCutoverStartDate
-			, ISNULL(rdr.DimRaceId, -1)					RaceId
-			, -1										CTEStatusId
-			, -1										K12EnrollmentStatusId
-			, ISNULL(rds.DimSeaId, -1)					SEAId
-			, -1										IEUId
-			, -1										SpecialEducationServicesExitDateId
+			ske.id														StagingId								
+			, rsy.DimSchoolYearId										SchoolYearId							
+			, @FactTypeId												FactTypeId							
+			, -1														GradeLevelId							
+			, -1														AgeId									
+			, ISNULL(rdr.DimRaceId, -1)									RaceId								
+			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId						
+			, 1															StudentCount							
+			, ISNULL(rds.DimSeaId, -1)									SEAId									
+			, -1														IEUId									
+			, ISNULL(rdl.DimLeaID, -1)									LEAId									
+			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId							
+			, ISNULL(rdp.DimPeopleId, -1)								K12StudentId							
+			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId							
+			, -1														LanguageId							
+			, ISNULL(rdhs.DimMigrantStatusId, -1)						MigrantStatusId						
+			, ISNULL(rkss.DimK12StudentStatusId, -1)					K12StudentStatusId					
+			, -1														TitleIStatusId						
+			, -1														TitleIIIStatusId						
+			, -1														AttendanceId							
+			, -1														CohortStatusId						
+			, -1														NOrDStatusId							
+			, -1														CTEStatusId							
+			, -1														K12EnrollmentStatusId					
+			, -1														EnglishLearnerStatusId				
+			, ISNULL(rdhs.DimHomelessnessStatusId, -1)					HomelessnessStatusId					
+			, ISNULL(rdeds.DimEconomicallyDisadvantagedStatusId, -1)	EconomicallyDisadvantagedStatusId		
+			, -1														FosterCareStatusId					
+			, -1 														ImmigrantStatusId						
+			, -1														PrimaryDisabilityTypeId				
+			, -1 														SpecialEducationServicesExitDateId	
+			, -1														MigrantStudentQualifyingArrivalDateId	
+			, -1														LastQualifyingMoveDateId				
+
+	--migrant (RDS)
+		LEFT JOIN #vwMigrantStatuses rdms
+
 		FROM Staging.K12Enrollment ske
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 		LEFT JOIN RDS.DimLeas rdl
-			ON ske.LEA_Identifier_State = rdl.LeaIdentifierState
+			ON ske.LEAIdentifierSeaAccountability = rdl.LeaIdentifierSea
 			AND ((rdl.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (rdl.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdl.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
 		LEFT JOIN RDS.DimK12Schools rdksch
-			ON ske.School_Identifier_State = rdksch.SchoolIdentifierState
+			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierState
 			AND ((rdksch.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (rdksch.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdksch.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
 		JOIN RDS.DimSeas rds
 			ON ((rds.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (rds.RecordStartDateTime < @ReportingStartDate AND ISNULL(rds.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
 		JOIN Staging.ProgramParticipationSpecialEducation sppse
-			ON ske.Student_Identifier_State = sppse.Student_Identifier_State
-			AND ISNULL(ske.LEA_Identifier_State, '') = ISNULL(sppse.LEA_Identifier_State, '') 
-			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(sppse.School_Identifier_State, '')
-			AND sppse.ProgramParticipationBeginDate BETWEEN @ReportingStartDate and @ReportingEndDate
+			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
+			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(sppse.LEAIdentifierSeaAccountability, '') 
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND ((sppse.ProgramParticipationBeginDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (sppse.ProgramParticipationBeginDate < @ReportingStartDate AND ISNULL(sppse.ProgramParticipationEndDate, GETDATE()) > @ReportingStartDate))
-		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
+		LEFT JOIN RDS.vwUnduplicatedRaceMap spr
 			ON ske.SchoolYear = spr.SchoolYear
-			AND ske.Student_Identifier_State = spr.Student_Identifier_State
-			AND (spr.OrganizationType in (SELECT SeaOrganizationType FROM #seaOrganizationTypes)
-				OR (ske.LEA_Identifier_State = spr.OrganizationIdentifier
-					AND spr.OrganizationType in (SELECT LeaOrganizationType FROM #leaOrganizationTypes))
-				OR (ske.School_Identifier_State = spr.OrganizationIdentifier
-					AND spr.OrganizationType in (SELECT K12SchoolOrganizationType FROM #schoolOrganizationTypes)))
-		LEFT JOIN Staging.PersonStatus idea
-			ON ske.Student_Identifier_State = idea.Student_Identifier_State
-			AND ISNULL(ske.Lea_Identifier_State, '') = ISNULL(idea.Lea_Identifier_State, '')
-			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(idea.School_Identifier_State, '')
-			AND idea.IdeaIndicator = 1
-			AND ((idea.IDEA_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (idea.IDEA_StatusStartDate < @ReportingStartDate AND ISNULL(idea.IDEA_StatusEndDate, GETDATE()) > @ReportingStartDate))
+			AND ske.StudentIdentifierState = spr.StudentIdentifierState
+			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
+				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
 		LEFT JOIN Staging.PersonStatus el 
-			ON ske.Student_Identifier_State = el.Student_Identifier_State
-			AND ISNULL(ske.LEA_Identifier_State, '') = ISNULL(el.LEA_Identifier_State, '') 
-			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(el.School_Identifier_State, '')
+			ON ske.StudentIdentifierState = el.StudentIdentifierState
+			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(el.LEAIdentifierSeaAccountability, '') 
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND el.EnglishLearnerStatus = 1
 			AND ((el.EnglishLearner_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (el.EnglishLearner_StatusStartDate < @ReportingStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) > @ReportingStartDate))
 		LEFT JOIN Staging.PersonStatus homeless 
-			ON ske.Student_Identifier_State = homeless.Student_Identifier_State
-			AND ISNULL(ske.LEA_Identifier_State, '') = ISNULL(homeless.LEA_Identifier_State, '') 
-			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(homeless.School_Identifier_State, '')
+			ON ske.StudentIdentifierState = homeless.StudentIdentifierState
+			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(homeless.LEAIdentifierSeaAccountability, '') 
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(homeless.SchoolIdentifierSea, '')
 			AND homeless.HomelessnessStatus = 1
 			AND ((homeless.Homelessness_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (homeless.Homelessness_StatusStartDate < @ReportingStartDate AND ISNULL(homeless.Homelessness_StatusEndDate, GETDATE()) > @ReportingStartDate))
 		LEFT JOIN Staging.PersonStatus ecoDis
-			ON ske.Student_Identifier_State = ecoDis.Student_Identifier_State
-			AND ISNULL(ske.LEA_Identifier_State, '') = ISNULL(ecoDis.LEA_Identifier_State, '') 
-			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(ecoDis.School_Identifier_State, '')
+			ON ske.StudentIdentifierState = ecoDis.StudentIdentifierState
+			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(ecoDis.LEAIdentifierSeaAccountability, '') 
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(ecoDis.SchoolIdentifierSea, '')
 			AND ecoDis.EconomicDisadvantageStatus = 1
 			AND ((ecoDis.EconomicDisadvantage_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (ecoDis.EconomicDisadvantage_StatusStartDate < @ReportingStartDate AND ISNULL(ecoDis.EconomicDisadvantage_StatusEndDate, GETDATE()) > @ReportingStartDate))
 		LEFT JOIN Staging.PersonStatus migrant
-			ON ske.Student_Identifier_State = migrant.Student_Identifier_State
-			AND ISNULL(ske.LEA_Identifier_State, '') = ISNULL(migrant.LEA_Identifier_State, '') 
-			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(migrant.School_Identifier_State, '')
+			ON ske.StudentIdentifierState = migrant.StudentIdentifierState
+			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(migrant.LEAIdentifierSeaAccountability, '') 
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
 			AND migrant.MigrantStatus = 1
 			AND ((migrant.Migrant_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (migrant.Migrant_StatusStartDate < @ReportingStartDate AND ISNULL(migrant.Migrant_StatusEndDate, GETDATE()) > @ReportingStartDate))
-		LEFT JOIN #vwK12Demographics rdkd
-			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = rdkd.EnglishLearnerStatusMap
-			AND ISNULL(CAST(ecoDis.EconomicDisadvantageStatus AS SMALLINT), -1) = rdkd.EconomicDisadvantageStatusMap
-			AND ISNULL(CAST(homeless.HomelessnessStatus AS SMALLINT), -1) = rdkd.HomelessnessStatusMap
-			AND ISNULL(CAST(migrant.MigrantStatus AS SMALLINT), -1) = rdkd.MigrantStatusMap
-			AND rdkd.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
-			AND rdkd.HomelessUnaccompaniedYouthStatusCode = 'MISSING'
-			AND rdkd.MilitaryConnectedStudentIndicatorCode = 'MISSING'
-		LEFT JOIN #vwK12StudentStatuses rkss
-			ON ISNULL(ske.HighSchoolDiplomaType, 'MISSING') = ISNULL(rkss.HighSchoolDiplomaTypeMap, rkss.HighSchoolDiplomaTypeCode)
-			AND rkss.NSLPDirectCertificationIndicatorCode = 'MISSING'
+		JOIN RDS.vwDimK12Demographics rdkd
+			ON rsy.SchoolYear = rdkd.SchoolYear
+			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+		JOIN #vwK12StudentStatuses rkss
+			ON ISNULL(ske.HighSchoolDiplomaType, 'MISSING') = ISNULL(rkss.DiplomaCredentialTypeMap, rkss.DiplomaCredentialTypeCode)
 			AND rkss.MobilityStatus12moCode = 'MISSING'
 			AND rkss.MobilityStatusSYCode = 'MISSING'	
 			AND rkss.ReferralStatusCode = 'MISSING'	
 			AND rkss.MobilityStatus36moCode = 'MISSING'
-			AND rkss.PlacementStatusCode = 'MISSING'
-			AND rkss.PlacementTypeCode = 'MISSING'
+	--english learner (RDS)
+		LEFT JOIN #vwEnglishLearnerStatus rdels
+			ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdkd.HomelessnessStatusMap AS SMALLINT), -1)
+			AND ISNULL(hmNight.HomelessNightTimeResidence, 'MISSING') = ISNULL(rdkd.HomelessPrimaryNighttimeResidenceMap, 'MISSING')
+			AND ISNULL(CAST(hmStatus.HomelessUnaccompaniedYouth AS SMALLINT), -1) = ISNULL(CAST(rdkd.HomelessUnaccompaniedYouthStatusMap AS SMALLINT), -1)
+	--disability status (RDS)
 		LEFT JOIN #vwIdeaStatuses rdis
-			ON ISNULL(CAST(idea.IDEAIndicator AS SMALLINT), -1) = rdis.IdeaIndicatorMap
-			AND ISNULL(idea.PrimaryDisabilityType, 'MISSING') = ISNULL(rdis.PrimaryDisabilityTypeMap, rdis.PrimaryDisabilityTypeCode)
-			AND rdis.IdeaEducationalEnvironmentCode = 'MISSING'
+			ON rdis.IdeaIndicatorCode = 'Yes'
 			AND rdis.SpecialEducationExitReasonCode = 'MISSING'
+			AND rdis.[IdeaEducationalEnvironmentForSchoolAgeCode] = 'MISSING'
+			AND rdis.[IdeaEducationalEnvironmentForEarlyChildhoodCode] = 'MISSING'
+	--homelessness (RDS)
+		LEFT JOIN #vwHomelessnessStatus rdhs
+			ON ISNULL(CAST(homeless.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)
+			AND rdhs.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
+			AND rdhs.HomelessUnaccompaniedYouthStatusCode = 'MISSING'
+	--economically disadvantaged (RDS)
+		LEFT JOIN #vwEconomicallyDisadvantagedStatuses rdeds
+			ON rdeds.EconomicDisadvantageStatusCode = 'MISSING'
+	--migrant (RDS)
+		LEFT JOIN #vwMigrantStatuses rdms
+			ON ISNULL(CAST(migrant.MigrantStatus AS SMALLINT), -1) = ISNULL(CAST(rdms.MigrantStatusMap AS SMALLINT), -1)
+	--race (RDS)
 		LEFT JOIN #vwRaces rdr
 			ON ISNULL(rdr.RaceCode, rdr.RaceMap) =
 				CASE
@@ -276,87 +250,87 @@ BEGIN
 					WHEN spr.RaceCode IS NOT NULL THEN spr.RaceCode
 					ELSE 'Missing'
 				END
-		JOIN RDS.DimK12Students rdks
-			ON ske.Student_Identifier_State = rdks.StateStudentIdentifier
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdks.FirstName, '')
-			AND ISNULL(ske.MiddleName, '') = ISNULL(rdks.MiddleName, '')
-			AND ISNULL(ske.LastName, 'MISSING') = rdks.LastName
-			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdks.BirthDate, '1/1/1900')
-			AND rdks.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate
-			AND ((rdks.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (rdks.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdks.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
+		JOIN RDS.DimPeople rdp
+			ON ske.StudentIdentifierState = rdp.StateStudentIdentifier
+			AND rdp.IsActiveK12Student = 1
+			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
+			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
+			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
+			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
+			AND ((rdp.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
+				OR (rdp.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdp.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
 		WHERE (ske.EnrollmentEntryDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (ske.EnrollmentEntryDate < @ReportingStartDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) > @ReportingStartDate)
 		AND ISNULL(ske.HighSchoolDiplomaType, '') <> ''
 
-		--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (
-			[AgeId]
-			, [SchoolYearId]
-			, [K12DemographicId]
+			[SchoolYearId]
 			, [FactTypeId]
 			, [GradeLevelId]
-			, [IdeaStatusId]
-			, [ProgramStatusId]
+			, [AgeId]
+			, [RaceId]
+			, [K12DemographicId]
+			, [StudentCount]
+			, [SEAId]
+			, [IEUId]
+			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
-			, [StudentCount]
+			, [IdeaStatusId]
 			, [LanguageId]
-			, [MigrantId]
+			, [MigrantStatusId]
 			, [K12StudentStatusId]
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
-			, [LeaId]
 			, [AttendanceId]
 			, [CohortStatusId]
-			, [NOrDProgramStatusId]
-			, [StudentCutOverStartDate]
-			, [RaceId]
-			, [CteStatusId]
+			, [NOrDStatusId]
+			, [CTEStatusId]
 			, [K12EnrollmentStatusId]
-			, [SeaId]
-			, [IeuId]
+			, [EnglishLearnerStatusId]
+			, [HomelessnessStatusId]
+			, [EconomicallyDisadvantagedStatusId]
+			, [FosterCareStatusId]
+			, [ImmigrantStatusId]
+			, [PrimaryDisabilityTypeId]
 			, [SpecialEducationServicesExitDateId]
+			, [MigrantStudentQualifyingArrivalDateId]
+			, [LastQualifyingMoveDateId]
 		)
-		SELECT
-			[AgeId]
-			, [SchoolYearId]
-			, [K12DemographicId]
+		SELECT 
+			[SchoolYearId]
 			, [FactTypeId]
 			, [GradeLevelId]
-			, [IdeaStatusId]
-			, [ProgramStatusId]
+			, [AgeId]
+			, [RaceId]
+			, [K12DemographicId]
+			, [StudentCount]
+			, [SEAId]
+			, [IEUId]
+			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
-			, [StudentCount]
+			, [IdeaStatusId]
 			, [LanguageId]
-			, [MigrantId]
+			, [MigrantStatusId]
 			, [K12StudentStatusId]
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
-			, [LeaId]
 			, [AttendanceId]
 			, [CohortStatusId]
-			, [NOrDProgramStatusId]
-			, [StudentCutOverStartDate]
-			, [RaceId]
-			, [CteStatusId]
+			, [NOrDStatusId]
+			, [CTEStatusId]
 			, [K12EnrollmentStatusId]
-			, [SeaId]
-			, [IeuId]
+			, [EnglishLearnerStatusId]
+			, [HomelessnessStatusId]
+			, [EconomicallyDisadvantagedStatusId]
+			, [FosterCareStatusId]
+			, [ImmigrantStatusId]
+			, [PrimaryDisabilityTypeId]
 			, [SpecialEducationServicesExitDateId]
+			, [MigrantStudentQualifyingArrivalDateId]
+			, [LastQualifyingMoveDateId]
 		FROM #Facts
-
-		ALTER INDEX ALL ON RDS.FactK12StudentCounts REBUILD
-
-		--Drop temp tables 
-		DROP TABLE #seaOrganizationTypes
-		DROP TABLE #leaOrganizationTypes
-		DROP TABLE #schoolOrganizationTypes
-		DROP TABLE #vwK12StudentStatuses
-		DROP TABLE #vwIdeaStatuses
-		DROP TABLE #vwK12Demographics
-		DROP TABLE #vwRaces
 
 	END TRY
 	BEGIN CATCH

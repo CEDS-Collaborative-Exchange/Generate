@@ -1,46 +1,43 @@
 CREATE VIEW [RDS].[vwDimCteStatuses] 
 AS
-	SELECT distinct
+	SELECT
 		  DimCteStatusId
 		, rsy.SchoolYear
-		, CteProgramCode
-		, CASE CteProgramCode
-			WHEN 'NONCTEPART' THEN 0 
-			WHEN 'CTEPART' THEN 1
-			WHEN 'CTECONC' THEN 2
-			ELSE -1
-		  END AS CteProgramMap
-		, CteAeDisplacedHomemakerIndicatorCode
-		, CASE CteAeDisplacedHomemakerIndicatorCode
-			WHEN 'DH' THEN 1 
+		, rdcs.CteAeDisplacedHomemakerIndicatorCode
+		, CASE rdcs.CteAeDisplacedHomemakerIndicatorCode 
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
 			ELSE -1
 		  END AS CteAeDisplacedHomemakerIndicatorMap
-		, CteNontraditionalGenderStatusCode 
-		, CASE CteNontraditionalGenderStatusCode
-			WHEN 'NTE' THEN 1 
+		, rdcs.CteNontraditionalGenderStatusCode
+		, sssrd1.OutputCode AS CteNontraditionalGenderStatusMap
+		, rdcs.CteNontraditionalCompletionCode
+		, CASE rdcs.CteNontraditionalCompletionCode 
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
 			ELSE -1
-		  END AS CteNontraditionalGenderStatusMap
-		, RepresentationStatusCode
-		, CASE RepresentationStatusCode
-			WHEN 'NM' THEN 0
-			WHEN 'MEM' THEN 1
+		  END AS CteNontraditionalCompletionMap
+		, rdcs.SingleParentOrSinglePregnantWomanStatusCode
+		, CASE rdcs.SingleParentOrSinglePregnantWomanStatusCode 
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
 			ELSE -1
-		  END AS RepresentationStatusMap
-		, SingleParentOrSinglePregnantWomanCode
-		, CASE SingleParentOrSinglePregnantWomanCode
-			WHEN 'SPPT' THEN 1 
+		  END AS SingleParentOrSinglePregnantWomanStatusMap
+		, rdcs.CteParticipantCode
+		, CASE rdcs.CteParticipantCode 
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
 			ELSE -1
-		  END AS SingleParentOrSinglePregnantWomanMap
-		, CteGraduationRateInclusionCode
-		, CASE CteGraduationRateInclusionCode
-			WHEN 'NOTG' THEN 0 
-			WHEN 'GRAD' THEN 1
+		  END AS CteParticipantMap
+		, rdcs.CteConcentratorCode
+		, CASE rdcs.CteConcentratorCode 
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
 			ELSE -1
-		  END AS CteGraduationRateInclusionMap
-		, LepPerkinsStatusCode
-		, CASE LepPerkinsStatusCode 
-			WHEN 'LEPP' THEN 1 
-			ELSE -1
-		  END AS LepPerkinsStatusMap
-	FROM rds.DimCteStatuses rdis
+		 END AS CteConcentratorMap
+	FROM rds.DimCteStatuses rdcs
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
+	LEFT JOIN staging.SourceSystemReferenceData sssrd1
+		ON rdcs.CteNontraditionalGenderStatusCode = sssrd1.OutputCode
+		AND sssrd1.TableName = 'RefCteNonTraditionalGenderStatus'
+		AND rsy.SchoolYear = sssrd1.SchoolYear
