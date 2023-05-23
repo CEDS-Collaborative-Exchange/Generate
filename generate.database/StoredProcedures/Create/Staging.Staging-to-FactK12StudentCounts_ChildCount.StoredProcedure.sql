@@ -136,7 +136,7 @@ BEGIN
 			, -1														NOrDStatusId
 			, -1														CTEStatusId
 			, -1														K12EnrollmentStatusId
-			, -1										 				EnglishLearnerStatusId
+			, ISNULL(rdels.DimEnglishLearnerStatusId, -1)				EnglishLearnerStatusId
 			, -1										 				HomelessnessStatusId
 			, -1										 				EconomicallyDisadvantagedStatusId
 			, -1														FosterCareStatusId
@@ -187,6 +187,9 @@ BEGIN
 				AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
 			JOIN RDS.DimAges rda
 				ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
+			LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
+				ON rsy.SchoolYear = rdels.SchoolYear
+				AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			LEFT JOIN #vwGradeLevels rgls
 				ON ske.GradeLevel = rgls.GradeLevelMap
 				AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
