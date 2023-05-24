@@ -12,6 +12,13 @@ BEGIN
 	 --SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
 
+	-- Drop temp tables.  This allows for running the procedure as a script while debugging
+		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
+		IF OBJECT_ID(N'tempdb..#vwCteStatuses') IS NOT NULL DROP TABLE #vwCteStatuses
+		IF OBJECT_ID(N'tempdb..#vwTitleIStatuses') IS NOT NULL DROP TABLE #vwTitleIStatuses
+		IF OBJECT_ID(N'tempdb..#vwMigrantStatuses') IS NOT NULL DROP TABLE #vwMigrantStatuses
+		IF OBJECT_ID(N'tempdb..#uniqueLEAs') IS NOT NULL DROP TABLE #uniqueLEAs
+
 	BEGIN TRY
 
 		DECLARE 
@@ -25,12 +32,12 @@ BEGIN
 		@ToggleStartDate DATE,
 		@ToggleEndDate DATE
 		
-	/*  Setting variables to be used in the select statements */
+	--Setting variables to be used in the select statements
 		SELECT @SchoolYearId = DimSchoolYearId 
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
-		-- Get Child Count Date
+	-- Get Child Count Date
 		SELECT @ChildCountDate = tr.ResponseValue
 		FROM App.ToggleQuestions tq
 		JOIN App.ToggleResponses tr
@@ -40,7 +47,7 @@ BEGIN
 		SELECT @ChildCountDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@ChildCountDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ChildCountDate) AS VARCHAR(2)) AS DATE)
 		SELECT @PreviousChildCountDate = CAST(CAST(@SchoolYear - 2 AS CHAR(4)) + '-' + CAST(MONTH(@ChildCountDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ChildCountDate) AS VARCHAR(2)) AS DATE)
 
-		-- Get Reference Period Dates, using Toggle to override if the state uses a custom reference period
+	-- Get Reference Period Dates, using Toggle to override if the state uses a custom reference period
 		-- Default date range
 		SELECT @StartDate = CAST('7/1/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
 		SELECT @EndDate = CAST('6/30/' + CAST(@SchoolYear  AS VARCHAR(4)) AS DATE)
@@ -71,87 +78,36 @@ BEGIN
 
 		END 
 
-	/*  Creating temp tables to be used in the select statement joins */
-		CREATE TABLE #seaOrganizationTypes (
-			SeaOrganizationType					VARCHAR(20)
-		)
-
-		CREATE TABLE #leaOrganizationTypes (
-			LeaOrganizationType					VARCHAR(20)
-		)
-
-		CREATE TABLE #schoolOrganizationTypes (
-			K12SchoolOrganizationType			VARCHAR(20)
-		)
-
-		INSERT INTO #seaOrganizationTypes
-		SELECT 
-			InputCode
-		FROM Staging.SourceSystemReferenceData 
-		WHERE TableName = 'RefOrganizationType' 
-			AND TableFilter = '001156' 
-			AND OutputCode = 'SEA'
-			AND SchoolYear = @SchoolYear
-
-		INSERT INTO #leaOrganizationTypes
-		SELECT 
-			InputCode
-		FROM Staging.SourceSystemReferenceData 
-		WHERE TableName = 'RefOrganizationType' 
-			AND TableFilter = '001156' 
-			AND OutputCode = 'LEA'
-			AND SchoolYear = @SchoolYear
-
-		INSERT INTO #schoolOrganizationTypes
-		SELECT 
-			InputCode
-		FROM Staging.SourceSystemReferenceData 
-		WHERE TableName = 'RefOrganizationType' 
-			AND TableFilter = '001156' 
-			AND OutputCode = 'K12School'
-			AND SchoolYear = @SchoolYear
-
-
-		-------------------------------------------------------------------------
-		--create the temp tables and indexes if necessary
-		-------------------------------------------------------------------------
-		IF OBJECT_ID('tempdb.dbo.#vwDimRaces', 'U') IS NOT NULL 
-			DROP TABLE #vwDimRaces; 		
-		SELECT v.* 
-		INTO #vwDimRaces 
-		FROM RDS.vwDimRaces v
-		WHERE v.SchoolYear = @SchoolYear
-
-		CREATE CLUSTERED INDEX ix_tempvwRaces ON #vwDimRaces (RaceMap);
-
-		IF OBJECT_ID('tempdb..#vwDimCteStatuses') IS NOT NULL 
-			DROP TABLE #vwDimCteStatuses; 		
+	--Create the temp tables (and any relevant indexes) needed for this domain
 		SELECT * 
-		INTO #vwDimCteStatuses 
+		INTO #vwRaces 
+		FROM RDS.vwDimRaces
+		WHERE SchoolYear = @SchoolYear
+
+		CREATE CLUSTERED INDEX ix_tempvwRaces ON #vwRaces (RaceMap);
+
+		SELECT * 
+		INTO #vwCteStatuses 
 		FROM RDS.vwDimCteStatuses
 		WHERE SchoolYear = @SchoolYear
 		
-		CREATE INDEX IX_vwDimCteStatuses ON #vwDimCteStatuses(SchoolYear, CteAeDisplacedHomemakerIndicatorMap, CteNontraditionalGenderStatusMap, SingleParentOrSinglePregnantWomanStatusMap) 
+		CREATE INDEX IX_vwCteStatuses ON #vwCteStatuses(SchoolYear, CteAeDisplacedHomemakerIndicatorMap, CteNontraditionalGenderStatusMap, SingleParentOrSinglePregnantWomanStatusMap) 
 			INCLUDE (CteAeDisplacedHomemakerIndicatorCode, CteNontraditionalGenderStatusCode, SingleParentOrSinglePregnantWomanStatusCode)
 
-		IF OBJECT_ID('tempdb..#vwDimTitleIStatuses') IS NOT NULL 
-			DROP TABLE #vwDimTitleIStatuses		
 		SELECT *
-		INTO #vwDimTitleIStatuses
+		INTO #vwTitleIStatuses
 		FROM RDS.vwDimTitleIStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE INDEX ix_vwDimTitleIStatuses ON #vwDimTitleIStatuses (TitleIInstructionalServicesMap, TitleIProgramTypeMap, TitleISchoolStatusMap, TitleISupportServicesMap)
+		CREATE INDEX ix_vwTitleIStatuses ON #vwTitleIStatuses (TitleIInstructionalServicesMap, TitleIProgramTypeMap, TitleISchoolStatusMap, TitleISupportServicesMap)
 			INCLUDE (TitleIInstructionalServicesCode, TitleIProgramTypeCode, TitleISchoolStatusCode, TitleISupportServicesCode);
 
-		IF OBJECT_ID('tempdb..#vwDimMigrantStatuses') IS NOT NULL 
-			DROP TABLE #vwDimMigrantStatuses		
 		SELECT *
-		INTO #vwDimMigrantStatuses
+		INTO #vwMigrantStatuses
 		FROM RDS.vwDimMigrantStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE INDEX ix_vwDimMigrantStatuses ON #vwDimMigrantStatuses (ContinuationOfServicesReasonMap, MigrantEducationProgramServicesTypeMap, MigrantPrioritizedForServicesMap, MigrantEducationProgramEnrollmentTypeMap)
+		CREATE INDEX ix_vwMigrantStatuses ON #vwMigrantStatuses (ContinuationOfServicesReasonMap, MigrantEducationProgramServicesTypeMap, MigrantPrioritizedForServicesMap, MigrantEducationProgramEnrollmentTypeMap)
 			INCLUDE (ContinuationOfServicesReasonCode, MigrantEducationProgramServicesTypeCode, MigrantPrioritizedForServicesCode, MigrantEducationProgramEnrollmentTypeCode);
 
 
@@ -166,7 +122,7 @@ BEGIN
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts
 
-	/*  Creating and load #Facts temp table */
+	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
 			StagingId								int not null
 			, SchoolYearId							int null
@@ -277,8 +233,8 @@ BEGIN
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr
 			ON ske.SchoolYear = spr.SchoolYear
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState
-			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(spr.LeaIdentifierSeaAccountability, '')
-			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(spr.SchoolIdentifierSea, '')
+			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
+				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
 		LEFT JOIN Staging.PersonStatus el 
 			ON ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
@@ -318,12 +274,15 @@ BEGIN
 		LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 			ON ske.SchoolYear = rdis.SchoolYear
 			AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
+			AND sidt.IsPrimaryDisability = 1
 		LEFT JOIN #vwDimRaces rdr
-			ON rsy.SchoolYear = rdr.SchoolYear
-			AND CASE 
-					WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HispanicorLatinoEthnicity'
-					ELSE spr.RaceCode
-				END = rdr.RaceMap
+			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
+				CASE
+					when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
+					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
+					ELSE 'Missing'
+				END
+				AND rsy.SchoolYear = rdr.SchoolYear
 		JOIN RDS.DimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
@@ -334,7 +293,7 @@ BEGIN
 			AND IsActiveK12Student = 1
 		WHERE sppse.ProgramParticipationEndDate IS NOT NULL		
 
-	/*  Update the #Facts table */
+	--Update the #Facts table
 		UPDATE #Facts
 		SET CteStatusId = ISNULL(rdcs.DimCteStatusId, -1)
 		FROM #Facts fact
@@ -355,7 +314,7 @@ BEGIN
 			AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_sp.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sppc_sp.SchoolIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN sppc_sp.SingleParent_StatusStartDate AND ISNULL(sppc_sp.SingleParent_StatusEndDate, @EndDate)
-		LEFT JOIN #vwDimCteStatuses rdcs
+		LEFT JOIN #vwCteStatuses rdcs
 			ON  ISNULL(CAST(sppc_part_conc.CteParticipant AS SMALLINT), -1)					= ISNULL(rdcs.CteParticipantMap, -1)
 			AND ISNULL(CAST(sppc_part_conc.CteConcentrator AS SMALLINT), -1)				= ISNULL(rdcs.CteConcentratorMap, -1)
 			AND ISNULL(CAST(sppc_dhm.DisplacedHomeMakerIndicator AS SMALLINT), -1)			= ISNULL(rdcs.CteAeDisplacedHomemakerIndicatorMap, -1)
@@ -385,7 +344,7 @@ BEGIN
 			ON ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(lea.LeaIdentifierSea, '')
 			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sch.SchoolIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN sch.School_RecordStartDateTime AND ISNULL(sch.School_RecordEndDateTime, @EndDate)
-		LEFT JOIN #vwDimTitleIStatuses rdtis
+		LEFT JOIN #vwTitleIStatuses rdtis
 			ON ISNULL(lea.LEA_TitleIProgramType, 'MISSING') = ISNULL(rdtis.TitleIProgramTypeMap, rdtis.TitleIProgramTypeCode)
 			AND ISNULL(lea.LEA_TitleIinstructionalService, 'MISSING') = ISNULL(rdtis.TitleIInstructionalServicesMap, rdtis.TitleIInstructionalServicesCode)
 			AND ISNULL(lea.LEA_K12LeaTitleISupportService, 'MISSING') = ISNULL(rdtis.TitleISupportServicesMap, rdtis.TitleISupportServicesCode)
@@ -409,7 +368,7 @@ BEGIN
 			AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(sm.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sm.SchoolIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN sm.ProgramParticipationStartDate AND ISNULL(sm.ProgramParticipationExitDate, @EndDate)
-		LEFT JOIN #vwDimMigrantStatuses rdms
+		LEFT JOIN #vwMigrantStatuses rdms
 			ON ISNULL(CAST(sm.MigrantPrioritizedForServices AS SMALLINT), -1) = ISNULL(rdms.MigrantPrioritizedForServicesMap, -1)
 			AND ISNULL(sm.MigrantEducationProgramServicesType, 'MISSING') = ISNULL(rdms.MigrantEducationProgramServicesTypeMap, rdms.MigrantEducationProgramServicesTypeCode)
 			AND rdms.ContinuationOfServicesReasonCode = 'MISSING'
@@ -417,7 +376,7 @@ BEGIN
 --			AND ISNULL(sm.ContinuationOfServicesReason, 'MISSING') = ISNULL(rdms.ContinuationOfServicesReasonMap, rdms.ContinuationOfServicesReasonCode)
 --			AND ISNULL(sm.MigrantEducationProgramEnrollmentType, 'MISSING') = ISNULL(rdms.MigrantEducationProgramEnrollmentTypeMap, rdms.MigrantEducationProgramEnrollmentTypeCode)
 		
-	/*  Final insert into RDS.FactK12StudentCounts  table */
+	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (
 			[SchoolYearId]
 			, [FactTypeId]
@@ -488,16 +447,6 @@ BEGIN
 		FROM #Facts
 
 		ALTER INDEX ALL ON RDS.FactK12StudentCounts REBUILD
-
-		/*  Drop temp tables clean up before new ones are created */
-		
-		DROP TABLE #seaOrganizationTypes
-		DROP TABLE #leaOrganizationTypes
-		DROP TABLE #schoolOrganizationTypes
-		DROP TABLE #vwDimRaces		
-		DROP TABLE #vwDimCteStatuses 
-		DROP TABLE #vwDimTitleIStatuses
-		DROP TABLE #vwDimMigrantStatuses		
 
 	END TRY
 	BEGIN CATCH
