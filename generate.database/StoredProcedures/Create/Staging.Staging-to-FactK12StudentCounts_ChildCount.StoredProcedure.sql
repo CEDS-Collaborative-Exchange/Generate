@@ -3,6 +3,7 @@ Author: AEM Corp
 Date:	1/6/2022
 Description: Migrates Child Count Data from Staging to RDS.FactK12StudentCounts
 
+UPDATED FOR V11
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_ChildCount]
 	@SchoolYear SMALLINT
