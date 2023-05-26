@@ -5676,6 +5676,13 @@ ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeDesc
 ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeEdFactsCode];
 ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [NSLPDirectCertificationIndicatorEdFactsCode];
 ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [NSLPDirectCertificationIndicatorId];
+ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [MobilityStatus36moId];
+ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [MobilityStatus12moId];
+ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [MobilityStatusSYId];
+ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [ReferralStatusId];
+ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [DiplomaCredentialTypeCode];
+ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [DiplomaCredentialTypeDescription];
+ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [DiplomaCredentialTypeEdFactsCode];
 
 
 GO
