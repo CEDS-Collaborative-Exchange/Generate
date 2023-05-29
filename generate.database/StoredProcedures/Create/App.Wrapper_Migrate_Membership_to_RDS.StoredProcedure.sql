@@ -14,8 +14,6 @@ BEGIN
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Membership - Start Staging-to-DimPeople_K12Students')
 
 		--Populate DimStudents
-		--exec [rds].[Migrate_DimK12Students] NULL
-		--exec [Staging].[Staging-to-DimK12Students] NULL
 		exec Staging.[Staging-To-DimPeople_K12Students] NULL
 
 			--write out message to DataMigrationHistories
@@ -58,16 +56,17 @@ BEGIN
 				deallocate selectedYears_cursor
 			end
 
-
 		DECLARE @submissionYear AS VARCHAR(50)
 		DECLARE selectedYears_cursor CURSOR FOR 
 		SELECT d.SchoolYear
-			FROM rds.DimSchoolYears d
-			JOIN rds.DimSchoolYearDataMigrationTypes dd ON dd.DimSchoolYearId = d.DimSchoolYearId
-			JOIN App.DataMigrationTypes b ON b.DataMigrationTypeId=dd.DataMigrationTypeId 
-			WHERE d.DimSchoolYearId <> -1 
-			AND dd.IsSelected=1 AND DataMigrationTypeCode='RDS'
-
+		FROM rds.DimSchoolYears d
+			JOIN rds.DimSchoolYearDataMigrationTypes dd 
+				ON dd.DimSchoolYearId = d.DimSchoolYearId
+			JOIN App.DataMigrationTypes b 
+				ON b.DataMigrationTypeId=dd.DataMigrationTypeId 
+		WHERE d.DimSchoolYearId <> -1 
+		AND dd.IsSelected = 1 
+		AND DataMigrationTypeCode = 'RDS'
 
 		OPEN selectedYears_cursor
 		FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
@@ -80,8 +79,6 @@ BEGIN
 		
 		CLOSE selectedYears_cursor
 		DEALLOCATE selectedYears_cursor
-
-
 
 	--RDS migration complete
 			--write out message to DataMigrationHistories
