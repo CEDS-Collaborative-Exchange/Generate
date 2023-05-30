@@ -51,6 +51,11 @@ BEGIN
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Child Count - Start Migrate_StudentCounts for Submission reports')
 
+		if cursor_status('global','selectedYears_cursor') >= -1
+			begin
+				deallocate selectedYears_cursor
+			end
+
 		
 		DECLARE @submissionYear AS VARCHAR(50)
 		DECLARE selectedYears_cursor CURSOR FOR 
