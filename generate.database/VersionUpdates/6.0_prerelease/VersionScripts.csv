@@ -20,8 +20,8 @@ Tables\\Drop,Staging.StagingValidationRules.Table.sql,0
 Tables\\Create,Staging.StagingValidationRules.Table.sql,0
 Tables\\Drop,Staging.StagingValidationResults.Table.sql,0
 Tables\\Create,Staging.StagingValidationResults.Table.sql,0
-VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
-VersionUpdates\\6.0_prerelease,AddStagingValidationRules.sql,0
+VersionUpdates\\6.0_prerelease,AddDataMigrationTypes.sql,0
+VersionUpdates\\6.0_prerelease,REPLACE_STAGING_VALIDATION_RULES.sql,0
 Views\\Drop,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql,0
 Views\\Create,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql,0
 Views\\Drop,dbo.vwCEDSMapping.View.sql,0
