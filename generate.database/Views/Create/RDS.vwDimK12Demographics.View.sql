@@ -11,4 +11,3 @@ AS
 		ON rdkd.SexCode = sssrd1.OutputCode
 		AND rsy.SchoolYear = sssrd1.SchoolYear
 		AND sssrd1.TableName = 'RefSex'
-		AND rsy.SchoolYear = sssrd1.SchoolYear
