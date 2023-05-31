@@ -8,7 +8,7 @@ AS
         , SchoolYear
     FROM (
         SELECT 
-            Student_Identifier_State
+            StudentIdentifierState
             , LeaIdentifierSeaAccountability
             , SchoolIdentifierSea
             , CASE 
@@ -28,7 +28,7 @@ AS
             AND spr.SchoolYear = sssrd.SchoolYear
             AND sssrd.TableName = 'RefRace'
         GROUP BY
-            Student_Identifier_State
+            StudentIdentifierState
             , LeaIdentifierSeaAccountability
             , SchoolIdentifierSea
             , spr.SchoolYear

@@ -10430,6 +10430,7 @@
 		[AttendanceId]                          INT CONSTRAINT [DF_FactK12StudentCounts_AttendanceId] DEFAULT ((-1)) NOT NULL,
 		[CohortStatusId]                        INT CONSTRAINT [DF_FactK12StudentCounts_CohortStatusId] DEFAULT ((-1)) NOT NULL,
 		[CteStatusId]                           INT CONSTRAINT [DF_FactK12StudentCounts_CteStatusId] DEFAULT ((-1)) NOT NULL,
+		[DisabilityStatusId]      	            INT CONSTRAINT [DF_FactK12StudentCounts_DisabilityStatusId] DEFAULT ((-1)) NOT NULL,
 		[EnglishLearnerStatusId]                INT CONSTRAINT [DF_FactK12StudentCounts_EnglishLearnerStatusId] DEFAULT ((-1)) NOT NULL,
 		[GradeLevelId]                          INT CONSTRAINT [DF_FactK12StudentCounts_GradeLevelId] DEFAULT ((-1)) NOT NULL,
 		[HomelessnessStatusId]                  INT CONSTRAINT [DF_FactK12StudentCounts_HomelessnessStatusId] DEFAULT ((-1)) NOT NULL,

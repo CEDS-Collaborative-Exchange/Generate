@@ -1,10 +1,10 @@
 /**********************************************************************************
 Author: AEM Corp
 Date:	2/20/2023
-Description: Migrates Title III EL SY Data from Staging to RDS.FactK12StudentCounts
+Description: Migrates Title III EL Oct Data from Staging to RDS.FactK12StudentCounts
 
 ***********************************************************************************/
-CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_TitleIIIELSY]
+CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_TitleIIIELOct]
 	@SchoolYear SMALLINT
 AS
 
@@ -23,7 +23,8 @@ BEGIN
 		@FactTypeId INT,
 		@SchoolYearId INT,
 		@SYStartDate DATE,
-		@SYEndDate DATE
+		@SYEndDate DATE,
+		@ReportingDate DATE
 		
 		SELECT @SchoolYearId = DimSchoolYearId 
 		FROM RDS.DimSchoolYears
@@ -31,6 +32,18 @@ BEGIN
 
 		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
+
+		--Reporting Date is the closest school day to Oct 1 according to the file spec
+		DECLARE @testDate datetime
+		SELECT @testDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + '10-01' AS DATE)
+		
+		SELECT @ReportingDate = 
+			CASE DATEPART(DW, @testDate)
+				WHEN 1 THEN (SELECT DATEADD(day, 1, @testDate))
+				WHEN 7 THEN (SELECT DATEADD(day, -1, @testDate))
+				ELSE @testDate
+			END	
+
 
 	--Create the temp tables (and any relevant indexes) needed for this domain
 		SELECT *
@@ -114,8 +127,8 @@ BEGIN
 			, rsy.DimSchoolYearId						SchoolYearId
 			, @FactTypeId								FactTypeId							
 			, ISNULL(rgls.DimGradeLevelId, -1)			GradeLevelId							
-			, ISNULL(rda.DimAgeId, -1)					AgeId									
-			, -1										RaceId								
+			, -1										AgeId									
+			, ISNULL(rdr.DimRaceId, -1)					RaceId								
 			, ISNULL(rdkd.DimK12DemographicId, -1)		K12DemographicId						
 			, 1											StudentCount							
 			, ISNULL(rds.DimSeaId, -1)					SEAId									
@@ -129,7 +142,7 @@ BEGIN
 			, -1										MigrantStatusId						
 			, -1										K12StudentStatusId					
 			, -1										TitleIStatusId						
-			, ISNULL(rd3ts.DimTitleIIIStatusId, -1)		TitleIIIStatusId						
+			, -1										TitleIIIStatusId						
 			, -1										AttendanceId							
 			, -1										CohortStatusId						
 			, -1 										NOrDStatusId							
@@ -151,53 +164,52 @@ BEGIN
 			ON ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			AND el.EnglishLearner_StatusStartDate >= @SYStartDate
-			AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) <= @SYEndDate
+			AND el.EnglishLearner_StatusStartDate <= @ReportingDate
+			AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= @ReportingDate
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND el.EnglishLearner_StatusStartDate >= rdl.RecordStartDateTime 
-			AND el.EnglishLearner_StatusStartDate <= ISNULL(rdl.RecordEndDateTime, GETDATE())
+			AND rdl.RecordStartDateTime <= @ReportingDate
+			AND ISNULL(rdl.RecordEndDateTime, @SYEndDate) >= @ReportingDate
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND el.EnglishLearner_StatusStartDate >= rdksch.RecordStartDateTime 
-			AND el.EnglishLearner_StatusStartDate <= ISNULL(rdksch.RecordEndDateTime, GETDATE())
+			AND rdksch.RecordStartDateTime  <= @ReportingDate
+			AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate) >= @ReportingDate
 		JOIN RDS.DimSeas rds
-			ON el.EnglishLearner_StatusStartDate >= convert(date, rds.RecordStartDateTime)
-			AND el.EnglishLearner_StatusStartDate <= ISNULL(convert(date, rds.RecordEndDateTime), GETDATE())
-	--title 3 program
-		LEFT JOIN Staging.ProgramParticipationTitleIII ppt3
-			ON ske.StudentIdentifierState = ppt3.StudentIdentifierState
-			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(ppt3.LeaIdentifierSeaAccountability, '') 
-			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(ppt3.SchoolIdentifierSea, '')
-			AND ppt3.ProgramParticipationBeginDate >= el.EnglishLearner_StatusStartDate 
-			AND ppt3.ProgramParticipationEndDate <= ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
-	--sex (RDS)
+			ON convert(date, rds.RecordStartDateTime)  <= @ReportingDate
+			AND ISNULL(convert(date, rds.RecordEndDateTime), @SYEndDate) >= @ReportingDate
+	--race	
+		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
+			ON ske.SchoolYear = spr.SchoolYear
+			AND ske.StudentIdentifierState = spr.StudentIdentifierState
+			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
+				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
+	--demographics
 		LEFT JOIN rds.vwDimK12Demographics rdkd
 			ON rsy.SchoolYear = rdkd.SchoolYear
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
-	--english learner (RDS)	
+	--english learner (RDS)
 		LEFT JOIN #vwDimEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdels.EnglishLearnerStatusMap AS SMALLINT), -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
 			AND TitleIIIAccountabilityProgressStatusCode = 'MISSING'
 			AND TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
-	--title 3 (RDS)	
-		LEFT JOIN rds.vwDimTitleIIIStatuses rdt3s
-			ON rsy.SchoolYear = rdt3s.SchoolYear
-			AND ISNULL(ppt3.EnglishLearnerParticipation, 'MISSING') = ISNULL(rdt3s.ProgramParticipationTitleIIIMap, rdt3s.ProgramParticipationTitleIIICode)
-			AND ISNULL(ppt3.Proficiency_TitleIII, 'MISSING') = ISNULL(rdt3s.ProficiencyStatusMap, rdt3s.ProficiencyStatusCode)
-			AND rdt3s.FormerEnglishLearnerYearStatusCode = 'MISSING'
 	--languages (RDS)
 		LEFT JOIN #vwLanguages rdvl
 			ON ISNULL(immigrant.ISO_639_2_NativeLanguage, 'MISSING') = ISNULL(rdvl.Iso6392LanguageMap, 'MISSING')
-		JOIN RDS.DimAges rda
-			ON RDS.Get_Age(ske.Birthdate, immigrant.Immigrant_ProgramParticipationStartDate) = rda.AgeValue
 	--grade (RDS)
 		LEFT JOIN #vwGradeLevels rgls
 			ON ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
+	--race (RDS)	
+		LEFT JOIN #vwRaces rdr
+			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
+				CASE
+					when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
+					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
+					ELSE 'Missing'
+				END
 		JOIN RDS.DimPeople rdp
 			ON ske.StudentIdentifierState = rdp.StateStudentIdentifier
 			AND rdp.IsActiveK12Student = 1
@@ -205,10 +217,10 @@ BEGIN
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 			AND ISNULL(ske.LastName, 'MISSING') = ISNULL(rdp.LastName, 'MISSING')
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND el.EnglishLearner_StatusStartDate >= rdp.RecordStartDateTime 
-			AND el.EnglishLearner_StatusStartDate <= ISNULL(rdp.RecordEndDateTime, GETDATE())
-		WHERE el.EnglishLearner_StatusStartDate >= ske.EnrollmentEntryDate 
-		AND el.EnglishLearner_StatusStartDate <= ISNULL(ske.EnrollmentExitDate, GETDATE())
+			AND rdp.RecordStartDateTime  <= @ReportingDate
+			AND ISNULL(rdp.RecordEndDateTime, @SYEndDate) >= @ReportingDate
+		WHERE ske.EnrollmentEntryDate  <= @ReportingDate
+		AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) >= @ReportingDate
 
 		--Final insert into RDS.FactK12StudentCounts table 
 		INSERT INTO RDS.FactK12StudentCounts (
@@ -286,7 +298,7 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
-		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', 'FactK12StudentCounts', ERROR_MESSAGE(), 1, NULL, GETDATE())
+		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', 'FactK12StudentCounts', ERROR_MESSAGE(), 1, NULL, GETDATE())
 	END CATCH
 
 END
