@@ -47,6 +47,7 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 		and ColumnName <> 'CarriageReturn/LineFeed'
 		and ColumnName <> 'FileRecordNumber'
 		and ColumnName not like '%FILLER%'
+		and ColumnName <> 'Explanation'
 		order by SequenceNumber
 	end try
 	begin catch
