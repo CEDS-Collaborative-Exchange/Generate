@@ -74,10 +74,6 @@ BEGIN
 		FROM inserted i
 		INNER JOIN App.GenerateReports agr 
 			ON i.ReportCode = agr.ReportCode
-		INNER JOIN App.FileSubmissions afs
-			ON agr.GenerateReportId = afs.GenerateReportId
-			AND i.SubmissionYear = afs.SubmissionYear
-			AND i.OrganizationLevelId = afs.OrganizationLevelId
 		INNER JOIN App.TableTypes att
 			ON i.EdFactsTableTypeId = att.EdFactsTableTypeId 
 

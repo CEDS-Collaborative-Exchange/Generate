@@ -127,9 +127,9 @@ BEGIN
 
 	--Pull the EL Status into a temp table
 		SELECT DISTINCT 
-			student_identifier_state
-			, lea_identifier_state
-			, school_identifier_state 
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea 
 			, EnglishLearnerStatus
 			, EnglishLearner_StatusStartDate
 			, EnglishLearner_StatusEndDate
@@ -137,7 +137,7 @@ BEGIN
 		FROM Staging.PersonStatus
 
 	-- Create Index for #tempELStatus 
-		CREATE INDEX IX_tempELStatus ON #tempELStatus(Student_identifier_state, lea_identifier_state, school_identifier_State, englishlearner_statusstartdate, englishlearner_statusenddate)-- INCLUDE (IdeaInterimRemovalCode, IdeaInterimRemovalReasonCode, DisciplineELStatusCode)
+		CREATE INDEX IX_tempELStatus ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, englishlearner_statusstartdate, englishlearner_statusenddate)-- INCLUDE (IdeaInterimRemovalCode, IdeaInterimRemovalReasonCode, DisciplineELStatusCode)
 
 	-- Clear the Fact table for the SY being migrated
 		DELETE RDS.FactK12StudentDisciplines
@@ -196,49 +196,47 @@ BEGIN
 			, -1											IeuId
 		FROM Staging.Discipline sd 
 		JOIN Staging.K12Enrollment ske
-			ON sd.Student_Identifier_State = ske.Student_Identifier_State
-			AND ISNULL(sd.LEA_Identifier_State, '') = ISNULL(ske.LEA_Identifier_State, '')
-			AND ISNULL(sd.School_Identifier_State, '') = ISNULL(ske.School_Identifier_State, '')
+			ON sd.StudentIdentifierState = ske.StudentIdentifierState
+			AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
 			AND sd.DisciplinaryActionStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @EndDate)
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation sppse
-			ON ske.Student_Identifier_State = sppse.Student_Identifier_State
-			AND ISNULL(ske.LEA_Identifier_State, '') = ISNULL(sppse.LEA_Identifier_State, '') 
-			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(sppse.School_Identifier_State, '')
+			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND sd.DisciplinaryActionStartDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @EndDate)
 		LEFT JOIN Staging.PersonStatus idea
-			ON sd.Student_Identifier_State = idea.Student_Identifier_State
-			AND ISNULL(ske.Lea_Identifier_State, '') = ISNULL(idea.Lea_Identifier_State, '')
-			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(idea.School_Identifier_State, '')
-			AND sd.DisciplinaryActionStartDate BETWEEN idea.IDEA_StatusStartDate AND ISNULL(idea.IDEA_StatusEndDate, @EndDate)
+			ON sd.StudentIdentifierState = idea.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
+			--AND sd.DisciplinaryActionStartDate BETWEEN idea.IDEA_StatusStartDate AND ISNULL(idea.IDEA_StatusEndDate, @EndDate)
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  Using a view that resolves multiple race records by returinging the value TwoOrMoreRaces
 			ON ske.SchoolYear = spr.SchoolYear
-			AND ske.Student_Identifier_State = spr.Student_Identifier_State
-			AND (spr.OrganizationType in (SELECT SeaOrganizationType FROM #seaOrganizationTypes)
-				OR (ske.LEA_Identifier_State = spr.OrganizationIdentifier
-					AND spr.OrganizationType in (SELECT LeaOrganizationType FROM #leaOrganizationTypes))
-				OR (ske.School_Identifier_State = spr.OrganizationIdentifier
-					AND spr.OrganizationType in (SELECT K12SchoolOrganizationType FROM #schoolOrganizationTypes)))
+			AND ske.StudentIdentifierState = spr.StudentIdentifierState
+			AND (ske.LeaIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability
+					OR ske.SchoolIdentifierSea = spr.SchoolIdentifierSea)
+					
 		LEFT JOIN #tempELStatus el
-			ON sd.Student_Identifier_State = el.Student_Identifier_State
-			AND ISNULL(sd.LEA_Identifier_State, '') = ISNULL(el.LEA_Identifier_State, '')
-			AND ISNULL(sd.School_Identifier_State, '') = ISNULL(el.School_Identifier_State, '')
+			ON sd.StudentIdentifierState = el.StudentIdentifierState
+			AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND sd.DisciplinaryActionStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @EndDate)
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 		JOIN RDS.DimAges rda
 			ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
 		JOIN RDS.DimK12Students rdks
-			ON sd.Student_Identifier_State = rdks.StateStudentIdentifier
+			ON sd.StudentIdentifierState = rdks.StateStudentIdentifier
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdks.FirstName, '')
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdks.MiddleName, '')
 			AND ISNULL(ske.LastName, 'MISSING') = rdks.LastName
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdks.BirthDate, '1/1/1900')
 			AND sd.DisciplinaryActionStartDate BETWEEN rdks.RecordStartDateTime AND ISNULL(rdks.RecordEndDateTime, @EndDate)
 		LEFT JOIN RDS.DimLeas rdl
-			ON sd.LEA_Identifier_State = rdl.LeaIdentifierState
+			ON sd.LeaIdentifierSeaAccountability = rdl.LeaIdentifierState
 			AND sd.DisciplinaryActionStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @EndDate)
 		LEFT JOIN RDS.DimK12Schools rdksch
-			ON sd.School_Identifier_State = rdksch.SchoolIdentifierState
+			ON sd.SchoolIdentifierSea = rdksch.SchoolIdentifierState
 			AND sd.DisciplinaryActionStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @EndDate)
 		LEFT JOIN #vwDimK12Demographics rdkd
 			ON rsy.SchoolYear = rdkd.SchoolYear
@@ -291,24 +289,24 @@ BEGIN
 			JOIN Staging.Discipline sd
 				ON fact.StagingId = sd.Id
 			LEFT JOIN Staging.ProgramParticipationCTE sppc_part_conc
-				ON sd.Student_Identifier_State = sppc_part_conc.Student_Identifier_State
-				AND ISNULL(sd.Lea_Identifier_State, '') = ISNULL(sppc_part_conc.Lea_Identifier_State, '')
-				AND ISNULL(sd.School_Identifier_State, '') = ISNULL(sppc_part_conc.School_Identifier_State, '')
+				ON sd.StudentIdentifierState = sppc_part_conc.StudentIdentifierState
+				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_part_conc.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sppc_part_conc.SchoolIdentifierSea, '')
 				AND sd.DisciplinaryActionStartDate BETWEEN sppc_part_conc.ProgramParticipationBeginDate AND ISNULL(sppc_part_conc.ProgramParticipationEndDate, @EndDate)
 			LEFT JOIN Staging.ProgramParticipationCTE sppc_dhm
-				ON sd.Student_Identifier_State = sppc_dhm.Student_Identifier_State
-				AND ISNULL(sd.Lea_Identifier_State, '') = ISNULL(sppc_dhm.Lea_Identifier_State, '')
-				AND ISNULL(sd.School_Identifier_State, '') = ISNULL(sppc_dhm.School_Identifier_State, '')
+				ON sd.StudentIdentifierState = sppc_dhm.StudentIdentifierState
+				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_dhm.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sppc_dhm.SchoolIdentifierSea, '')
 				AND sd.DisciplinaryActionStartDate BETWEEN sppc_dhm.DisplacedHomeMaker_StatusStartDate AND ISNULL(sppc_dhm.DisplacedHomeMaker_StatusEndDate, @EndDate)
 			LEFT JOIN Staging.ProgramParticipationCTE sppc_sp
-				ON sd.Student_Identifier_State = sppc_sp.Student_Identifier_State
-				AND ISNULL(sd.Lea_Identifier_State, '') = ISNULL(sppc_sp.Lea_Identifier_State, '')
-				AND ISNULL(sd.School_Identifier_State, '') = ISNULL(sppc_sp.School_Identifier_State, '')
+				ON sd.StudentIdentifierState = sppc_sp.StudentIdentifierState
+				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_sp.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sppc_sp.SchoolIdentifierSea, '')
 				AND sd.DisciplinaryActionStartDate BETWEEN sppc_sp.SingleParent_StatusStartDate AND ISNULL(sppc_sp.SingleParent_StatusEndDate, @EndDate)
 			LEFT JOIN Staging.PersonStatus sps
-				ON sd.Student_Identifier_State = sps.Student_Identifier_State
-				AND ISNULL(sd.Lea_Identifier_State, '') = ISNULL(sps.Lea_Identifier_State, '')
-				AND ISNULL(sd.School_Identifier_State, '') = ISNULL(sps.School_Identifier_State, '')
+				ON sd.StudentIdentifierState = sps.StudentIdentifierState
+				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sps.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sps.SchoolIdentifierSea, '')
 				AND sd.DisciplinaryActionStartDate BETWEEN sps.PerkinsLEPStatus_StatusStartDate AND ISNULL(sps.PerkinsLEPStatus_StatusEndDate, @EndDate)
 			LEFT JOIN #vwDimCteStatuses rdcs
 				ON CASE

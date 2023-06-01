@@ -9,11 +9,10 @@ BEGIN
 	--Populate the RDS tables from Staging data
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Homeless - Start Staging-to-DimK12Students')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Homeless - Start Staging-to-DimPeople_K12Students')
 
-		--Populate DimStudents
-		--exec [rds].[Migrate_DimK12Students] NULL
-		exec [Staging].[Staging-to-DimK12Students] NULL
+		--Populate DimPeople
+		exec Staging.[Staging-To-DimPeople_K12Students] NULL
 
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
@@ -41,24 +40,24 @@ BEGIN
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Homeless - Start Empty_RDS for the Submission reports')
 
 		--clear the data from the fact table
-		exec [rds].[Empty_RDS] 'homeless'
+		exec [rds].[Empty_RDS] 'Homeless'
 
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper homeless - Start Migrate_StudentCounts for Submission reports')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Homeless - Start Staging-to-FactK12StudentCounts_Homeless for Submission reports')
 
-		--populate the fact table for the submission report
+		--populate the Fact table
 		DECLARE @submissionYear AS VARCHAR(50)
 		DECLARE selectedYears_cursor CURSOR FOR 
 		SELECT d.SchoolYear
-			FROM rds.DimSchoolYears d
+		FROM rds.DimSchoolYears d
 			JOIN rds.DimSchoolYearDataMigrationTypes dd 
 				ON dd.DimSchoolYearId = d.DimSchoolYearId
-			JOIN rds.DimDataMigrationTypes b 
-				ON b.DimDataMigrationTypeId = dd.DataMigrationTypeId 
-			WHERE d.DimSchoolYearId <> -1 
-			AND dd.IsSelected = 1 
-			AND DataMigrationTypeCode = 'RDS'
+			JOIN App.DataMigrationTypes b 
+				ON b.DataMigrationTypeId=dd.DataMigrationTypeId 
+		WHERE d.DimSchoolYearId <> -1 
+		AND dd.IsSelected = 1 
+		AND DataMigrationTypeCode = 'RDS'
 
 		OPEN selectedYears_cursor
 		FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
@@ -75,12 +74,12 @@ BEGIN
 	--RDS migration complete
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Complete - homeless')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Complete - Homeless')
 
 	END TRY
 	BEGIN CATCH
 		insert into app.DataMigrationHistories
-		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper homeless failed to run - ' + ERROR_MESSAGE())
+		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Homeless failed to run - ' + ERROR_MESSAGE())
 	END CATCH
 
     SET NOCOUNT OFF;

@@ -28,7 +28,8 @@ CREATE TABLE Staging.K12StaffAssignment (
     , RecordEndDateTime DATE NULL
 	, SchoolYear VARCHAR(4) NULL
 	, DataCollectionName VARCHAR(100) NULL
-	, ProgramTypeCode VARCHAR(100) NULL
+	-- CIID-5778 JW
+	--, ProgramTypeCode VARCHAR(100) NULL
 	, RunDateTime DATETIME
 	)
 

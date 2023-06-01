@@ -17,7 +17,6 @@ BEGIN
 	) i ON (
 		afc.ColumnLength = i.ColumnLength
 		AND afc.ColumnName = i.ColumnName
-		AND ISNULL(afc.DimensionId,0) = ISNULL(i.DimensionId,0)
 		AND afc.DisplayName = i.DisplayName
 		AND afc.XMLElementName = i.XMLElementName
 		AND afc.DataType = i.DataType
@@ -58,7 +57,6 @@ BEGIN
 			AND i.DisplayName = afc.DisplayName
 			AND i.XMLElementName = afc.XMLElementName
 			AND i.DataType = afc.DataType
-			AND ISNULL(i.DimensionId,0) = ISNULL(afc.DimensionId,0)
 	) i2 ON (
 			afsfc.FileSubmissionId = i2.FileSubmissionId
 			AND afsfc.FileColumnId = i2.FileColumnId
