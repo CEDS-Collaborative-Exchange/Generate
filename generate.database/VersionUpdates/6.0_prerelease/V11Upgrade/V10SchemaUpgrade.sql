@@ -7627,16 +7627,22 @@
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_DimAssessments] (
-		[DimAssessmentId]                      INT            IDENTITY (1, 1) NOT NULL,
-		[AssessmentIdentifierState]            NVARCHAR (40)  NULL,
-		[AssessmentFamilyShortName]            NVARCHAR (30)  NULL,
-		[AssessmentTitle]                      NVARCHAR (60)  NULL,
-		[AssessmentShortName]                  NVARCHAR (30)  NULL,
-		[AssessmentTypeCode]                   NVARCHAR (100) NULL,
-		[AssessmentTypeDescription]            NVARCHAR (300) NULL,
-		[AssessmentAcademicSubjectCode]        NVARCHAR (100) NULL,
-		[AssessmentAcademicSubjectDescription] NVARCHAR (300) NULL,
-		[AssessmentAcademicSubjectEdFactsCode] NVARCHAR (50)  NULL,
+		[DimAssessmentId]                      					INT            IDENTITY (1, 1) NOT NULL,
+		[AssessmentIdentifierState]            					NVARCHAR (40)  NULL,
+		[AssessmentFamilyShortName]            					NVARCHAR (30)  NULL,
+		[AssessmentTitle]                      					NVARCHAR (60)  NULL,
+		[AssessmentShortName]                  					NVARCHAR (30)  NULL,
+		[AssessmentTypeCode]                   					NVARCHAR (100) NULL,
+		[AssessmentTypeDescription]            					NVARCHAR (300) NULL,
+		[AssessmentAcademicSubjectCode]        					NVARCHAR (100) NULL,
+		[AssessmentAcademicSubjectDescription] 					NVARCHAR (300) NULL,
+		[AssessmentAcademicSubjectEdFactsCode] 					NVARCHAR (50)  NULL,
+		[AssessmentTypeCode]                   					NVARCHAR (100) NULL,
+		[AssessmentTypeDescription]            					NVARCHAR (300) NULL,
+		[AssessmentTypeEdFactsCode]            					NVARCHAR (100) NULL,
+		[AssessmentTypeToEnglishLearnersCode]                   NVARCHAR (100) NULL,
+		[AssessmentTypeToEnglishLearnersDescription]            NVARCHAR (300) NULL,
+		[AssessmentTypeToEnglishLearnersEdFactsCode]            NVARCHAR (100) NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_DimAssessments1] PRIMARY KEY CLUSTERED ([DimAssessmentId] ASC) WITH (FILLFACTOR = 80)
 	);
 
@@ -7728,9 +7734,6 @@
 
 	CREATE TABLE [RDS].[tmp_ms_xx_DimAssessmentStatuses] (
 		[DimAssessmentStatusId]                           INT            IDENTITY (1, 1) NOT NULL,
-		[AssessmentPerformanceLevelIdentifier]            NVARCHAR (50)  NULL,
-		[AssessmentPerformanceLevelLabel]                 NVARCHAR (200) NULL,
-		[AssessmentPerformanceLevelIdentifierEdFactsCode] NVARCHAR (50)  NULL,
 		[ProgressLevelCode]                               NVARCHAR (50)  NULL,
 		[ProgressLevelDescription]                        NVARCHAR (100) NULL,
 		[ProgressLevelEdFactsCode]                        NVARCHAR (50)  NULL,
@@ -7740,8 +7743,6 @@
 		[AssessedFirstTimeCode]                           NVARCHAR (50)  NULL,
 		[AssessedFirstTimeDescription]                    NVARCHAR (100) NULL,
 		[AssessedFirstTimeEdFactsCode]                    NVARCHAR (50)  NULL,
-		[AssessmentScoreMetricTypeCode]                   NVARCHAR (50)  NULL,
-		[AssessmentScoreMetricTypeDescription]            NVARCHAR (50)  NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_DimAssessmentStatuses1] PRIMARY KEY CLUSTERED ([DimAssessmentStatusId] ASC) WITH (FILLFACTOR = 80)
 	);
 

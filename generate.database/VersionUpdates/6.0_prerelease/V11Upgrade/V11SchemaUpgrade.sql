@@ -5667,31 +5667,14 @@ EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatu
 EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdFactsCode]', @newname = N'PerkinsEnglishLearnerStatusEdFactsCode', @objtype = N'COLUMN';
 
 GO
-PRINT N'Altering Table [RDS].[DimK12StudentStatuses]...';
+PRINT N'Dropping Table [RDS].[DimK12StudentStatuses]...';
 
 
 GO
-ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeCode];
-ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeDescription];
-ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeEdFactsCode];
-ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [NSLPDirectCertificationIndicatorEdFactsCode];
-ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [NSLPDirectCertificationIndicatorId];
-
-
-GO
-DELETE FROM [RDS].[DimK12StudentStatuses]
-
-
-GO
-DBCC CHECKIDENT ('RDS.DimK12StudentStatuses', RESEED, 1);
-
-
-
-GO
-ALTER TABLE [RDS].[DimK12StudentStatuses]
-    ADD [DiplomaCredentialTypeCode]        NVARCHAR (50)  NULL,
-        [DiplomaCredentialTypeDescription] NVARCHAR (200) NULL,
-        [DiplomaCredentialTypeEdFactsCode] NVARCHAR (50)  NULL;
+ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP COLUMN [K12StudentStatusId];
+ALTER TABLE [RDS].[FactK12StudentAssessments] DROP COLUMN [K12StudentStatusId];
+ALTER TABLE [RDS].[FactK12StudentCounts] DROP COLUMN [K12StudentStatusId];
+DROP TABLE [RDS].[DimK12StudentStatuses];
 
 
 GO
@@ -5853,8 +5836,27 @@ CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentEnrollments_ResponsibleSchoolTypeI
 
 
 GO
-PRINT N'Creating Index [RDS].[FactK12StudentEnrollments].[IXFK_FactK12StudentEnrollments_K12EnrollmentStatusId]...';
 
+/*
+Adding field [RDS].[FactK12StudentCounts].[MigrantStudentQualifyingArrivalDate].
+*/
+GO
+PRINT N'Starting rebuilding table [RDS].[FactK12StudentCounts]...';
+ALTER TABLE [RDS].[FactK12StudentCounts] 
+ADD   [MigrantStudentQualifyingArrivalDateId] INT CONSTRAINT [DF_FactK12StudentCounts_MigrantStudentQualifyingArrivalDateId] DEFAULT (-1) NOT NULL
+
+GO
+
+
+GO
+CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_MigrantStudentQualifyingArrivalDateId]
+    ON [RDS].[FactK12StudentCounts]([MigrantStudentQualifyingArrivalDateId] ASC);
+
+
+/*
+Adding field [RDS].[FactPsStudentAcademicAwards].[SchoolYearId].
+Adding field [RDS].[FactPsStudentAcademicAwards].[PsDemographicId].
+*/
 
 GO
 PRINT N'Starting rebuilding table [RDS].[FactPsStudentAcademicAwards]...';
@@ -5864,6 +5866,10 @@ ADD   [SchoolYearId] INT CONSTRAINT [DF_FactPsStudentAcademicAwards_SchoolYearId
     , [PsDemographicId] INT CONSTRAINT [DF_FactPsStudentAcademicAwards_PsDemographicId] DEFAULT (-1) NOT NULL
 
 GO
+
+
+
+
 /*
 The column [RDS].[FactPsStudentAcademicRecords].[CountDateId] is being dropped, data loss could occur.
 */
@@ -8498,6 +8504,17 @@ PRINT N'Creating Foreign Key [RDS].[FK_FactAeStudentEnrollments_AeStudentId]...'
 GO
 ALTER TABLE [RDS].[FactAeStudentEnrollments] WITH NOCHECK
     ADD CONSTRAINT [FK_FactAeStudentEnrollments_AeStudentId] FOREIGN KEY ([AeStudentId]) REFERENCES [RDS].[DimPeople] ([DimPersonId]);
+
+
+
+GO
+PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_MigrantStudentQualifyingArrivalDateId]...';
+
+
+GO
+ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+    ADD CONSTRAINT [FK_FactK12StudentCounts_MigrantStudentQualifyingArrivalDateId] FOREIGN KEY ([MigrantStudentQualifyingArrivalDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+
 
 
 GO
