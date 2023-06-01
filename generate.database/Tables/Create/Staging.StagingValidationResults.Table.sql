@@ -1,5 +1,6 @@
 CREATE TABLE [Staging].[StagingValidationResults](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[StagingValidationRuleId] [int] NULL,
 	[SchoolYear] [int] NULL,
 	[ReportGroupOrCode] [varchar](50) NULL,
 	[StagingTableName] [varchar](200) NULL,
