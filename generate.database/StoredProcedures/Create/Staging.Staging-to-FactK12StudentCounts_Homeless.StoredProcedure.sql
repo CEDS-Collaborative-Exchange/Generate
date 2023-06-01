@@ -88,7 +88,7 @@ BEGIN
 		
 	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
-			  StagingId								int not null
+			StagingId								int not null
 			, SchoolYearId							int null
 			, FactTypeId							int null
 			, GradeLevelId							int null
@@ -223,7 +223,7 @@ BEGIN
 			AND rdms.ContinuationOfServicesReasonCode = 'MISSING'
 			AND rdms.MigrantEducationProgramServicesTypeCode = 'MISSING'
 			AND rdms.MigrantPrioritizedForServicesCode = 'MISSING'
-	--english learner ()RDS)
+	--english learner (RDS)
 		LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
 			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
