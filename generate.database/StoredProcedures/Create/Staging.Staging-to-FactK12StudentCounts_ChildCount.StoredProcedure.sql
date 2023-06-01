@@ -163,24 +163,26 @@ BEGIN
 				ON ske.SchoolYear = rsy.SchoolYear
 			JOIN RDS.vwDimK12Demographics rdkd
  				ON rsy.SchoolYear = rdkd.SchoolYear
-				AND convert(varchar, ISNULL(ske.Sex, 'MISSING')) = convert(varchar, ISNULL(rdkd.SexMap, rdkd.SexCode))
+				AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
 			JOIN RDS.DimAges rda
 				ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
 			JOIN RDS.DimSeas rds
 				ON @ChildCountDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())		
 			JOIN Staging.ProgramParticipationSpecialEducation sppse
-				ON convert(varchar, ske.StudentIdentifierState) = convert(varchar, sppse.StudentIdentifierState)
-				AND ((ISNULL(convert(varchar, ske.LeaIdentifierSeaAccountability), '') = ISNULL(convert(varchar, sppse.LeaIdentifierSeaAccountability), '') 
-					AND sppse.LeaIdentifierSeaAccountability is not null)
-					OR
-					(ISNULL(convert(varchar, ske.SchoolIdentifierSea), '') = ISNULL(convert(varchar, sppse.SchoolIdentifierSea), '')
-					AND sppse.SchoolIdentifierSea is not null))
+				ON ske.StudentIdentifierState = sppse.StudentIdentifierState
+				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sppse.LeaIdentifierSeaAccountability,'')
+				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sppse.SchoolIdentifierSea,'')
+				--AND ((ISNULL(convert(varchar, ske.LeaIdentifierSeaAccountability), '') = ISNULL(convert(varchar, sppse.LeaIdentifierSeaAccountability), '') 
+				--	AND sppse.LeaIdentifierSeaAccountability is not null)
+				--	OR
+				--	(ISNULL(convert(varchar, ske.SchoolIdentifierSea), '') = ISNULL(convert(varchar, sppse.SchoolIdentifierSea), '')
+				--	AND sppse.SchoolIdentifierSea is not null))
 				AND @ChildCountDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, GETDATE())
 			JOIN Staging.IdeaDisabilityType sidt	
 				ON ske.SchoolYear = sidt.SchoolYear
-				AND convert(varchar, sidt.StudentIdentifierState) = convert(varchar, sppse.StudentIdentifierState)
-				AND ISNULL(convert(varchar, sidt.LeaIdentifierSeaAccountability), '') = ISNULL(convert(varchar, sppse.LeaIdentifierSeaAccountability), '')
-				AND ISNULL(convert(varchar, sidt.SchoolIdentifierSea), '') = ISNULL(convert(varchar, sppse.SchoolIdentifierSea), '')
+				AND sidt.StudentIdentifierState = sppse.StudentIdentifierState
+				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 				AND sidt.IsPrimaryDisability = 1
 				AND @ChildCountDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
 			JOIN RDS.DimPeople rdp
@@ -211,14 +213,16 @@ BEGIN
 
 
 			LEFT JOIN Staging.PersonStatus el 
-				ON convert(varchar, ske.StudentIdentifierState) = convert(varchar, el.StudentIdentifierState)
+				ON ske.StudentIdentifierState = el.StudentIdentifierState
 				and ske.LeaIdentifierSeaAccountability = el.LeaIdentifierSeaAccountability
 				and ske.SchoolIdentifierSea = el.SchoolIdentifierSea
-				AND ((ISNULL(convert(varchar, ske.LeaIdentifierSeaAccountability), '') = ISNULL(convert(varchar, el.LeaIdentifierSeaAccountability), '') 
-					AND el.LeaIdentifierSeaAccountability is not null)
-					OR
-					(ISNULL(convert(varchar, ske.SchoolIdentifierSea), '') = ISNULL(convert(varchar, el.SchoolIdentifierSea), '')
-					AND el.SchoolIdentifierSea is not null))
+				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(el.LeaIdentifierSeaAccountability,'')
+				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(el.SchoolIdentifierSea,'')
+				--AND ((ISNULL(convert(varchar, ske.LeaIdentifierSeaAccountability), '') = ISNULL(convert(varchar, el.LeaIdentifierSeaAccountability), '') 
+				--	AND el.LeaIdentifierSeaAccountability is not null)
+				--	OR
+				--	(ISNULL(convert(varchar, ske.SchoolIdentifierSea), '') = ISNULL(convert(varchar, el.SchoolIdentifierSea), '')
+				--	AND el.SchoolIdentifierSea is not null))
 				AND @ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
 
 
@@ -233,11 +237,14 @@ BEGIN
 			LEFT JOIN #vwUnduplicatedRaceMap spr
 				ON ske.SchoolYear = spr.SchoolYear
 				AND ske.StudentIdentifierState = spr.StudentIdentifierState
-				AND ((ISNULL(convert(varchar, ske.LeaIdentifierSeaAccountability), '') = ISNULL(convert(varchar, spr.LeaIdentifierSeaAccountability), '') 
-					AND spr.LeaIdentifierSeaAccountability is not null)
-					OR
-					(ISNULL(convert(varchar, ske.SchoolIdentifierSea), '') = ISNULL(convert(varchar, spr.SchoolIdentifierSea), '')
-					AND spr.SchoolIdentifierSea is not null))
+				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(spr.LeaIdentifierSeaAccountability,'')
+				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(spr.SchoolIdentifierSea,'')
+
+				--AND ((ISNULL(convert(varchar, ske.LeaIdentifierSeaAccountability), '') = ISNULL(convert(varchar, spr.LeaIdentifierSeaAccountability), '') 
+				--	AND spr.LeaIdentifierSeaAccountability is not null)
+				--	OR
+				--	(ISNULL(convert(varchar, ske.SchoolIdentifierSea), '') = ISNULL(convert(varchar, spr.SchoolIdentifierSea), '')
+				--	AND spr.SchoolIdentifierSea is not null))
 
 			LEFT JOIN #vwRaces rdr
 				ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
