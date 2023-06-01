@@ -20,13 +20,6 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
 		IF OBJECT_ID(N'tempdb..#vwIdeaStatuses') IS NOT NULL DROP TABLE #vwIdeaStatuses
 
-	--create indexes to improve query performance
-		IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_Staging_PersonStatus_IdeaStatusStartDate_WithIncludes2' AND object_id = OBJECT_ID('Staging.PersonStatus')) BEGIN
-			CREATE NONCLUSTERED INDEX [IX_Staging_PersonStatus_IdeaStatusStartDate_WithIncludes2]
-			ON [Staging].[PersonStatus] ([IDEA_StatusStartDate])
-			INCLUDE ([Student_Identifier_State],[LEA_Identifier_State],[School_Identifier_State],[IDEAIndicator],[IDEA_StatusEndDate],[PrimaryDisabilityType])
-		END
-
 	--Set the standard variables used throughout
 		DECLARE 
 		@FactTypeId int,
@@ -74,7 +67,7 @@ BEGIN
 	--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
-		WHERE FactTypeCode = 'Grad'
+		WHERE FactTypeCode = 'Grad'  --FactTypeId = 8
 
 		DELETE RDS.FactK12StudentCounts
 		WHERE SchoolYearId = @SchoolYearId 
@@ -85,7 +78,7 @@ BEGIN
 		
 	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
-			  StagingId									int not null
+			StagingId									int not null
 			, SchoolYearId								int null
 			, FactTypeId								int null
 			, GradeLevelId								int null
@@ -169,17 +162,20 @@ BEGIN
 		JOIN RDS.DimSeas rds
 			ON ((rds.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (rds.RecordStartDateTime < @ReportingStartDate AND ISNULL(rds.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
-		JOIN Staging.ProgramParticipationSpecialEducation sppse
+	--disability
+		LEFT JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(sppse.LEAIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND ((sppse.ProgramParticipationBeginDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (sppse.ProgramParticipationBeginDate < @ReportingStartDate AND ISNULL(sppse.ProgramParticipationEndDate, GETDATE()) > @ReportingStartDate))
+	--race
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr
 			ON ske.SchoolYear = spr.SchoolYear
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState
-			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
-				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
+			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(spr.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(spr.SchoolIdentifierSea, '')
+	--english learner
 		LEFT JOIN Staging.PersonStatus el 
 			ON ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(el.LEAIdentifierSeaAccountability, '') 
@@ -187,6 +183,7 @@ BEGIN
 			AND el.EnglishLearnerStatus = 1
 			AND ((el.EnglishLearner_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (el.EnglishLearner_StatusStartDate < @ReportingStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) > @ReportingStartDate))
+	--homelessness
 		LEFT JOIN Staging.PersonStatus homeless 
 			ON ske.StudentIdentifierState = homeless.StudentIdentifierState
 			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(homeless.LEAIdentifierSeaAccountability, '') 
@@ -194,6 +191,7 @@ BEGIN
 			AND homeless.HomelessnessStatus = 1
 			AND ((homeless.Homelessness_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (homeless.Homelessness_StatusStartDate < @ReportingStartDate AND ISNULL(homeless.Homelessness_StatusEndDate, GETDATE()) > @ReportingStartDate))
+	--economically disadvantaged
 		LEFT JOIN Staging.PersonStatus ecoDis
 			ON ske.StudentIdentifierState = ecoDis.StudentIdentifierState
 			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(ecoDis.LEAIdentifierSeaAccountability, '') 
@@ -201,6 +199,7 @@ BEGIN
 			AND ecoDis.EconomicDisadvantageStatus = 1
 			AND ((ecoDis.EconomicDisadvantage_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (ecoDis.EconomicDisadvantage_StatusStartDate < @ReportingStartDate AND ISNULL(ecoDis.EconomicDisadvantage_StatusEndDate, GETDATE()) > @ReportingStartDate))
+	--migrant
 		LEFT JOIN Staging.PersonStatus migrant
 			ON ske.StudentIdentifierState = migrant.StudentIdentifierState
 			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(migrant.LEAIdentifierSeaAccountability, '') 
@@ -241,13 +240,14 @@ BEGIN
 		LEFT JOIN #vwMigrantStatuses rdms
 			ON ISNULL(CAST(migrant.MigrantStatus AS SMALLINT), -1) = ISNULL(CAST(rdms.MigrantStatusMap AS SMALLINT), -1)
 	--race (RDS)
-		LEFT JOIN #vwRaces rdr
-			ON ISNULL(rdr.RaceCode, rdr.RaceMap) =
+		LEFT JOIN #vwDimRaces rdr
+			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
 				CASE
 					when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
-					WHEN spr.RaceCode IS NOT NULL THEN spr.RaceCode
+					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
+				AND rsy.SchoolYear = rdr.SchoolYear
 		JOIN RDS.DimPeople rdp
 			ON ske.StudentIdentifierState = rdp.StateStudentIdentifier
 			AND rdp.IsActiveK12Student = 1
