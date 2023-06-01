@@ -18,6 +18,7 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
 		IF OBJECT_ID(N'tempdb..#vwIdeaStatuses') IS NOT NULL DROP TABLE #vwIdeaStatuses
 		IF OBJECT_ID(N'tempdb..#vwUnduplicatedRaceMap') IS NOT NULL DROP TABLE #vwUnduplicatedRaceMap
+		IF OBJECT_ID(N'tempdb..#vwEnglishLearnerStatuses') IS NOT NULL DROP TABLE #vwEnglishLearnerStatuses
 
 	BEGIN TRY
 
@@ -70,6 +71,12 @@ BEGIN
 
 		CREATE CLUSTERED INDEX ix_tempvwUnduplicatedRaceMap ON #vwUnduplicatedRaceMap (StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, RaceMap);
 
+		SELECT * 
+		INTO #vwEnglishLearnerStatuses 
+		FROM RDS.vwDimEnglishLearnerStatuses
+		WHERE SchoolYear = @SchoolYear
+
+		CREATE CLUSTERED INDEX ix_tempvwEnglishLearnerStatuses ON #vwEnglishLearnerStatuses (EnglishLearnerStatusMap)
 
 
 		SELECT @FactTypeId = DimFactTypeId 
@@ -161,13 +168,17 @@ BEGIN
 		FROM Staging.K12Enrollment ske
 			JOIN RDS.DimSchoolYears rsy
 				ON ske.SchoolYear = rsy.SchoolYear
+			
 			JOIN RDS.vwDimK12Demographics rdkd
  				ON rsy.SchoolYear = rdkd.SchoolYear
 				AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+			
 			JOIN RDS.DimAges rda
 				ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
+			
 			JOIN RDS.DimSeas rds
 				ON @ChildCountDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())		
+			
 			JOIN Staging.ProgramParticipationSpecialEducation sppse
 				ON ske.StudentIdentifierState = sppse.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sppse.LeaIdentifierSeaAccountability,'')
@@ -178,6 +189,7 @@ BEGIN
 				--	(ISNULL(convert(varchar, ske.SchoolIdentifierSea), '') = ISNULL(convert(varchar, sppse.SchoolIdentifierSea), '')
 				--	AND sppse.SchoolIdentifierSea is not null))
 				AND @ChildCountDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, GETDATE())
+			
 			JOIN Staging.IdeaDisabilityType sidt	
 				ON ske.SchoolYear = sidt.SchoolYear
 				AND sidt.StudentIdentifierState = sppse.StudentIdentifierState
@@ -185,6 +197,7 @@ BEGIN
 				AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 				AND sidt.IsPrimaryDisability = 1
 				AND @ChildCountDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+			
 			JOIN RDS.DimPeople rdp
 				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 				AND IsActiveK12Student = 1
@@ -214,8 +227,6 @@ BEGIN
 
 			LEFT JOIN Staging.PersonStatus el 
 				ON ske.StudentIdentifierState = el.StudentIdentifierState
-				and ske.LeaIdentifierSeaAccountability = el.LeaIdentifierSeaAccountability
-				and ske.SchoolIdentifierSea = el.SchoolIdentifierSea
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(el.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(el.SchoolIdentifierSea,'')
 				--AND ((ISNULL(convert(varchar, ske.LeaIdentifierSeaAccountability), '') = ISNULL(convert(varchar, el.LeaIdentifierSeaAccountability), '') 
@@ -226,9 +237,8 @@ BEGIN
 				AND @ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
 
 
-			LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
-				ON rsy.SchoolYear = rdels.SchoolYear
-				AND rdels.PerkinsEnglishLearnerStatusCode = 'MISSING'
+			LEFT JOIN #vwEnglishLearnerStatuses rdels
+				ON rdels.PerkinsEnglishLearnerStatusCode = 'MISSING'
 				AND rdels.TitleIIIAccountabilityProgressStatusCode = 'MISSING'
 				AND rdels.TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
 				AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
@@ -252,12 +262,10 @@ BEGIN
 						WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 						ELSE 'Missing'
 					END
-					
-
-			
+	
 			LEFT JOIN #vwIdeaStatuses rdis
 				ON rdis.IdeaIndicatorCode = 'Yes'
-				AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 
+				AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap = 
 				CASE 
 						--WHEN rda.AgeCode = 'MISSING' THEN 'MISSING'
 						WHEN 
@@ -269,11 +277,11 @@ BEGIN
 							THEN sppse.IDEAEducationalEnvironmentForEarlyChildhood
 						ELSE 'MISSING'
 					END 
-				and rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 
+				and rdis.IdeaEducationalEnvironmentForSchoolAgeMap = 
 					CASE 
 						--WHEN rda.AgeCode = 'MISSING' THEN 'MISSING'
 						WHEN 
-							(rda.AgeCode > 5 OR (rds.AgeCode = 5 AND rgls.GradeLevelCode NOT IN ('PK','MISSING')))
+							(rda.AgeCode > 5 OR (rda.AgeCode = 5 AND rgls.GradeLevelCode NOT IN ('PK','MISSING')))
 							AND
 							ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'') <> ''
 							and isnull(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, 'MISSING') = 'MISSING' -- ONLY GET THE ONES WHERE THE EARLY CHILDHOOD MAP IS NULL
