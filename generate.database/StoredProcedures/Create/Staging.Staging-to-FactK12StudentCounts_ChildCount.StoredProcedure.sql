@@ -235,8 +235,7 @@ BEGIN
 
 
 			LEFT JOIN #vwUnduplicatedRaceMap spr
-				ON ske.SchoolYear = spr.SchoolYear
-				AND ske.StudentIdentifierState = spr.StudentIdentifierState
+				ON ske.StudentIdentifierState = spr.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(spr.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(spr.SchoolIdentifierSea,'')
 
@@ -253,18 +252,18 @@ BEGIN
 						WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 						ELSE 'Missing'
 					END
-					AND rsy.SchoolYear = rdr.SchoolYear
+					
 
 			
 			LEFT JOIN #vwIdeaStatuses rdis
 				ON rdis.IdeaIndicatorCode = 'Yes'
 				AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 
 				CASE 
-						WHEN rda.AgeCode = 'MISSING' THEN 'MISSING'
+						--WHEN rda.AgeCode = 'MISSING' THEN 'MISSING'
 						WHEN 
 							(rda.AgeCode < 5 OR (rda.AgeCode = 5 AND rgls.GradeLevelCode IN ('PK','MISSING')))
 							AND	
-							sppse.IDEAEducationalEnvironmentForEarlyChildhood IS NOT NULL AND sppse.IDEAEducationalEnvironmentForEarlyChildhood <> '' 
+							ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'') <> '' 
 							and isnull(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, 'MISSING') = 'MISSING' -- ONLY GET THE ONES WHERE THE School Age MAP IS NULL
 
 							THEN sppse.IDEAEducationalEnvironmentForEarlyChildhood
@@ -272,11 +271,11 @@ BEGIN
 					END 
 				and rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 
 					CASE 
-						WHEN rda.AgeCode = 'MISSING' THEN 'MISSING'
+						--WHEN rda.AgeCode = 'MISSING' THEN 'MISSING'
 						WHEN 
-							(rda.AgeCode >= 5 AND rgls.GradeLevelCode NOT IN ('PK','MISSING'))
+							(rda.AgeCode > 5 OR (rds.AgeCode = 5 AND rgls.GradeLevelCode NOT IN ('PK','MISSING')))
 							AND
-							sppse.IDEAEducationalEnvironmentForSchoolAge IS NOT NULL and sppse.IDEAEducationalEnvironmentForSchoolAge <> ''
+							ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'') <> ''
 							and isnull(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, 'MISSING') = 'MISSING' -- ONLY GET THE ONES WHERE THE EARLY CHILDHOOD MAP IS NULL
 							THEN sppse.IDEAEducationalEnvironmentForSchoolAge
 						ELSE 'MISSING'
