@@ -1,7 +1,3 @@
-﻿-- Database Changes for Staging Validation --
-
-
--- Add Additional DataMigrationTypes
 if not exists (select * from App.DataMigrationTypes where DataMigrationTypeCode = 'StagingValidation')
 BEGIN
     insert into App.DataMigrationTypes	select 'StagingValidation', 'Staging Data Validation'
