@@ -1,40 +1,55 @@
 SET NOCOUNT ON;
 GO 
 
-IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentCounts') BEGIN
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentCounts') 
+BEGIN
 	DROP TABLE Upgrade.FactK12StudentCounts
-END
-GO
-IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentDisciplines') BEGIN
-	DROP TABLE Upgrade.FactK12StudentDisciplines
-END
-GO
-IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StaffCounts') BEGIN
-	DROP TABLE Upgrade.FactK12StaffCounts
-END
-GO
-IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactOrganizationCounts') BEGIN
-	DROP TABLE Upgrade.FactOrganizationCounts
-END
-GO
-IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentAssessments') BEGIN
-	DROP TABLE Upgrade.FactK12StudentAssessments
-END
-GO
-IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'DimK12Students') BEGIN
-	DROP TABLE Upgrade.DimK12Students
-END
-GO
-IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'DimK12Staff') BEGIN
-	DROP TABLE Upgrade.DimK12Staff
-END
-GO
-IF EXISTS (select * from INFORMATION_SCHEMA.SCHEMATA where schema_name = 'Upgrade') BEGIN
-	DROP SCHEMA Upgrade
-END
+END;
 GO
 
-CREATE SCHEMA Upgrade
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentDisciplines') 
+BEGIN
+	DROP TABLE Upgrade.FactK12StudentDisciplines
+END;
+GO
+
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StaffCounts') 
+BEGIN
+	DROP TABLE Upgrade.FactK12StaffCounts
+END;
+GO
+
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactOrganizationCounts') 
+BEGIN
+	DROP TABLE Upgrade.FactOrganizationCounts
+END;
+GO
+
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentAssessments') 
+BEGIN
+	DROP TABLE Upgrade.FactK12StudentAssessments
+END;
+GO
+
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'DimK12Students') 
+BEGIN
+	DROP TABLE Upgrade.DimK12Students
+END;
+GO
+
+IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'DimK12Staff') 
+BEGIN
+	DROP TABLE Upgrade.DimK12Staff
+END;
+GO
+
+IF EXISTS (select * from INFORMATION_SCHEMA.SCHEMATA where schema_name = 'Upgrade') 
+BEGIN
+	DROP SCHEMA Upgrade
+END;
+GO
+
+CREATE SCHEMA Upgrade;
 GO 
 
 CREATE TABLE Upgrade.DimK12Students (
@@ -57,8 +72,6 @@ SELECT
 	, RecordEndDateTime 
 FROM RDS.DimK12Students s
 
-GO
-
 CREATE TABLE Upgrade.DimK12Staff (
 	  FirstName NVARCHAR(200)
 	, MiddleName NVARCHAR(200)
@@ -79,9 +92,6 @@ SELECT
 	, RecordStartDateTime 
 	, RecordEndDateTime 
 FROM RDS.DimK12Staff s
-
-GO
-
 
 CREATE TABLE Upgrade.FactK12StudentCounts (
 	  StudentCutOverStartDate DATE
@@ -958,6 +968,6 @@ JOIN RDS.DimK12SchoolStateStatuses rdksss ON f.SchoolStateStatusId = rdksss.DimK
 JOIN RDS.DimComprehensiveAndTargetedSupports rdcats ON f.ComprehensiveAndTargetedSupportId = rdcats.DimComprehensiveAndTargetedSupportId
 JOIN RDS.DimSubgroups rdsub ON f.DimSubgroupId = f.DimSubgroupId
 JOIN RDS.DimComprehensiveSupportReasonApplicabilities rdcsra ON f.DimComprehensiveSupportReasonApplicabilityId = rdcsra.DimComprehensiveSupportReasonApplicabilityId
-
+																  
 
 /*******************************************************************************************************/
