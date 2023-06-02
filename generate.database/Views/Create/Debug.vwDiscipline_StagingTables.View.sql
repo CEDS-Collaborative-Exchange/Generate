@@ -25,7 +25,7 @@ CREATE VIEW [Debug].[vwDiscipline_StagingTables] AS
 				,discipline.IDEADisciplineMethodFirearm
 				,discipline.FirearmType
 			
-				,ideaDisability.IdeaDisabilityTypeCode
+				,ideaDisability.IdeaDisabilityType
 
 				,programparticipation.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
 				,programparticipation.ProgramParticipationEndDate		AS IDEAProgramParticipationEndDate
@@ -96,7 +96,7 @@ CREATE VIEW [Debug].[vwDiscipline_StagingTables] AS
 	--AND discipline.DisciplineMethodFirearm = ''
 	--AND discipline.IDEADisciplineMethodFirearm = ''
 	--AND discipline.FirearmType = ''
-	--AND ideaDisability.IdeaDisabilityTypeCode = ''
+	--AND ideaDisability.IdeaDisabilityType = ''
 	--AND programparticipation.ProgramParticipationBeginDate = ''
 	--AND programparticipation.ProgramParticipationEndDate = ''
 	--AND el.EnglishLearnerStatus = ''

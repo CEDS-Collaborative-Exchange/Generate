@@ -23,10 +23,11 @@ PRINT N'Rename [RDS].[FactK12StudentEnrollments].[AccountableK12SchoolId] to K12
 
 
 GO
-EXECUTE sp_rename @objname = N'[RDS].[FactK12StudentEnrollments].[AccountableK12SchoolId]', @newname = N'K12SchoolAccountabilityId', @objtype = N'COLUMN';
+--AccountableK12SchoolId doesn't exist in the table
+-- EXECUTE sp_rename @objname = N'[RDS].[FactK12StudentEnrollments].[AccountableK12SchoolId]', @newname = N'K12SchoolAccountabilityId', @objtype = N'COLUMN';
 
 
-GO
+-- GO
 PRINT N'Rename refactoring operation with key 353914f6-d8e2-4132-aa4e-5d202e661cec is skipped, element [Staging].[K12Enrollment].[ExitWithdrawType] (SqlSimpleColumn) will not be renamed to ExitOrWithdrawalType';
 
 
@@ -4132,14 +4133,14 @@ ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCount
 
 
 GO
-PRINT N'Dropping Foreign Key [RDS].[FK_BridgeAeStudentEnrollmentRaces_FactAeStudentEnrollmentId]...';
+-- PRINT N'Dropping Foreign Key [RDS].[FK_BridgeAeStudentEnrollmentRaces_FactAeStudentEnrollmentId]...';
 
 
-GO
-ALTER TABLE [RDS].[BridgeAeStudentEnrollmentRaces] DROP CONSTRAINT [FK_BridgeAeStudentEnrollmentRaces_FactAeStudentEnrollmentId];
+-- GO
+-- ALTER TABLE [RDS].[BridgeAeStudentEnrollmentRaces] DROP CONSTRAINT [FK_BridgeAeStudentEnrollmentRaces_FactAeStudentEnrollmentId];
 
 
-GO
+-- GO
 PRINT N'Dropping Foreign Key [RDS].[FK_BridgeAeStudentEnrollmentRaces_RaceId]...';
 
 
@@ -5657,41 +5658,14 @@ GO
 
 
 GO
-PRINT N'Altering Table [RDS].[DimEnglishLearnerStatuses]...';
+PRINT N'Dropping Table [RDS].[DimK12StudentStatuses]...';
 
 
 GO
-
-EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode]', @newname = N'PerkinsEnglishLearnerStatusCode', @objtype = N'COLUMN';
-EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription]', @newname = N'PerkinsEnglishLearnerStatusDescription', @objtype = N'COLUMN';
-EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdFactsCode]', @newname = N'PerkinsEnglishLearnerStatusEdFactsCode', @objtype = N'COLUMN';
-
-GO
-PRINT N'Altering Table [RDS].[DimK12StudentStatuses]...';
-
-
-GO
-ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeCode];
-ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeDescription];
-ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [HighSchoolDiplomaTypeEdFactsCode];
-ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [NSLPDirectCertificationIndicatorEdFactsCode];
-ALTER TABLE [RDS].[DimK12StudentStatuses] DROP COLUMN [NSLPDirectCertificationIndicatorId];
-
-
-GO
-DELETE FROM [RDS].[DimK12StudentStatuses]
-
-
-GO
-DBCC CHECKIDENT ('RDS.DimK12StudentStatuses', RESEED, 1);
-
-
-
-GO
-ALTER TABLE [RDS].[DimK12StudentStatuses]
-    ADD [DiplomaCredentialTypeCode]        NVARCHAR (50)  NULL,
-        [DiplomaCredentialTypeDescription] NVARCHAR (200) NULL,
-        [DiplomaCredentialTypeEdFactsCode] NVARCHAR (50)  NULL;
+ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP COLUMN [K12StudentStatusId];
+--ALTER TABLE [RDS].[FactK12StudentAssessments] DROP COLUMN [K12StudentStatusId];
+--ALTER TABLE [RDS].[FactK12StudentCounts] DROP COLUMN [K12StudentStatusId];
+DROP TABLE [RDS].[DimK12StudentStatuses];
 
 
 GO
@@ -5853,8 +5827,27 @@ CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentEnrollments_ResponsibleSchoolTypeI
 
 
 GO
-PRINT N'Creating Index [RDS].[FactK12StudentEnrollments].[IXFK_FactK12StudentEnrollments_K12EnrollmentStatusId]...';
 
+/*
+Adding field [RDS].[FactK12StudentCounts].[MigrantStudentQualifyingArrivalDate].
+*/
+GO
+PRINT N'Starting rebuilding table [RDS].[FactK12StudentCounts]...';
+ALTER TABLE [RDS].[FactK12StudentCounts] 
+ADD   [MigrantStudentQualifyingArrivalDateId] INT CONSTRAINT [DF_FactK12StudentCounts_MigrantStudentQualifyingArrivalDateId] DEFAULT (-1) NOT NULL
+
+GO
+
+
+GO
+CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_MigrantStudentQualifyingArrivalDateId]
+    ON [RDS].[FactK12StudentCounts]([MigrantStudentQualifyingArrivalDateId] ASC);
+
+
+/*
+Adding field [RDS].[FactPsStudentAcademicAwards].[SchoolYearId].
+Adding field [RDS].[FactPsStudentAcademicAwards].[PsDemographicId].
+*/
 
 GO
 PRINT N'Starting rebuilding table [RDS].[FactPsStudentAcademicAwards]...';
@@ -5864,6 +5857,10 @@ ADD   [SchoolYearId] INT CONSTRAINT [DF_FactPsStudentAcademicAwards_SchoolYearId
     , [PsDemographicId] INT CONSTRAINT [DF_FactPsStudentAcademicAwards_PsDemographicId] DEFAULT (-1) NOT NULL
 
 GO
+
+
+
+
 /*
 The column [RDS].[FactPsStudentAcademicRecords].[CountDateId] is being dropped, data loss could occur.
 */
@@ -6741,13 +6738,13 @@ PRINT N'Starting rebuilding table [Staging].[AssessmentResult]...';
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_AssessmentResult] (
     [Id]                                                   INT            IDENTITY (1, 1) NOT NULL,
-    [StudentIdentifierState]                               VARCHAR (100)  NULL,
-    [LeaIdentifierSeaAccountability]                       NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                           NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                              NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                           NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]       NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                                  VARCHAR (100)  NULL,
+    [StudentIdentifierState]                               NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                       NVARCHAR (50) NULL,
+    [LeaIdentifierSeaAttendance]                           NVARCHAR (50) NULL,
+    [LeaIdentifierSeaFunding]                              NVARCHAR (50) NULL,
+    [LeaIdentifierSeaGraduation]                           NVARCHAR (50) NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]       NVARCHAR (50) NULL,
+    [SchoolIdentifierSea]                                  VARCHAR (50)  NULL,
     [AssessmentTitle]                                      VARCHAR (100)  NULL,
     [AssessmentAcademicSubject]                            VARCHAR (100)  NULL,
     [AssessmentPurpose]                                    VARCHAR (100)  NULL,
@@ -6766,7 +6763,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_AssessmentResult] (
     [AssessmentPerformanceLevelIdentifier]                 VARCHAR (100)  NULL,
     [AssessmentPerformanceLevelLabel]                      VARCHAR (100)  NULL,
     [AssessmentScoreMetricType]                            VARCHAR (100)  NULL,
-    [SchoolYear]                                           VARCHAR (100)  NULL,
+    [SchoolYear]                                           SMALLINT 	  NULL,
     [DataCollectionName]                                   VARCHAR (100)  NULL,
     [DataCollectionId]                                     INT            NULL,
     [AssessmentRegistrationId]                             INT            NULL,
@@ -6824,13 +6821,13 @@ PRINT N'Starting rebuilding table [Staging].[IdeaDisabilityType]...';
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_IdeaDisabilityType] (
     [Id]                                                    INT             IDENTITY (1, 1) NOT NULL,
-    [StudentIdentifierState]                                NVARCHAR (100)  NULL,
-    [LeaIdentifierSeaAccountability]                        NVARCHAR (100)  NULL,
-    [LeaIdentifierSeaAttendance]                            NVARCHAR (100)  NULL,
-    [LeaIdentifierSeaFunding]                               NVARCHAR (100)  NULL,
-    [LeaIdentifierSeaGraduation]                            NVARCHAR (100)  NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]        NVARCHAR (100)  NULL,
-    [SchoolIdentifierSea]                                   NVARCHAR (100)  NULL,
+    [StudentIdentifierState]                                NVARCHAR (40)   NULL,
+    [LeaIdentifierSeaAccountability]                        NVARCHAR (50)   NULL,
+    [LeaIdentifierSeaAttendance]                            NVARCHAR (50)   NULL,
+    [LeaIdentifierSeaFunding]                               NVARCHAR (50)   NULL,
+    [LeaIdentifierSeaGraduation]                            NVARCHAR (50)   NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]        NVARCHAR (50)   NULL,
+    [SchoolIdentifierSea]                                   NVARCHAR (50)   NULL,
     [ResponsibleSchoolTypeAccountability]                   BIT             NULL,
     [ResponsibleSchoolTypeAttendance]                       BIT             NULL,
     [ResponsibleSchoolTypeFunding]                          BIT             NULL,
@@ -6838,7 +6835,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_IdeaDisabilityType] (
     [ResponsibleSchoolTypeIndividualizedEducationProgram]   BIT             NULL,
     [ResponsibleSchoolTypeTransportation]                   BIT             NULL,
     [ResponsibleSchoolTypeIepServiceProvider]               BIT             NULL,
-    [IdeaDisabilityTypeCode]                                    NVARCHAR (100)  NOT NULL,
+    [IdeaDisabilityTypeCode]                                NVARCHAR (100)  NOT NULL,
     [IsPrimaryDisability]   							    BIT             NULL,	
     [IsSecondaryDisability]	    						    BIT             NULL,	
     [SchoolYear]                                            SMALLINT        NULL,
@@ -6884,14 +6881,14 @@ PRINT N'Starting rebuilding table [Staging].[K12Enrollment]...';
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_K12Enrollment] (
     [Id]                                                  INT            IDENTITY (1, 1) NOT NULL,
-    [StudentIdentifierState]                              NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (100) NULL,
-    [LeaIdentifierSeaMembershipResident]                  NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                                 NVARCHAR (100) NULL,
+    [StudentIdentifierState]                              NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                      NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                             NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaMembershipResident]                  NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                                 NVARCHAR (50)  NULL,
     [ResponsibleSchoolTypeAccountability]                 BIT            NULL,
     [ResponsibleSchoolTypeAttendance]                     BIT            NULL,
     [ResponsibleSchoolTypeFunding]                        BIT            NULL,
@@ -6926,7 +6923,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_K12Enrollment] (
     [PostSecondaryEnrollmentStatus]                       NVARCHAR (100) NULL,
     [DiplomaOrCredentialAwardDate]                        DATE           NULL,
     [FoodServiceEligibility]                              NVARCHAR (100) NULL,
-    [SchoolYear]                                          NVARCHAR (100) NULL,
+    [SchoolYear]                                          SMALLINT 		 NULL,
     [RecordStartDateTime]                                 DATETIME       NULL,
     [RecordEndDateTime]                                   DATETIME       NULL,
     [DataCollectionName]                                  NVARCHAR (100) NULL,
@@ -6984,13 +6981,13 @@ PRINT N'Starting rebuilding table [Staging].[K12PersonRace]...';
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_K12PersonRace] (
     [Id]                                                  INT            IDENTITY (1, 1) NOT NULL,
-    [StudentIdentifierState]                              VARCHAR (100)  NULL,
-    [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                                 VARCHAR (100)  NULL,
+    [StudentIdentifierState]                              NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                      NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                             NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                                 NVARCHAR (50)  NULL,
     [ResponsibleSchoolTypeAccountability]                 BIT            NULL,
     [ResponsibleSchoolTypeAttendance]                     BIT            NULL,
     [ResponsibleSchoolTypeFunding]                        BIT            NULL,
@@ -7001,7 +6998,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_K12PersonRace] (
     [RaceType]                                            VARCHAR (100)  NULL,
     [EnrollmentEntryDate]                                 DATE           NULL,
     [EnrollmentExitDate]                                  DATE           NULL,
-    [SchoolYear]                                          VARCHAR (100)  NULL,
+    [SchoolYear]                                          SMALLINT 		 NULL,
     [RecordStartDateTime]                                 DATETIME       NULL,
     [RecordEndDateTime]                                   DATETIME       NULL,
     [DataCollectionName]                                  NVARCHAR (100) NULL,
@@ -7031,13 +7028,13 @@ GO
 
 CREATE TABLE [Staging].[tmp_ms_xx_K12ProgramParticipation] (
     [Id]                                                  INT            IDENTITY (1, 1) NOT NULL,
-    [StudentIdentifierState]                              NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                                 NVARCHAR (100) NULL,
+    [StudentIdentifierState]                              NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                      NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                             NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                                 NVARCHAR (50)  NULL,
     [ResponsibleSchoolTypeAccountability]                 BIT            NULL,
     [ResponsibleSchoolTypeAttendance]                     BIT            NULL,
     [ResponsibleSchoolTypeFunding]                        BIT            NULL,
@@ -7048,7 +7045,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_K12ProgramParticipation] (
     [ProgramType]                                         NVARCHAR (100) NULL,
     [EntryDate]                                           DATETIME       NULL,
     [ExitDate]                                            DATETIME       NULL,
-    [SchoolYear]                                          VARCHAR (100)  NULL,
+    [SchoolYear]                                          SMALLINT 		 NULL,
     [DataCollectionName]                                  NVARCHAR (100) NULL,
     [DataCollectionId]                                    INT            NULL,
     [OrganizationId_LEA]                                  INT            NULL,
@@ -7142,20 +7139,20 @@ PRINT N'Starting rebuilding table [Staging].[K12StudentCourseSection]...';
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_K12StudentCourseSection] (
     [Id]                                             INT            IDENTITY (1, 1) NOT NULL,
-    [StudentIdentifierState]                         VARCHAR (100)  NULL,
-    [LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                            VARCHAR (100)  NULL,
+    [StudentIdentifierState]                         NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
     [CourseGradeLevel]                               VARCHAR (100)  NULL,
     [ScedCourseCode]                                 NVARCHAR (50)  NULL,
     [CourseRecordStartDateTime]                      DATETIME       NULL,
     [CourseLevelCharacteristic]                      NVARCHAR (50)  NULL,
     [EntryDate]                                      DATETIME       NULL,
     [ExitDate]                                       DATETIME       NULL,
-    [SchoolYear]                                     INT            NULL,
+    [SchoolYear]                                     SMALLINT 		NULL,
     [RecordStartDateTime]                            DATETIME       NULL,
     [RecordEndDateTime]                              DATETIME       NULL,
     [DataCollectionName]                             NVARCHAR (100) NULL,
@@ -7214,14 +7211,14 @@ PRINT N'Starting rebuilding table [Staging].[OrganizationCustomSchoolIndicatorSt
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_OrganizationCustomSchoolIndicatorStatusType] (
     [Id]                                     INT            IDENTITY (1, 1) NOT NULL,
-    [SchoolIdentifierSea]                    VARCHAR (100)  NOT NULL,
+    [SchoolIdentifierSea]                    NVARCHAR (50)  NOT NULL,
     [IndicatorStatusType]                    VARCHAR (100)  NULL,
     [IndicatorStatus]                        VARCHAR (100)  NULL,
     [IndicatorStatusSubgroupType]            VARCHAR (100)  NULL,
     [IndicatorStatusSubgroup]                VARCHAR (100)  NULL,
     [StatedDefinedIndicatorStatus]           VARCHAR (100)  NULL,
     [StatedDefinedCustomIndicatorStatusType] VARCHAR (100)  NULL,
-    [SchoolYear]                             VARCHAR (100)  NULL,
+    [SchoolYear]                             SMALLINT       NULL,
     [RecordStartDateTime]                    DATETIME       NULL,
     [RecordEndDateTime]                      DATETIME       NULL,
     [DataCollectionName]                     NVARCHAR (100) NULL,
@@ -7242,10 +7239,10 @@ PRINT N'Starting rebuilding table [Staging].[OrganizationGradeOffered]...';
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_OrganizationGradeOffered] (
     [Id]                      INT            IDENTITY (1, 1) NOT NULL,
-    [OrganizationIdentifier]  VARCHAR (100)  NULL,
+    [OrganizationIdentifier]  NVARCHAR (50)  NULL,
     [GradeOffered]            VARCHAR (100)  NULL,
     [K12SchoolGradeOfferedId] INT            NULL,
-    [SchoolYear]              VARCHAR (100)  NULL,
+    [SchoolYear]              SMALLINT       NULL,
     [RecordStartDateTime]     DATETIME       NULL,
     [RecordEndDateTime]       DATETIME       NULL,
     [DataCollectionName]      NVARCHAR (100) NULL,
@@ -7293,7 +7290,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_OrganizationSchoolIndicatorStatus] (
     [IndicatorStatusSubgroupType]  VARCHAR (100)  NULL,
     [IndicatorStatusSubgroup]      VARCHAR (100)  NULL,
     [StatedDefinedIndicatorStatus] VARCHAR (100)  NULL,
-    [SchoolYear]                   VARCHAR (100)  NULL,
+    [SchoolYear]                   SMALLINT 	  NULL,
     [RecordStartDateTime]          DATETIME       NULL,
     [RecordEndDateTime]            DATETIME       NULL,
     [DataCollectionName]           NVARCHAR (100) NULL,
@@ -7391,13 +7388,13 @@ PRINT N'Starting rebuilding table [Staging].[PersonStatus]...';
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_PersonStatus] (
     [Id]                                                     INT            IDENTITY (1, 1) NOT NULL,
-    [StudentIdentifierState]                                 NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAccountability]                         NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                                NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]         NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                                    NVARCHAR (100) NULL,
+    [StudentIdentifierState]                                 NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                         NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                             NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                                NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                             NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]         NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                                    NVARCHAR (50)  NULL,
     [ResponsibleSchoolTypeAccountability]                    BIT            NULL,
     [ResponsibleSchoolTypeAttendance]                        BIT            NULL,
     [ResponsibleSchoolTypeFunding]                           BIT            NULL,
@@ -7481,13 +7478,13 @@ SET XACT_ABORT ON;
 CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationCTE] (
     [ID]                                                  INT            IDENTITY (1, 1) NOT NULL,
     [RecordId]                                            VARCHAR (100)  NULL,
-    [StudentIdentifierState]                              VARCHAR (100)  NULL,
-    [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                                 VARCHAR (100)  NULL,
+    [StudentIdentifierState]                              NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                      NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                             NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                                 NVARCHAR (50)  NULL,
     [ResponsibleSchoolTypeAccountability]                 BIT            NULL,
     [ResponsibleSchoolTypeAttendance]                     BIT            NULL,
     [ResponsibleSchoolTypeFunding]                        BIT            NULL,
@@ -7570,13 +7567,13 @@ GO
 
 CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationNorD] (
     [ID]                                                  INT            IDENTITY (1, 1) NOT NULL,
-    [StudentIdentifierState]                              NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                                 NVARCHAR (100) NULL,
+    [StudentIdentifierState]                              NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                      NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                             NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                                 NVARCHAR (50)  NULL,
     [ResponsibleSchoolTypeAccountability]                 BIT            NULL,
     [ResponsibleSchoolTypeAttendance]                     BIT            NULL,
     [ResponsibleSchoolTypeFunding]                        BIT            NULL,
@@ -7630,13 +7627,13 @@ PRINT N'Starting rebuilding table [Staging].[ProgramParticipationSpecialEducatio
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationSpecialEducation] (
     [ID]                                                  INT            IDENTITY (1, 1) NOT NULL,
-    [StudentIdentifierState]                              NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                                 NVARCHAR (100) NULL,
+    [StudentIdentifierState]                              NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                      NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                             NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                                 NVARCHAR (50)  NULL,
     [ResponsibleSchoolTypeAccountability]                 BIT            NULL,
     [ResponsibleSchoolTypeAttendance]                     BIT            NULL,
     [ResponsibleSchoolTypeFunding]                        BIT            NULL,
@@ -7694,12 +7691,12 @@ PRINT N'Starting rebuilding table [Staging].[ProgramParticipationTitleI]...';
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationTitleI] (
     [ID]                                                  INT            IDENTITY (1, 1) NOT NULL,
-    [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                                 NVARCHAR (100) NULL,
+    [LeaIdentifierSeaAccountability]                      NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                             NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                                 NVARCHAR (50)  NULL,
     [ResponsibleSchoolTypeAccountability]                 BIT            NULL,
     [ResponsibleSchoolTypeAttendance]                     BIT            NULL,
     [ResponsibleSchoolTypeFunding]                        BIT            NULL,
@@ -7707,7 +7704,9 @@ CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationTitleI] (
     [ResponsibleSchoolTypeIndividualizedEducationProgram] BIT            NULL,
     [ResponsibleSchoolTypeTransportation]                 BIT            NULL,
     [ResponsibleSchoolTypeIepServiceProvider]             BIT            NULL,
-    [StudentIdentifierState]                              NVARCHAR (100) NULL,
+    [StudentIdentifierState]                              NVARCHAR (40)  NULL,
+    [ProgramParticipationBeginDate]                       DATE           NULL,
+    [ProgramParticipationEndDate]                         DATE           NULL,
     [TitleIIndicator]                                     NVARCHAR (100) NULL,
     [DataCollectionName]                                  NVARCHAR (100) NULL,
     [DataCollectionID]                                    INT            NULL,
@@ -7786,13 +7785,13 @@ PRINT N'Starting rebuilding table [Staging].[ProgramParticipationTitleIII]...';
 GO
 CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationTitleIII] (
     [ID]                                                  INT            IDENTITY (1, 1) NOT NULL,
-    [SchoolIdentifierSea]                                 VARCHAR (100)  NULL,
-    [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (100) NULL,
-    [StudentIdentifierState]                              VARCHAR (100)  NULL,
+    [SchoolIdentifierSea]                                 NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAccountability]                      NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                             NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (50)  NULL,
+    [StudentIdentifierState]                              NVARCHAR (40)  NULL,
     [ResponsibleSchoolTypeAccountability]                 BIT            NULL,
     [ResponsibleSchoolTypeAttendance]                     BIT            NULL,
     [ResponsibleSchoolTypeFunding]                        BIT            NULL,
@@ -7852,7 +7851,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_PsStudentAcademicRecord] (
     [AcademicTermDesignator]                     NVARCHAR (50)   NULL,
     [ProfessionalOrTechnicalCredentialConferred] VARCHAR (50)    NULL,
     [InstructionalActivityHoursCompletedCredit]  DECIMAL (10, 2) NULL,
-    [SchoolYear]                                 NVARCHAR (50)   NULL,
+    [SchoolYear]                                 SMALLINT 		 NULL,
     [EntryDate]                                  DATETIME        NULL,
     [ExitDate]                                   DATETIME        NULL,
     [DataCollectionName]                         NVARCHAR (50)   NULL,
@@ -7916,7 +7915,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_PsStudentEnrollment] (
     [EntryDate]                         DATETIME       NULL,
     [ExitDate]                          DATETIME       NULL,
     [AcademicTermDesignator]            VARCHAR (100)  NULL,
-    [SchoolYear]                        VARCHAR (100)  NULL,
+    [SchoolYear]                        SMALLINT 	   NULL,
     [RecordStartDateTime]               DATETIME       NULL,
     [RecordEndDateTime]                 DATETIME       NULL,
     [DataCollectionName]                NVARCHAR (100) NULL,
@@ -7980,7 +7979,7 @@ CREATE TABLE [Staging].[tmp_ms_xx_StateDetail] (
     [SeaContact_Identifier]            NVARCHAR (100) NULL,
     [SeaContact_PositionTitle]         NVARCHAR (100) NULL,
     [CteGraduationRateInclusion]       NVARCHAR (100) NULL, 
-    [SchoolYear]                       NVARCHAR (100) NULL,
+    [SchoolYear]                       SMALLINT       NULL,
     [RecordStartDateTime]              DATETIME       NULL,
     [RecordEndDateTime]                DATETIME       NULL,
     [DataCollectionName]               NVARCHAR (100) NULL,
@@ -8156,13 +8155,13 @@ PRINT N'Creating Table [Staging].[Disability]...';
 GO
 CREATE TABLE [Staging].[Disability] (
     [ID]                                                  INT            IDENTITY (1, 1) NOT NULL,
-    [StudentIdentifierState]                              NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                          NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                                 NVARCHAR (100) NULL,
+    [StudentIdentifierState]                              NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                      NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                             NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                          NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                                 NVARCHAR (50)  NULL,
     [ResponsibleSchoolTypeAccountability]                 BIT            NULL,
     [ResponsibleSchoolTypeAttendance]                     BIT            NULL,
     [ResponsibleSchoolTypeFunding]                        BIT            NULL,
@@ -8171,8 +8170,12 @@ CREATE TABLE [Staging].[Disability] (
     [ResponsibleSchoolTypeTransportation]                 BIT            NULL,
     [ResponsibleSchoolTypeIepServiceProvider]             BIT            NULL,
     [DisabilityStatus]                                    BIT            NULL,
+    [Disability_StatusStartDate]                          DATETIME       NULL,
+    [Disability_StatusEndDate]                            DATETIME       NULL,
     [DisabilityConditionType]                             NVARCHAR (100) NULL,
     [DisabilityDeterminationSourceType]                   NVARCHAR (100) NULL,
+    [Section504Status]                                    BIT            NULL,
+    [SchoolYear]                                          SMALLINT       NULL,     
     [DataCollectionName]                                  NVARCHAR (100) NULL,
     [RunDateTime]                                         DATETIME       NULL,
     CONSTRAINT [PK_Disability] PRIMARY KEY CLUSTERED ([ID] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
@@ -8196,13 +8199,13 @@ GO
 CREATE TABLE [Staging].[DisciplineReason] (
     [Id]                                             INT            IDENTITY (1, 1) NOT NULL,
     [SchoolYear]                                     SMALLINT       NULL,
-    [StudentIdentifierState]                         NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                            NVARCHAR (100) NULL,
+    [StudentIdentifierState]                         NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
     [IncidentIdentifier]                             NVARCHAR (40)  NULL,
     [IncidentDate]                                   DATE           NULL,
     [IncidentTime]                                   TIME (7)       NULL,
@@ -8223,7 +8226,7 @@ CREATE TABLE [Staging].[EducationOrganizationNetwork] (
     [EducationOrganizationNetworkOrganizationName] NVARCHAR (100) NULL,
     [EducationOrganizationNetworkTypeCode]         NVARCHAR (100) NULL,
     [EducationOrganizationNetworkTypeDescription]  NVARCHAR (300) NULL,
-    [EducationOrganizationNetworkIdentifierSea]    NVARCHAR (100) NULL,
+    [EducationOrganizationNetworkIdentifierSea]    NVARCHAR (50)  NULL,
     [DataCollectionName]                           NVARCHAR (100) NULL,
     [RecordStartDateTime]                          DATETIME       NOT NULL,
     [RecordEndDateTime]                            DATETIME       NULL,
@@ -8241,13 +8244,13 @@ GO
 CREATE TABLE [Staging].[FollowUp] (
     [Id]                                             INT            IDENTITY (1, 1) NOT NULL,
     [SchoolYear]                                     SMALLINT       NULL,
-    [StudentIdentifierState]                         NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                            NVARCHAR (100) NULL,
+    [StudentIdentifierState]                         NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
     [IncidentIdentifier]                             NVARCHAR (40)  NULL,
     [IncidentDate]                                   DATE           NULL,
     [IncidentTime]                                   TIME (7)       NULL,
@@ -8266,13 +8269,13 @@ GO
 CREATE TABLE [Staging].[IncidentBehavior] (
     [Id]                                             INT            IDENTITY (1, 1) NOT NULL,
     [SchoolYear]                                     SMALLINT       NULL,
-    [StudentIdentifierState]                         NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                            NVARCHAR (100) NULL,
+    [StudentIdentifierState]                         NVARCHAR (40)  NULL,
+    [LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
     [IncidentIdentifier]                             NVARCHAR (40)  NULL,
     [IncidentDate]                                   DATE           NULL,
     [IncidentTime]                                   TIME (7)       NULL,
@@ -8290,13 +8293,13 @@ PRINT N'Creating Table [Staging].[K12StudentAddress]...';
 GO
 CREATE TABLE [Staging].[K12StudentAddress] (
     [Id]                                             INT            IDENTITY (1, 1) NOT NULL,
-    [StudentIdentifierState]                         NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                            NVARCHAR (100) NULL,
+    [StudentIdentifierState]                         NVARCHAR (40) NULL,
+    [LeaIdentifierSeaAccountability]                 NVARCHAR (50) NULL,
+    [LeaIdentifierSeaAttendance]                     NVARCHAR (50) NULL,
+    [LeaIdentifierSeaFunding]                        NVARCHAR (50) NULL,
+    [LeaIdentifierSeaGraduation]                     NVARCHAR (50) NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50) NULL,
+    [SchoolIdentifierSea]                            NVARCHAR (50) NULL,
     [AddressTypeForLearnerOrFamily]                  NVARCHAR (50)  NULL,
     [AddressStreetNumberAndName]                     NVARCHAR (150) NULL,
     [AddressApartmentRoomOrSuite]                    NVARCHAR (50)  NULL,
@@ -8309,7 +8312,7 @@ CREATE TABLE [Staging].[K12StudentAddress] (
     [CountryDescription]                             NVARCHAR (150) NULL,
     [Latitude]                                       NVARCHAR (100) NULL,
     [Longitude]                                      NVARCHAR (100) NULL,
-    [SchoolYear]                                     NVARCHAR (100) NULL,
+    [SchoolYear]                                     SMALLINT       NULL,
     [DataCollectionName]                             NVARCHAR (100) NULL,
     [RecordStartDateTime]                            DATETIME       NULL,
     [RecordEndDateTime]                              DATETIME       NULL,
@@ -8329,14 +8332,14 @@ PRINT N'Creating Table [Staging].[Military]...';
 GO
 CREATE TABLE [Staging].[Military] (
     [Id]                                             INT            IDENTITY (1, 1) NOT NULL,
-    [SchoolYear]                                     NVARCHAR (4)   NULL,
-    [LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-    [LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-    [LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-    [SchoolIdentifierSea]                            NVARCHAR (100) NULL,
-    [StudentIdentifierState]                         NVARCHAR (100) NULL,
+    [SchoolYear]                                     SMALLINT       NULL,
+    [LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+    [LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+    [SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
+    [StudentIdentifierState]                         NVARCHAR (40)  NULL,
     [MilitaryActiveStudentIndicator]                 NVARCHAR (100) NULL,
     [MilitaryBranch]                                 NVARCHAR (100) NULL,
     [MilitaryVeteranStudentIndicator]                NVARCHAR (100) NULL,
@@ -8492,6 +8495,17 @@ PRINT N'Creating Foreign Key [RDS].[FK_FactAeStudentEnrollments_AeStudentId]...'
 GO
 ALTER TABLE [RDS].[FactAeStudentEnrollments] WITH NOCHECK
     ADD CONSTRAINT [FK_FactAeStudentEnrollments_AeStudentId] FOREIGN KEY ([AeStudentId]) REFERENCES [RDS].[DimPeople] ([DimPersonId]);
+
+
+
+GO
+PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_MigrantStudentQualifyingArrivalDateId]...';
+
+
+GO
+ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+    ADD CONSTRAINT [FK_FactK12StudentCounts_MigrantStudentQualifyingArrivalDateId] FOREIGN KEY ([MigrantStudentQualifyingArrivalDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+
 
 
 GO

@@ -7627,16 +7627,20 @@
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_DimAssessments] (
-		[DimAssessmentId]                      INT            IDENTITY (1, 1) NOT NULL,
-		[AssessmentIdentifierState]            NVARCHAR (40)  NULL,
-		[AssessmentFamilyShortName]            NVARCHAR (30)  NULL,
-		[AssessmentTitle]                      NVARCHAR (60)  NULL,
-		[AssessmentShortName]                  NVARCHAR (30)  NULL,
-		[AssessmentTypeCode]                   NVARCHAR (100) NULL,
-		[AssessmentTypeDescription]            NVARCHAR (300) NULL,
-		[AssessmentAcademicSubjectCode]        NVARCHAR (100) NULL,
-		[AssessmentAcademicSubjectDescription] NVARCHAR (300) NULL,
-		[AssessmentAcademicSubjectEdFactsCode] NVARCHAR (50)  NULL,
+		[DimAssessmentId]                      					INT            IDENTITY (1, 1) NOT NULL,
+		[AssessmentIdentifierState]            					NVARCHAR (40)  NULL,
+		[AssessmentFamilyShortName]            					NVARCHAR (30)  NULL,
+		[AssessmentTitle]                      					NVARCHAR (60)  NULL,
+		[AssessmentShortName]                  					NVARCHAR (30)  NULL,
+		[AssessmentTypeCode]                   					NVARCHAR (100) NULL,
+		[AssessmentTypeDescription]            					NVARCHAR (300) NULL,
+		[AssessmentTypeEdFactsCode]            					NVARCHAR (100) NULL,
+		[AssessmentAcademicSubjectCode]        					NVARCHAR (100) NULL,
+		[AssessmentAcademicSubjectDescription] 					NVARCHAR (300) NULL,
+		[AssessmentAcademicSubjectEdFactsCode] 					NVARCHAR (50)  NULL,
+		[AssessmentTypeToEnglishLearnersCode]                   NVARCHAR (100) NULL,
+		[AssessmentTypeToEnglishLearnersDescription]            NVARCHAR (300) NULL,
+		[AssessmentTypeToEnglishLearnersEdFactsCode]            NVARCHAR (100) NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_DimAssessments1] PRIMARY KEY CLUSTERED ([DimAssessmentId] ASC) WITH (FILLFACTOR = 80)
 	);
 
@@ -7728,9 +7732,6 @@
 
 	CREATE TABLE [RDS].[tmp_ms_xx_DimAssessmentStatuses] (
 		[DimAssessmentStatusId]                           INT            IDENTITY (1, 1) NOT NULL,
-		[AssessmentPerformanceLevelIdentifier]            NVARCHAR (50)  NULL,
-		[AssessmentPerformanceLevelLabel]                 NVARCHAR (200) NULL,
-		[AssessmentPerformanceLevelIdentifierEdFactsCode] NVARCHAR (50)  NULL,
 		[ProgressLevelCode]                               NVARCHAR (50)  NULL,
 		[ProgressLevelDescription]                        NVARCHAR (100) NULL,
 		[ProgressLevelEdFactsCode]                        NVARCHAR (50)  NULL,
@@ -7740,8 +7741,6 @@
 		[AssessedFirstTimeCode]                           NVARCHAR (50)  NULL,
 		[AssessedFirstTimeDescription]                    NVARCHAR (100) NULL,
 		[AssessedFirstTimeEdFactsCode]                    NVARCHAR (50)  NULL,
-		[AssessmentScoreMetricTypeCode]                   NVARCHAR (50)  NULL,
-		[AssessmentScoreMetricTypeDescription]            NVARCHAR (50)  NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_DimAssessmentStatuses1] PRIMARY KEY CLUSTERED ([DimAssessmentStatusId] ASC) WITH (FILLFACTOR = 80)
 	);
 
@@ -7769,25 +7768,25 @@
 
 
 	GO
-	PRINT N'Creating Index [RDS].[DimAssessmentStatuses].[IX_DimAssessments_PerformanceLevelEdFactsCode]...';
+	-- PRINT N'Creating Index [RDS].[DimAssessmentStatuses].[IX_DimAssessments_PerformanceLevelEdFactsCode]...';
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IX_DimAssessments_PerformanceLevelEdFactsCode]
-		ON [RDS].[DimAssessmentStatuses]([AssessmentPerformanceLevelIdentifierEdFactsCode] ASC) WITH (FILLFACTOR = 80);
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IX_DimAssessments_PerformanceLevelEdFactsCode]
+	-- 	ON [RDS].[DimAssessmentStatuses]([AssessmentPerformanceLevelIdentifierEdFactsCode] ASC) WITH (FILLFACTOR = 80);
 
 
-	GO
-	PRINT N'Creating Index [RDS].[DimAssessmentStatuses].[IX_DimAssessmentStatuses_Codes]...';
+	-- GO
+	-- PRINT N'Creating Index [RDS].[DimAssessmentStatuses].[IX_DimAssessmentStatuses_Codes]...';
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IX_DimAssessmentStatuses_Codes]
-		ON [RDS].[DimAssessmentStatuses]([AssessmentPerformanceLevelIdentifier] ASC, [AssessmentPerformanceLevelIdentifierEdFactsCode] ASC, [ProgressLevelCode] ASC, [AssessmentTypeAdministeredCode] ASC, [AssessedFirstTimeCode] ASC, [AssessmentScoreMetricTypeCode] ASC) WITH (FILLFACTOR = 80);
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IX_DimAssessmentStatuses_Codes]
+	-- 	ON [RDS].[DimAssessmentStatuses]([AssessmentPerformanceLevelIdentifier] ASC, [AssessmentPerformanceLevelIdentifierEdFactsCode] ASC, [ProgressLevelCode] ASC, [AssessmentTypeAdministeredCode] ASC, [AssessedFirstTimeCode] ASC, [AssessmentScoreMetricTypeCode] ASC) WITH (FILLFACTOR = 80);
 
 
+	-- GO
 	--TODO: Verify this change
-	GO
 	PRINT N'Altering Table [RDS].[DimCohortStatuses]...';
 
 
@@ -8083,7 +8082,7 @@
 	--                 [IdeaIndicatorEdFactsCode]
 	--        FROM     [RDS].[DimIdeaStatuses]
 	--        ORDER BY [DimIdeaStatusId] ASC;
-	--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimIdeaStatuses] OFF;
+	--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimIdeaStatuses] OFF;iso
 	--    END
 
 	DROP TABLE [RDS].[DimIdeaStatuses];
@@ -10141,7 +10140,7 @@
 		[GradeLevelWhenAssessedId]                INT           CONSTRAINT [DF_FactK12StudentAssessments_GradeLevelWhenAssessedId] DEFAULT ((-1)) NOT NULL,
 		[IdeaStatusId]                            INT           CONSTRAINT [DF_FactK12StudentAssessments_IdeaStatusId] DEFAULT ((-1)) NOT NULL,
 		[K12DemographicId]                        INT           CONSTRAINT [DF_FactK12StudentAssessments_K12DemographicId] DEFAULT ((-1)) NOT NULL,
-		[K12StudentStatusId]                      INT           CONSTRAINT [DF_FactK12StudentAssessments_K12StudentStatusId] DEFAULT ((-1)) NOT NULL,
+--		[K12StudentStatusId]                      INT           CONSTRAINT [DF_FactK12StudentAssessments_K12StudentStatusId] DEFAULT ((-1)) NOT NULL,
 		[NOrDStatusId]                            INT           CONSTRAINT [DF_FactK12StudentAssessments_NOrDStatusId] DEFAULT ((-1)) NOT NULL,
 		[TitleIIIStatusId]                        INT           CONSTRAINT [DF_FactK12StudentAssessments_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
 		[AssessmentCount]                         INT           CONSTRAINT [DF_FactK12StudentAssessments_AssessmentCount] DEFAULT ((1)) NOT NULL,
@@ -10342,15 +10341,15 @@
 
 
 	GO
-	PRINT N'Creating Index [RDS].[FactK12StudentAssessments].[IXFK_FactK12StudentAssessments_K12StudentStatusId]...';
+	-- PRINT N'Creating Index [RDS].[FactK12StudentAssessments].[IXFK_FactK12StudentAssessments_K12StudentStatusId]...';
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentAssessments_K12StudentStatusId]
-		ON [RDS].[FactK12StudentAssessments]([K12StudentStatusId] ASC) WITH (FILLFACTOR = 80);
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentAssessments_K12StudentStatusId]
+	-- 	ON [RDS].[FactK12StudentAssessments]([K12StudentStatusId] ASC) WITH (FILLFACTOR = 80);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Index [RDS].[FactK12StudentAssessments].[IXFK_FactK12StudentAssessments_LeaId]...';
 
 
@@ -10430,6 +10429,7 @@
 		[AttendanceId]                          INT CONSTRAINT [DF_FactK12StudentCounts_AttendanceId] DEFAULT ((-1)) NOT NULL,
 		[CohortStatusId]                        INT CONSTRAINT [DF_FactK12StudentCounts_CohortStatusId] DEFAULT ((-1)) NOT NULL,
 		[CteStatusId]                           INT CONSTRAINT [DF_FactK12StudentCounts_CteStatusId] DEFAULT ((-1)) NOT NULL,
+		[DisabilityStatusId]      	            INT CONSTRAINT [DF_FactK12StudentCounts_DisabilityStatusId] DEFAULT ((-1)) NOT NULL,
 		[EnglishLearnerStatusId]                INT CONSTRAINT [DF_FactK12StudentCounts_EnglishLearnerStatusId] DEFAULT ((-1)) NOT NULL,
 		[GradeLevelId]                          INT CONSTRAINT [DF_FactK12StudentCounts_GradeLevelId] DEFAULT ((-1)) NOT NULL,
 		[HomelessnessStatusId]                  INT CONSTRAINT [DF_FactK12StudentCounts_HomelessnessStatusId] DEFAULT ((-1)) NOT NULL,
@@ -10440,7 +10440,7 @@
 		[ImmigrantStatusId]                     INT CONSTRAINT [DF_FactK12StudentCounts_ImmigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[K12DemographicId]                      INT CONSTRAINT [DF_FactK12StudentCounts_K12Demographic] DEFAULT ((-1)) NOT NULL,
 		[K12EnrollmentStatusId]                 INT CONSTRAINT [DF_FactK12StudentCounts_EnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
-		[K12StudentStatusId]                    INT CONSTRAINT [DF_FactK12StudentCounts_K12StudentStatusId] DEFAULT ((-1)) NOT NULL,
+--		[K12StudentStatusId]                    INT CONSTRAINT [DF_FactK12StudentCounts_K12StudentStatusId] DEFAULT ((-1)) NOT NULL,
 		[LanguageId]                            INT CONSTRAINT [DF_FactK12StudentCounts_LanguageId] DEFAULT ((-1)) NOT NULL,
 		[MigrantStatusId]                       INT CONSTRAINT [DF_FactK12StudentCounts_MigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[NOrDStatusId]                          INT CONSTRAINT [DF_FactK12StudentCounts_NOrDStatusId] DEFAULT ((-1)) NOT NULL,
@@ -10659,15 +10659,15 @@
 
 
 	GO
-	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_K12StudentStatusId]...';
+	-- PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_K12StudentStatusId]...';
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_K12StudentStatusId]
-		ON [RDS].[FactK12StudentCounts]([K12StudentStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_K12StudentStatusId]
+	-- 	ON [RDS].[FactK12StudentCounts]([K12StudentStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_LanguageId]...';
 
 
@@ -12754,6 +12754,9 @@
 	EXECUTE sp_rename N'[Staging].[StateDetail].[SeaShortName]', N'SeaOrganizationShortName';
 	EXECUTE sp_rename N'[Staging].[StateDetail].[SeaStateIdentifier]', N'SeaOrganizationIdentifierSea';
 
+	ALTER TABLE [Staging].[StateDetail] ALTER COLUMN [SchoolYear] SMALLINT NULL;	
+
+
 
 	GO
 	PRINT N'Altering Primary Key [Staging].[PK_Assessment]...';
@@ -12790,13 +12793,13 @@
 	CREATE TABLE [Staging].[tmp_ms_xx_Discipline] (
 		[Id]                                             INT            IDENTITY (1, 1) NOT NULL,
 		[SchoolYear]                                     SMALLINT       NULL,
-		[StudentIdentifierState]                         NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                            NVARCHAR (100) NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
 		[DisciplineActionIdentifier]                     NVARCHAR (100) NULL,
 		[IncidentIdentifier]                             NVARCHAR (40)  NULL,
 		[IncidentDate]                                   DATE           NULL,
@@ -12852,13 +12855,13 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_K12Enrollment] (
 		[Id]                                             INT            IDENTITY (1, 1) NOT NULL,
-		[StudentIdentifierState]                         NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                            NVARCHAR (100) NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
 		[FirstName]                                      NVARCHAR (100) NULL,
 		[LastOrSurname]                                  NVARCHAR (100) NULL,
 		[MiddleName]                                     NVARCHAR (100) NULL,
@@ -12883,7 +12886,7 @@
 		[PostSecondaryEnrollment]                        BIT            NULL,
 		[DiplomaOrCredentialAwardDate]                   DATE           NULL,
 		[FoodServiceEligibility]                         NVARCHAR (100) NULL,
-		[SchoolYear]                                     NVARCHAR (100) NULL,
+		[SchoolYear]                                     SMALLINT 		NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
 		[RecordStartDateTime]                            DATETIME       NULL,
 		[RecordEndDateTime]                              DATETIME       NULL,
@@ -12991,9 +12994,9 @@
 		[IEU_WebSiteAddress]                                                	NVARCHAR (300) NULL,
 		[IEU_RecordStartDateTime]                                           	DATETIME       NULL,
 		[IEU_RecordEndDateTime]                                             	DATETIME       NULL,
-		[LeaIdentifierSea]		          										VARCHAR (100)  NULL,
-		[PriorLeaIdentifierSea]		                                        	VARCHAR (100)  NULL,
-		[LeaIdentifierNCES] 	                                              	VARCHAR (100)  NULL,
+		[LeaIdentifierSea]		          										NVARCHAR (50)  NULL,
+		[PriorLeaIdentifierSea]		                                        	NVARCHAR (50)  NULL,
+		[LeaIdentifierNCES] 	                                              	NVARCHAR (50)  NULL,
 		[LEA_SupervisoryUnionIdentificationNumber]                          	VARCHAR (100)  NULL,
 		[LeaOrganizationName]                                                 	VARCHAR (256)  NULL,
 		[LEA_WebSiteAddress]                                                	VARCHAR (300)  NULL,
@@ -13008,13 +13011,13 @@
 		[LEA_TitleIProgramType]                                             	VARCHAR (100)  NULL,
 		[LEA_K12LeaTitleISupportService]                                    	VARCHAR (100)  NULL,
 		[LEA_MepProjectType]                                                	VARCHAR (100)  NULL,
-		[LEA_IsReportedFederally]                                           	BIT			  NULL,
+		[LEA_IsReportedFederally]                                           	BIT			   NULL,
 		[LEA_RecordStartDateTime]                                           	DATETIME       NULL,
 		[LEA_RecordEndDateTime]                                             	DATETIME       NULL,
-		[SchoolIdentifierSea]		                                           	VARCHAR (100)  NULL,
-		[PriorSchoolIdentifierSea]		                                     	VARCHAR (100)  NULL,
-		[School_PriorLeaIdentifierSea]	                                     	VARCHAR (100)  NULL,
-		[SchoolIdentifierNCES] 		                                           	VARCHAR (100)  NULL,
+		[SchoolIdentifierSea]		                                           	NVARCHAR (50)  NULL,
+		[PriorSchoolIdentifierSea]		                                     	NVARCHAR (50)  NULL,
+		[School_PriorLeaIdentifierSea]	                                     	NVARCHAR (50)  NULL,
+		[SchoolIdentifierNCES] 		                                           	NVARCHAR (50)  NULL,
 		[SchoolOrganizationName]                                              	VARCHAR (256)  NULL,
 		[School_WebSiteAddress]                                             	VARCHAR (300)  NULL,
 		[School_OperationalStatus]                                          	VARCHAR (100)  NULL,
@@ -13048,10 +13051,10 @@
 		[School_MigrantEducationProgramProjectType]                            	VARCHAR (100)  NULL,
 		[School_TitleIPartASchoolDesignation]                                  	VARCHAR (100)  NULL,
 		[School_AdministrativeFundingControl]                                  	NVARCHAR (100) NULL,
-		[School_IsReportedFederally]										   	BIT			  NULL,
+		[School_IsReportedFederally]										   	BIT			   NULL,
 		[School_RecordStartDateTime]                                           	DATETIME       NULL,
 		[School_RecordEndDateTime]                                             	DATETIME       NULL,
-		[SchoolYear]                                                           	VARCHAR (100)  NULL,
+		[SchoolYear]                                                           	SMALLINT 	   NULL,
 		[DataCollectionName]                                                   	NVARCHAR (100) NULL,
 		[NewIEU]                                                               	BIT            NULL,
 		[NewLEA]                                                               	BIT            NULL,
@@ -13087,18 +13090,18 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_K12ProgramParticipation] (
 		[Id]                                             INT            IDENTITY (1, 1) NOT NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                            NVARCHAR (100) NULL,
-		[StudentIdentifierState]                         NVARCHAR (100) NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
 		[ProgramType]                                    NVARCHAR (100) NULL,
 		[EntryDate]                                      DATETIME       NULL,
 		[ExitDate]                                       DATETIME       NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
-		[SchoolYear]                                     VARCHAR (100)  NULL,
+		[SchoolYear]                                     SMALLINT 		NULL,
 		[OrganizationId_LEA]                             INT            NULL,
 		[OrganizationId_School]                          INT            NULL,
 		[PersonId]                                       INT            NULL,
@@ -13196,14 +13199,14 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_K12StudentCourseSection] (
 		[Id]                                             INT            IDENTITY (1, 1) NOT NULL,
-		[StudentIdentifierState]                         VARCHAR (100)  NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                            VARCHAR (100)  NULL,
-		[SchoolYear]                                     INT            NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
+		[SchoolYear]                                     SMALLINT 		NULL,
 		[CourseGradeLevel]                               VARCHAR (100)  NULL,
 		[ScedCourseCode]                                 NVARCHAR (50)  NULL,
 		[CourseRecordStartDateTime]                      DATETIME       NULL,
@@ -13268,14 +13271,14 @@
 	CREATE TABLE [Staging].[tmp_ms_xx_Migrant] (
 		[Id]                                                  INT            IDENTITY (1, 1) NOT NULL,
 		[RecordId]                                            VARCHAR (100)  NULL,
-		[SchoolYear]                                          VARCHAR (4)    NULL,
-		[LeaIdentifierSeaAccountability]                      NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                          NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                             NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                          NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                                 VARCHAR (100)  NULL,
-		[StudentIdentifierState]                              VARCHAR (100)  NULL,
+		[SchoolYear]                                          SMALLINT 		 NULL,
+		[LeaIdentifierSeaAccountability]                      NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                          NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                             NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                          NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram]      NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                                 NVARCHAR (50)  NULL,
+		[StudentIdentifierState]                              NVARCHAR (40)  NULL,
 		[MigrantStatus]                                       VARCHAR (100)  NULL,
 		[MigrantEducationProgramEnrollmentType]               VARCHAR (100)  NULL,
 		[MigrantEducationProgramServicesType]                 VARCHAR (100)  NULL,
@@ -13323,7 +13326,7 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_OrganizationAddress] (
 		[Id]                                INT            IDENTITY (1, 1) NOT NULL,
-		[OrganizationIdentifier]            VARCHAR (60)   NULL,
+		[OrganizationIdentifier]            NVARCHAR (50)  NULL,
 		[OrganizationType]                  VARCHAR (100)  NULL,
 		[AddressTypeForOrganization]        VARCHAR (50)   NULL,
 		[AddressStreetNumberAndName]        VARCHAR (150)  NULL,
@@ -13334,7 +13337,7 @@
 		[AddressPostalCode]                 VARCHAR (17)   NULL,
 		[Latitude]                          NVARCHAR (100) NULL,
 		[Longitude]                         NVARCHAR (100) NULL,
-		[SchoolYear]                        VARCHAR (100)  NULL,
+		[SchoolYear]                        SMALLINT       NULL,
 		[DataCollectionName]                NVARCHAR (100) NULL,
 		[RecordStartDateTime]               DATETIME       NULL,
 		[RecordEndDateTime]                 DATETIME       NULL,
@@ -13358,6 +13361,7 @@
 
 	GO
 	ALTER TABLE [Staging].[OrganizationCalendarSession] DROP COLUMN [RunDateTime];
+	ALTER TABLE [Staging].[OrganizationCalendarSession] ALTER COLUMN [OrganizationIdentifier] NVARCHAR(50) NULL;
 
 
 	GO
@@ -13367,6 +13371,15 @@
 	GO
 	ALTER INDEX [PK_Session]
 		ON [Staging].[OrganizationCalendarSession] REBUILD WITH(DATA_COMPRESSION = PAGE);
+
+
+	GO
+	PRINT N'Altering Table [Staging].[OrganizationFederalFunding]...';
+
+
+	GO
+	ALTER TABLE [Staging].[OrganizationFederalFunding] ALTER COLUMN [SchoolYear] SMALLINT NULL;
+	ALTER TABLE [Staging].[OrganizationFederalFunding] ALTER COLUMN [OrganizationIdentifier] NVARCHAR(50) NULL;
 
 
 	GO
@@ -13413,12 +13426,12 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_OrganizationPhone] (
 		[Id]                              INT            IDENTITY (1, 1) NOT NULL,
-		[OrganizationIdentifier]          VARCHAR (100)  NULL,
+		[OrganizationIdentifier]          NVARCHAR (50)  NULL,
 		[OrganizationType]                VARCHAR (100)  NULL,
 		[InstitutionTelephoneNumberType]  VARCHAR (100)  NULL,
 		[TelephoneNumber]                 VARCHAR (100)  NULL,
 		[PrimaryTelephoneNumberIndicator] BIT            NULL,
-		[SchoolYear]                      VARCHAR (100)  NULL,
+		[SchoolYear]                      SMALLINT		 NULL,
 		[DataCollectionName]              NVARCHAR (100) NULL,
 		[RecordStartDateTime]             DATETIME       NULL,
 		[RecordEndDateTime]               DATETIME       NULL,
@@ -13442,6 +13455,8 @@
 
 	GO
 	ALTER TABLE [Staging].[OrganizationProgramType] DROP COLUMN [OrganizationName], COLUMN [RunDateTime];
+	ALTER TABLE [Staging].[OrganizationProgramType] ALTER COLUMN [OrganizationIdentifier] NVARCHAR(50) NULL;
+	ALTER TABLE [Staging].[OrganizationProgramType] ALTER COLUMN [SchoolYear] SMALLINT NULL;
 
 
 	GO
@@ -13507,8 +13522,8 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_OrganizationSchoolComprehensiveAndTargetedSupport] (
 		[Id]                                     INT            IDENTITY (1, 1) NOT NULL,
-		[SchoolIdentifierSea]                    VARCHAR (100)  NOT NULL,
-		[SchoolYear]                             VARCHAR (100)  NULL,
+		[SchoolIdentifierSea]                    NVARCHAR (50)  NOT NULL,
+		[SchoolYear]                             SMALLINT 		NULL,
 		[School_ComprehensiveAndTargetedSupport] VARCHAR (100)  NULL,
 		[School_ComprehensiveSupport]            VARCHAR (100)  NULL,
 		[School_TargetedSupport]                 VARCHAR (100)  NULL,
@@ -13551,13 +13566,13 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_PersonStatus] (
 		[Id]                                                     INT            IDENTITY (1, 1) NOT NULL,
-		[StudentIdentifierState]                                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAccountability]                         NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                             NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                                NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                             NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram]         NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                                    NVARCHAR (100) NULL,
+		[StudentIdentifierState]                                 NVARCHAR (40) NULL,
+		[LeaIdentifierSeaAccountability]                         NVARCHAR (50) NULL,
+		[LeaIdentifierSeaAttendance]                             NVARCHAR (50) NULL,
+		[LeaIdentifierSeaFunding]                                NVARCHAR (50) NULL,
+		[LeaIdentifierSeaGraduation]                             NVARCHAR (50) NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram]         NVARCHAR (50) NULL,
+		[SchoolIdentifierSea]                                    NVARCHAR (50) NULL,
 		[HomelessnessStatus]                                     BIT            NULL,
 		[Homelessness_StatusStartDate]                           DATE           NULL,
 		[Homelessness_StatusEndDate]                             DATE           NULL,
@@ -13699,13 +13714,13 @@
 	CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationCTE] (
 		[ID]                                             INT            IDENTITY (1, 1) NOT NULL,
 		[RecordId]                                       VARCHAR (100)  NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                            VARCHAR (100)  NULL,
-		[StudentIdentifierState]                         VARCHAR (100)  NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
 		[ProgramParticipationBeginDate]                  DATE           NULL,
 		[ProgramParticipationEndDate]                    DATE           NULL,
 		[DiplomaCredentialType]                          VARCHAR (100)  NULL,
@@ -13813,13 +13828,13 @@
 	CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationNorD] (
 		[ID]                                             INT            IDENTITY (1, 1) NOT NULL,
 		[RecordId]                                       VARCHAR (100)  NULL,
-		[StudentIdentifierState]                         VARCHAR (100)  NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                            VARCHAR (100)  NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
 		[ProgramParticipationNorD]                       VARCHAR (100)  NULL,
 		[ProgramParticipationBeginDate]                  DATE           NULL,
 		[ProgramParticipationEndDate]                    DATE           NULL,
@@ -13893,13 +13908,13 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationSpecialEducation] (
 		[ID]                                             INT            IDENTITY (1, 1) NOT NULL,
-		[StudentIdentifierState]                         NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                            NVARCHAR (100) NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
 		[ProgramParticipationBeginDate]                  DATE           NULL,
 		[ProgramParticipationEndDate]                    DATE           NULL,
 		[SpecialEducationExitReason]                     NVARCHAR (100) NULL,
@@ -13978,13 +13993,13 @@
 	CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationTitleI] (
 		[ID]                                             INT            IDENTITY (1, 1) NOT NULL,
 		[RecordId]                                       VARCHAR (100)  NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                            VARCHAR (100)  NULL,
-		[StudentIdentifierState]                         VARCHAR (100)  NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
 		[ProgramParticipationBeginDate]                  DATE           NULL,
 		[ProgramParticipationEndDate]                    DATE           NULL,
 		[TitleIIndicator]                                VARCHAR (100)  NULL,
@@ -14102,13 +14117,13 @@
 	CREATE TABLE [Staging].[tmp_ms_xx_ProgramParticipationTitleIII] (
 		[ID]                                             INT            IDENTITY (1, 1) NOT NULL,
 		[RecordId]                                       VARCHAR (100)  NULL,
-		[SchoolIdentifierSea]                            VARCHAR (100)  NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[StudentIdentifierState]                         VARCHAR (100)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
 		[ProgramParticipationBeginDate]                  DATE           NULL,
 		[ProgramParticipationEndDate]                    DATE           NULL,
 		[Participation_TitleIII]                         VARCHAR (100)  NULL,
@@ -14191,7 +14206,7 @@
 		[OperationalStatusEffectiveDate]      DATETIME       NULL,
 		[MostPrevalentLevelOfInstitutionCode] NVARCHAR (50)  NULL,
 		[PredominantCalendarSystem]           VARCHAR (100)  NULL,
-		[SchoolYear]                          VARCHAR (100)  NULL,
+		[SchoolYear]                          SMALLINT 		 NULL,
 		[DataCollectionName]                  NVARCHAR (100) NULL,
 		[RecordStartDateTime]                 DATETIME       NULL,
 		[RecordEndDateTime]                   DATETIME       NULL,
@@ -14254,14 +14269,14 @@
 	CREATE TABLE [Staging].[tmp_ms_xx_PsStudentAcademicAward] (
 		[Id]                                         INT            IDENTITY (1, 1) NOT NULL,
 		[InstitutionIpedsUnitId]                     VARCHAR (50)   NULL,
-		[StudentIdentifierState]                     VARCHAR (50)   NULL,
+		[StudentIdentifierState]                     NVARCHAR (40)  NULL,
 		[ProfessionalOrTechnicalCredentialConferred] NVARCHAR (50)  NULL,
 		[AcademicAwardDate]                          DATETIME       NULL,
 		[PescAwardLevelType]                         NVARCHAR (200) NULL,
 		[AcademicAwardTitle]                         NVARCHAR (200) NULL,
 		[EntryDate]                                  DATETIME       NULL,
 		[ExitDate]                                   DATETIME       NULL,
-		[SchoolYear]                                 NVARCHAR (50)  NULL,
+		[SchoolYear]                                 SMALLINT 		NULL,
 		[DataCollectionName]                         NVARCHAR (50)  NULL,
 		[OrganizationId]                             INT            NULL,
 		[PersonId]                                   INT            NULL,
@@ -14324,7 +14339,7 @@
 		[ProfessionalOrTechnicalCredentialConferred] VARCHAR (50)  NULL,
 		[EntryDate]                                  DATETIME      NULL,
 		[ExitDate]                                   DATETIME      NULL,
-		[SchoolYear]                                 NVARCHAR (50) NULL,
+		[SchoolYear]                                 SMALLINT 	   NULL,
 		[DataCollectionName]                         NVARCHAR (50) NULL,
 		[OrganizationId]                             INT           NULL,
 		[PersonId]                                   INT           NULL,
@@ -14420,7 +14435,7 @@
 		[RecordEndDateTime]                 DATETIME       NULL,
 		[DataCollectionName]                NVARCHAR (100) NULL,
 		[OrganizationId_PsInstitution]      INT            NULL,
-		[SchoolYear]                        VARCHAR (100)  NULL,
+		[SchoolYear]                        SMALLINT 	   NULL,
 		[PersonId]                          INT            NULL,
 		[OrganizationPersonRoleId]          INT            NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_PsTermEnrollment1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
@@ -15345,9 +15360,9 @@
 		[EnglishLearnerStatusCode]                          NVARCHAR (100) NOT NULL,
 		[EnglishLearnerStatusDescription]                   NVARCHAR (300) NOT NULL,
 		[EnglishLearnerStatusEdFactsCode]                   NVARCHAR (50)  NOT NULL,
-		[PerkinsELStatusCode]                               NVARCHAR (100) NOT NULL,
-		[PerkinsELStatusDescription]                        NVARCHAR (300) NOT NULL,
-		[PerkinsELStatusEdfactsCode]                        VARCHAR (50)   NOT NULL,
+		[PerkinsEnglishLearnerStatusCode]                   NVARCHAR (100) NOT NULL,
+		[PerkinsEnglishLearnerStatusDescription]            NVARCHAR (300) NOT NULL,
+		[PerkinsEnglishLearnerStatusEdfactsCode]	        VARCHAR (50)   NOT NULL,
 		[TitleIIIAccountabilityProgressStatusCode]          NVARCHAR (50)  NOT NULL,
 		[TitleIIIAccountabilityProgressStatusDescription]   NVARCHAR (100) NOT NULL,
 		[TitleIIIAccountabilityProgressStatusEdFactsCode]   NVARCHAR (50)  NOT NULL,
@@ -16301,15 +16316,15 @@
 
 
 	GO
-	PRINT N'Creating Index [RDS].[FactK12StudentEconomicDisadvantages].[IXFK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
+	-- PRINT N'Creating Index [RDS].[FactK12StudentEconomicDisadvantages].[IXFK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]
-		ON [RDS].[FactK12StudentEconomicDisadvantages]([K12StudentStatusId] ASC);
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]
+	-- 	ON [RDS].[FactK12StudentEconomicDisadvantages]([K12StudentStatusId] ASC);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Index [RDS].[FactK12StudentEconomicDisadvantages].[IXFK_FactK12StudentEconomicDisadvantages_LeaId]...';
 
 
@@ -17411,10 +17426,10 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_CharterSchoolManagementOrganization] (
 		[Id]                               								INT            IDENTITY (1, 1) NOT NULL,
-		[CharterSchoolManagementOrganizationOrganizationIdentifierEIN]  VARCHAR (100)  NULL,
+		[CharterSchoolManagementOrganizationOrganizationIdentifierEIN]  NVARCHAR (50)  NULL,
 		[CharterSchoolManagementOrganizationType] 						VARCHAR (100)  NULL,
 		[CharterSchoolManagementOrganizationOrganizationName]			VARCHAR (100)  NULL,
-		[OrganizationIdentifier]							  			VARCHAR (100)  NULL,
+		[OrganizationIdentifier]							  			NVARCHAR (50)  NULL,
 		[SchoolYear]				                                    SMALLINT       NULL,
 		[RecordStartDateTime]			            					DATETIME       NULL,
 		[RecordEndDateTime]             			            		DATETIME       NULL,
@@ -17454,7 +17469,7 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_CharterSchoolAuthorizer] (
 		[Id]                               									INT            IDENTITY (1, 1) NOT NULL,
-		[CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea]  	VARCHAR (100)  NULL,
+		[CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea]  	NVARCHAR (50)  NULL,
 		[CharterSchoolAuthorizingOrganizationType]							VARCHAR (100)  NULL,
 		[CharterSchoolAuthorizingOrganizationOrganizationName]				VARCHAR (100)  NULL,
 		[SchoolYear]					                                    SMALLINT       NULL,
@@ -17502,13 +17517,13 @@
 	CREATE TABLE [Staging].[EarlyLearningChildOutcomeSummary] (
 		[Id]                                             INT            IDENTITY (1, 1) NOT NULL,
 		[SchoolYear]                                     SMALLINT       NULL,
-		[StudentIdentifierState]                         NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                            NVARCHAR (100) NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
 		[COSRatingA]                                     NVARCHAR (100) NULL,
 		[COSProgressAIndicator]                          BIT            NULL,
 		[COSRatingB]                                     NVARCHAR (100) NULL,
@@ -17528,14 +17543,14 @@
 
 	GO
 	CREATE TABLE [Staging].[EarlyLearningOrganization] (
-		[OrganizationIdentifier_State]    NVARCHAR (100) NULL,
-		[WebSiteAddress]                  NVARCHAR (300) NULL,
-		[OperationalStatusEffectiveDate]  DATETIME       NULL,
-		[OrganizationName]                NVARCHAR (100) NULL,
-		[OrganizationOperationalStatus]   NVARCHAR (100) NULL,
-		[DataCollectionName]              NVARCHAR (100) NULL,
-		[OrganizationId]                  INT            NULL,
-		[OrganizationOperationalStatusId] INT            NULL
+		[EarlyLearningOrganizationIdentifierSea]	NVARCHAR (50)  NULL,
+		[WebSiteAddress]			                NVARCHAR (300) NULL,
+		[OperationalStatusEffectiveDate] 			DATETIME       NULL,
+		[OrganizationName]                			NVARCHAR (100) NULL,
+		[OrganizationOperationalStatus]   			NVARCHAR (100) NULL,
+		[DataCollectionName]              			NVARCHAR (100) NULL,
+		[OrganizationId]                  			INT            NULL,
+		[OrganizationOperationalStatusId] 			INT            NULL
 	)
 	WITH (DATA_COMPRESSION = PAGE);
 
@@ -17561,13 +17576,13 @@
 	CREATE TABLE [Staging].[IdeaDisabilityType] (
 		[Id]                                             INT            IDENTITY (1, 1) NOT NULL,
 		[SchoolYear]                                     SMALLINT       NULL,
-		[StudentIdentifierState]                         NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                            NVARCHAR (100) NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
 		[IdeaDisabilityType]                             NVARCHAR (100) NULL,
 		[IsPrimaryDisability]							 BIT NULL,	
 		[IsSecondaryDisability]							 BIT NULL,	
@@ -17586,13 +17601,13 @@
 	CREATE TABLE [Staging].[IndividualizedProgram] (
 		[Id]                                               INT            IDENTITY (1, 1) NOT NULL,
 		[SchoolYear]                                       SMALLINT       NULL,
-		[StudentIdentifierState]                           NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAccountability]                   NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                       NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                          NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                       NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram]   NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                              NVARCHAR (100) NULL,
+		[StudentIdentifierState]                           NVARCHAR (40)  NULL,
+		[LeaIdentifierSeaAccountability]                   NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                       NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                          NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                       NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram]   NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                              NVARCHAR (50)  NULL,
 		[IndividualizedProgramServicePlanDate]             DATE           NULL,
 		[IndividualizedProgramServicePlanReevaluationDate] DATE           NULL,
 		[IndividualizedProgramServicePlanEndDate]          DATE           NULL,
@@ -17614,15 +17629,15 @@
 	GO
 	CREATE TABLE [Staging].[K12PersonRace] (
 		[Id]                                             INT            IDENTITY (1, 1) NOT NULL,
-		[StudentIdentifierState]                         VARCHAR (100)  NULL,
-		[LeaIdentifierSeaAccountability]                 NVARCHAR (100) NULL,
-		[LeaIdentifierSeaAttendance]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaFunding]                        NVARCHAR (100) NULL,
-		[LeaIdentifierSeaGraduation]                     NVARCHAR (100) NULL,
-		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (100) NULL,
-		[SchoolIdentifierSea]                            VARCHAR (100)  NULL,
+		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
+		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaFunding]                        NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
+		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
+		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
 		[RaceType]                                       VARCHAR (100)  NULL,
-		[SchoolYear]                                     VARCHAR (100)  NULL,
+		[SchoolYear]                                     SMALLINT 		NULL,
 		[RecordStartDateTime]                            DATETIME       NULL,
 		[RecordEndDateTime]                              DATETIME       NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
@@ -17647,7 +17662,7 @@
 		[InstitutionIpedsUnitId]      VARCHAR (100)  NULL,
 		[RaceType]                    VARCHAR (100)  NULL,
 		[AcademicTermDesignator]      VARCHAR (100)  NULL,
-		[SchoolYear]                  VARCHAR (100)  NULL,
+		[SchoolYear]                  SMALLINT 		 NULL,
 		[RecordStartDateTime]         DATETIME       NULL,
 		[RecordEndDateTime]           DATETIME       NULL,
 		[DataCollectionName]          NVARCHAR (100) NULL,
@@ -17713,8 +17728,8 @@
 	GO
 	CREATE TABLE [Staging].[SchoolPerformanceIndicators] (
 		[Id]                                           INT            IDENTITY (1, 1) NOT NULL,
-		[SchoolIdentifierSea]                          VARCHAR (100)  NOT NULL,
-		[SchoolYear]                                   VARCHAR (100)  NULL,
+		[SchoolIdentifierSea]                          NVARCHAR (50)  NOT NULL,
+		[SchoolYear]                                   SMALLINT	  	  NULL,
 		[SchoolPerformanceIndicatorCategory]           VARCHAR (100)  NULL,
 		[SchoolPerformanceIndicatorStateDefinedStatus] VARCHAR (100)  NULL,
 		[SubgroupElementName]                          VARCHAR (100)  NULL,
@@ -17780,11 +17795,24 @@
 	EXECUTE sp_rename N'[Staging].[StaffAssignment].[OutOfFieldStatus]', N'EDFactsTeacherOutOfFieldStatus';
 	EXECUTE sp_rename N'[Staging].[StaffAssignment].[CredentialType]', N'TeachingCredentialType';
 
-	ALTER TABLE [Staging].[StaffAssignment] 
-	ALTER COLUMN RecordStartDateTime Datetime NULL
 
 	ALTER TABLE [Staging].[StaffAssignment] 
-	ALTER COLUMN RecordEndDateTime Datetime NULL
+	ALTER COLUMN StaffMemberIdentifierState NVARCHAR(40) NULL;
+
+	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER COLUMN LeaIdentifierSea NVARCHAR(50) NULL;
+
+	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER COLUMN SchoolIdentifierSea NVARCHAR(50) NULL;
+
+	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER COLUMN SchoolYear SMALLINT NULL;
+
+	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER COLUMN RecordStartDateTime Datetime NULL;
+
+	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER COLUMN RecordEndDateTime Datetime NULL;
 
 
 	GO
@@ -18365,12 +18393,12 @@
 
 
 	GO
-	PRINT N'Creating Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
+	-- PRINT N'Creating Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages]
-		ADD CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_K12StudentStatusId] DEFAULT ((-1)) FOR [K12StudentStatusId];
+	-- GO
+	-- ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages]
+	-- 	ADD CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_K12StudentStatusId] DEFAULT ((-1)) FOR [K12StudentStatusId];
 
 
 	GO
@@ -19481,15 +19509,15 @@
 
 
 	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentAssessments_StudentStatusId]...';
+	-- PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentAssessments_StudentStatusId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[FactK12StudentAssessments] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StudentAssessments_StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
+	-- GO
+	-- ALTER TABLE [RDS].[FactK12StudentAssessments] WITH NOCHECK
+	-- 	ADD CONSTRAINT [FK_FactK12StudentAssessments_StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentAssessments_TitleIIIStatusId]...';
 
 
@@ -19661,15 +19689,15 @@
 
 
 	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_K12StudentStatusId]...';
+	-- PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_K12StudentStatusId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StudentCounts_K12StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
+	-- GO
+	-- ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+	-- 	ADD CONSTRAINT [FK_FactK12StudentCounts_K12StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_LanguageId]...';
 
 
@@ -21783,15 +21811,15 @@
 
 
 	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
+	-- PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
+	-- GO
+	-- ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH NOCHECK
+	-- 	ADD CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEconomicDisadvantages_LeaId]...';
 
 
@@ -22888,123 +22916,123 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_Def_Desc]...';
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_Def_Desc]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A unique number or alphanumeric code assigned to an assessment performance level.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A unique number or alphanumeric code assigned to an assessment performance level.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_Element]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_Element]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Identifier', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Identifier', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_GlobalId]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_GlobalId]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000717', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000717', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_URL]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_URL]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19693', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19693', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[MS_Description]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[MS_Description]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_Def_Desc]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_Def_Desc]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A label representing the performance level appropriate for use on a report.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A label representing the performance level appropriate for use on a report.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_Element]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_Element]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Label', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Label', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_GlobalId]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_GlobalId]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000718', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000718', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_URL]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_URL]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19694', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19694', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[MS_Description]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[MS_Description]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_Def_Desc]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_Def_Desc]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A unique number or alphanumeric code assigned to an assessment performance level.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A unique number or alphanumeric code assigned to an assessment performance level.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_Element]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_Element]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Identifier', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Identifier', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_GlobalId]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_GlobalId]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000717', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000717', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_URL]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_URL]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19693', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19693', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[MS_Description]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[MS_Description]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
 
 
 	GO
@@ -23248,83 +23276,83 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_Def_Desc]...';
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_Def_Desc]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The specific method used to report the performance and achievement of the assessment. This is the metric that is being used to derive the scores.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The specific method used to report the performance and achievement of the assessment. This is the metric that is being used to derive the scores.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_Element]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_Element]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Score Metric Type', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Score Metric Type', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_GlobalId]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_GlobalId]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000369', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000369', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_URL]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_URL]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19368', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19368', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[MS_Description]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[MS_Description]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_Def_Desc]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_Def_Desc]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The specific method used to report the performance and achievement of the assessment. This is the metric that is being used to derive the scores.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The specific method used to report the performance and achievement of the assessment. This is the metric that is being used to derive the scores.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_Element]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_Element]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Score Metric Type', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Score Metric Type', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_GlobalId]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_GlobalId]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000369', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000369', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_URL]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_URL]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19368', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19368', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[MS_Description]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[MS_Description]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
 
 
 	GO
@@ -50298,47 +50326,47 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusCode].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusCode].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusCode].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_Element]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusCode].[CEDS_Element]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusCode].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusDescription].[CEDS_Def_Desc]...';
 
 
 	GO
@@ -50346,75 +50374,75 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_Element]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusDescription].[CEDS_Element]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusDescription].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusDescription].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusDescription].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusEdfactsCode].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_Element]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusEdfactsCode].[CEDS_Element]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusEdfactsCode].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusEdfactsCode].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusEdfactsCode].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusEdfactsCode';
 
 
 	GO
@@ -63230,7 +63258,7 @@
 
 	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_K12StudentId];
 
-	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_K12StudentStatusId];
+--	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_K12StudentStatusId];
 
 	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_LanguageId];
 
@@ -63658,7 +63686,7 @@
 
 	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_K12StudentId];
 
-	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId];
+--	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId];
 
 	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_LeaId];
 

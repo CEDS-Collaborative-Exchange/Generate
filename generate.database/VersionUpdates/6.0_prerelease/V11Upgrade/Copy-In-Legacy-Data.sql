@@ -66,7 +66,6 @@ INSERT INTO RDS.FactK12StudentCounts (
 	, ImmigrantStatusId
 	, K12DemographicId
 	, K12EnrollmentStatusId
-	, K12StudentStatusId
 	, LanguageId
 	, MigrantStatusId
 	, NOrDStatusId
@@ -100,7 +99,6 @@ SELECT
 	, ISNULL(DimImmigrantStatusId, -1)
 	, ISNULL(DimK12DemographicId, -1)
 	, ISNULL(DimK12EnrollmentStatusId, -1)
-	, ISNULL(DimK12StudentStatusId, -1)
 	, ISNULL(DimLanguageId, -1)
 	, ISNULL(DimMigrantStatusId, -1)
 	, ISNULL(DimNOrDStatusId, -1)

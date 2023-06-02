@@ -101,7 +101,6 @@ BEGIN
 			, IdeaStatusId							int null
 			, LanguageId							int null
 			, MigrantStatusId						int null
-			, K12StudentStatusId					int null
 			, TitleIStatusId						int null
 			, TitleIIIStatusId						int null
 			, AttendanceId							int null
@@ -138,7 +137,6 @@ BEGIN
 			, -1														IdeaStatusId
 			, -1														LanguageId
 			, -1														MigrantStatusId
-			, -1 														K12StudentStatusId
 			, -1														TitleIStatusId
 			, -1														TitleIIIStatusId
 			, -1														AttendanceId
@@ -178,7 +176,7 @@ BEGIN
 				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
 		JOIN RDS.DimAges rda
 			ON RDS.Get_Age(ske.Birthdate, @MembershipDate) = rda.AgeValue
-		JOIN RDS.DimK12Demographics rdkd
+		JOIN RDS.vwDimK12Demographics rdkd
 			ON rsy.SchoolYear = rdkd.SchoolYear
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
 		LEFT JOIN #vwGradeLevels rgls
@@ -232,7 +230,6 @@ BEGIN
 			, ImmigrantStatusId
 			, K12DemographicId
 			, K12EnrollmentStatusId
-			, K12StudentStatusId
 			, LanguageId
 			, MigrantStatusId
 			, NOrDStatusId
@@ -266,7 +263,6 @@ BEGIN
 			, ImmigrantStatusId
 			, K12DemographicId
 			, K12EnrollmentStatusId
-			, K12StudentStatusId
 			, LanguageId
 			, MigrantStatusId
 			, NOrDStatusId
