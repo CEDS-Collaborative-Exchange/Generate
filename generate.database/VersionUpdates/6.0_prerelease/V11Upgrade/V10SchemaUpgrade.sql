@@ -8082,7 +8082,7 @@
 	--                 [IdeaIndicatorEdFactsCode]
 	--        FROM     [RDS].[DimIdeaStatuses]
 	--        ORDER BY [DimIdeaStatusId] ASC;
-	--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimIdeaStatuses] OFF;
+	--        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_DimIdeaStatuses] OFF;iso
 	--    END
 
 	DROP TABLE [RDS].[DimIdeaStatuses];
@@ -10140,7 +10140,7 @@
 		[GradeLevelWhenAssessedId]                INT           CONSTRAINT [DF_FactK12StudentAssessments_GradeLevelWhenAssessedId] DEFAULT ((-1)) NOT NULL,
 		[IdeaStatusId]                            INT           CONSTRAINT [DF_FactK12StudentAssessments_IdeaStatusId] DEFAULT ((-1)) NOT NULL,
 		[K12DemographicId]                        INT           CONSTRAINT [DF_FactK12StudentAssessments_K12DemographicId] DEFAULT ((-1)) NOT NULL,
-		[K12StudentStatusId]                      INT           CONSTRAINT [DF_FactK12StudentAssessments_K12StudentStatusId] DEFAULT ((-1)) NOT NULL,
+--		[K12StudentStatusId]                      INT           CONSTRAINT [DF_FactK12StudentAssessments_K12StudentStatusId] DEFAULT ((-1)) NOT NULL,
 		[NOrDStatusId]                            INT           CONSTRAINT [DF_FactK12StudentAssessments_NOrDStatusId] DEFAULT ((-1)) NOT NULL,
 		[TitleIIIStatusId]                        INT           CONSTRAINT [DF_FactK12StudentAssessments_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
 		[AssessmentCount]                         INT           CONSTRAINT [DF_FactK12StudentAssessments_AssessmentCount] DEFAULT ((1)) NOT NULL,
@@ -10341,15 +10341,15 @@
 
 
 	GO
-	PRINT N'Creating Index [RDS].[FactK12StudentAssessments].[IXFK_FactK12StudentAssessments_K12StudentStatusId]...';
+	-- PRINT N'Creating Index [RDS].[FactK12StudentAssessments].[IXFK_FactK12StudentAssessments_K12StudentStatusId]...';
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentAssessments_K12StudentStatusId]
-		ON [RDS].[FactK12StudentAssessments]([K12StudentStatusId] ASC) WITH (FILLFACTOR = 80);
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentAssessments_K12StudentStatusId]
+	-- 	ON [RDS].[FactK12StudentAssessments]([K12StudentStatusId] ASC) WITH (FILLFACTOR = 80);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Index [RDS].[FactK12StudentAssessments].[IXFK_FactK12StudentAssessments_LeaId]...';
 
 
@@ -10440,7 +10440,7 @@
 		[ImmigrantStatusId]                     INT CONSTRAINT [DF_FactK12StudentCounts_ImmigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[K12DemographicId]                      INT CONSTRAINT [DF_FactK12StudentCounts_K12Demographic] DEFAULT ((-1)) NOT NULL,
 		[K12EnrollmentStatusId]                 INT CONSTRAINT [DF_FactK12StudentCounts_EnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
-		[K12StudentStatusId]                    INT CONSTRAINT [DF_FactK12StudentCounts_K12StudentStatusId] DEFAULT ((-1)) NOT NULL,
+--		[K12StudentStatusId]                    INT CONSTRAINT [DF_FactK12StudentCounts_K12StudentStatusId] DEFAULT ((-1)) NOT NULL,
 		[LanguageId]                            INT CONSTRAINT [DF_FactK12StudentCounts_LanguageId] DEFAULT ((-1)) NOT NULL,
 		[MigrantStatusId]                       INT CONSTRAINT [DF_FactK12StudentCounts_MigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[NOrDStatusId]                          INT CONSTRAINT [DF_FactK12StudentCounts_NOrDStatusId] DEFAULT ((-1)) NOT NULL,
@@ -10659,15 +10659,15 @@
 
 
 	GO
-	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_K12StudentStatusId]...';
+	-- PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_K12StudentStatusId]...';
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_K12StudentStatusId]
-		ON [RDS].[FactK12StudentCounts]([K12StudentStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_K12StudentStatusId]
+	-- 	ON [RDS].[FactK12StudentCounts]([K12StudentStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_LanguageId]...';
 
 
@@ -15360,9 +15360,9 @@
 		[EnglishLearnerStatusCode]                          NVARCHAR (100) NOT NULL,
 		[EnglishLearnerStatusDescription]                   NVARCHAR (300) NOT NULL,
 		[EnglishLearnerStatusEdFactsCode]                   NVARCHAR (50)  NOT NULL,
-		[PerkinsELStatusCode]                               NVARCHAR (100) NOT NULL,
-		[PerkinsELStatusDescription]                        NVARCHAR (300) NOT NULL,
-		[PerkinsELStatusEdfactsCode]                        VARCHAR (50)   NOT NULL,
+		[PerkinsEnglishLearnerStatusCode]                   NVARCHAR (100) NOT NULL,
+		[PerkinsEnglishLearnerStatusDescription]            NVARCHAR (300) NOT NULL,
+		[PerkinsEnglishLearnerStatusEdfactsCode]	        VARCHAR (50)   NOT NULL,
 		[TitleIIIAccountabilityProgressStatusCode]          NVARCHAR (50)  NOT NULL,
 		[TitleIIIAccountabilityProgressStatusDescription]   NVARCHAR (100) NOT NULL,
 		[TitleIIIAccountabilityProgressStatusEdFactsCode]   NVARCHAR (50)  NOT NULL,
@@ -16316,15 +16316,15 @@
 
 
 	GO
-	PRINT N'Creating Index [RDS].[FactK12StudentEconomicDisadvantages].[IXFK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
+	-- PRINT N'Creating Index [RDS].[FactK12StudentEconomicDisadvantages].[IXFK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]
-		ON [RDS].[FactK12StudentEconomicDisadvantages]([K12StudentStatusId] ASC);
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]
+	-- 	ON [RDS].[FactK12StudentEconomicDisadvantages]([K12StudentStatusId] ASC);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Index [RDS].[FactK12StudentEconomicDisadvantages].[IXFK_FactK12StudentEconomicDisadvantages_LeaId]...';
 
 
@@ -18393,12 +18393,12 @@
 
 
 	GO
-	PRINT N'Creating Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
+	-- PRINT N'Creating Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages]
-		ADD CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_K12StudentStatusId] DEFAULT ((-1)) FOR [K12StudentStatusId];
+	-- GO
+	-- ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages]
+	-- 	ADD CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_K12StudentStatusId] DEFAULT ((-1)) FOR [K12StudentStatusId];
 
 
 	GO
@@ -19509,15 +19509,15 @@
 
 
 	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentAssessments_StudentStatusId]...';
+	-- PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentAssessments_StudentStatusId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[FactK12StudentAssessments] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StudentAssessments_StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
+	-- GO
+	-- ALTER TABLE [RDS].[FactK12StudentAssessments] WITH NOCHECK
+	-- 	ADD CONSTRAINT [FK_FactK12StudentAssessments_StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentAssessments_TitleIIIStatusId]...';
 
 
@@ -19689,15 +19689,15 @@
 
 
 	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_K12StudentStatusId]...';
+	-- PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_K12StudentStatusId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StudentCounts_K12StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
+	-- GO
+	-- ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+	-- 	ADD CONSTRAINT [FK_FactK12StudentCounts_K12StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_LanguageId]...';
 
 
@@ -21811,15 +21811,15 @@
 
 
 	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
+	-- PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
+	-- GO
+	-- ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH NOCHECK
+	-- 	ADD CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId] FOREIGN KEY ([K12StudentStatusId]) REFERENCES [RDS].[DimK12StudentStatuses] ([DimK12StudentstatusId]);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentEconomicDisadvantages_LeaId]...';
 
 
@@ -50326,47 +50326,47 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusCode].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusCode].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusCode].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_Element]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusCode].[CEDS_Element]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusCode].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusDescription].[CEDS_Def_Desc]...';
 
 
 	GO
@@ -50374,75 +50374,75 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_Element]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusDescription].[CEDS_Element]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusDescription].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusDescription].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusDescription].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusDescription';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusDescription';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusEdfactsCode].[CEDS_Def_Desc]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication that students have Limited English Proficiency according to the definition in the Carl D. Perkins Career and Technical Education Act of 2006, which is "a secondary student, an adult, or an out-of-school youth, who has limited ability in speaking, reading, writing, or understanding English language, and (a) whose native language is a language other than English, or (b) who lives in a family or community environment in which a language other than English is the dominant language.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_Element]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusEdfactsCode].[CEDS_Element]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Perkins Limited English Proficiency Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusEdfactsCode].[CEDS_GlobalId]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000581', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusEdfactsCode].[CEDS_URL]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19574', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusEdfactsCode';
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdfactsCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[PerkinsEnglishLearnerStatusEdfactsCode].[MS_Description]...';
 
 
 	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsELStatusEdfactsCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'PerkinsEnglishLearnerStatusEdfactsCode';
 
 
 	GO
@@ -63258,7 +63258,7 @@
 
 	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_K12StudentId];
 
-	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_K12StudentStatusId];
+--	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_K12StudentStatusId];
 
 	ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_LanguageId];
 
@@ -63686,7 +63686,7 @@
 
 	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_K12StudentId];
 
-	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId];
+--	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_K12StudentStatusId];
 
 	ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentEconomicDisadvantages_LeaId];
 

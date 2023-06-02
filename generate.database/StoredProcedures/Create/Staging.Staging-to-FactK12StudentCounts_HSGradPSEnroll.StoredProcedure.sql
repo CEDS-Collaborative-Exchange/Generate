@@ -115,7 +115,7 @@ BEGIN
 			, ISNULL(rgls.DimGradeLevelId, -1)							GradeLevelId							
 			, -1 														AgeId									
 			, ISNULL(rdr.DimRaceId, -1)									RaceId								
-			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId						
+			, -1														K12DemographicId						
 			, 1															StudentCount							
 			, ISNULL(rds.DimSeaId, -1)									SEAId									
 			, -1														IEUId									
@@ -217,7 +217,7 @@ BEGIN
 					ELSE 'Missing'
 				END
 		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.StateStudentIdentifier
+			ON ske.StudentIdentifierState = rdp.StudentIdentifierState
 			AND rdp.IsActiveK12Student = 1
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')

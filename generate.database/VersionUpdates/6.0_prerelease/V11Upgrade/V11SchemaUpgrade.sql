@@ -4133,14 +4133,14 @@ ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCount
 
 
 GO
-PRINT N'Dropping Foreign Key [RDS].[FK_BridgeAeStudentEnrollmentRaces_FactAeStudentEnrollmentId]...';
+-- PRINT N'Dropping Foreign Key [RDS].[FK_BridgeAeStudentEnrollmentRaces_FactAeStudentEnrollmentId]...';
 
 
-GO
-ALTER TABLE [RDS].[BridgeAeStudentEnrollmentRaces] DROP CONSTRAINT [FK_BridgeAeStudentEnrollmentRaces_FactAeStudentEnrollmentId];
+-- GO
+-- ALTER TABLE [RDS].[BridgeAeStudentEnrollmentRaces] DROP CONSTRAINT [FK_BridgeAeStudentEnrollmentRaces_FactAeStudentEnrollmentId];
 
 
-GO
+-- GO
 PRINT N'Dropping Foreign Key [RDS].[FK_BridgeAeStudentEnrollmentRaces_RaceId]...';
 
 
@@ -5658,23 +5658,13 @@ GO
 
 
 GO
-PRINT N'Altering Table [RDS].[DimEnglishLearnerStatuses]...';
-
-
-GO
-
-EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusCode]', @newname = N'PerkinsEnglishLearnerStatusCode', @objtype = N'COLUMN';
-EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusDescription]', @newname = N'PerkinsEnglishLearnerStatusDescription', @objtype = N'COLUMN';
-EXECUTE sp_rename @objname = N'[RDS].[DimEnglishLearnerStatuses].[PerkinsELStatusEdFactsCode]', @newname = N'PerkinsEnglishLearnerStatusEdFactsCode', @objtype = N'COLUMN';
-
-GO
 PRINT N'Dropping Table [RDS].[DimK12StudentStatuses]...';
 
 
 GO
 ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP COLUMN [K12StudentStatusId];
-ALTER TABLE [RDS].[FactK12StudentAssessments] DROP COLUMN [K12StudentStatusId];
-ALTER TABLE [RDS].[FactK12StudentCounts] DROP COLUMN [K12StudentStatusId];
+--ALTER TABLE [RDS].[FactK12StudentAssessments] DROP COLUMN [K12StudentStatusId];
+--ALTER TABLE [RDS].[FactK12StudentCounts] DROP COLUMN [K12StudentStatusId];
 DROP TABLE [RDS].[DimK12StudentStatuses];
 
 
