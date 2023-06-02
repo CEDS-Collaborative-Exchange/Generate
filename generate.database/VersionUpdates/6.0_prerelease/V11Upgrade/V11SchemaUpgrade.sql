@@ -5801,7 +5801,7 @@ The column [RDS].[FactK12StudentEnrollments].[TitleIStatusId] is being dropped, 
 GO
 PRINT N'Starting rebuilding table [RDS].[FactK12StudentEnrollments]...';
 
-EXECUTE sp_rename @objname = N'[RDS].[FactK12StudentEnrollments].[K12SchoolAccountabilityId]', @newname = N'K12SchoolId', @objtype = N'COLUMN';
+EXECUTE sp_rename @objname = N'[RDS].[FactK12StudentEnrollments].[AccountableK12SchoolId]', @newname = N'K12SchoolId', @objtype = N'COLUMN';
 EXECUTE sp_rename @objname = N'[RDS].[FactK12StudentEnrollments].[StatusStartDatePerkinsELId]', @newname = N'StatusStartDatePerkinsEnglishLearnerId', @objtype = N'COLUMN';
 EXECUTE sp_rename @objname = N'[RDS].[FactK12StudentEnrollments].[StatusEndDatePerkinsELId]', @newname = N'StatusEndDatePerkinsEnglishLearnerId', @objtype = N'COLUMN';
 ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP COLUMN [TitleIStatusId]
@@ -5829,15 +5829,8 @@ CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentEnrollments_ResponsibleSchoolTypeI
 GO
 
 /*
-Adding field [RDS].[FactK12StudentCounts].[MigrantStudentQualifyingArrivalDate].
+Adding index for [RDS].[FactK12StudentCounts].[MigrantStudentQualifyingArrivalDate].
 */
-GO
-PRINT N'Starting rebuilding table [RDS].[FactK12StudentCounts]...';
-ALTER TABLE [RDS].[FactK12StudentCounts] 
-ADD   [MigrantStudentQualifyingArrivalDateId] INT CONSTRAINT [DF_FactK12StudentCounts_MigrantStudentQualifyingArrivalDateId] DEFAULT (-1) NOT NULL
-
-GO
-
 
 GO
 CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_MigrantStudentQualifyingArrivalDateId]
@@ -8414,15 +8407,6 @@ PRINT N'Creating Index [RDS].[DimAeStudentStatuses].[IX_DimAeStudentStatuses_Cod
 GO
 CREATE NONCLUSTERED INDEX [IX_DimAeStudentStatuses_Codes]
 ON [RDS].[DimAeStudentStatuses] ([AeFunctioningLevelAtIntakeCode],[AeFunctioningLevelAtPosttestCode],[AePostsecondaryTransitionActionCode],[EmployedWhileEnrolledCode],[EmployedAfterExitCode],[AdultEducationCredentialAttainmentPostsecondaryEnrollmentIndicatorCode],[AdultEducationCredentialAttainmentEmployedIndicatorCode],[AdultEducationCredentialAttainmentPostsecondaryCredentialIndicatorCode])
-
-
-GO
-PRINT N'Creating Foreign Key [RDS].[FK_BridgeAeStudentEnrollmentRaces_FactAeStudentEnrollmentId]...';
-
-
-GO
-ALTER TABLE [RDS].[BridgeAeStudentEnrollmentRaces] WITH NOCHECK
-    ADD CONSTRAINT [FK_BridgeAeStudentEnrollmentRaces_FactAeStudentEnrollmentId] FOREIGN KEY ([FactAeStudentEnrollmentId]) REFERENCES [RDS].[FactAeStudentEnrollments] ([FactAeStudentEnrollmentId]);
 
 
 GO
