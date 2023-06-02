@@ -176,7 +176,7 @@ BEGIN
 				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
 		JOIN RDS.DimAges rda
 			ON RDS.Get_Age(ske.Birthdate, @MembershipDate) = rda.AgeValue
-		JOIN RDS.DimK12Demographics rdkd
+		JOIN RDS.vwDimK12Demographics rdkd
 			ON rsy.SchoolYear = rdkd.SchoolYear
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
 		LEFT JOIN #vwGradeLevels rgls

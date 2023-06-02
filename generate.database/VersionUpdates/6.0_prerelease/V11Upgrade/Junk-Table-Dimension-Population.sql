@@ -42,14 +42,14 @@
 */    
 
 	SET NOCOUNT ON;
-	GO 
+	GO
 
 	------------------------------------------------
 	-- Populate DimAeDemgraphics				 ---
 	------------------------------------------------
 
-
-	IF NOT EXISTS (SELECT 1 FROM RDS.DimAeDemographics d WHERE d.DimAeDemographicId = -1) BEGIN
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimAeDemographics d WHERE d.DimAeDemographicId = -1)
+	BEGIN
 		SET IDENTITY_INSERT RDS.DimAeDemographics ON
 
 		INSERT INTO [RDS].[DimAeDemographics]
@@ -94,171 +94,171 @@
 
 	END
 	
-		DROP TABLE IF EXISTS #EconomicDisadvantageStatus
-		CREATE TABLE #EconomicDisadvantageStatus (EconomicDisadvantageStatusCode VARCHAR(50), EconomicDisadvantageStatusDescription VARCHAR(200), EconomicDisadvantageStatusEdFactsCode VARCHAR(100))
+	DROP TABLE IF EXISTS #EconomicDisadvantageStatus
+	CREATE TABLE #EconomicDisadvantageStatus (EconomicDisadvantageStatusCode VARCHAR(50), EconomicDisadvantageStatusDescription VARCHAR(200), EconomicDisadvantageStatusEdFactsCode VARCHAR(100))
 
-		INSERT INTO #EconomicDisadvantageStatus VALUES ('MISSING', 'MISSING', 'MISSING')
-		INSERT INTO #EconomicDisadvantageStatus 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-			, CASE CedsOptionSetCode
-				WHEN 'Yes' THEN 'ECODIS'
-				ELSE 'MISSING'
-			  END
-		FROM CEDS.CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'EconomicDisadvantageStatus'
+	INSERT INTO #EconomicDisadvantageStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #EconomicDisadvantageStatus 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CASE CedsOptionSetCode
+			WHEN 'Yes' THEN 'ECODIS'
+			ELSE 'MISSING'
+			END
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'EconomicDisadvantageStatus'
 
-		DROP TABLE IF EXISTS #HomelessnessStatus
-		CREATE TABLE #HomelessnessStatus (HomelessnessStatusCode VARCHAR(50), HomelessnessStatusDescription VARCHAR(200), HomelessnessStatusEdFactsCode VARCHAR(50))
+	DROP TABLE IF EXISTS #HomelessnessStatus
+	CREATE TABLE #HomelessnessStatus (HomelessnessStatusCode VARCHAR(50), HomelessnessStatusDescription VARCHAR(200), HomelessnessStatusEdFactsCode VARCHAR(50))
 
-		INSERT INTO #HomelessnessStatus VALUES ('MISSING', 'MISSING', 'MISSING')
-		INSERT INTO #HomelessnessStatus 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-			, CASE CedsOptionSetCode
-				WHEN 'Yes' THEN 'ECODIS'
-				ELSE 'MISSING'
-			  END
-		FROM CEDS.CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'HomelessnessStatus'
+	INSERT INTO #HomelessnessStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #HomelessnessStatus 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CASE CedsOptionSetCode
+			WHEN 'Yes' THEN 'ECODIS'
+			ELSE 'MISSING'
+			END
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'HomelessnessStatus'
 
-		DROP TABLE IF EXISTS #EnglishLearnerStatus
-		CREATE TABLE #EnglishLearnerStatus (EnglishLearnerStatusCode VARCHAR(50), EnglishLearnerStatusDescription VARCHAR(200))
+	DROP TABLE IF EXISTS #EnglishLearnerStatus
+	CREATE TABLE #EnglishLearnerStatus (EnglishLearnerStatusCode VARCHAR(50), EnglishLearnerStatusDescription VARCHAR(200))
 
-		INSERT INTO #EnglishLearnerStatus VALUES ('MISSING', 'MISSING')
-		INSERT INTO #EnglishLearnerStatus 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-		FROM CEDS.CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'EnglishLearnerStatus'
+	INSERT INTO #EnglishLearnerStatus VALUES ('MISSING', 'MISSING')
+	INSERT INTO #EnglishLearnerStatus 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'EnglishLearnerStatus'
 
-		DROP TABLE IF EXISTS #MigrantStatus
-		CREATE TABLE #MigrantStatus (MigrantStatusCode VARCHAR(50), MigrantStatusDescription VARCHAR(200))
+	DROP TABLE IF EXISTS #MigrantStatus
+	CREATE TABLE #MigrantStatus (MigrantStatusCode VARCHAR(50), MigrantStatusDescription VARCHAR(200))
 
-		INSERT INTO #MigrantStatus VALUES ('MISSING', 'MISSING')
-		INSERT INTO #MigrantStatus 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-		FROM CEDS.CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'MigrantStatus'
+	INSERT INTO #MigrantStatus VALUES ('MISSING', 'MISSING')
+	INSERT INTO #MigrantStatus 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'MigrantStatus'
 
-		DROP TABLE IF EXISTS #MilitaryConnectedStudentIndicator
-		CREATE TABLE #MilitaryConnectedStudentIndicator (MilitaryConnectedStudentIndicatorCode VARCHAR(50), MilitaryConnectedStudentIndicatorDescription VARCHAR(200), MilitaryConnectedStudentIndicatorEdFactsCode VARCHAR(50))
+	DROP TABLE IF EXISTS #MilitaryConnectedStudentIndicator
+	CREATE TABLE #MilitaryConnectedStudentIndicator (MilitaryConnectedStudentIndicatorCode VARCHAR(50), MilitaryConnectedStudentIndicatorDescription VARCHAR(200), MilitaryConnectedStudentIndicatorEdFactsCode VARCHAR(50))
 
-		INSERT INTO #MilitaryConnectedStudentIndicator VALUES ('MISSING', 'MISSING', 'MISSING')
-		INSERT INTO #MilitaryConnectedStudentIndicator 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-			, CASE CedsOptionSetCode
-				WHEN 'NotMilitaryConnected' THEN 'MISSING'
-				WHEN 'NationalGuardOrReserve' THEN 'MILCNCTD'
-				WHEN 'MISSING' THEN 'MISSING'
-				WHEN 'ActiveDuty' THEN 'MILCNCTD'
-				WHEN 'Unknown' THEN 'MISSING'
-			    ELSE 'MISSING'
-			  END
-		FROM CEDS.CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'MilitaryConnectedStudentIndicator'
+	INSERT INTO #MilitaryConnectedStudentIndicator VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #MilitaryConnectedStudentIndicator 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CASE CedsOptionSetCode
+			WHEN 'NotMilitaryConnected' THEN 'MISSING'
+			WHEN 'NationalGuardOrReserve' THEN 'MILCNCTD'
+			WHEN 'MISSING' THEN 'MISSING'
+			WHEN 'ActiveDuty' THEN 'MILCNCTD'
+			WHEN 'Unknown' THEN 'MISSING'
+			ELSE 'MISSING'
+			END
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'MilitaryConnectedStudentIndicator'
 
-		DROP TABLE IF EXISTS #HomelessPrimaryNighttimeResidence
-		CREATE TABLE #HomelessPrimaryNighttimeResidence (HomelessPrimaryNighttimeResidenceCode VARCHAR(50), HomelessPrimaryNighttimeResidenceDescription VARCHAR(200))
+	DROP TABLE IF EXISTS #HomelessPrimaryNighttimeResidence
+	CREATE TABLE #HomelessPrimaryNighttimeResidence (HomelessPrimaryNighttimeResidenceCode VARCHAR(50), HomelessPrimaryNighttimeResidenceDescription VARCHAR(200))
 
-		INSERT INTO #HomelessPrimaryNighttimeResidence VALUES ('MISSING', 'MISSING')
-		INSERT INTO #HomelessPrimaryNighttimeResidence 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-		FROM CEDS.CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'HomelessPrimaryNighttimeResidence'
+	INSERT INTO #HomelessPrimaryNighttimeResidence VALUES ('MISSING', 'MISSING')
+	INSERT INTO #HomelessPrimaryNighttimeResidence 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'HomelessPrimaryNighttimeResidence'
 
-		DROP TABLE IF EXISTS #HomelessUnaccompaniedYouthStatus
-		CREATE TABLE #HomelessUnaccompaniedYouthStatus (HomelessUnaccompaniedYouthStatusCode VARCHAR(50), HomelessUnaccompaniedYouthStatusDescription VARCHAR(200))
+	DROP TABLE IF EXISTS #HomelessUnaccompaniedYouthStatus
+	CREATE TABLE #HomelessUnaccompaniedYouthStatus (HomelessUnaccompaniedYouthStatusCode VARCHAR(50), HomelessUnaccompaniedYouthStatusDescription VARCHAR(200))
 
-		INSERT INTO #HomelessUnaccompaniedYouthStatus VALUES ('MISSING', 'MISSING')
-		INSERT INTO #HomelessUnaccompaniedYouthStatus 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-		FROM CEDS.CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'HomelessUnaccompaniedYouthStatus'
+	INSERT INTO #HomelessUnaccompaniedYouthStatus VALUES ('MISSING', 'MISSING')
+	INSERT INTO #HomelessUnaccompaniedYouthStatus 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'HomelessUnaccompaniedYouthStatus'
 
-		DROP TABLE IF EXISTS #Sex
-		CREATE TABLE #Sex (SexCode VARCHAR(50), SexDescription VARCHAR(200))
+	DROP TABLE IF EXISTS #Sex
+	CREATE TABLE #Sex (SexCode VARCHAR(50), SexDescription VARCHAR(200))
 
-		INSERT INTO #Sex VALUES ('MISSING', 'MISSING')
-		INSERT INTO #Sex 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-		FROM CEDS.CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'Sex'
-
-
-		INSERT INTO [RDS].[DimAeDemographics]
-				([EconomicDisadvantageStatusCode]
-				,[EconomicDisadvantageStatusDescription]
-				,[HomelessnessStatusCode]
-				,[HomelessnessStatusDescription]
-				,[EnglishLearnerStatusCode]
-				,[EnglishLearnerStatusDescription]
-				,[MigrantStatusCode]
-				,[MigrantStatusDescription]
-				,[MilitaryConnectedStudentIndicatorCode]
-				,[MilitaryConnectedStudentIndicatorDescription]
-				,[HomelessPrimaryNighttimeResidenceCode]
-				,[HomelessPrimaryNighttimeResidenceDescription]
-				,[HomelessUnaccompaniedYouthStatusCode]
-				,[HomelessUnaccompaniedYouthStatusDescription]
-				,[SexCode]
-				,[SexDescription])
-		SELECT DISTINCT
-			  a.EconomicDisadvantageStatusCode
-			, a.EconomicDisadvantageStatusDescription
-			, b.HomelessnessStatusCode
-			, b.HomelessnessStatusDescription
-			, c.EnglishLearnerStatusCode
-			, c.EnglishLearnerStatusDescription
-			, d.MigrantStatusCode
-			, d.MigrantStatusDescription
-			, e.MilitaryConnectedStudentIndicatorCode
-			, e.MilitaryConnectedStudentIndicatorDescription
-			, f.HomelessPrimaryNighttimeResidenceCode
-			, f.HomelessPrimaryNighttimeResidenceDescription
-			, g.HomelessUnaccompaniedYouthStatusCode
-			, g.HomelessUnaccompaniedYouthStatusDescription
-			, h.SexCode
-			, h.SexDescription
-		FROM #EconomicDisadvantageStatus a
-		CROSS JOIN #HomelessnessStatus b
-		CROSS JOIN #EnglishLearnerStatus c
-		CROSS JOIN #MigrantStatus d
-		CROSS JOIN #MilitaryConnectedStudentIndicator e
-		CROSS JOIN #HomelessPrimaryNighttimeResidence f
-		CROSS JOIN #HomelessUnaccompaniedYouthStatus g
-		CROSS JOIN #Sex h
-		LEFT JOIN rds.DimAeDemographics main
-			ON a.EconomicDisadvantageStatusCode = main.EconomicDisadvantageStatusCode
-			AND b.HomelessnessStatusCode = main.HomelessnessStatusCode
-			AND c.EnglishLearnerStatusCode = main.EnglishLearnerStatusCode
-			AND d.MigrantStatusCode = main.MigrantStatusCode
-			AND e.MilitaryConnectedStudentIndicatorCode = main.MilitaryConnectedStudentIndicatorCode
-			AND f.HomelessPrimaryNighttimeResidenceCode = main.HomelessPrimaryNighttimeResidenceCode
-			AND g.HomelessUnaccompaniedYouthStatusCode = main.HomelessUnaccompaniedYouthStatusCode
-			AND h.SexCode = main.SexCode
-		WHERE main.DimAeDemographicId IS NULL
+	INSERT INTO #Sex VALUES ('MISSING', 'MISSING')
+	INSERT INTO #Sex 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'Sex'
 
 
-		DROP TABLE #HomelessnessStatus
-		DROP TABLE #EnglishLearnerStatus
-		DROP TABLE #MigrantStatus
-		DROP TABLE #HomelessUnaccompaniedYouthStatus
-		DROP TABLE #HomelessPrimaryNighttimeResidence
-		DROP TABLE #Sex
+	INSERT INTO [RDS].[DimAeDemographics]
+			([EconomicDisadvantageStatusCode]
+			,[EconomicDisadvantageStatusDescription]
+			,[HomelessnessStatusCode]
+			,[HomelessnessStatusDescription]
+			,[EnglishLearnerStatusCode]
+			,[EnglishLearnerStatusDescription]
+			,[MigrantStatusCode]
+			,[MigrantStatusDescription]
+			,[MilitaryConnectedStudentIndicatorCode]
+			,[MilitaryConnectedStudentIndicatorDescription]
+			,[HomelessPrimaryNighttimeResidenceCode]
+			,[HomelessPrimaryNighttimeResidenceDescription]
+			,[HomelessUnaccompaniedYouthStatusCode]
+			,[HomelessUnaccompaniedYouthStatusDescription]
+			,[SexCode]
+			,[SexDescription])
+	SELECT DISTINCT
+			a.EconomicDisadvantageStatusCode
+		, a.EconomicDisadvantageStatusDescription
+		, b.HomelessnessStatusCode
+		, b.HomelessnessStatusDescription
+		, c.EnglishLearnerStatusCode
+		, c.EnglishLearnerStatusDescription
+		, d.MigrantStatusCode
+		, d.MigrantStatusDescription
+		, e.MilitaryConnectedStudentIndicatorCode
+		, e.MilitaryConnectedStudentIndicatorDescription
+		, f.HomelessPrimaryNighttimeResidenceCode
+		, f.HomelessPrimaryNighttimeResidenceDescription
+		, g.HomelessUnaccompaniedYouthStatusCode
+		, g.HomelessUnaccompaniedYouthStatusDescription
+		, h.SexCode
+		, h.SexDescription
+	FROM #EconomicDisadvantageStatus a
+	CROSS JOIN #HomelessnessStatus b
+	CROSS JOIN #EnglishLearnerStatus c
+	CROSS JOIN #MigrantStatus d
+	CROSS JOIN #MilitaryConnectedStudentIndicator e
+	CROSS JOIN #HomelessPrimaryNighttimeResidence f
+	CROSS JOIN #HomelessUnaccompaniedYouthStatus g
+	CROSS JOIN #Sex h
+	LEFT JOIN rds.DimAeDemographics main
+		ON a.EconomicDisadvantageStatusCode = main.EconomicDisadvantageStatusCode
+		AND b.HomelessnessStatusCode = main.HomelessnessStatusCode
+		AND c.EnglishLearnerStatusCode = main.EnglishLearnerStatusCode
+		AND d.MigrantStatusCode = main.MigrantStatusCode
+		AND e.MilitaryConnectedStudentIndicatorCode = main.MilitaryConnectedStudentIndicatorCode
+		AND f.HomelessPrimaryNighttimeResidenceCode = main.HomelessPrimaryNighttimeResidenceCode
+		AND g.HomelessUnaccompaniedYouthStatusCode = main.HomelessUnaccompaniedYouthStatusCode
+		AND h.SexCode = main.SexCode
+	WHERE main.DimAeDemographicId IS NULL
+
+
+	DROP TABLE #HomelessnessStatus
+	DROP TABLE #EnglishLearnerStatus
+	DROP TABLE #MigrantStatus
+	DROP TABLE #HomelessUnaccompaniedYouthStatus
+	DROP TABLE #HomelessPrimaryNighttimeResidence
+	DROP TABLE #Sex
 
 
 
