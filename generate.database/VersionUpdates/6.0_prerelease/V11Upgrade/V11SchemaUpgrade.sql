@@ -23,10 +23,11 @@ PRINT N'Rename [RDS].[FactK12StudentEnrollments].[AccountableK12SchoolId] to K12
 
 
 GO
-EXECUTE sp_rename @objname = N'[RDS].[FactK12StudentEnrollments].[AccountableK12SchoolId]', @newname = N'K12SchoolAccountabilityId', @objtype = N'COLUMN';
+--AccountableK12SchoolId doesn't exist in the table
+-- EXECUTE sp_rename @objname = N'[RDS].[FactK12StudentEnrollments].[AccountableK12SchoolId]', @newname = N'K12SchoolAccountabilityId', @objtype = N'COLUMN';
 
 
-GO
+-- GO
 PRINT N'Rename refactoring operation with key 353914f6-d8e2-4132-aa4e-5d202e661cec is skipped, element [Staging].[K12Enrollment].[ExitWithdrawType] (SqlSimpleColumn) will not be renamed to ExitOrWithdrawalType';
 
 

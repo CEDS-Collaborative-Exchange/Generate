@@ -7634,12 +7634,10 @@
 		[AssessmentShortName]                  					NVARCHAR (30)  NULL,
 		[AssessmentTypeCode]                   					NVARCHAR (100) NULL,
 		[AssessmentTypeDescription]            					NVARCHAR (300) NULL,
+		[AssessmentTypeEdFactsCode]            					NVARCHAR (100) NULL,
 		[AssessmentAcademicSubjectCode]        					NVARCHAR (100) NULL,
 		[AssessmentAcademicSubjectDescription] 					NVARCHAR (300) NULL,
 		[AssessmentAcademicSubjectEdFactsCode] 					NVARCHAR (50)  NULL,
-		[AssessmentTypeCode]                   					NVARCHAR (100) NULL,
-		[AssessmentTypeDescription]            					NVARCHAR (300) NULL,
-		[AssessmentTypeEdFactsCode]            					NVARCHAR (100) NULL,
 		[AssessmentTypeToEnglishLearnersCode]                   NVARCHAR (100) NULL,
 		[AssessmentTypeToEnglishLearnersDescription]            NVARCHAR (300) NULL,
 		[AssessmentTypeToEnglishLearnersEdFactsCode]            NVARCHAR (100) NULL,
@@ -7770,25 +7768,25 @@
 
 
 	GO
-	PRINT N'Creating Index [RDS].[DimAssessmentStatuses].[IX_DimAssessments_PerformanceLevelEdFactsCode]...';
+	-- PRINT N'Creating Index [RDS].[DimAssessmentStatuses].[IX_DimAssessments_PerformanceLevelEdFactsCode]...';
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IX_DimAssessments_PerformanceLevelEdFactsCode]
-		ON [RDS].[DimAssessmentStatuses]([AssessmentPerformanceLevelIdentifierEdFactsCode] ASC) WITH (FILLFACTOR = 80);
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IX_DimAssessments_PerformanceLevelEdFactsCode]
+	-- 	ON [RDS].[DimAssessmentStatuses]([AssessmentPerformanceLevelIdentifierEdFactsCode] ASC) WITH (FILLFACTOR = 80);
 
 
-	GO
-	PRINT N'Creating Index [RDS].[DimAssessmentStatuses].[IX_DimAssessmentStatuses_Codes]...';
+	-- GO
+	-- PRINT N'Creating Index [RDS].[DimAssessmentStatuses].[IX_DimAssessmentStatuses_Codes]...';
 
 
-	GO
-	CREATE NONCLUSTERED INDEX [IX_DimAssessmentStatuses_Codes]
-		ON [RDS].[DimAssessmentStatuses]([AssessmentPerformanceLevelIdentifier] ASC, [AssessmentPerformanceLevelIdentifierEdFactsCode] ASC, [ProgressLevelCode] ASC, [AssessmentTypeAdministeredCode] ASC, [AssessedFirstTimeCode] ASC, [AssessmentScoreMetricTypeCode] ASC) WITH (FILLFACTOR = 80);
+	-- GO
+	-- CREATE NONCLUSTERED INDEX [IX_DimAssessmentStatuses_Codes]
+	-- 	ON [RDS].[DimAssessmentStatuses]([AssessmentPerformanceLevelIdentifier] ASC, [AssessmentPerformanceLevelIdentifierEdFactsCode] ASC, [ProgressLevelCode] ASC, [AssessmentTypeAdministeredCode] ASC, [AssessedFirstTimeCode] ASC, [AssessmentScoreMetricTypeCode] ASC) WITH (FILLFACTOR = 80);
 
 
+	-- GO
 	--TODO: Verify this change
-	GO
 	PRINT N'Altering Table [RDS].[DimCohortStatuses]...';
 
 
@@ -22918,123 +22916,123 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_Def_Desc]...';
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_Def_Desc]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A unique number or alphanumeric code assigned to an assessment performance level.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A unique number or alphanumeric code assigned to an assessment performance level.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_Element]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_Element]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Identifier', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Identifier', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_GlobalId]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_GlobalId]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000717', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000717', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_URL]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[CEDS_URL]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19693', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19693', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[MS_Description]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifier].[MS_Description]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifier';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_Def_Desc]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_Def_Desc]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A label representing the performance level appropriate for use on a report.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A label representing the performance level appropriate for use on a report.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_Element]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_Element]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Label', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Label', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_GlobalId]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_GlobalId]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000718', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000718', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_URL]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[CEDS_URL]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19694', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19694', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[MS_Description]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelLabel].[MS_Description]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelLabel';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_Def_Desc]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_Def_Desc]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A unique number or alphanumeric code assigned to an assessment performance level.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'A unique number or alphanumeric code assigned to an assessment performance level.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_Element]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_Element]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Identifier', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Performance Level Identifier', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_GlobalId]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_GlobalId]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000717', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000717', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_URL]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[CEDS_URL]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19693', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19693', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[MS_Description]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentPerformanceLevelIdentifierEdFactsCode].[MS_Description]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentPerformanceLevelIdentifierEdFactsCode';
 
 
 	GO
@@ -23278,83 +23276,83 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_Def_Desc]...';
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_Def_Desc]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The specific method used to report the performance and achievement of the assessment. This is the metric that is being used to derive the scores.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The specific method used to report the performance and achievement of the assessment. This is the metric that is being used to derive the scores.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_Element]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_Element]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Score Metric Type', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Score Metric Type', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_GlobalId]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_GlobalId]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000369', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000369', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_URL]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[CEDS_URL]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19368', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19368', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[MS_Description]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeCode].[MS_Description]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeCode';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_Def_Desc]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_Def_Desc]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The specific method used to report the performance and achievement of the assessment. This is the metric that is being used to derive the scores.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The specific method used to report the performance and achievement of the assessment. This is the metric that is being used to derive the scores.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_Element]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_Element]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Score Metric Type', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Score Metric Type', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_GlobalId]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_GlobalId]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000369', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000369', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_URL]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[CEDS_URL]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19368', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19368', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
 
 
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[MS_Description]...';
+	-- GO
+	-- PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentScoreMetricTypeDescription].[MS_Description]...';
 
 
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
+	-- GO
+	-- EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentScoreMetricTypeDescription';
 
 
 	GO

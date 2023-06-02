@@ -156,7 +156,7 @@ BEGIN
 			AND ((rdl.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (rdl.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdl.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
 		LEFT JOIN RDS.DimK12Schools rdksch
-			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierState
+			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND ((rdksch.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (rdksch.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdksch.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
 		JOIN RDS.DimSeas rds

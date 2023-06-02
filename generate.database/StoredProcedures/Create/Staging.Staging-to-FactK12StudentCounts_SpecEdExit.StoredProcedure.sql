@@ -273,7 +273,7 @@ BEGIN
 			AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
 		LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 			ON ske.SchoolYear = rdis.SchoolYear
-			AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
+			AND ISNULL(sidt.IdeaDisabilityType, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
 			AND sidt.IsPrimaryDisability = 1
 		LEFT JOIN #vwDimRaces rdr
 			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
