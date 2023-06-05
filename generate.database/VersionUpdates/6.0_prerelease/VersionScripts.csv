@@ -124,7 +124,6 @@ StoredProcedures\\Drop,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.s
 StoredProcedures\\Create,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Get_Organizations.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Get_Organizations.StoredProcedure.sql,0
-VersionUpdates\\6.0_prerelease,UpdateDimK12StudentStatuses.sql,0
 StoredProcedures\\Drop,RDS.Get_YearToYearEnvironmentCountReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_YearToYearEnvironmentCountReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0

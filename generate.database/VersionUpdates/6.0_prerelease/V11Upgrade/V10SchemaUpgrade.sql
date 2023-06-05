@@ -15503,11 +15503,12 @@
 		[MigrantStatusEdFactsCode]                         NVARCHAR (50)  NOT NULL,
 		[MigrantEducationProgramEnrollmentTypeCode]        NVARCHAR (100) NOT NULL,
 		[MigrantEducationProgramEnrollmentTypeDescription] NVARCHAR (300) NOT NULL,
-		[MigrantEducationProgramEnrollmentTypeEdFactsCode] NVARCHAR (50)  NOT NULL,
 		[ContinuationOfServicesReasonCode]                 NVARCHAR (100) NOT NULL,
 		[ContinuationOfServicesReasonDescription]          NVARCHAR (300) NOT NULL,
-		[ContinuationOfServicesReasonEdFactsCode]          NVARCHAR (50)  NOT NULL,
 		[ConsolidatedMepFundsStatusCode]                   NVARCHAR (100) NOT NULL,
+		[MEPContinuationOfServicesStatusCode]			   NVARCHAR (100) NOT NULL,
+		[MEPContinuationOfServicesStatusDescription]	   NVARCHAR (300) NOT NULL,
+		[MEPContinuationOfServicesStatusEdFactsCode]	   NVARCHAR (50)  NOT NULL,
 		[ConsolidatedMepFundsStatusDescription]            NVARCHAR (300) NOT NULL,
 		[ConsolidatedMepFundsStatusEdFactsCode]            NVARCHAR (50)  NOT NULL,
 		[MigrantEducationProgramServicesTypeCode]          NVARCHAR (100) NOT NULL,
@@ -15526,25 +15527,17 @@
 
 	GO
 	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_Codes]
-		ON [RDS].[DimMigrantStatuses]([ContinuationOfServicesReasonCode] ASC, [ConsolidatedMepFundsStatusCode] ASC, [MigrantEducationProgramServicesTypeCode] ASC, [MigrantPrioritizedForServicesCode] ASC, [MigrantEducationProgramEnrollmentTypeCode] ASC) WITH (FILLFACTOR = 80);
+		ON [RDS].[DimMigrantStatuses]([MEPContinuationOfServicesStatusCode] ASC, [ContinuationOfServicesReasonCode] ASC, [ConsolidatedMepFundsStatusCode] ASC, [MigrantEducationProgramServicesTypeCode] ASC, [MigrantPrioritizedForServicesCode] ASC, [MigrantEducationProgramEnrollmentTypeCode] ASC) WITH (FILLFACTOR = 80);
 
 
 	GO
-	PRINT N'Creating Index [RDS].[DimMigrantStatuses].[IX_DimMigrantStatuses_ContinuationEdFactsCode]...';
+	PRINT N'Creating Index [RDS].[DimMigrantStatuses].[IX_DimMigrantStatuses_MEPContinuationOfServicesStatusEdFactsCode]...';
 
 
 	GO
-	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_ContinuationEdFactsCode]
-		ON [RDS].[DimMigrantStatuses]([ContinuationOfServicesReasonEdFactsCode] ASC) WITH (FILLFACTOR = 80);
+	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_MEPContinuationOfServicesStatusEdFactsCode]
+		ON [RDS].[DimMigrantStatuses]([MEPContinuationOfServicesStatusEdFactsCode] ASC) WITH (FILLFACTOR = 80);
 
-
-	GO
-	PRINT N'Creating Index [RDS].[DimMigrantStatuses].[IX_DimMigrantStatuses_MepEnrollmentTypeEdFactsCode]...';
-
-
-	GO
-	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_MepEnrollmentTypeEdFactsCode]
-		ON [RDS].[DimMigrantStatuses]([MigrantEducationProgramEnrollmentTypeEdFactsCode] ASC) WITH (FILLFACTOR = 80);
 
 
 	GO

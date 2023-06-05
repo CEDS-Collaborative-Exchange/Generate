@@ -1563,28 +1563,29 @@
 		SET IDENTITY_INSERT rds.DimMigrantStatuses ON
 
 		INSERT INTO rds.DimMigrantStatuses (
-						DimMigrantStatusId
-						, MigrantStatusCode
-						, MigrantStatusDescription
-						, MigrantStatusEdFactsCode
-						, MigrantEducationProgramEnrollmentTypeCode
-						, MigrantEducationProgramEnrollmentTypeDescription
-						, MigrantEducationProgramEnrollmentTypeEdFactsCode
-						, ContinuationOfServicesReasonCode
-						, ContinuationOfServicesReasonDescription
-						, ContinuationOfServicesReasonEdFactsCode
-						, ConsolidatedMepFundsStatusCode
-						, ConsolidatedMepFundsStatusDescription
-						, ConsolidatedMepFundsStatusEdFactsCode
-						, MigrantEducationProgramServicesTypeCode
-						, MigrantEducationProgramServicesTypeDescription
-						, MigrantEducationProgramServicesTypeEdFactsCode
-						, MigrantPrioritizedForServicesCode
-						, MigrantPrioritizedForServicesDescription
-						, MigrantPrioritizedForServicesEdFactsCode
+					DimMigrantStatusId
+					, MigrantStatusCode
+					, MigrantStatusDescription
+					, MigrantStatusEdFactsCode
+					, MigrantEducationProgramEnrollmentTypeCode
+					, MigrantEducationProgramEnrollmentTypeDescription
+					, ContinuationOfServicesReasonCode
+					, ContinuationOfServicesReasonDescription
+					, ConsolidatedMepFundsStatusCode
+					, MEPContinuationOfServicesStatusCode
+					, MEPContinuationOfServicesStatusDescription
+					, MEPContinuationOfServicesStatusEdFactsCode
+					, ConsolidatedMepFundsStatusDescription
+					, ConsolidatedMepFundsStatusEdFactsCode
+					, MigrantEducationProgramServicesTypeCode
+					, MigrantEducationProgramServicesTypeDescription
+					, MigrantEducationProgramServicesTypeEdFactsCode
+					, MigrantPrioritizedForServicesCode
+					, MigrantPrioritizedForServicesDescription
+					, MigrantPrioritizedForServicesEdFactsCode
 					)
 			VALUES (
-					-1
+					  -1
 					, 'MISSING'
 					, 'MISSING'
 					, 'MISSING'
@@ -1602,40 +1603,29 @@
 					, 'MISSING'
 					, 'MISSING'
 					, 'MISSING'
-					, 'MISSING')
+					, 'MISSING'
+					, 'MISSING'
+					)
 
 		SET IDENTITY_INSERT rds.DimMigrantStatuses OFF
 	END
 
-	CREATE TABLE #MepEnrollmentType (MigrantEducationProgramEnrollmentTypeCode VARCHAR(50), MigrantEducationProgramEnrollmentTypeDescription VARCHAR(200), MigrantEducationProgramEnrollmentTypeEdFactsCode VARCHAR(50))
+	CREATE TABLE #MepEnrollmentType (MigrantEducationProgramEnrollmentTypeCode VARCHAR(50), MigrantEducationProgramEnrollmentTypeDescription VARCHAR(200))
 
-	INSERT INTO #MepEnrollmentType VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #MepEnrollmentType VALUES ('MISSING', 'MISSING')
 	INSERT INTO #MepEnrollmentType 
 	SELECT 
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, CASE CedsOptionSetCode
-			WHEN '01' THEN 'MISSING'
-			WHEN '02' THEN 'MEPRSYDAY'
-			WHEN '03' THEN 'MEPSUM'
-			WHEN '04' THEN 'MEPYRP'
-			WHEN '05' THEN '??' -- Duane
-			WHEN '06' THEN 'MISSING'
-		  END
 	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'MigrantEducationProgramEnrollmentType' 
 
-	CREATE TABLE #ContinuationOfServices (ContinuationOfServicesReasonCode VARCHAR(50), ContinuationOfServicesReasonDescription VARCHAR(200), ContinuationOfServicesReasonEdFactsCode VARCHAR(50))
+	CREATE TABLE #ContinuationOfServices (ContinuationOfServicesReasonCode VARCHAR(50), ContinuationOfServicesReasonDescription VARCHAR(200))
 
-	INSERT INTO #ContinuationOfServices VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #ContinuationOfServices VALUES ('MISSING', 'MISSING')
 	INSERT INTO #ContinuationOfServices
 	SELECT 
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, CASE CedsOptionSetCode -- Duane
-			WHEN '01' THEN 'CONTINUED'
-			WHEN '02' THEN 'CONTINUED'
-			WHEN '03' THEN 'CONTINUED'
-		  END
 	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'ContinuationOfServicesReason'
 
 	CREATE TABLE #MepServiceType (MigrantEducationProgramServicesTypeCode VARCHAR(50), MigrantEducationProgramServicesTypeDescription VARCHAR(200), MigrantEducationProgramServicesTypeEdFactsCode VARCHAR(50))
@@ -1663,10 +1653,11 @@
 			, MigrantStatusEdFactsCode
 			, MigrantEducationProgramEnrollmentTypeCode
 			, MigrantEducationProgramEnrollmentTypeDescription
-			, MigrantEducationProgramEnrollmentTypeEdFactsCode
 			, ContinuationOfServicesReasonCode
 			, ContinuationOfServicesReasonDescription
-			, ContinuationOfServicesReasonEdFactsCode
+			, MEPContinuationOfServicesStatusCode
+			, MEPContinuationOfServicesStatusDescription
+			, MEPContinuationOfServicesStatusEdFactsCode			
 			, ConsolidatedMepFundsStatusCode
 			, ConsolidatedMepFundsStatusDescription
 			, ConsolidatedMepFundsStatusEdFactsCode
@@ -1683,10 +1674,11 @@
 		, Migrant.EdFactsCode
 		, met.MigrantEducationProgramEnrollmentTypeCode
 		, met.MigrantEducationProgramEnrollmentTypeDescription
-		, met.MigrantEducationProgramEnrollmentTypeEdFactsCode
 		, cs.ContinuationOfServicesReasonCode
 		, cs.ContinuationOfServicesReasonDescription
-		, cs.ContinuationOfServicesReasonEdFactsCode
+		, MEPContinuationOfServicesStatus.CedsOptionSetCode
+		, MEPContinuationOfServicesStatus.CedsOptionSetDescription
+		, MEPContinuationOfServicesStatus.EdFactsCode
 		, ConsolidatedMepFund.CedsOptionSetCode
 		, ConsolidatedMepFund.CedsOptionSetDescription
 		, ConsolidatedMepFund.EdFactsCode
@@ -1699,6 +1691,7 @@
 	FROM (VALUES('Yes', 'Migrant students', 'MS'),('No', 'Not a Migrant students', 'MISSING'),('MISSING', 'MISSING', 'MISSING')) Migrant(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN (VALUES('Yes', 'Yes', 'YES'),('No', 'No','NO'),('NA', 'Not applicable','NA'),('MISSING', 'MISSING', 'MISSING')) ConsolidatedMepFund(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN (VALUES('YES', 'Prioritized for Services', 'PS'),('NO', 'Not Prioritized for Services', 'MISSING'),('MISSING', 'MISSING', 'MISSING')) PrioritizedForServices(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
+	CROSS JOIN (VALUES('Yes', 'Receiving instructional or support services under the continuation of services authority ESEA Title III Section 1304(e)(2)-(3).', 'CONTINUED'),('No', 'Not receiving instructional or support services under the continuation of services authority ESEA Title III Section 1304(e)(2)-(3).', 'MISSING'),('MISSING', 'MISSING', 'MISSING')) MEPContinuationOfServicesStatus(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN #MepEnrollmentType met
 	CROSS JOIN #ContinuationOfServices cs
 	CROSS JOIN #MepServiceType mst
@@ -1706,6 +1699,7 @@
 		ON Migrant.CedsOptionSetCode = dms.MigrantStatusCode
 		AND met.MigrantEducationProgramEnrollmentTypeCode = dms.MigrantEducationProgramEnrollmentTypeCode
 		AND cs.ContinuationOfServicesReasonCode = dms.ContinuationOfServicesReasonCode
+		AND MEPContinuationOfServicesStatus.CedsOptionSetCode = dms.MEPContinuationOfServicesStatusCode
 		AND mst.MigrantEducationProgramServicesTypeCode = dms.MigrantEducationProgramServicesTypeCode
 		AND PrioritizedForServices.CedsOptionSetCode = dms.MigrantPrioritizedForServicesCode
 	WHERE dms.DimMigrantStatusId IS NULL
