@@ -16,15 +16,20 @@ values
 
 
 --reset GenerateStagingTables with the latest
-drop table app.GenerateStagingTables
+if OBJECT_ID('app.GenerateStagingTables', 'U') is not null
+	drop table app.GenerateStagingTables; 
+
 create table app.GenerateStagingTables (
 	StagingTableId int identity(1,1)
 	, StagingTableName varchar(100)
 )
-insert into app.GenerateStagingTables 
+
+insert into app.GenerateStagingTables (
+	StagingTableName
+)
 select distinct table_name
 from INFORMATION_SCHEMA.tables
-where table_SCHEMA = 'staging'
+where table_schema = 'staging'
 and table_name not like '%validation%'
 and table_name <> 'datacollection'
 and table_name <> 'sourcesystemreferencedata'
@@ -60,6 +65,9 @@ set StagingTableId = 6 where StagingTableId = 5
 
 
 --create the new table
+if OBJECT_ID('app.SourceSystemReferenceMapping_DomainFile_XREF', 'U') is not null
+	drop table app.SourceSystemReferenceMapping_DomainFile_XREF; 
+
 create table app.SourceSystemReferenceMapping_DomainFile_XREF(
 	ID int identity(1,1)
 	, GenerateReportGroup varchar(500) NOT NULL
