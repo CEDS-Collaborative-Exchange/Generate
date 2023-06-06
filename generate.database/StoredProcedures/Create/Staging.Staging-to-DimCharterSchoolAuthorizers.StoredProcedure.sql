@@ -49,7 +49,7 @@ BEGIN
 		, @StateName			 									'StateAbbreviationDescription'
 		, @StateCode 												'StateAbbreviationCode'
 		, @StateANSICode 											'StateANSICode'
-		, scsa.CharterSchoolAuthorizingOrganizationType
+		, scsa.CharterSchoolAuthorizingOrganizationType				'CharterSchoolAuthorizingOrganizationTypeCode'
 		, refcsat.[Definition] 										'CharterSchoolAuthorizingOrganizationTypeDescription'
 		, ssrd.OutputCode				 							'CharterSchoolAuthorizingOrganizationTypeEdfactsCode'
 		, smam.AddressStreetNumberAndName				 			'MailingAddressStreetNumberAndName'
@@ -161,7 +161,7 @@ BEGIN
 			, StateAbbreviationCode
 			, StateANSICode
 			, StateAbbreviationDescription
-			, src.CharterSchoolAuthorizingOrganizationType
+			, src.CharterSchoolAuthorizingOrganizationTypeCode
 			, src.CharterSchoolAuthorizingOrganizationTypeDescription
 			, src.CharterSchoolAuthorizingOrganizationTypeEdFactsCode
 			, src.MailingAddressStreetNumberAndName
