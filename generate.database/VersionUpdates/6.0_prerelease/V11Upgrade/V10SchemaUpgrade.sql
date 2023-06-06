@@ -7213,14 +7213,14 @@
 
 	--TODO: Review if this should happen
 	GO
-	PRINT N'Dropping Table [RDS].[DimDataMigrationTypes]...';
+	-- PRINT N'Dropping Table [RDS].[DimDataMigrationTypes]...';
 
 
-	GO
-	DROP TABLE [RDS].[DimDataMigrationTypes];
+	-- GO
+	-- DROP TABLE [RDS].[DimDataMigrationTypes];
 
 
-	GO
+	-- GO
 	PRINT N'Dropping Table [RDS].[DimDateDataMigrationTypes]...';
 
 
