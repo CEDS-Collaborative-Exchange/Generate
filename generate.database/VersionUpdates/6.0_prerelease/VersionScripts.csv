@@ -22,6 +22,7 @@ Tables\\Drop,Staging.StagingValidationResults.Table.sql,0
 Tables\\Create,Staging.StagingValidationResults.Table.sql,0
 VersionUpdates\\6.0_prerelease,AddDataMigrationTypes.sql,0
 VersionUpdates\\6.0_prerelease,REPLACE_STAGING_VALIDATION_RULES.sql,0
+VersionUpdates\\6.0_prerelease,UpdatesForSSRDUtility.sql,0
 Views\\Drop,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql,0
 Views\\Create,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql,0
 Views\\Drop,dbo.vwCEDSMapping.View.sql,0
@@ -185,5 +186,7 @@ StoredProcedures\\Drop,RDS.Get_OrganizationStatusReportData.StoredProcedure.sql,
 StoredProcedures\\Create,RDS.Get_OrganizationStatusReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
 VersionUpdates\\6.0_prerelease,RemoveReferencesToIeus.sql,0
 VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0
