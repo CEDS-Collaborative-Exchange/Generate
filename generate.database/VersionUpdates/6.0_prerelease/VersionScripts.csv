@@ -97,6 +97,8 @@ StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_Chronic_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_Chronic_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Wrapper_Migrate_Directory_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Wrapper_Migrate_Directory_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_Dropout_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_Dropout_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_GradRate_to_RDS.StoredProcedure.sql,0
@@ -169,6 +171,8 @@ StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimCharterSchoolAuthorizers.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimCharterSchoolAuthorizers.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimCharterSchoolManagementOrganizations.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimCharterSchoolManagementOrganizations.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_GraduatesCompleters.StoredProcedure.sql,0
@@ -189,4 +193,5 @@ VersionUpdates\\6.0_prerelease,UpdatesForSSRDUtility.sql,0
 StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
 VersionUpdates\\6.0_prerelease,RemoveReferencesToIeus.sql,0
+VersionUpdates\\6.0_prerelease,TEMP_RemoveFKConstraintsFactOrganizationCounts.sql,0
 VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0
