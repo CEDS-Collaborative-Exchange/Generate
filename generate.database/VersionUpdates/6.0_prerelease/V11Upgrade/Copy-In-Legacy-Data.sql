@@ -22,7 +22,6 @@ SELECT
 	, RecordEndDateTime 
 FROM Upgrade.DimK12Students
 
-
 INSERT INTO RDS.DimPeople (
 	  FirstName
 	, MiddleName
@@ -43,7 +42,6 @@ SELECT
    	, RecordStartDateTime 
 	, RecordEndDateTime 
 FROM Upgrade.DimK12Staff
-
 
 INSERT INTO RDS.FactK12StudentCounts (
     SchoolYearId
