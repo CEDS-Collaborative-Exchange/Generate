@@ -1561,28 +1561,29 @@
 		SET IDENTITY_INSERT rds.DimMigrantStatuses ON
 
 		INSERT INTO rds.DimMigrantStatuses (
-						DimMigrantStatusId
-						, MigrantStatusCode
-						, MigrantStatusDescription
-						, MigrantStatusEdFactsCode
-						, MigrantEducationProgramEnrollmentTypeCode
-						, MigrantEducationProgramEnrollmentTypeDescription
-						, MigrantEducationProgramEnrollmentTypeEdFactsCode
-						, ContinuationOfServicesReasonCode
-						, ContinuationOfServicesReasonDescription
-						, ContinuationOfServicesReasonEdFactsCode
-						, ConsolidatedMepFundsStatusCode
-						, ConsolidatedMepFundsStatusDescription
-						, ConsolidatedMepFundsStatusEdFactsCode
-						, MigrantEducationProgramServicesTypeCode
-						, MigrantEducationProgramServicesTypeDescription
-						, MigrantEducationProgramServicesTypeEdFactsCode
-						, MigrantPrioritizedForServicesCode
-						, MigrantPrioritizedForServicesDescription
-						, MigrantPrioritizedForServicesEdFactsCode
+					DimMigrantStatusId
+					, MigrantStatusCode
+					, MigrantStatusDescription
+					, MigrantStatusEdFactsCode
+					, MigrantEducationProgramEnrollmentTypeCode
+					, MigrantEducationProgramEnrollmentTypeDescription
+					, ContinuationOfServicesReasonCode
+					, ContinuationOfServicesReasonDescription
+					, ConsolidatedMepFundsStatusCode
+					, MEPContinuationOfServicesStatusCode
+					, MEPContinuationOfServicesStatusDescription
+					, MEPContinuationOfServicesStatusEdFactsCode
+					, ConsolidatedMepFundsStatusDescription
+					, ConsolidatedMepFundsStatusEdFactsCode
+					, MigrantEducationProgramServicesTypeCode
+					, MigrantEducationProgramServicesTypeDescription
+					, MigrantEducationProgramServicesTypeEdFactsCode
+					, MigrantPrioritizedForServicesCode
+					, MigrantPrioritizedForServicesDescription
+					, MigrantPrioritizedForServicesEdFactsCode
 					)
 			VALUES (
-					-1
+					  -1
 					, 'MISSING'
 					, 'MISSING'
 					, 'MISSING'
@@ -1600,40 +1601,29 @@
 					, 'MISSING'
 					, 'MISSING'
 					, 'MISSING'
-					, 'MISSING')
+					, 'MISSING'
+					, 'MISSING'
+					)
 
 		SET IDENTITY_INSERT rds.DimMigrantStatuses OFF
 	END
 
-	CREATE TABLE #MepEnrollmentType (MigrantEducationProgramEnrollmentTypeCode VARCHAR(50), MigrantEducationProgramEnrollmentTypeDescription VARCHAR(200), MigrantEducationProgramEnrollmentTypeEdFactsCode VARCHAR(50))
+	CREATE TABLE #MepEnrollmentType (MigrantEducationProgramEnrollmentTypeCode VARCHAR(50), MigrantEducationProgramEnrollmentTypeDescription VARCHAR(200))
 
-	INSERT INTO #MepEnrollmentType VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #MepEnrollmentType VALUES ('MISSING', 'MISSING')
 	INSERT INTO #MepEnrollmentType 
 	SELECT 
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, CASE CedsOptionSetCode
-			WHEN '01' THEN 'MISSING'
-			WHEN '02' THEN 'MEPRSYDAY'
-			WHEN '03' THEN 'MEPSUM'
-			WHEN '04' THEN 'MEPYRP'
-			WHEN '05' THEN '??' -- Duane
-			WHEN '06' THEN 'MISSING'
-		  END
 	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'MigrantEducationProgramEnrollmentType' 
 
-	CREATE TABLE #ContinuationOfServices (ContinuationOfServicesReasonCode VARCHAR(50), ContinuationOfServicesReasonDescription VARCHAR(200), ContinuationOfServicesReasonEdFactsCode VARCHAR(50))
+	CREATE TABLE #ContinuationOfServices (ContinuationOfServicesReasonCode VARCHAR(50), ContinuationOfServicesReasonDescription VARCHAR(200))
 
-	INSERT INTO #ContinuationOfServices VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #ContinuationOfServices VALUES ('MISSING', 'MISSING')
 	INSERT INTO #ContinuationOfServices
 	SELECT 
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, CASE CedsOptionSetCode -- Duane
-			WHEN '01' THEN 'CONTINUED'
-			WHEN '02' THEN 'CONTINUED'
-			WHEN '03' THEN 'CONTINUED'
-		  END
 	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'ContinuationOfServicesReason'
 
 	CREATE TABLE #MepServiceType (MigrantEducationProgramServicesTypeCode VARCHAR(50), MigrantEducationProgramServicesTypeDescription VARCHAR(200), MigrantEducationProgramServicesTypeEdFactsCode VARCHAR(50))
@@ -1661,10 +1651,11 @@
 			, MigrantStatusEdFactsCode
 			, MigrantEducationProgramEnrollmentTypeCode
 			, MigrantEducationProgramEnrollmentTypeDescription
-			, MigrantEducationProgramEnrollmentTypeEdFactsCode
 			, ContinuationOfServicesReasonCode
 			, ContinuationOfServicesReasonDescription
-			, ContinuationOfServicesReasonEdFactsCode
+			, MEPContinuationOfServicesStatusCode
+			, MEPContinuationOfServicesStatusDescription
+			, MEPContinuationOfServicesStatusEdFactsCode			
 			, ConsolidatedMepFundsStatusCode
 			, ConsolidatedMepFundsStatusDescription
 			, ConsolidatedMepFundsStatusEdFactsCode
@@ -1681,10 +1672,11 @@
 		, Migrant.EdFactsCode
 		, met.MigrantEducationProgramEnrollmentTypeCode
 		, met.MigrantEducationProgramEnrollmentTypeDescription
-		, met.MigrantEducationProgramEnrollmentTypeEdFactsCode
 		, cs.ContinuationOfServicesReasonCode
 		, cs.ContinuationOfServicesReasonDescription
-		, cs.ContinuationOfServicesReasonEdFactsCode
+		, MEPContinuationOfServicesStatus.CedsOptionSetCode
+		, MEPContinuationOfServicesStatus.CedsOptionSetDescription
+		, MEPContinuationOfServicesStatus.EdFactsCode
 		, ConsolidatedMepFund.CedsOptionSetCode
 		, ConsolidatedMepFund.CedsOptionSetDescription
 		, ConsolidatedMepFund.EdFactsCode
@@ -1697,6 +1689,7 @@
 	FROM (VALUES('Yes', 'Migrant students', 'MS'),('No', 'Not a Migrant students', 'MISSING'),('MISSING', 'MISSING', 'MISSING')) Migrant(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN (VALUES('Yes', 'Yes', 'YES'),('No', 'No','NO'),('NA', 'Not applicable','NA'),('MISSING', 'MISSING', 'MISSING')) ConsolidatedMepFund(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN (VALUES('YES', 'Prioritized for Services', 'PS'),('NO', 'Not Prioritized for Services', 'MISSING'),('MISSING', 'MISSING', 'MISSING')) PrioritizedForServices(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
+	CROSS JOIN (VALUES('Yes', 'Receiving instructional or support services under the continuation of services authority ESEA Title III Section 1304(e)(2)-(3).', 'CONTINUED'),('No', 'Not receiving instructional or support services under the continuation of services authority ESEA Title III Section 1304(e)(2)-(3).', 'MISSING'),('MISSING', 'MISSING', 'MISSING')) MEPContinuationOfServicesStatus(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN #MepEnrollmentType met
 	CROSS JOIN #ContinuationOfServices cs
 	CROSS JOIN #MepServiceType mst
@@ -1704,6 +1697,7 @@
 		ON Migrant.CedsOptionSetCode = dms.MigrantStatusCode
 		AND met.MigrantEducationProgramEnrollmentTypeCode = dms.MigrantEducationProgramEnrollmentTypeCode
 		AND cs.ContinuationOfServicesReasonCode = dms.ContinuationOfServicesReasonCode
+		AND MEPContinuationOfServicesStatus.CedsOptionSetCode = dms.MEPContinuationOfServicesStatusCode
 		AND mst.MigrantEducationProgramServicesTypeCode = dms.MigrantEducationProgramServicesTypeCode
 		AND PrioritizedForServices.CedsOptionSetCode = dms.MigrantPrioritizedForServicesCode
 	WHERE dms.DimMigrantStatusId IS NULL
@@ -1792,20 +1786,20 @@
 	SELECT 
 		  c.CedsOptionSetCode
 		, c.CedsOptionSetDescription
-		, CASE c.CedsOptionSetCode --Duane
+		, CASE c.CedsOptionSetCode
 			WHEN '00806' THEN 'REGDIP'
 			WHEN '00807' THEN 'REGDIP'
 			WHEN '00808' THEN 'REGDIP'
-			WHEN '00809' THEN 'REGDIP'
-			WHEN '00810' THEN 'OTHCOM'
-			WHEN '00811' THEN 'OTHCOM'
-			WHEN '00812' THEN 'MISSING'
-			WHEN '00813' THEN 'MISSING'
-			WHEN '00814' THEN 'MISSING'
+			WHEN '00809' THEN 'MISSING'
+			WHEN '00810' THEN 'REGDIP'
+			WHEN '00811' THEN 'REGDIP'
+			WHEN '00812' THEN 'OTHCOM'
+			WHEN '00813' THEN 'OTHCOM'
+			WHEN '00814' THEN 'OTHCOM'
 			WHEN '00815' THEN 'HSDGED'
 			WHEN '00816' THEN 'HSDGED'
 			WHEN '00818' THEN 'MISSING'
-			WHEN '00819' THEN 'MISSING'
+			WHEN '00819' THEN 'OTHCOM'
 			ELSE 'MISSING'
 		  END
 	FROM CEDS.CedsOptionSetMapping c
@@ -2762,12 +2756,11 @@
 			  CedsOptionSetCode
 			, CedsOptionSetDescription
 			, CASE 
-				WHEN CedsOptionSetCode = 'Medical' THEN 'MEDEXEMPT'
 				WHEN CedsOptionSetCode <> 'MISSING' THEN 'NPART'
 				ELSE 'MISSING'
 			  END
 		FROM CEDS.CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'AssessmentRegistrationReasonNotCompleting' -- Duane - Is this right?  Which one is used?  This or the next code set?
+		WHERE CedsElementTechnicalName = 'AssessmentRegistrationReasonNotCompleting'
 
 
 		DROP TABLE IF EXISTS #ReasonNotTested
@@ -3626,40 +3619,17 @@
 	-- Populate DimNOrDStatuses			 ---
 	------------------------------------------------
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimNOrDStatuses 
-			WHERE NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
-			AND NeglectedOrDelinquentProgramTypeCode = 'MISSING') BEGIN
+			WHERE NeglectedOrDelinquentProgramTypeCode = 'MISSING') BEGIN
 		SET IDENTITY_INSERT RDS.DimNOrDStatuses ON
 
 		INSERT INTO RDS.DimNOrDStatuses (
 			  DimNOrDStatusId
-			, NeglectedOrDelinquentLongTermStatusCode
-			, NeglectedOrDelinquentLongTermStatusDescription
-			, NeglectedOrDelinquentLongTermStatusEdFactsCode
 			, NeglectedOrDelinquentProgramTypeCode
 			, NeglectedOrDelinquentProgramTypeDescription
 			, NeglectedOrDelinquentProgramTypeEdFactsCode)
-		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING')
 
 		SET IDENTITY_INSERT RDS.DimNOrDStatuses OFF
-	END
-
-	IF OBJECT_ID('tempdb..#NeglectedOrDelinquentLongTermStatus') IS NOT NULL BEGIN
-		DROP TABLE #NeglectedOrDelinquentLongTermStatus
-	END
-
-	CREATE TABLE #NeglectedOrDelinquentLongTermStatus (NeglectedOrDelinquentLongTermStatusCode VARCHAR(50), NeglectedOrDelinquentLongTermStatusDescription VARCHAR(200), NeglectedOrDelinquentLongTermStatusEdFactsCode VARCHAR(50))
-
-	INSERT INTO #NeglectedOrDelinquentLongTermStatus VALUES ('MISSING', 'MISSING', 'MISSING')
-	INSERT INTO #NeglectedOrDelinquentLongTermStatus 
-	SELECT
-		  CedsOptionSetCode
-		, CedsOptionSetDescription
-		, EdFactsOptionSetCode
-	FROM CEDS.CedsOptionSetMapping
-	WHERE CedsElementTechnicalName like 'neglect' -- Duane
-
-	IF OBJECT_ID('tempdb..#NeglectedOrDelinquentProgramType') IS NOT NULL BEGIN
-		DROP TABLE #NeglectedOrDelinquentProgramType
 	END
 
 	CREATE TABLE #NeglectedOrDelinquentProgramType (NeglectedOrDelinquentProgramTypeCode VARCHAR(50), NeglectedOrDelinquentProgramTypeDescription VARCHAR(200), NeglectedOrDelinquentProgramTypeEdFactsCode VARCHAR(50))
@@ -3683,28 +3653,19 @@
 	   
 	INSERT INTO RDS.DimNOrDStatuses
 		(
-			  NeglectedOrDelinquentLongTermStatusCode
-			, NeglectedOrDelinquentLongTermStatusDescription
-			, NeglectedOrDelinquentLongTermStatusEdFactsCode
-			, NeglectedOrDelinquentProgramTypeCode
+			  NeglectedOrDelinquentProgramTypeCode
 			, NeglectedOrDelinquentProgramTypeDescription
 			, NeglectedOrDelinquentProgramTypeEdFactsCode
 		)
 	SELECT 
-		  nodlts.NeglectedOrDelinquentLongTermStatusCode 
-		, nodlts.NeglectedOrDelinquentLongTermStatusDescription
-		, nodlts.NeglectedOrDelinquentLongTermStatusEdFactsCode
-		, nodpt.NeglectedOrDelinquentProgramTypeCode
+		  nodpt.NeglectedOrDelinquentProgramTypeCode
 		, nodpt.NeglectedOrDelinquentProgramTypeDescription
 		, nodpt.NeglectedOrDelinquentProgramTypeEdFactsCode
-	FROM #NeglectedOrDelinquentLongTermStatus nodlts
-	CROSS JOIN #NeglectedOrDelinquentProgramType nodpt
+	FROM #NeglectedOrDelinquentProgramType nodpt
 	LEFT JOIN rds.DimNOrDStatuses main
-		ON nodlts.NeglectedOrDelinquentLongTermStatusCode = main.NeglectedOrDelinquentLongTermStatusCode
-		AND nodpt.NeglectedOrDelinquentProgramTypeCode = main.NeglectedOrDelinquentProgramTypeCode
+		ON nodpt.NeglectedOrDelinquentProgramTypeCode = main.NeglectedOrDelinquentProgramTypeCode
 	WHERE main.DimNOrDStatusId IS NULL
 
-	DROP TABLE #NeglectedOrDelinquentLongTermStatus
 	DROP TABLE #NeglectedOrDelinquentProgramType
 
 
@@ -3712,9 +3673,8 @@
 	-- Populate DimTitleIIIStatuses			 ---
 	------------------------------------------------
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimTitleIIIStatuses 
-			WHERE ProgramParticipationTitleIIICode = 'MISSING'
+			WHERE ProgramParticipationTitleIIILiepCode = 'MISSING'
 			AND TitleIIIImmigrantParticipationStatusCode = 'MISSING'
-			AND FormerEnglishLearnerYearStatusCode = 'MISSING'
 			AND ProficiencyStatusCode = 'MISSING'
 			AND TitleIIIAccountabilityProgressStatusCode = 'MISSING'
 			AND TitleIIILanguageInstructionProgramTypeCode = 'MISSING') BEGIN
@@ -3722,15 +3682,11 @@
 
 		INSERT INTO RDS.DimTitleIIIStatuses (
 			  DimTitleIIIStatusId
-			, ProgramParticipationTitleIIICode
-			, ProgramParticipationTitleIIIDescription
-			, ProgramParticipationTitleIIIEdFactsCode
+			, ProgramParticipationTitleIIILiepCode
+			, ProgramParticipationTitleIIILiepDescription
 			, TitleIIIImmigrantParticipationStatusCode
 			, TitleIIIImmigrantParticipationStatusDescription
 			, TitleIIIImmigrantParticipationStatusEdFactsCode
-			, FormerEnglishLearnerYearStatusCode
-			, FormerEnglishLearnerYearStatusDescription
-			, FormerEnglishLearnerYearStatusEdFactsCode
 			, ProficiencyStatusCode
 			, ProficiencyStatusDescription
 			, ProficiencyStatusEdFactsCode
@@ -3740,28 +3696,24 @@
 			, TitleIIILanguageInstructionProgramTypeCode
 			, TitleIIILanguageInstructionProgramTypeDescription
 			, TitleIIILanguageInstructionProgramTypeEdFactsCode)
-		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
 
 		SET IDENTITY_INSERT RDS.DimTitleIIIStatuses OFF
 	END
 
-	IF OBJECT_ID('tempdb..#ProgramParticipationTitleIII') IS NOT NULL BEGIN
-		DROP TABLE #ProgramParticipationTitleIII
+	IF OBJECT_ID('tempdb..#ProgramParticipationTitleIIILiep') IS NOT NULL BEGIN
+		DROP TABLE #ProgramParticipationTitleIIILiep
 	END
 
-	CREATE TABLE #ProgramParticipationTitleIII (ProgramParticipationTitleIIICode VARCHAR(50), ProgramParticipationTitleIIIDescription VARCHAR(200), ProgramParticipationTitleIIIEdFactsCode VARCHAR(50))
+	CREATE TABLE #ProgramParticipationTitleIIILiep (ProgramParticipationTitleIIILiepCode VARCHAR(50), ProgramParticipationTitleIIILiepDescription VARCHAR(200))
 
-	INSERT INTO #ProgramParticipationTitleIII VALUES ('MISSING', 'MISSING', 'MISSING')
-	INSERT INTO #ProgramParticipationTitleIII 
+	INSERT INTO #ProgramParticipationTitleIIILiep VALUES ('MISSING', 'MISSING')
+	INSERT INTO #ProgramParticipationTitleIIILiep 
 	SELECT
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, CASE CedsOptionSetCode
-			WHEN 'Yes' THEN 'PART'
-			ELSE 'MISSING'
-		  END 
 	FROM CEDS.CedsOptionSetMapping
-	WHERE CedsElementTechnicalName = '' -- Duane
+	WHERE CedsElementTechnicalName = ''
 
 	IF OBJECT_ID('tempdb..#TitleIIIImmigrantParticipationStatus') IS NOT NULL BEGIN
 		DROP TABLE #TitleIIIImmigrantParticipationStatus
@@ -3781,21 +3733,6 @@
 		  END 
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'TitleIIIImmigrantParticipationStatus'
-
-	IF OBJECT_ID('tempdb..#FormerEnglishLearnerYearStatus') IS NOT NULL BEGIN
-		DROP TABLE #FormerEnglishLearnerYearStatus
-	END
-
-	CREATE TABLE #FormerEnglishLearnerYearStatus (FormerEnglishLearnerYearStatusCode VARCHAR(50), FormerEnglishLearnerYearStatusDescription VARCHAR(200), FormerEnglishLearnerYearStatusEdFactsCode VARCHAR(50))
-
-	INSERT INTO #FormerEnglishLearnerYearStatus VALUES ('MISSING', 'MISSING', 'MISSING')
-	INSERT INTO #FormerEnglishLearnerYearStatus
-	SELECT
-		  CedsOptionSetCode
-		, CedsOptionSetDescription
-		, EdFactsOptionSetCode
-	FROM CEDS.CedsOptionSetMapping
-	WHERE CedsElementTechnicalName = 'FormerEnglishLearnerYearStatus' -- Duane
 
 	IF OBJECT_ID('tempdb..#ProficiencyStatus') IS NOT NULL BEGIN
 		DROP TABLE #ProficiencyStatus
@@ -3854,15 +3791,11 @@
 	   
 	INSERT INTO RDS.DimTitleIIIStatuses
 		(
-			  ProgramParticipationTitleIIICode
-			, ProgramParticipationTitleIIIDescription
-			, ProgramParticipationTitleIIIEdFactsCode
+			  ProgramParticipationTitleIIILiepCode
+			, ProgramParticipationTitleIIILiepDescription
 			, TitleIIIImmigrantParticipationStatusCode
 			, TitleIIIImmigrantParticipationStatusDescription
 			, TitleIIIImmigrantParticipationStatusEdFactsCode
-			, FormerEnglishLearnerYearStatusCode
-			, FormerEnglishLearnerYearStatusDescription
-			, FormerEnglishLearnerYearStatusEdFactsCode
 			, ProficiencyStatusCode
 			, ProficiencyStatusDescription
 			, ProficiencyStatusEdFactsCode
@@ -3873,15 +3806,11 @@
 			, TitleIIILanguageInstructionProgramTypeDescription
 			, TitleIIILanguageInstructionProgramTypeEdFactsCode		)
 	SELECT 
-			  ppt.ProgramParticipationTitleIIICode
-			, ppt.ProgramParticipationTitleIIIDescription
-			, ppt.ProgramParticipationTitleIIIEdFactsCode
+			  ppt.ProgramParticipationTitleIIILiepCode
+			, ppt.ProgramParticipationTitleIIILiepDescription
 			, tips.TitleIIIImmigrantParticipationStatusCode
 			, tips.TitleIIIImmigrantParticipationStatusDescription
 			, tips.TitleIIIImmigrantParticipationStatusEdFactsCode
-			, feys.FormerEnglishLearnerYearStatusCode
-			, feys.FormerEnglishLearnerYearStatusDescription
-			, feys.FormerEnglishLearnerYearStatusEdFactsCode
 			, ps.ProficiencyStatusCode
 			, ps.ProficiencyStatusDescription
 			, ps.ProficiencyStatusEdFactsCode
@@ -3891,24 +3820,21 @@
 			, tlip.TitleIIILanguageInstructionProgramTypeCode
 			, tlip.TitleIIILanguageInstructionProgramTypeDescription
 			, tlip.TitleIIILanguageInstructionProgramTypeEdFactsCode		
-	FROM #ProgramParticipationTitleIII ppt
+	FROM #ProgramParticipationTitleIIILiep ppt
 	CROSS JOIN #TitleIIIImmigrantParticipationStatus tips
-	CROSS JOIN #FormerEnglishLearnerYearStatus feys
 	CROSS JOIN #ProficiencyStatus ps
 	CROSS JOIN #TitleIIIAccountabilityProgressStatus taps
 	CROSS JOIN #TitleIIILanguageInstructionProgramType tlip
 	LEFT JOIN rds.DimTitleIIIStatuses main
-		ON ppt.ProgramParticipationTitleIIICode = main.ProgramParticipationTitleIIICode
+		ON ppt.ProgramParticipationTitleIIILiepCode = main.ProgramParticipationTitleIIILiepCode
 		AND tips.TitleIIIImmigrantParticipationStatusCode = main.TitleIIIImmigrantParticipationStatusCode
-		AND feys.FormerEnglishLearnerYearStatusCode = main.FormerEnglishLearnerYearStatusCode
 		AND ps.ProficiencyStatusCode = main.ProficiencyStatusCode
 		AND taps.TitleIIIAccountabilityProgressStatusCode = main.TitleIIIAccountabilityProgressStatusCode
 		AND tlip.TitleIIILanguageInstructionProgramTypeCode = main.TitleIIILanguageInstructionProgramTypeCode
 	WHERE main.DimTitleIIIStatusId IS NULL
 
-	DROP TABLE #ProgramParticipationTitleIII
+	DROP TABLE #ProgramParticipationTitleIIILiep
 	DROP TABLE #TitleIIIImmigrantParticipationStatus
-	DROP TABLE #FormerEnglishLearnerYearStatus
 	DROP TABLE #ProficiencyStatus
 	DROP TABLE #TitleIIIAccountabilityProgressStatus
 	DROP TABLE #TitleIIILanguageInstructionProgramType
@@ -3947,7 +3873,7 @@
 			, CedsOptionSetDescription
 			, EdFactsOptionSetCode
 		FROM CEDS.CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'AbsenteeismCode' -- Duane
+		WHERE CedsElementTechnicalName = 'AbsenteeismCode'
 
 
 		INSERT INTO [RDS].[DimAttendances]
@@ -4113,12 +4039,12 @@
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
 		, CASE CedsOptionSetCode
-			WHEN 'IncludedAsGraduated' THEN 'GRAD'
-			WHEN 'NotIncludedAsGraduated' THEN 'NOTG'
+			WHEN 'Yes' THEN 'CTEPART'
+			WHEN 'No' THEN 'NONCTEPART'
 			ELSE 'MISSING'
 		  END
 	FROM CEDS.CedsOptionSetMapping
-	WHERE CedsElementTechnicalName = 'CteParticipant' -- Duane
+	WHERE CedsElementTechnicalName = 'CteParticipant' 
 
 	IF OBJECT_ID('tempdb..#CteConcentrator') IS NOT NULL BEGIN
 		DROP TABLE #CteConcentrator
@@ -4131,9 +4057,13 @@
 	SELECT
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, EdFactsOptionSetCode
+		, CASE CedsOptionSetCode
+			WHEN 'Yes' THEN 'CTEPART'
+			WHEN 'No' THEN 'NONCTEPART'
+			ELSE 'MISSING'
+		  END
 	FROM CEDS.CedsOptionSetMapping
-	WHERE CedsElementTechnicalName = 'CteConcentrator' -- Duane
+	WHERE CedsElementTechnicalName = 'CteConcentrator'
 
 	   
 	INSERT INTO RDS.DimCteStatuses
@@ -4181,7 +4111,7 @@
 			, cp.CteParticipantEdFactsCode
 			, cc.CteConcentratorCode
 			, cc.CteConcentratorDescription
-			, cc.CteConcentratorEdFactsCode	
+			, cc.CteConcentratorEdFactsCode
 	FROM #CteAeDisplacedHomemakerIndicator cadhi
 	CROSS JOIN #CteNontraditionalGenderStatus cngs
 	CROSS JOIN #CteNontraditionalCompletion cnc
