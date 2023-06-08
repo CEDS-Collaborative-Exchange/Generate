@@ -92,7 +92,9 @@
 
 	END
 	
-	DROP TABLE IF EXISTS #EconomicDisadvantageStatus
+	IF OBJECT_ID('tempdb..#EconomicDisadvantageStatus') IS NOT NULL
+		DROP TABLE #EconomicDisadvantageStatus
+
 	CREATE TABLE #EconomicDisadvantageStatus (EconomicDisadvantageStatusCode VARCHAR(50), EconomicDisadvantageStatusDescription VARCHAR(200), EconomicDisadvantageStatusEdFactsCode VARCHAR(100))
 
 	INSERT INTO #EconomicDisadvantageStatus VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -107,7 +109,9 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'EconomicDisadvantageStatus'
 
-	DROP TABLE IF EXISTS #HomelessnessStatus
+	IF OBJECT_ID('tempdb..#HomelessnessStatus') IS NOT NULL
+		DROP TABLE #HomelessnessStatus
+
 	CREATE TABLE #HomelessnessStatus (HomelessnessStatusCode VARCHAR(50), HomelessnessStatusDescription VARCHAR(200), HomelessnessStatusEdFactsCode VARCHAR(50))
 
 	INSERT INTO #HomelessnessStatus VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -122,7 +126,9 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'HomelessnessStatus'
 
-	DROP TABLE IF EXISTS #EnglishLearnerStatus
+	IF OBJECT_ID('tempdb..#EnglishLearnerStatus') IS NOT NULL
+		DROP TABLE #EnglishLearnerStatus
+
 	CREATE TABLE #EnglishLearnerStatus (EnglishLearnerStatusCode VARCHAR(50), EnglishLearnerStatusDescription VARCHAR(200))
 
 	INSERT INTO #EnglishLearnerStatus VALUES ('MISSING', 'MISSING')
@@ -133,7 +139,9 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'EnglishLearnerStatus'
 
-	DROP TABLE IF EXISTS #MigrantStatus
+	IF OBJECT_ID('tempdb..#MigrantStatus') IS NOT NULL
+		DROP TABLE #MigrantStatus
+
 	CREATE TABLE #MigrantStatus (MigrantStatusCode VARCHAR(50), MigrantStatusDescription VARCHAR(200))
 
 	INSERT INTO #MigrantStatus VALUES ('MISSING', 'MISSING')
@@ -144,7 +152,9 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'MigrantStatus'
 
-	DROP TABLE IF EXISTS #MilitaryConnectedStudentIndicator
+	IF OBJECT_ID('tempdb..#MilitaryConnectedStudentIndicator') IS NOT NULL
+		DROP TABLE #MilitaryConnectedStudentIndicator
+
 	CREATE TABLE #MilitaryConnectedStudentIndicator (MilitaryConnectedStudentIndicatorCode VARCHAR(50), MilitaryConnectedStudentIndicatorDescription VARCHAR(200), MilitaryConnectedStudentIndicatorEdFactsCode VARCHAR(50))
 
 	INSERT INTO #MilitaryConnectedStudentIndicator VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -163,7 +173,9 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'MilitaryConnectedStudentIndicator'
 
-	DROP TABLE IF EXISTS #HomelessPrimaryNighttimeResidence
+	IF OBJECT_ID('tempdb..#HomelessPrimaryNighttimeResidence') IS NOT NULL
+		DROP TABLE #HomelessPrimaryNighttimeResidence
+
 	CREATE TABLE #HomelessPrimaryNighttimeResidence (HomelessPrimaryNighttimeResidenceCode VARCHAR(50), HomelessPrimaryNighttimeResidenceDescription VARCHAR(200))
 
 	INSERT INTO #HomelessPrimaryNighttimeResidence VALUES ('MISSING', 'MISSING')
@@ -174,7 +186,9 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'HomelessPrimaryNighttimeResidence'
 
-	DROP TABLE IF EXISTS #HomelessUnaccompaniedYouthStatus
+	IF OBJECT_ID('tempdb..#HomelessUnaccompaniedYouthStatus') IS NOT NULL
+		DROP TABLE #HomelessUnaccompaniedYouthStatus
+
 	CREATE TABLE #HomelessUnaccompaniedYouthStatus (HomelessUnaccompaniedYouthStatusCode VARCHAR(50), HomelessUnaccompaniedYouthStatusDescription VARCHAR(200))
 
 	INSERT INTO #HomelessUnaccompaniedYouthStatus VALUES ('MISSING', 'MISSING')
@@ -185,7 +199,9 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'HomelessUnaccompaniedYouthStatus'
 
-	DROP TABLE IF EXISTS #Sex
+	IF OBJECT_ID('tempdb..#Sex') IS NOT NULL
+		DROP TABLE #Sex
+
 	CREATE TABLE #Sex (SexCode VARCHAR(50), SexDescription VARCHAR(200))
 
 	INSERT INTO #Sex VALUES ('MISSING', 'MISSING')
@@ -2349,7 +2365,9 @@
 		SET IDENTITY_INSERT rds.DimMilitaryStatuses OFF
 	END
 
-	DROP TABLE IF EXISTS #MilitaryActiveStudentIndicator
+	IF OBJECT_ID('tempdb..#MilitaryActiveStudentIndicator') IS NOT NULL
+		DROP TABLE #MilitaryActiveStudentIndicator
+
 	CREATE TABLE #MilitaryActiveStudentIndicator (MilitaryActiveStudentIndicatorCode VARCHAR(50), MilitaryActiveStudentIndicatorDescription VARCHAR(200))
 
 	INSERT INTO #MilitaryActiveStudentIndicator VALUES ('MISSING', 'MISSING')
@@ -2360,7 +2378,9 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'MilitaryActiveStudentIndicator'
 
-	DROP TABLE IF EXISTS #MilitaryBranch
+	IF OBJECT_ID('tempdb..#MilitaryBranch') IS NOT NULL
+		DROP TABLE #MilitaryBranch
+
 	CREATE TABLE #MilitaryBranch (MilitaryBranchCode VARCHAR(50), MilitaryBranchDescription VARCHAR(200))
 
 	INSERT INTO #MilitaryBranch VALUES ('MISSING', 'MISSING')
@@ -2371,7 +2391,9 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'MilitaryBranch'
 	
-	DROP TABLE IF EXISTS #MilitaryVeteranStudentIndicator
+	IF OBJECT_ID('tempdb..#MilitaryVeteranStudentIndicator') IS NOT NULL
+		DROP TABLE #MilitaryVeteranStudentIndicator
+
 	CREATE TABLE #MilitaryVeteranStudentIndicator (MilitaryVeteranStudentIndicatorCode VARCHAR(50), MilitaryVeteranStudentIndicatorDescription VARCHAR(200))
 
 	INSERT INTO #MilitaryVeteranStudentIndicator VALUES ('MISSING', 'MISSING')
@@ -2451,7 +2473,9 @@
 		SET IDENTITY_INSERT rds.DimEconomicallyDisadvantagedStatuses OFF
 	END
 
-	DROP TABLE IF EXISTS #EligibilityStatusForSchoolFoodServicePrograms
+	IF OBJECT_ID('tempdb..#EligibilityStatusForSchoolFoodServicePrograms') IS NOT NULL
+		DROP TABLE #EligibilityStatusForSchoolFoodServicePrograms
+
 	CREATE TABLE #EligibilityStatusForSchoolFoodServicePrograms (EligibilityStatusForSchoolFoodServiceProgramsCode VARCHAR(50), EligibilityStatusForSchoolFoodServiceProgramsDescription VARCHAR(200), EligibilityStatusForSchoolFoodServiceProgramsEdFactsCode VARCHAR(50))
 
 	INSERT INTO #EligibilityStatusForSchoolFoodServicePrograms VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -2469,7 +2493,9 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'EligibilityStatusForSchoolFoodServicePrograms'
 	
-	DROP TABLE IF EXISTS #NationalSchoolLunchProgramDirectCertificationIndicator
+	IF OBJECT_ID('tempdb..#NationalSchoolLunchProgramDirectCertificationIndicator') IS NOT NULL
+		DROP TABLE #NationalSchoolLunchProgramDirectCertificationIndicator
+
 	CREATE TABLE #NationalSchoolLunchProgramDirectCertificationIndicator (NationalSchoolLunchProgramDirectCertificationIndicatorCode VARCHAR(50), NationalSchoolLunchProgramDirectCertificationIndicatorDescription VARCHAR(200))
 
 	INSERT INTO #NationalSchoolLunchProgramDirectCertificationIndicator VALUES ('MISSING', 'MISSING')
@@ -2540,7 +2566,9 @@
 
 	END
 
-		DROP TABLE IF EXISTS #AssessmentAccommodationCategory
+		IF OBJECT_ID('tempdb..#AssessmentAccommodationCategory') IS NOT NULL
+			DROP TABLE #AssessmentAccommodationCategory
+
 		CREATE TABLE #AssessmentAccommodationCategory (AssessmentAccommodationCategoryCode VARCHAR(50), AssessmentAccommodationCategoryDescription VARCHAR(200))
 
 		INSERT INTO #AssessmentAccommodationCategory VALUES ('MISSING', 'MISSING')
@@ -2551,8 +2579,9 @@
 		FROM CEDS.CedsOptionSetMapping
 		WHERE CedsElementTechnicalName = 'AssessmentAccommodationCategory'
 
+		IF OBJECT_ID('tempdb..#AccommodationType') IS NOT NULL
+			DROP TABLE #AccommodationType
 
-		DROP TABLE IF EXISTS #AccommodationType
 		CREATE TABLE #AccommodationType (AccommodationTypeCode VARCHAR(50), AccommodationTypeDescription VARCHAR(200))
 
 		INSERT INTO #AccommodationType VALUES ('MISSING', 'MISSING')
@@ -2673,7 +2702,9 @@
 
 	END
 
-		DROP TABLE IF EXISTS #AssessmentRegistrationParticipationIndicator
+		IF OBJECT_ID('tempdb..#AssessmentRegistrationParticipationIndicator') IS NOT NULL
+			DROP TABLE  #AssessmentRegistrationParticipationIndicator
+			
 		CREATE TABLE #AssessmentRegistrationParticipationIndicator (AssessmentRegistrationParticipationIndicatorCode VARCHAR(50), AssessmentRegistrationParticipationIndicatorDescription VARCHAR(200))
 
 		INSERT INTO #AssessmentRegistrationParticipationIndicator VALUES ('MISSING', 'MISSING')
@@ -2685,7 +2716,9 @@
 		WHERE CedsElementTechnicalName = 'AssessmentRegistrationParticipationIndicator'
 
 
-		DROP TABLE IF EXISTS #AssessmentRegistrationCompletionStatus
+		IF OBJECT_ID('tempdb..#AssessmentRegistrationCompletionStatus') IS NOT NULL
+			DROP TABLE #AssessmentRegistrationCompletionStatus
+
 		CREATE TABLE #AssessmentRegistrationCompletionStatus (AssessmentRegistrationCompletionStatusCode VARCHAR(50), AssessmentRegistrationCompletionStatusDescription VARCHAR(200))
 
 		INSERT INTO #AssessmentRegistrationCompletionStatus VALUES ('MISSING', 'MISSING')
@@ -2697,7 +2730,9 @@
 		WHERE CedsElementTechnicalName = 'AssessmentRegistrationCompletionStatus'
 
 
-		DROP TABLE IF EXISTS #StateFullAcademicYear
+		IF OBJECT_ID('tempdb..#StateFullAcademicYear') IS NOT NULL
+			DROP TABLE #StateFullAcademicYear
+
 		CREATE TABLE #StateFullAcademicYear (StateFullAcademicYearCode VARCHAR(50), StateFullAcademicYearDescription VARCHAR(200), StateFullAcademicYearEdFactsCode VARCHAR(50))
 
 		INSERT INTO #StateFullAcademicYear VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -2714,7 +2749,9 @@
 		WHERE CedsElementTechnicalName = 'StateFullAcademicYear'
 
 
-		DROP TABLE IF EXISTS #LeaFullAcademicYear
+		IF OBJECT_ID('tempdb..#LeaFullAcademicYear') IS NOT NULL
+			DROP TABLE #LeaFullAcademicYear
+
 		CREATE TABLE #LeaFullAcademicYear (LeaFullAcademicYearCode VARCHAR(50), LeaFullAcademicYearDescription VARCHAR(200), LeaFullAcademicYearEdFactsCode VARCHAR(50))
 
 		INSERT INTO #LeaFullAcademicYear VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -2730,8 +2767,9 @@
 		FROM CEDS.CedsOptionSetMapping
 		WHERE CedsElementTechnicalName = 'LeaFullAcademicYear'
 
+		IF OBJECT_ID('tempdb..#SchoolFullAcademicYear') IS NOT NULL
+			DROP TABLE #SchoolFullAcademicYear
 
-		DROP TABLE IF EXISTS #SchoolFullAcademicYear
 		CREATE TABLE #SchoolFullAcademicYear (SchoolFullAcademicYearCode VARCHAR(50), SchoolFullAcademicYearDescription VARCHAR(200), SchoolFullAcademicYearEdFactsCode VARCHAR(50))
 
 		INSERT INTO #SchoolFullAcademicYear VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -2747,7 +2785,9 @@
 		FROM CEDS.CedsOptionSetMapping
 		WHERE CedsElementTechnicalName = 'SchoolFullAcademicYear'
 
-		DROP TABLE IF EXISTS #AssessmentRegistrationReasonNotCompleting
+		IF OBJECT_ID('tempdb..#AssessmentRegistrationReasonNotCompleting') IS NOT NULL
+			DROP TABLE #AssessmentRegistrationReasonNotCompleting
+
 		CREATE TABLE #AssessmentRegistrationReasonNotCompleting (AssessmentRegistrationReasonNotCompletingCode VARCHAR(50), AssessmentRegistrationReasonNotCompletingDescription VARCHAR(200), AssessmentRegistrationReasonNotCompletingEdFactsCode VARCHAR(50))
 
 		INSERT INTO #AssessmentRegistrationReasonNotCompleting VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -2762,8 +2802,9 @@
 		FROM CEDS.CedsOptionSetMapping
 		WHERE CedsElementTechnicalName = 'AssessmentRegistrationReasonNotCompleting'
 
-
-		DROP TABLE IF EXISTS #ReasonNotTested
+		IF OBJECT_ID('tempdb..#ReasonNotTested') IS NOT NULL
+			DROP TABLE #ReasonNotTested
+		
 		CREATE TABLE #ReasonNotTested (ReasonNotTestedCode VARCHAR(50), ReasonNotTestedDescription VARCHAR(200), ReasonNotTestedEdFactsCode VARCHAR(50))
 
 		INSERT INTO #ReasonNotTested VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -2939,7 +2980,9 @@
 
 	END
 
-		DROP TABLE IF EXISTS #DisciplineMethodForFirearmsIncidents
+		IF OBJECT_ID('tempdb..#DisciplineMethodForFirearmsIncidents') IS NOT NULL
+			DROP TABLE #DisciplineMethodForFirearmsIncidents
+
 		CREATE TABLE #DisciplineMethodForFirearmsIncidents (DisciplineMethodForFirearmsIncidentsCode VARCHAR(50), DisciplineMethodForFirearmsIncidentsDescription VARCHAR(200), DisciplineMethodForFirearmsIncidentsEdFactsCode VARCHAR(50))
 
 		INSERT INTO #DisciplineMethodForFirearmsIncidents VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -2952,7 +2995,9 @@
 		WHERE CedsElementTechnicalName = 'DisciplineMethodForFirearmsIncidents'
 
 
-		DROP TABLE IF EXISTS #IdeaDisciplineMethodForFirearmsIncidents
+		IF OBJECT_ID('tempdb..#IdeaDisciplineMethodForFirearmsIncidents') IS NOT NULL
+			DROP TABLE #IdeaDisciplineMethodForFirearmsIncidents
+
 		CREATE TABLE #IdeaDisciplineMethodForFirearmsIncidents (IdeaDisciplineMethodForFirearmsIncidentsCode VARCHAR(50), IdeaDisciplineMethodForFirearmsIncidentsDescription VARCHAR(200), IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode VARCHAR(50))
 
 		INSERT INTO #IdeaDisciplineMethodForFirearmsIncidents VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -3045,7 +3090,9 @@
 			SET IDENTITY_INSERT RDS.DimK12StaffCategories OFF
 	END
 
-		DROP TABLE IF EXISTS #K12StaffClassification
+		IF OBJECT_ID('tempdb..#K12StaffClassification') IS NOT NULL
+			DROP TABLE #K12StaffClassification
+
 		CREATE TABLE #K12StaffClassification (K12StaffClassificationCode VARCHAR(50), K12StaffClassificationDescription VARCHAR(200), K12StaffClassificationEdFactsCode VARCHAR(50))
 
 		INSERT INTO #K12StaffClassification VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -3075,7 +3122,8 @@
 		FROM CEDS.CedsOptionSetMapping
 		WHERE CedsElementTechnicalName = 'K12StaffClassification'
 
-		DROP TABLE IF EXISTS #SpecialEducationSupportServicesCategory
+		IF OBJECT_ID('tempdb..#SpecialEducationSupportServicesCategory') IS NOT NULL
+			DROP TABLE #SpecialEducationSupportServicesCategory
 		CREATE TABLE #SpecialEducationSupportServicesCategory (SpecialEducationSupportServicesCategoryCode VARCHAR(50), SpecialEducationSupportServicesCategoryDescription VARCHAR(200), SpecialEducationSupportServicesCategoryEdFactsCode VARCHAR(50))
 
 		INSERT INTO #SpecialEducationSupportServicesCategory VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -3087,7 +3135,9 @@
 		FROM CEDS.CedsOptionSetMapping
 		WHERE CedsElementTechnicalName = 'SpecialEducationSupportServicesCategory'
 
-		DROP TABLE IF EXISTS #TitleIProgramStaffCategory
+		IF OBJECT_ID('tempdb..#TitleIProgramStaffCategory') IS NOT NULL
+			DROP TABLE #TitleIProgramStaffCategory
+
 		CREATE TABLE #TitleIProgramStaffCategory (TitleIProgramStaffCategoryCode VARCHAR(50), TitleIProgramStaffCategoryDescription VARCHAR(200), TitleIProgramStaffCategoryEdFactsCode VARCHAR(50))
 
 		INSERT INTO #TitleIProgramStaffCategory VALUES ('MISSING', 'MISSING', 'MISSING')
