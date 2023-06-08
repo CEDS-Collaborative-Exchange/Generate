@@ -9695,15 +9695,11 @@
 
 	CREATE TABLE [RDS].[DimTitleIIIStatuses](
 	[DimTitleIIIStatusId] [int] IDENTITY(1,1) NOT NULL,
-	[ProgramParticipationTitleIIICode] [nvarchar](50) NULL,
-	[ProgramParticipationTitleIIIDescription] [nvarchar](200) NULL,
-	[ProgramParticipationTitleIIIEdFactsCode] [nvarchar](50) NULL,
+	[ProgramParticipationTitleIIILiepCode] [nvarchar](50) NULL,
+	[ProgramParticipationTitleIIILiepDescription] [nvarchar](200) NULL,
 	[TitleIIIImmigrantParticipationStatusCode] [nvarchar](50) NULL,
 	[TitleIIIImmigrantParticipationStatusDescription] [nvarchar](200) NULL,
 	[TitleIIIImmigrantParticipationStatusEdFactsCode] [nvarchar](50) NULL,
-	[FormerEnglishLearnerYearStatusCode] [nvarchar](50) NULL,
-	[FormerEnglishLearnerYearStatusDescription] [nvarchar](100) NULL,
-	[FormerEnglishLearnerYearStatusEdFactsCode] [nvarchar](50) NULL,
 	[ProficiencyStatusCode] [nvarchar](50) NULL,
 	[ProficiencyStatusDescription] [nvarchar](100) NULL,
 	[ProficiencyStatusEdFactsCode] [nvarchar](50) NULL,
@@ -10451,6 +10447,8 @@
 		[LastQualifyingMoveDateId]              INT CONSTRAINT [DF_FactK12StudentCounts_LastQualifyingMoveDateId] DEFAULT ((-1)) NOT NULL,
 		[TitleIStatusId]                        INT CONSTRAINT [DF_FactK12StudentCounts_TitleIStatusId] DEFAULT ((-1)) NOT NULL,
 		[TitleIIIStatusId]                      INT CONSTRAINT [DF_FactK12StudentCounts_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
+		[StatusStartDateEnglishLearnerId]       INT CONSTRAINT [DF_FactK12StudentCounts_StatusStartDateEnglishLearnerId] DEFAULT ((-1)) NOT NULL,
+		[StatusEndDateEnglishLearnerId]         INT CONSTRAINT [DF_FactK12StudentCounts_StatusEndDateEnglishLearnerId] DEFAULT ((-1)) NOT NULL,
 		[StudentCount]                          INT CONSTRAINT [DF_FactK12StudentCounts_StudentCount] DEFAULT ((1)) NOT NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_FactStudentCounts1] PRIMARY KEY CLUSTERED ([FactK12StudentCountId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
@@ -10548,6 +10546,32 @@
 	GO
 	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_EconomicallyDisadvantagedStatusId]
 		ON [RDS].[FactK12StudentCounts]([EconomicallyDisadvantagedStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+
+	GO
+	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_EconomicallyDisadvantagedStatusId]...';
+
+
+	GO
+	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_StatusStartDateEnglishLearnerId]
+		ON [RDS].[FactK12StudentCounts]([StatusStartDateEnglishLearnerId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+
+	GO
+	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_EconomicallyDisadvantagedStatusId]...';
+
+
+	GO
+	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_StatusEndDateEnglishLearnerId]
+		ON [RDS].[FactK12StudentCounts]([StatusEndDateEnglishLearnerId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+
+	PRINT N'Creating Foreign Key [RDS].[FactK12StudentCounts].[FK_FactK12StudentCounts_StatusStartDateEnglishLearnerId]...';
+
+	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+		ADD CONSTRAINT [FK_FactK12StudentCounts_StatusStartDateEnglishLearnerId] FOREIGN KEY ([StatusStartDateEnglishLearnerId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+
+	PRINT N'Creating Foreign Key [RDS].[FactK12StudentCounts].[FK_FactK12StudentCounts_StatusEndDateEnglishLearnerId]...';
+
+	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+		ADD CONSTRAINT [FK_FactK12StudentCounts_StatusEndDateEnglishLearnerId] FOREIGN KEY ([StatusEndDateEnglishLearnerId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 	GO

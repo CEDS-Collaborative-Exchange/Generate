@@ -142,7 +142,6 @@ CREATE TABLE Upgrade.FactK12StudentCounts (
 	, TitleIProgramTypeCode NVARCHAR(200)
 	, TitleISchoolStatusCode NVARCHAR(200)
 	, TitleISupportServicesCode NVARCHAR(200)
-	, FormerEnglishLearnerYearStatusCode NVARCHAR(200)
 	, ProficiencyStatusCode NVARCHAR(200)
 	, TitleiiiAccountabilityProgressStatusCode NVARCHAR(200)
 	, TitleiiiLanguageInstructionCode NVARCHAR(200)
@@ -227,7 +226,6 @@ SELECT
 	, rdtis.TitleIProgramTypeCode
 	, rdtis.TitleISchoolStatusCode
 	, rdtis.TitleISupportServicesCode
-	, rdtiiis.FormerEnglishLearnerYearStatusCode
 	, rdtiiis.ProficiencyStatusCode
 	, rdtiiis.TitleiiiAccountabilityProgressStatusCode
 	, rdtiiis.TitleiiiLanguageInstructionCode
@@ -495,7 +493,6 @@ CREATE TABLE [RDS].[tmp_ms_xx_ReportEDFactsK12StaffCounts] (
     [TotalIndicator]                          NVARCHAR (MAX)  NULL,
     [K12STAFFCLASSIFICATION]                  NVARCHAR (50)   NULL,
     [STAFFCATEGORYCCD]                        NVARCHAR (50)   NULL,
-    [FORMERENGLISHLEARNERYEARSTATUS]          NVARCHAR (50)   NULL,
     [PROFICIENCYSTATUS]                       NVARCHAR (50)   NULL,
     [TITLEIIIACCOUNTABILITYPROGRESSSTATUS]    NVARCHAR (50)   NULL,
     [TITLEIIILANGUAGEINSTRUCTION]             NVARCHAR (50)   NULL,
@@ -536,7 +533,6 @@ CREATE TABLE Upgrade.FactK12StaffCounts (
 	, SpecialEducationSupportServicesCategoryCode NVARCHAR(200)
 	, TitleIProgramStaffCategoryCode NVARCHAR(200)
 	--TitleIIIStatus
-	, FormerEnglishLearnerYearStatusCode NVARCHAR(200)
 	, ProficiencyStatusCode NVARCHAR(200)
 	, TitleiiiAccountabilityProgressStatusCode NVARCHAR(200)
 	, TitleiiiLanguageInstructionCode NVARCHAR(200)
@@ -575,7 +571,6 @@ SELECT
 	, rdksc.SpecialEducationSupportServicesCategoryCode
 	, rdksc.TitleIProgramStaffCategoryCode
 
-	, rdtiiis.FormerEnglishLearnerYearStatusCode
 	, rdtiiis.ProficiencyStatusCode
 	, rdtiiis.TitleiiiAccountabilityProgressStatusCode
 	, rdtiiis.TitleiiiLanguageInstructionCode
@@ -643,7 +638,6 @@ CREATE TABLE Upgrade.FactK12StudentAssessments (
 	, AssessedFirstTimeCode NVARCHAR(200)
 	, AssessmentProgressLevelCode NVARCHAR(200)
 	--TitleIIIStatus
-	, FormerEnglishLearnerYearStatusCode NVARCHAR(200)
 	, ProficiencyStatusCode NVARCHAR(200)
 	, TitleiiiAccountabilityProgressStatusCode NVARCHAR(200)
 	, TitleiiiLanguageInstructionCode NVARCHAR(200)
@@ -728,7 +722,6 @@ SELECT
 	, rdas.AssessedFirstTimeCode
 	, rdas.AssessmentProgressLevelCode
 	--TitleIIIStatus
-	, rdtiiis.FormerEnglishLearnerYearStatusCode
 	, rdtiiis.ProficiencyStatusCode
 	, rdtiiis.TitleiiiAccountabilityProgressStatusCode
 	, rdtiiis.TitleiiiLanguageInstructionCode
