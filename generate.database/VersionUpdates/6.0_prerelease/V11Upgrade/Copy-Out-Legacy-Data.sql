@@ -53,7 +53,7 @@ CREATE SCHEMA Upgrade;
 GO 
 
 CREATE TABLE Upgrade.DimK12Students (
-	  FirstName NVARCHAR(200)
+	FirstName NVARCHAR(200)
 	, MiddleName NVARCHAR(200)
 	, LastOrSurname NVARCHAR(200)
 	, BirthDate DATE
@@ -63,7 +63,7 @@ CREATE TABLE Upgrade.DimK12Students (
 )
 INSERT INTO Upgrade.DimK12Students
 SELECT
-	  s.FirstName
+	s.FirstName
 	, s.MiddleName
 	, s.LastName
 	, s.BirthDate
@@ -73,7 +73,7 @@ SELECT
 FROM RDS.DimK12Students s
 
 CREATE TABLE Upgrade.DimK12Staff (
-	  FirstName NVARCHAR(200)
+	FirstName NVARCHAR(200)
 	, MiddleName NVARCHAR(200)
 	, LastOrSurname NVARCHAR(200)
 	, BirthDate DATE
@@ -84,7 +84,7 @@ CREATE TABLE Upgrade.DimK12Staff (
 
 INSERT INTO Upgrade.DimK12Staff
 SELECT 
-	  FirstName
+	FirstName
 	, MiddleName
 	, LastOrSurname
 	, BirthDate
