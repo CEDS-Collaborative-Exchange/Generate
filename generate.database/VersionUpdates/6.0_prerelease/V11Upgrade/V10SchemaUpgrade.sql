@@ -7213,14 +7213,14 @@
 
 	--TODO: Review if this should happen
 	GO
-	PRINT N'Dropping Table [RDS].[DimDataMigrationTypes]...';
+	-- PRINT N'Dropping Table [RDS].[DimDataMigrationTypes]...';
 
 
-	GO
-	DROP TABLE [RDS].[DimDataMigrationTypes];
+	-- GO
+	-- DROP TABLE [RDS].[DimDataMigrationTypes];
 
 
-	GO
+	-- GO
 	PRINT N'Dropping Table [RDS].[DimDateDataMigrationTypes]...';
 
 
@@ -8319,7 +8319,7 @@
 		[PhysicalAddressCountyAnsiCodeCode] [char](5) NULL,
 		[TelephoneNumber] [nvarchar](24) NULL,
 		[WebSiteAddress] [nvarchar](300) NULL,
-		[OutOfStateIndicator] [bit] NOT NULL,
+		[OutOfStateIndicator] [bit] NULL,
 		[RecordStartDateTime] [datetime] NULL,
 		[RecordEndDateTime] [datetime] NULL,
 	 CONSTRAINT [tmp_ms_xx_PK_DimCharterSchoolAuthorizer] PRIMARY KEY CLUSTERED ([DimCharterSchoolAuthorizerId] ASC) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
@@ -8456,7 +8456,7 @@
 		[PhysicalAddressStreetNumberAndName] [nvarchar](150) NULL,
 		[TelephoneNumber] [nvarchar](24) NULL,
 		[WebSiteAddress] [nvarchar](300) NULL,
-		[OutOfStateIndicator] [bit] NOT NULL,
+		[OutOfStateIndicator] [bit] NULL,
 		[RecordStartDateTime] [datetime] NULL,
 		[RecordEndDateTime] [datetime] NULL,
 		[OrganizationIdentifierFein] [varchar](50) NULL,
@@ -63487,27 +63487,27 @@
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_CharterSchoolManagementOrganizationId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_SecondaryAuthorizingBodyCharterSchoolAuthorizerId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_SecondaryAuthorizingBodyCharterSchoolAuthorizerId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_CharterSchoolStatusId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_CharterSchoolStatusId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_CharterSchoolUpdatedManagementOrganizationId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_CharterSchoolUpdatedManagementOrganizationId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_ComprehensiveAndTargetedSupportId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_ComprehensiveAndTargetedSupportId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_ReasonApplicabilityId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_ReasonApplicabilityId];
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_FactTypeId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12OrganizationStatusId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12OrganizationStatusId];
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12SchoolId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12SchoolStateStatusId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12SchoolStateStatusId];
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12SchoolStatusId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12StaffId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12StaffId];
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_LeaId];
 
@@ -63515,9 +63515,9 @@
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_SeaId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_SubgroupId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_SubgroupId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_TitleIStatusId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_TitleIStatusId];
 
 	ALTER TABLE [RDS].[FactOrganizationStatusCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationStatusCounts_DimK12Demographics];
 

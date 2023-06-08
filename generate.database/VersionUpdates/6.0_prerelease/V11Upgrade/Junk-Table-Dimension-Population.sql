@@ -1,5 +1,4 @@
 /*    
-
 	Copyright 2022 Common Education Data Standards
 	----------------------------------------------
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +37,6 @@
       
     More information on the data model is available at the CEDS website:  
     http://ceds.ed.gov.
-		
 */    
 
 	SET NOCOUNT ON;

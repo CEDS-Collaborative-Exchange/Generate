@@ -42,6 +42,12 @@ BEGIN
 		--Populate Charter Authorizer	
 		exec Staging.[Staging-to-DimCharterSchoolAuthorizers] 
 
+	--write out message to DataMigrationHistories
+			insert into app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-DimCharterSchoolManagementOrganizations')
+
+		--Populate Charter Authorizer	
+		exec Staging.[Staging-to-DimCharterSchoolManagementOrganizations] 
 
 
 		--write out message to DataMigrationHistories
