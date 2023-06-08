@@ -191,6 +191,5 @@ StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
 VersionUpdates\\6.0_prerelease,UpdatesForSSRDUtility.sql,0
 StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
-VersionUpdates\\6.0_prerelease,RemoveReferencesToIeus.sql,0
 VersionUpdates\\6.0_prerelease,TEMP_RemoveFKConstraintsFactOrganizationCounts.sql,0
 VersionUpdates\\6.0_prerelease,UpdateDbVersion.sql,0
