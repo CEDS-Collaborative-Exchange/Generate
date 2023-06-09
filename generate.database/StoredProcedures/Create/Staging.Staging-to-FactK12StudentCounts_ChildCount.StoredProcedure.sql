@@ -181,11 +181,6 @@ BEGIN
 				ON ske.StudentIdentifierState = sppse.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sppse.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sppse.SchoolIdentifierSea,'')
-				--AND ((ISNULL(convert(varchar, ske.LeaIdentifierSeaAccountability), '') = ISNULL(convert(varchar, sppse.LeaIdentifierSeaAccountability), '') 
-				--	AND sppse.LeaIdentifierSeaAccountability is not null)
-				--	OR
-				--	(ISNULL(convert(varchar, ske.SchoolIdentifierSea), '') = ISNULL(convert(varchar, sppse.SchoolIdentifierSea), '')
-				--	AND sppse.SchoolIdentifierSea is not null))
 				AND @ChildCountDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, GETDATE())
 			
 			JOIN Staging.IdeaDisabilityType sidt	
@@ -222,18 +217,11 @@ BEGIN
 				ON ske.GradeLevel = rgls.GradeLevelMap
 				AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
 
-
 			LEFT JOIN Staging.PersonStatus el 
 				ON ske.StudentIdentifierState = el.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(el.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(el.SchoolIdentifierSea,'')
-				--AND ((ISNULL(convert(varchar, ske.LeaIdentifierSeaAccountability), '') = ISNULL(convert(varchar, el.LeaIdentifierSeaAccountability), '') 
-				--	AND el.LeaIdentifierSeaAccountability is not null)
-				--	OR
-				--	(ISNULL(convert(varchar, ske.SchoolIdentifierSea), '') = ISNULL(convert(varchar, el.SchoolIdentifierSea), '')
-				--	AND el.SchoolIdentifierSea is not null))
 				AND @ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
-
 
 			LEFT JOIN #vwEnglishLearnerStatuses rdels
 				ON rdels.PerkinsEnglishLearnerStatusCode = 'MISSING'
@@ -241,17 +229,10 @@ BEGIN
 				AND rdels.TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
 				AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 
-
 			LEFT JOIN #vwUnduplicatedRaceMap spr
 				ON ske.StudentIdentifierState = spr.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(spr.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(spr.SchoolIdentifierSea,'')
-
-				--AND ((ISNULL(convert(varchar, ske.LeaIdentifierSeaAccountability), '') = ISNULL(convert(varchar, spr.LeaIdentifierSeaAccountability), '') 
-				--	AND spr.LeaIdentifierSeaAccountability is not null)
-				--	OR
-				--	(ISNULL(convert(varchar, ske.SchoolIdentifierSea), '') = ISNULL(convert(varchar, spr.SchoolIdentifierSea), '')
-				--	AND spr.SchoolIdentifierSea is not null))
 
 			LEFT JOIN #vwRaces rdr
 				ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
@@ -263,30 +244,23 @@ BEGIN
 	
 			LEFT JOIN #vwIdeaStatuses rdis
 				ON rdis.IdeaIndicatorCode = 'Yes'
-				AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap = 
-				CASE 
-						--WHEN rda.AgeCode = 'MISSING' THEN 'MISSING'
-						WHEN 
-							(rda.AgeCode < 5 OR (rda.AgeCode = 5 AND rgls.GradeLevelCode IN ('PK','MISSING')))
-							AND	
-							ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'') <> '' 
-							and isnull(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, 'MISSING') = 'MISSING' -- ONLY GET THE ONES WHERE THE School Age MAP IS NULL
-
-							THEN sppse.IDEAEducationalEnvironmentForEarlyChildhood
-						ELSE 'MISSING'
-					END 
-				and rdis.IdeaEducationalEnvironmentForSchoolAgeMap = 
-					CASE 
-						--WHEN rda.AgeCode = 'MISSING' THEN 'MISSING'
-						WHEN 
-							(rda.AgeCode > 5 OR (rda.AgeCode = 5 AND rgls.GradeLevelCode NOT IN ('PK','MISSING')))
-							AND
-							ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'') <> ''
-							and isnull(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, 'MISSING') = 'MISSING' -- ONLY GET THE ONES WHERE THE EARLY CHILDHOOD MAP IS NULL
-							THEN sppse.IDEAEducationalEnvironmentForSchoolAge
-						ELSE 'MISSING'
-					END
 				AND rdis.SpecialEducationExitReasonCode = 'MISSING'
+				AND ISNULL(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, '') = 
+					CASE 
+						WHEN (rda.AgeCode < 5 OR (rda.AgeCode = 5 AND rgls.GradeLevelCode IN ('PK','MISSING')))
+							AND	ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'') <> '' 
+							AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
+							THEN sppse.IDEAEducationalEnvironmentForEarlyChildhood
+						ELSE ''
+					END 
+				AND ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, '') = 
+					CASE 
+						WHEN (rda.AgeCode > 5 OR (rda.AgeCode = 5 AND rgls.GradeLevelCode NOT IN ('PK','MISSING')))
+							AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'') <> ''
+							AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
+							THEN sppse.IDEAEducationalEnvironmentForSchoolAge
+						ELSE ''
+					END
 
 			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 				ON ske.SchoolYear = rdis.SchoolYear
