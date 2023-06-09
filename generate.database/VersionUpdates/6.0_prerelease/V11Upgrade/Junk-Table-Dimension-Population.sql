@@ -654,6 +654,281 @@
 	DROP TABLE #Ages
 
 
+	-----------------------------------------------------
+	-- Populate DimDimK12SchoolStatuses		                   --
+	-----------------------------------------------------
+	SET NOCOUNT ON
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12SchoolStatuses d WHERE d.DimK12SchoolStatusId = -1) BEGIN
+		SET IDENTITY_INSERT RDS.DimK12SchoolStatuses ON
+
+		INSERT INTO [RDS].[DimK12SchoolStatuses]
+           ([DimK12SchoolStatusId]
+		   ,[MagnetOrSpecialProgramEmphasisSchoolCode]
+           ,[MagnetOrSpecialProgramEmphasisSchoolDescription]
+           ,[MagnetOrSpecialProgramEmphasisSchoolEdFactsCode]
+           ,[NslpStatusCode]
+           ,[NslpStatusDescription]
+           ,[NslpStatusEdFactsCode]
+           ,[SharedTimeIndicatorCode]
+           ,[SharedTimeIndicatorDescription]
+           ,[SharedTimeIndicatorEdFactsCode]
+           ,[VirtualSchoolStatusCode]
+           ,[VirtualSchoolStatusDescription]
+           ,[VirtualSchoolStatusEdFactsCode]
+           ,[SchoolImprovementStatusCode]
+           ,[SchoolImprovementStatusDescription]
+           ,[SchoolImprovementStatusEdFactsCode]
+           ,[PersistentlyDangerousStatusCode]
+           ,[PersistentlyDangerousStatusDescription]
+           ,[PersistentlyDangerousStatusEdFactsCode]
+           ,[StatePovertyDesignationCode]
+           ,[StatePovertyDesignationDescription]
+           ,[StatePovertyDesignationEdFactsCode]
+           ,[ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode]
+           ,[ProgressAchievingEnglishLanguageProficiencyIndicatorTypeDescription]
+           ,[ProgressAchievingEnglishLanguageProficiencyIndicatorTypeEdFactsCode])
+			VALUES (
+				  -1
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				)
+
+		SET IDENTITY_INSERT RDS.DimK12SchoolStatuses OFF
+
+	END
+
+	CREATE TABLE #MagnetOrSpecialProgramEmphasisSchool (MagnetOrSpecialProgramEmphasisSchoolCode VARCHAR(50), MagnetOrSpecialProgramEmphasisSchoolDescription VARCHAR(200), MagnetOrSpecialProgramEmphasisSchoolEdFactsCode VARCHAR(200))
+
+		INSERT INTO #MagnetOrSpecialProgramEmphasisSchool VALUES ('MISSING', 'MISSING', 'MISSING')
+		INSERT INTO #MagnetOrSpecialProgramEmphasisSchool
+		SELECT 
+			  CedsOptionSetCode
+			, CedsOptionSetDescription
+			, CASE
+				when CedsOptionSetCode = 'All' then 'MAGYES'
+				when CedsOptionSetCode = 'Some' then 'MAGYES'
+				when CedsOptionSetCode = 'None' then 'MAGNO'
+				else 'MISSING'
+			END
+		FROM CEDS.CedsOptionSetMapping
+		WHERE CedsElementTechnicalName = 'MagnetOrSpecialProgramEmphasisSchool'
+
+
+	CREATE TABLE #NationalSchoolLunchProgramStatus (NslpStatusCode VARCHAR(50), NslpStatusDescription VARCHAR(200), NslpStatusEdFactsCode VARCHAR(200))
+
+		INSERT INTO #NationalSchoolLunchProgramStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+		INSERT INTO #NationalSchoolLunchProgramStatus 
+		SELECT 
+			  CedsOptionSetCode
+			, CedsOptionSetDescription
+			, CedsOptionSetCode AS EdFactsOptionSetCode
+		FROM CEDS.CedsOptionSetMapping
+		WHERE CedsElementTechnicalName = 'NationalSchoolLunchProgramStatus'
+
+
+
+	CREATE TABLE #SharedTimeIndicator (SharedTimeIndicatorCode VARCHAR(50), SharedTimeIndicatorDescription VARCHAR(200), SharedTimeIndicatorEdFactsCode VARCHAR(200))
+
+		INSERT INTO #SharedTimeIndicator VALUES ('MISSING', 'MISSING', 'MISSING')
+		INSERT INTO #SharedTimeIndicator 
+		SELECT 
+			  CedsOptionSetCode
+			, CedsOptionSetDescription
+			, CedsOptionSetCode
+		FROM CEDS.CedsOptionSetMapping
+		WHERE CedsElementTechnicalName = 'SharedTimeIndicator'
+
+
+
+	CREATE TABLE #VirtualSchoolStatus (VirtualSchoolStatusCode VARCHAR(50), VirtualSchoolStatusDescription VARCHAR(200), VirtualSchoolStatusEdFactsCode VARCHAR(200))
+
+		INSERT INTO #VirtualSchoolStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+		INSERT INTO #VirtualSchoolStatus 
+		SELECT 
+			  CedsOptionSetCode
+			, CedsOptionSetDescription
+			, CASE
+				when CedsOptionSetCode = 'SupplementalVirtual' then 'SUPPVIRTUAL'
+				else CedsOptionSetCode
+			END
+		FROM CEDS.CedsOptionSetMapping
+		WHERE CedsElementTechnicalName = 'VirtualSchoolStatus'
+
+	-- This is no longer used in EdFacts.  Setting the EdFacts values to MISSING
+	CREATE TABLE #SchoolImprovementStatus (SchoolImprovementStatusCode VARCHAR(50), SchoolImprovementStatusDescription VARCHAR(200), SchoolImprovementStatusEdFactsCode VARCHAR(200))
+
+		INSERT INTO #SchoolImprovementStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+		INSERT INTO #SchoolImprovementStatus 
+		SELECT 
+			  CedsOptionSetCode
+			, CedsOptionSetDescription
+			, 'MISSING' AS EdFactsOptionSetCode
+		FROM CEDS.CedsOptionSetMapping
+		WHERE CedsElementTechnicalName = 'SchoolImprovementStatus'
+
+
+	CREATE TABLE #PersistentlyDangerousStatus (PersistentlyDangerousStatusCode VARCHAR(50), PersistentlyDangerousStatusDescription VARCHAR(200), PersistentlyDangerousStatusEdFactsCode VARCHAR(200))
+
+		INSERT INTO #PersistentlyDangerousStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+		INSERT INTO #PersistentlyDangerousStatus 
+		SELECT 
+			  CedsOptionSetCode
+			, CedsOptionSetDescription
+			, CedsOptionSetCode AS EdFactsOptionSetCode
+		FROM CEDS.CedsOptionSetMapping
+		WHERE CedsElementTechnicalName = 'PersistentlyDangerousStatus'
+
+
+
+	CREATE TABLE #StatePovertyDesignation (StatePovertyDesignationCode VARCHAR(50), StatePovertyDesignationDescription VARCHAR(200), StatePovertyDesignationEdFactsCode VARCHAR(200))
+
+		INSERT INTO #StatePovertyDesignation VALUES ('MISSING', 'MISSING', 'MISSING')
+		INSERT INTO #StatePovertyDesignation 
+		SELECT 
+			  CedsOptionSetCode
+			, CedsOptionSetDescription
+			, CASE
+				when CedsOptionSetCode = 'HighQuartile' then 'HIGH'
+				when CedsOptionSetCode = 'LowQuartile' then 'LOW'
+				when CedsOptionSetCode = 'Neither' then 'NEITHER'
+				else 'MISSING'
+			END
+		FROM CEDS.CedsOptionSetMapping
+		WHERE CedsElementTechnicalName = 'StatePovertyDesignation'
+
+
+	CREATE TABLE #ProgressAchievingEnglishLanguageProficiencyIndicatorType(ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode VARCHAR(50), ProgressAchievingEnglishLanguageProficiencyIndicatorTypeDescription VARCHAR(200), ProgressAchievingEnglishLanguageProficiencyIndicatorTypeEdFactsCode VARCHAR(200))
+
+		INSERT INTO #ProgressAchievingEnglishLanguageProficiencyIndicatorType VALUES ('MISSING', 'MISSING', 'MISSING')
+		INSERT INTO #ProgressAchievingEnglishLanguageProficiencyIndicatorType 
+		SELECT 
+			  CedsOptionSetCode
+			, CedsOptionSetDescription
+			, CedsOptionSetCode AS EdFactsOptionSetCode
+		FROM CEDS.CedsOptionSetMapping
+		WHERE CedsElementTechnicalName = 'ProgressAchievingEnglishLanguageProficiencyIndicatorType'
+
+
+
+		INSERT INTO [RDS].[DimK12SchoolStatuses]
+           ([MagnetOrSpecialProgramEmphasisSchoolCode]
+           ,[MagnetOrSpecialProgramEmphasisSchoolDescription]
+           ,[MagnetOrSpecialProgramEmphasisSchoolEdFactsCode]
+           ,[NslpStatusCode]
+           ,[NslpStatusDescription]
+           ,[NslpStatusEdFactsCode]
+           ,[SharedTimeIndicatorCode]
+           ,[SharedTimeIndicatorDescription]
+           ,[SharedTimeIndicatorEdFactsCode]
+           ,[VirtualSchoolStatusCode]
+           ,[VirtualSchoolStatusDescription]
+           ,[VirtualSchoolStatusEdFactsCode]
+           ,[SchoolImprovementStatusCode]
+           ,[SchoolImprovementStatusDescription]
+           ,[SchoolImprovementStatusEdFactsCode]
+           ,[PersistentlyDangerousStatusCode]
+           ,[PersistentlyDangerousStatusDescription]
+           ,[PersistentlyDangerousStatusEdFactsCode]
+           ,[StatePovertyDesignationCode]
+           ,[StatePovertyDesignationDescription]
+           ,[StatePovertyDesignationEdFactsCode]
+           ,[ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode]
+           ,[ProgressAchievingEnglishLanguageProficiencyIndicatorTypeDescription]
+           ,[ProgressAchievingEnglishLanguageProficiencyIndicatorTypeEdFactsCode])
+
+		SELECT DISTINCT
+			  a.MagnetOrSpecialProgramEmphasisSchoolCode
+			, a.MagnetOrSpecialProgramEmphasisSchoolDescription
+			, a.MagnetOrSpecialProgramEmphasisSchoolEdFactsCode
+			
+			, b.NslpStatusCode
+			, b.NslpStatusDescription
+			, b.NslpStatusEdFactsCode
+			
+			, c.SharedTimeIndicatorCode
+			, c.SharedTimeIndicatorDescription
+			, c.SharedTimeIndicatorEdFactsCode
+			
+			, d.VirtualSchoolStatusCode
+			, d.VirtualSchoolStatusDescription
+			, d.VirtualSchoolStatusEdFactsCode
+
+			, e.SchoolImprovementStatusCode
+			, e.SchoolImprovementStatusDescription
+			, e.SchoolImprovementStatusEdFactsCode
+
+			, f.PersistentlyDangerousStatusCode
+			, f.PersistentlyDangerousStatusDescription
+			, f.PersistentlyDangerousStatusEdFactsCode
+
+			, g.StatePovertyDesignationCode
+			, g.StatePovertyDesignationDescription
+			, g.StatePovertyDesignationEdFactsCode
+
+			, h.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode
+			, h.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeDescription
+			, h.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeEdFactsCode
+
+		FROM #MagnetOrSpecialProgramEmphasisSchool a
+		CROSS JOIN #NationalSchoolLunchProgramStatus b
+		CROSS JOIN #SharedTimeIndicator c
+		CROSS JOIN #VirtualSchoolStatus d
+
+		CROSS JOIN #SchoolImprovementStatus e
+		CROSS JOIN #PersistentlyDangerousStatus f
+		CROSS JOIN #StatePovertyDesignation g
+		CROSS JOIN #ProgressAchievingEnglishLanguageProficiencyIndicatorType h
+
+
+		LEFT JOIN RDS.DimK12SchoolStatuses main
+			ON a.MagnetOrSpecialProgramEmphasisSchoolCode = main.MagnetOrSpecialProgramEmphasisSchoolCode
+			AND b.NslpStatusCode = main.NslpStatusCode
+			AND c.SharedTimeIndicatorCode = main.SharedTimeIndicatorCode
+			AND d.VirtualSchoolStatusCode = main.VirtualSchoolStatusCode
+			AND e.SchoolImprovementStatusCode = main.SchoolImprovementStatusCode
+			AND f.PersistentlyDangerousStatusCode = main.PersistentlyDangerousStatusCode
+			AND g.StatePovertyDesignationCode = main.StatePovertyDesignationCode
+			AND h.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode = main.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode
+
+
+		WHERE main.DimK12SchoolStatusId IS NULL
+
+	DROP TABLE #MagnetOrSpecialProgramEmphasisSchool
+	DROP TABLE #NationalSchoolLunchProgramStatus
+	DROP TABLE #SharedTimeIndicator
+	DROP TABLE #VirtualSchoolStatus
+
+	DROP TABLE #SchoolImprovementStatus
+	DROP TABLE #PersistentlyDangerousStatus
+	DROP TABLE #StatePovertyDesignation
+	DROP TABLE #ProgressAchievingEnglishLanguageProficiencyIndicatorType
+
+
+
+
 	---------------------------------
 	-- Populate DimK12ProgramTypes
 	---------------------------------
