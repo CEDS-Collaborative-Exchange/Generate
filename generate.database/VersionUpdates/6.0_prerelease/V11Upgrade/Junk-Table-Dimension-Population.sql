@@ -2556,6 +2556,7 @@
 	WHERE main.DimIdeaDisabilityTypeId IS NULL
 		AND ceds.CedsElementTechnicalName = 'IdeaDisabilityType'
 	
+
 	-----------------------------------------------------
 	-- Populate DimImmigrantStatuses				   --
 	-----------------------------------------------------
