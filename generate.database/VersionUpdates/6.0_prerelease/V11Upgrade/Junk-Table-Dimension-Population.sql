@@ -777,7 +777,7 @@
 		FROM CEDS.CedsOptionSetMapping
 		WHERE CedsElementTechnicalName = 'VirtualSchoolStatus'
 
-	-- This doesn't appear to be used anymore 
+	-- This is no longer used in EdFacts.  Setting the EdFacts values to MISSING
 	CREATE TABLE #SchoolImprovementStatus (SchoolImprovementStatusCode VARCHAR(50), SchoolImprovementStatusDescription VARCHAR(200), SchoolImprovementStatusEdFactsCode VARCHAR(200))
 
 		INSERT INTO #SchoolImprovementStatus VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -785,7 +785,7 @@
 		SELECT 
 			  CedsOptionSetCode
 			, CedsOptionSetDescription
-			, CedsOptionSetCode AS EdFactsOptionSetCode
+			, 'MISSING' AS EdFactsOptionSetCode
 		FROM CEDS.CedsOptionSetMapping
 		WHERE CedsElementTechnicalName = 'SchoolImprovementStatus'
 
