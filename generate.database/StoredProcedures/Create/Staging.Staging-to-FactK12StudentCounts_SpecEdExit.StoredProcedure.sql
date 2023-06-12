@@ -251,8 +251,9 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(homeless.SchoolIdentifierSea, '')
 			AND rdd.DateValue BETWEEN homeless.Homelessness_StatusStartDate AND ISNULL(homeless.Homelessness_StatusEndDate, GETDATE())
 		JOIN RDS.vwDimEnglishLearnerStatuses rdels
- 			ON rsy.SchoolYear = rdels.SchoolYear
+			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
+			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
 		JOIN RDS.vwDimK12Demographics rdkd
  			ON rsy.SchoolYear = rdkd.SchoolYear
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)

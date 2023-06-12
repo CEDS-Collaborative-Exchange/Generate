@@ -220,6 +220,7 @@ BEGIN
 		LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
 			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
+			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
 	--disability status (RDS)
 		LEFT JOIN #vwIdeaStatuses rdis
 			ON rdis.IdeaIndicatorCode = 'Yes'

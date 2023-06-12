@@ -225,9 +225,8 @@ BEGIN
 				AND @ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
 
 			LEFT JOIN #vwEnglishLearnerStatuses rdels
-				ON rdels.PerkinsEnglishLearnerStatusCode = 'MISSING'
-				AND rdels.TitleIIIAccountabilityProgressStatusCode = 'MISSING'
-				AND rdels.TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
+				ON rsy.SchoolYear = rdels.SchoolYear
+				AND rdels.PerkinsEnglishLearnerStatusCode = 'MISSING'
 				AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 
 			LEFT JOIN #vwUnduplicatedRaceMap spr

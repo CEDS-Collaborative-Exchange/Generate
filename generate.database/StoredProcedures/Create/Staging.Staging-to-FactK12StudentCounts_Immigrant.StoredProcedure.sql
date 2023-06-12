@@ -163,8 +163,6 @@ BEGIN
 			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
-			AND TitleIIIAccountabilityProgressStatusCode = 'MISSING'
-			AND TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
 	--immigrant (RDS)
 		LEFT JOIN #vwImmigrantStatuses rdis
 			ON ISNULL(CAST(immigrant.ProgramType_Immigrant AS SMALLINT), -1) = ISNULL(CAST(rdis.TitleIIIImmigrantStatusMap AS SMALLINT), -1)

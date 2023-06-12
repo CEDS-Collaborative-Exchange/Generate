@@ -254,8 +254,6 @@ I believe Cohort is supposed to be in AcademicAwardStatuses but the dimension do
 			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
-			AND TitleIIIAccountabilityProgressStatusCode = 'MISSING'
-			AND TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
 	--foster (RDS)
 		LEFT JOIN RDS.vwDimFosterCareStatuses rdfcs
 			ON rsy.SchoolYear = rdfcs.SchoolYear
