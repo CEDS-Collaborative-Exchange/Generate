@@ -184,7 +184,6 @@ BEGIN
 			ON ske.SchoolYear = rdnds.SchoolYear
 			AND ISNULL(nord.NeglectedOrDelinquentProgramType, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentProgramTypeMap, rdnds.IdeaEducationalEnvironmentForSchoolAgeCode)
 			AND rdnds.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
-			AND rdnds.NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
 
 /*
 The mapping above feels incomplete, need to verify the dimension fields/population once the dimension is populated

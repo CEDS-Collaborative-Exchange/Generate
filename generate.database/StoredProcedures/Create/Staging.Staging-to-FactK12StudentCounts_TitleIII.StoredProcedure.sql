@@ -89,7 +89,6 @@ BEGIN
         ,[StudentCount]
         ,[LanguageId]
         ,[MigrantId]
-        ,[K12StudentStatusId]
         ,[TitleIStatusId]
         ,[TitleIIIStatusId]
         ,[LeaId]
@@ -116,7 +115,6 @@ BEGIN
 		, 1											StudentCount
 		, -1										LanguageId
 		, -1										MigrantId
-		, -1										K12StudentStatusId
 		, -1										TitleIStatusId
 		, title3Statuses.DimTitleIIIStatusId          TitleIIIStatusId
 	    , ISNULL(rdl.DimLeaID, -1)					LEAId

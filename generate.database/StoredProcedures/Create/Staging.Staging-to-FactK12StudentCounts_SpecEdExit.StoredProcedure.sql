@@ -273,9 +273,9 @@ BEGIN
 			AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
 		LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 			ON ske.SchoolYear = rdis.SchoolYear
-			AND ISNULL(sidt.IdeaDisabilityType, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
+			AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
 			AND sidt.IsPrimaryDisability = 1
-		LEFT JOIN #vwDimRaces rdr
+		LEFT JOIN #vwRaces rdr
 			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
 				CASE
 					when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
@@ -393,7 +393,6 @@ BEGIN
 			, [IdeaStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]
-			, [K12StudentStatusId]
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
 			, [AttendanceId]
@@ -427,7 +426,6 @@ BEGIN
 			, [IdeaStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]
-			, [K12StudentStatusId]
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
 			, [AttendanceId]
@@ -454,5 +452,3 @@ BEGIN
 	END CATCH
 
 END
-
-	

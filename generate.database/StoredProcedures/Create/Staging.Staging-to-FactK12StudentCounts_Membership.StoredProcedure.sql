@@ -17,6 +17,7 @@ BEGIN
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
 		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
+		IF OBJECT_ID(N'tempdb..#vwUnduplicatedRaceMap') IS NOT NULL DROP TABLE #vwUnduplicatedRaceMap
 		IF OBJECT_ID(N'tempdb..#vwEconomicallyDisadvantagedStatuses') IS NOT NULL DROP TABLE #vwEconomicallyDisadvantagedStatuses
 
 		DECLARE 
@@ -62,6 +63,13 @@ BEGIN
 
 		CREATE CLUSTERED INDEX ix_tempvwRaces 
 			ON #vwRaces (RaceMap);
+
+		SELECT * 
+		INTO #vwUnduplicatedRaceMap 
+		FROM RDS.vwUnduplicatedRaceMap
+		WHERE SchoolYear = @SchoolYear
+
+		CREATE CLUSTERED INDEX ix_tempvwUnduplicatedRaceMap ON #vwUnduplicatedRaceMap (StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, RaceMap);
 
 		SELECT * 
 		INTO #vwEconomicallyDisadvantagedStatuses
@@ -119,6 +127,7 @@ BEGIN
 			, LastQualifyingMoveDateId				int null
 		)
 
+
 		INSERT INTO #Facts
 		SELECT DISTINCT
 			ske.id														StagingId
@@ -157,45 +166,6 @@ BEGIN
 		FROM Staging.K12Enrollment ske
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
-		LEFT JOIN RDS.DimLeas rdl
-			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND @MembershipDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
-		LEFT JOIN RDS.DimK12Schools rdpch
-			ON ske.SchoolIdentifierSea = rdpch.SchoolIdentifierSea
-			AND @MembershipDate BETWEEN rdpch.RecordStartDateTime AND ISNULL(rdpch.RecordEndDateTime, GETDATE())
-		JOIN RDS.DimSeas rds
-			ON @MembershipDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
-		LEFT JOIN Staging.PersonStatus sps	
-			ON ske.StudentIdentifierState = sps.StudentIdentifierState
-			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sps.LeaIdentifierSeaAccountability, '')
-			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sps.SchoolIdentifierSea, '')
-		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
-			ON ske.SchoolYear = spr.SchoolYear
-			AND ske.StudentIdentifierState = spr.StudentIdentifierState
-			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
-				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
-		JOIN RDS.DimAges rda
-			ON RDS.Get_Age(ske.Birthdate, @MembershipDate) = rda.AgeValue
-		JOIN RDS.vwDimK12Demographics rdkd
-			ON rsy.SchoolYear = rdkd.SchoolYear
-			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
-		LEFT JOIN #vwGradeLevels rgls
-			ON rgls.SchoolYear = ske.SchoolYear
-			AND ske.GradeLevel = rgls.GradeLevelMap
-			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
-		LEFT JOIN #vwRaces rdr
-			ON rdr.SchoolYear = ske.SchoolYear
-				AND ISNULL(rdr.RaceMap, rdr.RaceCode) =
-				CASE
-					when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
-					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
-					ELSE 'Missing'
-				END
-		LEFT JOIN #vwEconomicallyDisadvantagedStatuses rdeds
-			ON rdeds.SchoolYear = ske.SchoolYear
-			AND ISNULL(sps.EligibilityStatusForSchoolFoodServicePrograms, 'MISSING') = ISNULL(rdeds.EligibilityStatusForSchoolFoodServiceProgramsMap, 'MISSING')
-			AND ISNULL(CAST(sps.NationalSchoolLunchProgramDirectCertificationIndicator AS SMALLINT), -1)  = isnull(rdeds.NationalSchoolLunchProgramDirectCertificationIndicatorMap, -1)
-			AND ISNULL(CAST(sps.EconomicDisadvantageStatus as SMALLINT), -1) = ISNULL(rdeds.EconomicDisadvantageStatusMap, -1)
 		JOIN RDS.DimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND rdp.IsActiveK12Student = 1
@@ -204,6 +174,46 @@ BEGIN
 			AND ISNULL(ske.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND @MembershipDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
+		JOIN RDS.DimSeas rds
+			ON @MembershipDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+		JOIN RDS.DimAges rda
+			ON RDS.Get_Age(ske.Birthdate, @MembershipDate) = rda.AgeValue
+		JOIN RDS.vwDimK12Demographics rdkd
+			ON rsy.SchoolYear = rdkd.SchoolYear
+			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)	
+		LEFT JOIN #vwUnduplicatedRaceMap spr 
+			ON ske.StudentIdentifierState = spr.StudentIdentifierState
+			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
+				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
+		LEFT JOIN #vwRaces rdr
+			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
+				CASE
+					when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
+					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
+					ELSE 'Missing'
+				END
+		LEFT JOIN RDS.DimK12Schools rdpch
+			ON ske.SchoolIdentifierSea = rdpch.SchoolIdentifierSea
+			AND @MembershipDate BETWEEN rdpch.RecordStartDateTime AND ISNULL(rdpch.RecordEndDateTime, GETDATE())
+		LEFT JOIN Staging.PersonStatus sps	
+			ON ske.StudentIdentifierState = sps.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sps.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sps.SchoolIdentifierSea, '')
+
+		LEFT JOIN #vwEconomicallyDisadvantagedStatuses rdeds
+			ON rdeds.SchoolYear = ske.SchoolYear
+			AND ISNULL(sps.EligibilityStatusForSchoolFoodServicePrograms, 'MISSING') = ISNULL(rdeds.EligibilityStatusForSchoolFoodServiceProgramsMap, 'MISSING')
+			AND ISNULL(CAST(sps.NationalSchoolLunchProgramDirectCertificationIndicator AS SMALLINT), -1)  = isnull(rdeds.NationalSchoolLunchProgramDirectCertificationIndicatorMap, -1)
+			AND ISNULL(CAST(sps.EconomicDisadvantageStatus as SMALLINT), -1) = ISNULL(rdeds.EconomicDisadvantageStatusMap, -1)
+
+		LEFT JOIN #vwGradeLevels rgls
+			ON rgls.SchoolYear = ske.SchoolYear
+			AND ske.GradeLevel = rgls.GradeLevelMap
+			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
+
+		LEFT JOIN RDS.DimLeas rdl
+			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
+			AND @MembershipDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
 
 		WHERE @MembershipDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
 
