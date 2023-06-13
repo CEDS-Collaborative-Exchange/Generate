@@ -3,6 +3,7 @@ Author: AEM Corp
 Date:	1/6/2022
 Description: Migrates Graduate/Completer Data from Staging to RDS.FactK12StudentCounts
 
+NOTE: This Stored Procedure processes files: 040
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_GraduatesCompleters]
 	@SchoolYear SMALLINT

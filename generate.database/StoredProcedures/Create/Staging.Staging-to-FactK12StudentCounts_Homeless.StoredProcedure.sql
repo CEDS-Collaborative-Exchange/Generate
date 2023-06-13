@@ -2,6 +2,8 @@
 Author: AEM Corp
 Date:	2/20/2023
 Description: Migrates Homeless Data from Staging to RDS.FactK12StudentCounts
+
+NOTE: This Stored Procedure processes files: 118, 194
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_Homeless]
 	@SchoolYear SMALLINT

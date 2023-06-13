@@ -1,3 +1,10 @@
+/**********************************************************************
+Author: AEM Corp
+Date:	5/1/2022
+Description: Migrates Organization Data from Staging to RDS.FactOrganizationCounts
+
+NOTE: This Stored Procedure processes files: 029, 035, 039, 103, 129, 130, 131, 163, 170, 190, 193, 196, 197, 198, 205, 206
+************************************************************************/
 CREATE PROCEDURE Staging.[Staging-to-FactOrganizationCounts]
 	@SchoolYear smallint 
 
