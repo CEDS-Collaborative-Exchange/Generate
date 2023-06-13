@@ -3,7 +3,7 @@ Author: AEM Corp
 Date:	1/6/2022
 Description: Migrates Child Count Data from Staging to RDS.FactK12StudentCounts
 
-UPDATED FOR V11
+NOTE: This Stored Procedure processes files: 002, 089
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_ChildCount]
 	@SchoolYear SMALLINT
@@ -225,9 +225,8 @@ BEGIN
 				AND @ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
 
 			LEFT JOIN #vwEnglishLearnerStatuses rdels
-				ON rdels.PerkinsEnglishLearnerStatusCode = 'MISSING'
-				AND rdels.TitleIIIAccountabilityProgressStatusCode = 'MISSING'
-				AND rdels.TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
+				ON rsy.SchoolYear = rdels.SchoolYear
+				AND rdels.PerkinsEnglishLearnerStatusCode = 'MISSING'
 				AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 
 			LEFT JOIN #vwUnduplicatedRaceMap spr
@@ -264,7 +263,6 @@ BEGIN
 					END
 
 			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
-				ON ske.SchoolYear = rdidt.SchoolYear
 				AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
 				AND sidt.IsPrimaryDisability = 1
 			

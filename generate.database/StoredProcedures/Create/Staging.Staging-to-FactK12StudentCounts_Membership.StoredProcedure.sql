@@ -3,6 +3,7 @@ Author: AEM Corp
 Date:	2/17/2023
 Description: Migrates Membership Data from Staging to RDS.FactK12StudentCounts
 
+NOTE: This Stored Procedure processes files: 033, 052
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_Membership]
 	@SchoolYear SMALLINT
