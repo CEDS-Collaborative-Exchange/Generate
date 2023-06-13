@@ -5152,7 +5152,7 @@ BEGIN
 			--create the table with the insert
 			declare @debugTableCreate nvarchar(max)
 			IF @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') BEGIN
-				set @debugTableCreate = '		select StateStudentIdentifier ' 
+				set @debugTableCreate = '		select K12StudentStudentIdentifierState ' 
 			END ELSE BEGIN
 				set @debugTableCreate = '		select s.StaffMemberIdentifierState '  
 			END 
@@ -5207,7 +5207,7 @@ BEGIN
 
 		
 			IF @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') BEGIN
-				set @debugTableCreate += '		order by StateStudentIdentifier ' + char(10)
+				set @debugTableCreate += '		order by K12StudentStudentIdentifierState ' + char(10)
 			END ELSE BEGIN
 				set @debugTableCreate += '		order by s.StaffMemberIdentifierState ' + char(10)
 			END

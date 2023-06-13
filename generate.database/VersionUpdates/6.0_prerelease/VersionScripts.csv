@@ -192,7 +192,6 @@ StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
-VersionUpdates\\6.0_prerelease,StagingValidationDatabaseChanges.sql,0
 VersionUpdates\\6.0_prerelease,RemoveReferencesToIeus.sql,0
 VersionUpdates\\6.0_prerelease,UpdatesForSSRDUtility.sql,0
 StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
