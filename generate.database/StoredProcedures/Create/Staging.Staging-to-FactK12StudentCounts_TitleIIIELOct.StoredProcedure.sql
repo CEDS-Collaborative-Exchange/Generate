@@ -3,6 +3,7 @@ Author: AEM Corp
 Date:	2/20/2023
 Description: Migrates Title III EL Oct Data from Staging to RDS.FactK12StudentCounts
 
+NOTE: This Stored Procedure processes files: 116, 141
 ***********************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_TitleIIIELOct]
 	@SchoolYear SMALLINT
@@ -193,8 +194,6 @@ BEGIN
 		LEFT JOIN #vwDimEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdels.EnglishLearnerStatusMap AS SMALLINT), -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
-			AND TitleIIIAccountabilityProgressStatusCode = 'MISSING'
-			AND TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
 	--languages (RDS)
 		LEFT JOIN #vwLanguages rdvl
 			ON ISNULL(immigrant.ISO_639_2_NativeLanguage, 'MISSING') = ISNULL(rdvl.Iso6392LanguageMap, 'MISSING')

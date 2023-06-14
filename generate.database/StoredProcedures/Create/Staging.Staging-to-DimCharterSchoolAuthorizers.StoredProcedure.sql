@@ -12,6 +12,12 @@ BEGIN
 	SELECT @StateANSICode = (select Code from dbo.RefStateANSICode where [Description] = @StateName)
 	SELECT @SchoolYear = (select SchoolYear from Staging.StateDetail)
 
+	IF NOT EXISTS (SELECT 1 FROM rds.DimCharterSchoolAuthorizers WHERE DimCharterSchoolAuthorizerId = -1)
+	BEGIN
+		SET IDENTITY_INSERT rds.DimCharterSchoolAuthorizers ON
+		INSERT INTO rds.DimCharterSchoolAuthorizers (DimCharterSchoolAuthorizerId) VALUES (-1)
+		SET IDENTITY_INSERT rds.DimCharterSchoolAuthorizers off
+	END
 
 	CREATE TABLE #organizationTypes (
 		SchoolYear									SMALLINT
@@ -49,7 +55,7 @@ BEGIN
 		, @StateName			 									'StateAbbreviationDescription'
 		, @StateCode 												'StateAbbreviationCode'
 		, @StateANSICode 											'StateANSICode'
-		, scsa.CharterSchoolAuthorizingOrganizationType
+		, scsa.CharterSchoolAuthorizingOrganizationType				'CharterSchoolAuthorizingOrganizationTypeCode'
 		, refcsat.[Definition] 										'CharterSchoolAuthorizingOrganizationTypeDescription'
 		, ssrd.OutputCode				 							'CharterSchoolAuthorizingOrganizationTypeEdfactsCode'
 		, smam.AddressStreetNumberAndName				 			'MailingAddressStreetNumberAndName'
@@ -161,7 +167,7 @@ BEGIN
 			, StateAbbreviationCode
 			, StateANSICode
 			, StateAbbreviationDescription
-			, src.CharterSchoolAuthorizingOrganizationType
+			, src.CharterSchoolAuthorizingOrganizationTypeCode
 			, src.CharterSchoolAuthorizingOrganizationTypeDescription
 			, src.CharterSchoolAuthorizingOrganizationTypeEdFactsCode
 			, src.MailingAddressStreetNumberAndName

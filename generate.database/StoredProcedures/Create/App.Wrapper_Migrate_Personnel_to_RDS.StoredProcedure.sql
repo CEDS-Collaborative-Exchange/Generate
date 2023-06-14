@@ -10,10 +10,10 @@ BEGIN
 	--Populate the RDS tables from ODS data
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Personnel - Start Migrate_DimPersonnel')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Personnel - Start Staging-to-DimPeople_K112staff')
 
-		--Populate DimPersonnel
-		exec [Staging].[Staging-To-DimK12Staff] null
+		--Populate DimPeople
+		exec Staging.[Staging-To-DimPeople_K12Staff] NULL
 
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
@@ -47,30 +47,36 @@ BEGIN
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Personnel - Start Migrate_PersonnelCounts for Submission reports')
 
+		--remove the cursor if a previous migraton stopped/failed
+		if cursor_status('global','selectedYears_cursor') >= -1
+		begin
+			deallocate selectedYears_cursor
+		end
+		
 		--populate the fact table for the submission report
 		DECLARE @submissionYear AS VARCHAR(50)
-
-		DECLARE selectedYears_cursor CURSOR LOCAL READ_ONLY FORWARD_ONLY FOR 
-			SELECT d.SchoolYear
-			FROM rds.DimSchoolYears d
+		DECLARE selectedYears_cursor CURSOR FOR 
+		SELECT d.SchoolYear
+		FROM rds.DimSchoolYears d
 			JOIN rds.DimSchoolYearDataMigrationTypes dd 
 				ON dd.DimSchoolYearId = d.DimSchoolYearId
-			JOIN rds.DimDataMigrationTypes b 
-				ON b.DimDataMigrationTypeId = dd.DataMigrationTypeId 
-			WHERE d.DimSchoolYearId <> -1 
-			AND dd.IsSelected = 1 
-			AND DataMigrationTypeCode = 'RDS'
+			JOIN App.DataMigrationTypes b 
+				ON b.DataMigrationTypeId=dd.DataMigrationTypeId 
+		WHERE d.DimSchoolYearId <> -1 
+		AND dd.IsSelected = 1 
+		AND DataMigrationTypeCode = 'RDS'
 
 		OPEN selectedYears_cursor
 		FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
-			exec [Staging].[Staging-to-FactK12StaffCounts] @submissionYear
+			EXEC Staging.[Staging-to-FactK12StaffCounts] @submissionYear
+
 			FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
 		END
-
-		close selectedYears_cursor
-		deallocate selectedYears_cursor
+		
+		CLOSE selectedYears_cursor
+		DEALLOCATE selectedYears_cursor
 
 	--RDS migration complete
 			--write out message to DataMigrationHistories

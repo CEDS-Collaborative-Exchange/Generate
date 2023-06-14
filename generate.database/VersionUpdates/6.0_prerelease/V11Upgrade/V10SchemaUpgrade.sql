@@ -7213,14 +7213,14 @@
 
 	--TODO: Review if this should happen
 	GO
-	PRINT N'Dropping Table [RDS].[DimDataMigrationTypes]...';
+	-- PRINT N'Dropping Table [RDS].[DimDataMigrationTypes]...';
 
 
-	GO
-	DROP TABLE [RDS].[DimDataMigrationTypes];
+	-- GO
+	-- DROP TABLE [RDS].[DimDataMigrationTypes];
 
 
-	GO
+	-- GO
 	PRINT N'Dropping Table [RDS].[DimDateDataMigrationTypes]...';
 
 
@@ -8319,7 +8319,7 @@
 		[PhysicalAddressCountyAnsiCodeCode] [char](5) NULL,
 		[TelephoneNumber] [nvarchar](24) NULL,
 		[WebSiteAddress] [nvarchar](300) NULL,
-		[OutOfStateIndicator] [bit] NOT NULL,
+		[OutOfStateIndicator] [bit] NULL,
 		[RecordStartDateTime] [datetime] NULL,
 		[RecordEndDateTime] [datetime] NULL,
 	 CONSTRAINT [tmp_ms_xx_PK_DimCharterSchoolAuthorizer] PRIMARY KEY CLUSTERED ([DimCharterSchoolAuthorizerId] ASC) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
@@ -8456,7 +8456,7 @@
 		[PhysicalAddressStreetNumberAndName] [nvarchar](150) NULL,
 		[TelephoneNumber] [nvarchar](24) NULL,
 		[WebSiteAddress] [nvarchar](300) NULL,
-		[OutOfStateIndicator] [bit] NOT NULL,
+		[OutOfStateIndicator] [bit] NULL,
 		[RecordStartDateTime] [datetime] NULL,
 		[RecordEndDateTime] [datetime] NULL,
 		[OrganizationIdentifierFein] [varchar](50) NULL,
@@ -9695,15 +9695,11 @@
 
 	CREATE TABLE [RDS].[DimTitleIIIStatuses](
 	[DimTitleIIIStatusId] [int] IDENTITY(1,1) NOT NULL,
-	[ProgramParticipationTitleIIICode] [nvarchar](50) NULL,
-	[ProgramParticipationTitleIIIDescription] [nvarchar](200) NULL,
-	[ProgramParticipationTitleIIIEdFactsCode] [nvarchar](50) NULL,
+	[ProgramParticipationTitleIIILiepCode] [nvarchar](50) NULL,
+	[ProgramParticipationTitleIIILiepDescription] [nvarchar](200) NULL,
 	[TitleIIIImmigrantParticipationStatusCode] [nvarchar](50) NULL,
 	[TitleIIIImmigrantParticipationStatusDescription] [nvarchar](200) NULL,
 	[TitleIIIImmigrantParticipationStatusEdFactsCode] [nvarchar](50) NULL,
-	[FormerEnglishLearnerYearStatusCode] [nvarchar](50) NULL,
-	[FormerEnglishLearnerYearStatusDescription] [nvarchar](100) NULL,
-	[FormerEnglishLearnerYearStatusEdFactsCode] [nvarchar](50) NULL,
 	[ProficiencyStatusCode] [nvarchar](50) NULL,
 	[ProficiencyStatusDescription] [nvarchar](100) NULL,
 	[ProficiencyStatusEdFactsCode] [nvarchar](50) NULL,
@@ -10436,7 +10432,7 @@
 		[EconomicallyDisadvantagedStatusId]     INT CONSTRAINT [DF_FactK12StudentCounts_EconomicallyDisadvantagedStatusId] DEFAULT ((-1)) NOT NULL,
 		[FosterCareStatusId]                    INT CONSTRAINT [DF_FactK12StudentCounts_FosterCareStatusId] DEFAULT ((-1)) NOT NULL,
 		[IdeaStatusId]                          INT CONSTRAINT [DF_FactK12StudentCounts_IdeaStatusId] DEFAULT ((-1)) NOT NULL,
-		[IdeaDisabilityTypeId]  				INT CONSTRAINT [DF_FactK12StudentCounts_IdeaDisabilityTypeId] DEFAULT ((-1)) NOT NULL,
+--		[IdeaDisabilityTypeId]  				INT CONSTRAINT [DF_FactK12StudentCounts_IdeaDisabilityTypeId] DEFAULT ((-1)) NOT NULL,
 		[ImmigrantStatusId]                     INT CONSTRAINT [DF_FactK12StudentCounts_ImmigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[K12DemographicId]                      INT CONSTRAINT [DF_FactK12StudentCounts_K12Demographic] DEFAULT ((-1)) NOT NULL,
 		[K12EnrollmentStatusId]                 INT CONSTRAINT [DF_FactK12StudentCounts_EnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
@@ -10451,6 +10447,8 @@
 		[LastQualifyingMoveDateId]              INT CONSTRAINT [DF_FactK12StudentCounts_LastQualifyingMoveDateId] DEFAULT ((-1)) NOT NULL,
 		[TitleIStatusId]                        INT CONSTRAINT [DF_FactK12StudentCounts_TitleIStatusId] DEFAULT ((-1)) NOT NULL,
 		[TitleIIIStatusId]                      INT CONSTRAINT [DF_FactK12StudentCounts_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
+		[StatusStartDateEnglishLearnerId]       INT CONSTRAINT [DF_FactK12StudentCounts_StatusStartDateEnglishLearnerId] DEFAULT ((-1)) NOT NULL,
+		[StatusEndDateEnglishLearnerId]         INT CONSTRAINT [DF_FactK12StudentCounts_StatusEndDateEnglishLearnerId] DEFAULT ((-1)) NOT NULL,
 		[StudentCount]                          INT CONSTRAINT [DF_FactK12StudentCounts_StudentCount] DEFAULT ((1)) NOT NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_FactStudentCounts1] PRIMARY KEY CLUSTERED ([FactK12StudentCountId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
@@ -10548,6 +10546,32 @@
 	GO
 	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_EconomicallyDisadvantagedStatusId]
 		ON [RDS].[FactK12StudentCounts]([EconomicallyDisadvantagedStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+
+	GO
+	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_EconomicallyDisadvantagedStatusId]...';
+
+
+	GO
+	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_StatusStartDateEnglishLearnerId]
+		ON [RDS].[FactK12StudentCounts]([StatusStartDateEnglishLearnerId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+
+	GO
+	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_EconomicallyDisadvantagedStatusId]...';
+
+
+	GO
+	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_StatusEndDateEnglishLearnerId]
+		ON [RDS].[FactK12StudentCounts]([StatusEndDateEnglishLearnerId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+
+	PRINT N'Creating Foreign Key [RDS].[FactK12StudentCounts].[FK_FactK12StudentCounts_StatusStartDateEnglishLearnerId]...';
+
+	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+		ADD CONSTRAINT [FK_FactK12StudentCounts_StatusStartDateEnglishLearnerId] FOREIGN KEY ([StatusStartDateEnglishLearnerId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+
+	PRINT N'Creating Foreign Key [RDS].[FactK12StudentCounts].[FK_FactK12StudentCounts_StatusEndDateEnglishLearnerId]...';
+
+	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+		ADD CONSTRAINT [FK_FactK12StudentCounts_StatusEndDateEnglishLearnerId] FOREIGN KEY ([StatusEndDateEnglishLearnerId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 	GO
@@ -11011,7 +11035,7 @@
 		[GradeLevelId]                      INT             CONSTRAINT [DF_FactK12StudentDisciplines_GradeLevelId] DEFAULT ((-1)) NOT NULL,
 		[HomelessnessStatusId]              INT             CONSTRAINT [DF_FactK12StudentDisciplines_HomelessnessStatusId] DEFAULT ((-1)) NOT NULL,
 		[IdeaStatusId]                      INT             CONSTRAINT [DF_FactK12StudentDisciplines_IdeaStatusId] DEFAULT ((-1)) NOT NULL,
-		[IdeaDisabilityTypeId]   			INT             CONSTRAINT [DF_FactK12StudentDisciplines_IdeaDisabilityTypeId] DEFAULT ((-1)) NOT NULL,
+--		[IdeaDisabilityTypeId]   			INT             CONSTRAINT [DF_FactK12StudentDisciplines_IdeaDisabilityTypeId] DEFAULT ((-1)) NOT NULL,
 		[ImmigrantStatusId]                 INT             CONSTRAINT [DF_FactK12StudentDisciplines_ImmigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[IncidentIdentifier]                NVARCHAR (40)   NULL,
 		[IncidentStatusId]                  INT             CONSTRAINT [DF_FactK12StudentDisciplines_IncidentStatusId] DEFAULT ((-1)) NOT NULL,
@@ -15363,12 +15387,6 @@
 		[PerkinsEnglishLearnerStatusCode]                   NVARCHAR (100) NOT NULL,
 		[PerkinsEnglishLearnerStatusDescription]            NVARCHAR (300) NOT NULL,
 		[PerkinsEnglishLearnerStatusEdfactsCode]	        VARCHAR (50)   NOT NULL,
-		[TitleIIIAccountabilityProgressStatusCode]          NVARCHAR (50)  NOT NULL,
-		[TitleIIIAccountabilityProgressStatusDescription]   NVARCHAR (100) NOT NULL,
-		[TitleIIIAccountabilityProgressStatusEdFactsCode]   NVARCHAR (50)  NOT NULL,
-		[TitleIIILanguageInstructionProgramTypeCode]        NVARCHAR (50)  NOT NULL,
-		[TitleIIILanguageInstructionProgramTypeDescription] NVARCHAR (100) NOT NULL,
-		[TitleIIILanguageInstructionProgramTypeEdFactsCode] NVARCHAR (50)  NOT NULL,
 		CONSTRAINT [PK_DimEnglistLearnerStatuses] PRIMARY KEY CLUSTERED ([DimEnglishLearnerStatusId] ASC)
 	);
 
@@ -15503,11 +15521,12 @@
 		[MigrantStatusEdFactsCode]                         NVARCHAR (50)  NOT NULL,
 		[MigrantEducationProgramEnrollmentTypeCode]        NVARCHAR (100) NOT NULL,
 		[MigrantEducationProgramEnrollmentTypeDescription] NVARCHAR (300) NOT NULL,
-		[MigrantEducationProgramEnrollmentTypeEdFactsCode] NVARCHAR (50)  NOT NULL,
 		[ContinuationOfServicesReasonCode]                 NVARCHAR (100) NOT NULL,
 		[ContinuationOfServicesReasonDescription]          NVARCHAR (300) NOT NULL,
-		[ContinuationOfServicesReasonEdFactsCode]          NVARCHAR (50)  NOT NULL,
 		[ConsolidatedMepFundsStatusCode]                   NVARCHAR (100) NOT NULL,
+		[MEPContinuationOfServicesStatusCode]			   NVARCHAR (100) NOT NULL,
+		[MEPContinuationOfServicesStatusDescription]	   NVARCHAR (300) NOT NULL,
+		[MEPContinuationOfServicesStatusEdFactsCode]	   NVARCHAR (50)  NOT NULL,
 		[ConsolidatedMepFundsStatusDescription]            NVARCHAR (300) NOT NULL,
 		[ConsolidatedMepFundsStatusEdFactsCode]            NVARCHAR (50)  NOT NULL,
 		[MigrantEducationProgramServicesTypeCode]          NVARCHAR (100) NOT NULL,
@@ -15526,25 +15545,17 @@
 
 	GO
 	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_Codes]
-		ON [RDS].[DimMigrantStatuses]([ContinuationOfServicesReasonCode] ASC, [ConsolidatedMepFundsStatusCode] ASC, [MigrantEducationProgramServicesTypeCode] ASC, [MigrantPrioritizedForServicesCode] ASC, [MigrantEducationProgramEnrollmentTypeCode] ASC) WITH (FILLFACTOR = 80);
+		ON [RDS].[DimMigrantStatuses]([MEPContinuationOfServicesStatusCode] ASC, [ContinuationOfServicesReasonCode] ASC, [ConsolidatedMepFundsStatusCode] ASC, [MigrantEducationProgramServicesTypeCode] ASC, [MigrantPrioritizedForServicesCode] ASC, [MigrantEducationProgramEnrollmentTypeCode] ASC) WITH (FILLFACTOR = 80);
 
 
 	GO
-	PRINT N'Creating Index [RDS].[DimMigrantStatuses].[IX_DimMigrantStatuses_ContinuationEdFactsCode]...';
+	PRINT N'Creating Index [RDS].[DimMigrantStatuses].[IX_DimMigrantStatuses_MEPContinuationOfServicesStatusEdFactsCode]...';
 
 
 	GO
-	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_ContinuationEdFactsCode]
-		ON [RDS].[DimMigrantStatuses]([ContinuationOfServicesReasonEdFactsCode] ASC) WITH (FILLFACTOR = 80);
+	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_MEPContinuationOfServicesStatusEdFactsCode]
+		ON [RDS].[DimMigrantStatuses]([MEPContinuationOfServicesStatusEdFactsCode] ASC) WITH (FILLFACTOR = 80);
 
-
-	GO
-	PRINT N'Creating Index [RDS].[DimMigrantStatuses].[IX_DimMigrantStatuses_MepEnrollmentTypeEdFactsCode]...';
-
-
-	GO
-	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_MepEnrollmentTypeEdFactsCode]
-		ON [RDS].[DimMigrantStatuses]([MigrantEducationProgramEnrollmentTypeEdFactsCode] ASC) WITH (FILLFACTOR = 80);
 
 
 	GO
@@ -50446,246 +50457,6 @@
 
 
 	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusCode].[CEDS_Def_Desc]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of the progress made by a student toward English proficiency.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusCode].[CEDS_Element]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Title III Accountability Progress Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusCode].[CEDS_GlobalId]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000536', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusCode].[CEDS_URL]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19527', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusCode].[MS_Description]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusDescription].[CEDS_Def_Desc]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of the progress made by a student toward English proficiency.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusDescription].[CEDS_Element]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Title III Accountability Progress Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusDescription].[CEDS_GlobalId]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000536', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusDescription].[CEDS_URL]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19527', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusDescription].[MS_Description]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusEdFactsCode].[CEDS_Def_Desc]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of the progress made by a student toward English proficiency.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusEdFactsCode].[CEDS_Element]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Title III Accountability Progress Status', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusEdFactsCode].[CEDS_GlobalId]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000536', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusEdFactsCode].[CEDS_URL]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19527', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIIAccountabilityProgressStatusEdFactsCode].[MS_Description]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIIAccountabilityProgressStatusEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeCode].[CEDS_Def_Desc]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of Title III language instructional education programs.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeCode].[CEDS_Element]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Title III Language Instruction Program Type', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeCode].[CEDS_GlobalId]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000447', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeCode].[CEDS_URL]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19437', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeCode].[MS_Description]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeDescription].[CEDS_Def_Desc]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of Title III language instructional education programs.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeDescription].[CEDS_Element]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Title III Language Instruction Program Type', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeDescription].[CEDS_GlobalId]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000447', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeDescription].[CEDS_URL]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19437', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeDescription].[MS_Description]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeDescription';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeEdFactsCode].[CEDS_Def_Desc]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The type of Title III language instructional education programs.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeEdFactsCode].[CEDS_Element]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Title III Language Instruction Program Type', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeEdFactsCode].[CEDS_GlobalId]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000447', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeEdFactsCode].[CEDS_URL]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19437', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeEdFactsCode';
-
-
-	GO
-	PRINT N'Creating Extended Property [RDS].[DimEnglishLearnerStatuses].[TitleIIILanguageInstructionProgramTypeEdFactsCode].[MS_Description]...';
-
-
-	GO
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimEnglishLearnerStatuses', @level2type = N'COLUMN', @level2name = N'TitleIIILanguageInstructionProgramTypeEdFactsCode';
-
-
-	GO
 	PRINT N'Creating Extended Property [RDS].[DimHomelessnessStatuses].[HomelessnessStatusCode].[CEDS_Def_Desc]...';
 
 
@@ -63470,27 +63241,27 @@
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_CharterSchoolManagementOrganizationId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_SecondaryAuthorizingBodyCharterSchoolAuthorizerId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_SecondaryAuthorizingBodyCharterSchoolAuthorizerId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_CharterSchoolStatusId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_CharterSchoolStatusId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_CharterSchoolUpdatedManagementOrganizationId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_CharterSchoolUpdatedManagementOrganizationId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_ComprehensiveAndTargetedSupportId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_ComprehensiveAndTargetedSupportId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_ReasonApplicabilityId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_ReasonApplicabilityId];
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_FactTypeId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12OrganizationStatusId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12OrganizationStatusId];
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12SchoolId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12SchoolStateStatusId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12SchoolStateStatusId];
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12SchoolStatusId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12StaffId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12StaffId];
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_LeaId];
 
@@ -63498,9 +63269,9 @@
 
 	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_SeaId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_SubgroupId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_SubgroupId];
 
-	ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_TitleIStatusId];
+	--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_TitleIStatusId];
 
 	ALTER TABLE [RDS].[FactOrganizationStatusCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationStatusCounts_DimK12Demographics];
 

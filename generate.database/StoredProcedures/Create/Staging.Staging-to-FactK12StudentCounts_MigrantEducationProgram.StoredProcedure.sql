@@ -2,6 +2,8 @@
 Author: AEM Corp
 Date:	2/20/2023
 Description: Migrates Migrant Education Program Data from Staging to RDS.FactK12StudentCounts
+
+NOTE: This Stored Procedure processes files: 054, 121, 122, 145
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_MigrantEducationProgram]
 	@SchoolYear SMALLINT
@@ -47,12 +49,12 @@ BEGIN
 		CREATE CLUSTERED INDEX ix_tempvwMigrantStatuses
 			ON #vwMigrantStatuses (MigrantStatusCode, MigrantEducationProgramEnrollmentTypeCode, ContinuationOfServicesReasonCode, ConsolidatedMepFundsStatusCode, MigrantEducationProgramServicesTypeCode, MigrantPrioritizedForServicesCode);
 
-		--Set the correct Fact Type
+	--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'mep'	--DimFactTypeId = 13
 
-		--Clear the Fact table of the data about to be migrated  
+	--Clear the Fact table of the data about to be migrated  
 		DELETE RDS.FactK12StudentCounts
 		WHERE SchoolYearId = @SchoolYearId 
 			AND FactTypeId = @FactTypeId
@@ -176,8 +178,6 @@ BEGIN
 			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
-			AND TitleIIIAccountabilityProgressStatusCode = 'MISSING'
-			AND TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
 	--migrant (RDS)
 		LEFT JOIN #vwMigrantStatuses rdms
 			ON ISNULL(CAST(migrant.MigrantStatus AS SMALLINT), -1) = ISNULL(CAST(rdms.MigrantStatusMap AS SMALLINT), -1)
@@ -197,7 +197,6 @@ BEGIN
 			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
-
 
 	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (

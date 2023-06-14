@@ -2,6 +2,8 @@
 Author: AEM Corp
 Date:	2/20/2023
 Description: Migrates Graduation Rate Data from Staging to RDS.FactK12StudentCounts
+
+NOTE: This Stored Procedure processes files: 150, 151
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_GraduationRate]
 	@SchoolYear SMALLINT
@@ -254,8 +256,6 @@ I believe Cohort is supposed to be in AcademicAwardStatuses but the dimension do
 			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
-			AND TitleIIIAccountabilityProgressStatusCode = 'MISSING'
-			AND TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
 	--foster (RDS)
 		LEFT JOIN RDS.vwDimFosterCareStatuses rdfcs
 			ON rsy.SchoolYear = rdfcs.SchoolYear

@@ -22,7 +22,6 @@ SELECT
 	, RecordEndDateTime 
 FROM Upgrade.DimK12Students
 
-
 INSERT INTO RDS.DimPeople (
 	  FirstName
 	, MiddleName
@@ -43,7 +42,6 @@ SELECT
    	, RecordStartDateTime 
 	, RecordEndDateTime 
 FROM Upgrade.DimK12Staff
-
 
 INSERT INTO RDS.FactK12StudentCounts (
     SchoolYearId
@@ -178,8 +176,6 @@ LEFT JOIN RDS.DimEnglishLearnerStatuses rdels
             WHEN 'NLEP' THEN 'No'
             ELSE 'MISSING'
         END = rdels.EnglishLearnerStatusCode
-    AND f.TitleiiiAccountabilityProgressStatusCode = rdels.TitleIIIAccountabilityProgressStatusCode	--Codes are the same
-    AND f.TitleiiiLanguageInstructionCode = rdels.TitleIIILanguageInstructionProgramTypeCode --Codes are the same
 LEFT JOIN RDS.DimGradeLevels rdgl
     ON  f.GradeLevelCode = rdgl.GradeLevelCode --Codes are the same
 LEFT JOIN RDS.DimHomelessnessStatuses rdhs
@@ -244,8 +240,7 @@ LEFT JOIN RDS.DimMigrantStatuses rdms
             ELSE 'MISSING'
         END = rdms.MigrantPrioritizedForServicesCode
 LEFT JOIN RDS.DimNOrDStatuses rdnords
-	ON  'MISSING' = rdnords.NeglectedOrDelinquentLongTermStatusCode -- f.LongTermStatusCode, need to create CEDS element for this value
-	AND CASE f.NeglectedOrDelinquentProgramTypeCode
+	ON  CASE f.NeglectedOrDelinquentProgramTypeCode
             WHEN 'ADLTCORR' THEN 'AdultCorrection'
             WHEN 'ATRISK' THEN 'AtRiskPrograms'
             WHEN 'JUVCORR' THEN 'JuvenileCorrection'
@@ -266,9 +261,8 @@ LEFT JOIN RDS.DimTitleIStatuses rdtis
 	AND f.TitleISchoolStatusCode = rdtis.TitleISchoolStatusCode
 	AND f.TitleISupportServicesCode = rdtis.TitleISupportServicesCode
 LEFT JOIN RDS.DimTitleIIIStatuses rdtiiis
-	ON  f.TitleiiiProgramParticipationCode = rdtiiis.ProgramParticipationTitleIIICode
+	ON  f.TitleiiiProgramParticipationCode = rdtiiis.ProgramParticipationTitleIIILiepCode
 	AND f.TitleIIIImmigrantParticipationStatusCode = rdtiiis.TitleIIIImmigrantParticipationStatusCode
-	AND f.FormerEnglishLearnerYearStatusCode = rdtiiis.FormerEnglishLearnerYearStatusCode
 	AND f.ProficiencyStatusCode = rdtiiis.ProficiencyStatusCode
 	AND f.TitleiiiAccountabilityProgressStatusCode = rdtiiis.TitleIIIAccountabilityProgressStatusCode
 	AND f.TitleiiiLanguageInstructionCode = rdtiiis.TitleIIILanguageInstructionProgramTypeCode

@@ -12211,8 +12211,14 @@ ALTER TABLE [RDS].[BridgeK12StudentEnrollmentIdeaDisabilityTypes] WITH CHECK CHE
 
 ALTER TABLE [RDS].[BridgeK12StudentEnrollmentIdeaDisabilityTypes] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12StudentEnrollmentIdeaDisabilityTypes_IdeaDisabilityTypeId];
 
+GO
+
+-- EMPTY RDS.DimK12SchoolStatuses to prepare for reloading in Junk-Table-Dimension-Population
+	delete from RDS.DimK12SchoolStatuses
+	DBCC CHECKIDENT ('RDS.DimK12SchoolStatuses', RESEED, 0); 
 
 GO
+
 PRINT N'Update complete.';
 
 

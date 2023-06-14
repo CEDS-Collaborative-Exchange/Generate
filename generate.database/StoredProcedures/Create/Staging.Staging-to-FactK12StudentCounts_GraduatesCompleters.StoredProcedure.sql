@@ -3,6 +3,7 @@ Author: AEM Corp
 Date:	1/6/2022
 Description: Migrates Graduate/Completer Data from Staging to RDS.FactK12StudentCounts
 
+NOTE: This Stored Procedure processes files: 040
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_GraduatesCompleters]
 	@SchoolYear SMALLINT
@@ -220,6 +221,7 @@ BEGIN
 		LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
 			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
+			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
 	--disability status (RDS)
 		LEFT JOIN #vwIdeaStatuses rdis
 			ON rdis.IdeaIndicatorCode = 'Yes'

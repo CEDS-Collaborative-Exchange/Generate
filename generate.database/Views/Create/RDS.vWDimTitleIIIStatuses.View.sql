@@ -2,14 +2,12 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 	SELECT
 		  rdt3s.DimTitleIIIStatusId
 		, rsy.SchoolYear
-		, rdt3s.ProgramParticipationTitleIIICode
-		, CASE rdt3s.ProgramParticipationTitleIIICode
+		, rdt3s.ProgramParticipationTitleIIILiepCode
+		, CASE rdt3s.ProgramParticipationTitleIIILiepCode
 			WHEN 'Yes' THEN 1 
 			WHEN 'No' THEN 0
 			ELSE -1
-		  END AS TitleIIIProgramParticipationMap
-		, rdt3s.FormerEnglishLearnerYearStatusCode
-		, '?' AS FormerEnglishLearnerYearStatusMap
+		  END AS TitleIIIProgramParticipationLiepMap
 		, rdt3s.ProficiencyStatusCode
 		, sssrd3.OutputCode AS ProficiencyStatusMap
 	FROM rds.DimTitleIIIStatuses rdt3s
