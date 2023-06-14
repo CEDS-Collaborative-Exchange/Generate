@@ -176,8 +176,6 @@ LEFT JOIN RDS.DimEnglishLearnerStatuses rdels
             WHEN 'NLEP' THEN 'No'
             ELSE 'MISSING'
         END = rdels.EnglishLearnerStatusCode
-    AND f.TitleiiiAccountabilityProgressStatusCode = rdels.TitleIIIAccountabilityProgressStatusCode	--Codes are the same
-    AND f.TitleiiiLanguageInstructionCode = rdels.TitleIIILanguageInstructionProgramTypeCode --Codes are the same
 LEFT JOIN RDS.DimGradeLevels rdgl
     ON  f.GradeLevelCode = rdgl.GradeLevelCode --Codes are the same
 LEFT JOIN RDS.DimHomelessnessStatuses rdhs
