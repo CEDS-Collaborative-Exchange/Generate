@@ -16,3 +16,4 @@ AS
 			ELSE -1
 		END AS TitleIIIImmigrantParticipationStatusMap
 	FROM rds.DimImmigrantStatuses rdis
+	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
