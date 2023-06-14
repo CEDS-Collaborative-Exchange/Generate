@@ -3,6 +3,7 @@ Author: AEM Corp
 Date:	2/20/2023
 Description: Migrates Title III EL SY Data from Staging to RDS.FactK12StudentCounts
 
+NOTE: This Stored Procedure processes files: 045, 204
 ***********************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_TitleIIIELSY]
 	@SchoolYear SMALLINT
@@ -179,10 +180,9 @@ BEGIN
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
 	--english learner (RDS)	
 		LEFT JOIN #vwDimEnglishLearnerStatuses rdels
-			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdels.EnglishLearnerStatusMap AS SMALLINT), -1)
+			ON rsy.SchoolYear = rdels.SchoolYear
+			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
-			AND TitleIIIAccountabilityProgressStatusCode = 'MISSING'
-			AND TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
 	--title 3 (RDS)	
 		LEFT JOIN rds.vwDimTitleIIIStatuses rdt3s
 			ON rsy.SchoolYear = rdt3s.SchoolYear

@@ -3,6 +3,7 @@ Author: AEM Corp
 Date:	5/1/2022
 Description: Migrates Discipline Data from Staging to RDS.FactK12StudentDisciplines
 
+NOTE: This Stored Procedure processes files: 005, 006, 007, 086, 088, 143, 144
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentDisciplines]
 	@SchoolYear SMALLINT

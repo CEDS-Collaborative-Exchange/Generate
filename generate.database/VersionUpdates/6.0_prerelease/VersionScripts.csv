@@ -105,6 +105,8 @@ StoredProcedures\\Drop,App.Wrapper_Migrate_GradRate_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_GradRate_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_HSGradEnroll_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_HSGradEnroll_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Wrapper_Migrate_Homeless_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Wrapper_Migrate_Homeless_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_Immigrant_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_Immigrant_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_MEP_to_RDS.StoredProcedure.sql,0
@@ -150,6 +152,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_GraduationRate.St
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_GraduationRate.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Homeless.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Homeless.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Immigrant.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Immigrant.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_MigrantEducationProgram.StoredProcedure.sql,0

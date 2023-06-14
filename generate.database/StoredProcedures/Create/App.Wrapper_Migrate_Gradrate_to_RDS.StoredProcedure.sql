@@ -46,6 +46,12 @@ BEGIN
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Graduation Rate - Start Staging-to-FactK12StudentCounts_Graduation Rate for Submission reports')
 
+		--remove the cursor if a previous migraton stopped/failed
+		if cursor_status('global','selectedYears_cursor') >= -1
+		begin
+			deallocate selectedYears_cursor
+		end
+		
 		--populate the Fact table
 		DECLARE @submissionYear AS VARCHAR(50)
 		DECLARE selectedYears_cursor CURSOR FOR 
