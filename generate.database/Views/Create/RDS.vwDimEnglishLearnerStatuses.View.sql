@@ -16,3 +16,4 @@ AS
 			ELSE -1
 		END AS PerkinsEnglishLearnerStatusMap
 	FROM rds.DimEnglishLearnerStatuses rdels
+	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy

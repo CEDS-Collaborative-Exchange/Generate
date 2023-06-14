@@ -1623,21 +1623,9 @@
 						, PerkinsEnglishLearnerStatusCode
 						, PerkinsEnglishLearnerStatusDescription
 						, PerkinsEnglishLearnerStatusEdfactsCode
-						, TitleiiiAccountabilityProgressStatusCode
-						, TitleiiiAccountabilityProgressStatusDescription
-						, TitleiiiAccountabilityProgressStatusEdFactsCode
-						, TitleIIILanguageInstructionProgramTypeCode
-						, TitleiiiLanguageInstructionProgramTypeDescription
-						, TitleiiiLanguageInstructionProgramTypeEdFactsCode
 					)
 			VALUES (
 					-1
-					, 'MISSING'
-					, 'MISSING'
-					, 'MISSING'
-					, 'MISSING'
-					, 'MISSING'
-					, 'MISSING'
 					, 'MISSING'
 					, 'MISSING'
 					, 'MISSING'
@@ -1648,39 +1636,6 @@
 		SET IDENTITY_INSERT rds.DimEnglishLearnerStatuses OFF
 	END
 
-	CREATE TABLE #TitleIIIAccountability (TitleiiiAccountabilityProgressStatusCode VARCHAR(50), TitleiiiAccountabilityProgressStatusDescription VARCHAR(200), TitleiiiAccountabilityProgressStatusEdFactsCode VARCHAR(50))
-
-	INSERT INTO #TitleIIIAccountability VALUES ('MISSING', 'MISSING', 'MISSING')
-	INSERT INTO #TitleIIIAccountability
-	SELECT 
-		  CedsOptionSetCode
-		, CedsOptionSetDescription
-		, CedsOptionSetCode
-	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'TitleIIIAccountabilityProgressStatus'
-
-	CREATE TABLE #TitleiiiLanguageInstruction (TitleiiiLanguageInstructionCode VARCHAR(50), TitleiiiLanguageInstructionDescription VARCHAR(200), TitleiiiLanguageInstructionEdFactsCode VARCHAR(50))
-
-	INSERT INTO #TitleiiiLanguageInstruction VALUES ('MISSING', 'MISSING', 'MISSING')
-	INSERT INTO #TitleiiiLanguageInstruction
-	SELECT 
-		  CedsOptionSetCode
-		, CedsOptionSetDescription
-		, CASE CedsOptionSetCode
-			WHEN 'DualLanguage' THEN 'LNGPRGDU'
-			WHEN 'TwoWayImmersion' THEN 'LNGPRGDU'
-			WHEN 'TransitionalBilingual' THEN 'LNGPRGBI'
-			WHEN 'DevelopmentalBilingual' THEN 'MISSING'
-			WHEN 'HeritageLanguage' THEN 'MISSING'
-			WHEN 'ShelteredEnglishInstruction' THEN 'MISSING'
-			WHEN 'StructuredEnglishImmersion' THEN 'MISSING'
-			WHEN 'SDAIE' THEN 'MISSING'
-			WHEN 'ContentBasedESL' THEN 'LNGPRGESLSUPP'
-			WHEN 'NewcomerPrograms' THEN 'LNGPRGNEW'
-			WHEN 'Other' THEN 'LNGPRGOTH'
-			WHEN 'PullOutESL' THEN 'LNGPRGESLELD'
-		  END
-	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'TitleIIILanguageInstructionProgramType'
-
 	INSERT INTO rds.DimEnglishLearnerStatuses 
 		(
 			EnglishLearnerStatusCode
@@ -1689,12 +1644,6 @@
 			, PerkinsEnglishLearnerStatusCode
 			, PerkinsEnglishLearnerStatusDescription
 			, PerkinsEnglishLearnerStatusEdfactsCode
-			, TitleiiiAccountabilityProgressStatusCode
-			, TitleiiiAccountabilityProgressStatusDescription
-			, TitleiiiAccountabilityProgressStatusEdFactsCode
-			, TitleIIILanguageInstructionProgramTypeCode
-			, TitleIIILanguageInstructionProgramTypeDescription
-			, TitleIIILanguageInstructionProgramTypeEdFactsCode
 		)
 	SELECT 
 		  EnglishLearner.CedsOptionSetCode
@@ -1703,24 +1652,13 @@
 		, PerkinsEnglishLearner.CedsOptionSetCode
 		, PerkinsEnglishLearner.CedsOptionSetDescription
 		, PerkinsEnglishLearner.EdFactsCode
-		, ta.TitleiiiAccountabilityProgressStatusCode
-		, ta.TitleiiiAccountabilityProgressStatusDescription
-		, ta.TitleiiiAccountabilityProgressStatusEdFactsCode
-		, tlipt.TitleiiiLanguageInstructionCode
-		, tlipt.TitleiiiLanguageInstructionDescription
-		, tlipt.TitleiiiLanguageInstructionEdFactsCode
 	FROM (VALUES('Yes', 'Limited English proficient (LEP) Student', 'LEP'),('No', 'Non-limited English proficient (non-LEP) Student', 'NLEP'),('MISSING', 'MISSING', 'MISSING')) EnglishLearner (CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN (VALUES('YES', 'Perkins EL students', 'LEPP'),('NO', 'Not Perkins EL students','MISSING'),('MISSING', 'MISSING', 'MISSING')) PerkinsEnglishLearner (CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
-	CROSS JOIN #TitleIIIAccountability ta
-	CROSS JOIN #TitleiiiLanguageInstruction tlipt
 	LEFT JOIN rds.DimEnglishLearnerStatuses dels
 	ON EnglishLearner.CedsOptionSetCode = dels.EnglishLearnerStatusCode
 		AND PerkinsEnglishLearner.CedsOptionSetCode = dels.PerkinsEnglishLearnerStatusCode
-		AND ta.TitleiiiAccountabilityProgressStatusCode = dels.TitleiiiAccountabilityProgressStatusCode
-		AND tlipt.TitleiiiLanguageInstructionCode = dels.TitleIIILanguageInstructionProgramTypeCode
 	WHERE dels.DimEnglishLearnerStatusId IS NULL
 
-	DROP TABLE #TitleIIIAccountability
 
 	
 	-----------------------------------------------------
