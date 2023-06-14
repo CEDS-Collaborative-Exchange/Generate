@@ -3,6 +3,11 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 		  rdt3s.DimTitleIIIStatusId
 		, rsy.SchoolYear
 		, rdt3s.ProgramParticipationTitleIIILiepCode
+		, CASE rdt3s.ProgramParticipationTitleIIILiepCode
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
+			ELSE -1
+		  END AS TitleIIIProgramParticipationLiepMap
 		, rdt3s.ProficiencyStatusCode
 		, sssrd3.OutputCode AS ProficiencyStatusMap
 	FROM rds.DimTitleIIIStatuses rdt3s

@@ -2482,12 +2482,29 @@
 		(
 			  IdeaDisabilityTypeCode
 			, IdeaDisabilityTypeDescription
-			, IdeaDisabilityTypeEdFactsCode --TODO
+			, IdeaDisabilityTypeEdFactsCode
 		)
 	SELECT 
 		  ceds.CedsOptionSetCode
 		, ceds.CedsOptionSetDescription
-		, ceds.CedsOptionSetCode AS EdFactsOptionSetCode
+		, CASE ceds.CedsOptionSetCode 
+			WHEN 'Autism' THEN 'AUT'
+			WHEN 'Deafblindness' THEN 'DB'
+			WHEN 'Deafness' THEN 'DB'
+			WHEN 'Developmentaldelay' THEN 'DD'
+			WHEN 'Emotionaldisturbance' THEN 'EMN'
+			WHEN 'Hearingimpairment' THEN 'HI'
+			WHEN 'Intellectualdisability' THEN 'ID'
+			WHEN 'Multipledisabilities' THEN 'MD'
+			WHEN 'Orthopedicimpairment' THEN 'OI'
+			WHEN 'Otherhealthimpairment' THEN 'OHI'
+			WHEN 'Specificlearningdisability' THEN 'SLD'
+			WHEN 'Speechlanguageimpairment' THEN 'SLI'
+			WHEN 'Traumaticbraininjury' THEN 'TBI'
+			WHEN 'Visualimpairment' THEN 'VI'
+			ELSE 'MISSING'
+		  END
+			
 	FROM CEDS.CedsOptionSetMapping ceds
 	LEFT JOIN RDS.DimIdeaDisabilityTypes main
 		ON ceds.CedsOptionSetCode = main.IdeaDisabilityTypeCode
