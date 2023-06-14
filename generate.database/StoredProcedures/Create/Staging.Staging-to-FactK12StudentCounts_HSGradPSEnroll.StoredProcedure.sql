@@ -2,6 +2,8 @@
 Author: AEM Corp
 Date:	2/20/2023
 Description: Migrates High School Graduate Post-Secondary Enrollment Data from Staging to RDS.FactK12StudentCounts
+
+NOTE: This Stored Procedure processes files: 160
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_HSGradPSEnroll]
 	@SchoolYear SMALLINT
@@ -202,8 +204,6 @@ BEGIN
 			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
-			AND TitleIIIAccountabilityProgressStatusCode = 'MISSING'
-			AND TitleIIILanguageInstructionProgramTypeCode = 'MISSING'
 	--grade (RDS)
 		LEFT JOIN #vwGradeLevels rgls
 			ON ske.GradeLevel = rgls.GradeLevelMap

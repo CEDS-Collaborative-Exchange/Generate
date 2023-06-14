@@ -10,7 +10,7 @@ AS
 			ELSE -1
 		  END AS HomelessnessStatusMap
 		, rdhs.HomelessPrimaryNighttimeResidenceCode
-		, sssrd.OutputCode AS HomelessPrimaryNighttimeResidenceMap
+		, sssrd.InputCode AS HomelessPrimaryNighttimeResidenceMap
 		, rdhs.HomelessServicedIndicatorCode
 		, CASE rdhs.HomelessServicedIndicatorCode 
 			WHEN 'Yes' THEN 1 

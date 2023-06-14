@@ -1,7 +1,7 @@
 CREATE VIEW rds.vwDimIdeaDisabilityTypes 
 AS
 	SELECT
-		  DimIdeaDisabilityTypeId
+		DimIdeaDisabilityTypeId
 		, rsy.SchoolYear
 		, rdidt.IdeaDisabilityTypeCode
 		, sssrd.InputCode AS IdeaDisabilityTypeMap
@@ -11,3 +11,6 @@ AS
 		ON rdidt.IdeaDisabilityTypeCode = sssrd.OutputCode
 		AND sssrd.TableName = 'RefIDEADisabilityType'
 		AND rsy.SchoolYear = sssrd.SchoolYear
+
+
+

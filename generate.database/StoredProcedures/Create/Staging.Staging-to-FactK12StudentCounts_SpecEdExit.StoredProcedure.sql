@@ -3,6 +3,7 @@ Author: AEM Corp
 Date:	3/1/2022
 Description: Migrates Exiting Data from Staging to RDS.FactK12StudentCounts
 
+NOTE: This Stored Procedure processes files: 009
 ************************************************************************/
 CREATE PROCEDURE  [Staging].[Staging-to-FactK12StudentCounts_SpecEdExit] 
 	@SchoolYear SMALLINT
@@ -251,8 +252,9 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(homeless.SchoolIdentifierSea, '')
 			AND rdd.DateValue BETWEEN homeless.Homelessness_StatusStartDate AND ISNULL(homeless.Homelessness_StatusEndDate, GETDATE())
 		JOIN RDS.vwDimEnglishLearnerStatuses rdels
- 			ON rsy.SchoolYear = rdels.SchoolYear
+			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
+			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
 		JOIN RDS.vwDimK12Demographics rdkd
  			ON rsy.SchoolYear = rdkd.SchoolYear
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
@@ -272,7 +274,7 @@ BEGIN
 			AND IdeaIndicatorCode = 'Yes'
 			AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
 		LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
-			ON ske.SchoolYear = rdis.SchoolYear
+			ON sidt.SchoolYear = rdidt.SchoolYear
 			AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
 			AND sidt.IsPrimaryDisability = 1
 		LEFT JOIN #vwRaces rdr
