@@ -4,7 +4,7 @@ AS
 		DimIdeaDisabilityTypeId
 		, rsy.SchoolYear
 		, rdidt.IdeaDisabilityTypeCode
-		sssrd.InputCode AS IdeaDisabilityTypeMap
+		, sssrd.InputCode AS IdeaDisabilityTypeMap
 	FROM rds.DimIdeaDisabilityTypes rdidt
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd
