@@ -57,6 +57,10 @@ Views\\Drop,RDS.vwDimDisabilityStatuses.View.sql,0
 Views\\Create,RDS.vwDimDisabilityStatuses.View.sql,0
 Views\\Drop,RDS.vwDimDisciplineStatuses.View.sql,0
 Views\\Create,RDS.vwDimDisciplineStatuses.View.sql,0
+Views\\Drop,RDS.vwDimFirearmDisciplineStatuses.View.sql,0
+Views\\Create,RDS.vwDimFirearmDisciplineStatuses.View.sql,0
+Views\\Drop,RDS.vwDimFirearms.View.sql,0
+Views\\Create,RDS.vwDimFirearms.View.sql,0
 Views\\Drop,RDS.vwDimEconomicallyDisadvantagedStatuses.View.sql,0
 Views\\Create,RDS.vwDimEconomicallyDisadvantagedStatuses.View.sql,0
 Views\\Drop,RDS.vwDimEnglishLearnerStatuses.View.sql,0

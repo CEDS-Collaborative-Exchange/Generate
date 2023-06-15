@@ -25,7 +25,7 @@ CREATE VIEW [Debug].[vwDiscipline_StagingTables] AS
 				,discipline.IDEADisciplineMethodFirearm
 				,discipline.FirearmType
 			
-				,ideaDisability.IdeaDisabilityTypeCode
+				,ideaDisability.IdeaDisabilityType
 
 				,programparticipation.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
 				,programparticipation.ProgramParticipationEndDate		AS IDEAProgramParticipationEndDate

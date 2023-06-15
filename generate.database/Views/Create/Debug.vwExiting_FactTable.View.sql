@@ -33,7 +33,7 @@ CREATE VIEW [Debug].[vwExiting_FactTable] AS
 	LEFT JOIN	RDS.DimLeas							LEAs				ON Fact.LeaId					= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools					Schools				ON Fact.K12SchoolId				= Schools.DimK12SchoolId
 	LEFT JOIN	RDS.DimIdeaStatuses					IDEAStatus			ON Fact.IdeaStatusId			= IDEAStatus.DimIdeaStatusId
-    LEFT JOIN   RDS.DimIdeaDisabilityTypes         	IDEADisability  	ON Fact.IdeaDisabilityTypeId   	= IDEADisability.DimIdeaDisabilityTypeId
+    LEFT JOIN   RDS.DimIdeaDisabilityTypes         	IDEADisability  	ON Fact.PrimaryDisabilityTypeId	= IDEADisability.DimIdeaDisabilityTypeId
 	LEFT JOIN	RDS.DimK12Demographics				Demo				ON Fact.K12DemographicId		= Demo.DimK12DemographicId
 	LEFT JOIN	RDS.DimEnglishLearnerStatuses		ELStatus			ON Fact.EnglishLearnerStatusId	= ELStatus.DimEnglishLearnerStatusId
 	LEFT JOIN	RDS.DimAges							Ages				ON Fact.AgeId					= Ages.DimAgeId      
