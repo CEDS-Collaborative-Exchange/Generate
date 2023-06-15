@@ -19637,15 +19637,15 @@
 
 
 	GO
-	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_IdeaDisabilityTypeId]...';
+	-- PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_IdeaDisabilityTypeId]...';
 
 
-	GO
-	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StudentCounts_IdeaDisabilityTypeId] FOREIGN KEY ([IdeaDisabilityTypeId]) REFERENCES [RDS].[DimIdeaDisabilityTypes] ([DimIdeaDisabilityTypeId]);
+	-- GO
+	-- ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+	-- 	ADD CONSTRAINT [FK_FactK12StudentCounts_IdeaDisabilityTypeId] FOREIGN KEY ([IdeaDisabilityTypeId]) REFERENCES [RDS].[DimIdeaDisabilityTypes] ([DimIdeaDisabilityTypeId]);
 
 
-	GO
+	-- GO
 	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_IeuId]...';
 
 
