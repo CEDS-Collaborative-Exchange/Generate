@@ -1622,9 +1622,21 @@
 						, PerkinsEnglishLearnerStatusCode
 						, PerkinsEnglishLearnerStatusDescription
 						, PerkinsEnglishLearnerStatusEdfactsCode
+						, TitleiiiAccountabilityProgressStatusCode
+						, TitleiiiAccountabilityProgressStatusDescription
+						, TitleiiiAccountabilityProgressStatusEdFactsCode
+						, TitleIIILanguageInstructionProgramTypeCode
+						, TitleiiiLanguageInstructionProgramTypeDescription
+						, TitleiiiLanguageInstructionProgramTypeEdFactsCode
 					)
 			VALUES (
 					-1
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
 					, 'MISSING'
 					, 'MISSING'
 					, 'MISSING'
@@ -1635,6 +1647,39 @@
 		SET IDENTITY_INSERT rds.DimEnglishLearnerStatuses OFF
 	END
 
+	CREATE TABLE #TitleIIIAccountability (TitleiiiAccountabilityProgressStatusCode VARCHAR(50), TitleiiiAccountabilityProgressStatusDescription VARCHAR(200), TitleiiiAccountabilityProgressStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #TitleIIIAccountability VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #TitleIIIAccountability
+	SELECT 
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CedsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'TitleIIIAccountabilityProgressStatus'
+
+	CREATE TABLE #TitleiiiLanguageInstruction (TitleiiiLanguageInstructionCode VARCHAR(50), TitleiiiLanguageInstructionDescription VARCHAR(200), TitleiiiLanguageInstructionEdFactsCode VARCHAR(50))
+
+	INSERT INTO #TitleiiiLanguageInstruction VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #TitleiiiLanguageInstruction
+	SELECT 
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CASE CedsOptionSetCode
+			WHEN 'DualLanguage' THEN 'LNGPRGDU'
+			WHEN 'TwoWayImmersion' THEN 'LNGPRGDU'
+			WHEN 'TransitionalBilingual' THEN 'LNGPRGBI'
+			WHEN 'DevelopmentalBilingual' THEN 'MISSING'
+			WHEN 'HeritageLanguage' THEN 'MISSING'
+			WHEN 'ShelteredEnglishInstruction' THEN 'MISSING'
+			WHEN 'StructuredEnglishImmersion' THEN 'MISSING'
+			WHEN 'SDAIE' THEN 'MISSING'
+			WHEN 'ContentBasedESL' THEN 'LNGPRGESLSUPP'
+			WHEN 'NewcomerPrograms' THEN 'LNGPRGNEW'
+			WHEN 'Other' THEN 'LNGPRGOTH'
+			WHEN 'PullOutESL' THEN 'LNGPRGESLELD'
+		  END
+	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'TitleIIILanguageInstructionProgramType'
+
 	INSERT INTO rds.DimEnglishLearnerStatuses 
 		(
 			EnglishLearnerStatusCode
@@ -1643,6 +1688,12 @@
 			, PerkinsEnglishLearnerStatusCode
 			, PerkinsEnglishLearnerStatusDescription
 			, PerkinsEnglishLearnerStatusEdfactsCode
+			, TitleiiiAccountabilityProgressStatusCode
+			, TitleiiiAccountabilityProgressStatusDescription
+			, TitleiiiAccountabilityProgressStatusEdFactsCode
+			, TitleIIILanguageInstructionProgramTypeCode
+			, TitleIIILanguageInstructionProgramTypeDescription
+			, TitleIIILanguageInstructionProgramTypeEdFactsCode
 		)
 	SELECT 
 		  EnglishLearner.CedsOptionSetCode
@@ -1651,13 +1702,24 @@
 		, PerkinsEnglishLearner.CedsOptionSetCode
 		, PerkinsEnglishLearner.CedsOptionSetDescription
 		, PerkinsEnglishLearner.EdFactsCode
+		, ta.TitleiiiAccountabilityProgressStatusCode
+		, ta.TitleiiiAccountabilityProgressStatusDescription
+		, ta.TitleiiiAccountabilityProgressStatusEdFactsCode
+		, tlipt.TitleiiiLanguageInstructionCode
+		, tlipt.TitleiiiLanguageInstructionDescription
+		, tlipt.TitleiiiLanguageInstructionEdFactsCode
 	FROM (VALUES('Yes', 'Limited English proficient (LEP) Student', 'LEP'),('No', 'Non-limited English proficient (non-LEP) Student', 'NLEP'),('MISSING', 'MISSING', 'MISSING')) EnglishLearner (CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN (VALUES('YES', 'Perkins EL students', 'LEPP'),('NO', 'Not Perkins EL students','MISSING'),('MISSING', 'MISSING', 'MISSING')) PerkinsEnglishLearner (CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
+	CROSS JOIN #TitleIIIAccountability ta
+	CROSS JOIN #TitleiiiLanguageInstruction tlipt
 	LEFT JOIN rds.DimEnglishLearnerStatuses dels
 	ON EnglishLearner.CedsOptionSetCode = dels.EnglishLearnerStatusCode
 		AND PerkinsEnglishLearner.CedsOptionSetCode = dels.PerkinsEnglishLearnerStatusCode
+		AND ta.TitleiiiAccountabilityProgressStatusCode = dels.TitleiiiAccountabilityProgressStatusCode
+		AND tlipt.TitleiiiLanguageInstructionCode = dels.TitleIIILanguageInstructionProgramTypeCode
 	WHERE dels.DimEnglishLearnerStatusId IS NULL
 
+	DROP TABLE #TitleIIIAccountability
 
 	
 	-----------------------------------------------------
@@ -2481,29 +2543,12 @@
 		(
 			  IdeaDisabilityTypeCode
 			, IdeaDisabilityTypeDescription
-			, IdeaDisabilityTypeEdFactsCode
+			, IdeaDisabilityTypeEdFactsCode --TODO
 		)
 	SELECT 
 		  ceds.CedsOptionSetCode
 		, ceds.CedsOptionSetDescription
-		, CASE ceds.CedsOptionSetCode 
-			WHEN 'Autism' THEN 'AUT'
-			WHEN 'Deafblindness' THEN 'DB'
-			WHEN 'Deafness' THEN 'DB'
-			WHEN 'Developmentaldelay' THEN 'DD'
-			WHEN 'Emotionaldisturbance' THEN 'EMN'
-			WHEN 'Hearingimpairment' THEN 'HI'
-			WHEN 'Intellectualdisability' THEN 'ID'
-			WHEN 'Multipledisabilities' THEN 'MD'
-			WHEN 'Orthopedicimpairment' THEN 'OI'
-			WHEN 'Otherhealthimpairment' THEN 'OHI'
-			WHEN 'Specificlearningdisability' THEN 'SLD'
-			WHEN 'Speechlanguageimpairment' THEN 'SLI'
-			WHEN 'Traumaticbraininjury' THEN 'TBI'
-			WHEN 'Visualimpairment' THEN 'VI'
-			ELSE 'MISSING'
-		  END
-			
+		, ceds.CedsOptionSetCode AS EdFactsOptionSetCode
 	FROM CEDS.CedsOptionSetMapping ceds
 	LEFT JOIN RDS.DimIdeaDisabilityTypes main
 		ON ceds.CedsOptionSetCode = main.IdeaDisabilityTypeCode
@@ -3665,12 +3710,13 @@
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12StaffStatuses 
 			WHERE SpecialEducationAgeGroupTaughtCode = 'MISSING'
 			AND EdFactsCertificationStatusCode = 'MISSING'
-			AND K12StaffClassificationCode = 'MISSING'
 			AND HighlyQualifiedTeacherIndicatorCode = 'MISSING'
 			AND EdFactsTeacherInexperiencedStatusCode = 'MISSING'
 			AND TeachingCredentialTypeCode = 'MISSING'
 			AND EdFactsTeacherOutOfFieldStatusCode = 'MISSING'
-			AND SpecialEducationTeacherQualificationStatusCode = 'MISSING') BEGIN
+			AND SpecialEducationTeacherQualificationStatusCode = 'MISSING'
+			AND ParaprofessionalQualificationStatusCode = 'MISSING') 
+		BEGIN
 		SET IDENTITY_INSERT RDS.DimK12StaffStatuses ON
 
 		INSERT INTO RDS.DimK12StaffStatuses (
@@ -3681,9 +3727,6 @@
 			, EdFactsCertificationStatusCode
 			, EdFactsCertificationStatusDescription
 			, EdFactsCertificationStatusEdFactsCode
-			, K12StaffClassificationCode
-			, K12StaffClassificationDescription
-			, K12StaffClassificationEdFactsCode
 			, HighlyQualifiedTeacherIndicatorCode
 			, HighlyQualifiedTeacherIndicatorDescription
 			, HighlyQualifiedTeacherIndicatorEdFactsCode
@@ -3699,7 +3742,10 @@
 			, SpecialEducationTeacherQualificationStatusCode
 			, SpecialEducationTeacherQualificationStatusDescription
 			, SpecialEducationTeacherQualificationStatusEdFactsCode)
-		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+			, ParaprofessionalQualificationStatusCode
+			, ParaprofessionalQualificationStatusDescription
+			, ParaprofessionalQualificationStatusEdFactsCode)
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING','MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
 
 		SET IDENTITY_INSERT RDS.DimK12StaffStatuses OFF
 	END
@@ -3826,9 +3872,6 @@
 			, EdFactsCertificationStatusCode
 			, EdFactsCertificationStatusDescription
 			, EdFactsCertificationStatusEdFactsCode
-			, K12StaffClassificationCode
-			, K12StaffClassificationDescription
-			, K12StaffClassificationEdFactsCode
 			, HighlyQualifiedTeacherIndicatorCode
 			, HighlyQualifiedTeacherIndicatorDescription
 			, HighlyQualifiedTeacherIndicatorEdFactsCode
@@ -3851,9 +3894,6 @@
 		, efcs.EdFactsCertificationStatusCode
 		, efcs.EdFactsCertificationStatusDescription
 		, efcs.EdFactsCertificationStatusEdFactsCode
-		, ksc.K12StaffClassificationCode
-		, ksc.K12StaffClassificationDescription
-		, ksc.K12StaffClassificationEdFactsCode
 		, hqti.HighlyQualifiedTeacherIndicatorCode
 		, hqti.HighlyQualifiedTeacherIndicatorDescription
 		, hqti.HighlyQualifiedTeacherIndicatorEdFactsCode
@@ -3871,7 +3911,6 @@
 		, setqs.SpecialEducationTeacherQualificationStatusEdFactsCode	
 	FROM #SpecialEducationAgeGroupTaught seagt
 	CROSS JOIN #EdFactsCertificationStatus efcs
-	CROSS JOIN #K12StaffClassification ksc
 	CROSS JOIN #HighlyQualifiedTeacherIndicator hqti
 	CROSS JOIN #EdFactsTeacherInexperiencedStatus dftis
 	CROSS JOIN #TeachingCredentialType tct
@@ -3880,7 +3919,6 @@
 	LEFT JOIN rds.DimK12StaffStatuses main
 		ON seagt.SpecialEducationAgeGroupTaughtCode = main.SpecialEducationAgeGroupTaughtCode
 		AND efcs.EdFactsCertificationStatusCode = main.EdFactsCertificationStatusCode
-		AND ksc.K12StaffClassificationCode = main.K12StaffClassificationCode
 		AND hqti.HighlyQualifiedTeacherIndicatorCode = main.HighlyQualifiedTeacherIndicatorCode
 		AND dftis.EdFactsTeacherInexperiencedStatusCode = main.EdFactsTeacherInexperiencedStatusCode
 		AND tct.TeachingCredentialTypeCode = main.TeachingCredentialTypeCode
