@@ -1,5 +1,4 @@
 SET NOCOUNT ON;
-GO 
 
 
 IF NOT EXISTS (SELECT 1 FROM app.[FactTables] WHERE [FactTableName] = 'FactK12ProgramParticipations')

@@ -1,5 +1,5 @@
 	SET NOCOUNT ON;
-	GO 
+		
 		update App.FileColumns set DimensionId = (select DimensionId from app.Dimensions where DimensionFieldName = 'DisabilityStatus')
 		where ColumnName = 'DisabilityStatusID'
 

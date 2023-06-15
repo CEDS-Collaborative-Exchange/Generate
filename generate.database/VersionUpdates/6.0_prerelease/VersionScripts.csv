@@ -1,6 +1,9 @@
 VersionUpdates\\6.0_prerelease,Restore 5.3.sql,0
+Schemas,Upgrade.Schema.sql,0
+Schemas,CEDS.Schema.sql,0
 VersionUpdates\\6.0_prerelease\V11Upgrade,Copy-Out-Legacy-Data.sql,0
 VersionUpdates\\6.0_prerelease\V11Upgrade,V10SchemaUpgrade.sql,0
+VersionUpdates\\6.0_prerelease\V11Upgrade,V10SchemaUpgradeExtendedProperties.sql,0
 VersionUpdates\\6.0_prerelease\V11Upgrade,V11SchemaUpgrade.sql,0
 VersionUpdates\\6.0_prerelease\V11Upgrade,CEDS-Elements.sql,0
 VersionUpdates\\6.0_prerelease\V11Upgrade,Junk-Table-Dimension-Population.sql,0

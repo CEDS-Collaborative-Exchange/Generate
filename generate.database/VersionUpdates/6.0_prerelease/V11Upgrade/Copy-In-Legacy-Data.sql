@@ -1,5 +1,4 @@
 SET NOCOUNT ON;
-GO 
 
 INSERT INTO RDS.DimPeople (
 	  FirstName

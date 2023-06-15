@@ -40,7 +40,6 @@
 */    
 
 	SET NOCOUNT ON;
-	GO
 
 	------------------------------------------------
 	-- Populate DimAeDemgraphics				 ---

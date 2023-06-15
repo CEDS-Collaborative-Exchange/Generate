@@ -1,56 +1,40 @@
-SET NOCOUNT ON;
-GO 
+SET NOCOUNT ON
 
 IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentCounts') 
 BEGIN
 	DROP TABLE Upgrade.FactK12StudentCounts
-END;
-GO
+END
 
 IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentDisciplines') 
 BEGIN
 	DROP TABLE Upgrade.FactK12StudentDisciplines
-END;
-GO
+END
 
 IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StaffCounts') 
 BEGIN
 	DROP TABLE Upgrade.FactK12StaffCounts
-END;
-GO
+END
 
 IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactOrganizationCounts') 
 BEGIN
 	DROP TABLE Upgrade.FactOrganizationCounts
-END;
-GO
+END
 
 IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'FactK12StudentAssessments') 
 BEGIN
 	DROP TABLE Upgrade.FactK12StudentAssessments
-END;
-GO
+END
 
 IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'DimK12Students') 
 BEGIN
 	DROP TABLE Upgrade.DimK12Students
-END;
-GO
+END
 
 IF EXISTS (select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'Upgrade' AND TABLE_NAME = 'DimK12Staff') 
 BEGIN
 	DROP TABLE Upgrade.DimK12Staff
-END;
-GO
+END
 
-IF EXISTS (select * from INFORMATION_SCHEMA.SCHEMATA where schema_name = 'Upgrade') 
-BEGIN
-	DROP SCHEMA Upgrade
-END;
-GO
-
-CREATE SCHEMA Upgrade;
-GO 
 
 CREATE TABLE Upgrade.DimK12Students (
 	FirstName NVARCHAR(200)

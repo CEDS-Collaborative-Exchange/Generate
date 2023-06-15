@@ -1,5 +1,4 @@
-	SET NOCOUNT ON;
-	GO 
+SET NOCOUNT ON;
 
 delete co
 from app.CategorySets cs 
