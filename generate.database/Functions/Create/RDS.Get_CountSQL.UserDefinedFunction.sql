@@ -280,8 +280,8 @@ BEGIN
 	  begin
 		set @idFieldsSQL = '
 		s.StateANSICode as OrganizationIdentifierNces,
-		sea.SeaOrganizationIdentifierSea as OrganizationIdentifierSea,
-		sea.StateAbbreviationDescription as OrganizationName,
+		s.SeaOrganizationIdentifierSea as OrganizationIdentifierSea,
+		s.StateAbbreviationDescription as OrganizationName,
 		null as ParentOrganizationIdentifierSea'
 	end
 	else if @reportLevel = 'lea'
@@ -813,6 +813,10 @@ BEGIN
 		else if @dimensionTable ='DimK12EnrollmentStatuses'
 		begin
 			set @dimensionPrimaryKey = 'DimK12EnrollmentStatusId'
+		end
+		else if @dimensionTable ='DimEnglishLearnerStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimEnglishLearnerStatusId'
 		end
 		else if @dimensionTable ='DimPeople'
 		begin
@@ -1796,7 +1800,7 @@ BEGIN
 			IF CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) = 0 
 				begin
 					set @reportFilterJoin = 'inner join rds.DimIdeaStatuses idea on fact.IdeaStatusId = idea.DimIdeaStatusId'
-					set @reportFilterCondition = @reportFilterCondition + ' and idea.IdeaEducationalEnvironmentEdFactsCode not in (''PPPS'')'
+					set @reportFilterCondition = @reportFilterCondition + ' and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode not in (''PPPS'')'
 				end				
 		end						
 		if @reportCode in ('c002','edenvironmentdisabilitiesage6-21','c089','disciplinaryremovals','c006','c005')
@@ -1810,16 +1814,16 @@ BEGIN
 				IF @reportLevel = 'sch' and @reportCode = 'c002'
 				begin
 					set @reportFilterJoin = 'inner join rds.DimIdeaStatuses idea on fact.IdeaStatusId = idea.DimIdeaStatusId'
-					set @reportFilterCondition = @reportFilterCondition + ' and idea.IdeaEducationalEnvironmentEdFactsCode not in (''HH'', ''PPPS'')'
+					set @reportFilterCondition = ' and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode not in (''HH'', ''PPPS'')'
 				end
 			end
 			ELSE IF @reportLevel = 'sch' AND CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) > 0 and @reportCode = 'c002'
 			begin
 				set @reportFilterJoin = 'inner join rds.DimIdeaStatuses IdeaEducationalEnvironment on fact.IdeaStatusId = IdeaEducationalEnvironment.DimIdeaStatusId'
-				set @reportFilterCondition = 'and IdeaEducationalEnvironment.IdeaEducationalEnvironmentEdFactsCode not in (''HH'', ''PPPS'')'
+				set @reportFilterCondition = 'and IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode not in (''HH'', ''PPPS'')'
 			end
 
-			IF @year > 2018 AND @reportCode = 'c002' AND CHARINDEX('AGE', @categorySetReportFieldList) > 0 
+			IF @year > 2018 AND @reportCode = 'c002' AND EXISTS (SELECT 1 FROM App.Split(@categorySetReportFieldList, ',') WHERE item = 'AGE')
 			begin
 				set @reportFilterJoin = @reportFilterJoin + '
 				inner join rds.DimGradeLevels g on fact.GradeLevelId = g.DimGradeLevelId 
@@ -1828,7 +1832,7 @@ BEGIN
                     ELSE g.GradeLevelEdFactsCode
                     END) = g.GradeLevelEdFactsCode' 
 			end
-			ELSE IF @year > 2018 AND @reportCode = 'c089' AND CHARINDEX('AGE', @categorySetReportFieldList) > 0 
+			ELSE IF @year > 2018 AND @reportCode = 'c089' AND EXISTS (SELECT 1 FROM App.Split(@categorySetReportFieldList, ',') WHERE item = 'AGE') 
 			begin
 				set @reportFilterJoin = @reportFilterJoin + '
 				inner join rds.DimGradeLevels g on fact.GradeLevelId = g.DimGradeLevelId 
@@ -2182,7 +2186,7 @@ BEGIN
 							and age.AgeValue >= 3 
 							and age.AgeValue <= 5
 						inner join rds.DimGradeLevels rgl 
-							on fact.GradeLevelId = rgl.GradeLevelId
+							on fact.GradeLevelId = rgl.DimGradeLevelId
 						inner join rds.DimK12Schools s 
 							on fact.K12SchoolId = s.DimK12SchoolId
 							and fact.SchoolYearId = @dimSchoolYearId
@@ -3900,7 +3904,7 @@ BEGIN
 									and c39.reportLevel = ''' + @reportLevel +
 									''' and c39.reportyear = ''' + @reportyear + '''										
 								) grades on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-									and grades.OrganizationStateId = s.LeaIdentifierState) '
+									and grades.OrganizationStateId = s.LeaIdentifierSea) '
 		END
 		ELSE if @reportLevel in ('sch')
 		BEGIN 
@@ -5160,13 +5164,13 @@ BEGIN
 			--set the LEA field in the select if necessary
 			if @reportLevel	= 'LEA' 
 			begin 
-				set @debugTableCreate += ', l.leaIdentifierState ' 
+				set @debugTableCreate += ', l.leaIdentifierSea ' 
 			end
 
 			--set the School field in the select if necessary
 			if @reportLevel = 'SCH' 
 			begin
-				set @debugTableCreate += ', sc.schoolIdentifierState '  
+				set @debugTableCreate += ', sc.schoolIdentifierSea '  
 			end
 
 			set @debugTableCreate += @sqlCategoryFields + char(10) 
@@ -5630,8 +5634,8 @@ BEGIN
 						CategorySetCode,
 						Categories,
 						StateANSICode,
-						StateCode,
-						StateName,
+						StateAbbreviationCode,
+						StateAbbreviationDescription,
 						OrganizationIdentifierNces,
 						OrganizationIdentifierSea,
 						OrganizationName,
@@ -6077,7 +6081,7 @@ BEGIN
                 where a.StudentCount = 0
                 AND OrganizationIdentifierSea NOT IN
                 (
-                SELECT DISTINCT dl.LeaIdentifierState
+                SELECT DISTINCT dl.LeaIdentifierSea
                 FROM RDS.BridgeLeaGradeLevels blgl
                 JOIN RDS.DimLeas dl
                     ON blgl.LeaId = dl.DimLeaID
@@ -6095,7 +6099,7 @@ BEGIN
                 where a.StudentCount = 0
                 AND OrganizationIdentifierSea NOT IN
                 (
-                SELECT DISTINCT dl.LeaIdentifierState
+                SELECT DISTINCT dl.LeaIdentifierSea
                 FROM RDS.BridgeLeaGradeLevels blgl
                 JOIN RDS.DimLeas dl
                     ON blgl.LeaId = dl.DimLeaID
