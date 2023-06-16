@@ -14,8 +14,8 @@ OUTER APPLY fn_listextendedproperty ('CEDS_URL', 'schema', 'dbo', N'table', c.TA
 CROSS APPLY app.Split(CAST(m.Value AS VARCHAR(MAX)), ',') ms
 CROSS APPLY app.Split(CAST(e.Value AS VARCHAR(MAX)), ',') es
 CROSS APPLY app.Split(CAST(u.Value AS VARCHAR(MAX)), ',') us
-WHERE ms.RowNumber = es.RowNumber
-	AND ms.RowNumber = us.RowNumber
+-- WHERE ms.RowNumber = es.RowNumber
+-- 	AND ms.RowNumber = us.RowNumber
 
 UNION
 
@@ -33,5 +33,5 @@ OUTER APPLY fn_listextendedproperty ('CEDS_URL', 'schema', 'dbo', N'table', c.TA
 CROSS APPLY app.Split(CAST(m.Value AS VARCHAR(MAX)), ',') ms
 CROSS APPLY app.Split(CAST(e.Value AS VARCHAR(MAX)), ',') es
 CROSS APPLY app.Split(CAST(u.Value AS VARCHAR(MAX)), ',') us
-WHERE ms.RowNumber = es.RowNumber
-	AND ms.RowNumber = us.RowNumber
+-- WHERE ms.RowNumber = es.RowNumber
+-- 	AND ms.RowNumber = us.RowNumber

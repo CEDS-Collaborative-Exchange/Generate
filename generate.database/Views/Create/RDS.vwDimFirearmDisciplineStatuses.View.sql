@@ -7,7 +7,7 @@ AS
 		, sssrd.InputCode AS DisciplineMethodForFirearmsIncidentsMap
 		, rdfds.IdeaDisciplineMethodForFirearmsIncidentsCode
 		, sssrd2.InputCode AS IdeaDisciplineMethodForFirearmsIncidentsMap
-	FROM rds.DimFirearmDisciplinesStatuses rdfds
+	FROM rds.DimFirearmDisciplineStatuses rdfds
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd
 		ON rdfds.DisciplineMethodForFirearmsIncidentsCode = sssrd.OutputCode
