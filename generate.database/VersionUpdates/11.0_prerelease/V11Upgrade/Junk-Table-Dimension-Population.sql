@@ -3163,14 +3163,14 @@
 
 
 	-----------------------------------------------------
-	-- Populate DimFirearmDisciplines            --
+	-- Populate DimFirearmDisciplineStatuses           --
 	-----------------------------------------------------
 
-	IF NOT EXISTS (SELECT 1 FROM RDS.DimFirearmDisciplines d WHERE d.DimFirearmDisciplineId = -1) BEGIN
-		SET IDENTITY_INSERT RDS.DimFirearmDisciplines ON
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimFirearmDisciplineStatuses d WHERE d.DimFirearmDisciplineStatusId = -1) BEGIN
+		SET IDENTITY_INSERT RDS.DimFirearmDisciplineStatuses ON
 
-	INSERT INTO [RDS].[DimFirearmDisciplines]
-           ([DimFirearmDisciplineId]
+	INSERT INTO [RDS].[DimFirearmDisciplineStatuses]
+           ([DimFirearmDisciplineStatusId]
 		   ,[DisciplineMethodForFirearmsIncidentsCode]
            ,[DisciplineMethodForFirearmsIncidentsDescription]
            ,[DisciplineMethodForFirearmsIncidentsEdFactsCode]
@@ -3187,7 +3187,7 @@
 				, 'MISSING'
 				)
 
-		SET IDENTITY_INSERT RDS.DimFirearmDisciplines OFF
+		SET IDENTITY_INSERT RDS.DimFirearmDisciplineStatuses OFF
 
 	END
 
@@ -3221,7 +3221,7 @@
 		WHERE CedsElementTechnicalName = 'IdeaDisciplineMethodForFirearmsIncidents'
 
 
-	INSERT INTO [RDS].[DimFirearmDisciplines]
+	INSERT INTO [RDS].[DimFirearmDisciplineStatuses]
            ([DisciplineMethodForFirearmsIncidentsCode]
            ,[DisciplineMethodForFirearmsIncidentsDescription]
            ,[DisciplineMethodForFirearmsIncidentsEdFactsCode]
@@ -3237,10 +3237,10 @@
 		,idm.IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode
 	FROM #DisciplineMethodForFirearmsIncidents dm
 	CROSS JOIN #IdeaDisciplineMethodForFirearmsIncidents idm
-	LEFT JOIN rds.DimFirearmDisciplines dfd
-		ON	dm.DisciplineMethodForFirearmsIncidentsCode	= dfd.DisciplineMethodForFirearmsIncidentsCode								
-		AND idm.IdeaDisciplineMethodForFirearmsIncidentsCode = dfd.IdeaDisciplineMethodForFirearmsIncidentsCode			
-	WHERE dfd.DimFirearmDisciplineId IS NULL
+	LEFT JOIN rds.DimFirearmDisciplineStatuses dfds
+		ON	dm.DisciplineMethodForFirearmsIncidentsCode	= dfds.DisciplineMethodForFirearmsIncidentsCode								
+		AND idm.IdeaDisciplineMethodForFirearmsIncidentsCode = dfds.IdeaDisciplineMethodForFirearmsIncidentsCode			
+	WHERE dfds.DimFirearmDisciplineStatusId IS NULL
 
 	DROP TABLE #DisciplineMethodForFirearmsIncidents
 	DROP TABLE #IdeaDisciplineMethodForFirearmsIncidents
@@ -3799,7 +3799,21 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'SpecialEducationTeacherQualificationStatus'
 
-	   
+	IF OBJECT_ID('tempdb..#ParaprofessionalQualificationStatus') IS NOT NULL BEGIN
+		DROP TABLE #ParaprofessionalQualificationStatus
+	END
+	CREATE TABLE #ParaprofessionalQualificationStatus (ParaprofessionalQualificationStatusCode VARCHAR(50), ParaprofessionalQualificationStatusDescription VARCHAR(200), ParaprofessionalQualificationStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #ParaprofessionalQualificationStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #ParaprofessionalQualificationStatus 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CedsOptionSetCode AS EdFactsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'ParaprofessionalQualificationStatus'
+
+
 	INSERT INTO RDS.DimK12StaffStatuses
 		(
 			  SpecialEducationAgeGroupTaughtCode
@@ -3822,7 +3836,11 @@
 			, EdFactsTeacherOutOfFieldStatusEdFactsCode
 			, SpecialEducationTeacherQualificationStatusCode
 			, SpecialEducationTeacherQualificationStatusDescription
-			, SpecialEducationTeacherQualificationStatusEdFactsCode		)
+			, SpecialEducationTeacherQualificationStatusEdFactsCode
+			, ParaprofessionalQualificationStatusCode
+			, ParaprofessionalQualificationStatusDescription
+			, ParaprofessionalQualificationStatusEdFactsCode
+	)
 	SELECT 
 		  seagt.SpecialEducationAgeGroupTaughtCode 
 		, seagt.SpecialEducationAgeGroupTaughtDescription
@@ -3845,6 +3863,9 @@
 		, setqs.SpecialEducationTeacherQualificationStatusCode
 		, setqs.SpecialEducationTeacherQualificationStatusDescription
 		, setqs.SpecialEducationTeacherQualificationStatusEdFactsCode	
+		, pqs.ParaprofessionalQualificationStatusCode
+		, pqs.ParaprofessionalQualificationStatusDescription
+		, pqs.ParaprofessionalQualificationStatusEdFactsCode
 	FROM #SpecialEducationAgeGroupTaught seagt
 	CROSS JOIN #EdFactsCertificationStatus efcs
 	CROSS JOIN #HighlyQualifiedTeacherIndicator hqti
@@ -3852,6 +3873,7 @@
 	CROSS JOIN #TeachingCredentialType tct
 	CROSS JOIN #EdFactsTeacherOutOfFieldStatus eftoofs
 	CROSS JOIN #SpecialEducationTeacherQualificationStatus setqs
+	CROSS JOIN #ParaprofessionalQualificationStatus pqs
 	LEFT JOIN rds.DimK12StaffStatuses main
 		ON seagt.SpecialEducationAgeGroupTaughtCode = main.SpecialEducationAgeGroupTaughtCode
 		AND efcs.EdFactsCertificationStatusCode = main.EdFactsCertificationStatusCode
@@ -3860,6 +3882,7 @@
 		AND tct.TeachingCredentialTypeCode = main.TeachingCredentialTypeCode
 		AND eftoofs.EdFactsTeacherOutOfFieldStatusCode = main.EdFactsTeacherOutOfFieldStatusCode
 		AND setqs.SpecialEducationTeacherQualificationStatusCode = main.SpecialEducationTeacherQualificationStatusCode
+		AND pqs.ParaprofessionalQualificationStatusCode = main.ParaprofessionalQualificationStatusCode
 	WHERE main.DimK12StaffStatusId IS NULL
 
 	DROP TABLE #SpecialEducationAgeGroupTaught
@@ -3869,6 +3892,7 @@
 	DROP TABLE #TeachingCredentialType
 	DROP TABLE #EdFactsTeacherOutOfFieldStatus
 	DROP TABLE #SpecialEducationTeacherQualificationStatus
+	DROP TABLE #ParaprofessionalQualificationStatus
 	------------------------------------------------
 	-- Populate DimNOrDStatuses			 ---
 	------------------------------------------------

@@ -33,17 +33,13 @@ CREATE VIEW RDS.vwDimK12StaffStatuses AS
 		AND sssrd2.TableName = 'RefUnexperiencedStatus'
 		AND rsy.SchoolYear = sssrd2.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd3
-		ON rdkss.OutOfFieldStatusCode = sssrd3.OutputCode
+		ON rdkss.EdFactsTeacherOutOfFieldStatusCode = sssrd3.OutputCode
 		AND sssrd3.TableName = 'RefOutOfFieldStatus'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd4
-		ON rdkss.EmergencyOrProvisionalCredentialStatusCode = sssrd4.OutputCode
-		AND sssrd4.TableName = 'RefTeachingCredentialType'
+		ON rdkss.SpecialEducationTeacherQualificationStatusCode = sssrd4.OutputCode
+		AND sssrd4.TableName = 'RefParaprofessionalQualification'
 		AND rsy.SchoolYear = sssrd4.SchoolYear
-	LEFT JOIN staging.SourceSystemReferenceData sssrd5
-		ON rdkss.SpecialEducationTeacherQualificationStatusCode = sssrd5.OutputCode
-		AND sssrd5.TableName = 'RefParaprofessionalQualification'
-		AND rsy.SchoolYear = sssrd5.SchoolYear
 --NEW ELEMENT ADDED BY OSC, TICKET #346, DON'T KNOW THE NAME OF THE REF TABLE
 	-- LEFT JOIN staging.SourceSystemReferenceData sssrd6
 	-- 	ON rdkss.SpecialEducationAgeGroupTaughtCode = sssrd6.OutputCode

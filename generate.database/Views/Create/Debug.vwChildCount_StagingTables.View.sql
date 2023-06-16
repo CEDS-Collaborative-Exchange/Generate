@@ -11,7 +11,7 @@ AS
 				,enrollment.BirthDate
 				,[RDS].[Get_Age] (enrollment.BirthDate, Toggle.ChildCountDate) AS CalculatedAge 
 
-				,ideaDisability.IdeaDisabilityType
+				,ideaDisability.IdeaDisabilityTypeCode
 
 				,programparticipation.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
 				,programparticipation.ProgramParticipationEndDate		AS IDEAProgramParticipationEndDate

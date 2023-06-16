@@ -7975,20 +7975,31 @@
 
 
 
-	
-	PRINT N'Altering Table [RDS].[DimFirearmDisciplines]...';
+	--Alter table [RDS].[DimFirearms] and update DimFirearmsId
 
-
-	--TODO: Verify 
-	
-	ALTER TABLE [RDS].[DimFirearmDisciplines] DROP COLUMN [FirearmsDisciplineId];
-
-
-	
-	/*
-	The column [RDS].[DimFirearms].[DimFirearmsId] is being renamed (remove plural 's')
-	*/
 	EXECUTE sp_rename N'[RDS].[DimFirearms].[DimFirearmsId]', N'DimFirearmId';
+
+
+	
+	PRINT N'Renaming/Rebuilding Table [RDS].[DimFirearmDisciplines]...';
+
+	CREATE TABLE [RDS].[tmp_ms_xx_DimFirearmDisciplineStatuses](
+		[DimFirearmDisciplineStatusId] 							[int] IDENTITY(1,1) 	NOT NULL,
+		[DisciplineMethodForFirearmsIncidentsCode] 				[nvarchar](50) 			NULL,
+		[DisciplineMethodForFirearmsIncidentsDescription] 		[nvarchar](max) 		NULL,
+		[DisciplineMethodForFirearmsIncidentsEdFactsCode] 		[nvarchar](50) 			NULL,
+		[IdeaDisciplineMethodForFirearmsIncidentsCode] 			[nvarchar](50) 			NULL,
+		[IdeaDisciplineMethodForFirearmsIncidentsDescription] 	[nvarchar](max) 		NULL,
+		[IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode] 	[nvarchar](50) 			NULL,
+		CONSTRAINT [tmp_ms_xx_constraint_PK_DimFirearmDisciplineStatuses1] PRIMARY KEY CLUSTERED ([DimFirearmDisciplineStatusId] ASC) WITH (DATA_COMPRESSION = PAGE)
+	);
+
+	DROP TABLE [RDS].[DimFirearmDisciplines];
+
+	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_DimFirearmDisciplineStatuses]', N'DimFirearmDisciplineStatuses';
+
+	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_DimFirearmDisciplineStatuses1]', N'PK_DimFirearmDisciplineStatuses', N'OBJECT';
+
 
 
 	
@@ -8806,9 +8817,6 @@
 		[EdFactsCertificationStatusCode]                        NVARCHAR (50)  NULL,
 		[EdFactsCertificationStatusDescription]                 NVARCHAR (200) NULL,
 		[EdFactsCertificationStatusEdFactsCode]                 NVARCHAR (50)  NULL,
-		[K12StaffClassificationCode]                            NVARCHAR (50)  NULL,
-		[K12StaffClassificationDescription]                     NVARCHAR (200) NULL,
-		[K12StaffClassificationEdFactsCode]                     NVARCHAR (50)  NULL,
 		[HighlyQualifiedTeacherIndicatorCode]                   NVARCHAR (50)  NULL,
 		[HighlyQualifiedTeacherIndicatorDescription]            NVARCHAR (200) NULL,
 		[HighlyQualifiedTeacherIndicatorEdFactsCode]            NVARCHAR (50)  NULL,
@@ -8824,6 +8832,9 @@
 		[SpecialEducationTeacherQualificationStatusCode]        NVARCHAR (50)  NULL,
 		[SpecialEducationTeacherQualificationStatusDescription] NVARCHAR (50)  NULL,
 		[SpecialEducationTeacherQualificationStatusEdFactsCode] NVARCHAR (50)  NULL,
+		[ParaprofessionalQualificationStatusCode]      			NVARCHAR (50)  NULL,
+		[ParaprofessionalQualificationStatusDescription] 		NVARCHAR (50)  NULL,
+		[ParaprofessionalQualificationStatusEdFactsCode] 		NVARCHAR (50)  NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_DimK12StaffStatuses1] PRIMARY KEY CLUSTERED ([DimK12StaffStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
@@ -8867,7 +8878,7 @@
 
 	
 	CREATE NONCLUSTERED INDEX [IX_DimK12StaffStatuses_Codes]
-		ON [RDS].[DimK12StaffStatuses]([SpecialEducationAgeGroupTaughtCode] ASC, [EdFactsCertificationStatusCode] ASC, [K12StaffClassificationCode] ASC, [HighlyQualifiedTeacherIndicatorCode] ASC, [EdFactsTeacherInexperiencedStatusCode] ASC, [TeachingCredentialTypeCode] ASC, [EdFactsTeacherOutOfFieldStatusCode] ASC, [SpecialEducationTeacherQualificationStatusCode] ASC);
+		ON [RDS].[DimK12StaffStatuses]([SpecialEducationAgeGroupTaughtCode] ASC, [EdFactsCertificationStatusCode] ASC, [HighlyQualifiedTeacherIndicatorCode] ASC, [EdFactsTeacherInexperiencedStatusCode] ASC, [TeachingCredentialTypeCode] ASC, [EdFactsTeacherOutOfFieldStatusCode] ASC, [SpecialEducationTeacherQualificationStatusCode] ASC, [ParaprofessionalQualificationStatusCode] ASC);
 
 
 	
@@ -8897,6 +8908,14 @@
 		ON [RDS].[DimK12StaffStatuses]([SpecialEducationTeacherQualificationStatusEdFactsCode] ASC);
 
 
+	PRINT N'Creating Index [RDS].[DimK12StaffStatuses].[IX_DimK12StaffStatuses_ParaprofessionalQualificationStatusEdFactsCode]...';
+
+
+	
+	CREATE NONCLUSTERED INDEX [IX_DimK12StaffStatuses_ParaprofessionalQualificationStatusEdFactsCode]
+		ON [RDS].[DimK12StaffStatuses]([ParaprofessionalQualificationStatusEdFactsCode] ASC);
+
+
 	
 	PRINT N'Creating Index [RDS].[DimK12StaffStatuses].[IX_DimK12StaffStatuses_TeachingCredentialTypeEdFactsCode]...';
 
@@ -8904,15 +8923,6 @@
 	
 	CREATE NONCLUSTERED INDEX [IX_DimK12StaffStatuses_TeachingCredentialTypeEdFactsCode]
 		ON [RDS].[DimK12StaffStatuses]([TeachingCredentialTypeEdFactsCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
-
-	
-	PRINT N'Creating Index [RDS].[DimK12StaffStatuses].[IX_DimK12StaffStatuses_K12StaffClassificationCode]...';
-
-
-	
-	CREATE NONCLUSTERED INDEX [IX_DimK12StaffStatuses_K12StaffClassificationCode]
-		ON [RDS].[DimK12StaffStatuses]([K12StaffClassificationCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 	
@@ -20061,7 +20071,7 @@
 
 	
 	ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StudentDisciplines_FirearmsDisciplineStatusId] FOREIGN KEY ([FirearmDisciplineStatusId]) REFERENCES [RDS].[DimFirearmDisciplines] ([DimFirearmDisciplineId]);
+		ADD CONSTRAINT [FK_FactK12StudentDisciplines_FirearmsDisciplineStatusId] FOREIGN KEY ([FirearmDisciplineStatusId]) REFERENCES [RDS].[DimFirearmDisciplineStatuses] ([DimFirearmDisciplineStatusId]);
 
 
 	

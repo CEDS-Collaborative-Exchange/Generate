@@ -13,11 +13,8 @@ BEGIN
 	SET NOCOUNT ON;
 
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
-		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
-		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
-		IF OBJECT_ID(N'tempdb..#vwIdeaStatuses') IS NOT NULL DROP TABLE #vwIdeaStatuses
-		IF OBJECT_ID(N'tempdb..#vwUnduplicatedRaceMap') IS NOT NULL DROP TABLE #vwUnduplicatedRaceMap
-		IF OBJECT_ID(N'tempdb..#vwEnglishLearnerStatuses') IS NOT NULL DROP TABLE #vwEnglishLearnerStatuses
+		IF OBJECT_ID(N'tempdb..#vwK12StaffStatuses') IS NOT NULL DROP TABLE #vwK12StaffStatuses
+		IF OBJECT_ID(N'tempdb..#vwK12StaffCategories') IS NOT NULL DROP TABLE #vwK12StaffCategories
 
 	BEGIN TRY
 
@@ -42,15 +39,20 @@ BEGIN
 	--Create the temp tables (and any relevant indexes) needed for this domain
 
 		SELECT *
-		INTO #vwGradeLevels
-		FROM RDS.vwDimGradeLevels
+		INTO #vwK12StaffStatuses
+		FROM RDS.vwDimK12StaffStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwGradeLevels ON #vwGradeLevels (GradeLevelTypeDescription, GradeLevelMap);
+		CREATE CLUSTERED INDEX ix_tempvwK12StaffStatuses ON #vwK12StaffStatuses (SpecialEducationAgeGroupTaughtMap, EdFactsTeacherInexperiencedStatusMap, EdFactsTeacherOutOfFieldStatusMap, TeachingCredentialTypeMap, ParaprofessionalQualificationStatusMap, HighlyQualifiedTeacherIndicatorMap);
 
+		SELECT *
+		INTO #vwK12StaffCategories
+		FROM RDS.vwDimK12StaffCategories
+		WHERE SchoolYear = @SchoolYear
 
+		CREATE CLUSTERED INDEX ix_tempvwK12StaffCategories ON #vwK12StaffCategories (K12StaffClassificationMap, SpecialEducationSupportServicesCategoryMap, TitleIProgramStaffCategoryMap);
 
-
+		
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'Submission'
@@ -110,13 +112,13 @@ BEGIN
 		LEFT JOIN RDS.DimSeas rds
 			ON @ChildCountDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
 	--staff categories (rds)
-		LEFT JOIN RDS.vwDimK12StaffCategories rdksc 
+		LEFT JOIN #vwK12StaffCategories rdksc 
 			ON rsy.SchoolYear = rdksc.SchoolYear
 			AND ISNULL(ssa.K12StaffClassification, 'MISSING') = ISNULL(rdksc.K12StaffClassificationMap, rdksc.K12StaffClassificationCode)
 			AND ISNULL(ssa.SpecialEducationStaffCategory, 'MISSING') = ISNULL(rdksc.SpecialEducationSupportServicesCategoryMap, rdksc.SpecialEducationSupportServicesCategoryCode)
 			AND ISNULL(ssa.TitleIProgramStaffCategory, 'MISSING') = ISNULL(rdksc.TitleIProgramStaffCategoryMap, rdksc.TitleIProgramStaffCategoryCode)
 	--staff statuses (rds)
-		LEFT JOIN RDS.vwDimK12StaffStatuses rdkss
+		LEFT JOIN #vwK12StaffStatuses rdkss
 			ON rsy.SchoolYear = rdkss.SchoolYear
 			AND ISNULL(ssa.SpecialEducationAgeGroupTaught, 'MISSING') = ISNULL(rdkss.SpecialEducationAgeGroupTaughtMap, rdkss.SpecialEducationAgeGroupTaughtCode)
 			AND ISNULL(ssa.EDFactsTeacherOutOfFieldStatus, 'MISSING') = ISNULL(rdkss.EDFactsTeacherOutOfFieldStatusMap, rdkss.EDFactsTeacherOutOfFieldStatusCode)
