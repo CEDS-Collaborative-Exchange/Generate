@@ -1,6 +1,6 @@
 CREATE PROCEDURE [Utilities].[Check_SourceSystemReferenceData_Mapping]
 	@generateReportGroup varchar(50) = null,
-	@schoolYear int,
+	@schoolYear smallint,
 	@showUnmappedOnly bit = 0
 AS 
 BEGIN
@@ -43,16 +43,11 @@ BEGIN
 	-------------------------------------------------	
 
 	--check that report group was provided
-	if @generateReportGroup is null
+	if isnull(@generateReportGroup, '') = ''
 	begin 
-		print 'No Generate Report Group provided, please execute the script for a specific Report Group.  Valid options can be found with this query - SELECT DISTNCT ReportGroup FROM [App].[GenerateReportGroups]'
-		return
-	end
-
-	--check that a school year was provided
-	if @schoolYear is null
-	begin 
-		print 'No school year provided, please execute the script with a valid School Year'
+		select '*** No value provided for Generate Report Group. Valid options are:' ValidValues
+		UNION
+		SELECT DISTINCT ReportGroup FROM [App].[GenerateReportGroups] 
 		return
 	end
 
@@ -61,10 +56,20 @@ BEGIN
 	begin
 		if (select count(*) from app.GenerateReportGroups where ReportGroup = @generateReportGroup) < 1
 		begin
-			print 'The Generate Report group is invalid, check the Group Name entered against - SELECT DISTNCT ReportGroup FROM [App].[GenerateReportGroups]'
+			select '*** Invalid value provided for Generate Report Group. Valid options are:' ValidValues
+			UNION
+			SELECT DISTINCT ReportGroup FROM [App].[GenerateReportGroups] 
 			return
 		end 
 	end
+
+	--check that a school year was provided
+	if isnull(@schoolYear, '') = ''
+	begin 
+		print '*** No school year provided, please execute the script with a valid School Year'
+		return
+	end
+
 
 	-------------------------------------------------	
 	--Execute the scripts
@@ -99,23 +104,6 @@ BEGIN
 --		print (@tempSql)
 		exec sp_executesql @tempSql
 
-		--Format the the list of Generate Report IDs for the Report Group
-		--	for use in the SSRD query below
-		declare @reportIdString varchar(100)
-		set @reportIdString = (	
-			SELECT DISTINCT  
-				SUBSTRING(
-					(
-						SELECT ',' + fmr1.FileNumber  AS [text()]
-						FROM #fileSpecByReportGroup fmr1
-						WHERE fmr1.FileGroupName = fmr2.FileGroupName
-						ORDER BY fmr1.FileGroupName
-						FOR XML PATH (''), TYPE
-					).value('text()[1]','nvarchar(max)'), 2, 1000) 
-				[Files]
-			FROM #fileSpecByReportGroup fmr2
-		)
-
 	end try
 	begin catch
 		select 'Failed to get the report IDs from the Report Group provided', ERROR_MESSAGE()
@@ -134,14 +122,14 @@ BEGIN
 		'	, sssrd.OutputCode ' + char(10) +
 		'from app.SourceSystemReferenceMapping_DomainFile_XREF x ' + char(10) +
 		'	inner join app.GenerateReports agr ' + char(10) +
-		'		on agr.GenerateReportId in (' + @reportIdString + ') ' + char(10) +
+		'		on agr.GenerateReportId in (select distinct FileNumber from #fileSpecByReportGroup) ' + char(10) +
 		'	inner join app.GenerateStagingTables agst ' + char(10) +
 		'		on x.StagingTableId = agst.StagingTableId ' + char(10) +
 		'	inner join staging.SourceSystemReferenceData sssrd ' + char(10) +
 		'		on x.CEDSReferenceTable = sssrd.TableName ' + char(10) +
 		'		and isnull(x.SSRDTableFilter, ''N/A'') = ISNULL(sssrd.TableFilter, ''N/A'') ' + char(10) +
 		'where x.GenerateReportGroup like (''%' + @generateReportGroup + '%'')' + char(10) +
-		'and sssrd.SchoolYear = 2022 ' + char(10)
+		'and sssrd.SchoolYear = ' + convert(varchar, @SchoolYear) + '' + char(10)
 
 		if @showUnmappedOnly = 1
 		begin 
