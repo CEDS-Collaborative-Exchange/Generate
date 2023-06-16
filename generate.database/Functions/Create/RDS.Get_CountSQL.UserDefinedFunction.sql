@@ -3924,13 +3924,13 @@ BEGIN
 					on fact.GradeLevelId = gl.DimGradeLevelId
 				inner join (
 					select distinct OrganizationStateId, GRADELEVEL 
-					from rds.FactOrganizationCountReports c39 
+					from rds.ReportEDFactsOrganizationCounts c39 
 					where c39.ReportCode = ''C039''
 						and c39.reportLevel = ''' + @reportLevel +
 						''' and c39.reportyear = ''' + @reportyear + '''										
 				) grades 
 					on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-					and grades.OrganizationStateId = s.SchoolIdentifierState) '
+					and grades.OrganizationStateId = s.SchoolIdentifierSea) '
 		END		
 	END
 	else if @reportCode in ('c070')
@@ -6030,7 +6030,7 @@ BEGIN
 		if @reportCode in ('c052') and @categorySetCode not in ('ST3','TOT') AND @reportLevel in ('lea', 'sch')
 			begin
 				set @sqlCategoryOptionJoins = @sqlCategoryOptionJoins + ' inner join (select distinct GRADELEVEL,OrganizationStateId
-				from rds.FactOrganizationCountReports where reportCode =''C039'' AND reportLevel = ''' + @reportLevel +''' AND reportyear = ''' + @reportyear +''') b
+				from rds.ReportEDFactsOrganizationCounts where reportCode =''C039'' AND reportLevel = ''' + @reportLevel +''' AND reportyear = ''' + @reportyear +''') b
 				on CAT_GRADELEVEL.Code = b.GRADELEVEL and CAT_Organizations.OrganizationIdentifierSea = b.OrganizationStateId'
 			end	
 
