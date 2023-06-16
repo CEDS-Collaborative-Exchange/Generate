@@ -9254,123 +9254,243 @@
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusCode].[CEDS_Def_Desc]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The titles of employment, official status, or rank of education staff.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of whether special education teachers are fully certified in the State.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationCode].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusCode].[CEDS_ElementTechnicalName]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'K12StaffClassification', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'SpecialEducationTeacherQualificationStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusCode].[CEDS_GlobalId]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000087', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'001996', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusCode].[CEDS_URL]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17087', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/element/001996', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusCode].[MS_Description]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationDescription].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusDescription].[CEDS_Def_Desc]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The titles of employment, official status, or rank of education staff.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of whether special education teachers are fully certified in the State.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationDescription].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusDescription].[CEDS_ElementTechnicalName]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'K12StaffClassification', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'SpecialEducationTeacherQualificationStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationDescription].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusDescription].[CEDS_GlobalId]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000087', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'001996', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationDescription].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusDescription].[CEDS_URL]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17087', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/element/001996', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationDescription].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusDescription].[MS_Description]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationDescription';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationEdFactsCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusEdFactsCode].[CEDS_Def_Desc]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The titles of employment, official status, or rank of education staff.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of whether special education teachers are fully certified in the State.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationEdFactsCode].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusEdFactsCode].[CEDS_ElementTechnicalName]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'K12StaffClassification', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'SpecialEducationTeacherQualificationStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationEdFactsCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusEdFactsCode].[CEDS_GlobalId]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000087', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'001996', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationEdFactsCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusEdFactsCode].[CEDS_URL]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17087', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/element/001996', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[K12StaffClassificationEdFactsCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[SpecialEducationTeacherQualificationStatusEdFactsCode].[MS_Description]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'K12StaffClassificationEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'SpecialEducationTeacherQualificationStatusEdFactsCode';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusCode].[CEDS_Def_Desc]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of whether paraprofessionals are classified as qualified for their assignment according to state definition.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusCode';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusCode].[CEDS_ElementTechnicalName]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'ParaprofessionalQualificationStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusCode';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusCode].[CEDS_GlobalId]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000207', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusCode';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusCode].[CEDS_URL]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermxTopicId=59104', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusCode';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusCode].[MS_Description]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusCode';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusDescription].[CEDS_Def_Desc]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of whether paraprofessionals are classified as qualified for their assignment according to state definition.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusDescription';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusDescription].[CEDS_ElementTechnicalName]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'ParaprofessionalQualificationStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusDescription';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusDescription].[CEDS_GlobalId]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000207', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusDescription';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusDescription].[CEDS_URL]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermxTopicId=59104', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusDescription';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusDescription].[MS_Description]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusDescription';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusEdFactsCode].[CEDS_Def_Desc]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of whether paraprofessionals are classified as qualified for their assignment according to state definition.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusEdFactsCode';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusEdFactsCode].[CEDS_ElementTechnicalName]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'ParaprofessionalQualificationStatus', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusEdFactsCode';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusEdFactsCode].[CEDS_GlobalId]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000207', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusEdFactsCode';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusEdFactsCode].[CEDS_URL]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermxTopicId=59104', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusEdFactsCode';
+
+
+	
+	PRINT N'Creating Extended Property [RDS].[DimK12StaffStatuses].[ParaprofessionalQualificationStatusEdFactsCode].[MS_Description]...';
+
+
+	
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimK12StaffStatuses', @level2type = N'COLUMN', @level2name = N'ParaprofessionalQualificationStatusEdFactsCode';
 
 
 	
@@ -36776,243 +36896,243 @@
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsCode].[CEDS_Def_Desc]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsCode].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsCode].[CEDS_ElementTechnicalName]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsCode].[CEDS_GlobalId]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsCode].[CEDS_URL]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsCode].[MS_Description]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsDescription].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsDescription].[CEDS_Def_Desc]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsDescription].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsDescription].[CEDS_ElementTechnicalName]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsDescription].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsDescription].[CEDS_GlobalId]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsDescription].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsDescription].[CEDS_URL]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsDescription].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsDescription].[MS_Description]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsDescription';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_Def_Desc]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_ElementTechnicalName]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_GlobalId]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_URL]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[DisciplineMethodForFirearmsIncidentsEdFactsCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[DisciplineMethodForFirearmsIncidentsEdFactsCode].[MS_Description]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'DisciplineMethodForFirearmsIncidentsEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsCode].[CEDS_Def_Desc]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsCode].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsCode].[CEDS_ElementTechnicalName]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsCode].[CEDS_GlobalId]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsCode].[CEDS_URL]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsCode].[MS_Description]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsDescription].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsDescription].[CEDS_Def_Desc]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsDescription].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsDescription].[CEDS_ElementTechnicalName]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsDescription].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsDescription].[CEDS_GlobalId]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsDescription].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsDescription].[CEDS_URL]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsDescription].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsDescription].[MS_Description]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsDescription';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsDescription';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_Def_Desc]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The method used to discipline students who are not children with disabilities (IDEA) involved in firearms and other outcomes of firearms incidents.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_ElementTechnicalName]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'DisciplineMethodForFirearmsIncidents', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_GlobalId]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000555', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode].[CEDS_URL]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17546', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplines].[IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimFirearmDisciplineStatuses].[IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode].[MS_Description]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplines', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimFirearmDisciplineStatuses', @level2type = N'COLUMN', @level2name = N'IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode';
 
 
 	

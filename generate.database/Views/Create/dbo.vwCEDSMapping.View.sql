@@ -17,6 +17,7 @@ CROSS APPLY dbo.fnSplit(CAST(u.Value AS VARCHAR(MAX)), ',') us
 WHERE ms.RowNumber = es.RowNumber
 	AND ms.RowNumber = us.RowNumber
 
+
 UNION
 
 SELECT 

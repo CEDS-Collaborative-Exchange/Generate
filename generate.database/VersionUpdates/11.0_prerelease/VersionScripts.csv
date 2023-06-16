@@ -53,6 +53,8 @@ Views\\Drop,Debug.vwK12Staff_StagingTables.View.sql,0
 Views\\Create,Debug.vwK12Staff_StagingTables.View.sql,0
 Views\\Drop,RDS.vwDimK12SchoolStatuses.View.sql,0
 Views\\Create,RDS.vwDimK12SchoolStatuses.View.sql,0
+Views\\Drop,RDS.vwDimK12StaffStatuses.View.sql,0
+Views\\Create,RDS.vwDimK12StaffStatuses.View.sql,0
 Views\\Drop,RDS.vwDimK12StudentStatuses.View.sql,0
 Views\\Drop,RDS.vwDimProgramStatuses.View.sql,0
 Views\\Drop,RDS.vwDimLanguages.View.sql,0

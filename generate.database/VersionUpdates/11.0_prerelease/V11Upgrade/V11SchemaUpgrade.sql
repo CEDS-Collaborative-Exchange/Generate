@@ -8458,7 +8458,6 @@ ALTER TABLE [RDS].[FactPsStudentEnrollments] WITH NOCHECK
 PRINT N'Creating Foreign Key [RDS].[FK_FactK12ProgramParticipations_K12StudentId]...';
 
 
-
 ALTER TABLE [RDS].[FactK12ProgramParticipations] WITH NOCHECK
     ADD CONSTRAINT [FK_FactK12ProgramParticipations_K12StudentId] FOREIGN KEY ([K12StudentId]) REFERENCES [RDS].[DimPeople] ([DimPersonId]);
 
@@ -8795,7 +8794,7 @@ PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentDisciplines_FirearmsDiscipl
 
 
 ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH NOCHECK
-    ADD CONSTRAINT [FK_FactK12StudentDisciplines_FirearmsDisciplineStatusId] FOREIGN KEY ([FirearmDisciplineStatusId]) REFERENCES [RDS].[DimFirearmDisciplines] ([DimFirearmDisciplineId]);
+    ADD CONSTRAINT [FK_FactK12StudentDisciplines_FirearmsDisciplineStatusId] FOREIGN KEY ([FirearmDisciplineStatusId]) REFERENCES [RDS].[DimFirearmDisciplineStatuses] ([DimFirearmDisciplineStatusId]);
 
 
 

@@ -10,14 +10,14 @@ AS
 
 				, StaffStatus.SpecialEducationAgeGroupTaughtEdFactsCode
 				, StaffStatus.EdFactsCertificationStatusEdFactsCode
-				, StaffStatus.K12StaffClassificationEdFactsCode
 				, StaffStatus.HighlyQualifiedTeacherIndicatorEdFactsCode
 				, StaffStatus.EdFactsTeacherInexperiencedStatusEdFactsCode
 				, StaffStatus.TeachingCredentialTypeEdFactsCode
 				, StaffStatus.EdFactsTeacherOutOfFieldStatusEdFactsCode
 				, StaffStatus.SpecialEducationTeacherQualificationStatusEdFactsCode
+				, StaffStatus.ParaprofessionalQualificationStatusEdFactsCode
 
---				, StaffCat.K12StaffClassificationEdFactsCode
+				, StaffCat.K12StaffClassificationEdFactsCode
 				, StaffCat.SpecialEducationSupportServicesCategoryEdFactsCode
 				, StaffCat.TitleIProgramStaffCategoryEdFactsCode
 
@@ -46,7 +46,6 @@ AS
 	--AND Schools.SchoolIdentifierState = '456'
 	--AND StaffStatus.SpecialEducationAgeGroupTaughtEdFactsCode = '6TO21'					--('3TO5', '6TO21', 'MISSING')
 	--AND StaffStatus.CertificationStatusEdFactsCode = 'FC'									--('FC', 'NFC', 'MISSING')
-	--AND StaffStatus.K12StaffClassificationEdFactsCode = 'STAFF'							--('TEACHER','PARAPROFESSIONAL','STAFF', 'MISSING')
 	--AND StaffStatus.QualificationStatusEdFactsCode = 'HQ'									--('NHQ','SPEDTCHFULCRT','HQ','Q','NQ','SPEDTCHNFULCRT', 'MISSING')
 	--AND StaffStatus.UnexperiencedStatusEdFactsCode = 'TCHEXPRNCD'							--('TCHINEXPRNCD','TCHEXPRNCD', 'MISSING')
 	--AND StaffStatus.EmergencyOrProvisionalCredentialStatusEdFactsCode = 'TCHWEMRPRVCRD'	--('TCHWEMRPRVCRD','TCHWOEMRPRVCRD', 'MISSING')
