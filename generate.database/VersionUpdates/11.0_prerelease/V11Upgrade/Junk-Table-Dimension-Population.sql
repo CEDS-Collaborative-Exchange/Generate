@@ -3741,7 +3741,7 @@
 			, EdFactsTeacherOutOfFieldStatusEdFactsCode
 			, SpecialEducationTeacherQualificationStatusCode
 			, SpecialEducationTeacherQualificationStatusDescription
-			, SpecialEducationTeacherQualificationStatusEdFactsCode)
+			, SpecialEducationTeacherQualificationStatusEdFactsCode
 			, ParaprofessionalQualificationStatusCode
 			, ParaprofessionalQualificationStatusDescription
 			, ParaprofessionalQualificationStatusEdFactsCode)
