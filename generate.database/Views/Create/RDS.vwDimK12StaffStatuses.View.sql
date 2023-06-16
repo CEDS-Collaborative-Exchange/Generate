@@ -1,13 +1,13 @@
-create VIEW RDS.vwDimK12StaffStatuses AS
+alter VIEW RDS.vwDimK12StaffStatuses AS
 	SELECT
 		  DimK12StaffStatusId
 		, rsy.SchoolYear
 		, SpecialEducationAgeGroupTaughtCode 
 		, sssrd1.InputCode AS SpecialEducationAgeGroupTaughtMap
-		, QualificationStatusCode 
+		, SpecialEducationTeacherQualificationStatusCode
 		, CASE  
-			WHEN QualificationStatusCode = 'SPEDTCHFULCRT' THEN 'SPEDTCHFULCRT'
-			WHEN QualificationStatusCode = 'SPEDTCHNFULCRT' THEN 'SPEDTCHNFULCRT'
+			WHEN SpecialEducationTeacherQualificationStatusCode = 'SPEDTCHFULCRT' THEN 'SPEDTCHFULCRT'
+			WHEN SpecialEducationTeacherQualificationStatusCode = 'SPEDTCHNFULCRT' THEN 'SPEDTCHNFULCRT'
 			ELSE sssrd6.InputCode
 		  END AS QualificationStatusMap
 		, EdFactsTeacherInexperiencedStatusCode 
@@ -28,11 +28,11 @@ create VIEW RDS.vwDimK12StaffStatuses AS
 		AND sssrd3.TableName = 'RefUnexperiencedStatus'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd4
-		ON rdkss.EmergencyOrProvisionalCredentialStatusCode = sssrd4.OutputCode
+		ON rdkss.EmergencyOrProvisionalCrEedentialStatusCode = sssrd4.OutputCode
 		AND sssrd4.TableName = 'RefEmergencyOrProvisionalCredentialStatus'
 		AND rsy.SchoolYear = sssrd4.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd5
-		ON rdkss.OutOfFieldStatusCode = sssrd5.OutputCode
+		ON rdkss.EdFactsTeacherOutOfFieldStatusCode = sssrd5.OutputCode
 		AND sssrd5.TableName = 'RefOutOfFieldStatus'
 		AND rsy.SchoolYear = sssrd5.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd6

@@ -5,7 +5,7 @@ Description: Migrates Discipline Data from Staging to RDS.FactK12StudentDiscipli
 
 NOTE: This Stored Procedure processes files: 005, 006, 007, 086, 088, 143, 144
 ************************************************************************/
-ALTER PROCEDURE [Staging].[Staging-to-FactK12StudentDisciplines]
+CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentDisciplines]
 	@SchoolYear SMALLINT
 AS
 BEGIN
