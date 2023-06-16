@@ -818,6 +818,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimEnglishLearnerStatusId'
 		end
+		else if @dimensionTable ='DimEconomicallyDisadvantagedStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimEconomicallyDisadvantagedStatusId'
+		end
 		else if @dimensionTable ='DimPeople'
 		begin
 			set @dimensionPrimaryKey = 'DimPersonId'
@@ -1420,8 +1424,8 @@ BEGIN
 					begin
 						set @sqlCategoryReturnField = ' 
 							case 
-								when CAT_' + @reportField + '.EligibilityStatusForSchoolFoodServiceProgramCode = ''FREE'' then ''FL''
-								when CAT_' + @reportField + '.EligibilityStatusForSchoolFoodServiceProgramCode = ''REDUCEDPRICE'' then ''RPL''
+								when CAT_' + @reportField + '.EligibilityStatusForSchoolFoodServiceProgramsCode = ''FREE'' then ''FL''
+								when CAT_' + @reportField + '.EligibilityStatusForSchoolFoodServiceProgramsCode = ''REDUCEDPRICE'' then ''RPL''
 								else CAT_' + @reportField + '.' + @dimensionField + '
 							end'
 					end
@@ -3701,7 +3705,7 @@ BEGIN
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					select distinct fact.K12StudentId, fact.K12StudentStatusId
+					select distinct fact.K12StudentId
 					from rds.' + @factTable + ' fact '
 
 					if @reportLevel in ('lea', 'sch')
@@ -3719,17 +3723,14 @@ BEGIN
 						and fact.SchoolYearId = @dimSchoolYearId
 						and fact.FactTypeId = @dimFactTypeId
 						and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-					inner join rds.DimK12StudentStatuses dss 
-						on fact.K12StudentStatusId = dss.DimK12StudentStatusId					
 					) rules
-						on fact.K12StudentId = rules.K12StudentId 
-						and fact.K12StudentStatusId = rules.K12StudentStatusId'
+						on fact.K12StudentId = rules.K12StudentId'
 			end
 		else if @tableTypeAbbrv in ('DIRECTCERT')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					select distinct fact.K12StudentId, fact.K12StudentStatusId
+					select distinct fact.K12StudentId, fact.EconomicallyDisadvantagedStatusId
 					from rds.' + @factTable + ' fact '
 
 					if @reportLevel in ('lea', 'sch')
@@ -3747,12 +3748,12 @@ BEGIN
 						and fact.SchoolYearId = @dimSchoolYearId
 						and fact.FactTypeId = @dimFactTypeId
 						and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-					inner join rds.DimK12StudentStatuses dss 
-						on fact.K12StudentStatusId = dss.DimK12StudentStatusId
-					where dss.NSLPDirectCertificationIndicatorCode = ''YES''
+					inner join rds.DimEconomicallyDisadvantagedStatuses dss 
+						on fact.EconomicallyDisadvantagedStatusId = dss.DimEconomicallyDisadvantagedStatusId
+					where dss.NationalSchoolLunchProgramDirectCertificationIndicatorCode = ''YES''
 					) rules
 						on fact.K12StudentId = rules.K12StudentId 
-						and fact.K12StudentStatusId = rules.K12StudentStatusId'
+						and fact.EconomicallyDisadvantagedStatusId = rules.EconomicallyDisadvantagedStatusId'
 			end
 		end
 	else if @reportCode in ('c141')
