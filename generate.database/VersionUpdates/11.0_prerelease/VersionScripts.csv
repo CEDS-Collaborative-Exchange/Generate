@@ -8,7 +8,6 @@ VersionUpdates\\11.0_prerelease\V11Upgrade,V11SchemaUpgrade.sql,0
 VersionUpdates\\11.0_prerelease\V11Upgrade,CEDS-Elements.sql,0
 VersionUpdates\\11.0_prerelease\V11Upgrade,Junk-Table-Dimension-Population.sql,0
 VersionUpdates\\11.0_prerelease,RemoveReferencesToIeus.sql,0
-VersionUpdates\\11.0_prerelease\V11Upgrade,Copy-In-Legacy-Data.sql,0
 Views\\Drop,App.trgVwReportCode_CategoryOptions.Trigger.sql,0
 Views\\Create,App.trgVwReportCode_CategoryOptions.Trigger.sql,0
 Views\\Drop,App.trgVwReportCode_FileColumns.Trigger.sql,0
@@ -26,6 +25,10 @@ Tables\\Drop,Staging.StagingValidationResults.Table.sql,0
 Tables\\Create,Staging.StagingValidationResults.Table.sql,0
 VersionUpdates\\11.0_prerelease,AddDataMigrationTypes.sql,0
 VersionUpdates\\11.0_prerelease,REPLACE_STAGING_VALIDATION_RULES.sql,0
+Functions\\Drop,dbo.fnSplit.UserDefinedFunction.sql,0
+Functions\\Create,dbo.fnSplit.UserDefinedFunction.sql,0
+Functions\\Drop,RDS.MaxRecordStartDateTime.UserDefinedFunction.sql,0
+Functions\\Create,RDS.MaxRecordStartDateTime.UserDefinedFunction.sql,0
 Views\\Drop,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql,0
 Views\\Create,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql,0
 Views\\Drop,dbo.vwCEDSMapping.View.sql,0
@@ -94,10 +97,6 @@ Views\\Drop,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Create,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Drop,RDS.vwUnduplicatedRaceMap.View.sql,0
 Views\\Create,RDS.vwUnduplicatedRaceMap.View.sql,0
-Functions\\Drop,dbo.fnSplit.UserDefinedFunction.sql,0
-Functions\\Create,dbo.fnSplit.UserDefinedFunction.sql,0
-Functions\\Drop,RDS.MaxRecordStartDateTime.UserDefinedFunction.sql,0
-Functions\\Create,RDS.MaxRecordStartDateTime.UserDefinedFunction.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql,0

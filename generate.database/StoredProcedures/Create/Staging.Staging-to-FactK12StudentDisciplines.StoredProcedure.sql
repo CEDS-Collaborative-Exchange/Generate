@@ -160,7 +160,6 @@ BEGIN
 			, FirearmDisciplineStatusId int null --new
 			, FosterCareStatusId int null --new
 			, HomelessnessStatusId int null --new
-			, IdeaDisabilityTypeId int null --new
 			, ImmigrantStatusId int null --new
 			, IncidentIdentifier int null --new
 			, IncidentStatusId int null --new
@@ -205,7 +204,6 @@ BEGIN
 			, ISNULL(rdfds.DimFirearmDisciplineStatusId, -1)FirearmDisciplineStatusId 
 			, -1											FosterCareStatusId
 			, -1											HomelessnessStatusId
-			, ISNULL(rdidt.DimIdeaDisabilityTypeId, -1)		IdeaDisabilityTypeId
 			, -1											ImmigrantStatusId
 			, sd.IncidentIdentifier							IncidentIdentifier
 			, -1											IncidentStatusId
@@ -426,7 +424,6 @@ BEGIN
 			  ,GradeLevelId
 			  ,HomelessnessStatusId
 			  ,IdeaStatusId
-			  ,IdeaDisabilityTypeId
 			  ,ImmigrantStatusId
 			  ,IncidentIdentifier
 			  ,IncidentStatusId
@@ -467,7 +464,6 @@ BEGIN
 			  ,GradeLevelId
 			  ,HomelessnessStatusId
 			  ,IdeaStatusId
-			  ,IdeaDisabilityTypeId
 			  ,ImmigrantStatusId
 			  ,IncidentIdentifier
 			  ,IncidentStatusId

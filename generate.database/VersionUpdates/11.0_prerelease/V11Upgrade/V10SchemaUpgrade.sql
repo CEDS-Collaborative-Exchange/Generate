@@ -8791,9 +8791,6 @@
 	The column [RDS].[DimK12StaffStatuses].[CertificationStatusDescription] is being renamed.
 	The column [RDS].[DimK12StaffStatuses].[CertificationStatusEdFactsCode] is being renamed.
 	TODO: Make sure these 3 should be dropped.
-	The column [RDS].[DimK12StaffStatuses].[EmergencyOrProvisionalCredentialStatusCode] is being dropped.
-	The column [RDS].[DimK12StaffStatuses].[EmergencyOrProvisionalCredentialStatusDescription] is being dropped.
-	The column [RDS].[DimK12StaffStatuses].[EmergencyOrProvisionalCredentialStatusEdFactsCode] is being dropped.
 	The column [RDS].[DimK12StaffStatuses].[OutOfFieldStatusCode] is being renamed.
 	The column [RDS].[DimK12StaffStatuses].[OutOfFieldStatusDescription] is being renamed.
 	The column [RDS].[DimK12StaffStatuses].[OutOfFieldStatusEdFactsCode] is being renamed.
@@ -8823,6 +8820,9 @@
 		[EdFactsTeacherInexperiencedStatusCode]                 NVARCHAR (50)  NULL,
 		[EdFactsTeacherInexperiencedStatusDescription]          NVARCHAR (200) NULL,
 		[EdFactsTeacherInexperiencedStatusEdFactsCode]          NVARCHAR (50)  NULL,
+		[EmergencyOrProvisionalCredentialStatusCode]			NVARCHAR (100) NULL,
+		[EmergencyOrProvisionalCredentialStatusDescription]		NVARCHAR (400) NULL,
+		[EmergencyOrProvisionalCredentialStatusEdFactsCode]		NVARCHAR (100) NULL,
 		[TeachingCredentialTypeCode]                            NVARCHAR (50)  NULL,
 		[TeachingCredentialTypeDescription]                     NVARCHAR (200) NULL,
 		[TeachingCredentialTypeEdFactsCode]                     NVARCHAR (50)  NULL,
