@@ -6,12 +6,12 @@ BEGIN
 		if(@organizationType = '001073') -- Schools
 		BEGIN
 			select distinct 
-				  SchoolIdentifierState AS 'OrganizationId'
+				  SchoolIdentifierSea AS 'OrganizationId'
 				, NameOfInstitution AS 'Name'
 				, Null AS 'RefOrganizationTypeId'
 				, NULL AS 'ShortName'
-				, LeaIdentifierState AS 'ParentOrganizationId'
-				, SchoolIdentifierState AS 'OrganizationStateIdentifier'
+				, LeaIdentifierSea AS 'ParentOrganizationId'
+				, SchoolIdentifierSea AS 'OrganizationStateIdentifier'
 			from rds.DimK12Schools
 			where NameOfInstitution is not null
 				AND RecordStartDateTime <= CAST('6/30/' + CAST(@schoolYear AS VARCHAR(4)) AS DATE)
@@ -22,17 +22,17 @@ BEGIN
 		ELSE
 		BEGIN
 			select distinct 
-				  LeaIdentifierState AS 'OrganizationId'
-				, LEAName AS 'Name'
+				  LeaIdentifierSea AS 'OrganizationId'
+				, LeaOrganizationName AS 'Name'
 				, NULL AS 'RefOrganizationTypeId'
 				, NULL AS 'ShortName'
 				, NULL AS 'ParentOrganizationId'
-				, LeaIdentifierState AS 'OrganizationStateIdentifier'  
+				, LeaIdentifierSea AS 'OrganizationStateIdentifier'  
 			from rds.dimleas 
-			where LeaName is not null
+			where LeaOrganizationName is not null
 				AND RecordStartDateTime <= CAST('06/30/' + CAST(@schoolYear AS VARCHAR(4)) AS DATE)
 				AND (RecordEndDateTime IS NULL 
 					OR RecordEndDateTime >= CAST('07/01/' + CAST(@schoolYear - 1 AS VARCHAR(4)) AS DATE))
-			order by LEAName
+			order by LeaOrganizationName
 		END
 END

@@ -1,31 +1,31 @@
 create VIEW RDS.vwDimTitleIStatuses
 AS
 	SELECT
-		rdtis.DimTitleIStatusId
+		  rdt1s.DimTitleIStatusId
 		, rsy.SchoolYear
-		, rdtis.TitleIInstructionalServicesCode
+		, rdt1s.TitleIInstructionalServicesCode
 		, sssrd1.InputCode AS TitleIInstructionalServicesMap
-		, TitleIProgramTypeCode
+		, rdt1s.TitleIProgramTypeCode
 		, sssrd2.InputCode AS TitleIProgramTypeMap
-		, TitleISchoolStatusCode
+		, rdt1s.TitleISchoolStatusCode
 		, sssrd3.InputCode AS TitleISchoolStatusMap
-		, TitleISupportServicesCode
+		, rdt1s.TitleISupportServicesCode
 		, sssrd4.InputCode AS TitleISupportServicesMap
-	FROM rds.DimTitleIStatuses rdtis
+	FROM rds.DimTitleIStatuses rdt1s
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
-		ON rdtis.TitleIInstructionalServicesCode = sssrd1.OutputCode
-		AND sssrd1.TableName = 'RefTitleIInstructionalServices'
+		ON rdt1s.TitleISupportServicesCode = sssrd1.OutputCode
+		AND sssrd1.TableName = 'RefTitleIInstructionServices'
 		AND rsy.SchoolYear = sssrd1.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd2
-		ON rdtis.TitleIProgramTypeCode = sssrd2.OutputCode
+		ON rdt1s.TitleIProgramTypeCode = sssrd2.OutputCode
 		AND sssrd2.TableName = 'RefTitleIProgramType'
 		AND rsy.SchoolYear = sssrd2.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd3
-		ON rdtis.TitleISchoolStatusCode = sssrd3.OutputCode
+		ON rdt1s.TitleISchoolStatusCode = sssrd2.OutputCode
 		AND sssrd3.TableName = 'RefTitleISchoolStatus'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd4
-		ON rdtis.TitleISupportServicesCode = sssrd4.OutputCode
+		ON rdt1s.TitleISupportServicesCode = sssrd4.OutputCode
 		AND sssrd4.TableName = 'RefK12LeaTitleISupportService'
 		AND rsy.SchoolYear = sssrd4.SchoolYear

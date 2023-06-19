@@ -27,15 +27,15 @@ BEGIN
 		BEGIN
 			;WITH MaxDateCTE AS (
 					-- Get the Max record for this school year
-					SELECT max(RecordStartDateTime) as maxDate, LeaIdentifierState 
+					SELECT max(RecordStartDateTime) as maxDate, LeaIdentifierSea 
 					FROM RDS.DimLeas 
 					WHERE RecordStartDateTime between @StartDate and @EndDate
-					GROUP BY LeaIdentifierState
+					GROUP BY LeaIdentifierSea
 			)
 			-- Fill the table variable with the rows for your result set
 				-- Get the Max record for this school year
 				INSERT INTO @MaxRecordStartDateTime				
-				SELECT d.LeaIdentifierState
+				SELECT d.LeaIdentifierSea
 					, d.OperationalStatusEffectiveDate
 					, d.LeaTypeDescription
 					, d.LeaTypeEdFactsCode
@@ -45,7 +45,7 @@ BEGIN
 					, d.RecordEndDateTime
 				FROM RDS.DimLeas d
 				LEFT JOIN MaxDateCTE dl 
-					ON (d.LeaIdentifierState = dl.LeaIdentifierState 
+					ON (d.LeaIdentifierSea = dl.LeaIdentifierSea 
 					AND d.RecordStartDateTime = dl.maxDate )
 				WHERE RecordStartDateTime between @StartDate and @EndDate 
 				AND dl.maxDate is not null
@@ -54,15 +54,15 @@ BEGIN
 		BEGIN
 			;WITH MaxDateCTE AS (
 					-- Get the Max record for this school year
-					SELECT max(RecordStartDateTime) as maxDate, SchoolIdentifierState 
+					SELECT max(RecordStartDateTime) as maxDate, SchoolIdentifierSea 
 					FROM rds.DimK12Schools schDir 
 					WHERE RecordStartDateTime between @StartDate and @EndDate
-					GROUP BY SchoolIdentifierState
+					GROUP BY SchoolIdentifierSea
 			)
 			-- Fill the table variable with the rows for your result set
 				-- Get the Max record for this school year
 				INSERT INTO @MaxRecordStartDateTime				
-				SELECT d.SchoolIdentifierState
+				SELECT d.SchoolIdentifierSea
 					, d.SchoolOperationalStatusEffectiveDate
 					, d.SchoolTypeDescription
 					, d.SchoolTypeEdFactsCode
@@ -72,7 +72,7 @@ BEGIN
 					, d.RecordEndDateTime
 				FROM RDS.DimK12Schools d
 				LEFT JOIN MaxDateCTE dl 
-					ON (d.SchoolIdentifierState = dl.SchoolIdentifierState 
+					ON (d.SchoolIdentifierSea = dl.SchoolIdentifierSea 
 					AND d.RecordStartDateTime = dl.maxDate )
 				WHERE RecordStartDateTime between @StartDate and @EndDate 
 				AND dl.maxDate is not null
@@ -82,15 +82,15 @@ BEGIN
 		BEGIN
 			;WITH MaxDateCTE AS (
 					-- Get the Max record for this school year
-					SELECT max(RecordStartDateTime) as maxDate, StateIdentifier 
+					SELECT max(RecordStartDateTime) as maxDate, CharterSchoolManagementOrganizationOrganizationIdentifierSea
 					FROM rds.DimCharterSchoolManagementOrganizations dcsaa
 					WHERE RecordStartDateTime between @StartDate and @EndDate
-					GROUP BY StateIdentifier
+					GROUP BY CharterSchoolManagementOrganizationOrganizationIdentifierSea
 			)
 			-- Fill the table variable with the rows for your result set
 				-- Get the Max record for this school year
 				INSERT INTO @MaxRecordStartDateTime				
-				SELECT d.StateIdentifier
+				SELECT d.CharterSchoolManagementOrganizationOrganizationIdentifierSea
 					, NULL
 					, d.CharterSchoolManagementOrganizationTypeDescription
 					, NULL
@@ -100,7 +100,8 @@ BEGIN
 					, d.RecordEndDateTime
 				FROM rds.DimCharterSchoolManagementOrganizations d
 				LEFT JOIN MaxDateCTE dl 
-					ON (d.StateIdentifier = dl.StateIdentifier AND d.RecordStartDateTime = dl.maxDate )
+					ON (d.CharterSchoolManagementOrganizationOrganizationIdentifierSea = dl.CharterSchoolManagementOrganizationOrganizationIdentifierSea 
+					AND d.RecordStartDateTime = dl.maxDate )
 				WHERE RecordStartDateTime between @StartDate and @EndDate 
 				AND dl.maxDate is not null
 		END

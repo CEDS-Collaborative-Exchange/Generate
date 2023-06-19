@@ -8,14 +8,13 @@ BEGIN
 
 		EXEC Staging.Rollover_SourceSystemReferenceData -- This only happens when it is needed
 
-	--Populate the RDS tables from ODS data
+	--Populate the RDS tables from Staging data
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Child Count - Start Staging-to-DimK12Students')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Child Count - Start Staging-to-DimPeople_K12Students')
 
 		--Populate DimStudents
-		--exec [rds].[Migrate_DimK12Students] NULL
-		exec [Staging].[Staging-to-DimK12Students] NULL
+		exec Staging.[Staging-To-DimPeople_K12Students] NULL
 
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
@@ -42,46 +41,30 @@ BEGIN
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Child Count - Start Empty_RDS for the Submission reports')
 
-/* Data Population not required for reporting code
-			--write out message to DataMigrationHistories
-			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper gradrate - Start Empty for Data Population')
-
-		----clear the data from the Data Population Summary report
-		--exec [rds].[Empty_RDS]  'datapopulation', 'studentcounts'
-
-		--	--write out message to DataMigrationHistories
-		--	insert into app.DataMigrationHistories
-		--	(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Child Count - Start Migrate_StudentCounts for Data Population Summary')
-
-		----create the Data Population Summary report
-		--exec [rds].[Migrate_StudentCounts]  'datapopulation', 0
-
-*/
-			--write out message to DataMigrationHistories
-			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Child Count - Start Empty_RDS for the Submission reports')
-
 		----clear the data from the fact table
 		exec [rds].[Empty_RDS] 'childcount'
 
-		--	--write out message to DataMigrationHistories
-		--	insert into app.DataMigrationHistories
-		--	(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Child Count - Start Migrate_StudentCounts for Submission reports')
+			--write out message to DataMigrationHistories
+			insert into app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Child Count - Start Staging-to-FactK12StudentCounts_ChildCount for Submission reports')
 
-		----populate the fact table for the submission report
-		--exec [rds].[Migrate_StudentCounts] 'childcount', 0
-
+		--remove the cursor if a previous migraton stopped/failed
+		if cursor_status('global','selectedYears_cursor') >= -1
+		begin
+			deallocate selectedYears_cursor
+		end
 		
 		DECLARE @submissionYear AS VARCHAR(50)
 		DECLARE selectedYears_cursor CURSOR FOR 
 		SELECT d.SchoolYear
-			FROM rds.DimSchoolYears d
-			JOIN rds.DimSchoolYearDataMigrationTypes dd ON dd.DimSchoolYearId = d.DimSchoolYearId
-			JOIN rds.DimDataMigrationTypes b ON b.DimDataMigrationTypeId=dd.DataMigrationTypeId 
-			WHERE d.DimSchoolYearId <> -1 
-			AND dd.IsSelected=1 AND DataMigrationTypeCode='RDS'
-
+		FROM rds.DimSchoolYears d
+			JOIN rds.DimSchoolYearDataMigrationTypes dd 
+				ON dd.DimSchoolYearId = d.DimSchoolYearId
+			JOIN App.DataMigrationTypes b 
+				ON b.DataMigrationTypeId=dd.DataMigrationTypeId 
+		WHERE d.DimSchoolYearId <> -1 
+		AND dd.IsSelected = 1 
+		AND DataMigrationTypeCode = 'RDS'
 
 		OPEN selectedYears_cursor
 		FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
@@ -94,8 +77,6 @@ BEGIN
 		
 		CLOSE selectedYears_cursor
 		DEALLOCATE selectedYears_cursor
-
-
 
 	--RDS migration complete
 			--write out message to DataMigrationHistories

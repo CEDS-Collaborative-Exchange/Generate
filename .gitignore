@@ -1,0 +1,4 @@
+generate.database/StoredProcedures/Drop/Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql
+generate.database/StoredProcedures/Create/Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql
+generate.database/VersionUpdates/6.0_prerelease/AddColumnInK12Organization.sql
+generate.database/VersionUpdates/6.0_prerelease/StagingValidationDatabaseChanges.sql

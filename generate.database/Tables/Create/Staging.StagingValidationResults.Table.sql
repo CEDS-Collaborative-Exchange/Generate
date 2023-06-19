@@ -1,5 +1,6 @@
 CREATE TABLE [Staging].[StagingValidationResults](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[StagingValidationRuleId] [int] NULL,
 	[SchoolYear] [int] NULL,
 	[ReportGroupOrCode] [varchar](50) NULL,
 	[StagingTableName] [varchar](200) NULL,
@@ -12,5 +13,6 @@ CREATE TABLE [Staging].[StagingValidationResults](
  CONSTRAINT [PK_StagingValidationResults] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, 
+ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
