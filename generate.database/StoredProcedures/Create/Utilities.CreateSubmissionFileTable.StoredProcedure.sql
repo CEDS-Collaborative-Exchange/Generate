@@ -1,4 +1,4 @@
-create PROCEDURE Utilities.[CreateSubmissionFileTable] 
+CREATE PROCEDURE [Utilities].[CreateSubmissionFileTable] 
 		@DatabaseName varchar(25) = NULL, -- If NULL then DatabaseName = 'Generate'
 		@SchemaName varchar(25),
 		@SubmissionYear int,
@@ -9,17 +9,19 @@ create PROCEDURE Utilities.[CreateSubmissionFileTable]
 		@CreatedTableName varchar(100) output
 AS
 BEGIN
+
 /****************************************************************************************
 AEM Inc.
 CIID Generate Team
 November 17, 2022
 
-This procedure creates an empty table for the specified file submission report code and report
+This procedure creates a table for the specified file submission report code and report
 level.
 
 The file will be named as follows: [@SchemaName].[@ReportCode_@ReportLevel_@SubmissionYear]
 
 *****************************************************************************************/
+
 	set NOCOUNT ON
 	IF OBJECT_ID(N'tempdb..#Columns') IS NOT NULL drop table #Columns
 

@@ -29,6 +29,7 @@ This process assumes the following:
 6. The @SourceFilePathAndName file has the header row REMOVED
 7. SQL Bulk Insert is available and the user has authorization to execute it
 *****************************************************************/
+
 	SET NOCOUNT ON
 
 	declare @CreatedTableName varchar(100) = NULL
@@ -91,6 +92,20 @@ This process assumes the following:
 				@ComparisonResultsTableName = @ComparisonTableName
 
 		end
+	if @ReportCode = 'C039'
+		begin
+			exec Utilities.CompareSubmissionFiles_C039
+				@DatabaseName = @DatabaseName,
+				@SchemaName = @SchemaName,
+				@SubmissionYear = @SubmissionYear,
+				@ReportCode = @ReportCode,
+				@ReportLevel = @ReportLevel,
+				@LegacyTableName = @LegacyTableName, 
+				@GenerateTableName = @GenerateTableName,
+				@ShowSQL = @ShowSQL,
+				@ComparisonResultsTableName = @ComparisonTableName
+
+		end		
 	else
 		begin
 			exec Utilities.CompareSubmissionFiles

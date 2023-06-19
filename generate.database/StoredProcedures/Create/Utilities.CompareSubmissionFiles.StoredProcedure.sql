@@ -1,4 +1,5 @@
 CREATE PROCEDURE [Utilities].[CompareSubmissionFiles] 
+
 		@DatabaseName varchar(25), -- If NULL then DatabaseName = 'Generate'
 		@SchemaName varchar(25),
 		@SubmissionYear int,
@@ -6,7 +7,9 @@ CREATE PROCEDURE [Utilities].[CompareSubmissionFiles]
 		@ReportLevel varchar(3),
 		@LegacyTableName varchar(100), 
 		@GenerateTableName varchar(100),
-		@ShowSQL bit = 0
+		@ShowSQL bit = 0,
+		@ComparisonResultsTableName varchar(200) output
+
 
 AS
 BEGIN
@@ -47,7 +50,7 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 		and ColumnName <> 'CarriageReturn/LineFeed'
 		and ColumnName <> 'FileRecordNumber'
 		and ColumnName not like '%FILLER%'
-		and ColumnName <> 'Explanation'
+		and ColumnName not like '%Explanation%'
 		order by SequenceNumber
 	end try
 	begin catch
@@ -58,7 +61,7 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 
 	declare 
 		@DropSQL varchar(max) = '',
-		@ComparisonResultsTableName varchar(100),
+		--@ComparisonResultsTableName varchar(100),
 		@TableName varchar(100) = @ReportCode + '_' + @ReportLevel + '_' + convert(varchar, @SubmissionYear) + '_COMPARISON',
 		@InsertQuery varchar(max) = '',
 		@ColumnName varchar(50),
@@ -91,12 +94,16 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 	while @ID <= @ColumnCount
 		begin
 			select @ColumnName = ColumnName from #SelectColumns where ID = @ID
-
-			select @InsertQuery = @InsertQuery + char(9) + 'ISNULL(L.[' + @ColumnName + '], G.[' + @ColumnName + ']) ' 
+			if @ColumnName <> @CompareColumn
+				begin
+					select @InsertQuery = @InsertQuery + char(9) + 'ISNULL(L.[' + @ColumnName + '], G.[' + @ColumnName + ']) ' 
+				end
 			if @ColumnName = @CompareColumn
 				begin
-					select @InsertQuery = @InsertQuery + ' LegacyAmount,' + char(10)
-					select @InsertQuery = @InsertQuery + char(9) + 'G.[' + @ColumnName + '] Generate' + @CompareColumn
+					select @InsertQuery = @InsertQuery + char(9) + 'L.[' + @ColumnName + '] Legacy' + @CompareColumn + ',' + char(10)
+					-- Syntax for Zero Counts that don't exist in Generate Report Tables.  Assume if Generate amount is null (doesn't exist) that it will be a zero count in the final report
+					select @InsertQuery = @InsertQuery + char(9) + 'case when L.[' + @ColumnName + '] = 0 and G.[' + @ColumnName + '] is NULL then 0 else G.[' + @CompareColumn + '] end Generate' + @CompareColumn
+--					select @InsertQuery = @InsertQuery + char(9) + 'isnull(G.[' + @ColumnName + '],0) Generate' + @CompareColumn
 				end
 			else
 				begin
@@ -134,13 +141,17 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 				begin
 					select @InsertQuery = @InsertQuery + char(9) + 'and '
 				end
-
-			select @InsertQuery = @InsertQuery + 'isnull (L.' + @ColumnName + ', '''') = isnull(G.' + @ColumnName + ', '''')' 
+			if @ColumnName <> @CompareColumn
+				begin
+					select @InsertQuery = @InsertQuery + 'isnull (L.' + @ColumnName + ', '''') = isnull(G.' + @ColumnName + ', '''')' 
+				end
 
 			if @ColumnName = @CompareColumn
 				begin
-					select @InsertQuery = @InsertQuery + ' LegacyAmount,' + char(10)
-					select @InsertQuery = @InsertQuery + char(9) + 'G.[' + @ColumnName + '] Generate' + @CompareColumn
+					select @InsertQuery = @InsertQuery + char(9) + 'L.[' + @ColumnName + 'Legacy' + @CompareColumn + ', ' + char(10)
+					-- Syntax for Zero Counts that don't exist in Generate Report Tables.  Assume if Generate amount is null (doesn't exist) that it will be a zero count in the final report
+					select @InsertQuery = @InsertQuery + char(9) + 'case when L.[' + @ColumnName + '] = 0 and G.[' + @ColumnName + '] is NULL then 0 else G.[' + @CompareColumn + '] end Generate' + @CompareColumn
+--					select @InsertQuery = @InsertQuery + char(9) + 'isnull(G.[' + @ColumnName + '],0) Generate' + @CompareColumn
 
 				end
 
