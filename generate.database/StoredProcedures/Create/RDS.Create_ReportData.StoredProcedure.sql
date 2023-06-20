@@ -110,7 +110,7 @@ BEGIN
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 
-			-- Get DimDateId
+			-- Get DimSchoolYearId
 
 			declare @dimSchoolYearId as int
 			select @dimSchoolYearId = DimSchoolYearId from rds.DimSchoolYears where SchoolYear = @reportYear
