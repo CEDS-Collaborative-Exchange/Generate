@@ -110,10 +110,10 @@ BEGIN
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 
-			-- Get DimDateId
+			-- Get DimSchoolYearId
 
-			declare @dimDateId as int
-			select @dimDateId = DimSchoolYearId from rds.DimSchoolYears where SchoolYear = @reportYear
+			declare @dimSchoolYearId as int
+			select @dimSchoolYearId = DimSchoolYearId from rds.DimSchoolYears where SchoolYear = @reportYear
 
 			-- Get Category Sets for this Submission Year
 
@@ -233,9 +233,9 @@ BEGIN
 				end
 				else
 				begin
-					print 'declare @dimDateId as int'
+					print 'declare @dimSchoolYearId as int'
 					print 'declare @dimFactTypeId as int'
-					print 'set @dimDateId = ' + convert(varchar(20), @dimDateId)
+					print 'set @dimSchoolYearId = ' + convert(varchar(20), @dimSchoolYearId)
 					print 'set @dimFactTypeId = ' + convert(varchar(20), @dimFactTypeId)
 					print ''
 				end
@@ -292,8 +292,8 @@ BEGIN
 						-- Execute @sql
 						------------------------------
 						declare @ParmDefinition as nvarchar(max)
-						SET @ParmDefinition = N'@dimFactTypeId int, @dimDateId int, @reportLevel varchar(50)';  
-						EXECUTE sp_executesql @sql, @ParmDefinition, @dimFactTypeId = @dimFactTypeId, @dimDateId = @dimDateId, @reportLevel = @reportLevel;
+						SET @ParmDefinition = N'@dimFactTypeId int, @dimSchoolYearId int, @reportLevel varchar(50)';  
+						EXECUTE sp_executesql @sql, @ParmDefinition, @dimFactTypeId = @dimFactTypeId, @dimSchoolYearId = @dimSchoolYearId, @reportLevel = @reportLevel;
 					end
 
 

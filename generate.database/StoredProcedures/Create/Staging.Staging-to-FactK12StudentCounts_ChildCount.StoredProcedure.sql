@@ -108,7 +108,6 @@ BEGIN
 			, K12StudentId							int null
 
 			, IdeaStatusId							int null
-			, IdeaDisabilityTypeId					int null
 			, LanguageId							int null
 			, MigrantStatusId						int null
 			, TitleIStatusId						int null
@@ -146,7 +145,6 @@ BEGIN
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
 			, ISNULL(rdp.DimPersonId, -1)								K12StudentId
 			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId
-			, ISNULL(rdidt.DimIdeaDisabilityTypeId, -1)					IdeaDisabilityTypeId
 			, -1														LanguageId
 			, -1														MigrantStatusId
 			, -1														TitleIStatusId
@@ -284,7 +282,6 @@ BEGIN
 			, [K12SchoolId]
 			, [K12StudentId]
 			, [IdeaStatusId]
-			, [IdeaDisabilityTypeId]
 			, [LanguageId]
 			, [MigrantStatusId]
 			, [TitleIStatusId]
@@ -318,7 +315,6 @@ BEGIN
 			, [K12SchoolId]
 			, [K12StudentId]
 			, [IdeaStatusId]
-			, [IdeaDisabilityTypeId]
 			, [LanguageId]
 			, [MigrantStatusId]
 			, [TitleIStatusId]
