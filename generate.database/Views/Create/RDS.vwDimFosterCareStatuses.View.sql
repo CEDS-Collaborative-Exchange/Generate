@@ -11,4 +11,3 @@ AS
 		  END AS ProgramParticipationFosterCareMap
 	FROM rds.DimFosterCareStatuses rdfcs
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
-GO
