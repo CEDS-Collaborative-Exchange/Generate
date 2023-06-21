@@ -15,8 +15,6 @@ where SubmissionYear = 2023
 
 delete from app.CategorySets where SubmissionYear = 2023
 
-GO
-
 INSERT INTO [App].[vwReportCode_CategoryOptions] VALUES ('c002', 'LEA1CHILDREN1WITH1DISABILITIES', 2, 2023, 'CSA', 'Category Set A', 22187, 19, 'IDEADISAB', 'Children with Disabilities (IDEA) School Age Tables', 'DISABCATIDEA', 'Disability Category', 19, 'AUT', 'Autism', 917)
 INSERT INTO [App].[vwReportCode_CategoryOptions] VALUES ('c002', 'LEA1CHILDREN1WITH1DISABILITIES', 2, 2023, 'CSA', 'Category Set A', 22187, 19, 'IDEADISAB', 'Children with Disabilities (IDEA) School Age Tables', 'DISABCATIDEA', 'Disability Category', 19, 'DB', 'Deaf-blindness', 944)
 INSERT INTO [App].[vwReportCode_CategoryOptions] VALUES ('c002', 'LEA1CHILDREN1WITH1DISABILITIES', 2, 2023, 'CSA', 'Category Set A', 22187, 19, 'IDEADISAB', 'Children with Disabilities (IDEA) School Age Tables', 'DISABCATIDEA', 'Disability Category', 19, 'DD', 'Developmental delay', 945)
