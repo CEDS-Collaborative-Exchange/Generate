@@ -11,10 +11,9 @@ BEGIN
 	--Populate the RDS tables from ODS data
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Discipline - Start Staging-to-DimK12Students')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Discipline - Start Staging-to-DimPeople_K12Students')
 
 		--Populate DimStudents
-		--exec [rds].[Migrate_DimK12Students] NULL
 		exec [Staging].[Staging-to-DimPeople_K12Students] NULL
 
 			--write out message to DataMigrationHistories
@@ -58,12 +57,12 @@ BEGIN
 		----populate the fact table for the submission report
 		DECLARE @submissionYear AS VARCHAR(50)
 		DECLARE selectedYears_cursor CURSOR FOR 
-		SELECT d.SchoolYear
+			SELECT d.SchoolYear
 			FROM rds.DimSchoolYears d
-			JOIN rds.DimSchoolYearDataMigrationTypes dd 
-				ON dd.DimSchoolYearId = d.DimSchoolYearId
-			JOIN rds.DimDataMigrationTypes b 
-				ON b.DimDataMigrationTypeId = dd.DataMigrationTypeId 
+				JOIN rds.DimSchoolYearDataMigrationTypes dd 
+					ON dd.DimSchoolYearId = d.DimSchoolYearId
+				JOIN rds.DimDataMigrationTypes b 
+					ON b.DimDataMigrationTypeId = dd.DataMigrationTypeId 
 			WHERE d.DimSchoolYearId <> -1 
 			AND dd.IsSelected = 1 
 			AND DataMigrationTypeCode = 'RDS'
@@ -77,14 +76,13 @@ BEGIN
 			FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
 		END
 
-		close selectedYears_Cursor
-		deallocate selectedYears_Cursor
-
+		CLOSE selectedYears_Cursor
+		DEALLOCATE selectedYears_Cursor
 
 	--RDS migration complete
-			--write out message to DataMigrationHistories
-			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Complete - Discipline')
+		--write out message to DataMigrationHistories
+		insert into app.DataMigrationHistories
+		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Complete - Discipline')
 
 	END TRY
 	BEGIN CATCH
