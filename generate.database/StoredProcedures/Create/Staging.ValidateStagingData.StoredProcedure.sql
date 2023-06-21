@@ -1,4 +1,4 @@
-CREATE PROCEDURE Staging.ValidateStagingData
+CREATE PROCEDURE [Staging].[ValidateStagingData]
 	@SchoolYear int,
 	@ReportGroupOrCodeParm varchar(50)
 AS
@@ -90,7 +90,8 @@ BEGIN
 				select @SQL = 'if not exists(select top 1 * from staging.' + @TableName + ')' + char(10)
 				select @SQL = @SQL + '	begin' + char(10)
 				select @SQL = @SQL + '		insert into Staging.StagingValidationResults' + char(10)
-				select @SQL = @SQL + '		select ''' + convert(varchar, @SchoolYear) + ''',''' 
+				select @SQL = @SQL + '		select ' + convert(varchar, @Id) + ','
+				select @SQL = @SQL + '''' + convert(varchar, @SchoolYear) + ''','''
 				select @SQL = @SQL + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' 
 				select @SQL = @SQL + @TableName + ''', NULL, ''' + isnull(@Severity,'') + ''', ''' 
 				select @SQL = @SQL + @NoRecords + case when @ValidationMessage is not null then  ' - ' else '' end 
@@ -124,7 +125,9 @@ BEGIN
 							select @SQL = @SQL + 'if @RecordCount > 0' + char(10)
 							select @SQL = @SQL + '	begin' + char(10)
 							select @SQL = @SQL + '		insert into Staging.StagingValidationResults' + char(10)
-							select @SQL = @SQL + '		select ''' + convert(varchar, @SchoolYear) + ''',''' + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', ''' + isnull(@Severity,'') + ''', ''' + @NullValue + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ''' + isnull(@ShowRecordsSQL,'') + ''', ''' + convert(varchar, @InsertDate, 121) + '''' + char(10)
+							select @SQL = @SQL + '		select ' + convert(varchar, @Id) + ','
+							select @SQL = @SQL + '''' + convert(varchar, @SchoolYear) + ''','''
+							select @SQL = @SQL + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', ''' + isnull(@Severity,'') + ''', ''' + @NullValue + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ''' + isnull(@ShowRecordsSQL,'') + ''', ''' + convert(varchar, @InsertDate, 121) + '''' + char(10)
 							select @SQL = @SQL + '	end' + char(10)
 
 
@@ -152,7 +155,9 @@ BEGIN
 						select @SQL = @SQL + 'if @RecordCount > 0' + char(10)
 						select @SQL = @SQL + '	begin' + char(10)
 						select @SQL = @SQL + '		insert into Staging.StagingValidationResults' + char(10)
-						select @SQL = @SQL + '		select ''' + convert(varchar, @SchoolYear) + ''',''' + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', ''' + isnull(@Severity,'') + ''', ''' + @BadValue + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ''' + replace(isnull(@ShowRecordsSQL,''),'''','''''') + ''', ''' + convert(varchar, @InsertDate, 121) + '''' + char(10)
+						select @SQL = @SQL + '		select ' + convert(varchar, @Id) + ','
+						select @SQL = @SQL + '''' + convert(varchar, @SchoolYear) + ''','''
+						select @SQL = @SQL + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', ''' + isnull(@Severity,'') + ''', ''' + @BadValue + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ''' + replace(isnull(@ShowRecordsSQL,''),'''','''''') + ''', ''' + convert(varchar, @InsertDate, 121) + '''' + char(10)
 						select @SQL = @SQL + '	end' + char(10)
 
 						begin try
@@ -172,7 +177,7 @@ BEGIN
 				if @ValidationType = @OptionNotMapped
 					begin	
 					-- 1. Show counts of records where the column value doesn't match the defined InputCode in SourceSystemReferenceData
-						select @ShowRecordsSQL = 'select ''''' + convert(varchar, @SchoolYear) + ''''' SchoolYear, ''''' 
+						select @ShowRecordsSQL = 'select ' + convert(varchar, @Id) + ' as RuleId, ' + convert(varchar, @SchoolYear) + ' as SchoolYear, ' 
 						select @ShowRecordsSQL = @ShowRecordsSQL + @TableName + ''''' TableName,' + char(10) 
 						select @ShowRecordsSQL = @ShowRecordsSQL + '	E.' + @ColumnName + ', ''''' 
 						select @ShowRecordsSQL = @ShowRecordsSQL + @RefTableName + ''''' RefTableName, ''''' + isnull(@TableFilter,'NULL') + '''''' +  ' TableFilter, SSRD.InputCode, ' + char(10)
@@ -206,7 +211,12 @@ BEGIN
 						select @SQL = @SQL + 'if @RecordCount > 0' + char(10)
 						select @SQL = @SQL + '	begin' + char(10)
 						select @SQL = @SQL + '		insert into Staging.StagingValidationResults' + char(10)
-						select @SQL = @SQL + '		select ''' + convert(varchar, @SchoolYear) + ''',''' + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', ''' + isnull(@Severity,'') + ''', ''' + @OptionNotMapped + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ''' + isnull(@ShowRecordsSQL,'') + ''', ''' + convert(varchar, @InsertDate, 121) + '''' + char(10)
+						select @SQL = @SQL + '		select ' + convert(varchar, @Id) + ','
+						select @SQL = @SQL + '''' + convert(varchar, @SchoolYear) + ''','''
+						select @SQL = @SQL + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' 
+						select @SQL = @SQL + @ColumnName + ''', ''' + isnull(@Severity,'') + ''', ''' + @OptionNotMapped 
+						select @SQL = @SQL + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') 
+						select @SQL = @SQL + ''', @RecordCount, ''' + isnull(@ShowRecordsSQL,'') + ''', ''' + convert(varchar, @InsertDate, 121) + '''' + char(10)
 						select @SQL = @SQL + '	end'
 
 						begin try
@@ -291,7 +301,9 @@ BEGIN
 						select @SQL = @SQL + 'if @RecordCount > 0' + char(10)
 						select @SQL = @SQL + '	begin' + char(10)
 						select @SQL = @SQL + '		insert into Staging.StagingValidationResults' + char(10)
-						select @SQL = @SQL + '		select ''' + convert(varchar, @SchoolYear) + ''',''' + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', '''
+						select @SQL = @SQL + '		select ' + convert(varchar, @Id) + ','
+						select @SQL = @SQL + '''' + convert(varchar, @SchoolYear) + ''','''
+						select @SQL = @SQL + isnull(@ReportGroupOrCodeParm, isnull(@ReportGroup,'')) + ''', ''' + @TableName + ''', ''' + @ColumnName + ''', '''
 						select @SQL = @SQL +		isnull(@Severity,'') + ''', ''' + @CEDSOptionMismatch + case when @ValidationMessage is not null then  ' - ' else '' end + isnull(@ValidationMessage,'') + ''', @RecordCount, ' + char(10)
 						select @SQL = @SQL +		+ '''' + isnull(@ShowRecordsSQL,'') + ''', ' + char(10) -- Need to do something to add extra quotes around RefTableName value 
 
@@ -315,19 +327,5 @@ BEGIN
 		delete from #Rules 
 		where StagingValidationRuleId = @Id
 	end
-
-	-- INSERT INTO APP.DATAMIGRATIONHISTORIES
-	select @LogMessage = convert(varchar, @RuleCount - @TryCatchError) + ' of ' + convert(varchar, @RuleCount) + ' staging validation rules executed for ' 
-	select @LogMessage = @LogMessage + @ReportGroupOrCodeParm + ' - ' + convert(varchar, @SchoolYear)
-	insert into App.DataMigrationHistories select getdate(), @LogMessage, @MigrationType
-
-
-	if @TryCatchError <> 0
-		begin
-			PRINT 'Staging validation completed, but ' + convert(varchar, @TryCatchError) +
-				case when @TryCatchError = 1 then ' error ' else 'errors ' end +
-			'did not execute due to errors in the rules.'
-			PRINT 'Please query table App.DataMigrationHistories where DataMigrationTypeId= ' + convert(varchar, @MigrationType) + ' for more information'
-		end
 
 END
