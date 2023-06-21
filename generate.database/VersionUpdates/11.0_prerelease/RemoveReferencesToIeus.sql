@@ -17,8 +17,8 @@ END
 
 
 --Remove IEU constraints from FactK12StudentDisciplines
-alter table RDS.FactK12StudentDisciplines
-drop constraint [DF_FactK12StudentDisciplines_IeuId]
+-- alter table RDS.FactK12StudentDisciplines
+-- drop constraint [DF_FactK12StudentDisciplines_IeuId]
 
 if exists (
    SELECT * 
