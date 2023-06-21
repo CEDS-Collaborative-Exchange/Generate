@@ -57,7 +57,6 @@ BEGIN
 	
 	
 	-- Creating temp tables to be used in the select statement joins 
-					
 		SELECT *
 		INTO #vwGradeLevels
 		FROM RDS.vwDimGradeLevels
