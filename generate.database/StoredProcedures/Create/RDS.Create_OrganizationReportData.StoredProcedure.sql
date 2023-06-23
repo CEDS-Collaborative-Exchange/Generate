@@ -134,6 +134,7 @@ BEGIN
 							,[MailingAddressPostalCode]
 							,[MailingAddressState]
 							,[MailingAddressStreet]
+							,[OrganizationId]
 							,[OrganizationCount]
 							,[OrganizationName]
 							,[PhysicalAddressCity]
@@ -153,6 +154,7 @@ BEGIN
 							,[TitleiPartaAllocations])
 						select p.ElectronicMailAddressOrganizational,p.FirstName,p.LastOrSurname,p.TelephoneNumberWork,p.PositionTitle, @categorySetCode,
 							sea.MailingAddressCity, sea.MailingAddressPostalCode, sea.MailingAddressStateAbbreviation, sea.MailingAddressStreetNumberAndName,
+							fact.SeaId,
 							1 as OrganizationCount, 							
 							sea.SeaOrganizationName as OrganizationName ,
 							sea.PhysicalAddressCity , sea.PhysicalAddressPostalCode, sea.PhysicalAddressStateAbbreviation, sea.PhysicalAddressStreetNumberAndName,
@@ -199,6 +201,7 @@ BEGIN
 							,[MailingAddressStreet]
 							,[OperationalStatus]
 							,[OperationalStatusId]
+							,[OrganizationId]
 							,[OrganizationCount]
 							,[OrganizationName]
 							,[OrganizationNcesId]
@@ -234,6 +237,7 @@ BEGIN
 							, latestLea.MailingAddressStreetNumberAndName
 							, syLea.LeaOperationalStatusEdFactsCode
 							, syLea.LeaOperationalStatusEdFactsCode as OperationalStatusId
+							, fact.LeaId
 							, 1 as OrganizationCount
 							, latestLea.LeaOrganizationName as OrganizationName
 							, latestLea.LeaIdentifierNces
@@ -317,6 +321,7 @@ BEGIN
 							,[NSLPSTATUS]
 							,[OperationalStatus]
 							,[OperationalStatusId]
+							,[OrganizationId]
 							,[OrganizationCount]
 							,[OrganizationName]
 							,[OrganizationNcesId]
@@ -362,6 +367,7 @@ BEGIN
 							, schStatus.NSLPStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode as OperationalStatusId
+							, fact.K12SchoolId
 							, 1 as OrganizationCount
 							, latestSchool.NameOfInstitution as OrganizationName 
 							, latestSchool.SchoolIdentifierNces
@@ -434,6 +440,7 @@ BEGIN
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
+							,[OrganizationId]
 							,[OrganizationCount]							
 							,[OrganizationName]
 							,[OrganizationStateId]
@@ -446,7 +453,7 @@ BEGIN
 							,[TotalIndicator]
 							,[GRADELEVEL]
 							)
-						select distinct @categorySetCode,
+						select distinct @categorySetCode, fact.LeaId,
 							1 as OrganizationCount, 
 							lea.LeaOrganizationName as OrganizationName ,lea.LeaIdentifierSea,
 							@reportCode, @reportLevel, @reportYear, lea.StateANSICode, lea.StateAbbreviationCode, lea.StateAbbreviationDescription, 0 as TotalIndicator, 
@@ -469,6 +476,7 @@ BEGIN
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
+							,[OrganizationId]
 							,[OrganizationCount]
 							,[OrganizationName]
 							,[OrganizationStateId]
@@ -481,7 +489,7 @@ BEGIN
 							,[StateName]
 							,[TotalIndicator]
 							,[GRADELEVEL])
-						select @categorySetCode,
+						select @categorySetCode, fact.k12SchoolId,
 							1 as OrganizationCount, sch.NameOfInstitution as OrganizationName ,
 							sch.SchoolIdentifierSea, sch.LeaIdentifierSea,
 							@reportCode, @reportLevel, @reportYear, sch.StateANSICode, sch.StateAbbreviationCode, sch.StateAbbreviationDescription, 0 as TotalIndicator, 
@@ -507,7 +515,8 @@ BEGIN
 						([CategorySetCode]
 						,[CharterSchoolAuthorizerIdPrimary]
 						,[CharterSchoolAuthorizerIdSecondary]													
-						,[NSLPSTATUS]	
+						,[NSLPSTATUS]
+						,[OrganizationId]
 						,[OrganizationCount]
 						,[OrganizationName]
 						,[OrganizationNcesId]
@@ -528,6 +537,7 @@ BEGIN
 						isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
 						,ISNULL(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')							
 						,schStatus.NSLPStatusEdFactsCode,
+						fact.K12SchoolId,
 						1 as OrganizationCount, 
 						sch.NameOfInstitution as OrganizationName ,
 						sch.SchoolIdentifierNces,
@@ -565,6 +575,7 @@ BEGIN
 						([CategorySetCode]
 						,[CharterSchoolAuthorizerIdPrimary]
 						,[CharterSchoolAuthorizerIdSecondary]
+						,[OrganizationId]
 						,[OrganizationCount]
 						,[OrganizationName]
 						,[OrganizationNcesId]
@@ -582,7 +593,8 @@ BEGIN
 						)
 					select distinct @categorySetCode,
 						isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
-						,ISNULL(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')								
+						,ISNULL(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')	
+						, fact.k12SchoolId
 						, 1 as OrganizationCount, 
 						sch.NameOfInstitution as OrganizationName ,
 						sch.SchoolIdentifierNces,
@@ -617,6 +629,7 @@ BEGIN
 				BEGIN		
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([CategorySetCode]
+						,[OrganizationId]
 						,[OrganizationCount]
 						,[OrganizationName]
 						,[OrganizationStateId]
@@ -630,6 +643,7 @@ BEGIN
 						,TitleiParentalInvolveRes
 						,TitleiPartaAllocations)
 					select distinct @categorySetCode,
+						fact.LeaId,
 						1 as OrganizationCount, 
 						lea.LeaOrganizationName as OrganizationName ,
 						lea.LeaIdentifierSea,
@@ -654,7 +668,8 @@ BEGIN
 				else if(@reportCode='c198')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
-						([OrganizationCount]
+						([OrganizationId]
+						,[OrganizationCount]
 						,[OrganizationName]
 						,[StateCode]
 						,[OrganizationStateId]
@@ -668,7 +683,8 @@ BEGIN
 						,[CharterSchoolContractIdNumber]
 						,[CharterContractApprovalDate]
 						,[CharterContractRenewalDate])
-					SELECT distinct 1 as OrganizationCount, 
+					SELECT distinct fact.k12SchoolId,
+						1 as OrganizationCount, 
 						schools.NameOfInstitution as OrganizationName,									
 						schools.StateAbbreviationCode, 
 						schools.SchoolIdentifierSea, 
@@ -699,7 +715,8 @@ BEGIN
 				ELSE if(@reportCode='c197')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
-						([OrganizationCount]
+						([OrganizationId]
+						,[OrganizationCount]
 						,[OrganizationName]	
 						,[StateCode]
 						,[OrganizationStateId]
@@ -715,7 +732,8 @@ BEGIN
 						,[CHARTERSCHOOLMANAGERORGANIZATION]
 						,[CHARTERSCHOOLUPDATEDMANAGERORGANIZATION]
 						)
-					SELECT distinct 1 as OrganizationCount, 
+					SELECT distinct fact.k12SchoolId,
+						1 as OrganizationCount, 
 						schools.NameOfInstitution as OrganizationName,									
 						schools.StateAbbreviationCode, 
 						schools.SchoolIdentifierSea, 
@@ -748,7 +766,8 @@ BEGIN
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						(
-						[OrganizationCount]
+						[OrganizationId]
+						,[OrganizationCount]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[StateCode]
@@ -767,7 +786,8 @@ BEGIN
 						,[PhysicalAddressCity]
 						,[PhysicalAddressState]
 						,[PhysicalAddressPostalCode])
-					(SELECT distinct	1 as OrganizationCount, 
+					(SELECT distinct fact.LeaId
+						, 1 as OrganizationCount, 
 						lea.CharterSchoolManagementOrganizationOrganizationName as OrganizationName,
 						lea.CharterSchoolManagementOrganizationOrganizationIdentifierSea as LeaStateIdentifier,
 						lea.StateAbbreviationCode,
@@ -797,7 +817,8 @@ BEGIN
 					and lea.DimCharterSchoolManagementOrganizationId <> -1 
 					and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					UNION
-					SELECT distinct	1 as OrganizationCount, 
+					SELECT distinct	fact.leaid,
+						1 as OrganizationCount, 
 						lea.CharterSchoolManagementOrganizationOrganizationName as OrganizationName,
 						lea.CharterSchoolManagementOrganizationOrganizationIdentifierSea as LeaStateIdentifier,
 						lea.StateAbbreviationCode,
@@ -831,7 +852,8 @@ BEGIN
 				ELSE IF(@reportCode ='c190')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
-						([OrganizationCount]
+						([OrganizationId]
+						,[OrganizationCount]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[StateCode]
@@ -850,7 +872,8 @@ BEGIN
 						,[PhysicalAddressCity]
 						,[PhysicalAddressState]
 						,[PhysicalAddressPostalCode])
-					(SELECT distinct 1 as OrganizationCount, 
+					(SELECT distinct fact.leaid,
+						1 as OrganizationCount, 
 						lea.CharterSchoolAuthorizingOrganizationOrganizationName as OrganizationName,
 						lea.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea as LeaStateIdentifier,
 						lea.StateAbbreviationCode,
@@ -880,7 +903,8 @@ BEGIN
 					and lea.DimCharterSchoolAuthorizerId <> -1 
 					and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					UNION 
-					SELECT distinct	1 as OrganizationCount, 
+					SELECT distinct	fact.leaid,
+						1 as OrganizationCount, 
 						lea.CharterSchoolAuthorizingOrganizationOrganizationName as OrganizationName,
 						lea.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea as LeaStateIdentifier,
 						lea.StateAbbreviationCode,
@@ -914,7 +938,8 @@ BEGIN
 				ELSE IF(@reportCode ='c103')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
-						([OrganizationCount]
+						([OrganizationId]
+						,[OrganizationCount]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[ParentOrganizationStateId]
@@ -926,7 +951,8 @@ BEGIN
 						,[ReportLevel]
 						,[ReportYear]
 						,[StatePovertyDesignation])
-					SELECT	distinct 1 as OrganizationCount, 
+					SELECT	distinct fact.K12SchoolId,
+						1 as OrganizationCount, 
 						sch.NameOfInstitution as OrganizationName,
 						sch.SchoolIdentifierSea,	
 						sch.LeaIdentifierSea as LeaStateIdentifier,										 
@@ -953,7 +979,8 @@ BEGIN
 				ELSE IF(@reportCode ='c132')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
-						([OrganizationCount]
+						([OrganizationId]
+						,[OrganizationCount]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[ParentOrganizationStateId]
@@ -967,7 +994,8 @@ BEGIN
 						,[SCHOOLIMPROVEMENTFUNDS]
 						,[EconomicallyDisadvantagedStudentCount]
 						)
-					SELECT distinct 1 as OrganizationCount, 
+					SELECT distinct fact.k12schoolId,
+						1 as OrganizationCount, 
 						sch.NameOfInstitution as OrganizationName,
 						sch.SchoolIdentifierSea,	
 						sch.LeaIdentifierSea as LeaStateIdentifier,										 
@@ -1005,7 +1033,8 @@ BEGIN
 				ELSE IF(@reportCode ='c170')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
-						([OrganizationCount]
+						([OrganizationId]
+						,[OrganizationCount]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[LeaStateIdentifier]
@@ -1018,7 +1047,8 @@ BEGIN
 						,[ReportYear]
 						,McKinneyVentoSubgrantRecipient
 						)
-					SELECT distinct 1 as OrganizationCount,
+					SELECT distinct fact.leaid,
+						1 as OrganizationCount,
 						lea.LeaOrganizationName as OrganizationName,
 						lea.LeaIdentifierSea,	
 						lea.LeaIdentifierSea as LeaStateIdentifier,										 
@@ -1049,7 +1079,8 @@ BEGIN
 					if(@reportLevel = 'lea')
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
-							([OrganizationCount]
+							([OrganizationId]
+							,[OrganizationCount]
 							,[OrganizationName]
 							,[OrganizationStateId]
 							,[LeaStateIdentifier]
@@ -1062,7 +1093,8 @@ BEGIN
 							,[ReportYear]
 							,GunFreeStatus
 							)
-						SELECT distinct 1 as OrganizationCount,
+						SELECT distinct fact.leaid,
+							1 as OrganizationCount,
 							lea.LeaOrganizationName as OrganizationName,
 							lea.LeaIdentifierSea,	
 							lea.LeaIdentifierSea as LeaStateIdentifier,										 
@@ -1089,7 +1121,8 @@ BEGIN
 					else if(@reportLevel = 'sch')
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
-							([CategorySetCode]
+							([OrganizationId]
+							,[CategorySetCode]
 							,[OrganizationCount]
 							,[OrganizationName]
 							,[OrganizationStateId]
@@ -1102,7 +1135,7 @@ BEGIN
 							,[StateName]
 							,[TotalIndicator]
 							,GunFreeStatus)
-						select distinct @categorySetCode,
+						select distinct fact.k12schoolId, @categorySetCode,
 							1 as OrganizationCount, sch.NameOfInstitution as OrganizationName ,
 							sch.SchoolIdentifierSea,	
 							sch.LeaIdentifierSea as LeaStateIdentifier,	
@@ -1125,7 +1158,8 @@ BEGIN
 				ELSE IF(@reportCode ='c205')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
-						([OrganizationCount]
+						([OrganizationId]
+						,[OrganizationCount]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[LeaStateIdentifier]
@@ -1140,7 +1174,8 @@ BEGIN
 						,[TableTypeAbbrv]
 						,[StateDefinedStatus]
 						)
-					SELECT distinct 1 as OrganizationCount, 
+					SELECT distinct fact.k12schoolId,
+						1 as OrganizationCount, 
 						sch.NameOfInstitution as OrganizationName,
 						sch.SchoolIdentifierSea,	
 						sch.LeaIdentifierSea as LeaStateIdentifier,										 
@@ -1172,7 +1207,8 @@ BEGIN
 				ELSE IF(@reportCode ='c206')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
-						([OrganizationCount]
+						([OrganizationId]
+						,[OrganizationCount]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[LeaStateIdentifier]
@@ -1191,7 +1227,8 @@ BEGIN
 						TargetedSupportCode,
 						AdditionalTargetedSupportandImprovementCode
 						)
-					SELECT distinct 1 as OrganizationCount, 
+					SELECT distinct fact.k12schoolId,
+						1 as OrganizationCount, 
 						sch.NameOfInstitution as OrganizationName,
 						sch.SchoolIdentifierSea,	
 						sch.LeaIdentifierSea as LeaStateIdentifier,										 
@@ -1226,7 +1263,8 @@ BEGIN
 				else if(@reportCode='c207')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
-						([OrganizationCount]
+						([OrganizationId]
+						,[OrganizationCount]
 						,[OrganizationName]
 						,[StateCode]
 						,[OrganizationStateId]
@@ -1238,7 +1276,8 @@ BEGIN
 						,[CategorySetCode]
 						,[ParentOrganizationStateId]
 						,[AppropriationMethodCode])
-					SELECT distinct 1 as OrganizationCount, 
+					SELECT distinct fact.k12schoolId,
+						1 as OrganizationCount, 
 						schools.NameOfInstitution as OrganizationName,
 						schools.StateAbbreviationCode,
 						schools.SchoolIdentifierSea,	
@@ -1266,6 +1305,7 @@ BEGIN
 				BEGIN	
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([CategorySetCode]
+						,[OrganizationId]
 						,[OrganizationCount]
 						,[OrganizationName]
 						,[OrganizationStateId]
@@ -1279,7 +1319,7 @@ BEGIN
 						,TitleiParentalInvolveRes
 						,TitleiPartaAllocations
 						,REAPAlternativeFundingStatus)
-					select DISTINCT @categorySetCode, 	
+					select DISTINCT @categorySetCode, fact.LeaId,
 						1 as OrganizationCount, 
 						lea.LeaOrganizationName as OrganizationName ,
 						lea.LeaIdentifierSea,
@@ -1311,6 +1351,7 @@ BEGIN
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
+							,[OrganizationId]
 							,[OrganizationCount]
 							,[OrganizationName]
 							,[OrganizationNcesId]
@@ -1325,7 +1366,7 @@ BEGIN
 							,[TotalIndicator]
 							,[FederalProgramCode]
 							,[FederalFundAllocated])
-						select distinct @categorySetCode,	1 as OrganizationCount, 
+						select distinct @categorySetCode, fact.leaid, 1 as OrganizationCount, 
 							lea.LeaOrganizationName as OrganizationName , lea.LeaIdentifierNces, lea.LeaIdentifierSea,
 							@reportCode, @reportLevel, @reportYear, lea.StateANSICode, lea.StateAbbreviationCode, lea.StateAbbreviationDescription, @tableTypeAbbrv,
 							0 as TotalIndicator, fact.FederalProgramCode, fact.FederalProgramsFundingAllocation
@@ -1345,6 +1386,7 @@ BEGIN
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
+							,[OrganizationId]
 							,[OrganizationCount]
 							,[OrganizationName]
 							,[StateANSICode]
@@ -1358,11 +1400,12 @@ BEGIN
 							,[FederalProgramCode]
 							,[FederalFundAllocationType]
 							,[FederalFundAllocated])
-						select distinct @categorySetCode,1 as OrganizationCount,
+						select distinct @categorySetCode, seaId,
+							1 as OrganizationCount,
 							OrganizationName , StateANSICode, StateName, StateCode,
 							@reportCode, @reportLevel, @reportYear,@tableTypeAbbrv, 0 as TotalIndicator, 
 							FederalProgramCode, FederalProgramsFundingAllocationType, Sum(FederalProgramsFundingAllocation)
-						from (	select distinct 1 as OrganizationCount,
+						from (	select distinct 1 as OrganizationCount, fact.seaId,
 									sea.SeaOrganizationName as OrganizationName , sea.StateANSICode, sea.StateAbbreviationDescription as StateName, 
 									sea.StateAbbreviationCode as StateCode,
 									0 as TotalIndicator, fact.FederalProgramCode, fact.FederalProgramsFundingAllocationType, 
@@ -1375,7 +1418,7 @@ BEGIN
 								where d.SchoolYear = @reportYear and sea.DimSeaId <> -1 
 							)as a 
 						group by OrganizationCount, OrganizationName,
-							StateCode, FederalProgramCode, FederalProgramsFundingAllocationType, StateANSICode, StateName
+							StateCode, FederalProgramCode, FederalProgramsFundingAllocationType, StateANSICode, StateName, seaId
 					end						
 				end
 			end			-- @runAsTest = 1
@@ -1387,6 +1430,7 @@ BEGIN
 					begin
 						select p.ElectronicMailAddressWork,p.FirstName,p.LastOrSurname,p.TelephoneNumberWork,p.PositionTitle, @categorySetCode,
 							sea.MailingAddressCity, sea.MailingAddressPostalCode, sea.MailingAddressStateAbbreviation, sea.MailingAddressStreetNumberAndName,
+							fact.SeaId,
 							1 as OrganizationCount, 							
 							sea.SeaOrganizationName as OrganizationName ,
 							sea.PhysicalAddressCity , sea.PhysicalAddressPostalCode, sea.PhysicalAddressStateAbbreviation, sea.PhysicalAddressStreetNumberAndName,
@@ -1433,6 +1477,7 @@ BEGIN
 							, latestLea.MailingAddressStreetNumberAndName
 							, syLea.LeaOperationalStatusEdFactsCode
 							, syLea.LeaOperationalStatusEdFactsCode as OperationalStatusId
+							, fact.leaId
 							, 1 as OrganizationCount
 							, latestlea.LeaOrganizationName as OrganizationName
 							, latestLea.LeaIdentifierNces
@@ -1513,6 +1558,7 @@ BEGIN
 							, schStatus.NSLPStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode as OperationalStatusId
+							, fact.K12SchoolId
 							, 1 as OrganizationCount
 							, latestSchool.NameOfInstitution as OrganizationName 
 							, latestSchool.SchoolIdentifierNces
@@ -1583,6 +1629,7 @@ BEGIN
 						if(@reportLevel = 'lea')
 						begin
 								select distinct @categorySetCode,
+							fact.leaId,
 							1 as OrganizationCount, 
 							lea.LeaOrganizationName as OrganizationName ,lea.LeaIdentifierSea,
 							@reportCode, @reportLevel, @reportYear, lea.StateANSICode, lea.StateAbbreviationCode, lea.StateAbbreviationDescription, 0 as TotalIndicator, 
@@ -1604,7 +1651,7 @@ BEGIN
 						else if(@reportLevel = 'sch')
 						begin
 
-							select @categorySetCode,
+							select @categorySetCode, fact.k12schoolId,
 							1 as OrganizationCount, sch.NameOfInstitution as OrganizationName ,
 							sch.SchoolIdentifierSea, sch.LeaIdentifierSea,
 							@reportCode, @reportLevel, @reportYear, sch.StateANSICode, sch.StateAbbreviationCode, sch.StateAbbreviationDescription, 0 as TotalIndicator, 
@@ -1630,6 +1677,7 @@ BEGIN
 						isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
 						, ISNULL(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')								
 						,schStatus.NslpStatusEdFactsCode,
+						fact.k12schoolId,
 						1 as OrganizationCount, 
 						sch.NameOfInstitution as OrganizationName ,
 						sch.SchoolIdentifierNces,
