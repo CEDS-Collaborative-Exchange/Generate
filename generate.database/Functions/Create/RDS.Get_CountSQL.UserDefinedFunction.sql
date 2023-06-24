@@ -829,6 +829,11 @@ BEGIN
 			
 		set @factKey = REPLACE(@dimensionPrimaryKey, 'Dim', '')
 
+		if @dimensionTable = 'DimIdeaDisabilityTypes'
+		begin
+			set @factKey = 'PrimaryDisabilityTypeId'
+		end
+
 		if @dimensionTable = 'DimSchoolYears'
 		begin
 			set @dimensionPrimaryKey = 'DimSchoolYearId'
@@ -1812,7 +1817,7 @@ BEGIN
 
 			IF CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) = 0 
 			begin
-				set @reportFilterJoin = 'inner join rds.DimIdeaDisabilityTypes idea on fact.IdeaDisabilityTypeId = idea.DimIdeaDisabilityTypeId'
+				set @reportFilterJoin = 'inner join rds.DimIdeaDisabilityTypes idea on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId'
 				set @reportFilterCondition = 'and idea.IdeaDisabilityTypeEdFactsCode <> ''MISSING'''
 
 				IF @reportLevel = 'sch' and @reportCode = 'c002'
@@ -1921,7 +1926,7 @@ BEGIN
 							ELSE -1
 						END <> -1
 					inner join rds.DimIdeaDisabilityTypes idea 
-						on fact.IdeaDisabilityTypeId = idea.DimIdeaDisabilityTypeId'
+						on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId'
 					+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN  '
 					inner join rds.DimGradeLevels grades 
 						on fact.GradeLevelId = grades.DimGradeLevelId
@@ -1931,7 +1936,7 @@ BEGIN
 							END) = grades.GradeLevelEdFactsCode' 
 						ELSE '' END + '
 					where idea.IdeaDisabilityTypeEdFactsCode <> ''MISSING''
-				)  rules on fact.K12StudentId = rules.K12StudentId and fact.IdeaDisabilityTypeId = rules.DimIdeaDisabilityTypeId'
+				)  rules on fact.K12StudentId = rules.K12StudentId and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId'
 				+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN ' and fact.GradeLevelId = rules.DimGradeLevelId' ELSE '' END + '
 				'
 	
@@ -1952,7 +1957,7 @@ BEGIN
 							and fact.FactTypeId = @dimFactTypeId
 							and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
 						inner join rds.DimIdeaDisabilityTypes idea 
-							on fact.IdeaDisabilityTypeId = idea.DimIdeaDisabilityTypeId
+							on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
 						where idea.IdeaDisabilityTypeEdFactsCode = ''DD''
 					) exclude
 						on fact.K12StudentId = exclude.K12StudentId'
@@ -2202,13 +2207,13 @@ BEGIN
 								ELSE -1
 							END <> -1
 						inner join rds.DimIdeaDisabilityTypes idea 
-							on fact.IdeaDisabilityTypeId = idea.DimIdeaDisabilityTypeId
+							on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
 						where idea.IdeaDisabilityTypeEdFactsCode <> ''MISSING''
 						and (age.AgeValue IN (3, 4) OR (age.AgeValue = 5 
 						and rgl.GradeLevelCode IN (''MISSING'',''PK'')))
 					) rules		
 						on fact.K12StudentId = rules.K12StudentId 
-						and fact.IdeaDisabilityTypeId = rules.DimIdeaDisabilityTypeId '
+						and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId '
 			end 
 			else if @year <= 2019
 			begin
@@ -2239,11 +2244,11 @@ BEGIN
 							and fact.DimFactTypeId = @dimFactTypeId
 							and IIF(fact.DimSchoolId > 0, fact.DimSchoolId, fact.DimLeaId) <> -1
 						inner join rds.DimIdeaDisabilityTypes idea 
-							on fact.IdeaDisabilityTypeId = idea.DimIdeaDisabilityTypeId
+							on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
 						where idea.IdeaDisabilityTypeEdFactsCode <> ''MISSING''
 					) rules 
 						on fact.K12StudentId = rules.K12StudentId 
-						and fact.IdeaDisabilityTypeId = rules.DimIdeaDisabilityTypeId '
+						and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId '
 			end
 
 			if not @toggleDevDelayAges is null
@@ -2261,7 +2266,7 @@ BEGIN
 								and fact.FactTypeId = @dimFactTypeId
 								and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
 							inner join rds.DimIdeaDisabilityTypes idea 
-								on fact.IdeaDisabilityTypeId = idea.DimIdeaDisabilityTypeId
+								on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
 							where idea.IdeaDisabilityTypeEdFactsCode = ''DD''
 						)'
 						
@@ -2692,11 +2697,11 @@ BEGIN
 						and fact.FactTypeId = @dimFactTypeId					
 						and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
 					inner join rds.DimIdeaDisabilityTypes ideaStatus 
-						on fact.IdeaDisabilityTypeId = ideaStatus.DimIdeaDisabilityTypeId
+						on fact.PrimaryDisabilityTypeId = ideaStatus.DimIdeaDisabilityTypeId
 					where ideaStatus.IdeaDisabilityTypeEdFactsCode <> ''MISSING''
 				) rules 
 					on fact.K12StudentId = rules.K12StudentId 
-					and fact.IdeaDisabilityTypeId = rules.DimIdeaDisabilityTypeId'
+					and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId'
 			end
 		else if @categorySetCode like ('gender%')
 			begin
