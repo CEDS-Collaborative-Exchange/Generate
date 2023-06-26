@@ -123,10 +123,10 @@ BEGIN
 
 					if(@reportLevel = 'sea')
 					begin
-						INSERT INTO [RDS].[FactOrganizationCountReports]
+						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CSSOEmail]
 							,[CSSOFirstName]
-							,[CSSOLastName]
+							,[CSSOLastOrSurname]
 							,[CSSOTelephone]
 							,[CSSOTitle]
 							,[CategorySetCode]
@@ -134,14 +134,13 @@ BEGIN
 							,[MailingAddressPostalCode]
 							,[MailingAddressState]
 							,[MailingAddressStreet]
-							,[MailingAddressStreet2]
 							,[OrganizationCount]
+							,[OrganizationId]
 							,[OrganizationName]
 							,[PhysicalAddressCity]
 							,[PhysicalAddressPostalCode]
 							,[PhysicalAddressState]
 							,[PhysicalAddressStreet]
-							,[PhysicalAddressStreet2]
 							,[ReportCode]
 							,[ReportLevel]
 							,[ReportYear]
@@ -153,20 +152,22 @@ BEGIN
 							,[Website]
 							,[TitleiParentalInvolveRes]
 							,[TitleiPartaAllocations])
-						select p.ElectronicMailAddress,p.FirstName,p.LastOrSurname,p.TelephoneNumber,p.PositionTitle, @categorySetCode,
-							sea.MailingAddressCity, sea.MailingAddressPostalCode, sea.MailingAddressState, sea.MailingAddressStreet,sea.MailingAddressStreet2,
-							1 as OrganizationCount, 							
-							sea.SeaName as OrganizationName ,
-							sea.PhysicalAddressCity , sea.PhysicalAddressPostalCode, sea.PhysicalAddressState, sea.PhysicalAddressStreet,sea.PhysicalAddressStreet2,
+						select distinct
+						p.ElectronicMailAddressOrganizational,p.FirstName,p.LastOrSurname,p.TelephoneNumberWork,p.PositionTitle, @categorySetCode,
+							sea.MailingAddressCity, sea.MailingAddressPostalCode, sea.StateAbbreviationCode, sea.MailingAddressStreetNumberAndName,
+							1 as OrganizationCount, 
+							sea.DimSeaId,
+							sea.SeaOrganizationName as OrganizationName ,
+							sea.PhysicalAddressCity , sea.PhysicalAddressPostalCode, sea.PhysicalAddressStateAbbreviation, sea.PhysicalAddressStreetNumberAndName,
 							@reportCode, @reportLevel, @reportYear, sea.StateANSICode, sea.StateAbbreviationCode, sea.StateAbbreviationDescription, 
-							sea.Telephone, 0 as TotalIndicator, sea.Website, -1 , -1
+							sea.TelephoneNumber, 0 as TotalIndicator, sea.WebSiteAddress, -1 , -1
 						from rds.FactOrganizationCounts fact
 							inner join rds.DimSchoolYears dates 
 								on fact.SchoolYearId = dates.DimSchoolYearId
 							inner join rds.DimSeas sea 
 								on fact.SeaId = sea.DimSeaId
-							left outer join rds.DimK12Staff p 
-								on fact.K12StaffId = p.DimK12StaffId
+							left outer join rds.DimPeople p 
+								on fact.K12StaffId = p.DimPersonId
 						where dates.SchoolYear = @reportYear 
 						and sea.DimSeaId <> -1
 					end
@@ -179,7 +180,7 @@ BEGIN
 							, MaxDate
 						)
 						select 
-							  LeaIdentifierState
+							  LeaIdentifierSea
 							, min(RecordStartDateTime)
 							, max(RecordStartDateTime)
 						from rds.FactOrganizationCounts fact
@@ -188,10 +189,10 @@ BEGIN
 						inner join rds.DimSchoolYears d 
 								on fact.SchoolYearId = d.DimSchoolYearId
 						where d.SchoolYear = @reportYear 
-						GROUP BY lea.LeaIdentifierState
+						GROUP BY lea.LeaIdentifierSea
 
 
-						INSERT INTO [RDS].[FactOrganizationCountReports]
+						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
 							,[CharterLeaStatus]
 							,[LEAType]
@@ -199,10 +200,10 @@ BEGIN
 							,[MailingAddressPostalCode]
 							,[MailingAddressState]
 							,[MailingAddressStreet]
-							,[MailingAddressStreet2]
 							,[OperationalStatus]
 							,[OperationalStatusId]
 							,[OrganizationCount]
+							,[OrganizationId]
 							,[OrganizationName]
 							,[OrganizationNcesId]
 							,[OrganizationStateId]
@@ -211,7 +212,6 @@ BEGIN
 							,[PhysicalAddressPostalCode]
 							,[PhysicalAddressState]
 							,[PhysicalAddressStreet]
-							,[PhysicalAddressStreet2]
 							,[ReportCode]
 							,[ReportLevel]
 							,[ReportYear]
@@ -234,21 +234,20 @@ BEGIN
 							, latestLea.LeaTypeEdFactsCode
 							, latestLea.MailingAddressCity
 							, latestLea.MailingAddressPostalCode
-							, latestLea.MailingAddressState
-							, latestLea.MailingAddressStreet
-							, latestLea.MailingAddressStreet2
+							, latestLea.MailingAddressStateAbbreviation
+							, latestLea.MailingAddressStreetNumberAndName
 							, syLea.LeaOperationalStatusEdFactsCode
 							, syLea.LeaOperationalStatusEdFactsCode as OperationalStatusId
 							, 1 as OrganizationCount
-							, latestLea.LeaName as OrganizationName
+							, latestLea.DimLeaID
+							, latestLea.LeaOrganizationName as OrganizationName
 							, latestLea.LeaIdentifierNces
-							, latestLea.LeaIdentifierState
+							, latestLea.LeaIdentifierSea
 							, latestLea.OutOfStateIndicator
 							, latestLea.PhysicalAddressCity 
 							, latestLea.PhysicalAddressPostalCode
-							, latestLea.PhysicalAddressState
-							, latestLea.PhysicalAddressStreet
-							, latestLea.PhysicalAddressStreet2
+							, latestLea.PhysicalAddressStateAbbreviation
+							, latestLea.PhysicalAddressStreetNumberAndName
 							, @reportCode
 							, @reportLevel
 							, @reportYear
@@ -256,14 +255,14 @@ BEGIN
 							, latestLea.StateAbbreviationCode as StateCode
 							, latestLea.StateAbbreviationDescription as StateName
 							, latestLea.LeaSupervisoryUnionIdentificationNumber
-							, latestLea.Telephone
+							, latestLea.TelephoneNumber
 							, 0 as TotalIndicator
-							, latestLea.Website
+							, latestLea.WebSiteAddress
 							, case 
 								when latestLea.OperationalStatusEffectiveDate > syLea.OperationalStatusEffectiveDate THEN latestLea.OperationalStatusEffectiveDate
 								else @effectiveDate
 							 end as OperationalStatusEffectiveDate
-							, latestLea.PriorLeaIdentifierState
+							, latestLea.PriorLeaIdentifierSea
 							, case 
 								when latestLea.OperationalStatusEffectiveDate > syLea.OperationalStatusEffectiveDate THEN isnull(latestLea.LeaOperationalStatusEdFactsCode, '')
 								else null
@@ -275,10 +274,10 @@ BEGIN
 							 -1, -1
 						from #minmaxLeas mmlea						
 						join rds.DimLeas syLea
-							on mmlea.Identifier = syLea.LeaIdentifierState
+							on mmlea.Identifier = syLea.LeaIdentifierSea
 							and mmlea.MinDate = syLea.RecordStartDateTime
 						join rds.DimLeas latestLea
-							on mmlea.Identifier = latestLea.LeaIdentifierState	
+							on mmlea.Identifier = latestLea.LeaIdentifierSea	
 							and mmlea.MaxDate = latestLea.RecordStartDateTime
 						join rds.FactOrganizationCounts fact
 							on latestLea.DimLeaId = fact.LeaId
@@ -299,7 +298,7 @@ BEGIN
 							, MaxDate
 						)
 						select 
-							  SchoolIdentifierState
+							  SchoolIdentifierSea
 							, min(RecordStartDateTime)
 							, max(RecordStartDateTime)
 						from rds.FactOrganizationCounts fact
@@ -308,23 +307,23 @@ BEGIN
 						inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
 						where d.SchoolYear = @reportYear 
-						GROUP BY school.SchoolIdentifierState
+						GROUP BY school.SchoolIdentifierSea
 
-						INSERT INTO [RDS].[FactOrganizationCountReports]
+						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
-							,[CharterSchoolAuthorizer]
-							,[CharterSchoolSecondaryAuthorizer]
+							,[CharterSchoolAuthorizerIdPrimary]
+							,[CharterSchoolAuthorizerIdSecondary]
 							,[CharterSchoolStatus]
 							,[CharterSchoolIndicator]
 							,[MailingAddressCity]
 							,[MailingAddressPostalCode]
 							,[MailingAddressState]
 							,[MailingAddressStreet]
-							,[MailingAddressStreet2]
 							,[NSLPSTATUS]
 							,[OperationalStatus]
 							,[OperationalStatusId]
 							,[OrganizationCount]
+							,[OrganizationId]
 							,[OrganizationName]
 							,[OrganizationNcesId]
 							,[OrganizationStateId]
@@ -335,7 +334,6 @@ BEGIN
 							,[PhysicalAddressPostalCode]
 							,[PhysicalAddressState]
 							,[PhysicalAddressStreet]
-							,[PhysicalAddressStreet2]
 							,[ReconstitutedStatus]
 							,[ReportCode]
 							,[ReportLevel]
@@ -359,30 +357,29 @@ BEGIN
 							,[TitleiPartaAllocations])
 						select 
 							  @categorySetCode
-							, isnull(primaryAuthorizer.StateIdentifier, '')
-							, ISNULL(secondaryAuthorizer.StateIdentifier, '')
+							, isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
+							, ISNULL(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
 							, latestSchool.CharterSchoolStatus as CharterSchoolStatusEdFactsCode
 							, latestSchool.CharterSchoolIndicator
 							, latestSchool.MailingAddressCity
 							, latestSchool.MailingAddressPostalCode
-							, latestSchool.MailingAddressState
-							, latestSchool.MailingAddressStreet
-							, latestSchool.MailingAddressStreet2
+							, latestSchool.MailingAddressStateAbbreviation
+							, latestSchool.MailingAddressStreetNumberAndName
 							, schStatus.NSLPStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode as OperationalStatusId
 							, 1 as OrganizationCount
+							, latestSchool.DimK12SchoolId
 							, latestSchool.NameOfInstitution as OrganizationName 
 							, latestSchool.SchoolIdentifierNces
-							, latestSchool.SchoolIdentifierState
-							, latestSchool.LeaIdentifierState
+							, latestSchool.SchoolIdentifierSea
+							, latestSchool.LeaIdentifierSea
 							, latestSchool.LeaIdentifierNces
 							, latestSchool.OutOfStateIndicator
 							, latestSchool.PhysicalAddressCity 
 							, latestSchool.PhysicalAddressPostalCode
-							, latestSchool.PhysicalAddressState
-							, latestSchool.PhysicalAddressStreet
-							, latestSchool.PhysicalAddressStreet2
+							, latestSchool.PhysicalAddressStateAbbreviation
+							, latestSchool.PhysicalAddressStreetNumberAndName
 							, latestSchool.ReconstitutedStatus
 							, @reportCode
 							, @reportLevel
@@ -393,16 +390,16 @@ BEGIN
 							, latestSchool.StateAbbreviationCode
 							, latestSchool.StateAbbreviationDescription
 							, titleIStatus.TitleISchoolStatusEdFactsCode
-							, latestSchool.Telephone
+							, latestSchool.TelephoneNumber
 							, 0 as TotalIndicator
 							, schStatus.VirtualSchoolStatusEdFactsCode
-							, latestSchool.Website
+							, latestSchool.WebSiteAddress
 							, CASE 
 								when latestSchool.SchoolOperationalStatusEffectiveDate > sySchool.SchoolOperationalStatusEffectiveDate THEN latestSchool.SchoolOperationalStatusEffectiveDate
 								
 							  end as OperationalStatusEffectiveDate
-							, latestSchool.PriorLeaIdentifierState
-							, latestSchool.PriorSchoolIdentifierState
+							, latestSchool.PriorLeaIdentifierSea
+							, latestSchool.PriorSchoolIdentifierSea
 							, CASE 
 								when latestSchool.SchoolOperationalStatusEffectiveDate > sySchool.SchoolOperationalStatusEffectiveDate THEN ISNULL(latestSchool.SchoolOperationalStatusEdFactsCode, '')
 								ELSE NULL
@@ -414,21 +411,21 @@ BEGIN
 							  -1, -1
 						from #minmaxSchools mmSchool						
 						join rds.DimK12Schools sySchool
-							on mmSchool.Identifier = sySchool.SchoolIdentifierState	
+							on mmSchool.Identifier = sySchool.SchoolIdentifierSea
 							and mmSchool.MinDate = sySchool.RecordStartDateTime
 						join rds.DimK12Schools latestSchool
-							on mmSchool.Identifier = latestSchool.SchoolIdentifierState	
+							on mmSchool.Identifier = latestSchool.SchoolIdentifierSea	
 							and mmSchool.MaxDate = latestSchool.RecordStartDateTime
 						join rds.FactOrganizationCounts fact
 							on latestSchool.DimK12SchoolId = fact.K12SchoolId
 						inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
 						left outer join rds.DimCharterSchoolAuthorizers primaryAuthorizer 
-							on fact.CharterSchoolApproverAgencyId = primaryAuthorizer.DimCharterSchoolAuthorizerId
+							on fact.AuthorizingBodyCharterSchoolAuthorizerId = primaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimCharterSchoolAuthorizers secondaryAuthorizer 
-							on fact.CharterSchoolSecondaryApproverAgencyId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
+							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimK12SchoolStatuses schStatus 
-							on fact.SchoolStatusId = schStatus.DimK12SchoolStatusId
+							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
 						left outer join rds.DimTitleIStatuses titleIStatus 
 							on fact.TitleIStatusId = titleIStatus.DimTitleIStatusId
 						where d.SchoolYear = @reportYear 
@@ -442,9 +439,10 @@ BEGIN
 				begin
 					if(@reportLevel = 'lea')
 					begin
-						INSERT INTO [RDS].[FactOrganizationCountReports]
+						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
-							,[OrganizationCount]							
+							,[OrganizationCount]	
+							,[OrganizationId]
 							,[OrganizationName]
 							,[OrganizationStateId]
 							,[ReportCode]
@@ -458,7 +456,8 @@ BEGIN
 							)
 						select distinct @categorySetCode,
 							1 as OrganizationCount, 
-							lea.LeaName as OrganizationName ,lea.LeaIdentifierState,
+							lea.DimLeaId,
+							lea.LeaOrganizationName as OrganizationName ,lea.LeaIdentifierSea,
 							@reportCode, @reportLevel, @reportYear, lea.StateANSICode, lea.StateAbbreviationCode, lea.StateAbbreviationDescription, 0 as TotalIndicator, 
 							grades.GradeLevelEdFactsCode
 						from rds.FactOrganizationCounts fact
@@ -477,9 +476,10 @@ BEGIN
 					end
 					else if(@reportLevel = 'sch')
 					begin
-						INSERT INTO [RDS].[FactOrganizationCountReports]
+						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
 							,[OrganizationCount]
+							,[OrganizationId]
 							,[OrganizationName]
 							,[OrganizationStateId]
 							,[ParentOrganizationStateId]
@@ -492,8 +492,10 @@ BEGIN
 							,[TotalIndicator]
 							,[GRADELEVEL])
 						select @categorySetCode,
-							1 as OrganizationCount, sch.NameOfInstitution as OrganizationName ,
-							sch.SchoolIdentifierState, sch.LeaIdentifierState,
+							1 as OrganizationCount, 
+							sch.DimK12SchoolId,
+							sch.NameOfInstitution as OrganizationName ,
+							sch.SchoolIdentifierSea, sch.LeaIdentifierSea,
 							@reportCode, @reportLevel, @reportYear, sch.StateANSICode, sch.StateAbbreviationCode, sch.StateAbbreviationDescription, 0 as TotalIndicator, 
 							grades.GradeLevelEdFactsCode
 						from rds.FactOrganizationCounts fact
@@ -513,12 +515,13 @@ BEGIN
 				end
 				else if (@reportCode ='c129')
 				BEGIN		
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([CategorySetCode]
-						,[CharterSchoolAuthorizer]
-						,[CharterSchoolSecondaryAuthorizer]													
+						,[CharterSchoolAuthorizerIdPrimary]
+						,[CharterSchoolAuthorizerIdSecondary]													
 						,[NSLPSTATUS]	
 						,[OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[OrganizationNcesId]
 						,[OrganizationStateId]							
@@ -535,13 +538,14 @@ BEGIN
 						,[MAGNETSTATUS]							
 						)
 					select distinct @categorySetCode,
-						sch.CharterSchoolAuthorizerIdPrimary,
-						sch.CharterSchoolAuthorizerIdSecondary,								
+						isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, ''),
+						ISNULL(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, ''),
 						schStatus.NSLPStatusEdFactsCode,
 						1 as OrganizationCount, 
+						sch.DimK12SchoolId,
 						sch.NameOfInstitution as OrganizationName ,
 						sch.SchoolIdentifierNces,
-						sch.SchoolIdentifierState,								
+						sch.SchoolIdentifierSea,								
 						@reportCode, 
 						@reportLevel,
 						@reportYear, 
@@ -557,9 +561,14 @@ BEGIN
 						inner join rds.DimK12Schools sch 
 							on fact.K12SchoolId = sch.DimK12SchoolId	
 						left outer join rds.DimK12SchoolStatuses schStatus 
-							on fact.SchoolStatusId = schStatus.DimK12SchoolStatusId
+							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
 						left outer join rds.DimTitleIStatuses titleIStatus 
-							on fact.TitleIStatusId = titleIStatus.DimTitleIStatusId					
+							on fact.TitleIStatusId = titleIStatus.DimTitleIStatusId		
+						left outer join rds.DimCharterSchoolAuthorizers primaryAuthorizer 
+							on fact.AuthorizingBodyCharterSchoolAuthorizerId = primaryAuthorizer.DimCharterSchoolAuthorizerId
+						left outer join rds.DimCharterSchoolAuthorizers secondaryAuthorizer 
+							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
+							
 					where d.SchoolYear = @reportYear 
 					and sch.DimK12SchoolId <> -1
 					and ISNULL(sch.ReportedFederally, 1) = 1 
@@ -567,11 +576,12 @@ BEGIN
 				END
 				else if (@reportCode ='c130')
 				BEGIN		
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([CategorySetCode]
-						,[CharterSchoolAuthorizer]
-						,[CharterSchoolSecondaryAuthorizer]
+						,[CharterSchoolAuthorizerIdPrimary]
+						,[CharterSchoolAuthorizerIdSecondary]													
 						,[OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[OrganizationNcesId]
 						,[OrganizationStateId]								
@@ -587,13 +597,14 @@ BEGIN
 						,ImprovementStatus						
 						)
 					select distinct @categorySetCode,
-						sch.CharterSchoolAuthorizerIdPrimary,
-						sch.CharterSchoolAuthorizerIdSecondary,								
+						isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, ''),
+						ISNULL(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, ''),
 						1 as OrganizationCount, 
+						sch.DimK12SchoolId,
 						sch.NameOfInstitution as OrganizationName ,
 						sch.SchoolIdentifierNces,
-						sch.SchoolIdentifierState,				
-						sch.[LeaIdentifierState],														
+						sch.SchoolIdentifierSea,				
+						sch.[LeaIdentifierSea],														
 						@reportCode, 
 						@reportLevel,
 						@reportYear, 
@@ -609,7 +620,11 @@ BEGIN
 						inner join rds.DimK12Schools sch 
 							on fact.K12SchoolId = sch.DimK12SchoolId
 						left outer join rds.DimK12SchoolStatuses schStatus 
-							on fact.SchoolStatusId = schStatus.DimK12SchoolStatusId				
+							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId				
+						left outer join rds.DimCharterSchoolAuthorizers primaryAuthorizer 
+							on fact.AuthorizingBodyCharterSchoolAuthorizerId = primaryAuthorizer.DimCharterSchoolAuthorizerId
+						left outer join rds.DimCharterSchoolAuthorizers secondaryAuthorizer 
+							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 					where d.SchoolYear = @reportYear 
 					and sch.DimK12SchoolId <> -1	
 					and ISNULL(sch.ReportedFederally, 1) = 1 
@@ -617,9 +632,10 @@ BEGIN
 				END
 				else if (@reportCode ='c193')
 				BEGIN		
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([CategorySetCode]
 						,[OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[ReportCode]
@@ -633,8 +649,9 @@ BEGIN
 						,TitleiPartaAllocations)
 					select distinct @categorySetCode,
 						1 as OrganizationCount, 
-						lea.LeaName as OrganizationName ,
-						lea.LeaIdentifierState,
+						lea.DimLeaId,
+						lea.LeaOrganizationName as OrganizationName ,
+						lea.LeaIdentifierSea,
 						@reportCode,
 						@reportLevel, 
 						@reportYear, 
@@ -655,8 +672,9 @@ BEGIN
 				END
 				else if(@reportCode='c198')
 				BEGIN
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[StateCode]
 						,[OrganizationStateId]
@@ -671,16 +689,17 @@ BEGIN
 						,[CharterContractApprovalDate]
 						,[CharterContractRenewalDate])
 					SELECT distinct 1 as OrganizationCount, 
+						schools.DimK12SchoolId,
 						schools.NameOfInstitution as OrganizationName,									
 						schools.StateAbbreviationCode, 
-						schools.SchoolIdentifierState, 
+						schools.SchoolIdentifierSea, 
 						schools.StateANSICode,
 						schools.StateAbbreviationDescription as StateName,		
 						@reportCode, 
 						@reportYear,
 						@reportLevel,
 						@categorySetCode, 
-						schools.LeaIdentifierState, 
+						schools.LeaIdentifierSea, 
 						schools.CharterSchoolContractIdNumber, 
 						schools.CharterSchoolContractApprovalDate, 
 						schools.CharterSchoolContractRenewalDate
@@ -690,9 +709,9 @@ BEGIN
 						inner join rds.DimK12Schools schools 
 							on schools.DimK12SchoolId= fact.K12SchoolId
 						inner join rds.DimCharterSchoolAuthorizers approver 
-							on fact.CharterSchoolApproverAgencyId = approver.DimCharterSchoolAuthorizerId 
+							on fact.AuthorizingBodyCharterSchoolAuthorizerId = approver.DimCharterSchoolAuthorizerId 
 						inner join rds.DimCharterSchoolAuthorizers secondaryApprover 
-							on fact.CharterSchoolSecondaryApproverAgencyId = secondaryApprover.DimCharterSchoolAuthorizerId
+							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryApprover.DimCharterSchoolAuthorizerId
 					WHERE d.SchoolYear = @reportYear 
 					and schools.CharterSchoolIndicator = 1 		
 					and ISNULL(schools.ReportedFederally, 1) = 1 
@@ -700,8 +719,9 @@ BEGIN
 				END
 				ELSE if(@reportCode='c197')
 				BEGIN
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]	
 						,[StateCode]
 						,[OrganizationStateId]
@@ -714,33 +734,34 @@ BEGIN
 						,[ParentOrganizationStateId]
 						,[ParentOrganizationNcesId]
 						,[OrganizationNcesId]
-						,[CharterSchoolManagementOrganization]
-						,[CharterSchoolUpdatedManagementOrganization]
+						,CHARTERSCHOOLMANAGERORGANIZATION
+						,CHARTERSCHOOLUPDATEDMANAGERORGANIZATION
 						)
 					SELECT distinct 1 as OrganizationCount, 
+						schools.dimK12SchoolId,
 						schools.NameOfInstitution as OrganizationName,									
 						schools.StateAbbreviationCode, 
-						schools.SchoolIdentifierState, 
+						schools.SchoolIdentifierSea, 
 						schools.StateANSICode,
 						schools.StateAbbreviationDescription as StateName,				
 						@reportCode, 
 						@reportYear,
 						@reportLevel,
 						@categorySetCode, 
-						schools.LeaIdentifierState, 
+						schools.LeaIdentifierSea, 
 						schools.LeaIdentifierNces, 
 						schools.SchoolIdentifierNces
-						,a.StateIdentifier
-						,b.StateIdentifier							 
+						,a.CharterSchoolManagementOrganizationOrganizationIdentifierSea
+						,b.CharterSchoolManagementOrganizationOrganizationIdentifierSea							 
 					FROM rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
 						inner join rds.DimK12Schools schools 
 							on schools.DimK12SchoolId= fact.K12SchoolId
 						inner join rds.DimCharterSchoolManagementOrganizations a 
-							on fact.CharterSchoolManagerOrganizationId = a.DimCharterSchoolManagementOrganizationId
+							on fact.CharterSchoolManagementOrganizationId = a.DimCharterSchoolManagementOrganizationId
 						inner join rds.DimCharterSchoolManagementOrganizations b 
-							on fact.CharterSchoolUpdatedManagerOrganizationId = b.DimCharterSchoolManagementOrganizationId
+							on fact.CharterSchoolManagementOrganizationId = b.DimCharterSchoolManagementOrganizationId
 					WHERE d.SchoolYear = @reportYear 
 					and schools.CharterSchoolIndicator=1 
 					and ISNULL(schools.ReportedFederally, 1) = 1
@@ -748,9 +769,10 @@ BEGIN
 				END
 				ELSE IF(@reportCode='c196')
 				BEGIN
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						(
 						[OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[StateCode]
@@ -770,70 +792,80 @@ BEGIN
 						,[PhysicalAddressState]
 						,[PhysicalAddressPostalCode])
 					(SELECT distinct	1 as OrganizationCount, 
-						lea.Name as OrganizationName,
-						lea.StateIdentifier as LeaStateIdentifier,
-						lea.StateCode,
+						lea.DimCharterSchoolManagementOrganizationId,
+						lea.CharterSchoolManagementOrganizationOrganizationName as OrganizationName,
+						lea.CharterSchoolManagementOrganizationOrganizationIdentifierSea as LeaStateIdentifier,
+						lea.StateAbbreviationCode,
 						lea.StateANSICode,
-						lea.[State] as StateName,
+						lea.StateAbbreviationDescription as StateName,
 						@categorySetCode,
 						lea.CharterSchoolManagementOrganizationTypeEdfactsCode as ManagementOrganizationType,
-						lea.MailingAddressStreet,
+						lea.MailingAddressStreetNumberAndName,
 						lea.MailingAddressCity,								
-						lea.MailingAddressState,
+						lea.MailingAddressStateAbbreviation,
 						lea.MailingAddressPostalCode,
 						@reportCode,
 						@reportLevel,
 						@reportYear,
-						lea.PhysicalAddressStreet,
+						lea.PhysicalAddressStreetNumberAndName,
 						lea.PhysicalAddressCity,
-						lea.PhysicalAddressState,
+						lea.PhysicalAddressStateAbbreviation,
 						lea.PhysicalAddressPostalCode
 					FROM rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
 						inner join rds.DimCharterSchoolManagementOrganizations lea 
-							on fact.CharterSchoolManagerOrganizationId = lea.DimCharterSchoolManagementOrganizationId
+							on fact.CharterSchoolManagementOrganizationId = lea.DimCharterSchoolManagementOrganizationId
+/* JW 6/26/2023 Not sure of this join *********************************************************
 						inner join rds.DimK12Schools schools 
-							on schools.SchoolIdentifierState = lea.SchoolStateIdentifier	
+							on schools.SchoolIdentifierSea = lea.SchoolStateIdentier
+***********************************************************************************************/
 					WHERE d.SchoolYear = @reportYear 
 					and lea.DimCharterSchoolManagementOrganizationId <> -1 
-					and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
+					-- JW 6/26/2023 Depends on join above that is commented 
+					-- and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					UNION
 					SELECT distinct	1 as OrganizationCount, 
-						lea.Name as OrganizationName,
-						lea.StateIdentifier as LeaStateIdentifier,
-						lea.StateCode,
+						lea.DimCharterSchoolManagementOrganizationId,
+						lea.CharterSchoolManagementOrganizationOrganizationName as OrganizationName,
+						lea.CharterSchoolManagementOrganizationOrganizationIdentifierSea as LeaStateIdentifier,
+						lea.StateAbbreviationCode,
 						lea.StateANSICode,
-						lea.[State] as StateName,
+						lea.StateAbbreviationDescription as StateName,
 						@categorySetCode,
 						lea.CharterSchoolManagementOrganizationTypeEdfactsCode as ManagementOrganizationType,
-						lea.MailingAddressStreet,
+						lea.MailingAddressStreetNumberAndName,
 						lea.MailingAddressCity,								
-						lea.MailingAddressState,
+						lea.MailingAddressStateAbbreviation,
 						lea.MailingAddressPostalCode,
 						@reportCode,
 						@reportLevel,
 						@reportYear,
-						lea.PhysicalAddressStreet,
+						lea.PhysicalAddressStreetNumberAndName,
 						lea.PhysicalAddressCity,
-						lea.PhysicalAddressState,
+						lea.PhysicalAddressStateAbbreviation,
 						lea.PhysicalAddressPostalCode
 					FROM rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
 						inner join rds.DimCharterSchoolManagementOrganizations lea 
-							on fact.CharterSchoolUpdatedManagerOrganizationId = lea.DimCharterSchoolManagementOrganizationId	
+							on fact.CharterSchoolUpdatedManagementOrganizationId = lea.DimCharterSchoolManagementOrganizationId	
+/* JW 6/26/2023 Not sure of this join *********************************************************
 						inner join rds.DimK12Schools schools 
-							on schools.SchoolIdentifierState = lea.SchoolStateIdentifier
+							on schools.SchoolIdentifierSea = lea.SchoolStateIdentifier
+***********************************************************************************************/
+
 					WHERE d.SchoolYear = @reportYear 
 					and lea.DimCharterSchoolManagementOrganizationId <> -1 
-					and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
+					-- JW 6/26/2023 Depends on join above that is commented 
+					-- and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					)
 			END
 				ELSE IF(@reportCode ='c190')
 				BEGIN
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[StateCode]
@@ -853,70 +885,79 @@ BEGIN
 						,[PhysicalAddressState]
 						,[PhysicalAddressPostalCode])
 					(SELECT distinct 1 as OrganizationCount, 
-						lea.Name as OrganizationName,
-						lea.StateIdentifier as LeaStateIdentifier,		 
-						lea.StateCode,
+						lea.DimCharterSchoolAuthorizerId,
+						lea.CharterSchoolAuthorizingOrganizationOrganizationName as OrganizationName,
+						lea.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea as LeaStateIdentifier,		 
+						lea.StateAbbreviationCode,
 						lea.StateANSICode,
-						lea.[State] as StateName,
+						lea.StateAbbreviationDescription as StateName,
 						@categorySetCode,
-						lea.CharterSchoolAuthorizerTypeCode as ManagementOrganizationType,
-						lea.MailingAddressStreet,
+						lea.CharterSchoolAuthorizingOrganizationTypeCode as ManagementOrganizationType,
+						lea.MailingAddressStreetNumberAndName,
 						lea.MailingAddressCity,								
-						lea.MailingAddressState,
+						lea.MailingAddressStateAbbreviation,
 						lea.MailingAddressPostalCode,
 						@reportCode,
 						@reportLevel,
 						@reportYear,
-						lea.PhysicalAddressStreet,
+						lea.PhysicalAddressStreetNumberAndName,
 						lea.PhysicalAddressCity,
-						lea.PhysicalAddressState,
+						lea.PhysicalAddressStateAbbreviation,
 						lea.PhysicalAddressPostalCode
 					from rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
 						inner join rds.DimCharterSchoolAuthorizers lea 
-							on fact.CharterSchoolApproverAgencyId = lea.DimCharterSchoolAuthorizerId
+							on fact.AuthorizingBodyCharterSchoolAuthorizerId = lea.DimCharterSchoolAuthorizerId
+/* JW 6/26/2023 Not sure of this join *********************************************************
 						inner join rds.DimK12Schools schools 
-							on schools.SchoolIdentifierState = lea.SchoolStateIdentifier	
+							on schools.SchoolIdentifierSea = lea.SchoolStateIdentifier	
+*********************************************************************************************/
 					where d.SchoolYear = @reportYear 
 					and lea.DimCharterSchoolAuthorizerId <> -1 
-					and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
+					-- JW 6/26/2023 Depends on join above that is commented 
+					-- and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					UNION 
 					SELECT distinct	1 as OrganizationCount, 
-						lea.Name as OrganizationName,
-						lea.StateIdentifier as LeaStateIdentifier,		 
-						lea.StateCode,
+						lea.DimCharterSchoolAuthorizerId,
+						lea.CharterSchoolAuthorizingOrganizationOrganizationName as OrganizationName,
+						lea.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea as LeaStateIdentifier,		 
+						lea.StateAbbreviationCode,
 						lea.StateANSICode,
-						lea.[State] as StateName,
+						lea.StateAbbreviationDescription as StateName,
 						@categorySetCode,
-						lea.CharterSchoolAuthorizerTypeCode,
-						lea.MailingAddressStreet,
+						lea.CharterSchoolAuthorizingOrganizationTypeCode,
+						lea.MailingAddressStreetNumberAndName,
 						lea.MailingAddressCity,								
-						lea.MailingAddressState,
+						lea.MailingAddressStateAbbreviation,
 						lea.MailingAddressPostalCode,
 						@reportCode,
 						@reportLevel,
 						@reportYear,
-						lea.PhysicalAddressStreet,
+						lea.PhysicalAddressStreetNumberAndName,
 						lea.PhysicalAddressCity,
-						lea.PhysicalAddressState,
+						lea.PhysicalAddressStateAbbreviation,
 						lea.PhysicalAddressPostalCode
 					from rds.FactOrganizationCounts fact
 					inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
 					inner join rds.DimCharterSchoolAuthorizers lea 
-						on fact.CharterSchoolSecondaryApproverAgencyId = lea.DimCharterSchoolAuthorizerId
+						on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = lea.DimCharterSchoolAuthorizerId
+/* JW 6/26/2023 Not sure of this join *********************************************************
 					inner join rds.DimK12Schools schools 
-						on schools.SchoolIdentifierState = lea.SchoolStateIdentifier	
+						on schools.SchoolIdentifierSea = lea.SchoolStateIdentifier	
+*********************************************************************************************/
 					where d.SchoolYear = @reportYear 
 					and lea.DimCharterSchoolAuthorizerId <> -1 
-					and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
+					-- JW 6/26/2023 Depends on join above that is commented 
+					-- and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					)
 				END
 				ELSE IF(@reportCode ='c103')
 				BEGIN
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[ParentOrganizationStateId]
@@ -929,9 +970,10 @@ BEGIN
 						,[ReportYear]
 						,[StatePovertyDesignation])
 					SELECT	distinct 1 as OrganizationCount, 
+						sch.DimK12SchoolId,
 						sch.NameOfInstitution as OrganizationName,
-						sch.SchoolIdentifierState,	
-						sch.LeaIdentifierState as LeaStateIdentifier,										 
+						sch.SchoolIdentifierSea,	
+						sch.LeaIdentifierSea as LeaStateIdentifier,										 
 						sch.StateANSICode as StateANSICode,
 						sch.StateAbbreviationCode,
 						sch.StateAbbreviationDescription as StateName,
@@ -946,7 +988,7 @@ BEGIN
 						inner join rds.DimK12Schools sch 
 							on fact.K12SchoolId = sch.DimK12SchoolId
 						inner join RDS.DimK12SchoolStatuses statuses 
-							on fact.SchoolStatusId= statuses.DimK12SchoolStatusId 		
+							on fact.K12SchoolStatusId= statuses.DimK12SchoolStatusId 		
 					Where d.SchoolYear = @reportYear 
 					and sch.DimK12SchoolId <> -1
 					and ISNULL(sch.ReportedFederally, 1) = 1 
@@ -954,8 +996,9 @@ BEGIN
 				END
 				ELSE IF(@reportCode ='c132')
 				BEGIN
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[ParentOrganizationStateId]
@@ -970,9 +1013,10 @@ BEGIN
 						,[EconomicallyDisadvantagedStudentCount]
 						)
 					SELECT distinct 1 as OrganizationCount, 
+						sch.DimK12SchoolId,
 						sch.NameOfInstitution as OrganizationName,
-						sch.SchoolIdentifierState,	
-						sch.LeaIdentifierState as LeaStateIdentifier,										 
+						sch.SchoolIdentifierSea,	
+						sch.LeaIdentifierSea as LeaStateIdentifier,										 
 						sch.StateANSICode as StateANSICode,
 						sch.StateAbbreviationCode,
 						sch.StateAbbreviationDescription as StateName,
@@ -988,11 +1032,11 @@ BEGIN
 						INNER JOIN rds.DimK12Schools sch
 							on fact.K12SchoolId = sch.DimK12SchoolId
 						inner join RDS.DimK12SchoolStatuses statuses 
-							on fact.SchoolStatusId= statuses.DimK12SchoolStatusId 
+							on fact.K12SchoolStatusId= statuses.DimK12SchoolStatusId 
 						left join(	select 	SchoolYearId, K12SchoolId, sum(studentcount) as ecodisStudentCount
 									from  RDS.FactK12StudentCounts factStd 		
-											inner join rds.DimK12Demographics demo 
-												on demo.DimK12DemographicId = factStd.K12DemographicId 
+											inner join rds.DimEconomicallyDisadvantagedStatuses demo 
+												on demo.DimEconomicallyDisadvantagedStatusId = factStd.EconomicallyDisadvantagedStatusId 
 												and demo.EconomicDisadvantageStatusCode != 'MISSING'	
 									where K12SchoolId <> -1
 									group by SchoolYearId, K12SchoolId 
@@ -1006,8 +1050,9 @@ BEGIN
 				END
 				ELSE IF(@reportCode ='c170')
 				BEGIN
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[LeaStateIdentifier]
@@ -1021,9 +1066,10 @@ BEGIN
 						,McKinneyVentoSubgrantRecipient
 						)
 					SELECT distinct 1 as OrganizationCount,
-						lea.LeaName as OrganizationName,
-						lea.LeaIdentifierState,	
-						lea.LeaIdentifierState as LeaStateIdentifier,										 
+						lea.DimLeaId,
+						lea.LeaOrganizationName as OrganizationName,
+						lea.LeaIdentifierSea,	
+						lea.LeaIdentifierSea as LeaStateIdentifier,										 
 						lea.StateANSICode as StateANSICode,
 						lea.StateAbbreviationCode,
 						lea.StateAbbreviationDescription as StateName,
@@ -1040,7 +1086,7 @@ BEGIN
 						inner join rds.DimLeas lea 
 							on fact.LeaId = lea.DimLeaID
 						left outer join RDS.DimK12OrganizationStatuses statuses 
-							on fact.OrganizationStatusId= statuses.DimK12OrganizationStatusId 
+							on fact.K12OrganizationStatusId= statuses.DimK12OrganizationStatusId 
 					where d.SchoolYear = @reportYear 
 					and lea.DimLeaID <> -1	
 					and ISNULL(lea.ReportedFederally, 1) = 1 
@@ -1050,8 +1096,9 @@ BEGIN
 				BEGIN
 					if(@reportLevel = 'lea')
 					begin
-						INSERT INTO [RDS].[FactOrganizationCountReports]
+						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([OrganizationCount]
+							,[OrganizationId]
 							,[OrganizationName]
 							,[OrganizationStateId]
 							,[LeaStateIdentifier]
@@ -1065,9 +1112,10 @@ BEGIN
 							,GunFreeStatus
 							)
 						SELECT distinct 1 as OrganizationCount,
-							lea.LeaName as OrganizationName,
-							lea.LeaIdentifierState,	
-							lea.LeaIdentifierState as LeaStateIdentifier,										 
+							lea.DimLeaId,
+							lea.LeaOrganizationName as OrganizationName,
+							lea.LeaIdentifierSea,	
+							lea.LeaIdentifierSea as LeaStateIdentifier,										 
 							lea.StateANSICode as StateANSICode,
 							lea.StateAbbreviationCode,
 							lea.StateAbbreviationDescription as StateName,
@@ -1082,7 +1130,7 @@ BEGIN
 							inner join rds.DimLeas lea 
 								on fact.LeaId = lea.DimLeaID
 							left outer join RDS.DimK12OrganizationStatuses statuses 
-								on fact.OrganizationStatusId= statuses.DimK12OrganizationStatusId
+								on fact.K12OrganizationStatusId= statuses.DimK12OrganizationStatusId
 						where d.SchoolYear = @reportYear 
 						and lea.DimLeaID <> -1
 						and lea.LeaOperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
@@ -1090,9 +1138,10 @@ BEGIN
 					end
 					else if(@reportLevel = 'sch')
 					begin
-						INSERT INTO [RDS].[FactOrganizationCountReports]
+						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
 							,[OrganizationCount]
+							,[OrganizationId]
 							,[OrganizationName]
 							,[OrganizationStateId]
 							,[ParentOrganizationStateId]
@@ -1105,9 +1154,11 @@ BEGIN
 							,[TotalIndicator]
 							,GunFreeStatus)
 						select distinct @categorySetCode,
-							1 as OrganizationCount, sch.NameOfInstitution as OrganizationName ,
-							sch.SchoolIdentifierState,	
-							sch.LeaIdentifierState as LeaStateIdentifier,	
+							1 as OrganizationCount, 
+							sch.DimK12SchoolId,
+							sch.NameOfInstitution as OrganizationName ,
+							sch.SchoolIdentifierSea,	
+							sch.LeaIdentifierSea as LeaStateIdentifier,	
 							@reportCode, @reportLevel, @reportYear, sch.StateANSICode, sch.StateAbbreviationCode,
 							sch.StateAbbreviationDescription as StateName, 0 as TotalIndicator, 
 							statuses.GunFreeSchoolsActReportingStatusCode as GunFreeStatusCode
@@ -1117,7 +1168,7 @@ BEGIN
 							inner join rds.DimK12Schools sch 
 								on fact.K12SchoolId = sch.DimK12SchoolId
 							left outer join RDS.DimK12OrganizationStatuses statuses 
-								on fact.OrganizationStatusId= statuses.DimK12OrganizationStatusId 
+								on fact.K12OrganizationStatusId= statuses.DimK12OrganizationStatusId 
 						where d.SchoolYear = @reportYear 
 						and sch.DimK12SchoolId <> -1	
 						and ISNULL(sch.ReportedFederally, 1) = 1
@@ -1126,8 +1177,9 @@ BEGIN
 				END
 				ELSE IF(@reportCode ='c205')
 				BEGIN
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[LeaStateIdentifier]
@@ -1143,9 +1195,10 @@ BEGIN
 						,[StateDefinedStatus]
 						)
 					SELECT distinct 1 as OrganizationCount, 
+						sch.DimK12SchoolId,
 						sch.NameOfInstitution as OrganizationName,
-						sch.SchoolIdentifierState,	
-						sch.LeaIdentifierState as LeaStateIdentifier,										 
+						sch.SchoolIdentifierSea,	
+						sch.LeaIdentifierSea as LeaStateIdentifier,										 
 						sch.StateANSICode as StateANSICode,
 						sch.StateAbbreviationCode,
 						sch.StateAbbreviationDescription as StateName,
@@ -1153,28 +1206,29 @@ BEGIN
 						@reportCode,
 						@reportLevel,
 						@reportYear,
-						statuses.ProgressAchievingEnglishLanguageCode as 'ProgressAchievingEnglishLanguage',
+						statuses.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode as 'ProgressAchievingEnglishLanguage',
 						@tableTypeAbbrv,
-						case when statuses.ProgressAchievingEnglishLanguageCode = 'STTDEF' then dss.SchoolStateStatusCode else null end as StateDefinedStatus
+						case when statuses.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode = 'STTDEF' then dss.SchoolStateStatusCode else null end as StateDefinedStatus
 					from rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
 						inner join rds.DimK12Schools sch 
 							on fact.K12SchoolId = sch.DimK12SchoolId
 						inner join RDS.DimK12SchoolStatuses statuses 
-							on fact.SchoolStatusId= statuses.DimK12SchoolStatusId 		
+							on fact.K12SchoolStatusId= statuses.DimK12SchoolStatusId 		
 						inner join rds.DimK12SchoolStateStatuses dss 
-							on dss.DimK12SchoolStateStatusId= fact.SchoolStateStatusId
+							on dss.DimK12SchoolStateStatusId= fact.K12SchoolStateStatusId
 					where d.SchoolYear = @reportYear 
 						and sch.DimK12SchoolId <> -1 
-						and statuses.ProgressAchievingEnglishLanguageCode <>'Missing'
+						and statuses.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode <>'Missing'
 						and ISNULL(sch.ReportedFederally, 1) = 1
 						and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 				END
 				ELSE IF(@reportCode ='c206')
 				BEGIN
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[LeaStateIdentifier]
@@ -1194,9 +1248,10 @@ BEGIN
 						AdditionalTargetedSupportandImprovementCode
 						)
 					SELECT distinct 1 as OrganizationCount, 
+						sch.DimK12SchoolId,
 						sch.NameOfInstitution as OrganizationName,
-						sch.SchoolIdentifierState,	
-						sch.LeaIdentifierState as LeaStateIdentifier,										 
+						sch.SchoolIdentifierSea,	
+						sch.LeaIdentifierSea as LeaStateIdentifier,										 
 						sch.StateANSICode as StateANSICode,
 						sch.StateAbbreviationCode,
 						sch.StateAbbreviationDescription as StateName,
@@ -1204,13 +1259,13 @@ BEGIN
 						@reportCode,
 						@reportLevel,
 						@reportYear,
-						ISNULL(FederalFundAllocated, 0) as FederalFundAllocated,
+						ISNULL(FederalProgramsFundingAllocation, 0) as FederalFundAllocated,
 						--statuses.ComprehensiveAndTargetedSupportCode,
-						statuses.ComprehensiveSupportImprovementCode,
-						statuses.TargetedSupportImprovementCode,						
-						statuses.ComprehensiveSupportCode,
-						statuses.TargetedSupportCode,
-						statuses.AdditionalTargetedSupportandImprovementCode
+						statuses.ComprehensiveSupportAndImprovementStatusCode,
+						statuses.TargetedSupportAndImprovementStatusCode,						
+						'', -- JW 6/26/2023 Not sure      statuses.ComprehensiveSupportCode,
+						'', -- JW 6/26/2023 Not sure      statuses.TargetedSupportCode,
+						statuses.AdditionalTargetedSupportAndImprovementStatusCode
 					from rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
@@ -1219,7 +1274,7 @@ BEGIN
 						inner join RDS.DimComprehensiveAndTargetedSupports statuses 
 							on fact.ComprehensiveAndTargetedSupportId = statuses.DimComprehensiveAndTargetedSupportId
 						inner join rds.DimK12SchoolStateStatuses dss 
-							on dss.DimK12SchoolStateStatusId= fact.SchoolStateStatusId
+							on dss.DimK12SchoolStateStatusId= fact.K12SchoolStateStatusId
 					where d.SchoolYear = @reportYear 
 					and sch.DimK12SchoolId <> -1 
 					and ISNULL(sch.ReportedFederally, 1) = 1
@@ -1227,8 +1282,9 @@ BEGIN
 				END
 				else if(@reportCode='c207')
 				BEGIN
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[StateCode]
 						,[OrganizationStateId]
@@ -1241,23 +1297,24 @@ BEGIN
 						,[ParentOrganizationStateId]
 						,[AppropriationMethodCode])
 					SELECT distinct 1 as OrganizationCount, 
+						schools.dimK12SchoolId,
 						schools.NameOfInstitution as OrganizationName,
 						schools.StateAbbreviationCode,
-						schools.SchoolIdentifierState,	
+						schools.SchoolIdentifierSea,	
 						schools.StateANSICode as StateANSICode,
 						schools.StateAbbreviationDescription as StateName,	
 						@reportCode, 
 						@reportYear,
 						@reportLevel,
 						@categorySetCode, 
-						schools.LeaIdentifierState, 
+						schools.LeaIdentifierSea, 
 						charterStatus.AppropriationMethodEdFactsCode
 					FROM rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
 						inner join rds.DimK12Schools schools
 							on schools.DimK12SchoolId= fact.K12SchoolId
-						inner join rds.DimCharterSchoolStatus charterStatus 
+						inner join rds.DimCharterSchoolStatuses charterStatus 
 							on fact.CharterSchoolStatusId = charterStatus.DimCharterSchoolStatusId
 					WHERE d.SchoolYear = @reportYear 
 					and schools.CharterSchoolIndicator=1
@@ -1266,9 +1323,10 @@ BEGIN
 				END
 				else if (@reportCode ='c131')
 				BEGIN	
-					INSERT INTO [RDS].[FactOrganizationCountReports]
+					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([CategorySetCode]
 						,[OrganizationCount]
+						,[OrganizationId]
 						,[OrganizationName]
 						,[OrganizationStateId]
 						,[ReportCode]
@@ -1283,8 +1341,9 @@ BEGIN
 						,REAPAlternativeFundingStatus)
 					select DISTINCT @categorySetCode, 	
 						1 as OrganizationCount, 
-						lea.LeaName as OrganizationName ,
-						lea.LeaIdentifierState,
+						lea.DimLeaId,
+						lea.LeaOrganizationName as OrganizationName ,
+						lea.LeaIdentifierSea,
 						@reportCode,
 						@reportLevel, 
 						@reportYear, 
@@ -1301,7 +1360,7 @@ BEGIN
 						inner join rds.DimLeas lea 
 							on fact.LeaId = lea.DimLeaID
 						inner join RDS.DimK12OrganizationStatuses organizationStatus 
-							on organizationStatus.DimK12OrganizationStatusId = fact.OrganizationStatusId	
+							on organizationStatus.DimK12OrganizationStatusId = fact.K12OrganizationStatusId	
 					where d.SchoolYear = @reportYear 
 					and lea.DimLeaID <> -1	
 					and ISNULL(lea.ReportedFederally, 1) = 1
@@ -1311,9 +1370,10 @@ BEGIN
 				begin
 					if(@reportLevel = 'lea')
 					begin
-						INSERT INTO [RDS].[FactOrganizationCountReports]
+						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
 							,[OrganizationCount]
+							,[OrganizationId]
 							,[OrganizationName]
 							,[OrganizationNcesId]
 							,[OrganizationStateId]
@@ -1328,9 +1388,10 @@ BEGIN
 							,[FederalProgramCode]
 							,[FederalFundAllocated])
 						select distinct @categorySetCode,	1 as OrganizationCount, 
-							lea.LeaName as OrganizationName , lea.LeaIdentifierNces, lea.LeaIdentifierState,
+							lea.DimLeaId,
+							lea.LeaOrganizationName as OrganizationName , lea.LeaIdentifierNces, lea.LeaIdentifierSea,
 							@reportCode, @reportLevel, @reportYear, lea.StateANSICode, lea.StateAbbreviationCode, lea.StateAbbreviationDescription, @tableTypeAbbrv,
-							0 as TotalIndicator, fact.FederalProgramCode, fact.FederalFundAllocated
+							0 as TotalIndicator, fact.FederalProgramCode, fact.FederalProgramsFundingAllocation
 						from rds.FactOrganizationCounts fact
 							inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
@@ -1345,9 +1406,10 @@ BEGIN
 					end	
 					else if(@reportLevel = 'sea')
 					begin
-						INSERT INTO [RDS].[FactOrganizationCountReports]
+						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
 							,[OrganizationCount]
+							,[OrganizationId]
 							,[OrganizationName]
 							,[StateANSICode]
 							,[StateName]
@@ -1361,14 +1423,15 @@ BEGIN
 							,[FederalFundAllocationType]
 							,[FederalFundAllocated])
 						select distinct @categorySetCode,1 as OrganizationCount,
+							a.DimSeaId,
 							OrganizationName , StateANSICode, StateName, StateCode,
 							@reportCode, @reportLevel, @reportYear,@tableTypeAbbrv, 0 as TotalIndicator, 
-							FederalProgramCode, FederalFundAllocationType, Sum(FederalFundAllocated)
-						from (	select distinct 1 as OrganizationCount,
-									sea.SeaName as OrganizationName , sea.StateANSICode, sea.StateAbbreviationDescription as StateName, 
+							FederalProgramCode, FederalProgramsFundingAllocationType, Sum(FederalProgramsFundingAllocation)
+						from (	select distinct 1 as OrganizationCount, sea.DimSeaId,
+									sea.SeaOrganizationName as OrganizationName , sea.StateANSICode, sea.StateAbbreviationDescription as StateName, 
 									sea.StateAbbreviationCode as StateCode,
-									0 as TotalIndicator, fact.FederalProgramCode, fact.FederalFundAllocationType, 
-									fact.FederalFundAllocated
+									0 as TotalIndicator, fact.FederalProgramCode, fact.FederalProgramsFundingAllocationType, 
+									fact.FederalProgramsFundingAllocation
 								from rds.FactOrganizationCounts fact
 									inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
@@ -1376,8 +1439,8 @@ BEGIN
 										on fact.SeaId = sea.DimSeaId						
 								where d.SchoolYear = @reportYear and sea.DimSeaId <> -1 
 							)as a 
-						group by OrganizationCount, OrganizationName,
-							StateCode, FederalProgramCode, FederalFundAllocationType, StateANSICode, StateName
+						group by OrganizationCount, OrganizationName, DimSeaId,
+							StateCode, FederalProgramCode, FederalProgramsFundingAllocationType, StateANSICode, StateName
 					end						
 				end
 			end			-- @runAsTest = 1
@@ -1387,20 +1450,20 @@ BEGIN
 				begin
 					if(@reportLevel = 'sea')
 					begin
-						select p.ElectronicMailAddress,p.FirstName,p.LastOrSurname,p.TelephoneNumber,p.PositionTitle, @categorySetCode,
-							sea.MailingAddressCity, sea.MailingAddressPostalCode, sea.MailingAddressState, sea.MailingAddressStreet,sea.MailingAddressStreet2,
+						select p.ElectronicMailAddressOrganizational,p.FirstName,p.LastOrSurname,p.TelephoneNumberWork,p.PositionTitle, @categorySetCode,
+							sea.MailingAddressCity, sea.MailingAddressPostalCode, sea.MailingAddressStateAbbreviation, sea.MailingAddressStreetNumberAndName,
 							1 as OrganizationCount, 							
-							sea.SeaName as OrganizationName ,
-							sea.PhysicalAddressCity , sea.PhysicalAddressPostalCode, sea.PhysicalAddressState, sea.PhysicalAddressStreet,sea.PhysicalAddressStreet2,
+							sea.SeaOrganizationName as OrganizationName ,
+							sea.PhysicalAddressCity , sea.PhysicalAddressPostalCode, sea.PhysicalAddressStateAbbreviation, sea.PhysicalAddressStreetNumberAndName,
 							@reportCode, @reportLevel, @reportYear, sea.StateANSICode, sea.StateAbbreviationCode, sea.StateAbbreviationDescription, 
-							sea.Telephone, 0 as TotalIndicator, sea.Website
+							sea.TelephoneNumber, 0 as TotalIndicator, sea.WebSiteAddress
 						from rds.FactOrganizationCounts fact
 							inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
 							inner join rds.DimSeas sea 
 								on fact.SeaId = sea.DimSeaId
-							left outer join rds.DimK12Staff p 
-								on fact.K12StaffId = p.DimK12StaffId
+							left outer join rds.DimPeople p 
+								on fact.K12StaffId = p.DimPersonId
 						where d.SchoolYear = @reportYear 
 						and sea.DimSeaId <> -1
 					end
@@ -1414,7 +1477,7 @@ BEGIN
 							, MaxDate
 						)
 						select 
-							  LeaIdentifierState
+							  LeaIdentifierSea
 							, min(RecordStartDateTime)
 							, max(RecordStartDateTime)
 						from rds.FactOrganizationCounts fact
@@ -1423,7 +1486,7 @@ BEGIN
 						inner join rds.DimSchoolYears dates
 								on fact.SchoolYearId = dates.DimSchoolYearId
 						where dates.SchoolYear = @reportYear 
-						GROUP BY lea.LeaIdentifierState
+						GROUP BY lea.LeaIdentifierSea
 
 						select 
 							  @categorySetCode
@@ -1431,21 +1494,19 @@ BEGIN
 							, latestLea.LeaTypeEdFactsCode
 							, latestLea.MailingAddressCity
 							, latestLea.MailingAddressPostalCode
-							, latestLea.MailingAddressState
-							, latestLea.MailingAddressStreet
-							, latestLea.MailingAddressStreet2
+							, latestLea.MailingAddressStateAbbreviation
+							, latestLea.MailingAddressStreetNumberAndName
 							, syLea.LeaOperationalStatusEdFactsCode
 							, syLea.LeaOperationalStatusEdFactsCode as OperationalStatusId
 							, 1 as OrganizationCount
-							, latestLea.LeaName as OrganizationName
+							, latestLea.LeaOrganizationName as OrganizationName
 							, latestLea.LeaIdentifierNces
-							, latestLea.LeaIdentifierState
+							, latestLea.LeaIdentifierSea
 							, latestLea.OutOfStateIndicator
 							, latestLea.PhysicalAddressCity 
 							, latestLea.PhysicalAddressPostalCode
-							, latestLea.PhysicalAddressState
-							, latestLea.PhysicalAddressStreet
-							, latestLea.PhysicalAddressStreet2
+							, latestLea.PhysicalAddressStateAbbreviation
+							, latestLea.PhysicalAddressStreetNumberAndName
 							, @reportCode
 							, @reportLevel
 							, @reportYear
@@ -1453,28 +1514,28 @@ BEGIN
 							, latestLea.StateAbbreviationCode
 							, latestLea.StateAbbreviationDescription
 							, latestLea.LeaSupervisoryUnionIdentificationNumber
-							, latestLea.Telephone
+							, latestLea.TelephoneNumber
 							, 0 as TotalIndicator
-							, latestLea.Website
+							, latestLea.WebSiteAddress
 							, case 
-								when latestLea.EffectiveDate > syLea.EffectiveDate THEN latestLea.EffectiveDate
+								when latestLea.OperationalStatusEffectiveDate > syLea.OperationalStatusEffectiveDate THEN latestLea.OperationalStatusEffectiveDate
 								ELSE @effectiveDate
 							 end as OperationalStatusEffectiveDate
-							, latestLea.PriorLeaIdentifierState
+							, latestLea.PriorLeaIdentifierSea
 							, case 
-								when latestLea.EffectiveDate > syLea.EffectiveDate THEN isnull(latestLea.LeaOperationalStatusEdFactsCode, '')
+								when latestLea.OperationalStatusEffectiveDate > syLea.OperationalStatusEffectiveDate THEN isnull(latestLea.LeaOperationalStatusEdFactsCode, '')
 								ELSE null
 							 end as UpdatedOperationalStatusEdFactsCode
 							, case 
-								when latestLea.EffectiveDate > syLea.EffectiveDate THEN isnull(latestLea.LeaOperationalStatusEdFactsCode, '')
+								when latestLea.OperationalStatusEffectiveDate > syLea.OperationalStatusEffectiveDate THEN isnull(latestLea.LeaOperationalStatusEdFactsCode, '')
 								ELSE null
 							 end as UpdatedOperationalStatusId
 						from #minmaxLeas mmlea						
 						join rds.DimLeas syLea
-							on mmlea.Identifier = syLea.LeaIdentifierState
+							on mmlea.Identifier = syLea.LeaIdentifierSea
 							and mmlea.MinDate = syLea.RecordStartDateTime
 						join rds.DimLeas latestLea
-							on mmlea.Identifier = latestLea.LeaIdentifierState	
+							on mmlea.Identifier = latestLea.LeaIdentifierSea	
 							and mmlea.MaxDate = latestLea.RecordStartDateTime
 						join rds.FactOrganizationCounts fact
 							on latestLea.DimLeaId = fact.LeaId
@@ -1494,7 +1555,7 @@ BEGIN
 							, MaxDate
 						)
 						select 
-							  SchoolIdentifierState
+							  SchoolIdentifierSea
 							, min(RecordStartDateTime)
 							, max(RecordStartDateTime)
 						from rds.FactOrganizationCounts fact
@@ -1503,33 +1564,31 @@ BEGIN
 						inner join rds.DimSchoolYears dates
 								on fact.SchoolYearId = dates.DimSchoolYearId
 						where dates.SchoolYear = @reportYear 
-						GROUP BY school.SchoolIdentifierState
+						GROUP BY school.SchoolIdentifierSea
 
 						select 
 							  @categorySetCode
-							, isnull(primaryAuthorizer.StateIdentifier, '')
-							, ISNULL(secondaryAuthorizer.StateIdentifier, '')
+							, isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
+							, ISNULL(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
 							, latestSchool.CharterSchoolStatus as CharterSchoolStatusEdFactsCode
 							, latestSchool.MailingAddressCity
 							, latestSchool.MailingAddressPostalCode
-							, latestSchool.MailingAddressState
-							, latestSchool.MailingAddressStreet
-							, latestSchool.MailingAddressStreet2
+							, latestSchool.MailingAddressStateAbbreviation
+							, latestSchool.MailingAddressStreetNumberAndName
 							, schStatus.NSLPStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode as OperationalStatusId
 							, 1 as OrganizationCount
 							, latestSchool.NameOfInstitution as OrganizationName 
 							, latestSchool.SchoolIdentifierNces
-							, latestSchool.SchoolIdentifierState
-							, latestSchool.LeaIdentifierState
+							, latestSchool.SchoolIdentifierSea
+							, latestSchool.LeaIdentifierSea
 							, latestSchool.LeaIdentifierNces
 							, latestSchool.OutOfStateIndicator
 							, latestSchool.PhysicalAddressCity 
 							, latestSchool.PhysicalAddressPostalCode
-							, latestSchool.PhysicalAddressState
-							, latestSchool.PhysicalAddressStreet
-							, latestSchool.PhysicalAddressStreet2
+							, latestSchool.PhysicalAddressStateAbbreviation
+							, latestSchool.PhysicalAddressStreetNumberAndName
 							, latestSchool.ReconstitutedStatus
 							, @reportCode
 							, @reportLevel
@@ -1540,16 +1599,16 @@ BEGIN
 							, latestSchool.StateAbbreviationCode
 							, latestSchool.StateAbbreviationDescription
 							, titleIStatus.TitleISchoolStatusEdFactsCode
-							, latestSchool.Telephone
+							, latestSchool.TelephoneNumber
 							, 0 as TotalIndicator
 							, schStatus.VirtualSchoolStatusEdFactsCode
-							, latestSchool.Website
+							, latestSchool.WebSiteAddress
 							, CASE 
 								when latestSchool.SchoolOperationalStatusEffectiveDate > sySchool.SchoolOperationalStatusEffectiveDate THEN latestSchool.SchoolOperationalStatusEffectiveDate
 								
 							  end as OperationalStatusEffectiveDate
-							, latestSchool.PriorLeaIdentifierState
-							, latestSchool.PriorSchoolIdentifierState
+							, latestSchool.PriorLeaIdentifierSea
+							, latestSchool.PriorSchoolIdentifierSea
 							, CASE 
 								when latestSchool.SchoolOperationalStatusEffectiveDate > sySchool.SchoolOperationalStatusEffectiveDate THEN ISNULL(latestSchool.SchoolOperationalStatusEdFactsCode, '')
 								ELSE NULL
@@ -1560,21 +1619,21 @@ BEGIN
 							  end as UpdatedOperationalStatusId
 						from #minmaxSchools mmSchool						
 						join rds.DimK12Schools sySchool
-							on mmSchool.Identifier = sySchool.SchoolIdentifierState	
+							on mmSchool.Identifier = sySchool.SchoolIdentifierSea	
 							and mmSchool.MinDate = sySchool.RecordStartDateTime
 						join rds.DimK12Schools latestSchool
-							on mmSchool.Identifier = latestSchool.SchoolIdentifierState	
+							on mmSchool.Identifier = latestSchool.SchoolIdentifierSea	
 							and mmSchool.MaxDate = latestSchool.RecordStartDateTime
 						join rds.FactOrganizationCounts fact
 							on latestSchool.DimK12SchoolId = fact.K12SchoolId
 						inner join rds.DimSchoolYears dates
 								on fact.SchoolYearId = dates.DimSchoolYearId
 						left outer join rds.DimCharterSchoolAuthorizers primaryAuthorizer 
-							on fact.CharterSchoolApproverAgencyId = primaryAuthorizer.DimCharterSchoolAuthorizerId
+							on fact.AuthorizingBodyCharterSchoolAuthorizerId = primaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimCharterSchoolAuthorizers secondaryAuthorizer 
-							on fact.CharterSchoolSecondaryApproverAgencyId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
+							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimK12SchoolStatuses schStatus 
-							on fact.SchoolStatusId = schStatus.DimK12SchoolStatusId
+							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
 						left outer join rds.DimTitleIStatuses titleIStatus 
 							on fact.TitleIStatusId = titleIStatus.DimTitleIStatusId
 						where dates.SchoolYear = @reportYear
@@ -1588,9 +1647,9 @@ BEGIN
 				begin
 						if(@reportLevel = 'lea')
 						begin
-								select distinct @categorySetCode,
+							select distinct @categorySetCode,
 							1 as OrganizationCount, 
-							lea.LeaName as OrganizationName ,lea.LeaIdentifierState,
+							lea.LeaOrganizationName as OrganizationName ,lea.LeaIdentifierSea,
 							@reportCode, @reportLevel, @reportYear, lea.StateANSICode, lea.StateAbbreviationCode, lea.StateAbbreviationDescription, 0 as TotalIndicator, 
 							grades.GradeLevelEdFactsCode
 						from rds.FactOrganizationCounts fact
@@ -1612,7 +1671,7 @@ BEGIN
 
 							select @categorySetCode,
 							1 as OrganizationCount, sch.NameOfInstitution as OrganizationName ,
-							sch.SchoolIdentifierState, sch.LeaIdentifierState,
+							sch.SchoolIdentifierSea, sch.LeaIdentifierSea,
 							@reportCode, @reportLevel, @reportYear, sch.StateANSICode, sch.StateAbbreviationCode, sch.StateAbbreviationDescription, 0 as TotalIndicator, 
 							grades.GradeLevelEdFactsCode
 						from rds.FactOrganizationCounts fact
@@ -1633,13 +1692,18 @@ BEGIN
 					else if (@reportCode ='c129')
 					BEGIN	
 						select distinct @categorySetCode,
+						-- JW 6/26/2023...should these be blank?
+						'',
+						'',
+						/**********************************
 						sch.CharterSchoolAuthorizerIdPrimary,
 						sch.CharterSchoolAuthorizerIdSecondary,								
+						************************************/
 						schStatus.NSLPStatusEdFactsCode,
 						1 as OrganizationCount, 
 						sch.NameOfInstitution as OrganizationName ,
 						sch.SchoolIdentifierNces,
-						sch.SchoolIdentifierState,								
+						sch.SchoolIdentifierSea,								
 						@reportCode, 
 						@reportLevel,
 						@reportYear, 
@@ -1655,7 +1719,7 @@ BEGIN
 						inner join rds.DimK12Schools sch 
 							on fact.K12SchoolId = sch.DimK12SchoolId	
 						left outer join rds.DimK12SchoolStatuses schStatus 
-							on fact.SchoolStatusId = schStatus.DimK12SchoolStatusId
+							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
 						left outer join rds.DimTitleIStatuses titleIStatus 
 							on fact.TitleIStatusId = titleIStatus.DimTitleIStatusId					
 					where dates.SchoolYear = @reportYear 
