@@ -2462,35 +2462,50 @@
 	DROP TABLE #IndividualizedProgramType
 	DROP TABLE #StudentSupportServiceType
 
-	------------------------------------------------
-	-- Populate DimIdeaDisabilityTypes					 ---
-	------------------------------------------------
+    ------------------------------------------------
+    -- Populate DimIdeaDisabilityTypes                   ---
+    ------------------------------------------------
+    IF NOT EXISTS (SELECT 1 FROM RDS.DimIdeaDisabilityTypes d WHERE d.IdeaDisabilityTypeCode = 'MISSING') BEGIN
+        SET IDENTITY_INSERT RDS.DimIdeaDisabilityTypes ON
 
-	IF NOT EXISTS (SELECT 1 FROM RDS.DimIdeaDisabilityTypes d WHERE d.IdeaDisabilityTypeCode = 'MISSING') BEGIN
-		SET IDENTITY_INSERT RDS.DimIdeaDisabilityTypes ON
+        INSERT INTO RDS.DimIdeaDisabilityTypes (DimIdeaDisabilityTypeId, IdeaDisabilityTypeCode, IdeaDisabilityTypeDescription, IdeaDisabilityTypeEdFactsCode)
+            VALUES (-1, 'MISSING', 'MISSING', 'MISSING')
 
-		INSERT INTO RDS.DimIdeaDisabilityTypes (DimIdeaDisabilityTypeId, IdeaDisabilityTypeCode, IdeaDisabilityTypeDescription, IdeaDisabilityTypeEdFactsCode)
-			VALUES (-1, 'MISSING', 'MISSING', 'MISSING')
+        SET IDENTITY_INSERT RDS.DimIdeaDisabilityTypes OFF
+    END
 
-		SET IDENTITY_INSERT RDS.DimIdeaDisabilityTypes OFF
-	END
-
-	INSERT INTO RDS.DimIdeaDisabilityTypes
-		(
-			  IdeaDisabilityTypeCode
-			, IdeaDisabilityTypeDescription
-			, IdeaDisabilityTypeEdFactsCode --TODO
-		)
-	SELECT 
-		  ceds.CedsOptionSetCode
-		, ceds.CedsOptionSetDescription
-		, ceds.CedsOptionSetCode AS EdFactsOptionSetCode
-	FROM CEDS.CedsOptionSetMapping ceds
-	LEFT JOIN RDS.DimIdeaDisabilityTypes main
-		ON ceds.CedsOptionSetCode = main.IdeaDisabilityTypeCode
-	WHERE main.DimIdeaDisabilityTypeId IS NULL
-		AND ceds.CedsElementTechnicalName = 'IdeaDisabilityType'
-	
+    INSERT INTO RDS.DimIdeaDisabilityTypes
+        (
+              IdeaDisabilityTypeCode
+            , IdeaDisabilityTypeDescription
+            , IdeaDisabilityTypeEdFactsCode
+        )
+    SELECT
+          ceds.CedsOptionSetCode
+        , ceds.CedsOptionSetDescription
+        , CASE ceds.CedsOptionSetCode
+            WHEN 'Autism' THEN 'AUT'
+            WHEN 'Deafblindness' THEN 'DB'
+            WHEN 'Deafness' THEN 'DB'
+            WHEN 'Developmentaldelay' THEN 'DD'
+            WHEN 'Emotionaldisturbance' THEN 'EMN'
+            WHEN 'Hearingimpairment' THEN 'HI'
+            WHEN 'Intellectualdisability' THEN 'ID'
+            WHEN 'Multipledisabilities' THEN 'MD'
+            WHEN 'Orthopedicimpairment' THEN 'OI'
+            WHEN 'Otherhealthimpairment' THEN 'OHI'
+            WHEN 'Specificlearningdisability' THEN 'SLD'
+            WHEN 'Speechlanguageimpairment' THEN 'SLI'
+            WHEN 'Traumaticbraininjury' THEN 'TBI'
+            WHEN 'Visualimpairment' THEN 'VI'
+            ELSE 'MISSING'
+          END
+           
+    FROM CEDS.CedsOptionSetMapping ceds
+    LEFT JOIN RDS.DimIdeaDisabilityTypes main
+        ON ceds.CedsOptionSetCode = main.IdeaDisabilityTypeCode
+    WHERE main.DimIdeaDisabilityTypeId IS NULL
+        AND ceds.CedsElementTechnicalName = 'IdeaDisabilityType'
 
 	-----------------------------------------------------
 	-- Populate DimImmigrantStatuses				   --
