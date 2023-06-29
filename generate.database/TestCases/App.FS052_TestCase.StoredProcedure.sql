@@ -12,8 +12,6 @@ BEGIN
 	IF OBJECT_ID('tempdb..#C052Staging') IS NOT NULL
 	DROP TABLE #C052Staging
 
-	IF OBJECT_ID('tempdb..#raceTemp') IS NOT NULL
-	DROP TABLE #raceTemp
 	IF OBJECT_ID('tempdb..#TempRacesUpdate') IS NOT NULL
 	DROP TABLE #TempRacesUpdate
 
@@ -217,31 +215,10 @@ BEGIN
 	FROM #c052Staging stg
 		INNER JOIN #TempRacesUpdate tru
 			ON stg.StudentIdentifierState = tru.StudentIdentifierState
-			AND (stg.LEAIdentifierSeaAccountability = tru.LEAIdentifierSeaAccountability		
-				OR stg.SchoolIdentifierSea = tru.SchoolIdentifierSea)
+			AND stg.LeaIdentifierSeaAccountability = tru.LeaIdentifierSeaAccountability
+			AND stg.SchoolIdentifierSea = tru.SchoolIdentifierSea
 	WHERE stg.RaceEdFactsCode <> 'HI7'
 
-	--Capture Students with multiple Race records
-	SELECT spr.StudentIdentifierState, spr.RaceType as FirstRace, spr2.RaceType as SecondRace
-	INTO #raceTemp	
-	FROM Staging.K12Enrollment ske
-	LEFT JOIN Staging.K12PersonRace spr
-		ON ske.SchoolYear = spr.SchoolYear
-		AND ske.StudentIdentifierState = spr.StudentIdentifierState
-		AND (ske.LEAIdentifierSeaAccountability = spr.LEAIdentifierSeaAccountability
-				OR ske.SchoolIdentifierSea = spr.SchoolIdentifierSea)
-		AND spr.RecordStartDateTime is not null
-		AND @MemberDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, GETDATE())
-	LEFT JOIN Staging.K12PersonRace spr2
-		ON ske.SchoolYear = spr.SchoolYear
-		AND ske.StudentIdentifierState = spr2.StudentIdentifierState
-		AND (ske.LEAIdentifierSeaAccountability = spr.LEAIdentifierSeaAccountability
-				OR ske.SchoolIdentifierSea = spr.SchoolIdentifierSea)
-		AND spr2.RecordStartDateTime is not null
-		AND @MemberDate BETWEEN spr2.RecordStartDateTime AND ISNULL(spr2.RecordEndDateTime, GETDATE())
-	WHERE @MemberDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
-	AND isnull(spr.RaceType, '') <> isnull(spr2.RaceType, '')
-	AND isnull(ske.HispanicLatinoEthnicity, 0) <> 1
 
 	-------------------------------------------------
 	-- Gather, evaluate & record the results
@@ -268,7 +245,7 @@ BEGIN
 								ELSE cs.RaceEdFactsCode
 							END AS RaceEdFactsCode
 						from #c052Staging cs
-							left join #raceTemp rt 
+							left join #TempRacesUpdate rt 
 								on cs.StudentIdentifierState = rt.StudentIdentifierState
 						) t
 						on t.StudentIdentifierState = c.StudentIdentifierState 
@@ -441,7 +418,7 @@ BEGIN
 								ELSE cs.RaceEdFactsCode
 							END AS RaceEdFactsCode
 						from #c052Staging cs
-							left join #raceTemp rt 
+							left join #TempRacesUpdate rt 
 								on cs.StudentIdentifierState = rt.StudentIdentifierState
 						) t
 						on t.StudentIdentifierState = c.StudentIdentifierState 
@@ -749,7 +726,7 @@ BEGIN
 								ELSE cs.RaceEdFactsCode
 							END AS RaceEdFactsCode
 						from #c052Staging cs
-							left join #raceTemp rt 
+							left join #TempRacesUpdate rt 
 								on cs.StudentIdentifierState = rt.StudentIdentifierState
 						) t
 						on t.StudentIdentifierState = c.StudentIdentifierState 
