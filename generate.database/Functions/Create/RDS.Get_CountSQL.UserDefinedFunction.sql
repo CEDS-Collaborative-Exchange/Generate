@@ -460,7 +460,7 @@ BEGIN
 				select @sql = @sql + char(10)
 				select @sql = @sql + 
 
-				'select rdks.StateStudentIdentifier'
+				'select rdks.K12StudentStudentIdentifierState'
 
 				if @reportLevel = 'lea'
 				begin
@@ -493,7 +493,7 @@ BEGIN
 						or rdd.DisciplinaryActionTakenCode IN (''03086'', ''03087'')
 						or rdd.IdeaInterimRemovalReasonCode <> ''MISSING''
 						or rdd.IdeaInterimRemovalCode <> ''MISSING'')
-				group by rdks.StateStudentIdentifier '
+				group by rdks.K12StudentStudentIdentifierState '
 
 				if @reportLevel = 'lea'
 				begin
@@ -502,7 +502,7 @@ BEGIN
 				end 
 
 				select @sql = @sql + 
-				'having sum(rfksd.DisciplineDuration) >= 0.5' + char(10)
+				'having sum(rfksd.DurationOfDisciplinaryAction) >= 0.5' + char(10)
 
 			end
 			else if @reportCode in ('c007')
@@ -510,7 +510,7 @@ BEGIN
 				select @sql = @sql + char(10)
 				select @sql = @sql + 
 
-				'select rdks.StateStudentIdentifier
+				'select rdks.K12StudentStudentIdentifierState
 				into #Students
 				from RDS.FactK12StudentDisciplines rfksd 
 				inner join rds.DimPeople rdks 
@@ -523,8 +523,8 @@ BEGIN
 					on rfksd.DisciplineStatusId = rdd.DimDisciplineStatusId
 				where rdd.IdeaInterimRemovalCode = ''REMDW''
 					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
-				group by rdks.StateStudentIdentifier, rdd.IdeaInterimRemovalCode, rdd.IdeaInterimRemovalReasonCode  
-				having sum(rfksd.DisciplineDuration) > 45' + char(10)
+				group by rdks.K12StudentStudentIdentifierState, rdd.IdeaInterimRemovalCode, rdd.IdeaInterimRemovalReasonCode  
+				having sum(rfksd.DurationOfDisciplinaryAction) > 45' + char(10)
 
 			end
 			else if @reportCode = 'c005'
@@ -532,7 +532,7 @@ BEGIN
 				select @sql = @sql + char(10)
 				select @sql = @sql + 
 
-				'select rdks.StateStudentIdentifier
+				'select rdks.K12StudentStudentIdentifierState
 				into #Students
 				from RDS.FactK12StudentDisciplines rfksd 
 				inner join rds.DimPeople rdks 
@@ -545,8 +545,8 @@ BEGIN
 					on rfksd.DisciplineStatusId = rdd.DimDisciplineStatusId
 				where rdd.IdeaInterimRemovalEdFactsCode in (''REMDW'', ''REMHO'')
 					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
-				group by rdks.StateStudentIdentifier 
-				having sum(rfksd.DisciplineDuration) > 45' + char(10)
+				group by rdks.K12StudentStudentIdentifierState 
+				having sum(rfksd.DurationOfDisciplinaryAction) > 45' + char(10)
 			end
 
 		end
@@ -1332,8 +1332,8 @@ BEGIN
 					begin
 						set @sqlCategoryReturnField = '
 						case 
-							when sum(isnull(fact.DisciplineDuration, 0)) < 0.5 then ''MISSING''
-							when sum(isnull(fact.DisciplineDuration, 0)) <= 10.0 then ''LTOREQ10''
+							when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) < 0.5 then ''MISSING''
+							when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) <= 10.0 then ''LTOREQ10''
 							else ''GREATER10''
 						end'
 						set @categoryReturnFieldIsAggregate = 1
@@ -1342,9 +1342,9 @@ BEGIN
 					begin
 						set @sqlCategoryReturnField = '
 						case 
-							when sum(isnull(fact.DisciplineDuration, 0)) < 0.5 then ''MISSING''
-							when sum(isnull(fact.DisciplineDuration, 0)) >= 0.5 AND sum(isnull(fact.DisciplineDuration, 0)) < 1.5 then ''LTOREQ1''
-							when sum(isnull(fact.DisciplineDuration, 0)) <= 10.0 then ''2TO10''
+							when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) < 0.5 then ''MISSING''
+							when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) >= 0.5 AND sum(isnull(fact.DurationOfDisciplinaryAction, 0)) < 1.5 then ''LTOREQ1''
+							when sum(isnull(fact.DurationOfDisciplinaryAction, 0)) <= 10.0 then ''2TO10''
 							else ''GREATER10''
 						end'
 						set @categoryReturnFieldIsAggregate = 1
@@ -1982,7 +1982,7 @@ BEGIN
 		-- Ages 3-21, Has Disability
 		set @sqlCountJoins = @sqlCountJoins + '
 			inner join (
-				select distinct rdks.StateStudentIdentifier, idea.DimIdeaStatusId
+				select distinct rdks.K12StudentStudentIdentifierState, idea.DimIdeaStatusId
 				from rds.' + @factTable + ' fact '
 
 				if @reportLevel in ('lea', 'sch')
@@ -1998,7 +1998,7 @@ BEGIN
 				inner join rds.DimPeople rdks 
 					on fact.K12StudentId = rdks.DimPersonId
 				left join #Students Students
-					on Students.StateStudentIdentifier = rdks.StateStudentIdentifier
+					on Students.K12StudentStudentIdentifierState = rdks.K12StudentStudentIdentifierState
 				inner join rds.DimAges age 
 					on fact.AgeId = age.DimAgeId
 					and age.AgeValue >= 3 
@@ -2020,9 +2020,9 @@ BEGIN
 				where idea.IdeaEducationalEnvironmentCode <> ''PPPS''
 					and idea.IdeaIndicatorCode = ''IDEA''
 					and dd.IdeaInterimRemovalCode in (''REMDW'', ''REMHO'')
-					and Students.StateStudentIdentifier IS NULL
+					and Students.K12StudentStudentIdentifierState IS NULL
 			) rules 
-				on stu.StateStudentIdentifier = rules.StateStudentIdentifier 
+				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState 
 				and fact.IdeaStatusId = rules.DimIdeaStatusId '
 				
 				
@@ -2032,7 +2032,7 @@ BEGIN
 		-- Ages 3-21, Has Disability
 		set @sqlCountJoins = @sqlCountJoins + '
 			inner join (
-				select rdks.StateStudentIdentifier, idea.DimIdeaStatusId, fact.DisciplineId
+				select rdks.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, fact.DisciplineId
 				from rds.' + @factTable + ' fact '
 
 				if @reportLevel in ('lea', 'sch')
@@ -2048,7 +2048,7 @@ BEGIN
 				inner join rds.DimPeople rdks
 					on fact.K12StudentId = rdks.DimPersonId
 				left join #Students Students
-					on Students.StateStudentIdentifier = rdks.StateStudentIdentifier
+					on Students.K12StudentStudentIdentifierState = rdks.K12StudentStudentIdentifierState
 				inner join rds.DimAges age 
 					on fact.AgeId = age.DimAgeId
 					and age.AgeValue >= 3 
@@ -2070,9 +2070,9 @@ BEGIN
 				where idea.IdeaEducationalEnvironmentCode <> ''PPPS''
 					and idea.IdeaIndicatorCode = ''IDEA'' 
 					and d.IdeaInterimRemovalCode = ''REMDW''
-					and Students.StateStudentIdentifier IS NULL
+					and Students.K12StudentStudentIdentifierState IS NULL
 			)  rules 
-				on stu.StateStudentIdentifier = rules.StateStudentIdentifier 
+				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState 
 				and fact.IdeaStatusId = rules.DimIdeaStatusId 
 				and fact.DisciplineId = rules.DisciplineId '
 					
@@ -2083,7 +2083,7 @@ BEGIN
 													inner join rds.DimIdeaStatuses id on sd.IdeaStatusId = id.DimIdeaStatusId
 													and d.IdeaInterimRemovalCode = ''REMDW''
 													and id.IdeaIndicatorEdFactsCode = ''IDEA''
-												GROUP BY K12StudentId, d.IdeaInterimRemovalCode, d.IdeaInterimRemovalReasonCode  HAVING SUM(sd.DisciplineDuration) > 45)'
+												GROUP BY K12StudentId, d.IdeaInterimRemovalCode, d.IdeaInterimRemovalReasonCode  HAVING SUM(sd.DurationOfDisciplinaryAction) > 45)'
 					*/
 		end
 	else if @reportCode = 'c009'
@@ -2138,7 +2138,7 @@ BEGIN
 		begin
 		set @sqlCountJoins = @sqlCountJoins + '
 			inner join (
-				select distinct rdks.StateStudentIdentifier, df.DimFirearmsId
+				select distinct rdks.K12StudentStudentIdentifierState, df.DimFirearmsId
 				from rds.' + @factTable + ' fact '
 
 				if @reportLevel in ('lea', 'sch')
@@ -2167,7 +2167,7 @@ BEGIN
 					on fact.FirearmsId = df.DimFirearmsId
 				where df.FirearmTypeEdFactsCode <> ''MISSING''
 			) rules 
-				on stu.StateStudentIdentifier = rules.StateStudentIdentifier 
+				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState 
 				and fact.FirearmsId = rules.DimFirearmsId '
 		end
 	else if @reportCode in ('c089','edenvironmentdisabilitiesage3-5')
@@ -2284,7 +2284,7 @@ BEGIN
 		-- Ages 3-21, Has Disability, Duration >= 0.5 
 		set @sqlCountJoins = @sqlCountJoins + '
 			inner join (
-				select distinct rdks.StateStudentIdentifier, idea.DimIdeaStatusId
+				select distinct rdks.K12StudentStudentIdentifierState, idea.DimIdeaStatusId
 				from rds.' + @factTable + ' fact '
 
 				if @reportLevel in ('lea', 'sch')
@@ -2321,7 +2321,7 @@ BEGIN
 					and idea.IdeaIndicatorCode = ''IDEA''
 					and dis.IdeaInterimRemovalEDFactsCode NOT IN (''REMDW'', ''REMHO'')
 			) rules 
-				on stu.StateStudentIdentifier = rules.StateStudentIdentifier
+				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState
 				and fact.IdeaStatusId = rules.DimIdeaStatusId '
 
 		end
@@ -2330,7 +2330,7 @@ BEGIN
 		-- Ages 3-21, Has Disability, Duration >= 0.5 
 			set @sqlCountJoins = @sqlCountJoins + '
 			inner join (
-				select distinct rdks.StateStudentIdentifier, idea.DimIdeaStatusId, dis.DimDisciplineStatusId
+				select distinct rdks.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, dis.DimDisciplineStatusId
 				from rds.' + @factTable + ' fact '
 
 				if @reportLevel in ('lea', 'sch')
@@ -2346,7 +2346,7 @@ BEGIN
 				inner join rds.DimPeople rdks 
 					on fact.K12StudentId = rdks.DimPersonId
 				inner join #Students Students
-					on Students.StateStudentIdentifier = rdks.StateStudentIdentifier '
+					on Students.K12StudentStudentIdentifierState = rdks.K12StudentStudentIdentifierState '
 
 			if @reportLevel = 'lea'
 			begin
@@ -2373,7 +2373,7 @@ BEGIN
 					on fact.IdeaStatusId = idea.DimIdeaStatusId
 				inner join rds.DimDisciplineStatuses dis 
 					on fact.DisciplineStatusId = dis.DimDisciplineStatusId
-				where idea.IdeaEducationalEnvironmentCode <> ''PPPS''
+				where idea.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 					and idea.IdeaIndicatorCode = ''IDEA''
 					and (dis.DisciplineMethodOfChildrenWithDisabilitiesCode <> ''MISSING''
 						or dis.DisciplinaryActionTakenCode IN (''03086'', ''03087'')
@@ -2381,7 +2381,7 @@ BEGIN
 						or dis.IdeaInterimRemovalCode <> ''MISSING'')
 
 			) rules 
-				on stu.StateStudentIdentifier = rules.StateStudentIdentifier
+				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState
 				and fact.IdeaStatusId = rules.DimIdeaStatusId 
 				and fact.DisciplineStatusId = rules.DimDisciplineStatusId '
 
@@ -2391,7 +2391,7 @@ BEGIN
 			--	INNER JOIN RDS.DimPeople stu
 			--		on fact.K12StudentId = stu.DimPersonId
 			--	INNER JOIN #Students Students
-			--		on Students.StateStudentIdentifier = stu.StateStudentIdentifier' + char(10)
+			--		on Students.K12StudentStudentIdentifierState = stu.K12StudentStudentIdentifierState' + char(10)
 
 			/*
 			and fact.K12StudentId IN (
@@ -2405,7 +2405,7 @@ BEGIN
 						or dis.DisciplinaryActionTakenCode IN (''03086'', ''03087'')
 						or dis.IdeaInterimRemovalReasonCode <> ''MISSING''
 						or dis.IdeaInterimRemovalCode <> ''MISSING'')
-					GROUP BY K12StudentId HAVING SUM(sd.DisciplineDuration) >= 0.5)
+					GROUP BY K12StudentId HAVING SUM(sd.DurationOfDisciplinaryAction) >= 0.5)
 			'*/
 
 			if CHARINDEX('DisciplinaryActionTaken', @categorySetReportFieldList) > 0 and CHARINDEX('IdeaInterimRemoval', @categorySetReportFieldList) > 0
@@ -2482,7 +2482,7 @@ BEGIN
             -- Ages 3-21 (if has disability), Grads K-12 (if no disability)
 			set @sqlCountJoins = @sqlCountJoins + '
             inner join (
-                select distinct rdks.StateStudentIdentifier, fact.IdeaStatusId, fact.GradeLevelId, fact.K12SchoolId
+                select distinct rdks.K12StudentStudentIdentifierState, fact.IdeaStatusId, fact.GradeLevelId, fact.K12SchoolId
 				from rds.' + @factTable + ' fact '
 
 				if @reportLevel in ('lea', 'sch')
@@ -2519,7 +2519,7 @@ BEGIN
 							or (idea.IDEAIndicatorCode = ''MISSING'' 
 								and grades.GradeLevelCode in (''KG'', ''01'', ''02'', ''03'', ''04'', ''05'', ''06'', ''07'', ''08'', ''09'', ''10'', ''11'', ''12'')))
             ) rules 
-				on stu.StateStudentIdentifier = rules.StateStudentIdentifier
+				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState
 				and fact.IdeaStatusId = rules.IdeaStatusId
 				and fact.GradeLevelId = rules.GradeLevelId 
 				and fact.K12SchoolId = rules.K12SchoolId
@@ -4338,7 +4338,7 @@ BEGIN
 						   when @reportLevel = 'lea' then 'DimLeaId int,' 
 						   else 'DimK12SchoolId int,'
 					end + '
-					StateStudentIdentifier varchar(50)' + @sqlCategoryFieldDefs + ',
+					K12StudentStudentIdentifierState varchar(50)' + @sqlCategoryFieldDefs + ',
 						' + @factField + ' int
 					)
 					' + case when @reportLevel = 'sea' then '
@@ -4357,17 +4357,17 @@ BEGIN
 					(' + case	when @reportLevel = 'sea' then 'DimSeaId,'
 								when @reportLevel = 'lea' then 'DimLeaId,' 
 								else 'DimK12SchoolId,'
-					end  + 'StateStudentIdentifier' 
+					end  + 'K12StudentStudentIdentifierState' 
 					+ @sqlCategoryFields + ', ' + @factField + ')
 					select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 									when @reportLevel = 'lea' then 'fact.LeaId,' 
 									else 'fact.K12SchoolId,'
-					end + 'fact.StateStudentIdentifier' + @sqlCategoryQualifiedSubSelectDimensionFields + ',
+					end + 'fact.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedSubSelectDimensionFields + ',
 					sum(isnull(fact.' + @factField + ', 0))
 					from ( select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 									when @reportLevel = 'lea' then 'fact.LeaId,' 
 									else 'fact.K12SchoolId,'
-					end + 'stu.StateStudentIdentifier,sum(fact.DisciplineCount) as DisciplineCount, sum(fact.DisciplineDuration) as DisciplineDuration' 
+					end + 'stu.K12StudentStudentIdentifierState,sum(fact.DisciplineCount) as DisciplineCount, sum(fact.DurationOfDisciplinaryAction) as DurationOfDisciplinaryAction' 
 					+ @sqlCategoryQualifiedSubDimensionFields + 
 					' from rds.' + @factTable + ' fact '
 					+ ' join rds.DimPeople stu on fact.K12StudentId = stu.DimPersonId '
@@ -4381,12 +4381,12 @@ BEGIN
 					group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 										when @reportLevel = 'lea' then 'fact.LeaId,'
 								   else 'fact.K12SchoolId,'
-								 end + 'stu.StateStudentIdentifier' + @sqlCategoryQualifiedSubDimensionFields +
-					+ ' having SUM(fact.DisciplineDuration) >= 0.5 ) as fact
+								 end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedSubDimensionFields +
+					+ ' having SUM(fact.DurationOfDisciplinaryAction) >= 0.5 ) as fact
 					group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 								   when @reportLevel = 'lea' then 'fact.LeaId,'
 								   else 'fact.K12SchoolId,'
-								 end + 'fact.StateStudentIdentifier' + @sqlCategoryQualifiedSubGroupDimensionFields + '
+								 end + 'fact.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedSubGroupDimensionFields + '
 					' + @sqlHavingClause + '
 					'
 				end
@@ -4404,7 +4404,7 @@ BEGIN
 						   when @reportLevel = 'lea' then 'DimLeaId int,' 
 						   else 'DimK12SchoolId int,'
 					end + '
-					StateStudentIdentifier varchar(50)' + @sqlCategoryFieldDefs + ', DisciplineDuration decimal(18, 2), 
+					K12StudentStudentIdentifierState varchar(50)' + @sqlCategoryFieldDefs + ', DurationOfDisciplinaryAction decimal(18, 2), 
 						' + @factField + ' int
 					)
 					' + case when @reportLevel = 'sea' then '
@@ -4423,13 +4423,13 @@ BEGIN
 					(' + case when @reportLevel = 'sea' then 'DimSeaId,'
 						  when @reportLevel = 'lea' then 'DimLeaId,' 
 						  else 'DimK12SchoolId,'
-					end + 'StateStudentIdentifier' 
-					+ @sqlCategoryFields + ', DisciplineDuration, ' + @factField + ')
+					end + 'K12StudentStudentIdentifierState' 
+					+ @sqlCategoryFields + ', DurationOfDisciplinaryAction, ' + @factField + ')
 					select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 						when @reportLevel = 'lea' then 'fact.LeaId,' 
 						     else 'fact.K12SchoolId,'
-					end + 'stu.StateStudentIdentifier' + @sqlCategoryQualifiedDimensionFields + ',
-					sum(isnull(fact.DisciplineDuration, 0)),
+					end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
+					sum(isnull(fact.DurationOfDisciplinaryAction, 0)),
 					sum(isnull(fact.' + @factField + ', 0))
 					from rds.' + @factTable + ' fact ' 
 					+ ' join rds.DimPeople stu on fact.K12StudentId = stu.DimPersonId '
@@ -4443,7 +4443,7 @@ BEGIN
 					group by ' + case   when @reportLevel = 'sea' then 'fact.SeaId,'
 										when @reportLevel = 'lea' then 'fact.LeaId,'
 										else 'fact.K12SchoolId,'
-								 end + 'stu.StateStudentIdentifier' + @sqlCategoryQualifiedDimensionGroupFields + '
+								 end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionGroupFields + '
 					' + @sqlHavingClause + '
 					'
 				end
@@ -4461,8 +4461,8 @@ BEGIN
 						   when @reportLevel = 'lea' then 'DimLeaId int,' 
 						   else 'DimK12SchoolId int,'
 					end + '
-					StateStudentIdentifier varchar(50), DisciplinaryActionTaken varchar(100), IdeaInterimRemoval varchar(100)' + @sqlCategoryFieldDefs + 
-					', DisciplineDuration decimal(18, 2), 
+					K12StudentStudentIdentifierState varchar(50), DisciplinaryActionTaken varchar(100), IdeaInterimRemoval varchar(100)' + @sqlCategoryFieldDefs + 
+					', DurationOfDisciplinaryAction decimal(18, 2), 
 						' + @factField + ' int
 					)
 					' + case when @reportLevel = 'sea' then '
@@ -4481,14 +4481,14 @@ BEGIN
 					(' + case when @reportLevel = 'sea' then 'DimSeaId,'
 						  when @reportLevel = 'lea' then 'DimLeaId,' 
 						  else 'DimK12SchoolId,'
-					end + 'StateStudentIdentifier, DisciplinaryActionTaken, IdeaInterimRemoval' 
-					+ @sqlCategoryFields + ', DisciplineDuration, ' + @factField + ')
+					end + 'K12StudentStudentIdentifierState, DisciplinaryActionTaken, IdeaInterimRemoval' 
+					+ @sqlCategoryFields + ', DurationOfDisciplinaryAction, ' + @factField + ')
 					select ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 									when @reportLevel = 'lea' then 'fact.LeaId,' 
 						     else 'fact.K12SchoolId,'
-					end  + 'stu.StateStudentIdentifier, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, CAT_IdeaInterimRemoval.IdeaInterimRemovalEdFactsCode' 
+					end  + 'stu.K12StudentStudentIdentifierState, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, CAT_IdeaInterimRemoval.IdeaInterimRemovalEdFactsCode' 
 					+ @sqlCategoryQualifiedDimensionFields + ',
-					sum(isnull(fact.DisciplineDuration, 0)),
+					sum(isnull(fact.DurationOfDisciplinaryAction, 0)),
 					sum(isnull(fact.' + @factField + ', 0))
 					from rds.' + @factTable + ' fact ' 
 					+ ' join rds.DimPeople stu on fact.K12StudentId = stu.DimPersonId '
@@ -4502,7 +4502,7 @@ BEGIN
 					group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 								   when @reportLevel = 'lea' then 'fact.LeaId,'
 								   else 'fact.K12SchoolId,'
-								 end  + 'stu.StateStudentIdentifier, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, CAT_IdeaInterimRemoval.IdeaInterimRemovalEdFactsCode' 
+								 end  + 'stu.K12StudentStudentIdentifierState, CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode, CAT_IdeaInterimRemoval.IdeaInterimRemovalEdFactsCode' 
 								 + @sqlCategoryQualifiedDimensionGroupFields + '
 					' + @sqlHavingClause + '
 					'
@@ -4519,8 +4519,8 @@ BEGIN
 					+ case when @reportLevel = 'sea' then 'DimSeaId int,'
 						   when @reportLevel = 'lea' then 'DimLeaId int,' 
 						   else 'DimK12SchoolId int,'
-					end + 'StateStudentIdentifier varchar(50)' + @sqlCategoryFieldDefs + ',
-					DisciplineDuration decimal(18, 2),
+					end + 'K12StudentStudentIdentifierState varchar(50)' + @sqlCategoryFieldDefs + ',
+					DurationOfDisciplinaryAction decimal(18, 2),
 					' + @factField + ' int
 				)
 		
@@ -4542,12 +4542,12 @@ BEGIN
 					(' + case when @reportLevel = 'sea' then 'DimSeaId,'
 						  when @reportLevel = 'lea' then 'DimLeaId,' 
 						  else 'DimK12SchoolId,'
-					end + 'StateStudentIdentifier' + @sqlCategoryFields + ', DisciplineDuration, ' + @factField + ')
+					end + 'K12StudentStudentIdentifierState' + @sqlCategoryFields + ', DurationOfDisciplinaryAction, ' + @factField + ')
 					select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 						when @reportLevel = 'lea' then 'fact.LeaId,' 
 						     else 'fact.K12SchoolId,'
-					end + 'stu.StateStudentIdentifier' + @sqlCategoryQualifiedDimensionFields + ',
-					sum(isnull(fact.DisciplineDuration, 0)),
+					end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
+					sum(isnull(fact.DurationOfDisciplinaryAction, 0)),
 					sum(isnull(fact.' + @factField + ', 0))
 					from rds.' + @factTable + ' fact ' 
 					+ ' join rds.DimPeople stu on fact.K12StudentId = stu.DimPersonId '
@@ -4561,7 +4561,7 @@ BEGIN
 					group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 								   when @reportLevel = 'lea' then 'fact.LeaId,'
 								   else 'fact.K12SchoolId,'
-								 end + 'stu.StateStudentIdentifier' + @sqlCategoryQualifiedDimensionGroupFields + '
+								 end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionGroupFields + '
 					' + @sqlHavingClause + '
 					'
 				end
@@ -4577,8 +4577,8 @@ BEGIN
 					+ case when @reportLevel = 'sea' then 'DimSeaId int,'
 						   when @reportLevel = 'lea' then 'DimLeaId int,' 
 						   else 'DimK12SchoolId int,'
-					end + 'StateStudentIdentifier varchar(50)' + @sqlCategoryFieldDefs + ',
-					DisciplineDuration decimal(18, 2),
+					end + 'K12StudentStudentIdentifierState varchar(50)' + @sqlCategoryFieldDefs + ',
+					DurationOfDisciplinaryAction decimal(18, 2),
 					' + @factField + ' int
 				)
 		
@@ -4600,12 +4600,12 @@ BEGIN
 					(' + case when @reportLevel = 'sea' then 'DimSeaId,'
 						  when @reportLevel = 'lea' then 'DimLeaId,' 
 						  else 'DimK12SchoolId,'
-					end + 'StateStudentIdentifier' + @sqlCategoryFields + ', DisciplineDuration, ' + @factField + ')
+					end + 'K12StudentStudentIdentifierState' + @sqlCategoryFields + ', DurationOfDisciplinaryAction, ' + @factField + ')
 					select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 						when @reportLevel = 'lea' then 'fact.LeaId,' 
 						     else 'fact.K12SchoolId,'
-					end + 'stu.StateStudentIdentifier' + @sqlCategoryQualifiedDimensionFields + ',
-					sum(isnull(fact.DisciplineDuration, 0)),
+					end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
+					sum(isnull(fact.DurationOfDisciplinaryAction, 0)),
 					sum(isnull(fact.' + @factField + ', 0))
 					from rds.' + @factTable + ' fact ' 
 					+ ' join rds.DimPeople stu on fact.K12StudentId = stu.DimPersonId '
@@ -4619,7 +4619,7 @@ BEGIN
 					group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 								   when @reportLevel = 'lea' then 'fact.LeaId,'
 								   else 'fact.K12SchoolId,'
-								 end + 'stu.StateStudentIdentifier' + @sqlCategoryQualifiedDimensionGroupFields + '
+								 end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionGroupFields + '
 					' + @sqlHavingClause + '
 					'
 				end
@@ -5122,7 +5122,7 @@ BEGIN
 		end
 		else if @reportCode in ('c005','c006','c086','c088','c144')
 		begin
-			set @sumOperation = 'count(distinct cs.StateStudentIdentifier )'
+			set @sumOperation = 'count(distinct cs.K12StudentStudentIdentifierState )'
 		end
 		else if @reportCode in ('c059', 'c070', 'c099', 'c112', 'c203')
 		begin
@@ -5188,7 +5188,7 @@ BEGIN
 				'		inner join rds.DimK12Staff s ' + char(10)
 				+ '			on c.DimK12StaffId = s.DimK12StaffId ' + char(10)
 			END 
-			--these reports have been converted to use StateStudentIdentifier instead of K12StudentId
+			--these reports have been converted to use K12StudentStudentIdentifierState instead of K12StudentId
 			--	in #Students and #categorySet so no need to join to DimPeople
 			ELSE IF @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
 			BEGIN
