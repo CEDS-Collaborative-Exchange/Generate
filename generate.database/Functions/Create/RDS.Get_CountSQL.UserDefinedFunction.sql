@@ -454,6 +454,96 @@ BEGIN
 		--pull the list of students to use in these reports into the #Students temp table 
 		if (@factReportTable <> 'ReportEDFactsK12StaffCounts')
 		begin
+			-- JW 6/28/2023 Fixed Membership performance issues by using #temp table rather than "In subselect"
+			if @reportCode in ('C052')
+				begin
+					select @sql = @sql + char(10) + char(10)
+					select @sql = @sql + 
+					'if OBJECT_ID(''tempdb..#Students'') is not null drop table #Students' + char(10)
+					select @sql = @sql +
+					'select	distinct fact.K12StudentId
+					into #Students
+					from rds.' + @factTable + ' fact' + char(10)
+					
+					if @reportLevel = 'SEA'
+						begin
+
+							declare @MembershipgradeList as varchar(2000)
+							
+							set @MembershipgradeList = '''PK'',''KG'',''01'',''02'',''03'',''04'',''05'',''06'',''07'',''08'',''09'',''10'',''11'',''12'''
+
+							IF(@toggleGrade13 = 1)
+							BEGIN
+								set @MembershipgradeList = @MembershipgradeList + ',''13'''
+							END
+
+							IF(@toggleUngraded = 1)
+							BEGIN
+								set @MembershipgradeList = @MembershipgradeList + ',''UG'''
+							END
+
+							IF(@toggleAdultEd = 1)
+							BEGIN
+								set @MembershipgradeList = @MembershipgradeList + ',''AE'''
+							END
+
+							select @sql = @sql + '
+							--inner join rds.DimK12Schools s 
+							--	on fact.K12SchoolId = s.DimK12SchoolId
+							--	and fact.SchoolYearId = @dimSchoolYearId
+							--	and fact.FactTypeId = @dimFactTypeId
+							--	and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+							inner join rds.DimGradeLevels gl 
+								on fact.GradeLevelId = gl.DimGradeLevelId
+								and gl.GradeLevelEdFactsCode in (' + @Membershipgradelist + ')' + char(10)
+						end
+
+					if @reportLevel = 'LEA'
+						begin
+							select @sql = @sql +
+							'inner join rds.DimLeas s 
+								on fact.LeaId = s.DimLeaId
+								and fact.SchoolYearId = @dimSchoolYearId
+								and fact.FactTypeId = @dimFactTypeId
+								and fact.LeaId <> -1
+								inner join rds.DimGradeLevels gl 
+									on fact.GradeLevelId = gl.DimGradeLevelId
+								inner join (
+											SELECT distinct OrganizationStateId, GRADELEVEL 
+											From rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''C039''
+												and c39.reportLevel = ''' + @reportLevel + ''' and c39.reportyear = ''' + @reportYear + '''										
+											) grades on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
+												and grades.OrganizationStateId = s.LeaIdentifierSea'  + char(10)
+						end
+
+					if @reportLevel = 'SCH'
+						begin
+							select @sql = @sql +
+							'inner join rds.DimK12Schools s 
+								on fact.K12SchoolId = s.DimK12SchoolId
+								and s.SchoolTypeCode <> ''Reportable''
+								and fact.SchoolYearId = @dimSchoolYearId
+								and fact.FactTypeId = @dimFactTypeId
+								and fact.K12SchoolId <> -1
+							inner join rds.DimGradeLevels gl 
+								on fact.GradeLevelId = gl.DimGradeLevelId
+							inner join (
+								select distinct OrganizationStateId, GRADELEVEL 
+								from rds.ReportEDFactsOrganizationCounts c39 
+								where c39.ReportCode = ''C039''
+								and c39.reportLevel = ''' + @reportLevel + ''' and c39.reportyear = ''' + @reportYear + '''										
+							) grades 
+								on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
+								and grades.OrganizationStateId = s.SchoolIdentifierSea' + char(10) 
+						end
+
+					select @sql = @sql + char(10) + 
+					'CREATE INDEX IDX_Students ON #Students (K12StudentId)' + char(10) + char(10)
+
+				end
+
+
+
 			-- JW 7/20/2022 Fixed Discipline performance issues by using #temp table rather than "In subselect"
 			if @reportCode in ('c088','c143')
 			begin
@@ -3941,90 +4031,7 @@ BEGIN
 
 	else if @reportCode ='c052'
 	begin
-		if (@reportLevel = 'sea')
-		BEGIN
-
-			declare @MembershipgradeList as varchar(2000)
-							
-			set @MembershipgradeList = '''PK'',''KG'',''01'',''02'',''03'',''04'',''05'',''06'',''07'',''08'',''09'',''10'',''11'',''12'''
-
-			IF(@toggleGrade13 = 1)
-			BEGIN
-				set @MembershipgradeList = @MembershipgradeList + ',''13'''
-			END
-
-			IF(@toggleUngraded = 1)
-			BEGIN
-				set @MembershipgradeList = @MembershipgradeList + ',''UG'''
-			END
-
-			IF(@toggleAdultEd = 1)
-			BEGIN
-				set @MembershipgradeList = @MembershipgradeList + ',''AE'''
-			END
-			set @queryFactFilter = '			 
-				and 
-				fact.K12StudentId in (
-				select distinct fact.K12StudentId
-				from rds.' + @factTable + ' fact
-				inner join rds.DimK12Schools s 
-					on fact.K12SchoolId = s.DimK12SchoolId
-					and fact.SchoolYearId = @dimSchoolYearId
-					and fact.FactTypeId = @dimFactTypeId
-					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				inner join rds.DimGradeLevels gl 
-					on fact.GradeLevelId = gl.DimGradeLevelId
-					and gl.GradeLevelEdFactsCode in (' + 	@MembershipgradeList + '					
-										))'
-
-		END 
-		ELSE if @reportLevel in ('lea')
-		BEGIN 
-			set @queryFactFilter = '
-				and 
-				fact.K12StudentId in (
-				select distinct fact.K12StudentId
-				from rds.' + @factTable + ' fact 
-				inner join rds.DimLeas s 
-					on fact.LeaId = s.DimLeaId
-					and fact.SchoolYearId = @dimSchoolYearId
-					and fact.FactTypeId = @dimFactTypeId
-					and fact.LeaId <> -1
-					inner join rds.DimGradeLevels gl 
-						on fact.GradeLevelId = gl.DimGradeLevelId
-					inner join (
-								SELECT distinct OrganizationStateId, GRADELEVEL 
-								From rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''C039''
-									and c39.reportLevel = ''' + @reportLevel +
-									''' and c39.reportyear = ''' + @reportyear + '''										
-								) grades on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-									and grades.OrganizationStateId = s.LeaIdentifierSea) '
-		END
-		ELSE if @reportLevel in ('sch')
-		BEGIN 
-			set @queryFactFilter = '
-				and 
-				fact.K12StudentId in (
-				select distinct fact.K12StudentId
-				from rds.' + @factTable + ' fact 
-				inner join rds.DimK12Schools s 
-					on fact.K12SchoolId = s.DimK12SchoolId
-					and s.SchoolTypeCode <> ''Reportable''
-					and fact.SchoolYearId = @dimSchoolYearId
-					and fact.FactTypeId = @dimFactTypeId
-					and fact.K12SchoolId <> -1
-				inner join rds.DimGradeLevels gl 
-					on fact.GradeLevelId = gl.DimGradeLevelId
-				inner join (
-					select distinct OrganizationStateId, GRADELEVEL 
-					from rds.ReportEDFactsOrganizationCounts c39 
-					where c39.ReportCode = ''C039''
-						and c39.reportLevel = ''' + @reportLevel +
-						''' and c39.reportyear = ''' + @reportyear + '''										
-				) grades 
-					on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-					and grades.OrganizationStateId = s.SchoolIdentifierSea) '
-		END		
+			set @queryFactFilter = ''			 
 	END
 	else if @reportCode in ('c070')
 		begin
@@ -5108,13 +5115,24 @@ BEGIN
 						(' + case when @reportLevel = 'sea' then 'DimSeaId,'
 								  when @reportLevel = 'lea' then 'DimLeaId,' 
 								  else 'DimK12SchoolId,'
+
 							end + 'DimStudentId, K12StudentStudentIdentifierState'  + @sqlCategoryFields + ', ' + @factField + ')
 						select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 										 when @reportLevel = 'lea' then 'fact.LeaId,' 
 										 else 'fact.K12SchoolId,'
 							end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
 						sum(isnull(fact.' + @factField + ', 0))
-						from rds.' + @factTable + ' fact ' + @sqlCountJoins 
+						from rds.' + @factTable + ' fact ' + char(10)
+							if @reportCode = 'C052'
+								begin
+									select @sql = @sql + char(10) +
+									char(9) + char(9) + char(9) + char(9) + char(9) + char(9) +
+									'inner join #Students Students
+									on fact.K12StudentId = Students.K12StudentId' + char(10)					
+								end
+						
+						select @sql = @sql + @sqlCountJoins + char(10)
+
 						+ ' ' + @reportFilterJoin + '
 						where ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
 									 when @reportLevel = 'lea' then 'fact.LeaId <> -1'
@@ -5205,7 +5223,9 @@ BEGIN
 		set @sumOperation = 'sum(isnull(' + @factField + ', 0))'
 
 
-		if @reportCode in ('c141','c009','c175', 'c178', 'c179', 'c185', 'c188', 'c189', 'c121', 'c194', 'c082', 'c083', 'c154', 'c155', 'c156', 'c157', 'c158', 'c118')
+		if @reportCode in ('c141','c009','c175', 'c178', 'c179', 'c185', 'c188', 
+			'c189', 'c121', 'c194', 'c082', 'c083', 'c154', 'c155', 'c156', 'c157', 'c158', 'c118',
+			'C052') -- JW 6/30/2023 Added C052
 		begin
 			set @sumOperation = 'count(distinct cs.dimStudentId )'
 		end
@@ -6121,13 +6141,14 @@ BEGIN
 				 '
 		end
 
+		/* JW 6/28/2023 Not sure this is even used
 		if @reportCode in ('c052') and @categorySetCode not in ('ST3','TOT') AND @reportLevel in ('lea', 'sch')
 			begin
 				set @sqlCategoryOptionJoins = @sqlCategoryOptionJoins + ' inner join (select distinct GRADELEVEL,OrganizationStateId
 				from rds.ReportEDFactsOrganizationCounts where reportCode =''C039'' AND reportLevel = ''' + @reportLevel +''' AND reportyear = ''' + @reportyear +''') b
 				on CAT_GRADELEVEL.Code = b.GRADELEVEL and CAT_Organizations.OrganizationIdentifierSea = b.OrganizationStateId'
 			end	
-
+		*/
 		if @reportCode in ('c033')
 		begin
 			set @sqlZeroCountConditions = @sqlZeroCountConditions + ' AND TableTypeAbbrv = ''' + @tableTypeAbbrv + ''' '
