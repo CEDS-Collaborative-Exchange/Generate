@@ -6,7 +6,7 @@ begin try
 	
 	begin transaction
 
-	update App.GenerateConfigurations set GenerateConfigurationValue = '6.0_prerelease' where GenerateConfigurationCategory = 'Database' and GenerateConfigurationKey = 'DatabaseVersion'
+	update App.GenerateConfigurations set GenerateConfigurationValue = '11.0_prerelease' where GenerateConfigurationCategory = 'Database' and GenerateConfigurationKey = 'DatabaseVersion'
 	-- Reset Hydrate student count to 10000 by default rather than 50000
 	update app.GenerateConfigurations set GenerateConfigurationValue = '10000' where GenerateConfigurationKey = 'StudentCount'
 
