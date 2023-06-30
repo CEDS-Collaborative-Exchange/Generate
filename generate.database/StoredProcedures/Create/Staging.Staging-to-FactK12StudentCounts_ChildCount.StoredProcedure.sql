@@ -243,22 +243,8 @@ BEGIN
 			LEFT JOIN #vwIdeaStatuses rdis
 				ON rdis.IdeaIndicatorCode = 'Yes'
 				AND rdis.SpecialEducationExitReasonCode = 'MISSING'
-				AND ISNULL(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, '') = 
-					CASE 
-						WHEN (rda.AgeCode < 5 OR (rda.AgeCode = 5 AND rgls.GradeLevelCode IN ('PK','MISSING')))
-							AND	ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'') <> '' 
-							AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
-							THEN sppse.IDEAEducationalEnvironmentForEarlyChildhood
-						ELSE ''
-					END 
-				AND ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, '') = 
-					CASE 
-						WHEN (rda.AgeCode > 5 OR (rda.AgeCode = 5 AND rgls.GradeLevelCode NOT IN ('PK','MISSING')))
-							AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'') <> ''
-							AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
-							THEN sppse.IDEAEducationalEnvironmentForSchoolAge
-						ELSE ''
-					END
+				AND ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode)
+				AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, rdis.IdeaEducationalEnvironmentForSchoolAgeCode)
 		--idea disability type (rds)
 			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 				ON sidt.SchoolYear = rdidt.SchoolYear
