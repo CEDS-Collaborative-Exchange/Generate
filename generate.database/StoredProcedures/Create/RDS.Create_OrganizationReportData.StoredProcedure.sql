@@ -202,6 +202,7 @@ BEGIN
 							,[MailingAddressStreet]
 							,[OperationalStatus]
 							,[OperationalStatusId]
+							,[OrganizationId]
 							,[OrganizationCount]
 							,[OrganizationId]
 							,[OrganizationName]
@@ -238,6 +239,7 @@ BEGIN
 							, latestLea.MailingAddressStreetNumberAndName
 							, syLea.LeaOperationalStatusEdFactsCode
 							, syLea.LeaOperationalStatusEdFactsCode as OperationalStatusId
+							, fact.LeaId
 							, 1 as OrganizationCount
 							, latestLea.DimLeaID
 							, latestLea.LeaOrganizationName as OrganizationName
@@ -322,6 +324,7 @@ BEGIN
 							,[NSLPSTATUS]
 							,[OperationalStatus]
 							,[OperationalStatusId]
+							,[OrganizationId]
 							,[OrganizationCount]
 							,[OrganizationId]
 							,[OrganizationName]
@@ -368,6 +371,7 @@ BEGIN
 							, schStatus.NSLPStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode as OperationalStatusId
+							, fact.K12SchoolId
 							, 1 as OrganizationCount
 							, latestSchool.DimK12SchoolId
 							, latestSchool.NameOfInstitution as OrganizationName 
@@ -454,7 +458,7 @@ BEGIN
 							,[TotalIndicator]
 							,[GRADELEVEL]
 							)
-						select distinct @categorySetCode,
+						select distinct @categorySetCode, fact.LeaId,
 							1 as OrganizationCount, 
 							lea.DimLeaId,
 							lea.LeaOrganizationName as OrganizationName ,lea.LeaIdentifierSea,
@@ -478,6 +482,7 @@ BEGIN
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
+							,[OrganizationId]
 							,[OrganizationCount]
 							,[OrganizationId]
 							,[OrganizationName]
@@ -560,6 +565,10 @@ BEGIN
 								on fact.SchoolYearId = d.DimSchoolYearId
 						inner join rds.DimK12Schools sch 
 							on fact.K12SchoolId = sch.DimK12SchoolId	
+						left outer join rds.DimCharterSchoolAuthorizers primaryAuthorizer 
+							on fact.AuthorizingBodyCharterSchoolAuthorizerId = primaryAuthorizer.DimCharterSchoolAuthorizerId
+						left outer join rds.DimCharterSchoolAuthorizers secondaryAuthorizer 
+							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
 						left outer join rds.DimTitleIStatuses titleIStatus 
@@ -619,6 +628,10 @@ BEGIN
 								on fact.SchoolYearId = d.DimSchoolYearId
 						inner join rds.DimK12Schools sch 
 							on fact.K12SchoolId = sch.DimK12SchoolId
+						left outer join rds.DimCharterSchoolAuthorizers primaryAuthorizer 
+							on fact.AuthorizingBodyCharterSchoolAuthorizerId = primaryAuthorizer.DimCharterSchoolAuthorizerId
+						left outer join rds.DimCharterSchoolAuthorizers secondaryAuthorizer 
+							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId				
 						left outer join rds.DimCharterSchoolAuthorizers primaryAuthorizer 
@@ -634,6 +647,7 @@ BEGIN
 				BEGIN		
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([CategorySetCode]
+						,[OrganizationId]
 						,[OrganizationCount]
 						,[OrganizationId]
 						,[OrganizationName]
@@ -648,6 +662,7 @@ BEGIN
 						,TitleiParentalInvolveRes
 						,TitleiPartaAllocations)
 					select distinct @categorySetCode,
+						fact.LeaId,
 						1 as OrganizationCount, 
 						lea.DimLeaId,
 						lea.LeaOrganizationName as OrganizationName ,
@@ -1325,6 +1340,7 @@ BEGIN
 				BEGIN	
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 						([CategorySetCode]
+						,[OrganizationId]
 						,[OrganizationCount]
 						,[OrganizationId]
 						,[OrganizationName]
@@ -1339,7 +1355,7 @@ BEGIN
 						,TitleiParentalInvolveRes
 						,TitleiPartaAllocations
 						,REAPAlternativeFundingStatus)
-					select DISTINCT @categorySetCode, 	
+					select DISTINCT @categorySetCode, fact.LeaId,
 						1 as OrganizationCount, 
 						lea.DimLeaId,
 						lea.LeaOrganizationName as OrganizationName ,
@@ -1372,6 +1388,7 @@ BEGIN
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
+							,[OrganizationId]
 							,[OrganizationCount]
 							,[OrganizationId]
 							,[OrganizationName]
@@ -1408,6 +1425,7 @@ BEGIN
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts]
 							([CategorySetCode]
+							,[OrganizationId]
 							,[OrganizationCount]
 							,[OrganizationId]
 							,[OrganizationName]
@@ -1498,6 +1516,7 @@ BEGIN
 							, latestLea.MailingAddressStreetNumberAndName
 							, syLea.LeaOperationalStatusEdFactsCode
 							, syLea.LeaOperationalStatusEdFactsCode as OperationalStatusId
+							, fact.leaId
 							, 1 as OrganizationCount
 							, latestLea.LeaOrganizationName as OrganizationName
 							, latestLea.LeaIdentifierNces
@@ -1578,6 +1597,7 @@ BEGIN
 							, schStatus.NSLPStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode as OperationalStatusId
+							, fact.K12SchoolId
 							, 1 as OrganizationCount
 							, latestSchool.NameOfInstitution as OrganizationName 
 							, latestSchool.SchoolIdentifierNces
@@ -1669,7 +1689,7 @@ BEGIN
 						else if(@reportLevel = 'sch')
 						begin
 
-							select @categorySetCode,
+							select @categorySetCode, fact.k12schoolId,
 							1 as OrganizationCount, sch.NameOfInstitution as OrganizationName ,
 							sch.SchoolIdentifierSea, sch.LeaIdentifierSea,
 							@reportCode, @reportLevel, @reportYear, sch.StateANSICode, sch.StateAbbreviationCode, sch.StateAbbreviationDescription, 0 as TotalIndicator, 
@@ -1718,6 +1738,10 @@ BEGIN
 								on fact.SchoolYearId = dates.DimSchoolYearId
 						inner join rds.DimK12Schools sch 
 							on fact.K12SchoolId = sch.DimK12SchoolId	
+						left outer join rds.DimCharterSchoolAuthorizers primaryAuthorizer 
+							on fact.AuthorizingBodyCharterSchoolAuthorizerId = primaryAuthorizer.DimCharterSchoolAuthorizerId
+						left outer join rds.DimCharterSchoolAuthorizers secondaryAuthorizer 
+							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
 						left outer join rds.DimTitleIStatuses titleIStatus 

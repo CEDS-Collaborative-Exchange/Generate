@@ -198,3 +198,12 @@ ELSE
 BEGIN
     Update app.Category_Dimensions set dimensionId = @dimensionId where CategoryId = @categoryId
 END
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PlacementStatus'
+DELETE FROM app.Category_Dimensions WHERE DimensionId = @dimensionId
+DELETE FROM app.Dimensions WHERE DimensionId = @dimensionId
+
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PlacementType'
+DELETE FROM app.Category_Dimensions WHERE DimensionId = @dimensionId
+DELETE FROM app.Dimensions WHERE DimensionId = @dimensionId
