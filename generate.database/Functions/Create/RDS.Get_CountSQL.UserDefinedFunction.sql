@@ -488,11 +488,11 @@ BEGIN
 							END
 
 							select @sql = @sql + '
-							inner join rds.DimK12Schools s 
-								on fact.K12SchoolId = s.DimK12SchoolId
-								and fact.SchoolYearId = @dimSchoolYearId
-								and fact.FactTypeId = @dimFactTypeId
-								and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+							--inner join rds.DimK12Schools s 
+							--	on fact.K12SchoolId = s.DimK12SchoolId
+							--	and fact.SchoolYearId = @dimSchoolYearId
+							--	and fact.FactTypeId = @dimFactTypeId
+							--	and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
 							inner join rds.DimGradeLevels gl 
 								on fact.GradeLevelId = gl.DimGradeLevelId
 								and gl.GradeLevelEdFactsCode in (' + @Membershipgradelist + ')' + char(10)
@@ -3943,92 +3943,7 @@ BEGIN
 
 	else if @reportCode ='c052'
 	begin
-
-
-		--if (@reportLevel = 'sea')
-		--BEGIN
--- JEFF NOW --
-		--	declare @MembershipgradeList as varchar(2000)
-							
-		--	set @MembershipgradeList = '''PK'',''KG'',''01'',''02'',''03'',''04'',''05'',''06'',''07'',''08'',''09'',''10'',''11'',''12'''
-
-		--	IF(@toggleGrade13 = 1)
-		--	BEGIN
-		--		set @MembershipgradeList = @MembershipgradeList + ',''13'''
-		--	END
-
-		--	IF(@toggleUngraded = 1)
-		--	BEGIN
-		--		set @MembershipgradeList = @MembershipgradeList + ',''UG'''
-		--	END
-
-		--	IF(@toggleAdultEd = 1)
-		--	BEGIN
-		--		set @MembershipgradeList = @MembershipgradeList + ',''AE'''
-		--	END
 			set @queryFactFilter = ''			 
-				--and 
-				--fact.K12StudentId in (
-				--select distinct fact.K12StudentId
-				--from rds.' + @factTable + ' fact
-				--inner join rds.DimK12Schools s 
-				--	on fact.K12SchoolId = s.DimK12SchoolId
-				--	and fact.SchoolYearId = @dimSchoolYearId
-				--	and fact.FactTypeId = @dimFactTypeId
-				--	and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				--inner join rds.DimGradeLevels gl 
-				--	on fact.GradeLevelId = gl.DimGradeLevelId
-				--	and gl.GradeLevelEdFactsCode in (' + 	@MembershipgradeList + '					
-				--						))'
-
-		--END 
-		--ELSE if @reportLevel in ('lea')
-		--BEGIN 
-		--	set @queryFactFilter = '
-		--		and 
-		--		fact.K12StudentId in (
-		--		select distinct fact.K12StudentId
-		--		from rds.' + @factTable + ' fact 
-		--		inner join rds.DimLeas s 
-		--			on fact.LeaId = s.DimLeaId
-		--			and fact.SchoolYearId = @dimSchoolYearId
-		--			and fact.FactTypeId = @dimFactTypeId
-		--			and fact.LeaId <> -1
-		--			inner join rds.DimGradeLevels gl 
-		--				on fact.GradeLevelId = gl.DimGradeLevelId
-		--			inner join (
-		--						SELECT distinct OrganizationStateId, GRADELEVEL 
-		--						From rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''C039''
-		--							and c39.reportLevel = ''' + @reportLevel +
-		--							''' and c39.reportyear = ''' + @reportyear + '''										
-		--						) grades on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-		--							and grades.OrganizationStateId = s.LeaIdentifierSea) '
-		--END
-		--ELSE if @reportLevel in ('sch')
-		--BEGIN 
-		--	set @queryFactFilter = '
-		--		and 
-		--		fact.K12StudentId in (
-		--		select distinct fact.K12StudentId
-		--		from rds.' + @factTable + ' fact 
-		--		inner join rds.DimK12Schools s 
-		--			on fact.K12SchoolId = s.DimK12SchoolId
-		--			and s.SchoolTypeCode <> ''Reportable''
-		--			and fact.SchoolYearId = @dimSchoolYearId
-		--			and fact.FactTypeId = @dimFactTypeId
-		--			and fact.K12SchoolId <> -1
-		--		inner join rds.DimGradeLevels gl 
-		--			on fact.GradeLevelId = gl.DimGradeLevelId
-		--		inner join (
-		--			select distinct OrganizationStateId, GRADELEVEL 
-		--			from rds.ReportEDFactsOrganizationCounts c39 
-		--			where c39.ReportCode = ''C039''
-		--				and c39.reportLevel = ''' + @reportLevel +
-		--				''' and c39.reportyear = ''' + @reportyear + '''										
-		--		) grades 
-		--			on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
-		--			and grades.OrganizationStateId = s.SchoolIdentifierSea) '
-		--END		
 	END
 	else if @reportCode in ('c070')
 		begin
@@ -5112,7 +5027,7 @@ BEGIN
 								  when @reportLevel = 'lea' then 'DimLeaId,' 
 								  else 'DimK12SchoolId,'
 							end + 'DimStudentId'  + @sqlCategoryFields + ', ' + @factField + ')
-						select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
+						select ' + case when @reportLevel = 'sea' then 'fact.SeaId,' 
 										 when @reportLevel = 'lea' then 'fact.LeaId,' 
 										 else 'fact.K12SchoolId,'
 							end + 'fact.K12StudentId' + @sqlCategoryQualifiedDimensionFields + ',
@@ -5218,7 +5133,9 @@ BEGIN
 		set @sumOperation = 'sum(isnull(' + @factField + ', 0))'
 
 
-		if @reportCode in ('c141','c009','c175', 'c178', 'c179', 'c185', 'c188', 'c189', 'c121', 'c194', 'c082', 'c083', 'c154', 'c155', 'c156', 'c157', 'c158', 'c118')
+		if @reportCode in ('c141','c009','c175', 'c178', 'c179', 'c185', 'c188', 
+			'c189', 'c121', 'c194', 'c082', 'c083', 'c154', 'c155', 'c156', 'c157', 'c158', 'c118',
+			'C052') -- JW 6/30/2023 Added C052
 		begin
 			set @sumOperation = 'count(distinct cs.dimStudentId )'
 		end
