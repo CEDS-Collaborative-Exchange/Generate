@@ -312,6 +312,9 @@ BEGIN
 			declare @dimFactTypeId as int
 			set @dimFactTypeId = ' + convert(varchar(20), @dimFactTypeId) + '
 
+			if OBJECT_ID(''tempdb..#cat_Organizations'') is not null drop table #cat_Organizations
+			if OBJECT_ID(''tempdb..#categoryset'') is not null drop table #categoryset
+
 			----------------------------
 			-- Category Options
 			----------------------------
@@ -455,15 +458,37 @@ BEGIN
 		if (@factReportTable <> 'ReportEDFactsK12StaffCounts')
 		begin
 			-- JW 6/28/2023 Fixed Membership performance issues by using #temp table rather than "In subselect"
+			-- JW 6/30/2023 Fixed GRADE join performance by using #temp table rather than "In subselect"
 			if @reportCode in ('C052')
 				begin
 					select @sql = @sql + char(10) + char(10)
+
+
+					if @ReportLevel in ('LEA', 'SCH')
+						begin
+							select @sql = @sql + 
+							'if OBJECT_ID(''tempdb..#Grades'') is not null drop table #Grades' + char(10)
+							select @sql = @sql + 
+							'SELECT distinct OrganizationStateId, GRADELEVEL 
+							into #Grades
+							From rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''C039''
+							and c39.reportLevel = ''' + @reportLevel + ''' and c39.reportyear = ''' + @reportYear + '''' + char(10)
+
+							select @sql = @sql + 
+							'CREATE INDEX IDX_Grades ON #Grades (OrganizationStateId, Gradelevel)' + char(10)
+						end
+
+
+
 					select @sql = @sql + 
 					'if OBJECT_ID(''tempdb..#Students'') is not null drop table #Students' + char(10)
+
 					select @sql = @sql +
-					'select	distinct fact.K12StudentId
+					'select	distinct fact.K12StudentId, people.K12StudentStudentIdentifierState
 					into #Students
-					from rds.' + @factTable + ' fact' + char(10)
+					from rds.' + @factTable + ' fact
+					inner join rds.DimPeople people
+						on fact.K12StudentId = people.DimPersonId' + char(10)
 					
 					if @reportLevel = 'SEA'
 						begin
@@ -488,15 +513,11 @@ BEGIN
 							END
 
 							select @sql = @sql + '
-							--inner join rds.DimK12Schools s 
-							--	on fact.K12SchoolId = s.DimK12SchoolId
-							--	and fact.SchoolYearId = @dimSchoolYearId
-							--	and fact.FactTypeId = @dimFactTypeId
-							--	and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
 							inner join rds.DimGradeLevels gl 
 								on fact.GradeLevelId = gl.DimGradeLevelId
 								and gl.GradeLevelEdFactsCode in (' + @Membershipgradelist + ')' + char(10)
 						end
+
 
 					if @reportLevel = 'LEA'
 						begin
@@ -508,11 +529,7 @@ BEGIN
 								and fact.LeaId <> -1
 								inner join rds.DimGradeLevels gl 
 									on fact.GradeLevelId = gl.DimGradeLevelId
-								inner join (
-											SELECT distinct OrganizationStateId, GRADELEVEL 
-											From rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''C039''
-												and c39.reportLevel = ''' + @reportLevel + ''' and c39.reportyear = ''' + @reportYear + '''										
-											) grades on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
+								inner join #Grades grades on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
 												and grades.OrganizationStateId = s.LeaIdentifierSea'  + char(10)
 						end
 
@@ -527,18 +544,18 @@ BEGIN
 								and fact.K12SchoolId <> -1
 							inner join rds.DimGradeLevels gl 
 								on fact.GradeLevelId = gl.DimGradeLevelId
-							inner join (
-								select distinct OrganizationStateId, GRADELEVEL 
-								from rds.ReportEDFactsOrganizationCounts c39 
-								where c39.ReportCode = ''C039''
-								and c39.reportLevel = ''' + @reportLevel + ''' and c39.reportyear = ''' + @reportYear + '''										
-							) grades 
+							inner join #Grades grades 
 								on grades.GRADELEVEL = gl.GradeLevelEdFactsCode
 								and grades.OrganizationStateId = s.SchoolIdentifierSea' + char(10) 
 						end
 
+					select @sql = @sql + '
+					where fact.SchoolYearId = ' + convert(varchar, @dimSchoolYearid) + 
+					' and fact.FactTypeId = ' + convert(varchar, @dimFactTypeId)
+
+
 					select @sql = @sql + char(10) + 
-					'CREATE INDEX IDX_Students ON #Students (K12StudentId)' + char(10) + char(10)
+					'CREATE INDEX IDX_Students ON #Students (K12StudentId, K12StudentStudentIdentifierState)' + char(10) + char(10)
 
 				end
 
@@ -4031,7 +4048,7 @@ BEGIN
 
 	else if @reportCode ='c052'
 	begin
-			set @queryFactFilter = ''			 
+			set @queryFactFilter = ''	
 	END
 	else if @reportCode in ('c070')
 		begin
@@ -5127,8 +5144,8 @@ BEGIN
 								begin
 									select @sql = @sql + char(10) +
 									char(9) + char(9) + char(9) + char(9) + char(9) + char(9) +
-									'inner join #Students Students
-									on fact.K12StudentId = Students.K12StudentId' + char(10)					
+									'inner join #Students rules
+									on fact.K12StudentId = rules.K12StudentId' + char(10)					
 								end
 						
 						select @sql = @sql + @sqlCountJoins + char(10)
@@ -5882,10 +5899,6 @@ BEGIN
 					end
 			end		-- END sch
 
-		set @sql = @sql + '
-		drop table #categorySet
-		if OBJECT_ID(''tempdb..#cat_Organizations'') is not null drop table #cat_Organizations
-	'
 	-- delete #categoryCohortSet used to calculate cohort total
 	if(@reportCode in ('c150'))
 	  begin
