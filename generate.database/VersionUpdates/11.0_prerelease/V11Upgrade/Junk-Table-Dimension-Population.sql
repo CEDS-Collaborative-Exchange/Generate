@@ -3176,6 +3176,43 @@
 		AND ceds.CedsElementTechnicalName = 'BuildingSpaceDesignType'
 
 
+	-----------------------------------------------------
+	-- Populate DimIncidentStatuses 		           --
+	-----------------------------------------------------
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimIncidentStatuses d WHERE d.DimIncidentStatusId = -1) 
+	BEGIN
+		SET IDENTITY_INSERT RDS.DimIncidentStatuses ON
+
+		INSERT INTO [RDS].[DimIncidentStatuses] (
+			[DimIncidentStatusId]
+			, [IncidentBehaviorCode]
+			, [IncidentBehaviorDescription]
+			, [IdeaInterimRemovalReasonCode]
+			, [IdeaInterimRemovalReasonDescription]
+			, [IdeaInterimRemovalReasonEdFactsCode]
+			, [DisciplineReasonCode]
+			, [DisciplineReasonDescription]
+			, [IncidentInjuryTypeCode]
+			, [IncidentInjuryTypeDescription]		
+		)
+		VALUES (
+			-1
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+		)
+
+		SET IDENTITY_INSERT RDS.DimIncidentStatuses OFF
+
+	END
+
 
 	-----------------------------------------------------
 	-- Populate DimFirearmDisciplineStatuses           --
@@ -3658,7 +3695,8 @@
 	------------------------------------------------
 	-- Populate DimK12StaffStatuses			 ---
 	------------------------------------------------
-	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12StaffStatuses 
+	IF NOT EXISTS (
+			SELECT 1 FROM RDS.DimK12StaffStatuses 
 			WHERE SpecialEducationAgeGroupTaughtCode = 'MISSING'
 			AND EdFactsCertificationStatusCode = 'MISSING'
 			AND HighlyQualifiedTeacherIndicatorCode = 'MISSING'
@@ -3666,7 +3704,9 @@
 			AND TeachingCredentialTypeCode = 'MISSING'
 			AND EdFactsTeacherOutOfFieldStatusCode = 'MISSING'
 			AND SpecialEducationTeacherQualificationStatusCode = 'MISSING'
-			AND ParaprofessionalQualificationStatusCode = 'MISSING') 
+			AND ParaprofessionalQualificationStatusCode = 'MISSING'
+			AND EmergencyOrProvisionalCredentialStatusCode = 'MISSING'
+		) 
 		BEGIN
 		SET IDENTITY_INSERT RDS.DimK12StaffStatuses ON
 
