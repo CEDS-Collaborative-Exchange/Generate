@@ -217,6 +217,12 @@ StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_StudentDisciplinaryRemovalsReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_StudentDisciplinaryRemovalsReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_StudentEducationEnvironmentDisabilitiesReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_StudentEducationEnvironmentDisabilitiesReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_StudentFederalProgramsReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_StudentFederalProgramsReportData.StoredProcedure.sql,0
 VersionUpdates\\11.0_prerelease,UpdatesForSSRDUtility.sql,0
 StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
