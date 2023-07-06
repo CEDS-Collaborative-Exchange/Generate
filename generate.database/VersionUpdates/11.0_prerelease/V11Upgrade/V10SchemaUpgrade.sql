@@ -8800,6 +8800,10 @@
 	The column [RDS].[DimK12StaffStatuses].[UnexperiencedStatusCode] is being renamed.
 	The column [RDS].[DimK12StaffStatuses].[UnexperiencedStatusDescription] is being renamed.
 	The column [RDS].[DimK12StaffStatuses].[UnexperiencedStatusEdFactsCode] is being renamed.
+
+	The column [RDS].[EmergencyOrProvisionalCredentialStatusCode] is being dropped.
+	The column [RDS].[EmergencyOrProvisionalCredentialStatusDescription] is being dropped.
+	The column [RDS].[EmergencyOrProvisionalCredentialStatusEdFactsCode] is being dropped.
 	*/
 
 	
@@ -8820,9 +8824,6 @@
 		[EdFactsTeacherInexperiencedStatusCode]                 NVARCHAR (50)  NULL,
 		[EdFactsTeacherInexperiencedStatusDescription]          NVARCHAR (200) NULL,
 		[EdFactsTeacherInexperiencedStatusEdFactsCode]          NVARCHAR (50)  NULL,
-		[EmergencyOrProvisionalCredentialStatusCode]			NVARCHAR (100) NULL,
-		[EmergencyOrProvisionalCredentialStatusDescription]		NVARCHAR (400) NULL,
-		[EmergencyOrProvisionalCredentialStatusEdFactsCode]		NVARCHAR (100) NULL,
 		[TeachingCredentialTypeCode]                            NVARCHAR (50)  NULL,
 		[TeachingCredentialTypeDescription]                     NVARCHAR (200) NULL,
 		[TeachingCredentialTypeEdFactsCode]                     NVARCHAR (50)  NULL,
