@@ -3705,7 +3705,6 @@
 			AND EdFactsTeacherOutOfFieldStatusCode = 'MISSING'
 			AND SpecialEducationTeacherQualificationStatusCode = 'MISSING'
 			AND ParaprofessionalQualificationStatusCode = 'MISSING'
-			AND EmergencyOrProvisionalCredentialStatusCode = 'MISSING'
 		) 
 		BEGIN
 		SET IDENTITY_INSERT RDS.DimK12StaffStatuses ON
