@@ -3767,7 +3767,7 @@
 
 	INSERT INTO #EdFactsCertificationStatus VALUES ('MISSING', 'MISSING', 'MISSING')
 	INSERT INTO #EdFactsCertificationStatus
-	SELECT
+	SELECT DISTINCT
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
 		, CedsOptionSetCode AS EdFactsOptionSetCode
@@ -3846,7 +3846,7 @@
 
 	INSERT INTO #SpecialEducationTeacherQualificationStatus VALUES ('MISSING', 'MISSING', 'MISSING')
 	INSERT INTO #SpecialEducationTeacherQualificationStatus 
-	SELECT
+	SELECT DISTINCT 
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
 		, CedsOptionSetCode AS EdFactsOptionSetCode
