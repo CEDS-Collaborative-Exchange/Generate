@@ -88,7 +88,6 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		-- Loop through Category Sets for this Submission Year
-		---------------------------------------------
 		declare @categorySetId as int
 		declare @reportLevel as varchar(5)
 		declare @categorySetCode as varchar(50)
