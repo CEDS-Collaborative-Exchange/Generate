@@ -8800,6 +8800,10 @@
 	The column [RDS].[DimK12StaffStatuses].[UnexperiencedStatusCode] is being renamed.
 	The column [RDS].[DimK12StaffStatuses].[UnexperiencedStatusDescription] is being renamed.
 	The column [RDS].[DimK12StaffStatuses].[UnexperiencedStatusEdFactsCode] is being renamed.
+
+	The column [RDS].[EmergencyOrProvisionalCredentialStatusCode] is being dropped.
+	The column [RDS].[EmergencyOrProvisionalCredentialStatusDescription] is being dropped.
+	The column [RDS].[EmergencyOrProvisionalCredentialStatusEdFactsCode] is being dropped.
 	*/
 
 	
@@ -8820,9 +8824,6 @@
 		[EdFactsTeacherInexperiencedStatusCode]                 NVARCHAR (50)  NULL,
 		[EdFactsTeacherInexperiencedStatusDescription]          NVARCHAR (200) NULL,
 		[EdFactsTeacherInexperiencedStatusEdFactsCode]          NVARCHAR (50)  NULL,
-		[EmergencyOrProvisionalCredentialStatusCode]			NVARCHAR (100) NULL,
-		[EmergencyOrProvisionalCredentialStatusDescription]		NVARCHAR (400) NULL,
-		[EmergencyOrProvisionalCredentialStatusEdFactsCode]		NVARCHAR (100) NULL,
 		[TeachingCredentialTypeCode]                            NVARCHAR (50)  NULL,
 		[TeachingCredentialTypeDescription]                     NVARCHAR (200) NULL,
 		[TeachingCredentialTypeEdFactsCode]                     NVARCHAR (50)  NULL,
@@ -9806,7 +9807,7 @@
 		[SeaId]                    INT             CONSTRAINT [DF_FactK12StaffCounts_SeaId] DEFAULT ((-1)) NOT NULL,
 		[LeaId]                    INT             CONSTRAINT [DF_FactK12StaffCounts_LeaId] DEFAULT ((-1)) NOT NULL,
 		[K12SchoolId]              INT             CONSTRAINT [DF_FactK12StaffCounts_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-		[K12StaffId]               BIGINT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
+		[K12StaffId]               BIGINT          CONSTRAINT [DF_FactK12StaffCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
 		[K12StaffStatusId]         INT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffStatusId] DEFAULT ((-1)) NOT NULL,
 		[K12StaffCategoryId]       INT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffCategoryId] DEFAULT ((-1)) NOT NULL,
 		[TitleIIIStatusId]         INT             CONSTRAINT [DF_FactK12StaffCounts_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
@@ -10270,6 +10271,7 @@
 		[K12DemographicId]                      INT CONSTRAINT [DF_FactK12StudentCounts_K12Demographic] DEFAULT ((-1)) NOT NULL,
 		[K12EnrollmentStatusId]                 INT CONSTRAINT [DF_FactK12StudentCounts_EnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
 --		[K12StudentStatusId]                    INT CONSTRAINT [DF_FactK12StudentCounts_K12StudentStatusId] DEFAULT ((-1)) NOT NULL,
+		[K12AcademicAwardStatusId]              INT CONSTRAINT [DF_FactK12StudentCounts_K12AcademicAwardStatusId] DEFAULT ((-1)) NOT NULL,
 		[LanguageId]                            INT CONSTRAINT [DF_FactK12StudentCounts_LanguageId] DEFAULT ((-1)) NOT NULL,
 		[MigrantStatusId]                       INT CONSTRAINT [DF_FactK12StudentCounts_MigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[NOrDStatusId]                          INT CONSTRAINT [DF_FactK12StudentCounts_NOrDStatusId] DEFAULT ((-1)) NOT NULL,
@@ -10495,6 +10497,14 @@
 	
 	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_K12EnrollmentStatusId]
 		ON [RDS].[FactK12StudentCounts]([K12EnrollmentStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+
+
+	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_K12AcademicAwardStatusId]...';
+
+
+	
+	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_K12AcademicAwardStatusId]
+		ON [RDS].[FactK12StudentCounts]([K12AcademicAwardStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 	
@@ -19644,6 +19654,15 @@
 	
 	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
 		ADD CONSTRAINT [FK_FactK12StudentCounts_K12EnrollmentStatusId] FOREIGN KEY ([K12EnrollmentStatusId]) REFERENCES [RDS].[DimK12EnrollmentStatuses] ([DimK12EnrollmentStatusId]);
+
+
+
+	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_K12AcademicAwardStatusId]...';
+
+
+	
+	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+		ADD CONSTRAINT [FK_FactK12StudentCounts_K12AcademicAwardStatusId] FOREIGN KEY ([K12AcademicAwardStatusId]) REFERENCES [RDS].[DimK12AcademicAwardStatuses] ([DimK12AcademicAwardStatusId]);
 
 
 	

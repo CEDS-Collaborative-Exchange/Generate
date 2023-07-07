@@ -12,6 +12,11 @@ SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE Dimen
 Update app.Dimensions SET DimensionTableId = @dimensionTableId, DimensionFieldName = 'ProgramParticipationFosterCare'
 WHERE DimensionFieldName = 'FosterCareProgram'
 
+SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimK12StaffStatuses'
+Update app.Dimensions SET DimensionTableId = @dimensionTableId, DimensionFieldName = 'TeachingCredentialType'
+WHERE DimensionFieldName = 'EmergencyOrProvisionalCredentialStatus'
+
+
 SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimImmigrantStatuses'
 Update app.Dimensions SET DimensionTableId = @dimensionTableId WHERE DimensionFieldName = 'TitleIIIImmigrantParticipationStatus'
 
