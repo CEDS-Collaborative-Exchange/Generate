@@ -684,10 +684,6 @@ BEGIN
 							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId				
-						left outer join rds.DimCharterSchoolAuthorizers primaryAuthorizer 
-							on fact.AuthorizingBodyCharterSchoolAuthorizerId = primaryAuthorizer.DimCharterSchoolAuthorizerId
-						left outer join rds.DimCharterSchoolAuthorizers secondaryAuthorizer 
-							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 					where d.SchoolYear = @reportYear 
 					and sch.DimK12SchoolId <> -1	
 					and ISNULL(sch.ReportedFederally, 1) = 1 
@@ -697,7 +693,6 @@ BEGIN
 				BEGIN		
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[CategorySetCode]
-						, [OrganizationId]
 						, [OrganizationCount]
 						, [OrganizationId]
 						, [OrganizationName]
@@ -713,7 +708,6 @@ BEGIN
 						, [TitleiPartaAllocations]
 					)
 					select distinct @categorySetCode
-						, fact.LeaId
 						, 1 as OrganizationCount
 						, lea.DimLeaId
 						, lea.LeaOrganizationName as OrganizationName 
@@ -1403,7 +1397,6 @@ BEGIN
 				BEGIN	
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[CategorySetCode]
-						, [OrganizationId]
 						, [OrganizationCount]
 						, [OrganizationId]
 						, [OrganizationName]
@@ -1420,7 +1413,6 @@ BEGIN
 						, [REAPAlternativeFundingStatus]
 					)
 					select DISTINCT @categorySetCode
-						, fact.LeaId
 						, 1 as OrganizationCount
 						, lea.DimLeaId
 						, lea.LeaOrganizationName as OrganizationName 
