@@ -628,10 +628,6 @@ BEGIN
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
 						left outer join rds.DimTitleIStatuses titleIStatus 
 							on fact.TitleIStatusId = titleIStatus.DimTitleIStatusId		
-						left outer join rds.DimCharterSchoolAuthorizers primaryAuthorizer 
-							on fact.AuthorizingBodyCharterSchoolAuthorizerId = primaryAuthorizer.DimCharterSchoolAuthorizerId
-						left outer join rds.DimCharterSchoolAuthorizers secondaryAuthorizer 
-							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 					where d.SchoolYear = @reportYear 
 					and sch.DimK12SchoolId <> -1
 					and ISNULL(sch.ReportedFederally, 1) = 1 

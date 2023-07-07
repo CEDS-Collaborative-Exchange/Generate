@@ -146,8 +146,6 @@ StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
-StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
-StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.ValidateStagingData_GetResults.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.ValidateStagingData_GetResults.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
@@ -219,6 +217,8 @@ StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 VersionUpdates\\11.0_prerelease,UpdatesForSSRDUtility.sql,0
 StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
