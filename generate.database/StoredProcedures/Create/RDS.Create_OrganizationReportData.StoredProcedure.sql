@@ -261,7 +261,7 @@ BEGIN
 							, [TotalIndicator]
 							, [Website]
 							, [EffectiveDate]
-							, [lea.PriorLeaStateIdentifier]
+							, [PriorLeaStateIdentifier]
 							, [UpdatedOperationalStatus]
 							, [UpdatedOperationalStatusId]
 							, [TitleiParentalInvolveRes]
