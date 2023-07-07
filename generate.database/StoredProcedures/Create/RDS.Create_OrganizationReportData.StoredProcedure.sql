@@ -498,7 +498,6 @@ BEGIN
 							, [GRADELEVEL]
 						)
 						select distinct @categorySetCode
-							, fact.LeaId
 							, 1 as OrganizationCount
 							, lea.DimLeaId
 							, lea.LeaOrganizationName as OrganizationName 
@@ -529,7 +528,6 @@ BEGIN
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 							[CategorySetCode]
-							, [OrganizationId]
 							, [OrganizationCount]
 							, [OrganizationId]
 							, [OrganizationName]
@@ -665,8 +663,8 @@ BEGIN
 						isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
 						, isnull(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
 						, 1 as OrganizationCount
-						, sch.DimK12SchoolId3
-						, sch.NameOfInstitution as OrganizationName 3
+						, sch.DimK12SchoolId
+						, sch.NameOfInstitution as OrganizationName
 						, sch.SchoolIdentifierNces
 						, sch.SchoolIdentifierSea
 						, sch.LeaIdentifierSea
@@ -781,7 +779,7 @@ BEGIN
 						inner join rds.DimSchoolYears d
 							on fact.SchoolYearId = d.DimSchoolYearId
 						inner join rds.DimK12Schools schools 
-							on schools.DimK12SchoolId= fact.K12SchoolId
+							on schools.DimK12SchoolId = fact.K12SchoolId
 						inner join rds.DimCharterSchoolAuthorizers approver 
 							on fact.AuthorizingBodyCharterSchoolAuthorizerId = approver.DimCharterSchoolAuthorizerId 
 						inner join rds.DimCharterSchoolAuthorizers secondaryApprover 
@@ -808,8 +806,8 @@ BEGIN
 						, [ParentOrganizationStateId]
 						, [ParentOrganizationNcesId]
 						, [OrganizationNcesId]
-						, CHARTERSCHOOLMANAGERORGANIZATION
-						, CHARTERSCHOOLUPDATEDMANAGERORGANIZATION
+						, [CHARTERSCHOOLMANAGERORGANIZATION]
+						, [CHARTERSCHOOLUPDATEDMANAGERORGANIZATION]
 					)
 					SELECT distinct 1 as OrganizationCount
 						, schools.dimK12SchoolId
@@ -1459,7 +1457,6 @@ BEGIN
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 							[CategorySetCode]
-							, [OrganizationId]
 							, [OrganizationCount]
 							, [OrganizationId]
 							, [OrganizationName]
@@ -1508,7 +1505,6 @@ BEGIN
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 							[CategorySetCode]
-							, [OrganizationId]
 							, [OrganizationCount]
 							, [OrganizationId]
 							, [OrganizationName]
