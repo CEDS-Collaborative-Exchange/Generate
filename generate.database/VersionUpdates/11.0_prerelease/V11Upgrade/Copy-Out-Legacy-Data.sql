@@ -275,7 +275,6 @@ LEFT JOIN RDS.DimDates rdsesed ON f.SpecialEducationServicesExitDateId = rdsesed
 
 --Should LeaId be switched to the new field LeaAccountabilityId
 	--from work in states, I think having both Accountability and Attending would be good
---Why is Race not in the new table
 --We have other statuses but not Military Connected or Section504, is that correct
 
 /*
@@ -588,7 +587,7 @@ CREATE TABLE Upgrade.FactK12StudentAssessments (
 	, FactType NVARCHAR(200)
 	, GradeLevelCode NVARCHAR(200)
 	, RaceCode NVARCHAR(200)
-
+	, SexCode NVARCHAR(200)
 	, SeaIdentifierState NVARCHAR(200)
 	, SEA_RecordStartDateTime DATETIME
 	, SEA_RecordEndDateTime	  DATETIME
@@ -604,7 +603,6 @@ CREATE TABLE Upgrade.FactK12StudentAssessments (
 	, StateStudentIdentifier NVARCHAR(200)
 	, STU_RecordStartDateTime DATETIME
 	, STU_RecordEndDateTime	  DATETIME
-
 	--K12Demographic
 	, EconomicDisadvantageStatusCode NVARCHAR(200)
 	, EnglishLearnerStatusCode NVARCHAR(200)
@@ -628,6 +626,15 @@ CREATE TABLE Upgrade.FactK12StudentAssessments (
 	--AssessmentStatus
 	, AssessedFirstTimeCode NVARCHAR(200)
 	, AssessmentProgressLevelCode NVARCHAR(200)
+	--Assessments
+	, PerformanceLevelCode NVARCHAR(200)-- New
+	, SeaFullYearStatusCode NVARCHAR(200)-- New
+	, LeaFullYearStatusCode NVARCHAR(200)-- New
+	, SchFullYearStatusCode NVARCHAR(200)-- New
+	, AssessmentTypeCode NVARCHAR(200)-- New
+	, AssessmentSubjectCode NVARCHAR(200)-- New
+	, ParticipationStatusCode NVARCHAR(200)-- New
+	, AssessmentTypeAdministeredToEnglishLearnersCode NVARCHAR(200)-- New
 	--TitleIIIStatus
 	, ProficiencyStatusCode NVARCHAR(200)
 	, TitleiiiAccountabilityProgressStatusCode NVARCHAR(200)
@@ -668,12 +675,12 @@ CREATE TABLE Upgrade.FactK12StudentAssessments (
 
 INSERT INTO Upgrade.FactK12StudentAssessments
 SELECT 
-	  f.AssessmentCount
+	   f.AssessmentCount
 	, rdsy.SchoolYear
 	, rdft.FactTypeCode
 	, rdgl.GradeLevelCode
 	, rdr.RaceCode
-
+	, rdkstu.SexCode 
 	, rds.SeaIdentifierState
 	, rds.RecordStartDateTime AS SEA_RecordStartDateTime
 	, rds.RecordEndDateTime   AS SEA_RecordEndDateTime
@@ -712,6 +719,15 @@ SELECT
 	--AssessmentStatus
 	, rdas.AssessedFirstTimeCode
 	, rdas.AssessmentProgressLevelCode -- AssessmentTypeAdministeredCode = Missing
+	--Assessments
+	, rda.PerformanceLevelCode -- New
+	, rda.SeaFullYearStatusCode -- New
+	, rda.LeaFullYearStatusCode -- New
+	, rda.SchFullYearStatusCode -- New
+	, rda.AssessmentTypeCode -- New
+	, rda.AssessmentSubjectCode -- New
+	, rda.ParticipationStatusCode -- New
+	, rda.AssessmentTypeAdministeredToEnglishLearnersCode -- New
 	--TitleIIIStatus
 	, rdtiiis.ProficiencyStatusCode
 	, rdtiiis.TitleiiiAccountabilityProgressStatusCode
@@ -765,6 +781,9 @@ JOIN RDS.DimK12Demographics rdkd ON f.K12DemographicId = rdkd.DimK12DemographicI
 JOIN RDS.DimIdeaStatuses rdis ON f.IdeaStatusId = rdis.DimIdeaStatusId
 JOIN RDS.DimProgramStatuses rdps ON f.ProgramStatusId = rdps.DimProgramStatusId
 JOIN RDS.DimAssessmentStatuses rdas ON f.AssessmentStatusId = rdas.DimAssessmentStatusId
+JOIN RDS.DimAssessments rda ON f.AssessmentId = rda.DimAssessmentid -- new
+
+
 JOIN RDS.DimTitleIIIStatuses rdtiiis ON f.TitleIIIStatusId = rdtiiis.DimTitleIIIStatusId
 JOIN RDS.DimK12StudentStatuses rdkss ON f.K12StudentStatusId = rdkss.DimK12StudentStatusId
 JOIN RDS.DimNOrDProgramStatuses rdnodps ON f.NOrDProgramStatusId = rdnodps.DimNOrDProgramStatusId
@@ -774,7 +793,7 @@ JOIN RDS.DimTitleIStatuses rdtis ON f.TitleIStatusId = rdtis.DimTitleIStatusId
 
 
 /*******************************************************************************************************/
-
+-- Make sure there is a row in the tables
 
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12Staff WHERE DimK12StaffId = -1)
 		BEGIN
@@ -851,8 +870,8 @@ JOIN RDS.DimTitleIStatuses rdtis ON f.TitleIStatusId = rdtis.DimTitleIStatusId
 
 CREATE TABLE Upgrade.FactOrganizationCounts (
 	-- Fact table
-	  TitleIParentalInvolveRes			VARCHAR(500)
-	, TitleIPartAAllocations								VARCHAR(500)
+	  TitleIParentalInvolveRes	VARCHAR(500)
+	, TitleIPartAAllocations	VARCHAR(500)
 	, SchoolImprovementFunds	VARCHAR(500)
 	, FederalFundAllocationType	VARCHAR(500)
 	, FederalProgramCode	VARCHAR(500)

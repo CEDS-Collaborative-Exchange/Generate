@@ -1,5 +1,4 @@
 SET NOCOUNT ON;
-
 -- People - Students
 INSERT INTO RDS.DimPeople (
 	  FirstName
@@ -66,7 +65,7 @@ SELECT
       , ISNULL(DimLeaId, -1) -- [LeaId]
       , ISNULL(dks.DimK12SchoolId, -1) --[K12SchoolId]
       , ISNULL(rdp.DimPersonId, -1) --[K12StaffId]
-      , ISNULL(rdss.DimK12StaffStatusId, -1) -- [K12StaffStatusId] -- is this correct?
+      , ISNULL(rdss.DimK12StaffStatusId, -1) AS [K12StaffStatusId] 
       , ISNULL(rdsc.DimK12StaffCategoryId, -1) -- [K12StaffCategoryId]
       , ISNULL(rdtiiis.DimTitleIIIStatusId, -1) --[TitleIIIStatusId]
       , ISNULL(f.StaffCount, -1)--[StaffCount]
@@ -76,7 +75,7 @@ FROM Upgrade.FactK12StaffCounts f
 		ON f.SchoolYear = rdsy.SchoolYear
 
 	LEFT JOIN RDS.DimFactTypes edft
-		ON edft.FactTypeCode = 'submission'		--??
+		ON edft.FactTypeCode = 'submission'	
 
 	LEFT JOIN RDS.DimSeas rdsea 
 		ON f.SeaIdentifierState = rdsea.SeaOrganizationIdentifierSea
@@ -101,9 +100,14 @@ FROM Upgrade.FactK12StaffCounts f
 		on f.SpecialEducationAgeGroupTaughtCode= rdss.SpecialEducationAgeGroupTaughtCode 
 		AND f.CertificationStatusCode = rdss.EdFactsCertificationStatusCode
 		AND f.UnexperiencedStatusCode = rdss.EdFactsTeacherInexperiencedStatusCode
-		AND rdss.EmergencyOrProvisionalCredentialStatusCode is null
-		AND f.OutOfFieldStatusCode = rdss.EdFactsTeacherOutOfFieldStatusCode
-		AND rdss.TeachingCredentialTypeCode = 'Missing' 
+		AND f.OutOfFieldStatusCode = rdss.EdFactsTeacherOutOfFieldStatusCode		
+		
+		AND CASE f.EmergencyOrProvisionalCredentialStatusCode 
+			when 'TCHWEMRPRVCRD' then 'Emergency'
+			when 'TCHWOEMRPRVCRD' then 'Master'
+			ELSE 'MISSING'
+		END = rdss.TeachingCredentialTypeCode
+
 		AND  CASE f.QualificationStatusCode
 			WHEN 'NotQualified' THEN 'NotQualified'
 			WHEN 'Qualified' THEN 'Qualified'
@@ -115,19 +119,12 @@ FROM Upgrade.FactK12StaffCounts f
 			WHEN 'SPEDTCHNFULCRT' THEN 'SPEDTCHNFULCRT'
 			ELSE 'MISSING'
 		END = rdss.SpecialEducationTeacherQualificationStatusCode
+
 		AND  CASE f.QualificationStatusCode
 			WHEN 'HQ' THEN 'HighlyQualitifed'
 			WHEN 'NHQ' THEN 'NotHighlyQualified'
 			ELSE 'MISSING'
 		END = rdss.HighlyQualifiedTeacherIndicatorCode
-
---NotQualified = ParaprofessionalQualificationStatusCode
---SPEDTCHFULCRT = SpecialEducationTeacherQualificationStatusCode
---Qualified = ParaprofessionalQualificationStatusCode
---SPEDTCHNFULCRT = SpecialEducationTeacherQualificationStatusCode
---MISSING -- join where all 3 are missing 
--- HQ = HighlyQualifiedTeacherIndicator
---NHQ = HighlyQualifiedTeacherIndicator
 
 	LEFT JOIN RDS.DimK12StaffCategories rdsc
 		ON  f.Category_K12StaffClassificationCode = rdsc.K12StaffClassificationCode -- or f.Status_K12StaffClassificationCode
@@ -182,7 +179,7 @@ SELECT
 		, ISNULL(rdcsas.DimCharterSchoolAuthorizerId, -1) --[SecondaryAuthorizingBodyCharterSchoolAuthorizerId]
 		, ISNULL(rdcss.DimCharterSchoolStatusId, -1) --[CharterSchoolStatusId]
 		, ISNULL(rdcsumo.DimCharterSchoolManagementOrganizationId, -1) --[CharterSchoolUpdatedManagementOrganizationId]
-		, ISNULL(rdcts.DimComprehensiveAndTargetedSupportId, -1) --[ComprehensiveAndTargetedSupportId]
+		, -1 --ISNULL(rdcts.DimComprehensiveAndTargetedSupportId, -1) --[ComprehensiveAndTargetedSupportId]
 		, ISNULL(rdra.DimReasonApplicabilityId, -1) --[ReasonApplicabilityId]
 		, ISNULL(rdos.DimK12OrganizationStatusId, -1) --[K12OrganizationStatusId]
 		, ISNULL(rdkss.DimK12SchoolStatusId, -1) --[K12SchoolStatusId]
@@ -201,7 +198,7 @@ FROM Upgrade.FactOrganizationCounts f
 		ON f.SchoolYear = rdsy.SchoolYear
 
 	LEFT JOIN RDS.DimFactTypes edft
-		ON edft.FactTypeCode = 'directory'		--??
+		ON edft.FactTypeCode = 'directory'		
 
 	LEFT JOIN RDS.DimSeas rdsea 
 		ON f.SeaIdentifierState = rdsea.SeaOrganizationIdentifierSea
@@ -222,7 +219,7 @@ FROM Upgrade.FactOrganizationCounts f
 		AND f.SCH_RecordStartDateTime = dks.RecordStartDateTime
 		AND ISNULL(f.SCH_RecordEndDateTime, '1/1/1900') = ISNULL(dks.RecordEndDateTime, '1/1/1900') 
 
-	LEFT JOIN RDS.DimCharterSchoolAuthorizers rdcsa															--??
+	LEFT JOIN RDS.DimCharterSchoolAuthorizers rdcsa															
 		ON f.CSAP_StateIdentifier = rdcsa.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea
 		AND f.CSAP_RecordStartDateTime = rdcsa.RecordStartDateTime
 		AND ISNULL(f.CSAP_RecordEndDateTime, '1/1/1900') = ISNULL(rdcsa.RecordEndDateTime, '1/1/1900') 
@@ -232,7 +229,7 @@ FROM Upgrade.FactOrganizationCounts f
 		AND f.CSMO_RecordStartDateTime = rdcsmo.RecordStartDateTime
 		AND ISNULL(f.CSMO_RecordEndDateTime, '1/1/1900') = ISNULL(rdcsmo.RecordEndDateTime, '1/1/1900') 
 		
-	LEFT JOIN RDS.DimCharterSchoolAuthorizers rdcsas															--??
+	LEFT JOIN RDS.DimCharterSchoolAuthorizers rdcsas															
 		ON f.CSAS_StateIdentifier = rdcsas.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea
 		AND f.CSAS_RecordStartDateTime = rdcsas.RecordStartDateTime
 		AND ISNULL(f.CSAS_RecordEndDateTime, '1/1/1900') = ISNULL(rdcsas.RecordEndDateTime, '1/1/1900') 
@@ -245,13 +242,13 @@ FROM Upgrade.FactOrganizationCounts f
 	LEFT JOIN RDS.DimCharterSchoolStatuses rdcss
 		ON f.AppropriationMethodCode = rdcss.AppropriationMethodCode
 
-	LEFT JOIN RDS.DimComprehensiveAndTargetedSupports rdcts -- follow up with Nathan
-		ON f.AdditionalTargetedSupportandImprovementCode = rdcts.AdditionalTargetedSupportAndImprovementStatusCode --		case statment --??
-		--AND f.ComprehensiveAndTargetedSupportCode = rdcts.ComprehensiveAndTargetedSupportCode -- no field to map this to is this a case and map to a different field?
-		AND f.ComprehensiveSupportCode = rdcts.ComprehensiveSupportIdentificationTypeCode
-		AND f.ComprehensiveSupportImprovementCode = rdcts.ComprehensiveSupportAndImprovementStatusCode 
-		--AND f.TargetedSupportCode = rdcts.TargetedSupportCode  -- no field to map this to is this a case and map to a different field?
-		AND f.TargetedSupportImprovementCode = rdcts.TargetedSupportAndImprovementStatusCode --
+	--LEFT JOIN RDS.DimComprehensiveAndTargetedSupports rdcts -- follow up with Nathan
+	--	ON f.AdditionalTargetedSupportandImprovementCode = rdcts.AdditionalTargetedSupportAndImprovementStatusCode --		case statment --??
+	--	--AND f.ComprehensiveAndTargetedSupportCode = rdcts.ComprehensiveAndTargetedSupportCode -- no field to map this to is this a case and map to a different field?
+	--	AND f.ComprehensiveSupportCode = rdcts.ComprehensiveSupportIdentificationTypeCode
+	--	AND f.ComprehensiveSupportImprovementCode = rdcts.ComprehensiveSupportAndImprovementStatusCode 
+	--	--AND f.TargetedSupportCode = rdcts.TargetedSupportCode  -- no field to map this to is this a case and map to a different field?
+	--	AND f.TargetedSupportImprovementCode = rdcts.TargetedSupportAndImprovementStatusCode --
 
 	LEFT JOIN RDS.DimReasonApplicabilities rdra
 		ON f.ComprehensiveSupportReasonApplicabilityCode = rdra.ReasonApplicabilityCode
@@ -307,6 +304,7 @@ INSERT INTO RDS.FactK12StudentCounts (
 	, ImmigrantStatusId
 	, K12DemographicId
 	, K12EnrollmentStatusId
+	, K12AcademicAwardStatusId
 	, LanguageId
 	, MigrantStatusId
 	, NOrDStatusId
@@ -340,6 +338,7 @@ SELECT
 	, ISNULL(DimImmigrantStatusId, -1)
 	, ISNULL(DimK12DemographicId, -1)
 	, ISNULL(DimK12EnrollmentStatusId, -1)
+	, ISNULL(rdkaas.DimK12AcademicAwardStatusId, -1)
 	, ISNULL(DimLanguageId, -1)
 	, ISNULL(DimMigrantStatusId, -1)
 	, ISNULL(DimNOrDStatusId, -1)
@@ -471,17 +470,13 @@ LEFT JOIN RDS.DimK12EnrollmentStatuses rdkes
     AND f.PostSecondaryEnrollmentStatusCode = rdkes.PostSecondaryEnrollmentStatusCode
     AND f.AcademicOrVocationalOutcomeCode = rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
     AND f.AcademicOrVocationalExitOutcomeCode = rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
-LEFT JOIN RDS.DimK12AcademicAwardStatuses rdkaas   -- Will probably change to DimK12AcademicAwardStatuses since this is the only field in DimK12StudentStatuses.  
-	ON CASE f.HighSchoolDiplomaTypeCode  -- **** Need to test this to see if this is the right code
-		 WHEN 'REGDIP' THEN '00806' -- The best we can do. NOTE: This data may not be used, so may not need to be upgraded. 
+LEFT JOIN RDS.DimK12AcademicAwardStatuses rdkaas    
+	ON CASE f.HighSchoolDiplomaTypeCode -- coded these because there are three rows for missing
+		 WHEN 'REGDIP' THEN '00806' 
 		 WHEN 'REGDIP' THEN '00812'
 		 WHEN 'REGDIP' THEN '00816'
 		 ELSE 'MISSING'
-    END = rdkaas.HighSchoolDiplomaTypeCode
-	
-	 --f.HighSchoolDiplomaTypeCode = rdkaas.HighSchoolDiplomaTypeEdFactsCode -- Codeset has completely changed, but the old codes map were the EDFacts Codes & there are only 3 with a value != 'MISSING', so this mapping works. 
-
-
+    END = rdkaas.HighSchoolDiplomaTypeCode	
 LEFT JOIN RDS.DimLanguages rdlang
     ON f.Iso6392LanguageCode = rdlang.Iso6392LanguageCodeCode
 LEFT JOIN RDS.DimMigrantStatuses rdms
@@ -529,34 +524,6 @@ LEFT JOIN RDS.DimTitleIIIStatuses rdtiiis
 /*******************************************************************************************************/
 
 -- Disciplines
-IF NOT EXISTS (SELECT 1 FROM rds.DimIncidentStatuses WHERE DimIncidentStatusId = -1)
-		BEGIN
-			SET IDENTITY_INSERT rds.DimIncidentStatuses ON
-			INSERT INTO rds.DimIncidentStatuses 
-			([DimIncidentStatusId]
-			 ,[IncidentBehaviorCode]
-			  ,[IncidentBehaviorDescription]
-			  ,[IdeaInterimRemovalReasonCode]
-			  ,[IdeaInterimRemovalReasonDescription]
-			  ,[IdeaInterimRemovalReasonEdFactsCode]
-			  ,[DisciplineReasonCode]
-			  ,[DisciplineReasonDescription]
-			  ,[IncidentInjuryTypeCode]
-			  ,[IncidentInjuryTypeDescription])
-			VALUES 
-			(-1
-			,'Missing'
-			,'Missing'
-			,'Missing'
-			,'Missing'
-			,'Missing'
-			,'Missing'
-			,'Missing'
-			,'Missing'
-			,'Missing')
-
-			SET IDENTITY_INSERT rds.DimIncidentStatuses off
-		END
 
 -- temp table for inserting race into BridgeK12StudentDisciplineRaces table
 		  DECLARE
@@ -862,5 +829,240 @@ IF NOT EXISTS (SELECT 1 FROM rds.DimIncidentStatuses WHERE DimIncidentStatusId =
             NewFactK12StudentDisciplineId,
             DimRaceId
         FROM @student_person_xwalk xw
+        JOIN RDS.DimRaces r
+            On xw.RaceId = r.DimRaceId
+
+/*******************************************************************************************************/
+
+
+-- temp table for inserting race into BridgeK12StudentDisciplineRaces table
+		  DECLARE
+          @student_Assessment_xwalk TABLE (
+              NewFactK12StudentAssessmentId INT
+            , RaceId VARCHAR(100)
+          );
+
+-- Create CTE with the data to be inserted into RDS.FactK12StudentDisciplines 	
+        WITH distinctFactRecords AS (
+            SELECT DISTINCT -- select and joins goes in here
+					ISNULL(DimSchoolYearId, -1) AS [SchoolYearId]
+					, -1	AS [CountDateId]							--[CountDateId]
+					, ISNULL(edft.DimFactTypeId, -1) AS [FactTypeId]
+					, ISNULL(DimSeaId, -1) AS [SeaId]
+					, ISNULL(DimIeuId, -1) AS [IeuId]
+					, ISNULL(DimLeaId, -1) AS [LeaId]
+					, ISNULL(DimK12SchoolId, -1) AS [K12SchoolId]
+					, ISNULL(DimPersonId, -1) AS [K12StudentId]
+					, ISNULL(rdr.DimRaceId, -1)		AS [RaceId]
+					, ISNULL(rda.DimAssessmentId, -1)  AS [AssessmentId]
+					, -1	AS [AssessmentSubtestId]
+					, -1	AS [AssessmentAdministrationId]
+					, -1	AS [AssessmentRegistrationId]
+					, -1	AS [AssessmentParticipationSessionId]
+					, -1	AS [AssessmentResultId]
+					, ISNULL(rdap.DimAssessmentPerformanceLevelId, -1) AS [AssessmentPerformanceLevelId]
+					, -1	AS [CompetencyDefinitionId]
+					, ISNULL(rdctes.DimCteStatusId, -1) AS [CteStatusId]
+					, ISNULL(rdgl.DimGradeLevelId, -1) AS [GradeLevelWhenAssessedId]
+					, ISNULL(rdis.DimIdeaStatusId, -1) AS [IdeaStatusId]
+					--, ISNULL(rdkdemo.DimK12DemographicId, -1)  AS [K12DemographicId]
+					, ISNULL(DimNOrDStatusId, -1) AS [NOrDStatusId]
+					, ISNULL(rdtiiis.DimTitleIIIStatusId, -1) AS [TitleIIIStatusId]
+					, ISNULL(f.AssessmentCount, -1) AS [AssessmentCount]
+					, -1	AS [AssessmentResultScoreValueRawScore]
+					, -1	AS [AssessmentResultScoreValueScaleScore]
+					, -1	AS [AssessmentResultScoreValuePercentile]
+					, -1	AS [AssessmentResultScoreValueTScore]
+					, -1	AS [AssessmentResultScoreValueZScore]
+					, -1	AS [AssessmentResultScoreValueACTScore]
+					, -1	AS [AssessmentResultScoreValueSATScore]
+					, -1	AS [FactK12StudentAssessmentAccommodationId]
+					
+			FROM Upgrade.FactK12StudentAssessments f
+			LEFT JOIN RDS.DimSchoolYears rdsy 
+				ON f.SchoolYear = rdsy.SchoolYear
+
+			LEFT JOIN RDS.DimFactTypes edft
+				ON edft.FactTypeCode = 'Assessment'
+
+			LEFT JOIN RDS.DimSeas rdsea 
+				ON f.SeaIdentifierState = rdsea.SeaOrganizationIdentifierSea
+				AND f.SEA_RecordStartDateTime = rdsea.RecordStartDateTime
+				AND ISNULL(f.SEA_RecordEndDateTime, '1/1/1900') = ISNULL(rdsea.RecordEndDateTime, '1/1/1900') 
+
+			LEFT JOIN RDS.DimIeus rdi 
+				ON f.IeuIdentifierState = rdi.IeuOrganizationIdentifierSea
+				AND f.IEU_RecordStartDateTime = rdi.RecordStartDateTime
+				AND ISNULL(f.IEU_RecordEndDateTime, '1/1/1900') = ISNULL(rdi.RecordEndDateTime, '1/1/1900') 
+
+			LEFT JOIN RDS.DimLeas rdl 
+				ON f.LeaIdentifierState = rdl.LeaIdentifierSea
+				AND f.LEA_RecordStartDateTime = rdl.RecordStartDateTime
+				AND ISNULL(f.LEA_RecordEndDateTime, '1/1/1900') = ISNULL(rdl.RecordEndDateTime, '1/1/1900') 
+
+			LEFT JOIN RDS.DimK12Schools dks
+				ON dks.SchoolIdentifierSea = SchoolIdentifierState 
+
+			LEFT JOIN RDS.DimPeople rdp
+				ON f.StateStudentIdentifier = rdp.K12StudentStudentIdentifierState 
+				AND rdp.IsActiveK12Student = 1
+
+			LEFT JOIN RDS.DimRaces rdr 
+				ON f.RaceCode = rdr.RaceCode
+
+			LEFT JOIN RDS.DimAssessments rda
+				ON f.AssessmentTypeCode = rda.AssessmentTypeCode
+				AND f.AssessmentSubjectCode = rda.AssessmentTypeCode
+				AND f.ParticipationStatusCode = rda.AssessmentAcademicSubjectCode
+				AND f.AssessmentTypeAdministeredToEnglishLearnersCode = rda.AssessmentTypeToEnglishLearnersCode
+
+			LEFT JOIN RDS.DimAssessmentPerformanceLevels rdap
+				ON f.PerformanceLevelCode = rdap.AssessmentPerformanceLevelIdentifier
+
+			LEFT JOIN RDS.DimCteStatuses rdctes 
+				ON  CASE f.CteAeDisplacedHomemakerIndicatorCode
+						WHEN 'DH' THEN 'Yes'
+						ELSE 'MISSING'
+					END = rdctes.CteAeDisplacedHomemakerIndicatorCode
+				AND CASE f.RepresentationStatusCode
+						WHEN 'MEM' THEN 'Underrepresented'
+						WHEN 'NM' THEN 'NotUnderrepresented'
+						ELSE 'MISSING'
+					END = rdctes.CteNontraditionalGenderStatusCode
+				AND CASE f.CteNontraditionalGenderStatusCode
+						WHEN 'NTE' THEN 'Yes'
+						ELSE 'MISSING'
+					END = rdctes.CteNontraditionalCompletionCode
+				AND CASE f.SingleParentOrSinglePregnantWomanCode
+						WHEN 'SPPT' THEN 'Yes'
+						ELSE 'MISSING'
+					END = rdctes.SingleParentOrSinglePregnantWomanStatusCode
+				AND CASE f.CteGraduationRateInclusionCode
+						WHEN 'GRAD' THEN 'IncludedAsGraduated'
+						WHEN 'NOTG' THEN 'NotIncludedAsGraduated'
+						ELSE 'MISSING'
+					END = rdctes.CteGraduationRateInclusionCode
+				AND CASE f.CteProgramCode 
+						WHEN 'CTEPART' THEN 'Yes'
+						WHEN 'NONCTEPART' THEN 'No'
+						ELSE 'MISSING'
+					END = rdctes.CteParticipantCode
+				AND CASE f.CteProgramCode 
+						WHEN 'CTECONC' THEN 'Yes'
+						WHEN 'NONCTEPART' THEN 'No'
+						ELSE 'MISSING'
+					END = rdctes.CteConcentratorCode
+
+			LEFT JOIN RDS.DimGradeLevels rdgl 
+				ON f.GradeLevelCode = rdgl.GradeLevelCode
+
+			LEFT JOIN RDS.DimIdeaStatuses rdis
+				ON   rdis.SpecialEducationExitReasonCode = 'Missing' --Codes are the same
+				AND CASE f.IdeaIndicatorCode
+						WHEN 'IDEA' THEN 'Yes'
+						ELSE 'MISSING'
+					END = rdis.IdeaIndicatorCode
+					AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'Missing'
+				AND  rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'Missing'
+
+			--LEFT JOIN RDS.DimK12Demographics rdkdemo 
+			--	ON f.SexCode = rdkdemo.SexCode
+
+			LEFT JOIN RDS.DimNOrDStatuses rdnords
+				ON  CASE f.NeglectedOrDelinquentProgramTypeCode
+						WHEN 'ADLTCORR' THEN 'AdultCorrection'
+						WHEN 'ATRISK' THEN 'AtRiskPrograms'
+						WHEN 'JUVCORR' THEN 'JuvenileCorrection'
+						WHEN 'JUVDET' THEN 'JuvenileDetention'
+						WHEN 'NEGLECT' THEN 'NeglectedPrograms'
+						WHEN 'OTHER' THEN 'OtherPrograms'
+						ELSE 'MISSING'
+					END = rdnords.NeglectedOrDelinquentProgramTypeCode
+
+			LEFT JOIN RDS.DimTitleIIIStatuses rdtiiis
+				ON  f.TitleiiiProgramParticipationCode = rdtiiis.ProgramParticipationTitleIIILiepCode
+				AND f.TitleIIIImmigrantParticipationStatusCode = rdtiiis.TitleIIIImmigrantParticipationStatusCode
+				AND f.ProficiencyStatusCode = rdtiiis.ProficiencyStatusCode
+				AND f.TitleiiiAccountabilityProgressStatusCode = rdtiiis.TitleIIIAccountabilityProgressStatusCode
+				AND f.TitleiiiLanguageInstructionCode = rdtiiis.TitleIIILanguageInstructionProgramTypeCode
+        )
+
+-- Insert and get the new table id from RDS.FactK12StudentDisciplines and the Race ID from CTE distinctFactRecords and insert it into @student_Assessment_xwalk 
+        MERGE INTO RDS.FactK12StudentAssessments TARGET
+		   USING distinctFactRecords AS distinctIDs
+           ON TARGET.SchoolYearId = 0 --Set this to something that will not match
+        WHEN NOT MATCHED THEN 
+            INSERT ( [SchoolYearId]
+				  ,[CountDateId]
+				  ,[FactTypeId]
+				  ,[SeaId]
+				  ,[IeuId]
+				  ,[LeaId]
+				  ,[K12SchoolId]
+				  ,[K12StudentId]
+				  ,[AssessmentId]
+				  ,[AssessmentSubtestId]
+				  ,[AssessmentAdministrationId]
+				  ,[AssessmentRegistrationId]
+				  ,[AssessmentParticipationSessionId]
+				  ,[AssessmentResultId]
+				  ,[AssessmentPerformanceLevelId]
+				  ,[CompetencyDefinitionId]
+				  ,[CteStatusId]
+				  ,[GradeLevelWhenAssessedId]
+				  ,[IdeaStatusId]
+				  ,[K12DemographicId]
+				  ,[NOrDStatusId]
+				  ,[TitleIIIStatusId]
+				  ,[AssessmentCount]
+				  ,[AssessmentResultScoreValueRawScore]
+				  ,[AssessmentResultScoreValueScaleScore]
+				  ,[AssessmentResultScoreValuePercentile]
+				  ,[AssessmentResultScoreValueTScore]
+				  ,[AssessmentResultScoreValueZScore]
+				  ,[AssessmentResultScoreValueACTScore]
+				  ,[AssessmentResultScoreValueSATScore]
+				  ,[FactK12StudentAssessmentAccommodationId])  
+						VALUES ( [SchoolYearId]
+				  ,[CountDateId]
+				  ,[FactTypeId]
+				  ,[SeaId]
+				  ,[IeuId]
+				  ,[LeaId]
+				  ,[K12SchoolId]
+				  ,[K12StudentId]
+				  ,[AssessmentId]
+				  ,[AssessmentSubtestId]
+				  ,[AssessmentAdministrationId]
+				  ,[AssessmentRegistrationId]
+				  ,[AssessmentParticipationSessionId]
+				  ,[AssessmentResultId]
+				  ,[AssessmentPerformanceLevelId]
+				  ,[CompetencyDefinitionId]
+				  ,[CteStatusId]
+				  ,[GradeLevelWhenAssessedId]
+				  ,[IdeaStatusId]
+				 -- ,[K12DemographicId]
+				  ,[NOrDStatusId]
+				  ,[TitleIIIStatusId]
+				  ,[AssessmentCount]
+				  ,[AssessmentResultScoreValueRawScore]
+				  ,[AssessmentResultScoreValueScaleScore]
+				  ,[AssessmentResultScoreValuePercentile]
+				  ,[AssessmentResultScoreValueTScore]
+				  ,[AssessmentResultScoreValueZScore]
+				  ,[AssessmentResultScoreValueACTScore]
+				  ,[AssessmentResultScoreValueSATScore]
+				  ,[FactK12StudentAssessmentAccommodationId])   
+        OUTPUT	INSERTED.FactK12StudentAssessmentId
+                ,distinctIDs.RaceID
+        INTO @student_Assessment_xwalk (NewFactK12StudentAssessmentId, RaceId);
+
+ -- Insert the new RDS.FactK12StudentDisciplines and raceID into RDS.BridgeK12StudentDiscplineRaces
+         INSERT INTO RDS.BridgeK12StudentDisciplineRaces
+        SELECT
+            NewFactK12StudentAssessmentId,
+            DimRaceId
+        FROM @student_Assessment_xwalk xw
         JOIN RDS.DimRaces r
             On xw.RaceId = r.DimRaceId
