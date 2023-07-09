@@ -77,6 +77,8 @@ SELECT
 	, RecordEndDateTime 
 FROM RDS.DimK12Staff s
 
+/*******************************************************************************************************/
+
 CREATE TABLE Upgrade.FactK12StudentCounts (
 	  StudentCutOverStartDate DATE
 	, StudentCount INT
@@ -273,7 +275,6 @@ LEFT JOIN RDS.DimDates rdsesed ON f.SpecialEducationServicesExitDateId = rdsesed
 
 --Should LeaId be switched to the new field LeaAccountabilityId
 	--from work in states, I think having both Accountability and Attending would be good
---Why is Race not in the new table
 --We have other statuses but not Military Connected or Section504, is that correct
 
 /*
@@ -318,11 +319,12 @@ NEW    [TitleIIIStatusId]                  INT             CONSTRAINT [DF_FactK1
 */
 
 CREATE TABLE Upgrade.FactK12StudentDisciplines (
-	DisciplineCount INT
+	FactK12StudentDisciplineId INT
+	,DisciplineCount INT
 	, SchoolYear SMALLINT
 	, GradeLevelCode NVARCHAR(200)
 	, AgeCode NVARCHAR(200)
-
+	, SexCode NVARCHAR(200)
 	, DisciplinaryActionTakenCode NVARCHAR(200)
 	, DisciplineMethodOfChildrenWithDisabilitiesCode NVARCHAR(200)
 	, EducationalServicesAfterRemovalCode NVARCHAR(200)
@@ -341,15 +343,16 @@ CREATE TABLE Upgrade.FactK12StudentDisciplines (
 	, IeuIdentifierState NVARCHAR(200)
 	, IEU_RecordStartDateTime DATETIME
 	, IEU_RecordEndDateTime	  DATETIME
+	, LeaIdentifierState NVARCHAR(200)
+	, LEA_RecordStartDateTime DATETIME
+	, LEA_RecordEndDateTime	  DATETIME
 	, SchoolIdentifierState NVARCHAR(200)
 	, SCH_RecordStartDateTime DATETIME
 	, SCH_RecordEndDateTime	  DATETIME
 	, StateStudentIdentifier NVARCHAR(200)
 	, STU_RecordStartDateTime DATETIME
 	, STU_RecordEndDateTime	  DATETIME
-	, LeaIdentifierState NVARCHAR(200)
-	, LEA_RecordStartDateTime DATETIME
-	, LEA_RecordEndDateTime	  DATETIME
+	
 
 	, EconomicallyDisadvantagedStatusCode NVARCHAR(200)
 	, EnglishLearnerStatusCode NVARCHAR(200)
@@ -366,6 +369,7 @@ CREATE TABLE Upgrade.FactK12StudentDisciplines (
 	, CteAeDisplacedHomemakerIndicatorCode NVARCHAR(200)
 	, CteGraduationRateInclusionCode NVARCHAR(200)
 	, CteNontraditionalGenderStatusCode NVARCHAR(200)
+	, RaceCode NVARCHAR(200)
 	, CteProgramCode NVARCHAR(200)
 	, LepPerkinsStatusCode NVARCHAR(200)
 	, RepresentationStatusCode NVARCHAR(200)
@@ -374,11 +378,12 @@ CREATE TABLE Upgrade.FactK12StudentDisciplines (
 
 INSERT INTO Upgrade.FactK12StudentDisciplines
 SELECT 
-	f.DisciplineCount
+	f.FactK12StudentDisciplineId -- Might need this to get radeid from RDS.BridgeK12StudentDisciplineRaces
+	,f.DisciplineCount
 	, rdsy.SchoolYear
 	, rdgl.GradeLevelCode
 	, rda.AgeCode
-
+	, rdkstu.SexCode 
 	, rdd.DisciplinaryActionTakenCode
 	, rdd.DisciplineMethodOfChildrenWithDisabilitiesCode
 	, rdd.EducationalServicesAfterRemovalCode
@@ -422,6 +427,7 @@ SELECT
 	, rdctes.CteAeDisplacedHomemakerIndicatorCode
 	, rdctes.CteGraduationRateInclusionCode
 	, rdctes.CteNontraditionalGenderStatusCode
+	, rdr.RaceCode --might need this to copy into RDS.BridgeK12StudentDisciplineRaces
 	, rdctes.CteProgramCode
 	, rdctes.LepPerkinsStatusCode
 	, rdctes.RepresentationStatusCode
@@ -581,7 +587,7 @@ CREATE TABLE Upgrade.FactK12StudentAssessments (
 	, FactType NVARCHAR(200)
 	, GradeLevelCode NVARCHAR(200)
 	, RaceCode NVARCHAR(200)
-
+	, SexCode NVARCHAR(200)
 	, SeaIdentifierState NVARCHAR(200)
 	, SEA_RecordStartDateTime DATETIME
 	, SEA_RecordEndDateTime	  DATETIME
@@ -597,7 +603,6 @@ CREATE TABLE Upgrade.FactK12StudentAssessments (
 	, StateStudentIdentifier NVARCHAR(200)
 	, STU_RecordStartDateTime DATETIME
 	, STU_RecordEndDateTime	  DATETIME
-
 	--K12Demographic
 	, EconomicDisadvantageStatusCode NVARCHAR(200)
 	, EnglishLearnerStatusCode NVARCHAR(200)
@@ -621,6 +626,15 @@ CREATE TABLE Upgrade.FactK12StudentAssessments (
 	--AssessmentStatus
 	, AssessedFirstTimeCode NVARCHAR(200)
 	, AssessmentProgressLevelCode NVARCHAR(200)
+	--Assessments
+	, PerformanceLevelCode NVARCHAR(200)-- New
+	, SeaFullYearStatusCode NVARCHAR(200)-- New
+	, LeaFullYearStatusCode NVARCHAR(200)-- New
+	, SchFullYearStatusCode NVARCHAR(200)-- New
+	, AssessmentTypeCode NVARCHAR(200)-- New
+	, AssessmentSubjectCode NVARCHAR(200)-- New
+	, ParticipationStatusCode NVARCHAR(200)-- New
+	, AssessmentTypeAdministeredToEnglishLearnersCode NVARCHAR(200)-- New
 	--TitleIIIStatus
 	, ProficiencyStatusCode NVARCHAR(200)
 	, TitleiiiAccountabilityProgressStatusCode NVARCHAR(200)
@@ -661,12 +675,12 @@ CREATE TABLE Upgrade.FactK12StudentAssessments (
 
 INSERT INTO Upgrade.FactK12StudentAssessments
 SELECT 
-	  f.AssessmentCount
+	   f.AssessmentCount
 	, rdsy.SchoolYear
 	, rdft.FactTypeCode
 	, rdgl.GradeLevelCode
 	, rdr.RaceCode
-
+	, rdkstu.SexCode 
 	, rds.SeaIdentifierState
 	, rds.RecordStartDateTime AS SEA_RecordStartDateTime
 	, rds.RecordEndDateTime   AS SEA_RecordEndDateTime
@@ -704,7 +718,16 @@ SELECT
 	, rdps.TitleiiiProgramParticipationCode
 	--AssessmentStatus
 	, rdas.AssessedFirstTimeCode
-	, rdas.AssessmentProgressLevelCode
+	, rdas.AssessmentProgressLevelCode -- AssessmentTypeAdministeredCode = Missing
+	--Assessments
+	, rda.PerformanceLevelCode -- New
+	, rda.SeaFullYearStatusCode -- New
+	, rda.LeaFullYearStatusCode -- New
+	, rda.SchFullYearStatusCode -- New
+	, rda.AssessmentTypeCode -- New
+	, rda.AssessmentSubjectCode -- New
+	, rda.ParticipationStatusCode -- New
+	, rda.AssessmentTypeAdministeredToEnglishLearnersCode -- New
 	--TitleIIIStatus
 	, rdtiiis.ProficiencyStatusCode
 	, rdtiiis.TitleiiiAccountabilityProgressStatusCode
@@ -758,6 +781,9 @@ JOIN RDS.DimK12Demographics rdkd ON f.K12DemographicId = rdkd.DimK12DemographicI
 JOIN RDS.DimIdeaStatuses rdis ON f.IdeaStatusId = rdis.DimIdeaStatusId
 JOIN RDS.DimProgramStatuses rdps ON f.ProgramStatusId = rdps.DimProgramStatusId
 JOIN RDS.DimAssessmentStatuses rdas ON f.AssessmentStatusId = rdas.DimAssessmentStatusId
+JOIN RDS.DimAssessments rda ON f.AssessmentId = rda.DimAssessmentid -- new
+
+
 JOIN RDS.DimTitleIIIStatuses rdtiiis ON f.TitleIIIStatusId = rdtiiis.DimTitleIIIStatusId
 JOIN RDS.DimK12StudentStatuses rdkss ON f.K12StudentStatusId = rdkss.DimK12StudentStatusId
 JOIN RDS.DimNOrDProgramStatuses rdnodps ON f.NOrDProgramStatusId = rdnodps.DimNOrDProgramStatusId
@@ -767,11 +793,85 @@ JOIN RDS.DimTitleIStatuses rdtis ON f.TitleIStatusId = rdtis.DimTitleIStatusId
 
 
 /*******************************************************************************************************/
+-- Make sure there is a row in the tables
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12Staff WHERE DimK12StaffId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimK12Staff ON
+			INSERT INTO RDS.DimK12Staff (DimK12StaffId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimK12Staff off
+		END
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12SchoolStatuses WHERE DimK12SchoolStatusId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimK12SchoolStatuses ON
+			INSERT INTO RDS.DimK12SchoolStatuses (DimK12SchoolStatusId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimK12SchoolStatuses off
+		END
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimTitleIStatuses WHERE DimTitleIStatusId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimTitleIStatuses ON
+			INSERT INTO RDS.DimTitleIStatuses (DimTitleIStatusId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimTitleIStatuses off
+		END
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimTitleIStatuses WHERE DimTitleIStatusId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimTitleIStatuses ON
+			INSERT INTO RDS.DimTitleIStatuses (DimTitleIStatusId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimTitleIStatuses off
+		END
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimCharterSchoolAuthorizers WHERE DimCharterSchoolAuthorizerId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimCharterSchoolAuthorizers ON
+			INSERT INTO RDS.DimCharterSchoolAuthorizers (DimCharterSchoolAuthorizerId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimCharterSchoolAuthorizers off
+		END
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimCharterSchoolManagementOrganizations WHERE DimCharterSchoolManagementOrganizationId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimCharterSchoolManagementOrganizations ON
+			INSERT INTO RDS.DimCharterSchoolManagementOrganizations (DimCharterSchoolManagementOrganizationId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimCharterSchoolManagementOrganizations off
+		END
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimCharterSchoolStatus WHERE DimCharterSchoolStatusId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimCharterSchoolStatus ON
+			INSERT INTO RDS.DimCharterSchoolStatus (DimCharterSchoolStatusId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimCharterSchoolStatus off
+		END
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12OrganizationStatuses WHERE DimK12OrganizationStatusId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimK12OrganizationStatuses ON
+			INSERT INTO RDS.DimK12OrganizationStatuses (DimK12OrganizationStatusId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimK12OrganizationStatuses off
+		END
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12SchoolStateStatuses WHERE DimK12SchoolStateStatusId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimK12SchoolStateStatuses ON
+			INSERT INTO RDS.DimK12SchoolStateStatuses (DimK12SchoolStateStatusId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimK12SchoolStateStatuses off
+		END
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimComprehensiveAndTargetedSupports WHERE DimComprehensiveAndTargetedSupportId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimComprehensiveAndTargetedSupports ON
+			INSERT INTO RDS.DimComprehensiveAndTargetedSupports (DimComprehensiveAndTargetedSupportId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimComprehensiveAndTargetedSupports off
+		END
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimSubgroups WHERE DimSubgroupId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimSubgroups ON
+			INSERT INTO RDS.DimSubgroups (DimSubgroupId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimSubgroups off
+		END
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimComprehensiveSupportReasonApplicabilities WHERE DimComprehensiveSupportReasonApplicabilityId = -1)
+		BEGIN
+			SET IDENTITY_INSERT RDS.DimComprehensiveSupportReasonApplicabilities ON
+			INSERT INTO RDS.DimComprehensiveSupportReasonApplicabilities (DimComprehensiveSupportReasonApplicabilityId) VALUES (-1)
+			SET IDENTITY_INSERT RDS.DimComprehensiveSupportReasonApplicabilities off
+		END
 
 CREATE TABLE Upgrade.FactOrganizationCounts (
 	-- Fact table
-	  TitleIParentalInvolveRes			VARCHAR(500)
-	, TitleIPartAAllocations								VARCHAR(500)
+	  TitleIParentalInvolveRes	VARCHAR(500)
+	, TitleIPartAAllocations	VARCHAR(500)
 	, SchoolImprovementFunds	VARCHAR(500)
 	, FederalFundAllocationType	VARCHAR(500)
 	, FederalProgramCode	VARCHAR(500)
@@ -804,6 +904,7 @@ CREATE TABLE Upgrade.FactOrganizationCounts (
 	, VirtualSchoolStatusCode	VARCHAR(500)
 	--DimSeas
 	, DimSeaId	VARCHAR(500)
+	, SeaIdentifierState VARCHAR(50) --
 	, RecordStartDateTime	DATETIME
 	, RecordEndDateTime	DATETIME
 	--DimTitleIStatus
@@ -828,6 +929,8 @@ CREATE TABLE Upgrade.FactOrganizationCounts (
 	, CSASU_StateIdentifier	VARCHAR(500)
 	, CSASU_RecordStartDateTime	DATETIME
 	, CSASU_RecordEndDateTime	DATETIME
+	-- DimCharterSchoolStatus --
+	, AppropriationMethodCode VARCHAR(500) --
 	--DimK12OrganizationStatuses
 	, GunFreeSchoolsActReportingStatusCode	VARCHAR(500)
 	, HighSchoolGraduationRateIndicatorStatusCode	VARCHAR(500)
@@ -846,6 +949,7 @@ CREATE TABLE Upgrade.FactOrganizationCounts (
 	, SubgroupCode	VARCHAR(500)
 	--DimComprehensiveSupportReasonApplicabilities
 	, ComprehensiveSupportReasonApplicabilityCode	VARCHAR(500)
+	, OrganizationCount INT ---
 )
 
 INSERT INTO Upgrade.FactOrganizationCounts
@@ -885,6 +989,7 @@ SELECT
 	, rdkss.VirtualSchoolStatusCode
 	--DimSeas
 	, rds.DimSeaId
+	, rds.SeaIdentifierState --
 	, rds.RecordStartDateTime
 	, rds.RecordEndDateTime
 	--DimTitleIStatus
@@ -909,6 +1014,8 @@ SELECT
 	, rdcsumo.StateIdentifier
 	, rdcsumo.RecordStartDateTime
 	, rdcsumo.RecordEndDateTime
+	-- DimCharterSchoolStatus --
+	, rdcss.AppropriationMethodCode --
 	--DimK12OrganizationStatuses
 	, rdkos.GunFreeSchoolsActReportingStatusCode
 	, rdkos.HighSchoolGraduationRateIndicatorStatusCode
@@ -927,6 +1034,8 @@ SELECT
 	, rdsub.SubgroupCode
 	--DimComprehensiveSupportReasonApplicabilities
 	, rdcsra.ComprehensiveSupportReasonApplicabilityCode
+	,f.OrganizationCount -----
+
 FROM RDS.FactOrganizationCounts f
 JOIN RDS.DimSchoolYears rdsy ON f.SchoolYearId = rdsy.DimSchoolYearId
 JOIN RDS.DimFactTypes rdft ON f.FactTypeId = rdft.DimFactTypeId
@@ -940,11 +1049,14 @@ JOIN RDS.DimCharterSchoolAuthorizers rdcsap ON f.CharterSchoolApproverAgencyId =
 JOIN RDS.DimCharterSchoolManagementOrganizations rdcsmo ON f.CharterSchoolManagerOrganizationId = rdcsmo.DimCharterSchoolManagementOrganizationId
 JOIN RDS.DimCharterSchoolAuthorizers rdcsas ON f.CharterSchoolSecondaryApproverAgencyId = rdcsas.DimCharterSchoolAuthorizerId
 JOIN RDS.DimCharterSchoolManagementOrganizations rdcsumo ON f.CharterSchoolUpdatedManagerOrganizationId = rdcsumo.DimCharterSchoolManagementOrganizationId
+JOIN RDS.DimCharterSchoolStatus rdcss ON f.CharterSchoolStatusId = rdcss.DimCharterSchoolStatusId --
 JOIN RDS.DimK12OrganizationStatuses rdkos ON f.OrganizationStatusId = rdkos.DimK12OrganizationStatusId
 JOIN RDS.DimK12SchoolStateStatuses rdksss ON f.SchoolStateStatusId = rdksss.DimK12SchoolStateStatusId
 JOIN RDS.DimComprehensiveAndTargetedSupports rdcats ON f.ComprehensiveAndTargetedSupportId = rdcats.DimComprehensiveAndTargetedSupportId
-JOIN RDS.DimSubgroups rdsub ON f.DimSubgroupId = f.DimSubgroupId
+JOIN RDS.DimSubgroups rdsub ON f.DimSubgroupId = rdsub.DimSubgroupId
 JOIN RDS.DimComprehensiveSupportReasonApplicabilities rdcsra ON f.DimComprehensiveSupportReasonApplicabilityId = rdcsra.DimComprehensiveSupportReasonApplicabilityId
-																  
+		
+																	  
+		  
 
 /*******************************************************************************************************/
