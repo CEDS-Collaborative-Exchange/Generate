@@ -6946,6 +6946,8 @@
 	-- --TODO: Review if this should happen
 	-- 
 	-- DROP TABLE [Staging].[K12SchoolComprehensiveSupportIdentificationType];
+	EXECUTE sp_rename N'[Staging].[K12SchoolComprehensiveSupportIdentificationType].[LEA_Identifier_State]', N'LEAIdentifierSea';
+	EXECUTE sp_rename N'[Staging].[K12SchoolComprehensiveSupportIdentificationType].[School_Identifier_State]', N'SchoolIdentifierSea';
 
 
 	-- --TODO: Review if this should happen
@@ -7624,20 +7626,23 @@
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_DimAssessments] (
-		[DimAssessmentId]                      					INT            IDENTITY (1, 1) NOT NULL,
-		[AssessmentIdentifierState]            					NVARCHAR (40)  NULL,
-		[AssessmentFamilyShortName]            					NVARCHAR (30)  NULL,
-		[AssessmentTitle]                      					NVARCHAR (60)  NULL,
-		[AssessmentShortName]                  					NVARCHAR (30)  NULL,
-		[AssessmentTypeCode]                   					NVARCHAR (100) NULL,
-		[AssessmentTypeDescription]            					NVARCHAR (300) NULL,
-		[AssessmentTypeEdFactsCode]            					NVARCHAR (100) NULL,
-		[AssessmentAcademicSubjectCode]        					NVARCHAR (100) NULL,
-		[AssessmentAcademicSubjectDescription] 					NVARCHAR (300) NULL,
-		[AssessmentAcademicSubjectEdFactsCode] 					NVARCHAR (50)  NULL,
-		[AssessmentTypeToEnglishLearnersCode]                   NVARCHAR (100) NULL,
-		[AssessmentTypeToEnglishLearnersDescription]            NVARCHAR (300) NULL,
-		[AssessmentTypeToEnglishLearnersEdFactsCode]            NVARCHAR (100) NULL,
+		[DimAssessmentId]                      								INT            IDENTITY (1, 1) NOT NULL,
+		[AssessmentIdentifierState]            								NVARCHAR (40)  NULL,
+		[AssessmentFamilyShortName]            								NVARCHAR (30)  NULL,
+		[AssessmentTitle]                      								NVARCHAR (60)  NULL,
+		[AssessmentShortName]                  								NVARCHAR (30)  NULL,
+		[AssessmentTypeCode]                   								NVARCHAR (100) NULL,
+		[AssessmentTypeDescription]            								NVARCHAR (300) NULL,
+		[AssessmentTypeEdFactsCode]            								NVARCHAR (100) NULL,
+		[AssessmentAcademicSubjectCode]        								NVARCHAR (100) NULL,
+		[AssessmentAcademicSubjectDescription] 								NVARCHAR (300) NULL,
+		[AssessmentAcademicSubjectEdFactsCode] 								NVARCHAR (50)  NULL,
+		[AssessmentTypeAdministeredCode]                   					NVARCHAR (100) NULL,
+		[AssessmentTypeAdministeredDescription]            					NVARCHAR (300) NULL,
+		[AssessmentTypeAdministeredEdFactsCode]            					NVARCHAR (100) NULL,
+		[AssessmentTypeAdministeredToEnglishLearnersCode]                   NVARCHAR (100) NULL,
+		[AssessmentTypeAdministeredToEnglishLearnersDescription]            NVARCHAR (300) NULL,
+		[AssessmentTypeAdministeredToEnglishLearnersEdFactsCode]            NVARCHAR (100) NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_DimAssessments1] PRIMARY KEY CLUSTERED ([DimAssessmentId] ASC) WITH (FILLFACTOR = 80)
 	);
 
@@ -7732,9 +7737,6 @@
 		[ProgressLevelCode]                               NVARCHAR (50)  NULL,
 		[ProgressLevelDescription]                        NVARCHAR (100) NULL,
 		[ProgressLevelEdFactsCode]                        NVARCHAR (50)  NULL,
-		[AssessmentTypeAdministeredCode]                  NVARCHAR (50)  NULL,
-		[AssessmentTypeAdministeredDescription]           NVARCHAR (200) NULL,
-		[AssessmentTypeAdministeredEdFactsCode]           NVARCHAR (50)  NULL,
 		[AssessedFirstTimeCode]                           NVARCHAR (50)  NULL,
 		[AssessedFirstTimeDescription]                    NVARCHAR (100) NULL,
 		[AssessedFirstTimeEdFactsCode]                    NVARCHAR (50)  NULL,
@@ -9800,18 +9802,20 @@
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactK12StaffCounts] (
-		[FactK12StaffCountId]      INT             IDENTITY (1, 1) NOT NULL,
-		[SchoolYearId]             INT             CONSTRAINT [DF_FactK12StaffCounts_SchoolYearId] DEFAULT ((-1)) NOT NULL,
-		[FactTypeId]               INT             CONSTRAINT [DF_FactK12StaffCounts_FactTypeId] DEFAULT ((-1)) NOT NULL,
-		[SeaId]                    INT             CONSTRAINT [DF_FactK12StaffCounts_SeaId] DEFAULT ((-1)) NOT NULL,
-		[LeaId]                    INT             CONSTRAINT [DF_FactK12StaffCounts_LeaId] DEFAULT ((-1)) NOT NULL,
-		[K12SchoolId]              INT             CONSTRAINT [DF_FactK12StaffCounts_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-		[K12StaffId]               BIGINT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
-		[K12StaffStatusId]         INT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffStatusId] DEFAULT ((-1)) NOT NULL,
-		[K12StaffCategoryId]       INT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffCategoryId] DEFAULT ((-1)) NOT NULL,
-		[TitleIIIStatusId]         INT             CONSTRAINT [DF_FactK12StaffCounts_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
-		[StaffCount]               INT             CONSTRAINT [DF_FactK12StaffCounts_StaffCount] DEFAULT ((1)) NOT NULL,
-		[StaffFullTimeEquivalency] DECIMAL (18, 3) NOT NULL,
+		[FactK12StaffCountId]      				INT             IDENTITY (1, 1) NOT NULL,
+		[SchoolYearId]             				INT             CONSTRAINT [DF_FactK12StaffCounts_SchoolYearId] DEFAULT ((-1)) NOT NULL,
+		[FactTypeId]               				INT             CONSTRAINT [DF_FactK12StaffCounts_FactTypeId] DEFAULT ((-1)) NOT NULL,
+		[SeaId]                    				INT             CONSTRAINT [DF_FactK12StaffCounts_SeaId] DEFAULT ((-1)) NOT NULL,
+		[LeaId]                    				INT             CONSTRAINT [DF_FactK12StaffCounts_LeaId] DEFAULT ((-1)) NOT NULL,
+		[K12SchoolId]              				INT             CONSTRAINT [DF_FactK12StaffCounts_K12SchoolId] DEFAULT ((-1)) NOT NULL,
+		[K12StaffId]               				BIGINT          CONSTRAINT [DF_FactK12StaffCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
+		[K12StaffStatusId]         				INT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffStatusId] DEFAULT ((-1)) NOT NULL,
+		[K12StaffCategoryId]       				INT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffCategoryId] DEFAULT ((-1)) NOT NULL,
+		[TitleIIIStatusId]         				INT             CONSTRAINT [DF_FactK12StaffCounts_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
+		[CredentialIssuanceDateId] 				INT             CONSTRAINT [DF_FactK12StaffCounts_CredentialIssuanceDateId] DEFAULT ((-1)) NOT NULL,
+		[CredentialExpirationDateId]         	INT             CONSTRAINT [DF_FactK12StaffCounts_CredentialExpirationDateId] DEFAULT ((-1)) NOT NULL,
+		[StaffCount]               				INT             CONSTRAINT [DF_FactK12StaffCounts_StaffCount] DEFAULT ((1)) NOT NULL,
+		[StaffFullTimeEquivalency] 				DECIMAL (18, 3) NOT NULL,
 		CONSTRAINT [tmp_ms_xx_constraint_PK_FactK12StaffCounts1] PRIMARY KEY CLUSTERED ([FactK12StaffCountId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
@@ -9922,6 +9926,22 @@
 	
 	CREATE NONCLUSTERED INDEX [IXFK_FactK12StaffCounts_TitleIIIStatusId]
 		ON [RDS].[FactK12StaffCounts]([TitleIIIStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+
+	
+	PRINT N'Creating Index [RDS].[FactK12StaffCounts].[IXFK_FactK12StaffCounts_TitleIIIStatusId]...';
+
+
+	
+	CREATE NONCLUSTERED INDEX [IXFK_FactK12StaffCounts_CredentialIssuanceDateId]
+		ON [RDS].[FactK12StaffCounts]([CredentialIssuanceDateId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+
+	
+	PRINT N'Creating Index [RDS].[FactK12StaffCounts].[IXFK_FactK12StaffCounts_CredentialExpirationDateId]...';
+
+
+	
+	CREATE NONCLUSTERED INDEX [IXFK_FactK12StaffCounts_CredentialExpirationDateId]
+		ON [RDS].[FactK12StaffCounts]([CredentialExpirationDateId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 	
@@ -10223,7 +10243,19 @@
 		ON [RDS].[FactK12StudentAssessments]([TitleIIIStatusId] ASC) WITH (FILLFACTOR = 80);
 
 
-	
+
+	PRINT N'Creating Table [RDS].[DimK12AcademicAwardStatuses]...';
+
+
+	CREATE TABLE [RDS].[DimK12AcademicAwardStatuses] (
+		[DimK12AcademicAwardStatusId]      INT            IDENTITY (1, 1) NOT NULL,
+		[HighSchoolDiplomaTypeCode]        NVARCHAR (100)  NULL,
+		[HighSchoolDiplomaTypeDescription] NVARCHAR (300) NULL,
+		[HighSchoolDiplomaTypeEdFactsCode] NVARCHAR (50) NULL,
+		CONSTRAINT [PK_DimK12AcademicAwardStatuses] PRIMARY KEY CLUSTERED ([DimK12AcademicAwardStatusId] ASC)
+	);
+
+
 	-- TODO: Review how StudentCutOverStartDate is currently used.  
 	/*
 	The column [RDS].[FactK12StudentCounts].[MigrantId] is being dropped, data loss could occur.
@@ -10269,7 +10301,7 @@
 		[ImmigrantStatusId]                     INT CONSTRAINT [DF_FactK12StudentCounts_ImmigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[K12DemographicId]                      INT CONSTRAINT [DF_FactK12StudentCounts_K12Demographic] DEFAULT ((-1)) NOT NULL,
 		[K12EnrollmentStatusId]                 INT CONSTRAINT [DF_FactK12StudentCounts_EnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
---		[K12StudentStatusId]                    INT CONSTRAINT [DF_FactK12StudentCounts_K12StudentStatusId] DEFAULT ((-1)) NOT NULL,
+		[K12AcademicAwardStatusId]              INT CONSTRAINT [DF_FactK12StudentCounts_K12AcademicAwardStatusId] DEFAULT ((-1)) NOT NULL,
 		[LanguageId]                            INT CONSTRAINT [DF_FactK12StudentCounts_LanguageId] DEFAULT ((-1)) NOT NULL,
 		[MigrantStatusId]                       INT CONSTRAINT [DF_FactK12StudentCounts_MigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[NOrDStatusId]                          INT CONSTRAINT [DF_FactK12StudentCounts_NOrDStatusId] DEFAULT ((-1)) NOT NULL,
@@ -10388,7 +10420,8 @@
 	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_StatusStartDateEnglishLearnerId]
 		ON [RDS].[FactK12StudentCounts]([StatusStartDateEnglishLearnerId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
-	
+
+
 	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_EconomicallyDisadvantagedStatusId]...';
 
 
@@ -10405,6 +10438,11 @@
 
 	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
 		ADD CONSTRAINT [FK_FactK12StudentCounts_StatusEndDateEnglishLearnerId] FOREIGN KEY ([StatusEndDateEnglishLearnerId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+
+	PRINT N'Creating Foreign Key [RDS].[FactK12StudentCounts].[FK_FactK12StudentCounts_K12AcademicAwardStatusId]...';
+
+	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
+		ADD CONSTRAINT [FK_FactK12StudentCounts_K12AcademicAwardStatusId] FOREIGN KEY ([K12AcademicAwardStatusId]) REFERENCES [RDS].[DimK12AcademicAwardStatuses] ([DimK12AcademicAwardStatusId]);
 
 
 	
@@ -10441,6 +10479,15 @@
 	
 	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_GradeLevelId]
 		ON [RDS].[FactK12StudentCounts]([GradeLevelId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+
+
+
+	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_K12AcademicAwardStatusId]...';
+
+
+	
+	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_K12AcademicAwardStatusId]
+		ON [RDS].[FactK12StudentCounts]([K12AcademicAwardStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 	
@@ -12141,13 +12188,15 @@
 		[CountDateId]                            INT            NOT NULL,
 		[SeaId]                                  INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_SeaId] DEFAULT ((-1)) NOT NULL,
 		[PsInstitutionID]                        INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_PsInstitutionId] DEFAULT ((-1)) NOT NULL,
-		[PsStudentId]                            BIGINT            CONSTRAINT [DF_FactPsStudentAcademicRecords_PsStudentId] DEFAULT ((-1)) NOT NULL,
+		[PsStudentId]                            BIGINT         CONSTRAINT [DF_FactPsStudentAcademicRecords_PsStudentId] DEFAULT ((-1)) NOT NULL,
 		[AcademicTermDesignatorId]               INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_AcademicTermDesignatorId] DEFAULT ((-1)) NOT NULL,
+        [PsDemographicId]                        INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_PsDemographicId] DEFAULT (-1) NOT NULL,
 		[PsInstitutionStatusId]                  INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_PsInstitutionStatusId] DEFAULT ((-1)) NOT NULL,
 		[PsEnrollmentStatusId]                   BIGINT         CONSTRAINT [DF_FactPsStudentAcademicRecords_PsEnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
 		[EnrollmentEntryDateId]                  INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_EnrollmentEntryDateId] DEFAULT ((-1)) NOT NULL,
 		[EnrollmentExitDateId]                   INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_EnrollmentExitDateId] DEFAULT ((-1)) NOT NULL,
 		[DataCollectionId]                       INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_DataCollectionId] DEFAULT ((-1)) NOT NULL,
+        [InstructionalActivityHoursCompletedCredit] DECIMAL (10, 2) NULL,
 		[GradePointAverage]                      DECIMAL (5, 4) NULL,
 		[GradePointAverageCumulative]            DECIMAL (5, 4) NULL,
 		[DualCreditDualEnrollmentCreditsAwarded] DECIMAL (4, 2) NULL,
@@ -12264,10 +12313,9 @@
 	The column [RDS].[FactPsStudentEnrollments].[ExitDateId] is being dropped, data loss could occur.
 	*/
 	
-	PRINT N'Starting rebuilding table [RDS].[FactPsStudentEnrollments]...';
+	-- PRINT N'Starting rebuilding table [RDS].[FactPsStudentEnrollments]...';
 
 
-	
 	SET XACT_ABORT ON;
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactPsStudentEnrollments] (
@@ -12330,11 +12378,11 @@
 
 
 	
-	PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_EntryDateId]...';
+	PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_EnrollmentEntryDateId]...';
 
 
 	
-	CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_EntryDateId]
+	CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_EnrollmentEntryDateId]
 		ON [RDS].[FactPsStudentEnrollments]([EnrollmentEntryDateId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
@@ -12348,11 +12396,11 @@
 
 
 	
-	PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_ExitDateId]...';
+	PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_EnrollmentExitDateId]...';
 
 
 	
-	CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_ExitDateId]
+	CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_EnrollmentExitDateId]
 		ON [RDS].[FactPsStudentEnrollments]([EnrollmentExitDateId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
@@ -15327,19 +15375,6 @@
 		CONSTRAINT [PK_DimIndividualizedProgramStatusId] PRIMARY KEY CLUSTERED ([DimIndividualizedProgramStatusId] ASC)
 	);
 
-
-	
-	PRINT N'Creating Table [RDS].[DimK12AcademicAwardStatuses]...';
-
-
-	
-	CREATE TABLE [RDS].[DimK12AcademicAwardStatuses] (
-		[DimK12AcademicAwardStatusId]      INT            IDENTITY (1, 1) NOT NULL,
-		[HighSchoolDiplomaTypeCode]        NVARCHAR (100)  NULL,
-		[HighSchoolDiplomaTypeDescription] NVARCHAR (300) NULL,
-		[HighSchoolDiplomaTypeEdFactsCode] NVARCHAR (50) NULL,
-		CONSTRAINT [PK_DimK12AcademicAwardStatuses] PRIMARY KEY CLUSTERED ([DimK12AcademicAwardStatusId] ASC)
-	);
 
 
 	
@@ -19301,6 +19336,23 @@
 	
 	ALTER TABLE [RDS].[FactK12StaffCounts] WITH NOCHECK
 		ADD CONSTRAINT [FK_FactK12StaffCounts_TitleIIIStatuses] FOREIGN KEY ([TitleIIIStatusId]) REFERENCES [RDS].[DimTitleIIIStatuses] ([DimTitleIIIStatusId]);
+
+
+	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StaffCounts_CredentialIssuanceDateId]...';
+
+
+	
+	ALTER TABLE [RDS].[FactK12StaffCounts] WITH NOCHECK
+		ADD CONSTRAINT [FK_FactK12StaffCounts_CredentialIssuanceDateId] FOREIGN KEY ([CredentialIssuanceDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+
+
+	
+	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StaffCounts_TCredentialExpirationDate]...';
+
+
+	
+	ALTER TABLE [RDS].[FactK12StaffCounts] WITH NOCHECK
+		ADD CONSTRAINT [FK_FactK12StaffCounts_CredentialExpirationDate] FOREIGN KEY ([CredentialExpirationDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 	

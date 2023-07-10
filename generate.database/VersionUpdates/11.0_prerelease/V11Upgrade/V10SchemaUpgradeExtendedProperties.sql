@@ -718,43 +718,43 @@
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentTypeAdministeredCode].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[DimAssessments].[AssessmentTypeAdministeredCode].[CEDS_Def_Desc]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The types of assessments administered to children with disabilities.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The types of assessments administered to children with disabilities.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentTypeAdministeredCode].[CEDS_Element]...';
+	PRINT N'Creating Extended Property [RDS].[DimAssessments].[AssessmentTypeAdministeredCode].[CEDS_Element]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Type Administered to Children with Disabilities', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Type Administered to Children with Disabilities', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentTypeAdministeredCode].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[DimAssessments].[AssessmentTypeAdministeredCode].[CEDS_GlobalId]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000415', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000415', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentTypeAdministeredCode].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[DimAssessments].[AssessmentTypeAdministeredCode].[CEDS_URL]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19405', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19405', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredCode';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[DimAssessmentStatuses].[AssessmentTypeAdministeredCode].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[DimAssessments].[AssessmentTypeAdministeredCode].[MS_Description]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredCode';
 
 
 	
@@ -762,7 +762,7 @@
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The types of assessments administered to children with disabilities.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The types of assessments administered to children with disabilities.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredDescription';
 
 
 	
@@ -770,7 +770,7 @@
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Type Administered to Children with Disabilities', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Type Administered to Children with Disabilities', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredDescription';
 
 
 	
@@ -778,7 +778,7 @@
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000415', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000415', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredDescription';
 
 
 	
@@ -786,7 +786,7 @@
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19405', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredDescription';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19405', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredDescription';
 
 
 	
@@ -794,7 +794,7 @@
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredDescription';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredDescription';
 
 
 	
@@ -802,7 +802,7 @@
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The types of assessments administered to children with disabilities.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The types of assessments administered to children with disabilities.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredEdFactsCode';
 
 
 	
@@ -810,7 +810,7 @@
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Type Administered to Children with Disabilities', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Element', @value = N'Assessment Type Administered to Children with Disabilities', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredEdFactsCode';
 
 
 	
@@ -818,7 +818,7 @@
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000415', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000415', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredEdFactsCode';
 
 
 	
@@ -826,7 +826,7 @@
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19405', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=19405', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredEdFactsCode';
 
 
 	
@@ -834,7 +834,7 @@
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessmentStatuses', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredEdFactsCode';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAssessments', @level2type = N'COLUMN', @level2name = N'AssessmentTypeAdministeredEdFactsCode';
 
 
 	

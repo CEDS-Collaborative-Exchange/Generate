@@ -1,44 +1,31 @@
-CREATE VIEW RDS.vwDimComprehensiveAndTargetedSupports
+alter VIEW RDS.vwDimComprehensiveAndTargetedSupports
 AS
 	SELECT
 		cts.DimComprehensiveAndTargetedSupportId,
 		sy.SchoolYear,
-		cts.ComprehensiveSupportCode,
-		[ComprehensiveSupportMap] = ISNULL(ssrd1.InputCode,'MISSING'),
-		cts.AdditionalTargetedSupportandImprovementCode,
-		[AdditionalTargetedSupportandImprovementMap] = ISNULL(ssrd2.InputCode,'MISSING'),
-		cts.ComprehensiveAndTargetedSupportCode,
-		[ComprehensiveAndTargetedSupportMap] = ISNULL(ssrd3.InputCode,'MISSING'),
-		cts.ComprehensiveSupportImprovementCode,
-		[ComprehensiveSupportImprovementMap] = ISNULL(ssrd4.InputCode,'MISSING'),
-		cts.TargetedSupportCode,
-		[TargetedSupportMap] = ISNULL(ssrd5.InputCode,'MISSING'),
-		cts.TargetedSupportImprovementCode,
-		[TargetedSupportImprovementMap] = ISNULL(ssrd6.InputCode,'MISSING')
+		cts.ComprehensiveSupportIdentificationTypeCode,
+		[ComprehensiveSupportIdentificationTypeMap] = ISNULL(ssrd1.InputCode,'MISSING'),
+		cts.AdditionalTargetedSupportAndImprovementStatusCode,
+		[AdditionalTargetedSupportAndImprovementStatusMap] = ISNULL(ssrd2.InputCode,'MISSING'),
+		cts.ComprehensiveSupportAndImprovementStatusCode,
+		[ComprehensiveSupportAndImprovementStatusMap] = ISNULL(ssrd3.InputCode,'MISSING'),
+		cts.TargetedSupportAndImprovementStatusCode,
+		[TargetedSupportAndImprovementStatusMap] = ISNULL(ssrd4.InputCode,'MISSING')
 	FROM RDS.DimComprehensiveAndTargetedSupports cts
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM Staging.SourceSystemReferenceData) sy
 	LEFT JOIN Staging.SourceSystemReferenceData ssrd1
-		ON cts.ComprehensiveSupportCode = ssrd1.OutputCode
+		ON cts.ComprehensiveSupportIdentificationTypeCode = ssrd1.OutputCode
 		AND ssrd1.TableName = 'RefComprehensiveSupport'
 		AND sy.SchoolYear = ssrd1.SchoolYear
 	LEFT JOIN Staging.SourceSystemReferenceData ssrd2
-		ON cts.AdditionalTargetedSupportandImprovementCode = ssrd2.OutputCode
-		AND ssrd2.TableName = 'RefAdditionalTargetedSupportandImprovement'
+		ON cts.AdditionalTargetedSupportAndImprovementStatusCode = ssrd2.OutputCode
+		AND ssrd2.TableName = 'RefAdditionalTargetedSupportAndImprovementStatus'
 		AND sy.SchoolYear = ssrd2.SchoolYear
 	LEFT JOIN Staging.SourceSystemReferenceData ssrd3
-		ON cts.ComprehensiveAndTargetedSupportCode = ssrd3.OutputCode
-		AND ssrd3.TableName = 'RefComprehensiveAndTargetedSupport'
+		ON cts.ComprehensiveSupportAndImprovementStatusCode = ssrd3.OutputCode
+		AND ssrd3.TableName = 'RefComprehensiveSupportAndImprovementStatus'
 		AND sy.SchoolYear = ssrd3.SchoolYear
 	LEFT JOIN Staging.SourceSystemReferenceData ssrd4
-		ON cts.ComprehensiveSupportImprovementCode = ssrd4.OutputCode
-		AND ssrd4.TableName = 'RefComprehensiveSupportImprovement'
+		ON cts.TargetedSupportAndImprovementStatusCode = ssrd4.OutputCode
+		AND ssrd4.TableName = 'RefTargetedSupportAndImprovementStatus'
 		AND sy.SchoolYear = ssrd4.SchoolYear
-	LEFT JOIN Staging.SourceSystemReferenceData ssrd5
-		ON cts.TargetedSupportCode = ssrd5.OutputCode
-		AND ssrd5.TableName = 'RefTargetedSupport'
-		AND sy.SchoolYear = ssrd5.SchoolYear
-	LEFT JOIN Staging.SourceSystemReferenceData ssrd6
-		ON cts.TargetedSupportImprovementCode = ssrd6.OutputCode
-		AND ssrd6.TableName = 'RefTargetedSupportImprovement'
-		AND sy.SchoolYear = ssrd6.SchoolYear
-	

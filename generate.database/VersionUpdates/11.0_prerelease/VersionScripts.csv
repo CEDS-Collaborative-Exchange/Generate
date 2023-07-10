@@ -59,6 +59,8 @@ Views\\Drop,RDS.vwDimK12StudentStatuses.View.sql,0
 Views\\Drop,RDS.vwDimProgramStatuses.View.sql,0
 Views\\Drop,RDS.vwDimLanguages.View.sql,0
 Views\\Create,RDS.vwDimLanguages.View.sql,0
+Views\\Drop,RDS.vwDimK12AcademicAwardStatuses.View.sql,0
+Views\\Create,RDS.vwDimK12AcademicAwardStatuses.View.sql,0
 Views\\Drop,RDS.vwDimCteStatuses.View.sql,0
 Views\\Create,RDS.vwDimCteStatuses.View.sql,0
 Views\\Drop,RDS.vwDimDisabilityStatuses.View.sql,0
@@ -111,6 +113,8 @@ StoredProcedures\\Drop,App.Wrapper_Migrate_Discipline_to_RDS.StoredProcedure.sql
 StoredProcedures\\Create,App.Wrapper_Migrate_Discipline_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_Dropout_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_Dropout_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Wrapper_Migrate_Exiting_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Wrapper_Migrate_Exiting_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_GradRate_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_GradRate_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_HSGradEnroll_to_RDS.StoredProcedure.sql,0
