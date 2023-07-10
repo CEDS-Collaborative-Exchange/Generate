@@ -1,4 +1,7 @@
 --add the remaining domains to the table
+delete from app.generatereportgroups
+where ReportGroupId in (8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+
 insert into app.generatereportgroups
 values 
 (8,'ChronicAbsenteeism'),
