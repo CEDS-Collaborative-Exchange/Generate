@@ -42,16 +42,11 @@ CREATE VIEW RDS.vwDimK12StaffStatuses AS
 		AND rsy.SchoolYear = sssrd4.SchoolYear
 --NEW ELEMENT ADDED BY OSC, TICKET #346, DON'T KNOW THE NAME OF THE REF TABLE
 	-- LEFT JOIN staging.SourceSystemReferenceData sssrd6
-	-- 	ON rdkss.SpecialEducationAgeGroupTaughtCode = sssrd6.OutputCode
+	-- 	ON rdkss.SpecialEducationTeacherQualificationStatusCode = sssrd6.OutputCode
 	-- 	AND sssrd6.TableName = 'RefSpecialEducationTeacherQualificationStatus'
 	-- 	AND rsy.SchoolYear = sssrd6.SchoolYear
 
 
---gotta think this one through
-	-- LEFT JOIN staging.SourceSystemReferenceData sssrd4
-	-- 	ON rdkss.EmergencyOrProvisionalCredentialStatusCode = sssrd4.OutputCode
-	-- 	AND sssrd4.TableName = 'RefEmergencyOrProvisionalCredentialStatus'
-	-- 	AND rsy.SchoolYear = sssrd4.SchoolYear
 
 
 

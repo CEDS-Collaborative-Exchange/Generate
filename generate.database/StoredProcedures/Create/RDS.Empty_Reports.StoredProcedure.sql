@@ -49,14 +49,14 @@ begin try
 		end	
 		else if @factTypeCode = 'directory'
 		begin
-			delete from rds.ReportEdFactsOrganizationCounts where ReportCode in (
+			delete from rds.ReportEDFactsOrganizationCounts where ReportCode in (
 					select ReportCode from app.GenerateReports r
 					where r.ReportCode in ('c029','c039','c129','c130','c193','c190','c196','c197','c198','c103','c131','c205','c206','c163', 'c170', 'c035', 'c207') and r.IsLocked=1)
 					and ReportYear = @selectedReportYear
 		end
 		else if @factTypeCode = 'organizationstatus'
 		begin
-			delete from rds.ReportEdFactsOrganizationCounts where ReportCode in (
+			delete from rds.ReportEDFactsOrganizationStatusCounts where ReportCode in (
 					select ReportCode from app.GenerateReports r
 					where r.ReportCode in ('c199', 'c201', 'c200', 'c202') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end

@@ -78,10 +78,10 @@ BEGIN
 		select StateANSICode,
 							StateCode,
 							StateName,
-							OrganizationNcesId,
-							OrganizationStateId,
+							OrganizationIdentifierNces,
+							OrganizationIdentifierSea,
 							OrganizationName,
-							ParentOrganizationStateId,
+							ParentOrganizationIdentifierSea,
 							EDUCENV,
 							SUM(StudentCount)
 							
@@ -91,10 +91,10 @@ BEGIN
 		group by StateANSICode,
 							StateCode,
 							StateName,
-							OrganizationNcesId,
-							OrganizationStateId,
+							OrganizationIdentifierNces,
+							OrganizationIdentifierSea,
 							OrganizationName,
-							ParentOrganizationStateId, 
+							ParentOrganizationIdentifierSea, 
 							EDUCENV
 		'
 	DECLARE @rowField as nvarchar(100)

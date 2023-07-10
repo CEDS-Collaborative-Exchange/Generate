@@ -12,6 +12,11 @@ SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE Dimen
 Update app.Dimensions SET DimensionTableId = @dimensionTableId, DimensionFieldName = 'ProgramParticipationFosterCare'
 WHERE DimensionFieldName = 'FosterCareProgram'
 
+SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimK12StaffStatuses'
+Update app.Dimensions SET DimensionTableId = @dimensionTableId, DimensionFieldName = 'TeachingCredentialType'
+WHERE DimensionFieldName = 'EmergencyOrProvisionalCredentialStatus'
+
+
 SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimImmigrantStatuses'
 Update app.Dimensions SET DimensionTableId = @dimensionTableId WHERE DimensionFieldName = 'TitleIIIImmigrantParticipationStatus'
 
@@ -198,3 +203,12 @@ ELSE
 BEGIN
     Update app.Category_Dimensions set dimensionId = @dimensionId where CategoryId = @categoryId
 END
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PlacementStatus'
+DELETE FROM app.Category_Dimensions WHERE DimensionId = @dimensionId
+DELETE FROM app.Dimensions WHERE DimensionId = @dimensionId
+
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PlacementType'
+DELETE FROM app.Category_Dimensions WHERE DimensionId = @dimensionId
+DELETE FROM app.Dimensions WHERE DimensionId = @dimensionId
