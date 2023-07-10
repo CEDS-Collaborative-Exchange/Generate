@@ -239,7 +239,6 @@ BEGIN
 							, [MailingAddressStreet]
 							, [OperationalStatus]
 							, [OperationalStatusId]
-							, [OrganizationId]
 							, [OrganizationCount]
 							, [OrganizationId]
 							, [OrganizationName]
@@ -277,7 +276,6 @@ BEGIN
 							, latestLea.MailingAddressStreetNumberAndName
 							, syLea.LeaOperationalStatusEdFactsCode
 							, syLea.LeaOperationalStatusEdFactsCode as OperationalStatusId
-							, fact.LeaId
 							, 1 as OrganizationCount
 							, latestLea.DimLeaID
 							, latestLea.LeaOrganizationName as OrganizationName
@@ -361,7 +359,6 @@ BEGIN
 							, [NSLPSTATUS]
 							, [OperationalStatus]
 							, [OperationalStatusId]
-							, [OrganizationId]
 							, [OrganizationCount]
 							, [OrganizationId]
 							, [OrganizationName]
@@ -409,7 +406,6 @@ BEGIN
 							, schStatus.NSLPStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode as OperationalStatusId
-							, fact.K12SchoolId
 							, 1 as OrganizationCount
 							, latestSchool.DimK12SchoolId
 							, latestSchool.NameOfInstitution as OrganizationName 

@@ -5287,10 +5287,17 @@ BEGIN
 
 			--create the table with the insert
 			declare @debugTableCreate nvarchar(max)
-			IF @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') BEGIN
+			IF @reportCode IN ('C059', 'C070', 'C099', 'C112') 
+			BEGIN
+				set @debugTableCreate = '		select s.StaffMemberIdentifierState '
+			END 
+			ELSE IF @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
+			BEGIN
+				set @debugTableCreate = '		select K12StudentStudentIdentifierState '   
+			END 
+			ELSE  
+			BEGIN
 				set @debugTableCreate = '		select s.K12StudentStudentIdentifierState ' 
-			END ELSE BEGIN
-				set @debugTableCreate = '		select s.StaffMemberIdentifierState '  
 			END 
 
 			--set the LEA field in the select if necessary
