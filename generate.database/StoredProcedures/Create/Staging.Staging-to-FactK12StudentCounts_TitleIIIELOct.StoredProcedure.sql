@@ -14,6 +14,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
+		IF OBJECT_ID(N'tempdb..#vwTitleIIIStatuses') IS NOT NULL DROP TABLE #vwTitleIIIStatuses
 		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
 		IF OBJECT_ID(N'tempdb..#vwUnduplicatedRaceMap') IS NOT NULL DROP TABLE #vwUnduplicatedRaceMap
 		IF OBJECT_ID(N'tempdb..#vwEnglishLearnerStatuses') IS NOT NULL DROP TABLE #vwEnglishLearnerStatuses
@@ -49,6 +50,13 @@ BEGIN
 
 
 	--Create the temp tables (and any relevant indexes) needed for this domain
+
+
+		
+		select * into #vwTitleIIIStatuses
+		from rds.vwDimTitleIIIStatuses 
+		where SchoolYear = @SchoolYear
+
 		SELECT *
 		INTO #vwGradeLevels
 		FROM RDS.vwDimGradeLevels
@@ -162,7 +170,7 @@ BEGIN
 			, -1										MigrantStatusId						
 			--, -1										K12StudentStatusId					
 			, -1										TitleIStatusId						
-			, -1										TitleIIIStatusId						
+			, isnull(TitleIII.DimTitleIIIStatusId, -1)	TitleIIIStatusId						
 			, -1										AttendanceId							
 			, -1										CohortStatusId						
 			, -1 										NOrDStatusId							
@@ -177,6 +185,8 @@ BEGIN
 			, -1										SpecialEducationServicesExitDateId	
 			, -1										MigrantStudentQualifyingArrivalDateId	
 			, -1										LastQualifyingMoveDateId				
+		
+		
 		FROM Staging.K12Enrollment ske
 
 		JOIN RDS.DimSchoolYears rsy
@@ -251,8 +261,30 @@ BEGIN
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
+
+	-- TitleIII Status
+		LEFT JOIN Staging.ProgramParticipationTitleIII sppt3
+			ON ske.StudentIdentifierState = sppt3.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppt3.LeaIdentifierSeaAccountability, '') 
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppt3.SchoolIdentifierSea, '')
+
+		LEFT JOIN #vwTitleIIIStatuses TitleIII
+			on ISNULL(TitleIII.TitleIIIImmigrantParticipationStatusMap, TitleIIIImmigrantParticipationStatusCode) = 
+			ISNULL(sppt3.TitleIIIImmigrantStatus, -1)
+			AND
+			ISNULL(TitleIII.TitleIIILanguageInstructionProgramTypeMap, TitleIII.TitleIIILanguageInstructionProgramTypeCode) = 
+			ISNULL(sppt3.TitleIIILanguageInstructionProgramType, 'MISSING')
+			AND
+			ISNULL(TitleIII.ProficiencyStatusMap, TitleIII.ProficiencyStatusCode) = 
+			ISNULL(sppt3.Proficiency_TitleIII, 'MISSING')
+			AND
+			ISNULL(TitleIII.TitleIIIAccountabilityProgressStatusMap, TitleIII.TitleIIIAccountabilityProgressStatusCode) = 
+			ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING')
+			AND TitleIII.ProgramParticipationTitleIIILiepCode = 'MISSING'
+
 		WHERE ske.EnrollmentEntryDate  <= @ReportingDate
 		AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) >= @ReportingDate
+
 
 		--Final insert into RDS.FactK12StudentCounts table 
 		INSERT INTO RDS.FactK12StudentCounts (
@@ -334,3 +366,4 @@ BEGIN
 	END CATCH
 
 END
+

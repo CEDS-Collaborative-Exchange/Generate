@@ -1963,8 +1963,10 @@ BEGIN
 		end
 		else if @reportCode in ('c116')
 		begin
-			set @reportFilterJoin = 'inner join rds.DimTitleIIIStatuses titleIII on fact.TitleIIIStatusId = titleIII.DimTitleIIIStatusId'
-			set @reportFilterCondition = 'and titleIII.TitleIIILanguageInstructionCode <> ''MISSING'''
+			set @reportFilterJoin = 'inner join RDS.DimPeople rules
+										on rules.DimPersonId = fact.K12StudentId
+									inner join rds.DimTitleIIIStatuses titleIII on fact.TitleIIIStatusId = titleIII.DimTitleIIIStatusId'
+			set @reportFilterCondition = 'and titleIII.TitleIIILanguageInstructionProgramTypeCode <> ''MISSING'''
 		end
 
 		else if @reportCode in ('c157')

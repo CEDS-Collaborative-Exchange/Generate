@@ -18,6 +18,7 @@ VersionUpdates\\11.0_prerelease\V11Upgrade,Metadata-DimensionTable-Updates.sql,0
 VersionUpdates\\11.0_prerelease\V11Upgrade,Metadata-Fact-Dimension-Table-Updates.sql,0
 VersionUpdates\\11.0_prerelease\V11Upgrade,Metadata-Dimension-Updates.sql,0
 VersionUpdates\\11.0_prerelease\V11Upgrade,Metadata-FileColumn-Dimension-Updates.sql,0
+VersionUpdates\\11.0_prerelease\V11Upgrade,PopulateNewSSRDValues.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
 Tables\\Drop,Staging.StagingValidationRules.Table.sql,0
 Tables\\Create,Staging.StagingValidationRules.Table.sql,0
