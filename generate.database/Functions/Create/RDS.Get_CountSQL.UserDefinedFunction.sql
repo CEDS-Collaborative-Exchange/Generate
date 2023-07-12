@@ -1980,7 +1980,7 @@ BEGIN
 			inner join RDS.DimIdeaStatuses CAT_IdeaEducationalEnvironment on fact.IdeaStatusId = CAT_IdeaEducationalEnvironment.DimIdeaStatusId																									
 			'
 			set @reportFilterCondition = ' 
-			and CAT_IdeaEducationalEnvironment.IdeaEducationalEnvironmentCode <> ''PPPS''
+			and CAT_IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 			and CAT_IdeaEducationalEnvironment.IdeaIndicatorCode = ''IDEA'''
 		end
 		else if @reportCode in ('c144')
@@ -1991,7 +1991,7 @@ BEGIN
 			'
 			set @reportFilterCondition = ' 
 			and (CAT_DisciplinaryActionTaken.DisciplinaryActionTakenEdFactsCode IN (''03086'', ''03087''))
-			and CAT_IdeaEducationalEnvironment.IdeaEducationalEnvironmentCode <> ''PPPS'''
+			and CAT_IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS'''
 		end
 
 		-- Filter facts based on report
@@ -2126,7 +2126,7 @@ BEGIN
 					on fact.IdeaStatusId = idea.DimIdeaStatusId
 				inner join rds.DimDisciplineStatuses dd 
 					on dd.DimDisciplineStatusId = fact.DisciplineStatusId
-				where idea.IdeaEducationalEnvironmentCode <> ''PPPS''
+				where idea.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 					and idea.IdeaIndicatorCode = ''IDEA''
 					and dd.IdeaInterimRemovalCode in (''REMDW'', ''REMHO'')
 					and Students.K12StudentStudentIdentifierState IS NULL
@@ -2176,7 +2176,7 @@ BEGIN
 					on fact.IdeaStatusId = idea.DimIdeaStatusId
 				inner join rds.DimDisciplineStatuses dd 
 					on dd.DimDisciplineStatusId = fact.DisciplineStatusId
-				where idea.IdeaEducationalEnvironmentCode <> ''PPPS''
+				where idea.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 					and idea.IdeaIndicatorCode = ''IDEA'' 
 					and d.IdeaInterimRemovalCode = ''REMDW''
 					and Students.K12StudentStudentIdentifierState IS NULL
@@ -2235,8 +2235,8 @@ BEGIN
 				inner join rds.DimIdeaStatuses idea 
 					on fact.IdeaStatusId = idea.DimIdeaStatusId
 				where idea.SpecialEducationExitReasonEdFactsCode <> ''MISSING''
-				and idea.IdeaEducationalEnvironmentEdFactsCode <> ''PPPS''
-				group by fact.K12StudentId, idea.DimIdeaStatusId, lea.DimLeaId 
+				and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode <> ''PPPS''
+				group by fact.K12StudentId, p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId 
 			) rules 
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.IdeaStatusId = rules.DimIdeaStatusId 
@@ -2430,7 +2430,7 @@ BEGIN
 					on fact.IdeaStatusId = idea.DimIdeaStatusId
 				inner join rds.DimDisciplineStatuses dis 
 					on fact.DisciplineStatusId = dis.DimDisciplineStatusId
-				where idea.IdeaEducationalEnvironmentCode <> ''PPPS''
+				where idea.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 					and idea.IdeaIndicatorCode = ''IDEA''
 					and dis.IdeaInterimRemovalEDFactsCode NOT IN (''REMDW'', ''REMHO'')
 			) rules 
@@ -2630,7 +2630,7 @@ BEGIN
 					on fact.IdeaStatusId = idea.DimIdeaStatusId
 				inner join rds.DimGradeLevels grades 
 					on fact.GradeLevelId = grades.DimGradeLevelId
-                where idea.IdeaEducationalEnvironmentCode <> ''PPPS''
+                where idea.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 					and ((idea.IDEAIndicatorCode = ''IDEA'' 
 							and age.AgeValue >= 3 and age.AgeValue <= 21)
 							or (idea.IDEAIndicatorCode = ''MISSING'' 
@@ -2730,7 +2730,7 @@ BEGIN
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
 				inner join rds.DimIdeaStatuses ideaStatus 
 					on fact.IdeaStatusId = ideaStatus.DimIdeaStatusId
-				where ideaStatus.IdeaEducationalEnvironmentCode <> ''MISSING''
+				where ideaStatus.IdeaEducationalEnvironmentForSchoolAgeCode <> ''MISSING''
 			) rules 
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.IdeaStatusId = rules.DimIdeaStatusId'
@@ -4371,6 +4371,7 @@ BEGIN
 								when @reportLevel = 'lea' then 'DimLeaId int,' 
 								else 'DimK12SchoolId int,'
 						end + 'DimStudentId int'  + @sqlCategoryFieldDefs + ',
+						K12StudentStudentIdentifierState VARCHAR(60),
 						SpecialEducationServicesExitDate datetime,
 						' + @factField + ' int,
 
@@ -4394,11 +4395,11 @@ BEGIN
 						(' + case when @reportLevel = 'sea' then 'DimSeaId,'
 									when @reportLevel = 'lea' then 'DimLeaId,' 
 									else 'DimK12SchoolId,'
-							end + 'DimStudentId'  + @sqlCategoryFields + ', SpecialEducationServicesExitDate, ' + @factField + ')
+							end + 'DimStudentId, K12StudentStudentIdentifierState'  + @sqlCategoryFields + ', SpecialEducationServicesExitDate, ' + @factField + ')
 						select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 											when @reportLevel = 'lea' then 'fact.LeaId,' 
 											else 'fact.K12SchoolId,'
-							end + 'fact.K12StudentId' + @sqlCategoryQualifiedDimensionFields + ',
+							end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
 							exitDate.DateValue as SpecialEducationServicesExitDate,
 						sum(isnull(fact.' + @factField + ', 0))
 						from rds.' + @factTable + ' fact ' + @sqlCountJoins 
@@ -4411,7 +4412,7 @@ BEGIN
 						' group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 											when @reportLevel = 'lea' then 'fact.LeaId,'
 											else 'fact.K12SchoolId,'
-											end + 'fact.K12StudentId'  + @sqlCategoryQualifiedDimensionGroupFields + ',
+											end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState'  + @sqlCategoryQualifiedDimensionGroupFields + ',
 											exitDate.DateValue
 						' + @sqlHavingClause + '
 						'

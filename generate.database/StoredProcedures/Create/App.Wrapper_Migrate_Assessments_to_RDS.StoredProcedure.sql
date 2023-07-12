@@ -11,30 +11,30 @@ BEGIN
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start MigrateDimStudents')
 
-		--Populate DimStudents
-		exec [rds].[Migrate_DimK12Students]
+		-- --Populate DimStudents
+		-- exec [rds].[Migrate_DimK12Students]
 
-			--write out message to DataMigrationHistories
-			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate_DimSeas')
+		-- 	--write out message to DataMigrationHistories
+		-- 	insert into app.DataMigrationHistories
+		-- 	(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate_DimSeas')
 
-		--Populate DimSeas
-		exec [rds].[Migrate_DimSeas] 'directory', NULL, 0
+		-- --Populate DimSeas
+		-- exec [rds].[Migrate_DimSeas] 'directory', NULL, 0
 
-			--write out message to DataMigrationHistories
+		-- 	--write out message to DataMigrationHistories
 
-			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate_DimLeas')
+		-- 	insert into app.DataMigrationHistories
+		-- 	(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate_DimLeas')
 
-		--Populate DimLeas
-		exec [rds].[Migrate_DimLeas] 'directory', NULL, 0
+		-- --Populate DimLeas
+		-- exec [rds].[Migrate_DimLeas] 'directory', NULL, 0
 
-			--write out message to DataMigrationHistories
-			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate_DimK12Schools')
+		-- 	--write out message to DataMigrationHistories
+		-- 	insert into app.DataMigrationHistories
+		-- 	(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate_DimK12Schools')
 
-		--Populate DimK12Schools
-		exec [rds].[Migrate_DimK12Schools] NULL, 0
+		-- --Populate DimK12Schools
+		-- exec [rds].[Migrate_DimK12Schools] NULL, 0
 
 /* Data Population not required for reporting code
 			--write out message to DataMigrationHistories

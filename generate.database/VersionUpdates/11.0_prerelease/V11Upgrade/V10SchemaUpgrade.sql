@@ -10302,10 +10302,6 @@
 		[ImmigrantStatusId]                     INT CONSTRAINT [DF_FactK12StudentCounts_ImmigrantStatusId] DEFAULT ((-1)) NOT NULL,
 		[K12DemographicId]                      INT CONSTRAINT [DF_FactK12StudentCounts_K12Demographic] DEFAULT ((-1)) NOT NULL,
 		[K12EnrollmentStatusId]                 INT CONSTRAINT [DF_FactK12StudentCounts_EnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
-<<<<<<< HEAD
-=======
---		[K12StudentStatusId]                    INT CONSTRAINT [DF_FactK12StudentCounts_K12StudentStatusId] DEFAULT ((-1)) NOT NULL,
->>>>>>> develop
 		[K12AcademicAwardStatusId]              INT CONSTRAINT [DF_FactK12StudentCounts_K12AcademicAwardStatusId] DEFAULT ((-1)) NOT NULL,
 		[LanguageId]                            INT CONSTRAINT [DF_FactK12StudentCounts_LanguageId] DEFAULT ((-1)) NOT NULL,
 		[MigrantStatusId]                       INT CONSTRAINT [DF_FactK12StudentCounts_MigrantStatusId] DEFAULT ((-1)) NOT NULL,
@@ -10547,14 +10543,6 @@
 	
 	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_K12EnrollmentStatusId]
 		ON [RDS].[FactK12StudentCounts]([K12EnrollmentStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
-
-	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IXFK_FactK12StudentCounts_K12AcademicAwardStatusId]...';
-
-
-	
-	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentCounts_K12AcademicAwardStatusId]
-		ON [RDS].[FactK12StudentCounts]([K12AcademicAwardStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 	
@@ -12335,6 +12323,7 @@
 		[FactPsStudentEnrollmentId]    BIGINT IDENTITY (1, 1) NOT NULL,
 		[DataCollectionId]             INT    CONSTRAINT [DF_FactPsStudentEnrollments_DataCollectionId] DEFAULT ((-1)) NOT NULL,
 		[SchoolYearId]                 INT    CONSTRAINT [DF_FactPsStudentEnrollments_SchoolYearId] DEFAULT ((-1)) NOT NULL,
+    	[CountDateId]                  INT    CONSTRAINT [DF_FactPsStudentEnrollments_CountDateId] DEFAULT (-1) NOT NULL,
 		[PsInstitutionID]              INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionId] DEFAULT ((-1)) NOT NULL,
 		[PsStudentId]                  BIGINT    CONSTRAINT [DF_FactPsStudentEnrollments_PsStudentId] DEFAULT ((-1)) NOT NULL,
 		[AcademicTermDesignatorId]     INT    CONSTRAINT [DF_FactPsStudentEnrollments_AcademicTermDesignatorId] DEFAULT ((-1)) NOT NULL,
@@ -19712,15 +19701,6 @@
 
 
 
-	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_K12AcademicAwardStatusId]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StudentCounts_K12AcademicAwardStatusId] FOREIGN KEY ([K12AcademicAwardStatusId]) REFERENCES [RDS].[DimK12AcademicAwardStatuses] ([DimK12AcademicAwardStatusId]);
-
-
-	
 	PRINT N'Creating Foreign Key [RDS].[FK_FactK12StudentCounts_K12SchoolId]...';
 
 

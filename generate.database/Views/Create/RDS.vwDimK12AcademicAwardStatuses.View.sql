@@ -1,7 +1,7 @@
 create VIEW RDS.vwDimK12AcademicAwardStatuses
 AS
 	SELECT
-		  DimK12AcademicAwardStatusesId
+		  DimK12AcademicAwardStatusId
 		, rsy.SchoolYear
 		, HighSchoolDiplomaTypeCode
 		, ISNULL(sssrd1.InputCode, 'MISSING') AS SexMap

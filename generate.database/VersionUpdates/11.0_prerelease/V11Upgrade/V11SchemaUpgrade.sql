@@ -307,6 +307,21 @@ ON [Staging].[K12Organization] ([School_RecordStartDateTime])
 INCLUDE ([SchoolIdentifierSea],[School_TitleIPartASchoolDesignation],[School_RecordEndDateTime])
 
 
+PRINT N'Create Index IX_Staging_K12Organization_LEA_IsReportedFederally';
+
+
+CREATE NONCLUSTERED INDEX [IX_Staging_K12Organization_LEA_IsReportedFederally]
+ON [Staging].[K12Organization] ([LEA_IsReportedFederally])
+INCLUDE ([LeaIdentifierSea])
+
+
+PRINT N'Create Index IX_Staging_ProgramParticipationSpecialEducation_StudentIdentifierState_LeaIdentifierSeaAccountability';
+
+
+CREATE NONCLUSTERED INDEX [IX_Staging_ProgramParticipationSpecialEducation_StudentIdentifierState_LeaIdentifierSeaAccountability]
+ON [Staging].[ProgramParticipationSpecialEducation] ([StudentIdentifierState],[LeaIdentifierSeaAccountability])
+INCLUDE ([ProgramParticipationEndDate])
+
 PRINT N'Rename [RDS].[DimResponsibleSchoolTypes].[ResponsibleSchoolTypeCode] to ResponsibleSchoolTypeAccountability';
 
 
@@ -6026,145 +6041,145 @@ The column [RDS].[FactPsStudentAcademicRecords].[CountDateId] is being dropped, 
 
 
 
-PRINT N'Starting rebuilding table [RDS].[FactPsStudentEnrollments]...';
+-- PRINT N'Starting rebuilding table [RDS].[FactPsStudentEnrollments]...';
 
 
 
 
-CREATE TABLE [RDS].[tmp_ms_xx_FactPsStudentEnrollments] (
-    [FactPsStudentEnrollmentId]    BIGINT IDENTITY (1, 1) NOT NULL,
-    [DataCollectionId]             INT    CONSTRAINT [DF_FactPsStudentEnrollments_DataCollectionId] DEFAULT (-1) NOT NULL,
-    [SchoolYearId]                 INT    CONSTRAINT [DF_FactPsStudentEnrollments_SchoolYearId] DEFAULT (-1) NOT NULL,
-    [CountDateId]                  INT    CONSTRAINT [DF_FactPsStudentEnrollments_CountDateId] DEFAULT (-1) NOT NULL,
-    [PsInstitutionID]              INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionId] DEFAULT (-1) NOT NULL,
-    [PsStudentId]                  BIGINT CONSTRAINT [DF_FactPsStudentEnrollments_PsStudentId] DEFAULT (-1) NOT NULL,
-    [AcademicTermDesignatorId]     INT    CONSTRAINT [DF_FactPsStudentEnrollments_AcademicTermDesignatorId] DEFAULT (-1) NOT NULL,
-    [EntryDateIntoPostSecondaryId] INT    CONSTRAINT [DF_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId] DEFAULT (-1) NOT NULL,
-    [EnrollmentEntryDateId]        INT    CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentEntryDateId] DEFAULT (-1) NOT NULL,
-    [EnrollmentExitDateId]         INT    CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentExitDateId] DEFAULT (-1) NOT NULL,
-    [PsEnrollmentStatusId]         BIGINT CONSTRAINT [DF_FactPsStudentEnrollments_PsEnrollmentStatusId] DEFAULT (-1) NOT NULL,
-    [PsInstitutionStatusId]        INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionStatusId] DEFAULT (-1) NOT NULL,
-    [StudentCount]                 INT    CONSTRAINT [DF_FactPsStudentEnrollments_StudentCount] DEFAULT (1) NOT NULL,
-    CONSTRAINT [tmp_ms_xx_constraint_PK_FactPsStudentEnrollments1] PRIMARY KEY CLUSTERED ([FactPsStudentEnrollmentId] ASC) WITH (DATA_COMPRESSION = PAGE)
-);
+-- CREATE TABLE [RDS].[tmp_ms_xx_FactPsStudentEnrollments] (
+--     [FactPsStudentEnrollmentId]    BIGINT IDENTITY (1, 1) NOT NULL,
+--     [DataCollectionId]             INT    CONSTRAINT [DF_FactPsStudentEnrollments_DataCollectionId] DEFAULT (-1) NOT NULL,
+--     [SchoolYearId]                 INT    CONSTRAINT [DF_FactPsStudentEnrollments_SchoolYearId] DEFAULT (-1) NOT NULL,
+--     [CountDateId]                  INT    CONSTRAINT [DF_FactPsStudentEnrollments_CountDateId] DEFAULT (-1) NOT NULL,
+--     [PsInstitutionID]              INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionId] DEFAULT (-1) NOT NULL,
+--     [PsStudentId]                  BIGINT CONSTRAINT [DF_FactPsStudentEnrollments_PsStudentId] DEFAULT (-1) NOT NULL,
+--     [AcademicTermDesignatorId]     INT    CONSTRAINT [DF_FactPsStudentEnrollments_AcademicTermDesignatorId] DEFAULT (-1) NOT NULL,
+--     [EntryDateIntoPostSecondaryId] INT    CONSTRAINT [DF_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId] DEFAULT (-1) NOT NULL,
+--     [EnrollmentEntryDateId]        INT    CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentEntryDateId] DEFAULT (-1) NOT NULL,
+--     [EnrollmentExitDateId]         INT    CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentExitDateId] DEFAULT (-1) NOT NULL,
+--     [PsEnrollmentStatusId]         BIGINT CONSTRAINT [DF_FactPsStudentEnrollments_PsEnrollmentStatusId] DEFAULT (-1) NOT NULL,
+--     [PsInstitutionStatusId]        INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionStatusId] DEFAULT (-1) NOT NULL,
+--     [StudentCount]                 INT    CONSTRAINT [DF_FactPsStudentEnrollments_StudentCount] DEFAULT (1) NOT NULL,
+--     CONSTRAINT [tmp_ms_xx_constraint_PK_FactPsStudentEnrollments1] PRIMARY KEY CLUSTERED ([FactPsStudentEnrollmentId] ASC) WITH (DATA_COMPRESSION = PAGE)
+-- );
 
-IF EXISTS (SELECT TOP 1 1 
-           FROM   [RDS].[FactPsStudentEnrollments])
-    BEGIN
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactPsStudentEnrollments] ON;
-        INSERT INTO [RDS].[tmp_ms_xx_FactPsStudentEnrollments] ([FactPsStudentEnrollmentId], [DataCollectionId], [SchoolYearId], [PsInstitutionID], [PsStudentId], [AcademicTermDesignatorId], [EntryDateIntoPostSecondaryId], [EnrollmentEntryDateId], [EnrollmentExitDateId], [PsEnrollmentStatusId], [PsInstitutionStatusId], [StudentCount])
-        SELECT   [FactPsStudentEnrollmentId],
-                 [DataCollectionId],
-                 [SchoolYearId],
-                 [PsInstitutionID],
-                 [PsStudentId],
-                 [AcademicTermDesignatorId],
-                 [EntryDateIntoPostSecondaryId],
-                 [EnrollmentEntryDateId],
-                 [EnrollmentExitDateId],
-                 [PsEnrollmentStatusId],
-                 [PsInstitutionStatusId],
-                 [StudentCount]
-        FROM     [RDS].[FactPsStudentEnrollments]
-        ORDER BY [FactPsStudentEnrollmentId] ASC;
-        SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactPsStudentEnrollments] OFF;
-    END
+-- IF EXISTS (SELECT TOP 1 1 
+--            FROM   [RDS].[FactPsStudentEnrollments])
+--     BEGIN
+--         SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactPsStudentEnrollments] ON;
+--         INSERT INTO [RDS].[tmp_ms_xx_FactPsStudentEnrollments] ([FactPsStudentEnrollmentId], [DataCollectionId], [SchoolYearId], [PsInstitutionID], [PsStudentId], [AcademicTermDesignatorId], [EntryDateIntoPostSecondaryId], [EnrollmentEntryDateId], [EnrollmentExitDateId], [PsEnrollmentStatusId], [PsInstitutionStatusId], [StudentCount])
+--         SELECT   [FactPsStudentEnrollmentId],
+--                  [DataCollectionId],
+--                  [SchoolYearId],
+--                  [PsInstitutionID],
+--                  [PsStudentId],
+--                  [AcademicTermDesignatorId],
+--                  [EntryDateIntoPostSecondaryId],
+--                  [EnrollmentEntryDateId],
+--                  [EnrollmentExitDateId],
+--                  [PsEnrollmentStatusId],
+--                  [PsInstitutionStatusId],
+--                  [StudentCount]
+--         FROM     [RDS].[FactPsStudentEnrollments]
+--         ORDER BY [FactPsStudentEnrollmentId] ASC;
+--         SET IDENTITY_INSERT [RDS].[tmp_ms_xx_FactPsStudentEnrollments] OFF;
+--     END
 
-DROP TABLE [RDS].[FactPsStudentEnrollments];
+-- DROP TABLE [RDS].[FactPsStudentEnrollments];
 
-EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactPsStudentEnrollments]', N'FactPsStudentEnrollments';
+-- EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactPsStudentEnrollments]', N'FactPsStudentEnrollments';
 
-EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactPsStudentEnrollments1]', N'PK_FactPsStudentEnrollments', N'OBJECT';
+-- EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactPsStudentEnrollments1]', N'PK_FactPsStudentEnrollments', N'OBJECT';
 
 
 
-PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_SchoolYearId]...';
+-- PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_SchoolYearId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_SchoolYearId]
-    ON [RDS].[FactPsStudentEnrollments]([SchoolYearId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+-- CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_SchoolYearId]
+--     ON [RDS].[FactPsStudentEnrollments]([SchoolYearId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 
-PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_AcademicTermDesignatorId]...';
+-- PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_AcademicTermDesignatorId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_AcademicTermDesignatorId]
-    ON [RDS].[FactPsStudentEnrollments]([AcademicTermDesignatorId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+-- CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_AcademicTermDesignatorId]
+--     ON [RDS].[FactPsStudentEnrollments]([AcademicTermDesignatorId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 
-PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_PsStudentId]...';
+-- PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_PsStudentId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_PsStudentId]
-    ON [RDS].[FactPsStudentEnrollments]([PsStudentId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+-- CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_PsStudentId]
+--     ON [RDS].[FactPsStudentEnrollments]([PsStudentId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 
-PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_PsInstitutionStatusId]...';
+-- PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_PsInstitutionStatusId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_PsInstitutionStatusId]
-    ON [RDS].[FactPsStudentEnrollments]([PsInstitutionStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+-- CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_PsInstitutionStatusId]
+--     ON [RDS].[FactPsStudentEnrollments]([PsInstitutionStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 
-PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_PsInstitutionId]...';
+-- PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_PsInstitutionId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_PsInstitutionId]
-    ON [RDS].[FactPsStudentEnrollments]([PsInstitutionID] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+-- CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_PsInstitutionId]
+--     ON [RDS].[FactPsStudentEnrollments]([PsInstitutionID] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 
-PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_PsEnrollmentStatusId]...';
+-- PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_PsEnrollmentStatusId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_PsEnrollmentStatusId]
-    ON [RDS].[FactPsStudentEnrollments]([PsEnrollmentStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+-- CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_PsEnrollmentStatusId]
+--     ON [RDS].[FactPsStudentEnrollments]([PsEnrollmentStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 
-PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_ExitDateId]...';
+-- PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_ExitDateId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_ExitDateId]
-    ON [RDS].[FactPsStudentEnrollments]([EnrollmentExitDateId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+-- CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_ExitDateId]
+--     ON [RDS].[FactPsStudentEnrollments]([EnrollmentExitDateId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 
-PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_EntryDateId]...';
+-- PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_EntryDateId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_EntryDateId]
-    ON [RDS].[FactPsStudentEnrollments]([EnrollmentEntryDateId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+-- CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_EntryDateId]
+--     ON [RDS].[FactPsStudentEnrollments]([EnrollmentEntryDateId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 
-PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId]...';
+-- PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId]
-    ON [RDS].[FactPsStudentEnrollments]([EntryDateIntoPostSecondaryId] ASC) WITH (DATA_COMPRESSION = PAGE);
+-- CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId]
+--     ON [RDS].[FactPsStudentEnrollments]([EntryDateIntoPostSecondaryId] ASC) WITH (DATA_COMPRESSION = PAGE);
 
 
 
-PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_DataCollectionId]...';
+-- PRINT N'Creating Index [RDS].[FactPsStudentEnrollments].[IXFK_FactPsStudentEnrollments_DataCollectionId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_DataCollectionId]
-    ON [RDS].[FactPsStudentEnrollments]([DataCollectionId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+-- CREATE NONCLUSTERED INDEX [IXFK_FactPsStudentEnrollments_DataCollectionId]
+--     ON [RDS].[FactPsStudentEnrollments]([DataCollectionId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 
@@ -7027,6 +7042,14 @@ EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_K12PersonRace1]', N'PK_K1
 CREATE NONCLUSTERED INDEX [IX_Staging_K12PersonRace_StudentIdentifierState_SchoolYear]
 ON [Staging].[K12PersonRace] ([StudentIdentifierState],[SchoolYear])
 
+CREATE NONCLUSTERED INDEX [IX_Staging_K12PersonRace_SchoolYear_WithIncludes]
+ON [Staging].[K12PersonRace] ([SchoolYear])
+INCLUDE ([RaceType],[RecordStartDateTime],[RecordEndDateTime])
+
+CREATE NONCLUSTERED INDEX [IX_Staging_K12PersonRace_SchoolYear_RecordStartDateTime]
+ON [Staging].[K12PersonRace] ([SchoolYear],[RecordStartDateTime])
+INCLUDE ([RaceType],[RecordEndDateTime])
+
 
 PRINT N'Starting rebuilding table [Staging].[K12ProgramParticipation]...';
 
@@ -7137,6 +7160,14 @@ PRINT N'Creating Index [Staging].[K12ProgramParticipation].[IX_K12ProgramPartici
 CREATE NONCLUSTERED INDEX [IX_K12ProgramParticipation_DataCollectionName_SchoolYear_WithIncludes]
     ON [Staging].[K12ProgramParticipation]([DataCollectionName] ASC, [SchoolYear] ASC)
     INCLUDE([EntryDate], [ExitDate], [LeaIdentifierSeaAccountability], [LeaIdentifierSeaAttendance], [LeaIdentifierSeaFunding], [LeaIdentifierSeaGraduation], [LeaIdentifierSeaIndividualizedEducationProgram], [ProgramType], [SchoolIdentifierSea], [StudentIdentifierState]);
+
+
+PRINT N'Creating Index [Staging].[K12ProgramParticipation].[IX_Staging_ProgramParticipationSpecialEducation_SpecialEducationExitReason]...';
+
+
+CREATE NONCLUSTERED INDEX [IX_Staging_ProgramParticipationSpecialEducation_SpecialEducationExitReason]
+    ON [Staging].[ProgramParticipationSpecialEducation] ([SpecialEducationExitReason])
+    INCLUDE ([StudentIdentifierState],[LeaIdentifierSeaAccountability],[ProgramParticipationEndDate])
 
 
 
