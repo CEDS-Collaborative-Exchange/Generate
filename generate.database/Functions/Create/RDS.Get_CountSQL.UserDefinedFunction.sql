@@ -617,7 +617,7 @@ BEGIN
 				select @sql = @sql + char(10)
 				select @sql = @sql + 
 
-				'select rdks.K12StudentStudentIdentifierState
+				'				select rdks.K12StudentStudentIdentifierState
 				into #Students
 				from RDS.FactK12StudentDisciplines rfksd 
 				inner join rds.DimPeople rdks 
@@ -626,11 +626,13 @@ BEGIN
 					and rfksd.FactTypeId = @dimFactTypeId
 				inner join rds.DimIdeaStatuses rdis 
 					on rfksd.IdeaStatusId = rdis.DimIdeaStatusId
-				inner join rds.DimDisciplineStatuses rdd 
-					on rfksd.DisciplineStatusId = rdd.DimDisciplineStatusId
+				inner join rds.DimDisciplineStatuses rdds 
+					on rfksd.DisciplineStatusId = rdds.DimDisciplineStatusId
 				where rdd.IdeaInterimRemovalCode = ''REMDW''
 					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
-				group by rdks.K12StudentStudentIdentifierState, rdd.IdeaInterimRemovalCode, rdd.IdeaInterimRemovalReasonCode  
+				group by rdks.K12StudentStudentIdentifierState
+					, rdds.IdeaInterimRemovalCode
+					, rdds.IdeaInterimRemovalReasonCode  
 				having sum(rfksd.DurationOfDisciplinaryAction) > 45' + char(10)
 
 			end
@@ -648,9 +650,9 @@ BEGIN
 					and rfksd.FactTypeId = @dimFactTypeId
 				inner join rds.DimIdeaStatuses rdis 
 					on rfksd.IdeaStatusId = rdis.DimIdeaStatusId
-				inner join rds.DimDisciplineStatuses rdd 
-					on rfksd.DisciplineStatusId = rdd.DimDisciplineStatusId
-				where rdd.IdeaInterimRemovalEdFactsCode in (''REMDW'', ''REMHO'')
+				inner join rds.DimDisciplineStatuses rdds 
+					on rfksd.DisciplineStatusId = rdds.DimDisciplineStatusId
+				where rdds.IdeaInterimRemovalEdFactsCode in (''REMDW'', ''REMHO'')
 					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
 				group by rdks.K12StudentStudentIdentifierState 
 				having sum(rfksd.DurationOfDisciplinaryAction) > 45' + char(10)
@@ -1961,8 +1963,10 @@ BEGIN
 		end
 		else if @reportCode in ('c116')
 		begin
-			set @reportFilterJoin = 'inner join rds.DimTitleIIIStatuses titleIII on fact.TitleIIIStatusId = titleIII.DimTitleIIIStatusId'
-			set @reportFilterCondition = 'and titleIII.TitleIIILanguageInstructionCode <> ''MISSING'''
+			set @reportFilterJoin = 'inner join RDS.DimPeople rules
+										on rules.DimPersonId = fact.K12StudentId
+									inner join rds.DimTitleIIIStatuses titleIII on fact.TitleIIIStatusId = titleIII.DimTitleIIIStatusId'
+			set @reportFilterCondition = 'and titleIII.TitleIIILanguageInstructionProgramTypeCode <> ''MISSING'''
 		end
 
 		else if @reportCode in ('c157')
@@ -2512,7 +2516,7 @@ BEGIN
 					FROM RDS.FactK12StudentDisciplines sd 
 					inner join rds.DimIdeaStatuses idea on sd.IdeaStatusId = idea.DimIdeaStatusId
 					inner join rds.DimDisciplines dis on sd.DisciplineId = dis.DimDisciplineId
-					where idea.IdeaEducationalEnvironmentCode <> ''PPPS''
+					where idea.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 					and idea.IdeaIndicatorCode = ''IDEA''
 					and (dis.DisciplineMethodOfChildrenWithDisabilitiesCode <> ''MISSING''
 						or dis.DisciplinaryActionTakenCode IN (''03086'', ''03087'')

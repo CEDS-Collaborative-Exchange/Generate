@@ -8259,7 +8259,7 @@
 
 	SET XACT_ABORT ON;
 
-	CREATE TABLE [RDS].[tmp_ciid_xx_DimCharterSchoolAuthorizers](
+	CREATE TABLE [RDS].[tmp_ciid_xx_DimCharterSchoolAuthorizers] (
 		  [CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea] [nvarchar](max) NULL
 		, [RecordStartDateTime] [datetime] NULL
 		, [RecordEndDateTime] [datetime] NULL
@@ -8267,7 +8267,7 @@
 
 	INSERT INTO [RDS].[tmp_ciid_xx_DimCharterSchoolAuthorizers]
 	SELECT 
-		  [StateIdentifier]
+		[StateIdentifier]
 		, [RecordStartDateTime]
 		, [RecordEndDateTime]
 	FROM [RDS].[DimCharterSchoolAuthorizers]
@@ -8332,7 +8332,7 @@
 					, [OutOfStateIndicator] 
 					, [RecordStartDateTime] 
 					, [RecordEndDateTime]
-					  )
+			)
 			SELECT    MIN([DimCharterSchoolAuthorizerId])
 					, [StateIdentifier]
 					, [StateCode]

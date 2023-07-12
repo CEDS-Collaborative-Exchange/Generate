@@ -1,5 +1,6 @@
-CREATE PROCEDURE Staging.[Staging-to-DimCharterSchoolManagementOrganizations]
- 
+CREATE PROCEDURE [Staging].[Staging-to-DimCharterSchoolManagementOrganizations]
+	@dataCollectionName AS VARCHAR(50) = NULL,
+	@runAsTest AS BIT = 0
 AS   
 
 BEGIN
