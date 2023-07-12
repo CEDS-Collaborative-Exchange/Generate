@@ -3218,8 +3218,7 @@
 		--Insert temporary rows into this dimension for IDEA Interim Removal Reason
 
 		INSERT INTO [RDS].[DimIncidentStatuses] (
-			[DimIncidentStatusId]
-			, [IncidentBehaviorCode]
+			[IncidentBehaviorCode]
 			, [IncidentBehaviorDescription]
 			, [IdeaInterimRemovalReasonCode]
 			, [IdeaInterimRemovalReasonDescription]
