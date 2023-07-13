@@ -26,8 +26,8 @@ BEGIN
 		@FactTypeId INT,
 		@SchoolYearId INT,
 		@SYStartDate DATE,
-		@SYEndDate DATE--,
-		--@ReportingDate DATE
+		@SYEndDate DATE,
+		@ReportingDate DATE
 		
 		SELECT @SchoolYearId = DimSchoolYearId 
 		FROM RDS.DimSchoolYears
@@ -36,18 +36,23 @@ BEGIN
 		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 
-		/* File Spec as of 2023 change this to be School Year - Any 12-month reporting period
-		--Reporting Date is the closest school day to Oct 1 according to the file spec
-		DECLARE @testDate datetime
-		SELECT @testDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + '10-01' AS DATE)
+		/* File Spec as of 2023 change this to be School Year - Any 12-month reporting period 		*/
+
+		if @SchoolYear < 2023
+		BEGIN
+			--Reporting Date is the closest school day to Oct 1 according to the file spec
+			DECLARE @testDate datetime
+			SELECT @testDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + '10-01' AS DATE)
 		
-		SELECT @ReportingDate = 
-			CASE DATEPART(DW, @testDate)
-				WHEN 1 THEN (SELECT DATEADD(day, 1, @testDate))
-				WHEN 7 THEN (SELECT DATEADD(day, -1, @testDate))
-				ELSE @testDate
-			END	
-		*/
+			SELECT @ReportingDate = 
+				CASE DATEPART(DW, @testDate)
+					WHEN 1 THEN (SELECT DATEADD(day, 1, @testDate))
+					WHEN 7 THEN (SELECT DATEADD(day, -1, @testDate))
+					ELSE @testDate
+				END	
+
+			select @SYStartDate = @ReportingDate, @SYEndDate = @ReportingDate
+		END
 
 	--Create the temp tables (and any relevant indexes) needed for this domain
 
@@ -216,8 +221,6 @@ BEGIN
 			and convert(date, ske.EnrollmentEntryDate) = convert(date, rdp.RecordStartDateTime)
 			and isnull(convert(date, ske.EnrollmentExitDate),getdate()) = isnull(convert(date, rdp.RecordEndDateTime), getdate())
 
-			--AND rdp.RecordStartDateTime = ske.EnrollmentEntryDate
-			--and isnull(rdp.RecordEndDateTime, getdate()) = isnull(ske.EnrollmentExitDate, getdate())
 
 	--english learner
 		JOIN Staging.PersonStatus el 
