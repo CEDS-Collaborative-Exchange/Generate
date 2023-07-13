@@ -5141,9 +5141,13 @@ BEGIN
 						select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 										 when @reportLevel = 'lea' then 'fact.LeaId,' 
 										 else 'fact.K12SchoolId,'
-							end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
-						sum(isnull(fact.' + @factField + ', 0))
-						from rds.' + @factTable + ' fact ' + char(10)
+							end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields +
+							case when @ReportCode = 'C116' then
+							',	count(distinct K12StudentId) '
+							else
+							',	sum(isnull(fact.' + @factField + ', 0)) '
+							end +
+						'from rds.' + @factTable + ' fact ' + char(10)
 							if @reportCode = 'C052'
 								begin
 									select @sql = @sql + char(10) +
