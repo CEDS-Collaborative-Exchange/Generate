@@ -102,6 +102,7 @@ Views\\Drop,RDS.vwUnduplicatedRaceMap.View.sql,0
 Views\\Create,RDS.vwUnduplicatedRaceMap.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+StoredProcedures\\Drop,App.Cleanup_Grades_Offered.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql,0
