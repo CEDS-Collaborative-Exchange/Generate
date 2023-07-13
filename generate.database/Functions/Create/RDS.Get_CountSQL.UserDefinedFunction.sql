@@ -5254,7 +5254,7 @@ BEGIN
 		begin
 			set @sumOperation = 'count(distinct cs.dimStudentId )'
 		end
-		else if @reportCode in ('c002', 'c089', 'c005','c006','c086','c088','c144')
+		else if @reportCode in ('c002', 'c089', 'c005','c006','c086','c088','c144', 'C116')
 		begin
 			set @sumOperation = 'count(distinct cs.K12StudentStudentIdentifierState )'
 		end
@@ -5296,17 +5296,21 @@ BEGIN
 			--create the table with the insert
 			declare @debugTableCreate nvarchar(max)
 			IF @reportCode IN ('C059', 'C070', 'C099', 'C112') 
-			BEGIN
-				set @debugTableCreate = '		select s.StaffMemberIdentifierState '
-			END 
+				BEGIN
+					set @debugTableCreate = '		select s.StaffMemberIdentifierState '
+				END 
 			ELSE IF @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
-			BEGIN
-				set @debugTableCreate = '		select K12StudentStudentIdentifierState '   
-			END 
+				BEGIN
+					set @debugTableCreate = '		select K12StudentStudentIdentifierState '   
+				END 
+			ELSE IF @ReportCode = 'C116'
+				BEGIN
+					set @debugTableCreate = '		select DISTINCT s.K12StudentStudentIdentifierState ' 
+				END
 			ELSE  
-			BEGIN
-				set @debugTableCreate = '		select s.K12StudentStudentIdentifierState ' 
-			END 
+				BEGIN
+					set @debugTableCreate = '		select s.K12StudentStudentIdentifierState ' 
+				END 
 
 			--set the LEA field in the select if necessary
 			if @reportLevel	= 'LEA' 

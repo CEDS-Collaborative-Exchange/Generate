@@ -212,6 +212,10 @@ BEGIN
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND rdp.RecordStartDateTime  <= @SYEndDate
 			AND ISNULL(rdp.RecordEndDateTime, @SYEndDate) >= @SYStartDate
+
+			and convert(date, ske.EnrollmentEntryDate) = convert(date, rdp.RecordStartDateTime)
+			and isnull(convert(date, ske.EnrollmentExitDate),getdate()) = isnull(convert(date, rdp.RecordEndDateTime), getdate())
+
 			--AND rdp.RecordStartDateTime = ske.EnrollmentEntryDate
 			--and isnull(rdp.RecordEndDateTime, getdate()) = isnull(ske.EnrollmentExitDate, getdate())
 
