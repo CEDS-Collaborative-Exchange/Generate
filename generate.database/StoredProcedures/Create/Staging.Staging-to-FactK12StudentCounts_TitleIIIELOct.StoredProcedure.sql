@@ -8,7 +8,6 @@ NOTE: This Stored Procedure processes files: 116, 141
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_TitleIIIELOct]
 	@SchoolYear SMALLINT
 AS
-
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
@@ -213,6 +212,8 @@ BEGIN
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND rdp.RecordStartDateTime  <= @SYEndDate
 			AND ISNULL(rdp.RecordEndDateTime, @SYEndDate) >= @SYStartDate
+			--AND rdp.RecordStartDateTime = ske.EnrollmentEntryDate
+			--and isnull(rdp.RecordEndDateTime, getdate()) = isnull(ske.EnrollmentExitDate, getdate())
 
 	--english learner
 		JOIN Staging.PersonStatus el 
@@ -285,8 +286,8 @@ BEGIN
 
 		WHERE ske.EnrollmentEntryDate  <= @SYEndDate
 		AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) >= @SYStartDate
-
-
+		
+		
 		--Final insert into RDS.FactK12StudentCounts table 
 		INSERT INTO RDS.FactK12StudentCounts (
 			[SchoolYearId]
