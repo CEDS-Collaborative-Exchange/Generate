@@ -170,7 +170,7 @@ BEGIN TRY
 			where rdsy.SchoolYear = @SchoolYear
 			and o.ReportedFederally = 1 
 			and o.DimLeaId <> -1 
-			and o.LEAOperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING') AND CONVERT(date, o.OperationalStatusEffectiveDate, 101) between CONVERT(date, '07/01/2022', 101) AND CONVERT(date, '06/30/2023', 101)
+			and o.LEAOperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING') AND CONVERT(date, o.OperationalStatusEffectiveDate, 101) between CONVERT(date, '07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)), 101) AND CONVERT(date, '06/30/' + CAST(@SchoolYear AS VARCHAR(4)), 101)
 
 
 			IF @catchmentArea = 'Districtwide (students moving out of district)' BEGIN
@@ -328,11 +328,9 @@ BEGIN TRY
 					ELSE 'MISSING'
 					END AS EnglishLearnerStatusEdFactsCode
 			FROM Staging.K12Enrollment ske
-			JOIN #stuLea latest
+			left JOIN #stuLea latest
 				ON ske.StudentIdentifierState = latest.StudentIdentifierState
 				AND ske.LeaIdentifierSeaAccountability = latest.LeaIdentifierSeaAccountability
-			JOIN #CAT_Organizations lea
-				ON latest.LeaIdentifierSeaAccountability = lea.LeaIdentifierState				
 			JOIN Staging.ProgramParticipationSpecialEducation sppse
 				ON sppse.StudentIdentifierState = latest.StudentIdentifierState
 				AND sppse.LeaIdentifierSeaAccountability = latest.LeaIdentifierSeaAccountability
@@ -360,13 +358,12 @@ BEGIN TRY
 			WHERE sppse.ProgramParticipationEndDate is not null
 				--AND sppse.IDEAEducationalEnvironmentForSchoolAge <> 'PPPS'
 				AND sppse.SpecialEducationExitReason IS NOT NULL
-				AND ske.SchoolYear = 2023
+				AND ske.SchoolYear = @SchoolYear
 				--and sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate and ISNULL(ske.EnrollmentExitDate, getdate())
-			
+
 
 			DELETE FROM #staging
 			WHERE Age NOT BETWEEN 14 AND 21
-				OR EnglishLearnerStatusEdFactsCode = 'MISSING'
 
 
 			-- Gather, evaluate & record the results
@@ -519,6 +516,7 @@ BEGIN TRY
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC4
 			FROM #staging 
+			WHERE EnglishLearnerStatusEdFactsCode <> 'MISSING'
 			GROUP BY SpecialEducationExitReasonEdFactsCode
 				, EnglishLearnerStatusEdFactsCode
 				
@@ -733,6 +731,7 @@ BEGIN TRY
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC9
 			FROM #staging 
+			WHERE EnglishLearnerStatusEdFactsCode <> 'MISSING'
 			GROUP BY EnglishLearnerStatusEdFactsCode
 				
 			
@@ -868,7 +867,10 @@ BEGIN TRY
 				ON s.IdeaDisabilityTypeEdFactsCode = d.CategoryOptionCode
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
 			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
 				, Age
@@ -925,7 +927,10 @@ BEGIN TRY
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
-			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE s.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
 				, RaceEdFactsCode
@@ -977,7 +982,10 @@ BEGIN TRY
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
 			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 				AND SexEdFactsCode <> 'MISSING'
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
@@ -1029,7 +1037,11 @@ BEGIN TRY
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
 			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
+				AND s.EnglishLearnerStatusEdFactsCode <> 'MISSING'
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
 				, EnglishLearnerStatusEdFactsCode
@@ -1081,7 +1093,10 @@ BEGIN TRY
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
 			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
 				
@@ -1129,7 +1144,10 @@ BEGIN TRY
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
 			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, Age
 				
@@ -1178,7 +1196,10 @@ BEGIN TRY
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
 			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, RaceEdFactsCode
 				
@@ -1227,7 +1248,10 @@ BEGIN TRY
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
 			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 				AND SexEdFactsCode <> 'MISSING'
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, SexEdFactsCode
@@ -1277,7 +1301,11 @@ BEGIN TRY
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
 			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
+				AND s.EnglishLearnerStatusEdFactsCode <> 'MISSING'
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, EnglishLearnerStatusEdFactsCode
 				
@@ -1328,7 +1356,10 @@ BEGIN TRY
 				ON s.IdeaDisabilityTypeEdFactsCode = d.CategoryOptionCode
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
 			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, IdeaDisabilityTypeEdFactsCode
 				
@@ -1374,7 +1405,10 @@ BEGIN TRY
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
 			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 			GROUP BY s.LeaIdentifierSeaAccountability
 			
 			
@@ -1421,7 +1455,6 @@ BEGIN TRY
 
 	CLOSE db_cursor  
 	DEALLOCATE db_cursor
-
 
 	COMMIT TRANSACTION
 
