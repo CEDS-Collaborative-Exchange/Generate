@@ -8277,9 +8277,9 @@
 		[DimCharterSchoolAuthorizerId] [int] IDENTITY(1,1) NOT NULL,
 		[CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea] [nvarchar](max) NULL,
 		[CharterSchoolAuthorizingOrganizationOrganizationName] [nvarchar](max) NULL,
-		[CharterSchoolAuthorizingOrganizationTypeCode] [nvarchar](50) NULL,
-		[CharterSchoolAuthorizingOrganizationTypeDescription] [nvarchar](100) NULL,
-		[CharterSchoolAuthorizingOrganizationTypeEdfactsCode] [nvarchar](50) NULL,
+		[CharterSchoolAuthorizerTypeCode] [nvarchar](50) NULL,
+		[CharterSchoolAuthorizerTypeDescription] [nvarchar](100) NULL,
+		[CharterSchoolAuthorizerTypeEdFactsCode] [nvarchar](50) NULL,
 		[StateAbbreviationCode] [nvarchar](max) NULL,
 		[StateANSICode] [nvarchar](max) NULL,
 		[StateAbbreviationDescription] [nvarchar](max) NULL,
@@ -8314,9 +8314,9 @@
 					, [StateAbbreviationCode]
 					, [CharterSchoolAuthorizingOrganizationOrganizationName]
 					, [StateANSICode]
-					, [CharterSchoolAuthorizingOrganizationTypeCode]
-					, [CharterSchoolAuthorizingOrganizationTypeDescription]
-					, [CharterSchoolAuthorizingOrganizationTypeEdfactsCode]
+					, [CharterSchoolAuthorizerTypeCode]
+					, [CharterSchoolAuthorizerTypeDescription]
+					, [CharterSchoolAuthorizerTypeEdFactsCode]
 					, [MailingAddressStreetNumberAndName]
 					, [MailingAddressCity]
 					, [MailingAddressPostalCode]
@@ -17334,7 +17334,6 @@
 
 	
 	-- EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizer_Identifier_State]', N'CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea';
-	-- EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizerType]', N'CharterSchoolAuthorizingOrganizationType';
 	-- EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizer_Name]', N'CharterSchoolAuthorizingOrganizationOrganizationName';
 	-- EXECUTE sp_rename N'[Staging].[CharterSchoolAuthorizer].[CharterSchoolAuthorizerOrganizationId]', N'CharterSchoolAuthorizingOrganizationOrganizationId';
 
@@ -17351,7 +17350,7 @@
 	CREATE TABLE [Staging].[tmp_ms_xx_CharterSchoolAuthorizer] (
 		[Id]                               									INT            IDENTITY (1, 1) NOT NULL,
 		[CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea]  	NVARCHAR (50)  NULL,
-		[CharterSchoolAuthorizingOrganizationType]							VARCHAR (100)  NULL,
+		[CharterSchoolAuthorizerType]										VARCHAR (100)  NULL,
 		[CharterSchoolAuthorizingOrganizationOrganizationName]				VARCHAR (100)  NULL,
 		[SchoolYear]					                                    SMALLINT       NULL,
 		[RecordStartDateTime]                       						DATETIME       NULL,

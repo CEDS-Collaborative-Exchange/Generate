@@ -70,17 +70,17 @@ BEGIN
 		, @reportLevel as ReportLevel
 		, @categorySetCode as CategorySetCode
 		, NULL as ReportFilter
-		, ISNULL(a.StateANSICode			, b.StateANSICode			 ) AS StateANSICode			  
-		, ISNULL(a.StateCode				, b.StateCode				 ) AS StateAbbreviationCode				 
-		, ISNULL(a.StateName				, b.StateName				 ) AS StateAbbreviationDescription
-		, ISNULL(a.OrganizationNcesId		, b.OrganizationNcesId		 ) AS OrganizationNcesId		 
-		, ISNULL(a.OrganizationStateId		, b.OrganizationStateId		 ) AS OrganizationStateId		 
-		, ISNULL(a.OrganizationName			, b.OrganizationName		 ) AS OrganizationName		 
-		, ISNULL(a.ParentOrganizationStateId, b.ParentOrganizationStateId) AS ParentOrganizationStateId
+		, ISNULL(a.StateANSICode					, b.StateANSICode						) AS StateANSICode			  
+		, ISNULL(a.StateAbbreviationCode			, b.StateAbbreviationCode				) AS StateAbbreviationCode				 
+		, ISNULL(a.StateAbbreviationDescription		, b.StateAbbreviationDescription		) AS StateAbbreviationDescription
+		, ISNULL(a.OrganizationIdentifierNces		, b.OrganizationIdentifierNces			) AS OrganizationNcesId		 
+		, ISNULL(a.OrganizationIdentifierSea		, b.OrganizationIdentifierSea			) AS OrganizationStateId		 
+		, ISNULL(a.OrganizationName					, b.OrganizationName					) AS OrganizationName		 
+		, ISNULL(a.ParentOrganizationIdentifierSea	, b.ParentOrganizationIdentifierSea		) AS ParentOrganizationStateId
 		, CASE @reportColumnName
 			WHEN 'AGE' THEN ISNULL(a.AGE, b.AGE)
 			WHEN 'SEX' THEN ISNULL(a.SEX, b.SEX)
-			WHEN 'PrimaryDisabilityType' THEN ISNULL(a.PRIMARYDISABILITYTYPE, b.PRIMARYDISABILITYTYPE)
+			WHEN 'PrimaryDisabilityType' THEN ISNULL(a.IDEADISABILITYTYPE, b.IDEADISABILITYTYPE)
 			WHEN 'LEPBoth' THEN ISNULL(a.ENGLISHLEARNERSTATUS, b.ENGLISHLEARNERSTATUS)
 			WHEN 'RACE' THEN ISNULL(a.RACE, b.RACE)
 			WHEN 'SpecialEducationExitReason' THEN ISNULL(a.SpecialEducationExitReason, b.SpecialEducationExitReason)
@@ -135,12 +135,12 @@ BEGIN
 	FULL OUTER JOIN RDS.ReportEDFactsK12StudentCounts b
 		ON a.ReportCode = b.ReportCode
 		AND a.ReportLevel = b.ReportLevel
-		AND ISNULL(a.OrganizationStateId, '') = ISNULL(b.OrganizationStateId, '')
+		AND ISNULL(a.OrganizationIdentifierSea, '') = ISNULL(b.OrganizationIdentifierSea, '')
 		AND a.CategorySetCode = b.CategorySetCode
 		AND CAST(a.ReportYear AS INT) - 1 = CAST(b.ReportYear AS INT)
 		AND ISNULL(a.Age, '') = ISNULL(b.Age, '')
 		AND ISNULL(a.SEX, '') = ISNULL(b.SEX, '')
-		AND ISNULL(a.PRIMARYDISABILITYTYPE, '') = ISNULL(b.PRIMARYDISABILITYTYPE, '')
+		AND ISNULL(a.IDEADISABILITYTYPE, '') = ISNULL(b.IDEADISABILITYTYPE, '')
 		AND ISNULL(a.ENGLISHLEARNERSTATUS, '') = ISNULL(b.ENGLISHLEARNERSTATUS, '')
 		AND ISNULL(a.RACE, '') = ISNULL(b.RACE, '')
 		AND ISNULL(a.SpecialEducationExitReason, '') = ISNULL(b.SpecialEducationExitReason, '')
