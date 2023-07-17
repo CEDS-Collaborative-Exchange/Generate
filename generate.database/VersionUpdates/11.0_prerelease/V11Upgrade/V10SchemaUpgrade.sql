@@ -7301,48 +7301,48 @@
 	-- PRINT N'Starting rebuilding table [RDS].[BridgeK12SchoolGradeLevels]...';
 
 
-	-- 
-	-- SET XACT_ABORT ON;
+	
+	SET XACT_ABORT ON;
 
-	-- CREATE TABLE [RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels] (
-	-- 	[BridgeK12SchoolGradeLevelId] INT IDENTITY (1, 1) NOT NULL,
-	-- 	[K12SchoolId]                 INT CONSTRAINT [DF_BridgeK12SchoolGradeLevels_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-	-- 	[GradeLevelId]                INT CONSTRAINT [DF_BridgeK12SchoolGradeLevels_GradeLevelId] DEFAULT ((-1)) NOT NULL,
-	-- 	CONSTRAINT [tmp_ms_xx_constraint_PK_BridgeK12SchoolGradeLevels1] PRIMARY KEY CLUSTERED ([BridgeK12SchoolGradeLevelId] ASC)
-	-- );
+	CREATE TABLE [RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels] (
+		[BridgeK12SchoolGradeLevelId] INT IDENTITY (1, 1) NOT NULL,
+		[K12SchoolId]                 INT CONSTRAINT [DF_BridgeK12SchoolGradeLevels_K12SchoolId] DEFAULT ((-1)) NOT NULL,
+		[GradeLevelId]                INT CONSTRAINT [DF_BridgeK12SchoolGradeLevels_GradeLevelId] DEFAULT ((-1)) NOT NULL,
+		CONSTRAINT [tmp_ms_xx_constraint_PK_BridgeK12SchoolGradeLevels1] PRIMARY KEY CLUSTERED ([BridgeK12SchoolGradeLevelId] ASC)
+	);
 
-	-- IF EXISTS (SELECT TOP 1 1 
-	-- 		   FROM   [RDS].[BridgeK12SchoolGradeLevels])
-	-- 	BEGIN
-	-- 		INSERT INTO [RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels] ([K12SchoolId], [GradeLevelId])
-	-- 		SELECT [K12SchoolId],
-	-- 			   [GradeLevelId]
-	-- 		FROM   [RDS].[BridgeK12SchoolGradeLevels];
-	-- 	END
+	IF EXISTS (SELECT TOP 1 1 
+			   FROM   [RDS].[BridgeK12SchoolGradeLevels])
+		BEGIN
+			INSERT INTO [RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels] ([K12SchoolId], [GradeLevelId])
+			SELECT [K12SchoolId],
+				   [GradeLevelId]
+			FROM   [RDS].[BridgeK12SchoolGradeLevels];
+		END
 
-	-- DROP TABLE [RDS].[BridgeK12SchoolGradeLevels];
+	DROP TABLE [RDS].[BridgeK12SchoolGradeLevels];
 
-	-- EXECUTE sp_rename N'[RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels]', N'BridgeK12SchoolGradeLevels';
+	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_BridgeK12SchoolGradeLevels]', N'BridgeK12SchoolGradeLevels';
 
-	-- EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_BridgeK12SchoolGradeLevels1]', N'PK_BridgeK12SchoolGradeLevels', N'OBJECT';
-
-
-	-- 
-	-- PRINT N'Creating Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_DimK12Schools]...';
+	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_BridgeK12SchoolGradeLevels1]', N'PK_BridgeK12SchoolGradeLevels', N'OBJECT';
 
 
-	-- 
-	-- CREATE NONCLUSTERED INDEX [IXFK_BridgeK12SchoolGradeLevels_DimK12Schools]
-	-- 	ON [RDS].[BridgeK12SchoolGradeLevels]([K12SchoolId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+	
+	PRINT N'Creating Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_DimK12Schools]...';
 
 
-	-- 
-	-- PRINT N'Creating Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_GradeLevelId]...';
+	
+	CREATE NONCLUSTERED INDEX [IXFK_BridgeK12SchoolGradeLevels_DimK12Schools]
+		ON [RDS].[BridgeK12SchoolGradeLevels]([K12SchoolId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
-	-- 
-	-- CREATE NONCLUSTERED INDEX [IXFK_BridgeK12SchoolGradeLevels_GradeLevelId]
-	-- 	ON [RDS].[BridgeK12SchoolGradeLevels]([GradeLevelId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
+	
+	PRINT N'Creating Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_GradeLevelId]...';
+
+
+	
+	CREATE NONCLUSTERED INDEX [IXFK_BridgeK12SchoolGradeLevels_GradeLevelId]
+		ON [RDS].[BridgeK12SchoolGradeLevels]([GradeLevelId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 	
@@ -17656,42 +17656,36 @@
 
 
 	
-	PRINT N'Altering Table Name for [Staging].[K12StaffAssignment]...';
-
 	
-	EXECUTE sp_rename N'[Staging].[K12StaffAssignment]', N'StaffAssignment';
+	PRINT N'Altering Columns in Table [Staging].[K12StaffAssignment]...';
 
 
 	
-	PRINT N'Altering Columns in Table [Staging].[StaffAssignment]...';
+	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[Personnel_Identifier_State]', N'StaffMemberIdentifierState';
+	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[LEA_Identifier_State]', N'LeaIdentifierSea';
+	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[School_Identifier_State]', N'SchoolIdentifierSea';
+	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[LastName]', N'LastOrSurname';
+	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[InexperiencedStatus]', N'EdFactsTeacherInexperiencedStatus';
+	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[OutOfFieldStatus]', N'EDFactsTeacherOutOfFieldStatus';
+	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[CredentialType]', N'TeachingCredentialType';
 
 
-	
-	EXECUTE sp_rename N'[Staging].[StaffAssignment].[Personnel_Identifier_State]', N'StaffMemberIdentifierState';
-	EXECUTE sp_rename N'[Staging].[StaffAssignment].[LEA_Identifier_State]', N'LeaIdentifierSea';
-	EXECUTE sp_rename N'[Staging].[StaffAssignment].[School_Identifier_State]', N'SchoolIdentifierSea';
-	EXECUTE sp_rename N'[Staging].[StaffAssignment].[LastName]', N'LastOrSurname';
-	EXECUTE sp_rename N'[Staging].[StaffAssignment].[InexperiencedStatus]', N'EdFactsTeacherInexperiencedStatus';
-	EXECUTE sp_rename N'[Staging].[StaffAssignment].[OutOfFieldStatus]', N'EDFactsTeacherOutOfFieldStatus';
-	EXECUTE sp_rename N'[Staging].[StaffAssignment].[CredentialType]', N'TeachingCredentialType';
-
-
-	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER TABLE [Staging].[K12StaffAssignment] 
 	ALTER COLUMN StaffMemberIdentifierState NVARCHAR(40) NULL;
 
-	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER TABLE [Staging].[K12StaffAssignment] 
 	ALTER COLUMN LeaIdentifierSea NVARCHAR(50) NULL;
 
-	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER TABLE [Staging].[K12StaffAssignment] 
 	ALTER COLUMN SchoolIdentifierSea NVARCHAR(50) NULL;
 
-	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER TABLE [Staging].[K12StaffAssignment] 
 	ALTER COLUMN SchoolYear SMALLINT NULL;
 
-	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER TABLE [Staging].[K12StaffAssignment] 
 	ALTER COLUMN RecordStartDateTime Datetime NULL;
 
-	ALTER TABLE [Staging].[StaffAssignment] 
+	ALTER TABLE [Staging].[K12StaffAssignment] 
 	ALTER COLUMN RecordEndDateTime Datetime NULL;
 
 

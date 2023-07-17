@@ -28,7 +28,7 @@ CREATE VIEW [Debug].[vwK12Staff_StagingTables] AS
 				, RecordStartDateTime
 				, RecordEndDateTime
 
-	FROM Staging.StaffAssignment							staff		
+	FROM Staging.K12StaffAssignment							staff		
 	
 	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1
