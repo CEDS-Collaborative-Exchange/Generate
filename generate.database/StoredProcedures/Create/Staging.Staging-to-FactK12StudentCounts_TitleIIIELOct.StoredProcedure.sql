@@ -8,7 +8,6 @@ NOTE: This Stored Procedure processes files: 116, 141
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_TitleIIIELOct]
 	@SchoolYear SMALLINT
 AS
-
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
@@ -37,17 +36,23 @@ BEGIN
 		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 
-		--Reporting Date is the closest school day to Oct 1 according to the file spec
-		DECLARE @testDate datetime
-		SELECT @testDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + '10-01' AS DATE)
-		
-		SELECT @ReportingDate = 
-			CASE DATEPART(DW, @testDate)
-				WHEN 1 THEN (SELECT DATEADD(day, 1, @testDate))
-				WHEN 7 THEN (SELECT DATEADD(day, -1, @testDate))
-				ELSE @testDate
-			END	
+		/* File Spec as of 2023 change this to be School Year - Any 12-month reporting period 		*/
 
+		if @SchoolYear < 2023
+		BEGIN
+			--Reporting Date is the closest school day to Oct 1 according to the file spec
+			DECLARE @testDate datetime
+			SELECT @testDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + '10-01' AS DATE)
+		
+			SELECT @ReportingDate = 
+				CASE DATEPART(DW, @testDate)
+					WHEN 1 THEN (SELECT DATEADD(day, 1, @testDate))
+					WHEN 7 THEN (SELECT DATEADD(day, -1, @testDate))
+					ELSE @testDate
+				END	
+
+			select @SYStartDate = @ReportingDate, @SYEndDate = @ReportingDate
+		END
 
 	--Create the temp tables (and any relevant indexes) needed for this domain
 
@@ -205,8 +210,8 @@ BEGIN
 
 	-- seas (rds)
 		JOIN RDS.DimSeas rds
-			ON convert(date, rds.RecordStartDateTime)  <= @ReportingDate
-			AND ISNULL(convert(date, rds.RecordEndDateTime), @SYEndDate) >= @ReportingDate
+			ON convert(date, rds.RecordStartDateTime)  <= @SYEndDate
+			AND ISNULL(convert(date, rds.RecordEndDateTime), @SYEndDate) >= @SYStartDate
 
 	-- dimpeople (rds)
 		JOIN RDS.DimPeople rdp
@@ -216,28 +221,32 @@ BEGIN
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 			AND ISNULL(ske.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND rdp.RecordStartDateTime  <= @ReportingDate
-			AND ISNULL(rdp.RecordEndDateTime, @SYEndDate) >= @ReportingDate
+			AND rdp.RecordStartDateTime  <= @SYEndDate
+			AND ISNULL(rdp.RecordEndDateTime, @SYEndDate) >= @SYStartDate
+
+			and convert(date, ske.EnrollmentEntryDate) = convert(date, rdp.RecordStartDateTime)
+			and isnull(convert(date, ske.EnrollmentExitDate),getdate()) = isnull(convert(date, rdp.RecordEndDateTime), getdate())
+
 
 	--english learner
 		JOIN Staging.PersonStatus el 
 			ON ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			AND el.EnglishLearner_StatusStartDate <= @ReportingDate
-			AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= @ReportingDate
+			AND el.EnglishLearner_StatusStartDate <= @SYEndDate
+			AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= @SYStartDate
 
 	-- Leas (rds)
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND rdl.RecordStartDateTime <= @ReportingDate
-			AND ISNULL(rdl.RecordEndDateTime, @SYEndDate) >= @ReportingDate
+			AND rdl.RecordStartDateTime <= @SYEndDate
+			AND ISNULL(rdl.RecordEndDateTime, @SYEndDate) >= @SYStartDate
 
 	-- K12Schools (rds)
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND rdksch.RecordStartDateTime  <= @ReportingDate
-			AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate) >= @ReportingDate
+			AND rdksch.RecordStartDateTime  <= @SYEndDate
+			AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate) >= @SYStartDate
 
 	--english learner (RDS)
 		LEFT JOIN #vwEnglishLearnerStatuses rdels
@@ -288,10 +297,10 @@ BEGIN
 			ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING')
 			AND TitleIII.ProgramParticipationTitleIIILiepCode = 'MISSING'
 
-		WHERE ske.EnrollmentEntryDate  <= @ReportingDate
-		AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) >= @ReportingDate
-
-
+		WHERE ske.EnrollmentEntryDate  <= @SYEndDate
+		AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) >= @SYStartDate
+		
+		
 		--Final insert into RDS.FactK12StudentCounts table 
 		INSERT INTO RDS.FactK12StudentCounts (
 			[SchoolYearId]
