@@ -4170,19 +4170,19 @@ ALTER TABLE [RDS].[BridgeAeStudentEnrollmentRaces] DROP CONSTRAINT [FK_BridgeAeS
 
 
 
-PRINT N'Dropping Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_DimGradeLevels_DimGradeLevelId]...';
+-- PRINT N'Dropping Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_DimGradeLevels_DimGradeLevelId]...';
 
 
 
-ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] DROP CONSTRAINT [FK_BridgeK12SchoolGradeLevels_DimGradeLevels_DimGradeLevelId];
+-- ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] DROP CONSTRAINT [FK_BridgeK12SchoolGradeLevels_DimGradeLevels_DimGradeLevelId];
 
 
 
-PRINT N'Dropping Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_DimK12Schools_DimK12SchoolId]...';
+-- PRINT N'Dropping Foreign Key [RDS].[FK_BridgeK12SchoolGradeLevels_DimK12Schools_DimK12SchoolId]...';
 
 
 
-ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] DROP CONSTRAINT [FK_BridgeK12SchoolGradeLevels_DimK12Schools_DimK12SchoolId];
+-- ALTER TABLE [RDS].[BridgeK12SchoolGradeLevels] DROP CONSTRAINT [FK_BridgeK12SchoolGradeLevels_DimK12Schools_DimK12SchoolId];
 
 
 

@@ -2,7 +2,7 @@
 AS
 BEGIN
 
-DROP TABLE #Staff
+		IF OBJECT_ID('tempdb..#Staff') IS NOT NULL DROP TABLE #Staff
 
 		-- Define the test
 		DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT

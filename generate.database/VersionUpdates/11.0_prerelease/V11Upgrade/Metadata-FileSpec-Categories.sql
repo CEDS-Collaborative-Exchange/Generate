@@ -23,52 +23,6 @@ where fs.SubmissionYear = '2023'
 
 delete from app.FileSubmissions where SubmissionYear = '2023'
 
--- Roll over all metadata
-    DECLARE @reportCode VARCHAR(5)
-
-    DECLARE csy CURSOR FOR
-        SELECT distinct agr.ReportCode
-        FROM App.FileSubmissions fs
-		JOIN App.GenerateReports agr
-			ON fs.GenerateReportId = agr.GenerateReportId
-        WHERE SubmissionYear = 2022
-            AND ReportCode NOT IN (
-                 'c002'
-                ,'C045'
-                ,'C050'
-                ,'C052'
-                ,'C059'
-                ,'C088'
-                ,'C089'
-                ,'C118'
-                ,'C126'
-                ,'C137'
-                ,'C138'
-                ,'C141'
-                ,'C179'
-                ,'C185'
-                ,'C189'
-                ,'C203'
-                ,'C210'
-                ,'C211'
-                ,'C212'
-            )
-        ORDER BY agr.ReportCode
-
-    SET @reportCode = NULL
-    OPEN csy
-    FETCH NEXT FROM csy INTO @reportCode
-
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        EXEC App.Rollover_Previous_Year_Metadata @reportCode , 2022, 2023
-    
-        FETCH NEXT FROM csy INTO @reportCode
-    END
-
-    CLOSE csy
-    DEALLOCATE csy
-
 INSERT INTO [App].[vwReportCode_CategoryOptions] VALUES ('c002', 'LEA1CHILDREN1WITH1DISABILITIES', 2, 2023, 'CSA', 'Category Set A', 22187, 19, 'IDEADISAB', 'Children with Disabilities (IDEA) School Age Tables', 'DISABCATIDEA', 'Disability Category', 19, 'AUT', 'Autism', 917)
 INSERT INTO [App].[vwReportCode_CategoryOptions] VALUES ('c002', 'LEA1CHILDREN1WITH1DISABILITIES', 2, 2023, 'CSA', 'Category Set A', 22187, 19, 'IDEADISAB', 'Children with Disabilities (IDEA) School Age Tables', 'DISABCATIDEA', 'Disability Category', 19, 'DB', 'Deaf-blindness', 944)
 INSERT INTO [App].[vwReportCode_CategoryOptions] VALUES ('c002', 'LEA1CHILDREN1WITH1DISABILITIES', 2, 2023, 'CSA', 'Category Set A', 22187, 19, 'IDEADISAB', 'Children with Disabilities (IDEA) School Age Tables', 'DISABCATIDEA', 'Disability Category', 19, 'DD', 'Developmental delay', 945)
@@ -12079,3 +12033,49 @@ INSERT INTO [App].[vwReportCode_FileColumns] VALUES (2, 'StateAgencyNumber', NUL
 INSERT INTO [App].[vwReportCode_FileColumns] VALUES (20, 'StateSchoolIDNumber', NULL, 'School Identifier (State)', 'STATESCHOOLIDNUMBER', 'String', 48, 1, 5, 29, 2023, 3, 'c212')
 INSERT INTO [App].[vwReportCode_FileColumns] VALUES (20, 'TableTypeAbbrv', NULL, 'Table Type Abbreviation', 'TYPEABBRV', 'String', 68, 1, 6, 49, 2023, 3, 'c212')
 INSERT INTO [App].[vwReportCode_FileColumns] VALUES (200, 'Explanation', NULL, 'Explanation', 'EXPLANATION', 'String', 299, 0, 10, 100, 2023, 3, 'c212')
+
+-- Roll over all metadata
+    DECLARE @reportCode VARCHAR(5)
+
+    DECLARE csy CURSOR FOR
+        SELECT distinct agr.ReportCode
+        FROM App.FileSubmissions fs
+		JOIN App.GenerateReports agr
+			ON fs.GenerateReportId = agr.GenerateReportId
+        WHERE SubmissionYear = 2022
+            AND ReportCode NOT IN (
+                 'c002'
+                ,'C045'
+                ,'C050'
+                ,'C052'
+                ,'C059'
+                ,'C088'
+                ,'C089'
+                ,'C118'
+                ,'C126'
+                ,'C137'
+                ,'C138'
+                ,'C141'
+                ,'C179'
+                ,'C185'
+                ,'C189'
+                ,'C203'
+                ,'C210'
+                ,'C211'
+                ,'C212'
+            )
+        ORDER BY agr.ReportCode
+
+    SET @reportCode = NULL
+    OPEN csy
+    FETCH NEXT FROM csy INTO @reportCode
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        EXEC App.Rollover_Previous_Year_Metadata @reportCode , 2022, 2023
+    
+        FETCH NEXT FROM csy INTO @reportCode
+    END
+
+    CLOSE csy
+    DEALLOCATE csy
