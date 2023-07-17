@@ -2,6 +2,7 @@
 AS
 BEGIN
 
+
 		-- Define the test
 		DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
 		IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'DimK12Students_UnitTestCase') 
@@ -33,27 +34,25 @@ BEGIN
 		DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId
 	
 		SELECT  
-			  ske.Student_Identifier_State
-			, ske.LEA_Identifier_State
-			, ske.School_Identifier_State
+			  ske.StudentIdentifierState
+			, ske.LeaIdentifierSeaAccountability
+			, ske.SchoolIdentifierSea
 			, ske.FirstName
 			, ske.MiddleName
-			, ske.LastName 
+			, ske.LastOrSurname
 			, ske.Birthdate
 			, ske.Sex
 			, ske.EnrollmentEntryDate AS RecordStartDateTime
 			, ske.EnrollmentExitDate AS RecordEndDateTime
-			, rds.DimK12StudentId
+			, rds.DimPersonId
 		INTO #Students
 		FROM Staging.K12Enrollment ske
-		LEFT JOIN RDS.DimK12Students rds
-			ON rds.StateStudentIdentifier = ske.Student_Identifier_State
+		LEFT JOIN RDS.DimPeople rds
+			ON rds.K12StudentStudentIdentifierState = ske.StudentIdentifierState
 			AND ISNULL(rds.FirstName, 'MISSING') = ISNULL(ske.FirstName, 'MISSING') 
 			AND ISNULL(rds.MiddleName, 'MISSING') = ISNULL(ske.MiddleName, 'MISSING') 
-			AND ISNULL(rds.LastName, 'MISSING') = ISNULL(ske.LastName, 'MISSING') 
-			AND ISNULL(rds.SexCode, 'MISSING') = ISNULL(ske.Sex, 'MISSING') 
+			AND ISNULL(rds.LastOrSurname, 'MISSING') = ISNULL(ske.LastOrSurname, 'MISSING') 
 			AND ISNULL(rds.BirthDate, '01/01/1900') = ISNULL(ske.BirthDate, '01/01/1900') 
-			AND ISNULL(rds.Cohort, 0) = ISNULL(ske.CohortGraduationYear, 0)
 			AND ISNULL(rds.RecordStartDateTime, '1/1/1900') = ISNULL(ske.EnrollmentEntryDate, '1/1/1900') 
 
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -70,8 +69,8 @@ BEGIN
 			,'Student Match'
 			,'Student Match All'
 			,COUNT(*)
-			,(SELECT COUNT(*) FROM #Students WHERE DimK12StudentId IS NOT NULL)
-			,CASE WHEN COUNT(*) = (SELECT COUNT(*) FROM #Students WHERE DimK12StudentId IS NOT NULL) THEN 1 ELSE 0 END
+			,(SELECT COUNT(*) FROM #Students WHERE DimPersonID IS NOT NULL)
+			,CASE WHEN COUNT(*) = (SELECT COUNT(*) FROM #Students WHERE DimPersonID IS NOT NULL) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #Students
 
