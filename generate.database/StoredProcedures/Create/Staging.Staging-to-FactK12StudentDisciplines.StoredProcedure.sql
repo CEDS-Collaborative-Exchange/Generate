@@ -289,13 +289,14 @@ BEGIN
 				AND ISNULL(sd.IdeaInterimRemoval, 'MISSING')                            = ISNULL(rddisc.IdeaInterimRemovalMap, rddisc.IdeaInterimRemovalCode)
 				AND ISNULL(sd.IdeaInterimRemovalReason, 'MISSING')                      = ISNULL(rddisc.IdeaInterimRemovalReasonMap, rddisc.IdeaInterimRemovalReasonCode)
 			
-		--idea status (rds)             
+		--idea status (rds)	
 			LEFT JOIN #vwIdeaStatuses rdis
 				ON rsy.SchoolYear = rdis.SchoolYear
 				AND rdis.IdeaIndicatorCode = 'Yes'
-				AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, 'MISSING')		= ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, rdis.IdeaEducationalEnvironmentForSchoolAgeCode)
-				AND ISNULL(sppse.SpecialEducationExitReason, 'MISSING')                 = ISNULL(rdis.SpecialEducationExitReasonMap, rdis.SpecialEducationExitReasonCode) 
-			
+				AND rdis.SpecialEducationExitReasonCode = 'MISSING'
+				AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
+				AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
+
 		--idea disability type (rds)
 			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 				ON ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
