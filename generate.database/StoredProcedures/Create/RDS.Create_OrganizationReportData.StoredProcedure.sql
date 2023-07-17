@@ -949,7 +949,7 @@ BEGIN
 						, lea.StateANSICode
 						, lea.StateAbbreviationDescription as StateName
 						, @categorySetCode
-						, lea.CharterSchoolAuthorizingOrganizationTypeCode as ManagementOrganizationType
+						, lea.CharterSchoolAuthorizerTypeCode as ManagementOrganizationType
 						, lea.MailingAddressStreetNumberAndName
 						, lea.MailingAddressCity
 						, lea.MailingAddressStateAbbreviation
@@ -983,7 +983,7 @@ BEGIN
 						, lea.StateANSICode
 						, lea.StateAbbreviationDescription as StateName
 						, @categorySetCode
-						, lea.CharterSchoolAuthorizingOrganizationTypeCode
+						, lea.CharterSchoolAuthorizerTypeCode
 						, lea.MailingAddressStreetNumberAndName
 						, lea.MailingAddressCity
 						, lea.MailingAddressStateAbbreviation

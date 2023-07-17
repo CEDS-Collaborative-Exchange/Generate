@@ -56,9 +56,9 @@ BEGIN
 		, @StateName			 									'StateAbbreviationDescription'
 		, @StateCode 												'StateAbbreviationCode'
 		, @StateANSICode 											'StateANSICode'
-		, scsa.CharterSchoolAuthorizingOrganizationType				'CharterSchoolAuthorizingOrganizationTypeCode'
-		, refcsat.[Definition] 										'CharterSchoolAuthorizingOrganizationTypeDescription'
-		, ssrd.OutputCode				 							'CharterSchoolAuthorizingOrganizationTypeEdfactsCode'
+		, scsa.CharterSchoolAuthorizerType							'CharterSchoolAuthorizerTypeCode'
+		, refcsat.[Definition] 										'CharterSchoolAuthorizerTypeDescription'
+		, ssrd.OutputCode				 							'CharterSchoolAuthorizerTypeEdFactsCode'
 		, smam.AddressStreetNumberAndName				 			'MailingAddressStreetNumberAndName'
 		, smam.AddressApartmentRoomOrSuiteNumber					'MailingAddressApartmentRoomOrSuiteNumber'
 		, smam.AddressCity 											'MailingAddressCity'
@@ -82,7 +82,7 @@ BEGIN
 	FROM Staging.CharterSchoolAuthorizer scsa
 	JOIN Staging.SourceSystemReferenceData ssrd
 		ON ssrd.TableName = 'RefCharterSchoolAuthorizerType'
-		AND scsa.CharterSchoolAuthorizingOrganizationType = ssrd.InputCode
+		AND scsa.CharterSchoolAuthorizerType = ssrd.InputCode
 		AND ssrd.SchoolYear = @SchoolYear
 	JOIN Staging.StateDetail ssd
 		ON scsa.SchoolYear = ssd.SchoolYear
@@ -115,9 +115,9 @@ BEGIN
 				trgt.StateAbbreviationCode 									= src.StateAbbreviationCode,
 				trgt.StateANSICode 											= src.StateANSICode,
 				trgt.StateAbbreviationDescription 							= src.StateAbbreviationDescription,
-				trgt.CharterSchoolAuthorizingOrganizationTypeCode 			= src.CharterSchoolAuthorizingOrganizationTypeCode,
-				trgt.CharterSchoolAuthorizingOrganizationTypeDescription 	= src.CharterSchoolAuthorizingOrganizationTypeDescription,
-				trgt.CharterSchoolAuthorizingOrganizationTypeEdFactsCode	= src.CharterSchoolAuthorizingOrganizationTypeEdFactsCode,						
+				trgt.CharterSchoolAuthorizerTypeCode 						= src.CharterSchoolAuthorizerTypeCode,
+				trgt.CharterSchoolAuthorizerTypeDescription 				= src.CharterSchoolAuthorizerTypeDescription,
+				trgt.CharterSchoolAuthorizerTypeEdFactsCode					= src.CharterSchoolAuthorizerTypeEdFactsCode,						
 				trgt.MailingAddressStreetNumberAndName						= src.MailingAddressStreetNumberAndName,
 				trgt.MailingAddressApartmentRoomOrSuiteNumber				= src.MailingAddressApartmentRoomOrSuiteNumber,
 				trgt.MailingAddressCity 									= src.MailingAddressCity,
@@ -141,9 +141,9 @@ BEGIN
 			, StateAbbreviationCode
 			, StateANSICode
 			, StateAbbreviationDescription
-			, CharterSchoolAuthorizingOrganizationTypeCode
-			, CharterSchoolAuthorizingOrganizationTypeDescription
-			, CharterSchoolAuthorizingOrganizationTypeEdFactsCode
+			, CharterSchoolAuthorizerTypeCode
+			, CharterSchoolAuthorizerTypeDescription
+			, CharterSchoolAuthorizerTypeEdFactsCode
 			, MailingAddressStreetNumberAndName
 			, MailingAddressApartmentRoomOrSuiteNumber
 			, MailingAddressCity
@@ -168,9 +168,9 @@ BEGIN
 			, StateAbbreviationCode
 			, StateANSICode
 			, StateAbbreviationDescription
-			, src.CharterSchoolAuthorizingOrganizationTypeCode
-			, src.CharterSchoolAuthorizingOrganizationTypeDescription
-			, src.CharterSchoolAuthorizingOrganizationTypeEdFactsCode
+			, src.CharterSchoolAuthorizerTypeCode
+			, src.CharterSchoolAuthorizerTypeDescription
+			, src.CharterSchoolAuthorizerTypeEdFactsCode
 			, src.MailingAddressStreetNumberAndName
 			, src.MailingAddressApartmentRoomOrSuiteNumber
 			, src.MailingAddressCity
