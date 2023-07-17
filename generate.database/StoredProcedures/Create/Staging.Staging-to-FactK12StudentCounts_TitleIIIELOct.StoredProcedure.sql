@@ -130,7 +130,10 @@ BEGIN
 			, DisabilityStatusId					int null
 			, LanguageId							int null
 			, MigrantStatusId						int null
+<<<<<<< HEAD
+=======
 			--, K12StudentStatusId					int null
+>>>>>>> develop
 			, TitleIStatusId						int null
 			, TitleIIIStatusId						int null
 			, AttendanceId							int null
@@ -168,7 +171,10 @@ BEGIN
 			, -1										DisabilityStatusId							
 			, ISNULL(rdvl.DimLanguageId, -1)			LanguageId							
 			, -1										MigrantStatusId						
+<<<<<<< HEAD
+=======
 			--, -1										K12StudentStatusId					
+>>>>>>> develop
 			, -1										TitleIStatusId						
 			, isnull(TitleIII.DimTitleIIIStatusId, -1)	TitleIIIStatusId						
 			, -1										AttendanceId							
@@ -261,7 +267,7 @@ BEGIN
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
-
+	
 	-- TitleIII Status
 		LEFT JOIN Staging.ProgramParticipationTitleIII sppt3
 			ON ske.StudentIdentifierState = sppt3.StudentIdentifierState
@@ -304,7 +310,10 @@ BEGIN
 			, [DisabilityStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]
+<<<<<<< HEAD
+=======
 			--, [K12StudentStatusId]
+>>>>>>> develop
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
 			, [AttendanceId]
@@ -339,7 +348,10 @@ BEGIN
 			, [DisabilityStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]
+<<<<<<< HEAD
+=======
 			--, [K12StudentStatusId]
+>>>>>>> develop
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
 			, [AttendanceId]
@@ -367,3 +379,8 @@ BEGIN
 
 END
 
+<<<<<<< HEAD
+GO
+
+=======
+>>>>>>> develop
