@@ -79,22 +79,23 @@ BEGIN
 			, CredentialIssuanceDateId				int null
 			, CredentialExpirationDateId			int null
 			, StaffCount							int null
-			, StaffFullTimeEquivalency				int null
+			, StaffFullTimeEquivalency				decimal(5,4) null
 		)
 
 		INSERT INTO #Facts
 		SELECT DISTINCT 
-			rsy.DimSchoolYearId							SchoolYearId
+			ssa.Id										StagingId
+			, rsy.DimSchoolYearId						SchoolYearId
 			, @FactTypeId								FactTypeId
 			, ISNULL(rds.DimSeaId, -1)					SeaId
 			, ISNULL(rdl.DimLeaID, -1)					LeaId
 			, ISNULL(rdksch.DimK12SchoolId, -1)			K12SchoolId
-			, ISNULL(rdks.DimK12StaffId, -1)			K12StaffId
+			, ISNULL(rdp.DimPersonId, -1)				K12StaffId
 			, ISNULL(rdkss.DimK12StaffStatusId, -1)		K12StaffStatusId
 			, ISNULL(rdksc.DimK12StaffCategoryId, -1)	K12StaffCategoryId
 			, -1										TitleIIIStatusId
-			, ISNULL(credIss.DimdDateId, -1)			CredentialIssuanceDateId
-			, ISNULL(credExp.DimdDateId, -1)			CredentialExpirationDateId
+			, ISNULL(credIss.DimDateId, -1)				CredentialIssuanceDateId
+			, ISNULL(credExp.DimDateId, -1)				CredentialExpirationDateId
 			, 1											StaffCounts
 			, FullTimeEquivalency						StaffFullTimeEquivalency
 		FROM Staging.K12StaffAssignment ssa
@@ -126,18 +127,21 @@ BEGIN
 			AND ISNULL(ssa.TeachingCredentialType, 'MISSING') = ISNULL(rdkss.TeachingCredentialTypeMap, rdkss.TeachingCredentialTypeCode)
 			AND ISNULL(ssa.ParaprofessionalQualification, 'MISSING') = ISNULL(rdkss.ParaprofessionalQualificationStatusMap, rdkss.ParaprofessionalQualificationStatusCode)
 			AND ISNULL(CAST(ssa.HighlyQualifiedTeacherIndicator AS SMALLINT), -1) = ISNULL(rdkss.HighlyQualifiedTeacherIndicatorMap, -1)
------
---finish up these 3
------
-			AND rdkss.SpecialEducationTeacherQualificationStatusCode = 'MISSING'
-			AND rdkss.EdFactsCertificationStatusCode = 'MISSING'
---			AND ISNULL(ssa.EmergencyorProvisionalCredentialStatus, 'MISSING') = ISNULL(rdkss.EmergencyOrProvisionalCredentialStatusMap, rdkss.EmergencyOrProvisionalCredentialStatusCode)
+			AND ISNULL(ssa.SpecialEducationTeacherQualificationStatus, 'MISSING') = ISNULL(rdkss.SpecialEducationTeacherQualificationStatusMap, rdkss.SpecialEducationTeacherQualificationStatusCode)
+            AND	CASE
+                    WHEN ssa.CredentialType in ('Certification','Licensure')
+						AND ssa.CredentialIssuanceDate >= staging.GetFiscalYearStartDate(@SchoolYear)
+                        AND ssa.CredentialIssuanceDate <= staging.GetFiscalYearEndDate(@SchoolYear)
+                        THEN 'FC'
+                    ELSE 'NFC'
+            	END = ISNULL(rdkss.EdFactsCertificationStatusCode, 'MISSING')
+
 	--credential issuance date	
 		LEFT JOIN RDS.DimDates CredIss
-			ON ssa.CredentialIssuanceDate = rdd.DateValue
+			ON ssa.CredentialIssuanceDate = CredIss.DateValue
 	--credential expiration date	
 		LEFT JOIN RDS.DimDates CredExp
-			ON ssa.CredentialExpirationDate = rdd.DateValue
+			ON ssa.CredentialExpirationDate = CredExp.DateValue
 	--person (rds)
 		JOIN RDS.DimPeople rdp
 			ON ssa.StaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState

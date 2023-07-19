@@ -54,6 +54,8 @@ Views\\Drop,Debug.vwK12Staff_StagingTables.View.sql,0
 Views\\Create,Debug.vwK12Staff_StagingTables.View.sql,0
 Views\\Drop,RDS.vwDimK12SchoolStatuses.View.sql,0
 Views\\Create,RDS.vwDimK12SchoolStatuses.View.sql,0
+Views\\Drop,RDS.vwDimK12StaffCategories.View.sql,0
+Views\\Create,RDS.vwDimK12StaffCategories.View.sql,0
 Views\\Drop,RDS.vwDimK12StaffStatuses.View.sql,0
 Views\\Create,RDS.vwDimK12StaffStatuses.View.sql,0
 Views\\Drop,RDS.vwDimLanguages.View.sql,0
@@ -129,6 +131,8 @@ StoredProcedures\\Drop,App.Wrapper_Migrate_MEP_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_MEP_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_NOrD_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_NOrD_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Wrapper_Migrate_Personnel_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Wrapper_Migrate_Personnel_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_TitleI_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_TitleI_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_TitleIIIELOct_to_RDS.StoredProcedure.sql,0

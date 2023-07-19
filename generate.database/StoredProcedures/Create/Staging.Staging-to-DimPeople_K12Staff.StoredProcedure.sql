@@ -51,7 +51,7 @@ BEGIN
 			, 1
 			, RecordStartDateTime
 			, RecordEndDateTime
-		FROM Staging.StaffAssignment sa
+		FROM Staging.K12StaffAssignment sa
 
 		MERGE rds.DimPeople AS trgt
 		USING #K12Staff AS src

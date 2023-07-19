@@ -17656,37 +17656,53 @@
 
 
 	
-	
-	PRINT N'Altering Columns in Table [Staging].[K12StaffAssignment]...';
+	PRINT N'Starting rebuilding table [Staging].[K12StaffAssignment]...';
 
 
-	
-	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[Personnel_Identifier_State]', N'StaffMemberIdentifierState';
-	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[LEA_Identifier_State]', N'LeaIdentifierSea';
-	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[School_Identifier_State]', N'SchoolIdentifierSea';
-	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[LastName]', N'LastOrSurname';
-	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[InexperiencedStatus]', N'EdFactsTeacherInexperiencedStatus';
-	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[OutOfFieldStatus]', N'EDFactsTeacherOutOfFieldStatus';
-	EXECUTE sp_rename N'[Staging].[K12StaffAssignment].[CredentialType]', N'TeachingCredentialType';
+	SET XACT_ABORT ON;
+
+	CREATE TABLE [Staging].[tmp_ms_xx_K12StaffAssignment] (
+		[ID] 											INT 			IDENTITY(1,1) NOT NULL,
+		[StaffMemberIdentifierState] 					NVARCHAR (40) 	NULL,
+		[LeaIdentifierSea] 								NVARCHAR (50) 	NULL,
+		[SchoolIdentifierSea] 							NVARCHAR (50) 	NULL,
+		[FirstName] 									NVARCHAR (50) 	NULL,
+		[LastOrSurname] 								NVARCHAR (50) 	NULL,
+		[MiddleName] 									NVARCHAR (50) 	NULL,
+		[BirthDate] 									DATE 			NULL,
+		[Sex] 											NVARCHAR (30) 	NULL,
+		[PositionTitle] 								NVARCHAR (50) 	NULL,
+		[FullTimeEquivalency] 							DECIMAL (5, 4) 	NULL,
+		[SpecialEducationStaffCategory] 				NVARCHAR (100) 	NULL,
+		[K12StaffClassification] 						NVARCHAR (100) 	NULL,
+		[TitleIProgramStaffCategory] 					NVARCHAR (100) 	NULL,
+		[TeachingCredentialType] 						NVARCHAR (100) 	NULL,
+		[CredentialType] 								NVARCHAR (100) 	NULL,
+		[CredentialIssuanceDate] 						DATE 			NULL,
+		[CredentialExpirationDate] 						DATE 			NULL,
+		[ParaprofessionalQualification] 				NVARCHAR (100) 	NULL,
+		[SpecialEducationAgeGroupTaught] 				NVARCHAR (100) 	NULL,
+		[HighlyQualifiedTeacherIndicator] 				BIT 			NULL,
+		[AssignmentStartDate] 							DATE 			NULL,
+		[AssignmentEndDate] 							DATE 			NULL,
+		[EdFactsTeacherInexperiencedStatus] 			NVARCHAR (100) 	NULL,
+		[SpecialEducationTeacherQualificationStatus]	NVARCHAR (100) 	NULL,
+		[EDFactsTeacherOutOfFieldStatus] 				NVARCHAR (100) 	NULL,
+		[RecordStartDateTime] 							DATETIME 		NULL,
+		[RecordEndDateTime] 							DATETIME 		NULL,
+		[SchoolYear] 									SMALLINT 		NULL,
+		[DataCollectionName] 							NVARCHAR (100) 	NULL,
+		[ProgramTypeCode] 								NVARCHAR (100) 	NULL,
+		[RunDateTime] 									DATETIME 		NULL,
+		CONSTRAINT [[tmp_ms_xx_constraint_PK_K12StaffAssignment1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
+	);
 
 
-	ALTER TABLE [Staging].[K12StaffAssignment] 
-	ALTER COLUMN StaffMemberIdentifierState NVARCHAR(40) NULL;
+	DROP TABLE [Staging].[K12StaffAssignment];
 
-	ALTER TABLE [Staging].[K12StaffAssignment] 
-	ALTER COLUMN LeaIdentifierSea NVARCHAR(50) NULL;
+	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_K12StaffAssignment]', N'K12StaffAssignment';
 
-	ALTER TABLE [Staging].[K12StaffAssignment] 
-	ALTER COLUMN SchoolIdentifierSea NVARCHAR(50) NULL;
-
-	ALTER TABLE [Staging].[K12StaffAssignment] 
-	ALTER COLUMN SchoolYear SMALLINT NULL;
-
-	ALTER TABLE [Staging].[K12StaffAssignment] 
-	ALTER COLUMN RecordStartDateTime Datetime NULL;
-
-	ALTER TABLE [Staging].[K12StaffAssignment] 
-	ALTER COLUMN RecordEndDateTime Datetime NULL;
+	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_K12StaffAssignment1]', N'PK_K12StaffAssignment', N'OBJECT';
 
 
 	
