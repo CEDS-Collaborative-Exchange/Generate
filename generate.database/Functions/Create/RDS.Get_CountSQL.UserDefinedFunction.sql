@@ -4178,7 +4178,7 @@ BEGIN
 
 				set @sqlCountJoins = @sqlCountJoins + '
 				inner join ( 
-					select K12StaffId, sum(round(StaffFTE, 2)) as StaffFTE
+					select K12StaffId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFullTimeEquivalency
 					from rds.' + @factTable + ' fact '
 
 					if @reportLevel in ('lea', 'sch')
@@ -4240,7 +4240,7 @@ BEGIN
 				 'fact.K12StaffId' 
 				+ @sqlCategoryQualifiedDimensionFields 
 				+ ', isnull(fact.StaffCount, 0) as StaffCount,'
-				+ 'isnull(K12StaffCount.StaffFTE, 0.0) as StaffFTE'
+				+ 'isnull(K12StaffCount.StaffFullTimeEquivalency, 0.0) as StaffFullTimeEquivalency'
 				+ ' from rds.' + @factTable + ' fact ' + @sqlCountJoins 
 				+ ' ' + @reportFilterJoin + '
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
@@ -5296,7 +5296,7 @@ BEGIN
 			declare @debugTableCreate nvarchar(max)
 			if @reportCode IN ('C059', 'C070', 'C099', 'C112') 
 			begin
-				set @debugTableCreate = '		select s.StaffMemberIdentifierState '
+				set @debugTableCreate = '		select s.K12StaffStaffMemberIdentifierState '
 			end 
 			else if @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
 			begin
@@ -5325,8 +5325,8 @@ BEGIN
 			IF @reportCode IN ('C059', 'C070', 'C099', 'C112')
 			BEGIN
 				set @debugTableCreate += '		from #categorySet c ' + char(10) +
-				'		inner join rds.DimK12Staff s ' + char(10)
-				+ '			on c.DimK12StaffId = s.DimK12StaffId ' + char(10)
+				'		inner join rds.DimPeople s ' + char(10)
+				+ '			on c.DimK12StaffId = s.DimPersonId ' + char(10)
 			END 
 			--these reports have been converted to use K12StudentStudentIdentifierState instead of K12StudentId
 			--	in #Students and #categorySet so no need to join to DimPeople
@@ -5359,7 +5359,7 @@ BEGIN
 			IF @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') BEGIN
 				set @debugTableCreate += '		order by K12StudentStudentIdentifierState ' + char(10)
 			END ELSE BEGIN
-				set @debugTableCreate += '		order by s.StaffMemberIdentifierState ' + char(10)
+				set @debugTableCreate += '		order by s.K12StaffStaffMemberIdentifierState ' + char(10)
 			END
 
 			set @sql += @debugTableCreate 

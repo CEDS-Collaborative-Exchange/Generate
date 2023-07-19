@@ -17,10 +17,9 @@ CREATE VIEW RDS.vwDimK12StaffStatuses AS
 			WHEN 'HIGHLYQUALIFIED' THEN 1
 			WHEN 'NOTHIGHLYQUALIFIED' THEN 0
 		END AS HighlyQualifiedTeacherIndicatorMap
---this is the data that will uncomment with the join below
-		-- , rdkss.SpecialEducationTeacherQualificationStatusCode
-		-- , sssrd6.InputCode AS SpecialEducationTeacherQualificationStatusCodeMap
---
+		, rdkss.SpecialEducationTeacherQualificationStatusCode
+		, sssrd5.InputCode AS SpecialEducationTeacherQualificationStatusMap
+		, rdkss.EdFactsCertificationStatusCode
 
 	FROM rds.DimK12StaffStatuses rdkss
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
@@ -40,11 +39,10 @@ CREATE VIEW RDS.vwDimK12StaffStatuses AS
 		ON rdkss.SpecialEducationTeacherQualificationStatusCode = sssrd4.OutputCode
 		AND sssrd4.TableName = 'RefParaprofessionalQualification'
 		AND rsy.SchoolYear = sssrd4.SchoolYear
---NEW ELEMENT ADDED BY OSC, TICKET #346, DON'T KNOW THE NAME OF THE REF TABLE
-	-- LEFT JOIN staging.SourceSystemReferenceData sssrd6
-	-- 	ON rdkss.SpecialEducationTeacherQualificationStatusCode = sssrd6.OutputCode
-	-- 	AND sssrd6.TableName = 'RefSpecialEducationTeacherQualificationStatus'
-	-- 	AND rsy.SchoolYear = sssrd6.SchoolYear
+	LEFT JOIN staging.SourceSystemReferenceData sssrd5
+		ON rdkss.SpecialEducationTeacherQualificationStatusCode = sssrd5.OutputCode
+		AND sssrd5.TableName = 'RefSpecialEducationTeacherQualificationStatus'
+		AND rsy.SchoolYear = sssrd5.SchoolYear
 
 
 
