@@ -17671,7 +17671,7 @@
 		[MiddleName] 									NVARCHAR (75) 	NULL,
 		[BirthDate] 									DATE 			NULL,
 		[Sex] 											NVARCHAR (30) 	NULL,
-		[PositionTitle] 								NVARCHAR (50) 	NULL,
+		[PositionTitle] 								NVARCHAR (200) 	NULL,
 		[FullTimeEquivalency] 							DECIMAL (5, 4) 	NULL,
 		[SpecialEducationStaffCategory] 				NVARCHAR (100) 	NULL,
 		[K12StaffClassification] 						NVARCHAR (100) 	NULL,
