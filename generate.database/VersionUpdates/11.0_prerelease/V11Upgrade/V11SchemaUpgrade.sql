@@ -6934,8 +6934,6 @@ CREATE TABLE [Staging].[tmp_ms_xx_K12Enrollment] (
     [CohortDescription]                                   NCHAR (1024)   NULL,
     [ProjectedGraduationDate]                             NVARCHAR (8)   NULL,
     [HighSchoolDiplomaType]                               NVARCHAR (100) NULL,
-    [LanguageNative]                                      NVARCHAR (100) NULL,
-    [LanguadeHome]                                        NVARCHAR (100) NULL,
     [NumberOfSchoolDays]                                  DECIMAL (9, 2) NULL,
     [NumberOfDaysAbsent]                                  DECIMAL (9, 2) NULL,
     [AttendanceRate]                                      DECIMAL (5, 4) NULL,
