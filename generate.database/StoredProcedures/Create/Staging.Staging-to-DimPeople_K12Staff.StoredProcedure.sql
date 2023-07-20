@@ -28,6 +28,7 @@ BEGIN
 			, BirthDate										DATE NULL
 			, K12StaffStaffMemberIdentifierState			NVARCHAR(40) NULL
 			, IsActiveK12StaffMember						BIT NULL
+			, PositionTitle									NVARCHAR(200) NULL
 			, RecordStartDateTime							DATE NULL
 			, RecordEndDateTime								DATE NULL
 		)
@@ -39,6 +40,7 @@ BEGIN
 			, BirthDate
 			, K12StaffStaffMemberIdentifierState
 			, IsActiveK12StaffMember
+			, PositionTitle
 			, RecordStartDateTime
 			, RecordEndDateTime
 		)		
@@ -49,6 +51,7 @@ BEGIN
 			, BirthDate
 			, StaffMemberIdentifierState
 			, 1
+			, PositionTitle
 			, RecordStartDateTime
 			, RecordEndDateTime
 		FROM Staging.K12StaffAssignment sa
@@ -70,6 +73,7 @@ BEGIN
 			, BirthDate
 			, K12StaffStaffMemberIdentifierState
 			, IsActiveK12StaffMember
+			, PositionTitle
 			, RecordStartDateTime
 			, RecordEndDateTime
 		)
@@ -80,6 +84,7 @@ BEGIN
 			, src.Birthdate
 			, src.K12StaffStaffMemberIdentifierState
 			, src.IsActiveK12StaffMember
+			, src.PositionTitle
 			, src.RecordStartDateTime
 			, src.RecordEndDateTime
 		);
