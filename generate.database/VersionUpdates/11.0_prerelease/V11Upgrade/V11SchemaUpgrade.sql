@@ -2710,13 +2710,12 @@ DROP INDEX [IX_SourceSystemReferenceData_Unique]
     ON [Staging].[SourceSystemReferenceData];
 
 
-
-PRINT N'Dropping Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]...';
-
+-- PRINT N'Dropping Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]...';
 
 
-DROP INDEX [IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]
-    ON [RDS].[BridgeK12SchoolGradeLevels];
+
+-- DROP INDEX [IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]
+--     ON [RDS].[BridgeK12SchoolGradeLevels];
 
 
 
