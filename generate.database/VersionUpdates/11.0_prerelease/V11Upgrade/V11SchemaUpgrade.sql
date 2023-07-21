@@ -2710,13 +2710,12 @@ DROP INDEX [IX_SourceSystemReferenceData_Unique]
     ON [Staging].[SourceSystemReferenceData];
 
 
-
-PRINT N'Dropping Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]...';
-
+-- PRINT N'Dropping Index [RDS].[BridgeK12SchoolGradeLevels].[IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]...';
 
 
-DROP INDEX [IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]
-    ON [RDS].[BridgeK12SchoolGradeLevels];
+
+-- DROP INDEX [IXFK_BridgeK12SchoolGradeLevels_DimGradeLevels]
+--     ON [RDS].[BridgeK12SchoolGradeLevels];
 
 
 
@@ -6935,8 +6934,6 @@ CREATE TABLE [Staging].[tmp_ms_xx_K12Enrollment] (
     [CohortDescription]                                   NCHAR (1024)   NULL,
     [ProjectedGraduationDate]                             NVARCHAR (8)   NULL,
     [HighSchoolDiplomaType]                               NVARCHAR (100) NULL,
-    [LanguageNative]                                      NVARCHAR (100) NULL,
-    [LanguadeHome]                                        NVARCHAR (100) NULL,
     [NumberOfSchoolDays]                                  DECIMAL (9, 2) NULL,
     [NumberOfDaysAbsent]                                  DECIMAL (9, 2) NULL,
     [AttendanceRate]                                      DECIMAL (5, 4) NULL,

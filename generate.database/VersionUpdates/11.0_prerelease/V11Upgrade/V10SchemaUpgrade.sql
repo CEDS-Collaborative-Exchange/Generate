@@ -12785,8 +12785,6 @@
 		[CohortDescription]                              NCHAR (1024)   NULL,
 		[ProjectedGraduationDate]                        NVARCHAR (8)   NULL,
 		[HighSchoolDiplomaType]                          NVARCHAR (100) NULL,
-		[LanguageNative]                                 NVARCHAR (100) NULL,
-		[LanguadeHome]                                   NVARCHAR (100) NULL,
 		[NumberOfSchoolDays]                             DECIMAL (9, 2) NULL,
 		[NumberOfDaysAbsent]                             DECIMAL (9, 2) NULL,
 		[AttendanceRate]                                 DECIMAL (5, 4) NULL,
@@ -17688,11 +17686,11 @@
 		[EdFactsTeacherInexperiencedStatus] 			NVARCHAR (100) 	NULL,
 		[SpecialEducationTeacherQualificationStatus]	NVARCHAR (100) 	NULL,
 		[EDFactsTeacherOutOfFieldStatus] 				NVARCHAR (100) 	NULL,
-		[RecordStartDateTime] 							DATETIME 		NULL,
-		[RecordEndDateTime] 							DATETIME 		NULL,
+		[ProgramTypeCode] 								NVARCHAR (100) 	NULL,
 		[SchoolYear] 									SMALLINT 		NULL,
 		[DataCollectionName] 							NVARCHAR (100) 	NULL,
-		[ProgramTypeCode] 								NVARCHAR (100) 	NULL,
+		[RecordStartDateTime] 							DATETIME 		NULL,
+		[RecordEndDateTime] 							DATETIME 		NULL,
 		[RunDateTime] 									DATETIME 		NULL,
 		CONSTRAINT [[tmp_ms_xx_constraint_PK_K12StaffAssignment1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
