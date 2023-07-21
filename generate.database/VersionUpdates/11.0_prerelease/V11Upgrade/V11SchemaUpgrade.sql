@@ -12274,7 +12274,7 @@ ALTER TABLE [RDS].[BridgeK12StudentEnrollmentIdeaDisabilityTypes] WITH CHECK CHE
 
 ALTER TABLE [RDS].[BridgeK12StudentEnrollmentIdeaDisabilityTypes] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12StudentEnrollmentIdeaDisabilityTypes_IdeaDisabilityTypeId];
 
-
+EXEC sp_rename 'RDS.ReportEdFactsK12StudentCounts.ISO6392Language', 'ISO6392LanguageCode', 'COLUMN';
 
 -- EMPTY RDS.DimK12SchoolStatuses to prepare for reloading in Junk-Table-Dimension-Population
 	delete from RDS.DimK12SchoolStatuses

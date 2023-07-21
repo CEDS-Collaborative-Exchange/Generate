@@ -179,7 +179,7 @@ BEGIN
 			, -1 										NOrDStatusId							
 			, -1										CTEStatusId							
 			, -1										K12EnrollmentStatusId					
-			, -1										EnglishLearnerStatusId				
+			, isnull(rdels.DimEnglishLearnerStatusId, -1)	EnglishLearnerStatusId	-- USED FOR FS141, but not FS116			
 			, -1										HomelessnessStatusId					
 			, -1										EconomicallyDisadvantagedStatusId		
 			, -1										FosterCareStatusId					
@@ -371,6 +371,4 @@ BEGIN
 	END CATCH
 
 END
-
-GO
 

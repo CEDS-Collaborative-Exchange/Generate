@@ -558,6 +558,75 @@ BEGIN
 
 				end
 
+			-- JW 7/20/2023 Fixed FS141 performance issues by using #temp table rather than "In subselect"
+			if @reportCode in ('C141')
+				begin
+					select @sql = @sql + char(10) + char(10)
+
+					select @sql = @sql + 
+					'if OBJECT_ID(''tempdb..#Students'') is not null drop table #Students' + char(10)
+
+					select @sql = @sql +
+						'select distinct 
+							fact.K12StudentId,  
+							m.DimEnglishLearnerStatusId, 
+							g.DimGradelevelId, 
+							people.K12StudentStudentIdentifierState
+						into #Students
+						from rds.' + @factTable + ' fact
+						inner join rds.DimPeople people
+							on fact.K12StudentId = people.DimPersonId' + char(10)
+
+					if @reportLevel = 'SEA'
+						begin
+							select @sql = @sql +
+							'inner join rds.DimEnglishLearnerStatuses m 
+								on fact.EnglishLearnerStatusId = m.DimEnglishLearnerStatusId
+							inner join rds.DimGradeLevels g 
+								on fact.GradelevelId = g.DimGradelevelId' + char(10)
+						end
+
+
+					if @reportLevel = 'LEA'
+						begin
+							select @sql = @sql +
+							'inner join rds.DimLeas s 
+								on fact.LeaId = s.DimLeaId
+								and fact.SchoolYearId = @dimSchoolYearId
+								and fact.FactTypeId = @dimFactTypeId
+								and fact.LeaId <> -1
+							inner join rds.DimEnglishLearnerStatuses m 
+								on fact.EnglishLearnerStatusId = m.DimEnglishLearnerStatusId
+							inner join rds.DimGradeLevels g 
+								on fact.GradelevelId = g.DimGradelevelId' + char(10)
+						end
+
+					if @reportLevel = 'SCH'
+						begin
+							select @sql = @sql +
+							'inner join rds.DimK12Schools s 
+								on fact.K12SchoolId = s.DimK12SchoolId
+								and fact.SchoolYearId = @dimSchoolYearId
+								and fact.FactTypeId = @dimFactTypeId
+								and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+							inner join rds.DimEnglishLearnerStatuses m 
+								on fact.EnglishLearnerStatusId = m.DimEnglishLearnerStatusId
+							inner join rds.DimGradeLevels g 
+								on fact.GradelevelId = g.DimGradelevelId' + char(10) 
+						end
+
+					select @sql = @sql + '
+					where fact.SchoolYearId = ' + convert(varchar, @dimSchoolYearid) + 
+					' and fact.FactTypeId = ' + convert(varchar, @dimFactTypeId) +
+					' and m.EnglishLearnerStatusCode = ''Yes'' -- JW 7/19/2023
+					  and g.GradeLevelEdFactsCode not in (''PK'',''AE'')' + char(10)
+
+
+					select @sql = @sql + char(10) + 
+					'CREATE INDEX IDX_Students ON #Students (K12StudentId, K12StudentStudentIdentifierState)' + char(10) + char(10)
+
+				end
+
 
 
 			-- JW 7/20/2022 Fixed Discipline performance issues by using #temp table rather than "In subselect"
@@ -3956,34 +4025,7 @@ BEGIN
 	else if @reportCode in ('c141')
 		begin
 		set @sqlCountJoins = @sqlCountJoins + '
-			inner join (
-				select distinct fact.K12StudentId,  m.DimEnglishLearnerStatusId, g.DimGradelevelId, p.K12StudentStudentIdentifierState
-				from rds.' + @factTable + ' fact '
-
-				if @reportLevel in ('lea', 'sch')
-				begin
-					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
-				end
-
-			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
-					on fact.K12StudentId = p.DimPersonId
-				inner join rds.DimK12Schools s 
-					on fact.K12SchoolId = s.DimK12SchoolId
-					and fact.SchoolYearId = @dimSchoolYearId
-					and fact.FactTypeId = @dimFactTypeId
-					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				inner join rds.DimEnglishLearnerStatuses m 
-					on fact.EnglishLearnerStatusId = m.DimEnglishLearnerStatusId
-				inner join rds.DimGradeLevels g 
-					on fact.GradelevelId = g.DimGradelevelId
-				where m.EnglishLearnerStatusCode = ''LEP'' 
-				and g.GradeLevelEdFactsCode not in (''PK'',''AE'')
-			) rules
+			inner join #Students rules
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.EnglishLearnerStatusId =  rules.DimEnglishLearnerStatusId 
 				and fact.GradelevelId =  rules.DimGradelevelId'
@@ -4178,7 +4220,7 @@ BEGIN
 
 				set @sqlCountJoins = @sqlCountJoins + '
 				inner join ( 
-					select K12StaffId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFullTimeEquivalency
+					select K12StaffId, sum(round(StaffFTE, 2)) as StaffFTE
 					from rds.' + @factTable + ' fact '
 
 					if @reportLevel in ('lea', 'sch')
@@ -4240,7 +4282,7 @@ BEGIN
 				 'fact.K12StaffId' 
 				+ @sqlCategoryQualifiedDimensionFields 
 				+ ', isnull(fact.StaffCount, 0) as StaffCount,'
-				+ 'isnull(K12StaffCount.StaffFullTimeEquivalency, 0.0) as StaffFullTimeEquivalency'
+				+ 'isnull(K12StaffCount.StaffFTE, 0.0) as StaffFTE'
 				+ ' from rds.' + @factTable + ' fact ' + @sqlCountJoins 
 				+ ' ' + @reportFilterJoin + '
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
@@ -5296,7 +5338,7 @@ BEGIN
 			declare @debugTableCreate nvarchar(max)
 			if @reportCode IN ('C059', 'C070', 'C099', 'C112') 
 			begin
-				set @debugTableCreate = '		select s.K12StaffStaffMemberIdentifierState '
+				set @debugTableCreate = '		select s.StaffMemberIdentifierState '
 			end 
 			else if @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
 			begin
@@ -5325,8 +5367,8 @@ BEGIN
 			IF @reportCode IN ('C059', 'C070', 'C099', 'C112')
 			BEGIN
 				set @debugTableCreate += '		from #categorySet c ' + char(10) +
-				'		inner join rds.DimPeople s ' + char(10)
-				+ '			on c.DimK12StaffId = s.DimPersonId ' + char(10)
+				'		inner join rds.DimK12Staff s ' + char(10)
+				+ '			on c.DimK12StaffId = s.DimK12StaffId ' + char(10)
 			END 
 			--these reports have been converted to use K12StudentStudentIdentifierState instead of K12StudentId
 			--	in #Students and #categorySet so no need to join to DimPeople
@@ -5359,7 +5401,7 @@ BEGIN
 			IF @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') BEGIN
 				set @debugTableCreate += '		order by K12StudentStudentIdentifierState ' + char(10)
 			END ELSE BEGIN
-				set @debugTableCreate += '		order by s.K12StaffStaffMemberIdentifierState ' + char(10)
+				set @debugTableCreate += '		order by s.StaffMemberIdentifierState ' + char(10)
 			END
 
 			set @sql += @debugTableCreate 
