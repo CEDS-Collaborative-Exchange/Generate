@@ -12465,19 +12465,20 @@
 	PRINT N'Starting rebuilding table [RDS].[ReportEDFactsK12StaffCounts]...';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[OrganizationNcesId]', N'OrganizationIdentifierNces';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[OrganizationStateId]', N'OrganizationIdentifierSea';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[OUTOFFIELDSTATUS]', N'EDFACTSTEACHEROUTOFFIELDSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[OUTOFFIELDSTATUS]', N'EDFactsTeacherOutOfFieldStTatus';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[ParentOrganizationStateId]', N'ParentOrganizationIdentifierSea';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StateCode]', N'StateAbbreviationCode';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StateName]', N'StateAbbreviationDescription';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[UNEXPERIENCEDSTATUS]', N'EDFACTSTEACHERINEXPERIENCEDSTATUS';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[CERTIFICATIONSTATUS]', N'EDFACTSCERTIFICATIONSTATUS';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[QUALIFICATIONSTATUS]', N'SPECIALEDUCATIONTEACHERQUALIFICATIONSTATUS';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION]', N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[UNEXPERIENCEDSTATUS]', N'EDFactsTeacherInexperiencedStatus';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[CERTIFICATIONSTATUS]', N'EDFactsCertificationStatus';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[QUALIFICATIONSTATUS]', N'SpecialEducationTeacherQualificationStatus';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION]', N'TitleIIILanguageInstructionProgramType';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StaffFTE]', N'StaffFullTimeEquivalency';
 	
+	ALTER TABLE [RDS].[ReportEDFactsK12StaffCounts] ADD [ParaprofessionalQualificationStatus] INT NULL;
 
 
-	
+
 	/*
 	The column [RDS].[ReportEDFactsK12StudentCounts].[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAM] is being dropped, data loss could occur.
 	The column [RDS].[ReportEDFactsK12StudentCounts].[LEPPERKINSSTATUS] is being dropped, data loss could occur.
