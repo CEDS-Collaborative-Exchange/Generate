@@ -23,7 +23,6 @@ CREATE VIEW [Debug].[vwK12Staff_StagingTables] AS
 				, AssignmentStartDate
 				, AssignmentEndDate
 				, EdFactsTeacherInexperiencedStatus
-				, EmergencyorProvisionalCredentialStatus
 				, EDFactsTeacherOutOfFieldStatus
 				, RecordStartDateTime
 				, RecordEndDateTime
@@ -54,7 +53,6 @@ CREATE VIEW [Debug].[vwK12Staff_StagingTables] AS
 	--AND AssignmentStartDate = ''
 	--AND AssignmentEndDate = ''
 	--AND EdFactsTeacherInexperiencedStatus = ''
-	--AND EmergencyorProvisionalCredentialStatus = ''
 	--AND EDFactsTeacherOutOfFieldStatus = ''
 	--AND RecordStartDateTime = ''
 	--AND RecordEndDateTime = ''
