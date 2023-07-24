@@ -212,3 +212,16 @@ DELETE FROM app.Dimensions WHERE DimensionId = @dimensionId
 SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PlacementType'
 DELETE FROM app.Category_Dimensions WHERE DimensionId = @dimensionId
 DELETE FROM app.Dimensions WHERE DimensionId = @dimensionId
+
+SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimK12StaffStatuses'
+
+INSERT INTO App.Dimensions VALUES ('ParaprofessionalQualificationStatus', @dimensionTableId, 0, 0)
+SELECT @dimensionId = DimensionId FROM App.Dimensions WHERE DimensionFieldName = 'ParaprofessionalQualificationStatus'
+
+SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'QUALSTATPARA'
+
+INSERT INTO App.Category_Dimensions VALUES (@categoryId, @dimensionId)
+
+SELECT @dimensionId = DimensionId FROM App.Dimensions WHERE DimensionFieldName = 'SpecialEducationTeacherQualificationStatus'
+
+DELETE FROM App.Category_Dimensions WHERE CategoryId = @categoryId AND DimensionId = @dimensionId

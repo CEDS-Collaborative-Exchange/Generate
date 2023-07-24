@@ -18,6 +18,9 @@ BEGIN
 
 	BEGIN TRY
 
+	--SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
+		SET NOCOUNT ON;
+
 		DECLARE 
 		@FactTypeId INT,
 		@SchoolYearId int,
@@ -43,8 +46,8 @@ BEGIN
 		FROM RDS.vwDimK12StaffStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwK12StaffStatuses ON #vwK12StaffStatuses (SpecialEducationAgeGroupTaughtMap, EdFactsTeacherInexperiencedStatusMap, EdFactsTeacherOutOfFieldStatusMap, TeachingCredentialTypeMap, ParaprofessionalQualificationStatusMap, HighlyQualifiedTeacherIndicatorMap);
-
+		CREATE CLUSTERED INDEX ix_tempvwK12StaffStatuses ON #vwK12StaffStatuses (SpecialEducationAgeGroupTaughtMap, EdFactsTeacherInexperiencedStatusMap, EdFactsTeacherOutOfFieldStatusMap, TeachingCredentialTypeMap, ParaprofessionalQualificationStatusMap, HighlyQualifiedTeacherIndicatorMap, SpecialEducationTeacherQualificationStatusMap, EdFactsCertificationStatusMap);
+		
 		SELECT *
 		INTO #vwK12StaffCategories
 		FROM RDS.vwDimK12StaffCategories
@@ -125,17 +128,10 @@ BEGIN
 			AND ISNULL(ssa.EDFactsTeacherOutOfFieldStatus, 'MISSING') = ISNULL(rdkss.EDFactsTeacherOutOfFieldStatusMap, rdkss.EDFactsTeacherOutOfFieldStatusCode)
 			AND ISNULL(ssa.EdFactsTeacherInexperiencedStatus, 'MISSING') = ISNULL(rdkss.EdFactsTeacherInexperiencedStatusMap, rdkss.EdFactsTeacherInexperiencedStatusCode)
 			AND ISNULL(ssa.TeachingCredentialType, 'MISSING') = ISNULL(rdkss.TeachingCredentialTypeMap, rdkss.TeachingCredentialTypeCode)
-			AND ISNULL(ssa.ParaprofessionalQualification, 'MISSING') = ISNULL(rdkss.ParaprofessionalQualificationStatusMap, rdkss.ParaprofessionalQualificationStatusCode)
+			AND ISNULL(ssa.ParaprofessionalQualificationStatus, 'MISSING') = ISNULL(rdkss.ParaprofessionalQualificationStatusMap, rdkss.ParaprofessionalQualificationStatusCode)
 			AND ISNULL(CAST(ssa.HighlyQualifiedTeacherIndicator AS SMALLINT), -1) = ISNULL(rdkss.HighlyQualifiedTeacherIndicatorMap, -1)
 			AND ISNULL(ssa.SpecialEducationTeacherQualificationStatus, 'MISSING') = ISNULL(rdkss.SpecialEducationTeacherQualificationStatusMap, rdkss.SpecialEducationTeacherQualificationStatusCode)
-            AND	CASE
-                    WHEN ssa.CredentialType in ('Certification','Licensure')
-						AND ssa.CredentialIssuanceDate >= staging.GetFiscalYearStartDate(@SchoolYear)
-                        AND ssa.CredentialIssuanceDate <= staging.GetFiscalYearEndDate(@SchoolYear)
-                        THEN 'FC'
-                    ELSE 'NFC'
-            	END = ISNULL(rdkss.EdFactsCertificationStatusCode, 'MISSING')
-
+            AND	ISNULL(ssa.EdFactsCertificationStatus, 'MISSING') = ISNULL(rdkss.EdFactsCertificationStatusMap, rdkss.EdFactsCertificationStatusCode)
 	--credential issuance date	
 		LEFT JOIN RDS.DimDates CredIss
 			ON ssa.CredentialIssuanceDate = CredIss.DateValue
@@ -151,9 +147,7 @@ BEGIN
 			AND ISNULL(ssa.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
 			AND @ChildCountDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
 			AND @ChildCountDate BETWEEN ssa.AssignmentStartDate AND ISNULL(ssa.AssignmentEndDate, GETDATE())
-		ALTER INDEX ALL ON RDS.FactK12StaffCounts REBUILD
-
-
+		
 	--Final insert into RDS.FactK12StaffCounts table
 		INSERT INTO RDS.FactK12StaffCounts ( 
 			SchoolYearId
@@ -185,6 +179,8 @@ BEGIN
 			, StaffCount
 			, StaffFullTimeEquivalency
 		FROM #Facts
+
+		ALTER INDEX ALL ON RDS.FactK12StaffCounts REBUILD
 
 	END TRY
 	BEGIN CATCH
