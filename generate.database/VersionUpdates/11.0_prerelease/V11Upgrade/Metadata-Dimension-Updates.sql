@@ -106,7 +106,7 @@ BEGIN
 	INSERT INTO [App].[Dimensions]([DimensionFieldName],[DimensionTableId],[IsCalculated],[IsOrganizationLevelSpecific])
     VALUES('DisciplineReason', @dimensionTableId, 0, 0)
 END
-Update app.Dimensions SET DimensionTableId = @dimensionTableId WHERE DimensionFieldName = 'IdeaInterimRemovalReason'
+--Update app.Dimensions SET DimensionTableId = @dimensionTableId WHERE DimensionFieldName = 'IdeaInterimRemovalReason'
 IF NOT EXISTS(SELECT 1 FROM app.Dimensions where DimensionFieldName = 'IncidentBehavior')
 BEGIN
 	INSERT INTO [App].[Dimensions]([DimensionFieldName],[DimensionTableId],[IsCalculated],[IsOrganizationLevelSpecific])
