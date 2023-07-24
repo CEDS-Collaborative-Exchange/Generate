@@ -619,7 +619,7 @@ BEGIN
 					where fact.SchoolYearId = ' + convert(varchar, @dimSchoolYearid) + 
 					' and fact.FactTypeId = ' + convert(varchar, @dimFactTypeId) +
 					' and m.EnglishLearnerStatusCode = ''Yes'' -- JW 7/19/2023
-					  and g.GradeLevelEdFactsCode not in (''PK'',''AE'')' + char(10)
+					  and g.GradeLevelEdFactsCode in (''KG'',''01'', ''02'', ''03'', ''04'', ''05'', ''06'', ''07'', ''08'', ''09'', ''10'', ''11'', ''12'', ''13'', ''UG'', ''MISSING'')' + char(10)
 
 
 					select @sql = @sql + char(10) + 
