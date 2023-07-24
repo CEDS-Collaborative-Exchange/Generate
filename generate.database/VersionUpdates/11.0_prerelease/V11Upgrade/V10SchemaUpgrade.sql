@@ -12474,6 +12474,8 @@
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[QUALIFICATIONSTATUS]', N'SpecialEducationTeacherQualificationStatus';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION]', N'TitleIIILanguageInstructionProgramType';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StaffFTE]', N'StaffFullTimeEquivalency';
+
+	ALTER TABLE RDS.ReportEDFactsK12StaffCounts ADD PARAPROFESSIONALQUALIFICATIONSTATUS NVARCHAR(50);
 	
 	ALTER TABLE [RDS].[ReportEDFactsK12StaffCounts] ADD [ParaprofessionalQualificationStatus] INT NULL;
 
@@ -17676,10 +17678,10 @@
 		[K12StaffClassification] 						NVARCHAR (100) 	NULL,
 		[TitleIProgramStaffCategory] 					NVARCHAR (100) 	NULL,
 		[TeachingCredentialType] 						NVARCHAR (100) 	NULL,
-		[CredentialType] 								NVARCHAR (100) 	NULL,
+		[EdFactsCertificationStatus] 					NVARCHAR (100) 	NULL,
 		[CredentialIssuanceDate] 						DATE 			NULL,
 		[CredentialExpirationDate] 						DATE 			NULL,
-		[ParaprofessionalQualification] 				NVARCHAR (100) 	NULL,
+		[ParaprofessionalQualificationStatus]			NVARCHAR (100) 	NULL,
 		[SpecialEducationAgeGroupTaught] 				NVARCHAR (100) 	NULL,
 		[HighlyQualifiedTeacherIndicator] 				BIT 			NULL,
 		[AssignmentStartDate] 							DATE 			NULL,
