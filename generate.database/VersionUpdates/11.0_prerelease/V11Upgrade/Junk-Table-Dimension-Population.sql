@@ -3628,6 +3628,16 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'EducationalServicesAfterRemoval'
 	
+--EDFacts Code is incorrectly populated with the CEDS Code
+	UPDATE #EducationalServicesAfterRemoval
+	SET EducationalServicesAfterRemovalEdFactsCode = 'SERVPROV'
+	WHERE EducationalServicesAfterRemovalEdFactsCode = 'Yes'
+
+	UPDATE #EducationalServicesAfterRemoval
+	SET EducationalServicesAfterRemovalEdFactsCode = 'SERVNOTPROV'
+	WHERE EducationalServicesAfterRemovalEdFactsCode = 'No'
+
+
 	IF OBJECT_ID('tempdb..#IdeaInterimRemovalReason') IS NOT NULL BEGIN
 		DROP TABLE #IdeaInterimRemovalReason
 	END
@@ -3642,6 +3652,20 @@
 		, CedsOptionSetCode AS EdFactsOptionSetCode
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'IdeaInterimRemovalReason'
+
+--EDFacts Code is incorrectly populated with the CEDS Code
+	UPDATE #IdeaInterimRemovalReason
+	SET IdeaInterimRemovalReasonEdFactsCode = 'D'
+	WHERE IdeaInterimRemovalReasonEdFactsCode = 'Drugs'
+
+	UPDATE #IdeaInterimRemovalReason
+	SET IdeaInterimRemovalReasonEdFactsCode = 'W'
+	WHERE IdeaInterimRemovalReasonEdFactsCode = 'Weapons'
+
+	UPDATE #IdeaInterimRemovalReason
+	SET IdeaInterimRemovalReasonEdFactsCode = 'SBI'
+	WHERE IdeaInterimRemovalReasonEdFactsCode = 'SeriousBodilyInjury'
+
 
 	IF OBJECT_ID('tempdb..#IdeaInterimRemoval') IS NOT NULL BEGIN
 		DROP TABLE #IdeaInterimRemoval
