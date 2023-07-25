@@ -1,4 +1,4 @@
-CREATE PROCEDURE [App].[FS002_TestCase]	
+CREATE PROCEDURE [App].[General_UnitTest]	
 	@SchoolYear SMALLINT
 AS
 BEGIN
@@ -20,8 +20,8 @@ BEGIN TRY
 			)
 			VALUES 
 			(
-				  'FS002_UnitTestCase'
-				, 'FS002_TestCase'				
+				  'General_UnitTestCase'
+				, 'General_TestCase'				
 				, 'FS002'
 				, 1
 			)
@@ -32,7 +32,7 @@ BEGIN TRY
 			SELECT 
 				@SqlUnitTestId = SqlUnitTestId
 			FROM App.SqlUnitTest 
-			WHERE UnitTestName = 'FS002_UnitTestCase'
+			WHERE UnitTestName = 'General_UnitTestCase'
 		END
 
 		-- Clear out last run
