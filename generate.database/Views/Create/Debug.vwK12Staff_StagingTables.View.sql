@@ -17,7 +17,7 @@ CREATE VIEW [Debug].[vwK12Staff_StagingTables] AS
 				, TeachingCredentialType
 				, CredentialIssuanceDate
 				, CredentialExpirationDate
-				, ParaprofessionalQualification
+				, ParaprofessionalQualificationStatus
 				, SpecialEducationAgeGroupTaught
 				, HighlyQualifiedTeacherIndicator
 				, AssignmentStartDate
@@ -47,7 +47,7 @@ CREATE VIEW [Debug].[vwK12Staff_StagingTables] AS
 	--AND TeachingCredentialType = ''
 	--AND CredentialIssuanceDate = ''
 	--AND CredentialExpirationDate = ''
-	--AND ParaprofessionalQualification = ''
+	--AND ParaprofessionalQualificationStatus = ''
 	--AND SpecialEducationAgeGroupTaught = ''
 	--AND HighlyQualifiedTeacherIndicator = ''
 	--AND AssignmentStartDate = ''
