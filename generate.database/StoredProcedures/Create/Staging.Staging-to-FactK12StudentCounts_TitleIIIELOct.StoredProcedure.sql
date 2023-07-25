@@ -159,7 +159,6 @@ BEGIN
 				AND sppse.ProgramParticipationBeginDate  <= @ReportingDate
 				AND ISNULL(sppse.ProgramParticipationEndDate, @ReportingDate) >= @ReportingDate
 				then 1 
-				when sppse.IDEAIndicator is null then -1
 				else 0
 			end 										DisabilityStatusId	
 			, ISNULL(rdvl.DimLanguageId, -1)			LanguageId							

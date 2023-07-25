@@ -98,8 +98,8 @@ BEGIN
 				ELSE 'MISSING'
 			END AS K12StaffClassificationEdFactsCode
 			, CredentialType
-			, ParaprofessionalQualification
-			, CASE ParaprofessionalQualification
+			, ParaprofessionalQualificationStatus
+			, CASE ParaprofessionalQualificationStatus
 				WHEN 'Qualified' THEN 'Q'
 				WHEN 'NotQualified' THEN 'NQ'
 				ELSE 'MISSING'

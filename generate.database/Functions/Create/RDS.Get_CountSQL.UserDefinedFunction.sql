@@ -576,16 +576,11 @@ BEGIN
 						from rds.' + @factTable + ' fact
 						inner join rds.DimPeople people
 							on fact.K12StudentId = people.DimPersonId' + char(10)
-
-					if @reportLevel = 'SEA'
-						begin
-							select @sql = @sql +
+						select @sql = @sql +
 							'inner join rds.DimEnglishLearnerStatuses m 
 								on fact.EnglishLearnerStatusId = m.DimEnglishLearnerStatusId
 							inner join rds.DimGradeLevels g 
 								on fact.GradelevelId = g.DimGradelevelId' + char(10)
-						end
-
 
 					if @reportLevel = 'LEA'
 						begin
@@ -594,11 +589,7 @@ BEGIN
 								on fact.LeaId = s.DimLeaId
 								and fact.SchoolYearId = @dimSchoolYearId
 								and fact.FactTypeId = @dimFactTypeId
-								and fact.LeaId <> -1
-							inner join rds.DimEnglishLearnerStatuses m 
-								on fact.EnglishLearnerStatusId = m.DimEnglishLearnerStatusId
-							inner join rds.DimGradeLevels g 
-								on fact.GradelevelId = g.DimGradelevelId' + char(10)
+								and fact.LeaId <> -1' + char(10)
 						end
 
 					if @reportLevel = 'SCH'
@@ -608,11 +599,7 @@ BEGIN
 								on fact.K12SchoolId = s.DimK12SchoolId
 								and fact.SchoolYearId = @dimSchoolYearId
 								and fact.FactTypeId = @dimFactTypeId
-								and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-							inner join rds.DimEnglishLearnerStatuses m 
-								on fact.EnglishLearnerStatusId = m.DimEnglishLearnerStatusId
-							inner join rds.DimGradeLevels g 
-								on fact.GradelevelId = g.DimGradelevelId' + char(10) 
+								and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1' + char(10) 
 						end
 
 					select @sql = @sql + '
@@ -4220,7 +4207,7 @@ BEGIN
 
 				set @sqlCountJoins = @sqlCountJoins + '
 				inner join ( 
-					select K12StaffId, sum(round(StaffFTE, 2)) as StaffFTE
+					select K12StaffId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFTE
 					from rds.' + @factTable + ' fact '
 
 					if @reportLevel in ('lea', 'sch')

@@ -196,7 +196,6 @@ BEGIN
 			, -1										MigrantStudentQualifyingArrivalDateId	
 			, -1										LastQualifyingMoveDateId				
 		
-	--select count(distinct ske.StudentIdentifierState)	
 		FROM Staging.K12Enrollment ske
 
 		JOIN RDS.DimSchoolYears rsy
@@ -232,11 +231,6 @@ BEGIN
 			ON ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			--AND el.EnglishLearner_StatusStartDate <= @SYEndDate 
-
-			-- THIS SHOULD BE DIFFERENT FOR FS116 and FS141 ------------------------------------
-			-- NOT SURE HOW TO HANDLE THIS YET
-			-- FS116
 			AND ISNULL(el.EnglishLearner_StatusStartDate, @SYStartDate) <= @SYEndDate -- JW
 			AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= @SYStartDate
 
@@ -385,7 +379,7 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
-		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', 'FactK12StudentCounts', ERROR_MESSAGE(), 1, NULL, GETDATE())
+		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', 'FactK12StudentCounts', ERROR_MESSAGE(), 1, NULL, GETDATE())
 	END CATCH
 
 END
