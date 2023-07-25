@@ -1,4 +1,4 @@
-CREATE PROCEDURE [App].[General_UnitTest]	
+CREATE PROCEDURE [App].[General_TestCase]	
 	@SchoolYear SMALLINT
 AS
 BEGIN
