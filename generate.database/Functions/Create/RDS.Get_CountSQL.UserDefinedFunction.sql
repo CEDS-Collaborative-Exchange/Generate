@@ -2103,7 +2103,7 @@ BEGIN
 		-- Ages 3-21, Has Disability
 		set @sqlCountJoins = @sqlCountJoins + '
 			inner join (
-				select rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId, fact.DisciplineStatusId
+				select distinct rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId, fact.DisciplineStatusId
 				from rds.' + @factTable + ' fact '
 
 				if @reportLevel = 'lea'
