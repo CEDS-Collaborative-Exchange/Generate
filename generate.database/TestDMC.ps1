@@ -18,7 +18,7 @@ $erroractionpreference = 'stop'
 
 try
 {
-	$sqlCmdPath = "C:\Program Files\Microsoft SQL Server\110\Tools\Binn\SQLCMD.EXE"
+	$sqlCmdPath = "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\SQLCMD.EXE"
 	$invocation = (Get-Variable MyInvocation).Value
 	$currentPath = Split-Path $invocation.MyCommand.Path
 
@@ -26,6 +26,8 @@ try
 	
     Echo "Version Path = $testPath"	
 	Echo "TestDMC.ps1 Starting"
+
+    $clearPath = "$testPath\pre_Test DMC.sql" 
 
 	Get-childitem $testPath | ForEach-Object {
 
