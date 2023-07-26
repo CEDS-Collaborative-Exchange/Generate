@@ -3,375 +3,924 @@ CREATE PROCEDURE [App].[FS194_TestCase]
 AS
 BEGIN
 
-	BEGIN TRY
-	BEGIN TRANSACTION
+	--clear the tables for the next run
+	IF OBJECT_ID('tempdb..#C194Staging') IS NOT NULL
+	DROP TABLE #C194Staging
 
-		--clear the tables for the next run
-		--DROP TABLE #Staging
-		--DROP TABLE #TC1
-		--DROP TABLE #TC2
-		--DROP TABLE #TC3
-		--DROP TABLE #TC4
+	IF OBJECT_ID('tempdb..#S_CSA') IS NOT NULL
+	DROP TABLE #S_CSA
 
-		IF OBJECT_ID('tempdb..#Staging') IS NOT NULL
-		DROP TABLE #Staging
+	IF OBJECT_ID('tempdb..#L_CSA') IS NOT NULL
+	DROP TABLE #L_CSA
 
-		IF OBJECT_ID('tempdb..#TC1') IS NOT NULL
-		DROP TABLE #TC1
+	-- Define the test
+	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
+	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS194_UnitTestCase') 
 
-		IF OBJECT_ID('tempdb..#TC2') IS NOT NULL
-		DROP TABLE #TC2
-
-		IF OBJECT_ID('tempdb..#TC3') IS NOT NULL
-		DROP TABLE #TC3
-
-		IF OBJECT_ID('tempdb..#TC4') IS NOT NULL
-		DROP TABLE #TC4
-
-		-- Define the test
-		DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
-		IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS194_UnitTestCase') 
-		BEGIN
-			SET @expectedResult = 1
-			INSERT INTO App.SqlUnitTest (
-				  [UnitTestName]
-				, [StoredProcedureName]
-				, [TestScope]
-				, [IsActive]
-			)
-			VALUES (
-				'FS194_UnitTestCase'
-				, 'FS194_TestCase'				
-				, 'FS194'
-				, 1
-			)
-			SET @SqlUnitTestId = @@IDENTITY
-		END 
-		ELSE 
-		BEGIN
-			SELECT 
-				@SqlUnitTestId = SqlUnitTestId
-			--, @expectedResult = ExpectedResult 
-			FROM App.SqlUnitTest 
-			WHERE UnitTestName = 'FS194_UnitTestCase'
-		END
-
-		-- Clear out last run
-		DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId
+	BEGIN
+		SET @expectedResult = 1
+		INSERT INTO App.SqlUnitTest (
+			[UnitTestName]
+			, [StoredProcedureName]
+			, [TestScope]
+			, [IsActive]
+		)
+		VALUES (
+			'FS194_UnitTestCase'
+			, 'FS194_TestCase'				
+			, 'FS194'
+			, 1
+		)
+		SET @SqlUnitTestId = @@IDENTITY
+	END 
+	ELSE 
+	BEGIN
+		SELECT 
+			@SqlUnitTestId = SqlUnitTestId
+		--, @expectedResult = ExpectedResult 
+		FROM App.SqlUnitTest 
+		WHERE UnitTestName = 'FS194_UnitTestCase'
+	END
 	
-		--Get the Special Education program code
-		DECLARE @SPEDProgram varchar(5)
-		SELECT @SPEDProgram = [code] from dbo.RefProgramType where [Definition] = 'Special Education Services'
+	-- Clear out last run
+	DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId
+	
+	--Create SY Start / SY End variables
+	declare @SYStart varchar(10) = CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
+	declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
 
-		--Get School Year End Date
-		DECLARE @SYStartDate datetime = staging.GetFiscalYearStartDate(@schoolYear)
+	-- Get Custom Child Count Date
+	DECLARE @cutOffMonth INT, @cutOffDay INT, @customFactTypeDate VARCHAR(10), @childCountDate date
+	set @cutOffMonth = 11
+	set @cutOffDay = 1
 
-		-- Get Custom Child Count Date
-		DECLARE @ChildCountDate DATETIME
-		select @ChildCountDate = CAST('10/01/' + cast(@SchoolYear - 1 AS Varchar(4)) AS DATETIME)
+	select @customFactTypeDate = r.ResponseValue
+	from app.ToggleResponses r
+	inner join app.ToggleQuestions q 
+		on r.ToggleQuestionId = q.ToggleQuestionId
+	where q.EmapsQuestionAbbrv = 'CHDCTDTE'
 
-		SELECT DISTINCT 
-			Personnel_Identifier_State
-			, LEA_Identifier_State
-			, School_Identifier_State
-			, FullTimeEquivalency
-			, SpecialEducationStaffCategory
-			, CASE SpecialEducationStaffCategory
-				WHEN 'PSYCH'		THEN 'PSYCH'
-				WHEN 'SOCIALWORK' 	THEN 'SOCIALWORK' 
-				WHEN 'OCCTHERAP'	THEN 'OCCTHERAP'
-				WHEN 'AUDIO'		THEN 'AUDIO'
-				WHEN 'PEANDREC'		THEN 'PEANDREC'
-				WHEN 'PHYSTHERAP'	THEN 'PHYSTHERAP'
-				WHEN 'SPEECHPATH' 	THEN 'SPEECHPATH' 
-				WHEN 'INTERPRET'	THEN 'INTERPRET'
-				WHEN 'COUNSELOR'	THEN 'COUNSELOR'
-				WHEN 'ORIENTMOBIL'	THEN 'ORIENTMOBIL'
-				WHEN 'MEDNURSE'		THEN 'MEDNURSE'
+	select @cutOffMonth = SUBSTRING(@customFactTypeDate, 0, CHARINDEX('/', @customFactTypeDate))
+	select @cutOffDay = SUBSTRING(@customFactTypeDate, CHARINDEX('/', @customFactTypeDate) + 1, 2)
+
+    select @ChildCountDate = convert(varchar, @CutoffMonth) + '/' + convert(varchar, @CutoffDay) + '/' + convert(varchar, @SchoolYear -1)
+
+		
+	--Get the LEAs that should not be reported against
+	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL
+	DROP TABLE #excludedLeas
+
+	CREATE TABLE #excludedLeas (
+		LeaIdentifierSeaAccountability		VARCHAR(20)
+	)
+
+	INSERT INTO #excludedLeas 
+	SELECT DISTINCT LEAIdentifierSea
+	FROM Staging.K12Organization
+	WHERE LEA_IsReportedFederally = 0
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+
+	-- Gather, evaluate & record the results
+	SELECT  
+		ske.StudentIdentifierState
+		, ske.LeaIdentifierSeaAccountability
+		, ske.SchoolIdentifierSea
+		, ske.Birthdate
+--Homelessness
+		, hmStatus.HomelessUnaccompaniedYouth
+		, CASE WHEN hmStatus.HomelessUnaccompaniedYouth = 1 THEN 'UY'
 				ELSE 'MISSING'
-			END AS SpecialEducationSupportServicesCategoryEdFactsCode
-			, CredentialType
-			, CASE 
-				WHEN CredentialType in ('Certification', 'Licensure')
-					AND CredentialIssuanceDate <= CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
-					AND isnull(CredentialExpirationDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) >= CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
-					THEN 'FC'
-				ELSE 'NFC'
-			END AS CertificationStatusEdFactsCode
-			, CredentialIssuanceDate
-			, CredentialExpirationDate
-			, AssignmentStartDate
-			, AssignmentEndDate
-		INTO #staging
-		FROM Staging.K12StaffAssignment sksa
-		WHERE K12StaffClassification in ('AdministrativeSupportStaff','Administrators','AllOtherSupportStaff','ElementaryTeachers','InstructionalCoordinators',
-			'KindergartenTeachers','LibraryMediaSpecialists','LibraryMediaSupportStaff','Paraprofessionals','Pre-KindergartenTeachers','SchoolCounselors',
-			'SchoolPsychologist','SecondaryTeachers','SpecialEducationTeachers','StudentSupportServicesStaff','UngradedTeachers')
-		AND ISNULL(AssignmentEndDate, GETDATE()) > @SYStartDate
---		AND ProgramTypeCode = @SPEDProgram
---		WHERE sksa.SchoolYear = @SchoolYear
+		END AS HomelessUnaccompaniedYouthEdFactsCode		
+
+		, hmNight.HomelessNighttimeResidence
+		, CASE WHEN ISNULL(hmNight.HomelessNighttimeResidence, '') <> ''
+				THEN ssrd1.OutputCode
+				ELSE 'MISSING'
+		END AS HomelessPrimaryNighttimeResidenceEdFactsCode
+
+--Age/Grade
+		, CASE 	WHEN rds.Get_Age(ske.Birthdate, @SYStart) < 3
+				THEN 'UNDER3'
+				WHEN rds.Get_Age(ske.Birthdate, @SYStart) >= 3		
+					AND rds.Get_Age(ske.Birthdate, @SYEnd) <= 5
+					AND ISNULL(ske.GradeLevel, 'PK') = 'PK'
+				THEN '3TO5NOTK'
+				ELSE ISNULL(ske.GradeLevel, 'MISSING')
+		END AS GradeLevelEdFactsCode	
+
+	INTO #C194Staging
+
+	FROM Staging.K12Enrollment ske
+--McKinneyVento 
+	JOIN staging.K12Organization sko
+		ON ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sko.LeaIdentifierSea, '')
+		AND sko.LEA_MckinneyVentoSubgrantRecipient = 1 
+--homeless
+	JOIN Staging.PersonStatus hmStatus
+		ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
+		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
+		AND hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
+--homeless nighttime residence
+	LEFT JOIN Staging.PersonStatus hmNight
+		ON ske.StudentIdentifierState = hmNight.StudentIdentifierState
+		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmNight.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmNight.SchoolIdentifierSea, '')
+		AND hmNight.HomelessNightTimeResidence_StartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
+--disability status
+	LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
+		ON ske.StudentIdentifierState = idea.StudentIdentifierState
+		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
+		AND hmStatus.Homelessness_StatusStartDate BETWEEN idea.ProgramParticipationBeginDate AND ISNULL(idea.ProgramParticipationEndDate, @SYEnd)
+--english learner
+	LEFT JOIN Staging.PersonStatus el 
+		ON ske.StudentIdentifierState = el.StudentIdentifierState
+		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
+		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
+		AND hmStatus.Homelessness_StatusStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEnd)
+--migratory status	
+	LEFT JOIN Staging.PersonStatus migrant
+		ON ske.StudentIdentifierState = migrant.StudentIdentifierState
+		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
+		AND hmStatus.Homelessness_StatusStartDate BETWEEN migrant.Migrant_StatusStartDate AND ISNULL(migrant.Migrant_StatusEndDate, @SYEnd)
+--race	
+	LEFT JOIN Staging.K12PersonRace spr
+		ON spr.StudentIdentifierState = ske.StudentIdentifierState
+		AND ISNULL(spr.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(spr.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+		AND spr.SchoolYear = ske.SchoolYear
+		AND CAST(ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') AS DATE) BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
+--age
+	JOIN RDS.DimAges rda
+		ON RDS.Get_Age(ske.Birthdate, @SYStart) = rda.AgeValue
+--race (rds)
+	LEFT JOIN RDS.DimRaces rdr
+		ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
+			OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceCode)
+--homeless unaccompanied
+	LEFT JOIN Staging.SourceSystemReferenceData ssrd1
+		ON ske.SchoolYear = ssrd1.SchoolYear
+		AND ssrd1.TableName = 'RefHomelessNighttimeResidence'
+		AND ssrd1.InputCode = hmNight.HomelessNightTimeResidence
+
+	WHERE hmStatus.HomelessnessStatus = 1
+	AND GradeLevelEdFactsCode <> 'MISSING'
+	AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
+	--Homeless Date with SY range 
+	AND ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') 
+		BETWEEN @SYStart AND @SYEnd
 
 
-/* Test Case 1:
-	CSA at the SEA level 
-	Teachers (FTE) by Credential Status and SPED Support Services Category
-*/
-
-		-- Gather, evaluate & record the results
-		SELECT 
-			count(distinct Personnel_Identifier_State) as StaffCount
-			, SpecialEducationSupportServicesCategoryEdFactsCode
-			, CertificationStatusEdFactsCode
-			, sum(FullTimeEquivalency) as FullTimeEquivalency
-		INTO #TC1
-		FROM #staging 
-		GROUP BY SpecialEducationSupportServicesCategoryEdFactsCode
-			, CertificationStatusEdFactsCode
-
-		INSERT INTO App.SqlUnitTestCaseResult (
-			[SqlUnitTestId]
-			,[TestCaseName]
-			,[TestCaseDetails]
-			,[ExpectedResult]
-			,[ActualResult]
-			,[Passed]
-			,[TestDateTime]
-		)
-		SELECT 
-			 @SqlUnitTestId
-			,'CSA SEA Match All'
-			,'CSA SEA Match All - SPED Support Services Category: ' + s.SpecialEducationSupportServicesCategoryEdFactsCode
-				+ '; Certification Status: ' + s.CertificationStatusEdFactsCode
-				+ '; Full Time Equivalency: ' + cast(s.FullTimeEquivalency as varchar(10))
-			,s.StaffCount
-			,rreksc.StaffCount
-			,CASE WHEN s.StaffCount = ISNULL(rreksc.StaffCount, -1) THEN 1 ELSE 0 END
-			,GETDATE()
-		FROM #TC1 s
-		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
-			ON s.SpecialEducationSupportServicesCategoryEdFactsCode = rreksc.SpecialEducationSupportServicesCategory
-			AND s.CertificationStatusEdFactsCode = rreksc.CertificationStatus
-			AND rreksc.ReportCode = 'C194' 
-			AND rreksc.ReportYear = @SchoolYear
-			AND rreksc.ReportLevel = 'SEA'
-			AND rreksc.CategorySetCode = 'CSA'
+	/**********************************************************************
+		Test Case 1:
+		CSA at the SEA level - Student Count by Age/Grade (Basic)
+	***********************************************************************/
+	SELECT 
+		GradeLevelEdFactsCode
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #S_CSA
+	FROM #C194staging 
+	GROUP BY GradeLevelEdFactsCode
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT 
+		@SqlUnitTestId
+		, 'CSA SEA Match All'
+		, 'CSA SEA Match All - Age/Grade: ' +  s.GradeLevelEdFactsCode
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #S_CSA s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.GradeLevelEdFactsCode = rreksc.GRADELEVEL
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'SEA'
+		AND rreksc.CategorySetCode = 'CSA'
 	
-		DROP TABLE #TC1
+	DROP TABLE #S_CSA
 
-		--select * 
-		--from App.SqlUnitTestCaseResult r
-		--	inner join App.SqlUnitTest t
-		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'CSA SEA Match All' 
-		--AND t.TestScope = 'FS194'
-		--AND Passed = 0
 
-/* Test Case 2:
-	ST1 at the SEA level
-	Subtotal by SPED Support Services Category
-*/
+	/**********************************************************************
+		Test Case 2:
+		CSB at the SEA level - Student Count by Homeless Primary Nighttime Residence
+	***********************************************************************/
+	SELECT 
+		HomelessPrimaryNighttimeResidenceEdFactsCode
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #S_CSB
+	FROM #C194staging 
+	GROUP BY HomelessPrimaryNighttimeResidenceEdFactsCode
 
-		-- Gather, evaluate & record the results
-		SELECT 
-			COUNT(DISTINCT Personnel_Identifier_State) AS StaffCount
-			, SpecialEducationSupportServicesCategoryEdFactsCode
-			, sum(FullTimeEquivalency) as FullTimeEquivalency
-		INTO #TC2
-		FROM #staging 
-		GROUP BY SpecialEducationSupportServicesCategoryEdFactsCode
 
-		INSERT INTO App.SqlUnitTestCaseResult (
-			[SqlUnitTestId]
-			,[TestCaseName]
-			,[TestCaseDetails]
-			,[ExpectedResult]
-			,[ActualResult]
-			,[Passed]
-			,[TestDateTime]
-		)
-		SELECT DISTINCT
-			 @SqlUnitTestId
-			,'ST1 SEA Match All'
-			,'ST1 SEA Match All - SPED Support Services Category: ' + s.SpecialEducationSupportServicesCategoryEdFactsCode + '
-				Full Time Equivalency: ' + CAST(s.FullTimeEquivalency as varchar(10))
-			,s.StaffCount
-			,rreksc.StaffCount
-			,CASE WHEN s.StaffCount = ISNULL(rreksc.StaffCount, -1) THEN 1 ELSE 0 END
-			,GETDATE()
-		FROM #TC2 s
-		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
-			ON s.SpecialEducationSupportServicesCategoryEdFactsCode = rreksc.SpecialEducationSupportServicesCategory
-			AND rreksc.ReportCode = 'C194' 
-			AND rreksc.ReportYear = @SchoolYear
-			AND rreksc.ReportLevel = 'SEA'
-			AND rreksc.CategorySetCode = 'ST1'
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSB SEA Match All'
+		, 'CSB SEA Match All - Homeless Primary Mighttime Residence: ' + HomelessPrimaryNighttimeResidenceEdFactsCode 
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #S_CSB s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.HomelessPrimaryNighttimeResidenceEdFactsCode = rreksc.HOMELESSPRIMARYNIGHTTIMERESIDENCE
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'SEA'
+		AND rreksc.CategorySetCode = 'CSB'
 
-		DROP TABLE #TC2
+	DROP TABLE #S_CSB
 
-		--select * 
-		--from App.SqlUnitTestCaseResult r
-		--	inner join App.SqlUnitTest t
-		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'ST1 SEA Match All' 
-		--AND t.TestScope = 'FS194'
-		--AND Passed = 0
 
-		----------------------------------------
-		--- LEA level tests					 ---
-		----------------------------------------
 
-/* Test Case 3:
-	CSA at the LEA level 
-	Teachers (FTE) by Credential Status and SPED Support Services Category
-*/
+	/**********************************************************************
+		Test Case 3:
+		CSC at the SEA level - Student Count by Disability Status (Only)
+	***********************************************************************/
+	SELECT 
+		DisabilityStatusEdFactsCode
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #S_CSC
+	FROM #C194staging 
+	WHERE SexEdFactsCode <> 'MISSING'
+	GROUP BY DisabilityStatusEdFactsCode
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSC SEA Match All'
+		, 'CSC SEA Match All - Disability Status: ' + s.DisabilityStatusEdFactsCode
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #S_CSC s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.DisabilityStatusEdFactsCode = rreksc.IDEADISABILITYTYPE
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'SEA'
+		AND rreksc.CategorySetCode = 'CSC'
 
-		-- Gather, evaluate & record the results
-		SELECT 
-			count(distinct Personnel_Identifier_State) as StaffCount
-			, LEA_Identifier_State
-			, SpecialEducationSupportServicesCategoryEdFactsCode
-			, CertificationStatusEdFactsCode
-			, sum(FullTimeEquivalency) as FullTimeEquivalency
-		INTO #TC3
-		FROM #staging 
-		GROUP BY LEA_Identifier_State
-			, SpecialEducationSupportServicesCategoryEdFactsCode
-			, CertificationStatusEdFactsCode
+	DROP TABLE #S_CSC
 
-		INSERT INTO App.SqlUnitTestCaseResult (
-			[SqlUnitTestId]
-			,[TestCaseName]
-			,[TestCaseDetails]
-			,[ExpectedResult]
-			,[ActualResult]
-			,[Passed]
-			,[TestDateTime]
-		)
-		SELECT 
-			 @SqlUnitTestId
-			,'CSA LEA Match All'
-			,'CSA LEA Match All - LEA Identifier: ' + s.LEA_Identifier_State
-				+ '; SPED Support Services Category: ' + s.SpecialEducationSupportServicesCategoryEdFactsCode
-				+ '; Certification Status: ' + s.CertificationStatusEdFactsCode
-				+ '; Full Time Equivalency: ' + cast(s.FullTimeEquivalency as varchar(10))
-			,s.StaffCount
-			,rreksc.StaffCount
-			,CASE WHEN s.StaffCount = ISNULL(rreksc.StaffCount, -1) THEN 1 ELSE 0 END
-			,GETDATE()
-		FROM #TC3 s
-		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
-			ON s.SpecialEducationSupportServicesCategoryEdFactsCode = rreksc.SpecialEducationSupportServicesCategory
-			AND s.CertificationStatusEdFactsCode = rreksc.CertificationStatus
-			AND s.LEA_Identifier_State = rreksc.OrganizationStateId
-			AND rreksc.ReportCode = 'C194' 
-			AND rreksc.ReportYear = @SchoolYear
-			AND rreksc.ReportLevel = 'LEA'
-			AND rreksc.CategorySetCode = 'CSA'
 	
-		DROP TABLE #TC3
+	/**********************************************************************
+		Test Case 4:
+		CSD at the SEA level - Student Count by English Learner Status (Only)
+	***********************************************************************/
+	SELECT 
+		EnglishLearnerStatusEdFactsCode
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #S_CSD
+	FROM #C194staging
+	WHERE EnglishLearnerStatusEdFactsCode in ('LEP','NLEP')
+	GROUP BY EnglishLearnerStatusEdFactsCode
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSD SEA Match All'
+		, 'CSD SEA Match All - EL Status: ' + s.EnglishLearnerStatusEdFactsCode
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #S_CSD s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.EnglishLearnerStatusEdFactsCode  = rreksc.ENGLISHLEARNERSTATUS
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'SEA'
+		AND rreksc.CategorySetCode = 'CSD'
+			
+	DROP TABLE #S_CSD
 
-		--select * 
-		--from App.SqlUnitTestCaseResult r
-		--	inner join App.SqlUnitTest t
-		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'CSA LEA Match All' 
-		--AND t.TestScope = 'FS194'
-		--AND Passed = 0
 
-/* Test Case 4:
-	ST1 at the LEA level
-	Subtotal by SPED Support Services Category
-*/
+	/**********************************************************************
+		Test Case 5:
+		CSE at the SEA level - Student Count by Migratory Status
+	***********************************************************************/
+	SELECT 
+		MigrantStatusEdFactsCode
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #S_CSE
+	FROM #C194staging 
+	GROUP BY MigrantStatusEdFactsCode
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSE SEA Match All'
+		, 'CSE SEA Match All - Migratory Status: ' + s.MigrantStatusEdFactsCode
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #S_CSE s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.MigrantStatusEdFactsCode = rreksc.MIGRANTSTATUS
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'SEA'
+		AND rreksc.CategorySetCode = 'CSE'
+			
+	DROP TABLE #S_CSE
 
-		-- Gather, evaluate & record the results
-		SELECT 
-			COUNT(DISTINCT Personnel_Identifier_State) AS StaffCount
-			, LEA_Identifier_State
-			, SpecialEducationSupportServicesCategoryEdFactsCode
-			, sum(FullTimeEquivalency) as FullTimeEquivalency
-		INTO #TC4
-		FROM #staging 
-		GROUP BY LEA_Identifier_State
-				, SpecialEducationSupportServicesCategoryEdFactsCode
+	/**********************************************************************
+		Test Case 6:
+		CSF at the SEA level - Student Count by Homeless Unaccompanied Youth Status
+	***********************************************************************/
+	SELECT 
+		HomelessUnaccompaniedYouthEdFactsCode
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #S_CSF
+	FROM #C194staging 
+	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSF SEA Match All'
+		, 'CSF SEA Match All - Homeless Unaccompanied Youth: ' + s.HomelessUnaccompaniedYouthEdFactsCode
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #S_CSF s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.HomelessUnaccompaniedYouthEdFactsCode = rreksc.HOMELESSUNACCOMPANIEDYOUTHSTATUS
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'SEA'
+		AND rreksc.CategorySetCode = 'CSF'
 
-		INSERT INTO App.SqlUnitTestCaseResult (
-			[SqlUnitTestId]
-			,[TestCaseName]
-			,[TestCaseDetails]
-			,[ExpectedResult]
-			,[ActualResult]
-			,[Passed]
-			,[TestDateTime]
-		)
-		SELECT DISTINCT
-			 @SqlUnitTestId
-			,'ST1 LEA Match All'
-			,'ST1 LEA Match All - LEA Identifier: ' + s.LEA_Identifier_State
-				+ '; SPED Support Services Category: ' + s.SpecialEducationSupportServicesCategoryEdFactsCode
-				+ '; Full Time Equivalency: ' + CAST(s.FullTimeEquivalency as varchar(10))
-			,s.StaffCount
-			,rreksc.StaffCount
-			,CASE WHEN s.StaffCount = ISNULL(rreksc.StaffCount, -1) THEN 1 ELSE 0 END
-			,GETDATE()
-		FROM #TC4 s
-		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
-			ON s.SpecialEducationSupportServicesCategoryEdFactsCode = rreksc.SpecialEducationSupportServicesCategory
-			AND s.LEA_Identifier_State = rreksc.OrganizationStateId
-			AND rreksc.ReportCode = 'C194' 
-			AND rreksc.ReportYear = @SchoolYear
-			AND rreksc.ReportLevel = 'LEA'
-			AND rreksc.CategorySetCode = 'ST1'
+	/**********************************************************************
+		Test Case 7:
+		CSG at the SEA level - Student Count by Homeless Unaccompanied Youth Status 
+								by Homeless Primary Nighttime Residence
+	***********************************************************************/
+	SELECT 
+		HomelessUnaccompaniedYouthEdFactsCode
+		, HomelessPrimaryNighttimeResidenceEdFactsCode
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #S_CSG
+	FROM #C194staging 
+	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
+			, HomelessPrimaryNighttimeResidenceEdFactsCode
 
-		DROP TABLE #TC4
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSG SEA Match All'
+		, 'CSG SEA Match All - Unaccompanied Youth: ' + s.HomelessUnaccompaniedYouthEdFactsCode
+			+ '; Primary Nighttime Residence: ' + s.HomelessPrimaryNighttimeResidenceEdFactsCode
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #S_CSG s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.HomelessUnaccompaniedYouthEdFactsCode = rreksc.HOMELESSUNACCOMPANIEDYOUTHSTATUS
+		AND s.HomelessPrimaryNighttimeResidenceEdFactsCode = rreksc.HOMELESSPRIMARYNIGHTTIMERESIDENCE
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'SEA'
+		AND rreksc.CategorySetCode = 'CSG'
+			
+	DROP TABLE #S_CSG
 
-		--select * 
-		--from App.SqlUnitTestCaseResult r
-		--	inner join App.SqlUnitTest t
-		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'ST1 LEA Match All' 
-		--AND t.TestScope = 'FS194'
-		--AND Passed = 0
+	/**********************************************************************
+		Test Case 8:
+		CSH at the SEA level - Student Count by Racial Ethnic
+	***********************************************************************/
+	SELECT 
+		RaceEdFactsCode
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #S_CSH
+	FROM #C194staging 
+	GROUP BY RaceEdFactsCode
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSH SEA Match All'
+		, 'CSH SEA Match All - Race: ' + s.RaceEdFactsCode
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #S_CSH s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.RaceEdFactsCode = rreksc.RACE
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'SEA'
+		AND rreksc.CategorySetCode = 'CSH'
+			
+	DROP TABLE #S_CSH
 
-		COMMIT TRANSACTION
+	/**********************************************************************
+		Test Case 9:
+		TOT at the SEA level
+	***********************************************************************/
+	SELECT 
+		COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #S_TOT
+	FROM #C194staging 
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'TOT SEA Match All'
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #S_TOT s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.StudentCount= rreksc.StudentCount
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'SEA'
+		AND rreksc.CategorySetCode = 'TOT'
+			
+	DROP TABLE #S_TOT
 
-	END TRY
-	BEGIN CATCH
 
-		IF @@TRANCOUNT > 0
-		BEGIN
-			ROLLBACK TRANSACTION
-		END
 
-		DECLARE @msg AS NVARCHAR(MAX)
-		SET @msg = ERROR_MESSAGE()
-		DECLARE @sev AS INT
-		SET @sev = ERROR_SEVERITY()
+	----------------------------------------
+	--- LEA level tests					 ---
+	----------------------------------------
+	/**********************************************************************
+		Test Case 1:
+		CSA at the LEA level - Student Count by Age/Grade (Basic)
+	***********************************************************************/
+	SELECT 
+		GradeLevelEdFactsCode
+		, LeaIdentifierSeaAccountability
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #L_CSA
+	FROM #C194staging 
+	GROUP BY GradeLevelEdFactsCode
+		, LeaIdentifierSeaAccountability
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT 
+		@SqlUnitTestId
+		, 'CSA LEA Match All'
+		, 'CSA LEA Match All - Age/Grade: ' +  s.GradeLevelEdFactsCode
+			+ '; LEA Identifier: ' + s.LeaIdentifierSeaAccountability
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #L_CSA s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
+		AND s.GradeLevelEdFactsCode = rreksc.GRADELEVEL
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'LEA'
+		AND rreksc.CategorySetCode = 'CSA'
+	
+	DROP TABLE #L_CSA
 
-		RAISERROR(@msg, @sev, 1)
 
-	END CATCH; 
+	/**********************************************************************
+		Test Case 2:
+		CSB at the LEA level - Student Count by Homeless Primary Nighttime Residence
+	***********************************************************************/
+	SELECT 
+		HomelessPrimaryNighttimeResidenceEdFactsCode
+		, LeaIdentifierSeaAccountability
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #L_CSB
+	FROM #C194staging 
+	GROUP BY HomelessPrimaryNighttimeResidenceEdFactsCode
+		, LeaIdentifierSeaAccountability
 
-	--clean up 
-	--DROP TABLE #Staging
-	--DROP TABLE #TC1
-	--DROP TABLE #TC2
-	--DROP TABLE #TC3
-	--DROP TABLE #TC4
 
-		IF OBJECT_ID('tempdb..#Staging') IS NOT NULL
-		DROP TABLE #Staging
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSB LEA Match All'
+		, 'CSB LEA Match All - Homeless Primary Mighttime Residence: ' + HomelessPrimaryNighttimeResidenceEdFactsCode 
+			+ '; LEA Identifier: ' + s.LeaIdentifierSeaAccountability
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #L_CSB s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
+		AND s.HomelessPrimaryNighttimeResidenceEdFactsCode = rreksc.HOMELESSPRIMARYNIGHTTIMERESIDENCE
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'LEA'
+		AND rreksc.CategorySetCode = 'CSB'
 
-		IF OBJECT_ID('tempdb..#TC1') IS NOT NULL
-		DROP TABLE #TC1
+	DROP TABLE #L_CSB
 
-		IF OBJECT_ID('tempdb..#TC2') IS NOT NULL
-		DROP TABLE #TC2
 
-		IF OBJECT_ID('tempdb..#TC3') IS NOT NULL
-		DROP TABLE #TC3
 
-		IF OBJECT_ID('tempdb..#TC4') IS NOT NULL
-		DROP TABLE #TC4
+	/**********************************************************************
+		Test Case 3:
+		CSC at the LEA level - Student Count by Disability Status (Only)
+	***********************************************************************/
+	SELECT 
+		DisabilityStatusEdFactsCode
+		, LeaIdentifierSeaAccountability
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #L_CSC
+	FROM #C194staging 
+	WHERE SexEdFactsCode <> 'MISSING'
+	GROUP BY DisabilityStatusEdFactsCode
+		, LeaIdentifierSeaAccountability
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSC LEA Match All'
+		, 'CSC LEA Match All - Disability Status: ' + s.DisabilityStatusEdFactsCode
+			+ '; LEA Identifier: ' + s.LeaIdentifierSeaAccountability
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #L_CSC s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
+		AND s.DisabilityStatusEdFactsCode = rreksc.IDEADISABILITYTYPE
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'LEA'
+		AND rreksc.CategorySetCode = 'CSC'
+
+	DROP TABLE #L_CSC
+
+	
+	/**********************************************************************
+		Test Case 4:
+		CSD at the LEA level - Student Count by English Learner Status (Only)
+	***********************************************************************/
+	SELECT 
+		EnglishLearnerStatusEdFactsCode
+		, LeaIdentifierSeaAccountability
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #L_CSD
+	FROM #C194staging
+	WHERE EnglishLearnerStatusEdFactsCode in ('LEP','NLEP')
+	GROUP BY EnglishLearnerStatusEdFactsCode
+		, LeaIdentifierSeaAccountability
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSD LEA Match All'
+		, 'CSD LEA Match All - EL Status: ' + s.EnglishLearnerStatusEdFactsCode
+			+ '; LEA Identifier: ' + s.LeaIdentifierSeaAccountability
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #L_CSD s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
+		AND s.EnglishLearnerStatusEdFactsCode  = rreksc.ENGLISHLEARNERSTATUS
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'LEA'
+		AND rreksc.CategorySetCode = 'CSD'
+			
+	DROP TABLE #L_CSD
+
+
+	/**********************************************************************
+		Test Case 5:
+		CSE at the LEA level - Student Count by Migratory Status
+	***********************************************************************/
+	SELECT 
+		MigrantStatusEdFactsCode
+		, LeaIdentifierSeaAccountability
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #L_CSE
+	FROM #C194staging 
+	GROUP BY MigrantStatusEdFactsCode
+		, LeaIdentifierSeaAccountability
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSE LEA Match All'
+		, 'CSE LEA Match All - Migratory Status: ' + s.MigrantStatusEdFactsCode
+			+ '; LEA Identifier: ' + s.LeaIdentifierSeaAccountability
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #L_CSE s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
+		AND s.MigrantStatusEdFactsCode = rreksc.MIGRANTSTATUS
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'LEA'
+		AND rreksc.CategorySetCode = 'CSE'
+			
+	DROP TABLE #L_CSE
+
+	/**********************************************************************
+		Test Case 6:
+		CSF at the LEA level - Student Count by Homeless Unaccompanied Youth Status
+	***********************************************************************/
+	SELECT 
+		HomelessUnaccompaniedYouthEdFactsCode
+		, LeaIdentifierSeaAccountability
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #L_CSF
+	FROM #C194staging 
+	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
+		, LeaIdentifierSeaAccountability
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSF LEA Match All'
+		, 'CSF LEA Match All - Homeless Unaccompanied Youth: ' + s.HomelessUnaccompaniedYouthEdFactsCode
+			+ '; LEA Identifier: ' + s.LeaIdentifierSeaAccountability
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #L_CSF s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
+		AND s.HomelessUnaccompaniedYouthEdFactsCode = rreksc.HOMELESSUNACCOMPANIEDYOUTHSTATUS
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'LEA'
+		AND rreksc.CategorySetCode = 'CSF'
+
+	/**********************************************************************
+		Test Case 7:
+		CSG at the LEA level - Student Count by Homeless Unaccompanied Youth Status 
+								by Homeless Primary Nighttime Residence
+	***********************************************************************/
+	SELECT 
+		HomelessUnaccompaniedYouthEdFactsCode
+		, HomelessPrimaryNighttimeResidenceEdFactsCode
+		, LeaIdentifierSeaAccountability
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #L_CSG
+	FROM #C194staging 
+	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
+		, HomelessPrimaryNighttimeResidenceEdFactsCode
+		, LeaIdentifierSeaAccountability
+
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSG LEA Match All'
+		, 'CSG LEA Match All - Unaccompanied Youth: ' + s.HomelessUnaccompaniedYouthEdFactsCode
+			+ '; Primary Nighttime Residence: ' + s.HomelessPrimaryNighttimeResidenceEdFactsCode
+			+ '; LEA Identifier: ' + s.LeaIdentifierSeaAccountability
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #L_CSG s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
+		AND s.HomelessUnaccompaniedYouthEdFactsCode = rreksc.HOMELESSUNACCOMPANIEDYOUTHSTATUS
+		AND s.HomelessPrimaryNighttimeResidenceEdFactsCode = rreksc.HOMELESSPRIMARYNIGHTTIMERESIDENCE
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'LEA'
+		AND rreksc.CategorySetCode = 'CSG'
+			
+	DROP TABLE #L_CSG
+
+	/**********************************************************************
+		Test Case 8:
+		CSH at the LEA level - Student Count by Racial Ethnic
+	***********************************************************************/
+	SELECT 
+		RaceEdFactsCode
+		, LeaIdentifierSeaAccountability
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #L_CSH
+	FROM #C194staging 
+	GROUP BY RaceEdFactsCode
+		, LeaIdentifierSeaAccountability
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'CSH LEA Match All'
+		, 'CSH LEA Match All - Race: ' + s.RaceEdFactsCode
+			+ '; LEA Identifier: ' + s.LeaIdentifierSeaAccountability
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #L_CSH s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
+		AND s.RaceEdFactsCode = rreksc.RACE
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'LEA'
+		AND rreksc.CategorySetCode = 'CSH'
+			
+	DROP TABLE #L_CSH
+
+	/**********************************************************************
+		Test Case 9:
+		TOT at the LEA level
+	***********************************************************************/
+	SELECT 
+		LeaIdentifierSeaAccountability
+		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+	INTO #L_TOT
+	FROM #C194staging 
+	GROUP BY LeaIdentifierSeaAccountability
+		
+	INSERT INTO App.SqlUnitTestCaseResult (
+		[SqlUnitTestId]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
+	)
+	SELECT DISTINCT
+		@SqlUnitTestId
+		, 'TOT LEA Match All'
+			+ '; LEA Identifier: ' + s.LeaIdentifierSeaAccountability
+		, s.StudentCount
+		, rreksc.StudentCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
+	FROM #L_TOT s
+	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
+		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
+		AND s.StudentCount= rreksc.StudentCount
+		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportYear = @SchoolYear
+		AND rreksc.ReportLevel = 'LEA'
+		AND rreksc.CategorySetCode = 'TOT'
+			
+	DROP TABLE #L_TOT
+
+	--check the results
+
+	--select *
+	--from App.SqlUnitTestCaseResult sr
+	--	inner join App.SqlUnitTest s
+	--		on s.SqlUnitTestId = sr.SqlUnitTestId
+	--where s.UnitTestName like '%194%'
+	--and passed = 0
 
 END
-
