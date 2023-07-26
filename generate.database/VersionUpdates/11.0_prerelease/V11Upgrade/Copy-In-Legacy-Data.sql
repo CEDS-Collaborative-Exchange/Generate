@@ -935,7 +935,7 @@ LEFT JOIN RDS.DimTitleIIIStatuses rdtiiis
 				ON f.AssessmentTypeCode = rda.AssessmentTypeCode
 				AND f.AssessmentSubjectCode = rda.AssessmentTypeCode
 				AND f.ParticipationStatusCode = rda.AssessmentAcademicSubjectCode
-				AND f.AssessmentTypeAdministeredToEnglishLearnersCode = rda.AssessmentTypeToEnglishLearnersCode
+				AND f.AssessmentTypeAdministeredToEnglishLearnersCode = rda.AssessmentTypeAdministeredToEnglishLearnersCode
 
 			LEFT JOIN RDS.DimAssessmentPerformanceLevels rdap
 				ON f.PerformanceLevelCode = rdap.AssessmentPerformanceLevelIdentifier
