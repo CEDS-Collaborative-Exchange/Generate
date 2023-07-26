@@ -3906,7 +3906,10 @@
 	SELECT
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, CedsOptionSetCode AS EdFactsOptionSetCode
+		, CASE CedsOptionSetCode 
+			WHEN 'Qualified' THEN 'Q'
+			WHEN 'NotQualified' THEN 'NQ'
+		  END AS EdFactsOptionSetCode
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'ParaprofessionalQualificationStatus'
 
