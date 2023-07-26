@@ -355,9 +355,9 @@ BEGIN
 			') status on status.OperationalStatusEffectiveDate = ' +  case when @reportLevel = 'lea' then 's.OperationalStatusEffectiveDate'  else 's.SchoolOperationalStatusEffectiveDate' end 
 			+ '	AND status.stateIdentifier = s.' +  case when @reportLevel = 'lea' then 'LEAIdentifierSea'  else 'SchoolIdentifierSea' end
 			+ ' where s.ReportedFederally = 1 and ' + case when @reportLevel = 'lea' then 's.DimLeaId <> -1 
-			and s.LEAOperationalStatus not in (''Closed'', ''Future'', ''Inactive'', ''MISSING'')'
+			and s.LEAOperationalStatus not in (''Closed'', ''FutureAgency'', ''Inactive'', ''MISSING'')'
 			else 's.DimK12SchoolId <> -1 
-			and s.SchoolOperationalStatus	not in (''Closed'', ''Future'', ''Inactive'', ''MISSING'')
+			and s.SchoolOperationalStatus	not in (''Closed'', ''FutureSchool'', ''Inactive'', ''MISSING'')
 			' end  
 
 			IF(@reportCode in ('c052'))
@@ -2103,7 +2103,7 @@ BEGIN
 		-- Ages 3-21, Has Disability
 		set @sqlCountJoins = @sqlCountJoins + '
 			inner join (
-				select rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId, fact.DisciplineStatusId
+				select distinct rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId, fact.DisciplineStatusId
 				from rds.' + @factTable + ' fact '
 
 				if @reportLevel = 'lea'
