@@ -31,19 +31,17 @@ BEGIN
 
 	-- Define the test
 	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
-	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS143_UnitTestCase') 
 
+	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS143_UnitTestCase') 
 	BEGIN
 		SET @expectedResult = 1
-		INSERT INTO App.SqlUnitTest 
-		(
+		INSERT INTO App.SqlUnitTest (
 			[UnitTestName]
 			, [StoredProcedureName]
 			, [TestScope]
 			, [IsActive]
 		)
-		VALUES 
-		(
+		VALUES (
 			'FS143_UnitTestCase'
 			, 'FS143_TestCase'				
 			, 'FS143'
@@ -59,16 +57,16 @@ BEGIN
 		FROM App.SqlUnitTest 
 		WHERE UnitTestName = 'FS143_UnitTestCase'
 	END
-	
+
 	-- Clear out last run
 	DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId
-
+	
 	--Create SY Start / SY End variables
 	declare @SYStart varchar(10) = CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
 	declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
 
 	-- Get Custom Child Count Date
-	DECLARE @cutOffMonth INT, @cutOffDay INT, @customFactTypeDate VARCHAR(10)
+	DECLARE @cutOffMonth INT, @cutOffDay INT, @customFactTypeDate VARCHAR(10), @childCountDate date
 	set @cutOffMonth = 11
 	set @cutOffDay = 1
 
@@ -80,51 +78,68 @@ BEGIN
 
 	select @cutOffMonth = SUBSTRING(@customFactTypeDate, 0, CHARINDEX('/', @customFactTypeDate))
 	select @cutOffDay = SUBSTRING(@customFactTypeDate, CHARINDEX('/', @customFactTypeDate) + 1, 2)
+
+    select @ChildCountDate = convert(varchar, @CutoffMonth) + '/' + convert(varchar, @CutoffDay) + '/' + convert(varchar, @SchoolYear -1)
+
 		
 	--Get the LEAs that should not be reported against
-	IF OBJECT_ID('tempdb..#notReportedFederallyLeas') IS NOT NULL
-	DROP TABLE #notReportedFederallyLeas
+	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL
+	DROP TABLE #excludedLeas
 
-	CREATE TABLE #notReportedFederallyLeas (
-		LEA_Identifier_State		VARCHAR(20)
+	CREATE TABLE #excludedLeas (
+		LeaIdentifierSeaAccountability		VARCHAR(20)
 	)
 
-	INSERT INTO #notReportedFederallyLeas 
-	SELECT DISTINCT LEA_Identifier_State
+	INSERT INTO #excludedLeas 
+	SELECT DISTINCT LEAIdentifierSea
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
 
 	SELECT  
-		ske.Student_Identifier_State
-		, ske.LEA_Identifier_State
-		, ske.School_Identifier_State
-		, sppse.ProgramParticipationEndDate
+		ske.StudentIdentifierState
+		, ske.LeaIdentifierSeaAccountability
+		, ske.SchoolIdentifierSea
 		, ske.Birthdate
-		, sps.PrimaryDisabilityType
 		, ske.HispanicLatinoEthnicity
-		, spr.RaceType
-		, rdr.RaceEdFactsCode
 		, ske.Sex
 		, CASE ske.Sex
-			WHEN 'Male' THEN 'M'
-			WHEN 'Female' THEN 'F'
+			WHEN 'Male'		THEN 'M'
+			WHEN 'Female'	THEN 'F'
 			ELSE 'MISSING'
 			END AS SexEdFactsCode
+		, sppse.ProgramParticipationEndDate
+		, CASE sidt.IdeaDisabilityTypeCode
+			WHEN 'Autism'						THEN 'AUT'
+            WHEN 'Deafblindness'				THEN 'DB'
+            WHEN 'Deafness'						THEN 'DB'
+            WHEN 'Developmentaldelay'			THEN 'DD'
+            WHEN 'Emotionaldisturbance'			THEN 'EMN'
+            WHEN 'Hearingimpairment'			THEN 'HI'
+            WHEN 'Intellectualdisability'		THEN 'ID'
+            WHEN 'Multipledisabilities'			THEN 'MD'
+            WHEN 'Orthopedicimpairment'			THEN 'OI'
+            WHEN 'Otherhealthimpairment'		THEN 'OHI'
+            WHEN 'Specificlearningdisability'	THEN 'SLD'
+            WHEN 'Speechlanguageimpairment'		THEN 'SLI'
+            WHEN 'Traumaticbraininjury'			THEN 'TBI'
+            WHEN 'Visualimpairment'				THEN 'VI'
+            ELSE sidt.IdeaDisabilityTypeCode
+		END AS IdeaDisabilityType
+		, spr.RaceType
+		, rdr.RaceEdFactsCode
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
-					AND ISNULL(sps.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
+				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
 					THEN ISNULL(EnglishLearnerStatus, 0)
 			ELSE 0
 			END AS EnglishLearnerStatus
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
-					AND ISNULL(sps.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
+				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
 					THEN 
 						CASE 
 							WHEN EnglishLearnerStatus = 1 THEN 'LEP'
-							--WHEN ISNULL(EnglishLearnerStatus, 0) = 0 THEN 'NLEP'
 							ELSE 'NLEP'
 						END
 			ELSE 'NLEP'
@@ -137,114 +152,113 @@ BEGIN
 	INTO #C143Staging
 	FROM Staging.K12Enrollment ske
 	JOIN Staging.Discipline sd
-		ON sd.Student_Identifier_State = ske.Student_Identifier_State
-		AND ISNULL(sd.LEA_Identifier_State, '') = ISNULL(ske.LEA_Identifier_State, '')
-		AND ISNULL(sd.School_Identifier_State, '') = ISNULL(ske.School_Identifier_State, '')
-		AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') between ISNULL(ske.EnrollmentEntryDate, '1900-01-01') and ISNULL (ske.EnrollmentExitDate, GETDATE())
-	JOIN Staging.PersonStatus sps
-		ON sps.Student_Identifier_State = sd.Student_Identifier_State
-		AND ISNULL(sps.LEA_Identifier_State, '') = ISNULL(sd.LEA_Identifier_State, '')
-		AND ISNULL(sps.School_Identifier_State, '') = ISNULL(sd.School_Identifier_State, '')
-		--Discipline Date within IDEA range
-		AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-			BETWEEN ISNULL(sps.IDEA_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)) 
-			AND ISNULL (sps.IDEA_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE))
+		ON sd.StudentIdentifierState = ske.StudentIdentifierState
+		AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
+			BETWEEN ISNULL(ske.EnrollmentEntryDate, @SYStart) and ISNULL (ske.EnrollmentExitDate, @SYEnd)
 	JOIN Staging.ProgramParticipationSpecialEducation sppse
-		ON sppse.Student_Identifier_State = sps.Student_Identifier_State
-		AND ISNULL(sppse.LEA_Identifier_State, '') = ISNULL(sps.LEA_Identifier_State, '')
-		AND ISNULL(sppse.School_Identifier_State, '') = ISNULL(sps.School_Identifier_State, '')
+		ON sppse.StudentIdentifierState = ske.StudentIdentifierState
+		AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
 		--Discipline Date within Program Participation range
-		AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)) 
-			AND ISNULL(sppse.ProgramParticipationEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE))
-	LEFT JOIN Staging.PersonRace spr
-		ON spr.Student_Identifier_State = ske.Student_Identifier_State
+		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
+			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, @SYStart) AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
+	LEFT JOIN Staging.IdeaDisabilityType sidt
+        ON ske.StudentIdentifierState = sidt.StudentIdentifierState
+        AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sidt.LeaIdentifierSeaAccountability, '')
+        AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sidt.SchoolIdentifierSea, '')
+        AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)  
+			BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+        AND sidt.IsPrimaryDisability = 1
+	LEFT JOIN Staging.PersonStatus sps
+		ON sps.StudentIdentifierState = sd.StudentIdentifierState
+		AND ISNULL(sps.LeaIdentifierSeaAccountability, '') = ISNULL(sd.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(sps.SchoolIdentifierSea, '') = ISNULL(sd.SchoolIdentifierSea, '')
+		--Discipline Date within English Learner range
+		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
+			BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) and ISNULL (sps.EnglishLearner_StatusEndDate, @SYEnd)
+	LEFT JOIN Staging.K12PersonRace spr
+		ON spr.StudentIdentifierState = ske.StudentIdentifierState
+		AND ISNULL(spr.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(spr.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
 		AND spr.SchoolYear = ske.SchoolYear
-		AND ISNULL(sppse.ProgramParticipationEndDate, spr.RecordStartDateTime) 
-			BETWEEN spr.RecordStartDateTime 
-			AND ISNULL(spr.RecordEndDateTime, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE))
+		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
+			BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
 	LEFT JOIN RDS.DimRaces rdr
 		ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
 			OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceCode)
-	WHERE sps.IDEAIndicator = 1
+	WHERE sppse.IDEAIndicator = 1
 		AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
-		AND [RDS].[Get_Age](ske.Birthdate, DATEFROMPARTS(CASE WHEN @cutOffMonth >= 7 THEN @SchoolYear - 1 
-           ELSE @SchoolYear 
-           END, @cutOffMonth, @cutOffDay)
-           ) BETWEEN 3 AND 21   
-		AND ske.Student_Identifier_State IN (
-			SELECT e.Student_Identifier_State 
-			FROM Staging.Discipline d 
-			JOIN staging.K12Enrollment e 
-				ON d.Student_Identifier_State = e.Student_Identifier_State
-				AND ISNULL(d.LEA_Identifier_State, '') = ISNULL(e.LEA_Identifier_State, '')
-				AND ISNULL(d.School_Identifier_State, '') = ISNULL(e.School_Identifier_State, '')
-				AND ISNULL(d.DisciplinaryActionStartDate, '1900-01-01') between ISNULL(e.EnrollmentEntryDate, '1900-01-01') and ISNULL (e.EnrollmentExitDate, GETDATE()) 
-			JOIN Staging.ProgramParticipationSpecialEducation pp
-				ON pp.Student_Identifier_State = d.Student_Identifier_State
-				AND ISNULL(pp.LEA_Identifier_State, '') = ISNULL(d.LEA_Identifier_State, '')
-				AND ISNULL(pp.School_Identifier_State, '') = ISNULL(d.School_Identifier_State, '')
-				--Discipline Date within Program Participation range
-				AND ISNULL(d.DisciplinaryActionStartDate, '1900-01-01') 
-					BETWEEN ISNULL(pp.ProgramParticipationBeginDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)) 
-					AND ISNULL(pp.ProgramParticipationEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE))
-				GROUP BY e.Student_Identifier_State 
-				HAVING SUM(CAST(DurationOfDisciplinaryAction AS DECIMAL(6, 3))) >= 0.5)
+		AND ske.StudentIdentifierState not like 'C%'
 		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') <> 'PPPS'
-		AND PrimaryDisabilityType IS NOT NULL 
-		AND (sd.DisciplineMethodOfCwd IS NOT NULL
-			or sd.DisciplinaryActionTaken IN ('03086', '03087')
-			or sd.IdeaInterimRemovalReason IS NOT NULL
-            or sd.IdeaInterimRemoval IS NOT NULL )
-        --Discipline Date within Enrollment range
-        AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-            BETWEEN ske.EnrollmentEntryDate 
-            AND ISNULL(ske.EnrollmentExitDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE))
-        --Discipline Date with SY range 
-		AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-			BETWEEN CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE) 
-			AND CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
-			
+		AND rds.Get_Age(ske.Birthdate, @ChildCountDate) BETWEEN 3 AND 21	
+		AND (ISNULL(sd.DisciplineMethodOfCwd, '') <> ''
+			OR sd.DisciplinaryActionTaken IN ('03086', '03087')
+			OR ISNULL(sd.IdeaInterimRemovalReason, '') <> ''
+            OR ISNULL(sd.IdeaInterimRemoval, '') <> '')
+		AND ske.StudentIdentifierState IN (
+			SELECT ske.StudentIdentifierState 
+			FROM Staging.Discipline sd 
+			JOIN staging.K12Enrollment ske 
+				ON sd.StudentIdentifierState = ske.StudentIdentifierState
+				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+				AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') between ISNULL(ske.EnrollmentEntryDate, '1900-01-01') and ISNULL (ske.EnrollmentExitDate, GETDATE()) 
+			JOIN Staging.ProgramParticipationSpecialEducation sppe
+				ON sppe.StudentIdentifierState = sd.StudentIdentifierState
+				AND ISNULL(sppe.LeaIdentifierSeaAccountability, '') = ISNULL(sd.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sppe.SchoolIdentifierSea, '') = ISNULL(sd.SchoolIdentifierSea, '')
+				--Discipline Date within Program Participation range
+				AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
+					BETWEEN ISNULL(sppe.ProgramParticipationBeginDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)) 
+					AND ISNULL(sppe.ProgramParticipationEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE))
+				GROUP BY ske.StudentIdentifierState 
+				HAVING SUM(CAST(sd.DurationOfDisciplinaryAction AS DECIMAL(6, 3))) >= 0.5
+			)
+		--Discipline Date with SY range 
+		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
+			BETWEEN @SYStart AND @SYEnd
+
+
 	-- Gather, evaluate & record the results
 	/**********************************************************************
 		Test Case 1:
 		CSA at the SEA level
 	***********************************************************************/
 	SELECT 
-		PrimaryDisabilityType
+		IdeaDisabilityType
 		, COUNT(*) AS StudentCount
 	INTO #S_CSA
 	FROM #C143staging 
-	GROUP BY PrimaryDisabilityType
+	GROUP BY IdeaDisabilityType
 		
-	INSERT INTO App.SqlUnitTestCaseResult 
-	(
+	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
-		,[TestCaseName]
-		,[TestCaseDetails]
-		,[ExpectedResult]
-		,[ActualResult]
-		,[Passed]
-		,[TestDateTime]
+		, [TestCaseName]
+		, [TestCaseDetails]
+		, [ExpectedResult]
+		, [ActualResult]
+		, [Passed]
+		, [TestDateTime]
 	)
 	SELECT 
-			@SqlUnitTestId
-		,'CSA SEA Match All'
-		,'CSA SEA Match All - Disability Type: ' + s.PrimaryDisabilityType
-		,s.StudentCount
-		,rreksd.DisciplineCount
-		,CASE WHEN s.StudentCount = ISNULL(rreksd.DisciplineCount, -1) THEN 1 ELSE 0 END
-		,GETDATE()
+		@SqlUnitTestId
+		, 'CSA SEA Match All'
+		, 'CSA SEA Match All - Disability Type: ' + s.IdeaDisabilityType
+		, s.StudentCount
+		, rreksd.DisciplineCount
+		, CASE WHEN s.StudentCount = ISNULL(rreksd.DisciplineCount, -1) THEN 1 ELSE 0 END
+		, GETDATE()
 	FROM #S_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.PrimaryDisabilityType = rreksd.PrimaryDisabilityType
+		ON s.IdeaDisabilityType = rreksd.IDEADISABILITYTYPE
 		AND rreksd.ReportCode = 'C143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSA'
 	
 	DROP TABLE #S_CSA
-
 
 	/**********************************************************************
 		Test Case 2:
@@ -256,10 +270,8 @@ BEGIN
 	INTO #S_CSB
 	FROM #C143staging 
 	GROUP BY RaceEdFactsCode
-		
 
-	INSERT INTO App.SqlUnitTestCaseResult 
-	(
+	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
 		, [TestCaseDetails]
@@ -269,7 +281,7 @@ BEGIN
 		, [TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		, 'CSB SEA Match All'
 		, 'CSB SEA Match All - Race: ' + CAST(s.RaceEdFactsCode AS VARCHAR(3)) 
 		, s.StudentCount
@@ -280,27 +292,25 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.RaceEdFactsCode = rreksd.RACE
 		AND rreksd.ReportCode = 'C143' 
-		AND rreksd.ReportYear = @SchoolYear
+		AND rreksd.ReportYear = 2023--@SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSB'
 
 	DROP TABLE #S_CSB
-
 
 	/**********************************************************************
 		Test Case 3:
 		CSC at the SEA level
 	***********************************************************************/
 	SELECT 
-			SexEdFactsCode
+		SexEdFactsCode
 		, COUNT(*) AS StudentCount
 	INTO #S_CSC
 	FROM #C143staging 
 	WHERE SexEdFactsCode <> 'MISSING'	
 	GROUP BY SexEdFactsCode
 		
-	INSERT INTO App.SqlUnitTestCaseResult 
-	(
+	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
 		, [TestCaseDetails]
@@ -310,7 +320,7 @@ BEGIN
 		, [TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		, 'CSC SEA Match All'
 		, 'CSC SEA Match All - Sex: ' + CAST(s.SexEdFactsCode AS VARCHAR(10)) 
 		, s.StudentCount
@@ -333,15 +343,14 @@ BEGIN
 		CSD at the SEA level
 	***********************************************************************/
 	SELECT 
-			EnglishLearnerStatusEdFactsCode
+		EnglishLearnerStatusEdFactsCode
 		, COUNT(*) AS StudentCount
 	INTO #S_CSD
 	FROM #C143staging
 	WHERE EnglishLearnerStatusEdFactsCode in ('LEP','NLEP')
 	GROUP BY EnglishLearnerStatusEdFactsCode
 		
-	INSERT INTO App.SqlUnitTestCaseResult 
-	(
+	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
 		, [TestCaseDetails]
@@ -378,8 +387,7 @@ BEGIN
 	INTO #S_ST1
 	FROM #C143staging 
 		
-	INSERT INTO App.SqlUnitTestCaseResult 
-	(
+	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
 		, [TestCaseDetails]
@@ -389,7 +397,7 @@ BEGIN
 		, [TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		, 'TOT SEA Match All'
 		, 'TOT SEA Match All'
 		, s.StudentCount
@@ -415,20 +423,18 @@ BEGIN
 		CSA at the LEA level
 	***********************************************************************/
 	SELECT 
-		PrimaryDisabilityType
-		, s.LEA_Identifier_State
+		IdeaDisabilityType
+		, s.LeaIdentifierSeaAccountability
 		, COUNT(*) AS StudentCount
 	INTO #L_CSA
 	FROM #C143staging  s
-	LEFT JOIN #notReportedFederallyLeas nrflea
-		ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-	WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-	GROUP BY s.LEA_Identifier_State
-		, PrimaryDisabilityType
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+	GROUP BY s.LeaIdentifierSeaAccountability
+		, IdeaDisabilityType
 		
-
-	INSERT INTO App.SqlUnitTestCaseResult 
-	(
+	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
 		, [TestCaseDetails]
@@ -438,18 +444,18 @@ BEGIN
 		, [TestDateTime]
 	)
 	SELECT 
-			@SqlUnitTestId
+		@SqlUnitTestId
 		, 'CSA LEA Match All'
-		, 'CSA LEA Match All - LEA_Identifier_State: ' + s.LEA_Identifier_State 
-			+ '; Disability Type: ' + s.PrimaryDisabilityType
+		, 'CSA LEA Match All - LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability 
+			+ '; Disability Type: ' + s.IdeaDisabilityType
 		, s.StudentCount
 		, rreksd.DisciplineCount
 		, CASE WHEN s.StudentCount = ISNULL(rreksd.DisciplineCount, -1) THEN 1 ELSE 0 END
 		, GETDATE()
 	FROM #L_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.LEA_Identifier_State = rreksd.OrganizationStateId
-		AND s.PrimaryDisabilityType = rreksd.PrimaryDisabilityType
+		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
+		AND s.IdeaDisabilityType = rreksd.IdeaDisabilityType
 		AND rreksd.ReportCode = 'C143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
@@ -464,19 +470,18 @@ BEGIN
 	***********************************************************************/
 	SELECT 
 		RaceEdFactsCode
-		, s.LEA_Identifier_State
+		, s.LeaIdentifierSeaAccountability
 		, COUNT(*) AS StudentCount
 	INTO #L_CSB
 	FROM #C143staging  s
-	LEFT JOIN #notReportedFederallyLeas nrflea
-		ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-	WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-	GROUP BY s.LEA_Identifier_State
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+	GROUP BY s.LeaIdentifierSeaAccountability
 		, RaceEdFactsCode
 		
 
-	INSERT INTO App.SqlUnitTestCaseResult 
-	(
+	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
 		, [TestCaseDetails]
@@ -486,9 +491,9 @@ BEGIN
 		, [TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		, 'CSB LEA Match All'
-		, 'CSB LEA Match All - LEA_Identifier_State: ' + s.LEA_Identifier_State 
+		, 'CSB LEA Match All - LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability 
 			+ '; Race: ' + CAST(s.RaceEdFactsCode AS VARCHAR(3))  
 		, s.StudentCount
 		, rreksd.DisciplineCount
@@ -497,7 +502,7 @@ BEGIN
 	FROM #L_CSB s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
 		ON s.RaceEdFactsCode = rreksd.RACE
-		AND s.LEA_Identifier_State = rreksd.OrganizationStateId
+		AND s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 		AND rreksd.ReportCode = 'C143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
@@ -512,19 +517,18 @@ BEGIN
 	***********************************************************************/
 	SELECT 
 		SexEdFactsCode
-		, s.LEA_Identifier_State
+		, s.LeaIdentifierSeaAccountability
 		, COUNT(*) AS StudentCount
 	INTO #L_CSC
 	FROM #C143staging s
-	LEFT JOIN #notReportedFederallyLeas nrflea
-		ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-	WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
 	AND SexEdFactsCode <> 'MISSING'
-	GROUP BY s.LEA_Identifier_State
+	GROUP BY s.LeaIdentifierSeaAccountability
 		, SexEdFactsCode
 		
-	INSERT INTO App.SqlUnitTestCaseResult 
-	(
+	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
 		, [TestCaseDetails]
@@ -534,9 +538,9 @@ BEGIN
 		, [TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		, 'CSC LEA Match All'
-		, 'CSC LEA Match All - LEA_Identifier_State: ' + s.LEA_Identifier_State 
+		, 'CSC LEA Match All - LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability 
 			+ '; Sex: ' + CAST(s.SexEdFactsCode AS VARCHAR(10)) 
 		, s.StudentCount
 		, rreksd.DisciplineCount
@@ -545,7 +549,7 @@ BEGIN
 	FROM #L_CSC s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
 		ON s.SexEdFactsCode = rreksd.SEX
-		AND s.LEA_Identifier_State = rreksd.OrganizationStateId
+		AND s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 		AND rreksd.ReportCode = 'C143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
@@ -559,20 +563,19 @@ BEGIN
 		CSD at the LEA level
 	***********************************************************************/
 	SELECT 
-			EnglishLearnerStatusEdFactsCode
-		, s.LEA_Identifier_State
+		EnglishLearnerStatusEdFactsCode
+		, s.LeaIdentifierSeaAccountability
 		, COUNT(*) AS StudentCount
 	INTO #L_CSD
 	FROM #C143staging  s
-	LEFT JOIN #notReportedFederallyLeas nrflea
-		ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-	WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
 	AND EnglishLearnerStatusEdFactsCode in ('LEP','NLEP')
-	GROUP BY s.LEA_Identifier_State
+	GROUP BY s.LeaIdentifierSeaAccountability
 		, EnglishLearnerStatusEdFactsCode
 		
-	INSERT INTO App.SqlUnitTestCaseResult 
-	(
+	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
 		, [TestCaseDetails]
@@ -582,9 +585,9 @@ BEGIN
 		, [TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		, 'CSD LEA Match All'
-		, 'CSD LEA Match All - LEA_Identifier_State: ' + s.LEA_Identifier_State 
+		, 'CSD LEA Match All - LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability 
 			+ '; EL Status: ' + CAST(s.EnglishLearnerStatusEdFactsCode AS VARCHAR(4)) 								
 		, s.StudentCount
 		, rreksd.DisciplineCount
@@ -593,7 +596,7 @@ BEGIN
 	FROM #L_CSD s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
 		ON s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
-		AND s.LEA_Identifier_State = rreksd.OrganizationStateId
+		AND s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 		AND rreksd.ReportCode = 'C143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
@@ -607,17 +610,16 @@ BEGIN
 		TOT at the LEA level
 	***********************************************************************/
 	SELECT 
-		s.LEA_Identifier_State
+		s.LeaIdentifierSeaAccountability
 		, COUNT(*) AS StudentCount
 	INTO #L_ST1
 	FROM #C143staging  s
-	LEFT JOIN #notReportedFederallyLeas nrflea
-		ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-	WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-	GROUP BY s.LEA_Identifier_State
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+	GROUP BY s.LeaIdentifierSeaAccountability
 		
-	INSERT INTO App.SqlUnitTestCaseResult 
-	(
+	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
 		, [TestCaseDetails]
@@ -627,21 +629,30 @@ BEGIN
 		, [TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		, 'TOT LEA Match All'
-		, 'TOT LEA Match All - LEA_Identifier_State: ' + s.LEA_Identifier_State 
+		, 'TOT LEA Match All - LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability 
 		, s.StudentCount
 		, rreksd.DisciplineCount
 		, CASE WHEN s.StudentCount = ISNULL(rreksd.DisciplineCount, -1) THEN 1 ELSE 0 END
 		, GETDATE()
 	FROM #L_ST1 s
 	LEFT  JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
-		ON s.LEA_Identifier_State = rreksd.OrganizationStateId
+		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 		AND rreksd.ReportCode = 'C143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'TOT'
 			
 	DROP TABLE #L_ST1
+
+	--check the results
+
+	--select *
+	--from App.SqlUnitTestCaseResult sr
+	--	inner join App.SqlUnitTest s
+	--		on s.SqlUnitTestId = sr.SqlUnitTestId
+	--where s.UnitTestName like '%143%'
+	--and passed = 0
 
 END
