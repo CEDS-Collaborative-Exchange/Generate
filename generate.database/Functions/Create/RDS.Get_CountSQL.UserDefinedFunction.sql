@@ -501,6 +501,62 @@ BEGIN
 
 				end
 
+			-- JW 7/20/2023 Fixed FS141 performance issues by using #temp table rather than "In subselect"
+			if @reportCode in ('C141')
+				begin
+					select @sql = @sql + char(10) + char(10)
+
+					select @sql = @sql + 
+					'if OBJECT_ID(''tempdb..#Students'') is not null drop table #Students' + char(10)
+
+					select @sql = @sql +
+						'select distinct 
+							fact.K12StudentId,  
+							m.DimEnglishLearnerStatusId, 
+							g.DimGradelevelId, 
+							people.K12StudentStudentIdentifierState
+						into #Students
+						from rds.' + @factTable + ' fact
+						inner join rds.DimPeople people
+							on fact.K12StudentId = people.DimPersonId' + char(10)
+						select @sql = @sql +
+							'inner join rds.DimEnglishLearnerStatuses m 
+								on fact.EnglishLearnerStatusId = m.DimEnglishLearnerStatusId
+							inner join rds.DimGradeLevels g 
+								on fact.GradelevelId = g.DimGradelevelId' + char(10)
+
+					if @reportLevel = 'LEA'
+						begin
+							select @sql = @sql +
+							'inner join rds.DimLeas s 
+								on fact.LeaId = s.DimLeaId
+								and fact.SchoolYearId = @dimSchoolYearId
+								and fact.FactTypeId = @dimFactTypeId
+								and fact.LeaId <> -1' + char(10)
+						end
+
+					if @reportLevel = 'SCH'
+						begin
+							select @sql = @sql +
+							'inner join rds.DimK12Schools s 
+								on fact.K12SchoolId = s.DimK12SchoolId
+								and fact.SchoolYearId = @dimSchoolYearId
+								and fact.FactTypeId = @dimFactTypeId
+								and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1' + char(10) 
+						end
+
+					select @sql = @sql + '
+					where fact.SchoolYearId = ' + convert(varchar, @dimSchoolYearid) + 
+					' and fact.FactTypeId = ' + convert(varchar, @dimFactTypeId) +
+					' and m.EnglishLearnerStatusCode = ''Yes'' -- JW 7/19/2023
+					  and g.GradeLevelEdFactsCode in (''KG'',''01'', ''02'', ''03'', ''04'', ''05'', ''06'', ''07'', ''08'', ''09'', ''10'', ''11'', ''12'', ''13'', ''UG'', ''MISSING'')' + char(10)
+
+
+					select @sql = @sql + char(10) + 
+					'CREATE INDEX IDX_Students ON #Students (K12StudentId, K12StudentStudentIdentifierState)' + char(10) + char(10)
+
+				end
+
 
 
 			-- JW 7/20/2022 Fixed Discipline performance issues by using #temp table rather than "In subselect"
@@ -4290,46 +4346,12 @@ BEGIN
 	else if @reportCode in ('c141')
 		begin
 		set @sqlCountJoins = @sqlCountJoins + '
-			inner join (
-				select distinct fact.K12StudentId,  m.DimEnglishLearnerStatusId, g.DimGradelevelId, p.K12StudentStudentIdentifierState
-				from rds.' + @factTable + ' fact '
-
-					if @reportLevel = 'lea'
-					begin
-						set @sqlCountJoins = @sqlCountJoins + '
-						inner join RDS.DimLeas org 
-							on fact.LeaId = org.DimLeaId
-							AND org.ReportedFederally = 1
-							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
-					end 
-					if @reportLevel = 'sch'
-					begin
-						set @sqlCountJoins = @sqlCountJoins + '
-						inner join RDS.DimK12Schools org 
-							on fact.K12SchoolId = org.DimK12SchoolId
-							AND org.ReportedFederally = 1
-							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
-					end
-
-			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
-					on fact.K12StudentId = p.DimPersonId
-				inner join rds.DimK12Schools s 
-					on fact.K12SchoolId = s.DimK12SchoolId
-					and fact.SchoolYearId = @dimSchoolYearId
-					and fact.FactTypeId = @dimFactTypeId
-					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				inner join rds.DimEnglishLearnerStatuses m 
-					on fact.EnglishLearnerStatusId = m.DimEnglishLearnerStatusId
-				inner join rds.DimGradeLevels g 
-					on fact.GradelevelId = g.DimGradelevelId
-				where m.EnglishLearnerStatusCode = ''LEP'' 
-				and g.GradeLevelEdFactsCode not in (''PK'',''AE'')
-			) rules
+			inner join #Students rules
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.EnglishLearnerStatusId =  rules.DimEnglishLearnerStatusId 
 				and fact.GradelevelId =  rules.DimGradelevelId'
 		end
+
 	else if @reportCode in ('c194')
 		begin
 		set @sqlCountJoins = @sqlCountJoins + '
