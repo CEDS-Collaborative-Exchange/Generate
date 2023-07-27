@@ -390,63 +390,6 @@ BEGIN
 	if @sqlType = 'actual'
 	begin
 		
-		--create a temp table with the LEAs/Schools that should be included based on 
-		--	Federal Reporting status and Operational Status.  This will be used by the 
-		--	dynamic query to join to the appropriate rows from the Fact table
-		if @reportLevel in ('lea','sch')
-		begin
-
-			set @sql  = '
-			----------------------------
-			-- Organizations
-			---------------------------
-			create table #CAT_Organizations
-			(
-				OrganizationId int
-			)
-			CREATE INDEX IDX_CAT_Organizations ON #CAT_Organizations (OrganizationId)
-
-			truncate table #CAT_Organizations
-
-			-- temp Category schools table							
-			insert into #CAT_Organizations
-
-			select distinct ' 
-				+ case when @reportLevel = 'lea' then 'DimLeaId'
-					else 'DimK12SchoolId' end + '  
-			from rds.' + @factTable + ' fact
-			inner join ' + case when @reportLevel = 'lea' then 'rds.DimLeas o '  else 'rds.DimK12Schools o ' end + ' 
-			on ' +  case when @reportLevel = 'lea' then 'fact.LeaId = o.DimLeaId '  else 'fact.K12SchoolId = o.DimK12SchoolId ' end + '
-			where fact.SchoolYearId = @dimSchoolYearId  
-			and fact.FactTypeId = @dimFactTypeId
-			and o.ReportedFederally = 1 
-			and ' + case when @reportLevel = 'lea' then 'o.DimLeaId <> -1 
-			and o.LEAOperationalStatus not in (''Closed'', ''FutureAgency'', ''Inactive'', ''MISSING'')'
-			else 'o.DimK12SchoolId <> -1 
-			and o.SchoolOperationalStatus	not in (''Closed'', ''FutureSchool'', ''Inactive'', ''MISSING'') '
-			end  
-
-			if(@reportCode in ('c052'))
-			begin
-				set @sql  = @sql + case when @reportLevel = 'lea' then ' AND CONVERT(date, o.OperationalStatusEffectiveDate, 101)'
-										else ' AND CONVERT(date, o.SchoolOperationalStatusEffectiveDate, 101)' end  
-									+  ' between CONVERT(date, ''' + @calculatedSYStartDate + ''', 101) AND CONVERT(date, ''' + @calculatedMemberDate + ''', 101)'
-			end
-			else if(@reportCode in ('c002','c089'))
-			begin
-				set @sql  = @sql + case when @reportLevel = 'lea' then ' AND CONVERT(date, o.OperationalStatusEffectiveDate, 101)'
-										else ' AND CONVERT(date, o.SchoolOperationalStatusEffectiveDate, 101)' end  
-									+  ' between CONVERT(date, ''' + @calculatedSYStartDate + ''', 101) AND CONVERT(date, ''' + @toggleChildCountDate + ''', 101)'
-			end
-			else
-			begin
-				set @sql  = @sql + case when @reportLevel = 'lea' then ' AND CONVERT(date, o.OperationalStatusEffectiveDate, 101)'
-										else ' AND CONVERT(date, o.SchoolOperationalStatusEffectiveDate, 101)' end  
-									+  ' between CONVERT(date, ''' + @calculatedSYStartDate + ''', 101) AND CONVERT(date, ''' + @calculatedSYEndDate + ''', 101)'
-			end
-
-		end		
-
 		set @sql  = @sql + '
 			----------------------------
 			-- Category Options
@@ -2068,13 +2011,21 @@ BEGIN
 					'
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -2153,13 +2104,21 @@ BEGIN
 				select distinct rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2203,13 +2162,21 @@ BEGIN
 				select distinct rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId, fact.DisciplineStatusId
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2262,15 +2229,22 @@ BEGIN
 				select fact.K12StudentId, p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId, MAX(d.DateValue) as SpecialEducationServiceExitDate
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
-
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimAges age 
 					on fact.AgeId = age.DimAgeId
@@ -2311,13 +2285,21 @@ BEGIN
 				select distinct rdp.K12StudentStudentIdentifierState, df.DimFirearmsId
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2350,14 +2332,22 @@ BEGIN
 						select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, idea.DimIdeaDisabilityTypeId
 						from rds.' + @factTable + ' fact '
 
-						if @reportLevel in ('lea', 'sch')
-						begin
-							set @sqlCountJoins = @sqlCountJoins + '
-							inner join #Cat_Organizations org 
-								on fact.' +
-							case when @reportLevel = 'lea' then 'LeaId'
-								else 'K12SchoolId' end + ' = org.OrganizationId'
-						end
+					if @reportLevel = 'lea'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+					end
 
 					set @sqlCountJoins = @sqlCountJoins + '
 						inner join rds.DimAges age 
@@ -2396,14 +2386,22 @@ BEGIN
 						select distinct fact.K12StudentId, idea.DimIdeaDisabilityTypeId
 						from rds.' + @factTable + ' fact '
 
-						if @reportLevel in ('lea', 'sch')
-						begin
-							set @sqlCountJoins = @sqlCountJoins + '
-							inner join #Cat_Organizations org 
-								on fact.' +
-							case when @reportLevel = 'lea' then 'LeaId'
-								else 'K12SchoolId' end + ' = org.OrganizationId'
-						end
+					if @reportLevel = 'lea'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+					end
 
 					set @sqlCountJoins = @sqlCountJoins + '
 						inner join rds.DimAges age 
@@ -2459,14 +2457,22 @@ BEGIN
 				select distinct rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
-				begin
-					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
-				end
+					if @reportLevel = 'lea'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+					end
 
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimPeople rdp
@@ -2505,13 +2511,21 @@ BEGIN
 				select distinct rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId, rdds.DimDisciplineStatusId
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2595,13 +2609,21 @@ BEGIN
 				select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState,  titleI.DimTitleIStatusId	
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2625,13 +2647,21 @@ BEGIN
 				select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, assessment.DimAssessmentID	
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2661,13 +2691,21 @@ BEGIN
                 select distinct rdp.K12StudentStudentIdentifierState, fact.IdeaStatusId, fact.GradeLevelId, fact.K12SchoolId
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2740,13 +2778,21 @@ BEGIN
 				select distinct fact.K12SchoolId, p.K12StudentStudentIdentifierState, titleI.DimTitleIStatusId
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2773,13 +2819,21 @@ BEGIN
 				select distinct fact.K12StudentId, ideaStatus.DimIdeaStatusId
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2801,13 +2855,21 @@ BEGIN
 				select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, ideaStatus.DimIdeaStatusId
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2831,13 +2893,21 @@ BEGIN
 				select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState disc.DimDisciplineStatusId
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2863,13 +2933,21 @@ BEGIN
 					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, ideaStatus.DimIdeaDisabilityTypeId
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -2894,13 +2972,21 @@ BEGIN
 					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, demo.DimK12DemographicId
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -2925,13 +3011,21 @@ BEGIN
 					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, age.DimAgeId
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -2956,13 +3050,21 @@ BEGIN
 					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, el.DimEnglishLearnerStatusId
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -2987,13 +3089,21 @@ BEGIN
 					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, ideaStatus.DimIdeaStatusId
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -3018,13 +3128,21 @@ BEGIN
 					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, ideaStatus.DimIdeaStatusId
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -3049,13 +3167,21 @@ BEGIN
 					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -3080,14 +3206,22 @@ BEGIN
 				select  distinct fact.K12StudentId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
-				begin
-					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
-				end
+					if @reportLevel = 'lea'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+					end
 
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimPeople p
@@ -3111,14 +3245,22 @@ BEGIN
 				select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
-				begin
-					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
-				end
+					if @reportLevel = 'lea'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+					end
 
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimPeople p
@@ -3146,13 +3288,21 @@ BEGIN
 				select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3177,13 +3327,21 @@ BEGIN
 				select distinct fact.K12StudentId, idea.DimIdeaStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3208,13 +3366,21 @@ BEGIN
 				select distinct fact.K12StudentId, ss.DimK12StudentStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3239,13 +3405,21 @@ BEGIN
 				select distinct fact.K12StudentId, m.DimMigrantStatusId, studentStatuses.DimK12StudentStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3274,13 +3448,21 @@ BEGIN
 				select distinct fact.K12StudentId, n.DimNorDStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3305,13 +3487,21 @@ BEGIN
 				select distinct fact.K12StudentId, m.DimMigrantStatusId, dgl.DimGradeLevelId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3339,13 +3529,21 @@ BEGIN
 				select distinct fact.K12StudentId, m.DimMigrantStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3370,13 +3568,21 @@ BEGIN
 				select distinct fact.K12StudentId, cteStatus.DimCteStatusId, enrStatus.DimEnrollmentStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3406,13 +3612,21 @@ BEGIN
 				select distinct fact.K12StudentId,  homeless.DimHomelessnessStatusId, dgl.DimGradeLevelId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3441,13 +3655,21 @@ BEGIN
 				select distinct fact.K12StudentId,  studentStatus.DimK12EnrollmentStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3475,13 +3697,21 @@ BEGIN
 				select distinct fact.K12StudentId, dimTitleIII.DimTitleIIIStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3507,13 +3737,21 @@ BEGIN
 				select distinct fact.K12StudentId, dimTitleIII.DimTitleIIIStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3577,13 +3815,21 @@ BEGIN
 					select distinct fact.K12StudentId, students.Cohort, p.K12StudentStudentIdentifierState
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -3607,13 +3853,21 @@ BEGIN
 					select distinct fact.K12StudentId, students.Cohort, p.K12StudentStudentIdentifierState
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -3671,14 +3925,22 @@ BEGIN
 				select distinct fact.K12StudentId, students.Cohort, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
-				begin
-					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
-				end
+					if @reportLevel = 'lea'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+					end
 
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimPeople p
@@ -3704,14 +3966,22 @@ BEGIN
 				select distinct fact.K12StudentId, cteStatus.DimCteStatusId, enrStatus.DimEnrollmentStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
-				begin
-					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
-				end
+					if @reportLevel = 'lea'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+					end
 
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimPeople p
@@ -3742,14 +4012,22 @@ BEGIN
 				select distinct fact.K12StudentId, cteStatus.DimCteStatusId, enrStatus.DimK12EnrollmentStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
-				begin
-					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
-				end
+					if @reportLevel = 'lea'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+					end
 
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimPeople p
@@ -3787,13 +4065,21 @@ BEGIN
 				select distinct fact.K12StudentId, ss.DimCteStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3820,13 +4106,21 @@ BEGIN
 				select distinct fact.K12StudentId, cteStatus.DimCteStatusId, enrStatus.DimK12EnrollmentStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3857,13 +4151,21 @@ BEGIN
 				select distinct fact.K12StudentId, cteStatus.DimCteStatusId, enrStatus.DimK12EnrollmentStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3893,13 +4195,21 @@ BEGIN
 				select distinct fact.K12StudentId, enrStatus.DimK12EnrollmentStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3924,13 +4234,21 @@ BEGIN
 				select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3957,13 +4275,21 @@ BEGIN
 					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -3984,13 +4310,21 @@ BEGIN
 					select distinct fact.K12StudentId, fact.EconomicallyDisadvantagedStatusId, p.K12StudentStudentIdentifierState
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -4017,6 +4351,7 @@ BEGIN
 				and fact.EnglishLearnerStatusId =  rules.DimEnglishLearnerStatusId 
 				and fact.GradelevelId =  rules.DimGradelevelId'
 		end
+
 	else if @reportCode in ('c194')
 		begin
 		set @sqlCountJoins = @sqlCountJoins + '
@@ -4024,13 +4359,21 @@ BEGIN
 				select distinct fact.K12StudentId, homelessStatus.DimHomelessnessStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -4055,13 +4398,21 @@ BEGIN
 				select distinct fact.K12StudentId, m.DimAttendanceId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -4090,13 +4441,21 @@ BEGIN
 					SELECT distinct fact.K12StaffId, s.DimK12StaffCategoryId
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel in ('lea', 'sch')
+				if @reportLevel = 'lea'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join #Cat_Organizations org 
-						on fact.' +
-					case when @reportLevel = 'lea' then 'LeaId'
-						else 'K12SchoolId' end + ' = org.OrganizationId'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -4119,13 +4478,21 @@ BEGIN
 					SELECT distinct fact.K12StaffId, s.DimK12StaffCategoryId
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -4148,13 +4515,21 @@ BEGIN
 					SELECT distinct fact.K12StaffId, title3.DimTitleIIIStatusId
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -4178,13 +4553,21 @@ BEGIN
 					SELECT distinct fact.K12StaffId, s.DimK12StaffCategoryId
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -4207,16 +4590,24 @@ BEGIN
 
 				set @sqlCountJoins = @sqlCountJoins + '
 				inner join ( 
-					select K12StaffId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFTE
+					select K12StaffId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFullTimeEquivalency
 					from rds.' + @factTable + ' fact '
 
-					if @reportLevel in ('lea', 'sch')
+					if @reportLevel = 'lea'
 					begin
 						set @sqlCountJoins = @sqlCountJoins + '
-						inner join #Cat_Organizations org 
-							on fact.' +
-						case when @reportLevel = 'lea' then 'LeaId'
-							else 'K12SchoolId' end + ' = org.OrganizationId'
+						inner join RDS.DimLeas org 
+							on fact.LeaId = org.DimLeaId
+							AND org.ReportedFederally = 1
+							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					end 
+					if @reportLevel = 'sch'
+					begin
+						set @sqlCountJoins = @sqlCountJoins + '
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							AND org.ReportedFederally = 1
+							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -4269,7 +4660,7 @@ BEGIN
 				 'fact.K12StaffId' 
 				+ @sqlCategoryQualifiedDimensionFields 
 				+ ', isnull(fact.StaffCount, 0) as StaffCount,'
-				+ 'isnull(K12StaffCount.StaffFTE, 0.0) as StaffFTE'
+				+ 'isnull(K12StaffCount.StaffFullTimeEquivalency, 0.0) as StaffFullTimeEquivalency'
 				+ ' from rds.' + @factTable + ' fact ' + @sqlCountJoins 
 				+ ' ' + @reportFilterJoin + '
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
@@ -5325,7 +5716,7 @@ BEGIN
 			declare @debugTableCreate nvarchar(max)
 			if @reportCode IN ('C059', 'C070', 'C099', 'C112') 
 			begin
-				set @debugTableCreate = '		select s.StaffMemberIdentifierState '
+				set @debugTableCreate = '		select s.K12StaffStaffMemberIdentifierState '
 			end 
 			else if @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
 			begin
@@ -5354,8 +5745,8 @@ BEGIN
 			IF @reportCode IN ('C059', 'C070', 'C099', 'C112')
 			BEGIN
 				set @debugTableCreate += '		from #categorySet c ' + char(10) +
-				'		inner join rds.DimK12Staff s ' + char(10)
-				+ '			on c.DimK12StaffId = s.DimK12StaffId ' + char(10)
+				'		inner join rds.DimPeople s ' + char(10)
+				+ '			on c.DimK12StaffId = s.DimPersonId ' + char(10)
 			END 
 			--these reports have been converted to use K12StudentStudentIdentifierState instead of K12StudentId
 			--	in #Students and #categorySet so no need to join to DimPeople
@@ -5388,7 +5779,7 @@ BEGIN
 			IF @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') BEGIN
 				set @debugTableCreate += '		order by K12StudentStudentIdentifierState ' + char(10)
 			END ELSE BEGIN
-				set @debugTableCreate += '		order by s.StaffMemberIdentifierState ' + char(10)
+				set @debugTableCreate += '		order by s.K12StaffStaffMemberIdentifierState ' + char(10)
 			END
 
 			set @sql += @debugTableCreate 
@@ -6129,6 +6520,8 @@ BEGIN
 		-- Insert zero count data 
 		-- @sqlType = ''zero''
 		----------------------------
+
+		
 
 		insert into @reportData
 		(
