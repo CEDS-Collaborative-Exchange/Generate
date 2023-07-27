@@ -2,14 +2,40 @@
 	@SchoolYear SMALLINT
 AS
 BEGIN
+	IF OBJECT_ID('tempdb..#Staging') IS NOT NULL DROP TABLE #Staging
+	IF OBJECT_ID('tempdb..#SEA_CSA') IS NOT NULL DROP TABLE #SEA_CSA
+	IF OBJECT_ID('tempdb..#SEA_CSB') IS NOT NULL DROP TABLE #SEA_CSB
+	IF OBJECT_ID('tempdb..#SEA_CSC') IS NOT NULL DROP TABLE #SEA_CSC
+	IF OBJECT_ID('tempdb..#SEA_CSD') IS NOT NULL DROP TABLE #SEA_CSD
+	IF OBJECT_ID('tempdb..#SEA_TOT') IS NOT NULL DROP TABLE #SEA_TOT
+	--IF OBJECT_ID('tempdb..#SEA_TC2') IS NOT NULL DROP TABLE #SEA_TC2
+	--IF OBJECT_ID('tempdb..#SEA_TC5') IS NOT NULL DROP TABLE #SEA_TC5
 
-BEGIN TRY
-	BEGIN TRANSACTION
+	IF OBJECT_ID('tempdb..#LEA_CSA') IS NOT NULL DROP TABLE #LEA_CSA
+	IF OBJECT_ID('tempdb..#LEA_CSB') IS NOT NULL DROP TABLE #LEA_CSB
+	IF OBJECT_ID('tempdb..#LEA_CSC') IS NOT NULL DROP TABLE #LEA_CSC
+	IF OBJECT_ID('tempdb..#LEA_CSD') IS NOT NULL DROP TABLE #LEA_CSD
+	IF OBJECT_ID('tempdb..#LEA_TOT') IS NOT NULL DROP TABLE #LEA_TOT
+	--IF OBJECT_ID('tempdb..#LEA_TC2') IS NOT NULL DROP TABLE #LEA_TC2
+	--IF OBJECT_ID('tempdb..#LEA_TC5') IS NOT NULL DROP TABLE #LEA_TC5
 
-	DECLARE @UnitTestName VARCHAR(100) = 'FS141_UnitTestCase'
-	DECLARE @StoredProcedureName VARCHAR(100) = 'FS141_TestCase'
-	DECLARE @TestScope VARCHAR(1000) = 'FS141'
-	DECLARE @ReportCode VARCHAR(20) = 'C141' 
+	IF OBJECT_ID('tempdb..#SCH_CSA') IS NOT NULL DROP TABLE #SCH_CSA
+	IF OBJECT_ID('tempdb..#SCH_CSB') IS NOT NULL DROP TABLE #SCH_CSB
+	IF OBJECT_ID('tempdb..#SCH_CSC') IS NOT NULL DROP TABLE #SCH_CSC
+	IF OBJECT_ID('tempdb..#SCH_CSD') IS NOT NULL DROP TABLE #SCH_CSD
+	IF OBJECT_ID('tempdb..#SCH_TOT') IS NOT NULL DROP TABLE #SCH_TOT
+	--IF OBJECT_ID('tempdb..#SCH_TC2') IS NOT NULL DROP TABLE #SCH_TC2
+	--IF OBJECT_ID('tempdb..#SCH_TC5') IS NOT NULL DROP TABLE #SCH_TC5
+
+
+	DECLARE 
+		@UnitTestName VARCHAR(100) = 'FS141_UnitTestCase',
+		@StoredProcedureName VARCHAR(100) = 'FS141_TestCase',
+		@TestScope VARCHAR(1000) = 'FS141',
+		@ReportCode VARCHAR(20) = 'C141',
+		
+		@CategorySet varchar(5) = '',
+		@ReportLevel varchar(5) = ''
  
 	-- Define the test
 	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
@@ -46,275 +72,68 @@ BEGIN TRY
 	
 
 		--DROP TABLE #staging 
-
 		IF OBJECT_ID('tempdb..#staging') IS NOT NULL
 		DROP TABLE #staging
 
-	DECLARE @ELDate DATETIME
+		IF OBJECT_ID('tempdb..#vwStudentDetails') IS NOT NULL
+		DROP TABLE #vwStudentDetails
+
+		-- Needed to do this for performance. 
+		-- Doing date comparisons directly on the view was causing issues
+		select *
+		into #vwStudentDetails
+		from debug.vwStudentDetails
+
+	DECLARE @ReportingDate Date = '10/1/' + convert(varchar, @SchoolYear - 1)
 	
-	-- Get EL Date
-	SELECT @ELDate = CAST('10/01/' + cast(@SchoolYear - 1 AS Varchar(4)) AS DATETIME)
-
-	-- Get Custom EL Date
-	DECLARE @cutOffMonth INT, @cutOffDay INT, @customFactTypeDate VARCHAR(10)
-	set @cutOffMonth = 10
-	set @cutOffDay = 1
-
-	select @customFactTypeDate = r.ResponseValue
-	from app.ToggleResponses r
-	inner join app.ToggleQuestions q 
-		on r.ToggleQuestionId = q.ToggleQuestionId
-	where q.EmapsQuestionAbbrv = 'ELDTE'
-
-	if not @customFactTypeDate is null
-	begin
-		if CHARINDEX('/', @customFactTypeDate) > 0
-		begin
-			select @cutOffMonth = SUBSTRING(@customFactTypeDate, 1, 2)
-			select @cutOffDay = SUBSTRING(@customFactTypeDate, 4, 2)
-		end			
-
-		SELECT @ELDate = DATEFROMPARTS(CASE WHEN @cutOffMonth >= 7 THEN sy.SchoolYear - 1 ELSE sy.SchoolYear END, @cutOffMonth, @cutOffDay)
-		FROM rds.DimSchoolYears sy
-		Where sy.SchoolYear = @SchoolYear
-	end
-
-
-	SELECT	 IDEAIndicator
-		,[IDEA_StatusStartDate]
-		,[IDEA_StatusEndDate]
-		,EnglishLearnerStatus
-		,[EnglishLearner_StatusStartDate]
-		,[EnglishLearner_StatusEndDate]
-		,ISO_639_2_NativeLanguage
-		,Student_Identifier_State
-		,LEA_Identifier_State
-		,School_Identifier_State
-	INTO #sps
-	FROM Staging.PersonStatus
-
-	CREATE NONCLUSTERED INDEX IX_sps ON #sps (Student_Identifier_State,LEA_Identifier_State,School_Identifier_State)
 
 	SELECT 
-		Student_Identifier_State
-		,LEA_Identifier_State
-		,School_Identifier_State
-		,HispanicLatinoEthnicity
-	INTO #ske
-	FROM Staging.K12Enrollment
-    
-	CREATE NONCLUSTERED INDEX IX_ske ON #ske (Student_Identifier_State,LEA_Identifier_State,School_Identifier_State,HispanicLatinoEthnicity)
-
-	SELECT Student_Identifier_State
-		,SchoolYear
-		,RaceType
-		,RecordStartDateTime
-		,RecordEndDateTime
-	INTO #spr
-	FROM Staging.PersonRace
-	WHERE SchoolYear = @SchoolYear
-
-	CREATE NONCLUSTERED INDEX IX_spr ON #spr (Student_Identifier_State,SchoolYear,RaceType,RecordStartDateTime,RecordEndDateTime)
-
-	SELECT 
-		RaceEdFactsCode
-		,RaceCode
-	INTO #rdr
-	FROM RDS.DimRaces
-
-	CREATE NONCLUSTERED INDEX IX_rdr ON #rdr (RaceEdFactsCode,RaceCode)
-
-	SELECT
-		GradeLevelCode
-	INTO #dgl
-	FROM rds.DimGradeLevels
-
-	
-	SELECT 
-		SchoolYear
-		,SessionBeginDate
-		,SessionEndDate
-	INTO #sy
-	FROM RDS.DimSchoolYears
-	WHERE SchoolYear = @SchoolYear
-
-
-
-	SELECT 
-		enr.Student_Identifier_State,
-		enr.LEA_Identifier_State,
-		enr.School_Identifier_State,
-		[RaceEdFactsCode] = rdr.[RaceEdFactsCode],
-		[DisabilityStatusEdFactsCode] = CASE WHEN idea.IDEAIndicator = 1 THEN 'WDIS' ELSE 'MISSING' END,
-		[EnglishLearnerStatusEdFactsCode] = CASE WHEN el.EnglishLearnerStatus = 1 THEN 'LEP' ELSE 'MISSING' END,
-		[ISO6392Language] = ISNULL(lang.ISO_639_2_NativeLanguage, 'MISSING'),
-		dgl.GradeLevelCode,
-		spr.RecordStartDateTime
-		,spr.RecordEndDateTime
-		,sy.SessionBeginDate
-		,sy.SessionEndDate
+		StudentIdentifierState,
+		LeaIdentifierSeaAccountability,
+		SchoolIdentifierSea,
+		RaceEdFactsCode,
+		CASE 
+			when IDEAIndicatorEdFactsCode = 'Yes'
+			and isnull(ProgramParticipationBeginDate, @ReportingDate)  <= @ReportingDate
+			and isnull(ProgramParticipationEndDate, @ReportingDate) >= @ReportingDate
+			then 'WDIS'
+		ELSE
+			case
+				when IDEAIndicatorEdFactsCode = 'MISSING'
+				then 'MISSING'
+			end
+		END	DisabilityStatusEdFactsCode,
+		EnglishLearnerStatusEdFactsCode,
+		EnglishLearner_StatusStartDate,
+		EnglishLearner_StatusEndDate,
+		Iso6392LanguageCodeEdFactsCode,
+		GradeLevelEdFactsCode
 	INTO #staging
-	FROM Staging.K12Enrollment enr		
-	INNER JOIN #ske ske
-		ON enr.Student_Identifier_State = ske.Student_Identifier_State
-		AND enr.LEA_Identifier_State = ske.LEA_Identifier_State
-		AND enr.School_Identifier_State = ske.School_Identifier_State
-	INNER JOIN #sy sy
-		ON sy.SessionBeginDate <= enr.EnrollmentEntryDate
-		AND @ELDate BETWEEN enr.EnrollmentEntryDate AND ISNULL(enr.EnrollmentExitDate, GETDATE())
-	LEFT JOIN #sps idea
-		ON idea.Student_Identifier_State = enr.Student_Identifier_State
-		   AND idea.LEA_Identifier_State = enr.LEA_Identifier_State
-		   AND idea.School_Identifier_State = enr.School_Identifier_State
-		   AND idea.IDEA_StatusStartDate <= @ELDate AND (idea.IDEA_StatusEndDate >= @ELDate OR idea.IDEA_StatusEndDate IS NULL)
-		   AND idea.IDEAIndicator = 1
-     LEFT JOIN #sps el
-		ON el.Student_Identifier_State = enr.Student_Identifier_State
-		   AND el.LEA_Identifier_State = enr.LEA_Identifier_State
-		   AND el.School_Identifier_State = enr.School_Identifier_State
-		   and el.EnglishLearnerStatus = 1
-	LEFT JOIN #sps lang
-		ON lang.Student_Identifier_State = enr.Student_Identifier_State
-		   AND lang.LEA_Identifier_State = enr.LEA_Identifier_State
-		   AND lang.School_Identifier_State = enr.School_Identifier_State
-		   and lang.ISO_639_2_NativeLanguage IS NOT NULL
-    LEFT JOIN #spr spr
-        ON spr.Student_Identifier_State = ske.Student_Identifier_State
-        AND spr.SchoolYear = sy.SchoolYear
-		AND ISNULL(enr.EnrollmentEntryDate, spr.RecordStartDateTime)
-        BETWEEN spr.RecordStartDateTime
-        AND @ELDate
-       	AND (sy.SessionBeginDate <= @ELDate
-	AND sy.SessionEndDate >= @ELDate)
-	LEFT JOIN #rdr rdr
-		ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
-				OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceCode)
-	LEFT JOIN #dgl dgl
-		ON dgl.GradeLevelCode = enr.GradeLevel
-	WHERE  enr.GradeLevel not in ('PK','AE', 'ABE') and el.EnglishLearnerStatus = 1
+	FROM  #vwStudentDetails
+	WHERE  
+		GradeLevelEdFactsCode in ('KG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', 'UG')
+		and EnglishLearnerStatusEdFactsCode = 'LEP'
+		and isnull(EnglishLearner_StatusStartDate, @ReportingDate)  <= @ReportingDate
+		and isnull(EnglishLearner_StatusEndDate, @ReportingDate) >= @ReportingDate	
+		and isnull(EnrollmentEntryDate, @ReportingDate)  <= @ReportingDate
+		and isnull(EnrollmentExitDate, @ReportingDate) >= @ReportingDate	
 
-	IF OBJECT_ID('tempdb..#rdr') IS NOT NULL
-	DROP TABLE #rdr
-	IF OBJECT_ID('tempdb..#ske') IS NOT NULL
-	DROP TABLE #ske
-	IF OBJECT_ID('tempdb..#spr') IS NOT NULL
-	DROP TABLE #spr
-	IF OBJECT_ID('tempdb..#sps') IS NOT NULL
-	DROP TABLE #sps
-	IF OBJECT_ID('tempdb..#dgl') IS NOT NULL
-	DROP TABLE #dgl
-	IF OBJECT_ID('tempdb..#sy') IS NOT NULL
-	DROP TABLE #sy
-		
+-- CSA --------------------------------------------------------------------------------------------------
+select @CategorySet = 'CSA'
 
-			--CSA
-			SELECT 
-				 GRADELEVEL
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,[StudentCount] = SUM(StudentCount)
-			 INTO #csa
-			 FROM RDS.ReportEDFactsK12StudentCounts
-			 WHERE CategorySetCode = 'CSA'
-			 AND ReportYear = @SchoolYear
-			 AND ReportCode = @ReportCode
-			 GROUP BY GRADELEVEL
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			 --CSB
-			SELECT 
-				 ISO6392LANGUAGE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,[StudentCount] = SUM(StudentCount)
-			 INTO #csb
-			 FROM RDS.ReportEDFactsK12StudentCounts
-			 WHERE CategorySetCode = 'CSB'
-			 AND ReportYear = @SchoolYear
-			 AND ReportCode = @ReportCode
-			 GROUP BY ISO6392LANGUAGE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			 --CSC
-			SELECT 
-				 RACE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,[StudentCount] = SUM(StudentCount)
-			 INTO #csc
-			 FROM RDS.ReportEDFactsK12StudentCounts
-			 WHERE CategorySetCode = 'CSC'
-			 AND ReportYear = @SchoolYear
-			 AND ReportCode = @ReportCode
-			 GROUP BY RACE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			 --CSD
-			SELECT 
-				 IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,[StudentCount] = SUM(StudentCount)
-			 INTO #csd
-			 FROM RDS.ReportEDFactsK12StudentCounts
-			 WHERE CategorySetCode = 'CSD'
-			 AND ReportYear = @SchoolYear
-			 AND ReportCode = @ReportCode
-			 GROUP BY IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			
-			--TOT
-			 SELECT 
-				 ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,[StudentCount] = SUM(StudentCount)
-			 INTO #tot
-			 FROM RDS.ReportEDFactsK12StudentCounts
-			 WHERE CategorySetCode = 'TOT'
-			 AND ReportYear = @SchoolYear
-			 AND ReportCode = @ReportCode
-			 GROUP BY ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-
-
-----------------------------------------------------------------------------------------------------
-		/* Test Case 1: 
-			CSA  */
-
+		/******************************************************* 
+		Test Case 1: 
+			CSA at SEA Level  
+			Student Count by:
+				GradeLevel
+		********************************************************/
+		select @ReportLevel = 'SEA'
 		SELECT 
-			 GradeLevelCode
-			,COUNT(DISTINCT Student_Identifier_State) AS StudentCount
-		INTO #TC1
+			 GradeLevelEdFactsCode
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #SEA_CSA
 		FROM #staging 
-		GROUP BY GradeLevelCode
-
-
+		GROUP BY GradeLevelEdFactsCode
 
 		INSERT INTO App.SqlUnitTestCaseResult 
 		(
@@ -328,31 +147,36 @@ BEGIN TRY
 		)
 		SELECT 
 			 @SqlUnitTestId
-			,'CSA ' + UPPER(sar.ReportLevel) + ' Match All'
-			,'CSA ' + UPPER(sar.ReportLevel) + ' Match All - Grade Level: ' + s.GradeLevelCode
+			,@CategorySet + ' ' + @ReportLevel
+			,'Grade: ' + s.GradeLevelEdFactsCode
 			,s.StudentCount
-			,sar.StudentCount
-			,CASE WHEN s.StudentCount = ISNULL(sar.StudentCount, -1) THEN 1 ELSE 0 END
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
-		FROM #TC1 s
-		JOIN #csa sar 
-			ON s.GradeLevelCode = sar.GRADELEVEL
+		FROM #SEA_CSA s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.GRADELEVEL = s.GradeLevelEdFactsCode
 
-	
-		DROP TABLE #TC1
-
-		/* Test Case 2: 
-			CSB  */
-
-
+		/******************************************************* 
+		Test Case 2: 
+			CSA at LEA Level  
+			Student Count by:
+				GradeLevel
+		********************************************************/
+		select @ReportLevel = 'LEA'
 		SELECT 
-			 ISO6392Language
-			,COUNT(DISTINCT Student_Identifier_State) AS StudentCount
-		INTO #TC2
+			LeaIdentifierSeaAccountability
+			,GradeLevelEdFactsCode
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #LEA_CSA
 		FROM #staging 
-		GROUP BY ISO6392Language
-
-
+		GROUP BY 
+			LeaIdentifierSeaAccountability,
+			GradeLevelEdFactsCode
 
 		INSERT INTO App.SqlUnitTestCaseResult 
 		(
@@ -366,30 +190,260 @@ BEGIN TRY
 		)
 		SELECT 
 			 @SqlUnitTestId
-			,'CSB ' + UPPER(sar.ReportLevel) + ' Match All'
-			,'CSB ' + UPPER(sar.ReportLevel) + ' Match All - Language: ' + s.ISO6392Language
+			,@CategorySet + ' ' + @ReportLevel
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
+			+ 'Grade: ' + s.GradeLevelEdFactsCode
 			,s.StudentCount
-			,sar.StudentCount
-			,CASE WHEN s.StudentCount = ISNULL(sar.StudentCount, -1) THEN 1 ELSE 0 END
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
-		FROM #TC2 s
-		JOIN #csb sar 
-			ON s.ISO6392Language = sar.ISO6392LANGUAGE
+		FROM #LEA_CSA s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.GRADELEVEL = s.GradeLevelEdFactsCode
+			and Fact.OrganizationIdentifierSea = s.LeaIdentifierSeaAccountability
 
-	
-		DROP TABLE #TC2
+		/******************************************************* 
+		Test Case 3: 
+			CSA at SCH Level  
+			Student Count by:
+				GradeLevel
+		********************************************************/
+		select @ReportLevel = 'SCH'
+		SELECT 
+			SchoolIdentifierSea
+			,GradeLevelEdFactsCode
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #SCH_CSA
+		FROM #staging 
+		GROUP BY 
+			SchoolIdentifierSea,
+			GradeLevelEdFactsCode
 
-		/* Test Case 3: 
-			CSC  */
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+			 @SqlUnitTestId
+			,@CategorySet + ' ' + @ReportLevel
+			,'SchoolIdentifierSEA: ' + s.SchoolIdentifierSea + '  '
+			+ 'Grade: ' + s.GradeLevelEdFactsCode
+			,s.StudentCount
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #SCH_CSA s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.GRADELEVEL = s.GradeLevelEdFactsCode
+			and Fact.OrganizationIdentifierSea = s.SchoolIdentifierSea
 
+-- CSB --------------------------------------------------------------------------------------------------
+select @CategorySet = 'CSB'
+
+		/******************************************************* 
+		Test Case 4: 
+			CSB at SEA Level  
+			Student Count by:
+				Language
+		********************************************************/
+		select @ReportLevel = 'SEA'
+		SELECT 
+			 Iso6392LanguageCodeEdFactsCode
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #SEA_CSB
+		FROM #staging 
+		GROUP BY Iso6392LanguageCodeEdFactsCode
+
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+			 @SqlUnitTestId
+			,@CategorySet + ' ' + @ReportLevel
+			,'Language: ' + s.Iso6392LanguageCodeEdFactsCode
+			,s.StudentCount
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #SEA_CSB s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.ISO6392LanguageCode = s.Iso6392LanguageCodeEdFactsCode
+
+		/******************************************************* 
+		Test Case 5: 
+			CSB at LEA Level  
+			Student Count by:
+				Language
+		********************************************************/
+		select @ReportLevel = 'LEA'
+		SELECT 
+			LeaIdentifierSeaAccountability
+			,Iso6392LanguageCodeEdFactsCode
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #LEA_CSB
+		FROM #staging 
+		GROUP BY 
+			LeaIdentifierSeaAccountability,
+			Iso6392LanguageCodeEdFactsCode
+
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+			 @SqlUnitTestId
+			,@CategorySet + ' ' + @ReportLevel
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
+			+ 'Language: ' + s.Iso6392LanguageCodeEdFactsCode
+			,s.StudentCount
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #LEA_CSB s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.OrganizationIdentifierSea = s.LeaIdentifierSeaAccountability
+			and Fact.ISO6392LanguageCode = s.Iso6392LanguageCodeEdFactsCode
+
+		/******************************************************* 
+		Test Case 6: 
+			CSB at SCH Level  
+			Student Count by:
+				Language
+		********************************************************/
+		select @ReportLevel = 'SCH'
+		SELECT 
+			SchoolIdentifierSea
+			,Iso6392LanguageCodeEdFactsCode
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #SCH_CSB
+		FROM #staging 
+		GROUP BY 
+			SchoolIdentifierSea,
+			Iso6392LanguageCodeEdFactsCode
+
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+			 @SqlUnitTestId
+			,@CategorySet + ' ' + @ReportLevel
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
+			+ 'Language: ' + s.Iso6392LanguageCodeEdFactsCode
+			,s.StudentCount
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #SCH_CSB s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.OrganizationIdentifierSea = s.SchoolIdentifierSea
+			and Fact.ISO6392LanguageCode = s.Iso6392LanguageCodeEdFactsCode
+
+
+-- CSC --------------------------------------------------------------------------------------------------
+select @CategorySet = 'CSC'
+
+		/******************************************************* 
+		Test Case 7: 
+			CSC at SEA Level  
+			Student Count by:
+				Race
+		********************************************************/
+		select @ReportLevel = 'SEA'
 		SELECT 
 			 RaceEdFactsCode
-			,COUNT(DISTINCT Student_Identifier_State) AS StudentCount
-		INTO #TC3
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #SEA_CSC
 		FROM #staging 
 		GROUP BY RaceEdFactsCode
 
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+			 @SqlUnitTestId
+			,@CategorySet + ' ' + @ReportLevel
+			,'Race: ' + s.RaceEdFactsCode
+			,s.StudentCount
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #SEA_CSC s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.RACE = s.RaceEdFactsCode
 
+		/******************************************************* 
+		Test Case 8: 
+			CSC at LEA Level  
+			Student Count by:
+				Race
+		********************************************************/
+		select @ReportLevel = 'LEA'
+		SELECT 
+			LeaIdentifierSeaAccountability
+			,RaceEdFactsCode
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #LEA_CSC
+		FROM #staging 
+		GROUP BY 
+			LeaIdentifierSeaAccountability,
+			RaceEdFactsCode
 
 		INSERT INTO App.SqlUnitTestCaseResult 
 		(
@@ -403,30 +457,85 @@ BEGIN TRY
 		)
 		SELECT 
 			 @SqlUnitTestId
-			,'CSC ' + UPPER(sar.ReportLevel) + ' Match All'
-			,'CSC ' + UPPER(sar.ReportLevel) + ' Match All - Race: ' + s.RaceEdFactsCode
+			,@CategorySet + ' ' + @ReportLevel
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
+			+ 'Race: ' + s.RaceEdFactsCode
 			,s.StudentCount
-			,sar.StudentCount
-			,CASE WHEN s.StudentCount = ISNULL(sar.StudentCount, -1) THEN 1 ELSE 0 END
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
-		FROM #TC3 s
-		JOIN #csc sar 
-			ON s.RaceEdFactsCode = sar.Race
+		FROM #LEA_CSC s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.OrganizationIdentifierSea = s.LeaIdentifierSeaAccountability
+			and Fact.RACE = s.RaceEdFactsCode
 
-	
-		DROP TABLE #TC3
+		/******************************************************* 
+		Test Case 9: 
+			CSC at SCH Level  
+			Student Count by:
+				Race
+		********************************************************/
+		select @ReportLevel = 'SCH'
+		SELECT 
+			SchoolIdentifierSea
+			,RaceEdFactsCode
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #SCH_CSC
+		FROM #staging 
+		GROUP BY 
+			SchoolIdentifierSea,
+			RaceEdFactsCode
 
-		/* Test Case 4: 
-			CSD  */
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+			 @SqlUnitTestId
+			,@CategorySet + ' ' + @ReportLevel
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
+			+ 'Race: ' + s.RaceEdFactsCode
+			,s.StudentCount
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #SCH_CSC s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.OrganizationIdentifierSea = s.SchoolIdentifierSea
+			and Fact.RACE = s.RaceEdFactsCode
 
+
+-- CSD --------------------------------------------------------------------------------------------------
+select @CategorySet = 'CSD'
+
+		/******************************************************* 
+		Test Case 7: 
+			CSD at SEA Level  
+			Student Count by:
+				DisabilityStatusEdFactsCode
+		********************************************************/
+		select @ReportLevel = 'SEA'
 		SELECT 
 			 DisabilityStatusEdFactsCode
-			,COUNT(DISTINCT Student_Identifier_State) AS StudentCount
-		INTO #TC4
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #SEA_CSD
 		FROM #staging 
 		GROUP BY DisabilityStatusEdFactsCode
 
-	
 		INSERT INTO App.SqlUnitTestCaseResult 
 		(
 			[SqlUnitTestId]
@@ -439,30 +548,164 @@ BEGIN TRY
 		)
 		SELECT 
 			 @SqlUnitTestId
-			,'CSD ' + UPPER(sar.ReportLevel) + ' Match All'
-			,'CSD ' + UPPER(sar.ReportLevel) + ' Match All - Disability: ' + sar.IDEAINDICATOR
+			,@CategorySet + ' ' + @ReportLevel
+			,'DisabilityStatusEdFactsCode: ' + s.DisabilityStatusEdFactsCode
 			,s.StudentCount
-			,sar.StudentCount
-			,CASE WHEN s.StudentCount = ISNULL(sar.StudentCount, -1) THEN 1 ELSE 0 END
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
-		FROM #TC4 s
-		JOIN #csd sar 
-		ON s.DisabilityStatusEdFactsCode = sar.IDEAINDICATOR
+		FROM #SEA_CSD s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.IDEAINDICATOR = s.DisabilityStatusEdFactsCode
 
-
-	
-		DROP TABLE #TC4
-
-
-		
-		/* Test Case 5: 
-			TOT  */
-
+		/******************************************************* 
+		Test Case 8: 
+			CSD at LEA Level  
+			Student Count by:
+				DisabilityStatusEdFactsCode
+		********************************************************/
+		select @ReportLevel = 'LEA'
 		SELECT 
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
-		INTO #TC5
+			LeaIdentifierSeaAccountability
+			,DisabilityStatusEdFactsCode
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #LEA_CSD
+		FROM #staging 
+		GROUP BY 
+			LeaIdentifierSeaAccountability,
+			DisabilityStatusEdFactsCode
+
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+			 @SqlUnitTestId
+			,@CategorySet + ' ' + @ReportLevel
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
+			+ 'DisabilityStatusEdFactsCode: ' + s.DisabilityStatusEdFactsCode
+			,s.StudentCount
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #LEA_CSD s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.OrganizationIdentifierSea = s.LeaIdentifierSeaAccountability
+			and Fact.IDEAINDICATOR = s.DisabilityStatusEdFactsCode
+
+		/******************************************************* 
+		Test Case 9: 
+			CSD at SCH Level  
+			Student Count by:
+				DisabilityStatusEdFactsCode
+		********************************************************/
+		select @ReportLevel = 'SCH'
+		SELECT 
+			SchoolIdentifierSea
+			,DisabilityStatusEdFactsCode
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #SCH_CSD
+		FROM #staging 
+		GROUP BY 
+			SchoolIdentifierSea,
+			DisabilityStatusEdFactsCode
+
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+			 @SqlUnitTestId
+			,@CategorySet + ' ' + @ReportLevel
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
+			+ 'DisabilityStatusEdFactsCode: ' + s.DisabilityStatusEdFactsCode
+			,s.StudentCount
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #SCH_CSD s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.OrganizationIdentifierSea = s.SchoolIdentifierSea
+			and Fact.IDEAINDICATOR = s.DisabilityStatusEdFactsCode
+
+-- TOT --------------------------------------------------------------------------------------------------
+select @CategorySet = 'TOT'
+
+		/******************************************************* 
+		Test Case 7: 
+			TOTAL at SEA Level  
+			Student Count by:
+				Total
+		********************************************************/
+		select @ReportLevel = 'SEA'
+		SELECT 
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #SEA_TOT
 		FROM #staging 
 
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+			 @SqlUnitTestId
+			,@CategorySet + ' ' + @ReportLevel
+			,'TOTAL'
+			,s.StudentCount
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #SEA_TOT s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+
+		/******************************************************* 
+		Test Case 8: 
+			TOTAL at LEA Level  
+			Student Count by:
+				Total
+		********************************************************/
+		select @ReportLevel = 'LEA'
+		SELECT 
+			LeaIdentifierSeaAccountability
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #LEA_TOT
+		FROM #staging 
+		GROUP BY 
+			LeaIdentifierSeaAccountability
 
 		INSERT INTO App.SqlUnitTestCaseResult 
 		(
@@ -476,46 +719,63 @@ BEGIN TRY
 		)
 		SELECT 
 			 @SqlUnitTestId
-			,'TOT ' + UPPER(sar.ReportLevel) + ' Match All'
-			,'TOT ' + UPPER(sar.ReportLevel) + ' Match All'
+			,@CategorySet + ' ' + @ReportLevel
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
+			+ 'Total'
 			,s.StudentCount
-			,sar.StudentCount
-			,CASE WHEN s.StudentCount = ISNULL(sar.StudentCount, -1) THEN 1 ELSE 0 END
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
-		FROM #TC5 s
-		JOIN #tot sar 
-			ON sar.ReportCode = @ReportCode 
-			AND sar.ReportYear = @SchoolYear
-			AND sar.CategorySetCode = 'TOT'
+		FROM #LEA_TOT s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.OrganizationIdentifierSea = s.LeaIdentifierSeaAccountability
 
-	
-	   DROP TABLE #TC5
-	   DROP TABLE #csa
-	   DROP TABLE #csb
-	   DROP TABLE #csc
-	   DROP TABLE #csd
-	   DROP TABLE #tot
-	   DROP TABLE #staging
+		/******************************************************* 
+		Test Case 9: 
+			TOTAL at SCH Level  
+			Student Count by:
+				Total
+		********************************************************/
+		select @ReportLevel = 'SCH'
+		SELECT 
+			SchoolIdentifierSea
+			,COUNT(DISTINCT StudentIdentifierState) AS StudentCount
+		INTO #SCH_TOT
+		FROM #staging 
+		GROUP BY 
+			SchoolIdentifierSea
 
-	COMMIT TRANSACTION
-
-	END TRY
-	BEGIN CATCH
-
-	IF @@TRANCOUNT > 0
-	BEGIN
-		ROLLBACK TRANSACTION
-	END
-
-	DECLARE @msg AS NVARCHAR(MAX)
-	SET @msg = ERROR_MESSAGE()
-
-	DECLARE @sev AS INT
-	SET @sev = ERROR_SEVERITY()
-
-	RAISERROR(@msg, @sev, 1)
-
-	END CATCH; 
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+			 @SqlUnitTestId
+			,@CategorySet + ' ' + @ReportLevel
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
+			+ 'Total'
+			,s.StudentCount
+			,Fact.StudentCount
+			,CASE WHEN s.StudentCount = ISNULL(Fact.StudentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #SCH_TOT s
+		JOIN RDS.ReportEdFactsK12StudentCounts Fact
+			ON Fact.ReportCode = @ReportCode
+			and Fact.ReportYear = @SchoolYear
+			and Fact.ReportLevel = @ReportLevel
+			and Fact.CategorySetCode = @CategorySet
+			and Fact.OrganizationIdentifierSea = s.SchoolIdentifierSea
 
 
 END
+

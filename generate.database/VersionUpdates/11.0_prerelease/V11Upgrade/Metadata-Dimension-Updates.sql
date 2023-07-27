@@ -174,6 +174,9 @@ WHERE DimensionFieldName IN ('MepServicesType')
 Update app.Dimensions SET DimensionFieldName = 'NeglectedOrDelinquentLongTermStatus'
 WHERE DimensionFieldName IN ('LongTermStatus')
 
+Update app.Dimensions SET DimensionFieldName = 'ISO6392LanguageCode'
+where DimensionFieldName in ('ISO6392Language')
+
 SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimEconomicallyDisadvantagedStatuses'
 Update app.Dimensions SET DimensionTableId = @dimensionTableId, DimensionFieldName = 'EligibilityStatusForSchoolFoodServicePrograms'
 WHERE DimensionFieldName = 'EligibilityStatusForSchoolFoodServiceProgram'
