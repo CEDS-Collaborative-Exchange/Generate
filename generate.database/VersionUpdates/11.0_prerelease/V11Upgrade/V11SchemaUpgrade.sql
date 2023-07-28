@@ -5748,15 +5748,6 @@ ALTER TABLE [RDS].[DimPeople]
         , PositionTitle                             NVARCHAR(200) NULL
 
 
-EXECUTE sp_rename N'[RDS].[DimPeople].[ELChildChildIdentifierState]', N'EarlyLearningChildChildIdentifierState', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[ELStaffStaffMemberIdentifierState]', N'EarlyLearningStaffStaffMemberIdentifierState', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveELChild]', N'IsActiveEarlyLearningChild', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveELStaffMember]', N'IsActiveEarlyLearningStaffMember', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveK12StaffMember]', N'IsActiveK12StaffMember', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActivePsStaffMember]', N'IsActivePsStaffMember', N'COLUMN';
-
-
-
 PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_K12Students]...';
 
 
