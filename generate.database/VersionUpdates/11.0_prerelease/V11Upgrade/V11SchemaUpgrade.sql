@@ -9642,12 +9642,12 @@ ALTER TABLE [RDS].[FactPsStudentAcademicRecords] WITH NOCHECK
 
 
 
-PRINT N'Creating Foreign Key [RDS].[FK_FactPsStudentAcademicRecords_PsDemographicId]...';
+-- PRINT N'Creating Foreign Key [RDS].[FK_FactPsStudentAcademicRecords_PsDemographicId]...';
 
 
 
-ALTER TABLE [RDS].[FactPsStudentAcademicRecords] WITH NOCHECK
-    ADD CONSTRAINT [FK_FactPsStudentAcademicRecords_PsDemographicId] FOREIGN KEY ([PsDemographicId]) REFERENCES [RDS].[DimPsDemographics] ([DimPsDemographicId]);
+-- ALTER TABLE [RDS].[FactPsStudentAcademicRecords] WITH NOCHECK
+--     ADD CONSTRAINT [FK_FactPsStudentAcademicRecords_PsDemographicId] FOREIGN KEY ([PsDemographicId]) REFERENCES [RDS].[DimPsDemographics] ([DimPsDemographicId]);
 
 
 
@@ -9752,12 +9752,12 @@ ALTER TABLE [RDS].[BridgePsStudentEnrollmentRaces] WITH NOCHECK
 
 
 
-PRINT N'Creating Foreign Key [RDS].[FK_FactPsStudentEnrollments_CountDateId]...';
+-- PRINT N'Creating Foreign Key [RDS].[FK_FactPsStudentEnrollments_CountDateId]...';
 
 
 
-ALTER TABLE [RDS].[FactPsStudentEnrollments] WITH NOCHECK
-    ADD CONSTRAINT [FK_FactPsStudentEnrollments_CountDateId] FOREIGN KEY ([CountDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+-- ALTER TABLE [RDS].[FactPsStudentEnrollments] WITH NOCHECK
+--     ADD CONSTRAINT [FK_FactPsStudentEnrollments_CountDateId] FOREIGN KEY ([CountDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 
@@ -12154,7 +12154,7 @@ ALTER TABLE [RDS].[FactPsStudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_Fac
 
 ALTER TABLE [RDS].[BridgePsStudentEnrollmentRaces] WITH CHECK CHECK CONSTRAINT [FK_BridgePsStudentEnrollmentRaces_FactPsStudentEnrollments];
 
-ALTER TABLE [RDS].[FactPsStudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactPsStudentEnrollments_CountDateId];
+-- ALTER TABLE [RDS].[FactPsStudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactPsStudentEnrollments_CountDateId];
 
 ALTER TABLE [RDS].[FactSpecialEducation] WITH CHECK CHECK CONSTRAINT [FK_FactSpecialEducation_CteStatusId];
 
