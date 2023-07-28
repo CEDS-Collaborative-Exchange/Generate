@@ -342,6 +342,3 @@ Title I Indicator from Staging.ProgramParticipationTitleI is supposd to be mappe
 	END CATCH
 
 END
-
-GO
-

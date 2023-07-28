@@ -17691,7 +17691,7 @@
 		[RecordStartDateTime] 							DATETIME 		NULL,
 		[RecordEndDateTime] 							DATETIME 		NULL,
 		[RunDateTime] 									DATETIME 		NULL,
-		CONSTRAINT [[tmp_ms_xx_constraint_PK_K12StaffAssignment1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
+		CONSTRAINT [tmp_ms_xx_constraint_PK_K12StaffAssignment1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
 

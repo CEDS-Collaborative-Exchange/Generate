@@ -358,6 +358,3 @@ I believe Cohort is supposed to be in AcademicAwardStatuses but the dimension do
 	END CATCH
 
 END
-
-GO
-
