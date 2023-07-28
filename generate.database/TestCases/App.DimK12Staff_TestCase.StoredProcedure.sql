@@ -43,7 +43,7 @@ BEGIN
 		LEFT JOIN RDS.DimPeople rds
 			ON rds.K12StaffStaffMemberIdentifierState = ske.StaffMemberIdentifierState
 			AND ISNULL(rds.RecordStartDateTime, '1/1/1900') = ISNULL(ske.RecordStartDateTime, '1/1/1900') 
-			AND rds.IsActiveK12StaffMember = 1
+			AND rds.IsActiveK12Staff = 1
 
 		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]

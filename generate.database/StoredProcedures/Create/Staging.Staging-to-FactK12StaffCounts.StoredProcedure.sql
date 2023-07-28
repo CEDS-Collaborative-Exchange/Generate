@@ -141,7 +141,7 @@ BEGIN
 	--person (rds)
 		JOIN RDS.DimPeople rdp
 			ON ssa.StaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState
-			AND rdp.IsActiveK12StaffMember = 1
+			AND rdp.IsActiveK12Staff = 1
 			AND ISNULL(ssa.FirstName, 'MISSING') = ISNULL(rdp.FirstName, 'MISSING')
 			AND ISNULL(ssa.MiddleName, 'MISSING') = ISNULL(rdp.MiddleName, 'MISSING')
 			AND ISNULL(ssa.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
