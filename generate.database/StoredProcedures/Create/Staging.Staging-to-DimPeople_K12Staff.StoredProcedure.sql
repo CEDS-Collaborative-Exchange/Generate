@@ -27,7 +27,7 @@ BEGIN
 			, LastOrSurname									NVARCHAR(50) NULL
 			, BirthDate										DATE NULL
 			, K12StaffStaffMemberIdentifierState			NVARCHAR(40) NULL
-			, IsActiveK12StaffMember						BIT NULL
+			, IsActiveK12Staf 								BIT NULL
 			, PositionTitle									NVARCHAR(200) NULL
 			, RecordStartDateTime							DATE NULL
 			, RecordEndDateTime								DATE NULL
@@ -39,7 +39,7 @@ BEGIN
 			, LastOrSurname
 			, BirthDate
 			, K12StaffStaffMemberIdentifierState
-			, IsActiveK12StaffMember
+			, IsActiveK12Staff
 			, PositionTitle
 			, RecordStartDateTime
 			, RecordEndDateTime
@@ -63,7 +63,7 @@ BEGIN
 				AND ISNULL(trgt.LastOrSurname, '') = ISNULL(src.LastOrSurname, '')
 				AND ISNULL(trgt.MiddleName, '') = ISNULL(src.MiddleName, '')
 				AND ISNULL(trgt.BirthDate, '1900-01-01') = ISNULL(src.BirthDate, '1900-01-01')
-				AND trgt.IsActiveK12StaffMember = 1
+				AND trgt.IsActiveK12Staff = 1
 				AND trgt.RecordStartDateTime = src.RecordStartDateTime
 		WHEN NOT MATCHED BY TARGET THEN     --- Records Exists in Source but NOT in Target
 		INSERT (
@@ -72,7 +72,7 @@ BEGIN
 			, LastOrSurname
 			, BirthDate
 			, K12StaffStaffMemberIdentifierState
-			, IsActiveK12StaffMember
+			, IsActiveK12Staff
 			, PositionTitle
 			, RecordStartDateTime
 			, RecordEndDateTime
@@ -83,7 +83,7 @@ BEGIN
 			, src.LastOrSurname
 			, src.Birthdate
 			, src.K12StaffStaffMemberIdentifierState
-			, src.IsActiveK12StaffMember
+			, src.IsActiveK12Staff
 			, src.PositionTitle
 			, src.RecordStartDateTime
 			, src.RecordEndDateTime

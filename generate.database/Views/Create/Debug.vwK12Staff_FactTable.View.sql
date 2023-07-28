@@ -27,7 +27,7 @@ AS
 	FROM		RDS.FactK12StaffCounts				Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId		= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid		
-	LEFT JOIN	RDS.DimPeople						Staff			ON  Fact.K12StaffId			= Staff.DimPersonId					AND Staff.IsActiveK12StaffMember = 1
+	LEFT JOIN	RDS.DimPeople						Staff			ON  Fact.K12StaffId			= Staff.DimPersonId					AND Staff.IsActiveK12Staff = 1
 	LEFT JOIN	RDS.DimLeas							LEAs			ON  Fact.LeaId				= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools					Schools			ON  Fact.K12SchoolId		= Schools.DimK12SchoolId
 
