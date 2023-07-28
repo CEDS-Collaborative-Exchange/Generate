@@ -302,6 +302,3 @@ The view also needs to be finished
 	END CATCH
 
 END
-
-GO
-

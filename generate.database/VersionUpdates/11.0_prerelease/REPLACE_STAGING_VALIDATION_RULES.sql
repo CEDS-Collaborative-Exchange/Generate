@@ -43,6 +43,10 @@ INSERT [Staging].[StagingValidationRules] VALUES
 -- Staging.K12Organization -----------------------------------------------------------------------
 ,(N'Directory, ChildCount, Exiting, Discipline, Personnel, Assessment, Membership', N'K12Organization cannot be empty', N'K12Organization', NULL, N'No Records', NULL, NULL, NULL, NULL, N'Critical', 'Generate')
 
+,(N'Directory, ChildCount, Exiting, Discipline, Personnel, Assessment, Membership', N'LEA_IsReportedFederally cannot be NULL', N'K12Organization', N'LEA_IsReportedFederally', N'Null Value', NULL, NULL, NULL, NULL, 'Critical', 'Generate')
+,(N'Directory, ChildCount, Exiting, Discipline, Personnel, Assessment, Membership', N'School_IsReportedFederally cannot be NULL', N'K12Organization', N'School_IsReportedFederally', N'Null Value', NULL, NULL, NULL, NULL, 'Critical', 'Generate')
+
+
 ,(N'Directory, ChildCount, Exiting, Discipline, Personnel, Assessment, Membership', N'LeaIdentifierSea cannot be NULL', N'K12Organization', N'LeaIdentifierSea', N'Null Value', NULL, NULL, NULL, NULL, 'Warning', 'Generate')
 ,(N'Directory, ChildCount, Exiting, Discipline, Personnel, Assessment, Membership', N'LEA_IsReportedFederally cannot be NULL', N'K12Organization', N'LEA_IsReportedFederally',N'Null Value',NULL,NULL,NULL,NULL,N'Error', 'Generate')
 ,(N'Directory, ChildCount, Exiting, Discipline, Personnel, Assessment, Membership', N'RecordStartDateTime cannot be NULL', N'K12Organization', N'School_RecordStartDateTime',N'Null Value',NULL,NULL,NULL,NULL,N'Error', 'Generate')

@@ -131,7 +131,7 @@ begin try
 			delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
-				where r.ReportCode in ('c116','c141') and r.IsLocked=1) and ReportYear = @selectedReportYear
+				where r.ReportCode in ('c141') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end
 		else if @factTypeCode = 'titleIIIELSY'
 		begin	
@@ -139,7 +139,7 @@ begin try
 			delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
-				where r.ReportCode in ('c045','c204') and r.IsLocked=1) and ReportYear = @selectedReportYear
+				where r.ReportCode in ('c045','c204', 'c116') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end
 		else if @factTypeCode = 'titleI'
 		begin	

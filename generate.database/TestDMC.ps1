@@ -2,7 +2,8 @@ Param(
   [string] $sqlServer = "192.168.51.53",
   [string] $db = "generate",
   [string] $user,
-  [string] $password)
+  [string] $password,
+  [string] $sqlCmdPath = "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\SQLCMD.EXE")
 
 Echo "Server = $sqlServer"
 Echo "Database = $db"
@@ -18,7 +19,6 @@ $erroractionpreference = 'stop'
 
 try
 {
-	$sqlCmdPath = "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\SQLCMD.EXE"
 	$invocation = (Get-Variable MyInvocation).Value
 	$currentPath = Split-Path $invocation.MyCommand.Path
 
