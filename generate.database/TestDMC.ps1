@@ -27,8 +27,6 @@ try
     Echo "Version Path = $testPath"	
 	Echo "TestDMC.ps1 Starting"
 
-    $clearPath = "$testPath\pre_Test DMC.sql" 
-
 	Get-childitem $testPath | ForEach-Object {
 
         Echo "Running: $testPath\$_" 
@@ -39,8 +37,6 @@ try
 			& $sqlCmdPath -b -S $sqlServer -d $db -i "$testPath\$_" 
 		}
 	}
-
-    $fileToRun = $testPath + "\Test DMC.sql"
 
 	$fileMsg = $fileToRun + " - Finished"
 	Echo $fileMsg

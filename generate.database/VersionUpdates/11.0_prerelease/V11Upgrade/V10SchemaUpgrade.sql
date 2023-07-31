@@ -6945,9 +6945,7 @@
 
 	-- --TODO: Review if this should happen
 	-- 
-	-- DROP TABLE [Staging].[K12SchoolComprehensiveSupportIdentificationType];
-	EXECUTE sp_rename N'[Staging].[K12SchoolComprehensiveSupportIdentificationType].[LEA_Identifier_State]', N'LEAIdentifierSea';
-	EXECUTE sp_rename N'[Staging].[K12SchoolComprehensiveSupportIdentificationType].[School_Identifier_State]', N'SchoolIdentifierSea';
+	DROP TABLE [Staging].[K12SchoolComprehensiveSupportIdentificationType];
 
 
 	-- --TODO: Review if this should happen
@@ -7812,10 +7810,7 @@
 
 	
 	ALTER TABLE [RDS].[DimComprehensiveAndTargetedSupports]
-		ADD [ComprehensiveSupportIdentificationTypeCode]               VARCHAR (50)  NULL,
-			[ComprehensiveSupportIdentificationTypeDescription]        VARCHAR (200) NULL,
-			[ComprehensiveSupportIdentificationTypeEdFactsCode]        VARCHAR (50)  NULL,
-			[AdditionalTargetedSupportAndImprovementStatusCode]        VARCHAR (50)  NULL,
+		ADD	[AdditionalTargetedSupportAndImprovementStatusCode]        VARCHAR (50)  NULL,
 			[AdditionalTargetedSupportAndImprovementStatusDescription] VARCHAR (200) NULL,
 			[AdditionalTargetedSupportAndImprovementStatusEDFactsCode] VARCHAR (50)  NULL,
 			[ComprehensiveSupportAndImprovementStatusCode]             VARCHAR (50)  NULL,
@@ -7825,6 +7820,9 @@
 			[TargetedSupportAndImprovementStatusDescription]           VARCHAR (200) NULL,
 			[TargetedSupportAndImprovementStatusEdFactsCode]           VARCHAR (50)  NULL;
 
+
+	DELETE FROM [RDS].[DimComprehensiveAndTargetedSupports];
+	DBCC CHECKIDENT ('[RDS].[DimComprehensiveAndTargetedSupports]', RESEED, 1);
 
 	
 	PRINT N'Altering Primary Key [RDS].[PK_DimComprehensiveAndTargetedSupport]...';
@@ -8802,10 +8800,6 @@
 	The column [RDS].[DimK12StaffStatuses].[UnexperiencedStatusCode] is being renamed.
 	The column [RDS].[DimK12StaffStatuses].[UnexperiencedStatusDescription] is being renamed.
 	The column [RDS].[DimK12StaffStatuses].[UnexperiencedStatusEdFactsCode] is being renamed.
-
-	The column [RDS].[EmergencyOrProvisionalCredentialStatusCode] is being dropped.
-	The column [RDS].[EmergencyOrProvisionalCredentialStatusDescription] is being dropped.
-	The column [RDS].[EmergencyOrProvisionalCredentialStatusEdFactsCode] is being dropped.
 	*/
 
 	
@@ -12169,6 +12163,99 @@
 
 
 	
+
+	
+	PRINT N'Creating Table [RDS].[DimPsDemographics]...';
+
+
+	
+	CREATE TABLE [RDS].[DimPsDemographics] (
+		[DimPsDemographicId]                           INT            IDENTITY (1, 1) NOT NULL,
+		[EconomicDisadvantageStatusCode]               NVARCHAR (50)  NULL,
+		[EconomicDisadvantageStatusDescription]        NVARCHAR (200) NULL,
+		[HomelessnessStatusCode]                       NVARCHAR (50)  NULL,
+		[HomelessnessStatusDescription]                NVARCHAR (200) NULL,
+		[EnglishLearnerStatusCode]                     NVARCHAR (50)  NULL,
+		[EnglishLearnerStatusDescription]              NVARCHAR (200) NULL,
+		[MigrantStatusCode]                            NVARCHAR (50)  NULL,
+		[MigrantStatusDescription]                     NVARCHAR (200) NULL,
+		[MilitaryConnectedStudentIndicatorCode]        NVARCHAR (50)  NULL,
+		[MilitaryConnectedStudentIndicatorDescription] NVARCHAR (200) NULL,
+		[HomelessPrimaryNighttimeResidenceCode]        NVARCHAR (50)  NULL,
+		[HomelessPrimaryNighttimeResidenceDescription] NVARCHAR (MAX) NULL,
+		[HomelessUnaccompaniedYouthStatusCode]         NVARCHAR (50)  NULL,
+		[HomelessUnaccompaniedYouthStatusDescription]  NVARCHAR (MAX) NULL,
+		[SexCode]                                      NVARCHAR (50)  NULL,
+		[SexDescription]                               NVARCHAR (200) NULL,
+		CONSTRAINT [PK_DimPsDemographics] PRIMARY KEY CLUSTERED ([DimPsDemographicId] ASC)
+	);
+
+	
+	PRINT N'Creating Table [RDS].[DimPeople]...';
+
+
+	
+	CREATE TABLE [RDS].[DimPeople] (
+		[DimPersonId]                                      BIGINT        IDENTITY (1, 1) NOT NULL,
+		[FirstName]                                        NVARCHAR (75) NULL,
+		[MiddleName]                                       NVARCHAR (75) NULL,
+		[LastOrSurname]                                    NVARCHAR (75) NULL,
+		[BirthDate]                                        DATE          NULL,
+		[ELChildChildIdentifierState]                      NVARCHAR (40) NULL,
+		[K12StudentStudentIdentifierState]                 NVARCHAR (40) NULL,
+		[K12StudentStudentIdentifierDistrict]              NVARCHAR (40) NULL,
+		[K12StudentStudentIdentifierNationalMigrant]       NVARCHAR (40) NULL,
+		[PsStudentStudentIdentifierState]                  NVARCHAR (40) NULL,
+		[AeStudentStudentIdentifierState]                  NVARCHAR (40) NULL,
+		[WorkforceProgramParticipantPersonIdentifierState] NVARCHAR (40) NULL,
+		[ELStaffStaffMemberIdentifierState]                NVARCHAR (40) NULL,
+		[K12StaffStaffMemberIdentifierState]               NVARCHAR (40) NULL,
+		[K12StaffStaffMemberIdentifierDistrict]            NVARCHAR (40) NULL,
+		[PsStaffStaffMemberIdentifierState]                NVARCHAR (40) NULL,
+		[PersonIdentifierDriversLicense]                   NVARCHAR (40) NULL,
+		[IsActiveELChild]                                  BIT           NULL,
+		[IsActiveK12Student]                               BIT           NULL,
+		[IsActivePsStudent]                                BIT           NULL,
+		[IsActiveAeStudent]                                BIT           NULL,
+		[IsActiveWorkforceProgramParticipant]              BIT           NULL,
+		[IsActiveELStaff]                            	   BIT           NULL,
+		[IsActiveK12Staff]                           	   BIT           NULL,
+		[IsActivePsStaff]                            	   BIT           NULL,
+		[RecordStartDateTime]                              DATETIME      NULL,
+		[RecordEndDateTime]                                DATETIME      NULL,
+		CONSTRAINT [PK_DimPersonId] PRIMARY KEY CLUSTERED ([DimPersonId] ASC)
+	);
+
+
+	
+	PRINT N'Creating Table [RDS].[DimPersonAddresses]...';
+
+
+	
+	CREATE TABLE [RDS].[DimPersonAddresses] (
+		[DimPersonAddressId]                         INT            IDENTITY (1, 1) NOT NULL,
+		[AddressTypeForLearnerOrFamilyCode]          NVARCHAR (50)  NULL,
+		[AddressTypeForLearnerOrFamilyDescription]   NVARCHAR (150) NULL,
+		[AddressStreetNumberAndName]                 NVARCHAR (150) NULL,
+		[AddressApartmentRoomOrSuiteNumber]          NVARCHAR (60)  NULL,
+		[AddressCity]                                NVARCHAR (30)  NULL,
+		[StateAbbreviationCode]                      NVARCHAR (50)  NULL,
+		[StateAbbreviationDescription]               NVARCHAR (150) NULL,
+		[AddressPostalCode]                          NVARCHAR (17)  NULL,
+		[AddressCountyName]                          NVARCHAR (30)  NULL,
+		[CountryCodeCode]                            NVARCHAR (50)  NULL,
+		[CountryCodeDescription]                     NVARCHAR (150) NULL,
+		[Latitude]                                   NVARCHAR (20)  NULL,
+		[Longitude]                                  NVARCHAR (20)  NULL,
+		[CountyAnsiCodeCode]                         NVARCHAR (50)  NULL,
+		[CountyAnsiCodeDescription]                  NVARCHAR (150) NULL,
+		[DoNotPublishIndicator]                      NVARCHAR (10)  NULL,
+		[PersonalInformationVerificationCode]        NVARCHAR (50)  NULL,
+		[PersonalInformationVerificationDescription] NVARCHAR (150) NULL,
+		CONSTRAINT [PK_DimPersonAddresses] PRIMARY KEY CLUSTERED ([DimPersonAddressId] ASC)
+	);
+
+
 	/*
 	The column [RDS].[FactPsStudentAcademicRecords].[AdvancePlacementsCreditsAwarded] is being dropped, data loss could occur.
 
@@ -12185,18 +12272,18 @@
 
 	CREATE TABLE [RDS].[tmp_ms_xx_FactPsStudentAcademicRecords] (
 		[FactPsStudentAcademicRecordId]          BIGINT         IDENTITY (1, 1) NOT NULL,
-		[SchoolYearId]                           INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_SchoolYearId] DEFAULT ((-1)) NOT NULL,
-		[CountDateId]                            INT            NOT NULL,
-		[SeaId]                                  INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_SeaId] DEFAULT ((-1)) NOT NULL,
-		[PsInstitutionID]                        INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_PsInstitutionId] DEFAULT ((-1)) NOT NULL,
-		[PsStudentId]                            BIGINT         CONSTRAINT [DF_FactPsStudentAcademicRecords_PsStudentId] DEFAULT ((-1)) NOT NULL,
-		[AcademicTermDesignatorId]               INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_AcademicTermDesignatorId] DEFAULT ((-1)) NOT NULL,
-        [PsDemographicId]                        INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_PsDemographicId] DEFAULT (-1) NOT NULL,
-		[PsInstitutionStatusId]                  INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_PsInstitutionStatusId] DEFAULT ((-1)) NOT NULL,
-		[PsEnrollmentStatusId]                   BIGINT         CONSTRAINT [DF_FactPsStudentAcademicRecords_PsEnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
-		[EnrollmentEntryDateId]                  INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_EnrollmentEntryDateId] DEFAULT ((-1)) NOT NULL,
-		[EnrollmentExitDateId]                   INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_EnrollmentExitDateId] DEFAULT ((-1)) NOT NULL,
-		[DataCollectionId]                       INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_DataCollectionId] DEFAULT ((-1)) NOT NULL,
+		[SchoolYearId]                              INT             CONSTRAINT [DF_FactPsStudentAcademicRecords_SchoolYearId] DEFAULT ((-1)) NOT NULL,
+		[CountDateId]                               INT             CONSTRAINT [DF_FactPsStudentAcademicRecords_CountDateId] DEFAULT ((-1)) NOT NULL,
+		[SeaId]                                     INT             CONSTRAINT [DF_FactPsStudentAcademicRecords_SeaId] DEFAULT ((-1)) NOT NULL,
+		[PsInstitutionID]                           INT             CONSTRAINT [DF_FactPsStudentAcademicRecords_PsInstitutionId] DEFAULT ((-1)) NOT NULL,
+		[PsStudentId]                               BIGINT          CONSTRAINT [DF_FactPsStudentAcademicRecords_PsStudentId] DEFAULT ((-1)) NOT NULL,
+		[AcademicTermDesignatorId]                  INT             CONSTRAINT [DF_FactPsStudentAcademicRecords_AcademicTermDesignatorId] DEFAULT ((-1)) NOT NULL,
+		[PsDemographicId]                           INT             CONSTRAINT [DF_FactPsStudentAcademicRecords_PsDemographicId] DEFAULT ((-1)) NOT NULL,
+		[PsInstitutionStatusId]                     INT             CONSTRAINT [DF_FactPsStudentAcademicRecords_PsInstitutionStatusId] DEFAULT ((-1)) NOT NULL,
+		[PsEnrollmentStatusId]                      BIGINT          CONSTRAINT [DF_FactPsStudentAcademicRecords_PsEnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
+		[EnrollmentEntryDateId]                     INT             CONSTRAINT [DF_FactPsStudentAcademicRecords_EnrollmentEntryDateId] DEFAULT ((-1)) NOT NULL,
+		[EnrollmentExitDateId]                      INT             CONSTRAINT [DF_FactPsStudentAcademicRecords_EnrollmentExitDateId] DEFAULT ((-1)) NOT NULL,
+		[DataCollectionId]                          INT             CONSTRAINT [DF_FactPsStudentAcademicRecords_DataCollectionId] DEFAULT ((-1)) NOT NULL,
         [InstructionalActivityHoursCompletedCredit] DECIMAL (10, 2) NULL,
 		[GradePointAverage]                      DECIMAL (5, 4) NULL,
 		[GradePointAverageCumulative]            DECIMAL (5, 4) NULL,
@@ -12204,7 +12291,9 @@
 		[APCreditsAwarded]                       INT            NULL,
 		[CourseTotal]                            INT            NULL,
 		[StudentCourseCount]                     INT            CONSTRAINT [DF_FactPsStudentAcademicRecords_StudentCourseCount] DEFAULT ((1)) NOT NULL,
-		CONSTRAINT [tmp_ms_xx_constraint_PK_FactPsStudentAcademicRecords1] PRIMARY KEY CLUSTERED ([FactPsStudentAcademicRecordId] ASC) WITH (DATA_COMPRESSION = PAGE)
+		CONSTRAINT [tmp_ms_xx_constraint_PK_FactPsStudentAcademicRecords1] PRIMARY KEY CLUSTERED ([FactPsStudentAcademicRecordId] ASC) WITH (DATA_COMPRESSION = PAGE),
+		CONSTRAINT [FK_FactPsStudentAcademicRecords_PsDemographicId] FOREIGN KEY ([PsDemographicId]) REFERENCES [RDS].[DimPsDemographics] ([DimPsDemographicId]),
+		CONSTRAINT [FK_FactPsStudentAcademicRecords_CountDateId] FOREIGN KEY ([CountDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]),
 	);
 
 
@@ -12319,22 +12408,23 @@
 
 	SET XACT_ABORT ON;
 
-	CREATE TABLE [RDS].[tmp_ms_xx_FactPsStudentEnrollments] (
-		[FactPsStudentEnrollmentId]    BIGINT IDENTITY (1, 1) NOT NULL,
-		[DataCollectionId]             INT    CONSTRAINT [DF_FactPsStudentEnrollments_DataCollectionId] DEFAULT ((-1)) NOT NULL,
-		[SchoolYearId]                 INT    CONSTRAINT [DF_FactPsStudentEnrollments_SchoolYearId] DEFAULT ((-1)) NOT NULL,
-    	[CountDateId]                  INT    CONSTRAINT [DF_FactPsStudentEnrollments_CountDateId] DEFAULT (-1) NOT NULL,
-		[PsInstitutionID]              INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionId] DEFAULT ((-1)) NOT NULL,
-		[PsStudentId]                  BIGINT    CONSTRAINT [DF_FactPsStudentEnrollments_PsStudentId] DEFAULT ((-1)) NOT NULL,
-		[AcademicTermDesignatorId]     INT    CONSTRAINT [DF_FactPsStudentEnrollments_AcademicTermDesignatorId] DEFAULT ((-1)) NOT NULL,
-		[EntryDateIntoPostSecondaryId] INT    CONSTRAINT [DF_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId] DEFAULT ((-1)) NOT NULL,
-		[EnrollmentEntryDateId]        INT    CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentEntryDateId] DEFAULT ((-1)) NOT NULL,
-		[EnrollmentExitDateId]         INT    CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentExitDateId] DEFAULT ((-1)) NOT NULL,
-		[PsEnrollmentStatusId]         BIGINT CONSTRAINT [DF_FactPsStudentEnrollments_PsEnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
-		[PsInstitutionStatusId]        INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionStatusId] DEFAULT ((-1)) NOT NULL,
-		[StudentCount]                 INT    CONSTRAINT [DF_FactPsStudentEnrollments_StudentCount] DEFAULT ((1)) NOT NULL,
-		CONSTRAINT [tmp_ms_xx_constraint_PK_FactPsStudentEnrollments1] PRIMARY KEY CLUSTERED ([FactPsStudentEnrollmentId] ASC) WITH (DATA_COMPRESSION = PAGE)
-	);
+		CREATE TABLE [RDS].[tmp_ms_xx_FactPsStudentEnrollments] (
+			[FactPsStudentEnrollmentId]    BIGINT IDENTITY (1, 1) NOT NULL,
+			[DataCollectionId]             INT    CONSTRAINT [DF_FactPsStudentEnrollments_DataCollectionId] DEFAULT ((-1)) NOT NULL,
+			[SchoolYearId]                 INT    CONSTRAINT [DF_FactPsStudentEnrollments_SchoolYearId] DEFAULT ((-1)) NOT NULL,
+			[CountDateId]                  INT    CONSTRAINT [DF_FactPsStudentEnrollments_CountDateId] DEFAULT ((-1)) NOT NULL,
+			[PsInstitutionID]              INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionId] DEFAULT ((-1)) NOT NULL,
+			[PsStudentId]                  BIGINT CONSTRAINT [DF_FactPsStudentEnrollments_PsStudentId] DEFAULT ((-1)) NOT NULL,
+			[AcademicTermDesignatorId]     INT    CONSTRAINT [DF_FactPsStudentEnrollments_AcademicTermDesignatorId] DEFAULT ((-1)) NOT NULL,
+			[EntryDateIntoPostSecondaryId] INT    CONSTRAINT [DF_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId] DEFAULT ((-1)) NOT NULL,
+			[EnrollmentEntryDateId]        INT    CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentEntryDateId] DEFAULT ((-1)) NOT NULL,
+			[EnrollmentExitDateId]         INT    CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentExitDateId] DEFAULT ((-1)) NOT NULL,
+			[PsEnrollmentStatusId]         BIGINT CONSTRAINT [DF_FactPsStudentEnrollments_PsEnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
+			[PsInstitutionStatusId]        INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionStatusId] DEFAULT ((-1)) NOT NULL,
+			[StudentCount]                 INT    CONSTRAINT [DF_FactPsStudentEnrollments_StudentCount] DEFAULT ((1)) NOT NULL,
+			CONSTRAINT [tmp_ms_xx_constraint_PK_FactPsStudentEnrollments1] PRIMARY KEY CLUSTERED ([FactPsStudentEnrollmentId] ASC) WITH (DATA_COMPRESSION = PAGE),
+			CONSTRAINT [FK_FactPsStudentEnrollments_CountDateId] FOREIGN KEY ([CountDateId]) REFERENCES [RDS].[DimDates] ([DimDateId])
+		);
 
 	-- IF EXISTS (SELECT TOP 1 1 
 	--            FROM   [RDS].[FactPsStudentEnrollments])
@@ -12465,14 +12555,14 @@
 	PRINT N'Starting rebuilding table [RDS].[ReportEDFactsK12StaffCounts]...';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[OrganizationNcesId]', N'OrganizationIdentifierNces';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[OrganizationStateId]', N'OrganizationIdentifierSea';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[OUTOFFIELDSTATUS]', N'EDFactsTeacherOutOfFieldStTatus';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[OUTOFFIELDSTATUS]', N'EDFACTSTEACHEROUTOFFIELDSTATUS';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[ParentOrganizationStateId]', N'ParentOrganizationIdentifierSea';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StateCode]', N'StateAbbreviationCode';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StateName]', N'StateAbbreviationDescription';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[UNEXPERIENCEDSTATUS]', N'EDFactsTeacherInexperiencedStatus';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[CERTIFICATIONSTATUS]', N'EDFactsCertificationStatus';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[QUALIFICATIONSTATUS]', N'SpecialEducationTeacherQualificationStatus';
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION]', N'TitleIIILanguageInstructionProgramType';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[UNEXPERIENCEDSTATUS]', N'EDFACTSTEACHERINEXPERIENCEDSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[CERTIFICATIONSTATUS]', N'EDFACTSCERTIFICATIONSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[QUALIFICATIONSTATUS]', N'SPECIALEDUCATIONTEACHERQUALIFICATIONSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[TITLEIIILANGUAGEINSTRUCTION]', N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StaffFTE]', N'StaffFullTimeEquivalency';
 
 	ALTER TABLE RDS.ReportEDFactsK12StaffCounts ADD PARAPROFESSIONALQUALIFICATIONSTATUS NVARCHAR(50);
@@ -15526,70 +15616,6 @@
 
 
 	
-	PRINT N'Creating Table [RDS].[DimPeople]...';
-
-
-	
-	CREATE TABLE [RDS].[DimPeople] (
-		[DimPersonId]                                      BIGINT        IDENTITY (1, 1) NOT NULL,
-		[FirstName]                                        NVARCHAR (75) NULL,
-		[MiddleName]                                       NVARCHAR (75) NULL,
-		[LastOrSurname]                                    NVARCHAR (75) NULL,
-		[BirthDate]                                        DATE          NULL,
-		[ELChildChildIdentifierState]                      NVARCHAR (40) NULL,
-		[K12StudentStudentIdentifierState]                 NVARCHAR (40) NULL,
-		[K12StudentStudentIdentifierDistrict]              NVARCHAR (40) NULL,
-		[K12StudentStudentIdentifierNationalMigrant]       NVARCHAR (40) NULL,
-		[PsStudentStudentIdentifierState]                  NVARCHAR (40) NULL,
-		[AeStudentStudentIdentifierState]                  NVARCHAR (40) NULL,
-		[WorkforceProgramParticipantPersonIdentifierState] NVARCHAR (40) NULL,
-		[ELStaffStaffMemberIdentifierState]                NVARCHAR (40) NULL,
-		[K12StaffStaffMemberIdentifierState]               NVARCHAR (40) NULL,
-		[K12StaffStaffMemberIdentifierDistrict]            NVARCHAR (40) NULL,
-		[PsStaffStaffMemberIdentifierState]                NVARCHAR (40) NULL,
-		[PersonIdentifierDriversLicense]                   NVARCHAR (40) NULL,
-		[IsActiveELChild]                                  BIT           NULL,
-		[IsActiveK12Student]                               BIT           NULL,
-		[IsActivePsStudent]                                BIT           NULL,
-		[IsActiveAeStudent]                                BIT           NULL,
-		[IsActiveWorkforceProgramParticipant]              BIT           NULL,
-		[IsActiveELStaffMember]                            BIT           NULL,
-		[IsActiveK12StaffMember]                           BIT           NULL,
-		[IsActivePsStaffMember]                            BIT           NULL,
-		[RecordStartDateTime]                              DATETIME      NULL,
-		[RecordEndDateTime]                                DATETIME      NULL,
-		CONSTRAINT [PK_DimPersonId] PRIMARY KEY CLUSTERED ([DimPersonId] ASC)
-	);
-
-
-	
-	PRINT N'Creating Table [RDS].[DimPersonAddresses]...';
-
-
-	
-	CREATE TABLE [RDS].[DimPersonAddresses] (
-		[DimPersonAddressId]                         INT            IDENTITY (1, 1) NOT NULL,
-		[AddressTypeForLearnerOrFamilyCode]          NVARCHAR (50)  NULL,
-		[AddressTypeForLearnerOrFamilyDescription]   NVARCHAR (150) NULL,
-		[AddressStreetNumberAndName]                 NVARCHAR (150) NULL,
-		[AddressApartmentRoomOrSuiteNumber]          NVARCHAR (60)  NULL,
-		[AddressCity]                                NVARCHAR (30)  NULL,
-		[StateAbbreviationCode]                      NVARCHAR (50)  NULL,
-		[StateAbbreviationDescription]               NVARCHAR (150) NULL,
-		[AddressPostalCode]                          NVARCHAR (17)  NULL,
-		[AddressCountyName]                          NVARCHAR (30)  NULL,
-		[CountryCodeCode]                            NVARCHAR (50)  NULL,
-		[CountryCodeDescription]                     NVARCHAR (150) NULL,
-		[Latitude]                                   NVARCHAR (20)  NULL,
-		[Longitude]                                  NVARCHAR (20)  NULL,
-		[CountyAnsiCodeCode]                         NVARCHAR (50)  NULL,
-		[CountyAnsiCodeDescription]                  NVARCHAR (150) NULL,
-		[DoNotPublishIndicator]                      NVARCHAR (10)  NULL,
-		[PersonalInformationVerificationCode]        NVARCHAR (50)  NULL,
-		[PersonalInformationVerificationDescription] NVARCHAR (150) NULL,
-		CONSTRAINT [PK_DimPersonAddresses] PRIMARY KEY CLUSTERED ([DimPersonAddressId] ASC)
-	);
-
 
 	
 	PRINT N'Creating Table [RDS].[DimPsAcademicAwardTitles]...';
@@ -15600,33 +15626,6 @@
 		[DimPsAcademicAwardTitleId] INT            IDENTITY (1, 1) NOT NULL,
 		[AcademicAwardTitle]        NVARCHAR (160) NOT NULL,
 		CONSTRAINT [PK_DimPsAcademicAwardTitles] PRIMARY KEY CLUSTERED ([DimPsAcademicAwardTitleId] ASC) WITH (FILLFACTOR = 80)
-	);
-
-
-	
-	PRINT N'Creating Table [RDS].[DimPsDemographics]...';
-
-
-	
-	CREATE TABLE [RDS].[DimPsDemographics] (
-		[DimPsDemographicId]                           INT            IDENTITY (1, 1) NOT NULL,
-		[EconomicDisadvantageStatusCode]               NVARCHAR (50)  NULL,
-		[EconomicDisadvantageStatusDescription]        NVARCHAR (200) NULL,
-		[HomelessnessStatusCode]                       NVARCHAR (50)  NULL,
-		[HomelessnessStatusDescription]                NVARCHAR (200) NULL,
-		[EnglishLearnerStatusCode]                     NVARCHAR (50)  NULL,
-		[EnglishLearnerStatusDescription]              NVARCHAR (200) NULL,
-		[MigrantStatusCode]                            NVARCHAR (50)  NULL,
-		[MigrantStatusDescription]                     NVARCHAR (200) NULL,
-		[MilitaryConnectedStudentIndicatorCode]        NVARCHAR (50)  NULL,
-		[MilitaryConnectedStudentIndicatorDescription] NVARCHAR (200) NULL,
-		[HomelessPrimaryNighttimeResidenceCode]        NVARCHAR (50)  NULL,
-		[HomelessPrimaryNighttimeResidenceDescription] NVARCHAR (MAX) NULL,
-		[HomelessUnaccompaniedYouthStatusCode]         NVARCHAR (50)  NULL,
-		[HomelessUnaccompaniedYouthStatusDescription]  NVARCHAR (MAX) NULL,
-		[SexCode]                                      NVARCHAR (50)  NULL,
-		[SexDescription]                               NVARCHAR (200) NULL,
-		CONSTRAINT [PK_DimPsDemographics] PRIMARY KEY CLUSTERED ([DimPsDemographicId] ASC)
 	);
 
 
@@ -17691,7 +17690,7 @@
 		[RecordStartDateTime] 							DATETIME 		NULL,
 		[RecordEndDateTime] 							DATETIME 		NULL,
 		[RunDateTime] 									DATETIME 		NULL,
-		CONSTRAINT [[tmp_ms_xx_constraint_PK_K12StaffAssignment1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
+		CONSTRAINT [tmp_ms_xx_constraint_PK_K12StaffAssignment1] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 	);
 
 

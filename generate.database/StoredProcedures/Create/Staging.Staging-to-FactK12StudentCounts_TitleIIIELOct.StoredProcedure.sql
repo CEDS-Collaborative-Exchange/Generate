@@ -3,7 +3,7 @@ Author: AEM Corp
 Date:	2/20/2023
 Description: Migrates Title III EL Oct Data from Staging to RDS.FactK12StudentCounts
 
-NOTE: This Stored Procedure processes files: 116, 141
+NOTE: This Stored Procedure processes files: 141
 ***********************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_TitleIIIELOct]
 	@SchoolYear SMALLINT
@@ -19,6 +19,7 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#vwEnglishLearnerStatuses') IS NOT NULL DROP TABLE #vwEnglishLearnerStatuses
 		IF OBJECT_ID(N'tempdb..#vwLanguages') IS NOT NULL DROP TABLE #vwLanguages
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
+		IF OBJECT_ID(N'tempdb..#vwIdeaStatuses') IS NOT NULL DROP TABLE #vwIdeaStatuses
 
 	BEGIN TRY
 
@@ -33,28 +34,16 @@ BEGIN
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
-		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
-		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
-
-		/* File Spec as of 2023 change this to be School Year - Any 12-month reporting period 		*/
-
-		if @SchoolYear < 2023
-		BEGIN
-			--Reporting Date is the closest school day to Oct 1 according to the file spec
-			DECLARE @testDate datetime
-			SELECT @testDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + '10-01' AS DATE)
-		
-			SELECT @ReportingDate = 
-				CASE DATEPART(DW, @testDate)
-					WHEN 1 THEN (SELECT DATEADD(day, 1, @testDate))
-					WHEN 7 THEN (SELECT DATEADD(day, -1, @testDate))
-					ELSE @testDate
-				END	
-
-			select @SYStartDate = @ReportingDate, @SYEndDate = @ReportingDate
-		END
+		SELECT @ReportingDate = '10/1/' + convert(varchar, @SchoolYear - 1)
 
 	--Create the temp tables (and any relevant indexes) needed for this domain
+
+		SELECT *
+		INTO #vwIdeaStatuses
+		FROM RDS.vwDimIdeaStatuses
+		WHERE SchoolYear = @SchoolYear
+
+		CREATE CLUSTERED INDEX ix_tempvwIdeaStatuses ON #vwIdeaStatuses (IdeaIndicatorMap, IdeaEducationalEnvironmentForSchoolageMap);
 
 
 		
@@ -78,10 +67,11 @@ BEGIN
 		CREATE CLUSTERED INDEX ix_tempvwEnglishLearnerStatuses
 			ON #vwEnglishLearnerStatuses (EnglishLearnerStatusCode, PerkinsEnglishLearnerStatusCode)--, TitleIIIAccountabilityProgressStatusCode, TitleIIILanguageInstructionProgramTypeCode);
 
-		SELECT *
+		SELECT min(DimLanguageId) DimLanguageId, SchoolYear, Iso6392LanguageCodeCode, Iso6392LanguageMap -- Using min(DimLanguageId) for now because there are duplicates in the Dim table.  This is being corrected.
 		INTO #vwLanguages
 		FROM RDS.vwDimLanguages
 		WHERE SchoolYear = @SchoolYear
+		GROUP BY SchoolYear, Iso6392LanguageCodeCode, Iso6392LanguageMap
 
 		CREATE CLUSTERED INDEX ix_tempvwLanguages
 			ON #vwLanguages (Iso6392LanguageCodeCode);
@@ -108,10 +98,6 @@ BEGIN
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'TitleIIIELOct' -- DimFactTypeId = 9
 
-		--Clear the Fact table of the data about to be migrated  
-		DELETE RDS.FactK12StudentCounts
-		WHERE SchoolYearId = @SchoolYearId 
-			AND FactTypeId = @FactTypeId
 
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts
@@ -167,19 +153,24 @@ BEGIN
 			, -1										IEUId									
 			, ISNULL(rdl.DimLeaID, -1)					LEAId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)			K12SchoolId							
-			, ISNULL(rdp.DimPersonId, -1)				K12StudentId							
-			, -1										IdeaStatusId							
-			, -1										DisabilityStatusId							
+			, ISNULL(rdp.DimPersonId, -1)				K12StudentId		
+			, -1										IDEAIndicator
+			, case when sppse.IDEAIndicator = 1
+				AND sppse.ProgramParticipationBeginDate  <= @ReportingDate
+				AND ISNULL(sppse.ProgramParticipationEndDate, @ReportingDate) >= @ReportingDate
+				then 1 
+				else 0
+			end 										DisabilityStatusId	
 			, ISNULL(rdvl.DimLanguageId, -1)			LanguageId							
 			, -1										MigrantStatusId						
 			, -1										TitleIStatusId						
-			, isnull(TitleIII.DimTitleIIIStatusId, -1)	TitleIIIStatusId						
+			, -1										TitleIIIStatusId						
 			, -1										AttendanceId							
 			, -1										CohortStatusId						
 			, -1 										NOrDStatusId							
 			, -1										CTEStatusId							
 			, -1										K12EnrollmentStatusId					
-			, -1										EnglishLearnerStatusId				
+			, isnull(rdels.DimEnglishLearnerStatusId, -1)	EnglishLearnerStatusId	-- USED FOR FS141, but not FS116			
 			, -1										HomelessnessStatusId					
 			, -1										EconomicallyDisadvantagedStatusId		
 			, -1										FosterCareStatusId					
@@ -189,7 +180,7 @@ BEGIN
 			, -1										MigrantStudentQualifyingArrivalDateId	
 			, -1										LastQualifyingMoveDateId				
 		
-		
+	--select count(distinct ske.StudentIdentifierState)	
 		FROM Staging.K12Enrollment ske
 
 		JOIN RDS.DimSchoolYears rsy
@@ -202,8 +193,8 @@ BEGIN
 
 	-- seas (rds)
 		JOIN RDS.DimSeas rds
-			ON convert(date, rds.RecordStartDateTime)  <= @SYEndDate
-			AND ISNULL(convert(date, rds.RecordEndDateTime), @SYEndDate) >= @SYStartDate
+			ON convert(date, rds.RecordStartDateTime)  <= @ReportingDate
+			AND ISNULL(convert(date, rds.RecordEndDateTime), @ReportingDate) >= @ReportingDate
 
 	-- dimpeople (rds)
 		JOIN RDS.DimPeople rdp
@@ -213,8 +204,8 @@ BEGIN
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 			AND ISNULL(ske.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND rdp.RecordStartDateTime  <= @SYEndDate
-			AND ISNULL(rdp.RecordEndDateTime, @SYEndDate) >= @SYStartDate
+			AND rdp.RecordStartDateTime  <= @ReportingDate
+			AND ISNULL(rdp.RecordEndDateTime, @ReportingDate) >= @ReportingDate
 
 			and convert(date, ske.EnrollmentEntryDate) = convert(date, rdp.RecordStartDateTime)
 			and isnull(convert(date, ske.EnrollmentExitDate),getdate()) = isnull(convert(date, rdp.RecordEndDateTime), getdate())
@@ -225,20 +216,22 @@ BEGIN
 			ON ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			AND el.EnglishLearner_StatusStartDate <= @SYEndDate
-			AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= @SYStartDate
+
+			-- FS141
+			AND ISNULL(el.EnglishLearner_StatusStartDate, @ReportingDate) <= @ReportingDate
+			AND ISNULL(el.EnglishLearner_StatusEndDate, @ReportingDate) >= @ReportingDate
 
 	-- Leas (rds)
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND rdl.RecordStartDateTime <= @SYEndDate
-			AND ISNULL(rdl.RecordEndDateTime, @SYEndDate) >= @SYStartDate
+			AND rdl.RecordStartDateTime <= @ReportingDate
+			AND ISNULL(rdl.RecordEndDateTime, @ReportingDate) >= @ReportingDate
 
 	-- K12Schools (rds)
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND rdksch.RecordStartDateTime  <= @SYEndDate
-			AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate) >= @SYStartDate
+			AND rdksch.RecordStartDateTime  <= @ReportingDate
+			AND ISNULL(rdksch.RecordEndDateTime, @ReportingDate) >= @ReportingDate
 
 	--english learner (RDS)
 		LEFT JOIN #vwEnglishLearnerStatuses rdels
@@ -269,29 +262,22 @@ BEGIN
 					ELSE 'Missing'
 				END
 	
-	-- TitleIII Status
-		LEFT JOIN Staging.ProgramParticipationTitleIII sppt3
-			ON ske.StudentIdentifierState = sppt3.StudentIdentifierState
-			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppt3.LeaIdentifierSeaAccountability, '') 
-			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppt3.SchoolIdentifierSea, '')
+		LEFT JOIN Staging.ProgramParticipationSpecialEducation sppse
+			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 
-		LEFT JOIN #vwTitleIIIStatuses TitleIII
-			on ISNULL(TitleIII.TitleIIIImmigrantParticipationStatusMap, TitleIIIImmigrantParticipationStatusCode) = 
-			ISNULL(sppt3.TitleIIIImmigrantStatus, -1)
-			AND
-			ISNULL(TitleIII.TitleIIILanguageInstructionProgramTypeMap, TitleIII.TitleIIILanguageInstructionProgramTypeCode) = 
-			ISNULL(sppt3.TitleIIILanguageInstructionProgramType, 'MISSING')
-			AND
-			ISNULL(TitleIII.ProficiencyStatusMap, TitleIII.ProficiencyStatusCode) = 
-			ISNULL(sppt3.Proficiency_TitleIII, 'MISSING')
-			AND
-			ISNULL(TitleIII.TitleIIIAccountabilityProgressStatusMap, TitleIII.TitleIIIAccountabilityProgressStatusCode) = 
-			ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING')
-			AND TitleIII.ProgramParticipationTitleIIILiepCode = 'MISSING'
 
-		WHERE ske.EnrollmentEntryDate  <= @SYEndDate
-		AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) >= @SYStartDate
-		
+		WHERE ske.EnrollmentEntryDate  <= @ReportingDate
+		AND ISNULL(ske.EnrollmentExitDate, @ReportingDate) >= @ReportingDate
+
+	
+-----------------------------------------------------------------------------------------------------------------------	
+
+		--Clear the Fact table of the data about to be migrated  
+		DELETE RDS.FactK12StudentCounts
+		WHERE SchoolYearId = @SchoolYearId 
+			AND FactTypeId = @FactTypeId
 		
 		--Final insert into RDS.FactK12StudentCounts table 
 		INSERT INTO RDS.FactK12StudentCounts (
@@ -371,6 +357,4 @@ BEGIN
 	END CATCH
 
 END
-
-GO
 

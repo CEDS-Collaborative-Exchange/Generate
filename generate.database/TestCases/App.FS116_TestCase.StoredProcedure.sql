@@ -83,6 +83,38 @@ BEGIN
 		ske.StudentIdentifierState
 		, ske.LeaIdentifierSeaAccountability
 		, ske.SchoolIdentifierSea
+		, ske.GradeLevelEdFactsCode
+		, ske.RaceEdFactsCode
+		, sppt3.TitleIIILanguageInstructionProgramType
+		, rdt3s.TitleIIILanguageInstructionProgramTypeEdFactsCode
+	INTO #staging
+	FROM debug.vwStudentDetails ske
+
+	JOIN Staging.ProgramParticipationTitleIII sppt3
+		ON sppt3.StudentIdentifierState = ske.StudentIdentifierState
+		AND sppt3.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
+		AND sppt3.SchoolIdentifierSea = ske.SchoolIdentifierSea
+		and convert(date, sppt3.ProgramParticipationBeginDate) <= @SYEndDate
+		and ISNULL(convert(date, sppt3.ProgramParticipationEndDate), @SYEndDate) >= @SYStartDate
+
+	JOIN RDS.DimTitleIIIStatuses rdt3s
+		ON sppt3.TitleIIILanguageInstructionProgramType = rdt3s.TitleIIILanguageInstructionProgramTypeCode
+		AND rdt3s.ProgramParticipationTitleIIILiepCode = 'MISSING'
+		AND rdt3s.TitleIIIImmigrantParticipationStatusCode = 'MISSING'
+		AND rdt3s.ProficiencyStatusCode = 'MISSING'
+		AND rdt3s.TitleIIIAccountabilityProgressStatusCode = 'MISSING'
+
+	WHERE isnull(rdt3s.TitleIIILanguageInstructionProgramTypeCode,'MISSING') <> 'MISSING'
+		and convert(date, ske.EnrollmentEntryDate) <= @SYEndDate
+		and ISNULL(convert(date, ske.EnrollmentExitDate), @SYEndDate) >= @SYStartDate
+
+
+
+/*
+	SELECT DISTINCT
+		ske.StudentIdentifierState
+		, ske.LeaIdentifierSeaAccountability
+		, ske.SchoolIdentifierSea
 		, ske.GradeLevel
 		,CASE 
 			WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HI7' 
@@ -125,6 +157,9 @@ BEGIN
 	WHERE isnull(rdt3s.TitleIIILanguageInstructionProgramTypeCode,'MISSING') <> 'MISSING'
 		and convert(date, ske.EnrollmentEntryDate) <= @SYEndDate
 		and ISNULL(convert(date, ske.EnrollmentExitDate), @SYEndDate) >= @SYStartDate
+*/
+
+
 
 --select * from #staging
 --return
@@ -135,12 +170,12 @@ BEGIN
 			GradeLevel
 		***********************************************************************/
 		SELECT
-			GradeLevel,
+			GradeLevelEdFactsCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_CSA
 		FROM #staging 
 		GROUP BY 
-			GradeLevel
+			GradeLevelEdFactsCode
 
 --select * from #s_csa
 --return
@@ -158,14 +193,14 @@ BEGIN
 		SELECT 
 			@SqlUnitTestId
 			,'CSA SEA'
-			,'Grade: ' + convert(varchar, s.GradeLevel) + '  ' 
+			,'Grade: ' + convert(varchar, s.GradeLevelEdFactsCode) + '  ' 
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_CSA s
 		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON s.GradeLevel = rreksd.GRADELEVEL			
+			ON s.GradeLevelEdFactsCode = rreksd.GRADELEVEL			
 			AND rreksd.ReportCode = 'C116' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
@@ -186,13 +221,13 @@ BEGIN
 		***********************************************************************/
 		SELECT
 			LeaIdentifierSeaAccountability,
-			GradeLevel,
+			GradeLevelEdFactsCode,
 			COUNT(StudentIdentifierState) AS StudentCount
 		INTO #L_CSA
 		FROM #staging 
 		GROUP BY 
 			LeaIdentifierSeaAccountability,
-			GradeLevel
+			GradeLevelEdFactsCode
 
 		
 		INSERT INTO App.SqlUnitTestCaseResult 
@@ -209,7 +244,7 @@ BEGIN
 			@SqlUnitTestId
 			,'CSA LEA'
 			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
-			 + 'Grade: ' + convert(varchar, s.GradeLevel) + '  ' 
+			 + 'Grade: ' + convert(varchar, s.GradeLevelEdFactsCode) + '  ' 
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
@@ -217,7 +252,7 @@ BEGIN
 		FROM #L_CSA s
 		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-			AND s.GradeLevel = rreksd.GRADELEVEL			
+			AND s.GradeLevelEdFactsCode = rreksd.GRADELEVEL			
 			AND rreksd.ReportCode = 'C116' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
@@ -404,13 +439,13 @@ BEGIN
 			Language Instruction Educational Program Type
 		***********************************************************************/
 		SELECT
-			GradeLevel,
+			GradeLevelEdFactsCode,
 			TitleIIILanguageInstructionProgramTypeEdFactsCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_CSA1
 		FROM #staging 
 		GROUP BY 
-			GradeLevel,
+			GradeLevelEdFactsCode,
 			TitleIIILanguageInstructionProgramTypeEdFactsCode
 
 		
@@ -427,7 +462,7 @@ BEGIN
 		SELECT 
 			@SqlUnitTestId
 			,'CSA SEA'
-			,'Grade: ' + convert(varchar, s.GradeLevel) + '  ' 
+			,'Grade: ' + convert(varchar, s.GradeLevelEdFactsCode) + '  ' 
 			+ 'LIEPType: ' + convert(varchar, s.TitleIIILanguageInstructionProgramTypeEdFactsCode)
 			,s.StudentCount
 			,rreksd.StudentCount
@@ -435,7 +470,7 @@ BEGIN
 			,GETDATE()
 		FROM #S_CSA1 s
 		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON s.GradeLevel = rreksd.GRADELEVEL			
+			ON s.GradeLevelEdFactsCode = rreksd.GRADELEVEL			
 			AND s.TitleIIILanguageInstructionProgramTypeEdFactsCode = rreksd.TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE
 			AND rreksd.ReportCode = 'C116' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -454,14 +489,14 @@ BEGIN
 	***********************************************************************/
 		SELECT
 			LeaIdentifierSeaAccountability,
-			GradeLevel,
+			GradeLevelEdFactsCode,
 			TitleIIILanguageInstructionProgramTypeEdFactsCode,
 			COUNT(StudentIdentifierState) AS StudentCount
 		INTO #L_CSA1
 		FROM #staging 
 		GROUP BY 
 			LeaIdentifierSeaAccountability,
-			GradeLevel,
+			GradeLevelEdFactsCode,
 			TitleIIILanguageInstructionProgramTypeEdFactsCode
 	
 
@@ -479,7 +514,7 @@ BEGIN
 			@SqlUnitTestId
 			,'CSA LEA'
 			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
-			 + 'Grade: ' + convert(varchar, s.GradeLevel) + '  ' 
+			 + 'Grade: ' + convert(varchar, s.GradeLevelEdFactsCode) + '  ' 
      		 + 'LIEPType: ' + convert(varchar, s.TitleIIILanguageInstructionProgramTypeEdFactsCode)
 
 			,s.StudentCount
@@ -489,7 +524,7 @@ BEGIN
 		FROM #L_CSA1 s
 		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-			AND s.GradeLevel = rreksd.GRADELEVEL	
+			AND s.GradeLevelEdFactsCode = rreksd.GRADELEVEL	
 			AND s.TitleIIILanguageInstructionProgramTypeEdFactsCode = rreksd.TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE
 			AND rreksd.ReportCode = 'C116' 
 			AND rreksd.ReportYear = @SchoolYear

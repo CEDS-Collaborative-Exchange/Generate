@@ -413,16 +413,6 @@ begin try
 
 			if @factTypeCode = 'titleIIIELOct'
 			begin
-				if exists (select 'c' from app.GenerateReports where ReportCode = 'c116' and IsLocked = 1 and UseLegacyReportMigration = 1)
-                begin
-				    -- Log history
-				    insert into app.DataMigrationHistories
-				    (DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
-				    values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c116')
-
-				    exec [RDS].[Create_ReportData]	@reportCode = 'c116', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
-                end
-
 				if exists (select 'c' from app.GenerateReports where ReportCode = 'c141' and IsLocked = 1 and UseLegacyReportMigration = 1)
                 begin
 				    -- Log history
@@ -437,7 +427,17 @@ begin try
 			if @factTypeCode = 'titleIIIELSY'
 			begin
 
-                if exists (select 'c' from app.GenerateReports where ReportCode = 'c045' and IsLocked = 1 and UseLegacyReportMigration = 1)
+ 				if exists (select 'c' from app.GenerateReports where ReportCode = 'c116' and IsLocked = 1 and UseLegacyReportMigration = 1)
+                begin
+				    -- Log history
+				    insert into app.DataMigrationHistories
+				    (DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
+				    values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c116')
+
+				    exec [RDS].[Create_ReportData]	@reportCode = 'c116', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
+                end
+
+               if exists (select 'c' from app.GenerateReports where ReportCode = 'c045' and IsLocked = 1 and UseLegacyReportMigration = 1)
                 begin
 				-- Log history
 				insert into app.DataMigrationHistories
@@ -447,15 +447,16 @@ begin try
 					exec [RDS].[Create_ReportData]	@reportCode = 'c045', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
                 end
 
-				if exists (select 'c' from app.GenerateReports where ReportCode = 'c204' and IsLocked = 1 and UseLegacyReportMigration = 1)
-                begin			
-				    -- Log history
-				    insert into app.DataMigrationHistories
-				    (DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
-				    values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c204')
+				-- This report is retired --
+				--if exists (select 'c' from app.GenerateReports where ReportCode = 'c204' and IsLocked = 1 and UseLegacyReportMigration = 1)
+    --            begin			
+				--    -- Log history
+				--    insert into app.DataMigrationHistories
+				--    (DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
+				--    values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c204')
 
-				    exec [RDS].[Create_ReportData]	@reportCode = 'c204', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
-                end
+				--    exec [RDS].[Create_ReportData]	@reportCode = 'c204', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
+    --            end
 			end
 
 			if @factTypeCode = 'titleI'

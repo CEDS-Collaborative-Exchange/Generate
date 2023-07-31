@@ -27,7 +27,7 @@ INSERT INTO RDS.DimPeople (
 	, MiddleName
 	, LastOrSurname
 	, BirthDate 
-    , IsActiveK12StaffMember
+    , IsActiveK12Staff
 	, K12StaffStaffMemberIdentifierState 
    	, RecordStartDateTime 
 	, RecordEndDateTime 
@@ -84,7 +84,7 @@ FROM Upgrade.FactK12StaffCounts f
 
 	LEFT JOIN RDS.DimPeople rdp
 		ON f.StaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState 
-		AND rdp.IsActiveK12StaffMember = 1
+		AND rdp.IsActiveK12Staff = 1
 
 	LEFT JOIN RDS.DimLeas rdl 
 		ON f.LeaIdentifierState = rdl.LeaIdentifierSea
@@ -207,7 +207,7 @@ FROM Upgrade.FactOrganizationCounts f
 
 	LEFT JOIN RDS.DimPeople rdp
 		ON f.StaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState 
-		AND rdp.IsActiveK12StaffMember = 1
+		AND rdp.IsActiveK12Staff = 1
 
 	LEFT JOIN RDS.DimLeas rdl 
 		ON f.LeaIdentifierState = rdl.LeaIdentifierSea

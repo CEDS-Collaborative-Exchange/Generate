@@ -5748,15 +5748,6 @@ ALTER TABLE [RDS].[DimPeople]
         , PositionTitle                             NVARCHAR(200) NULL
 
 
-EXECUTE sp_rename N'[RDS].[DimPeople].[ELChildChildIdentifierState]', N'EarlyLearningChildChildIdentifierState', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[ELStaffStaffMemberIdentifierState]', N'EarlyLearningStaffStaffMemberIdentifierState', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveELChild]', N'IsActiveEarlyLearningChild', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveELStaffMember]', N'IsActiveEarlyLearningStaffMember', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActiveK12StaffMember]', N'IsActiveK12StaffMember', N'COLUMN';
-EXECUTE sp_rename N'[RDS].[DimPeople].[IsActivePsStaffMember]', N'IsActivePsStaffMember', N'COLUMN';
-
-
-
 PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_K12Students]...';
 
 
@@ -9651,12 +9642,12 @@ ALTER TABLE [RDS].[FactPsStudentAcademicRecords] WITH NOCHECK
 
 
 
-PRINT N'Creating Foreign Key [RDS].[FK_FactPsStudentAcademicRecords_PsDemographicId]...';
+-- PRINT N'Creating Foreign Key [RDS].[FK_FactPsStudentAcademicRecords_PsDemographicId]...';
 
 
 
-ALTER TABLE [RDS].[FactPsStudentAcademicRecords] WITH NOCHECK
-    ADD CONSTRAINT [FK_FactPsStudentAcademicRecords_PsDemographicId] FOREIGN KEY ([PsDemographicId]) REFERENCES [RDS].[DimPsDemographics] ([DimPsDemographicId]);
+-- ALTER TABLE [RDS].[FactPsStudentAcademicRecords] WITH NOCHECK
+--     ADD CONSTRAINT [FK_FactPsStudentAcademicRecords_PsDemographicId] FOREIGN KEY ([PsDemographicId]) REFERENCES [RDS].[DimPsDemographics] ([DimPsDemographicId]);
 
 
 
@@ -9761,12 +9752,12 @@ ALTER TABLE [RDS].[BridgePsStudentEnrollmentRaces] WITH NOCHECK
 
 
 
-PRINT N'Creating Foreign Key [RDS].[FK_FactPsStudentEnrollments_CountDateId]...';
+-- PRINT N'Creating Foreign Key [RDS].[FK_FactPsStudentEnrollments_CountDateId]...';
 
 
 
-ALTER TABLE [RDS].[FactPsStudentEnrollments] WITH NOCHECK
-    ADD CONSTRAINT [FK_FactPsStudentEnrollments_CountDateId] FOREIGN KEY ([CountDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+-- ALTER TABLE [RDS].[FactPsStudentEnrollments] WITH NOCHECK
+--     ADD CONSTRAINT [FK_FactPsStudentEnrollments_CountDateId] FOREIGN KEY ([CountDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 
@@ -12163,7 +12154,7 @@ ALTER TABLE [RDS].[FactPsStudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_Fac
 
 ALTER TABLE [RDS].[BridgePsStudentEnrollmentRaces] WITH CHECK CHECK CONSTRAINT [FK_BridgePsStudentEnrollmentRaces_FactPsStudentEnrollments];
 
-ALTER TABLE [RDS].[FactPsStudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactPsStudentEnrollments_CountDateId];
+-- ALTER TABLE [RDS].[FactPsStudentEnrollments] WITH CHECK CHECK CONSTRAINT [FK_FactPsStudentEnrollments_CountDateId];
 
 ALTER TABLE [RDS].[FactSpecialEducation] WITH CHECK CHECK CONSTRAINT [FK_FactSpecialEducation_CteStatusId];
 
@@ -12271,7 +12262,7 @@ ALTER TABLE [RDS].[BridgeK12StudentEnrollmentIdeaDisabilityTypes] WITH CHECK CHE
 
 ALTER TABLE [RDS].[BridgeK12StudentEnrollmentIdeaDisabilityTypes] WITH CHECK CHECK CONSTRAINT [FK_BridgeK12StudentEnrollmentIdeaDisabilityTypes_IdeaDisabilityTypeId];
 
-
+EXEC sp_rename 'RDS.ReportEdFactsK12StudentCounts.ISO6392Language', 'ISO6392LanguageCode', 'COLUMN';
 
 -- EMPTY RDS.DimK12SchoolStatuses to prepare for reloading in Junk-Table-Dimension-Population
 	delete from RDS.DimK12SchoolStatuses
