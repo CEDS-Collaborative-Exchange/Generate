@@ -4662,53 +4662,53 @@
 	DROP TABLE #ComprehensiveSupportAndImprovementStatus
 	DROP TABLE #TargetedSupportAndImprovementStatus
 	
-	------------------------------------------------
-	-- Populate DimCharterSchoolStatuses			 ---
-	------------------------------------------------
-	IF NOT EXISTS (SELECT 1 FROM RDS.DimCharterSchoolStatuses WHERE AppropriationMethodCode = 'MISSING')
-	BEGIN
-		SET IDENTITY_INSERT RDS.DimComprehensiveAndTargetedSupports ON
+	-- ------------------------------------------------
+	-- -- Populate DimCharterSchoolStatuses			 ---
+	-- ------------------------------------------------
+	-- IF NOT EXISTS (SELECT 1 FROM RDS.DimCharterSchoolStatuses WHERE AppropriationMethodCode = 'MISSING')
+	-- BEGIN
+	-- 	SET IDENTITY_INSERT RDS.DimComprehensiveAndTargetedSupports ON
 
-		INSERT INTO RDS.DimCharterSchoolStatuses (
-			  DimComprehensiveAndTargetedSupportId
-			, AppropriationMethodCode
-			, AppropriationMethodDescription
-			, AppropriationMethodEDFactsCode
-			)
+	-- 	INSERT INTO RDS.DimCharterSchoolStatuses (
+	-- 		  DimComprehensiveAndTargetedSupportId
+	-- 		, AppropriationMethodCode
+	-- 		, AppropriationMethodDescription
+	-- 		, AppropriationMethodEDFactsCode
+	-- 		)
 
-		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+	-- 	VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
 
-		SET IDENTITY_INSERT RDS.DimCharterSchoolStatuses OFF
-	END
+	-- 	SET IDENTITY_INSERT RDS.DimCharterSchoolStatuses OFF
+	-- END
 
-	IF OBJECT_ID('tempdb..#AppropriationMethod') IS NOT NULL BEGIN
-		DROP TABLE #AppropriationMethod
-	END
-	CREATE TABLE #AppropriationMethod (AppropriationMethodCode VARCHAR(50), AppropriationMethodDescription VARCHAR(200), AppropriationMethodEdFactsCode VARCHAR(50))
+	-- IF OBJECT_ID('tempdb..#AppropriationMethod') IS NOT NULL BEGIN
+	-- 	DROP TABLE #AppropriationMethod
+	-- END
+	-- CREATE TABLE #AppropriationMethod (AppropriationMethodCode VARCHAR(50), AppropriationMethodDescription VARCHAR(200), AppropriationMethodEdFactsCode VARCHAR(50))
 
-	INSERT INTO #AppropriationMethod VALUES ('MISSING', 'MISSING', 'MISSING')
-	INSERT INTO #AppropriationMethod 
-	SELECT
-		  CedsOptionSetCode
-		, CedsOptionSetDescription
-		, CedsOptionSetCode
-	FROM CEDS.CedsOptionSetMapping
-	WHERE CedsElementTechnicalName = 'AppropriationMethod'
+	-- INSERT INTO #AppropriationMethod VALUES ('MISSING', 'MISSING', 'MISSING')
+	-- INSERT INTO #AppropriationMethod 
+	-- SELECT
+	-- 	  CedsOptionSetCode
+	-- 	, CedsOptionSetDescription
+	-- 	, CedsOptionSetCode
+	-- FROM CEDS.CedsOptionSetMapping
+	-- WHERE CedsElementTechnicalName = 'AppropriationMethod'
 
    
-	INSERT INTO RDS.DimCharterSchoolStatuses
-		(
-			  AppropriationMethodCode
-			, AppropriationMethodDescription
-			, AppropriationMethodEDFactsCode
-		)
-	SELECT 
-			  atsais.AppropriationMethodCode
-			, atsais.AppropriationMethodDescription
-			, atsais.AppropriationMethodEDFactsCode
-	FROM #AppropriationMethod atsais
-	LEFT JOIN rds.DimCharterSchoolStatuses main
-		ON atsais.AppropriationMethodCode = main.AppropriationMethodCode
-	WHERE main.DimComprehensiveAndTargetedSupportId IS NULL
+	-- INSERT INTO RDS.DimCharterSchoolStatuses
+	-- 	(
+	-- 		  AppropriationMethodCode
+	-- 		, AppropriationMethodDescription
+	-- 		, AppropriationMethodEDFactsCode
+	-- 	)
+	-- SELECT 
+	-- 		  atsais.AppropriationMethodCode
+	-- 		, atsais.AppropriationMethodDescription
+	-- 		, atsais.AppropriationMethodEDFactsCode
+	-- FROM #AppropriationMethod atsais
+	-- LEFT JOIN rds.DimCharterSchoolStatuses main
+	-- 	ON atsais.AppropriationMethodCode = main.AppropriationMethodCode
+	-- WHERE main.DimComprehensiveAndTargetedSupportId IS NULL
 
-	DROP TABLE #AppropriationMethod
+	-- DROP TABLE #AppropriationMethod
