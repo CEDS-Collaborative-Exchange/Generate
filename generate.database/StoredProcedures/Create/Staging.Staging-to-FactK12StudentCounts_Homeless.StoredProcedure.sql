@@ -18,6 +18,8 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#vwEconomicallyDisadvantagedStatuses') IS NOT NULL DROP TABLE #vwEconomicallyDisadvantagedStatuses
 		IF OBJECT_ID(N'tempdb..#vwMigrantStatuses') IS NOT NULL DROP TABLE #vwMigrantStatuses
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
+		IF OBJECT_ID(N'tempdb..#vwIdeaStatuses') IS NOT NULL DROP TABLE #vwIdeaStatuses
+		IF OBJECT_ID(N'tempdb..#vwHomelessnessStatuses') IS NOT NULL DROP TABLE #vwHomelessnessStatuses
 
 	BEGIN TRY
 
@@ -60,6 +62,13 @@ BEGIN
 			ON #vwHomelessnessStatuses (HomelessnessStatusCode, HomelessPrimaryNighttimeResidenceCode, HomelessUnaccompaniedYouthStatusCode);
 
 		SELECT *
+		INTO #vwIdeaStatuses
+		FROM RDS.vwDimIdeaStatuses
+		WHERE SchoolYear = @SchoolYear
+
+		CREATE CLUSTERED INDEX ix_tempvwIdeaStatuses ON #vwIdeaStatuses (IdeaIndicatorMap, IdeaEducationalEnvironmentForSchoolageMap);
+
+		SELECT *
 		INTO #vwEconomicallyDisadvantagedStatuses
 		FROM RDS.vwDimEconomicallyDisadvantagedStatuses
 		WHERE SchoolYear = @SchoolYear
@@ -73,7 +82,7 @@ BEGIN
 		WHERE SchoolYear = @SchoolYear
 
 		CREATE CLUSTERED INDEX ix_tempvwMigrantStatuses
-			ON #vwMigrantStatuses (MigrantStatusCode, MigrantEducationProgramEnrollmentTypeCode, ContinuationOfServicesReasonCode, ConsolidatedMepFundsStatusCode, MigrantEducationProgramServicesTypeCode, MigrantPrioritizedForServicesCode);
+			ON #vwMigrantStatuses (MigrantStatusCode, MigrantEducationProgramEnrollmentTypeCode, ContinuationOfServicesReasonCode, ConsolidatedMEPFundsStatusCode, MigrantEducationProgramServicesTypeCode, MigrantPrioritizedForServicesCode);
 
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
@@ -140,7 +149,7 @@ BEGIN
 			, ISNULL(rdl.DimLeaID, -1)						LEAId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)				K12SchoolId							
 			, ISNULL(rdp.DimPersonId, -1)					K12StudentId							
-			, -1											IdeaStatusId							
+			, ISNULL(rdis.DimIdeaStatusId, -1)				IdeaStatusId
 			, -1											DisabilityStatusId							
 			, -1											LanguageId							
 			, ISNULL(rdms.DimMigrantStatusId, -1)			MigrantStatusId						
@@ -160,6 +169,9 @@ BEGIN
 			, -1											SpecialEducationServicesExitDateId	
 			, -1											MigrantStudentQualifyingArrivalDateId	
 			, -1											LastQualifyingMoveDateId						
+
+
+--select rdels.*
 		FROM Staging.K12Enrollment ske
 	--homeless
 		JOIN Staging.PersonStatus hmStatus
@@ -246,6 +258,12 @@ BEGIN
 			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
+	--idea status (rds)	
+		LEFT JOIN #vwIdeaStatuses rdis
+			ON rdis.IdeaIndicatorCode = 'Yes'
+			AND rdis.SpecialEducationExitReasonCode = 'MISSING'
+			AND ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode)
+			AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, rdis.IdeaEducationalEnvironmentForSchoolAgeCode)
 	--idea disability type (rds)
 		LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 			ON sidt.SchoolYear = rdidt.SchoolYear
