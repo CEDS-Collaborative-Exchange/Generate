@@ -4551,52 +4551,115 @@
 
 
 
-	-- ------------------------------------------------
-	-- -- Populate DimComprehensiveAndTargetedSupports			 ---
-	-- ------------------------------------------------
-	-- IF NOT EXISTS (SELECT 1 FROM RDS.DimComprehensiveAndTargetedSupports
-	-- 		WHERE ComprehensiveSupportIdentificationTypeCode = 'MISSING'
-	-- 		AND AdditionalTargetedSupportAndImprovementStatusCode = 'MISSING'
-	-- 		AND ComprehensiveSupportAndImprovementStatusCode = 'MISSING'
-	-- 		AND TargetedSupportAndImprovementStatusCode = 'MISSING') 
-	-- BEGIN
-	-- 	SET IDENTITY_INSERT RDS.DimComprehensiveAndTargetedSupports ON
+	------------------------------------------------
+	-- Populate DimComprehensiveAndTargetedSupports			 ---
+	------------------------------------------------
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimComprehensiveAndTargetedSupports
+			WHERE AdditionalTargetedSupportAndImprovementStatusCode = 'MISSING'
+			AND ComprehensiveSupportAndImprovementStatusCode = 'MISSING'
+			AND TargetedSupportAndImprovementStatusCode = 'MISSING') 
+	BEGIN
+		SET IDENTITY_INSERT RDS.DimComprehensiveAndTargetedSupports ON
 
-	-- 	INSERT INTO RDS.DimCteStatuses (
-	-- 		  DimComprehensiveAndTargetedSupportId
-	-- 		, ComprehensiveSupportIdentificationTypeCode
-	-- 		, ComprehensiveSupportIdentificationTypeDescription
-	-- 		, ComprehensiveSupportIdentificationTypeEdFactsCode
-	-- 		, AdditionalTargetedSupportAndImprovementStatusCode
-	-- 		, AdditionalTargetedSupportAndImprovementStatusDescription
-	-- 		, AdditionalTargetedSupportAndImprovementStatusEDFactsCode
-	-- 		, ComprehensiveSupportAndImprovementStatusCode
-	-- 		, ComprehensiveSupportAndImprovementStatusDescription
-	-- 		, ComprehensiveSupportAndImprovementStatusEdFactsCode
-	-- 		, TargetedSupportAndImprovementStatusCode
-	-- 		, TargetedSupportAndImprovementStatusDescription
-	-- 		, TargetedSupportAndImprovementStatusEdFactsCode)
+		INSERT INTO RDS.DimComprehensiveAndTargetedSupports (
+			  DimComprehensiveAndTargetedSupportId
+			, AdditionalTargetedSupportAndImprovementStatusCode
+			, AdditionalTargetedSupportAndImprovementStatusDescription
+			, AdditionalTargetedSupportAndImprovementStatusEDFactsCode
+			, ComprehensiveSupportAndImprovementStatusCode
+			, ComprehensiveSupportAndImprovementStatusDescription
+			, ComprehensiveSupportAndImprovementStatusEdFactsCode
+			, TargetedSupportAndImprovementStatusCode
+			, TargetedSupportAndImprovementStatusDescription
+			, TargetedSupportAndImprovementStatusEdFactsCode
+			)
 
-	-- 	VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
 
-	-- 	SET IDENTITY_INSERT RDS.DimComprehensiveAndTargetedSupports OFF
-	-- END
+		SET IDENTITY_INSERT RDS.DimComprehensiveAndTargetedSupports OFF
+	END
 
-	-- IF OBJECT_ID('tempdb..#ComprehensiveSupportIdentificationType') IS NOT NULL BEGIN
-	-- 	DROP TABLE #ComprehensiveSupportIdentificationType
-	-- END
+	IF OBJECT_ID('tempdb..#AdditionalTargetedSupportAndImprovementStatus') IS NOT NULL BEGIN
+		DROP TABLE #AdditionalTargetedSupportAndImprovementStatus
+	END
 
-	-- CREATE TABLE #ComprehensiveSupportIdentificationType (ComprehensiveSupportIdentificationTypeCode VARCHAR(50), ComprehensiveSupportIdentificationTypeDescription VARCHAR(200), ComprehensiveSupportIdentificationTypeEdFactsCode VARCHAR(50))
+	CREATE TABLE #AdditionalTargetedSupportAndImprovementStatus (AdditionalTargetedSupportAndImprovementStatusCode VARCHAR(50), AdditionalTargetedSupportAndImprovementStatusDescription VARCHAR(200), AdditionalTargetedSupportAndImprovementStatusEdFactsCode VARCHAR(50))
 
-	-- INSERT INTO #ComprehensiveSupportIdentificationType VALUES ('MISSING', 'MISSING', 'MISSING')
-	-- INSERT INTO #ComprehensiveSupportIdentificationType 
-	-- SELECT
-	-- 	  CedsOptionSetCode
-	-- 	, CedsOptionSetDescription
-	-- 	, CASE CedsOptionSetCode	
-	-- 		WHEN 'Yes' THEN 'DH'
-	-- 		ELSE 'MISSING'
-	-- 	  END
-	-- FROM CEDS.CedsOptionSetMapping
-	-- WHERE CedsElementTechnicalName = 'ComprehensiveSupportIdentificationType'
+	INSERT INTO #AdditionalTargetedSupportAndImprovementStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #AdditionalTargetedSupportAndImprovementStatus 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CedsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'AdditionalTargetedSupportAndImprovementStatus'
 
+
+
+	IF OBJECT_ID('tempdb..#ComprehensiveSupportAndImprovementStatus') IS NOT NULL BEGIN
+		DROP TABLE #ComprehensiveSupportAndImprovementStatus
+	END
+
+	CREATE TABLE #ComprehensiveSupportAndImprovementStatus (ComprehensiveSupportAndImprovementStatusCode VARCHAR(50), ComprehensiveSupportAndImprovementStatusDescription VARCHAR(200), ComprehensiveSupportAndImprovementStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #ComprehensiveSupportAndImprovementStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #ComprehensiveSupportAndImprovementStatus 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CedsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'ComprehensiveSupportAndImprovementStatus'
+
+
+
+	IF OBJECT_ID('tempdb..#TargetedSupportAndImprovementStatus') IS NOT NULL BEGIN
+		DROP TABLE #TargetedSupportAndImprovementStatus
+	END
+
+	CREATE TABLE #TargetedSupportAndImprovementStatus (TargetedSupportAndImprovementStatusCode VARCHAR(50), TargetedSupportAndImprovementStatusDescription VARCHAR(200), TargetedSupportAndImprovementStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #TargetedSupportAndImprovementStatus VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #TargetedSupportAndImprovementStatus 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CedsOptionSetCode
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'TargetedSupportAndImprovementStatus'
+
+   
+	INSERT INTO RDS.DimComprehensiveAndTargetedSupports
+		(
+			  AdditionalTargetedSupportAndImprovementStatusCode
+			, AdditionalTargetedSupportAndImprovementStatusDescription
+			, AdditionalTargetedSupportAndImprovementStatusEDFactsCode
+			, ComprehensiveSupportAndImprovementStatusCode
+			, ComprehensiveSupportAndImprovementStatusDescription
+			, ComprehensiveSupportAndImprovementStatusEdFactsCode
+			, TargetedSupportAndImprovementStatusCode
+			, TargetedSupportAndImprovementStatusDescription
+			, TargetedSupportAndImprovementStatusEdFactsCode
+		)
+	SELECT 
+			  atsais.AdditionalTargetedSupportAndImprovementStatusCode
+			, atsais.AdditionalTargetedSupportAndImprovementStatusDescription
+			, atsais.AdditionalTargetedSupportAndImprovementStatusEDFactsCode
+			, csais.ComprehensiveSupportAndImprovementStatusCode
+			, csais.ComprehensiveSupportAndImprovementStatusDescription
+			, csais.ComprehensiveSupportAndImprovementStatusEdFactsCode
+			, tsais.TargetedSupportAndImprovementStatusCode
+			, tsais.TargetedSupportAndImprovementStatusDescription
+			, tsais.TargetedSupportAndImprovementStatusEdFactsCode
+	FROM #AdditionalTargetedSupportAndImprovementStatus atsais
+	CROSS JOIN #ComprehensiveSupportAndImprovementStatus csais
+	CROSS JOIN #TargetedSupportAndImprovementStatus tsais
+	LEFT JOIN rds.DimComprehensiveAndTargetedSupports main
+		ON atsais.AdditionalTargetedSupportAndImprovementStatusCode = main.AdditionalTargetedSupportAndImprovementStatusCode
+		AND csais.ComprehensiveSupportAndImprovementStatusCode = main.ComprehensiveSupportAndImprovementStatusCode
+		AND tsais.TargetedSupportAndImprovementStatusCode = main.TargetedSupportAndImprovementStatusCode
+	WHERE main.DimComprehensiveAndTargetedSupportId IS NULL
+
+	DROP TABLE #AdditionalTargetedSupportAndImprovementStatus
+	DROP TABLE #ComprehensiveSupportAndImprovementStatus
+	DROP TABLE #TargetedSupportAndImprovementStatus
