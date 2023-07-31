@@ -6945,7 +6945,9 @@
 
 	-- --TODO: Review if this should happen
 	-- 
-	DROP TABLE [Staging].[K12SchoolComprehensiveSupportIdentificationType];
+	--DROP TABLE [Staging].[K12SchoolComprehensiveSupportIdentificationType];
+	EXECUTE sp_rename N'[Staging].[K12SchoolComprehensiveSupportIdentificationType].[LEA_Identifier_State]', N'LEAIdentifierSea';
+	EXECUTE sp_rename N'[Staging].[K12SchoolComprehensiveSupportIdentificationType].[School_Identifier_State]', N'SchoolIdentifierSea';
 
 
 	-- --TODO: Review if this should happen
