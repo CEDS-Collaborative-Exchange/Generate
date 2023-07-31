@@ -6945,9 +6945,7 @@
 
 	-- --TODO: Review if this should happen
 	-- 
-	-- DROP TABLE [Staging].[K12SchoolComprehensiveSupportIdentificationType];
-	EXECUTE sp_rename N'[Staging].[K12SchoolComprehensiveSupportIdentificationType].[LEA_Identifier_State]', N'LEAIdentifierSea';
-	EXECUTE sp_rename N'[Staging].[K12SchoolComprehensiveSupportIdentificationType].[School_Identifier_State]', N'SchoolIdentifierSea';
+	DROP TABLE [Staging].[K12SchoolComprehensiveSupportIdentificationType];
 
 
 	-- --TODO: Review if this should happen
@@ -7812,10 +7810,7 @@
 
 	
 	ALTER TABLE [RDS].[DimComprehensiveAndTargetedSupports]
-		ADD [ComprehensiveSupportIdentificationTypeCode]               VARCHAR (50)  NULL,
-			[ComprehensiveSupportIdentificationTypeDescription]        VARCHAR (200) NULL,
-			[ComprehensiveSupportIdentificationTypeEdFactsCode]        VARCHAR (50)  NULL,
-			[AdditionalTargetedSupportAndImprovementStatusCode]        VARCHAR (50)  NULL,
+		ADD	[AdditionalTargetedSupportAndImprovementStatusCode]        VARCHAR (50)  NULL,
 			[AdditionalTargetedSupportAndImprovementStatusDescription] VARCHAR (200) NULL,
 			[AdditionalTargetedSupportAndImprovementStatusEDFactsCode] VARCHAR (50)  NULL,
 			[ComprehensiveSupportAndImprovementStatusCode]             VARCHAR (50)  NULL,
@@ -7825,6 +7820,9 @@
 			[TargetedSupportAndImprovementStatusDescription]           VARCHAR (200) NULL,
 			[TargetedSupportAndImprovementStatusEdFactsCode]           VARCHAR (50)  NULL;
 
+
+	DELETE FROM [RDS].[DimComprehensiveAndTargetedSupports];
+	DBCC CHECKIDENT ('[RDS].[DimComprehensiveAndTargetedSupports]', RESEED, 1);
 
 	
 	PRINT N'Altering Primary Key [RDS].[PK_DimComprehensiveAndTargetedSupport]...';
