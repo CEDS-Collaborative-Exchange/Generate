@@ -734,13 +734,13 @@ SELECT
 	, rdtiiis.TitleiiiLanguageInstructionCode
 	--K12StudentStatus
 	, rdkss.HighSchoolDiplomaTypeCode
-	, rdkss.MobilityStatus12moCode
-	, rdkss.MobilityStatus36moCode
-	, rdkss.MobilityStatusSYCode
+	, rdkss.MobilityStatus12moCode -- copy out from RDS.DimK12StudentStatuses not copied in
+	, rdkss.MobilityStatus36moCode -- copy out from RDS.DimK12StudentStatuses not copied in
+	, rdkss.MobilityStatusSYCode -- copy out from RDS.DimK12StudentStatuses not copied in
 	, rdkss.NSLPDirectCertificationIndicatorCode
-	, rdkss.PlacementStatusCode
-	, rdkss.PlacementTypeCode
-	, rdkss.ReferralStatusCode
+	, rdkss.PlacementStatusCode -- copy out from RDS.DimK12StudentStatuses not copied in
+	, rdkss.PlacementTypeCode -- copy out from RDS.DimK12StudentStatuses not copied in
+	, rdkss.ReferralStatusCode -- copy out from RDS.DimK12StudentStatuses not copied in
 	--NOrDProgramStatus
 	, rdnodps.LongTermStatusCode
 	, rdnodps.NeglectedOrDelinquentProgramTypeCode
