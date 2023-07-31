@@ -245,11 +245,10 @@ FROM Upgrade.FactOrganizationCounts f
 	LEFT JOIN RDS.DimComprehensiveAndTargetedSupports rdcts -- follow up with Nathan
 		ON f.AdditionalTargetedSupportandImprovementCode = rdcts.AdditionalTargetedSupportAndImprovementStatusCode --		case statment --??
 		AND f.ComprehensiveAndTargetedSupportCode = 'Missing' -- no field to map this to is this a case and map to a different field?
-		AND f.ComprehensiveSupportCode = rdcts.ComprehensiveSupportIdentificationTypeCode
+		AND f.ComprehensiveSupportCode = 'Missing'
 		AND f.ComprehensiveSupportImprovementCode = rdcts.ComprehensiveSupportAndImprovementStatusCode 
-		AND f.TargetedSupportCode = rdcts.TargetedSupportAndImprovementStatusCode  -- might be a case
-		AND f.TargetedSupportImprovementCode = rdcts.TargetedSupportAndImprovementStatusCode --
-
+		AND f.TargetedSupportCode = 'Missing'
+		AND f.TargetedSupportImprovementCode = rdcts.TargetedSupportAndImprovementStatusCode 
 	LEFT JOIN RDS.DimReasonApplicabilities rdra
 		ON f.ComprehensiveSupportReasonApplicabilityCode = rdra.ReasonApplicabilityCode
 	
