@@ -832,14 +832,21 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimAgeId'
 		end
-
 		else if @dimensionTable = 'DimAssessments'
 		begin
 			set @dimensionPrimaryKey = 'DimAssessmentId'
 		end
-		else if @dimensionTable = 'DimK12Demographics'
+		else if @dimensionTable = 'DimAssessmentStatuses'
 		begin
-			set @dimensionPrimaryKey = 'DimK12DemographicId'
+			set @dimensionPrimaryKey = 'DimAssessmentStatusId'
+		end
+		else if @dimensionTable = 'DimCohortStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimCohortStatusId'
+		end
+		else if @dimensionTable ='DimCteStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimCteStatusId'
 		end
 		else if @dimensionTable = 'DimDisciplineStatuses'
 		begin
@@ -849,9 +856,29 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimDisciplineReasonId'
 		end
+		else if @dimensionTable ='DimEnglishLearnerStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimEnglishLearnerStatusId'
+		end
+		else if @dimensionTable ='DimEconomicallyDisadvantagedStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimEconomicallyDisadvantagedStatusId'
+		end
+		else if @dimensionTable = 'DimFirearms'
+		begin
+			set @dimensionPrimaryKey = 'DimFirearmsId'
+		end
+		else if @dimensionTable = 'DimFirearmDisciplines'
+		begin
+			set @dimensionPrimaryKey = 'DimFirearmDisciplineId'
+		end
 		else if @dimensionTable = 'DimGradeLevels'
 		begin
 			set @dimensionPrimaryKey = 'DimGradeLevelId'
+		end
+		else if @dimensionTable = 'DimHomelessnessStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimHomelessnessStatusId'
 		end
 		else if @dimensionTable = 'DimIdeaStatuses'
 		begin
@@ -861,6 +888,14 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimIdeaDisabilityTypeId'
 		end
+		else if @dimensionTable = 'DimK12Demographics'
+		begin
+			set @dimensionPrimaryKey = 'DimK12DemographicId'
+		end
+		else if @dimensionTable ='DimK12EnrollmentStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimK12EnrollmentStatusId'
+		end
 		else if @dimensionTable = 'DimK12StaffStatuses'
 		begin
 			set @dimensionPrimaryKey = 'DimK12StaffStatusId'
@@ -868,6 +903,30 @@ BEGIN
 		else if @dimensionTable = 'DimK12StaffCategories'
 		begin
 			set @dimensionPrimaryKey = 'DimK12StaffCategoryId'
+		end
+		else if @dimensionTable = 'DimLanguages'
+		begin
+			set @dimensionPrimaryKey = 'DimLanguageId'
+		end
+		else if @dimensionTable = 'DimMigrantStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimMigrantStatusId'
+		end
+		else if @dimensionTable = 'DimMilitaryStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimMilitaryStatusId'
+		end
+		else if @dimensionTable ='DimNOrDStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimNOrDStatusId'
+		end
+		else if @dimensionTable ='DimPeople'
+		begin
+			set @dimensionPrimaryKey = 'DimPersonId'
+		end
+		else if @dimensionTable = 'DimPeopleStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimPeopleStatusId'
 		end
 		else if @dimensionTable = 'DimRaces'
 		begin
@@ -880,58 +939,6 @@ BEGIN
 		else if @dimensionTable = 'DimTitleIIIStatuses'
 		begin
 			set @dimensionPrimaryKey = 'DimTitleIIIStatusId'
-		end
-		else if @dimensionTable = 'DimLanguages'
-		begin
-			set @dimensionPrimaryKey = 'DimLanguageId'
-		end
-		else if @dimensionTable = 'DimPeopletatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimPeopletatusId'
-		end
-		else if @dimensionTable = 'DimMigrantStatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimMigrantStatusId'
-		end
-		else if @dimensionTable = 'DimAssessmentStatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimAssessmentStatusId'
-		end
-		else if @dimensionTable = 'DimFirearms'
-		begin
-			set @dimensionPrimaryKey = 'DimFirearmsId'
-		end
-		else if @dimensionTable = 'DimFirearmDisciplines'
-		begin
-			set @dimensionPrimaryKey = 'DimFirearmDisciplineId'
-		end
-		else if @dimensionTable = 'DimCohortStatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimCohortStatusId'
-		end
-		else if @dimensionTable ='DimNOrDStatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimNOrDStatusId'
-		end
-		else if @dimensionTable ='DimCteStatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimCteStatusId'
-		end
-		else if @dimensionTable ='DimK12EnrollmentStatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimK12EnrollmentStatusId'
-		end
-		else if @dimensionTable ='DimEnglishLearnerStatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimEnglishLearnerStatusId'
-		end
-		else if @dimensionTable ='DimEconomicallyDisadvantagedStatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimEconomicallyDisadvantagedStatusId'
-		end
-		else if @dimensionTable ='DimPeople'
-		begin
-			set @dimensionPrimaryKey = 'DimPersonId'
 		end
 			
 		set @factKey = REPLACE(@dimensionPrimaryKey, 'Dim', '')
@@ -1576,9 +1583,10 @@ BEGIN
 							case 
 								when isnull(da.AgeCode, ''99'') IN (''3'', ''4'', ''5'')
 										and isnull(CAT_GRADELEVEL.GradeLevelEdFactsCode, ''xx'') <> ''KG'' THEN ''3TO5NOTK''
-								when isnull(da.AgeCode, ''99'') IN (''0'',''1'',''2'') then ''UNDER3''
 								else CAT_GRADELEVEL.GradeLevelEdFactsCode END'
 					end
+--this condition was included in the case above, can't find the equivalent requirement in the file spec
+--								when isnull(da.AgeCode, ''99'') IN (''0'',''1'',''2'') then ''UNDER3''
 
 				---End New Code for c118
 

@@ -141,9 +141,9 @@ BEGIN
 					THEN 
 						CASE 
 							WHEN el.EnglishLearnerStatus = 1 THEN 'LEP'
-							ELSE 'NLEP'
+							ELSE 'MISSING'
 						END
-			ELSE 'NLEP'
+			ELSE 'MISSING'
 			END AS EnglishLearnerStatusEdFactsCode
 --Homelessness
 		, hmStatus.HomelessUnaccompaniedYouth
@@ -152,8 +152,13 @@ BEGIN
 		END AS HomelessUnaccompaniedYouthEdFactsCode		
 
 		, hmNight.HomelessNighttimeResidence
-		, CASE WHEN ISNULL(hmNight.HomelessNighttimeResidence, '') <> ''
-				THEN ssrd1.OutputCode
+		, CASE ISNULL(hmNight.HomelessNighttimeResidence, '')
+				WHEN 'DoubledUp'					THEN 'D'
+				WHEN 'HotelMotel'					THEN 'HM'
+				WHEN 'Shelter'						THEN 'STH'
+				WHEN 'SheltersTransitionalHousing'	THEN 'STH'
+				WHEN 'Transitional Housing'			THEN 'STH'
+				WHEN 'Unsheltered'					THEN 'U'
 				ELSE 'MISSING'
 		END AS HomelessPrimaryNighttimeResidenceEdFactsCode
 
@@ -203,9 +208,6 @@ BEGIN
 						END
 			ELSE 'MISSING'
 		END AS MigrantStatusEdFactsCode
-		, ske.HispanicLatinoEthnicity
-		, spr.RaceType
-		, rdr.RaceEdFactsCode
 	INTO #C118Staging
 
 	FROM Staging.K12Enrollment ske
@@ -260,11 +262,12 @@ BEGIN
 		AND ssrd1.InputCode = hmNight.HomelessNightTimeResidence
 
 	WHERE hmStatus.HomelessnessStatus = 1
+	AND rda.AgeValue between 3 and 22
+	AND ske.GradeLevel not in ('AE', 'ABE')
 	AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
 	--Homeless Date with SY range 
 	AND ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') 
 		BETWEEN @SYStart AND @SYEnd
-
 
 	/**********************************************************************
 		Test Case 1:
@@ -304,7 +307,6 @@ BEGIN
 	
 	DROP TABLE #S_CSA
 
-
 	/**********************************************************************
 		Test Case 2:
 		CSB at the SEA level - Student Count by Homeless Primary Nighttime Residence
@@ -314,8 +316,8 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSB
 	FROM #C118staging 
+	WHERE HomelessPrimaryNighttimeResidenceEdFactsCode <> 'MISSING'
 	GROUP BY HomelessPrimaryNighttimeResidenceEdFactsCode
-
 
 	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
@@ -355,7 +357,7 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSC
 	FROM #C118staging 
-	WHERE SexEdFactsCode <> 'MISSING'
+	WHERE DisabilityStatusEdFactsCode <> 'MISSING'
 	GROUP BY DisabilityStatusEdFactsCode
 		
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -385,7 +387,6 @@ BEGIN
 
 	DROP TABLE #S_CSC
 
-	
 	/**********************************************************************
 		Test Case 4:
 		CSD at the SEA level - Student Count by English Learner Status (Only)
@@ -395,7 +396,7 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSD
 	FROM #C118staging
-	WHERE EnglishLearnerStatusEdFactsCode in ('LEP','NLEP')
+	WHERE EnglishLearnerStatusEdFactsCode = 'LEP'
 	GROUP BY EnglishLearnerStatusEdFactsCode
 		
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -435,6 +436,7 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSE
 	FROM #C118staging 
+	WHERE MigrantStatusEdFactsCode <> 'MISSING'
 	GROUP BY MigrantStatusEdFactsCode
 		
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -473,6 +475,7 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSF
 	FROM #C118staging 
+	WHERE HomelessUnaccompaniedYouthEdFactsCode <> 'MISSING'
 	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
 		
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -511,6 +514,8 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSG
 	FROM #C118staging 
+	WHERE HomelessUnaccompaniedYouthEdFactsCode <> 'MISSING'
+		AND HomelessPrimaryNighttimeResidenceEdFactsCode <> 'MISSING'
 	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
 			, HomelessPrimaryNighttimeResidenceEdFactsCode
 
@@ -602,6 +607,7 @@ BEGIN
 	SELECT DISTINCT
 		@SqlUnitTestId
 		, 'TOT SEA Match All'
+		, 'TOT SEA Match All'
 		, s.StudentCount
 		, rreksc.StudentCount
 		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
@@ -674,6 +680,7 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSB
 	FROM #C118staging 
+	WHERE HomelessPrimaryNighttimeResidenceEdFactsCode <> 'MISSING'
 	GROUP BY HomelessPrimaryNighttimeResidenceEdFactsCode
 		, LeaIdentifierSeaAccountability
 
@@ -719,7 +726,7 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSC
 	FROM #C118staging 
-	WHERE SexEdFactsCode <> 'MISSING'
+	WHERE DisabilityStatusEdFactsCode <> 'MISSING'
 	GROUP BY DisabilityStatusEdFactsCode
 		, LeaIdentifierSeaAccountability
 		
@@ -763,7 +770,7 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSD
 	FROM #C118staging
-	WHERE EnglishLearnerStatusEdFactsCode in ('LEP','NLEP')
+	WHERE EnglishLearnerStatusEdFactsCode = 'LEP'
 	GROUP BY EnglishLearnerStatusEdFactsCode
 		, LeaIdentifierSeaAccountability
 		
@@ -807,6 +814,7 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSE
 	FROM #C118staging 
+	WHERE MigrantStatusEdFactsCode <> 'MISSING'
 	GROUP BY MigrantStatusEdFactsCode
 		, LeaIdentifierSeaAccountability
 		
@@ -849,6 +857,7 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSF
 	FROM #C118staging 
+	WHERE HomelessUnaccompaniedYouthEdFactsCode <> 'MISSING'
 	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
 		, LeaIdentifierSeaAccountability
 		
@@ -891,6 +900,8 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSG
 	FROM #C118staging 
+	WHERE HomelessUnaccompaniedYouthEdFactsCode <> 'MISSING'
+		AND HomelessPrimaryNighttimeResidenceEdFactsCode <> 'MISSING'
 	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
 		, HomelessPrimaryNighttimeResidenceEdFactsCode
 		, LeaIdentifierSeaAccountability
@@ -991,7 +1002,7 @@ BEGIN
 	SELECT DISTINCT
 		@SqlUnitTestId
 		, 'TOT LEA Match All'
-			+ '; LEA Identifier: ' + s.LeaIdentifierSeaAccountability
+		, 'LEA Identifier: ' + s.LeaIdentifierSeaAccountability
 		, s.StudentCount
 		, rreksc.StudentCount
 		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
