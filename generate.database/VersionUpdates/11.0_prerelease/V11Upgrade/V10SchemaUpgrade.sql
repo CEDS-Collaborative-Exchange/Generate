@@ -12790,7 +12790,6 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_Discipline] (
 		[Id]                                             INT            IDENTITY (1, 1) NOT NULL,
-		[SchoolYear]                                     SMALLINT       NULL,
 		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
 		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
 		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
@@ -12804,8 +12803,8 @@
 		[IncidentTime]                                   TIME (7)       NULL,
 		[DisciplinaryActionTaken]                        NVARCHAR (100) NULL,
 		[DisciplineReason]                               NVARCHAR (100) NULL,
-		[DisciplinaryActionStartDate]                    NVARCHAR (100) NULL,
-		[DisciplinaryActionEndDate]                      NVARCHAR (100) NULL,
+		[DisciplinaryActionStartDate]                    DATE			NULL,
+		[DisciplinaryActionEndDate]                      DATE 			NULL,
 		[IncidentInjuryType]                             NVARCHAR (100) NULL,
 		[IncidentBehavior]                               NVARCHAR (100) NULL,
 		[DurationOfDisciplinaryAction]                   NVARCHAR (100) NULL,
@@ -12817,6 +12816,7 @@
 		[DisciplineMethodOfCwd]                          NVARCHAR (100) NULL,
 		[WeaponType]                                     NVARCHAR (100) NULL,
 		[FirearmType]                                    NVARCHAR (100) NULL,
+		[SchoolYear]                                     SMALLINT       NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
 		[PersonId]                                       INT            NULL,
 		[OrganizationID_LEA]                             INT            NULL,
