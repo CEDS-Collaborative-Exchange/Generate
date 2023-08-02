@@ -24,6 +24,7 @@ Tables\\Drop,Staging.StagingValidationRules.Table.sql,0
 Tables\\Create,Staging.StagingValidationRules.Table.sql,0
 Tables\\Drop,Staging.StagingValidationResults.Table.sql,0
 Tables\\Create,Staging.StagingValidationResults.Table.sql,0
+VersionUpdates\\11.0_prerelease,AppTableChanges.sql,0
 VersionUpdates\\11.0_prerelease,AddDataMigrationTypes.sql,0
 VersionUpdates\\11.0_prerelease,REPLACE_STAGING_VALIDATION_RULES.sql,0
 Functions\\Drop,dbo.fnSplit.UserDefinedFunction.sql,0

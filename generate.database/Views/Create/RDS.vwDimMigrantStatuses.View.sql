@@ -1,7 +1,7 @@
 CREATE VIEW rds.vwDimMigrantStatuses 
 AS
 	SELECT
-		  DimMigrantStatusId
+		DimMigrantStatusId
 		, rsy.SchoolYear
 		, rdms.MigrantStatusCode
 		, CASE rdms.MigrantStatusCode 
@@ -21,6 +21,19 @@ AS
 			WHEN 'No' THEN 0
 			ELSE -1
 		  END AS MigrantPrioritizedForServicesMap
+		, rdms.MEPContinuationOfServicesStatusCode
+		, CASE rdms.MEPContinuationOfServicesStatusCode
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
+			ELSE -1
+		  END AS MEPContinuationOfServicesStatusMap
+		, rdms.ConsolidatedMEPFundsStatusCode
+		, CASE rdms.ConsolidatedMEPFundsStatusCode
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
+			ELSE -1
+		  END AS ConsolidatedMEPFundsStatusMap
+
 	FROM rds.DimMigrantStatuses rdms
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1

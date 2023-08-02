@@ -8960,6 +8960,7 @@
 	EXECUTE sp_rename N'[RDS].[DimLanguages].[Iso6392LanguageCode]', N'Iso6392LanguageCodeCode';
 	EXECUTE sp_rename N'[RDS].[DimLanguages].[Iso6392LanguageDescription]', N'Iso6392LanguageCodeDescription';
 	EXECUTE sp_rename N'[RDS].[DimLanguages].[Iso6392LanguageEdFactsCode]', N'Iso6392LanguageCodeEdFactsCode';
+	EXECUTE sp_rename N'[RDS].[DimLanguages].[Iso6393LanguageCode]', N'Iso6393LanguageCodeCode';
 
 
 	
@@ -13425,6 +13426,9 @@
 		ON [Staging].[OrganizationGradeOffered]([OrganizationId] ASC) WITH (FILLFACTOR = 100, STATISTICS_NORECOMPUTE = ON);
 
 
+	CREATE NONCLUSTERED INDEX [IX_Staging_OrganizationGradeOffered_SchoolYear] 
+		ON [Staging].[OrganizationGradeOffered] ([SchoolYear]) INCLUDE ([OrganizationIdentifier],[GradeOffered])
+
 	
 	/*
 	The column [Staging].[OrganizationPhone].[OrganizationTelephoneId] is being dropped, data loss could occur.
@@ -13460,6 +13464,9 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_OrganizationPhone1]', N'PK_OrganizationPhone', N'OBJECT';
 
+	
+	CREATE NONCLUSTERED INDEX [IX_StateDetail_OrganizationPhone] 
+		ON [Staging].[OrganizationPhone] ([OrganizationIdentifier],[PrimaryTelephoneNumberIndicator])
 
 	
 	PRINT N'Altering Table [Staging].[OrganizationProgramType]...';
@@ -15490,26 +15497,26 @@
 
 	
 	CREATE TABLE [RDS].[DimMigrantStatuses] (
-		[DimMigrantStatusId]                               INT            IDENTITY (1, 1) NOT NULL,
-		[MigrantStatusCode]                                NVARCHAR (100) NOT NULL,
-		[MigrantStatusDescription]                         NVARCHAR (300) NOT NULL,
-		[MigrantStatusEdFactsCode]                         NVARCHAR (50)  NOT NULL,
-		[MigrantEducationProgramEnrollmentTypeCode]        NVARCHAR (100) NOT NULL,
-		[MigrantEducationProgramEnrollmentTypeDescription] NVARCHAR (300) NOT NULL,
-		[ContinuationOfServicesReasonCode]                 NVARCHAR (100) NOT NULL,
-		[ContinuationOfServicesReasonDescription]          NVARCHAR (300) NOT NULL,
-		[ConsolidatedMepFundsStatusCode]                   NVARCHAR (100) NOT NULL,
-		[MEPContinuationOfServicesStatusCode]			   NVARCHAR (100) NOT NULL,
-		[MEPContinuationOfServicesStatusDescription]	   NVARCHAR (300) NOT NULL,
-		[MEPContinuationOfServicesStatusEdFactsCode]	   NVARCHAR (50)  NOT NULL,
-		[ConsolidatedMepFundsStatusDescription]            NVARCHAR (300) NOT NULL,
-		[ConsolidatedMepFundsStatusEdFactsCode]            NVARCHAR (50)  NOT NULL,
-		[MigrantEducationProgramServicesTypeCode]          NVARCHAR (100) NOT NULL,
-		[MigrantEducationProgramServicesTypeDescription]   NVARCHAR (300) NOT NULL,
-		[MigrantEducationProgramServicesTypeEdFactsCode]   NVARCHAR (50)  NOT NULL,
-		[MigrantPrioritizedForServicesCode]                NVARCHAR (100) NOT NULL,
-		[MigrantPrioritizedForServicesDescription]         NVARCHAR (300) NOT NULL,
-		[MigrantPrioritizedForServicesEdFactsCode]         NVARCHAR (50)  NOT NULL,
+		[DimMigrantStatusId]    											INT            IDENTITY (1, 1) NOT NULL,
+		[MigrantStatusCode]                     				           	NVARCHAR (100) NOT NULL,
+		[MigrantStatusDescription]                         					NVARCHAR (300) NOT NULL,
+		[MigrantStatusEdFactsCode]                         					NVARCHAR (50)  NOT NULL,
+		[MigrantEducationProgramEnrollmentTypeCode]        					NVARCHAR (100) NOT NULL,
+		[MigrantEducationProgramEnrollmentTypeDescription] 					NVARCHAR (300) NOT NULL,
+		[ContinuationOfServicesReasonCode]                 					NVARCHAR (100) NOT NULL,
+		[ContinuationOfServicesReasonDescription]          					NVARCHAR (300) NOT NULL,
+		[MEPContinuationOfServicesStatusCode]								NVARCHAR (100) NOT NULL,
+		[MEPContinuationOfServicesStatusDescription]						NVARCHAR (300) NOT NULL,
+		[MEPContinuationOfServicesStatusEdFactsCode]						NVARCHAR (50)  NOT NULL,
+		[ConsolidatedMEPFundsStatusCode]  									NVARCHAR (100) NOT NULL,
+		[ConsolidatedMEPFundsStatusDescription] 							NVARCHAR (300) NOT NULL,
+		[ConsolidatedMEPFundsStatusEdFactsCode] 							NVARCHAR (50)  NOT NULL,
+		[MigrantEducationProgramServicesTypeCode]          					NVARCHAR (100) NOT NULL,
+		[MigrantEducationProgramServicesTypeDescription]  			 		NVARCHAR (300) NOT NULL,
+		[MigrantEducationProgramServicesTypeEdFactsCode]   					NVARCHAR (50)  NOT NULL,
+		[MigrantPrioritizedForServicesCode]                					NVARCHAR (100) NOT NULL,
+		[MigrantPrioritizedForServicesDescription]         					NVARCHAR (300) NOT NULL,
+		[MigrantPrioritizedForServicesEdFactsCode]         					NVARCHAR (50)  NOT NULL,
 		CONSTRAINT [PK_DimMigrantStatuses] PRIMARY KEY CLUSTERED ([DimMigrantStatusId] ASC) WITH (FILLFACTOR = 80)
 	);
 
@@ -15520,10 +15527,10 @@
 
 	
 	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_Codes]
-		ON [RDS].[DimMigrantStatuses]([MEPContinuationOfServicesStatusCode] ASC, [ContinuationOfServicesReasonCode] ASC, [ConsolidatedMepFundsStatusCode] ASC, [MigrantEducationProgramServicesTypeCode] ASC, [MigrantPrioritizedForServicesCode] ASC, [MigrantEducationProgramEnrollmentTypeCode] ASC) WITH (FILLFACTOR = 80);
+		ON [RDS].[DimMigrantStatuses]([MEPContinuationOfServicesStatusCode] ASC, [ContinuationOfServicesReasonCode] ASC, [ConsolidatedMEPFundsStatusCode] ASC, [MigrantEducationProgramServicesTypeCode] ASC, [MigrantPrioritizedForServicesCode] ASC, [MigrantEducationProgramEnrollmentTypeCode] ASC) WITH (FILLFACTOR = 80);
 
 
-	
+
 	PRINT N'Creating Index [RDS].[DimMigrantStatuses].[IX_DimMigrantStatuses_MEPContinuationOfServicesStatusEdFactsCode]...';
 
 
@@ -15534,20 +15541,20 @@
 
 
 	
-	PRINT N'Creating Index [RDS].[DimMigrantStatuses].[IX_DimMigrantStatuses_MepFundsStatusEdFactsCode]...';
+	PRINT N'Creating Index [RDS].[DimMigrantStatuses].[IX_DimMigrantStatuses_MEPFundsStatusEdFactsCode]...';
 
 
 	
-	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_MepFundsStatusEdFactsCode]
-		ON [RDS].[DimMigrantStatuses]([ConsolidatedMepFundsStatusEdFactsCode] ASC) WITH (FILLFACTOR = 80);
+	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_MEPFundsStatusEdFactsCode]
+		ON [RDS].[DimMigrantStatuses]([ConsolidatedMEPFundsStatusEdFactsCode] ASC) WITH (FILLFACTOR = 80);
 
 
 	
-	PRINT N'Creating Index [RDS].[DimMigrantStatuses].[IX_DimMigrantStatuses_MepServicesEdFactsCode]...';
+	PRINT N'Creating Index [RDS].[DimMigrantStatuses].[IX_DimMigrantStatuses_MigrantEducationProgramServicesEdFactsCode]...';
 
 
 	
-	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_MepServicesEdFactsCode]
+	CREATE NONCLUSTERED INDEX [IX_DimMigrantStatuses_MigrantEducationProgramServicesEdFactsCode]
 		ON [RDS].[DimMigrantStatuses]([MigrantEducationProgramServicesTypeEdFactsCode] ASC) WITH (FILLFACTOR = 80);
 
 
