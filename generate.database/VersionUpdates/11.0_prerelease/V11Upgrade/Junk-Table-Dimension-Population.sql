@@ -1795,12 +1795,12 @@
 					, MigrantEducationProgramEnrollmentTypeDescription
 					, ContinuationOfServicesReasonCode
 					, ContinuationOfServicesReasonDescription
-					, ConsolidatedMepFundsStatusCode
 					, MEPContinuationOfServicesStatusCode
 					, MEPContinuationOfServicesStatusDescription
 					, MEPContinuationOfServicesStatusEdFactsCode
-					, ConsolidatedMepFundsStatusDescription
-					, ConsolidatedMepFundsStatusEdFactsCode
+					, ConsolidatedMEPFundsStatusCode
+					, ConsolidatedMEPFundsStatusDescription
+					, ConsolidatedMEPFundsStatusEdFactsCode
 					, MigrantEducationProgramServicesTypeCode
 					, MigrantEducationProgramServicesTypeDescription
 					, MigrantEducationProgramServicesTypeEdFactsCode
@@ -1882,9 +1882,9 @@
 			, MEPContinuationOfServicesStatusCode
 			, MEPContinuationOfServicesStatusDescription
 			, MEPContinuationOfServicesStatusEdFactsCode			
-			, ConsolidatedMepFundsStatusCode
-			, ConsolidatedMepFundsStatusDescription
-			, ConsolidatedMepFundsStatusEdFactsCode
+			, ConsolidatedMEPFundsStatusCode
+			, ConsolidatedMEPFundsStatusDescription
+			, ConsolidatedMEPFundsStatusEdFactsCode
 			, MigrantEducationProgramServicesTypeCode
 			, MigrantEducationProgramServicesTypeDescription
 			, MigrantEducationProgramServicesTypeEdFactsCode
@@ -1903,9 +1903,9 @@
 		, MEPContinuationOfServicesStatus.CedsOptionSetCode
 		, MEPContinuationOfServicesStatus.CedsOptionSetDescription
 		, MEPContinuationOfServicesStatus.EdFactsCode
-		, ConsolidatedMepFund.CedsOptionSetCode
-		, ConsolidatedMepFund.CedsOptionSetDescription
-		, ConsolidatedMepFund.EdFactsCode
+		, ConsolidatedMEPFund.CedsOptionSetCode
+		, ConsolidatedMEPFund.CedsOptionSetDescription
+		, ConsolidatedMEPFund.EdFactsCode
 		, mst.MigrantEducationProgramServicesTypeCode
 		, mst.MigrantEducationProgramServicesTypeDescription
 		, mst.MigrantEducationProgramServicesTypeEdFactsCode
@@ -1913,7 +1913,8 @@
 		, PrioritizedForServices.CedsOptionSetDescription
 		, PrioritizedForServices.EdFactsCode
 	FROM (VALUES('Yes', 'Migrant students', 'MS'),('No', 'Not a Migrant students', 'MISSING'),('MISSING', 'MISSING', 'MISSING')) Migrant(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
-	CROSS JOIN (VALUES('Yes', 'Yes', 'YES'),('No', 'No','NO'),('NA', 'Not applicable','NA'),('MISSING', 'MISSING', 'MISSING')) ConsolidatedMepFund(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
+	CROSS JOIN (VALUES('Yes', 'Yes', 'YES'),('No', 'No','NO'),('NA', 'Not applicable','NA'),('MISSING', 'MISSING', 'MISSING')) ConsolidatedMEPFund(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
+	CROSS JOIN (VALUES('Yes', 'Yes', 'YES'),('No', 'No','NO'),('NA', 'Not applicable','NA'),('MISSING', 'MISSING', 'MISSING')) MEPContinuationOfServicesStatus(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN (VALUES('YES', 'Prioritized for Services', 'PS'),('NO', 'Not Prioritized for Services', 'MISSING'),('MISSING', 'MISSING', 'MISSING')) PrioritizedForServices(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN (VALUES('Yes', 'Receiving instructional or support services under the continuation of services authority ESEA Title III Section 1304(e)(2)-(3).', 'CONTINUED'),('No', 'Not receiving instructional or support services under the continuation of services authority ESEA Title III Section 1304(e)(2)-(3).', 'MISSING'),('MISSING', 'MISSING', 'MISSING')) MEPContinuationOfServicesStatus(CedsOptionSetCode, CedsOptionSetDescription, EdFactsCode)
 	CROSS JOIN #MepEnrollmentType met
@@ -1926,6 +1927,7 @@
 		AND MEPContinuationOfServicesStatus.CedsOptionSetCode = dms.MEPContinuationOfServicesStatusCode
 		AND mst.MigrantEducationProgramServicesTypeCode = dms.MigrantEducationProgramServicesTypeCode
 		AND PrioritizedForServices.CedsOptionSetCode = dms.MigrantPrioritizedForServicesCode
+		AND ConsolidatedMEPFund.CedsOptionSetCode = dms.ConsolidatedMEPFundsStatusCode
 	WHERE dms.DimMigrantStatusId IS NULL
 
 	DROP TABLE #MepEnrollmentType
@@ -4541,8 +4543,8 @@
 		full outer join CEDS.CedsOptionSetMapping iso3
 			on iso2.CedsOptionSetCode = iso3.CedsOptionSetCode
 		left outer join rds.DimLanguages dl
-			on isnull(dl.Iso6392LanguageCodeCode,'')=isnull(iso2.CedsOptionSetCode,'')
-				and isnull(dl.Iso6393LanguageCodeCode,'')=isnull(iso3.CedsOptionSetCode,'')
+			on isnull(dl.Iso6392LanguageCodeCode,'') = isnull(iso2.CedsOptionSetCode,'')
+				and isnull(dl.Iso6393LanguageCodeCode,'') = isnull(iso3.CedsOptionSetCode,'')
 	Where iso2.CedsGlobalId = '000317'
 		and iso3.CedsGlobalId = '001637'
 		and dl.DimLanguageId is null
