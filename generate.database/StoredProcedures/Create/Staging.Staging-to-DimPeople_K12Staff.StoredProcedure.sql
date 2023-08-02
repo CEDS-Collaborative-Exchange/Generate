@@ -26,7 +26,7 @@ BEGIN
 			, LastOrSurname									NVARCHAR(50) NULL
 			, BirthDate										DATE NULL
 			, K12StaffStaffMemberIdentifierState			NVARCHAR(40) NULL
-			, IsActiveK12Staf 								BIT NULL
+			, IsActiveK12Staff 								BIT NULL
 			, PositionTitle									NVARCHAR(200) NULL
 			, RecordStartDateTime							DATE NULL
 			, RecordEndDateTime								DATE NULL

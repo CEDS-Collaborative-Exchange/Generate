@@ -7038,6 +7038,10 @@ CREATE NONCLUSTERED INDEX [IX_Staging_K12PersonRace_SchoolYear_RecordStartDateTi
 ON [Staging].[K12PersonRace] ([SchoolYear],[RecordStartDateTime])
 INCLUDE ([RaceType],[RecordEndDateTime])
 
+CREATE NONCLUSTERED INDEX [IX_Staging_K12PersonRace_SchoolYear_WithIncludes2]
+ON [Staging].[K12PersonRace] ([SchoolYear])
+INCLUDE ([StudentIdentifierState],[LeaIdentifierSeaAccountability],[SchoolIdentifierSea],[RaceType])
+
 
 PRINT N'Starting rebuilding table [Staging].[K12ProgramParticipation]...';
 

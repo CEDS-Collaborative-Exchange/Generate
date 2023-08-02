@@ -10667,6 +10667,15 @@
 		ON [RDS].[FactK12StudentCounts]([TitleIStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
+	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IX_RDS_FactK12StudentCounts_SchoolYearId_FactTypeId_SeaId_WithIncludes]...';
+
+
+	CREATE NONCLUSTERED INDEX [IX_RDS_FactK12StudentCounts_SchoolYearId_FactTypeId_SeaId_WithIncludes]
+		ON [RDS].[FactK12StudentCounts] ([SchoolYearId],[FactTypeId],[SeaId])
+		INCLUDE ([LeaId],[K12StudentId],[AgeId],[IdeaStatusId],[PrimaryDisabilityTypeId],[SpecialEducationServicesExitDateId],[StudentCount])
+
+
+
 	-- TODO: Do this with renames rather than drops/creates
 	
 	/*
@@ -11248,6 +11257,13 @@
 	
 	CREATE NONCLUSTERED INDEX [IXFK_FactK12StudentDisciplines_TitleIStatusId]
 		ON [RDS].[FactK12StudentDisciplines]([TitleIStatusId] ASC);
+
+
+	PRINT N'Creating Index [RDS].[FactK12StudentDisciplines].[IX_RDS_FactK12StudentDisciplines_SchoolYearId_FactTypeId_WithIncludes]...';
+
+	CREATE NONCLUSTERED INDEX [IX_RDS_FactK12StudentDisciplines_SchoolYearId_FactTypeId_WithIncludes]
+		ON [RDS].[FactK12StudentDisciplines] ([SchoolYearId],[FactTypeId])
+		INCLUDE ([K12StudentId],[DisciplineStatusId],[IdeaStatusId],[DurationOfDisciplinaryAction])
 
 
 	
