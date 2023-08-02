@@ -13409,6 +13409,9 @@
 		ON [Staging].[OrganizationGradeOffered]([OrganizationId] ASC) WITH (FILLFACTOR = 100, STATISTICS_NORECOMPUTE = ON);
 
 
+	CREATE NONCLUSTERED INDEX [IX_Staging_OrganizationGradeOffered_SchoolYear] 
+		ON [Staging].[OrganizationGradeOffered] ([SchoolYear]) INCLUDE ([OrganizationIdentifier],[GradeOffered])
+
 	
 	/*
 	The column [Staging].[OrganizationPhone].[OrganizationTelephoneId] is being dropped, data loss could occur.
@@ -13444,6 +13447,9 @@
 
 	EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_OrganizationPhone1]', N'PK_OrganizationPhone', N'OBJECT';
 
+	
+	CREATE NONCLUSTERED INDEX [IX_StateDetail_OrganizationPhone] 
+		ON [Staging].[OrganizationPhone] ([OrganizationIdentifier],[PrimaryTelephoneNumberIndicator])
 
 	
 	PRINT N'Altering Table [Staging].[OrganizationProgramType]...';
