@@ -1,11 +1,4 @@
-﻿USE [Generate]
-GO
-/****** Object:  StoredProcedure [App].[FS088_TestCase]    Script Date: 8/1/2023 11:58:11 AM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-ALTER PROCEDURE [App].[FS088_TestCase]	
+﻿CREATE PROCEDURE [App].[FS088_TestCase]	
 	@SchoolYear SMALLINT
 AS
 BEGIN
