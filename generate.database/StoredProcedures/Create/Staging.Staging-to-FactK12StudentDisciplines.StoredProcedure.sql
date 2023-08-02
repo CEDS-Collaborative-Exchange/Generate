@@ -309,10 +309,6 @@ BEGIN
 				ON sd.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 				AND sd.DisciplinaryActionStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @EndDate)
 
-		--age
-			JOIN RDS.DimAges rda
-				ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
-
 		--demographics                                
 			JOIN RDS.vwDimK12Demographics rdkd
 				ON rsy.SchoolYear = rdkd.SchoolYear
