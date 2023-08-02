@@ -27,7 +27,7 @@ INSERT INTO RDS.DimPeople (
 	, MiddleName
 	, LastOrSurname
 	, BirthDate 
-    , IsActiveK12StaffMember
+    , IsActiveK12Staff
 	, K12StaffStaffMemberIdentifierState 
    	, RecordStartDateTime 
 	, RecordEndDateTime 
@@ -84,7 +84,7 @@ FROM Upgrade.FactK12StaffCounts f
 
 	LEFT JOIN RDS.DimPeople rdp
 		ON f.StaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState 
-		AND rdp.IsActiveK12StaffMember = 1
+		AND rdp.IsActiveK12Staff = 1
 
 	LEFT JOIN RDS.DimLeas rdl 
 		ON f.LeaIdentifierState = rdl.LeaIdentifierSea
@@ -179,7 +179,7 @@ SELECT
 		, ISNULL(rdcsas.DimCharterSchoolAuthorizerId, -1) --[SecondaryAuthorizingBodyCharterSchoolAuthorizerId]
 		, ISNULL(rdcss.DimCharterSchoolStatusId, -1) --[CharterSchoolStatusId]
 		, ISNULL(rdcsumo.DimCharterSchoolManagementOrganizationId, -1) --[CharterSchoolUpdatedManagementOrganizationId]
-		, -1 --ISNULL(rdcts.DimComprehensiveAndTargetedSupportId, -1) --[ComprehensiveAndTargetedSupportId]
+		, ISNULL(rdcts.DimComprehensiveAndTargetedSupportId, -1) --[ComprehensiveAndTargetedSupportId]
 		, ISNULL(rdra.DimReasonApplicabilityId, -1) --[ReasonApplicabilityId]
 		, ISNULL(rdos.DimK12OrganizationStatusId, -1) --[K12OrganizationStatusId]
 		, ISNULL(rdkss.DimK12SchoolStatusId, -1) --[K12SchoolStatusId]
@@ -207,7 +207,7 @@ FROM Upgrade.FactOrganizationCounts f
 
 	LEFT JOIN RDS.DimPeople rdp
 		ON f.StaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState 
-		AND rdp.IsActiveK12StaffMember = 1
+		AND rdp.IsActiveK12Staff = 1
 
 	LEFT JOIN RDS.DimLeas rdl 
 		ON f.LeaIdentifierState = rdl.LeaIdentifierSea
@@ -241,15 +241,14 @@ FROM Upgrade.FactOrganizationCounts f
 	
 	LEFT JOIN RDS.DimCharterSchoolStatuses rdcss
 		ON f.AppropriationMethodCode = rdcss.AppropriationMethodCode
-
-	--LEFT JOIN RDS.DimComprehensiveAndTargetedSupports rdcts -- follow up with Nathan
-	--	ON f.AdditionalTargetedSupportandImprovementCode = rdcts.AdditionalTargetedSupportAndImprovementStatusCode --		case statment --??
-	--	--AND f.ComprehensiveAndTargetedSupportCode = rdcts.ComprehensiveAndTargetedSupportCode -- no field to map this to is this a case and map to a different field?
-	--	AND f.ComprehensiveSupportCode = rdcts.ComprehensiveSupportIdentificationTypeCode
-	--	AND f.ComprehensiveSupportImprovementCode = rdcts.ComprehensiveSupportAndImprovementStatusCode 
-	--	--AND f.TargetedSupportCode = rdcts.TargetedSupportCode  -- no field to map this to is this a case and map to a different field?
-	--	AND f.TargetedSupportImprovementCode = rdcts.TargetedSupportAndImprovementStatusCode --
-
+		--select * from RDS.DimComprehensiveAndTargetedSupports 
+	LEFT JOIN RDS.DimComprehensiveAndTargetedSupports rdcts -- follow up with Nathan
+		ON f.AdditionalTargetedSupportandImprovementCode = rdcts.AdditionalTargetedSupportAndImprovementStatusCode --		case statment --??
+		AND f.ComprehensiveAndTargetedSupportCode = 'Missing' -- no field to map this to is this a case and map to a different field?
+		AND f.ComprehensiveSupportCode = 'Missing'
+		AND f.ComprehensiveSupportImprovementCode = rdcts.ComprehensiveSupportAndImprovementStatusCode 
+		AND f.TargetedSupportCode = 'Missing'
+		AND f.TargetedSupportImprovementCode = rdcts.TargetedSupportAndImprovementStatusCode 
 	LEFT JOIN RDS.DimReasonApplicabilities rdra
 		ON f.ComprehensiveSupportReasonApplicabilityCode = rdra.ReasonApplicabilityCode
 	
@@ -258,7 +257,7 @@ FROM Upgrade.FactOrganizationCounts f
 		AND f.HighSchoolGraduationRateIndicatorStatusCode = rdos.HighSchoolGraduationRateIndicatorStatusCode
 		AND f.McKinneyVentoSubgrantRecipientCode = rdos.McKinneyVentoSubgrantRecipientCode
 		AND f.ReapAlternativeFundingStatusCode = rdos.ReapAlternativeFundingStatusCode
-
+		
 	LEFT JOIN RDS.DimK12SchoolStatuses rdkss 
 		ON f.MagnetOrSpecialProgramEmphasisSchoolCode = rdkss.MagnetOrSpecialProgramEmphasisSchoolCode
 		AND f.NslpStatusCode = rdkss.NslpStatusCode
@@ -315,6 +314,7 @@ INSERT INTO RDS.FactK12StudentCounts (
 	, LastQualifyingMoveDateId
 	, TitleIStatusId
 	, TitleIIIStatusId
+	--, MilitaryStatu
 	, StudentCount        
     )
 SELECT 
@@ -342,14 +342,16 @@ SELECT
 	, ISNULL(DimLanguageId, -1)
 	, ISNULL(DimMigrantStatusId, -1)
 	, ISNULL(DimNOrDStatusId, -1)
-	, ISNULL(DimIdeaDisabilityTypeId, -1)
+	, ISNULL(DimIdeaDisabilityTypeId, -1) AS DisabilityType
 	, ISNULL(DimRaceId, -1)
 	, ISNULL(rdsesed.DimDateId, -1) -- DimSpecialEducationServicesExitDateId
 	, -1
 	, -1
 	, ISNULL(DimTitleIStatusId, -1)
 	, ISNULL(DimTitleIIIStatusId, -1)
+	--, ISNULL(rdms2.DimMilitaryStatusId, -1)
 	, ISNULL(StudentCount, -1)
+
 FROM Upgrade.FactK12StudentCounts f
 LEFT JOIN RDS.DimSchoolYears rdsy 
     ON f.SchoolYear = rdsy.SchoolYear
@@ -487,7 +489,7 @@ LEFT JOIN RDS.DimMigrantStatuses rdms
             ELSE 'MISSING'
         END = rdms.ContinuationOfServicesReasonCode
 	AND f.ConsolidatedMepFundsStatusCode = rdms.ConsolidatedMepFundsStatusCode --Codes are the same
-	AND 'MISSING' = rdms.MigrantEducationProgramServicesTypeCode
+	AND f.MepServicesTypeCode = rdms.MigrantEducationProgramServicesTypeCode
 	AND CASE f.MigrantPrioritizedForServicesCode
             WHEN 'PS' THEN 'Yes'
             ELSE 'MISSING'
@@ -503,8 +505,25 @@ LEFT JOIN RDS.DimNOrDStatuses rdnords
             WHEN 'OTHER' THEN 'OtherPrograms'
             ELSE 'MISSING'
         END = rdnords.NeglectedOrDelinquentProgramTypeCode
-LEFT JOIN RDS.DimIdeaDisabilityTypes rdidt
-	ON f.PrimaryDisabilityTypeCode = rdidt.IdeaDisabilityTypeCode
+		--NeglectedOrDelinquentLongTermStatusCode		these are NULL										--**********
+LEFT JOIN RDS.DimIdeaDisabilityTypes rdidt -- case with RefDisabilityTypeId 
+					ON CASE f.PrimaryDisabilityTypeCode 
+						WHEN 'AUT'	THEN 'Autism'
+    					WHEN 'DB'	THEN 'Deafblindness'
+						WHEN 'DD'	THEN 'Developmentaldelay'
+						WHEN 'EMN'	THEN 'Emotionaldisturbance'
+						WHEN 'HI'	THEN 'Hearingimpairment'
+						WHEN 'ID'	THEN 'IntellectualDisability'
+						WHEN 'MD'	THEN 'Multipledisabilities'
+						WHEN 'OI'	THEN 'Orthopedicimpairment'
+						WHEN 'OHI'	THEN 'Otherhealthimpairment'
+						WHEN 'SLD'	THEN 'Specificlearningdisability'
+						WHEN 'SLI'	THEN 'Speechlanguageimpairment'
+						WHEN 'TBI'	THEN 'Traumaticbraininjury'
+						WHEN 'VI'	THEN 'Visualimpairment'
+						ELSE 'MISSING'	
+					END = rdidt.IdeaDisabilityTypeCode		
+	
 LEFT JOIN RDS.DimRaces rdr
 	ON f.RaceCode = rdr.RaceCode
 LEFT JOIN RDS.DimDates rdsesed
@@ -520,7 +539,8 @@ LEFT JOIN RDS.DimTitleIIIStatuses rdtiiis
 	AND f.ProficiencyStatusCode = rdtiiis.ProficiencyStatusCode
 	AND f.TitleiiiAccountabilityProgressStatusCode = rdtiiis.TitleIIIAccountabilityProgressStatusCode
 	AND f.TitleiiiLanguageInstructionCode = rdtiiis.TitleIIILanguageInstructionProgramTypeCode
-
+--LEFT JOIN RDS.DimMilitaryStatuses rdms2 
+--	ON f.MilitaryConnectedStudentIndicatorCode = rdms2.MilitaryConnectedStudentIndicatorCode
 /*******************************************************************************************************/
 
 -- Disciplines
@@ -865,7 +885,7 @@ LEFT JOIN RDS.DimTitleIIIStatuses rdtiiis
 					, ISNULL(rdctes.DimCteStatusId, -1) AS [CteStatusId]
 					, ISNULL(rdgl.DimGradeLevelId, -1) AS [GradeLevelWhenAssessedId]
 					, ISNULL(rdis.DimIdeaStatusId, -1) AS [IdeaStatusId]
-					--, ISNULL(rdkdemo.DimK12DemographicId, -1)  AS [K12DemographicId]
+					, ISNULL(rdkdemo.DimK12DemographicId, -1)  AS [K12DemographicId]
 					, ISNULL(DimNOrDStatusId, -1) AS [NOrDStatusId]
 					, ISNULL(rdtiiis.DimTitleIIIStatusId, -1) AS [TitleIIIStatusId]
 					, ISNULL(f.AssessmentCount, -1) AS [AssessmentCount]
@@ -914,7 +934,7 @@ LEFT JOIN RDS.DimTitleIIIStatuses rdtiiis
 				ON f.AssessmentTypeCode = rda.AssessmentTypeCode
 				AND f.AssessmentSubjectCode = rda.AssessmentTypeCode
 				AND f.ParticipationStatusCode = rda.AssessmentAcademicSubjectCode
-				AND f.AssessmentTypeAdministeredToEnglishLearnersCode = rda.AssessmentTypeToEnglishLearnersCode
+				AND f.AssessmentTypeAdministeredToEnglishLearnersCode = rda.AssessmentTypeAdministeredToEnglishLearnersCode
 
 			LEFT JOIN RDS.DimAssessmentPerformanceLevels rdap
 				ON f.PerformanceLevelCode = rdap.AssessmentPerformanceLevelIdentifier
@@ -965,8 +985,8 @@ LEFT JOIN RDS.DimTitleIIIStatuses rdtiiis
 					AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'Missing'
 				AND  rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'Missing'
 
-			--LEFT JOIN RDS.DimK12Demographics rdkdemo 
-			--	ON f.SexCode = rdkdemo.SexCode
+			LEFT JOIN RDS.DimK12Demographics rdkdemo 
+				ON f.SexCode = rdkdemo.SexCode
 
 			LEFT JOIN RDS.DimNOrDStatuses rdnords
 				ON  CASE f.NeglectedOrDelinquentProgramTypeCode
@@ -1042,7 +1062,7 @@ LEFT JOIN RDS.DimTitleIIIStatuses rdtiiis
 				  ,[CteStatusId]
 				  ,[GradeLevelWhenAssessedId]
 				  ,[IdeaStatusId]
-				 -- ,[K12DemographicId]
+				  ,[K12DemographicId]
 				  ,[NOrDStatusId]
 				  ,[TitleIIIStatusId]
 				  ,[AssessmentCount]
