@@ -105,6 +105,8 @@ Views\\Drop,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Create,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Drop,RDS.vwUnduplicatedRaceMap.View.sql,0
 Views\\Create,RDS.vwUnduplicatedRaceMap.View.sql,0
+Views\\Drop,Debug.vwStudentDetails.View.sql,0
+Views\\Create,Debug.vwStudentDetails.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,App.Cleanup_Grades_Offered.StoredProcedure.sql,0

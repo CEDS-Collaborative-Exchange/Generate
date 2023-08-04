@@ -10668,6 +10668,22 @@
 		ON [RDS].[FactK12StudentCounts]([TitleIStatusId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
+	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IX_RDS_FactK12StudentCounts_SchoolYearId_FactTypeId_SeaId_WithIncludes]...';
+
+
+	CREATE NONCLUSTERED INDEX [IX_RDS_FactK12StudentCounts_SchoolYearId_FactTypeId_SeaId_WithIncludes]
+		ON [RDS].[FactK12StudentCounts] ([SchoolYearId],[FactTypeId],[SeaId])
+		INCLUDE ([LeaId],[K12StudentId],[AgeId],[IdeaStatusId],[PrimaryDisabilityTypeId],[SpecialEducationServicesExitDateId],[StudentCount])
+
+
+	PRINT N'Creating Index [RDS].[FactK12StudentCounts].[IX_RDS_FactK12StudentCounts_SchoolYearId_FactTypeId_AgeId]...';
+
+	CREATE NONCLUSTERED INDEX [IX_RDS_FactK12StudentCounts_SchoolYearId_FactTypeId_AgeId]
+		ON [RDS].[FactK12StudentCounts] ([SchoolYearId],[FactTypeId],[AgeId])
+		INCLUDE ([SeaId],[LeaId],[K12StudentId],[IdeaStatusId],[PrimaryDisabilityTypeId],[SpecialEducationServicesExitDateId],[StudentCount])
+
+
+
 	-- TODO: Do this with renames rather than drops/creates
 	
 	/*
@@ -11251,7 +11267,26 @@
 		ON [RDS].[FactK12StudentDisciplines]([TitleIStatusId] ASC);
 
 
-	
+	PRINT N'Creating Index [RDS].[FactK12StudentDisciplines].[IX_RDS_FactK12StudentDisciplines_SchoolYearId_FactTypeId_WithIncludes]...';
+
+	CREATE NONCLUSTERED INDEX [IX_RDS_FactK12StudentDisciplines_SchoolYearId_FactTypeId_WithIncludes]
+		ON [RDS].[FactK12StudentDisciplines] ([SchoolYearId],[FactTypeId])
+		INCLUDE ([K12StudentId],[DisciplineStatusId],[IdeaStatusId],[DurationOfDisciplinaryAction])
+
+
+	PRINT N'Creating Index [RDS].[FactK12StudentDisciplines].[IX_RDS_FactK12StudentDisciplines_SchoolYearId_FactTypeId_DisciplineStatusId_IdeaStatusId]...';
+
+	CREATE NONCLUSTERED INDEX [IX_RDS_FactK12StudentDisciplines_SchoolYearId_FactTypeId_DisciplineStatusId_IdeaStatusId]
+		ON [RDS].[FactK12StudentDisciplines] ([SchoolYearId],[FactTypeId],[DisciplineStatusId],[IdeaStatusId])
+		INCLUDE ([SeaId],[LeaId],[K12SchoolId],[K12StudentId],[AgeId])
+
+
+	PRINT N'Creating Index [RDS].[FactK12StudentDisciplines].[IX_RDS_FactK12StudentDisciplines_SchoolYearId_FactTypeId_PrimaryDisabilityTypeId]...';
+
+	CREATE NONCLUSTERED INDEX [IX_RDS_FactK12StudentDisciplines_SchoolYearId_FactTypeId_PrimaryDisabilityTypeId]
+	ON [RDS].[FactK12StudentDisciplines] ([SchoolYearId],[FactTypeId],[PrimaryDisabilityTypeId])
+	INCLUDE ([SeaId],[K12StudentId],[DisciplineStatusId],[IdeaStatusId],[DurationOfDisciplinaryAction],[DisciplineCount])
+
 	/*
 	The column [RDS].[FactK12StudentEnrollments].[EntryDateId] is being dropped, data loss could occur.
 

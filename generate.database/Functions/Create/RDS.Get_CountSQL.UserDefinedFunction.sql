@@ -609,6 +609,9 @@ BEGIN
 				select @sql = @sql + 
 				'having sum(rfksd.DurationOfDisciplinaryAction) >= 0.5' + char(10)
 
+				select @sql = @sql + char(10) + 
+				'CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState)' + char(10) + char(10)
+
 			end
 			else if @reportCode in ('c007')
 			begin
@@ -633,6 +636,8 @@ BEGIN
 					, rdds.IdeaInterimRemovalReasonCode  
 				having sum(rfksd.DurationOfDisciplinaryAction) > 45' + char(10)
 
+				select @sql = @sql + char(10) + 
+				'CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState)' + char(10) + char(10)
 			end
 			else if @reportCode = 'c005'
 			begin
@@ -654,6 +659,10 @@ BEGIN
 					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
 				group by rdp.K12StudentStudentIdentifierState 
 				having sum(rfksd.DurationOfDisciplinaryAction) > 45' + char(10)
+
+				select @sql = @sql + char(10) + 
+				'CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState)' + char(10) + char(10)
+
 			end
 
 		end
@@ -2276,8 +2285,8 @@ BEGIN
 				inner join rds.DimIdeaStatuses idea 
 					on fact.IdeaStatusId = idea.DimIdeaStatusId
 				where idea.SpecialEducationExitReasonEdFactsCode <> ''MISSING''
-				and idea.IdeaEducationalEnvironmentEdFactsCode <> ''PPPS''
-				group by fact.K12StudentId, idea.DimIdeaStatusId, lea.DimLeaId 
+				and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode <> ''PPPS''
+				group by fact.K12StudentId, p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId 
 			) rules 
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.IdeaStatusId = rules.DimIdeaStatusId 
@@ -4637,7 +4646,7 @@ BEGIN
 						   when @reportLevel = 'lea' then 'DimLeaId int,' 
 						   else 'DimK12SchoolId int,'
 					end + '			
-					DimK12StaffId int' + @sqlCategoryFieldDefs + ',
+					DimK12StaffId int, K12StudentStudentIdentifierState VARCHAR(60) ' + @sqlCategoryFieldDefs + ',
 					StaffCount int,
 					' + @factField + ' decimal(18,2)
 				)
@@ -4801,7 +4810,7 @@ BEGIN
 						+ case when @reportLevel = 'sea' then 'DimSeaId int,'
 								when @reportLevel = 'lea' then 'DimLeaId int,' 
 								else 'DimK12SchoolId int,'
-						end + 'DimStudentId int'  + @sqlCategoryFieldDefs + ',
+						end + 'DimStudentId int, K12StudentStudentIdentifierState varchar(60) '  + @sqlCategoryFieldDefs + ',
 						SpecialEducationServicesExitDate datetime,
 						' + @factField + ' int,
 
@@ -4825,11 +4834,11 @@ BEGIN
 						(' + case when @reportLevel = 'sea' then 'DimSeaId,'
 									when @reportLevel = 'lea' then 'DimLeaId,' 
 									else 'DimK12SchoolId,'
-							end + 'DimStudentId'  + @sqlCategoryFields + ', SpecialEducationServicesExitDate, ' + @factField + ')
+							end + 'DimStudentId, K12StudentStudentIdentifierState'  + @sqlCategoryFields + ', SpecialEducationServicesExitDate, ' + @factField + ')
 						select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 											when @reportLevel = 'lea' then 'fact.LeaId,' 
 											else 'fact.K12SchoolId,'
-							end + 'fact.K12StudentId' + @sqlCategoryQualifiedDimensionFields + ',
+							end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
 							exitDate.DateValue as SpecialEducationServicesExitDate,
 						sum(isnull(fact.' + @factField + ', 0))
 						from rds.' + @factTable + ' fact ' + @sqlCountJoins 
@@ -4842,7 +4851,7 @@ BEGIN
 						' group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 											when @reportLevel = 'lea' then 'fact.LeaId,'
 											else 'fact.K12SchoolId,'
-											end + 'fact.K12StudentId'  + @sqlCategoryQualifiedDimensionGroupFields + ',
+											end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState'  + @sqlCategoryQualifiedDimensionGroupFields + ',
 											exitDate.DateValue
 						' + @sqlHavingClause + '
 						'
