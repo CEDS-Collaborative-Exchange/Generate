@@ -8960,7 +8960,6 @@
 	EXECUTE sp_rename N'[RDS].[DimLanguages].[Iso6392LanguageCode]', N'Iso6392LanguageCodeCode';
 	EXECUTE sp_rename N'[RDS].[DimLanguages].[Iso6392LanguageDescription]', N'Iso6392LanguageCodeDescription';
 	EXECUTE sp_rename N'[RDS].[DimLanguages].[Iso6392LanguageEdFactsCode]', N'Iso6392LanguageCodeEdFactsCode';
-	EXECUTE sp_rename N'[RDS].[DimLanguages].[Iso6393LanguageCode]', N'Iso6393LanguageCodeCode';
 
 
 	
