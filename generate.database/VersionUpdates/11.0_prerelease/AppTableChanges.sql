@@ -1,6 +1,6 @@
 set nocount on
 begin try
-	begin transaction
+begin transaction
 
 		--Check for the existance of the Source to Staging scripts in the new name format
 		--	remove them so they can all be added in the correct order later in this process
@@ -110,28 +110,28 @@ begin try
 		--Add the new stored procedures
 		insert into app.DataMigrationTasks
 		values
-		(1,1,0,0,'Staging.Source-to-Staging_Directory',				1,	0,'029, 035, 039, 103, 129, 130, 131, 163, 170, 190, 193, 196, 197, 198, 205, 206',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_ChildCount',			2,	0,'002, 089',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_Exiting',				3,	0,'009',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_Discipline',			4,	0,'005, 006, 007, 086, 088, 143, 144',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_Staff',					5,	0,'059, 065, 067, 070, 099, 112, 203',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_Assessment',			6,	0,'113, 125, 126, 137, 138, 139, 142, 175, 178, 179, 185, 188, 189',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_ChronicAbsenteeism',	7,	0,'195',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_Dropout',				8,	0,'032',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_GraduatesCompleters',	9,	0,'040',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_GraduationRate',		10,	0,'150, 151',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_Homeless',				11,	0,'118, 194',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_HsGradPsEnroll',		12,	0,'160',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_Immigrant',				13,	0,'165',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_Membership',			14,	0,'033, 052',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_MigrantEdProgram',		15,	0,'054, 121, 145',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_NeglectedOrDelinquent',	16,	0,'119, 127',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_TitleI',				17,	0,'037, 134',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_TitleIIIELOct',			18,	0,'141',NULL),
-		(1,1,0,0,'Staging.Source-to-Staging_TitleIIIELSY',			19,	0,'045, 116',NULL)
+		(1,1,0,0,'Source.Source-to-Staging_Directory @SchoolYear',				1,	0,'029, 035, 039, 103, 129, 130, 131, 163, 170, 190, 193, 196, 197, 198, 205, 206',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_ChildCount @SchoolYear',				2,	0,'002, 089',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_Exiting @SchoolYear',				3,	0,'009',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_Discipline @SchoolYear',				4,	0,'005, 006, 007, 086, 088, 143, 144',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_Staff @SchoolYear',					5,	0,'059, 065, 067, 070, 099, 112, 203',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_Assessment @SchoolYear',				6,	0,'113, 125, 126, 137, 138, 139, 142, 175, 178, 179, 185, 188, 189',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_ChronicAbsenteeism @SchoolYear',		7,	0,'195',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_Dropout @SchoolYear',				8,	0,'032',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_GraduatesCompleters @SchoolYear',	9,	0,'040',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_GraduationRate @SchoolYear',			10,	0,'150, 151',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_Homeless @SchoolYear',				11,	0,'118, 194',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_HsGradPsEnroll @SchoolYear',			12,	0,'160',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_Immigrant @SchoolYear',				13,	0,'165',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_Membership @SchoolYear',				14,	0,'033, 052',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_MigrantEdProgram @SchoolYear',		15,	0,'054, 121, 145',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_NeglectedOrDelinquent @SchoolYear',	16,	0,'119, 127',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_TitleI @SchoolYear',					17,	0,'037, 134',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_TitleIIIELOct @SchoolYear',			18,	0,'141',NULL),
+		(1,1,0,0,'Source.Source-to-Staging_TitleIIIELSY @SchoolYear',			19,	0,'045, 116',NULL)
 
 
-	commit transaction
+commit transaction
 end try
  
 begin catch
