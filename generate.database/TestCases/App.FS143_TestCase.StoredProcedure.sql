@@ -3,7 +3,7 @@
 AS
 BEGIN
 
---clear the tables for the next run
+	--clear the tables for the next run
 	IF OBJECT_ID('tempdb..#C143Staging') IS NOT NULL
 	DROP TABLE #C143Staging
 
@@ -81,7 +81,35 @@ BEGIN
 
     select @ChildCountDate = convert(varchar, @CutoffMonth) + '/' + convert(varchar, @CutoffDay) + '/' + convert(varchar, @SchoolYear -1)
 
-		
+	-- Identify studentw who have more than .5 day of duration
+	IF OBJECT_ID('tempdb..#StudentsWithEnoughDuration') IS NOT NULL
+	DROP TABLE #StudentsWithEnoughDuration
+
+	CREATE TABLE #StudentsWithEnoughDuration (
+		StudentIdentifierState	VARCHAR(60)
+	)
+
+	INSERT INTO #StudentsWithEnoughDuration
+	SELECT ske.StudentIdentifierState 
+		FROM Staging.Discipline sd 
+		JOIN staging.K12Enrollment ske 
+			ON sd.StudentIdentifierState = ske.StudentIdentifierState
+			AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+			AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') between ISNULL(ske.EnrollmentEntryDate, '1900-01-01') and ISNULL (ske.EnrollmentExitDate, GETDATE()) 
+		JOIN Staging.ProgramParticipationSpecialEducation sppe
+			ON sppe.StudentIdentifierState = sd.StudentIdentifierState
+			AND ISNULL(sppe.LeaIdentifierSeaAccountability, '') = ISNULL(sd.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(sppe.SchoolIdentifierSea, '') = ISNULL(sd.SchoolIdentifierSea, '')
+			--Discipline Date within Program Participation range
+			AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
+				BETWEEN ISNULL(sppe.ProgramParticipationBeginDate, CAST('07/01/' + CAST(2023 - 1 AS VARCHAR(4)) AS DATE)) 
+				AND ISNULL(sppe.ProgramParticipationEndDate, CAST('06/30/' + CAST(2023 AS VARCHAR(4)) AS DATE))
+			GROUP BY ske.StudentIdentifierState 
+			HAVING SUM(CAST(sd.DurationOfDisciplinaryAction AS DECIMAL(6, 3))) >= 0.5
+
+	CREATE INDEX IX_StudentsWithEnoughDuration ON #StudentsWithEnoughDuration(StudentIdentifierState)
+
 	--Get the LEAs that should not be reported against
 	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL
 	DROP TABLE #excludedLeas
@@ -164,6 +192,8 @@ BEGIN
 		--Discipline Date within Program Participation range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, @SYStart) AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
+	JOIN #StudentsWithEnoughDuration swed
+		ON ske.StudentIdentifierState = swed.StudentIdentifierState
 	LEFT JOIN Staging.IdeaDisabilityType sidt
         ON ske.StudentIdentifierState = sidt.StudentIdentifierState
         AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sidt.LeaIdentifierSeaAccountability, '')
@@ -197,25 +227,6 @@ BEGIN
 			OR sd.DisciplinaryActionTaken IN ('03086', '03087')
 			OR ISNULL(sd.IdeaInterimRemovalReason, '') <> ''
             OR ISNULL(sd.IdeaInterimRemoval, '') <> '')
-		AND ske.StudentIdentifierState IN (
-			SELECT ske.StudentIdentifierState 
-			FROM Staging.Discipline sd 
-			JOIN staging.K12Enrollment ske 
-				ON sd.StudentIdentifierState = ske.StudentIdentifierState
-				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
-				AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
-				AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') between ISNULL(ske.EnrollmentEntryDate, '1900-01-01') and ISNULL (ske.EnrollmentExitDate, GETDATE()) 
-			JOIN Staging.ProgramParticipationSpecialEducation sppe
-				ON sppe.StudentIdentifierState = sd.StudentIdentifierState
-				AND ISNULL(sppe.LeaIdentifierSeaAccountability, '') = ISNULL(sd.LeaIdentifierSeaAccountability, '')
-				AND ISNULL(sppe.SchoolIdentifierSea, '') = ISNULL(sd.SchoolIdentifierSea, '')
-				--Discipline Date within Program Participation range
-				AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-					BETWEEN ISNULL(sppe.ProgramParticipationBeginDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)) 
-					AND ISNULL(sppe.ProgramParticipationEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE))
-				GROUP BY ske.StudentIdentifierState 
-				HAVING SUM(CAST(sd.DurationOfDisciplinaryAction AS DECIMAL(6, 3))) >= 0.5
-			)
 		--Discipline Date with SY range 
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN @SYStart AND @SYEnd
@@ -654,5 +665,6 @@ BEGIN
 	--		on s.SqlUnitTestId = sr.SqlUnitTestId
 	--where s.UnitTestName like '%143%'
 	--and passed = 0
+
 
 END
