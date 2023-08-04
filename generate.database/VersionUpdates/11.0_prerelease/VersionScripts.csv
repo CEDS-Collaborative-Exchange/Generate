@@ -8,6 +8,7 @@ VersionUpdates\\11.0_prerelease\V11Upgrade,V11SchemaUpgrade.sql,0
 VersionUpdates\\11.0_prerelease\V11Upgrade,CEDS-Elements.sql,0
 VersionUpdates\\11.0_prerelease\V11Upgrade,Junk-Table-Dimension-Population.sql,0
 VersionUpdates\\11.0_prerelease,RemoveReferencesToIeus.sql,0
+VersionUpdates\\11.0_prerelease,DropUnusedItemsfromDatabase.sql,0
 Views\\Drop,App.trgVwReportCode_CategoryOptions.Trigger.sql,0
 Views\\Create,App.trgVwReportCode_CategoryOptions.Trigger.sql,0
 Views\\Drop,App.trgVwReportCode_FileColumns.Trigger.sql,0
