@@ -609,6 +609,9 @@ BEGIN
 				select @sql = @sql + 
 				'having sum(rfksd.DurationOfDisciplinaryAction) >= 0.5' + char(10)
 
+				select @sql = @sql + char(10) + 
+				'CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState)' + char(10) + char(10)
+
 			end
 			else if @reportCode in ('c007')
 			begin
@@ -633,6 +636,8 @@ BEGIN
 					, rdds.IdeaInterimRemovalReasonCode  
 				having sum(rfksd.DurationOfDisciplinaryAction) > 45' + char(10)
 
+				select @sql = @sql + char(10) + 
+				'CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState)' + char(10) + char(10)
 			end
 			else if @reportCode = 'c005'
 			begin
@@ -654,6 +659,10 @@ BEGIN
 					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
 				group by rdp.K12StudentStudentIdentifierState 
 				having sum(rfksd.DurationOfDisciplinaryAction) > 45' + char(10)
+
+				select @sql = @sql + char(10) + 
+				'CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState)' + char(10) + char(10)
+
 			end
 
 		end
