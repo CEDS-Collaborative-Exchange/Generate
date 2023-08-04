@@ -1,6 +1,12 @@
 set nocount on
 begin try
-begin transaction
+	begin transaction
+
+		--Create the new schema to house the Source to Staging scripts
+		IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'Source')
+		BEGIN
+			EXEC('CREATE SCHEMA [Source]')
+		END
 
 		--Check for the existance of the Source to Staging scripts in the new name format
 		--	remove them so they can all be added in the correct order later in this process
@@ -131,7 +137,7 @@ begin transaction
 		(1,1,0,0,'Source.Source-to-Staging_TitleIIIELSY @SchoolYear',			19,	0,'045, 116',NULL)
 
 
-commit transaction
+	commit transaction
 end try
  
 begin catch
