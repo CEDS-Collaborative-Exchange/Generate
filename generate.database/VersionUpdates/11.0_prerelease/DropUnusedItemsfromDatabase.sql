@@ -2,9 +2,9 @@
 IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Migrate_StagingToIDS_CharterSchoolManagementOrganization'))
 	drop procedure Staging.Migrate_StagingToIDS_CharterSchoolManagementOrganization
 IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Migrate_StagingToIDS_Discipline')) 
-	drop procedure Staging.Staging.Migrate_StagingToIDS_Discipline
+	drop procedure Staging.Migrate_StagingToIDS_Discipline
 IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Migrate_StagingToIDS_K12ProgramParticipation')) 
-	drop procedure Staging.Staging.Migrate_StagingToIDS_K12ProgramParticipation
+	drop procedure Staging.Migrate_StagingToIDS_K12ProgramParticipation
 IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Migrate_StagingToIDS_Migrant')) 
 	drop procedure Staging.Migrate_StagingToIDS_Migrant
 IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Migrate_StagingToIDS_OrganizationAddress')) 
