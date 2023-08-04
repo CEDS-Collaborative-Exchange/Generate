@@ -12604,6 +12604,7 @@
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StaffCounts].[StaffFTE]', N'StaffFullTimeEquivalency';
 
 	ALTER TABLE RDS.ReportEDFactsK12StaffCounts ADD PARAPROFESSIONALQUALIFICATIONSTATUS NVARCHAR(50);
+	ALTER TABLE RDS.ReportEDFactsK12StaffCounts ADD TEACHINGCREDENTIALTYPE NVARCHAR(50);
 
 	/*
 	The column [RDS].[ReportEDFactsK12StudentCounts].[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAM] is being dropped, data loss could occur.
