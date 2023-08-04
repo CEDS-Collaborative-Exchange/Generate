@@ -119,7 +119,6 @@ BEGIN
 		WHERE K12StaffClassification = 'SpecialEducationTeachers' 
 			AND @ChildCountDate BETWEEN sksa.AssignmentStartDate AND ISNULL(sksa.AssignmentEndDate, GETDATE())
 
-			select * from #staging where LeaIdentifierSea = '029CID3872'
 
 		---ST2 SEA Match All - Age Group Taught: 3TO5 Full Time Equivalency: 1493.3700
 		--SELECT * 

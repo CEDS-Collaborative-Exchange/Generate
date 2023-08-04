@@ -143,6 +143,7 @@ BEGIN
 			, SchoolIdentifierSea
 			, ProgramParticipationBeginDate
 			, ProgramParticipationEndDate
+			, IdeaIndicator
 			, IDEAEducationalEnvironmentForEarlyChildhood
 			, IDEAEducationalEnvironmentForSchoolAge
 		INTO #tempIdeaStatus
@@ -309,11 +310,6 @@ BEGIN
 				ON sd.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 				AND sd.DisciplinaryActionStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @EndDate)
 
-		--demographics                                
-			JOIN RDS.vwDimK12Demographics rdkd
-				ON rsy.SchoolYear = rdkd.SchoolYear
-				AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
-			
 		-- discipline status (rds)
 			LEFT JOIN #vwDisciplineStatuses rddisc
 				ON rsy.SchoolYear = rddisc.SchoolYear
