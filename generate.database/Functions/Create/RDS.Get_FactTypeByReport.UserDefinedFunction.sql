@@ -52,11 +52,11 @@ BEGIN
 	begin
 		set @factTypeCode = 'sppapr'
 	end 
-	else if(@reportCode in ('c116','c141'))
+	else if(@reportCode in ('c141'))
 	begin
 		set @factTypeCode = 'titleIIIELOct'
 	end 
-	else if(@reportCode in ('c045','c204'))
+	else if(@reportCode in ('c116','c045','c204'))
 	begin
 		set @factTypeCode = 'titleIIIELSY'
 	end 
