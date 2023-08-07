@@ -7,3 +7,5 @@ if not exists (select * from App.DataMigrationTypes where DataMigrationTypeCode 
 BEGIN
     insert into App.DataMigrationTypes	select 'RDSValidation', 'RDS Data Validation'
 END
+
+Update rds.DimSchoolYearDataMigrationTypes set IsSelected = 1 where DimSchoolYearId = 24
