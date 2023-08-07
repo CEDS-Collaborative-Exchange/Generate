@@ -1730,7 +1730,7 @@
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
 		, CASE CedsOptionSetCode
-			WHEN 'Shelter' THEN 'STH'
+			WHEN 'Shelters' THEN 'STH'
 			WHEN 'DoubledUp' THEN 'D'
 			WHEN 'Unsheltered' THEN 'U'
 			WHEN 'HotelMotel' THEN 'HM'
@@ -1739,8 +1739,7 @@
 		  END
 	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'HomelessPrimaryNighttimeResidence'
 
-	INSERT INTO RDS.DimHomelessnessStatuses
-		(
+	INSERT INTO RDS.DimHomelessnessStatuses (
 			HomelessnessStatusCode
 			, HomelessnessStatusDescription
 			, HomelessnessStatusEdFactsCode
