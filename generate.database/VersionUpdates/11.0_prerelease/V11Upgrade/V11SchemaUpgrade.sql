@@ -309,21 +309,9 @@ INCLUDE ([SchoolIdentifierSea],[School_TitleIPartASchoolDesignation],[School_Rec
 
 PRINT N'Create Index IX_Staging_K12Organization_LEA_IsReportedFederally';
 
-
 CREATE NONCLUSTERED INDEX [IX_Staging_K12Organization_LEA_IsReportedFederally]
 ON [Staging].[K12Organization] ([LEA_IsReportedFederally])
 INCLUDE ([LeaIdentifierSea])
-
-
-PRINT N'Create Index IX_Staging_ProgramParticipationSpecialEducation_StudentIdentifierState_LeaIdentifierSeaAccountability';
-
-
-CREATE NONCLUSTERED INDEX [IX_Staging_ProgramParticipationSpecialEducation_StudentIdentifierState_LeaIdentifierSeaAccountability]
-ON [Staging].[ProgramParticipationSpecialEducation] ([StudentIdentifierState],[LeaIdentifierSeaAccountability])
-INCLUDE ([ProgramParticipationEndDate])
-
-PRINT N'Rename [RDS].[DimResponsibleSchoolTypes].[ResponsibleSchoolTypeCode] to ResponsibleSchoolTypeAccountability';
-
 
 
 EXECUTE sp_rename @objname = N'[RDS].[DimResponsibleSchoolTypes].[ResponsibleSchoolTypeCode]', @newname = N'ResponsibleSchoolTypeAccountability', @objtype = N'COLUMN';
@@ -7705,6 +7693,17 @@ DROP TABLE [Staging].[ProgramParticipationSpecialEducation];
 EXECUTE sp_rename N'[Staging].[tmp_ms_xx_ProgramParticipationSpecialEducation]', N'ProgramParticipationSpecialEducation';
 
 EXECUTE sp_rename N'[Staging].[tmp_ms_xx_constraint_PK_ProgramParticipationSpecialEducation1]', N'PK_ProgramParticipationSpecialEducation', N'OBJECT';
+
+
+PRINT N'Rename [RDS].[DimResponsibleSchoolTypes].[ResponsibleSchoolTypeCode] to ResponsibleSchoolTypeAccountability';
+
+
+
+PRINT N'Create Index IX_Staging_ProgramParticipationSpecialEducation_StudentIdentifierState_LeaIdentifierSeaAccountability';
+
+CREATE NONCLUSTERED INDEX [IX_Staging_ProgramParticipationSpecialEducation_StudentIdentifierState_LeaIdentifierSeaAccountability]
+ON [Staging].[ProgramParticipationSpecialEducation] ([StudentIdentifierState],[LeaIdentifierSeaAccountability])
+INCLUDE ([ProgramParticipationEndDate])
 
 
 PRINT N'Creating Index [Staging].[ProgramParticipationSpecialEducation].[IX_Staging_ProgramParticipationSpecialEducation_WithIdentifiers]...';
