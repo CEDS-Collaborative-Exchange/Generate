@@ -26,8 +26,12 @@ UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C002','C089')
 EXEC RDS.Create_Reports 'childcount', 0, 'studentcounts' -- FS002, FS089 
 -- Execution time: 2 minutes
 PRINT 'RDS migration for Child Count (C141)' -- No WORKING test for FS116
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C116', 'C141')
-EXEC RDS.Create_Reports 'titleIIIELOct', 0, 'studentcounts' -- FS116, FS141
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C141')
+EXEC RDS.Create_Reports 'titleIIIELOct', 0, 'studentcounts' -- FS141
+
+PRINT 'RDS migration for Child Count (C116)' -- No WORKING test for FS116
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C116')
+EXEC RDS.Create_Reports 'titleIIIELSY', 0, 'studentcounts' -- FS141
 -- Execution time: 15 seconds - No records created
 PRINT 'RDS migration for Child Count (FS194)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C194')

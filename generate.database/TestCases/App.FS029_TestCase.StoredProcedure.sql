@@ -72,7 +72,7 @@ BEGIN TRY
 		  ,sko.LEA_OperationalStatusEffectiveDate
 		  ,sko.LEA_CharterLeaStatus
 		  ,sko.LEA_CharterSchoolIndicator
-		  ,sko.LEA_Type
+		  ,isnull(sko.LEA_Type, -1) LEA_Type
 		  ,sko.LEA_IsReportedFederally
 		  ,sko.LEA_RecordStartDateTime
 		  ,sko.LEA_RecordEndDateTime
@@ -125,7 +125,8 @@ BEGIN TRY
 		from RDS.ReportEDFactsOrganizationCounts
 		where reportcode = 'c029' and ReportLevel = 'LEA' and ReportYear = @SchoolYear
 
-
+--select * from #leas_staging --where LeaIdentifierSea = 
+--return
 		 INSERT INTO App.SqlUnitTestCASEResult 
 		 (
 			 [SqlUnitTestId]
@@ -536,14 +537,18 @@ BEGIN TRY
 				ELSE NULL
 			end as School_OperationalStatus
 		  ,sko.School_OperationalStatusEffectiveDate
-		  ,CASE WHEN isnull(sko.School_CharterSchoolIndicator,0) = 1 then 'YES' ELSE 'NO' END as School_CharterSchoolStatus
+		  ,CASE sko.School_CharterSchoolIndicator
+				when 1 then 'YES' 
+				when 0 then 'NO' 
+				ELSE 'MISSING' 
+			END as School_CharterSchoolStatus
 		  ,CASE sssrd3.OutputCode 
 				WHEN 'Regular' THEN 1
 				WHEN 'Special' THEN 2
 				WHEN 'CareerAndTechnical' THEN 3
 				WHEN 'Alternative' THEN 4
 				WHEN 'Reportable' THEN 5
-				ELSE NULL
+				ELSE -1
 			END as School_Type
 		  ,sko.School_IsReportedFederally
 		  ,sko.School_RecordStartDateTime

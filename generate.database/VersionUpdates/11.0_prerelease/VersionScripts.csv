@@ -33,6 +33,8 @@ Functions\\Drop,dbo.fnSplit.UserDefinedFunction.sql,0
 Functions\\Create,dbo.fnSplit.UserDefinedFunction.sql,0
 Functions\\Drop,RDS.MaxRecordStartDateTime.UserDefinedFunction.sql,0
 Functions\\Create,RDS.MaxRecordStartDateTime.UserDefinedFunction.sql,0
+Functions\\Drop,RDS.Get_FactTypeByReport.UserDefinedFunction.sql,0
+Functions\\Create,RDS.Get_FactTypeByReport.UserDefinedFunction.sql,0
 Views\\Drop,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql,0
 Views\\Create,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql,0
 Views\\Drop,dbo.vwCEDSMapping.View.sql,0
