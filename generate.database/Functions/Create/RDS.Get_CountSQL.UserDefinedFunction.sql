@@ -4376,13 +4376,14 @@ BEGIN
 				select distinct fact.K12StudentId, homelessStatus.DimHomelessnessStatusId, p.K12StudentStudentIdentifierState
 				from rds.' + @factTable + ' fact '
 
-				if @reportLevel = 'lea'
+				if @reportLevel in ('sea', 'lea')
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
 					inner join RDS.DimLeas org 
 						on fact.LeaId = org.DimLeaId
 						AND org.ReportedFederally = 1
-						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')
+						AND org.McKinneyVentoSubgrantRecipient = ''1'''
 				end 
 				if @reportLevel = 'sch'
 				begin
@@ -4403,7 +4404,8 @@ BEGIN
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
 				inner join rds.DimHomelessnessStatuses homelessStatus 
 					on homelessStatus.DimHomelessnessStatusId = fact.HomelessnessStatusId
-				where homelessStatus.HomelessServicedIndicatorCode = ''YES''
+				where homelessStatus.HomelessServicedIndicatorCode = ''Yes''
+				and fact.GradeLevelId in (-1, 1)
 			) rules
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.HomelessnessStatusId =  rules.DimHomelessnessStatusId'
