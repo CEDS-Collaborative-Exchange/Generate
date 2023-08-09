@@ -17715,7 +17715,7 @@
 		[MiddleName] 									NVARCHAR (100) 	NULL,
 		[BirthDate] 									DATE 			NULL,
 		[Sex] 											NVARCHAR (30) 	NULL,
-    	[Race]                                   		VARCHAR (100)  NULL,
+    	[Race]                                   		NVARCHAR (100)  NULL,
 		[PositionTitle] 								NVARCHAR (200) 	NULL,
 		[FullTimeEquivalency] 							DECIMAL (5, 4) 	NULL,
 		[SpecialEducationStaffCategory] 				NVARCHAR (100) 	NULL,

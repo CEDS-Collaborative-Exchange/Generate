@@ -1,10 +1,3 @@
-/**********************************************************************
-Author: AEM Corp
-Date:	3/1/2022
-Description: Migrates Staff Data from Staging to RDS.FactK12StaffCounts
-
-NOTE: This Stored Procedure processes files: 059, 065, 067, 070, 099, 112, 203
-************************************************************************/
 CREATE PROCEDURE  [Staging].[Staging-to-FactK12StaffCounts] 
 	@SchoolYear SMALLINT
 AS

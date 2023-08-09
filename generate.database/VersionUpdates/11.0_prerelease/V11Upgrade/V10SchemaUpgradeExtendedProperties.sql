@@ -17168,43 +17168,43 @@
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ISO6392LANGUAGE].[CEDS_Def_Desc]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ISO6392LANGUAGECODE].[CEDS_Def_Desc]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The code for the specific language or dialect that a person uses to communicate.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ISO6392LANGUAGE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'The code for the specific language or dialect that a person uses to communicate.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ISO6392LANGUAGECODE';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ISO6392LANGUAGE].[CEDS_ElementTechnicalName]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ISO6392LANGUAGECODE].[CEDS_ElementTechnicalName]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'Iso6392LanguageCodeCode', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ISO6392LANGUAGE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_ElementTechnicalName', @value = N'Iso6392LanguageCodeCode', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ISO6392LANGUAGECODE';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ISO6392LANGUAGE].[CEDS_GlobalId]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ISO6392LANGUAGECODE].[CEDS_GlobalId]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000317', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ISO6392LANGUAGE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_GlobalId', @value = N'000317', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ISO6392LANGUAGECODE';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ISO6392LANGUAGE].[CEDS_URL]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ISO6392LANGUAGECODE].[CEDS_URL]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17317', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ISO6392LANGUAGE';
+	EXECUTE sp_addextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=17317', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ISO6392LANGUAGECODE';
 
 
 	
-	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ISO6392LANGUAGE].[MS_Description]...';
+	PRINT N'Creating Extended Property [RDS].[ReportEDFactsK12StudentCounts].[ISO6392LANGUAGECODE].[MS_Description]...';
 
 
 	
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ISO6392LANGUAGE';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'See the CEDS_GlobalId, CEDS_ElementTechnicalName, CEDS_URL, and CEDS_Def_Desc extended properties.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'ReportEDFactsK12StudentCounts', @level2type = N'COLUMN', @level2name = N'ISO6392LANGUAGECODE';
 
 
 	
