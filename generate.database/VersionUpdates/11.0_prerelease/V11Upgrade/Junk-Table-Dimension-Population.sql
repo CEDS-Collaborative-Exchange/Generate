@@ -1730,7 +1730,7 @@
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
 		, CASE CedsOptionSetCode
-			WHEN 'Shelters' THEN 'STH'
+			WHEN 'Shelter' THEN 'STH'
 			WHEN 'DoubledUp' THEN 'D'
 			WHEN 'Unsheltered' THEN 'U'
 			WHEN 'HotelMotel' THEN 'HM'

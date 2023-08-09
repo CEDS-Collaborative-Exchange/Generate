@@ -51,7 +51,7 @@ EXEC RDS.Create_Reports 'submission', 0, 'personnelcounts' -- FS070, FS099, FS11
 -- Execution time -- ERROR "Invalud column name "DimStudentId" for FS070 Line 1334
 PRINT 'RDS migration for Directry (C029)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C029')
-EXEC RDS.Create_Reports 'submission', 0, 'organizationcounts' -- FS029, no tests yet for FS039, FS129, FS130, FS193, FS190, FS196, FS197, FS198, FS103, FS131, FS205, FS206, FS170, FS035, FS207
+EXEC RDS.Create_OrganizationReportData 'C029', 0 -- FS029, no tests yet for FS039, FS129, FS130, FS193, FS190, FS196, FS197, FS198, FS103, FS131, FS205, FS206, FS170, FS035, FS207
 -- Execution time
 
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'specedexit' -- FS009 - The test runs this code for you

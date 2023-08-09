@@ -44,10 +44,6 @@ BEGIN
 	begin
 		set @factTypeCode = 'grad'
 	end 
-	else if(@reportCode in ('c040','cohortgraduationrate'))
-	begin
-		set @factTypeCode = 'grad'
-	end 
 	else if(@reportCode in ('indicator9','indicator10'))
 	begin
 		set @factTypeCode = 'sppapr'

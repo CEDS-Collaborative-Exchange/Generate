@@ -8259,18 +8259,18 @@
 
 	SET XACT_ABORT ON;
 
-	CREATE TABLE [RDS].[tmp_ciid_xx_DimCharterSchoolAuthorizers] (
-		  [CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea] [nvarchar](max) NULL
-		, [RecordStartDateTime] [datetime] NULL
-		, [RecordEndDateTime] [datetime] NULL
-	)
+	-- CREATE TABLE [RDS].[tmp_ciid_xx_DimCharterSchoolAuthorizers] (
+	-- 	  [CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea] [nvarchar](max) NULL
+	-- 	, [RecordStartDateTime] [datetime] NULL
+	-- 	, [RecordEndDateTime] [datetime] NULL
+	-- )
 
-	INSERT INTO [RDS].[tmp_ciid_xx_DimCharterSchoolAuthorizers]
-	SELECT 
-		[StateIdentifier]
-		, [RecordStartDateTime]
-		, [RecordEndDateTime]
-	FROM [RDS].[DimCharterSchoolAuthorizers]
+	-- INSERT INTO [RDS].[tmp_ciid_xx_DimCharterSchoolAuthorizers]
+	-- SELECT 
+	-- 	[StateIdentifier]
+	-- 	, [RecordStartDateTime]
+	-- 	, [RecordEndDateTime]
+	-- FROM [RDS].[DimCharterSchoolAuthorizers]
 
 
 	CREATE TABLE [RDS].[tmp_ms_xx_DimCharterSchoolAuthorizers] (
@@ -8401,18 +8401,18 @@
 	SET XACT_ABORT ON;
 
 
-	CREATE TABLE [RDS].[tmp_ciid_xx_DimCharterSchoolManagementOrganizations](
-		  [CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea] [nvarchar](max) NULL
-		, [RecordStartDateTime] [datetime] NULL
-		, [RecordEndDateTime] [datetime] NULL
-	)
+	-- CREATE TABLE [RDS].[tmp_ciid_xx_DimCharterSchoolManagementOrganizations](
+	-- 	  [CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea] [nvarchar](max) NULL
+	-- 	, [RecordStartDateTime] [datetime] NULL
+	-- 	, [RecordEndDateTime] [datetime] NULL
+	-- )
 
-	INSERT INTO [RDS].[tmp_ciid_xx_DimCharterSchoolManagementOrganizations]
-	SELECT 
-		  [StateIdentifier]
-		, [RecordStartDateTime]
-		, [RecordEndDateTime]
-	FROM [RDS].[DimCharterSchoolManagementOrganizations]
+	-- INSERT INTO [RDS].[tmp_ciid_xx_DimCharterSchoolManagementOrganizations]
+	-- SELECT 
+	-- 	  [StateIdentifier]
+	-- 	, [RecordStartDateTime]
+	-- 	, [RecordEndDateTime]
+	-- FROM [RDS].[DimCharterSchoolManagementOrganizations]
 
 	CREATE TABLE [RDS].[tmp_ms_xx_DimCharterSchoolManagementOrganizations](
 		[DimCharterSchoolManagementOrganizationId] [int] IDENTITY(1,1) NOT NULL,
@@ -12639,6 +12639,7 @@
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[ASSESSMENTSUBJECT]', N'ASSESSMENTACADEMICSUBJECT';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[ACADEMICORVOCATIONALEXITOUTCOME]', N'EDFACTSACADEMICORCAREERANDTECHNICALOUTCOMEEXITTYPE';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[LEPPERKINSSTATUS]', N'PERKINSENGLISHLEARNERSTATUS';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentCounts].[ISO6392Language]', N'ISO6392LANGUAGECODE';
 
 	
 
@@ -12745,35 +12746,35 @@
 
 
 	
-	SET XACT_ABORT ON;
+	-- SET XACT_ABORT ON;
 
-	CREATE TABLE [RDS].[tmp_ms_xx_ReportPsAttainment] (
-		[ReportLevel]                     NVARCHAR (20)  NOT NULL,
-		[ReportCode]                      NVARCHAR (20)  NOT NULL,
-		[SchoolYear]                      SMALLINT       NULL,
-		[CategorySetCode]                 NVARCHAR (20)  NOT NULL,
-		[IPEDSIdentifier]                 NVARCHAR (40)  NULL,
-		[PsInstitutionName]               NVARCHAR (100) NULL,
-		[ReportMeasureLabel]              NVARCHAR (100) NULL,
-		[ReportMeasure]                   NVARCHAR (MAX) NOT NULL,
-		[AcademicAwardYear]               SMALLINT       NULL,
-		[AgeRange]                        NVARCHAR (20)  NULL,
-		[CumulativeCreditsEarnedRange]    NVARCHAR (20)  NULL,
-		[Earned24CreditsFirst12Months]    NVARCHAR (20)  NULL,
-		[EconomicDisadvantageStatus]      NVARCHAR (20)  NULL,
-		[EnglishLearnerStatus]            NVARCHAR (20)  NULL,
-		[EnrolledFirstToSecondFall]       NVARCHAR (20)  NULL,
-		[HomelessnessStatus]              NVARCHAR (20)  NULL,
-		[IdeaIndicator]                   NVARCHAR (20)  NULL,
-		[MigrantStatus]                   NVARCHAR (20)  NULL,
-		[MostPrevalentLevelOfInstitution] NVARCHAR (20)  NULL,
-		[PescAwardLevelTypeDescription]   NVARCHAR (100) NULL,
-		[RaceEthnicity]                   NVARCHAR (60)  NULL,
-		[RemedialSession]                 NVARCHAR (20)  NULL,
-		[Sex]                             NVARCHAR (20)  NULL,
-		[SchoolYearExitedFromHS]          SMALLINT       NULL
-	)
-	WITH (DATA_COMPRESSION = PAGE);
+	-- CREATE TABLE [RDS].[tmp_ms_xx_ReportPsAttainment] (
+	-- 	[ReportLevel]                     NVARCHAR (20)  NOT NULL,
+	-- 	[ReportCode]                      NVARCHAR (20)  NOT NULL,
+	-- 	[SchoolYear]                      SMALLINT       NULL,
+	-- 	[CategorySetCode]                 NVARCHAR (20)  NOT NULL,
+	-- 	[IPEDSIdentifier]                 NVARCHAR (40)  NULL,
+	-- 	[PsInstitutionName]               NVARCHAR (100) NULL,
+	-- 	[ReportMeasureLabel]              NVARCHAR (100) NULL,
+	-- 	[ReportMeasure]                   NVARCHAR (MAX) NOT NULL,
+	-- 	[AcademicAwardYear]               SMALLINT       NULL,
+	-- 	[AgeRange]                        NVARCHAR (20)  NULL,
+	-- 	[CumulativeCreditsEarnedRange]    NVARCHAR (20)  NULL,
+	-- 	[Earned24CreditsFirst12Months]    NVARCHAR (20)  NULL,
+	-- 	[EconomicDisadvantageStatus]      NVARCHAR (20)  NULL,
+	-- 	[EnglishLearnerStatus]            NVARCHAR (20)  NULL,
+	-- 	[EnrolledFirstToSecondFall]       NVARCHAR (20)  NULL,
+	-- 	[HomelessnessStatus]              NVARCHAR (20)  NULL,
+	-- 	[IdeaIndicator]                   NVARCHAR (20)  NULL,
+	-- 	[MigrantStatus]                   NVARCHAR (20)  NULL,
+	-- 	[MostPrevalentLevelOfInstitution] NVARCHAR (20)  NULL,
+	-- 	[PescAwardLevelTypeDescription]   NVARCHAR (100) NULL,
+	-- 	[RaceEthnicity]                   NVARCHAR (60)  NULL,
+	-- 	[RemedialSession]                 NVARCHAR (20)  NULL,
+	-- 	[Sex]                             NVARCHAR (20)  NULL,
+	-- 	[SchoolYearExitedFromHS]          SMALLINT       NULL
+	-- )
+	-- WITH (DATA_COMPRESSION = PAGE);
 
 
 	
@@ -12789,8 +12790,13 @@
 	EXECUTE sp_rename N'[Staging].[StateDetail].[SeaStateIdentifier]', N'SeaOrganizationIdentifierSea';
 
 	ALTER TABLE [Staging].[StateDetail] ALTER COLUMN [SchoolYear] SMALLINT NULL;	
+	ALTER TABLE [Staging].[StateDetail] ALTER COLUMN [SeaContact_FirstName] VARCHAR(100) NULL;	
+	ALTER TABLE [Staging].[StateDetail] ALTER COLUMN [SeaContact_LastOrSurname] VARCHAR(100) NULL;	
 
-
+	
+	PRINT N'Starting rebuilding table [Staging].[Assessment]...';
+	
+	EXECUTE sp_rename N'[Staging].[Assessment].[AssessmentTypeAdministeredToChildrenWithDisabilities]', N'AssessmentTypeAdministered';
 
 	
 	PRINT N'Altering Primary Key [Staging].[PK_Assessment]...';
@@ -12826,6 +12832,7 @@
 
 	CREATE TABLE [Staging].[tmp_ms_xx_Discipline] (
 		[Id]                                             INT            IDENTITY (1, 1) NOT NULL,
+		[SchoolYear]                                     SMALLINT       NULL,
 		[StudentIdentifierState]                         NVARCHAR (40)  NULL,
 		[LeaIdentifierSeaAccountability]                 NVARCHAR (50)  NULL,
 		[LeaIdentifierSeaAttendance]                     NVARCHAR (50)  NULL,
@@ -12852,7 +12859,6 @@
 		[DisciplineMethodOfCwd]                          NVARCHAR (100) NULL,
 		[WeaponType]                                     NVARCHAR (100) NULL,
 		[FirearmType]                                    NVARCHAR (100) NULL,
-		[SchoolYear]                                     SMALLINT       NULL,
 		[DataCollectionName]                             NVARCHAR (100) NULL,
 		[PersonId]                                       INT            NULL,
 		[OrganizationID_LEA]                             INT            NULL,
@@ -12896,9 +12902,9 @@
 		[LeaIdentifierSeaGraduation]                     NVARCHAR (50)  NULL,
 		[LeaIdentifierSeaIndividualizedEducationProgram] NVARCHAR (50)  NULL,
 		[SchoolIdentifierSea]                            NVARCHAR (50)  NULL,
-		[FirstName]                                      NVARCHAR (75)  NULL,
-		[LastOrSurname]                                  NVARCHAR (75)  NULL,
-		[MiddleName]                                     NVARCHAR (75)  NULL,
+		[FirstName]                                      NVARCHAR (100)  NULL,
+		[LastOrSurname]                                  NVARCHAR (100)  NULL,
+		[MiddleName]                                     NVARCHAR (100)  NULL,
 		[Birthdate]                                      DATE           NULL,
 		[Sex]                                            NVARCHAR (30)  NULL,
 		[HispanicLatinoEthnicity]                        BIT            NULL,
@@ -12912,6 +12918,8 @@
 		[CohortDescription]                              NCHAR (1024)   NULL,
 		[ProjectedGraduationDate]                        NVARCHAR (8)   NULL,
 		[HighSchoolDiplomaType]                          NVARCHAR (100) NULL,
+		[LanguageNative]                                 NVARCHAR (100) NULL,
+		[LanguageHome]                                   NVARCHAR (100) NULL,
 		[NumberOfSchoolDays]                             DECIMAL (9, 2) NULL,
 		[NumberOfDaysAbsent]                             DECIMAL (9, 2) NULL,
 		[AttendanceRate]                                 DECIMAL (5, 4) NULL,
@@ -14458,9 +14466,9 @@
 		[Id]                                INT            IDENTITY (1, 1) NOT NULL,
 		[StudentIdentifierState]            NVARCHAR (100) NULL,
 		[InstitutionIpedsUnitId]            NVARCHAR (100) NULL,
-		[FirstName]                         NVARCHAR (75)  NULL,
-		[LastOrSurname]                     NVARCHAR (75)  NULL,
-		[MiddleName]                        NVARCHAR (75)  NULL,
+		[FirstName]                         NVARCHAR (100)  NULL,
+		[LastOrSurname]                     NVARCHAR (100)  NULL,
+		[MiddleName]                        NVARCHAR (100)  NULL,
 		[Birthdate]                         DATE           NULL,
 		[Sex]                               VARCHAR (30)   NULL,
 		[HispanicLatinoEthnicity]           BIT            NULL,
@@ -16870,10 +16878,6 @@
 
 
 	
-	PRINT N'Creating Table [RDS].[ReportEDFactsK12StudentAssessments]...';
-
-
-	
 	CREATE TABLE [RDS].[ReportEDFactsK12StudentAssessments] (
 		[ReportEDFactsK12StudentAssessmentId]           INT             IDENTITY (1, 1) NOT NULL,
 		[ASSESSMENTSUBJECT]                             NVARCHAR (50)   NULL,
@@ -17706,11 +17710,12 @@
 		[StaffMemberIdentifierState] 					NVARCHAR (40) 	NULL,
 		[LeaIdentifierSea] 								NVARCHAR (50) 	NULL,
 		[SchoolIdentifierSea] 							NVARCHAR (50) 	NULL,
-		[FirstName] 									NVARCHAR (75) 	NULL,
-		[LastOrSurname] 								NVARCHAR (75) 	NULL,
-		[MiddleName] 									NVARCHAR (75) 	NULL,
+		[FirstName] 									NVARCHAR (100) 	NULL,
+		[LastOrSurname] 								NVARCHAR (100) 	NULL,
+		[MiddleName] 									NVARCHAR (100) 	NULL,
 		[BirthDate] 									DATE 			NULL,
 		[Sex] 											NVARCHAR (30) 	NULL,
+    	[Race]                                   		VARCHAR (100)  NULL,
 		[PositionTitle] 								NVARCHAR (200) 	NULL,
 		[FullTimeEquivalency] 							DECIMAL (5, 4) 	NULL,
 		[SpecialEducationStaffCategory] 				NVARCHAR (100) 	NULL,
@@ -18727,6 +18732,9 @@
 		ADD CONSTRAINT [DF_FactSpecialEducation_PrimaryDisabilityTypeId] DEFAULT ((-1)) FOR [PrimaryDisabilityTypeId];
 
 
+
+
+
 	
 	PRINT N'Creating Default Constraint [RDS].[DF_FactSpecialEducation_SpecialEducationServicesExitDateId]...';
 
@@ -19403,7 +19411,7 @@
 
 	
 	ALTER TABLE [RDS].[FactK12StaffCounts] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactK12StaffCounts_CredentialExpirationDate] FOREIGN KEY ([CredentialExpirationDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
+		ADD CONSTRAINT [FK_FactK12StaffCounts_CredentialExpirationDateId] FOREIGN KEY ([CredentialExpirationDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
 	
@@ -22204,7 +22212,16 @@
 		ADD CONSTRAINT [FK_FactSpecialEducation_IndividualizedProgramServicePlanReevaluationDateId] FOREIGN KEY ([IndividualizedProgramServicePlanReevaluationDateId]) REFERENCES [RDS].[DimDates] ([DimDateId]);
 
 
+
+	PRINT N'Creating Foreign Key [RDS].[FK_FactSpecialEducation_LeaIEPServiceProviderId]...';
+
+
+
+    ALTER TABLE [RDS].[FactSpecialEducation] WITH NOCHECK
+		ADD CONSTRAINT [FK_FactSpecialEducation_LeaIEPServiceProviderId] FOREIGN KEY ([LeaIEPServiceProviderId]) REFERENCES [RDS].[DimLeas] ([DimLeaID])
 	
+
+
 	PRINT N'Creating Foreign Key [RDS].[FK_FactSpecialEducation_IndividualizedProgramStatusId]...';
 
 
@@ -22294,16 +22311,7 @@
 		ADD CONSTRAINT [FK_FactSpecialEducation_LeaIndividualizedEducationProgramId] FOREIGN KEY ([LeaIndividualizedEducationProgramId]) REFERENCES [RDS].[DimLeas] ([DimLeaID]);
 
 
-	
-	PRINT N'Creating Foreign Key [RDS].[FK_FactSpecialEducation_LeaIEPServiceProviderId]...';
-
-
-	
-	ALTER TABLE [RDS].[FactSpecialEducation] WITH NOCHECK
-		ADD CONSTRAINT [FK_FactSpecialEducation_LeaIEPServiceProviderId] FOREIGN KEY ([LeaIEPServiceProviderId]) REFERENCES [RDS].[DimLeas] ([DimLeaID]);
-
-
-	
+		
 	PRINT N'Creating Foreign Key [RDS].[FK_FactSpecialEducation_MigrantStatusId]...';
 
 
