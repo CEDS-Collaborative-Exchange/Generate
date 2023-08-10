@@ -220,6 +220,7 @@ BEGIN
 			-- FS141
 			AND ISNULL(el.EnglishLearner_StatusStartDate, @ReportingDate) <= @ReportingDate
 			AND ISNULL(el.EnglishLearner_StatusEndDate, @ReportingDate) >= @ReportingDate
+			AND ISNULL(el.EnglishLearnerStatus,0) = 1
 
 	-- Leas (rds)
 		LEFT JOIN RDS.DimLeas rdl
@@ -236,7 +237,7 @@ BEGIN
 	--english learner (RDS)
 		LEFT JOIN #vwEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdels.EnglishLearnerStatusMap AS SMALLINT), -1)
-			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
+			AND ISNULL(CAST(el.PerkinsEnglishLearnerStatus  AS SMALLINT), -1) = ISNULL(CAST(rdels.PerkinsEnglishLearnerStatusMap AS SMALLINT), -1)
 
 	--languages (RDS)
 		LEFT JOIN #vwLanguages rdvl
@@ -270,6 +271,7 @@ BEGIN
 
 		WHERE ske.EnrollmentEntryDate  <= @ReportingDate
 		AND ISNULL(ske.EnrollmentExitDate, @ReportingDate) >= @ReportingDate
+		AND rgls.GradeLevelCode in ('KG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', 'UG')
 
 	
 -----------------------------------------------------------------------------------------------------------------------	
