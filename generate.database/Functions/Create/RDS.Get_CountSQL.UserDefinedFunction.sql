@@ -1507,15 +1507,23 @@ BEGIN
 									else ''WDIS''
 								end'
 							end
+						else if @reportCode = 'c118'
+							begin
+								set @sqlCategoryReturnField = ' 
+								case 
+									when CAT_' + @reportField + '.IdeaIndicatorEdFactsCode = ''IDEA'' then ''WDIS''
+									else ''MISSING''
+								end'
+							end
 						else
 							begin
 								set @sqlCategoryReturnField = '
 								case 
-									when CAT_' + @reportField + '.IdeaIndicatorCode = ''MISSING'' then ''WODIS''
-									else ''WDIS''
+									when CAT_' + @reportField + '.IdeaIndicatorEdFactsCode = ''IDEA'' then ''WDIS''
+									else ''WODIS''
 								end'
 							end
-					end
+					end		
 				else if @categoryCode in ('DISABCATIDEA', 'DISABCATIDEAEXIT') and @year <= 2020
 				begin
 					
@@ -1795,8 +1803,8 @@ BEGIN
 			else if(@reportField = 'GRADELEVEL' and @reportCode in ('c118'))
 			BEGIN
 					set @sqlCountJoins = @sqlCountJoins + '		
-						left join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
-						left join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
+						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
+						inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
 							on ' + 'CAT_' + @reportField + '.GradeLevelEdFactsCode = CAT_' + @reportField + '_temp.Code
 							and ' + 'CAT_' + @reportField + '.GradeLevelEdFactsCode NOT IN (''AE'')
 						left join RDS.DimAges da ON fact.AgeId = da.DimAgeId
@@ -3625,46 +3633,24 @@ BEGIN
 	else if @reportCode in ('c118')
 		begin
 		set @sqlCountJoins = @sqlCountJoins + '
-			inner join (
-				select distinct fact.K12StudentId,  homeless.DimHomelessnessStatusId, dgl.DimGradeLevelId, p.K12StudentStudentIdentifierState
-				from rds.' + @factTable + ' fact '
-
-				if @reportLevel = 'lea'
-				begin
-					set @sqlCountJoins = @sqlCountJoins + '
-					inner join RDS.DimLeas org 
-						on fact.LeaId = org.DimLeaId
-						AND org.ReportedFederally = 1
-						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
-				end 
-				if @reportLevel = 'sch'
-				begin
-					set @sqlCountJoins = @sqlCountJoins + '
-					inner join RDS.DimK12Schools org 
-						on fact.K12SchoolId = org.DimK12SchoolId
-						AND org.ReportedFederally = 1
-						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
-				end
-
-			set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimPeople p
 					on fact.K12StudentId = p.DimPersonId
-				inner join rds.DimLeas l 
-					on fact.LeaID = l.DimLeaID				
+				inner join RDS.DimLeas org 
+					on fact.LeaId = org.DimLeaId '
+		if @reportLevel = 'lea'
+		begin
+			set @sqlCountJoins = @sqlCountJoins + '
+					AND org.ReportedFederally = 1
+					AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+		end 
+		set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimGradeLevels dgl 
 					on fact.GradeLevelId = dgl.DimGradeLevelId
-					and fact.SchoolYearId = @dimSchoolYearId
-					and fact.FactTypeId = @dimFactTypeId
 					and fact.LeaId <> -1
 				inner join rds.DimHomelessnessStatuses homeless 
 					on homeless.DimHomelessnessStatusId = fact.HomelessnessStatusId
-				where homeless.HomelessnessStatusCode = ''Yes''
-				and dgl.GradeLevelEdFactsCode NOT IN (''AE'')			
-			) rules
-				on fact.K12StudentId = rules.K12StudentId  
-				and fact.homelessnessStatusId = rules.DimHomelessnessStatusId 
-				and fact.GradeLevelId = rules.DimGradeLevelId' 
-		end
+			'	
+		end	
 	else if @reportCode in ('c160')
 		begin
 		set @sqlCountJoins = @sqlCountJoins + '
@@ -5536,6 +5522,79 @@ BEGIN
 						' + @sqlHavingClause + '
 						'
 				end			
+			else if(@reportCode in ('c118'))
+				begin
+							set @sql = @sql + '
+								----------------------------
+								-- Insert actual count data 
+								-- default ReportEDFactsK12StudentCounts
+								----------------------------
+		
+								create table #categorySet (	' 
+								+ case when @reportLevel = 'sea' then 'DimSeaId int,'
+									   when @reportLevel = 'lea' then 'DimLeaId int,' 
+									   else 'DimK12SchoolId int,'
+								end + 'DimStudentId int,
+								K12StudentStudentIdentifierState varchar(50)' + @sqlCategoryFieldDefs + ',
+								' + @factField + ' int
+								) 
+
+										' + case when @reportLevel = 'sea' then '
+								CREATE INDEX IDX_CategorySet ON #CategorySet (DimSeaId)
+								'    when @reportLevel = 'lea' then '
+								CREATE INDEX IDX_CategorySet ON #CategorySet (DimLeaId)
+								' 	 when @reportLevel = 'sch' then '
+								CREATE INDEX IDX_CategorySet ON #CategorySet (DimK12SchoolId)
+								'    else ''
+								end +
+								'
+								truncate table #categorySet
+
+								-- Actual Counts
+								insert into #categorySet
+						(' + case when @reportLevel = 'sea' then 'DimSeaId,'
+								  when @reportLevel = 'lea' then 'DimLeaId,' 
+								  else 'DimK12SchoolId,'
+
+							end + 'DimStudentId, K12StudentStudentIdentifierState'  + @sqlCategoryFields + ', ' + @factField + ')
+						select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
+										 when @reportLevel = 'lea' then 'fact.LeaId,' 
+										 else 'fact.K12SchoolId,'
+							end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields +
+							case when @ReportCode = 'C116' then
+							',	count(distinct K12StudentId) '
+							else
+							',	sum(isnull(fact.' + @factField + ', 0)) '
+							end +
+						'from rds.' + @factTable + ' fact ' + char(10)
+							if @reportCode = 'C052'
+								begin
+									select @sql = @sql + char(10) +
+									char(9) + char(9) + char(9) + char(9) + char(9) + char(9) +
+									'inner join #Students rules
+									on fact.K12StudentId = rules.K12StudentId' + char(10)					
+								end
+						
+						select @sql = @sql + @sqlCountJoins + char(10)
+
+						+ ' ' + @reportFilterJoin + '
+						where ' + case when @reportLevel = 'sea' then 'fact.SeaId <>-1'
+									 when @reportLevel = 'lea' then 'fact.LeaId <> -1'
+									 else 'IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1' end  + '
+
+						and homeless.HomelessnessStatusCode = ''Yes''
+						and dgl.GradeLevelEdFactsCode <> ''AE''			
+
+						and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
+						and fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition +
+						' group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
+										   when @reportLevel = 'lea' then 'fact.LeaId,'
+										   else 'fact.K12SchoolId,'
+										 end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState'  + @sqlCategoryQualifiedDimensionGroupFields + '
+						' + @sqlHavingClause + '
+						'
+
+				end
 			else
 				-- all other report codes
 				begin
