@@ -2,7 +2,7 @@ Param(
   [string] $sqlServer = "192.168.51.53",
   [string] $db = "generate",
   [string] $user,
-  [securestring] $password,
+  [string] $password,
   [string] $sqlCmdPath = "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\SQLCMD.EXE")
 
 Write-Output "Server = $sqlServer"
