@@ -59,7 +59,8 @@ BEGIN
 		FROM RDS.vwDimIdeaStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwIdeaStatuses ON #vwIdeaStatuses (IdeaIndicatorMap, IdeaEducationalEnvironmentForSchoolageMap);
+		CREATE CLUSTERED INDEX ix_tempvwIdeaStatuses 
+			ON #vwIdeaStatuses (IdeaIndicatorMap, IdeaEducationalEnvironmentForSchoolageMap);
 
 		SELECT *
 		INTO #vwMigrantStatuses
@@ -81,7 +82,8 @@ BEGIN
 		FROM Staging.PersonStatus
 
 	-- Create Index for #tempELStatus 
-		CREATE INDEX IX_tempELStatus ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusEndDate)
+		CREATE INDEX IX_tempELStatus 
+			ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusEndDate)
 
 	--Pull the Migrant Status into a temp table
 		SELECT DISTINCT 
@@ -95,7 +97,8 @@ BEGIN
 		FROM Staging.PersonStatus
 
 	-- Create Index for #tempMigrantStatus 
-		CREATE INDEX IX_tempMigrantStatus ON #tempMigrantStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Migrant_StatusStartDate, Migrant_StatusEndDate)
+		CREATE INDEX IX_tempMigrantStatus 
+			ON #tempMigrantStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Migrant_StatusStartDate, Migrant_StatusEndDate)
 
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
@@ -182,6 +185,7 @@ BEGIN
 			, -1											SpecialEducationServicesExitDateId	
 			, -1											MigrantStudentQualifyingArrivalDateId	
 			, -1											LastQualifyingMoveDateId						
+
 		FROM Staging.K12Enrollment ske
 	--homeless
 		JOIN Staging.PersonStatus hmStatus
@@ -275,7 +279,7 @@ BEGIN
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
 	--idea status (rds)	
 		LEFT JOIN #vwIdeaStatuses rdis
-			ON rdis.IdeaIndicatorCode = 'Yes'
+			ON ISNULL(CAST(sppse.IDEAIndicator AS SMALLINT), -1) = ISNULL(CAST(rdis.IdeaIndicatorMap AS SMALLINT), -1)
 			AND rdis.SpecialEducationExitReasonCode = 'MISSING'
 			AND ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode)
 			AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, rdis.IdeaEducationalEnvironmentForSchoolAgeCode)
@@ -292,12 +296,13 @@ BEGIN
 		LEFT JOIN #vwRaces rdr
 			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
 				CASE
-					when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
+					WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HispanicorLatinoEthnicity'
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
 		WHERE hmStatus.HomelessnessStatus = 1 
 		AND hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
+
 
 	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (
