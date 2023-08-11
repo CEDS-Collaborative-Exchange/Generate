@@ -1803,8 +1803,8 @@ BEGIN
 			else if(@reportField = 'GRADELEVEL' and @reportCode in ('c118'))
 			BEGIN
 					set @sqlCountJoins = @sqlCountJoins + '		
-						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
-						inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
+						left join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
+						left join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
 							on ' + 'CAT_' + @reportField + '.GradeLevelEdFactsCode = CAT_' + @reportField + '_temp.Code
 							and ' + 'CAT_' + @reportField + '.GradeLevelEdFactsCode NOT IN (''AE'')
 						left join RDS.DimAges da ON fact.AgeId = da.DimAgeId
