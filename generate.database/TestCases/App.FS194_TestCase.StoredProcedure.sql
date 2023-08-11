@@ -71,7 +71,7 @@ BEGIN
 		, ske.Birthdate
 		, ske.GradeLevel
 --Homelessness
-		, hmStatus.HomelessnessServicedIndicator
+		, hmStatus.HomelessServicedIndicator
 --Age/Grade
 		, CASE	WHEN rda.AgeValue < 3 THEN 'UNDER3'
 				WHEN rda.AgeValue in (3,4,5) AND isnull(ske.GradeLevel, 'PK') = 'PK' THEN '3TO5NOTK'
