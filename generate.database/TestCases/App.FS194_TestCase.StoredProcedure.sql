@@ -194,6 +194,6 @@ BEGIN
 	--	inner join App.SqlUnitTest s
 	--		on s.SqlUnitTestId = sr.SqlUnitTestId
 	--where s.UnitTestName like '%194%'
-	--and passed = 1
+	--and passed = 0
 
 END

@@ -1599,7 +1599,7 @@ BEGIN
 						set @sqlCategoryReturnField = ' 
 							case 
 								when isnull(da.AgeCode, ''99'') IN (''3'', ''4'', ''5'')
-										and isnull(CAT_GRADELEVEL.GradeLevelEdFactsCode, ''xx'') <> ''KG'' THEN ''3TO5NOTK''
+										and isnull(CAT_GRADELEVEL.GradeLevelEdFactsCode, ''PK'') in (''PK'',''MISSING'') THEN ''3TO5NOTK''
 								else CAT_GRADELEVEL.GradeLevelEdFactsCode END'
 					end
 --this condition was included in the case above, can't find the equivalent requirement in the file spec
@@ -1803,8 +1803,8 @@ BEGIN
 			else if(@reportField = 'GRADELEVEL' and @reportCode in ('c118'))
 			BEGIN
 					set @sqlCountJoins = @sqlCountJoins + '		
-						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
-						inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
+						left join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
+						left join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
 							on ' + 'CAT_' + @reportField + '.GradeLevelEdFactsCode = CAT_' + @reportField + '_temp.Code
 							and ' + 'CAT_' + @reportField + '.GradeLevelEdFactsCode NOT IN (''AE'')
 						left join RDS.DimAges da ON fact.AgeId = da.DimAgeId
@@ -5524,6 +5524,22 @@ BEGIN
 				end			
 			else if(@reportCode in ('c118'))
 				begin
+							--set the variables for Grades 13 and UG to be used in the exclusions
+							declare @gradesExclude varchar(25)
+
+							set @gradesExclude = '(''AE'''
+
+							if (@toggleGrade13 = 0)
+							begin 
+								set @gradesExclude += ',''13'''
+							end
+							if (@toggleUngraded = 0)
+							begin 
+								set @gradesExclude += ',''UG'''
+							end
+
+							set @gradesExclude += ')'
+
 							set @sql = @sql + '
 								----------------------------
 								-- Insert actual count data 
@@ -5583,7 +5599,7 @@ BEGIN
 									 else 'IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1' end  + '
 
 						and homeless.HomelessnessStatusCode = ''Yes''
-						and dgl.GradeLevelEdFactsCode <> ''AE''			
+						and dgl.GradeLevelEdFactsCode NOT IN ' + @gradesExclude + '
 
 						and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
 						and fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition +
