@@ -110,7 +110,6 @@
 
 	IF OBJECT_ID('tempdb..#HomelessnessStatus') IS NOT NULL
 		DROP TABLE #HomelessnessStatus
-
 	CREATE TABLE #HomelessnessStatus (HomelessnessStatusCode VARCHAR(50), HomelessnessStatusDescription VARCHAR(200), HomelessnessStatusEdFactsCode VARCHAR(50))
 
 	INSERT INTO #HomelessnessStatus VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -1840,7 +1839,8 @@
 	SELECT 
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-	FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'MigrantEducationProgramEnrollmentType' 
+	FROM CEDS.CedsOptionSetMapping 
+	WHERE CedsElementTechnicalName = 'MigrantEducationProgramEnrollmentType' 
 
 	CREATE TABLE #ContinuationOfServices (ContinuationOfServicesReasonCode VARCHAR(50), ContinuationOfServicesReasonDescription VARCHAR(200))
 
@@ -3471,6 +3471,7 @@
 		AND tsc.TitleIProgramStaffCategoryCode = dfd.TitleIProgramStaffCategoryCode
 	WHERE dfd.DimK12StaffCategoryId IS NULL
 
+	DROP TABLE #K12StaffClassification
 	DROP TABLE #SpecialEducationSupportServicesCategory
 	DROP TABLE #TitleIProgramStaffCategory
 
@@ -4712,3 +4713,44 @@
 	-- WHERE main.DimComprehensiveAndTargetedSupportId IS NULL
 
 	-- DROP TABLE #AppropriationMethod
+	
+	------------------------------------------------
+	-- Populate DimFactTypes					 ---
+	------------------------------------------------
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimFactTypes d WHERE d.DimFactTypeId = -1) BEGIN
+		SET IDENTITY_INSERT RDS.DimFactTypes ON
+
+
+	INSERT INTO [RDS].[DimFactTypes]
+           ([DimFactTypeId]
+		   ,[FactTypeCode]
+           ,[FactTypeDescription])
+			VALUES (-1, 'NA', 'NotApplicable')
+				,('1',	'datapopulation',	'Generate Data Population Summary')
+				,('2',	'submission',	'EDFacts Submission Reports')
+				,('3',	'childcount',	'EDFacs Child Count')
+				,('4',	'specedexit',	'EDFacts Exit from Special Education')
+				,('5',	'cte',	'EDFacts ECareer and Technical Education')
+				,('6',	'membership',	'EDFacts EMemebership')
+				,('7',	'dropout',	'EDFacts EDropout')
+				,('8',	'grad',	'EDFacts EGraduation/Completer')
+				,('9',	'titleIIIELOct',	'EDFacts ETitle III EL Students')
+				,('10',	'titleIIIELSY',	'EDFacts ETitle III EL Students')
+				,('11',	'sppapr',	'EDFacts ESPP APR Students')
+				,('12',	'titleI',	'EDFacts ETitle I Students')
+				,('13',	'mep',	'EDFacts EMEP Students')
+				,('14',	'immigrant',	'EDFacts EImmigrant Students')
+				,('15',	'nord',	'EDFacts EN or D Students')
+				,('16',	'homeless',	'EDFacts EHomeless Students')
+				,('17',	'chronic',	'EDFacts EChronic Absenteeism')
+				,('18',	'gradrate',	'EDFacts EGrad Rate')
+				,('19',	'hsgradenroll',	'EDFacts EHS Grad PS Enrollment')
+				,('20',	'other',	'Generate Other Reports like State defined reports')
+				,('21',	'directory',	'EDFacts EDirectory related reports')
+				,('22',	'organizationstatus',	'EDFacts EOrganization Status related reports')
+				,('23',	'compsupport',	'EDFacts EComprehensive Support Identification Type')
+
+		SET IDENTITY_INSERT RDS.DimFactTypes OFF
+	END
+
