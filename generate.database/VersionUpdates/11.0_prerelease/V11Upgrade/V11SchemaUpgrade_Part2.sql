@@ -9598,35 +9598,35 @@ EXECUTE sp_updateextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.e
 
 
 
-PRINT N'Altering Extended Property [RDS].[DimAeProgramTypes].[WioaTrainingServicesCode].[CEDS_Def_Desc]...';
+-- PRINT N'Altering Extended Property [RDS].[DimAeProgramTypes].[WioaTrainingServicesCode].[CEDS_Def_Desc]...';
 
 
 
-EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of whether or not the individual has received services as defined by the Workforce Innovation and Opportunity Act (WIOA), one or more courses or classes, or a structured regimen that provides the services in 20 CFR part 680.200 and leads to: (a) An industry-recognized certificate or certification, a certificate of completion of a registered apprenticeship, a license recognized by the State involved or the Federal Government, an associate or baccalaureate degree, or community college certificate of completion; (b) Consistent with § 680.350, a secondary school diploma or its equivalent; (c) Employment; or (d) Measurable skill gains toward a credential described in paragraph (a) or (b) of this section or employment.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAeProgramTypes', @level2type = N'COLUMN', @level2name = N'WioaTrainingServicesCode';
+-- EXECUTE sp_addextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of whether or not the individual has received services as defined by the Workforce Innovation and Opportunity Act (WIOA), one or more courses or classes, or a structured regimen that provides the services in 20 CFR part 680.200 and leads to: (a) An industry-recognized certificate or certification, a certificate of completion of a registered apprenticeship, a license recognized by the State involved or the Federal Government, an associate or baccalaureate degree, or community college certificate of completion; (b) Consistent with § 680.350, a secondary school diploma or its equivalent; (c) Employment; or (d) Measurable skill gains toward a credential described in paragraph (a) or (b) of this section or employment.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAeProgramTypes', @level2type = N'COLUMN', @level2name = N'WioaTrainingServicesCode';
 
 
 
-PRINT N'Altering Extended Property [RDS].[DimAeProgramTypes].[WioaTrainingServicesCode].[CEDS_URL]...';
+-- PRINT N'Altering Extended Property [RDS].[DimAeProgramTypes].[WioaTrainingServicesCode].[CEDS_URL]...';
 
 
 
-EXECUTE sp_updateextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22971', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAeProgramTypes', @level2type = N'COLUMN', @level2name = N'WioaTrainingServicesCode';
+-- EXECUTE sp_updateextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22971', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAeProgramTypes', @level2type = N'COLUMN', @level2name = N'WioaTrainingServicesCode';
 
 
 
-PRINT N'Altering Extended Property [RDS].[DimAeProgramTypes].[WioaTrainingServicesDescription].[CEDS_Def_Desc]...';
+-- PRINT N'Altering Extended Property [RDS].[DimAeProgramTypes].[WioaTrainingServicesDescription].[CEDS_Def_Desc]...';
 
 
 
-EXECUTE sp_updateextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of whether or not the individual has received services as defined by the Workforce Innovation and Opportunity Act (WIOA), one or more courses or classes, or a structured regimen that provides the services in 20 CFR part 680.200 and leads to: (a) An industry-recognized certificate or certification, a certificate of completion of a registered apprenticeship, a license recognized by the State involved or the Federal Government, an associate or baccalaureate degree, or community college certificate of completion; (b) Consistent with § 680.350, a secondary school diploma or its equivalent; (c) Employment; or (d) Measurable skill gains toward a credential described in paragraph (a) or (b) of this section or employment.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAeProgramTypes', @level2type = N'COLUMN', @level2name = N'WioaTrainingServicesDescription';
+-- EXECUTE sp_updateextendedproperty @name = N'CEDS_Def_Desc', @value = N'An indication of whether or not the individual has received services as defined by the Workforce Innovation and Opportunity Act (WIOA), one or more courses or classes, or a structured regimen that provides the services in 20 CFR part 680.200 and leads to: (a) An industry-recognized certificate or certification, a certificate of completion of a registered apprenticeship, a license recognized by the State involved or the Federal Government, an associate or baccalaureate degree, or community college certificate of completion; (b) Consistent with § 680.350, a secondary school diploma or its equivalent; (c) Employment; or (d) Measurable skill gains toward a credential described in paragraph (a) or (b) of this section or employment.', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAeProgramTypes', @level2type = N'COLUMN', @level2name = N'WioaTrainingServicesDescription';
 
 
 
-PRINT N'Altering Extended Property [RDS].[DimAeProgramTypes].[WioaTrainingServicesDescription].[CEDS_URL]...';
+-- PRINT N'Altering Extended Property [RDS].[DimAeProgramTypes].[WioaTrainingServicesDescription].[CEDS_URL]...';
 
 
 
-EXECUTE sp_updateextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22971', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAeProgramTypes', @level2type = N'COLUMN', @level2name = N'WioaTrainingServicesDescription';
+-- EXECUTE sp_updateextendedproperty @name = N'CEDS_URL', @value = N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22971', @level0type = N'SCHEMA', @level0name = N'RDS', @level1type = N'TABLE', @level1name = N'DimAeProgramTypes', @level2type = N'COLUMN', @level2name = N'WioaTrainingServicesDescription';
 
 
 
