@@ -57,7 +57,7 @@ Views\\Drop,Debug.vwExiting_StagingTables.View.sql,0
 Views\\Create,Debug.vwExiting_StagingTables.View.sql,0
 Views\\Drop,Debug.vwK12Staff_StagingTables.View.sql,0
 Views\\Create,Debug.vwK12Staff_StagingTables.View.sql,0
-Views\\Create,RDS.vwDimAcademicTermDesignator.Views.sql,0
+Views\\Drop,RDS.vwDimAcademicTermDesignator.View.sql,0
 Views\\Drop,RDS.vwDimK12SchoolStatuses.View.sql,0
 Views\\Create,RDS.vwDimK12SchoolStatuses.View.sql,0
 Views\\Create,RDS.vwDimAcademicTermDesignator.Views.sql,0
