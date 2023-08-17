@@ -236,7 +236,7 @@ AS BEGIN
 
 
 	ALTER INDEX ALL ON RDS.FactK12ProgramParticipations REBUILD
-	DROP TABLE IF EXISTS #temp
+	IF OBJECT_ID(N'tempdb..#temp') IS NOT NULL DROP TABLE #temp
 
 	SELECT DISTINCT
 		  rfkse.FactK12ProgramParticipationId
@@ -313,6 +313,6 @@ AS BEGIN
 						When t.RaceType = 'MISSING' and t.HispanicLatinoEthnicity = 1 Then 'HispanicorLatinoEthnicity'
 					Else t.RaceType End = rdr.RaceMap
 	
-	DROP TABLE IF EXISTS #temp
+	IF OBJECT_ID(N'tempdb..#temp') IS NOT NULL DROP TABLE #temp
 
 END

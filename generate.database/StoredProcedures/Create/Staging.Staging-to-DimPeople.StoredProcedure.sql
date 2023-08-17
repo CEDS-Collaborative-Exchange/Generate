@@ -22,7 +22,7 @@ BEGIN
 			SET IDENTITY_INSERT RDS.DimPeople off
 		END
 
-		DROP TABLE IF EXISTS #People
+		IF OBJECT_ID(N'tempdb..#People') IS NOT NULL DROP TABLE #People
 		CREATE TABLE #People (
 			  BirthDate						  DATE
 			, FirstName						  NVARCHAR(50) NULL
@@ -243,7 +243,7 @@ BEGIN
 
 		ALTER INDEX ALL ON RDS.DimPeople REBUILD
 		
-		Drop Table If Exists #upd
+		IF OBJECT_ID(N'tempdb..#upd') IS NOT NULL DROP TABLE #upd
 
 		CREATE TABLE #upd (
 			  K12StudentStudentIdentifierState		NVARCHAR(60)
@@ -301,8 +301,8 @@ BEGIN
 			SET @index = @index + 1
 		END
 
-		DROP TABLE IF EXISTS #People
-		DROP TABLE IF EXISTS #upd
+		IF OBJECT_ID(N'tempdb..#People') IS NOT NULL DROP TABLE #People
+		IF OBJECT_ID(N'tempdb..#upd') IS NOT NULL DROP TABLE #upd
 		
 		ALTER INDEX ALL ON RDS.DimPeople REBUILD
 

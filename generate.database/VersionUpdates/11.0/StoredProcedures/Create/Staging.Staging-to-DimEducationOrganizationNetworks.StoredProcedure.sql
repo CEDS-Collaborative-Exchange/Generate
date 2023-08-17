@@ -116,5 +116,4 @@ BEGIN
 	ALTER INDEX ALL ON RDS.DimEducationOrganizationNetworks REBUILD
 
 END
-GO
 
