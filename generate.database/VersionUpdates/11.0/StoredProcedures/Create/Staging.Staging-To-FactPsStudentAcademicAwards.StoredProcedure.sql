@@ -1,7 +1,8 @@
 CREATE PROCEDURE Staging.[Staging-To-FactPsStudentAcademicAwards]
 AS
 
-	DROP TABLE IF EXISTS #saa
+	IF OBJECT_ID(N'tempdb..#saa') IS NOT NULL DROP TABLE #saa
+
 	SELECT 
 		  rdpi.DimPsInstitutionId							AS [PsInstitutionId]
 		, ISNULL(rdsy.DimSchoolYearId, -1)					AS [SchoolYearId]
@@ -32,7 +33,7 @@ AS
 	JOIN RDS.DimDates awardDate
 		ON spsar.AcademicAwardDate = awardDate.DateValue
 
-	DROP TABLE IF EXISTS #spse
+	IF OBJECT_ID(N'tempdb..#spse') IS NOT NULL DROP TABLE #spse
 	-- Students who exited school during or right before they received an award
 	SELECT 
 		  s.PsStudentIdentifierState
@@ -140,7 +141,7 @@ AS
 		AND ISNULL(spse.[Sex], 'MISSING') = ISNULL(rdpd.SexMap, rdpd.SexCode) 
 
 	-- Get min and max of every institution to find a match for those missing one
-	DROP TABLE IF EXISTS #Institutions
+	IF OBJECT_ID(N'tempdb..#Institutions') IS NOT NULL DROP TABLE #Institutions
 	SELECT 
 		  MIN(DimPsInstitutionId) AS DimPsInstitutionId
 		, IPEDSIdentifier

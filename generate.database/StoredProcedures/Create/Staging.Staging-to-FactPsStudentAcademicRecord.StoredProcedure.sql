@@ -8,8 +8,8 @@ AS
 	WHILE @firstDigit < 10
 	BEGIN
 		
-		drop table if exists #Temp
-		drop table if exists #MiTemp
+		IF OBJECT_ID(N'tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+		IF OBJECT_ID(N'tempdb..#MiTemp') IS NOT NULL DROP TABLE #MiTemp
 
 		SELECT distinct
 			  rsy.DimSchoolYearId								AS SchoolYearId
