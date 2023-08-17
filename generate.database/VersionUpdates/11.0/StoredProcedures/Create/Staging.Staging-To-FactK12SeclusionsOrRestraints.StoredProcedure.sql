@@ -103,7 +103,7 @@ BEGIN
 
 	CREATE NONCLUSTERED INDEX IX_K12SeclusionOrRestraint ON #K12EnrollmentAges(DataCollectionName, StudentIdentifierState) INCLUDE (LeaIdentifierSeaAttendance, SchoolIdentifierSea)
 
-	DROP TABLE IF EXISTS #Facts
+	IF OBJECT_ID(N'tempdb..#Facts') IS NOT NULL DROP TABLE #Facts
 	CREATE TABLE #Facts (
 					[StagingId]										INT NOT NULL
 					,[SeclusionOrRestraintId]						INT NOT NULL
