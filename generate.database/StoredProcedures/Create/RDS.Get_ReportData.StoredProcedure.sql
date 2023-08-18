@@ -609,18 +609,6 @@ BEGIN
 	--print '@reportCode='+@reportCode
 	--print '@zeroCountSql='+@zeroCountSql
 
-	if(LEN(ISNULL(@categorySetCode,'')) < 1) AND @reportLevel <> 'sea' AND @reportCode in ('c002','c089')
-		begin
-			set @includeOrganizationSQL = 1
-			SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, 'TOT', 'zero',@includeOrganizationSQL, 1,@tableTypeAbbrvs, @totalIndicators, @factTypeCode)
-
-			IF(@zeroCountSql IS NOT NULL)
-				begin
-					set @sql = @sql + '
-						' + @zeroCountSql
-				end
-		end
-
 	-- Obscure missing category counts with -1 values
 	if @obscureMissingCategoryCounts = 1
 		begin
