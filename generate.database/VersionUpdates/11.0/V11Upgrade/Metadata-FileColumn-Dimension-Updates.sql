@@ -3,10 +3,10 @@
 		update App.FileColumns set DimensionId = (select DimensionId from app.Dimensions where DimensionFieldName = 'DisabilityStatus')
 		where ColumnName = 'DisabilityStatusID'
 
-		update App.FileColumns set DimensionId = (select DimensionId from app.Dimensions where DimensionFieldName = 'IdeaEducationalEnvironmentForEarlyChildhood') 
+		update App.FileColumns set DimensionId = (select DimensionId from app.Dimensions where DimensionFieldName = 'IdeaEducationalEnvironmentForSchoolAge') 
 		where ColumnName = 'EdEnvironmentID'
 	
-		update App.FileColumns set DimensionId = (select DimensionId from app.Dimensions where DimensionFieldName = 'IdeaEducationalEnvironmentForSchoolAge') 
+		update App.FileColumns set DimensionId = (select DimensionId from app.Dimensions where DimensionFieldName = 'IdeaEducationalEnvironmentForEarlyChildhood') 
 		where ColumnName = 'EarlyChildEdEnvironmentID'
 	
 		update App.FileColumns set DimensionId = (select DimensionId from app.Dimensions where DimensionFieldName = 'EconomicDisadvantageStatus') 
