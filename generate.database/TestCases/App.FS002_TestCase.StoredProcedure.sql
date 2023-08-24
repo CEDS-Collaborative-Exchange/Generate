@@ -1,16 +1,14 @@
-/***********************************************************************
-February 17, 2022
-End to End Test for FS002
-************************************************************************/
-
 CREATE PROCEDURE [app].[FS002_TestCase] 
-	@SchoolYear INT
+	@SchoolYear INT 
 AS
 BEGIN
 
 	--clear the tables for the next run
 	IF OBJECT_ID('tempdb..#C002Staging') IS NOT NULL
 	DROP TABLE #C002Staging
+
+	IF OBJECT_ID('tempdb..#TempRacesUpdate') IS NOT NULL
+	DROP TABLE #TempRacesUpdate
 
 	IF OBJECT_ID('tempdb..#S_CSA') IS NOT NULL
 	DROP TABLE #S_CSA
@@ -72,31 +70,28 @@ BEGIN
 	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
 
 	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS002_UnitTestCase') 
-		BEGIN
-			SET @expectedResult = 1
-			INSERT INTO App.SqlUnitTest 
-			(
-				UnitTestName,
-				StoredProcedureName,
-				TestScope,
-				IsActive
-			)
-			VALUES 
-			(
-				'FS002_UnitTestCase',
-				'FS002_TestCase',
-				'FS002',
-				1
-			)
-			SET @SqlUnitTestId = @@IDENTITY
-		END 
+	BEGIN
+		SET @expectedResult = 1
+		INSERT INTO App.SqlUnitTest (
+			UnitTestName,
+			StoredProcedureName,
+			TestScope,
+			IsActive
+		) VALUES (
+			'FS002_UnitTestCase',
+			'FS002_TestCase',
+			'FS002',
+			1
+		)
+		SET @SqlUnitTestId = @@IDENTITY
+	END 
 	ELSE 
-		BEGIN
-			SELECT 
-				@SqlUnitTestId = SqlUnitTestId
-			FROM App.SqlUnitTest 
-			WHERE UnitTestName = 'FS002_UnitTestCase'
-		END
+	BEGIN
+		SELECT 
+			@SqlUnitTestId = SqlUnitTestId
+		FROM App.SqlUnitTest 
+		WHERE UnitTestName = 'FS002_UnitTestCase'
+	END
 	
 	-- Clear out last run
 	DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId
@@ -110,25 +105,45 @@ BEGIN
 
 	select @customFactTypeDate = r.ResponseValue
 	from app.ToggleResponses r
-	inner join app.ToggleQuestions q 
+	INNER join app.ToggleQuestions q 
 		on r.ToggleQuestionId = q.ToggleQuestionId
 	where q.EmapsQuestionAbbrv = 'CHDCTDTE'
 
 	select @cutOffMonth = SUBSTRING(@customFactTypeDate, 0, CHARINDEX('/', @customFactTypeDate))
-	select @cutOffDay = SUBSTRING(@customFactTypeDate, CHARINDEX('/', @customFactTypeDate) + 1, 2)
+	
+	declare @cutOffDayVARCHAR varchar(5)
+	select @cutOffDayVARCHAR = SUBSTRING(@customFactTypeDate, CHARINDEX('/', @customFactTypeDate) + 1, 2)	
+	select @cutOffDay = case when right(@cutOffDayVARCHAR,1) = '/' then left(@CutOffDayVARCHAR,1) else @CutOffDayVARCHAR end
+	-- select @cutOffDay = SUBSTRING(@customFactTypeDate, CHARINDEX('/', @customFactTypeDate) + 1, 2)
+	
 	select @ChildCountDate = convert(varchar, @CutoffMonth) + '/' + convert(varchar, @CutoffDay) + '/' + convert(varchar, @SchoolYear-1) -- < changed to "-1"
 
 
---/***********************************************************
-
-	 SELECT  
-		ske.Student_Identifier_State,
-		ske.LEA_Identifier_State,
-		ske.School_Identifier_State,
+	--Get the data needed for the tests
+	SELECT  
+		ske.StudentIdentifierState,
+		ske.LeaIdentifierSeaAccountability,
+		ske.SchoolIdentifierSea,
 		sppse.IDEAEducationalEnvironmentForSchoolAge,
 		rda.AgeValue,
 		ske.GradeLevel,
-		idea.PrimaryDisabilityType,
+		CASE idea.IdeaDisabilityTypeCode
+            WHEN 'Autism' THEN 'AUT'
+            WHEN 'Deafblindness' THEN 'DB'
+            WHEN 'Deafness' THEN 'DB'
+            WHEN 'Developmentaldelay' THEN 'DD'
+            WHEN 'Emotionaldisturbance' THEN 'EMN'
+            WHEN 'Hearingimpairment' THEN 'HI'
+            WHEN 'Intellectualdisability' THEN 'ID'
+            WHEN 'Multipledisabilities' THEN 'MD'
+            WHEN 'Orthopedicimpairment' THEN 'OI'
+            WHEN 'Otherhealthimpairment' THEN 'OHI'
+            WHEN 'Specificlearningdisability' THEN 'SLD'
+            WHEN 'Speechlanguageimpairment' THEN 'SLI'
+            WHEN 'Traumaticbraininjury' THEN 'TBI'
+            WHEN 'Visualimpairment' THEN 'VI'
+            ELSE idea.IdeaDisabilityTypeCode
+		END AS IdeaDisabilityTypeCode,
 		CASE 
 			WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HI7' 
 			WHEN spr.RaceType = 'AmericanIndianorAlaskaNative' THEN 'AM7'
@@ -144,65 +159,118 @@ BEGIN
 				ELSE 'MISSING'
 			  END AS SexEdFactsCode,
 		CASE 
-			WHEN @ChildCountDate
-				BETWEEN ISNULL(EL.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
-				AND ISNULL(EL.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
-			THEN ISNULL(EL.EnglishLearnerStatus, 0)
-		ELSE 0
-			  END AS EnglishLearnerStatus,
+			WHEN ISNULL(el.EnglishLearnerStatus, '') <> '' 
+				AND @ChildCountDate
+					BETWEEN ISNULL(EL.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
+					AND ISNULL(EL.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
+			THEN EL.EnglishLearnerStatus
+			ELSE -1
+		END AS EnglishLearnerStatus,
 		CASE
-			WHEN @ChildCountDate
-				BETWEEN ISNULL(EL.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
-				AND ISNULL(EL.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
+			WHEN ISNULL(el.EnglishLearnerStatus, '') <> '' 
+				AND @ChildCountDate
+					BETWEEN ISNULL(EL.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
+					AND ISNULL(EL.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
 			THEN 
 				CASE 
 					WHEN EL.EnglishLearnerStatus = 1 THEN 'LEP'
-				ELSE 'NLEP'
-							END
-				ELSE 'NLEP'
-			  END AS EnglishLearnerStatusEdFactsCode
+					ELSE 'NLEP'
+				END
+			ELSE 'MISSING'
+		END AS EnglishLearnerStatusEdFactsCode
 
-		INTO #c002Staging
-		FROM Staging.K12Enrollment ske
+	INTO #c002Staging
+	FROM Staging.K12Enrollment ske
 
-		JOIN Staging.PersonStatus idea
-			ON ske.Student_Identifier_State = idea.Student_Identifier_State
-			AND ISNULL(ske.Lea_Identifier_State, '') = ISNULL(idea.Lea_Identifier_State, '')
-			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(idea.School_Identifier_State, '')
-			AND @ChildCountDate BETWEEN idea.IDEA_StatusStartDate AND ISNULL(idea.IDEA_StatusEndDate, GETDATE())
 
 		JOIN Staging.ProgramParticipationSpecialEducation sppse
-			ON ske.Student_Identifier_State = sppse.Student_Identifier_State
-			AND ISNULL(ske.LEA_Identifier_State, '') = ISNULL(sppse.LEA_Identifier_State, '') 
-			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(sppse.School_Identifier_State, '')
+			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND @ChildCountDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, GETDATE())
 		
-		LEFT JOIN Staging.PersonRace spr
-			ON ske.SchoolYear = spr.SchoolYear
-			AND ske.Student_Identifier_State = spr.Student_Identifier_State
-			AND (spr.OrganizationType = 'SEA'
-				OR (ske.LEA_Identifier_State = spr.OrganizationIdentifier
-					AND spr.OrganizationType = 'LEA')
-				OR (ske.School_Identifier_State = spr.OrganizationIdentifier
-					AND spr.OrganizationType = 'K12School'))
+		JOIN Staging.IdeaDisabilityType idea
+			ON ske.StudentIdentifierState = idea.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
+			AND @ChildCountDate BETWEEN idea.RecordStartDateTime AND ISNULL(idea.RecordEndDateTime, GETDATE())
+			AND idea.IsPrimaryDisability = 1
 
-		left JOIN Staging.PersonStatus el 
-			ON ske.Student_Identifier_State = el.Student_Identifier_State
-			AND ISNULL(ske.Lea_Identifier_State, '') = ISNULL(el.Lea_Identifier_State, '')
-			AND ISNULL(ske.School_Identifier_State, '') = ISNULL(el.School_Identifier_State, '')
+		LEFT JOIN Staging.K12PersonRace spr
+			ON ske.SchoolYear = spr.SchoolYear
+			AND ske.StudentIdentifierState = spr.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(spr.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(spr.SchoolIdentifierSea, '')
+			AND spr.RecordStartDateTime is not null
+			AND @ChildCountDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, GETDATE())
+			
+		LEFT JOIN Staging.PersonStatus el 
+			ON ske.StudentIdentifierState = el.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND @ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
 
 		JOIN RDS.DimAges rda
 			ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
 
 		WHERE @ChildCountDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
-		AND idea.IDEAIndicator  = 1
-		and (rda.AgeValue BETWEEN 6 and 21
+		AND sppse.IDEAIndicator  = 1
+		AND idea.IdeaDisabilityTypeCode IS NOT NULL
+		AND (rda.AgeValue BETWEEN 6 and 21
 			OR (rda.AgeValue = 5
 				AND ske.GradeLevel IS NOT NULL 
 				AND ske.GradeLevel NOT IN ('PK')))
+		
+	--Handle the Race records to match the unduplicated code 
+	drop table if exists #tempRacesUpdate
 
+	--Update #c002Staging records for the same Lea/School to Multiple 
+	SELECT 
+		StudentIdentifierState
+		, LeaIdentifierSeaAccountability
+		, SchoolIdentifierSea
+		, rdr.RaceCode
+		, SchoolYear
+	INTO #TempRacesUpdate
+	FROM (
+		SELECT 
+			  StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, CASE 
+				WHEN COUNT(OutputCode) > 1 THEN 'TwoOrMoreRaces'
+				ELSE MAX(OutputCode)
+			END as RaceCode
+			, spr.SchoolYear
+		FROM Staging.K12PersonRace spr
+		JOIN Staging.SourceSystemReferenceData sssrd
+			ON spr.RaceType = sssrd.InputCode
+			AND spr.SchoolYear = sssrd.SchoolYear
+			AND sssrd.TableName = 'RefRace'
+		WHERE OutputCode <> 'TwoOrMoreRaces'	
+		GROUP BY
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, spr.SchoolYear
+	) AS stagingRaces
+	JOIN RDS.DimRaces rdr
+		ON stagingRaces.RaceCode = rdr.RaceCode
+	WHERE stagingRaces.RaceCode = 'TwoOrMoreRaces'
+
+
+	UPDATE stg 
+	SET RaceEdFactsCode = 'MU7'
+	FROM #c002Staging stg
+		INNER JOIN #TempRacesUpdate tru
+			ON stg.StudentIdentifierState = tru.StudentIdentifierState
+			AND stg.LeaIdentifierSeaAccountability = tru.LeaIdentifierSeaAccountability
+			AND stg.SchoolIdentifierSea = tru.SchoolIdentifierSea
+	WHERE stg.RaceEdFactsCode <> 'HI7'
+
+	-------------------------------------------------
 	-- Gather, evaluate & record the results
+	-------------------------------------------------
 
 		/**********************************************************************
 		Test Case 1:
@@ -210,23 +278,21 @@ BEGIN
 		Student Count by:
 			RaceEdFactsCode
 			SexEdFactsCode
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 		***********************************************************************/
 		SELECT
-			RaceEdFactsCode,
+			c.RaceEdFactsCode,
 			SexEdFactsCode,
-			PrimaryDisabilityType,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			IdeaDisabilityTypeCode,
+			COUNT(DISTINCT c.StudentIdentifierState) AS StudentCount
 		INTO #S_CSA
-		FROM #c002staging 
+		FROM #c002staging c
 		GROUP BY 
-			RaceEdFactsCode,
+			c.RaceEdFactsCode,
 			SexEdFactsCode,
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 
-		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -240,16 +306,16 @@ BEGIN
 			,'CSA SEA'
 			,'Race: ' + convert(varchar, s.RaceEdFactsCode) + '  ' 
 				+ 'Sex: ' + s.SexEdFactsCode+ '  '
-				+ 'Disability Type: ' + s.PrimaryDisabilityType			
+				+ 'Disability Type: ' + s.IdeaDisabilityTypeCode			
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_CSA s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.RaceEdFactsCode = rreksd.RACE			
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND s.PrimaryDisabilityType = rreksd.PrimaryDisabilityType
+			AND s.IdeaDisabilityTypeCode = rreksd.IDEADISABILITYTYPE
 			AND rreksd.ReportCode = 'C002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
@@ -264,25 +330,23 @@ BEGIN
 		Student Count by:
 			RaceEdFactsCode
 			SexEdFactsCode
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 		***********************************************************************/
 		SELECT
-			LEA_Identifier_State,
-			RaceEdFactsCode,
+			LeaIdentifierSeaAccountability,
+			RaceEdFactsCode, 
 			SexEdFactsCode,
-			PrimaryDisabilityType,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			IdeaDisabilityTypeCode,
+			COUNT(DISTINCT c.StudentIdentifierState) AS StudentCount
 		INTO #L_CSA
-		FROM #c002staging
+		FROM #c002staging c
 		GROUP BY 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			RaceEdFactsCode,
 			SexEdFactsCode,
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 
-		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -294,21 +358,21 @@ BEGIN
 		SELECT 
 			@SqlUnitTestId
 			,'CSA LEA'
-			,'LEA_Identifier_State: ' + s.LEA_Identifier_State + '  '
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
 				+ 'Race: ' + convert(varchar, s.RaceEdFactsCode) + '  ' 
 				+ 'Sex: ' + s.SexEdFactsCode + '  '
-				+ 'Disability Type: ' + s.PrimaryDisabilityType
+				+ 'Disability Type: ' + s.IdeaDisabilityTypeCode
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_CSA s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON
-			s.LEA_Identifier_State = rreksd.OrganizationStateId			
+			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea			
 			and S.RaceEdFactsCode = rreksd.RACE
 			and S.SexEdFactsCode = rreksd.SEX
-			and s.PrimaryDisabilityType = rreksd.PrimaryDisabilityType
+			and s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND rreksd.ReportCode = 'C002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
@@ -316,33 +380,31 @@ BEGIN
 
 		DROP TABLE #L_CSA
 
-		
 		/**********************************************************************
 		Test Case 3:
 		CSA at the School level
 		Student Count by:
 			RaceEdFactsCode
 			SexEdFactsCode
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 		***********************************************************************/
 		SELECT
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			RaceEdFactsCode,
 			SexEdFactsCode,
-			PrimaryDisabilityType,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			IdeaDisabilityTypeCode,
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_CSA
 		FROM #c002staging
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			RaceEdFactsCode,
 			SexEdFactsCode,
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -354,21 +416,21 @@ BEGIN
 		SELECT 
 			@SqlUnitTestId
 			,'CSA School'
-			,'School_Identifier_State: ' + s.School_Identifier_State + '  '
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
 				+ 'Race: ' + convert(varchar, s.RaceEdFactsCode) + '  ' 
 				+ 'Sex: ' + s.SexEdFactsCode + '  '
-				+ 'Disability Type: ' + s.PrimaryDisabilityType
+				+ 'Disability Type: ' + s.IdeaDisabilityTypeCode
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_CSA s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON
-			s.School_Identifier_State = rreksd.OrganizationStateId			
+			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea			
 			and S.RaceEdFactsCode = rreksd.RACE
 			and S.SexEdFactsCode = rreksd.SEX
-			and s.PrimaryDisabilityType = rreksd.PrimaryDisabilityType
+			and s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND rreksd.ReportCode = 'C002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
@@ -381,25 +443,23 @@ BEGIN
 		Test Case 4:
 		CSB at the SEA level
 		Student Count by:
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 			AgeValue
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT
-			PrimaryDisabilityType,
+			IdeaDisabilityTypeCode,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge,
-
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_CSB
 		FROM #c002staging 
 		GROUP BY 
-			PrimaryDisabilityType,
+			IdeaDisabilityTypeCode,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -411,7 +471,7 @@ BEGIN
 		SELECT 
 			@SqlUnitTestId
 			,'CSB SEA'
-			,'Disability Type: ' + s.PrimaryDisabilityType + '  ' 
+			,'Disability Type: ' + s.IdeaDisabilityTypeCode + '  ' 
 			+'Age: ' + convert(varchar, s.AgeValue) + '  '
 			+'Education Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
@@ -419,10 +479,10 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_CSB s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON s.PrimaryDisabilityType = rreksd.PRIMARYDISABILITYTYPE
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
-			and S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			and S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND rreksd.ReportCode = 'C002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
@@ -434,27 +494,26 @@ BEGIN
 		Test Case 5:
 		CSB at the LEA level
 		Student Count by:
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 			AgeValue
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT
-			LEA_Identifier_State,
-			PrimaryDisabilityType,
+			LeaIdentifierSeaAccountability,
+			IdeaDisabilityTypeCode,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_CSB
 		FROM #c002staging 
 		GROUP BY 
-			LEA_Identifier_State,
-			PrimaryDisabilityType,
+			LeaIdentifierSeaAccountability,
+			IdeaDisabilityTypeCode,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge
 
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -466,8 +525,8 @@ BEGIN
 		SELECT 
 			@SqlUnitTestId
 			,'CSB LEA'
-			,'LEA_Identifier_State: ' + s.LEA_Identifier_State + '  '
-			+'Disability Type: ' + s.PrimaryDisabilityType + '  ' 
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
+			+'Disability Type: ' + s.IdeaDisabilityTypeCode + '  ' 
 			+'Age: ' + convert(varchar, s.AgeValue) + '  '
 			+'Education Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
@@ -475,11 +534,11 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_CSB s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON S.LEA_Identifier_State = rreksd.OrganizationStateId
-			AND s.PrimaryDisabilityType = rreksd.PRIMARYDISABILITYTYPE
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON S.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
+			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
-			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND rreksd.ReportCode = 'C002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
@@ -492,28 +551,27 @@ BEGIN
 		Test Case 6:
 		CSB at the School level
 		Student Count by:
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 			AgeValue
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT
-			School_Identifier_State,
-			PrimaryDisabilityType,
+			SchoolIdentifierSea,
+			IdeaDisabilityTypeCode,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_CSB
 		FROM #c002staging 
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
-			PrimaryDisabilityType,
+			SchoolIdentifierSea,
+			IdeaDisabilityTypeCode,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge
 
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -525,8 +583,8 @@ BEGIN
 		SELECT 
 			@SqlUnitTestId
 			,'CSB School'
-			,'School_Identifier_State: ' + s.School_Identifier_State + '  '
-			+'Disability Type: ' + s.PrimaryDisabilityType + '  ' 
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
+			+'Disability Type: ' + s.IdeaDisabilityTypeCode + '  ' 
 			+'Age: ' + convert(varchar, s.AgeValue) + '  '
 			+'Education Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
@@ -534,11 +592,11 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_CSB s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON S.School_Identifier_State = rreksd.OrganizationStateId
-			AND s.PrimaryDisabilityType = rreksd.PRIMARYDISABILITYTYPE
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON S.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
+			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
-			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND rreksd.ReportCode = 'C002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
@@ -555,17 +613,17 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 	
-			RaceEdFactsCode,
+			c.RaceEdFactsCode,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT c.StudentIdentifierState) AS StudentCount
 		INTO #S_CSC
-		FROM #c002staging 
+		FROM #c002staging c
 		GROUP BY 
-			RaceEdFactsCode,
+			c.RaceEdFactsCode,
 			IDEAEducationalEnvironmentForSchoolAge
-		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+
+
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -585,7 +643,7 @@ BEGIN
 			,GETDATE()
 		FROM #S_CSC s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			ON S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.RaceEdFactsCode = rreksd.RACE
 			AND rreksd.ReportCode = 'C002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -603,19 +661,18 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			RaceEdFactsCode,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_CSC
 		FROM #c002staging 
 		GROUP BY 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			RaceEdFactsCode,
 			IDEAEducationalEnvironmentForSchoolAge
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -627,7 +684,7 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'CSC LEA'
-			,'LEA_Identifier_State: ' + s.LEA_Identifier_State + '  '
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
 			+ 'Race: ' + s.RaceEdFactsCode +  '  '
 			+ 'Education Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
@@ -635,9 +692,9 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_CSC s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON S.LEA_Identifier_State = rreksd.OrganizationStateId
-			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON S.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
+			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.RaceEdFactsCode = rreksd.RACE
 			AND rreksd.ReportCode = 'C002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -654,20 +711,19 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			RaceEdFactsCode,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_CSC
 		FROM #c002staging 
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			RaceEdFactsCode,
 			IDEAEducationalEnvironmentForSchoolAge
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -679,7 +735,7 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'CSC School'
-			,'School_Identifier_State: ' + s.School_Identifier_State + '  '
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
 			+ 'Race: ' + s.RaceEdFactsCode +  '  '
 			+ 'Education Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
@@ -687,9 +743,9 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_CSC s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON S.School_Identifier_State = rreksd.OrganizationStateId
-			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON S.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
+			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.RaceEdFactsCode = rreksd.RACE
 			AND rreksd.ReportCode = 'C002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -699,30 +755,27 @@ BEGIN
 		DROP TABLE #SCH_CSC
 
 
-
 		/**********************************************************************
 		Test Case 10:
 		CSD at the SEA level
 		Student Count by:
 			SexEdFactsCode
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
 			SexEdFactsCode,
-			PrimaryDisabilityType,
+			IdeaDisabilityTypeCode,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_CSD
 		FROM #c002staging
 		GROUP BY 
 			SexEdFactsCode,
-			PrimaryDisabilityType,
+			IdeaDisabilityTypeCode,
 			IDEAEducationalEnvironmentForSchoolAge
-
-		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+					
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -735,17 +788,17 @@ BEGIN
 			 @SqlUnitTestId
 			,'CSD SEA'
 			,'Sex: ' + s.SexEdFactsCode + '  '
-			+ 'Primary Disability Type: ' + s.PrimaryDisabilityType +  '  '
+			+ 'Primary Disability Type: ' + s.IdeaDisabilityTypeCode +  '  '
 			+ 'Education Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_CSD s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND s.PrimaryDisabilityType = rreksd.PRIMARYDISABILITYTYPE
+			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
@@ -759,25 +812,24 @@ BEGIN
 		CSD at the LEA level
 		Student Count by:
 			SexEdFactsCode
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			SexEdFactsCode,
-			PrimaryDisabilityType,
+			IdeaDisabilityTypeCode,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_CSD
 		FROM #c002staging
 		GROUP BY 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			SexEdFactsCode,
-			PrimaryDisabilityType,
+			IdeaDisabilityTypeCode,
 			IDEAEducationalEnvironmentForSchoolAge
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -789,8 +841,8 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'CSD LEA'
-			,'LEA_Identifier_State: ' + s.LEA_Identifier_State + '  '
-			+ 'Primary Disability Type: ' + CAST(s.PrimaryDisabilityType AS VARCHAR(3)) + '  '
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
+			+ 'Primary Disability Type: ' + CAST(s.IdeaDisabilityTypeCode AS VARCHAR(3)) + '  '
 			+ 'Sex: ' + s.SexEdFactsCode + ' '
 			+ 'Educational Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
@@ -798,12 +850,12 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_CSD s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.LEA_Identifier_State = rreksd.OrganizationStateId
+			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND s.PrimaryDisabilityType = rreksd.PRIMARYDISABILITYTYPE
-			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
+			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
@@ -816,27 +868,25 @@ BEGIN
 		CSD at the School level
 		Student Count by:
 			SexEdFactsCode
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			SexEdFactsCode,
-			PrimaryDisabilityType,
+			IdeaDisabilityTypeCode,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_CSD
 		FROM #c002staging
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			SexEdFactsCode,
-			PrimaryDisabilityType,
+			IdeaDisabilityTypeCode,
 			IDEAEducationalEnvironmentForSchoolAge
 
-		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -848,21 +898,21 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'CSD School'
-			,'School_Identifier_State: ' + s.School_Identifier_State + '  '
-			+ 'Primary Disability Type: ' + CAST(s.PrimaryDisabilityType AS VARCHAR(3)) + '  '
-			+ 'Sex: ' + s.SexEdFactsCode + ' '
-			+ 'Educational Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
+			,' SchoolIdentifierSea: ' + s.SchoolIdentifierSea + ''
+			+ ' Primary Disability Type: ' + CAST(s.IdeaDisabilityTypeCode AS VARCHAR(3)) + ''
+			+ ' Sex: ' + s.SexEdFactsCode + ''
+			+ ' Educational Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_CSD s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.School_Identifier_State = rreksd.OrganizationStateId
-			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
+			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND s.PrimaryDisabilityType = rreksd.PRIMARYDISABILITYTYPE
+			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
@@ -871,33 +921,30 @@ BEGIN
 		DROP TABLE #SCH_CSD
 
 
-
 		/**********************************************************************
 		Test Case 13:
-		Subtotal 1 at the SEA level
+		CSE at the SEA level
 		Student Count by:
 			SexEdFactsCode
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 			IDEAEducationalEnvironmentForSchoolAge
 			EnglishLearnerStatusEdFactsCode
 		***********************************************************************/
 		SELECT 
 			SexEdFactsCode,
-			PrimaryDisabilityType, 
+			IdeaDisabilityTypeCode, 
 			IDEAEducationalEnvironmentForSchoolAge,
 			EnglishLearnerStatusEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_CSE
 		FROM #c002staging 
 		WHERE EnglishLearnerStatusEdFactsCode in ('LEP','NLEP')
 		GROUP BY SexEdFactsCode,
-			PrimaryDisabilityType, 
+			IdeaDisabilityTypeCode, 
 			IDEAEducationalEnvironmentForSchoolAge,
 			EnglishLearnerStatusEdFactsCode
 
-		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -907,21 +954,21 @@ BEGIN
 			,[TestDateTime]
 		)
 		SELECT DISTINCT
-			 @SqlUnitTestId
+			@SqlUnitTestId
 			,'CSE SEA'
-			,'Sex: ' + s.SexEdFactsCode + '  '
-			+ 'Primary Disability Type: ' + s.PrimaryDisabilityType
-			+ 'Education Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
-			+ 'EL Status: ' + CAST(s.EnglishLearnerStatusEdFactsCode AS VARCHAR(3)) + '  '
+			,'Sex: ' + s.SexEdFactsCode + ' '
+			+ 'Primary Disability Type: ' + s.IdeaDisabilityTypeCode + ' ' 
+			+ 'Education Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge + ' ' 
+			+ 'EL Status: ' + CAST(s.EnglishLearnerStatusEdFactsCode AS VARCHAR(3)) + ' '
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_CSE s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.SexEdFactsCode= rreksd.SEX
-			AND s.PrimaryDisabilityType = rreksd.PRIMARYDISABILITYTYPE
-			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
+			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -930,33 +977,33 @@ BEGIN
 
 		DROP TABLE #S_CSE
 
+
 		/**********************************************************************
 		Test Case 14:
-		Subtotal 1 at the LEA level
+		CSE at the LEA level
 		Student Count by:
 			SexEdFactsCode
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 			IDEAEducationalEnvironmentForSchoolAge
 			EnglishLearnerStatusEdFactsCode
 		***********************************************************************/
 		SELECT 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			SexEdFactsCode,
-			PrimaryDisabilityType, 
+			IdeaDisabilityTypeCode, 
 			IDEAEducationalEnvironmentForSchoolAge,
 			EnglishLearnerStatusEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_CSE
 		FROM #c002staging 
 		GROUP BY 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			SexEdFactsCode,
-			PrimaryDisabilityType, 
+			IdeaDisabilityTypeCode, 
 			IDEAEducationalEnvironmentForSchoolAge,
 			EnglishLearnerStatusEdFactsCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -968,9 +1015,9 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'CSE LEA'
-			,'LEA_Identifier_State: ' + s.LEA_Identifier_State + '  '
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
 			+ 'Sex: ' + s.SexEdFactsCode + '  '
-			+ 'Primary Disability Type: ' + s.PrimaryDisabilityType
+			+ 'Primary Disability Type: ' + s.IdeaDisabilityTypeCode
 			+ 'Education Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			+ 'EL Status: ' + CAST(s.EnglishLearnerStatusEdFactsCode AS VARCHAR(3)) + '  '
 			,s.StudentCount
@@ -978,11 +1025,11 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_CSE s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON S.LEA_Identifier_State = rreksd.OrganizationStateId
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON S.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND s.SexEdFactsCode= rreksd.SEX
-			AND s.PrimaryDisabilityType = rreksd.PRIMARYDISABILITYTYPE
-			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
+			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -993,32 +1040,31 @@ BEGIN
 
 		/**********************************************************************
 		Test Case 15:
-		Subtotal 1 at the School level
+		CSE at the School level
 		Student Count by:
 			SexEdFactsCode
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 			IDEAEducationalEnvironmentForSchoolAge
 			EnglishLearnerStatusEdFactsCode
 		***********************************************************************/
 		SELECT 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			SexEdFactsCode,
-			PrimaryDisabilityType, 
+			IdeaDisabilityTypeCode, 
 			IDEAEducationalEnvironmentForSchoolAge,
 			EnglishLearnerStatusEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_CSE
 		FROM #c002staging 
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			SexEdFactsCode,
-			PrimaryDisabilityType, 
+			IdeaDisabilityTypeCode, 
 			IDEAEducationalEnvironmentForSchoolAge,
 			EnglishLearnerStatusEdFactsCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1030,9 +1076,9 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'CSE School'
-			,'School_Identifier_State: ' + s.School_Identifier_State + '  '
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
 			+ 'Sex: ' + s.SexEdFactsCode + '  '
-			+ 'Primary Disability Type: ' + s.PrimaryDisabilityType
+			+ 'Primary Disability Type: ' + s.IdeaDisabilityTypeCode
 			+ 'Education Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			+ 'EL Status: ' + CAST(s.EnglishLearnerStatusEdFactsCode AS VARCHAR(3)) + '  '
 			,s.StudentCount
@@ -1040,11 +1086,11 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_CSE s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON S.School_Identifier_State = rreksd.OrganizationStateId
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON S.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND s.SexEdFactsCode= rreksd.SEX
-			AND s.PrimaryDisabilityType = rreksd.PRIMARYDISABILITYTYPE
-			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
+			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1062,13 +1108,12 @@ BEGIN
 		***********************************************************************/
 		SELECT 
 			SexEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_TOT1
 		FROM #c002staging 
 		GROUP BY SexEdFactsCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1086,7 +1131,7 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_TOT1 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.SexEdFactsCode = rreksd.SEX
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1103,17 +1148,16 @@ BEGIN
 			Sex 
 		***********************************************************************/
 		SELECT 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			SexEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT1
 		FROM #c002staging 
 		GROUP BY 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			SexEdFactsCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1125,16 +1169,16 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST1 LEA'
-			,'LEA_Identifier_State: ' + s.LEA_Identifier_State + '  '
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
 			+ 'Sex: ' + s.SexEdFactsCode
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_TOT1 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.LEA_Identifier_State = rreksd.OrganizationStateId
+			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND s.SexEdFactsCode = rreksd.SEX
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1150,18 +1194,17 @@ BEGIN
 			Sex 
 		***********************************************************************/
 		SELECT 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			SexEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT1
 		FROM #c002staging 
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			SexEdFactsCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1173,16 +1216,16 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST1 School'
-			,'School_Identifier_State: ' + s.School_Identifier_State + '  '
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
 			+ 'Sex: ' + s.SexEdFactsCode
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_TOT1 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.School_Identifier_State = rreksd.OrganizationStateId
+			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND s.SexEdFactsCode = rreksd.SEX
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1200,13 +1243,12 @@ BEGIN
 		***********************************************************************/
 		SELECT 
 			AgeValue,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_TOT2
 		FROM #c002staging 
 		GROUP BY AgeValue
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1224,7 +1266,7 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_TOT2 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1241,17 +1283,16 @@ BEGIN
 			AgeValue
 		***********************************************************************/
 		SELECT 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			AgeValue,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT2
 		FROM #c002staging 
 		GROUP BY 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			AgeValue
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1263,16 +1304,16 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST2 LEA'
-			,'LEA_Identifier_State: ' + s.LEA_Identifier_State + '  '
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
 			+ 'Age: ' + cast(S.AgeValue as varchar(2))
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_TOT2 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.LEA_Identifier_State = rreksd.OrganizationStateId
+			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1288,18 +1329,17 @@ BEGIN
 			AgeValue
 		***********************************************************************/
 		SELECT 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			AgeValue,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT2
 		FROM #c002staging 
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			AgeValue
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1311,16 +1351,16 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST2 School'
-			,'School_Identifier_State: ' + s.School_Identifier_State + '  '
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
 			+ 'Age: ' + cast(S.AgeValue as varchar(2))
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_TOT2 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.School_Identifier_State = rreksd.OrganizationStateId
+			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1333,17 +1373,16 @@ BEGIN
 		Test Case 22:
 		Subtotal 3 at the SEA level
 		Student Count by:
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 		***********************************************************************/
 		SELECT 
-			PrimaryDisabilityType,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			IdeaDisabilityTypeCode,
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_TOT3
 		FROM #c002staging 
-		GROUP BY PrimaryDisabilityType
+		GROUP BY IdeaDisabilityTypeCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1355,14 +1394,14 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST3 SEA'
-			,'Primary Disability Type: ' + S.PrimaryDisabilityType
+			,'Primary Disability Type: ' + S.IdeaDisabilityTypeCode
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_TOT3 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON S.PrimaryDisabilityType = rreksd.PrimaryDisabilityType
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON S.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
@@ -1374,20 +1413,19 @@ BEGIN
 		Test Case 23:
 		Subtotal 3 at the LEA level
 		Student Count by:
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 		***********************************************************************/
 		SELECT 
-			LEA_Identifier_State,
-			PrimaryDisabilityType,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			LeaIdentifierSeaAccountability,
+			IdeaDisabilityTypeCode,
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT3
 		FROM #c002staging 
 		GROUP BY 
-			LEA_Identifier_State,
-			PrimaryDisabilityType
+			LeaIdentifierSeaAccountability,
+			IdeaDisabilityTypeCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1399,15 +1437,15 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST3 LEA'
-			,'Primary Disability Type: ' + S.PrimaryDisabilityType
+			,'Primary Disability Type: ' + S.IdeaDisabilityTypeCode
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_TOT3 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON S.LEA_Identifier_State = rreksd.OrganizationStateId
-			AND S.PrimaryDisabilityType = rreksd.PrimaryDisabilityType
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON S.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
+			AND S.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
@@ -1419,21 +1457,20 @@ BEGIN
 		Test Case 24:
 		Subtotal 3 at the School level
 		Student Count by:
-			PrimaryDisabilityType
+			IdeaDisabilityTypeCode
 		***********************************************************************/
 		SELECT 
-			School_Identifier_State,
-			PrimaryDisabilityType,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			SchoolIdentifierSea,
+			IdeaDisabilityTypeCode,
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT3
 		FROM #c002staging 
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
-			PrimaryDisabilityType
+			SchoolIdentifierSea,
+			IdeaDisabilityTypeCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1445,23 +1482,21 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST3 School'
-			,'Primary Disability Type: ' + S.PrimaryDisabilityType
+			,'Primary Disability Type: ' + S.IdeaDisabilityTypeCode
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_TOT3 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON S.School_Identifier_State = rreksd.OrganizationStateId
-			AND S.PrimaryDisabilityType = rreksd.PrimaryDisabilityType
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON S.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
+			AND S.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST3'
 
 		DROP TABLE #SCH_TOT3
-
-
 
 
 		/**********************************************************************
@@ -1471,14 +1506,13 @@ BEGIN
 			RaceEdFactsCode
 		***********************************************************************/
 		SELECT 
-			RaceEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			c.RaceEdFactsCode,
+			COUNT(DISTINCT c.StudentIdentifierState) AS StudentCount
 		INTO #S_TOT4
-		FROM #c002staging 
-		GROUP BY RaceEdFactsCode
-		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		FROM #c002staging c
+		GROUP BY c.RaceEdFactsCode
+
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1496,7 +1530,7 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_TOT4 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON S.RaceEdFactsCode = rreksd.RACE
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1506,7 +1540,6 @@ BEGIN
 		DROP TABLE #S_TOT4
 
 
-
 		/**********************************************************************
 		Test Case 26:
 		Subtotal 4 at the LEA level
@@ -1514,17 +1547,16 @@ BEGIN
 			RaceEdFactsCode
 		***********************************************************************/
 		SELECT 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			RaceEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT4
 		FROM #c002staging 
 		GROUP BY 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			RaceEdFactsCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1536,16 +1568,16 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST4 LEA'
-			,'LEA_Identifier_State: ' + s.LEA_Identifier_State + '  '
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
 			+ 'Race: ' + S.RaceEdFactsCode
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_TOT4 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.LEA_Identifier_State = rreksd.OrganizationStateId
+			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND S.RaceEdFactsCode = rreksd.RACE
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1562,18 +1594,17 @@ BEGIN
 			RaceEdFactsCode
 		***********************************************************************/
 		SELECT 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			RaceEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT4
 		FROM #c002staging 
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			RaceEdFactsCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1585,16 +1616,16 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST4 School'
-			,'School_Identifier_State: ' + s.School_Identifier_State + '  '
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
 			+ 'Race: ' + S.RaceEdFactsCode
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_TOT4 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.School_Identifier_State = rreksd.OrganizationStateId
+			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND S.RaceEdFactsCode = rreksd.RACE
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1612,13 +1643,12 @@ BEGIN
 		***********************************************************************/
 		SELECT 
 			EnglishLearnerStatusEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_TOT5
 		FROM #c002staging 
 		GROUP BY EnglishLearnerStatusEdFactsCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1636,7 +1666,7 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_TOT5 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON S.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1646,7 +1676,6 @@ BEGIN
 		DROP TABLE #S_TOT5
 
 
-
 		/**********************************************************************
 		Test Case 29:
 		Subtotal 5 at the LEA level
@@ -1654,17 +1683,16 @@ BEGIN
 			EnglishLearnerStatusEdFactsCode
 		***********************************************************************/
 		SELECT 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			EnglishLearnerStatusEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT5
 		FROM #c002staging 
 		GROUP BY 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			EnglishLearnerStatusEdFactsCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1676,16 +1704,16 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST5 LEA'
-			,'LEA_Identifier_State: ' + s.LEA_Identifier_State + '  '
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
 			+ 'EL Status: ' + S.EnglishLearnerStatusEdFactsCode
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_TOT5 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.LEA_Identifier_State = rreksd.OrganizationStateId
+			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND S.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1694,6 +1722,7 @@ BEGIN
 
 		DROP TABLE #L_TOT5
 
+
 		/**********************************************************************
 		Test Case 30:
 		Subtotal 5 at the School level
@@ -1701,18 +1730,17 @@ BEGIN
 			EnglishLearnerStatusEdFactsCode
 		***********************************************************************/
 		SELECT 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			EnglishLearnerStatusEdFactsCode,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT5
 		FROM #c002staging 
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			EnglishLearnerStatusEdFactsCode
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1724,16 +1752,16 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST5 School'
-			,'School_Identifier_State: ' + s.School_Identifier_State + '  '
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
 			+ 'EL Status: ' + S.EnglishLearnerStatusEdFactsCode
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_TOT5 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.School_Identifier_State = rreksd.OrganizationStateId
+			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND S.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
@@ -1751,13 +1779,12 @@ BEGIN
 		***********************************************************************/
 		SELECT 
 			s.IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_TOT6
 		FROM #c002staging s
 		GROUP BY IDEAEducationalEnvironmentForSchoolAge
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1775,15 +1802,14 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_TOT6 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST6'
 
 		DROP TABLE #S_TOT6
-
 
 
 		/**********************************************************************
@@ -1793,17 +1819,16 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT6
 		FROM #c002staging 
 		GROUP BY 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			IDEAEducationalEnvironmentForSchoolAge
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1815,17 +1840,17 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST6 LEA'
-			,'LEA_Identifier_State: ' + s.LEA_Identifier_State + '  '
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
 			+ 'Educational Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_TOT6 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.LEA_Identifier_State = rreksd.OrganizationStateId
-			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
+			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
@@ -1841,18 +1866,17 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT6
 		FROM #c002staging 
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			IDEAEducationalEnvironmentForSchoolAge
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1864,17 +1888,17 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST6 School'
-			,'School_Identifier_State: ' + s.School_Identifier_State + '  '
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
 			+ 'Educational Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_TOT6 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.School_Identifier_State = rreksd.OrganizationStateId
-			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
+			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
@@ -1883,25 +1907,24 @@ BEGIN
 		DROP TABLE #SCH_TOT6
 
 		
-
 		/**********************************************************************
 		Test Case 34:
 		Subtotal 7 at the SEA level
 		Student Count by:
+			Age
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
 			s.AgeValue,
 			s.IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_TOT7
 		FROM #c002staging s
 		GROUP BY 
 			  AgeValue
 			, IDEAEducationalEnvironmentForSchoolAge
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1920,16 +1943,15 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_TOT7 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
-			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST7'
 
 		DROP TABLE #S_TOT7
-
 
 
 		/**********************************************************************
@@ -1940,19 +1962,18 @@ BEGIN
 			Education Unit Total Student Count
 		***********************************************************************/
 		SELECT 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT7
 		FROM #c002staging 
 		GROUP BY 
-			LEA_Identifier_State,
+			LeaIdentifierSeaAccountability,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -1964,7 +1985,7 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST7 LEA'
-			,'LEA_Identifier_State: ' + s.LEA_Identifier_State + '  '
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
 			+ 'Age: ' + cast(s.AgeValue as varchar(2))
 			+ 'Educational Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
@@ -1972,17 +1993,18 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_TOT7 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.LEA_Identifier_State = rreksd.OrganizationStateId
+			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
-			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST7'
 
 		DROP TABLE #L_TOT7
+
 
 		/**********************************************************************
 		Test Case 36:
@@ -1992,20 +2014,19 @@ BEGIN
 			Education Unit Total Student Count
 		***********************************************************************/
 		SELECT 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT7
 		FROM #c002staging 
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State,
+			SchoolIdentifierSea,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -2017,7 +2038,7 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST7 School'
-			,'School_Identifier_State: ' + s.School_Identifier_State + '  '
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
 			+ 'Age: ' + cast(s.AgeValue as varchar(2))
 			+ 'Educational Environment: ' + s.IDEAEducationalEnvironmentForSchoolAge
 			,s.StudentCount
@@ -2025,11 +2046,11 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_TOT7 s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON 
-			s.School_Identifier_State = rreksd.OrganizationStateId
+			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
-			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENT
+			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
@@ -2042,12 +2063,11 @@ BEGIN
 		Total at the SEA level
 		***********************************************************************/
 		SELECT 
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #S_TOT
 		FROM #c002staging s
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -2065,7 +2085,7 @@ BEGIN
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #S_TOT s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
@@ -2074,21 +2094,19 @@ BEGIN
 		DROP TABLE #S_TOT
 
 
-
 		/**********************************************************************
 		Test Case 38:
 		Total at the LEA level
 		***********************************************************************/
 		SELECT 
-			LEA_Identifier_State,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			LeaIdentifierSeaAccountability,
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT
 		FROM #c002staging 
 		GROUP BY 
-			LEA_Identifier_State
+			LeaIdentifierSeaAccountability
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -2100,14 +2118,14 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'TOT LEA'
-			,'Total Student'
+			,'LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '  '
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #L_TOT s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON s.LEA_Identifier_State = rreksd.OrganizationStateId
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
@@ -2121,16 +2139,15 @@ BEGIN
 		Total at the School level
 		***********************************************************************/
 		SELECT 
-			School_Identifier_State,
-			COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+			SchoolIdentifierSea,
+			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT
 		FROM #c002staging 
 		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			School_Identifier_State
+			SchoolIdentifierSea
 		
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -2142,20 +2159,19 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'TOT School'
-			,'Total Student'
+			,'SchoolIdentifierSea: ' + s.SchoolIdentifierSea + '  '
 			,s.StudentCount
 			,rreksd.StudentCount
 			,CASE WHEN s.StudentCount = ISNULL(rreksd.StudentCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #SCH_TOT s
-		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON s.School_Identifier_State = rreksd.OrganizationStateId
+		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
+			ON s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND rreksd.ReportCode = 'c002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'TOT'
 
 		DROP TABLE #SCH_TOT
-
 
 END

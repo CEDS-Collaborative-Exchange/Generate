@@ -63,13 +63,15 @@ BEGIN TRY
 
  		select @ChildCountDate = CAST('10/01/' + cast(@SchoolYear - 1 AS Varchar(4)) AS DATETIME)
 
-		--DROP TABLE #disabilityCodes
-
 		IF OBJECT_ID('tempdb..#disabilityCodes') IS NOT NULL
 		DROP TABLE #disabilityCodes
 
+		CREATE TABLE #disabilityCodes (
+			CategoryOptionCode VARCHAR(60)
+		)
+
+		INSERT INTO #disabilityCodes
 		SELECT distinct o.CategoryOptionCode
-		INTO #disabilityCodes
 		from app.CategoryOptions o
 		inner join app.Categories c on o.CategoryId = c.CategoryId
 		and c.CategoryCode = 'DISABCATIDEAEXIT'
@@ -84,6 +86,9 @@ BEGIN TRY
 		where q.EmapsQuestionAbbrv = 'CHDCTDISCAT'
 			AND SubmissionYear = @SchoolYear
 
+
+		IF OBJECT_ID('tempdb..#catchmentType') IS NOT NULL
+		DROP TABLE #catchmentType
 
 		CREATE TABLE #catchmentType ( CatchmentArea varchar(100) )
 		INSERT INTO #catchmentType VALUES ( 'Districtwide (students moving out of district)' )
@@ -113,46 +118,71 @@ BEGIN TRY
 			WHERE atq.EmapsQuestionAbbrv IN ('DEFEXMOVCONSEA', 'DEFEXMOVCONLEA')
 				AND atqo.OptionText = @catchmentArea
 
-			delete from rds.ReportEDFactsK12StudentCounts WHERE ReportCode = 'C009'
 			UPDATE app.GenerateReports SET IsLocked = 1 WHERE ReportCode = 'C009'
 			EXEC RDS.Create_ReportData 'C009', 'specedexit', 0
 	
-			--DROP TABLE #staging
-			--DROP TABLE #stuLea
-
 			IF OBJECT_ID('tempdb..#staging') IS NOT NULL
 			DROP TABLE #staging
 
+			IF OBJECT_ID('tempdb..#stuLeaTemp') IS NOT NULL
+			DROP TABLE #stuLeaTemp
+
 			IF OBJECT_ID('tempdb..#stuLea') IS NOT NULL
 			DROP TABLE #stuLea
+
+			IF OBJECT_ID('tempdb..#CAT_Organizations') IS NOT NULL
+			DROP TABLE #CAT_Organizations
 
 			IF OBJECT_ID('tempdb..#notReportedFederallyLeas') IS NOT NULL
 			DROP TABLE #notReportedFederallyLeas
 
 			CREATE TABLE #notReportedFederallyLeas (
-				LEA_Identifier_State		VARCHAR(20)
+				LeaIdentifierSeaAccountability		VARCHAR(20)
 			)
 
 			INSERT INTO #notReportedFederallyLeas 
-			SELECT DISTINCT LEA_Identifier_State
+			SELECT DISTINCT LeaIdentifierSea
 			FROM Staging.K12Organization
 			WHERE LEA_IsReportedFederally = 0
 
 			CREATE TABLE #stuLeaTemp (
-				  Student_Identifier_State	VARCHAR(20)
-				, Lea_Identifier_State		VARCHAR(20)
+				  StudentIdentifierState	VARCHAR(20)
+				, LeaIdentifierSeaAccountability		VARCHAR(20)
 			)
+
+			create table #CAT_Organizations
+			(
+				LeaIdentifierState varchar(60)
+			)
+			CREATE INDEX IDX_CAT_Organizations ON #CAT_Organizations (LeaIdentifierState)
+ 
+			truncate table #CAT_Organizations
+ 
+			-- temp Category schools table							
+			insert into #CAT_Organizations
+ 
+			select distinct o.LeaIdentifierSea  
+			from rds.FactK12StudentCounts fact
+			join rds.DimLeas o  
+				on fact.LeaId = o.DimLeaId 
+			join rds.DimSchoolYears rdsy
+				on fact.SchoolYearId = rdsy.DimSchoolYearId
+			where rdsy.SchoolYear = @SchoolYear
+			and o.ReportedFederally = 1 
+			and o.DimLeaId <> -1 
+			and o.LEAOperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING') AND CONVERT(date, o.OperationalStatusEffectiveDate, 101) between CONVERT(date, '07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)), 101) AND CONVERT(date, '06/30/' + CAST(@SchoolYear AS VARCHAR(4)), 101)
+
 
 			IF @catchmentArea = 'Districtwide (students moving out of district)' BEGIN
 			
 				INSERT INTO #stuLeaTemp
 				SELECT DISTINCT
-					  sppse.Student_Identifier_State
-					, sppse.Lea_Identifier_State
+					  sppse.StudentIdentifierState
+					, sppse.LeaIdentifierSeaAccountability
 				FROM Staging.ProgramParticipationSpecialEducation sppse
 				WHERE ProgramParticipationEndDate IS NOT NULL
-				GROUP BY Student_Identifier_State
-					, sppse.Lea_Identifier_State
+				GROUP BY StudentIdentifierState	
+					, sppse.LeaIdentifierSeaAccountability
 					, ProgramParticipationEndDate
 				HAVING ProgramParticipationEndDate  = MIN(ProgramParticipationEndDate)
 			
@@ -160,52 +190,124 @@ BEGIN TRY
 			
 				INSERT INTO #stuLeaTemp
 				SELECT DISTINCT
-					  sppse.Student_Identifier_State
-					, sppse.Lea_Identifier_State
+					  sppse.StudentIdentifierState
+					, sppse.LeaIdentifierSeaAccountability
 				FROM Staging.ProgramParticipationSpecialEducation sppse
-				GROUP BY Student_Identifier_State
-					, sppse.Lea_Identifier_State
+				GROUP BY StudentIdentifierState
+					, sppse.LeaIdentifierSeaAccountability
 					, ProgramParticipationEndDate
 				HAVING ProgramParticipationEndDate  = MAX(ProgramParticipationEndDate)
 
 			END
+			
+			CREATE NONCLUSTERED INDEX [IX_stuLeaTemp] ON #stuLeaTemp(LeaIdentifierSeaAccountability, StudentIdentifierState)
 
 			
 			CREATE TABLE #stuLea (
-				  Student_Identifier_State	VARCHAR(20)
-				, Lea_Identifier_State		VARCHAR(20)
-				, SpecialEducationServicesExitDate DATETIME
+				  StudentIdentifierState					VARCHAR(20)
+				, LeaIdentifierSeaAccountability			VARCHAR(20)
+				, SpecialEducationServicesExitDate			DATETIME
 			)
 
 			INSERT INTO #stuLea
 			SELECT
-				  sppse.Student_Identifier_State
-				, sppse.Lea_Identifier_State
+				  sppse.StudentIdentifierState
+				, sppse.LeaIdentifierSeaAccountability
 				, MAX(sppse.ProgramParticipationEndDate)
 			FROM Staging.ProgramParticipationSpecialEducation sppse
 			JOIN #stuLeaTemp temp	
-				ON sppse.Student_Identifier_State = temp.Student_Identifier_State
-				AND sppse.Lea_Identifier_State = temp.Lea_Identifier_State
-			GROUP BY sppse.Student_Identifier_State
-				, sppse.Lea_Identifier_State
+				ON sppse.StudentIdentifierState = temp.StudentIdentifierState
+				AND sppse.LeaIdentifierSeaAccountability = temp.LeaIdentifierSeaAccountability
+			GROUP BY sppse.StudentIdentifierState
+				, sppse.LeaIdentifierSeaAccountability
+
+			CREATE NONCLUSTERED INDEX [IX_stuLea] ON #stuLea(LeaIdentifierSeaAccountability, StudentIdentifierState)
 
 
+			CREATE TABLE #staging (
+				  StudentIdentifierState					VARCHAR(100)
+				, LeaIdentifierSeaAccountability			VARCHAR(100)
+				, SchoolIdentifierSea						VARCHAR(100)
+				, Birthdate									DATETIME
+				, Age										VARCHAR(100)
+				, SpecialEducationExitReason				VARCHAR(100)
+				, SpecialEducationExitReasonEdFactsCode		VARCHAR(100)
+				, IdeaDisabilityTypeCode					VARCHAR(100)
+				, IdeaDisabilityTypeEdFactsCode				VARCHAR(100)
+				, HispanicLatinoEthnicity					VARCHAR(100)
+				, RaceType									VARCHAR(100)
+				, RaceEdFactsCode							VARCHAR(100)
+				, Sex										VARCHAR(100)
+				, SexEdFactsCode							VARCHAR(100)
+				, EnglishLearnerStatus						VARCHAR(100)
+				, EnglishLearnerStatusEdFactsCode			VARCHAR(100)
+
+			)
+
+			INSERT INTO #staging
 			SELECT DISTINCT 
-				  ske.Student_Identifier_State
-				, ske.LEA_Identifier_State
-				, ske.School_Identifier_State
+				  ske.StudentIdentifierState
+				, ske.LeaIdentifierSeaAccountability
+				, ske.SchoolIdentifierSea
 				, ske.Birthdate
 				, case
 					when @ChildCountDate <= sppse.ProgramParticipationEndDate then [RDS].[Get_Age](ske.Birthdate, @ChildCountDate)
 					else [RDS].[Get_Age](ske.BirthDate, DATEADD(year, -1, @ChildCountDate))
 					end as Age
 				, sppse.SpecialEducationExitReason
-				, rdis.SpecialEducationExitReasonEdFactsCode
-				, sps.PrimaryDisabilityType
-				, rdis.PrimaryDisabilityTypeEdFactsCode
+				, CASE sppse.SpecialEducationExitReason
+							WHEN 'PartCNoLongerEligible' THEN 'PartCNoLongerEligible'
+							WHEN 'PartBEligibleContinuingPartC' THEN 'PartBEligibleContinuingPartC'
+							WHEN 'WithdrawalByParent' THEN 'TRAN'
+							WHEN 'PartBEligibilityNotDeterminedExitingPartC' THEN 'PartBEligibilityNotDeterminedExitingPartC'
+							WHEN 'Unreachable' THEN 'DROPOUT'
+							WHEN 'Died' THEN 'D'
+							WHEN 'ReceivedCertificate' THEN 'RC'
+							WHEN 'MISSING' THEN 'MISSING'
+							WHEN 'MovedAndContinuing' THEN 'MKC'
+							WHEN 'PartBEligibleExitingPartC' THEN 'PartBEligibleExitingPartC'
+							WHEN 'MovedOutOfState' THEN 'MKC'
+							WHEN 'ReachedMaximumAge' THEN 'RMA'
+							WHEN 'NotPartBEligibleExitingPartCWithoutReferrrals' THEN 'MISSING'
+							WHEN 'GraduatedAlternateDiploma' THEN 'GRADALTDPL'
+							WHEN 'NotPartBEligibleExitingPartCWithReferrrals' THEN 'MISSING'
+							WHEN 'DroppedOut' THEN 'DROPOUT'
+							WHEN 'HighSchoolDiploma' THEN 'GHS'
+							WHEN 'Transferred' THEN 'TRAN'
+						END
+				, sidt.IdeaDisabilityTypeCode
+				, CASE sidt.IdeaDisabilityTypeCode 
+					WHEN 'MISSING' THEN 'MISSING'
+					WHEN 'Autism' THEN 'AUT'
+					WHEN 'Deafblindness' THEN 'DB'
+					WHEN 'Deafness' THEN 'DB'
+					WHEN 'Developmentaldelay' THEN 'DD'
+					WHEN 'Emotionaldisturbance' THEN 'EMN'
+					WHEN 'Hearingimpairment' THEN 'HI'
+					WHEN 'Intellectualdisability' THEN 'ID'
+					WHEN 'Multipledisabilities' THEN 'MD'
+					WHEN 'Orthopedicimpairment' THEN 'OI'
+					WHEN 'Otherhealthimpairment' THEN 'OHI'
+					WHEN 'Specificlearningdisability' THEN 'SLD'
+					WHEN 'Speechlanguageimpairment' THEN 'SLI'
+					WHEN 'Traumaticbraininjury' THEN 'TBI'
+					WHEN 'Visualimpairment' THEN 'VI'
+				  END
 				, ske.HispanicLatinoEthnicity
 				, spr.RaceType
-				, rdr.RaceEdFactsCode
+				, CASE 
+					WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HI7'
+					WHEN spr.RaceType = 'AmericanIndianorAlaskaNative' THEN 'AM7'
+					WHEN spr.RaceType = 'Asian' THEN 'AS7'
+					WHEN spr.RaceType = 'BlackorAfricanAmerican' THEN 'BL7'
+					WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander' THEN 'PI7'
+					WHEN spr.RaceType = 'White' THEN 'WH7'
+					WHEN spr.RaceType = 'TwoorMoreRaces' THEN 'MU7'
+					WHEN spr.RaceType = 'HispanicorLatinoEthnicity' THEN 'HI7'
+					WHEN spr.RaceType = 'DemographicRaceTwoOrMoreRaces' THEN 'MISSING'
+					WHEN spr.RaceType = 'RaceAndEthnicityUnknown' THEN 'MISSING'
+					WHEN spr.RaceType = 'MISSING' THEN 'MISSING'
+				  END
 				, ske.Sex
 				, CASE ske.Sex
 					WHEN 'Male' THEN 'M'
@@ -213,49 +315,53 @@ BEGIN TRY
 					ELSE 'MISSING'
 					END AS SexEdFactsCode
 				, CASE
-					WHEN sppse.ProgramParticipationEndDate BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, GETDATE()) THEN EnglishLearnerStatus
+					WHEN sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) THEN EnglishLearnerStatus
 					ELSE 0
 					END AS EnglishLearnerStatus
 				, CASE
-					WHEN sppse.ProgramParticipationEndDate BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, GETDATE()) THEN 
+					WHEN sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) THEN 
 						CASE 
 							WHEN EnglishLearnerStatus = 1 THEN 'LEP'
 							WHEN EnglishLearnerStatus = 0 THEN 'NLEP'
-							WHEN EnglishLearnerStatus IS NULL THEN 'NLEP'
 							ELSE 'MISSING'
 						END
-					ELSE 'NLEP'
+					ELSE 'MISSING'
 					END AS EnglishLearnerStatusEdFactsCode
-			INTO #staging
 			FROM Staging.K12Enrollment ske
-			JOIN Staging.PersonStatus sps
-				ON sps.Student_Identifier_State = ske.Student_Identifier_State
-				AND sps.LEA_Identifier_State = ske.LEA_Identifier_State
-				AND ISNULL(sps.School_Identifier_State, '') = ISNULL(ske.School_Identifier_State,'')
+			left JOIN #stuLea latest
+				ON ske.StudentIdentifierState = latest.StudentIdentifierState
+				AND ske.LeaIdentifierSeaAccountability = latest.LeaIdentifierSeaAccountability
 			JOIN Staging.ProgramParticipationSpecialEducation sppse
-				ON sppse.Student_Identifier_State = ske.Student_Identifier_State
-				AND sppse.LEA_Identifier_State = ske.LEA_Identifier_State
-				AND ISNULL(sppse.School_Identifier_State, '') = ISNULL(ske.School_Identifier_State, '')
-			JOIN #stuLea latest
-				ON sppse.Student_Identifier_State = latest.Student_Identifier_State
-				AND sppse.LEA_Identifier_State = latest.LEA_Identifier_State
+				ON sppse.StudentIdentifierState = latest.StudentIdentifierState
+				AND sppse.LeaIdentifierSeaAccountability = latest.LeaIdentifierSeaAccountability
 				AND sppse.ProgramParticipationEndDate = latest.SpecialEducationServicesExitDate
-			LEFT JOIN Staging.PersonRace spr
-				ON spr.Student_Identifier_State = ske.Student_Identifier_State
+			JOIN Staging.IdeaDisabilityType sidt
+				ON sidt.StudentIdentifierState = ske.StudentIdentifierState
+				AND sidt.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
+				AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+				AND sppse.ProgramParticipationEndDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+				and sidt.IsPrimaryDisability = 1
+			LEFT JOIN Staging.K12PersonRace spr
+				ON ske.StudentIdentifierState = spr.StudentIdentifierState
+				AND ske.LeaIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability
+				AND ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
 				AND spr.SchoolYear = ske.SchoolYear
 				AND sppse.ProgramParticipationEndDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, GETDATE())
-			left JOIN RDS.DimRaces rdr
+			LEFT JOIN RDS.DimRaces rdr
 				ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
 					OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceCode)
-			JOIN RDS.DimIdeaStatuses rdis
-				ON sps.PrimaryDisabilityType = rdis.PrimaryDisabilityTypeCode
-				AND sppse.SpecialEducationExitReason = rdis.SpecialEducationExitReasonCode
+			LEFT JOIN Staging.PersonStatus el 
+				ON ske.StudentIdentifierState = el.StudentIdentifierState
+				AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
+				AND sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
 			WHERE sppse.ProgramParticipationEndDate is not null
 				--AND sppse.IDEAEducationalEnvironmentForSchoolAge <> 'PPPS'
 				AND sppse.SpecialEducationExitReason IS NOT NULL
 				AND ske.SchoolYear = @SchoolYear
 				--and sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate and ISNULL(ske.EnrollmentExitDate, getdate())
-			
+
+
 			DELETE FROM #staging
 			WHERE Age NOT BETWEEN 14 AND 21
 
@@ -267,15 +373,15 @@ BEGIN TRY
 			SELECT 
 				  SpecialEducationExitReasonEdFactsCode
 				, Age
-				, PrimaryDisabilityTypeEdFactsCode
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, IdeaDisabilityTypeEdFactsCode
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC1
 			FROM #staging s
 			JOIN #disabilityCodes d
-				ON s.PrimaryDisabilityTypeEdFactsCode = d.CategoryOptionCode
+				ON s.IdeaDisabilityTypeEdFactsCode = d.CategoryOptionCode
 			GROUP BY SpecialEducationExitReasonEdFactsCode
 				, Age
-				, PrimaryDisabilityTypeEdFactsCode
+				, IdeaDisabilityTypeEdFactsCode
 				
 			
 
@@ -292,7 +398,7 @@ BEGIN TRY
 			SELECT 
 				 @SqlUnitTestId
 				,'CSA SEA Match All'
-				,'CSA SEA Match All = Catchment Area: ' + @catchmentArea + ';  Age: ' + CAST(s.Age AS VARCHAR(2)) +  '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode + '; Disability Type: ' + s.PrimaryDisabilityTypeEdFactsCode
+				,'CSA SEA Match All = Catchment Area: ' + @catchmentArea + ';  Age: ' + CAST(s.Age AS VARCHAR(2)) +  '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode + '; Disability Type: ' + s.IdeaDisabilityTypeEdFactsCode
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
@@ -301,7 +407,7 @@ BEGIN TRY
 			LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.Age = rreksc.Age
-				AND s.PrimaryDisabilityTypeEdFactsCode = rreksc.PrimaryDisabilityType
+				AND s.IdeaDisabilityTypeEdFactsCode = rreksc.IDEADISABILITYTYPE
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
@@ -317,7 +423,7 @@ BEGIN TRY
 			SELECT 
 				  SpecialEducationExitReasonEdFactsCode
 				, RaceEdFactsCode
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC2
 			FROM #staging 
 			GROUP BY SpecialEducationExitReasonEdFactsCode
@@ -361,7 +467,7 @@ BEGIN TRY
 			SELECT 
 				  SpecialEducationExitReasonEdFactsCode
 				, SexEdFactsCode
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC3
 			FROM #staging 
 			WHERE SexEdFactsCode <> 'MISSING'
@@ -407,9 +513,10 @@ BEGIN TRY
 			SELECT 
 				  SpecialEducationExitReasonEdFactsCode
 				, EnglishLearnerStatusEdFactsCode
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC4
 			FROM #staging 
+			WHERE EnglishLearnerStatusEdFactsCode <> 'MISSING'
 			GROUP BY SpecialEducationExitReasonEdFactsCode
 				, EnglishLearnerStatusEdFactsCode
 				
@@ -450,7 +557,7 @@ BEGIN TRY
 			*/
 			SELECT 
 				  SpecialEducationExitReasonEdFactsCode
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC5
 			FROM #staging 
 			GROUP BY SpecialEducationExitReasonEdFactsCode
@@ -493,7 +600,7 @@ BEGIN TRY
 			*/
 			SELECT 
 				  Age
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC6
 			FROM #staging 
 			GROUP BY Age
@@ -535,7 +642,7 @@ BEGIN TRY
 			*/
 			SELECT 
 				  RaceEdFactsCode
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC7
 			FROM #staging 
 			GROUP BY RaceEdFactsCode
@@ -577,7 +684,7 @@ BEGIN TRY
 			*/
 			SELECT 
 				  SexEdFactsCode
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC8
 			FROM #staging 
 			WHERE SexEdFactsCode <> 'MISSING'
@@ -621,9 +728,10 @@ BEGIN TRY
 			*/
 			SELECT 
 				  EnglishLearnerStatusEdFactsCode
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC9
 			FROM #staging 
+			WHERE EnglishLearnerStatusEdFactsCode <> 'MISSING'
 			GROUP BY EnglishLearnerStatusEdFactsCode
 				
 			
@@ -662,13 +770,13 @@ BEGIN TRY
 				ST6 at the SEA level
 			*/
 			SELECT 
-				  PrimaryDisabilityTypeEdFactsCode
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				  IdeaDisabilityTypeEdFactsCode
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC10
 			FROM #staging s
 			JOIN #disabilityCodes d
-				ON s.PrimaryDisabilityTypeEdFactsCode = d.CategoryOptionCode
-			GROUP BY PrimaryDisabilityTypeEdFactsCode
+				ON s.IdeaDisabilityTypeEdFactsCode = d.CategoryOptionCode
+			GROUP BY IdeaDisabilityTypeEdFactsCode
 				
 			
 
@@ -685,14 +793,14 @@ BEGIN TRY
 			SELECT DISTINCT
 				 @SqlUnitTestId
 				,'ST6 SEA Match All'
-				,'ST6 SEA Match All = Catchment Area: ' + @catchmentArea + ';  Primary Disability Type: ' + s.PrimaryDisabilityTypeEdFactsCode
+				,'ST6 SEA Match All = Catchment Area: ' + @catchmentArea + ';  Primary Disability Type: ' + s.IdeaDisabilityTypeEdFactsCode
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
 				,GETDATE()
 			FROM #TC10 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
-				ON s.PrimaryDisabilityTypeEdFactsCode = rreksc.PRIMARYDISABILITYTYPE
+				ON s.IdeaDisabilityTypeEdFactsCode = rreksc.IDEADISABILITYTYPE
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
@@ -706,7 +814,7 @@ BEGIN TRY
 				TOT at the SEA level
 			*/
 			SELECT 
-				COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC11
 			FROM #staging 
 
@@ -750,20 +858,23 @@ BEGIN TRY
 			SELECT 
 				  SpecialEducationExitReasonEdFactsCode
 				, Age
-				, PrimaryDisabilityTypeEdFactsCode
-				, s.LEA_Identifier_State
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, IdeaDisabilityTypeEdFactsCode
+				, s.LeaIdentifierSeaAccountability
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC12
 			FROM #staging s
 			JOIN #disabilityCodes d
-				ON s.PrimaryDisabilityTypeEdFactsCode = d.CategoryOptionCode
+				ON s.IdeaDisabilityTypeEdFactsCode = d.CategoryOptionCode
 			LEFT JOIN #notReportedFederallyLeas nrflea
-				ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-			WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-			GROUP BY s.LEA_Identifier_State
+				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
+			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
 				, Age
-				, PrimaryDisabilityTypeEdFactsCode
+				, IdeaDisabilityTypeEdFactsCode
 				
 			
 
@@ -781,7 +892,7 @@ BEGIN TRY
 			SELECT 
 				 @SqlUnitTestId
 				,'CSA LEA Match All'
-				,'CSA LEA Match All = Catchment Area: ' + @catchmentArea + ';  LEA_Identifier_State: ' + s.LEA_Identifier_State + '; Age: ' + CAST(s.Age AS VARCHAR(2)) +  '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode + '; Disability Type: ' + s.PrimaryDisabilityTypeEdFactsCode
+				,'CSA LEA Match All = Catchment Area: ' + @catchmentArea + ';  LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '; Age: ' + CAST(s.Age AS VARCHAR(2)) +  '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode + '; Disability Type: ' + s.IdeaDisabilityTypeEdFactsCode
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
@@ -790,8 +901,8 @@ BEGIN TRY
 			LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.Age = rreksc.Age
-				AND s.LEA_Identifier_State = rreksc.OrganizationStateId
-				AND s.PrimaryDisabilityTypeEdFactsCode = rreksc.PrimaryDisabilityType
+				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
+				AND s.IdeaDisabilityTypeEdFactsCode = rreksc.IDEADISABILITYTYPE
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
@@ -810,14 +921,17 @@ BEGIN TRY
 			SELECT 
 				  SpecialEducationExitReasonEdFactsCode
 				, RaceEdFactsCode
-				, s.LEA_Identifier_State
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, s.LeaIdentifierSeaAccountability
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC13
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
-				ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-			WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-			GROUP BY s.LEA_Identifier_State
+				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE s.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
+			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
 				, RaceEdFactsCode
 				
@@ -837,7 +951,7 @@ BEGIN TRY
 			SELECT DISTINCT
 				 @SqlUnitTestId
 				,'CSB LEA Match All'
-				,'CSB LEA Match All = Catchment Area: ' + @catchmentArea + ';  LEA_Identifier_State: ' + s.LEA_Identifier_State + '; Race: ' + CAST(s.RaceEdFactsCode AS VARCHAR(3)) +  '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode
+				,'CSB LEA Match All = Catchment Area: ' + @catchmentArea + ';  LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '; Race: ' + CAST(s.RaceEdFactsCode AS VARCHAR(3)) +  '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
@@ -846,7 +960,7 @@ BEGIN TRY
 			LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.RaceEdFactsCode = rreksc.RACE
-				AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
@@ -862,15 +976,18 @@ BEGIN TRY
 			SELECT 
 				  SpecialEducationExitReasonEdFactsCode
 				, SexEdFactsCode
-				, s.LEA_Identifier_State
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, s.LeaIdentifierSeaAccountability
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC14
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
-				ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-			WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
+				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 				AND SexEdFactsCode <> 'MISSING'
-			GROUP BY s.LEA_Identifier_State
+			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
 				, SexEdFactsCode
 				
@@ -889,7 +1006,7 @@ BEGIN TRY
 			SELECT DISTINCT
 				 @SqlUnitTestId
 				,'CSC LEA Match All'
-				,'CSC LEA Match All = Catchment Area: ' + @catchmentArea + ';  LEA_Identifier_State: ' + s.LEA_Identifier_State + '; Sex: ' + CAST(s.SexEdFactsCode AS VARCHAR(2)) +  '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode
+				,'CSC LEA Match All = Catchment Area: ' + @catchmentArea + ';  LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '; Sex: ' + CAST(s.SexEdFactsCode AS VARCHAR(2)) +  '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
@@ -898,7 +1015,7 @@ BEGIN TRY
 			LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.SexEdFactsCode = rreksc.SEX
-				AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
@@ -914,14 +1031,18 @@ BEGIN TRY
 			SELECT 
 				  SpecialEducationExitReasonEdFactsCode
 				, EnglishLearnerStatusEdFactsCode
-				, s.LEA_Identifier_State
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, s.LeaIdentifierSeaAccountability
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC15
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
-				ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-			WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-			GROUP BY s.LEA_Identifier_State
+				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
+				AND s.EnglishLearnerStatusEdFactsCode <> 'MISSING'
+			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
 				, EnglishLearnerStatusEdFactsCode
 				
@@ -940,7 +1061,7 @@ BEGIN TRY
 			SELECT DISTINCT
 				 @SqlUnitTestId
 				,'CSD LEA Match All'
-				,'CSD LEA Match All = Catchment Area: ' + @catchmentArea + ';  LEA_Identifier_State: ' + s.LEA_Identifier_State + '; EL Status: ' + CAST(s.EnglishLearnerStatusEdFactsCode AS VARCHAR(3)) +  '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode
+				,'CSD LEA Match All = Catchment Area: ' + @catchmentArea + ';  LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '; EL Status: ' + CAST(s.EnglishLearnerStatusEdFactsCode AS VARCHAR(3)) +  '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
@@ -949,7 +1070,7 @@ BEGIN TRY
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.EnglishLearnerStatusEdFactsCode = rreksc.ENGLISHLEARNERSTATUS
-				AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
@@ -966,14 +1087,17 @@ BEGIN TRY
 			*/
 			SELECT 
 				  SpecialEducationExitReasonEdFactsCode
-				, s.LEA_Identifier_State
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, s.LeaIdentifierSeaAccountability
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC16
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
-				ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-			WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-			GROUP BY s.LEA_Identifier_State
+				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
+			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
 				
 			
@@ -991,7 +1115,7 @@ BEGIN TRY
 			SELECT DISTINCT
 				 @SqlUnitTestId
 				,'ST1 LEA Match All'
-				,'ST1 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LEA_Identifier_State: ' + s.LEA_Identifier_State + '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode
+				,'ST1 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '; Special Ed Exit Reason: ' + s.SpecialEducationExitReasonEdFactsCode
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
@@ -999,7 +1123,7 @@ BEGIN TRY
 			FROM #TC16 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
-				AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
@@ -1014,14 +1138,17 @@ BEGIN TRY
 			*/
 			SELECT 
 				  Age
-				, s.LEA_Identifier_State
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, s.LeaIdentifierSeaAccountability
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC17
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
-				ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-			WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-			GROUP BY s.LEA_Identifier_State
+				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
+			GROUP BY s.LeaIdentifierSeaAccountability
 				, Age
 				
 			
@@ -1039,7 +1166,7 @@ BEGIN TRY
 			SELECT DISTINCT
 				 @SqlUnitTestId
 				,'ST2 LEA Match All'
-				,'ST2 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LEA_Identifier_State: ' + s.LEA_Identifier_State + '; Age: ' + CAST(s.Age as VARCHAR(2))
+				,'ST2 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '; Age: ' + CAST(s.Age as VARCHAR(2))
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
@@ -1047,7 +1174,7 @@ BEGIN TRY
 			FROM #TC17 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.Age = rreksc.AGE
-				AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
@@ -1063,14 +1190,17 @@ BEGIN TRY
 			*/
 			SELECT 
 				  RaceEdFactsCode
-				, s.LEA_Identifier_State
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, s.LeaIdentifierSeaAccountability
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC18
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
-				ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-			WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-			GROUP BY s.LEA_Identifier_State
+				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
+			GROUP BY s.LeaIdentifierSeaAccountability
 				, RaceEdFactsCode
 				
 			
@@ -1088,7 +1218,7 @@ BEGIN TRY
 			SELECT DISTINCT
 				 @SqlUnitTestId
 				,'ST3 LEA Match All'
-				,'ST3 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LEA_Identifier_State: ' + s.LEA_Identifier_State + '; Race: ' + s.RaceEdFactsCode
+				,'ST3 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '; Race: ' + s.RaceEdFactsCode
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
@@ -1096,7 +1226,7 @@ BEGIN TRY
 			FROM #TC18 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.RaceEdFactsCode = rreksc.Race
-				AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
@@ -1112,15 +1242,18 @@ BEGIN TRY
 			*/
 			SELECT 
 				  SexEdFactsCode
-				, s.LEA_Identifier_State
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, s.LeaIdentifierSeaAccountability
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC19
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
-				ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-			WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
+				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 				AND SexEdFactsCode <> 'MISSING'
-			GROUP BY s.LEA_Identifier_State
+			GROUP BY s.LeaIdentifierSeaAccountability
 				, SexEdFactsCode
 				
 			
@@ -1138,7 +1271,7 @@ BEGIN TRY
 			SELECT DISTINCT
 				 @SqlUnitTestId
 				,'ST4 LEA Match All'
-				,'ST4 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LEA_Identifier_State: ' + s.LEA_Identifier_State + '; Sex: ' + s.SexEdFactsCode
+				,'ST4 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '; Sex: ' + s.SexEdFactsCode
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
@@ -1146,7 +1279,7 @@ BEGIN TRY
 			FROM #TC19 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SexEdFactsCode = rreksc.Sex
-				AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
@@ -1162,14 +1295,18 @@ BEGIN TRY
 			*/
 			SELECT 
 				  EnglishLearnerStatusEdFactsCode
-				, s.LEA_Identifier_State
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				, s.LeaIdentifierSeaAccountability
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC20
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
-				ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-			WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-			GROUP BY s.LEA_Identifier_State
+				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
+				AND s.EnglishLearnerStatusEdFactsCode <> 'MISSING'
+			GROUP BY s.LeaIdentifierSeaAccountability
 				, EnglishLearnerStatusEdFactsCode
 				
 			
@@ -1187,7 +1324,7 @@ BEGIN TRY
 			SELECT DISTINCT
 				 @SqlUnitTestId
 				,'ST5 LEA Match All'
-				,'ST5 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LEA_Identifier_State: ' + s.LEA_Identifier_State + '; EL Status: ' + s.EnglishLearnerStatusEdFactsCode
+				,'ST5 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '; EL Status: ' + s.EnglishLearnerStatusEdFactsCode
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
@@ -1195,7 +1332,7 @@ BEGIN TRY
 			FROM #TC20 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.EnglishLearnerStatusEdFactsCode = rreksc.ENGLISHLEARNERSTATUS
-				AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
@@ -1210,18 +1347,21 @@ BEGIN TRY
 				ST6 at the LEA level
 			*/
 			SELECT 
-				  PrimaryDisabilityTypeEdFactsCode
-				, s.LEA_Identifier_State
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				  IdeaDisabilityTypeEdFactsCode
+				, s.LeaIdentifierSeaAccountability
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC21
 			FROM #staging s
 			JOIN #disabilityCodes d
-				ON s.PrimaryDisabilityTypeEdFactsCode = d.CategoryOptionCode
+				ON s.IdeaDisabilityTypeEdFactsCode = d.CategoryOptionCode
 			LEFT JOIN #notReportedFederallyLeas nrflea
-				ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-			WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-			GROUP BY s.LEA_Identifier_State
-				, PrimaryDisabilityTypeEdFactsCode
+				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
+			GROUP BY s.LeaIdentifierSeaAccountability
+				, IdeaDisabilityTypeEdFactsCode
 				
 			
 
@@ -1238,15 +1378,15 @@ BEGIN TRY
 			SELECT DISTINCT
 				 @SqlUnitTestId
 				,'ST6 LEA Match All'
-				,'ST6 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LEA_Identifier_State: ' + s.LEA_Identifier_State + '; Primary Disability Type: ' + s.PrimaryDisabilityTypeEdFactsCode
+				,'ST6 LEA Match All = Catchment Area: ' + @catchmentArea + ';  LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability + '; Primary Disability Type: ' + s.IdeaDisabilityTypeEdFactsCode
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
 				,GETDATE()
 			FROM #TC21 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
-				ON s.PrimaryDisabilityTypeEdFactsCode = rreksc.PRIMARYDISABILITYTYPE
-				AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+				ON s.IdeaDisabilityTypeEdFactsCode = rreksc.IDEADISABILITYTYPE
+				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
@@ -1259,14 +1399,17 @@ BEGIN TRY
 				TOT at the LEA level
 			*/
 			SELECT 
-				  s.LEA_Identifier_State
-				, COUNT(DISTINCT Student_Identifier_State) AS StudentCount
+				  s.LeaIdentifierSeaAccountability
+				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC22
 			FROM #staging s
 			LEFT JOIN #notReportedFederallyLeas nrflea
-				ON s.Lea_Identifier_State = nrflea.Lea_Identifier_State
-			WHERE nrflea.Lea_Identifier_State IS NULL -- exclude non-federally reported LEAs
-			GROUP BY s.LEA_Identifier_State
+				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
+			LEFT JOIN #CAT_Organizations org
+				ON s.LeaIdentifierSeaAccountability = org.LeaIdentifierState
+			WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
+			GROUP BY s.LeaIdentifierSeaAccountability
 			
 			
 
@@ -1283,14 +1426,14 @@ BEGIN TRY
 			SELECT DISTINCT
 				 @SqlUnitTestId
 				,'TOT LEA Match All'
-				,'TOT LEA Match All = Catchment Area: ' + @catchmentArea + ';  LEA_Identifier_State: ' + s.LEA_Identifier_State
+				,'TOT LEA Match All = Catchment Area: ' + @catchmentArea + ';  LeaIdentifierSeaAccountability: ' + s.LeaIdentifierSeaAccountability
 				,s.StudentCount
 				,rreksc.StudentCount
 				,CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
 				,GETDATE()
 			FROM #TC22 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
-				ON s.LEA_Identifier_State = rreksc.OrganizationStateId
+				ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 				AND rreksc.ReportCode = 'C009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
@@ -1298,8 +1441,8 @@ BEGIN TRY
 			
 			DROP TABLE #TC22
 			
-			--DROP TABLE #stuLea
-			--DROP TABLE #stuLeaTemp
+			DROP TABLE #stuLea
+			DROP TABLE #stuLeaTemp
 
 			IF OBJECT_ID('tempdb..#stuLea') IS NOT NULL
 			DROP TABLE #stuLea
@@ -1312,7 +1455,6 @@ BEGIN TRY
 
 	CLOSE db_cursor  
 	DEALLOCATE db_cursor
-
 
 	COMMIT TRANSACTION
 

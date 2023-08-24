@@ -87,10 +87,10 @@ BEGIN
 		DECLARE @ChildCountDate DATETIME
 		select @ChildCountDate = CAST('10/01/' + cast(@SchoolYear - 1 AS Varchar(4)) AS DATETIME)
 
-		SELECT DISTINCT 
-			Personnel_Identifier_State
-			, sksa.LEA_Identifier_State
-			, sksa.School_Identifier_State
+		SELECT DISTINCT
+			StaffMemberIdentifierState
+			, sksa.LeaIdentifierSea
+			, sksa.SchoolIdentifierSea
 			, FullTimeEquivalency
 			, K12StaffClassification
 			, CASE K12StaffClassification
@@ -104,25 +104,39 @@ BEGIN
 				WHEN '6TO21' THEN '6TO21'
 				ELSE 'MISSING'
 			END AS SpecialEducationAgeGroupTaughtEdFactsCode
-			, CASE HighlyQualifiedTeacherIndicator
-				WHEN 1 THEN 'SPEDTCHFULCRT'
-				WHEN 0 THEN 'SPEDTCHNFULCRT'
-				ELSE 'MISSING'
-			END AS HighlyQualifiedTeacherIndicator
+			, SpecialEducationTeacherQualificationStatus
 			, AssignmentStartDate
 			, AssignmentEndDate
-			, CASE WHEN (sko.LEA_IsReportedFederally IS NULL OR sko.LEA_IsReportedFederally = 1)
-				AND sko.LEA_OperationalStatus IN ('New', 'Added', 'Open', 'Reopened', 'ChangedBoundary') THEN 1
+			, CASE WHEN sko.LEA_IsReportedFederally = 1
+					AND sko.LEA_OperationalStatus IN ('New', 'Added', 'Open', 'Reopened', 'ChangedBoundary') THEN 1
 				ELSE 0
 			  END AS [IsLeaReportedFederally]
 		INTO #staging
 		FROM Staging.K12StaffAssignment sksa
 		JOIN Staging.K12Organization sko
-			ON sksa.LEA_Identifier_State = sko.LEA_Identifier_State
+			ON sksa.LeaIdentifierSea = sko.LeaIdentifierSea
+			AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, GETDATE())
 		WHERE K12StaffClassification = 'SpecialEducationTeachers' 
 			AND @ChildCountDate BETWEEN sksa.AssignmentStartDate AND ISNULL(sksa.AssignmentEndDate, GETDATE())
-			AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, GETDATE())
 
+
+		---ST2 SEA Match All - Age Group Taught: 3TO5 Full Time Equivalency: 1493.3700
+		--SELECT * 
+		--FROM #staging s
+		--where s.SpecialEducationAgeGroupTaughtEdFactsCode = '3TO5' 
+		--	and s.StaffMemberIdentifierState NOT IN (
+		--		SELECT g.K12StaffStaffMemberIdentifierState
+		--		from [debug].[c070_sea_ST2_2023_AGEGROUP] g
+		--		where SpecialEducationAgeGroupTaught = '3TO5'
+		--		)
+		--SELECT * 
+		--FROM [debug].[c070_sea_ST2_2023_AGEGROUP] s
+		--where s.SPECIALEDUCATIONAGEGROUPTAUGHT = '3TO5' 
+		--	and s.K12StaffStaffMemberIdentifierState NOT IN (
+		--		SELECT g.StaffMemberIdentifierState
+		--		from #staging g
+		--		where SpecialEducationAgeGroupTaughtEdFactsCode = '3TO5'
+		--		)
 
 /* Test Case 1:
 	CSA at the SEA level 
@@ -131,13 +145,13 @@ BEGIN
 
 		-- Gather, evaluate & record the results
 		SELECT 
-			count(distinct Personnel_Identifier_State) as StaffCount
+			count(distinct StaffMemberIdentifierState) as StaffCount
 			, SpecialEducationAgeGroupTaughtEdFactsCode
-			, HighlyQualifiedTeacherIndicator
+			, SpecialEducationTeacherQualificationStatus
 			, sum(FullTimeEquivalency) as FullTimeEquivalency
 		INTO #TC1
 		FROM #staging 
-		GROUP BY HighlyQualifiedTeacherIndicator
+		GROUP BY SpecialEducationTeacherQualificationStatus
 			, SpecialEducationAgeGroupTaughtEdFactsCode
 
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -152,7 +166,7 @@ BEGIN
 		SELECT 
 			 @SqlUnitTestId
 			,'CSA SEA Match All'
-			,'CSA SEA Match All - Qualification Status: ' + s.HighlyQualifiedTeacherIndicator +  '
+			,'CSA SEA Match All - Qualification Status: ' + s.SpecialEducationTeacherQualificationStatus +  '
 				; Special Ed Age Group Taught: ' + s.SpecialEducationAgeGroupTaughtEdFactsCode + '
 				; Full Time Equivalency: ' + cast(s.FullTimeEquivalency as varchar(10))
 			,s.StaffCount
@@ -161,7 +175,7 @@ BEGIN
 			,GETDATE()
 		FROM #TC1 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
-			ON s.HighlyQualifiedTeacherIndicator = rreksc.QualificationStatus
+			ON s.SpecialEducationTeacherQualificationStatus = rreksc.SPECIALEDUCATIONTEACHERQUALIFICATIONSTATUS
 			AND s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
 			AND rreksc.ReportCode = 'C070' 
 			AND rreksc.ReportYear = @SchoolYear
@@ -187,12 +201,12 @@ BEGIN
 
 		-- Gather, evaluate & record the results
 		SELECT 
-			COUNT(DISTINCT Personnel_Identifier_State) AS StaffCount
-			, HighlyQualifiedTeacherIndicator
+			COUNT(DISTINCT StaffMemberIdentifierState) AS StaffCount
+			, SpecialEducationTeacherQualificationStatus
 			, sum(FullTimeEquivalency) as FullTimeEquivalency
 		INTO #TC2
 		FROM #staging 
-		GROUP BY HighlyQualifiedTeacherIndicator
+		GROUP BY SpecialEducationTeacherQualificationStatus
 
 		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
@@ -206,7 +220,7 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST1 SEA Match All'
-			,'ST1 SEA Match All - Qualification Status: ' + s.HighlyQualifiedTeacherIndicator + '
+			,'ST1 SEA Match All - Qualification Status: ' + s.SpecialEducationTeacherQualificationStatus + '
 				Full Time Equivalency: ' + CAST(s.FullTimeEquivalency as varchar(10))
 			,s.StaffCount
 			,rreksc.StaffCount
@@ -214,7 +228,7 @@ BEGIN
 			,GETDATE()
 		FROM #TC2 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
-			ON s.HighlyQualifiedTeacherIndicator = rreksc.QualificationStatus
+			ON s.SpecialEducationTeacherQualificationStatus = rreksc.SpecialEducationTeacherQualificationStatus
 			AND rreksc.ReportCode = 'C070' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'SEA'
@@ -239,7 +253,7 @@ BEGIN
 
 		-- Gather, evaluate & record the results
 		SELECT 
-			COUNT(DISTINCT Personnel_Identifier_State) AS StaffCount
+			COUNT(DISTINCT StaffMemberIdentifierState) AS StaffCount
 			, SpecialEducationAgeGroupTaught
 			, sum(FullTimeEquivalency) as FullTimeEquivalency
 		INTO #TC3
@@ -288,7 +302,7 @@ BEGIN
 	TOT at the SEA level
 */
 		SELECT 
-			COUNT(DISTINCT Personnel_Identifier_State) AS StaffCount
+			COUNT(DISTINCT StaffMemberIdentifierState) AS StaffCount
 		INTO #TC4
 		FROM #staging 
 		
@@ -339,16 +353,16 @@ BEGIN
 
 		-- Gather, evaluate & record the results
 		SELECT 
-			count(distinct Personnel_Identifier_State) as StaffCount
-			, LEA_Identifier_State
+			count(distinct StaffMemberIdentifierState) as StaffCount
+			, LeaIdentifierSea
 			, SpecialEducationAgeGroupTaughtEdFactsCode
-			, HighlyQualifiedTeacherIndicator
+			, SpecialEducationTeacherQualificationStatus
 			, sum(FullTimeEquivalency) as FullTimeEquivalency
 		INTO #TC5
 		FROM #staging 
 		WHERE IsLeaReportedFederally = 1
-		GROUP BY LEA_Identifier_State
-			, HighlyQualifiedTeacherIndicator
+		GROUP BY LeaIdentifierSea
+			, SpecialEducationTeacherQualificationStatus
 			, SpecialEducationAgeGroupTaughtEdFactsCode
 			 
 
@@ -364,8 +378,8 @@ BEGIN
 		SELECT 
 			 @SqlUnitTestId
 			,'CSA LEA Match All'
-			,'CSA LEA Match All - LEA Identifier: ' + s.LEA_Identifier_State
-				+ '; Qualification Status: ' + s.HighlyQualifiedTeacherIndicator
+			,'CSA LEA Match All - LEA Identifier: ' + s.LeaIdentifierSea
+				+ '; Qualification Status: ' + s.SpecialEducationTeacherQualificationStatus
 				+ '; Special Ed Age Group Taught: ' + s.SpecialEducationAgeGroupTaughtEdFactsCode
 				+ '; Full Time Equivalency: ' + cast(s.FullTimeEquivalency as varchar(10))
 			,s.StaffCount
@@ -374,9 +388,9 @@ BEGIN
 			,GETDATE()
 		FROM #TC5 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
-			ON s.HighlyQualifiedTeacherIndicator = rreksc.QualificationStatus
+			ON s.SpecialEducationTeacherQualificationStatus = rreksc.SpecialEducationTeacherQualificationStatus
 			AND s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
-			AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+			AND s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
 			AND rreksc.ReportCode = 'C070' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'LEA'
@@ -400,15 +414,15 @@ BEGIN
 
 		-- Gather, evaluate & record the results
 		SELECT 
-			COUNT(DISTINCT Personnel_Identifier_State) AS StaffCount
-			, LEA_Identifier_State
-			, HighlyQualifiedTeacherIndicator
+			COUNT(DISTINCT StaffMemberIdentifierState) AS StaffCount
+			, LeaIdentifierSea
+			, SpecialEducationTeacherQualificationStatus
 			, sum(FullTimeEquivalency) as FullTimeEquivalency
 		INTO #TC6
 		FROM #staging 
 		WHERE IsLeaReportedFederally = 1
-		GROUP BY LEA_Identifier_State
-				, HighlyQualifiedTeacherIndicator
+		GROUP BY LeaIdentifierSea
+				, SpecialEducationTeacherQualificationStatus
 
 		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
@@ -422,8 +436,8 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST1 LEA Match All'
-			,'ST1 LEA Match All - LEA Identifier ' + LEA_Identifier_State
-				 + 'Qualification Status: ' + s.HighlyQualifiedTeacherIndicator
+			,'ST1 LEA Match All - LEA Identifier ' + LeaIdentifierSea
+				 + 'Qualification Status: ' + s.SpecialEducationTeacherQualificationStatus
 				 + 'Full Time Equivalency: ' + CAST(s.FullTimeEquivalency as varchar(10))
 			,s.StaffCount
 			,rreksc.StaffCount
@@ -431,8 +445,8 @@ BEGIN
 			,GETDATE()
 		FROM #TC6 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
-			ON s.HighlyQualifiedTeacherIndicator = rreksc.QualificationStatus
-			AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+			ON s.SpecialEducationTeacherQualificationStatus = rreksc.SpecialEducationTeacherQualificationStatus
+			AND s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
 			AND rreksc.ReportCode = 'C070' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'LEA'
@@ -457,14 +471,14 @@ BEGIN
 
 		-- Gather, evaluate & record the results
 		SELECT 
-			COUNT(DISTINCT Personnel_Identifier_State) AS StaffCount
-			, LEA_Identifier_State
+			COUNT(DISTINCT StaffMemberIdentifierState) AS StaffCount
+			, LeaIdentifierSea
 			, SpecialEducationAgeGroupTaught
 			, sum(FullTimeEquivalency) as FullTimeEquivalency
 		INTO #TC7
 		FROM #staging 
 		WHERE IsLeaReportedFederally = 1
-		GROUP BY LEA_Identifier_State
+		GROUP BY LeaIdentifierSea
 				, SpecialEducationAgeGroupTaught
 
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -479,7 +493,7 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST2 LEA Match All'
-			,'ST2 LEA Match All - LEA Identifier ' + LEA_Identifier_State
+			,'ST2 LEA Match All - LEA Identifier ' + LeaIdentifierSea
 				+ ' Age Group Taught: ' + s.SpecialEducationAgeGroupTaught 
 				+ ' Full Time Equivalency: ' + CAST(s.FullTimeEquivalency as varchar(10))
 			,s.StaffCount
@@ -489,7 +503,7 @@ BEGIN
 		FROM #TC7 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
 			ON s.SpecialEducationAgeGroupTaught = rreksc.SpecialEducationAgeGroupTaught
-			AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+			AND s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
 			AND rreksc.ReportCode = 'C070' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'LEA'
@@ -511,12 +525,12 @@ BEGIN
 	TOT at the LEA level
 */
 		SELECT 
-			COUNT(DISTINCT Personnel_Identifier_State) AS StaffCount
-			, LEA_Identifier_State
+			COUNT(DISTINCT StaffMemberIdentifierState) AS StaffCount
+			, LeaIdentifierSea
 		INTO #TC8
 		FROM #staging 
 		WHERE IsLeaReportedFederally = 1
-		GROUP BY LEA_Identifier_State
+		GROUP BY LeaIdentifierSea
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
@@ -530,19 +544,19 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'TOT LEA Match All'
-			,'TOT LEA Match All - LEA_Identifier_State: ' + s.LEA_Identifier_State
+			,'TOT LEA Match All - LeaIdentifierSea: ' + s.LeaIdentifierSea
 			,s.StaffCount
 			,rreksc.StaffCount
 			,CASE WHEN s.StaffCount = ISNULL(rreksc.StaffCount, -1) THEN 1 ELSE 0 END
 			,GETDATE()
 		FROM #TC8 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc
-			ON s.LEA_Identifier_State = rreksc.OrganizationStateId
+			ON s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
 			AND rreksc.ReportCode = 'C070' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'LEA'
 			AND rreksc.CategorySetCode = 'TOT'
-			AND s.LEA_Identifier_State = rreksc.OrganizationStateId
+			AND s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
 			
 		DROP TABLE #TC8
 
@@ -554,7 +568,8 @@ BEGIN
 		--WHERE TestCaseName = 'TOT LEA Match All' 
 		--AND t.TestScope = 'FS070'
 		--AND Passed = 0
-		
+
+	
 		COMMIT TRANSACTION
 
 	END TRY
