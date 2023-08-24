@@ -119,6 +119,35 @@ BEGIN
 	select @ChildCountDate = convert(varchar, @CutoffMonth) + '/' + convert(varchar, @CutoffDay) + '/' + convert(varchar, @SchoolYear-1) -- < changed to "-1"
 
 
+	--Get the LEAs that should not be reported against
+	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL
+	DROP TABLE #excludedLeas
+
+	CREATE TABLE #excludedLeas (
+		LeaIdentifierSeaAccountability		VARCHAR(20)
+	)
+
+	INSERT INTO #excludedLeas 
+	SELECT DISTINCT LEAIdentifierSea
+	FROM Staging.K12Organization
+	WHERE LEA_IsReportedFederally = 0
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+
+
+	--Get the Schools that should not be reported against
+	IF OBJECT_ID('tempdb..#excludedSchools') IS NOT NULL
+	DROP TABLE #excludedSchools
+
+	CREATE TABLE #excludedSchools (
+		SchoolIdentifierSea		VARCHAR(20)
+	)
+
+	INSERT INTO #excludedSchools 
+	SELECT DISTINCT SchoolIdentifierSea
+	FROM Staging.K12Organization
+	WHERE School_IsReportedFederally = 0
+		OR School_OperationalStatus in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
+
 	--Get the data needed for the tests
 	SELECT  
 		ske.StudentIdentifierState,
@@ -221,8 +250,10 @@ BEGIN
 				AND ske.GradeLevel IS NOT NULL 
 				AND ske.GradeLevel NOT IN ('PK')))
 		
+	
 	--Handle the Race records to match the unduplicated code 
-	drop table if exists #tempRacesUpdate
+	IF OBJECT_ID('tempdb..#tempRacesUpdate') IS NOT NULL
+	drop table #tempRacesUpdate
 
 	--Update #c002Staging records for the same Lea/School to Multiple 
 	SELECT 
@@ -333,15 +364,18 @@ BEGIN
 			IdeaDisabilityTypeCode
 		***********************************************************************/
 		SELECT
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			RaceEdFactsCode, 
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode,
 			COUNT(DISTINCT c.StudentIdentifierState) AS StudentCount
 		INTO #L_CSA
 		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			RaceEdFactsCode,
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode
@@ -389,16 +423,19 @@ BEGIN
 			IdeaDisabilityTypeCode
 		***********************************************************************/
 		SELECT
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			RaceEdFactsCode,
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_CSA
-		FROM #c002staging
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			RaceEdFactsCode,
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode
@@ -499,15 +536,18 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			IdeaDisabilityTypeCode,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_CSB
-		FROM #c002staging 
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			IdeaDisabilityTypeCode,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge
@@ -556,16 +596,19 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			IdeaDisabilityTypeCode,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_CSB
-		FROM #c002staging 
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			IdeaDisabilityTypeCode,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge
@@ -661,14 +704,17 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			RaceEdFactsCode,
 			IDEAEducationalEnvironmentForSchoolAge,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_CSC
-		FROM #c002staging 
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			RaceEdFactsCode,
 			IDEAEducationalEnvironmentForSchoolAge
 		
@@ -711,15 +757,18 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			RaceEdFactsCode,
 			IDEAEducationalEnvironmentForSchoolAge,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_CSC
-		FROM #c002staging 
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			RaceEdFactsCode,
 			IDEAEducationalEnvironmentForSchoolAge
 		
@@ -816,15 +865,18 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode,
 			IDEAEducationalEnvironmentForSchoolAge,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_CSD
-		FROM #c002staging
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode,
 			IDEAEducationalEnvironmentForSchoolAge
@@ -872,16 +924,19 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode,
 			IDEAEducationalEnvironmentForSchoolAge,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_CSD
-		FROM #c002staging
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode,
 			IDEAEducationalEnvironmentForSchoolAge
@@ -988,16 +1043,19 @@ BEGIN
 			EnglishLearnerStatusEdFactsCode
 		***********************************************************************/
 		SELECT 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode, 
 			IDEAEducationalEnvironmentForSchoolAge,
 			EnglishLearnerStatusEdFactsCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_CSE
-		FROM #c002staging 
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode, 
 			IDEAEducationalEnvironmentForSchoolAge,
@@ -1048,17 +1106,20 @@ BEGIN
 			EnglishLearnerStatusEdFactsCode
 		***********************************************************************/
 		SELECT 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode, 
 			IDEAEducationalEnvironmentForSchoolAge,
 			EnglishLearnerStatusEdFactsCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_CSE
-		FROM #c002staging 
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			SexEdFactsCode,
 			IdeaDisabilityTypeCode, 
 			IDEAEducationalEnvironmentForSchoolAge,
@@ -1148,13 +1209,16 @@ BEGIN
 			Sex 
 		***********************************************************************/
 		SELECT 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			SexEdFactsCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT1
-		FROM #c002staging 
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			SexEdFactsCode
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1194,14 +1258,17 @@ BEGIN
 			Sex 
 		***********************************************************************/
 		SELECT 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			SexEdFactsCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT1
-		FROM #c002staging 
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			SexEdFactsCode
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1283,13 +1350,16 @@ BEGIN
 			AgeValue
 		***********************************************************************/
 		SELECT 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			AgeValue,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT2
-		FROM #c002staging 
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			AgeValue
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1329,14 +1399,17 @@ BEGIN
 			AgeValue
 		***********************************************************************/
 		SELECT 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			AgeValue,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT2
-		FROM #c002staging 
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			AgeValue
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1416,13 +1489,16 @@ BEGIN
 			IdeaDisabilityTypeCode
 		***********************************************************************/
 		SELECT 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			IdeaDisabilityTypeCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT3
-		FROM #c002staging 
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			IdeaDisabilityTypeCode
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1460,14 +1536,17 @@ BEGIN
 			IdeaDisabilityTypeCode
 		***********************************************************************/
 		SELECT 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			IdeaDisabilityTypeCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT3
-		FROM #c002staging 
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			IdeaDisabilityTypeCode
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1547,13 +1626,16 @@ BEGIN
 			RaceEdFactsCode
 		***********************************************************************/
 		SELECT 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			RaceEdFactsCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT4
-		FROM #c002staging 
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			RaceEdFactsCode
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1594,14 +1676,17 @@ BEGIN
 			RaceEdFactsCode
 		***********************************************************************/
 		SELECT 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			RaceEdFactsCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT4
-		FROM #c002staging 
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			RaceEdFactsCode
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1683,13 +1768,16 @@ BEGIN
 			EnglishLearnerStatusEdFactsCode
 		***********************************************************************/
 		SELECT 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			EnglishLearnerStatusEdFactsCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT5
-		FROM #c002staging 
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			EnglishLearnerStatusEdFactsCode
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1730,14 +1818,17 @@ BEGIN
 			EnglishLearnerStatusEdFactsCode
 		***********************************************************************/
 		SELECT 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			EnglishLearnerStatusEdFactsCode,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT5
-		FROM #c002staging 
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			EnglishLearnerStatusEdFactsCode
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1819,13 +1910,16 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			IDEAEducationalEnvironmentForSchoolAge,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT6
-		FROM #c002staging 
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			IDEAEducationalEnvironmentForSchoolAge
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1866,14 +1960,17 @@ BEGIN
 			IDEAEducationalEnvironmentForSchoolAge
 		***********************************************************************/
 		SELECT 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			IDEAEducationalEnvironmentForSchoolAge,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT6
-		FROM #c002staging 
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			IDEAEducationalEnvironmentForSchoolAge
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -1962,14 +2059,17 @@ BEGIN
 			Education Unit Total Student Count
 		***********************************************************************/
 		SELECT 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT7
-		FROM #c002staging 
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge
 		
@@ -2014,15 +2114,18 @@ BEGIN
 			Education Unit Total Student Count
 		***********************************************************************/
 		SELECT 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT7
-		FROM #c002staging 
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			AgeValue,
 			IDEAEducationalEnvironmentForSchoolAge
 		
@@ -2099,12 +2202,15 @@ BEGIN
 		Total at the LEA level
 		***********************************************************************/
 		SELECT 
-			LeaIdentifierSeaAccountability,
+			c.LeaIdentifierSeaAccountability,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #L_TOT
-		FROM #c002staging 
+		FROM #c002staging c
+		LEFT JOIN #excludedLeas elea
+			ON c.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LeaIdentifierSeaAccountability
+			c.LeaIdentifierSeaAccountability
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
@@ -2139,13 +2245,16 @@ BEGIN
 		Total at the School level
 		***********************************************************************/
 		SELECT 
-			SchoolIdentifierSea,
+			c.SchoolIdentifierSea,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #SCH_TOT
-		FROM #c002staging 
-		WHERE IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		FROM #c002staging c
+		LEFT JOIN #excludedSchools esch
+			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
+		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
 		GROUP BY 
-			SchoolIdentifierSea
+			c.SchoolIdentifierSea
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
