@@ -1,3 +1,5 @@
 VersionUpdates\\11.1_prerelease,Restore 11.0.sql,0
 VersionUpdates\\11.1_prerelease,Metadata-FileSpec-Categories.sql,0
+VersionUpdates\\11.1_prerelease,Dimension-Changes.sql,0
+Metadata,App.ViewDefinitions.Metadata.sql,0
 VersionUpdates\\11.1_prerelease,UpdateDbVersion.sql,0
