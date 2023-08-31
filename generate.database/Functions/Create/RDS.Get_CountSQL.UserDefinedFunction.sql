@@ -1627,11 +1627,12 @@ BEGIN
 				end
 				else if (@categoryCode = 'PROFSTATUS' and @reportCode  IN ('yeartoyearprogress','c175','c178','c179'))
 					begin
+						
 						set @sqlCategoryReturnField = ' 
 							case 
-								WHEN assmnt.PerformanceLevelEdFactsCode =''MISSING'' THEN ''MISSING''
-								when CAST(SUBSTRING( assmnt.PerformanceLevelEdFactsCode, 2,1) as int ) >= CAST( tgglAssmnt.ProficientOrAboveLevel as int) THEN  ''PROFICIENT''		
-								when CAST(SUBSTRING( assmnt.PerformanceLevelEdFactsCode, 2,1) as int ) < CAST( tgglAssmnt.ProficientOrAboveLevel as int)  THEN  ''NOTPROFICIENT''
+								WHEN assmntPerfLevl.AssessmentPerformanceLevelIdentifier =''MISSING'' THEN ''MISSING''
+								when CAST(SUBSTRING( assmntPerfLevl.AssessmentPerformanceLevelIdentifier, 2,1) as int ) >= CAST( tgglAssmnt.ProficientOrAboveLevel as int) THEN  ''PROFICIENT''		
+								when CAST(SUBSTRING( assmntPerfLevl.AssessmentPerformanceLevelIdentifier, 2,1) as int ) < CAST( tgglAssmnt.ProficientOrAboveLevel as int)  THEN  ''NOTPROFICIENT''
 								else ''MISSING''
 							end'
 					end
@@ -1639,10 +1640,10 @@ BEGIN
 					begin
 						set @sqlCategoryReturnField = ' 
 							case 
-							WHEN assmnt.PerformanceLevelEdFactsCode =''MISSING'' THEN ''NODETERM''
-							when CAST(SUBSTRING( assmnt.PerformanceLevelEdFactsCode, 2,1) as int ) >= CAST( tgglAssmnt.ProficientOrAboveLevel as int) THEN  ''PROFICIENT''		
-							when CAST(SUBSTRING( assmnt.PerformanceLevelEdFactsCode, 2,1) as int ) < CAST( tgglAssmnt.ProficientOrAboveLevel as int)  THEN  ''NOTPROFICIENT''	
-							else ''MISSING''
+								WHEN assmntPerfLevl.AssessmentPerformanceLevelIdentifier =''MISSING'' THEN ''NODETERM''
+								when CAST(SUBSTRING( assmntPerfLevl.AssessmentPerformanceLevelIdentifier, 2,1) as int ) >= CAST( tgglAssmnt.ProficientOrAboveLevel as int) THEN  ''PROFICIENT''		
+								when CAST(SUBSTRING( assmntPerfLevl.AssessmentPerformanceLevelIdentifier, 2,1) as int ) < CAST( tgglAssmnt.ProficientOrAboveLevel as int)  THEN  ''NOTPROFICIENT''
+								else ''MISSING''
 							end'
 					end
 
@@ -1792,7 +1793,9 @@ BEGIN
 					set @sqlCountJoins = @sqlCountJoins + '		
 						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
 						inner join RDS.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId 
-						inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = CAT_GradeLevel.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentSubjectEdFactsCode	
+						inner join RDS.DimAssessmentPerformanceLevels assmntPerfLevl on fact.AssessmentPerformanceLevelId = assmntPerfLevl.DimAssessmentPerformanceLevelId
+						inner join RDS.DimGradeLevels grades on fact.GradeLevelId = grades.DimGradeLevelId
+						inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grades.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
 															AND tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeEdFactsCode			
 						inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
 						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
@@ -2766,7 +2769,7 @@ BEGIN
 		end
 		else if @reportCode in ('c175', 'c178', 'c179')
 		begin
-		set @queryFactFilter = 'and CAT_ASSESSMENTTYPE.AssessmentSubjectEdFactsCode = '
+		set @queryFactFilter = 'and CAT_ASSESSMENTTYPEADMINISTERED.AssessmentAcademicSubjectEdFactsCode = '
 			if(@reportCode = 'c175')
 			begin
 				set @queryFactFilter = @queryFactFilter + '''MATH'''
@@ -2782,7 +2785,7 @@ BEGIN
 		end
 		else if @reportCode in ('c185', 'c188', 'c189')
 		begin
-			set @queryFactFilter = 'and CAT_PARTICIPATIONSTATUS.AssessmentSubjectEdFactsCode = '
+			set @queryFactFilter = 'and CAT_PARTICIPATIONSTATUS.AssessmentAcademicSubjectEdFactsCode = '
 			if(@reportCode = 'c185')
 			begin
 				set @queryFactFilter = @queryFactFilter + '''MATH'''

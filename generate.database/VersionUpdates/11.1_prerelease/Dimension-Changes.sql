@@ -2,6 +2,8 @@ SET NOCOUNT ON;
 
 DECLARE @dimensionTableId as INT, @categoryId as INT, @dimensionId as INT
 
+ UPDATE app.[FactTables] SET FactReportTableIdName = 'ReportEDFactsK12StudentAssessmentId', FactReportTableName = 'ReportEDFactsK12StudentAssessments' WHERE [FactTableName] = 'FactK12StudentAssessments'
+
 SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'GRADELEVEL'
 SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'GRADELVLLG'
 
@@ -74,3 +76,6 @@ BEGIN
     INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
     VALUES (@categoryId, @dimensionId)
 END
+
+SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimAssessments'
+Update app.Dimensions SET DimensionTableId = @dimensionTableId WHERE DimensionFieldName = 'AssessmentTypeAdministered'
