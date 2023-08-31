@@ -11,8 +11,6 @@ AS
 
 BEGIN
 
-declare @schoolyear int = 2023
-
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
 
@@ -553,7 +551,7 @@ declare @schoolyear int = 2023
 	BEGIN CATCH
 		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentAssessments', 'RDS.FactK12StudentAssessments', 'FactK12StudentAssessments', 'FactK12StudentAssessments', ERROR_MESSAGE(), 1, NULL, GETDATE())
 
-		insert into app.DataMigrationHistories
+		INSERT INTO app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
 
 	END CATCH
