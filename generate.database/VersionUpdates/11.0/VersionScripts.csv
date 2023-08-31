@@ -9,6 +9,7 @@ VersionUpdates\\11.0\V11Upgrade,V11SchemaUpgrade_Part2.sql,0
 VersionUpdates\\11.0\V11Upgrade,CEDS-Elements.sql,0
 VersionUpdates\\11.0\V11Upgrade,Junk-Table-Dimension-Population.sql,0
 VersionUpdates\\11.0,RemoveReferencesToIeus.sql,0
+VersionUpdates\\11.0\V11Upgrade,Copy-In-Legacy-Data.sql,0
 VersionUpdates\\11.0\\Views\\Drop,App.trgVwReportCode_CategoryOptions.Trigger.sql,0
 VersionUpdates\\11.0\\Views\\Create,App.trgVwReportCode_CategoryOptions.Trigger.sql,0
 VersionUpdates\\11.0\\Views\\Drop,App.trgVwReportCode_FileColumns.Trigger.sql,0

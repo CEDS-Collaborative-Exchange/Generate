@@ -1,4 +1,18 @@
-﻿	--TODO: Check for state custom indicator stuff.  Don't delete those fields/tables.
+﻿	-- Delete duplicate records in Staging.SourceSystemReferenceData
+	DELETE 
+	FROM Staging.SourceSystemReferenceData
+	WHERE SourceSystemReferenceDataId NOT IN (
+		SELECT 
+			MIN(SourceSystemReferenceDataId)
+		FROM Staging.SourceSystemReferenceData
+		GROUP BY 
+			[SchoolYear] 
+			, [TableName] 
+			, [TableFilter] 
+			, [InputCode]
+			)
+			
+	--TODO: Check for state custom indicator stuff.  Don't delete those fields/tables.
 	--TODO: 
 
 	PRINT N'Dropping Extended Property [RDS].[DimCredentials].[CredentialAlternateName].[MS_Description]...';
@@ -4008,46 +4022,49 @@
 	DROP INDEX [IX_Staging_SourceSystemReferenceData_OutputCode_TableName_SchoolYear]
 		ON [Staging].[SourceSystemReferenceData];
 
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[DimAssessmentStatuses]...';
-
-
-	
-	ALTER TABLE [RDS].[DimAssessmentStatuses] DROP CONSTRAINT [DF__DimAssess__Asses__5FBEF025];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[DimCteStatuses]...';
-
-
-	
-	ALTER TABLE [RDS].[DimCteStatuses] DROP CONSTRAINT [DF__DimCteSta__LepPe__3C6DF44C];
+	-- Capture proper name of default constraints that currently are without a name
+	SELECT DISTINCT	
+			'ALTER TABLE [' + c.table_schema + '].[' + c.table_name + '] ADD CONSTRAINT [DF_' + c.table_name + '_' + c.column_name + '] DEFAULT ' + dc.Definition + ' FOR [' + c.Column_name + '];' AS CreateConstraint
+		, 'DF_' + c.table_name + '_' + c.column_name  AS ConstraintName
+		, c.table_name AS TableName
+		, c.TABLE_SCHEMA AS TableSchema
+	INTO #NewConstraints
+	FROM sys.default_constraints dc
+	INNER JOIN sys.tables t ON dc.parent_object_id = t.object_id
+	INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+	INNER JOIN INFORMATION_SCHEMA.COLUMNS c on t.name = c.TABLE_NAME AND s.name = c.TABLE_SCHEMA AND dc.parent_column_id = c.ORDINAL_POSITION
+	WHERE dc.name like 'DF[_][_]%'
 
 
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[DimK12Schools]...';
+	DECLARE @TableName NVARCHAR(128)
+	DECLARE @TableSchema NVARCHAR(128)
+	DECLARE @ConstraintName NVARCHAR(128)
+	DECLARE @SqlStatement NVARCHAR(MAX)
+
+	-- Drop all default constraints with no name
+	DECLARE ConstraintCursor CURSOR FOR
+	SELECT DISTINCT t.Name as TableName, c.TABLE_SCHEMA AS TableSchema, dc.Name AS ConstraintName
+	FROM sys.default_constraints dc
+	INNER JOIN sys.tables t ON dc.parent_object_id = t.object_id
+	INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+	INNER JOIN INFORMATION_SCHEMA.COLUMNS c on t.name = c.TABLE_NAME AND s.name = c.TABLE_SCHEMA AND dc.parent_column_id = c.ORDINAL_POSITION
+	WHERE dc.name like 'DF[_][_]%'
 
 
-	
-	ALTER TABLE [RDS].[DimK12Schools] DROP CONSTRAINT [DF__DimSchool__OutOf__431004E3];
+	OPEN ConstraintCursor
+	FETCH NEXT FROM ConstraintCursor INTO @TableName, @TableSchema, @ConstraintName	
 
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SET @SqlStatement = 'ALTER TABLE ' + @TableSchema + '.' + @TableName + ' DROP CONSTRAINT ' + QUOTENAME(@ConstraintName)
+		PRINT @SqlStatement
+		EXEC sp_executesql @SqlStatement
 
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[DimLeas]...';
+	FETCH NEXT FROM ConstraintCursor INTO @TableName, @TableSchema, @ConstraintName	
+	END
 
-
-	
-	ALTER TABLE [RDS].[DimLeas] DROP CONSTRAINT [DF__DimLeas__OutOfSt__421BE0AA];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12ProgramParticipations]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF__FactK12Pr__Stude__37B75983];
-
+	CLOSE ConstraintCursor
+	DEALLOCATE ConstraintCursor
 
 	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_LeaId]...';
@@ -4122,12 +4139,6 @@
 
 
 	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentAssessments]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF__FactK12St__IeuId__3BBCF491];
-
 
 	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_NorDProgramStatusId]...';
@@ -4217,15 +4228,6 @@
 	ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_CohortStatusId];
 
 
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentCounts]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF__FactK12St__Speci__3DA53D03];
-
-
-	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_NorDProgramStatusId]...';
 
 
@@ -4266,22 +4268,6 @@
 
 
 	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentCounts]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF__FactK12St__IeuId__3CB118CA];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentCourseSections]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF__FactK12St__Stude__43290C2F];
-
-
-	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDisciplines_RaceId]...';
 
 
@@ -4289,15 +4275,7 @@
 	ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [DF_FactK12StudentDisciplines_RaceId];
 
 
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentDisciplines]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [DF__FactK12St__IeuId__3E99613C];
-
-
-	
+		
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDisciplines_CteStatusId]...';
 
 
@@ -4321,15 +4299,7 @@
 	ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [DF_FactK12StudentDisciplines_SeaId];
 
 
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentEnrollments]...';
 
-
-	
-	ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF__FactK12St__Stude__526B4FBF];
-
-
-	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_CharterSchoolManagerOrganizationId]...';
 
 
@@ -4372,27 +4342,12 @@
 
 
 	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCounts]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF__FactOrgan__DimSu__209EEA01];
-
-
-	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_CharterSchoolUpdatedManagerOrganizationId]...';
 
 
 	
 	ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_CharterSchoolUpdatedManagerOrganizationId];
 
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCounts]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF__FactOrgan__DimCo__21930E3A];
 
 
 	
@@ -4444,99 +4399,7 @@
 
 
 	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactPsStudentAcademicRecords]...';
-
-
-	
-	ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF__FactPsStu__Stude__694EB517];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactPsStudentEnrollments]...';
-
-
-	
-	ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF__FactPsStu__Stude__73CC438A];
-
-
-	
 	PRINT N'Dropping Default Constraint unnamed constraint on [cedsv8].[DimNorDProgramStatuses]...';
-
-
-	
-	ALTER TABLE [cedsv8].[DimNorDProgramStatuses] DROP CONSTRAINT [DF__DimNorDPr__Acade__16B25FB8];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [cedsv8].[DimNorDProgramStatuses]...';
-
-
-	
-	ALTER TABLE [cedsv8].[DimNorDProgramStatuses] DROP CONSTRAINT [DF__DimNorDPr__LongT__163AFC67];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [cedsv8].[DimNorDProgramStatuses]...';
-
-
-	
-	ALTER TABLE [cedsv8].[DimNorDProgramStatuses] DROP CONSTRAINT [DF__DimNorDPr__Negle__172F20A0];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [cedsv8].[DimNorDProgramStatuses]...';
-
-
-	
-	ALTER TABLE [cedsv8].[DimNorDProgramStatuses] DROP CONSTRAINT [DF__DimNorDPr__Acade__17A683F1];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[DimProgramStatuses]...';
-
-
-	
-	ALTER TABLE [RDS].[DimProgramStatuses] DROP CONSTRAINT [DF__DimProgra__Homel__538663CE];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCountReportDtos]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCountReportDtos] DROP CONSTRAINT [DF__FactOrgan__Title__0D45C3B3];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCountReportDtos]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCountReportDtos] DROP CONSTRAINT [DF__FactOrgan__Title__0E39E7EC];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCountReports]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCountReports] DROP CONSTRAINT [DF__FactOrgan__Title__0F2E0C25];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCountReports]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCountReports] DROP CONSTRAINT [DF__FactOrgan__OutOf__7291CD77];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCountReports]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCountReports] DROP CONSTRAINT [DF__FactOrgan__Title__1022305E];
 
 
 	-- 
@@ -18423,7 +18286,7 @@
 
 	
 	ALTER TABLE [RDS].[FactSchoolPerformanceIndicators]
-		ADD DEFAULT ((1)) FOR [OrganizationCount];
+		ADD CONSTRAINT [DF_FactSchoolPerformanceIndicators_OrganizationCount] DEFAULT ((1)) FOR [OrganizationCount];
 
 
 	
@@ -18858,7 +18721,7 @@
 
 	
 	ALTER TABLE [RDS].[ReportEDFactsOrganizationCounts]
-		ADD DEFAULT (N'0') FOR [OutOfStateIndicator];
+		ADD CONSTRAINT [DF_ReportEDFactsOrganizationCounts_OutOfStateIndicator] DEFAULT (N'0') FOR [OutOfStateIndicator];
 
 
 	
@@ -18867,7 +18730,7 @@
 
 	
 	ALTER TABLE [RDS].[ReportEDFactsOrganizationCounts]
-		ADD DEFAULT ((0)) FOR [TitleiParentalInvolveRes];
+		ADD CONSTRAINT [DF_ReportEDFactsOrganizationCounts_TitleiParentalInvolveRes] DEFAULT ((0)) FOR [TitleiParentalInvolveRes];
 
 
 	
@@ -18876,7 +18739,7 @@
 
 	
 	ALTER TABLE [RDS].[ReportEDFactsOrganizationCounts]
-		ADD DEFAULT ((0)) FOR [TitleiPartaAllocations];
+		ADD CONSTRAINT [DF_ReportEDFactsOrganizationCounts_TitleiPartaAllocations] DEFAULT ((0)) FOR [TitleiPartaAllocations];
 
 
 	
@@ -18885,7 +18748,7 @@
 
 	
 	ALTER TABLE [RDS].[ToggleAssessments]
-		ADD DEFAULT (N'') FOR [Subject];
+		ADD CONSTRAINT [DF_ToggleAssessments_Subject] DEFAULT (N'') FOR [Subject];
 
 
 	
@@ -22517,6 +22380,43 @@
 	ALTER TABLE [RDS].[BridgePsStudentEnrollmentRaces] WITH NOCHECK
 		ADD CONSTRAINT [FK_BridgePsStudentEnrollmentRaces_RaceId] FOREIGN KEY ([RaceId]) REFERENCES [RDS].[DimRaces] ([DimRaceId]);
 
+
+
+
+	-- Rebuild the default constraints using proper naming convention
+	DECLARE @CreateConstraint NVARCHAR(1000)
+
+	DECLARE ConstraintCursor CURSOR FOR
+	SELECT * FROM #NewConstraints
+	WHERE TableSchema <> 'cedsv8' 
+		AND TableName NOT LIKE '%DTOS'
+		AND ConstraintName NOT LIKE '%LepPerkinsStatus%'
+
+	OPEN ConstraintCursor
+	FETCH NEXT FROM ConstraintCursor INTO @CreateConstraint, @ConstraintName, @TableName, @TableSchema
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SELECT @CreateConstraint = REPLACE(@CreateConstraint, 'FactOrganizationCountReports', 'ReportEDFactsOrganizationCounts')
+		SELECT @TableName = REPLACE(@TableName, 'FactOrganizationCountReports', 'ReportEDFactsOrganizationCounts')
+		SELECT @ConstraintName = REPLACE(@ConstraintName, 'FactOrganizationCountReports', 'ReportEDFactsOrganizationCounts')
+		IF NOT EXISTS (SELECT 1 
+						FROM sys.default_constraints dc
+						INNER JOIN sys.tables t ON dc.parent_object_id = t.object_id
+						INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+						WHERE dc.name = @ConstraintName
+							AND t.name = @TableName
+							AND s.Name = @TableSchema) BEGIN
+			PRINT @CreateConstraint
+			EXEC sp_executesql @CreateConstraint
+		END
+		FETCH NEXT FROM ConstraintCursor INTO @CreateConstraint, @ConstraintName, @TableName, @TableSchema
+	END
+
+	CLOSE ConstraintCursor
+	DEALLOCATE ConstraintCursor
+
+	DROP TABLE #NewConstraints
 
 	
 	PRINT N'Altering View [RDS].[vwDimGradeLevels]...';
