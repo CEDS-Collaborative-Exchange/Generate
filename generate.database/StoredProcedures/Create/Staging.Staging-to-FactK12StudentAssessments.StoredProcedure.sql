@@ -501,7 +501,7 @@ BEGIN
 			, [NOrDStatusId]
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
-			, [FactK12StudentAssessmentAccommodationd]
+			, [FactK12StudentAssessmentAccommodationId]
 		)
 		SELECT 
 			[SchoolYearId]							
@@ -542,7 +542,7 @@ BEGIN
 			, [NOrDStatusId]
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
-			, [FactK12StudentAssessmentAccommodationd]
+			, [FactK12StudentAssessmentAccommodationId]
 		FROM #Facts
 
 		ALTER INDEX ALL ON RDS.FactK12StudentAssessments REBUILD
