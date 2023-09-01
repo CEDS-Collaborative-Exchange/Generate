@@ -445,20 +445,6 @@ BEGIN
 				AND rdmils.MilitaryBranchCode = 'MISSING'
 				AND rdmils.MilitaryVeteranStudentIndicatorCode = 'MISSING'
 
-		--race (staging + function)	
-			LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
-				ON ske.SchoolYear = spr.SchoolYear
-				AND ske.StudentIdentifierState = spr.StudentIdentifierState
-				AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
-					OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
-		--race (RDS)	
-			LEFT JOIN #vwRaces rdr
-				ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
-					CASE
-						when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
-						WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
-						ELSE 'Missing'
-					END
 			WHERE sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
 
 	--Final insert into RDS.FactK12StudentAssessments table
@@ -546,6 +532,46 @@ BEGIN
 		FROM #Facts
 
 		ALTER INDEX ALL ON RDS.FactK12StudentAssessments REBUILD
+
+
+
+		SELECT DISTINCT
+			  rfksa.FactK12StudentAssessmentId
+			, rdsy.SchoolYear
+			, spr.RaceMap
+		INTO #temp
+		FROM RDS.FactK12StudentAssessments rfksa
+		JOIN RDS.DimSchoolYears rdsy
+			ON rfksa.SchoolYearId = rdsy.DimSchoolYearId
+		JOIN RDS.DimPeople rdp
+			ON rfksa.K12StudentId = rdp.DimPersonId
+		JOIN RDS.DimK12Schools rdks
+			ON rfksa.K12SchoolId = rdks.DimK12SchoolId
+		JOIN RDS.DimLeas rdlsAcc
+			ON rfksa.LeaId = rdlsAcc.DimLeaID
+		JOIN RDS.DimDates countDate
+			ON rfksa.CountDateId = countDate.DimDateId
+		-- LEFT JOIN RDS.DimDataCollections rddc
+		-- 	ON rfksa.DataCollectionId = rddc.DimDataCollectionId
+		-- 	AND rddc.DataCollectionName = @DataCollectionName
+		--race (staging + function)	
+		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
+			ON rdsy.SchoolYear = spr.SchoolYear
+			AND rdp.K12StudentStudentIdentifierState = spr.StudentIdentifierState
+			AND (rdks.SchoolIdentifierSea = spr.SchoolIdentifierSea
+				OR rdlsAcc.LeaIdentifierSea = spr.LeaIdentifierSeaAccountability)
+
+		INSERT INTO RDS.BridgeK12StudentAssessmentRaces
+				(
+				  [FactK12StudentAssessmentId]       
+				, [RaceId]                          
+				)
+		SELECT DISTINCT
+			  t.FactK12StudentAssessmentId
+			, rdr.DimRaceId 
+		FROM #temp t 
+		JOIN #vwRaces rdr
+			ON t.RaceMap = ISNULL(rdr.RaceMap, rdr.RaceCode)
 
 	END TRY
 	BEGIN CATCH
