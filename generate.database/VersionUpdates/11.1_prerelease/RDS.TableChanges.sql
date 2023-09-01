@@ -75,3 +75,5 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_FactK12StudentAssessments]', N'FactK12StudentAssessments';
 
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactStudentAssessments1]', N'PK_FactStudentAssessments';
+
+	ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD ASSESSMENTTYPEADMINISTERED nvarchar(50);
