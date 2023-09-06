@@ -29,7 +29,6 @@
 	CREATE TABLE [RDS].[tmp_ms_xx_FactK12StudentAssessments] (
 		[FactK12StudentAssessmentId]				INT IDENTITY (1, 1) NOT NULL,
 		[SchoolYearId]								INT CONSTRAINT [DF_FactK12StudentAssessments_SchoolYearId] DEFAULT ((-1)) NOT NULL,
-		[CountDateId]								INT CONSTRAINT [DF_FactK12StudentAssessments_CountDateId] DEFAULT ((-1)) NOT NULL,	
 		[FactTypeId]								INT CONSTRAINT [DF_FactK12StudentAssessments_FactTypeId] DEFAULT ((-1)) NOT NULL,
 		[SeaId]										INT CONSTRAINT [DF_FactK12StudentAssessments_SeaId] DEFAULT ((-1)) NOT NULL,
 		[IeuId]										INT CONSTRAINT [DF_FactK12StudentAssessments_IeuId] DEFAULT ((-1)) NOT NULL,
