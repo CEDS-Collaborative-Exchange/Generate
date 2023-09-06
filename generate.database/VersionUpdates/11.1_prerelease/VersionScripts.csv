@@ -7,6 +7,12 @@ Views\\Drop,RDS.vwDimAssessments.View.sql,0
 Views\\Create,RDS.vwDimAssessments.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
+Views\\Drop,RDS.vwDimAssessmentAccommodations.View.sql,0
+Views\\Create,RDS.vwDimAssessmentAccommodations.View.sql,0
+Views\\Drop,RDS.vwDimAssessmentResults.View.sql,0
+Views\\Create,RDS.vwDimAssessmentResults.View.sql,0
+Views\\Drop,RDS.vwDimAssessmentRegistrations.View.sql,0
+Views\\Create,RDS.vwDimAssessmentRegistrations.View.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sql,0

@@ -3,6 +3,7 @@ AS
 	SELECT
 		DimAssessmentId
 		, rsy.SchoolYear
+		, AssessmentIdentifierState
 		, AssessmentFamilyShortName
 		, AssessmentTitle
 		, AssessmentShortName
