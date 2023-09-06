@@ -15,6 +15,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
+		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
 		IF OBJECT_ID(N'tempdb..#vwIdeaStatuses') IS NOT NULL DROP TABLE #vwIdeaStatuses
 		IF OBJECT_ID(N'tempdb..#vwEconomicallyDisadvantagedStatuses') IS NOT NULL DROP TABLE #vwEconomicallyDisadvantagedStatuses
 		IF OBJECT_ID(N'tempdb..#vwMigrantStatuses') IS NOT NULL DROP TABLE #vwMigrantStatuses
@@ -35,7 +36,6 @@ BEGIN
 		DECLARE 
 		@FactTypeId INT,
 		@SchoolYearId INT,
-		@ChildCountDate DATE,
 		@SYStartDate DATE,
 		@SYEndDate DATE
 		
@@ -50,14 +50,6 @@ BEGIN
 		SELECT @SchoolYearId = DimSchoolYearId 
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
-
-		SELECT @ChildCountDate = tr.ResponseValue
-		FROM App.ToggleQuestions tq
-		JOIN App.ToggleResponses tr
-			ON tq.ToggleQuestionId = tr.ToggleQuestionId
-		WHERE tq.EmapsQuestionAbbrv = 'CHDCTDTE'
-
-		SELECT @ChildCountDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@ChildCountDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ChildCountDate) AS VARCHAR(2)) AS DATE)
 
 	--Create the temp views (and any relevant indexes) needed for this domain
 		SELECT *
@@ -122,7 +114,6 @@ BEGIN
 
 		CREATE CLUSTERED INDEX ix_tempvwEconomicallyDisadvantagedStatuses
 			ON #vwEconomicallyDisadvantagedStatuses (EconomicDisadvantageStatusCode, EligibilityStatusForSchoolFoodServiceProgramsCode);
-
 
 	--Pull the IDEA Status into a temp table
 		SELECT DISTINCT 
@@ -227,13 +218,13 @@ BEGIN
 			, EconomicDisadvantageStatus
 			, EconomicDisadvantage_StatusStartDate
 			, EconomicDisadvantage_StatusEndDate
-		INTO #tempEconomicallyDsadvantagedStatus
+		INTO #tempEconomicallyDisadvantagedStatus
 		FROM Staging.PersonStatus
 		WHERE EconomicDisadvantageStatus = 1
 
 	-- Create Index for #tempEconomicallyDsadvantagedStatus 
-		CREATE INDEX IX_tempEconomicallyDsadvantagedStatus
-			ON #tempEconomicallyDsadvantagedStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, EconomicDisadvantage_StatusStartDate, EconomicDisadvantage_StatusEndDate)
+		CREATE INDEX IX_tempEconomicallyDisadvantagedStatus
+			ON #tempEconomicallyDisadvantagedStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, EconomicDisadvantage_StatusStartDate, EconomicDisadvantage_StatusEndDate)
 
 
 		SELECT @FactTypeId = DimFactTypeId 
@@ -339,31 +330,31 @@ BEGIN
 			JOIN RDS.vwDimK12Demographics rdkd
  				ON rsy.SchoolYear = rdkd.SchoolYear
 				AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
-		--seas (rds)			
-			JOIN RDS.DimSeas rds
-				ON @ChildCountDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())		
 		--assessment results
 			JOIN Staging.AssessmentResult sar
 				ON ske.StudentIdentifierState = sar.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
+		--seas (rds)			
+			JOIN RDS.DimSeas rds
+				ON sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())		
+		--dimpeople	(rds)
+			JOIN RDS.DimPeople rdp
+				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
+				AND IsActiveK12Student = 1
+				--AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
+				--AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
+				--AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
+				AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
+				AND ISNULL(sar.AssessmentAdministrationStartDate, '1/1/1900') BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
 		--assessments
-			JOIN Staging.Assessment sa
+			LEFT JOIN Staging.Assessment sa
 				ON ISNULL(sar.AssessmentTitle, '') = ISNULL(sa.AssessmentTitle, '')
 				AND ISNULL(sar.AssessmentAcademicSubject, '') = ISNULL(sa.AssessmentAcademicSubject, '') 
 				AND ISNULL(sar.AssessmentPurpose, '') = ISNULL(sa.AssessmentPurpose, '') 
 				AND ISNULL(sar.AssessmentType, '') = ISNULL(sa.AssessmentType, '')
 				AND ISNULL(sar.AssessmentTypeAdministered, '') = ISNULL(sa.AssessmentTypeAdministered, '')
-				AND ISNULL(sar.AssessmentTypeAdministeredToEnglishLearners, '') = ISNULL(sa.AssessmentTypeAdministeredToEnglishLearners, '')
-		--dimpeople	(rds)
-			JOIN RDS.DimPeople rdp
-				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-				AND IsActiveK12Student = 1
-				AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
-				AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-				AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
-				AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-				AND @ChildCountDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
+--				AND ISNULL(sar.AssessmentTypeAdministeredToEnglishLearners, '') = ISNULL(sa.AssessmentTypeAdministeredToEnglishLearners, '')
 
 		--assessments (rds)
 			LEFT JOIN RDS.vwDimAssessments rda
@@ -373,7 +364,7 @@ BEGIN
 				AND sa.AssessmentTitle = rda.AssessmentTitle
 				AND sa.AssessmentAcademicSubject = rda.AssessmentAcademicSubjectCode	--RefAcademicSubject
 				AND sa.AssessmentType = rda.AssessmentTypeCode	--RefAssessmentType
-				AND sa.AssessmentTypeAdministered = rda.AssessmentTypeAdministeredCode	--???  RefAssessmentTypeChildrenWithDisabilities
+				AND sa.AssessmentTypeAdministered = rda.AssessmentTypeAdministeredCode	--RefAssessmentTypeAdministered
 				AND sa.AssessmentTypeAdministeredToEnglishLearners = rda.AssessmentTypeAdministeredToEnglishLearnersCode	--RefAssessmentTypeAdministeredToEnglishLearners
 
 		--assessment results (rds)
@@ -381,14 +372,14 @@ BEGIN
 				ON sar.AssessmentScoreMetricType = rdar.AssessmentScoreMetricTypeCode	--RefScoreMetricType
 
 		--assessment registrations (rds)
-			LEFT JOIN RDS.vwDimAssessmentRegistrations rdars
-				ON rdars.StateFullAcademicYearCode = 'MISSING'
+			LEFT JOIN #vwAssessmentRegistrations rdars
+				ON ISNULL(CAST(sar.AssessmentRegistrationParticipationIndicator AS SMALLINT), -1) = ISNULL(rdars.AssessmentRegistrationParticipationIndicatorMap, -1)
+				AND sar.AssessmentRegistrationReasonNotCompleting = ISNULL(rdars.AssessmentRegistrationReasonNotCompletingMap, rdars.AssessmentRegistrationReasonNotCompletingCode)	--RefAssessmentReasonNotCompleting
+				AND rdars.StateFullAcademicYearCode = 'MISSING'
 				AND rdars.LeaFullAcademicYearCode = 'MISSING'
 				AND rdars.SchoolFullAcademicYearCode = 'MISSING'
 				AND rdars.ReasonNotTestedCode = 'MISSING'
 				AND rdars.AssessmentRegistrationCompletionStatusCode = 'MISSING'
-				AND sar.AssessmentRegistrationParticipationIndicator = ISNULL(rdars.AssessmentRegistrationParticipationIndicatorMap, rdars.AssessmentRegistrationParticipationIndicatorCode)  --RefAssessmentParticipationIndicator
-				AND sar.AssessmentRegistrationReasonNotCompleting = ISNULL(rdars.AssessmentRegistrationReasonNotCompletingMap, rdars.AssessmentRegistrationReasonNotCompletingCode)	--RefAssessmentReasonNotCompleting
 
 		--assessment administration (rds)
 			LEFT JOIN RDS.DimAssessmentAdministrations rdaa
@@ -404,11 +395,11 @@ BEGIN
 		--leas (rds)	
 			LEFT JOIN RDS.DimLeas rdl
 				ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-				AND @ChildCountDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
+				AND sar.AssessmentAdministrationStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
 		--schools (rds)
 			LEFT JOIN RDS.DimK12Schools rdksch
 				ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-				AND @ChildCountDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
+				AND sar.AssessmentAdministrationStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
 		--grade levels (rds)
 			LEFT JOIN #vwGradeLevels rgls
 				ON ske.GradeLevel = rgls.GradeLevelMap
@@ -488,7 +479,7 @@ BEGIN
 				ON ISNULL(CAST(foster.ProgramType_FosterCare AS SMALLINT), -1) = ISNULL(CAST(rdfcs.ProgramParticipationFosterCareMap AS SMALLINT), -1)
 
 		--economically disadvantaged status (staging)	
-			LEFT JOIN #tempEconomicallyDsadvantagedStatus ecoDisStatus
+			LEFT JOIN #tempEconomicallyDisadvantagedStatus ecoDisStatus
 				ON sar.StudentIdentifierState = ecoDisStatus.StudentIdentifierState
 				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') = ISNULL(ecoDisStatus.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(ecoDisStatus.SchoolIdentifierSea, '')
