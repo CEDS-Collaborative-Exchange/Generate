@@ -623,8 +623,6 @@ BEGIN
 			ON rfksa.K12SchoolId = rdks.DimK12SchoolId
 		JOIN RDS.DimLeas rdlsAcc
 			ON rfksa.LeaId = rdlsAcc.DimLeaID
-		JOIN RDS.DimDates countDate
-			ON rfksa.CountDateId = countDate.DimDateId
 		-- LEFT JOIN RDS.DimDataCollections rddc
 		-- 	ON rfksa.DataCollectionId = rddc.DimDataCollectionId
 		-- 	AND rddc.DataCollectionName = @DataCollectionName
