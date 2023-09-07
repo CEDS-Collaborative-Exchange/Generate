@@ -4022,6 +4022,18 @@
 	DROP INDEX [IX_Staging_SourceSystemReferenceData_OutputCode_TableName_SchoolYear]
 		ON [Staging].[SourceSystemReferenceData];
 
+
+	
+	PRINT N'Dropping Index [Staging].[SourceSystemReferenceData].[IX_SourceSystemReferenceData_Unique]...';
+
+
+	IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_SourceSystemReferenceData_Unique')	
+	BEGIN
+		DROP INDEX [IX_SourceSystemReferenceData_Unique]
+			ON [Staging].[SourceSystemReferenceData];
+	END
+
+
 	-- Capture proper name of default constraints that currently are without a name
 	SELECT DISTINCT	
 			'ALTER TABLE [' + c.table_schema + '].[' + c.table_name + '] ADD CONSTRAINT [DF_' + c.table_name + '_' + c.column_name + '] DEFAULT ' + dc.Definition + ' FOR [' + c.Column_name + '];' AS CreateConstraint

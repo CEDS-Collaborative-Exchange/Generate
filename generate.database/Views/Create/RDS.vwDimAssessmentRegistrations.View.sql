@@ -5,15 +5,21 @@ AS
 		, rsy.SchoolYear
 		, StateFullAcademicYearCode
 		, CASE StateFullAcademicYearCode
-			WHEN '1' THEN '1'
+			WHEN 'Yes' THEN 1
+			WHEN 'No' THEN 0
+			ELSE NULL
 		  END AS StateFullAcademicYearMap
 		, LeaFullAcademicYearCode
 		, CASE LeaFullAcademicYearCode
-			WHEN '1' THEN '1'
+			WHEN 'Yes' THEN 1
+			WHEN 'No' THEN 0
+			ELSE NULL
 		  END AS LeaFullAcademicYearMap
 		, SchoolFullAcademicYearCode
 		, CASE SchoolFullAcademicYearCode
-			WHEN '1' THEN '1'
+			WHEN 'Yes' THEN 1
+			WHEN 'No' THEN 0
+			ELSE NULL
 		  END AS SchoolFullAcademicYearMap
 		, AssessmentRegistrationCompletionStatusCode
 		, sssrd1.OutputCode AS AssessmentRegistrationCompletionStatusMap
