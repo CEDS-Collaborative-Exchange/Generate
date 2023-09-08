@@ -6,43 +6,51 @@ BEGIN
 
 	BEGIN TRY
 
-	--Populate the RDS tables from ODS data
+	--Populate the RDS tables from Staging data
+	
+		--Populate DimStudents
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate DimPeople')
 
-		--Populate DimStudents
-		exec Staging.[Staging-To-DimPeople_K12Students] NULL
+			exec Staging.[Staging-To-DimPeople_K12Students] NULL
 
+		--Populate DimSeas
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate DimSeas')
 
-		--Populate DimSeas
-		exec [Staging].[Staging-to-DimSeas] 'directory', NULL, 0
+			exec [Staging].[Staging-to-DimSeas] 'directory', NULL, 0
 
+		--Populate DimLeas
 			--write out message to DataMigrationHistories
-
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate DimLeas')
 
-		--Populate DimLeas
-		exec [Staging].[Staging-to-DimLeas] 'directory', NULL, 0
+			exec [Staging].[Staging-to-DimLeas] 'directory', NULL, 0
 
+		--Populate DimK12Schools
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate DimK12Schools')
 
-		--Populate DimK12Schools
-		exec [Staging].[Staging-to-DimK12Schools] NULL, 0
+			exec [Staging].[Staging-to-DimK12Schools] NULL, 0
 
+		--Populate DimAssessments
+			--write out message to DataMigrationHistories
+			insert into app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate DiMAssessments')
+
+			exec [Staging].[Staging-to-DimAssessments]
+
+		--clear the data from the fact table
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Empty_RDS for the Submission reports')
 
-		--clear the data from the fact table
-		exec [rds].[Empty_RDS] 'submission', 'studentassessments'
+			exec [rds].[Empty_RDS] 'submission', 'studentassessments'
 
+		--finish
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate StudentAssessments for Submission reports')
