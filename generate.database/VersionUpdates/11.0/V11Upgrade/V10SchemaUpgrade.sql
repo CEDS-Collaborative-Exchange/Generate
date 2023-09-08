@@ -4024,7 +4024,7 @@
 
 
 	
-	PRINT N'Dropping Index [Staging].[SourceSystemReferenceData].[IX_Staging_SourceSystemReferenceData_OutputCode_TableName_SchoolYear]...';
+	PRINT N'Dropping Index [Staging].[SourceSystemReferenceData].[IX_SourceSystemReferenceData_Unique]...';
 
 
 	IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_SourceSystemReferenceData_Unique')	
@@ -4033,14 +4033,6 @@
 			ON [Staging].[SourceSystemReferenceData];
 	END
 
-
-
-	PRINT N'Dropping Index [Staging].[SourceSystemReferenceData].[IX_Staging_SourceSystemReferenceData_OutputCode_TableName_SchoolYear]...';
-
-
-	
-	DROP INDEX [IX_Staging_SourceSystemReferenceData_OutputCode_TableName_SchoolYear]
-		ON [Staging].[SourceSystemReferenceData];
 
 	-- Capture proper name of default constraints that currently are without a name
 	SELECT DISTINCT	
