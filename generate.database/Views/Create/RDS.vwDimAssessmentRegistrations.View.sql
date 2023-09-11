@@ -22,13 +22,13 @@ AS
 			ELSE NULL
 		  END AS SchoolFullAcademicYearMap
 		, AssessmentRegistrationCompletionStatusCode
-		, sssrd1.OutputCode AS AssessmentRegistrationCompletionStatusMap
+		, sssrd1.InputCode AS AssessmentRegistrationCompletionStatusMap
 		, AssessmentRegistrationParticipationIndicatorCode
-		, sssrd2.OutputCode AS AssessmentRegistrationParticipationIndicatorMap
+		, sssrd2.InputCode AS AssessmentRegistrationParticipationIndicatorMap
 		, AssessmentRegistrationReasonNotCompletingCode
-		, sssrd3.OutputCode AS AssessmentRegistrationReasonNotCompletingMap
+		, sssrd3.InputCode AS AssessmentRegistrationReasonNotCompletingMap
 		, ReasonNotTestedCode
-		, sssrd4.OutputCode AS ReasonNotTestedMap
+		, sssrd4.InputCode AS ReasonNotTestedMap
 	FROM rds.DimAssessmentRegistrations rdar
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
