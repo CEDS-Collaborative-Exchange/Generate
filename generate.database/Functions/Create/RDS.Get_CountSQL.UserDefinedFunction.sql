@@ -957,6 +957,11 @@ BEGIN
 			set @factKey = 'PrimaryDisabilityTypeId'
 		end
 
+		if @dimensionTable = 'DimGradeLevels' and @reportCode in ('c175','c178','c179','c185','c188','c189')
+		begin
+			set @factKey = 'GradeLevelWhenAssessedId'
+		end
+
 		if @dimensionTable = 'DimSchoolYears'
 		begin
 			set @dimensionPrimaryKey = 'DimSchoolYearId'
@@ -1781,6 +1786,14 @@ BEGIN
 					inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
 						on CAT_RACE.RaceEdFactsCode = CAT_' + @reportField + '_temp.Code'
 				end
+				else if @reportField = 'RACE' and @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join rds.BridgeK12StudentAssessmentRaces b on fact.FactK12StudentAssessmentId = b.FactK12StudentAssessmentId
+					inner join rds.DimRaces CAT_' + @reportField + ' on b.RaceId = CAT_' + @reportField + '.DimRaceId 
+					inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
+						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code'
+				end
 				else if @reportField = 'RACE'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
@@ -1794,7 +1807,7 @@ BEGIN
 						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
 						inner join RDS.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId 
 						inner join RDS.DimAssessmentPerformanceLevels assmntPerfLevl on fact.AssessmentPerformanceLevelId = assmntPerfLevl.DimAssessmentPerformanceLevelId
-						inner join RDS.DimGradeLevels grades on fact.GradeLevelId = grades.DimGradeLevelId
+						inner join RDS.DimGradeLevels grades on fact.GradeLevelWhenAssessedId = grades.DimGradeLevelId
 						inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grades.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
 															AND tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeEdFactsCode			
 						inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
@@ -5204,10 +5217,11 @@ BEGIN
 					select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 						when @reportLevel = 'lea' then 'fact.LeaId,' 
 						     else 'fact.K12SchoolId,'
-					end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
+					end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
 					sum(isnull(fact.' + @factField + ', 0))
 					from rds.' + @factTable + ' fact ' + @sqlCountJoins 
 					+ ' ' + @reportFilterJoin + '
+					inner join rds.DimPeople p on fact.K12StudentId = p.DimPersonId 
 					where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
 					and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
 					and ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
@@ -5216,7 +5230,7 @@ BEGIN
 					group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 								   when @reportLevel = 'lea' then 'fact.LeaId,'
 								   else 'fact.K12SchoolId,'
-								 end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionGroupFields + '
+								 end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionGroupFields + '
 					' + @sqlHavingClause + '
 					'
 			end
