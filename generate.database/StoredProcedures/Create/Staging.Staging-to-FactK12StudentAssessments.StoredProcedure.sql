@@ -358,23 +358,23 @@ BEGIN
 
 		--assessments (rds)
 			LEFT JOIN RDS.vwDimAssessments rda
-				ON sa.AssessmentIdentifier = rda.AssessmentIdentifierState
-				AND sa.AssessmentFamilyShortName = rda.AssessmentFamilyShortName
-				AND sa.AssessmentShortName = rda.AssessmentShortName
-				AND sa.AssessmentTitle = rda.AssessmentTitle
-				AND sa.AssessmentAcademicSubject = rda.AssessmentAcademicSubjectCode	--RefAcademicSubject
-				AND sa.AssessmentType = rda.AssessmentTypeCode	--RefAssessmentType
-				AND sa.AssessmentTypeAdministered = rda.AssessmentTypeAdministeredCode	--RefAssessmentTypeAdministered
-				AND sa.AssessmentTypeAdministeredToEnglishLearners = rda.AssessmentTypeAdministeredToEnglishLearnersCode	--RefAssessmentTypeAdministeredToEnglishLearners
+				ON ISNULL(sa.AssessmentIdentifier, '') = ISNULL(rda.AssessmentIdentifierState, '')
+				AND ISNULL(sa.AssessmentFamilyShortName, '') = ISNULL(rda.AssessmentFamilyShortName, '')
+				AND ISNULL(sa.AssessmentShortName, '') = ISNULL(rda.AssessmentShortName, '')
+				AND ISNULL(sa.AssessmentTitle, '') = ISNULL(rda.AssessmentTitle, '')
+				AND ISNULL(sa.AssessmentAcademicSubject, '') = ISNULL(rda.AssessmentAcademicSubjectCode, '')	--RefAcademicSubject
+				AND ISNULL(sa.AssessmentType, '') = ISNULL(rda.AssessmentTypeCode, '')	--RefAssessmentType
+				AND ISNULL(sa.AssessmentTypeAdministered, '') = ISNULL(rda.AssessmentTypeAdministeredCode, '')	--RefAssessmentTypeCildrenWithDisabilities
+				AND ISNULL(sa.AssessmentTypeAdministeredToEnglishLearners, '') = ISNULL(rda.AssessmentTypeAdministeredToEnglishLearnersCode, '')	--RefAssessmentTypeAdministeredToEnglishLearners
 
 		--assessment results (rds)
 			LEFT JOIN RDS.vwDimAssessmentResults rdar
-				ON sar.AssessmentScoreMetricType = rdar.AssessmentScoreMetricTypeCode	--RefScoreMetricType
+				ON ISNULL(sar.AssessmentScoreMetricType, '') = ISNULL(rdar.AssessmentScoreMetricTypeCode, '')	--RefScoreMetricType
 
 		--assessment registrations (rds)
 			LEFT JOIN #vwAssessmentRegistrations rdars
 				ON ISNULL(CAST(sar.AssessmentRegistrationParticipationIndicator AS SMALLINT), -1) = ISNULL(rdars.AssessmentRegistrationParticipationIndicatorMap, -1)
-				AND sar.AssessmentRegistrationReasonNotCompleting = ISNULL(rdars.AssessmentRegistrationReasonNotCompletingMap, rdars.AssessmentRegistrationReasonNotCompletingCode)	--RefAssessmentReasonNotCompleting
+				AND ISNULL(sar.AssessmentRegistrationReasonNotCompleting, 'MISSING') = ISNULL(rdars.AssessmentRegistrationReasonNotCompletingMap, rdars.AssessmentRegistrationReasonNotCompletingCode)	--RefAssessmentReasonNotCompleting
 				AND rdars.StateFullAcademicYearCode = 'MISSING'
 				AND rdars.LeaFullAcademicYearCode = 'MISSING'
 				AND rdars.SchoolFullAcademicYearCode = 'MISSING'
@@ -383,26 +383,26 @@ BEGIN
 
 		--assessment administration (rds)
 			LEFT JOIN RDS.DimAssessmentAdministrations rdaa
-				ON sa.AssessmentFamilyTitle = rdaa.AssessmentAdministrationAssessmentFamily
-				AND sar.AssessmentAdministrationStartDate = rdaa.AssessmentAdministrationStartDate
-				AND sar.AssessmentAdministrationFinishDate = rdaa.AssessmentAdministrationFinishDate
+				ON ISNULL(sa.AssessmentFamilyTitle, '') = ISNULL(rdaa.AssessmentAdministrationAssessmentFamily, '')
+				AND ISNULL(sar.AssessmentAdministrationStartDate, '1900-01-01') = ISNULL(rdaa.AssessmentAdministrationStartDate, '1900-01-01')
+				AND ISNULL(sar.AssessmentAdministrationFinishDate, '1900-01-01') = ISNULL(rdaa.AssessmentAdministrationFinishDate, '1900-01-01')
 		
 		--assessment performance levels (rds)
 			LEFT JOIN RDS.DimAssessmentPerformanceLevels rdapl
-				ON sar.AssessmentPerformanceLevelIdentifier = rdapl.AssessmentPerformanceLevelIdentifier
-				AND sar.AssessmentPerformanceLevelLabel = rdapl.AssessmentPerformanceLevelLabel
+				ON ISNULL(sar.AssessmentPerformanceLevelIdentifier, '') = ISNULL(rdapl.AssessmentPerformanceLevelIdentifier, '')
+				AND ISNULL(sar.AssessmentPerformanceLevelLabel, '') = ISNULL(rdapl.AssessmentPerformanceLevelLabel, '')
 
 		--leas (rds)	
 			LEFT JOIN RDS.DimLeas rdl
-				ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
+				ON ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(rdl.LeaIdentifierSea, '')
 				AND sar.AssessmentAdministrationStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
 		--schools (rds)
 			LEFT JOIN RDS.DimK12Schools rdksch
-				ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
+				ON ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(rdksch.SchoolIdentifierSea, '')
 				AND sar.AssessmentAdministrationStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
 		--grade levels (rds)
 			LEFT JOIN #vwGradeLevels rgls
-				ON ske.GradeLevel = rgls.GradeLevelMap
+				ON ISNULL(ske.GradeLevel, '') = ISNULL(rgls.GradeLevelMap, '')
 				AND rgls.GradeLevelTypeDescription = 'Grade Level When Assessed'
 		--idea (staging)	
 			LEFT JOIN #tempIdeaStatus idea
