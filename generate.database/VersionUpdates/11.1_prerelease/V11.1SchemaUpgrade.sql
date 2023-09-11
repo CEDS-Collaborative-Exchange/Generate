@@ -47,6 +47,15 @@ PRINT N'Updating RDS.DimAssessmentAdministrations';
 	ALTER TABLE [RDS].[DimAssessmentAdministrations] ALTER COLUMN [AssessmentAdministrationAssessmentFamily] nvarchar(100) NULL;
 
 
+PRINT N'Updating RDS.DimAssessmentPerformanceLevels';
+
+	ALTER TABLE [RDS].[DimAssessmentPerformanceLevels] ALTER COLUMN [AssessmentPerformanceLevelIdentifier] nvarchar(40) NULL;
+	ALTER TABLE [RDS].[DimAssessmentPerformanceLevels] ALTER COLUMN [AssessmentPerformanceLevelLabel] nvarchar(20) NULL;
+	ALTER TABLE [RDS].[DimAssessmentPerformanceLevels] ALTER COLUMN [AssessmentPerformanceLevelScoreMetric] nvarchar(30) NULL;
+	ALTER TABLE [RDS].[DimAssessmentPerformanceLevels] ALTER COLUMN [AssessmentPerformanceLevelLowerCutScore] nvarchar(30) NULL;
+	ALTER TABLE [RDS].[DimAssessmentPerformanceLevels] ALTER COLUMN [AssessmentPerformanceLevelUpperCutScore] nvarchar(30) NULL;
+
+
 PRINT N'Update complete.';
 
 

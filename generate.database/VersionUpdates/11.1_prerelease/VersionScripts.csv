@@ -13,6 +13,8 @@ StoredProcedures\\Drop,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimAssessmentAdministrations.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimAssessmentAdministrations.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimAssessmentPerformanceLevels.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimAssessmentPerformanceLevels.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sql,0
