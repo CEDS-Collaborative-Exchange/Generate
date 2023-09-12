@@ -949,6 +949,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimTitleIIIStatusId'
 		end
+		else if @dimensionTable = 'DimFosterCareStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimFosterCareStatusId'
+		end
 			
 		set @factKey = REPLACE(@dimensionPrimaryKey, 'Dim', '')
 
@@ -1626,7 +1630,7 @@ BEGIN
 				begin
 					set @sqlCategoryReturnField = ' 
 						case 
-							when CAT_' + @reportField + '.FosterCareProgramCode = ''FOSTERCARE'' then ''FCS''					
+							when CAT_' + @reportField + '.ProgramParticipationFosterCareCode = ''Yes'' then ''FCS''					
 							else CAT_' + @reportField + '.' + @dimensionField + '
 						end'
 				end
@@ -1809,7 +1813,7 @@ BEGIN
 						inner join RDS.DimAssessmentPerformanceLevels assmntPerfLevl on fact.AssessmentPerformanceLevelId = assmntPerfLevl.DimAssessmentPerformanceLevelId
 						inner join RDS.DimGradeLevels grades on fact.GradeLevelWhenAssessedId = grades.DimGradeLevelId
 						inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grades.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
-															AND tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeEdFactsCode			
+															AND tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeAdministeredCode			
 						inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
 						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
 						'

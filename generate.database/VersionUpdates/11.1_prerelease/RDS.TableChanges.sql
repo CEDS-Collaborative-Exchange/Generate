@@ -76,6 +76,9 @@
 	EXECUTE sp_rename N'[RDS].[tmp_ms_xx_constraint_PK_FactStudentAssessments1]', N'PK_FactStudentAssessments';
 
 	ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD ASSESSMENTTYPEADMINISTERED nvarchar(50);
+
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].FOSTERCAREPROGRAM', N'PROGRAMPARTICIPATIONFOSTERCARE', 'COLUMN';
+	
 ----------------------------------------------------------------------------------------------------------
 --Repopulate the DimAssessmentRegistrations table (fields were swapped when it was created in v11)
 ----------------------------------------------------------------------------------------------------------
