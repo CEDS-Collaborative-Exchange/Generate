@@ -354,7 +354,7 @@ BEGIN
 				AND ISNULL(sar.AssessmentPurpose, '') = ISNULL(sa.AssessmentPurpose, '') 
 				AND ISNULL(sar.AssessmentType, '') = ISNULL(sa.AssessmentType, '')
 				AND ISNULL(sar.AssessmentTypeAdministered, '') = ISNULL(sa.AssessmentTypeAdministered, '')
---				AND ISNULL(sar.AssessmentTypeAdministeredToEnglishLearners, '') = ISNULL(sa.AssessmentTypeAdministeredToEnglishLearners, '')
+				AND ISNULL(sar.AssessmentTypeAdministeredToEnglishLearners, '') = ISNULL(sa.AssessmentTypeAdministeredToEnglishLearners, '')
 
 		--assessments (rds)
 			LEFT JOIN RDS.vwDimAssessments rda

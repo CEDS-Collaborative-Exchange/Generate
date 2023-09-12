@@ -7,19 +7,19 @@ AS
 		, CASE StateFullAcademicYearCode
 			WHEN 'Yes' THEN 1
 			WHEN 'No' THEN 0
-			ELSE NULL
+			ELSE -1
 		  END AS StateFullAcademicYearMap
 		, LeaFullAcademicYearCode
 		, CASE LeaFullAcademicYearCode
 			WHEN 'Yes' THEN 1
 			WHEN 'No' THEN 0
-			ELSE NULL
+			ELSE -1
 		  END AS LeaFullAcademicYearMap
 		, SchoolFullAcademicYearCode
 		, CASE SchoolFullAcademicYearCode
 			WHEN 'Yes' THEN 1
 			WHEN 'No' THEN 0
-			ELSE NULL
+			ELSE -1
 		  END AS SchoolFullAcademicYearMap
 		, AssessmentRegistrationCompletionStatusCode
 		, sssrd1.InputCode AS AssessmentRegistrationCompletionStatusMap
