@@ -375,15 +375,18 @@ BEGIN
 			LEFT JOIN #vwAssessmentRegistrations rdars
 				ON ISNULL(CAST(sar.AssessmentRegistrationParticipationIndicator AS SMALLINT), -1) = ISNULL(rdars.AssessmentRegistrationParticipationIndicatorMap, -1)
 				AND ISNULL(sar.AssessmentRegistrationReasonNotCompleting, 'MISSING') = ISNULL(rdars.AssessmentRegistrationReasonNotCompletingMap, rdars.AssessmentRegistrationReasonNotCompletingCode)	--RefAssessmentReasonNotCompleting
-				AND rdars.StateFullAcademicYearCode = 'MISSING'
-				AND rdars.LeaFullAcademicYearCode = 'MISSING'
-				AND rdars.SchoolFullAcademicYearCode = 'MISSING'
+				AND ISNULL(CAST(sar.StateFullAcademicYear AS SMALLINT), -1) = ISNULL(rdars.StateFullAcademicYearMap, -1)
+				AND ISNULL(CAST(sar.LeaFullAcademicYear AS SMALLINT), -1) = ISNULL(rdars.LeaFullAcademicYearMap, -1)
+				AND ISNULL(CAST(sar.SchoolFullAcademicYear AS SMALLINT), -1) = ISNULL(rdars.SchoolFullAcademicYearMap, -1)
 				AND rdars.ReasonNotTestedCode = 'MISSING'
 				AND rdars.AssessmentRegistrationCompletionStatusCode = 'MISSING'
 
 		--assessment administration (rds)
 			LEFT JOIN RDS.DimAssessmentAdministrations rdaa
-				ON ISNULL(sa.AssessmentFamilyTitle, '') = ISNULL(rdaa.AssessmentAdministrationAssessmentFamily, '')
+				ON ISNULL(sa.AssessmentIdentifier, '') = ISNULL(rdaa.AssessmentIdentifier, '')
+				AND ISNULL(sa.AssessmentFamilyTitle, '') = ISNULL(rdaa.AssessmentAdministrationAssessmentFamily, '')
+				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(rdaa.SchoolIdentifierSea, '')
+				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') = ISNULL(rdaa.LEAIdentifierSea, '')
 				AND ISNULL(sar.AssessmentAdministrationStartDate, '1900-01-01') = ISNULL(rdaa.AssessmentAdministrationStartDate, '1900-01-01')
 				AND ISNULL(sar.AssessmentAdministrationFinishDate, '1900-01-01') = ISNULL(rdaa.AssessmentAdministrationFinishDate, '1900-01-01')
 		
