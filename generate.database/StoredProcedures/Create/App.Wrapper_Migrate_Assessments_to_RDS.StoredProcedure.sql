@@ -39,9 +39,23 @@ BEGIN
 		--Populate DimAssessments
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate DiMAssessments')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate DimAssessments')
 
 			exec [Staging].[Staging-to-DimAssessments]
+
+		--Populate DimAssessmentAdministrations
+			--write out message to DataMigrationHistories
+			insert into app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate DimMAssessmentAdministrations')
+
+			exec [Staging].[Staging-to-DimAssessmentAdministrations]
+
+		--Populate DimAssessmentPerformanceLevels
+			--write out message to DataMigrationHistories
+			insert into app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Assessments - Start Migrate DimMAssessmentPerformanceLevels')
+
+			exec [Staging].[Staging-to-DimAssessmentPerformanceLevels]
 
 		--clear the data from the fact table
 			--write out message to DataMigrationHistories
