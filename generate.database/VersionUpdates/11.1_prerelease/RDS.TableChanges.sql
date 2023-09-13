@@ -78,7 +78,18 @@
 	ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD ASSESSMENTTYPEADMINISTERED nvarchar(50);
 
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].FOSTERCAREPROGRAM', N'PROGRAMPARTICIPATIONFOSTERCARE', 'COLUMN';
-	
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].ASSESSMENTSUBJECT', N'ASSESSMENTACADEMICSUBJECT', 'COLUMN';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].CTEPROGRAM', N'CTEPARTICIPANT', 'COLUMN';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].ACADEMICORVOCATIONALEXITOUTCOME', N'EDFACTSACADEMICORCAREERANDTECHNICALOUTCOMEEXITTYPE', 'COLUMN';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].ACADEMICORVOCATIONALOUTCOME', N'EDFACTSACADEMICORCAREERANDTECHNICALOUTCOMETYPE', 'COLUMN';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].IDEAEDUCATIONALENVIRONMENT', N'IDEAEDUCATIONALENVIRONMENTFOREARLYCHILDHOOD', 'COLUMN';
+
+	ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE nvarchar(50);
+
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].NEGLECTEDORDELINQUENTPROGRAMTYPE', N'NEGLECTEDORDELINQUENTLONGTERMSTATUS', 'COLUMN';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].SINGLEPARENTORSINGLEPREGNANTWOMAN', N'SINGLEPARENTORSINGLEPREGNANTWOMANSTATUS', 'COLUMN';
+
+
 ----------------------------------------------------------------------------------------------------------
 --Repopulate the DimAssessmentRegistrations table (fields were swapped when it was created in v11)
 ----------------------------------------------------------------------------------------------------------
