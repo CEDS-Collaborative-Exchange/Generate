@@ -6903,8 +6903,8 @@ BEGIN
 									  where a.AssessmentType = b.AssessmentTypeCode
 									  and a.GradeLevel = b.Grade
 									  and a.AssessmentAcademicSubject = b.Subject
-									  and LEN(a.PerformanceLevel) = 2
-									  and CAST(SUBSTRING(a.PerformanceLevel,2,1) as INT) <= CAST(b.PerformanceLevels as INT))'
+									  and LEN(a.ASSESSMENTPERFORMANCELEVELIDENTIFIER) = 2
+									  and CAST(SUBSTRING(a.ASSESSMENTPERFORMANCELEVELIDENTIFIER,2,1) as INT) <= CAST(b.PerformanceLevels as INT))'
 
 			end
 		else if @reportCode in ('c185','c189')

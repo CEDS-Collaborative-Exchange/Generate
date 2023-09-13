@@ -86,9 +86,15 @@
 
 	ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE nvarchar(50);
 
-	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].NEGLECTEDORDELINQUENTPROGRAMTYPE', N'NEGLECTEDORDELINQUENTLONGTERMSTATUS', 'COLUMN';
 	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].SINGLEPARENTORSINGLEPREGNANTWOMAN', N'SINGLEPARENTORSINGLEPREGNANTWOMANSTATUS', 'COLUMN';
+	EXECUTE sp_rename N'[RDS].[ReportEDFactsK12StudentAssessments].PERFORMANCELEVEL', N'ASSESSMENTPERFORMANCELEVELIDENTIFIER', 'COLUMN';
 
+	ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD CONSOLIDATEDMEPFUNDSSTATUS nvarchar(50);
+	ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD CONTINUATIONOFSERVICESREASON nvarchar(50);
+	ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE nvarchar(50);
+	ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD MIGRANTEDUCATIONPROGRAMSERVICESTYPE nvarchar(50);
+	ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD MIGRANTPRIORITIZEDFORSERVICES nvarchar(50);
+	ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD NEGLECTEDORDELINQUENTLONGTERMSTATUS nvarchar(50);
 
 ----------------------------------------------------------------------------------------------------------
 --Repopulate the DimAssessmentRegistrations table (fields were swapped when it was created in v11)
