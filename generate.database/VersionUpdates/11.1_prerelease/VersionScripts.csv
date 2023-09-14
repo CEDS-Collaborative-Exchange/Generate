@@ -27,4 +27,6 @@ StoredProcedures\\Drop,App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sq
 StoredProcedures\\Create,App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Rollover_SourceSystemReferenceData.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Rollover_SourceSystemReferenceData.StoredProcedure.sql,0
+StoredProcedures\\Drop,dbo.Get_AssessmentTypeChildrenWithDisabilities.sql,0
+StoredProcedures\\Create,dbo.Get_AssessmentTypeChildrenWithDisabilities.sql,0
 VersionUpdates\\11.1_prerelease,UpdateDbVersion.sql,0
