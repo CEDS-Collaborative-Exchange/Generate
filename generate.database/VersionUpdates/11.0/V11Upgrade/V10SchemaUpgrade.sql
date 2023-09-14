@@ -6789,13 +6789,22 @@
 
 
 	
-	PRINT N'Dropping Table [RDS].[FactK12StudentAssessmentReports]...';
+	PRINT N'Renaming Table [RDS].[FactK12StudentAssessmentReports] and necessary fields...';
 
 
-	--TODO: Convert this to a table rename, if necessary
-	
-	DROP TABLE [RDS].[FactK12StudentAssessmentReports];
-
+	EXECUTE sp_rename N'[RDS].[FactK12StudentAssessmentReports]', N'ReportEdFactsK12StudentAssessments';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAM]', N'ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[OrganizationNcesId]', N'OrganizationIdentifierNces';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[OrganizationStateId]', N'OrganizationIdentifierSea';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[ParentOrganizationStateId]', N'ParentOrganizationIdentifierSea';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[FactK12StudentAssessmentReportId]', N'ReportEDFactsK12StudentAssessmentId';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[PRIMARYDISABILITYTYPE]', N'IDEADISABILITYTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[StateCode]', N'StateAbbreviationCode';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[StateName]', N'StateAbbreviationDescription';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[PRIMARYDISABILITYTYPE]', N'IDEADISABILITYTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTION]', N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[ASSESSMENTPROGRESSLEVEL]', N'PROGRESSLEVEL';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[LEPPERKINSSTATUS]', N'PERKINSENGLISHLEARNERSTATUS';
 
 	
 	PRINT N'Dropping Table [RDS].[FactK12StudentAttendanceReports]...';
@@ -7154,12 +7163,16 @@
 
 
 	
-	PRINT N'Dropping Table [RDS].[FactOrganizationCountReports]...';
+	PRINT N'Renaming Table [RDS].[FactOrganizationCountReports]...';
 
 
-	--TODO: Switch to rename
-	
-	DROP TABLE [RDS].[FactOrganizationCountReports];
+	EXECUTE sp_rename N'[RDS].[FactOrganizationCountReports]', N'ReportEdFactsOrganizationCounts';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[FactOrganizationCountReportId]', N'ReportEDFactsOrganizationCountId';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[CSSOLastName]', N'CSSOLastOrSurname';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[CharterSchoolAuthorizer]', N'CharterSchoolAuthorizerIdPrimary';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[CharterSchoolSecondaryAuthorizer]', N'CharterSchoolAuthorizerIdSecondary';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[MailingAddressStreet2]', N'MailingAddressApartmentRoomOrSuiteNumber';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[PhysicalAddressStreet2]', N'PhysicalAddressApartmentRoomOrSuiteNumber';
 
 
 	
@@ -16753,101 +16766,7 @@
 
 
 	
-	CREATE TABLE [RDS].[ReportEDFactsK12StudentAssessments] (
-		[ReportEDFactsK12StudentAssessmentId]           INT             IDENTITY (1, 1) NOT NULL,
-		[ASSESSMENTSUBJECT]                             NVARCHAR (50)   NULL,
-		[ASSESSMENTTYPE]                                NVARCHAR (50)   NULL,
-		[AssessmentCount]                               INT             NOT NULL,
-		[SPECIALEDUCATIONEXITREASON]                    NVARCHAR (50)   NULL,
-		[CTEPROGRAM]                                    NVARCHAR (50)   NULL,
-		[Categories]                                    NVARCHAR (300)  NULL,
-		[CategorySetCode]                               NVARCHAR (40)   NOT NULL,
-		[IDEADISABILITYTYPE]                            NVARCHAR (50)   NULL,
-		[ECONOMICDISADVANTAGESTATUS]                    NVARCHAR (50)   NULL,
-		[IDEAEDUCATIONALENVIRONMENT]                    NVARCHAR (50)   NULL,
-		[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS] NVARCHAR (50)   NULL,
-		[FOSTERCAREPROGRAM]                             NVARCHAR (50)   NULL,
-		[FULLYEARSTATUS]                                NVARCHAR (50)   NULL,
-		[GRADELEVEL]                                    NVARCHAR (50)   NULL,
-		[HOMElESSNESSSTATUS]                            NVARCHAR (50)   NULL,
-		[TITLEIIIIMMIGRANTPARTICIPATIONSTATUS]          NVARCHAR (50)   NULL,
-		[ENGLISHLEARNERSTATUS]                          NVARCHAR (50)   NULL,
-		[MIGRANTSTATUS]                                 NVARCHAR (50)   NULL,
-		[OrganizationName]                              NVARCHAR (1000) NOT NULL,
-		[OrganizationIdentifierNces]                    NVARCHAR (100)  NOT NULL,
-		[OrganizationIdentifierSea]                     NVARCHAR (100)  NOT NULL,
-		[PARTICIPATIONSTATUS]                           NVARCHAR (50)   NULL,
-		[PERFORMANCELEVEL]                              NVARCHAR (50)   NULL,
-		[ParentOrganizationIdentifierSea]               NVARCHAR (MAX)  NULL,
-		[RACE]                                          NVARCHAR (50)   NULL,
-		[ReportCode]                                    NVARCHAR (40)   NOT NULL,
-		[ReportLevel]                                   NVARCHAR (40)   NOT NULL,
-		[ReportYear]                                    NVARCHAR (40)   NOT NULL,
-		[SECTION504STATUS]                              NVARCHAR (50)   NULL,
-		[SEX]                                           NVARCHAR (50)   NULL,
-		[StateANSICode]                                 NVARCHAR (100)  NOT NULL,
-		[StateAbbreviationCode]                         NVARCHAR (100)  NOT NULL,
-		[StateAbbreviationDescription]                  NVARCHAR (1000) NOT NULL,
-		[TableTypeAbbrv]                                NVARCHAR (MAX)  NULL,
-		[TotalIndicator]                                NVARCHAR (MAX)  NULL,
-		[ASSESSEDFIRSTTIME]                             NVARCHAR (50)   NULL,
-		[FORMERENGLISHLEARNERYEARSTATUS]                NVARCHAR (50)   NULL,
-		[MILITARYCONNECTEDSTUDENTINDICATOR]             NVARCHAR (50)   NULL,
-		[PROFICIENCYSTATUS]                             NVARCHAR (50)   NULL,
-		[TITLEIIIACCOUNTABILITYPROGRESSSTATUS]          NVARCHAR (50)   NULL,
-		[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE]        NVARCHAR (50)   NULL,
-		[TITLEIIIPROGRAMPARTICIPATION]                  NVARCHAR (50)   NULL,
-		[CTEAEDISPLACEDHOMEMAKERINDICATOR]              NVARCHAR (50)   NULL,
-		[CTENONTRADITIONALGENDERSTATUS]                 NVARCHAR (50)   NULL,
-		[PLACEMENTSTATUS]                               NVARCHAR (50)   NULL,
-		[PLACEMENTTYPE]                                 NVARCHAR (50)   NULL,
-		[REPRESENTATIONSTATUS]                          NVARCHAR (50)   NULL,
-		[SINGLEPARENTORSINGLEPREGNANTWOMAN]             NVARCHAR (50)   NULL,
-		[NEGLECTEDORDELINQUENTPROGRAMTYPE]              NVARCHAR (50)   NULL,
-		[MOBILITYSTATUS12MO]                            NVARCHAR (50)   NULL,
-		[MOBILITYSTATUSSY]                              NVARCHAR (50)   NULL,
-		[REFERRALSTATUS]                                NVARCHAR (50)   NULL,
-		[CTEGRADUATIONRATEINCLUSION]                    NVARCHAR (50)   NULL,
-		[TESTRESULT]                                    NVARCHAR (50)   NULL,
-		[HOMELESSPRIMARYNIGHTTIMERESIDENCE]             NVARCHAR (50)   NULL,
-		[HOMELESSUNACCOMPANIEDYOUTHSTATUS]              NVARCHAR (50)   NULL,
-		[PROGRESSLEVEL]                       			NVARCHAR (50)   NULL,
-		[YEAR]                                          NVARCHAR (50)   NULL,
-		[LONGTERMSTATUS]                                NVARCHAR (50)   NULL,
-		[HIGHSCHOOLDIPLOMATYPE]                         NVARCHAR (50)   NULL,
-		[ACADEMICORVOCATIONALEXITOUTCOME]               NVARCHAR (50)   NULL,
-		[ACADEMICORVOCATIONALOUTCOME]                   NVARCHAR (50)   NULL,
-		[HOMELESSSERVICEDINDICATOR]                     NVARCHAR (50)   NULL,
-		[PERKINSENGLISHLEARNERSTATUS]                   NVARCHAR (50)   NULL,
-		[IDEAINDICATOR]                                 VARCHAR (50)    NULL,
-		[TITLEISUPPORTSERVICES]                         VARCHAR (50)    NULL,
-		[TITLEIINSTRUCTIONALSERVICES]                   VARCHAR (50)    NULL,
-		[TITLEIPROGRAMTYPE]                             VARCHAR (50)    NULL,
-		[TITLEISCHOOLSTATUS]                            VARCHAR (50)    NULL,
-		[PostSecondaryEnrollmentStatus]                 VARCHAR (50)    NULL,
-		[AssessmentTypeAdministeredToEnglishLearners]   VARCHAR (50)    NULL,
-		CONSTRAINT [PK_FactStudentAssessmentReports] PRIMARY KEY CLUSTERED ([ReportEDFactsK12StudentAssessmentId] ASC) WITH (DATA_COMPRESSION = PAGE)
-	);
-
-
 	
-	PRINT N'Creating Index [RDS].[ReportEDFactsK12StudentAssessments].[IX_FactStudentAssessmentReports_ReportCode_ReportYear_ReportLevel_CategorySetCode]...';
-
-
-	
-	CREATE NONCLUSTERED INDEX [IX_FactStudentAssessmentReports_ReportCode_ReportYear_ReportLevel_CategorySetCode]
-		ON [RDS].[ReportEDFactsK12StudentAssessments]([ReportCode] ASC, [ReportYear] ASC, [ReportLevel] ASC, [CategorySetCode] ASC);
-
-
-	
-	PRINT N'Creating Index [RDS].[ReportEDFactsK12StudentAssessments].[IX_FactStudentAssessmentReports_ReportCode_ReportYear_ReportLevel_CategorySetCode_SubJect_AssmentType_Grade]...';
-
-
-	
-	CREATE NONCLUSTERED INDEX [IX_FactStudentAssessmentReports_ReportCode_ReportYear_ReportLevel_CategorySetCode_SubJect_AssmentType_Grade]
-		ON [RDS].[ReportEDFactsK12StudentAssessments]([ReportCode] ASC, [ReportYear] ASC, [ReportLevel] ASC, [CategorySetCode] ASC, [ASSESSMENTSUBJECT] ASC, [ASSESSMENTTYPE] ASC, [GRADELEVEL] ASC);
-
-
 	
 	PRINT N'Creating Table [RDS].[ReportEDFactsK12StudentAttendance]...';
 
@@ -16884,122 +16803,6 @@
 
 
 	
-	PRINT N'Creating Table [RDS].[ReportEDFactsOrganizationCounts]...';
-
-
-	
-	CREATE TABLE [RDS].[ReportEDFactsOrganizationCounts] (
-		[ReportEDFactsOrganizationCountId]        INT             IDENTITY (1, 1) NOT NULL,
-		[CSSOEmail]                               NVARCHAR (100)  NULL,
-		[CSSOFirstName]                           NVARCHAR (75)   NULL,
-		[CSSOLastOrSurname]                       NVARCHAR (75)   NULL,
-		[CSSOTelephone]                           NVARCHAR (24)   NULL,
-		[CSSOTitle]                               NVARCHAR (100)  NULL,
-		[Categories]                              NVARCHAR (300)  NULL,
-		[CategorySetCode]                         NVARCHAR (40)   NOT NULL,
-		[CharterLeaStatus]                        NVARCHAR (100)  NULL,
-		[CharterSchoolAuthorizerIdPrimary]        NVARCHAR (50)   NULL,
-		[CharterSchoolAuthorizerIdSecondary]      NVARCHAR (50)   NULL,
-		[CharterSchoolStatus]                     NVARCHAR (100)  NULL,
-		[EffectiveDate]                           NVARCHAR (50)   NULL,
-		[GRADELEVEL]                              NVARCHAR (50)   NULL,
-		[LEAType]                                 NVARCHAR (50)   NULL,
-		[LEATypeId]                               NVARCHAR (MAX)  NULL,
-		[MAGNETSTATUS]                            NVARCHAR (MAX)  NULL,
-		[MailingAddressCity]                      NVARCHAR (50)   NULL,
-		[MailingAddressPostalCode]                NVARCHAR (17)   NULL,
-		[MailingAddressState]                     NVARCHAR (50)   NULL,
-		[MailingAddressStreet]                    NVARCHAR (100)  NULL,
-		[NSLPSTATUS]                              NVARCHAR (MAX)  NULL,
-		[OperationalStatus]                       NVARCHAR (50)   NULL,
-		[OperationalStatusId]                     NVARCHAR (MAX)  NULL,
-		[OrganizationCount]                       INT             NOT NULL,
-		[OrganizationId]                          INT             NOT NULL,
-		[OrganizationName]                        NVARCHAR (1000) NOT NULL,
-		[OrganizationNcesId]                      NVARCHAR (100)  NULL,
-		[OrganizationStateId]                     NVARCHAR (100)  NULL,
-		[OutOfStateIndicator]                     NVARCHAR (MAX)  NULL,
-		[ParentOrganizationStateId]               NVARCHAR (100)  NULL,
-		[PhysicalAddressCity]                     NVARCHAR (50)   NULL,
-		[PhysicalAddressPostalCode]               NVARCHAR (17)   NULL,
-		[PhysicalAddressState]                    NVARCHAR (50)   NULL,
-		[PhysicalAddressStreet]                   NVARCHAR (100)  NULL,
-		[PriorLeaStateIdentifier]                 NVARCHAR (50)   NULL,
-		[PriorSchoolStateIdentifier]              NVARCHAR (50)   NULL,
-		[ReconstitutedStatus]                     NVARCHAR (100)  NULL,
-		[ReportCode]                              NVARCHAR (40)   NOT NULL,
-		[ReportLevel]                             NVARCHAR (40)   NOT NULL,
-		[ReportYear]                              NVARCHAR (40)   NOT NULL,
-		[SHAREDTIMESTATUS]                        NVARCHAR (MAX)  NULL,
-		[SchoolType]                              NVARCHAR (50)   NULL,
-		[SchoolTypeId]                            NVARCHAR (MAX)  NULL,
-		[StateANSICode]                           NVARCHAR (100)  NOT NULL,
-		[StateCode]                               NVARCHAR (100)  NOT NULL,
-		[StateName]                               NVARCHAR (1000) NOT NULL,
-		[SupervisoryUnionIdentificationNumber]    NCHAR (3)       NULL,
-		[TITLE1SCHOOLSTATUS]                      NVARCHAR (MAX)  NULL,
-		[TableTypeAbbrv]                          NVARCHAR (100)  NULL,
-		[Telephone]                               NVARCHAR (24)   NULL,
-		[TotalIndicator]                          NVARCHAR (5)    NULL,
-		[UpdatedOperationalStatus]                NVARCHAR (50)   NULL,
-		[UpdatedOperationalStatusId]              NVARCHAR (MAX)  NULL,
-		[VIRTUALSCHSTATUS]                        NVARCHAR (MAX)  NULL,
-		[Website]                                 NVARCHAR (100)  NULL,
-		[TitleiParentalInvolveRes]                INT             NOT NULL,
-		[TitleiPartaAllocations]                  INT             NOT NULL,
-		[ParentOrganizationNcesId]                NVARCHAR (100)  NULL,
-		[CharterSchoolIndicator]                  BIT             NULL,
-		[CharterSchoolContractIdNumber]           NVARCHAR (MAX)  NULL,
-		[CharterContractApprovalDate]             NVARCHAR (MAX)  NULL,
-		[CharterContractRenewalDate]              NVARCHAR (MAX)  NULL,
-		[LeaNcesIdentifier]                       NVARCHAR (MAX)  NULL,
-		[LeaStateIdentifier]                      NVARCHAR (MAX)  NULL,
-		[ManagementOrganizationType]              NVARCHAR (MAX)  NULL,
-		[IMPROVEMENTSTATUS]                       NVARCHAR (MAX)  NULL,
-		[PERSISTENTLYDANGEROUSSTATUS]             NVARCHAR (MAX)  NULL,
-		[CHARTERSCHOOLMANAGERORGANIZATION]        NVARCHAR (MAX)  NULL,
-		[CHARTERSCHOOLUPDATEDMANAGERORGANIZATION] NVARCHAR (MAX)  NULL,
-		[STATEPOVERTYDESIGNATION]                 NVARCHAR (50)   NULL,
-		[SCHOOLIMPROVEMENTFUNDS]                  INT             NULL,
-		[EconomicallyDisadvantagedStudentCount]   INT             NULL,
-		[McKinneyVentoSubgrantRecipient]          VARCHAR (50)    NULL,
-		[ProgressAchievingEnglishLanguage]        NVARCHAR (MAX)  NULL,
-		[StateDefinedStatus]                      NVARCHAR (MAX)  NULL,
-		[REAPAlternativeFundingStatus]            NVARCHAR (50)   NULL,
-		[GraduationRate]                          NVARCHAR (50)   NULL,
-		[GunFreeStatus]                           NVARCHAR (50)   NULL,
-		[FederalFundAllocationType]               NVARCHAR (20)   NULL,
-		[FederalProgramCode]                      NVARCHAR (20)   NULL,
-		[FederalFundAllocated]                    INT             NULL,
-		[ComprehensiveAndTargetedSupportCode]     NVARCHAR (50)   NULL,
-		[ComprehensiveSupportCode]                NVARCHAR (50)   NULL,
-		[TargetedSupportCode]                     NVARCHAR (50)   NULL,
-		[ComprehensiveSupportImprovementCode]	  NVARCHAR (50)   NULL,
-		[TargetedSupportImprovementCode] 		  NVARCHAR (50)   NULL,
-		[AdditionalTargetedSupportandImprovementCode] NVARCHAR (50)   NULL,
-		[AppropriationMethodCode]				  NVARCHAR (50)   NULL,
-		CONSTRAINT [PK_ReportEDFactsOrganizationCounts] PRIMARY KEY CLUSTERED ([ReportEDFactsOrganizationCountId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
-	);
-
-
-	
-	PRINT N'Creating Index [RDS].[ReportEDFactsOrganizationCounts].[IX_ReportEDFactsOrganizationCounts_ReportCode_ReportYear_ReportLevel_CategorySetCode]...';
-
-
-	
-	CREATE NONCLUSTERED INDEX [IX_ReportEDFactsOrganizationCounts_ReportCode_ReportYear_ReportLevel_CategorySetCode]
-		ON [RDS].[ReportEDFactsOrganizationCounts]([ReportCode] ASC, [ReportYear] ASC, [ReportLevel] ASC, [CategorySetCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
-
-	
-	PRINT N'Creating Index [RDS].[ReportEDFactsOrganizationCounts].[IX_ReportEDFactsOrganizationCounts_ReportCode_ReportYear_ReportLevel_Grade_Organization]...';
-
-
-	
-	CREATE NONCLUSTERED INDEX [IX_ReportEDFactsOrganizationCounts_ReportCode_ReportYear_ReportLevel_Grade_Organization]
-		ON [RDS].[ReportEDFactsOrganizationCounts]([ReportCode] ASC, [ReportYear] ASC, [ReportLevel] ASC)
-		INCLUDE([GRADELEVEL], [OrganizationId]) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
 
 	
 	PRINT N'Creating Table [RDS].[ReportEDFactsOrganizationStatusCounts]...';
