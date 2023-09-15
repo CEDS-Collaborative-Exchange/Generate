@@ -1,4 +1,4 @@
-CREATE procedure [RDS].[Create_OrganizationReportData]
+CREATE PROCEDURE [RDS].[Create_OrganizationReportData]
 	@reportCode as varchar(50),
 	@runAsTest as bit
 AS
@@ -152,13 +152,14 @@ BEGIN
 							, [MailingAddressPostalCode]
 							, [MailingAddressState]
 							, [MailingAddressStreet]
+							, [MailingAddressApartmentRoomOrSuiteNumber]
 							, [OrganizationCount]
-							, [OrganizationId]
 							, [OrganizationName]
 							, [PhysicalAddressCity]
 							, [PhysicalAddressPostalCode]
 							, [PhysicalAddressState]
 							, [PhysicalAddressStreet]
+							, [PhysicalAddressApartmentRoomOrSuiteNumber]
 							, [ReportCode]
 							, [ReportLevel]
 							, [ReportYear]
@@ -182,13 +183,14 @@ BEGIN
 							, sea.MailingAddressPostalCode
 							, sea.StateAbbreviationCode
 							, sea.MailingAddressStreetNumberAndName
+							, sea.MailingAddressApartmentRoomOrSuiteNumber
 							, 1 as OrganizationCount
-							, sea.DimSeaId
 							, sea.SeaOrganizationName as OrganizationName 
 							, sea.PhysicalAddressCity 
 							, sea.PhysicalAddressPostalCode
 							, sea.PhysicalAddressStateAbbreviation
 							, sea.PhysicalAddressStreetNumberAndName
+							, sea.PhysicalAddressApartmentRoomOrSuiteNumber
 							, @reportCode
 							, @reportLevel
 							, @reportYear
@@ -237,10 +239,10 @@ BEGIN
 							, [MailingAddressPostalCode]
 							, [MailingAddressState]
 							, [MailingAddressStreet]
+							, [MailingAddressApartmentRoomOrSuiteNumber]
 							, [OperationalStatus]
 							, [OperationalStatusId]
 							, [OrganizationCount]
-							, [OrganizationId]
 							, [OrganizationName]
 							, [OrganizationNcesId]
 							, [OrganizationStateId]
@@ -249,6 +251,7 @@ BEGIN
 							, [PhysicalAddressPostalCode]
 							, [PhysicalAddressState]
 							, [PhysicalAddressStreet]
+							, [PhysicalAddressApartmentRoomOrSuiteNumber]
 							, [ReportCode]
 							, [ReportLevel]
 							, [ReportYear]
@@ -274,10 +277,10 @@ BEGIN
 							, latestLea.MailingAddressPostalCode
 							, latestLea.MailingAddressStateAbbreviation
 							, latestLea.MailingAddressStreetNumberAndName
+							, latestLea.MailingAddressApartmentRoomOrSuiteNumber
 							, syLea.LeaOperationalStatusEdFactsCode
 							, syLea.LeaOperationalStatusEdFactsCode as OperationalStatusId
 							, 1 as OrganizationCount
-							, latestLea.DimLeaID
 							, latestLea.LeaOrganizationName as OrganizationName
 							, latestLea.LeaIdentifierNces
 							, latestLea.LeaIdentifierSea
@@ -286,6 +289,7 @@ BEGIN
 							, latestLea.PhysicalAddressPostalCode
 							, latestLea.PhysicalAddressStateAbbreviation
 							, latestLea.PhysicalAddressStreetNumberAndName
+							, latestLea.PhysicalAddressApartmentRoomOrSuiteNumber
 							, @reportCode
 							, @reportLevel
 							, @reportYear
@@ -356,11 +360,11 @@ BEGIN
 							, [MailingAddressPostalCode]
 							, [MailingAddressState]
 							, [MailingAddressStreet]
+							, [MailingAddressApartmentRoomOrSuiteNumber]
 							, [NSLPSTATUS]
 							, [OperationalStatus]
 							, [OperationalStatusId]
 							, [OrganizationCount]
-							, [OrganizationId]
 							, [OrganizationName]
 							, [OrganizationNcesId]
 							, [OrganizationStateId]
@@ -371,6 +375,7 @@ BEGIN
 							, [PhysicalAddressPostalCode]
 							, [PhysicalAddressState]
 							, [PhysicalAddressStreet]
+							, [PhysicalAddressApartmentRoomOrSuiteNumber]
 							, [ReconstitutedStatus]
 							, [ReportCode]
 							, [ReportLevel]
@@ -403,11 +408,11 @@ BEGIN
 							, latestSchool.MailingAddressPostalCode
 							, latestSchool.MailingAddressStateAbbreviation
 							, latestSchool.MailingAddressStreetNumberAndName
+							, latestSchool.MailingAddressApartmentRoomOrSuiteNumber
 							, schStatus.NSLPStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode as OperationalStatusId
 							, 1 as OrganizationCount
-							, latestSchool.DimK12SchoolId
 							, latestSchool.NameOfInstitution as OrganizationName 
 							, latestSchool.SchoolIdentifierNces
 							, latestSchool.SchoolIdentifierSea
@@ -418,6 +423,7 @@ BEGIN
 							, latestSchool.PhysicalAddressPostalCode
 							, latestSchool.PhysicalAddressStateAbbreviation
 							, latestSchool.PhysicalAddressStreetNumberAndName
+							, latestSchool.PhysicalAddressApartmentRoomOrSuiteNumber
 							, latestSchool.ReconstitutedStatus
 							, @reportCode
 							, @reportLevel
@@ -480,7 +486,6 @@ BEGIN
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 							[CategorySetCode]
 							, [OrganizationCount]	
-							, [OrganizationId]
 							, [OrganizationName]
 							, [OrganizationStateId]
 							, [ReportCode]
@@ -494,7 +499,6 @@ BEGIN
 						)
 						select distinct @categorySetCode
 							, 1 as OrganizationCount
-							, lea.DimLeaId
 							, lea.LeaOrganizationName as OrganizationName 
 							, lea.LeaIdentifierSea
 							, @reportCode
@@ -524,7 +528,6 @@ BEGIN
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 							[CategorySetCode]
 							, [OrganizationCount]
-							, [OrganizationId]
 							, [OrganizationName]
 							, [OrganizationStateId]
 							, [ParentOrganizationStateId]
@@ -539,7 +542,6 @@ BEGIN
 						)
 						select @categorySetCode
 							, 1 as OrganizationCount
-							, sch.DimK12SchoolId 
 							, sch.NameOfInstitution as OrganizationName 
 							, sch.SchoolIdentifierSea
 							, sch.LeaIdentifierSea
@@ -574,7 +576,6 @@ BEGIN
 						, [CharterSchoolAuthorizerIdSecondary]													
 						, [NSLPSTATUS]	
 						, [OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [OrganizationNcesId]
 						, [OrganizationStateId]							
@@ -595,7 +596,6 @@ BEGIN
 						, isnull(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '') 
 						, schStatus.NSLPStatusEdFactsCode
 						, 1 as OrganizationCount
-						, sch.DimK12SchoolId
 						, sch.NameOfInstitution as OrganizationName 
 						, sch.SchoolIdentifierNces
 						, sch.SchoolIdentifierSea
@@ -635,7 +635,6 @@ BEGIN
 						, [CharterSchoolAuthorizerIdPrimary]
 						, [CharterSchoolAuthorizerIdSecondary]													
 						, [OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [OrganizationNcesId]
 						, [OrganizationStateId]								
@@ -654,7 +653,6 @@ BEGIN
 						isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
 						, isnull(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
 						, 1 as OrganizationCount
-						, sch.DimK12SchoolId
 						, sch.NameOfInstitution as OrganizationName
 						, sch.SchoolIdentifierNces
 						, sch.SchoolIdentifierSea
@@ -689,7 +687,6 @@ BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[CategorySetCode]
 						, [OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [OrganizationStateId]
 						, [ReportCode]
@@ -704,7 +701,6 @@ BEGIN
 					)
 					select distinct @categorySetCode
 						, 1 as OrganizationCount
-						, lea.DimLeaId
 						, lea.LeaOrganizationName as OrganizationName 
 						, lea.LeaIdentifierSea
 						, @reportCode
@@ -730,7 +726,6 @@ BEGIN
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [StateCode]
 						, [OrganizationStateId]
@@ -746,7 +741,6 @@ BEGIN
 						, [CharterContractRenewalDate]
 					)
 					select distinct 1 as OrganizationCount
-						, schools.DimK12SchoolId
 						, schools.NameOfInstitution as OrganizationName
 						, schools.StateAbbreviationCode
 						, schools.SchoolIdentifierSea
@@ -778,7 +772,6 @@ BEGIN
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]	
 						, [StateCode]
 						, [OrganizationStateId]
@@ -791,11 +784,10 @@ BEGIN
 						, [ParentOrganizationStateId]
 						, [ParentOrganizationNcesId]
 						, [OrganizationNcesId]
-						, [CHARTERSCHOOLMANAGERORGANIZATION]
-						, [CHARTERSCHOOLUPDATEDMANAGERORGANIZATION]
+						, [CharterSchoolManagementOrganization]
+						, [CharterSchoolUpdatedManagementOrganization]
 					)
 					SELECT distinct 1 as OrganizationCount
-						, schools.dimK12SchoolId
 						, schools.NameOfInstitution as OrganizationName
 						, schools.StateAbbreviationCode
 						, schools.SchoolIdentifierSea
@@ -828,7 +820,6 @@ BEGIN
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [OrganizationStateId]
 						, [StateCode]
@@ -849,7 +840,6 @@ BEGIN
 						, [PhysicalAddressPostalCode]
 					)
 					(SELECT distinct	1 as OrganizationCount
-						, lea.DimCharterSchoolManagementOrganizationId
 						, lea.CharterSchoolManagementOrganizationOrganizationName as OrganizationName
 						, lea.CharterSchoolManagementOrganizationOrganizationIdentifierSea as LeaStateIdentifier
 						, lea.StateAbbreviationCode
@@ -883,7 +873,6 @@ BEGIN
 					-- and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					UNION
 					SELECT distinct	1 as OrganizationCount
-						, lea.DimCharterSchoolManagementOrganizationId
 						, lea.CharterSchoolManagementOrganizationOrganizationName as OrganizationName
 						, lea.CharterSchoolManagementOrganizationOrganizationIdentifierSea as LeaStateIdentifier
 						, lea.StateAbbreviationCode
@@ -921,7 +910,6 @@ BEGIN
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [OrganizationStateId]
 						, [StateCode]
@@ -942,7 +930,6 @@ BEGIN
 						, [PhysicalAddressPostalCode]
 					)
 					(SELECT distinct 1 as OrganizationCount
-						, lea.DimCharterSchoolAuthorizerId
 						, lea.CharterSchoolAuthorizingOrganizationOrganizationName as OrganizationName
 						, lea.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea as LeaStateIdentifier
 						, lea.StateAbbreviationCode
@@ -976,7 +963,6 @@ BEGIN
 					-- and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					UNION 
 					SELECT distinct	1 as OrganizationCount
-						, lea.DimCharterSchoolAuthorizerId
 						, lea.CharterSchoolAuthorizingOrganizationOrganizationName as OrganizationName
 						, lea.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea as LeaStateIdentifier
 						, lea.StateAbbreviationCode
@@ -1014,7 +1000,6 @@ BEGIN
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [OrganizationStateId]
 						, [ParentOrganizationStateId]
@@ -1028,7 +1013,6 @@ BEGIN
 						, [StatePovertyDesignation]
 					)
 					SELECT	distinct 1 as OrganizationCount
-						, sch.DimK12SchoolId
 						, sch.NameOfInstitution as OrganizationName
 						, sch.SchoolIdentifierSea
 						, sch.LeaIdentifierSea as LeaStateIdentifier
@@ -1056,7 +1040,6 @@ BEGIN
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [OrganizationStateId]
 						, [ParentOrganizationStateId]
@@ -1071,7 +1054,6 @@ BEGIN
 						, [EconomicallyDisadvantagedStudentCount]
 					)
 					SELECT distinct 1 as OrganizationCount
-						, sch.DimK12SchoolId
 						, sch.NameOfInstitution as OrganizationName
 						, sch.SchoolIdentifierSea
 						, sch.LeaIdentifierSea as LeaStateIdentifier
@@ -1110,7 +1092,6 @@ BEGIN
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [OrganizationStateId]
 						, [LeaStateIdentifier]
@@ -1124,7 +1105,6 @@ BEGIN
 						, [McKinneyVentoSubgrantRecipient]
 					)
 					SELECT distinct 1 as OrganizationCount
-						, lea.DimLeaId
 						, lea.LeaOrganizationName as OrganizationName
 						, lea.LeaIdentifierSea
 						, lea.LeaIdentifierSea as LeaStateIdentifier
@@ -1156,7 +1136,6 @@ BEGIN
 					begin
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 							[OrganizationCount]
-							, [OrganizationId]
 							, [OrganizationName]
 							, [OrganizationStateId]
 							, [LeaStateIdentifier]
@@ -1170,7 +1149,6 @@ BEGIN
 							, [GunFreeStatus]
 						)
 						SELECT distinct 1 as OrganizationCount
-							, lea.DimLeaId
 							, lea.LeaOrganizationName as OrganizationName
 							, lea.LeaIdentifierSea
 							, lea.LeaIdentifierSea as LeaStateIdentifier
@@ -1199,7 +1177,6 @@ BEGIN
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 							[CategorySetCode]
 							, [OrganizationCount]
-							, [OrganizationId]
 							, [OrganizationName]
 							, [OrganizationStateId]
 							, [ParentOrganizationStateId]
@@ -1214,7 +1191,6 @@ BEGIN
 						)
 						select distinct @categorySetCode
 							, 1 as OrganizationCount
-							, sch.DimK12SchoolId
 							, sch.NameOfInstitution as OrganizationName 
 							, sch.SchoolIdentifierSea
 							, sch.LeaIdentifierSea as LeaStateIdentifier
@@ -1243,7 +1219,6 @@ BEGIN
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [OrganizationStateId]
 						, [LeaStateIdentifier]
@@ -1259,7 +1234,6 @@ BEGIN
 						, [StateDefinedStatus]
 					)
 					SELECT distinct 1 as OrganizationCount
-						, sch.DimK12SchoolId
 						, sch.NameOfInstitution as OrganizationName
 						, sch.SchoolIdentifierSea
 						, sch.LeaIdentifierSea as LeaStateIdentifier
@@ -1294,7 +1268,6 @@ BEGIN
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [OrganizationStateId]
 						, [LeaStateIdentifier]
@@ -1314,7 +1287,6 @@ BEGIN
 						, [AdditionalTargetedSupportandImprovementCode]
 					)
 					SELECT distinct 1 as OrganizationCount
-						, sch.DimK12SchoolId
 						, sch.NameOfInstitution as OrganizationName
 						, sch.SchoolIdentifierSea
 						, sch.LeaIdentifierSea as LeaStateIdentifier
@@ -1350,7 +1322,6 @@ BEGIN
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [StateCode]
 						, [OrganizationStateId]
@@ -1364,7 +1335,6 @@ BEGIN
 						, [AppropriationMethodCode]
 					)
 					SELECT distinct 1 as OrganizationCount
-						, schools.dimK12SchoolId
 						, schools.NameOfInstitution as OrganizationName
 						, schools.StateAbbreviationCode
 						, schools.SchoolIdentifierSea
@@ -1393,7 +1363,6 @@ BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[CategorySetCode]
 						, [OrganizationCount]
-						, [OrganizationId]
 						, [OrganizationName]
 						, [OrganizationStateId]
 						, [ReportCode]
@@ -1409,7 +1378,6 @@ BEGIN
 					)
 					select DISTINCT @categorySetCode
 						, 1 as OrganizationCount
-						, lea.DimLeaId
 						, lea.LeaOrganizationName as OrganizationName 
 						, lea.LeaIdentifierSea
 						, @reportCode
@@ -1441,7 +1409,6 @@ BEGIN
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 							[CategorySetCode]
 							, [OrganizationCount]
-							, [OrganizationId]
 							, [OrganizationName]
 							, [OrganizationNcesId]
 							, [OrganizationStateId]
@@ -1458,7 +1425,6 @@ BEGIN
 						)
 						select distinct @categorySetCode
 							, 1 as OrganizationCount
-							, lea.DimLeaId
 							, lea.LeaOrganizationName as OrganizationName 
 							, lea.LeaIdentifierNces
 							, lea.LeaIdentifierSea
@@ -1489,7 +1455,6 @@ BEGIN
 						INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 							[CategorySetCode]
 							, [OrganizationCount]
-							, [OrganizationId]
 							, [OrganizationName]
 							, [StateANSICode]
 							, [StateName]
@@ -1505,7 +1470,6 @@ BEGIN
 						)
 						select distinct @categorySetCode
 							, 1 as OrganizationCount
-							, a.DimSeaId
 							, OrganizationName 
 							, StateANSICode
 							, StateName
@@ -1563,12 +1527,14 @@ BEGIN
 							, sea.MailingAddressPostalCode
 							, sea.MailingAddressStateAbbreviation
 							, sea.MailingAddressStreetNumberAndName
+							, sea.MailingAddressApartmentRoomOrSuiteNumber
 							, 1 as OrganizationCount
 							, sea.SeaOrganizationName as OrganizationName 
 							, sea.PhysicalAddressCity 
 							, sea.PhysicalAddressPostalCode
 							, sea.PhysicalAddressStateAbbreviation
 							, sea.PhysicalAddressStreetNumberAndName
+							, sea.MailingAddressApartmentRoomOrSuiteNumber
 							, @reportCode
 							, @reportLevel
 							, @reportYear
@@ -1615,6 +1581,7 @@ BEGIN
 							, latestLea.MailingAddressPostalCode
 							, latestLea.MailingAddressStateAbbreviation
 							, latestLea.MailingAddressStreetNumberAndName
+							, latestLea.MailingAddressApartmentRoomOrSuiteNumber
 							, syLea.LeaOperationalStatusEdFactsCode
 							, syLea.LeaOperationalStatusEdFactsCode as OperationalStatusId
 							, fact.leaId
@@ -1627,6 +1594,7 @@ BEGIN
 							, latestLea.PhysicalAddressPostalCode
 							, latestLea.PhysicalAddressStateAbbreviation
 							, latestLea.PhysicalAddressStreetNumberAndName
+							, latestLea.PhysicalAddressApartmentRoomOrSuiteNumber
 							, @reportCode
 							, @reportLevel
 							, @reportYear
@@ -1694,6 +1662,7 @@ BEGIN
 							, latestSchool.MailingAddressPostalCode
 							, latestSchool.MailingAddressStateAbbreviation
 							, latestSchool.MailingAddressStreetNumberAndName
+							, latestSchool.MailingAddressApartmentRoomOrSuiteNumber
 							, schStatus.NSLPStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode
 							, sySchool.SchoolOperationalStatusEdFactsCode as OperationalStatusId
@@ -1709,6 +1678,7 @@ BEGIN
 							, latestSchool.PhysicalAddressPostalCode
 							, latestSchool.PhysicalAddressStateAbbreviation
 							, latestSchool.PhysicalAddressStreetNumberAndName
+							, latestSchool.PhysicalAddressApartmentRoomOrSuiteNumber
 							, latestSchool.ReconstitutedStatus
 							, @reportCode
 							, @reportLevel
