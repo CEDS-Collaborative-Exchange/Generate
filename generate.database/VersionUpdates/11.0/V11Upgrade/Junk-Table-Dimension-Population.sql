@@ -4664,23 +4664,23 @@
 	DROP TABLE #TargetedSupportAndImprovementStatus
 	
 	-- ------------------------------------------------
-	-- -- Populate DimCharterSchoolStatuses			 ---
+	-- -- Populate DimCharterSchoolStatuses			---
 	-- ------------------------------------------------
-	-- IF NOT EXISTS (SELECT 1 FROM RDS.DimCharterSchoolStatuses WHERE AppropriationMethodCode = 'MISSING')
-	-- BEGIN
-	-- 	SET IDENTITY_INSERT RDS.DimComprehensiveAndTargetedSupports ON
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimCharterSchoolStatuses WHERE AppropriationMethodCode = 'MISSING')
+	BEGIN
+		SET IDENTITY_INSERT RDS.DimCharterSchoolStatuses ON
 
-	-- 	INSERT INTO RDS.DimCharterSchoolStatuses (
-	-- 		  DimComprehensiveAndTargetedSupportId
-	-- 		, AppropriationMethodCode
-	-- 		, AppropriationMethodDescription
-	-- 		, AppropriationMethodEDFactsCode
-	-- 		)
+		INSERT INTO RDS.DimCharterSchoolStatuses (
+			  DimCharterSchoolStatusId
+			, AppropriationMethodCode
+			, AppropriationMethodDescription
+			, AppropriationMethodEDFactsCode
+			)
 
-	-- 	VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING')
 
-	-- 	SET IDENTITY_INSERT RDS.DimCharterSchoolStatuses OFF
-	-- END
+		SET IDENTITY_INSERT RDS.DimCharterSchoolStatuses OFF
+	END
 
 	-- IF OBJECT_ID('tempdb..#AppropriationMethod') IS NOT NULL BEGIN
 	-- 	DROP TABLE #AppropriationMethod
@@ -4713,7 +4713,115 @@
 	-- WHERE main.DimComprehensiveAndTargetedSupportId IS NULL
 
 	-- DROP TABLE #AppropriationMethod
-	
+
+	-- ------------------------------------------------
+	-- -- Populate DimReasonApplicabilities			---
+	-- ------------------------------------------------
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimReasonApplicabilities WHERE ReasonApplicabilityCode = 'MISSING')
+	BEGIN
+		SET IDENTITY_INSERT RDS.DimReasonApplicabilities ON
+
+		INSERT INTO RDS.DimReasonApplicabilities (
+			  DimReasonApplicabilityId
+			, ReasonApplicabilityCode
+			, ReasonApplicabilityDescription
+			, ReasonApplicabilityEdFactsCode
+			)
+
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING')
+
+		SET IDENTITY_INSERT RDS.DimReasonApplicabilities OFF
+	END
+
+	-- ------------------------------------------------
+	-- -- Populate DimPeople						---
+	-- ------------------------------------------------
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimPeople WHERE DimPersonId = -1)
+	BEGIN
+		SET IDENTITY_INSERT RDS.DimPeople ON
+
+		INSERT INTO RDS.DimPeople (
+			  DimPersonId
+			, FirstName
+			, MiddleName
+			, LastOrSurname
+			, BirthDate
+			, ELChildChildIdentifierState
+			, K12StudentStudentIdentifierState
+			, K12StudentStudentIdentifierDistrict
+			, K12StudentStudentIdentifierNationalMigrant
+			, PsStudentStudentIdentifierState
+			, AeStudentStudentIdentifierState
+			, WorkforceProgramParticipantPersonIdentifierState
+			, ELStaffStaffMemberIdentifierState
+			, K12StaffStaffMemberIdentifierState
+			, K12StaffStaffMemberIdentifierDistrict
+			, PsStaffStaffMemberIdentifierState
+			, PersonIdentifierDriversLicense
+			, IsActiveELChild
+			, IsActiveK12Student
+			, IsActivePsStudent
+			, IsActiveAeStudent
+			, IsActiveWorkforceProgramParticipant
+			, IsActiveELStaff
+			, IsActiveK12Staff
+			, IsActivePsStaff
+			, RecordStartDateTime
+			, RecordEndDateTime
+			, ElectronicMailAddressHome
+			, ElectronicMailAddressOrganizational
+			, ElectronicMailAddressWork
+			, TelephoneNumberFax
+			, TelephoneNumberHome
+			, TelephoneNumberMobile
+			, TelephoneNumberWork
+			, PersonalTitleOrPrefix
+			, PositionTitle	
+		)
+
+		VALUES (
+			  -1
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, '1/1/1900'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 0
+			, 0
+			, 0
+			, 0
+			, 0
+			, 0
+			, 0
+			, 0
+			, '1/1/1900'
+			, NULL
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+		 )
+
+		SET IDENTITY_INSERT RDS.DimPeople OFF
+	END
+
+
 	------------------------------------------------
 	-- Populate DimFactTypes					 ---
 	------------------------------------------------
