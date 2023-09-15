@@ -55,7 +55,7 @@ BEGIN
             fact.Website ,
             fact.Telephone ,
             fact.MailingAddressStreet,
-			-- fact.MailingAddressStreet2,
+			fact.MailingAddressApartmentRoomOrSuiteNumber,
             fact.MailingAddressCity ,
             fact.MailingAddressState ,
             left(fact.MailingAddressPostalCode, 5) as MailingAddressPostalCode,
@@ -173,7 +173,7 @@ BEGIN
             fact.Website ,
             fact.Telephone ,
             fact.MailingAddressStreet,
-			fact.MailingAddressApartmentRoomOrSuiteNumber
+			fact.MailingAddressApartmentRoomOrSuiteNumber,
             fact.MailingAddressCity ,
             fact.MailingAddressState ,
             left(fact.MailingAddressPostalCode, 5) as MailingAddressPostalCode,
@@ -293,7 +293,7 @@ BEGIN
 			fact.Website ,
 			fact.Telephone ,
 			fact.MailingAddressStreet,
-			fact.MailingAddressApartmentRoomOrSuiteNumber
+			fact.MailingAddressApartmentRoomOrSuiteNumber,
 			fact.MailingAddressCity,
 			fact.MailingAddressState ,
 			left(fact.MailingAddressPostalCode, 5) as MailingAddressPostalCode,
@@ -414,7 +414,7 @@ BEGIN
             fact.Website ,
             fact.Telephone ,
             fact.MailingAddressStreet,
-			fact.MailingAddressApartmentRoomOrSuiteNumber
+			fact.MailingAddressApartmentRoomOrSuiteNumber,
             fact.MailingAddressCity ,
             fact.MailingAddressState ,
             left(fact.MailingAddressPostalCode, 5) as MailingAddressPostalCode,
@@ -566,7 +566,7 @@ BEGIN
             fact.Website ,
             fact.Telephone ,
             fact.MailingAddressStreet,
-			fact.MailingAddressApartmentRoomOrSuiteNumber
+			fact.MailingAddressApartmentRoomOrSuiteNumber,
             fact.MailingAddressCity ,
             fact.MailingAddressState ,
             left(fact.MailingAddressPostalCode, 5) as MailingAddressPostalCode,
@@ -824,7 +824,7 @@ BEGIN
             fact.Website ,
             fact.Telephone ,
             fact.MailingAddressStreet,
-			fact.MailingAddressApartmentRoomOrSuiteNumber
+			fact.MailingAddressApartmentRoomOrSuiteNumber,
             fact.MailingAddressCity ,
             fact.MailingAddressState ,
             left(fact.MailingAddressPostalCode, 5) as MailingAddressPostalCode,
