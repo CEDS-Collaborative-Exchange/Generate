@@ -6895,7 +6895,7 @@ BEGIN
 			END
 
 		if @reportCode in ('c175','c178','c179')
-			begin
+		begin
 
 				set @sql = @sql + ' delete a from @reportData a
 					where a.' +  @factField + ' = 0 
@@ -6904,14 +6904,46 @@ BEGIN
 									  and a.GradeLevel = b.Grade
 									  and a.AssessmentAcademicSubject = b.Subject)'
 
-			end
-		else if @reportCode in ('c185','c189','c188')
+		end
+		else if @reportCode in ('c185', 'c188', 'c189')
              begin
 				  set @sql = @sql + ' delete a from @reportData a
 						where a.' + @factField + ' = 0
+						AND RIGHT(a.TableTypeAbbrv, 2) = ''LG''
+						AND a.ParticipationStatus IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'')
 						AND NOT EXISTS (Select 1 from app.ToggleAssessments b
 											where a.GradeLevel = b.Grade
-											and a.AssessmentAcademicSubject = b.Subject)'
+											and a.AssessmentAcademicSubject = b.Subject
+											and a.ParticipationStatus = replace(b.AssessmentTypeCode, ''ASS'', ''PART'')'
+
+
+					set @sql = @sql + ' delete a from @reportData a
+						where a.' + @factField + ' = 0
+						AND RIGHT(a.TableTypeAbbrv, 2) = ''LG''
+						AND a.ParticipationStatus NOT IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'')
+						AND NOT EXISTS (Select 1 from app.ToggleAssessments b
+											where a.GradeLevel = b.Grade
+											and a.AssessmentAcademicSubject = b.Subject
+											and a.ParticipationStatus = (''P'' + replace(b.AssessmentTypeCode, ''ASMT'', ''ASM'')))'
+
+					set @sql = @sql + ' delete a from @reportData a
+						where a.' + @factField + ' = 0
+						AND RIGHT(a.TableTypeAbbrv, 2) = ''HS''
+						AND a.ParticipationStatus IN (''ALTPARTALTACH'')
+						AND NOT EXISTS (Select 1 from app.ToggleAssessments b
+											where a.GradeLevel = b.Grade
+											and a.AssessmentAcademicSubject = b.Subject
+											and a.ParticipationStatus = replace(b.AssessmentTypeCode, ''ASS'', ''PART'')'
+
+
+					set @sql = @sql + ' delete a from @reportData a
+						where a.' + @factField + ' = 0
+						AND RIGHT(a.TableTypeAbbrv, 2) = ''HS''
+						AND a.ParticipationStatus NOT IN (''ALTPARTALTACH'')
+						AND NOT EXISTS (Select 1 from app.ToggleAssessments b
+											where a.GradeLevel = b.Grade
+											and a.AssessmentAcademicSubject = b.Subject
+											and a.ParticipationStatus = (''P'' + replace(b.AssessmentTypeCode, ''ASMT'', ''ASM'')))'
 		   end
 		/*Student count for displaced homemakers ?  If the state does not have displaced homemakers at the secondary level, leave that category set out of the file */
 		else if @reportCode in ('c082','c083','c142','c154','c155','c156','c157','c158') and @toggleDisplacedHomemakers = '0'
