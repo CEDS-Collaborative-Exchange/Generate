@@ -173,7 +173,8 @@ BEGIN
 	AND GradeLevel IN (SELECT GradeLevel FROM @GradesList)
 
 	--Handle the Race records to match the unduplicated code 
-	drop table if exists #tempRacesUpdate
+	IF OBJECT_ID('tempdb..#tempRacesUpdate') IS NOT NULL
+		drop table #tempRacesUpdate
 
 	--Update #c052Staging records for the same Lea/School to Multiple 
 	SELECT 

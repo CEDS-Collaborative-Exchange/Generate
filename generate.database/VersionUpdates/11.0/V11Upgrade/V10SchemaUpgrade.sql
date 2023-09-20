@@ -1,4 +1,18 @@
-﻿	--TODO: Check for state custom indicator stuff.  Don't delete those fields/tables.
+﻿	-- Delete duplicate records in Staging.SourceSystemReferenceData
+	DELETE 
+	FROM Staging.SourceSystemReferenceData
+	WHERE SourceSystemReferenceDataId NOT IN (
+		SELECT 
+			MIN(SourceSystemReferenceDataId)
+		FROM Staging.SourceSystemReferenceData
+		GROUP BY 
+			[SchoolYear] 
+			, [TableName] 
+			, [TableFilter] 
+			, [InputCode]
+			)
+			
+	--TODO: Check for state custom indicator stuff.  Don't delete those fields/tables.
 	--TODO: 
 
 	PRINT N'Dropping Extended Property [RDS].[DimCredentials].[CredentialAlternateName].[MS_Description]...';
@@ -4010,44 +4024,59 @@
 
 
 	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[DimAssessmentStatuses]...';
+	PRINT N'Dropping Index [Staging].[SourceSystemReferenceData].[IX_SourceSystemReferenceData_Unique]...';
 
 
-	
-	ALTER TABLE [RDS].[DimAssessmentStatuses] DROP CONSTRAINT [DF__DimAssess__Asses__5FBEF025];
+	IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_SourceSystemReferenceData_Unique')	
+	BEGIN
+		DROP INDEX [IX_SourceSystemReferenceData_Unique]
+			ON [Staging].[SourceSystemReferenceData];
+	END
 
 
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[DimCteStatuses]...';
+	-- Capture proper name of default constraints that currently are without a name
+	SELECT DISTINCT	
+			'ALTER TABLE [' + c.table_schema + '].[' + c.table_name + '] ADD CONSTRAINT [DF_' + c.table_name + '_' + c.column_name + '] DEFAULT ' + dc.Definition + ' FOR [' + c.Column_name + '];' AS CreateConstraint
+		, 'DF_' + c.table_name + '_' + c.column_name  AS ConstraintName
+		, c.table_name AS TableName
+		, c.TABLE_SCHEMA AS TableSchema
+	INTO #NewConstraints
+	FROM sys.default_constraints dc
+	INNER JOIN sys.tables t ON dc.parent_object_id = t.object_id
+	INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+	INNER JOIN INFORMATION_SCHEMA.COLUMNS c on t.name = c.TABLE_NAME AND s.name = c.TABLE_SCHEMA AND dc.parent_column_id = c.ORDINAL_POSITION
+	WHERE dc.name like 'DF[_][_]%'
 
 
-	
-	ALTER TABLE [RDS].[DimCteStatuses] DROP CONSTRAINT [DF__DimCteSta__LepPe__3C6DF44C];
+	DECLARE @TableName NVARCHAR(128)
+	DECLARE @TableSchema NVARCHAR(128)
+	DECLARE @ConstraintName NVARCHAR(128)
+	DECLARE @SqlStatement NVARCHAR(MAX)
+
+	-- Drop all default constraints with no name
+	DECLARE ConstraintCursor CURSOR FOR
+	SELECT DISTINCT t.Name as TableName, c.TABLE_SCHEMA AS TableSchema, dc.Name AS ConstraintName
+	FROM sys.default_constraints dc
+	INNER JOIN sys.tables t ON dc.parent_object_id = t.object_id
+	INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+	INNER JOIN INFORMATION_SCHEMA.COLUMNS c on t.name = c.TABLE_NAME AND s.name = c.TABLE_SCHEMA AND dc.parent_column_id = c.ORDINAL_POSITION
+	WHERE dc.name like 'DF[_][_]%'
 
 
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[DimK12Schools]...';
+	OPEN ConstraintCursor
+	FETCH NEXT FROM ConstraintCursor INTO @TableName, @TableSchema, @ConstraintName	
 
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SET @SqlStatement = 'ALTER TABLE ' + @TableSchema + '.' + @TableName + ' DROP CONSTRAINT ' + QUOTENAME(@ConstraintName)
+		PRINT @SqlStatement
+		EXEC sp_executesql @SqlStatement
 
-	
-	ALTER TABLE [RDS].[DimK12Schools] DROP CONSTRAINT [DF__DimSchool__OutOf__431004E3];
+	FETCH NEXT FROM ConstraintCursor INTO @TableName, @TableSchema, @ConstraintName	
+	END
 
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[DimLeas]...';
-
-
-	
-	ALTER TABLE [RDS].[DimLeas] DROP CONSTRAINT [DF__DimLeas__OutOfSt__421BE0AA];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12ProgramParticipations]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF__FactK12Pr__Stude__37B75983];
-
+	CLOSE ConstraintCursor
+	DEALLOCATE ConstraintCursor
 
 	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_LeaId]...';
@@ -4122,12 +4151,6 @@
 
 
 	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentAssessments]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF__FactK12St__IeuId__3BBCF491];
-
 
 	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_NorDProgramStatusId]...';
@@ -4217,15 +4240,6 @@
 	ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_CohortStatusId];
 
 
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentCounts]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF__FactK12St__Speci__3DA53D03];
-
-
-	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_NorDProgramStatusId]...';
 
 
@@ -4266,22 +4280,6 @@
 
 
 	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentCounts]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF__FactK12St__IeuId__3CB118CA];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentCourseSections]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF__FactK12St__Stude__43290C2F];
-
-
-	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDisciplines_RaceId]...';
 
 
@@ -4289,15 +4287,7 @@
 	ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [DF_FactK12StudentDisciplines_RaceId];
 
 
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentDisciplines]...';
-
-
-	
-	ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [DF__FactK12St__IeuId__3E99613C];
-
-
-	
+		
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDisciplines_CteStatusId]...';
 
 
@@ -4321,15 +4311,7 @@
 	ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [DF_FactK12StudentDisciplines_SeaId];
 
 
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentEnrollments]...';
 
-
-	
-	ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF__FactK12St__Stude__526B4FBF];
-
-
-	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_CharterSchoolManagerOrganizationId]...';
 
 
@@ -4372,27 +4354,12 @@
 
 
 	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCounts]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF__FactOrgan__DimSu__209EEA01];
-
-
-	
 	PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_CharterSchoolUpdatedManagerOrganizationId]...';
 
 
 	
 	ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_CharterSchoolUpdatedManagerOrganizationId];
 
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCounts]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF__FactOrgan__DimCo__21930E3A];
 
 
 	
@@ -4444,99 +4411,7 @@
 
 
 	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactPsStudentAcademicRecords]...';
-
-
-	
-	ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF__FactPsStu__Stude__694EB517];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactPsStudentEnrollments]...';
-
-
-	
-	ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF__FactPsStu__Stude__73CC438A];
-
-
-	
 	PRINT N'Dropping Default Constraint unnamed constraint on [cedsv8].[DimNorDProgramStatuses]...';
-
-
-	
-	ALTER TABLE [cedsv8].[DimNorDProgramStatuses] DROP CONSTRAINT [DF__DimNorDPr__Acade__16B25FB8];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [cedsv8].[DimNorDProgramStatuses]...';
-
-
-	
-	ALTER TABLE [cedsv8].[DimNorDProgramStatuses] DROP CONSTRAINT [DF__DimNorDPr__LongT__163AFC67];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [cedsv8].[DimNorDProgramStatuses]...';
-
-
-	
-	ALTER TABLE [cedsv8].[DimNorDProgramStatuses] DROP CONSTRAINT [DF__DimNorDPr__Negle__172F20A0];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [cedsv8].[DimNorDProgramStatuses]...';
-
-
-	
-	ALTER TABLE [cedsv8].[DimNorDProgramStatuses] DROP CONSTRAINT [DF__DimNorDPr__Acade__17A683F1];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[DimProgramStatuses]...';
-
-
-	
-	ALTER TABLE [RDS].[DimProgramStatuses] DROP CONSTRAINT [DF__DimProgra__Homel__538663CE];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCountReportDtos]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCountReportDtos] DROP CONSTRAINT [DF__FactOrgan__Title__0D45C3B3];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCountReportDtos]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCountReportDtos] DROP CONSTRAINT [DF__FactOrgan__Title__0E39E7EC];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCountReports]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCountReports] DROP CONSTRAINT [DF__FactOrgan__Title__0F2E0C25];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCountReports]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCountReports] DROP CONSTRAINT [DF__FactOrgan__OutOf__7291CD77];
-
-
-	
-	PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactOrganizationCountReports]...';
-
-
-	
-	ALTER TABLE [RDS].[FactOrganizationCountReports] DROP CONSTRAINT [DF__FactOrgan__Title__1022305E];
 
 
 	-- 
@@ -6914,13 +6789,21 @@
 
 
 	
-	PRINT N'Dropping Table [RDS].[FactK12StudentAssessmentReports]...';
+	PRINT N'Renaming Table [RDS].[FactK12StudentAssessmentReports] and necessary fields...';
 
 
-	--TODO: Convert this to a table rename, if necessary
-	
-	DROP TABLE [RDS].[FactK12StudentAssessmentReports];
-
+	EXECUTE sp_rename N'[RDS].[FactK12StudentAssessmentReports]', N'ReportEdFactsK12StudentAssessments';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAM]', N'ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[OrganizationNcesId]', N'OrganizationIdentifierNces';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[OrganizationStateId]', N'OrganizationIdentifierSea';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[ParentOrganizationStateId]', N'ParentOrganizationIdentifierSea';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[FactK12StudentAssessmentReportId]', N'ReportEDFactsK12StudentAssessmentId';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[PRIMARYDISABILITYTYPE]', N'IDEADISABILITYTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[StateCode]', N'StateAbbreviationCode';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[StateName]', N'StateAbbreviationDescription';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTION]', N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[ASSESSMENTPROGRESSLEVEL]', N'PROGRESSLEVEL';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[LEPPERKINSSTATUS]', N'PERKINSENGLISHLEARNERSTATUS';
 
 	
 	PRINT N'Dropping Table [RDS].[FactK12StudentAttendanceReports]...';
@@ -7279,12 +7162,16 @@
 
 
 	
-	PRINT N'Dropping Table [RDS].[FactOrganizationCountReports]...';
+	PRINT N'Renaming Table [RDS].[FactOrganizationCountReports]...';
 
 
-	--TODO: Switch to rename
-	
-	DROP TABLE [RDS].[FactOrganizationCountReports];
+	EXECUTE sp_rename N'[RDS].[FactOrganizationCountReports]', N'ReportEdFactsOrganizationCounts';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[FactOrganizationCountReportId]', N'ReportEDFactsOrganizationCountId';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[CSSOLastName]', N'CSSOLastOrSurname';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[CharterSchoolAuthorizer]', N'CharterSchoolAuthorizerIdPrimary';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[CharterSchoolSecondaryAuthorizer]', N'CharterSchoolAuthorizerIdSecondary';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[MailingAddressStreet2]', N'MailingAddressApartmentRoomOrSuiteNumber';
+	EXECUTE sp_rename N'[RDS].[ReportEdFactsOrganizationCounts].[PhysicalAddressStreet2]', N'PhysicalAddressApartmentRoomOrSuiteNumber';
 
 
 	
@@ -16878,101 +16765,7 @@
 
 
 	
-	CREATE TABLE [RDS].[ReportEDFactsK12StudentAssessments] (
-		[ReportEDFactsK12StudentAssessmentId]           INT             IDENTITY (1, 1) NOT NULL,
-		[ASSESSMENTSUBJECT]                             NVARCHAR (50)   NULL,
-		[ASSESSMENTTYPE]                                NVARCHAR (50)   NULL,
-		[AssessmentCount]                               INT             NOT NULL,
-		[SPECIALEDUCATIONEXITREASON]                    NVARCHAR (50)   NULL,
-		[CTEPROGRAM]                                    NVARCHAR (50)   NULL,
-		[Categories]                                    NVARCHAR (300)  NULL,
-		[CategorySetCode]                               NVARCHAR (40)   NOT NULL,
-		[IDEADISABILITYTYPE]                            NVARCHAR (50)   NULL,
-		[ECONOMICDISADVANTAGESTATUS]                    NVARCHAR (50)   NULL,
-		[IDEAEDUCATIONALENVIRONMENT]                    NVARCHAR (50)   NULL,
-		[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS] NVARCHAR (50)   NULL,
-		[FOSTERCAREPROGRAM]                             NVARCHAR (50)   NULL,
-		[FULLYEARSTATUS]                                NVARCHAR (50)   NULL,
-		[GRADELEVEL]                                    NVARCHAR (50)   NULL,
-		[HOMElESSNESSSTATUS]                            NVARCHAR (50)   NULL,
-		[TITLEIIIIMMIGRANTPARTICIPATIONSTATUS]          NVARCHAR (50)   NULL,
-		[ENGLISHLEARNERSTATUS]                          NVARCHAR (50)   NULL,
-		[MIGRANTSTATUS]                                 NVARCHAR (50)   NULL,
-		[OrganizationName]                              NVARCHAR (1000) NOT NULL,
-		[OrganizationIdentifierNces]                    NVARCHAR (100)  NOT NULL,
-		[OrganizationIdentifierSea]                     NVARCHAR (100)  NOT NULL,
-		[PARTICIPATIONSTATUS]                           NVARCHAR (50)   NULL,
-		[PERFORMANCELEVEL]                              NVARCHAR (50)   NULL,
-		[ParentOrganizationIdentifierSea]               NVARCHAR (MAX)  NULL,
-		[RACE]                                          NVARCHAR (50)   NULL,
-		[ReportCode]                                    NVARCHAR (40)   NOT NULL,
-		[ReportLevel]                                   NVARCHAR (40)   NOT NULL,
-		[ReportYear]                                    NVARCHAR (40)   NOT NULL,
-		[SECTION504STATUS]                              NVARCHAR (50)   NULL,
-		[SEX]                                           NVARCHAR (50)   NULL,
-		[StateANSICode]                                 NVARCHAR (100)  NOT NULL,
-		[StateAbbreviationCode]                         NVARCHAR (100)  NOT NULL,
-		[StateAbbreviationDescription]                  NVARCHAR (1000) NOT NULL,
-		[TableTypeAbbrv]                                NVARCHAR (MAX)  NULL,
-		[TotalIndicator]                                NVARCHAR (MAX)  NULL,
-		[ASSESSEDFIRSTTIME]                             NVARCHAR (50)   NULL,
-		[FORMERENGLISHLEARNERYEARSTATUS]                NVARCHAR (50)   NULL,
-		[MILITARYCONNECTEDSTUDENTINDICATOR]             NVARCHAR (50)   NULL,
-		[PROFICIENCYSTATUS]                             NVARCHAR (50)   NULL,
-		[TITLEIIIACCOUNTABILITYPROGRESSSTATUS]          NVARCHAR (50)   NULL,
-		[TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE]        NVARCHAR (50)   NULL,
-		[TITLEIIIPROGRAMPARTICIPATION]                  NVARCHAR (50)   NULL,
-		[CTEAEDISPLACEDHOMEMAKERINDICATOR]              NVARCHAR (50)   NULL,
-		[CTENONTRADITIONALGENDERSTATUS]                 NVARCHAR (50)   NULL,
-		[PLACEMENTSTATUS]                               NVARCHAR (50)   NULL,
-		[PLACEMENTTYPE]                                 NVARCHAR (50)   NULL,
-		[REPRESENTATIONSTATUS]                          NVARCHAR (50)   NULL,
-		[SINGLEPARENTORSINGLEPREGNANTWOMAN]             NVARCHAR (50)   NULL,
-		[NEGLECTEDORDELINQUENTPROGRAMTYPE]              NVARCHAR (50)   NULL,
-		[MOBILITYSTATUS12MO]                            NVARCHAR (50)   NULL,
-		[MOBILITYSTATUSSY]                              NVARCHAR (50)   NULL,
-		[REFERRALSTATUS]                                NVARCHAR (50)   NULL,
-		[CTEGRADUATIONRATEINCLUSION]                    NVARCHAR (50)   NULL,
-		[TESTRESULT]                                    NVARCHAR (50)   NULL,
-		[HOMELESSPRIMARYNIGHTTIMERESIDENCE]             NVARCHAR (50)   NULL,
-		[HOMELESSUNACCOMPANIEDYOUTHSTATUS]              NVARCHAR (50)   NULL,
-		[PROGRESSLEVEL]                       			NVARCHAR (50)   NULL,
-		[YEAR]                                          NVARCHAR (50)   NULL,
-		[LONGTERMSTATUS]                                NVARCHAR (50)   NULL,
-		[HIGHSCHOOLDIPLOMATYPE]                         NVARCHAR (50)   NULL,
-		[ACADEMICORVOCATIONALEXITOUTCOME]               NVARCHAR (50)   NULL,
-		[ACADEMICORVOCATIONALOUTCOME]                   NVARCHAR (50)   NULL,
-		[HOMELESSSERVICEDINDICATOR]                     NVARCHAR (50)   NULL,
-		[PERKINSENGLISHLEARNERSTATUS]                   NVARCHAR (50)   NULL,
-		[IDEAINDICATOR]                                 VARCHAR (50)    NULL,
-		[TITLEISUPPORTSERVICES]                         VARCHAR (50)    NULL,
-		[TITLEIINSTRUCTIONALSERVICES]                   VARCHAR (50)    NULL,
-		[TITLEIPROGRAMTYPE]                             VARCHAR (50)    NULL,
-		[TITLEISCHOOLSTATUS]                            VARCHAR (50)    NULL,
-		[PostSecondaryEnrollmentStatus]                 VARCHAR (50)    NULL,
-		[AssessmentTypeAdministeredToEnglishLearners]   VARCHAR (50)    NULL,
-		CONSTRAINT [PK_FactStudentAssessmentReports] PRIMARY KEY CLUSTERED ([ReportEDFactsK12StudentAssessmentId] ASC) WITH (DATA_COMPRESSION = PAGE)
-	);
-
-
 	
-	PRINT N'Creating Index [RDS].[ReportEDFactsK12StudentAssessments].[IX_FactStudentAssessmentReports_ReportCode_ReportYear_ReportLevel_CategorySetCode]...';
-
-
-	
-	CREATE NONCLUSTERED INDEX [IX_FactStudentAssessmentReports_ReportCode_ReportYear_ReportLevel_CategorySetCode]
-		ON [RDS].[ReportEDFactsK12StudentAssessments]([ReportCode] ASC, [ReportYear] ASC, [ReportLevel] ASC, [CategorySetCode] ASC);
-
-
-	
-	PRINT N'Creating Index [RDS].[ReportEDFactsK12StudentAssessments].[IX_FactStudentAssessmentReports_ReportCode_ReportYear_ReportLevel_CategorySetCode_SubJect_AssmentType_Grade]...';
-
-
-	
-	CREATE NONCLUSTERED INDEX [IX_FactStudentAssessmentReports_ReportCode_ReportYear_ReportLevel_CategorySetCode_SubJect_AssmentType_Grade]
-		ON [RDS].[ReportEDFactsK12StudentAssessments]([ReportCode] ASC, [ReportYear] ASC, [ReportLevel] ASC, [CategorySetCode] ASC, [ASSESSMENTSUBJECT] ASC, [ASSESSMENTTYPE] ASC, [GRADELEVEL] ASC);
-
-
 	
 	PRINT N'Creating Table [RDS].[ReportEDFactsK12StudentAttendance]...';
 
@@ -17009,122 +16802,6 @@
 
 
 	
-	PRINT N'Creating Table [RDS].[ReportEDFactsOrganizationCounts]...';
-
-
-	
-	CREATE TABLE [RDS].[ReportEDFactsOrganizationCounts] (
-		[ReportEDFactsOrganizationCountId]        INT             IDENTITY (1, 1) NOT NULL,
-		[CSSOEmail]                               NVARCHAR (100)  NULL,
-		[CSSOFirstName]                           NVARCHAR (75)   NULL,
-		[CSSOLastOrSurname]                       NVARCHAR (75)   NULL,
-		[CSSOTelephone]                           NVARCHAR (24)   NULL,
-		[CSSOTitle]                               NVARCHAR (100)  NULL,
-		[Categories]                              NVARCHAR (300)  NULL,
-		[CategorySetCode]                         NVARCHAR (40)   NOT NULL,
-		[CharterLeaStatus]                        NVARCHAR (100)  NULL,
-		[CharterSchoolAuthorizerIdPrimary]        NVARCHAR (50)   NULL,
-		[CharterSchoolAuthorizerIdSecondary]      NVARCHAR (50)   NULL,
-		[CharterSchoolStatus]                     NVARCHAR (100)  NULL,
-		[EffectiveDate]                           NVARCHAR (50)   NULL,
-		[GRADELEVEL]                              NVARCHAR (50)   NULL,
-		[LEAType]                                 NVARCHAR (50)   NULL,
-		[LEATypeId]                               NVARCHAR (MAX)  NULL,
-		[MAGNETSTATUS]                            NVARCHAR (MAX)  NULL,
-		[MailingAddressCity]                      NVARCHAR (50)   NULL,
-		[MailingAddressPostalCode]                NVARCHAR (17)   NULL,
-		[MailingAddressState]                     NVARCHAR (50)   NULL,
-		[MailingAddressStreet]                    NVARCHAR (100)  NULL,
-		[NSLPSTATUS]                              NVARCHAR (MAX)  NULL,
-		[OperationalStatus]                       NVARCHAR (50)   NULL,
-		[OperationalStatusId]                     NVARCHAR (MAX)  NULL,
-		[OrganizationCount]                       INT             NOT NULL,
-		[OrganizationId]                          INT             NOT NULL,
-		[OrganizationName]                        NVARCHAR (1000) NOT NULL,
-		[OrganizationNcesId]                      NVARCHAR (100)  NULL,
-		[OrganizationStateId]                     NVARCHAR (100)  NULL,
-		[OutOfStateIndicator]                     NVARCHAR (MAX)  NULL,
-		[ParentOrganizationStateId]               NVARCHAR (100)  NULL,
-		[PhysicalAddressCity]                     NVARCHAR (50)   NULL,
-		[PhysicalAddressPostalCode]               NVARCHAR (17)   NULL,
-		[PhysicalAddressState]                    NVARCHAR (50)   NULL,
-		[PhysicalAddressStreet]                   NVARCHAR (100)  NULL,
-		[PriorLeaStateIdentifier]                 NVARCHAR (50)   NULL,
-		[PriorSchoolStateIdentifier]              NVARCHAR (50)   NULL,
-		[ReconstitutedStatus]                     NVARCHAR (100)  NULL,
-		[ReportCode]                              NVARCHAR (40)   NOT NULL,
-		[ReportLevel]                             NVARCHAR (40)   NOT NULL,
-		[ReportYear]                              NVARCHAR (40)   NOT NULL,
-		[SHAREDTIMESTATUS]                        NVARCHAR (MAX)  NULL,
-		[SchoolType]                              NVARCHAR (50)   NULL,
-		[SchoolTypeId]                            NVARCHAR (MAX)  NULL,
-		[StateANSICode]                           NVARCHAR (100)  NOT NULL,
-		[StateCode]                               NVARCHAR (100)  NOT NULL,
-		[StateName]                               NVARCHAR (1000) NOT NULL,
-		[SupervisoryUnionIdentificationNumber]    NCHAR (3)       NULL,
-		[TITLE1SCHOOLSTATUS]                      NVARCHAR (MAX)  NULL,
-		[TableTypeAbbrv]                          NVARCHAR (100)  NULL,
-		[Telephone]                               NVARCHAR (24)   NULL,
-		[TotalIndicator]                          NVARCHAR (5)    NULL,
-		[UpdatedOperationalStatus]                NVARCHAR (50)   NULL,
-		[UpdatedOperationalStatusId]              NVARCHAR (MAX)  NULL,
-		[VIRTUALSCHSTATUS]                        NVARCHAR (MAX)  NULL,
-		[Website]                                 NVARCHAR (100)  NULL,
-		[TitleiParentalInvolveRes]                INT             NOT NULL,
-		[TitleiPartaAllocations]                  INT             NOT NULL,
-		[ParentOrganizationNcesId]                NVARCHAR (100)  NULL,
-		[CharterSchoolIndicator]                  BIT             NULL,
-		[CharterSchoolContractIdNumber]           NVARCHAR (MAX)  NULL,
-		[CharterContractApprovalDate]             NVARCHAR (MAX)  NULL,
-		[CharterContractRenewalDate]              NVARCHAR (MAX)  NULL,
-		[LeaNcesIdentifier]                       NVARCHAR (MAX)  NULL,
-		[LeaStateIdentifier]                      NVARCHAR (MAX)  NULL,
-		[ManagementOrganizationType]              NVARCHAR (MAX)  NULL,
-		[IMPROVEMENTSTATUS]                       NVARCHAR (MAX)  NULL,
-		[PERSISTENTLYDANGEROUSSTATUS]             NVARCHAR (MAX)  NULL,
-		[CHARTERSCHOOLMANAGERORGANIZATION]        NVARCHAR (MAX)  NULL,
-		[CHARTERSCHOOLUPDATEDMANAGERORGANIZATION] NVARCHAR (MAX)  NULL,
-		[STATEPOVERTYDESIGNATION]                 NVARCHAR (50)   NULL,
-		[SCHOOLIMPROVEMENTFUNDS]                  INT             NULL,
-		[EconomicallyDisadvantagedStudentCount]   INT             NULL,
-		[McKinneyVentoSubgrantRecipient]          VARCHAR (50)    NULL,
-		[ProgressAchievingEnglishLanguage]        NVARCHAR (MAX)  NULL,
-		[StateDefinedStatus]                      NVARCHAR (MAX)  NULL,
-		[REAPAlternativeFundingStatus]            NVARCHAR (50)   NULL,
-		[GraduationRate]                          NVARCHAR (50)   NULL,
-		[GunFreeStatus]                           NVARCHAR (50)   NULL,
-		[FederalFundAllocationType]               NVARCHAR (20)   NULL,
-		[FederalProgramCode]                      NVARCHAR (20)   NULL,
-		[FederalFundAllocated]                    INT             NULL,
-		[ComprehensiveAndTargetedSupportCode]     NVARCHAR (50)   NULL,
-		[ComprehensiveSupportCode]                NVARCHAR (50)   NULL,
-		[TargetedSupportCode]                     NVARCHAR (50)   NULL,
-		[ComprehensiveSupportImprovementCode]	  NVARCHAR (50)   NULL,
-		[TargetedSupportImprovementCode] 		  NVARCHAR (50)   NULL,
-		[AdditionalTargetedSupportandImprovementCode] NVARCHAR (50)   NULL,
-		[AppropriationMethodCode]				  NVARCHAR (50)   NULL,
-		CONSTRAINT [PK_ReportEDFactsOrganizationCounts] PRIMARY KEY CLUSTERED ([ReportEDFactsOrganizationCountId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
-	);
-
-
-	
-	PRINT N'Creating Index [RDS].[ReportEDFactsOrganizationCounts].[IX_ReportEDFactsOrganizationCounts_ReportCode_ReportYear_ReportLevel_CategorySetCode]...';
-
-
-	
-	CREATE NONCLUSTERED INDEX [IX_ReportEDFactsOrganizationCounts_ReportCode_ReportYear_ReportLevel_CategorySetCode]
-		ON [RDS].[ReportEDFactsOrganizationCounts]([ReportCode] ASC, [ReportYear] ASC, [ReportLevel] ASC, [CategorySetCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
-
-	
-	PRINT N'Creating Index [RDS].[ReportEDFactsOrganizationCounts].[IX_ReportEDFactsOrganizationCounts_ReportCode_ReportYear_ReportLevel_Grade_Organization]...';
-
-
-	
-	CREATE NONCLUSTERED INDEX [IX_ReportEDFactsOrganizationCounts_ReportCode_ReportYear_ReportLevel_Grade_Organization]
-		ON [RDS].[ReportEDFactsOrganizationCounts]([ReportCode] ASC, [ReportYear] ASC, [ReportLevel] ASC)
-		INCLUDE([GRADELEVEL], [OrganizationId]) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
 
 	
 	PRINT N'Creating Table [RDS].[ReportEDFactsOrganizationStatusCounts]...';
@@ -18423,7 +18100,7 @@
 
 	
 	ALTER TABLE [RDS].[FactSchoolPerformanceIndicators]
-		ADD DEFAULT ((1)) FOR [OrganizationCount];
+		ADD CONSTRAINT [DF_FactSchoolPerformanceIndicators_OrganizationCount] DEFAULT ((1)) FOR [OrganizationCount];
 
 
 	
@@ -18858,7 +18535,7 @@
 
 	
 	ALTER TABLE [RDS].[ReportEDFactsOrganizationCounts]
-		ADD DEFAULT (N'0') FOR [OutOfStateIndicator];
+		ADD CONSTRAINT [DF_ReportEDFactsOrganizationCounts_OutOfStateIndicator] DEFAULT (N'0') FOR [OutOfStateIndicator];
 
 
 	
@@ -18867,7 +18544,7 @@
 
 	
 	ALTER TABLE [RDS].[ReportEDFactsOrganizationCounts]
-		ADD DEFAULT ((0)) FOR [TitleiParentalInvolveRes];
+		ADD CONSTRAINT [DF_ReportEDFactsOrganizationCounts_TitleiParentalInvolveRes] DEFAULT ((0)) FOR [TitleiParentalInvolveRes];
 
 
 	
@@ -18876,7 +18553,7 @@
 
 	
 	ALTER TABLE [RDS].[ReportEDFactsOrganizationCounts]
-		ADD DEFAULT ((0)) FOR [TitleiPartaAllocations];
+		ADD CONSTRAINT [DF_ReportEDFactsOrganizationCounts_TitleiPartaAllocations] DEFAULT ((0)) FOR [TitleiPartaAllocations];
 
 
 	
@@ -18885,7 +18562,7 @@
 
 	
 	ALTER TABLE [RDS].[ToggleAssessments]
-		ADD DEFAULT (N'') FOR [Subject];
+		ADD CONSTRAINT [DF_ToggleAssessments_Subject] DEFAULT (N'') FOR [Subject];
 
 
 	
@@ -22517,6 +22194,43 @@
 	ALTER TABLE [RDS].[BridgePsStudentEnrollmentRaces] WITH NOCHECK
 		ADD CONSTRAINT [FK_BridgePsStudentEnrollmentRaces_RaceId] FOREIGN KEY ([RaceId]) REFERENCES [RDS].[DimRaces] ([DimRaceId]);
 
+
+
+
+	-- Rebuild the default constraints using proper naming convention
+	DECLARE @CreateConstraint NVARCHAR(1000)
+
+	DECLARE ConstraintCursor CURSOR FOR
+	SELECT * FROM #NewConstraints
+	WHERE TableSchema <> 'cedsv8' 
+		AND TableName NOT LIKE '%DTOS'
+		AND ConstraintName NOT LIKE '%LepPerkinsStatus%'
+
+	OPEN ConstraintCursor
+	FETCH NEXT FROM ConstraintCursor INTO @CreateConstraint, @ConstraintName, @TableName, @TableSchema
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SELECT @CreateConstraint = REPLACE(@CreateConstraint, 'FactOrganizationCountReports', 'ReportEDFactsOrganizationCounts')
+		SELECT @TableName = REPLACE(@TableName, 'FactOrganizationCountReports', 'ReportEDFactsOrganizationCounts')
+		SELECT @ConstraintName = REPLACE(@ConstraintName, 'FactOrganizationCountReports', 'ReportEDFactsOrganizationCounts')
+		IF NOT EXISTS (SELECT 1 
+						FROM sys.default_constraints dc
+						INNER JOIN sys.tables t ON dc.parent_object_id = t.object_id
+						INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+						WHERE dc.name = @ConstraintName
+							AND t.name = @TableName
+							AND s.Name = @TableSchema) BEGIN
+			PRINT @CreateConstraint
+			EXEC sp_executesql @CreateConstraint
+		END
+		FETCH NEXT FROM ConstraintCursor INTO @CreateConstraint, @ConstraintName, @TableName, @TableSchema
+	END
+
+	CLOSE ConstraintCursor
+	DEALLOCATE ConstraintCursor
+
+	DROP TABLE #NewConstraints
 
 	
 	PRINT N'Altering View [RDS].[vwDimGradeLevels]...';
