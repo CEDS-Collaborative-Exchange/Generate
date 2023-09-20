@@ -6801,7 +6801,6 @@
 	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[PRIMARYDISABILITYTYPE]', N'IDEADISABILITYTYPE';
 	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[StateCode]', N'StateAbbreviationCode';
 	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[StateName]', N'StateAbbreviationDescription';
-	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[PRIMARYDISABILITYTYPE]', N'IDEADISABILITYTYPE';
 	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[TITLEIIILANGUAGEINSTRUCTION]', N'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE';
 	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[ASSESSMENTPROGRESSLEVEL]', N'PROGRESSLEVEL';
 	EXECUTE sp_rename N'[RDS].[ReportEdFactsK12StudentAssessments].[LEPPERKINSSTATUS]', N'PERKINSENGLISHLEARNERSTATUS';

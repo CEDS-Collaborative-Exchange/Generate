@@ -78,19 +78,21 @@ BEGIN TRY
 		  ,sko.LEA_RecordEndDateTime
 		  , phone.TelephoneNumber
 		  , mailing.AddressStreetNumberAndName as MailingAddressStreetNumberAndName
+		  , mailing.AddressApartmentRoomOrSuiteNumber as MailingAddressApartmentRoomOrSuiteNumber
 		  , mailing.AddressCity as MailingAddressCity
 		  , mailing.StateAbbreviation as MailingStateAbbreviation
 		  , mailing.AddressPostalCode as MailingAddressPostalCode
 		  , physical.AddressStreetNumberAndName as PhysicalAddressStreetNumberAndName
+		  , physical.AddressApartmentRoomOrSuiteNumber as PhysicalAddressApartmentRoomOrSuiteNumber
 		  , physical.AddressCity as PhysicalAddressCity
 		  , physical.StateAbbreviation as PhysicalStateAbbreviation
 		  , physical.AddressPostalCode as PhysicalAddressPostalCode
 		INTO #leas_staging
 		FROM Staging.K12Organization sko
-		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressCity, StateAbbreviation, AddressPostalCode
+		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressApartmentRoomOrSuiteNumber, AddressCity, StateAbbreviation, AddressPostalCode
 		  from Staging.OrganizationAddress
 		  where AddressTypeForOrganization = 'Mailing' ) mailing on mailing.OrganizationIdentifier = sko.LEAIdentifierSea
-		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressCity, StateAbbreviation, AddressPostalCode
+		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressApartmentRoomOrSuiteNumber, AddressCity, StateAbbreviation, AddressPostalCode
 		  from Staging.OrganizationAddress
 		  where AddressTypeForOrganization = 'Physical' ) physical on physical.OrganizationIdentifier = sko.LEAIdentifierSea
 		left join Staging.OrganizationPhone phone on phone.OrganizationIdentifier = sko.LEAIdentifierSea
@@ -114,10 +116,12 @@ BEGIN TRY
 		  ,LEAType
 		  ,Telephone
 		  , MailingAddressStreet
+		  , MailingAddressApartmentRoomOrSuiteNumber
 		  , MailingAddressCity
 		  , MailingAddressState
 		  , MailingAddressPostalCode
 		  , PhysicalAddressStreet
+		  , PhysicalAddressApartmentRoomOrSuiteNumber
 		  , PhysicalAddressCity
 		  , PhysicalAddressState
 		  , PhysicalAddressPostalCode
@@ -293,6 +297,30 @@ BEGIN TRY
 		 )
 		 SELECT distinct
 			  @SqlUnitTestId
+			 ,'Mailing Address Apartment Room Or Suite Match'
+			 ,'Mailing Address Match ' + s.LEAIdentifierSea
+			 ,s.MailingAddressApartmentRoomOrSuiteNumber
+			 ,r.MailingAddressApartmentRoomOrSuiteNumber
+			 ,CASE WHEN isnull(s.MailingAddressApartmentRoomOrSuiteNumber,'') = isnull(r.MailingAddressApartmentRoomOrSuiteNumber,'') THEN 1 
+				   ELSE 0 END
+			 ,GETDATE()
+		 FROM #leas_staging s
+		 left JOIN #leas_reporting r 
+			 ON s.LEAIdentifierSea = r.OrganizationStateId
+
+
+		 INSERT INTO App.SqlUnitTestCASEResult 
+		 (
+			 [SqlUnitTestId]
+			 ,[TestCASEName]
+			 ,[TestCASEDetails]
+			 ,[ExpectedResult]
+			 ,[ActualResult]
+			 ,[Passed]
+			 ,[TestDateTime]
+		 )
+		 SELECT distinct
+			  @SqlUnitTestId
 			 ,'Mailing Address Match'
 			 ,'Mailing Address Match ' + s.LEAIdentifierSea
 			 ,s.MailingAddressStreetNumberAndName
@@ -392,6 +420,29 @@ BEGIN TRY
 			 ,s.PhysicalAddressStreetNumberAndName
 			 ,r.PhysicalAddressStreet
 			 ,CASE WHEN isnull(s.PhysicalAddressStreetNumberAndName,'') = isnull(r.PhysicalAddressStreet,'') THEN 1 
+				   ELSE 0 END
+			 ,GETDATE()
+		 FROM #leas_staging s
+		 left JOIN #leas_reporting r 
+			 ON s.LEAIdentifierSea = r.OrganizationStateId
+
+		 INSERT INTO App.SqlUnitTestCASEResult 
+		 (
+			 [SqlUnitTestId]
+			 ,[TestCASEName]
+			 ,[TestCASEDetails]
+			 ,[ExpectedResult]
+			 ,[ActualResult]
+			 ,[Passed]
+			 ,[TestDateTime]
+		 )
+		 SELECT distinct
+			  @SqlUnitTestId
+			 ,'Physical Address Apartment Room Or Suite Match'
+			 ,'Physical Address Match ' + s.LEAIdentifierSea
+			 ,s.PhysicalAddressApartmentRoomOrSuiteNumber
+			 ,r.PhysicalAddressApartmentRoomOrSuiteNumber
+			 ,CASE WHEN isnull(s.PhysicalAddressApartmentRoomOrSuiteNumber,'') = isnull(r.PhysicalAddressApartmentRoomOrSuiteNumber,'') THEN 1 
 				   ELSE 0 END
 			 ,GETDATE()
 		 FROM #leas_staging s
@@ -555,19 +606,21 @@ BEGIN TRY
 		  ,sko.School_RecordEndDateTime
 		  , phone.TelephoneNumber
 		  , mailing.AddressStreetNumberAndName as MailingAddressStreetNumberAndName
+		  , mailing.AddressApartmentRoomOrSuiteNumber as MailingAddressApartmentRoomOrSuiteNumber
 		  , mailing.AddressCity as MailingAddressCity
 		  , mailing.StateAbbreviation as MailingStateAbbreviation
 		  , mailing.AddressPostalCode as MailingAddressPostalCode
 		  , physical.AddressStreetNumberAndName as PhysicalAddressStreetNumberAndName
+		  , physical.AddressApartmentRoomOrSuiteNumber as PhysicalAddressApartmentRoomOrSuiteNumber
 		  , physical.AddressCity as PhysicalAddressCity
 		  , physical.StateAbbreviation as PhysicalStateAbbreviation
 		  , physical.AddressPostalCode as PhysicalAddressPostalCode
 		INTO #schools_staging
 		FROM Staging.K12Organization sko
-		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressCity, StateAbbreviation, AddressPostalCode
+		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressApartmentRoomOrSuiteNumber, AddressCity, StateAbbreviation, AddressPostalCode
 		  from Staging.OrganizationAddress
 		  where AddressTypeForOrganization = 'Mailing' ) mailing on mailing.OrganizationIdentifier = sko.SchoolIdentifierSea
-		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressCity, StateAbbreviation, AddressPostalCode
+		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressApartmentRoomOrSuiteNumber, AddressCity, StateAbbreviation, AddressPostalCode
 		  from Staging.OrganizationAddress
 		  where AddressTypeForOrganization = 'Physical' ) physical on physical.OrganizationIdentifier = sko.SchoolIdentifierSea
 		left join Staging.OrganizationPhone phone on phone.OrganizationIdentifier = sko.SchoolIdentifierSea
@@ -597,9 +650,11 @@ BEGIN TRY
 		  ,Telephone
 		  , MailingAddressStreet
 		  , MailingAddressCity
+		  , MailingAddressApartmentRoomOrSuiteNumber
 		  , MailingAddressState
 		  , MailingAddressPostalCode
 		  , PhysicalAddressStreet
+		  , PhysicalAddressApartmentRoomOrSuiteNumber
 		  , PhysicalAddressCity
 		  , PhysicalAddressState
 		  , PhysicalAddressPostalCode
@@ -787,6 +842,30 @@ BEGIN TRY
 		 )
 		 SELECT distinct
 			  @SqlUnitTestId
+			 ,'Mailing Address Apartment Room Or Suite Number Match'
+			 ,'Mailing Address Match ' + s.SchoolIdentifierSea
+			 ,s.MailingAddressApartmentRoomOrSuiteNumber
+			 ,r.MailingAddressApartmentRoomOrSuiteNumber
+			 ,CASE WHEN isnull(s.MailingAddressApartmentRoomOrSuiteNumber,'') = isnull(r.MailingAddressApartmentRoomOrSuiteNumber,'') THEN 1 
+				   ELSE 0 END
+			 ,GETDATE()
+		 FROM #schools_staging s
+		 left JOIN #schools_reporting r 
+			 ON s.SchoolIdentifierSea = r.OrganizationStateId
+
+
+		INSERT INTO App.SqlUnitTestCASEResult 
+		 (
+			 [SqlUnitTestId]
+			 ,[TestCASEName]
+			 ,[TestCASEDetails]
+			 ,[ExpectedResult]
+			 ,[ActualResult]
+			 ,[Passed]
+			 ,[TestDateTime]
+		 )
+		 SELECT distinct
+			  @SqlUnitTestId
 			 ,'Mailing Address State Match'
 			 ,'Mailing Address State Match ' + s.SchoolIdentifierSea
 			 ,s.MailingStateAbbreviation
@@ -862,6 +941,29 @@ BEGIN TRY
 			 ,s.PhysicalAddressStreetNumberAndName
 			 ,r.PhysicalAddressStreet
 			 ,CASE WHEN isnull(s.PhysicalAddressStreetNumberAndName,'') = isnull(r.PhysicalAddressStreet,'') THEN 1 
+				   ELSE 0 END
+			 ,GETDATE()
+		 FROM #schools_staging s
+		 left JOIN #schools_reporting r 
+			 ON s.SchoolIdentifierSea = r.OrganizationStateId
+
+		INSERT INTO App.SqlUnitTestCASEResult 
+		 (
+			 [SqlUnitTestId]
+			 ,[TestCASEName]
+			 ,[TestCASEDetails]
+			 ,[ExpectedResult]
+			 ,[ActualResult]
+			 ,[Passed]
+			 ,[TestDateTime]
+		 )
+		 SELECT distinct
+			  @SqlUnitTestId
+			 ,'Physical Address Apartment Room Or Suite Number Match'
+			 ,'Physical Address Match ' + s.SchoolIdentifierSea
+			 ,s.PhysicalAddressApartmentRoomOrSuiteNumber
+			 ,r.PhysicalAddressApartmentRoomOrSuiteNumber
+			 ,CASE WHEN isnull(s.PhysicalAddressApartmentRoomOrSuiteNumber,'') = isnull(r.PhysicalAddressApartmentRoomOrSuiteNumber,'') THEN 1 
 				   ELSE 0 END
 			 ,GETDATE()
 		 FROM #schools_staging s
