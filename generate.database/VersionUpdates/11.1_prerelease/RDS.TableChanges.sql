@@ -1,4 +1,4 @@
-﻿	ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_SchoolYearId];
+﻿﻿	ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_SchoolYearId];
 	ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_CountDateId];
 	ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_FactTypeId];
 	ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_SeaId];
@@ -99,6 +99,7 @@
 ----------------------------------------------------------------------------------------------------------
 --Repopulate the DimAssessmentRegistrations table (fields were swapped when it was created in v11)
 ----------------------------------------------------------------------------------------------------------
+﻿--Repopulate the DimAssessmentRegistrations table (fields were swapped when it was created in v11)
 
 	TRUNCATE TABLE RDS.DimAssessmentRegistrations
 

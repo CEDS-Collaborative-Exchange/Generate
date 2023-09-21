@@ -1,10 +1,10 @@
 VersionUpdates\\11.1_prerelease,Restore 11.0.sql,0
 VersionUpdates\\11.1_prerelease,Metadata-FileSpec-Categories.sql,0
 VersionUpdates\\11.1_prerelease,Dimension-Changes.sql,0
-VersionUpdates\\11.1_prerelease,RDS.TableChanges.sql,0
-Metadata,App.ViewDefinitions.Metadata.sql,0
 VersionUpdates\\11.1_prerelease,V11.1SchemaUpgrade.sql,0
+VersionUpdates\\11.1_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\11.1_prerelease,DataChanges.sql,0
+Metadata,App.ViewDefinitions.Metadata.sql,0
 Views\\Drop,RDS.vwDimAssessments.View.sql,0
 Views\\Create,RDS.vwDimAssessments.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
@@ -15,6 +15,8 @@ Views\\Drop,RDS.vwDimAssessmentResults.View.sql,0
 Views\\Create,RDS.vwDimAssessmentResults.View.sql,0
 Views\\Drop,RDS.vwDimAssessmentRegistrations.View.sql,0
 Views\\Create,RDS.vwDimAssessmentRegistrations.View.sql,0
+Views\\Drop,RDS.vwDimMigrantStatuses.View.sql,0
+Views\\Create,RDS.vwDimMigrantStatuses.View.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimAssessmentAdministrations.StoredProcedure.sql,0
