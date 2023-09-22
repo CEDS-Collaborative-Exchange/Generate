@@ -633,8 +633,7 @@ BEGIN
 					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
 				group by rdp.K12StudentStudentIdentifierState
 					, rdds.IdeaInterimRemovalCode
-					, rdds.IdeaInterimRemovalReasonCode  
-				having sum(rfksd.DurationOfDisciplinaryAction) > 45' + char(10)
+					, rdds.IdeaInterimRemovalReasonCode' + char(10)
 
 				select @sql = @sql + char(10) + 
 				'CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState)' + char(10) + char(10)
@@ -657,8 +656,7 @@ BEGIN
 					on rfksd.DisciplineStatusId = rdds.DimDisciplineStatusId
 				where rdds.IdeaInterimRemovalEdFactsCode in (''REMDW'', ''REMHO'')
 					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
-				group by rdp.K12StudentStudentIdentifierState 
-				having sum(rfksd.DurationOfDisciplinaryAction) > 45' + char(10)
+				group by rdp.K12StudentStudentIdentifierState' + char(10)
 
 				select @sql = @sql + char(10) + 
 				'CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState)' + char(10) + char(10)
