@@ -449,13 +449,13 @@ LEFT JOIN RDS.DimIdeaStatuses rdis
             WHEN 'IDEA' THEN 'Yes'
             ELSE 'MISSING'
         END = rdis.IdeaIndicatorCode
-    AND CASE WHEN (f.AgeCode >= 6 AND f.AgeCode <= 21)
-                OR (f.AgeCode = 5 and f.GradeLevelCode NOT IN ('MISSING','PK'))
+    AND CASE WHEN (f.AgeCode IN ('6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'))
+                OR (f.AgeCode = '5' and f.GradeLevelCode NOT IN ('MISSING','PK'))
                     THEN f.IdeaEducationalEnvironmentCode 
             ELSE 'MISSING'
         END = rdis.IdeaEducationalEnvironmentForSchoolAgeCode
-    AND CASE WHEN (f.AgeCode < 5 AND f.AgeCode >= 3)
-                OR (f.AgeCode = 5 and f.GradeLevelCode IN ('MISSING','PK'))
+    AND CASE WHEN (f.AgeCode IN ('3', '4'))
+                OR (f.AgeCode = '5' and f.GradeLevelCode IN ('MISSING','PK'))
                     THEN f.IdeaEducationalEnvironmentCode 
             ELSE 'MISSING'
         END = rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode
