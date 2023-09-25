@@ -2,7 +2,7 @@
 --Add new mappings to Staging.SourceSystemReferenceData
 ----------------------------------------------------------
 
---check for existing 2023 assessment mappings in SSRD
+--check for existing 2023 assessment type administered mappings in SSRD
 declare @ssrdCount int
 set @ssrdCount = (select count(*) 
 					from staging.SourceSystemReferencedata 
@@ -19,7 +19,7 @@ begin
 	and SchoolYear = 2023
 end
 
---add the necessary assessment rows for SSRD 
+--add the necessary assessment type administered rows for SSRD 
 if isnull(@ssrdCount, 0) = 0
 begin
 	insert into staging.SourceSystemReferenceData (
@@ -50,7 +50,7 @@ begin
 	(2023, 'RefAssessmentTypeAdministered', NULL, 'LSNRHSASMTWOACC', 'LSNRHSASMTWOACC'),
 	(2023, 'RefAssessmentTypeAdministered', NULL, 'LSNRHSASMTWACC', 'LSNRHSASMTWACC')
 end		
-else --assessment mappings exist for 2023 in SSRD
+else --assessment type administered mappings exist for 2023 in SSRD
 begin
 	--new assessment ADVASMTWOACC
 	if (select count(*) 
@@ -281,3 +281,34 @@ begin
 	end
 
 end
+
+-------------------------------------------------------------
+--Add new mappings for Assessment Reason Not Tested
+-------------------------------------------------------------
+
+--check for existing 2023 assessment reason not tested mappings in SSRD
+set @ssrdCount = (select count(*) 
+					from staging.SourceSystemReferencedata 
+					where tablename = 'RefAssessmentReasonNotTested'
+					and schoolyear = 2023
+				)
+
+--add the necessary assessment type reason not tested rows for SSRD 
+if isnull(@ssrdCount, 0) = 0
+begin
+	insert into staging.SourceSystemReferenceData (
+		SchoolYear
+		, TableName
+		, TableFilter
+		, InputCode
+		, OutputCode
+	)
+	values 
+	(2023, 'RefAssessmentReasonNotTested', NULL, '03451', '03451'),
+	(2023, 'RefAssessmentReasonNotTested', NULL, '03455', '03455'),
+	(2023, 'RefAssessmentReasonNotTested', NULL, '03454', '03454'),
+	(2023, 'RefAssessmentReasonNotTested', NULL, '03456', '03456'),
+	(2023, 'RefAssessmentReasonNotTested', NULL, '03452', '03452'),
+	(2023, 'RefAssessmentReasonNotTested', NULL, '03453', '03453'),
+	(2023, 'RefAssessmentReasonNotTested', NULL, '09999', '09999')    
+end 
