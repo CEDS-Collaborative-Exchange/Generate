@@ -107,8 +107,10 @@ BEGIN
 		SET AssessmentAcademicSubjectDescription = ccosm.CedsOptionSetDescription,
 			assessmentAcademicSubjectEdFactsCode = 
 				CASE AssessmentAcademicSubjectCode
-					WHEN '01166' THEN 'M'
+					WHEN '01166' THEN 'MATH'
 					WHEN '13373' THEN 'RLA'
+					WHEN '00562' THEN 'SCIENCE'
+					WHEN '73065' THEN 'CTE'
 					ELSE 'MISSING'
 				END
 		FROM #Assessments a
