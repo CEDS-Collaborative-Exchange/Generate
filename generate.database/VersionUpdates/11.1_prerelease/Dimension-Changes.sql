@@ -178,5 +178,14 @@ BEGIN
     VALUES (@factTableId, @dimensionTableId)
 END
 
+SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimAssessmentRegistrations'
+IF NOT EXISTS(SELECT 1 from app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+    INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId])
+    VALUES (@factTableId, @dimensionTableId)
+END
+
 update App.FileColumns set DimensionId = (select DimensionId from app.Dimensions where DimensionFieldName = 'AssessmentTypeAdministered') 
 where ColumnName = 'AssessAdministeredID'
+
+delete from app.Dimensions where DimensionFieldName in ('LeaFullAcademicYear','SchoolFullAcademicYear','StateFullAcademicYear')
