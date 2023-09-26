@@ -177,3 +177,6 @@ BEGIN
     INSERT INTO [App].[FactTable_DimensionTables]([FactTableId],[DimensionTableId])
     VALUES (@factTableId, @dimensionTableId)
 END
+
+update App.FileColumns set DimensionId = (select DimensionId from app.Dimensions where DimensionFieldName = 'AssessmentTypeAdministered') 
+where ColumnName = 'AssessAdministeredID'
