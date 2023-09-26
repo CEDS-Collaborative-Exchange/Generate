@@ -953,6 +953,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimFosterCareStatusId'
 		end
+		else if @dimensionTable = 'DimAssessmentRegistrations'
+		begin
+			set @dimensionPrimaryKey = 'DimAssessmentRegistrationId'
+		end
 			
 		set @factKey = REPLACE(@dimensionPrimaryKey, 'Dim', '')
 
@@ -1634,6 +1638,46 @@ BEGIN
 							else CAT_' + @reportField + '.' + @dimensionField + '
 						end'
 				end
+				else if (@categoryCode like 'PARTSTATUS%LG')
+					begin
+						
+						set @sqlCategoryReturnField = ' 
+							case 
+								WHEN assmnt.AssessmentTypeAdministeredCode =''REGASSWOACC'' THEN ''REGPARTWOACC''	
+								WHEN assmnt.AssessmentTypeAdministeredCode =''REGASSWACC'' THEN ''REGPARTWACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ADVASMTWOACC'' THEN ''PADVASMWOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
+								WHEN rdar.AssessmentRegistrationCompletionStatusCode = ''DidNotParticipate'' THEN ''NPART''
+								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+								else ''MISSING''
+							end'
+					end
+				else if (@categoryCode like 'PARTSTATUS%HS')
+					begin
+						
+						set @sqlCategoryReturnField = ' 
+							case 
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWOACC'' THEN ''PHSRGASMIWOACC''	
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWACC'' THEN ''PHSRGASMIWACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMT2WOACC'' THEN ''PHSRGASM2WOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMT2WACC'' THEN ''PHSRGASM2WACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMT3WOACC'' THEN ''PHSRGASM3WOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMT3WACC'' THEN ''PHSRGASM3WACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ADVASMTWOACC'' THEN ''PADVASMWOACC''	
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWOACC'' THEN ''PLSNRHSASMWOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWACC'' THEN ''PLSNRHSASMWACC''
+								WHEN rdar.AssessmentRegistrationCompletionStatusCode = ''DidNotParticipate'' THEN ''NPART''
+								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+								else ''MISSING''
+							end'
+					end
 				else if (@categoryCode = 'PROFSTATUS' and @reportCode  IN ('yeartoyearprogress','c175','c178','c179'))
 					begin
 						
@@ -1818,6 +1862,12 @@ BEGIN
 						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
 						'
 			END	
+			else if (@reportField = 'ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR' and @reportCode in ('c185','c188','c189'))
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+					inner join rds.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId
+					inner join rds.DimAssessmentRegistrations rdar on fact.AssessmentRegistrationId = rdar.DimAssessmentRegistrationId'
+			end	
 			---Begin New Code for c118
 
 			else if(@reportField = 'GRADELEVEL' and @reportCode in ('c118'))
@@ -1956,6 +2006,7 @@ BEGIN
 		declare @reportFilterCondition as nvarchar(max)
 		set @reportFilterCondition = ''
 
+			
 		if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 		begin
 			IF CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) = 0 
@@ -1963,6 +2014,7 @@ BEGIN
 					set @reportFilterJoin = 'inner join rds.DimIdeaStatuses idea on fact.IdeaStatusId = idea.DimIdeaStatusId'
 					set @reportFilterCondition = @reportFilterCondition + ' and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode not in (''PPPS'')'
 				end				
+
 		end						
 		if @reportCode in ('c002','edenvironmentdisabilitiesage6-21','c089','disciplinaryremovals','c006','c005')
 		begin
@@ -2802,7 +2854,7 @@ BEGIN
 		end
 		else if @reportCode in ('c185', 'c188', 'c189')
 		begin
-			set @queryFactFilter = 'and CAT_PARTICIPATIONSTATUS.AssessmentAcademicSubjectEdFactsCode = '
+			set @queryFactFilter = 'and assmnt.AssessmentAcademicSubjectEdFactsCode = '
 			if(@reportCode = 'c185')
 			begin
 				set @queryFactFilter = @queryFactFilter + '''MATH'''
