@@ -77,59 +77,59 @@ BEGIN
     VALUES (@categoryId, @dimensionId)
 END
 
-SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
-SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSMTHLG'
+-- SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
+-- SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSMTHLG'
 
-IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
-BEGIN
-    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
-    VALUES (@categoryId, @dimensionId)
-END
+-- IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+-- BEGIN
+--     INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+--     VALUES (@categoryId, @dimensionId)
+-- END
 
-SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
-SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSMTHHS'
+-- SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
+-- SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSMTHHS'
 
-IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
-BEGIN
-    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
-    VALUES (@categoryId, @dimensionId)
-END
+-- IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+-- BEGIN
+--     INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+--     VALUES (@categoryId, @dimensionId)
+-- END
 
-SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
-SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSRLAHS'
+-- SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
+-- SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSRLAHS'
 
-IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
-BEGIN
-    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
-    VALUES (@categoryId, @dimensionId)
-END
+-- IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+-- BEGIN
+--     INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+--     VALUES (@categoryId, @dimensionId)
+-- END
 
-SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
-SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSRLALG'
+-- SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
+-- SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSRLALG'
 
-IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
-BEGIN
-    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
-    VALUES (@categoryId, @dimensionId)
-END
+-- IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+-- BEGIN
+--     INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+--     VALUES (@categoryId, @dimensionId)
+-- END
 
-SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
-SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSSCIHS'
+-- SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
+-- SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSSCIHS'
 
-IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
-BEGIN
-    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
-    VALUES (@categoryId, @dimensionId)
-END
+-- IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+-- BEGIN
+--     INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+--     VALUES (@categoryId, @dimensionId)
+-- END
 
-SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
-SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSSCILG'
+-- SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'PARTICIPATIONSTATUS'
+-- SELECT @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSSCILG'
 
-IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
-BEGIN
-    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
-    VALUES (@categoryId, @dimensionId)
-END
+-- IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+-- BEGIN
+--     INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+--     VALUES (@categoryId, @dimensionId)
+-- END
 
 SELECT @dimensionTableId = DimensionTableId FROM app.DimensionTables WHERE DimensionTableName = 'DimAssessments'
 Update app.Dimensions SET DimensionTableId = @dimensionTableId WHERE DimensionFieldName = 'AssessmentTypeAdministered'
