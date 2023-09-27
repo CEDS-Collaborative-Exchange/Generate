@@ -42,7 +42,7 @@ BEGIN
 	declare @tableTypeAbbrv as nvarchar(150)
 	declare @totalIndicator as nvarchar(1)
 
-	IF(@reportCode in ('c204', 'c150', 'c151','c033','c116'))
+	IF(@reportCode in ('c204', 'c150', 'c151','c033','c116', 'c175', 'c178', 'c179', 'c185', 'c188', 'c189'))
 	  begin
 		set @tableTypeAbbrv=@tableTypeAbbrvs
 		set @totalIndicator=@totalIndicators
@@ -949,12 +949,25 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimTitleIIIStatusId'
 		end
+		else if @dimensionTable = 'DimFosterCareStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimFosterCareStatusId'
+		end
+		else if @dimensionTable = 'DimAssessmentRegistrations'
+		begin
+			set @dimensionPrimaryKey = 'DimAssessmentRegistrationId'
+		end
 			
 		set @factKey = REPLACE(@dimensionPrimaryKey, 'Dim', '')
 
 		if @dimensionTable = 'DimIdeaDisabilityTypes'
 		begin
 			set @factKey = 'PrimaryDisabilityTypeId'
+		end
+
+		if @dimensionTable = 'DimGradeLevels' and @reportCode in ('c175','c178','c179','c185','c188','c189')
+		begin
+			set @factKey = 'GradeLevelWhenAssessedId'
 		end
 
 		if @dimensionTable = 'DimSchoolYears'
@@ -1621,17 +1634,58 @@ BEGIN
 				begin
 					set @sqlCategoryReturnField = ' 
 						case 
-							when CAT_' + @reportField + '.FosterCareProgramCode = ''FOSTERCARE'' then ''FCS''					
+							when CAT_' + @reportField + '.ProgramParticipationFosterCareCode = ''Yes'' then ''FCS''					
 							else CAT_' + @reportField + '.' + @dimensionField + '
 						end'
 				end
-				else if (@categoryCode = 'PROFSTATUS' and @reportCode  IN ('yeartoyearprogress','c175','c178','c179'))
+				else if (@categoryCode like 'PARTSTATUS%LG')
 					begin
+						
 						set @sqlCategoryReturnField = ' 
 							case 
-								WHEN assmnt.PerformanceLevelEdFactsCode =''MISSING'' THEN ''MISSING''
-								when CAST(SUBSTRING( assmnt.PerformanceLevelEdFactsCode, 2,1) as int ) >= CAST( tgglAssmnt.ProficientOrAboveLevel as int) THEN  ''PROFICIENT''		
-								when CAST(SUBSTRING( assmnt.PerformanceLevelEdFactsCode, 2,1) as int ) < CAST( tgglAssmnt.ProficientOrAboveLevel as int)  THEN  ''NOTPROFICIENT''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''REGASSWOACC'' THEN ''REGPARTWOACC''	
+								WHEN assmnt.AssessmentTypeAdministeredCode =''REGASSWACC'' THEN ''REGPARTWACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ADVASMTWOACC'' THEN ''PADVASMWOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
+								WHEN rdar.AssessmentRegistrationCompletionStatusCode = ''DidNotParticipate'' THEN ''NPART''
+								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+								else ''MISSING''
+							end'
+					end
+				else if (@categoryCode like 'PARTSTATUS%HS')
+					begin
+						
+						set @sqlCategoryReturnField = ' 
+							case 
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWOACC'' THEN ''PHSRGASMIWOACC''	
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWACC'' THEN ''PHSRGASMIWACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMT2WOACC'' THEN ''PHSRGASM2WOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMT2WACC'' THEN ''PHSRGASM2WACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMT3WOACC'' THEN ''PHSRGASM3WOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMT3WACC'' THEN ''PHSRGASM3WACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ADVASMTWOACC'' THEN ''PADVASMWOACC''	
+								WHEN assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWOACC'' THEN ''PLSNRHSASMWOACC''
+								WHEN assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWACC'' THEN ''PLSNRHSASMWACC''
+								WHEN rdar.AssessmentRegistrationCompletionStatusCode = ''DidNotParticipate'' THEN ''NPART''
+								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+								else ''MISSING''
+							end'
+					end
+				else if (@categoryCode = 'PROFSTATUS' and @reportCode  IN ('yeartoyearprogress','c175','c178','c179'))
+					begin
+						
+						set @sqlCategoryReturnField = ' 
+							case 
+								WHEN assmntPerfLevl.AssessmentPerformanceLevelIdentifier =''MISSING'' THEN ''MISSING''
+								when CAST(SUBSTRING( assmntPerfLevl.AssessmentPerformanceLevelIdentifier, 2,1) as int ) >= CAST( tgglAssmnt.ProficientOrAboveLevel as int) THEN  ''PROFICIENT''		
+								when CAST(SUBSTRING( assmntPerfLevl.AssessmentPerformanceLevelIdentifier, 2,1) as int ) < CAST( tgglAssmnt.ProficientOrAboveLevel as int)  THEN  ''NOTPROFICIENT''
 								else ''MISSING''
 							end'
 					end
@@ -1639,10 +1693,10 @@ BEGIN
 					begin
 						set @sqlCategoryReturnField = ' 
 							case 
-							WHEN assmnt.PerformanceLevelEdFactsCode =''MISSING'' THEN ''NODETERM''
-							when CAST(SUBSTRING( assmnt.PerformanceLevelEdFactsCode, 2,1) as int ) >= CAST( tgglAssmnt.ProficientOrAboveLevel as int) THEN  ''PROFICIENT''		
-							when CAST(SUBSTRING( assmnt.PerformanceLevelEdFactsCode, 2,1) as int ) < CAST( tgglAssmnt.ProficientOrAboveLevel as int)  THEN  ''NOTPROFICIENT''	
-							else ''MISSING''
+								WHEN assmntPerfLevl.AssessmentPerformanceLevelIdentifier =''MISSING'' THEN ''NODETERM''
+								when CAST(SUBSTRING( assmntPerfLevl.AssessmentPerformanceLevelIdentifier, 2,1) as int ) >= CAST( tgglAssmnt.ProficientOrAboveLevel as int) THEN  ''PROFICIENT''		
+								when CAST(SUBSTRING( assmntPerfLevl.AssessmentPerformanceLevelIdentifier, 2,1) as int ) < CAST( tgglAssmnt.ProficientOrAboveLevel as int)  THEN  ''NOTPROFICIENT''
+								else ''MISSING''
 							end'
 					end
 
@@ -1679,8 +1733,8 @@ BEGIN
 				begin
 					set @sqlCategoryReturnField = ' 
 						case 
-							when CAT_' + @reportField + '.AssessmentSubjectEdFactsCode = ''MATH'' then ''M''	
-							when CAT_' + @reportField + '.AssessmentSubjectEdFactsCode = ''SCIENCE'' then ''S''				
+							when CAT_' + @reportField + '.AssessmentAcademicSubjectEdFactsCode = ''MATH'' then ''M''	
+							when CAT_' + @reportField + '.AssessmentAcademicSubjectEdFactsCode = ''SCIENCE'' then ''S''				
 							else CAT_' + @reportField + '.' + @dimensionField + '
 						end'
 				end
@@ -1780,6 +1834,14 @@ BEGIN
 					inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
 						on CAT_RACE.RaceEdFactsCode = CAT_' + @reportField + '_temp.Code'
 				end
+				else if @reportField = 'RACE' and @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join rds.BridgeK12StudentAssessmentRaces b on fact.FactK12StudentAssessmentId = b.FactK12StudentAssessmentId
+					inner join rds.DimRaces CAT_' + @reportField + ' on b.RaceId = CAT_' + @reportField + '.DimRaceId 
+					inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
+						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code'
+				end
 				else if @reportField = 'RACE'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
@@ -1792,12 +1854,20 @@ BEGIN
 					set @sqlCountJoins = @sqlCountJoins + '		
 						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
 						inner join RDS.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId 
-						inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = CAT_GradeLevel.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentSubjectEdFactsCode	
-															AND tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeEdFactsCode			
+						inner join RDS.DimAssessmentPerformanceLevels assmntPerfLevl on fact.AssessmentPerformanceLevelId = assmntPerfLevl.DimAssessmentPerformanceLevelId
+						inner join RDS.DimGradeLevels grades on fact.GradeLevelWhenAssessedId = grades.DimGradeLevelId
+						inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grades.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
+															AND tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeAdministeredCode			
 						inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
 						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
 						'
 			END	
+			else if (@reportField = 'ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR' and @reportCode in ('c185','c188','c189'))
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+					inner join rds.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId
+					inner join rds.DimAssessmentRegistrations rdar on fact.AssessmentRegistrationId = rdar.DimAssessmentRegistrationId'
+			end	
 			---Begin New Code for c118
 
 			else if(@reportField = 'GRADELEVEL' and @reportCode in ('c118'))
@@ -1833,7 +1903,7 @@ BEGIN
 						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
 						inner join RDS.DimGradeLevels grdlevel on fact.GradeLevelId = grdlevel.DimGradeLevelId
 						inner join RDS.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId 
-						inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grdlevel.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentSubjectEdFactsCode				
+						inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grdlevel.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode				
 						inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
 						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
 						inner join rds.DimCteStatuses cteStatus on fact.CteStatusId = cteStatus.DimCteStatusId			
@@ -1845,7 +1915,7 @@ BEGIN
 					inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
 					inner join RDS.DimGradeLevels grdlevel on fact.GradeLevelId = grdlevel.DimGradeLevelId
 					inner join RDS.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId 
-					inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grdlevel.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentSubjectEdFactsCode	
+					inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grdlevel.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
 					inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
 						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
 					inner join rds.DimCteStatuses cteStatus on fact.CteStatusId = cteStatus.DimCteStatusId			
@@ -1936,6 +2006,7 @@ BEGIN
 		declare @reportFilterCondition as nvarchar(max)
 		set @reportFilterCondition = ''
 
+			
 		if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 		begin
 			IF CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) = 0 
@@ -1943,6 +2014,7 @@ BEGIN
 					set @reportFilterJoin = 'inner join rds.DimIdeaStatuses idea on fact.IdeaStatusId = idea.DimIdeaStatusId'
 					set @reportFilterCondition = @reportFilterCondition + ' and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode not in (''PPPS'')'
 				end				
+
 		end						
 		if @reportCode in ('c002','edenvironmentdisabilitiesage6-21','c089','disciplinaryremovals','c006','c005')
 		begin
@@ -1997,7 +2069,7 @@ BEGIN
 			set @reportFilterJoin = '
 							inner join RDS.DimAssessments assmntSubject on fact.AssessmentId = assmntSubject.DimAssessmentId'
 			set @reportFilterCondition = '
-			and assmntSubject.AssessmentSubjectCode = ''73065'''
+			and assmntSubject.AssessmentAcademicSubjectCode = ''73065'''
 		end
 		else if @reportCode in ('c143')
 		begin
@@ -2766,7 +2838,7 @@ BEGIN
 		end
 		else if @reportCode in ('c175', 'c178', 'c179')
 		begin
-		set @queryFactFilter = 'and CAT_ASSESSMENTTYPE.AssessmentSubjectEdFactsCode = '
+		set @queryFactFilter = 'and CAT_ASSESSMENTTYPEADMINISTERED.AssessmentAcademicSubjectEdFactsCode = '
 			if(@reportCode = 'c175')
 			begin
 				set @queryFactFilter = @queryFactFilter + '''MATH'''
@@ -2782,7 +2854,7 @@ BEGIN
 		end
 		else if @reportCode in ('c185', 'c188', 'c189')
 		begin
-			set @queryFactFilter = 'and CAT_PARTICIPATIONSTATUS.AssessmentSubjectEdFactsCode = '
+			set @queryFactFilter = 'and assmnt.AssessmentAcademicSubjectEdFactsCode = '
 			if(@reportCode = 'c185')
 			begin
 				set @queryFactFilter = @queryFactFilter + '''MATH'''
@@ -5201,10 +5273,11 @@ BEGIN
 					select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 						when @reportLevel = 'lea' then 'fact.LeaId,' 
 						     else 'fact.K12SchoolId,'
-					end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
+					end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
 					sum(isnull(fact.' + @factField + ', 0))
 					from rds.' + @factTable + ' fact ' + @sqlCountJoins 
 					+ ' ' + @reportFilterJoin + '
+					inner join rds.DimPeople p on fact.K12StudentId = p.DimPersonId 
 					where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
 					and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
 					and ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
@@ -5213,7 +5286,7 @@ BEGIN
 					group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 								   when @reportLevel = 'lea' then 'fact.LeaId,'
 								   else 'fact.K12SchoolId,'
-								 end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionGroupFields + '
+								 end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionGroupFields + '
 					' + @sqlHavingClause + '
 					'
 			end
@@ -5915,7 +5988,7 @@ BEGIN
 				
 				if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 				begin
-					set @sql = @sql + ',AssessmentSubject'
+					set @sql = @sql + ',AssessmentAcademicSubject'
 				end
 				else if(@reportCode in ('c150'))
 				begin
@@ -6207,7 +6280,7 @@ BEGIN
 							
 							if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 							begin
-								set @sql = @sql + ',AssessmentSubject'
+								set @sql = @sql + ',AssessmentAcademicSubject'
 							end
 
 							set @sql = @sql + '
@@ -6311,7 +6384,7 @@ BEGIN
 					end
 				if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 					begin
-						set @sql = @sql + ',AssessmentSubject'
+						set @sql = @sql + ',AssessmentAcademicSubject'
 					end
 			
 				-- add StudentRate  field for c150
@@ -6505,7 +6578,7 @@ BEGIN
 				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
-				AssessmentSubject,
+				AssessmentAcademicSubject,
 				CategorySetCode
 			' + @sqlSelectCategoryFieldsExcludePerfLvl + ',AssessmentCount,PERFORMANCELEVEL)
 			select StateANSICode,
@@ -6517,7 +6590,7 @@ BEGIN
 				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
-				AssessmentSubject,
+				AssessmentAcademicSubject,
 				CategorySetCode
 			' + @sqlSelectCategoryFieldsExcludePerfLvl + ',0 as AssessmentCount, b.Code as PERFORMANCELEVEL
 			from ( select StateANSICode,
@@ -6529,7 +6602,7 @@ BEGIN
 				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
-				AssessmentSubject,
+				AssessmentAcademicSubject,
 				CategorySetCode
 			' + @sqlSelectCategoryFieldsExcludePerfLvl +
 			' from  @reportData
@@ -6542,7 +6615,7 @@ BEGIN
 				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
-				AssessmentSubject,
+				AssessmentAcademicSubject,
 				CategorySetCode
 			' + @sqlSelectCategoryFieldsExcludePerfLvl +
 			' having  CategorySetCode =  ''' + @categorySetCode + ''') a
@@ -6563,7 +6636,7 @@ BEGIN
 			inner join ( select  AssessmentTypeCode, Grade, PerformanceLevels, Subject
 			from app.ToggleAssessments
 			) b 
-			on a.ASSESSMENTTYPE = b.AssessmentTypeCode and a.GradeLevel = b.Grade and a.AssessmentSubject = b.Subject
+			on a.ASSESSMENTTYPE = b.AssessmentTypeCode and a.GradeLevel = b.Grade and a.AssessmentAcademicSubject = b.Subject
 			and CAST(SUBSTRING(a.PERFORMANCELEVEL,2,1) as INT) > CAST(b.PerformanceLevels as INT)
 			'
 
@@ -6580,7 +6653,7 @@ BEGIN
 				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
-				ASSESSMENTSUBJECT,
+				ASSESSMENTAcademicSUBJECT,
 				CategorySetCode
 			' + @sqlCategoryFields + ', ' + @factField
 		
@@ -6595,7 +6668,7 @@ BEGIN
 				ParentOrganizationIdentifierSea,
 				TableTypeAbbrv,
 				TotalIndicator,
-				ASSESSMENTSUBJECT,
+				ASSESSMENTAcademicSUBJECT,
 				CategorySetCode
 			' + @sqlCategoryFields + ',AssessmentCount
 			from #performanceData_' + @categorySetCode + '
@@ -6644,7 +6717,7 @@ BEGIN
 		
 		if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 			begin
-				set @sql = @sql + ',AssessmentSubject'
+				set @sql = @sql + ',AssessmentAcademicSubject'
 			end
 		
 		set @sql = @sql + ')
@@ -6874,34 +6947,60 @@ BEGIN
 			END
 
 		if @reportCode in ('c175','c178','c179')
-			begin
+		begin
 
 				set @sql = @sql + ' delete a from @reportData a
 					where a.' +  @factField + ' = 0 
 					AND NOT EXISTS (Select 1 from app.ToggleAssessments b
-									  where a.AssessmentType = b.AssessmentTypeCode
+									  where a.ASSESSMENTTYPEADMINISTERED = b.AssessmentTypeCode
 									  and a.GradeLevel = b.Grade
-									  and a.AssessmentSubject = b.Subject
-									  and LEN(a.PerformanceLevel) = 2
-									  and CAST(SUBSTRING(a.PerformanceLevel,2,1) as INT) <= CAST(b.PerformanceLevels as INT))'
+									  and a.AssessmentAcademicSubject = b.Subject)'
 
-			end
-		else if @reportCode in ('c185','c189')
+		end
+		else if @reportCode in ('c185', 'c188', 'c189')
              begin
-				  set @sql = @sql + ' delete a from @reportData a
+				  set @sql = @sql + ' 
+						delete a from @reportData a
 						where a.' + @factField + ' = 0
+						AND RIGHT(a.TableTypeAbbrv, 2) = ''LG''
+						AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'')
 						AND NOT EXISTS (Select 1 from app.ToggleAssessments b
 											where a.GradeLevel = b.Grade
-											and a.AssessmentSubject = b.Subject)'
+											and a.AssessmentAcademicSubject = b.Subject
+											and a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = replace(b.AssessmentTypeCode, ''ASS'', ''PART''))'
+
+
+					set @sql = @sql + ' 
+						delete a from @reportData a
+						where a.' + @factField + ' = 0
+						AND RIGHT(a.TableTypeAbbrv, 2) = ''LG''
+						AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'')
+						AND NOT EXISTS (Select 1 from app.ToggleAssessments b
+											where a.GradeLevel = b.Grade
+											and a.AssessmentAcademicSubject = b.Subject
+											and a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = (''P'' + replace(b.AssessmentTypeCode, ''ASMT'', ''ASM'')))'
+
+					set @sql = @sql + ' 
+						delete a from @reportData a
+						where a.' + @factField + ' = 0
+						AND RIGHT(a.TableTypeAbbrv, 2) = ''HS''
+						AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR IN (''ALTPARTALTACH'')
+						AND NOT EXISTS (Select 1 from app.ToggleAssessments b
+											where a.GradeLevel = b.Grade
+											and a.AssessmentAcademicSubject = b.Subject
+											and a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = replace(b.AssessmentTypeCode, ''ASS'', ''PART''))'
+
+
+					set @sql = @sql + ' 
+						delete a from @reportData a
+						where a.' + @factField + ' = 0
+						AND RIGHT(a.TableTypeAbbrv, 2) = ''HS''
+						AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''ALTPARTALTACH'')
+						AND NOT EXISTS (Select 1 from app.ToggleAssessments b
+											where a.GradeLevel = b.Grade
+											and a.AssessmentAcademicSubject = b.Subject
+											and a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = (''P'' + replace(b.AssessmentTypeCode, ''ASMT'', ''ASM'')))'
 		   end
-        else if @reportCode in ('c188')
-		     begin
-				set @sql = @sql + ' delete a from @reportData a
-						where a.' + @factField + ' = 0
-						AND NOT EXISTS (Select 1 from app.ToggleAssessments b
-											where a.GradeLevel = b.Grade
-											and a.AssessmentSubject = b.Subject)'
-             end
 		/*Student count for displaced homemakers ?  If the state does not have displaced homemakers at the secondary level, leave that category set out of the file */
 		else if @reportCode in ('c082','c083','c142','c154','c155','c156','c157','c158') and @toggleDisplacedHomemakers = '0'
 			BEGIN
