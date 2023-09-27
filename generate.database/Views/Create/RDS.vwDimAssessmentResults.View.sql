@@ -4,7 +4,7 @@ AS
 		DimAssessmentResultId
 		, rsy.SchoolYear
 		, AssessmentScoreMetricTypeCode
-		, sssrd1.OutputCode AS AssessmentScoreMetricTypeMap
+		, sssrd1.InputCode AS AssessmentScoreMetricTypeMap
 	FROM rds.DimAssessmentResults rdar
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1

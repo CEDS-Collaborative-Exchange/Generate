@@ -55,7 +55,7 @@ begin
 	--new assessment ADVASMTWOACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'ADVASMTWOACC'
 	) = 0
@@ -74,7 +74,7 @@ begin
 	--new assessment ADVASMTWACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'ADVASMTWACC'
 	) = 0
@@ -93,7 +93,7 @@ begin
 	--new assessment IADAPLASMTWOACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'IADAPLASMTWOACC'
 	) = 0
@@ -112,7 +112,7 @@ begin
 	--new assessment IADAPLASMTWACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'IADAPLASMTWACC'
 	) = 0
@@ -131,7 +131,7 @@ begin
 	--new assessment HSREGASMTIWOACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'HSREGASMTIWOACC'
 	) = 0
@@ -150,7 +150,7 @@ begin
 	--new assessment HSREGASMTIWACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'HSREGASMTIWACC'
 	) = 0
@@ -169,7 +169,7 @@ begin
 	--new assessment HSREGASMT2WOACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'HSREGASMT2WOACC'
 	) = 0
@@ -188,7 +188,7 @@ begin
 	--new assessment HSREGASMT2WACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'HSREGASMT2WACC'
 	) = 0
@@ -207,7 +207,7 @@ begin
 	--new assessment HSREGASMT3WOACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'HSREGASMT3WOACC'
 	) = 0
@@ -226,7 +226,7 @@ begin
 	--new assessment HSREGASMT3WACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'HSREGASMT3WACC'
 	) = 0
@@ -245,7 +245,7 @@ begin
 	--new assessment LSNRHSASMTWOACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'LSNRHSASMTWOACC'
 	) = 0
@@ -264,7 +264,7 @@ begin
 	--new assessment LSNRHSASMTWACC
 	if (select count(*) 
 		from staging.SourceSystemReferencedata 
-		where tablename = 'RefAssessmentTypeChildrenWithDisabilities'
+		where tablename = 'RefAssessmentTypeAdministered'
 		and schoolyear = 2023
 		and OutputCode = 'LSNRHSASMTWACC'
 	) = 0

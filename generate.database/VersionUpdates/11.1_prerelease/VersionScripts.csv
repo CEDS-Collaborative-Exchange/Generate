@@ -6,6 +6,7 @@ VersionUpdates\\11.1_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\11.1_prerelease,DataChanges.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
 VersionUpdates\\11.1_prerelease,UpdateSourceSystemReferenceData.sql,0
+VersionUpdates\\11.1_prerelease,AddToggleQuestions.sql,0
 Views\\Drop,RDS.vwDimAssessments.View.sql,0
 Views\\Create,RDS.vwDimAssessments.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
@@ -32,4 +33,5 @@ StoredProcedures\\Drop,Staging.Rollover_SourceSystemReferenceData.StoredProcedur
 StoredProcedures\\Create,Staging.Rollover_SourceSystemReferenceData.StoredProcedure.sql,0
 StoredProcedures\\Drop,dbo.Get_AssessmentTypeChildrenWithDisabilities.StoredProcedure.sql,0
 StoredProcedures\\Create,dbo.Get_AssessmentTypeChildrenWithDisabilities.StoredProcedure.sql,0
+VersionUpdates\\11.1_prerelease,RepopulateFactK12StudentAssessments.sql,0
 VersionUpdates\\11.1_prerelease,UpdateDbVersion.sql,0
