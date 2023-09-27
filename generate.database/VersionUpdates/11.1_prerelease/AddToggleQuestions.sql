@@ -37,20 +37,20 @@ values (1, 'High school regular assessment II, without accommodations', @hsQuest
 
 --insert into Toggle Responses for Assessment LG question
 insert into app.ToggleResponses
-values ('ADVASMTWOACC', @lgQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @lgQuestionid and OptionSequence = 1)), 
-	('ADVASMTWACC', @lgQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @lgQuestionid and OptionSequence = 2)), 
-	('IADAPLASMTWOACC', @lgQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @lgQuestionid and OptionSequence = 3)), 
-	('IADAPLASMTWACC', @lgQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @lgQuestionid and OptionSequence = 4))
+values ('Advanced assessment without accommodations', @lgQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @lgQuestionid and OptionSequence = 1)), 
+	('Advanced assessment with accommodations', @lgQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @lgQuestionid and OptionSequence = 2)), 
+	('Innovative Assessment Demonstration Authority (IADA) pilot assessment without accommodations', @lgQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @lgQuestionid and OptionSequence = 3)), 
+	('Innovative Assessment Demonstration Authority (IADA) pilot assessment with accommodations', @lgQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @lgQuestionid and OptionSequence = 4))
 
 --insert into Toggle Responses for Assessment LG question
 insert into app.ToggleResponses
-values ('HSREGASMT2WOACC', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 1)), 
-	('HSREGASMT2WACC', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 2)), 
-	('HSREGASMT3WOACC', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 3)), 
-	('HSREGASMT3WACC', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 4)),
-	('ADVASMTWOACC', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 5)), 
-	('ADVASMTWACC', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 6)), 
-	('IADAPLASMTWOACC', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 7)), 
-	('IADAPLASMTWACC', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 8)),
-	('LSNRHSASMTWOACC', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 9)), 
-	('LSNRHSASMTWACC', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 10)) 
+values ('High school regular assessment II, without accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 1)), 
+	('High school regular assessment II, with accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 2)), 
+	('High school regular assessment III, without accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 3)), 
+	('High school regular assessment III, with accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 4)),
+	('Advanced assessment without accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 5)), 
+	('Advanced assessment with accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 6)), 
+	('Innovative Assessment Demonstration Authority (IADA) pilot assessment without accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 7)), 
+	('Innovative Assessment Demonstration Authority (IADA) pilot assessment with accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 8)),
+	('Locally-selected nationally recognized high school assessment without accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 9)), 
+	('Locally-selected nationally recognized high school assessment with accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 10)) 
