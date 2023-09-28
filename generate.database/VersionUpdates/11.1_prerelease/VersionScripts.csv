@@ -4,6 +4,7 @@ VersionUpdates\\11.1_prerelease,Dimension-Changes.sql,0
 VersionUpdates\\11.1_prerelease,V11.1SchemaUpgrade.sql,0
 VersionUpdates\\11.1_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\11.1_prerelease,DataChanges.sql,0
+VersionUpdates\\11.1_prerelease,ToggleArchive.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
 VersionUpdates\\11.1_prerelease,UpdateSourceSystemReferenceData.sql,0
 VersionUpdates\\11.1_prerelease,AddToggleQuestions.sql,0
