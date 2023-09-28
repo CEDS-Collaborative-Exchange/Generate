@@ -1,12 +1,17 @@
 VersionUpdates\\11.1_prerelease,Restore 11.0.sql,0
+VersionUpdates\\11.1_prerelease,Metadata-FileSpec-Categories.sql,0
+VersionUpdates\\11.1_prerelease,Dimension-Changes.sql,0
 VersionUpdates\\11.1_prerelease,V11.1SchemaUpgrade.sql,0
 VersionUpdates\\11.1_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\11.1_prerelease,DataChanges.sql,0
 VersionUpdates\\11.1_prerelease,ToggleArchive.sql,0
-Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
-Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+Metadata,App.ViewDefinitions.Metadata.sql,0
+VersionUpdates\\11.1_prerelease,UpdateSourceSystemReferenceData.sql,0
+VersionUpdates\\11.1_prerelease,AddToggleQuestions.sql,0
 Views\\Drop,RDS.vwDimAssessments.View.sql,0
 Views\\Create,RDS.vwDimAssessments.View.sql,0
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
 Views\\Drop,RDS.vwDimAssessmentAccommodations.View.sql,0
 Views\\Create,RDS.vwDimAssessmentAccommodations.View.sql,0
 Views\\Drop,RDS.vwDimAssessmentResults.View.sql,0
@@ -27,4 +32,7 @@ StoredProcedures\\Drop,App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sq
 StoredProcedures\\Create,App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Rollover_SourceSystemReferenceData.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Rollover_SourceSystemReferenceData.StoredProcedure.sql,0
+StoredProcedures\\Drop,dbo.Get_AssessmentTypeChildrenWithDisabilities.StoredProcedure.sql,0
+StoredProcedures\\Create,dbo.Get_AssessmentTypeChildrenWithDisabilities.StoredProcedure.sql,0
+VersionUpdates\\11.1_prerelease,RepopulateFactK12StudentAssessments.sql,0
 VersionUpdates\\11.1_prerelease,UpdateDbVersion.sql,0

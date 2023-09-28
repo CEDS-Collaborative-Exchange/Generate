@@ -4,9 +4,9 @@ AS
 		DimAssessmentAccommodationId
 		, rsy.SchoolYear
    		, AssessmentAccommodationCategoryCode
-		, sssrd1.OutputCode AS AssessmentAccommodationCategoryMap
+		, sssrd1.InputCode AS AssessmentAccommodationCategoryMap
       	, AccommodationTypeCode
-		, sssrd1.OutputCode AS AccommodationTypeMap
+		, sssrd1.InputCode AS AccommodationTypeMap
 	FROM rds.DimAssessmentAccommodations rdaa
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1

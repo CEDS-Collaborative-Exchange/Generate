@@ -120,7 +120,7 @@ begin try
 						BEGIN
 						IF(@reportTypeId=@generateReportTypeId)
 							BEGIN
-								IF (@reportCode='c151' OR @reportCode='c150' OR @reportCode='c116')
+								IF @reportCode in ('c151','c150','c116','c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 								BEGIN
 									SET @rowFields='"rowFields":{"items":["SEA","SEA ID","Table Type"'
 								END	
@@ -144,7 +144,7 @@ begin try
 							IF(@reportTypeId = @generateReportTypeId)
 								BEGIN
 								
-								IF (@reportCode='c151' OR @reportCode='c150' OR @reportCode='c116')
+								IF @reportCode in ('c151','c150','c116','c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 								BEGIN
 									SET @rowFields='"rowFields":{"items":["LEA","LEA ID","Table Type"'
 								END	
@@ -165,7 +165,7 @@ begin try
 						BEGIN
 							IF(@reportTypeId=@generateReportTypeId)
 							BEGIN
-								IF (@reportCode='c151' OR @reportCode='c150')
+								IF @reportCode in ('c151','c150','c116','c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 								BEGIN
 									SET @rowFields='"rowFields":{"items":["School","School ID","Table Type"'
 								END	
@@ -192,7 +192,7 @@ begin try
 							SET @fields=@fields+'{"binding":"parentOrganizationName","header":"LEA Name","dataType":1,"aggregate":0,"showAs":0,"descending":false,"format":"","width":250,"wordWrap":true,"isContentHtml":false},'
 						END
 					END
-					IF (@reportCode='c151' OR @reportCode='c150' OR @reportCode='c116')
+					IF @reportCode in ('c151','c150','c116','c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 					BEGIN
 						SET @fields=@fields+'{"binding":"tableTypeAbbrv","header":"Table Type","dataType":1,"aggregate":0,"showAs":0,"descending":false,"format":"","width":250,"wordWrap":true,"isContentHtml":false},'
 					END	

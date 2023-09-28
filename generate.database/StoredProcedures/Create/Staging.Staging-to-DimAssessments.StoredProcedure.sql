@@ -28,12 +28,16 @@ BEGIN
 			, AssessmentShortName										VARCHAR (100) 	NULL
 			, AssessmentTypeCode										VARCHAR (100) 	NULL
 			, AssessmentTypeDescription									VARCHAR (300) 	NULL
+			, AssessmentTypeEdFactsCode									VARCHAR (100) 	NULL
 			, AssessmentAcademicSubjectCode								VARCHAR (100) 	NULL
 			, AssessmentAcademicSubjectDescription						VARCHAR (300) 	NULL
+			, AssessmentAcademicSubjectEdFactsCode						VARCHAR (50) 	NULL
 			, AssessmentTypeAdministeredCode							VARCHAR (100) 	NULL
 			, AssessmentTypeAdministeredDescription						VARCHAR (300) 	NULL
+			, AssessmentTypeAdministeredEdFactsCode						VARCHAR (100) 	NULL
 			, AssessmentTypeAdministeredToEnglishLearnersCode			VARCHAR (100) 	NULL
 			, AssessmentTypeAdministeredToEnglishLearnersDescription	VARCHAR (300) 	NULL
+			, AssessmentTypeAdministeredToEnglishLearnersEdFactsCode	VARCHAR (100) 	NULL
 		)
 		
 		INSERT INTO #Assessments (
@@ -42,13 +46,17 @@ BEGIN
 			, AssessmentTitle							
 			, AssessmentShortName						
 			, AssessmentTypeCode									
-			, AssessmentTypeDescription								
+			, AssessmentTypeDescription	
+			, AssessmentTypeEdFactsCode							
 			, AssessmentAcademicSubjectCode							
-			, AssessmentAcademicSubjectDescription					
+			, AssessmentAcademicSubjectDescription	
+			, AssessmentAcademicSubjectEdFactsCode				
 			, AssessmentTypeAdministeredCode						
-			, AssessmentTypeAdministeredDescription					
+			, AssessmentTypeAdministeredDescription
+			, AssessmentTypeAdministeredEdFactsCode					
 			, AssessmentTypeAdministeredToEnglishLearnersCode		
 			, AssessmentTypeAdministeredToEnglishLearnersDescription
+			, AssessmentTypeAdministeredToEnglishLearnersEdFactsCode
 		)		
 		SELECT DISTINCT
 			AssessmentIdentifier
@@ -57,12 +65,16 @@ BEGIN
 			, AssessmentShortName
 			, sssrd1.OutputCode					as AssessmentTypeCode
 			, NULL								as AssessmentTypeDescription
+			, sssrd1.OutputCode					as AssessmentTypeEdFactsCode
 			, sssrd2.OutputCode					as AssessmentAcademicSubjectCode
 			, NULL								as AssessmentAcademicSubjectDescription
+			, NULL								as AssessmentAcademicSubjecteEdFactsCode
 			, sssrd3.OutputCode					as AssessmentTypeAdministeredCode
 			, NULL								as AssessmentTypeAdministeredDescription
+			, NULL								as AssessmentTypeAdministeredEdFactsCode
 			, sssrd4.OutputCode					as AssessmentTypeAdministeredToEnglishLearnersCode
 			, NULL								as AssessmentTypeAdministeredToEnglishLearnersDescription
+			, NULL								as AssessmentTypeAdministeredToEnglishLearnersEdFactsCode
 		FROM Staging.Assessment sa
 		CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 		LEFT JOIN staging.SourceSystemReferenceData sssrd1
@@ -82,30 +94,60 @@ BEGIN
 			AND sssrd4.TableName = 'RefAssessmentTypeAdministeredToEnglishLearners'
 			AND rsy.SchoolYear = sssrd4.SchoolYear
 
-	--Add the AssessmentType Description	
+	--Add the AssessmentType Description
+		--AssessmentType EDFacts Code is handled in the code above by using the CEDS Output code from SSRD
 		UPDATE a
 		SET AssessmentTypeDescription = ccosm.CedsOptionSetDescription
 		FROM #Assessments a
 			INNER JOIN CEDS.CedsOptionSetMapping ccosm
 				ON a.AssessmentTypeCode = ccosm.CedsOptionSetCode
 
-	--Add the AssessmentAcademicSubject Description	
+	--Add the AssessmentAcademicSubject Description and EDFacts Code	
 		UPDATE a
-		SET AssessmentAcademicSubjectDescription = ccosm.CedsOptionSetDescription
+		SET AssessmentAcademicSubjectDescription = ccosm.CedsOptionSetDescription,
+			assessmentAcademicSubjectEdFactsCode = 
+				CASE AssessmentAcademicSubjectCode
+					WHEN '01166' THEN 'MATH'
+					WHEN '13373' THEN 'RLA'
+					WHEN '00562' THEN 'SCIENCE'
+					WHEN '73065' THEN 'CTE'
+					ELSE 'MISSING'
+				END
 		FROM #Assessments a
 			INNER JOIN CEDS.CedsOptionSetMapping ccosm
 				ON a.AssessmentAcademicSubjectCode = ccosm.CedsOptionSetCode
 
-	--Add the AssessmentTypeAdministered Description	
+	--Add the AssessmentTypeAdministered Description and EDFacts Code	
 		UPDATE a
-		SET AssessmentTypeAdministeredDescription = ccosm.CedsOptionSetDescription
+		SET AssessmentTypeAdministeredDescription = ccosm.CedsOptionSetDescription,
+			AssessmentTypeAdministeredEdFactsCode = 
+				CASE AssessmentTypeAdministeredCode
+					WHEN 'REGASSWOACC'		THEN 'REGASSWOACC'
+					WHEN 'REGASSWACC'		THEN 'REGASSWACC'	
+					WHEN 'ALTASSALTACH'		THEN 'ALTASSALTACH'
+					WHEN 'HSREGASMTIWOACC'	THEN 'HSREGASMTIWOACC'
+					WHEN 'HSREGASMTIWACC'	THEN 'HSREGASMTIWACC'	
+					WHEN 'HSREGASMT2WOACC'	THEN 'HSREGASMT2WOACC'	
+					WHEN 'HSREGASMT2WACC'	THEN 'HSREGASMT2WACC'	
+					WHEN 'HSREGASMT3WOACC'	THEN 'HSREGASMT3WOACC'	
+					WHEN 'HSREGASMT3WACC'	THEN 'HSREGASMT3WACC'	
+					WHEN 'LSNRHSASMTWOACC'	THEN 'LSNRHSASMTWOACC'	
+					WHEN 'LSNRHSASMTWACC'	THEN 'LSNRHSASMTWACC'	
+					ELSE 'MISSING'
+				END
 		FROM #Assessments a
 			INNER JOIN CEDS.CedsOptionSetMapping ccosm
 				ON a.AssessmentTypeAdministeredCode = ccosm.CedsOptionSetCode
 
-	--Add the AssessmentTypeAdministeredToEnglishLearners Description	
+	--Add the AssessmentTypeAdministeredToEnglishLearners Description and EDFacts Code	
 		UPDATE a
-		SET AssessmentTypeAdministeredToEnglishLearnersDescription = ccosm.CedsOptionSetDescription
+		SET AssessmentTypeAdministeredToEnglishLearnersDescription = ccosm.CedsOptionSetDescription,
+			AssessmentTypeAdministeredToEnglishLearnersEdFactsCode =
+				CASE AssessmentTypeAdministeredToEnglishLearnersCode
+					WHEN 'REGELPASMNT' THEN 'REGELPASMNT'
+					WHEN 'ALTELPASMNTALT' THEN 'ALTELPASMNTALT'
+					ELSE 'MISSING'
+				END
 		FROM #Assessments a
 			INNER JOIN CEDS.CedsOptionSetMapping ccosm
 				ON a.AssessmentTypeAdministeredToEnglishLearnersCode = ccosm.CedsOptionSetCode
@@ -118,13 +160,9 @@ BEGIN
 				AND ISNULL(trgt.AssessmentTitle, '') = ISNULL(src.AssessmentTitle, '')
 				AND ISNULL(trgt.AssessmentShortName, '') = ISNULL(src.AssessmentShortName, '')
 				AND ISNULL(trgt.AssessmentTypeCode, '') = ISNULL(src.AssessmentTypeCode, '')
-				AND ISNULL(trgt.AssessmentTypeDescription, '') = ISNULL(src.AssessmentTypeDescription, '')
 				AND ISNULL(trgt.AssessmentAcademicSubjectCode, '') = ISNULL(src.AssessmentAcademicSubjectCode, '')
-				AND ISNULL(trgt.AssessmentAcademicSubjectDescription, '') = ISNULL(src.AssessmentAcademicSubjectDescription, '')
 				AND ISNULL(trgt.AssessmentTypeAdministeredCode, '') = ISNULL(src.AssessmentTypeAdministeredCode, '')
-				AND ISNULL(trgt.AssessmentTypeAdministeredDescription, '') = ISNULL(src.AssessmentTypeAdministeredDescription, '')
 				AND ISNULL(trgt.AssessmentTypeAdministeredToEnglishLearnersCode, '') = ISNULL(src.AssessmentTypeAdministeredToEnglishLearnersCode, '')
-				AND ISNULL(trgt.AssessmentTypeAdministeredToEnglishLearnersDescription, '') = ISNULL(src.AssessmentTypeAdministeredToEnglishLearnersDescription, '')
 		WHEN NOT MATCHED BY TARGET THEN     --- Records Exists in Source but NOT in Target
 		INSERT (
 			AssessmentIdentifierState
@@ -132,13 +170,17 @@ BEGIN
 			, AssessmentTitle
 			, AssessmentShortName
 			, AssessmentTypeCode									
-			, AssessmentTypeDescription								
+			, AssessmentTypeDescription
+			, AssessmentTypeEdFactsCode
 			, AssessmentAcademicSubjectCode							
-			, AssessmentAcademicSubjectDescription					
+			, AssessmentAcademicSubjectDescription
+			, AssessmentAcademicSubjectEdFactsCode
 			, AssessmentTypeAdministeredCode						
-			, AssessmentTypeAdministeredDescription					
+			, AssessmentTypeAdministeredDescription
+			, AssessmentTypeAdministeredEdFactsCode
 			, AssessmentTypeAdministeredToEnglishLearnersCode		
 			, AssessmentTypeAdministeredToEnglishLearnersDescription
+			, AssessmentTypeAdministeredToEnglishLearnersEdFactsCode
 		)
 		VALUES (
 			  src.AssessmentIdentifier
@@ -146,13 +188,17 @@ BEGIN
 			, src.AssessmentTitle
 			, src.AssessmentShortName
 			, src.AssessmentTypeCode									
-			, src.AssessmentTypeDescription								
+			, src.AssessmentTypeDescription
+			, src.AssessmentTypeEdFactsCode
 			, src.AssessmentAcademicSubjectCode							
-			, src.AssessmentAcademicSubjectDescription					
+			, src.AssessmentAcademicSubjectDescription
+			, src.AssessmentAcademicSubjectEdFactsCode
 			, src.AssessmentTypeAdministeredCode						
-			, src.AssessmentTypeAdministeredDescription					
+			, src.AssessmentTypeAdministeredDescription
+			, src.AssessmentTypeAdministeredEdFactsCode
 			, src.AssessmentTypeAdministeredToEnglishLearnersCode		
 			, src.AssessmentTypeAdministeredToEnglishLearnersDescription
+			, src.AssessmentTypeAdministeredToEnglishLearnersEdFactsCode
 		);
 
 		ALTER INDEX ALL ON RDS.DimAssessments REBUILD

@@ -8,13 +8,13 @@ AS
 		, AssessmentTitle
 		, AssessmentShortName
 		, AssessmentTypeCode
-		, sssrd1.OutputCode AS AssessmentTypeMap
+		, sssrd1.InputCode AS AssessmentTypeMap
 		, AssessmentAcademicSubjectCode
-		, sssrd2.OutputCode AS AssessmentAcademicSubjectMap
+		, sssrd2.InputCode AS AssessmentAcademicSubjectMap
 		, AssessmentTypeAdministeredCode
-		, sssrd3.OutputCode AS AssessmentTypeAdministeredMap
+		, sssrd3.InputCode AS AssessmentTypeAdministeredMap
 		, AssessmentTypeAdministeredToEnglishLearnersCode
-		, sssrd4.OutputCode AS AssessmentTypeAdministeredToEnglishLearnersMap
+		, sssrd4.InputCode AS AssessmentTypeAdministeredToEnglishLearnersMap
 	FROM rds.DimAssessments rda
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
