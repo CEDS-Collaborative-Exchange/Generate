@@ -13,87 +13,87 @@ BEGIN
 	BEGIN TRY
 		EXEC Staging.Rollover_SourceSystemReferenceData -- This only happens when it is needed
 
+		--Populate DimSeas
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-DimSeas')
 
-		--Populate DimSeas
-		exec [Staging].[Staging-to-DimSeas] 'directory', NULL, 0
+			exec [Staging].[Staging-to-DimSeas] 'directory', NULL, 0
 
+		--Populate DimLeas
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-DimLeas')
 
-		--Populate DimLeas
-		exec [Staging].[Staging-to-DimLeas] 'directory', NULL, 0
+			exec [Staging].[Staging-to-DimLeas] 'directory', NULL, 0
 
+		--Populate DimK12Schools
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-DimK12Schools')
 
-		--Populate DimK12Schools
 		exec [Staging].[Staging-to-DimK12Schools] NULL, 0
 
 	
-	--write out message to DataMigrationHistories
+		--Populate Charter Authorizer	
+			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-DimCharterSchoolAuthorizers')
 
-		--Populate Charter Authorizer	
 		exec Staging.[Staging-to-DimCharterSchoolAuthorizers] 
 
-	--write out message to DataMigrationHistories
+		--Populate Charter Management Organizations
+			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-DimCharterSchoolManagementOrganizations')
 
-		--Populate Charter Authorizer	
-		exec Staging.[Staging-to-DimCharterSchoolManagementOrganizations] 
+			exec Staging.[Staging-to-DimCharterSchoolManagementOrganizations] 
 
 
-		--write out message to DataMigrationHistories
-		insert into app.DataMigrationHistories
-		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-FactOrganizationCounts')
+		--Populate the Fact table
+			--write out message to DataMigrationHistories
+			insert into app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-FactOrganizationCounts')
 
-		--remove the cursor if a previous migraton stopped/failed
-		if cursor_status('global','selectedYears_cursor') >= -1
-		begin
-			deallocate selectedYears_cursor
-		end
-		
-		DECLARE @submissionYear AS VARCHAR(50)
-		DECLARE selectedYears_cursor CURSOR FOR 
-		SELECT d.SchoolYear
-			FROM rds.DimSchoolYears d
-			JOIN rds.DimSchoolYearDataMigrationTypes dd 
-				ON dd.DimSchoolYearId = d.DimSchoolYearId
-			JOIN rds.DimDataMigrationTypes b 
-				ON b.DimDataMigrationTypeId = dd.DataMigrationTypeId 
-			WHERE d.DimSchoolYearId <> -1 
-			AND dd.IsSelected = 1 
-			AND DataMigrationTypeCode = 'RDS'
+			--remove the cursor if a previous migraton stopped/failed
+			if cursor_status('global','selectedYears_cursor') >= -1
+			begin
+				deallocate selectedYears_cursor
+			end
+			
+			DECLARE @submissionYear AS VARCHAR(50)
+			DECLARE selectedYears_cursor CURSOR FOR 
+			SELECT d.SchoolYear
+				FROM rds.DimSchoolYears d
+				JOIN rds.DimSchoolYearDataMigrationTypes dd 
+					ON dd.DimSchoolYearId = d.DimSchoolYearId
+				JOIN rds.DimDataMigrationTypes b 
+					ON b.DimDataMigrationTypeId = dd.DataMigrationTypeId 
+				WHERE d.DimSchoolYearId <> -1 
+				AND dd.IsSelected = 1 
+				AND DataMigrationTypeCode = 'RDS'
 
-		OPEN selectedYears_cursor
-		FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
-		WHILE @@FETCH_STATUS = 0
-		BEGIN
-
-			begin try
-				--Populate the organization tables	
-				exec [Staging].[Staging-to-FactOrganizationCounts] @submissionyear
-			end try
-			begin catch
-				insert into app.DataMigrationHistories
-				(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory failed to run - ' + ERROR_MESSAGE())
-			end catch
-
-
+			OPEN selectedYears_cursor
 			FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
-		END
-		close selectedYears_Cursor
-		deallocate selectedYears_Cursor
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+
+				begin try
+					--Populate the organization tables	
+					exec [Staging].[Staging-to-FactOrganizationCounts] @submissionyear
+				end try
+				begin catch
+					insert into app.DataMigrationHistories
+					(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory failed to run - ' + ERROR_MESSAGE())
+				end catch
 
 
-	--RDS migration complete
+				FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
+			END
+			close selectedYears_Cursor
+			deallocate selectedYears_Cursor
+
+		--RDS migration complete
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Complete - Directory')
