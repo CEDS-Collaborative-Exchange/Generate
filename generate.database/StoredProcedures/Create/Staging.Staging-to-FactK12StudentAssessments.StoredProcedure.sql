@@ -682,10 +682,24 @@ BEGIN
 		ALTER INDEX ALL ON RDS.FactK12StudentAssessments REBUILD
 
 	--Populate the assessment race bridge table
+
+		IF OBJECT_ID(N'tempdb..#raceHispanic') IS NOT NULL DROP TABLE #raceHispanic
+
+		SELECT 	
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+		INTO #raceHispanic
+		FROM staging.K12Enrollment
+		WHERE HispanicLatinoEthnicity = 1
+
 		SELECT DISTINCT
 			  rfksa.FactK12StudentAssessmentId
 			, rdsy.SchoolYear
-			, spr.RaceMap
+			, CASE 
+				WHEN ISNULL(rh.StudentIdentifierState, '') <> '' THEN 'HispanicLatinoEthnicity'
+				ELSE ISNULL(spr.RaceMap, 'MISSING')
+			  END AS RaceMap
 		INTO #temp
 		FROM RDS.FactK12StudentAssessments rfksa
 		JOIN RDS.DimSchoolYears rdsy
@@ -696,6 +710,10 @@ BEGIN
 			ON rfksa.K12SchoolId = rdks.DimK12SchoolId
 		JOIN RDS.DimLeas rdlsAcc
 			ON rfksa.LeaId = rdlsAcc.DimLeaID
+		LEFT JOIN #raceHispanic rh
+			ON rh.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
+			AND ISNULL(rh.LeaIdentifierSeaAccountability, '') = rdlsAcc.LeaIdentifierSea
+			AND ISNULL(rh.SchoolIdentifierSea, '') = rdks.SchoolIdentifierSea
 		-- LEFT JOIN RDS.DimDataCollections rddc
 		-- 	ON rfksa.DataCollectionId = rddc.DimDataCollectionId
 		-- 	AND rddc.DataCollectionName = @DataCollectionName
