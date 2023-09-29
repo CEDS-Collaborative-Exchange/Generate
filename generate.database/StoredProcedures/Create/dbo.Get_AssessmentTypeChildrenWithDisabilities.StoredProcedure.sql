@@ -1,9 +1,21 @@
 ﻿CREATE PROCEDURE [dbo].[Get_AssessmentTypeChildrenWithDisabilities]
+@subject as varchar(50),
 @grade as varchar(50)
 AS
 BEGIN
 
+	declare @isLowerGrade as bit = 0
+
 	IF @grade IN ('03', '04', '05', '06', '07', '08')
+	BEGIN
+		set @isLowerGrade = 1
+	END
+	ELSE IF @grade = '09' AND @subject = 'SCIENCE'
+	BEGIN
+		set @isLowerGrade = 1
+	END
+
+	IF @isLowerGrade = 1
 	BEGIN
 
 		SELECT 1 as RefAssessmentTypeChildrenWithDisabilitiesId, 'Regular assessments based on grade-level achievement standards without accommodations' as [Description], 
