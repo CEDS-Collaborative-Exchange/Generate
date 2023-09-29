@@ -735,7 +735,6 @@ BEGIN
 		JOIN #vwRaces rdr
 			ON t.RaceMap = ISNULL(rdr.RaceMap, rdr.RaceCode)
 
-
 	--Populate the accommodations bridge table
 		INSERT INTO RDS.BridgeK12StudentAssessmentAccommodations (
 		  FactK12StudentAssessmentId
