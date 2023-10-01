@@ -697,7 +697,7 @@ BEGIN
 			  rfksa.FactK12StudentAssessmentId
 			, rdsy.SchoolYear
 			, CASE 
-				WHEN ISNULL(rh.StudentIdentifierState, '') <> '' THEN 'HispanicLatinoEthnicity'
+				WHEN ISNULL(rh.StudentIdentifierState, '') <> '' THEN 'HispanicOrLatinoEthnicity'
 				ELSE ISNULL(spr.RaceMap, 'MISSING')
 			  END AS RaceMap
 		INTO #temp
