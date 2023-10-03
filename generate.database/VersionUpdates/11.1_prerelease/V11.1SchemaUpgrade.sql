@@ -113,6 +113,22 @@ PRINT N'Creating new indexes for Assessment process';
 		ON [Staging].[PersonStatus] ([ProgramType_FosterCare])
 		INCLUDE ([StudentIdentifierState],[LeaIdentifierSeaAccountability],[SchoolIdentifierSea],[FosterCare_ProgramParticipationStartDate],[FosterCare_ProgramParticipationEndDate])
 
+	CREATE NONCLUSTERED INDEX [OrganizationGradeOffered_SchoolYear]
+		ON [Staging].[OrganizationGradeOffered] ([SchoolYear])
+		INCLUDE ([OrganizationIdentifier],[GradeOffered])
+
+	CREATE NONCLUSTERED INDEX [CedsOptionSetMapping_CedsOptionSetCode]
+		ON [CEDS].[CedsOptionSetMapping] ([CedsOptionSetCode])
+		INCLUDE ([CedsOptionSetDescription])
+
+	CREATE NONCLUSTERED INDEX [FactK12StudentAssessments_SchoolYear]
+		ON [RDS].[FactK12StudentAssessments] ([FactTypeId])
+		INCLUDE ([SchoolYearId])
+
+	CREATE NONCLUSTERED INDEX [DimAssessmentRegistrations_CompletionStatus_FullYearAcademicCodes_ReasonNotTested]
+		ON [RDS].[DimAssessmentRegistrations] ([AssessmentRegistrationCompletionStatusCode],[StateFullAcademicYearCode],[LeaFullAcademicYearCode],[SchoolFullAcademicYearCode],[ReasonNotTestedCode])
+		INCLUDE ([AssessmentRegistrationParticipationIndicatorCode],[AssessmentRegistrationReasonNotCompletingCode])
+
 
 PRINT N'Updating RDS.DimAssessmentAdministrations';
 
