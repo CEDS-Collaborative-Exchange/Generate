@@ -20,6 +20,8 @@ Views\\Drop,RDS.vwDimAssessmentRegistrations.View.sql,0
 Views\\Create,RDS.vwDimAssessmentRegistrations.View.sql,0
 Views\\Drop,RDS.vwDimMigrantStatuses.View.sql,0
 Views\\Create,RDS.vwDimMigrantStatuses.View.sql,0
+Views\\Drop,RDS.vwDimIdeaStatuses.View.sql,0
+Views\\Create,RDS.vwDimIdeaStatuses.View.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimAssessmentSubtests.StoredProcedure.sql,0
