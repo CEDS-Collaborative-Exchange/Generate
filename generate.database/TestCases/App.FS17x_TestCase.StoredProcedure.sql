@@ -49,6 +49,16 @@ Use the @FileSpec parameter to pass in one of the
 */
 	--DECLARE @AssessmentPurpose VARCHAR(10) = '03458'
 	DECLARE @AssessmentType VARCHAR(100) = 'PerformanceAssessment'
+		
+	---------------------------------------------------------------------
+	DECLARE
+		@SYStartDate DATE,
+		@SYEndDate DATE,
+		@Today Date = convert(date, getdate())
+
+		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
+		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
+	----------------------------------------------------------------------
 
 
 	-- Define the test
@@ -408,44 +418,89 @@ Use the @FileSpec parameter to pass in one of the
 		ON idea.StudentIdentifierState = asr.StudentIdentifierState
 			AND idea.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND idea.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			AND a.AssessmentAdministrationStartDate BETWEEN idea.IDEA_StatusStartDate AND ISNULL(idea.IDEA_StatusEndDate,GETDATE()) --
+			--AND a.AssessmentAdministrationStartDate BETWEEN idea.IDEA_StatusStartDate AND ISNULL(idea.IDEA_StatusEndDate,GETDATE()) --
 			AND idea.IDEAIndicator = 1
+
+				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(idea.SchoolIdentifierSea,'')
+				AND ((idea.IDEA_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
+						AND idea.IDEA_StatusStartDate <=  asr.AssessmentAdministrationStartDate) 
+					AND ISNULL(idea.IDEA_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+
+
 	LEFT JOIN #StagingPersonStatus el
 		ON el.StudentIdentifierState = asr.StudentIdentifierState
 			AND el.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND el.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			AND a.AssessmentAdministrationStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate,GETDATE()) --
+			--AND a.AssessmentAdministrationStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate,GETDATE()) --
 			AND el.EnglishLearnerStatus = 1
+
+
+				AND ((el.EnglishLearner_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
+						AND el.EnglishLearner_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
+					AND ISNULL(el.EnglishLearner_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+
+
 	LEFT JOIN #StagingPersonStatus eco
 		ON eco.StudentIdentifierState = asr.StudentIdentifierState
 			AND eco.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND eco.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			AND a.AssessmentAdministrationStartDate BETWEEN eco.EconomicDisadvantage_StatusStartDate AND ISNULL(eco.EconomicDisadvantage_StatusEndDate,GETDATE())
+			--AND a.AssessmentAdministrationStartDate BETWEEN eco.EconomicDisadvantage_StatusStartDate AND ISNULL(eco.EconomicDisadvantage_StatusEndDate,GETDATE())
 			and eco.EconomicDisadvantageStatus = 1
+
+				AND ((eco.EconomicDisadvantage_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
+						AND eco.EconomicDisadvantage_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
+					AND ISNULL(eco.EconomicDisadvantage_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+
+
 	LEFT JOIN #StagingPersonStatus ms
 		ON ms.StudentIdentifierState = asr.StudentIdentifierState
 			AND ms.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND ms.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			AND a.AssessmentAdministrationStartDate BETWEEN ms.Migrant_StatusStartDate AND ISNULL(ms.Migrant_StatusEndDate,GETDATE())
+			--AND a.AssessmentAdministrationStartDate BETWEEN ms.Migrant_StatusStartDate AND ISNULL(ms.Migrant_StatusEndDate,GETDATE())
 			AND ms.MigrantStatus = 1
+
+				AND ((ms.Migrant_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
+						AND ms.Migrant_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
+					AND ISNULL(ms.Migrant_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+
+
+
 	LEFT JOIN #StagingPersonStatus hs
 		ON hs.StudentIdentifierState = asr.StudentIdentifierState
 			AND hs.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND hs.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			AND a.AssessmentAdministrationStartDate BETWEEN hs.Homelessness_StatusStartDate AND ISNULL(hs.Homelessness_StatusEndDate,GETDATE())
+			--AND a.AssessmentAdministrationStartDate BETWEEN hs.Homelessness_StatusStartDate AND ISNULL(hs.Homelessness_StatusEndDate,GETDATE())
 			AND hs.HomelessnessStatus = 1
+
+				AND ((hs.Homelessness_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
+						AND hs.Homelessness_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
+					AND ISNULL(hs.Homelessness_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+
+
 	LEFT JOIN #StagingPersonStatus fc
 		ON fc.StudentIdentifierState = asr.StudentIdentifierState
 			AND fc.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND fc.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			AND a.AssessmentAdministrationStartDate BETWEEN fc.FosterCare_ProgramParticipationStartDate AND ISNULL(fc.FosterCare_ProgramParticipationEndDate,GETDATE()) --
+			--AND a.AssessmentAdministrationStartDate BETWEEN fc.FosterCare_ProgramParticipationStartDate AND ISNULL(fc.FosterCare_ProgramParticipationEndDate,GETDATE()) --
 			AND fc.ProgramType_FosterCare = 1
+
+				AND ((fc.FosterCare_ProgramParticipationStartDate BETWEEN @SYStartDate and @SYEndDate 
+						AND fc.FosterCare_ProgramParticipationStartDate <= asr.AssessmentAdministrationStartDate) 
+					AND ISNULL(fc.FosterCare_ProgramParticipationEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+
+
 	LEFT JOIN #StagingPersonStatus mcs
 		ON mcs.StudentIdentifierState = asr.StudentIdentifierState
 			AND mcs.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND mcs.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			AND a.AssessmentAdministrationStartDate BETWEEN mcs.MilitaryConnected_StatusStartDate AND ISNULL(mcs.MilitaryConnected_StatusEndDate,GETDATE()) --
+			--AND a.AssessmentAdministrationStartDate BETWEEN mcs.MilitaryConnected_StatusStartDate AND ISNULL(mcs.MilitaryConnected_StatusEndDate,GETDATE()) --
 			AND case when mcs.MilitaryConnectedStudentIndicator IS NULL then 0 else 1 end = 1
+
+				AND ((mcs.MilitaryConnected_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
+						AND mcs.MilitaryConnected_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
+					AND ISNULL(mcs.MilitaryConnected_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+
+
 	LEFT JOIN #StagingPersonRace spr
 		ON spr.StudentIdentifierState = ske.StudentIdentifierState
 			AND spr.SchoolYear = sy.SchoolYear
@@ -465,27 +520,8 @@ Use the @FileSpec parameter to pass in one of the
 	AND ta.[Subject] = @SubjectAbbrv
 
 
-	--AND ISNULL(ppse.IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS')  -- This should only be removed from the Disability Category Set
-
-----CSD LG SEA Match All - Assessment: ALTASSALTACH; Proficiency Status: NOTPROFICIENT; Grade Level: 03; EnglishLearner Status: LEP	
---select * from #staging
---where AssessmentTypeAdministeredCode = 'ALTASSALTACH' and ProficiencyStatus = 'NOTPROFICIENT' and GradeLevelWhenAssessed = '03' and EnglishLearnerStatusEdFactsCode = 'LEP'
-
-----CSG HS SEA Match All - Assessment: ALTASSALTACH; Proficiency Status: NOTPROFICIENT; Grade Level: 09; Homelessness Status: MISSING
---select * from #staging
---where AssessmentTypeAdministeredCode = 'ALTASSALTACH' and ProficiencyStatus = 'NOTPROFICIENT' and GradeLevelWhenAssessed = '09' and HomelessnessStatusEdFactsCode = 'MISSING'
-
-
---select * from #staging where StudentIdentifierState in (
---'0000348171',
---'0000308757',
---'0000054680',
---'0000303809'
---)
---return
---return
 -----------------------------------------------------------------------------------------------------------------
--- BUILD CSA TEMPT TABLES FROM REPORT TABLE ---------------------------------------------------------------------
+-- BUILD CATEGORY SET TEMP TABLES FROM REPORT TABLE ---------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
 			-- CSA LG ------------------------------
 			SELECT ASSESSMENTTYPEADMINISTERED
@@ -513,24 +549,6 @@ Use the @FileSpec parameter to pass in one of the
 				,ReportYear
 				,ReportLevel
 				,CategorySetCode
-
---select gradelevel, reportcode, ASSESSMENTACADEMICSUBJECT, CAtegorysetcode, count(*) 
---select * from RDS.ReportEDFactsK12StudentAssessments
---where reportcode = 'C179'
---group by gradelevel, reportcode, ASSESSMENTACADEMICSUBJECT, CategorySetCode
---order by reportcode, ASSESSMENTACADEMICSUBJECT, CategorySetCode
-
---select reportlevel, categorysetcode, gradelevel, count(*) 'Records', sum(AssessmentCount) 'AssessmentCount'
---from RDS.ReportEDFactsK12StudentAssessments
---where reportcode = 'c179' and reportyear = '2023'
---group by reportlevel, categorysetcode, gradelevel
---order by categorysetcode, reportlevel
-
-
-
---select * from staging.AssessmentResult where AssessmentAcademicSubject = '00562'
-
-
 
 			-- CSB LG ------------------------------
 			SELECT ASSESSMENTTYPEADMINISTERED
@@ -1145,19 +1163,10 @@ Use the @FileSpec parameter to pass in one of the
 			,COUNT(DISTINCT StudentIdentifierState) AS AssessmentCount
 		INTO #CSA_LG_TESTCASE
 		FROM #staging 
---where StudentIdentifierState in (
---'0000212681',
---'0000308757',
---'0000054680',
---'0000303809'
---)
 		GROUP BY AssessmentTypeAdministeredCode
 			,ProficiencyStatus
 			,GradeLevelWhenAssessed
 			,RaceEdFactsCode
-
---_TESTCASE
---return
 
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
@@ -1188,13 +1197,6 @@ Use the @FileSpec parameter to pass in one of the
 				AND ReportTotal.ReportCode = @ReportCode 
 				AND ReportTotal.ReportYear = @SchoolYear
 				AND ReportTotal.CategorySetCode = 'CSA'
-
---select * from #csa_lg where gradelevel = '05'  and PROFICIENCYSTATUS = 'NOTPROFICIENT' and ASSESSMENTTYPEADMINISTERED = 'REGASSWACC'
---
---select * from #staging where ProficiencyStatus = 'Notproficient' and AssessmentTypeAdministeredCode = 'REGASSWACC' and GradeLevelWhenAssessed = '05' and raceedfactscode = 'MAN' 
---select * from #CSA_LG_TESTCASE where ProficiencyStatus = 'Notproficient' and AssessmentTypeAdministeredCode = 'REGASSWACC' and GradeLevelWhenAssessed = '05' 
---select * from #CSA_LG_TESTCASE where ProficiencyStatus = 'Notproficient' and AssessmentTypeAdministeredCode = 'REGASSWACC' and GradeLevelWhenAssessed = '05' and RaceEdFactsCode = 'MAN'
-
 
 	-- TEST CASE CSB LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSB_LG_TESTCASE') IS NOT NULL DROP TABLE #CSB_LG_TESTCASE
@@ -2003,12 +2005,6 @@ Use the @FileSpec parameter to pass in one of the
 				AND ReportTotal.ReportCode = @ReportCode 
 				AND ReportTotal.ReportYear = @SchoolYear
 				AND ReportTotal.CategorySetCode = 'CSG'
-
---select HomelessnessStatusEdFactsCode, count(*)
---from #staging where AssessmentTypeAdministeredCode = 'ALTASSALTACH' and ProficiencyStatus = 'NOTPROFICIENT' and GradeLevelWhenAssessed = '09' 
---group by HomelessnessStatusEdFactsCode
-
---CSG HS SEA Match All - Assessment: ALTASSALTACH; Proficiency Status: NOTPROFICIENT; Grade Level: 09; Homelessness Status: MISSING  74  109
 
 		
 	-- TEST CASE CSH HS ------------------------------------------------------------------
