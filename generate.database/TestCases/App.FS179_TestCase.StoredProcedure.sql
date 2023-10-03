@@ -2,6 +2,9 @@
 	@SchoolYear SMALLINT
 AS
 BEGIN
+/*******************
+October 2023
+This test has been replaced with FS17x_TestCase
 
 BEGIN TRY
 	BEGIN TRANSACTION
@@ -1027,6 +1030,6 @@ BEGIN TRY
 	RAISERROR(@msg, @sev, 1)
 
 	END CATCH; 
-
+*/
 
 END

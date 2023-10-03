@@ -3,6 +3,9 @@
 AS
 BEGIN
 
+/*******************
+October 2023
+This test has been replaced with FS17x_TestCase
 
 	DECLARE @UnitTestName VARCHAR(100) = 'FS178_UnitTestCase'
 	DECLARE @AssessmentAcademicSubject VARCHAR(10) = '13373' 
@@ -1028,5 +1031,5 @@ BEGIN
 	   DROP TABLE #staging
 
 
-
+*/
 END

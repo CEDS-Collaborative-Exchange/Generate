@@ -2,6 +2,9 @@ CREATE PROCEDURE [App].[FS175_TestCase]
 	@SchoolYear SMALLINT
 AS
 BEGIN
+/*******************
+October 2023
+This test has been replaced with FS17x_TestCase
 
 BEGIN TRY
 	
@@ -1109,5 +1112,5 @@ BEGIN TRY
 
 	END CATCH; 
 
-
+*/
 END
