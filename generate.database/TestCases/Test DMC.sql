@@ -133,3 +133,12 @@ EXEC App.FS194_TestCase							@SchoolYear
 --EXEC App.FS212_TestCase							@SchoolYear
 --PRINT 'End-to-End Test for zz_DimK12Schools_Charter_NA_TestCase'
 --EXEC App.zz_DimK12Schools_Charter_NA_TestCase	@SchoolYear
+
+PRINT 'End-to-End Test for FS175'
+EXEC App.FS17x_TestCase							@SchoolYear, 'FS175'
+PRINT 'End-to-End Test for FS178'
+EXEC App.FS17x_TestCase							@SchoolYear, 'FS178'
+PRINT 'End-to-End Test for FS179'
+EXEC App.FS17x_TestCase							@SchoolYear, 'FS179'
+
+
