@@ -2007,7 +2007,7 @@ BEGIN
 			
 		if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 		begin
-			IF CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) = 0 
+			IF CHARINDEX('IdeaIndicator', @categorySetReportFieldList) > 0  
 				begin
 					set @reportFilterJoin = 'inner join rds.DimIdeaStatuses idea on fact.IdeaStatusId = idea.DimIdeaStatusId'
 					set @reportFilterCondition = @reportFilterCondition + ' and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode not in (''PPPS'')'
