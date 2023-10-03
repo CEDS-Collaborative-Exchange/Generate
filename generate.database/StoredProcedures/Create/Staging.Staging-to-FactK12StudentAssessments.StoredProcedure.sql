@@ -176,6 +176,7 @@ BEGIN
 			, LeaIdentifierSeaAccountability
 			, SchoolIdentifierSea
 			, IDEAIndicator
+			, IdeaEducationalEnvironmentForSchoolAgeCode
 			, ProgramParticipationBeginDate
 			, ProgramParticipationEndDate
 			, rvdis.DimIdeaStatusId
@@ -186,7 +187,7 @@ BEGIN
 				AND ISNULL(CAST(sppse.IDEAIndicator AS SMALLINT), -1) = ISNULL(rvdis.IdeaIndicatorMap, -1)
 				AND rvdis.SpecialEducationExitReasonCode = 'MISSING'
 				AND rvdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
-				AND rvdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'		
+				AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'MISSING') = ISNULL(rvdis.IdeaEducationalEnvironmentForSchoolAgeMap, rvdis.IdeaEducationalEnvironmentForSchoolAgeCode)
 		WHERE sppse.IDEAIndicator = 1
 
 		-- Create Index
