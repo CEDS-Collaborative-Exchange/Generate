@@ -1,5 +1,4 @@
 Create PROCEDURE [App].[FS18x_TestCase]	
-declare
 	@SchoolYear SMALLINT = 2023,
 	@FileSpec varchar(5) = 'FS185'
 AS
@@ -33,7 +32,12 @@ BEGIN
 			when @FileSpec = 'FS189' then 'SCIENCE'
 		end
 
-
+	DECLARE @TableTypeAbbrv VARCHAR(20) = 
+		case
+			when @FileSpec = 'FS185' then 'STUPARTMATH' 
+			when @FileSpec = 'FS188' then 'STUPARTRLA'
+			when @FileSpec = 'FS189' then 'STUPARTSCI'
+		end
 
 /*	
 	DECLARE @UnitTestName VARCHAR(100) = 'FS175_UnitTestCase'
@@ -485,7 +489,7 @@ BEGIN
 			 INTO #CSA_LG
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSA'
-			 AND TableTypeAbbrv = 'STUPARTMATHLG'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode
 				AND ReportLevel = 'SEA'
@@ -528,7 +532,7 @@ BEGIN
 			 INTO #CSB_LG
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSB'
-			 AND TableTypeAbbrv = 'STUPARTMATHLG'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
 				AND ReportLevel = 'SEA'
@@ -552,7 +556,7 @@ BEGIN
 			 INTO #CSC_LG
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSC'
-			 AND TableTypeAbbrv = 'STUPARTMATHLG'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
 			 AND IDEAINDICATOR IN ('WDIS','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -578,7 +582,7 @@ BEGIN
 			 INTO #CSD_LG
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSD'
-			 AND TableTypeAbbrv = 'STUPARTMATHLG'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
 			 AND ENGLISHLEARNERSTATUS IN ('LEP','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -603,7 +607,7 @@ BEGIN
 			 INTO #CSE_LG
 			 FROM RDS.ReportEDFactsK12StudentAssessments 
 			 WHERE CategorySetCode = 'CSE'
-			 AND TableTypeAbbrv = 'STUPARTMATHLG'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
 			 AND ECONOMICDISADVANTAGESTATUS IN ('ECODIS','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -628,7 +632,7 @@ BEGIN
 			 INTO #CSF_LG
 			 FROM RDS.ReportEDFactsK12StudentAssessments 
 			 WHERE CategorySetCode = 'CSF'
-			 AND TableTypeAbbrv = 'STUPARTMATHLG'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
 			 AND MIGRANTSTATUS IN ('MS','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -653,7 +657,7 @@ BEGIN
 			 INTO #CSG_LG
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSG'
-			 AND TableTypeAbbrv = 'STUPARTMATHLG'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
 			 AND HOMElESSNESSSTATUS IN ('HOMELSENRL','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -678,7 +682,7 @@ BEGIN
 			 INTO #CSH_LG
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSH'
-			 AND TableTypeAbbrv = 'STUPARTMATHLG'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
 			 AND PROGRAMPARTICIPATIONFOSTERCARE IN ('FCS','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -703,7 +707,7 @@ BEGIN
 			 INTO #CSI_LG
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSI'
-			 AND TableTypeAbbrv = 'STUPARTMATHLG'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
 			 AND MILITARYCONNECTEDSTUDENTINDICATOR IN ('MILCNCTD','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -729,7 +733,7 @@ BEGIN
 			 INTO #CSJ_LG
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSJ'
-			 AND TableTypeAbbrv = 'STUPARTMATHLG'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
 			 AND IDEAINDICATOR IN ('WDIS','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -755,7 +759,7 @@ BEGIN
 			 INTO #ST1_LG
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'ST1'
-			 AND TableTypeAbbrv = 'STUPARTMATHLG'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
 				AND ReportLevel = 'SEA'
@@ -782,7 +786,7 @@ BEGIN
 			 INTO #CSA_HS
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSA'
-			 AND TableTypeAbbrv = 'STUPARTMATHHS'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
 				AND ReportLevel = 'SEA'
@@ -807,7 +811,7 @@ BEGIN
 			 INTO #CSB_HS
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSB'
-			 AND TableTypeAbbrv = 'STUPARTMATHHS'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
 				AND ReportLevel = 'SEA'
@@ -831,7 +835,7 @@ BEGIN
 			 INTO #CSC_HS
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSC'
-			 AND TableTypeAbbrv = 'STUPARTMATHHS'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
 			 AND IDEAINDICATOR IN ('WDIS','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -857,7 +861,7 @@ BEGIN
 			 INTO #CSD_HS
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSD'
-			 AND TableTypeAbbrv = 'STUPARTMATHHS'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
 			 AND ENGLISHLEARNERSTATUS IN ('LEP','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -883,7 +887,7 @@ BEGIN
 			 INTO #CSE_HS
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSE'
-			 AND TableTypeAbbrv = 'STUPARTMATHHS'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
 			 AND ECONOMICDISADVANTAGESTATUS IN ('ECODIS','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -908,7 +912,7 @@ BEGIN
 			 INTO #CSF_HS
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSF'
-			 AND TableTypeAbbrv = 'STUPARTMATHHS'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
 			 AND MIGRANTSTATUS IN ('MS','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -933,7 +937,7 @@ BEGIN
 			 INTO #CSG_HS
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSG'
-			 AND TableTypeAbbrv = 'STUPARTMATHHS'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
 			 AND HOMElESSNESSSTATUS IN ('HOMELSENRL','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -958,7 +962,7 @@ BEGIN
 			 INTO #CSH_HS
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSH'
-			 AND TableTypeAbbrv = 'STUPARTMATHHS'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
 			 AND PROGRAMPARTICIPATIONFOSTERCARE IN ('FCS','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -983,7 +987,7 @@ BEGIN
 			 INTO #CSI_HS
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSI'
-			 AND TableTypeAbbrv = 'STUPARTMATHHS'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
 			 AND MILITARYCONNECTEDSTUDENTINDICATOR IN ('MILCNCTD','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -1009,7 +1013,7 @@ BEGIN
 			 INTO #CSJ_HS
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'CSJ'
-			 AND TableTypeAbbrv = 'STUPARTMATHHS'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
 			 AND IDEAINDICATOR IN ('WDIS','MISSING')
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
@@ -1035,7 +1039,7 @@ BEGIN
 			 INTO #ST1_HS
 			 FROM RDS.ReportEDFactsK12StudentAssessments
 			 WHERE CategorySetCode = 'ST1'
-			 AND TableTypeAbbrv = 'STUPARTMATHHS'
+			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
 			 AND ReportYear = @SchoolYear
 				AND ReportCode = @ReportCode 
 				AND ReportLevel = 'SEA'
