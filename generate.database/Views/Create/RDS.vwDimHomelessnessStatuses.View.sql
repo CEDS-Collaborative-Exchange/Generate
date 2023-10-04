@@ -1,8 +1,8 @@
-CREATE VIEW rds.vwDimHomelessnessStatuses 
+CREATE VIEW [RDS].[vwDimHomelessnessStatuses] 
 AS
-	SELECT
-		  DimHomelessnessStatusId
-		, sssrd.SchoolYear
+	SELECT																					
+		DimHomelessnessStatusId
+		, rsy.SchoolYear
 		, rdhs.HomelessnessStatusCode
 		, CASE rdhs.HomelessnessStatusCode 
 			WHEN 'Yes' THEN 1 
@@ -10,7 +10,7 @@ AS
 			ELSE -1
 		  END AS HomelessnessStatusMap
 		, rdhs.HomelessPrimaryNighttimeResidenceCode
-		, sssrd.InputCode AS HomelessPrimaryNighttimeResidenceMap
+		, ISNULL(sssrd.InputCode, 'MISSING')  AS HomelessPrimaryNighttimeResidenceMap
 		, rdhs.HomelessServicedIndicatorCode
 		, CASE rdhs.HomelessServicedIndicatorCode 
 			WHEN 'Yes' THEN 1 
@@ -24,6 +24,8 @@ AS
 			ELSE -1
 		  END AS HomelessUnaccompaniedYouthStatusMap
 	FROM rds.DimHomelessnessStatuses rdhs
-	LEFT JOIN staging.SourceSystemReferenceData sssrd
+	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd
 		ON rdhs.HomelessPrimaryNighttimeResidenceCode = sssrd.OutputCode
 		AND sssrd.TableName = 'RefHomelessNighttimeResidence'
+		AND rsy.SchoolYear = sssrd.SchoolYear		
