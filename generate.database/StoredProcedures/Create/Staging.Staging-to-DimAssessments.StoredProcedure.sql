@@ -119,14 +119,40 @@ BEGIN
 
 	--Add the AssessmentTypeAdministered Description and EDFacts Code	
 		UPDATE a
-		SET AssessmentTypeAdministeredDescription = ccosm.CedsOptionSetDescription,
-			AssessmentTypeAdministeredEdFactsCode = 
+		SET AssessmentTypeAdministeredDescription = 				
 				CASE AssessmentTypeAdministeredCode
+					--Standard Assessment Types
+					WHEN 'REGASSWOACC'		THEN 'Regular assessments based on grade-level achievement standards without accommodations'
+					WHEN 'REGASSWACC'		THEN 'Regular assessments based on grade-level achievement standards with accommodations'	
+					WHEN 'ALTASSALTACH'		THEN 'Alternate assessments based on alternate achievement standards'
+					WHEN 'HSREGASMTIWOACC'	THEN 'High school regular assessment I, without accommodations'
+					WHEN 'HSREGASMTIWACC'	THEN 'High school regular assessment I, with accommodations'
+					--New Assessment Types			
+					WHEN 'ADVASMTWOACC'		THEN 'Advanced assessment without accommodations'
+					WHEN 'ADVASMTWACC'		THEN 'Advanced assessment with accommodations'
+					WHEN 'IADAPLASMTWOACC'	THEN 'Innovative Assessment Demonstration Authority (IADA) pilot assessment without accommodations'
+					WHEN 'IADAPLASMTWACC'	THEN 'Innovative Assessment Demonstration Authority (IADA) pilot assessment with accommodations'
+					WHEN 'HSREGASMT2WOACC'	THEN 'High school regular assessment II, without accommodations'
+					WHEN 'HSREGASMT2WACC'	THEN 'High school regular assessment II, with accommodations'	
+					WHEN 'HSREGASMT3WOACC'	THEN 'High school regular assessment III, without accommodations'
+					WHEN 'HSREGASMT3WACC'	THEN 'High school regular assessment III, with accommodations'
+					WHEN 'LSNRHSASMTWOACC'	THEN 'Locally-selected nationally recognized high school assessment without accommodations'
+					WHEN 'LSNRHSASMTWACC'	THEN 'Locally-selected nationally recognized high school assessment with accommodations'	
+					ELSE 'MISSING'
+				END
+			, AssessmentTypeAdministeredEdFactsCode = 
+				CASE AssessmentTypeAdministeredCode
+					--Standard Assessment Types
 					WHEN 'REGASSWOACC'		THEN 'REGASSWOACC'
 					WHEN 'REGASSWACC'		THEN 'REGASSWACC'	
 					WHEN 'ALTASSALTACH'		THEN 'ALTASSALTACH'
 					WHEN 'HSREGASMTIWOACC'	THEN 'HSREGASMTIWOACC'
 					WHEN 'HSREGASMTIWACC'	THEN 'HSREGASMTIWACC'	
+					--New Assessment Types			
+					WHEN 'ADVASMTWOACC'		THEN 'ADVASMTWOACC'
+					WHEN 'ADVASMTWACC'		THEN 'ADVASMTWACC'
+					WHEN 'IADAPLASMTWOACC'	THEN 'IADAPLASMTWOACC'
+					WHEN 'IADAPLASMTWACC'	THEN 'IADAPLASMTWACC'
 					WHEN 'HSREGASMT2WOACC'	THEN 'HSREGASMT2WOACC'	
 					WHEN 'HSREGASMT2WACC'	THEN 'HSREGASMT2WACC'	
 					WHEN 'HSREGASMT3WOACC'	THEN 'HSREGASMT3WOACC'	
@@ -136,8 +162,6 @@ BEGIN
 					ELSE 'MISSING'
 				END
 		FROM #Assessments a
-			INNER JOIN CEDS.CedsOptionSetMapping ccosm
-				ON a.AssessmentTypeAdministeredCode = ccosm.CedsOptionSetCode
 
 	--Add the AssessmentTypeAdministeredToEnglishLearners Description and EDFacts Code	
 		UPDATE a
