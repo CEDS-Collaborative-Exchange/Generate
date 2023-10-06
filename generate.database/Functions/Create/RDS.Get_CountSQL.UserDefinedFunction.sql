@@ -2242,7 +2242,7 @@ BEGIN
 				where rdis.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
 					and rdds.IdeaInterimRemovalCode in (''REMDW'', ''REMHO'')
-					and Students.K12StudentStudentIdentifierState IS NULL
+					and Students.K12StudentStudentIdentifierState IS NOT NULL
 			) rules 
 				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState 
 				and fact.IdeaStatusId = rules.DimIdeaStatusId '
@@ -2300,7 +2300,7 @@ BEGIN
 				where rdis.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 					and rdis.IdeaIndicatorEdFactsCode = ''IDEA'' 
 					and rdds.IdeaInterimRemovalCode = ''REMDW''
-					and Students.K12StudentStudentIdentifierState IS NULL
+					and Students.K12StudentStudentIdentifierState IS NOT NULL
 			)  rules 
 				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState 
 				and fact.IdeaStatusId = rules.DimIdeaStatusId 
@@ -6842,11 +6842,6 @@ BEGIN
 
 			IF @toggleDevDelayAges is not null
 			BEGIN
-
-				set @sql = @sql + '  delete a from @reportData a
-					where a.' +  @factField + ' = 0   
-					AND AGE NOT IN ( ' +  @toggleDevDelayAges + ')
-					AND PrimaryDisabilityType = ''DD'' '
 
 				if @reportCode = 'c002' AND @toggleDevDelay6to9 is null
 				begin
