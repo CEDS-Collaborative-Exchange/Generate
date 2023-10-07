@@ -4,9 +4,10 @@ Flatten the data and insert it into new table from ToggleQuestions, ToggleRespon
 	ToggleQuestionTypes, ToggleSections, ToggleSectionTypes, ToggleParentToggleQuestionID
 Delete Data from ToggleQuestions, ToggleQuestionOptions
 */ 
-IF OBJECT_ID(N'generate.App.ToggleArchiveQuestions') IS NOT NULL DROP TABLE generate.App.ToggleArchiveQuestions
 
---DROP table App.ToggleArchiveQuestions 
+IF OBJECT_ID(N'App.ToggleArchiveQuestions') IS NOT NULL 
+	DROP TABLE App.ToggleArchiveQuestions
+
 CREATE TABLE App.ToggleArchiveQuestions (
 -- ToggleQuestions
   	[EmapsQuestionAbbrv] [nvarchar](50),
@@ -69,33 +70,23 @@ INSERT INTO App.ToggleArchiveQuestions
 		,ISNULL(atqo2.OptionText,-1)
 
 	FROM App.ToggleQuestions atq
-	LEFT JOIN App.ToggleQuestionOptions atqo ON atqo.ToggleQuestionId = atq.ToggleQuestionId
-	LEFT JOIN App.ToggleQuestionTypes atqt ON atqt.ToggleQuestionTypeId = atq.ToggleQuestionTypeId
-	LEFT JOIN App.ToggleSections ats ON ats.ToggleSectionId = atq.ToggleSectionId
-	LEFT JOIN App.ToggleSectionTypes atst ON atst.ToggleSectionTypeId = ats.ToggleSectionTypeId
-	LEFT JOIN App.ToggleQuestions atqp ON atqp.ToggleQuestionId = atq.ParentToggleQuestionId
-	LEFT JOIN App.ToggleResponses atr ON atr.ToggleQuestionId = atq.ToggleQuestionId
-	LEFT JOIN App.ToggleQuestionOptions atqo2 ON atqo2.ToggleQuestionOptionId = atr.ToggleQuestionOptionId
-	WHERE  atq.EmapsQuestionAbbrv IN ('ASSESLEP',
-	'CHDCTRPTFOR',
-	'CHDCTRPTSOP',
-	'DEFEXCERTNUM',
-	'DISCPREGPOL',
-	'DISCPREM',
-	'ENVECHM',
-	'ENVECREGCL',
-	'ENVECRESFAC',
-	'ENVECSEPCL',
-	'ENVECSEPSCH',
-	'ENVECSERPRV',
-	'ENVSAHMHOS',
-	'ENVSAPRVSCH',
-	'ENVSAREGCL',
-	'ENVSARESFAC',
-	'ENVSASEPSCH',
-	'MOECEDEF',
-	'STADMSLDS',
-	'STADMSSIS'
+	LEFT JOIN App.ToggleQuestionOptions atqo 
+		ON atqo.ToggleQuestionId = atq.ToggleQuestionId
+	LEFT JOIN App.ToggleQuestionTypes atqt 
+		ON atqt.ToggleQuestionTypeId = atq.ToggleQuestionTypeId
+	LEFT JOIN App.ToggleSections ats 
+		ON ats.ToggleSectionId = atq.ToggleSectionId
+	LEFT JOIN App.ToggleSectionTypes atst 
+		ON atst.ToggleSectionTypeId = ats.ToggleSectionTypeId
+	LEFT JOIN App.ToggleQuestions atqp 
+		ON atqp.ToggleQuestionId = atq.ParentToggleQuestionId
+	LEFT JOIN App.ToggleResponses atr 
+		ON atr.ToggleQuestionId = atq.ToggleQuestionId
+	LEFT JOIN App.ToggleQuestionOptions atqo2 	
+		ON atqo2.ToggleQuestionOptionId = atr.ToggleQuestionOptionId
+	WHERE  atq.EmapsQuestionAbbrv IN ('ASSESLEP',	'CHDCTRPTFOR',	'CHDCTRPTSOP',	'DEFEXCERTNUM',	'DISCPREGPOL',
+	'DISCPREM',	'ENVECHM',	'ENVECREGCL',	'ENVECRESFAC',	'ENVECSEPCL',	'ENVECSEPSCH',	'ENVECSERPRV',	'ENVSAHMHOS',
+	'ENVSAPRVSCH',	'ENVSAREGCL',	'ENVSARESFAC',	'ENVSASEPSCH',	'MOECEDEF',	'STADMSLDS', 'STADMSSIS'
 	)
 	
 
@@ -104,75 +95,24 @@ INSERT INTO App.ToggleArchiveQuestions
 DELETE atr FROM [App].[ToggleResponses] atr
 	JOIN App.ToggleQuestions atq on atq.ToggleQuestionId = atr.ToggleQuestionId 
 	LEFT JOIN App.ToggleQuestionOptions atqo ON atqo.ToggleQuestionId = atr.ToggleQuestionId
-      WHERE  atq.EmapsQuestionAbbrv IN ('ASSESLEP',
-	'CHDCTRPTFOR',
-	'CHDCTRPTSOP',
-	'DEFEXCERTNUM',
-	'DISCPREGPOL',
-	'DISCPREM',
-	'ENVECHM',
-	'ENVECREGCL',
-	'ENVECRESFAC',
-	'ENVECSEPCL',
-	'ENVECSEPSCH',
-	'ENVECSERPRV',
-	'ENVSAHMHOS',
-	'ENVSAPRVSCH',
-	'ENVSAREGCL',
-	'ENVSARESFAC',
-	'ENVSASEPSCH',
-	'MOECEDEF',
-	'STADMSLDS',
-	'STADMSSIS'
+      WHERE  atq.EmapsQuestionAbbrv IN ('ASSESLEP',	'CHDCTRPTFOR',	'CHDCTRPTSOP',	'DEFEXCERTNUM',	'DISCPREGPOL',
+	'DISCPREM',	'ENVECHM',	'ENVECREGCL',	'ENVECRESFAC',	'ENVECSEPCL',	'ENVECSEPSCH',	'ENVECSERPRV',	'ENVSAHMHOS',
+	'ENVSAPRVSCH',	'ENVSAREGCL',	'ENVSARESFAC',	'ENVSASEPSCH',	'MOECEDEF',	'STADMSLDS', 'STADMSSIS'
 	)
 
 --ToggleQuestionOption
 DELETE atqo FROM [App].[ToggleQuestionOptions] atqo
 JOIN App.ToggleQuestions atq on atq.ToggleQuestionId = atqo.ToggleQuestionId 
 	
-      WHERE  atq.EmapsQuestionAbbrv IN ('ASSESLEP',
-	'CHDCTRPTFOR',
-	'CHDCTRPTSOP',
-	'DEFEXCERTNUM',
-	'DISCPREGPOL',
-	'DISCPREM',
-	'ENVECHM',
-	'ENVECREGCL',
-	'ENVECRESFAC',
-	'ENVECSEPCL',
-	'ENVECSEPSCH',
-	'ENVECSERPRV',
-	'ENVSAHMHOS',
-	'ENVSAPRVSCH',
-	'ENVSAREGCL',
-	'ENVSARESFAC',
-	'ENVSASEPSCH',
-	'MOECEDEF',
-	'STADMSLDS',
-	'STADMSSIS'
+      WHERE  atq.EmapsQuestionAbbrv IN ('ASSESLEP',	'CHDCTRPTFOR',	'CHDCTRPTSOP',	'DEFEXCERTNUM',	'DISCPREGPOL',
+	'DISCPREM',	'ENVECHM',	'ENVECREGCL',	'ENVECRESFAC',	'ENVECSEPCL',	'ENVECSEPSCH',	'ENVECSERPRV',	'ENVSAHMHOS',
+	'ENVSAPRVSCH',	'ENVSAREGCL',	'ENVSARESFAC',	'ENVSASEPSCH',	'MOECEDEF',	'STADMSLDS', 'STADMSSIS'
 	)
 
 --ToggleQuestions
 DELETE atq FROM App.ToggleQuestions atq 	
-      WHERE  atq.EmapsQuestionAbbrv IN ('ASSESLEP',
-	'CHDCTRPTFOR',
-	'CHDCTRPTSOP',
-	'DEFEXCERTNUM',
-	'DISCPREGPOL',
-	'DISCPREM',
-	'ENVECHM',
-	'ENVECREGCL',
-	'ENVECRESFAC',
-	'ENVECSEPCL',
-	'ENVECSEPSCH',
-	'ENVECSERPRV',
-	'ENVSAHMHOS',
-	'ENVSAPRVSCH',
-	'ENVSAREGCL',
-	'ENVSARESFAC',
-	'ENVSASEPSCH',
-	'MOECEDEF',
-	'STADMSLDS',
-	'STADMSSIS'
+      WHERE  atq.EmapsQuestionAbbrv IN ('ASSESLEP',	'CHDCTRPTFOR',	'CHDCTRPTSOP',	'DEFEXCERTNUM',	'DISCPREGPOL',
+	'DISCPREM',	'ENVECHM',	'ENVECREGCL',	'ENVECRESFAC',	'ENVECSEPCL',	'ENVECSEPSCH',	'ENVECSERPRV',	'ENVSAHMHOS',
+	'ENVSAPRVSCH',	'ENVSAREGCL',	'ENVSARESFAC',	'ENVSASEPSCH',	'MOECEDEF',	'STADMSLDS', 'STADMSSIS'
 	)
 

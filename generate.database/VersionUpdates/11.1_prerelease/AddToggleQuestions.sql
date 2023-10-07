@@ -1,10 +1,17 @@
-﻿--Add the new toggle question for lower grade assessments
+﻿--Get the appropriate Question ID value
+declare @questionId int
+
+select @questionId = (select ISNULL(max(QuestionSequence), 700)
+	from app.ToggleQuestions
+	where togglesectionid = 12)
+
+--Add the new toggle question for lower grade assessments
 insert into app.ToggleQuestions
-values('ASSESSTYPLG', NULL, 702, 'Please indicate any of the following Lower Grade (3-8) Assessments used by your state.', 8, 12)
+values('ASSESSTYPLG', NULL, @questionId + 1, 'Please indicate any of the following Lower Grade (3-8) Assessments used by your state.', 8, 12)
 
 --Add the new toggle question for high school assessments
 insert into app.ToggleQuestions
-values('ASSESSTYPHS', NULL, 703, 'Please indicate any of the following High School (9-12) Assessments used by your state.', 8, 12)
+values('ASSESSTYPHS', NULL, @questionId + 2, 'Please indicate any of the following High School (9-12) Assessments used by your state.', 8, 12)
 
 declare @lgQuestionid int
 declare @hsQuestionid int
