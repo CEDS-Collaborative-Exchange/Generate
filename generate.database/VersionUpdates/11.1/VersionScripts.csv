@@ -40,5 +40,7 @@ VersionUpdates\\11.1\\StoredProcedures\\Drop,Staging.Rollover_SourceSystemRefere
 VersionUpdates\\11.1\\StoredProcedures\\Create,Staging.Rollover_SourceSystemReferenceData.StoredProcedure.sql,0
 VersionUpdates\\11.1\\StoredProcedures\\Drop,dbo.Get_AssessmentTypeChildrenWithDisabilities.StoredProcedure.sql,0
 VersionUpdates\\11.1\\StoredProcedures\\Create,dbo.Get_AssessmentTypeChildrenWithDisabilities.StoredProcedure.sql,0
+VersionUpdates\\11.1\\StoredProcedures\\Drop,RDS.Empty_RDS.StoredProcedure.sql,0
+VersionUpdates\\11.1\\StoredProcedures\\Create,RDS.Empty_RDS.StoredProcedure.sql,0
 VersionUpdates\\11.1,RepopulateFactK12StudentAssessments.sql,0
 VersionUpdates\\11.1,UpdateDbVersion.sql,0
