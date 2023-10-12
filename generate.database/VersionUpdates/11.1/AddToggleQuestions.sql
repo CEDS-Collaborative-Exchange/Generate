@@ -19,7 +19,6 @@ declare @hsQuestionid int
 set @lgQuestionid = (select ToggleQuestionId from app.ToggleQuestions where EmapsQuestionAbbrv = 'ASSESSTYPLG')
 set @hsQuestionid = (select ToggleQuestionId from app.ToggleQuestions where EmapsQuestionAbbrv = 'ASSESSTYPHS')
 
-
 --Add the options for the new Assessment LG/HS questions
 --LG
 insert into app.ToggleQuestionOptions
