@@ -49,7 +49,7 @@ values ('Advanced assessment without accommodations', @lgQuestionid, (select Tog
 	('Innovative Assessment Demonstration Authority (IADA) pilot assessment without accommodations', @lgQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @lgQuestionid and OptionSequence = 3)), 
 	('Innovative Assessment Demonstration Authority (IADA) pilot assessment with accommodations', @lgQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @lgQuestionid and OptionSequence = 4))
 
---insert into Toggle Responses for Assessment LG question
+--insert into Toggle Responses for Assessment HS question
 insert into app.ToggleResponses
 values ('High school regular assessment II, without accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 1)), 
 	('High school regular assessment II, with accommodations', @hsQuestionid, (select ToggleQuestionOptionId from app.ToggleQuestionOptions where ToggleQuestionId = @hsQuestionid and OptionSequence = 2)), 
