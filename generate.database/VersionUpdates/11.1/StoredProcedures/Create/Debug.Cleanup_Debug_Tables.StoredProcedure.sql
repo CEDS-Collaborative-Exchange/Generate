@@ -8,16 +8,19 @@ BEGIN
 	declare @cmd varchar(4000)
 	declare @cursorSql nvarchar(max)
 
+	--create the cursor to drop the existing debug tables
 	set @cursorSql = 'DECLARE cmds CURSOR FOR
 	SELECT ''drop table [debug].['' + Table_Name + '']''
 	FROM INFORMATION_SCHEMA.TABLES
 	WHERE 1 = 1'
 
+	--check for the report code condition to add to the query
 	if @reportCode is not null
 	begin
 		set @cursorSql += ' AND Table_Name LIKE ''' + @reportCode + '_%'''
 	end
 
+	--check for the report year condition to add to the query
 	if @reportYear is not null
 	begin 
 		set @cursorSql += ' AND Table_Name LIKE ''%_' + @reportYear + '%'''
