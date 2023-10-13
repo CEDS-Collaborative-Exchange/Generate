@@ -134,7 +134,7 @@ begin try
 								SET @rowFields='"rowFields":{"items":["SEA ID"'
 						END							
 				
-					SET @fields=@fields+'{"binding":"organizationStateId","header":"SEA ID","dataType":1,"aggregate":1,"showAs":0,"descending":false,"format":"D","isContentHtml":false},'
+					SET @fields=@fields+'{"binding":"organizationIdentifierSea","header":"SEA ID","dataType":1,"aggregate":1,"showAs":0,"descending":false,"format":"D","isContentHtml":false},'
 					SET @fields=@fields+'{"binding":"organizationName","header":"SEA","dataType":1,"aggregate":0,"showAs":0,"descending":false,"format":"","width":250,"wordWrap":true,"isContentHtml":false},'
 					
 					END
@@ -158,7 +158,7 @@ begin try
 
 									SET @rowFields='"rowFields":{"items":["LEA ID"'
 							END			
-						SET @fields=@fields+'{"binding":"organizationStateId","header":"LEA ID","dataType":1,"aggregate":1,"showAs":0,"descending":false,"format":"D","isContentHtml":false},'
+						SET @fields=@fields+'{"binding":"organizationIdentifierSea","header":"LEA ID","dataType":1,"aggregate":1,"showAs":0,"descending":false,"format":"D","isContentHtml":false},'
 						SET @fields=@fields+'{"binding":"organizationName","header":"LEA","dataType":1,"aggregate":0,"showAs":0,"descending":false,"format":"","width":250,"wordWrap":true,"isContentHtml":false},'
 					END
 					ELSE IF @organizationLevel=@schId
@@ -183,12 +183,12 @@ begin try
 									SET @rowFields='"rowFields":{"items":["School ID"'
 							END		
 
-						SET @fields=@fields+'{"binding":"organizationStateId","header":"School ID","dataType":1,"aggregate":2,"showAs":0,"descending":false,"format":"D","isContentHtml":false},'
+						SET @fields=@fields+'{"binding":"organizationIdentifierSea","header":"School ID","dataType":1,"aggregate":2,"showAs":0,"descending":false,"format":"D","isContentHtml":false},'
 						SET @fields=@fields+'{"binding":"organizationName","header":"School","dataType":1,"aggregate":0,"showAs":0,"descending":false,"format":"","width":250,"wordWrap":true,"isContentHtml":false},'
 
 						IF (@reportCode='c202')
 						BEGIN
-							SET @fields=@fields+'{"binding":"parentOrganizationStateId","header":"LEA ID","dataType":1,"aggregate":2,"showAs":0,"descending":false,"format":"D","isContentHtml":false},'
+							SET @fields=@fields+'{"binding":"parentOrganizationIdentifierSea","header":"LEA ID","dataType":1,"aggregate":2,"showAs":0,"descending":false,"format":"D","isContentHtml":false},'
 							SET @fields=@fields+'{"binding":"parentOrganizationName","header":"LEA Name","dataType":1,"aggregate":0,"showAs":0,"descending":false,"format":"","width":250,"wordWrap":true,"isContentHtml":false},'
 						END
 					END
