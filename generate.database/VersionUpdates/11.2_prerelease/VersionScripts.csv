@@ -1,2 +1,5 @@
 VersionUpdates\\11.2_prerelease,Restore 11.1.sql,0
 VersionUpdates\\11.2_prerelease,UpdateDbVersion.sql,0
+VersionUpdates\\11.2\\StoredProcedures\\Drop,Utilities.Compare_C029.StoredProcedure.sql,0
+
+
