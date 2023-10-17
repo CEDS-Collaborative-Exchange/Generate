@@ -2020,7 +2020,11 @@ BEGIN
 			IF CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) = 0 
 			begin
 				set @reportFilterJoin = 'inner join rds.DimIdeaDisabilityTypes idea on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId'
-				set @reportFilterCondition = 'and idea.IdeaDisabilityTypeEdFactsCode <> ''MISSING'''
+
+				if @reportCode not in ('c002','c089')
+				begin
+					set @reportFilterCondition = 'and idea.IdeaDisabilityTypeEdFactsCode <> ''MISSING'''
+				end
 
 				IF @reportLevel = 'sch' and @reportCode = 'c002'
 				begin
@@ -2149,7 +2153,6 @@ BEGIN
 							ELSE grades.GradeLevelEdFactsCode
 							END) = grades.GradeLevelEdFactsCode' 
 						ELSE '' END + '
-					where idea.IdeaDisabilityTypeEdFactsCode <> ''MISSING''
 				)  rules on fact.K12StudentId = rules.K12StudentId and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId'
 				+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN ' and fact.GradeLevelId = rules.DimGradeLevelId' ELSE '' END + '
 				'
@@ -2465,8 +2468,7 @@ BEGIN
 							END <> -1
 						inner join rds.DimIdeaDisabilityTypes idea 
 							on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
-						where idea.IdeaDisabilityTypeEdFactsCode <> ''MISSING''
-						and (age.AgeValue IN (3, 4) OR (age.AgeValue = 5 
+						where (age.AgeValue IN (3, 4) OR (age.AgeValue = 5 
 						and rgl.GradeLevelCode IN (''MISSING'',''PK'')))
 					) rules		
 						on fact.K12StudentId = rules.K12StudentId 
@@ -2510,7 +2512,6 @@ BEGIN
 							and IIF(fact.DimSchoolId > 0, fact.DimSchoolId, fact.DimLeaId) <> -1
 						inner join rds.DimIdeaDisabilityTypes idea 
 							on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
-						where idea.IdeaDisabilityTypeEdFactsCode <> ''MISSING''
 					) rules 
 						on fact.K12StudentId = rules.K12StudentId 
 						and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId '
