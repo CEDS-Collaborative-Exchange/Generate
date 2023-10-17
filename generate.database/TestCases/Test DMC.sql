@@ -121,15 +121,24 @@ EXEC App.FS144_TestCase							@SchoolYear
 --EXEC App.FS178_TestCase							@SchoolYear
 --PRINT 'End-to-End Test for FS179'
 --EXEC App.FS179_TestCase							@SchoolYear
---PRINT 'End-to-End Test for FS185'
---EXEC App.FS185_TestCase							@SchoolYear
---PRINT 'End-to-End Test for FS188'
---EXEC App.FS188_TestCase							@SchoolYear
---PRINT 'End-to-End Test for FS189'
---EXEC App.FS189_TestCase							@SchoolYear
+PRINT 'End-to-End Test for FS185'
+EXEC App.FS18x_TestCase							@SchoolYear, 'FS185'
+PRINT 'End-to-End Test for FS188'
+EXEC App.FS18x_TestCase							@SchoolYear, 'FS188'
+PRINT 'End-to-End Test for FS189'
+EXEC App.FS18x_TestCase							@SchoolYear, 'FS189'
 PRINT 'End-to-End Test for FS194'
 EXEC App.FS194_TestCase							@SchoolYear
 --PRINT 'End-to-End Test for FS212'
 --EXEC App.FS212_TestCase							@SchoolYear
 --PRINT 'End-to-End Test for zz_DimK12Schools_Charter_NA_TestCase'
 --EXEC App.zz_DimK12Schools_Charter_NA_TestCase	@SchoolYear
+
+PRINT 'End-to-End Test for FS175'
+EXEC App.FS17x_TestCase							@SchoolYear, 'FS175'
+PRINT 'End-to-End Test for FS178'
+EXEC App.FS17x_TestCase							@SchoolYear, 'FS178'
+PRINT 'End-to-End Test for FS179'
+EXEC App.FS17x_TestCase							@SchoolYear, 'FS179'
+
+
