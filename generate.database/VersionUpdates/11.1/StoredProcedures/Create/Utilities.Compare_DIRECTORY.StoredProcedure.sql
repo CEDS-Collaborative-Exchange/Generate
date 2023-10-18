@@ -22,6 +22,9 @@ This process assumes the following:
 2. The @SchemaName is a valid schema on the database
 3. Metadata exists in Generate for the SubmissionYear, ReportCode, ReportLevel
 4. The @LegacyTableName exists, is populated, and has the exact column names from the Generate Metadata
+
+10/17/2023 JW: Updated for V11
+
 *****************************************************************/
 
 
@@ -60,32 +63,32 @@ if @ReportCode = 'C029'
 					NULL					FileRecordNumber,
 					StateANSICode			FIPSStateCode,
 					''01''					StateAgencyNumber,
-					NULL		Filler,
-					NULL		Filler,
+					NULL					Filler,
+					NULL					Filler,
 					NULL					Filler6,
 					NULL					Filler7,
 					OrganizationName		StateAgencyName,
 					Website					StateAgencyWebAddress,
 					Telephone				PhoneNumber,
 					MailingAddressStreet	MailingAddress1,
-					MailingAddressStreet2	MailingAddress2,
+					NULL					MailingAddress2,
 					NULL					MailingAddress3,
 					MailingAddressCity		MailingCity,
 					MailingAddressState		MailingPostalStateCode,
 					left(MailingAddressPostalCode,5)	 MailingZipCode,
 					case when len(MailingAddressPostalCode)=10 then right(MailingAddressPostalCode,4) else '''' end	 MailingZipcodePlus4,
 					PhysicalAddressStreet	LocationAddress1,
-					PhysicalAddressStreet2	LocationAddress2,
+					NULL					LocationAddress2,
 					NULL					LocationAddress3,
 					PhysicalAddressCity		LocationCity,
 					PhysicalAddressState	LocationPostalStateCode,
 					left(PhysicalAddressPostalCode,5)	 LocationZipCode,
 					case when len(PhysicalAddressPostalCode)=10 then right(PhysicalAddressPostalCode,4) else '''' end	 LocationZipcodePlus4,
-					CSSOFirstName,
-					CSSOLastName,
-					CSSOTitle,
-					CSSOTelephone,
-					CSSOEmail,
+					NULL					Filler,
+					NULL					Filler,
+					NULL					Filler,
+					NULL					Filler,
+					Null					Filler,
 					NULL					Explanation'
 			end
 
@@ -107,21 +110,21 @@ if @ReportCode = 'C029'
 					SupervisoryUnionIdentificationNumber	SupervisoryUnion,
 					Telephone				LEAPhoneNumber,
 					MailingAddressStreet	MailingAddress1,
-					MailingAddressStreet2	MailingAddress2,
+					NULL					MailingAddress2,
 					NULL					MailingAddress3,
 					MailingAddressCity		MailingCity,
 					MailingAddressState		MailingPostalStateCode,
 					left(MailingAddressPostalCode,5)	 MailingZipCode,
 					case when len(MailingAddressPostalCode)=10 then right(MailingAddressPostalCode,4) else '''' end	 MailingZipcodePlus4,
 					PhysicalAddressStreet	LocationAddress1,
-					PhysicalAddressStreet2	LocationAddress2,
+					NULL					LocationAddress2,
 					NULL					LocationAddress3,
 					PhysicalAddressCity		LocationCity,
 					PhysicalAddressState	LocationPostalStateCode,
 					left(PhysicalAddressPostalCode,5)	 LocationZipCode,
 					case when len(PhysicalAddressPostalCode)=10 then right(PhysicalAddressPostalCode,4) else '''' end	 LocationZipcodePlus4,
 					OperationalStatus		LEASysOpstatus,
-					NULL					LEAOpStatus,
+					UpdatedOperationalStatus		LEAOpStatusNew,
 					NULL					StatusEffectiveDate,
 					case when isnull(CharterLeaStatus,''NO'') = ''NO'' then ''CHRTNOTLEA'' else isnull(CharterLEAStatus,'''') end		ChrtSchoolLEAStatusID,
 					PriorLeaStateIdentifier	PriorStateLEAID,
@@ -146,24 +149,24 @@ if @ReportCode = 'C029'
 					Website					WebAddress,
 					Telephone				PhoneNumber,
 					MailingAddressStreet	MailingAddress1,
-					MailingAddressStreet2	MailingAddress2,
-					NULL					MailingAddress3,
+--					NULL					MailingAddress2,
+--					NULL					MailingAddress3,
 					MailingAddressCity		MailingCity,
 					MailingAddressState		MailingPostalStateCode,
 					left(MailingAddressPostalCode,5)	 MailingZipCode,
 					case when len(MailingAddressPostalCode)=10 then right(MailingAddressPostalCode,4) else '''' end	 MailingZipcodePlus4,
 					PhysicalAddressStreet	LocationAddress1,
-					PhysicalAddressStreet2	LocationAddress2,
-					NULL					LocationAddress3,
+--					NULL					LocationAddress2,
+--					NULL					LocationAddress3,
 					PhysicalAddressCity		LocationCity,
 					PhysicalAddressState	LocationPostalStateCode,
 					left(PhysicalAddressPostalCode,5)	 LocationZipCode,
 					case when len(PhysicalAddressPostalCode)=10 then right(PhysicalAddressPostalCode,4) else '''' end	 LocationZipcodePlus4,
 					OperationalStatus		SchoolSysOpstatus,
-					NULL					SchoolOpStatus,
+					UpdatedOperationalStatus					SchoolOpStatusNew,
 					NULL					StatusEffectiveDate,
 					case when isnull(CharterSchoolStatus,''NO'') = ''NO'' then ''NO'' else ''YES'' end		ChrtStatusID,
-					PriorLEAStateIdentifier	PrioStateLEAId,
+					PriorLEAStateIdentifier		PriorStateLEAId,
 					PriorSchoolStateIdentifier	PriorStateSchoolID,
 					ReconstitutedStatus	ReconstitutedStatus,
 					NULL	Filler,
@@ -208,7 +211,7 @@ if @ReportCode = 'C039'
 	end
 
 	select @SQL = @SQL + char(10) +
-			'FROM generate.rds.FactOrganizationCountReports FACT
+			'FROM generate.rds.ReportEdFactsOrganizationCounts FACT
 				where 
 				ReportCode = ''' + @ReportCode + '''
 				and ReportLevel = ''' + @ReportLevel + '''
