@@ -1,11 +1,10 @@
 --/////////////////////////////////////////////////////
 --
 --    Date: 07/20/2023
--- Changes per [Staging].[Staging-to-FactK12StudentDisciplines]
---			1) the code to get 45 day older students
---			2) to only include the OPEN LEAs
---		        3) to get IdeaInterimRemovalEdFactsCode in ('REMDW', 'REMHO')
---			4) to get IdeaEducationalEnvironmentForSchoolAgeCode <> 'PPPS'
+-- Changes per [Staging].[Staging-to-FactK12StudentDisciplines]--			
+--			1) to only include the OPEN LEAs
+--		    2) to get IdeaInterimRemovalEdFactsCode in ('REMDW', 'REMHO')
+--			3) to get IdeaEducationalEnvironmentForSchoolAgeCode <> 'PPPS'
 --
 --//////////////////////////////////////////////////////
 
@@ -260,43 +259,7 @@ BEGIN
 	AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 		BETWEEN @SYStart AND @SYEnd
 
-	--Get the students that have more than 45 days removal time
-	SELECT ske.StudentIdentifierState 
-	INTO #tempDurationLengthExceeded
-	FROM Staging.Discipline d 
-	JOIN staging.K12Enrollment ske 
-		ON d.StudentIdentifierState = ske.StudentIdentifierState
-		AND ISNULL(d.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
-		AND ISNULL(d.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
-		AND CAST(ISNULL(d.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN ISNULL(ske.EnrollmentEntryDate, @SYStart) and ISNULL (ske.EnrollmentExitDate, @SYEnd) 
-	JOIN Staging.ProgramParticipationSpecialEducation sppse
-		ON ske.StudentIdentifierState 						= sppse.StudentIdentifierState
-		AND ISNULL(ske.LEAIdentifierSeaAccountability,'') 	= ISNULL(sppse.LeaIdentifierSeaAccountability,'')
-		AND ISNULL(ske.SchoolIdentifierSea,'') 				= ISNULL(sppse.SchoolIdentifierSea,'')
-		AND d.DisciplinaryActionStartDate 
-			BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
-			
-		--idea disability type
-	JOIN Staging.IdeaDisabilityType sidt         
-		ON ske.SchoolYear = sidt.SchoolYear
-		AND sidt.StudentIdentifierState 					= sppse.StudentIdentifierState
-		AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
-		AND ISNULL(sidt.SchoolIdentifierSea, '') 			= ISNULL(sppse.SchoolIdentifierSea, '')
-		AND sidt.IsPrimaryDisability = 1
-		AND d.DisciplinaryActionStartDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
-
-	WHERE d.IdeaInterimRemoval in ('REMDW', 'REMHO')
-	GROUP BY ske.StudentIdentifierState 
-	HAVING SUM(CAST(DurationOfDisciplinaryAction AS DECIMAL(5, 2))) > 45
-
-	--Remove the +45 day students from the staging data used for the test
-	DELETE s
-	FROM #C005Staging s
-	LEFT JOIN #tempDurationLengthExceeded t
-		ON s.StudentIdentifierState = t.StudentIdentifierState
-	WHERE t.StudentIdentifierState is not null
-
+	
 			
 	/**********************************************************************
 		Test Case 1:
