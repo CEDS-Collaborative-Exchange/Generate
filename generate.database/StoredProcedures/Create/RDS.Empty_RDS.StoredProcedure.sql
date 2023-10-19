@@ -55,6 +55,8 @@ begin try
 
 					delete from RDS.BridgeK12StudentAssessmentRaces where FactK12StudentAssessmentId in (select factId from #factTable)
 
+					delete from RDS.BridgeK12StudentAssessmentAccommodations where FactK12StudentAssessmentId in (select factId from #factTable)
+
 					delete from rds.FactK12StudentAssessments where FactK12StudentAssessmentId in (select factId from #factTable)
 
 				end

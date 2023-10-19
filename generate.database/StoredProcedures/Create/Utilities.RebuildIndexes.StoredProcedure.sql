@@ -17,9 +17,11 @@ BEGIN
 	ALTER INDEX ALL ON Staging.CharterSchoolAuthorizer								  REBUILD;
 	ALTER INDEX ALL ON Staging.CharterSchoolManagementOrganization					  REBUILD;
 	ALTER INDEX ALL ON Staging.Discipline											  REBUILD;
+	ALTER INDEX ALL ON Staging.IdeaDisabilityTypes									  REBUILD;
 	ALTER INDEX ALL ON Staging.IndicatorStatusCustomType							  REBUILD;
 	ALTER INDEX ALL ON Staging.K12Enrollment										  REBUILD;
 	ALTER INDEX ALL ON Staging.K12Organization										  REBUILD;
+	ALTER INDEX ALL ON Staging.K12PersonRace										  REBUILD;
 	ALTER INDEX ALL ON Staging.K12ProgramParticipation								  REBUILD;
 	ALTER INDEX ALL ON Staging.K12SchoolComprehensiveSupportIdentificationType		  REBUILD;
 	ALTER INDEX ALL ON Staging.K12SchoolTargetedSupportIdentificationType			  REBUILD;
@@ -35,7 +37,6 @@ BEGIN
 	ALTER INDEX ALL ON Staging.OrganizationProgramType								  REBUILD;
 	ALTER INDEX ALL ON Staging.OrganizationSchoolComprehensiveAndTargetedSupport	  REBUILD;
 	ALTER INDEX ALL ON Staging.OrganizationSchoolIndicatorStatus					  REBUILD;
-	ALTER INDEX ALL ON Staging.PersonRace											  REBUILD;
 	ALTER INDEX ALL ON Staging.PersonStatus											  REBUILD;
 	ALTER INDEX ALL ON Staging.ProgramParticipationCTE								  REBUILD;
 	ALTER INDEX ALL ON Staging.ProgramParticipationNorD								  REBUILD;
