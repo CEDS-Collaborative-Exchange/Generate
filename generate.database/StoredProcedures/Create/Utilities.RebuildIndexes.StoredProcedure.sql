@@ -8,8 +8,6 @@ BEGIN
 		against these tables less efficient.  Rebuilding the index restores
 		it to optimal performance.  Occasionally rebuilding indexes is 
 		good practice.
-		There is a companion utility to this one that will disable the
-		indexes called DisableIndexes.
 	*/
 
 	ALTER INDEX ALL ON Staging.Assessment											  REBUILD;
@@ -17,7 +15,7 @@ BEGIN
 	ALTER INDEX ALL ON Staging.CharterSchoolAuthorizer								  REBUILD;
 	ALTER INDEX ALL ON Staging.CharterSchoolManagementOrganization					  REBUILD;
 	ALTER INDEX ALL ON Staging.Discipline											  REBUILD;
-	ALTER INDEX ALL ON Staging.IdeaDisabilityTypes									  REBUILD;
+	ALTER INDEX ALL ON Staging.IdeaDisabilityType									  REBUILD;
 	ALTER INDEX ALL ON Staging.IndicatorStatusCustomType							  REBUILD;
 	ALTER INDEX ALL ON Staging.K12Enrollment										  REBUILD;
 	ALTER INDEX ALL ON Staging.K12Organization										  REBUILD;
