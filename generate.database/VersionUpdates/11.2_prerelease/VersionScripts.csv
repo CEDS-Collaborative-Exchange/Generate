@@ -1,4 +1,6 @@
 VersionUpdates\\11.2_prerelease,Restore 11.1.sql,0
+VersionUpdates\\11.2_prerelease,Metadata-FileSpec-Categories.sql,0
+Metadata,App.ViewDefinitions.Metadata.sql,0
 StoredProcedures\\Drop,RDS.Empty_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Empty_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.DisableIndexes.StoredProcedure.sql,0
