@@ -955,6 +955,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimAssessmentRegistrationId'
 		end
+		else if @dimensionTable = 'DimK12AcademicAwardStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimK12AcademicAwardStatusId'
+		end
 			
 		set @factKey = REPLACE(@dimensionPrimaryKey, 'Dim', '')
 
