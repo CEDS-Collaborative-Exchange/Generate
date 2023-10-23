@@ -51,6 +51,6 @@ StoredProcedures\\Drop,App.Wrapper_Migrate_titleIIIELOct_to_RDS.StoredProcedure.
 StoredProcedures\\Create,App.Wrapper_Migrate_titleIIIELOct_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.sql,0
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
 VersionUpdates\\11.2_prerelease,UpdateDbVersion.sql,0
-
-
