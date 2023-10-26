@@ -2,6 +2,8 @@ VersionUpdates\\11.2_prerelease,Restore 11.1.sql,0
 VersionUpdates\\11.2_prerelease,Metadata-FileSpec-Categories.sql,0
 VersionUpdates\\11.2_prerelease,Metadata-Missing-CategorySets.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
 StoredProcedures\\Drop,RDS.Empty_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Empty_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.DisableIndexes.StoredProcedure.sql,0
@@ -56,6 +58,4 @@ StoredProcedures\\Drop,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.s
 StoredProcedures\\Create,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
-Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
-Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
 VersionUpdates\\11.2_prerelease,UpdateDbVersion.sql,0

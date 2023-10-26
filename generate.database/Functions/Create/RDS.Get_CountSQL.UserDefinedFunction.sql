@@ -280,7 +280,7 @@ BEGIN
 		set @idFieldsSQL = '
 		s.StateANSICode as OrganizationIdentifierNces,
 		s.SeaOrganizationIdentifierSea as OrganizationIdentifierSea,
-		s.StateAbbreviationDescription as OrganizationName,
+		s.SeaOrganizationName as OrganizationName,
 		null as ParentOrganizationIdentifierSea'
 	end
 	else if @reportLevel = 'lea'
@@ -296,7 +296,7 @@ BEGIN
 		set @idFieldsSQL = '
 			s.SchoolIdentifierNces as OrganizationIdentifierNces,
 			s.SchoolIdentifierSea as OrganizationIdentifierSea,
-			s.SeaOrganizationName as OrganizationName,
+			s.NameOfInstitution as OrganizationName,
 			s.LeaIdentifierSea as ParentOrganizationIdentifierSea'
 	end
 
