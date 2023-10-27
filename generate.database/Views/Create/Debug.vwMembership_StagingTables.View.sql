@@ -44,5 +44,5 @@ AS
 	--AND race.RaceType = ''
 	--AND race.RecordStartDateTime = ''
 	--AND race.RecordEndDateTime = ''
-	-- 	 AND Pstatus.[EligibilityStatusForSchoolFoodServicePrograms] = ''
-		--AND Pstatus.[NationalSchoolLunchProgramDirectCertificationIndicator] = ''
+	--AND Pstatus.EligibilityStatusForSchoolFoodServicePrograms = ''
+	--AND Pstatus.NationalSchoolLunchProgramDirectCertificationIndicator = ''
