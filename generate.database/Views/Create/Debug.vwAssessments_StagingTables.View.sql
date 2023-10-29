@@ -11,22 +11,22 @@ AS
 				,enrollment.BirthDate
 				,enrollment.GradeLevel
 
-				,assess.AssessmentTitle
-				,assess.AssessmentIdentifier
-				,assess.AssessmentAdministrationStartDate
-				,assess.AssessmentAdministrationFinishDate
-				,assess.AssessmentAcademicSubject
-				,assess.AssessmentPurpose
-				,assess.AssessmentPerformanceLevelIdentifier
-				,assess.AssessmentTypeAdministered
-				,assess.AssessmentTypeAdministeredToEnglishLearners
+				,assess.AssessmentTitle									AS 'Assessment-AssessmentTitle'
+				,assess.AssessmentIdentifier							AS 'Assessment-AssessmentIdentifier'
+				,assess.AssessmentAdministrationStartDate				AS 'Assessment-AssessmentAdministrationStartDate'
+				,assess.AssessmentAdministrationFinishDate				AS 'Assessment-AssessmentAdministrationFinishDate'
+				,assess.AssessmentAcademicSubject						AS 'Assessment-AssessmentAcademicSubject'
+				,assess.AssessmentPurpose								AS 'Assessment-AssessmentPurpose'
+				,assess.AssessmentPerformanceLevelIdentifier			AS 'Assessment-AssessmentPerformanceLevelIdentifier'
+				,assess.AssessmentTypeAdministered						AS 'Assessment-AssessmentTypeAdministered'
+				,assess.AssessmentTypeAdministeredToEnglishLearners		AS 'Assessment-AssessmentTypeAdministeredToEnglishLearners'
 
-				,results.AssessmentAdministrationStartDate
-				,results.AssessmentIdentifier
-				,results.AssessmentPerformanceLevelIdentifier
-				,results.AssessmentRegistrationParticipationIndicator
-				,results.AssessmentRegistrationReasonNotCompleting
-				,results.AssessmentRegistrationReasonNotTested
+				,results.AssessmentAdministrationStartDate				AS 'Results-AssessmentAdministrationStartDate'
+				,results.AssessmentIdentifier							AS 'Results-AssessmentIdentifier'
+				,results.AssessmentPerformanceLevelIdentifier			AS 'Results-AssessmentPerformanceLevelIdentifier'
+				,results.AssessmentRegistrationParticipationIndicator	AS 'Results-AssessmentRegistrationParticipationIndicator'
+				,results.AssessmentRegistrationReasonNotCompleting		AS 'Results-AssessmentRegistrationReasonNotCompleting'
+				,results.AssessmentRegistrationReasonNotTested			AS 'Results-AssessmentRegistrationReasonNotTested'
 
 				,race.RaceType
 				,race.RecordStartDateTime
