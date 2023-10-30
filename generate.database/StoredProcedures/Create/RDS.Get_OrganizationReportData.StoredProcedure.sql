@@ -491,7 +491,7 @@ BEGIN
         from rds.ReportEDFactsOrganizationCounts fact
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
-		where reportcode = case when @reportCode = 'C039' then 'C029' else @ReportCode end
+		where reportcode = @reportCode
 		and ReportLevel = @reportLevel 
 		and ReportYear = @reportYear and CategorySetCode =  isnull(@categorySetCode,'CSA')
 		) organizationInfo     

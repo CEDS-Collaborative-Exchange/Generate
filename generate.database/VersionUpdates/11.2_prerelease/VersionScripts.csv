@@ -81,4 +81,6 @@ StoredProcedures\\Drop,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.s
 StoredProcedures\\Create,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 VersionUpdates\\11.2_prerelease,UpdateDbVersion.sql,0
