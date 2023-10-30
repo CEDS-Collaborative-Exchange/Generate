@@ -59,9 +59,9 @@ AS
 	
 	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1
-	--AND Students.StudentIdentifierState = '12345678'	
-	--AND LEAs.LeaIdentifierSeaAccountability = '123'
-	--AND Schools.SchoolIdentifierSea = '456'
+	--AND enrollment.StudentIdentifierState = '12345678'	
+	--AND enrollment.LeaIdentifierSeaAccountability = '123'
+	--AND enrollment.SchoolIdentifierSea = '456'
 	--AND [RDS].[Get_Age] (enrollment.BirthDate, dates.ResponseValue) = '12'
 	--AND enrollment.FirstName = ''
 	--AND enrollment.LastOrSurname = ''
