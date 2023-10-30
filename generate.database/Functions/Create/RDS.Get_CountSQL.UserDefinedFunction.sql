@@ -395,6 +395,10 @@ BEGIN
 			-- Category Options
 			----------------------------
 		'
+		-- JW 10/20/2023 ----------------------------------------------------------------------------
+		select @sql = @sql + char(10) + 							
+		'IF OBJECT_ID(''tempdb..#categoryset'') IS NOT NULL DROP TABLE #categoryset' + char(10) + char(10)
+		---------------------------------------------------------------------------------------------
 
 		--pull the list of students to use in these reports into the #Students temp table 
 		if (@factReportTable <> 'ReportEDFactsK12StaffCounts')
@@ -500,6 +504,36 @@ BEGIN
 					'CREATE INDEX IDX_Students ON #Students (K12StudentId, K12StudentStudentIdentifierState)' + char(10) + char(10)
 
 				end
+
+			-- JW 10/20/2023 Fixed C002 SCH Performance by using a #temp table rather than "In subselect"
+			if not @toggleDevDelayAges is null
+			begin
+				select @sql = @sql + char(10)
+				select @sql = @sql + 
+
+							'-- *****************************************************************************
+							IF OBJECT_ID(''tempdb..#EXCLUDE'') IS NOT NULL DROP TABLE #EXCLUDE
+
+							select distinct fact.K12StudentId
+							into #EXCLUDE
+							from rds.FactK12StudentCounts fact
+							inner join rds.DimAges age 
+								on fact.AgeId = age.DimAgeId
+								and not age.AgeCode in (' + @toggleDevDelayAges + ') 
+							inner join rds.DimK12Schools s 
+								on fact.K12SchoolId = s.DimK12SchoolId
+								and fact.SchoolYearId = @dimSchoolYearId
+								and fact.FactTypeId = @dimFactTypeId
+								and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+							inner join rds.DimIdeaDisabilityTypes idea 
+								on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
+							where idea.IdeaDisabilityTypeEdFactsCode = ''DD''
+							--***************************************************************************'
+
+				 + char(10) + char(10)
+
+			end
+
 
 			-- JW 7/20/2023 Fixed FS141 performance issues by using #temp table rather than "In subselect"
 			if @reportCode in ('C141')
@@ -2164,7 +2198,13 @@ BEGIN
 			if not @toggleDevDelayAges is null
 			begin
 				-- Exclude DD from counts for invalid ages
+				-- JW 10/20/2023 ------------------------------------------------------
+				set @sqlCountJoins = @sqlCountJoins + '
+								left join #EXCLUDE exclude
+						on fact.K12StudentId = exclude.K12StudentId' + char(10) + char(10)
 
+
+				/*********************************************
 				set @sqlCountJoins = @sqlCountJoins + '
 					left join (
 						select distinct fact.K12StudentId
@@ -2182,6 +2222,7 @@ BEGIN
 						where idea.IdeaDisabilityTypeEdFactsCode = ''DD''
 					) exclude
 						on fact.K12StudentId = exclude.K12StudentId'
+				**********************************************/
 						
 				set @queryFactFilter = @queryFactFilter + '
 				and exclude.K12StudentId IS NULL'
