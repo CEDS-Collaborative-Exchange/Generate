@@ -496,6 +496,7 @@ BEGIN
 							, [StateName]
 							, [TotalIndicator]
 							, [GRADELEVEL]
+							, [OperationalStatus]
 						)
 						select distinct @categorySetCode
 							, 1 as OrganizationCount
@@ -509,6 +510,7 @@ BEGIN
 							, lea.StateAbbreviationDescription
 							, 0 as TotalIndicator
 							, grades.GradeLevelEdFactsCode
+							, lea.LeaOperationalStatusEdFactsCode
 						from rds.FactOrganizationCounts fact
 							inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
@@ -539,6 +541,7 @@ BEGIN
 							, [StateName]
 							, [TotalIndicator]
 							, [GRADELEVEL]
+							, [OperationalStatus]
 						)
 						select @categorySetCode
 							, 1 as OrganizationCount
@@ -553,6 +556,7 @@ BEGIN
 							, sch.StateAbbreviationDescription
 							, 0 as TotalIndicator
 							, grades.GradeLevelEdFactsCode
+							, sch.SchoolOperationalStatusEdFactsCode
 						from rds.FactOrganizationCounts fact
 							inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
@@ -1749,6 +1753,7 @@ BEGIN
 								, lea.StateAbbreviationDescription
 								, 0 as TotalIndicator
 								, grades.GradeLevelEdFactsCode
+								, lea.LeaOperationalStatusEdFactsCode
 							from rds.FactOrganizationCounts fact
 								inner join rds.DimSchoolYears dates
 									on fact.SchoolYearId = dates.DimSchoolYearId
@@ -1779,6 +1784,7 @@ BEGIN
 								, sch.StateAbbreviationDescription
 								, 0 as TotalIndicator
 								, grades.GradeLevelEdFactsCode
+								, sch.SchoolOperationalStatusEdFactsCode
 							from rds.FactOrganizationCounts fact
 								inner join rds.DimSchoolYears dates
 									on fact.SchoolYearId = dates.DimSchoolYearId
