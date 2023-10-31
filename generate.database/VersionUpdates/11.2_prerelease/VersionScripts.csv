@@ -1,6 +1,7 @@
 VersionUpdates\\11.2_prerelease,Restore 11.1.sql,0
 VersionUpdates\\11.2_prerelease,Metadata-FileSpec-Categories.sql,0
 VersionUpdates\\11.2_prerelease,Metadata-Missing-CategorySets.sql,0
+VersionUpdates\\11.2_prerelease,Metadata-Updates.sql,0
 VersionUpdates\\11.2_prerelease,Update-DataMigrationTasks-file-list.sql,0
 VersionUpdates\\11.2_prerelease,Update_SSRD.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
