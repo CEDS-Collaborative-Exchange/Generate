@@ -29,14 +29,27 @@ BEGIN
 		@SchoolYearId INT,
 		@SYStartDate DATE,
 		@SYEndDate DATE,
-		@DimK12EnrollmentStatusId int
+		@DimK12EnrollmentStatusId int,
+		@ExitOrWithdrawalTypeMap varchar(10)
 		
 		SELECT @SchoolYearId = DimSchoolYearId 
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
-		select top 1 @DimK12EnrollmentStatusId = (
-			select DimK12EnrollmentStatusId
+		select @DimK12EnrollmentStatusId = (
+			select top 1 DimK12EnrollmentStatusId
+			from rds.vwDimK12EnrollmentStatuses
+			where ExitOrWithdrawalTypeCode = '01927'
+				and EnrollmentStatusCode = 'MISSING'
+				and EntryTypeCode = 'MISSING'
+				and PostSecondaryEnrollmentStatusCode = 'MISSING'
+				and EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
+				and EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
+				and SchoolYear = @SchoolYear
+				)
+
+		select @ExitOrWithdrawalTypeMap = (
+			select top 1 ExitOrWithdrawalTypeMap
 			from rds.vwDimK12EnrollmentStatuses
 			where ExitOrWithdrawalTypeCode = '01927'
 				and EnrollmentStatusCode = 'MISSING'
@@ -316,6 +329,8 @@ BEGIN
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
+
+		WHERE ske.ExitOrWithdrawalType = @ExitOrWithdrawalTypeMap
 
 	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (
