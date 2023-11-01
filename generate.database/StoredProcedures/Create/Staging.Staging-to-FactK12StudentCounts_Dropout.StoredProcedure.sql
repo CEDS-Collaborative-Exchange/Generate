@@ -72,9 +72,10 @@ BEGIN
 		INTO #vwHomelessnessStatuses
 		FROM RDS.vwDimHomelessnessStatuses
 		WHERE SchoolYear = @SchoolYear
+			AND HomelessPrimaryNighttimeResidenceCode =  'MISSING'
+			AND HomelessUnaccompaniedYouthStatusCode = 'MISSING'
+			AND HomelessServicedIndicatorCode = 'MISSING'
 
-		CREATE CLUSTERED INDEX ix_tempvwHomelessnessStatuses
-			ON #vwHomelessnessStatuses (HomelessnessStatusMap, HomelessPrimaryNighttimeResidenceMap, HomelessUnaccompaniedYouthStatusMap, HomelessServicedIndicatorMap);
 
 		SELECT *
 		INTO #vwEconomicallyDisadvantagedStatuses
@@ -269,9 +270,6 @@ BEGIN
 	--homelessness (RDS)
 		LEFT JOIN #vwHomelessnessStatuses rdhs
 			ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)
-			AND ISNULL(hmStatus.HomelessNightTimeResidence, 'MISSING') = ISNULL(rdhs.HomelessPrimaryNighttimeResidenceMap, 'MISSING')
-			AND ISNULL(CAST(hmStatus.HomelessUnaccompaniedYouth AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessUnaccompaniedYouthStatusMap AS SMALLINT), -1)
-			AND ISNULL(CAST(hmStatus.HomelessServicedIndicator as SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessServicedIndicatorMap as SMALLINT), -1) -- JW Added This 10/31/2023
 			
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
