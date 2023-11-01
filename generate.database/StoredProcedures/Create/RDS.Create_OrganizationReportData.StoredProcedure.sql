@@ -1,4 +1,4 @@
-CREATE PROCEDURE [RDS].[Create_OrganizationReportData]
+Create PROCEDURE [RDS].[Create_OrganizationReportData]
 	@reportCode as varchar(50),
 	@runAsTest as bit
 AS
@@ -920,7 +920,6 @@ BEGIN
 						, [StateANSICode]
 						, [StateName]							
 						, [CategorySetCode]
-						, [ManagementOrganizationType]
 						, [MailingAddressStreet]
 						, [MailingAddressCity]
 						, [MailingAddressState]
@@ -932,70 +931,71 @@ BEGIN
 						, [PhysicalAddressCity]
 						, [PhysicalAddressState]
 						, [PhysicalAddressPostalCode]
+						, [CharterSchoolAuthorizerType]
 					)
 					(SELECT distinct 1 as OrganizationCount
-						, lea.CharterSchoolAuthorizingOrganizationOrganizationName as OrganizationName
-						, lea.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea as LeaStateIdentifier
-						, lea.StateAbbreviationCode
-						, lea.StateANSICode
-						, lea.StateAbbreviationDescription as StateName
+						, rdcsa.CharterSchoolAuthorizingOrganizationOrganizationName as OrganizationName
+						, rdcsa.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea as LeaStateIdentifier
+						, rdcsa.StateAbbreviationCode
+						, rdcsa.StateANSICode
+						, rdcsa.StateAbbreviationDescription as StateName
 						, @categorySetCode
-						, lea.CharterSchoolAuthorizerTypeCode as ManagementOrganizationType
-						, lea.MailingAddressStreetNumberAndName
-						, lea.MailingAddressCity
-						, lea.MailingAddressStateAbbreviation
-						, lea.MailingAddressPostalCode
+						, rdcsa.MailingAddressStreetNumberAndName
+						, rdcsa.MailingAddressCity
+						, rdcsa.MailingAddressStateAbbreviation
+						, rdcsa.MailingAddressPostalCode
 						, @reportCode
 						, @reportLevel
 						, @reportYear
-						, lea.PhysicalAddressStreetNumberAndName
-						, lea.PhysicalAddressCity
-						, lea.PhysicalAddressStateAbbreviation
-						, lea.PhysicalAddressPostalCode
+						, rdcsa.PhysicalAddressStreetNumberAndName
+						, rdcsa.PhysicalAddressCity
+						, rdcsa.PhysicalAddressStateAbbreviation
+						, rdcsa.PhysicalAddressPostalCode
+						, rdcsa.CharterSchoolAuthorizerTypeCode
 					from rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 							on fact.SchoolYearId = d.DimSchoolYearId
-						inner join rds.DimCharterSchoolAuthorizers lea 
-							on fact.AuthorizingBodyCharterSchoolAuthorizerId = lea.DimCharterSchoolAuthorizerId
+						inner join rds.DimCharterSchoolAuthorizers rdcsa 
+							on fact.AuthorizingBodyCharterSchoolAuthorizerId = rdcsa.DimCharterSchoolAuthorizerId
 /* JW 6/26/2023 Not sure of this join *********************************************************
 						inner join rds.DimK12Schools schools 
 							on schools.SchoolIdentifierSea = lea.SchoolStateIdentifier	
 *********************************************************************************************/
 					where d.SchoolYear = @reportYear 
-					and lea.DimCharterSchoolAuthorizerId <> -1 
+					and rdcsa.DimCharterSchoolAuthorizerId <> -1 
 					-- JW 6/26/2023 Depends on join above that is commented 
 					-- and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					UNION 
 					SELECT distinct	1 as OrganizationCount
-						, lea.CharterSchoolAuthorizingOrganizationOrganizationName as OrganizationName
-						, lea.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea as LeaStateIdentifier
-						, lea.StateAbbreviationCode
-						, lea.StateANSICode
-						, lea.StateAbbreviationDescription as StateName
-						, @categorySetCode
-						, lea.CharterSchoolAuthorizerTypeCode
-						, lea.MailingAddressStreetNumberAndName
-						, lea.MailingAddressCity
-						, lea.MailingAddressStateAbbreviation
-						, lea.MailingAddressPostalCode
+						, rdcsa.CharterSchoolAuthorizingOrganizationOrganizationName as OrganizationName
+						, rdcsa.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea as LeaStateIdentifier
+						, rdcsa.StateAbbreviationCode
+						, rdcsa.StateANSICode
+						, rdcsa.StateAbbreviationDescription as StateName
+						, @categorySetCode						
+						, rdcsa.MailingAddressStreetNumberAndName
+						, rdcsa.MailingAddressCity
+						, rdcsa.MailingAddressStateAbbreviation
+						, rdcsa.MailingAddressPostalCode
 						, @reportCode
 						, @reportLevel
 						, @reportYear
-						, lea.PhysicalAddressStreetNumberAndName
-						, lea.PhysicalAddressCity
-						, lea.PhysicalAddressStateAbbreviation
-						, lea.PhysicalAddressPostalCode
+						, rdcsa.PhysicalAddressStreetNumberAndName
+						, rdcsa.PhysicalAddressCity
+						, rdcsa.PhysicalAddressStateAbbreviation
+						, rdcsa.PhysicalAddressPostalCode
+						, rdcsa.CharterSchoolAuthorizerTypeCode
 					from rds.FactOrganizationCounts fact
 					inner join rds.DimSchoolYears d
 						on fact.SchoolYearId = d.DimSchoolYearId
-					inner join rds.DimCharterSchoolAuthorizers lea 
-						on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = lea.DimCharterSchoolAuthorizerId
+					inner join rds.DimCharterSchoolAuthorizers rdcsa 
+						on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = rdcsa.DimCharterSchoolAuthorizerId
 /* JW 6/26/2023 Not sure of this join *********************************************************
 					inner join rds.DimK12Schools schools 
 						on schools.SchoolIdentifierSea = lea.SchoolStateIdentifier	
 *********************************************************************************************/
 					where d.SchoolYear = @reportYear 
-					and lea.DimCharterSchoolAuthorizerId <> -1 
+					and rdcsa.DimCharterSchoolAuthorizerId <> -1 
 					-- JW 6/26/2023 Depends on join above that is commented 
 					-- and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					)
