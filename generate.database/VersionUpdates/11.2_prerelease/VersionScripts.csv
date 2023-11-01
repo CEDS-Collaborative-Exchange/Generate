@@ -4,6 +4,7 @@ VersionUpdates\\11.2_prerelease,Metadata-Missing-CategorySets.sql,0
 VersionUpdates\\11.2_prerelease,Metadata-Updates.sql,0
 VersionUpdates\\11.2_prerelease,Update-DataMigrationTasks-file-list.sql,0
 VersionUpdates\\11.2_prerelease,TableChanges.sql,0
+VersionUpdates\\11.2_prerelease,Update_SSRD.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
 Views\\Drop,Debug.vwAssessments_FactTable.View.sql
 Views\\Create,Debug.vwAssessments_FactTable.View.sql
@@ -85,4 +86,6 @@ StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Dropout.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Dropout.StoredProcedure.sql,0
 VersionUpdates\\11.2_prerelease,UpdateDbVersion.sql,0
