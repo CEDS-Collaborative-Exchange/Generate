@@ -4,6 +4,8 @@ Date:	2/20/2023
 Description: Migrates Dropout Data from Staging to RDS.FactK12StudentCounts
 
 NOTE: This Stored Procedure processes files: 032
+
+11/1/2023: Updated to properly set DimK12EnrollmentStatusId and improve performance
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_Dropout]
 	@SchoolYear SMALLINT
@@ -26,11 +28,24 @@ BEGIN
 		@FactTypeId INT,
 		@SchoolYearId INT,
 		@SYStartDate DATE,
-		@SYEndDate DATE
+		@SYEndDate DATE,
+		@DimK12EnrollmentStatusId int
 		
 		SELECT @SchoolYearId = DimSchoolYearId 
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
+
+		select top 1 @DimK12EnrollmentStatusId = (
+			select DimK12EnrollmentStatusId
+			from rds.vwDimK12EnrollmentStatuses
+			where ExitOrWithdrawalTypeCode = '01927'
+				and EnrollmentStatusCode = 'MISSING'
+				and EntryTypeCode = 'MISSING'
+				and PostSecondaryEnrollmentStatusCode = 'MISSING'
+				and EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
+				and EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
+				and SchoolYear = @SchoolYear
+				)
 
 		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
@@ -162,7 +177,7 @@ BEGIN
 			, -1 														CohortStatusId						
 			, -1														NOrDStatusId							
 			, -1														CTEStatusId							
-			, -1														K12EnrollmentStatusId					
+			, @DimK12EnrollmentStatusId									K12EnrollmentStatusId					
 			, ISNULL(rdels.DimEnglishLearnerStatusId, -1)				EnglishLearnerStatusId				
 			, ISNULL(rdhs.DimHomelessnessStatusId, -1)					HomelessnessStatusId					
 			, ISNULL(rdeds.DimEconomicallyDisadvantagedStatusId, -1)	EconomicallyDisadvantagedStatusId		
