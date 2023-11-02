@@ -100,8 +100,8 @@ BEGIN
 			END AS K12StaffClassificationEdFactsCode
 			, SpecialEducationAgeGroupTaught
 			, CASE SpecialEducationAgeGroupTaught
-				WHEN '3TO5NOTK' THEN '3TO5NOTK'
-				WHEN 'AGE5KTO21' THEN 'AGE5KTO21'
+				WHEN '3TO5' THEN '3TO5NOTK'
+				WHEN '6TO21' THEN 'AGE5KTO21'
 				ELSE 'MISSING'
 			END AS SpecialEducationAgeGroupTaughtEdFactsCode
 			, SpecialEducationTeacherQualificationStatus
