@@ -31,6 +31,10 @@ Views\\Drop,Debug.vwChildCount_StagingTables.View.sql
 Views\\Create,Debug.vwChildCount_StagingTables.View.sql
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
+Functions\\Drop,dbo.fn_StripCharacters.UserDefinedFunction.sql 
+Functions\\Create,dbo.fn_StripCharacters.UserDefinedFunction.sql
+VersionUpdates\\11.2_prerelease,Update File Submission File Description.sql,0
+Functions\\Drop,dbo.fn_StripCharacters.UserDefinedFunction.sql 
 StoredProcedures\\Drop,RDS.Empty_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Empty_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.DisableIndexes.StoredProcedure.sql,0
