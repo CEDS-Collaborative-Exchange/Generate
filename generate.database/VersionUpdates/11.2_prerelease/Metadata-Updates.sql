@@ -8,3 +8,6 @@ BEGIN
     INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
     VALUES (@categoryId, @dimensionId)
 END
+
+
+update App.FileColumns set DimensionId = @dimensionId where ColumnName = 'CertificationStatusID'
