@@ -83,17 +83,18 @@ BEGIN
 	select @cutOffDay = SUBSTRING(@customFactTypeDate, CHARINDEX('/', @customFactTypeDate) + 1, 2)
 
 	--Get the LEAs that should not be reported against
-	IF OBJECT_ID('tempdb..#notReportedFederallyLeas') IS NOT NULL
-	DROP TABLE #notReportedFederallyLeas
+	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL
+	DROP TABLE #excludedLeas
 
-	CREATE TABLE #notReportedFederallyLeas (
+	CREATE TABLE #excludedLeas (
 		LeaIdentifierSeaAccountability		VARCHAR(20)
 	)
 
-	INSERT INTO #notReportedFederallyLeas 
-	SELECT DISTINCT LeaIdentifierSea
+	INSERT INTO #excludedLeas 
+	SELECT DISTINCT LEAIdentifierSea
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
 
 	IF OBJECT_ID('tempdb..#vwDisciplineStatuses') IS NOT NULL
 	DROP TABLE #vwDisciplineStatuses
@@ -293,18 +294,18 @@ BEGIN
 	SET s.RemovalLength = tmp.RemovalLength
 	FROM #C088Staging s
 		INNER JOIN (
-				SELECT StudentIdentifierState
-					,CASE 
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) >= 0.5 
-							and sum(cast(DurationOfDisciplinaryAction as float)) < 1.5 THEN 'LTOREQ1'
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) >= 1.5 
-							and sum(cast(DurationOfDisciplinaryAction as float)) <= 10 THEN '2TO10'
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) > 10 THEN 'GREATER10'
-						ELSE 'MISSING'
-					END AS RemovalLength
-				FROM #C088Staging 
-				where IDEADISABILITYTYPE IS NOT NULL
-				GROUP BY StudentIdentifierState--, IDEADISABILITYTYPE
+			SELECT StudentIdentifierState
+				,CASE 
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 0.5 
+						and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) < 1.5 THEN 'LTOREQ1'
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 1.5 
+						and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) <= 10 THEN '2TO10'
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
+					ELSE 'MISSING'
+				END AS RemovalLength
+			FROM #C088Staging 
+			where IDEADISABILITYTYPE IS NOT NULL
+			GROUP BY StudentIdentifierState--, IDEADISABILITYTYPE
 		) tmp
 			ON s.StudentIdentifierState =  tmp.StudentIdentifierState
 
@@ -313,17 +314,17 @@ BEGIN
 	SET s.LEPRemovalLength = tmp.LEPRemovalLength
 	FROM #C088Staging s
 		INNER JOIN (
-				SELECT StudentIdentifierState, EnglishLearnerStatusEdFactsCode
-					,CASE 
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) >= 0.5 
-							and sum(cast(DurationOfDisciplinaryAction as float)) < 1.5 THEN 'LTOREQ1'
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) >= 1.5 
-							and sum(cast(DurationOfDisciplinaryAction as float)) <= 10 THEN '2TO10'
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) > 10 THEN 'GREATER10'
-						ELSE 'MISSING'
-					END AS LEPRemovalLength
-				FROM #C088Staging 
-				GROUP BY StudentIdentifierState, EnglishLearnerStatusEdFactsCode
+			SELECT StudentIdentifierState, EnglishLearnerStatusEdFactsCode
+				,CASE 
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 0.5 
+						and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) < 1.5 THEN 'LTOREQ1'
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 1.5 
+						and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) <= 10 THEN '2TO10'
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
+					ELSE 'MISSING'
+				END AS LEPRemovalLength
+			FROM #C088Staging 
+			GROUP BY StudentIdentifierState, EnglishLearnerStatusEdFactsCode
 		) tmp
 			ON s.StudentIdentifierState = tmp.StudentIdentifierState
 			AND s.EnglishLearnerStatusEdFactsCode = tmp.EnglishLearnerStatusEdFactsCode
@@ -383,11 +384,11 @@ BEGIN
 		INNER JOIN (
 				SELECT StudentIdentifierState
 					,CASE 
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) >= 0.5 
-							and sum(cast(DurationOfDisciplinaryAction as float)) < 1.5 THEN 'LTOREQ1'
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) >= 1.5 
-							and sum(cast(DurationOfDisciplinaryAction as float)) <= 10 THEN '2TO10'
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) > 10 THEN 'GREATER10'
+						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 0.5 
+							and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) < 1.5 THEN 'LTOREQ1'
+						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 1.5 
+							and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) <= 10 THEN '2TO10'
+						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
 						ELSE 'MISSING'
 					END AS RemovalLength
 				FROM #C088Staging 
@@ -618,28 +619,22 @@ BEGIN
 		and o.DimLeaId <> -1 
 		and o.LEAOperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING') AND CONVERT(date, o.OperationalStatusEffectiveDate, 101) between CONVERT(date, '07/01/2022', 101) AND CONVERT(date, '06/30/2023', 101)
 
-	/*************************************************************************
-		1) Change from float to decimal(18,2) 
-			becuase when sum(cast(DurationOfDisciplinaryAction as float)) = 10, the comparison to 10 results  'GREATER10'
-			changing to decimal resolves the issue
-		2) Recalculate the RemovalLength in case some closed LEAs.
-	*/
 	UPDATE s
 	SET s.RemovalLength = tmp.RemovalLength
 	FROM #C088staging_LEA s
 		INNER JOIN (
-				SELECT StudentIdentifierState
-					,CASE 
-						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(18,2))) >= 0.5 
-							and sum(cast(DurationOfDisciplinaryAction as decimal(18,2))) < 1.5 THEN 'LTOREQ1'
-						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(18,2))) >= 1.5 
-							and sum(cast(DurationOfDisciplinaryAction as decimal(18,2))) <= 10 THEN '2TO10'
-						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(18,2))) > 10 THEN 'GREATER10'
-						ELSE 'MISSING'
-					END AS RemovalLength
-				FROM #C088Staging_LEA 
-				where ISNULL(IDEADISABILITYTYPE, 'MISSING') <> 'MISSING' -- For CSA only because the studentcount is group by StudentIdentifierState-, IDEADISABILITYTYPE
-				GROUP BY StudentIdentifierState--, IDEADISABILITYTYPE
+			SELECT StudentIdentifierState
+				,CASE 
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 0.5 
+						and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) < 1.5 THEN 'LTOREQ1'
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 1.5 
+						and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) <= 10 THEN '2TO10'
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
+					ELSE 'MISSING'
+				END AS RemovalLength
+			FROM #C088Staging_LEA 
+			where ISNULL(IDEADISABILITYTYPE, 'MISSING') <> 'MISSING' -- For CSA only because the studentcount is group by StudentIdentifierState-, IDEADISABILITYTYPE
+			GROUP BY StudentIdentifierState--, IDEADISABILITYTYPE
 		) tmp
 			ON s.StudentIdentifierState =  tmp.StudentIdentifierState
 
@@ -654,9 +649,9 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSA
 	FROM #C088staging_LEA  s
-	LEFT JOIN #notReportedFederallyLeas nrflea
-		ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
-	WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 	AND RemovalLength <> 'MISSING'
 	AND IDEADISABILITYTYPE <> 'MISSING'
 	GROUP BY s.LeaIdentifierSeaAccountability
@@ -704,18 +699,18 @@ BEGIN
 	SET s.RemovalLength = tmp.RemovalLength
 	FROM #C088staging_LEA s
 		INNER JOIN (
-				SELECT StudentIdentifierState
-					,CASE 
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) >= 0.5 
-							and sum(cast(DurationOfDisciplinaryAction as float)) < 1.5 THEN 'LTOREQ1'
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) >= 1.5 
-							and sum(cast(DurationOfDisciplinaryAction as float)) <= 10 THEN '2TO10'
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) > 10 THEN 'GREATER10'
-						ELSE 'MISSING'
-					END AS RemovalLength
-				FROM #C088Staging_LEA 
-				--where ISNULL(IDEADISABILITYTYPE, 'MISSING') <> 'MISSING' -- For CSA only
-				GROUP BY StudentIdentifierState--, IDEADISABILITYTYPE
+			SELECT StudentIdentifierState
+				,CASE 
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 0.5 
+						and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) < 1.5 THEN 'LTOREQ1'
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 1.5 
+						and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) <= 10 THEN '2TO10'
+					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
+					ELSE 'MISSING'
+				END AS RemovalLength
+			FROM #C088Staging_LEA 
+			--where ISNULL(IDEADISABILITYTYPE, 'MISSING') <> 'MISSING' -- For CSA only
+			GROUP BY StudentIdentifierState--, IDEADISABILITYTYPE
 		) tmp
 			ON s.StudentIdentifierState =  tmp.StudentIdentifierState
 
@@ -726,9 +721,9 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSB
 	FROM #C088staging_LEA  s
-	LEFT JOIN #notReportedFederallyLeas nrflea
-		ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
-	WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 	AND RemovalLength <> 'MISSING'
 	GROUP BY s.LeaIdentifierSeaAccountability
 		, RemovalLength
@@ -777,9 +772,9 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSC
 	FROM #C088staging_LEA  s
-	LEFT JOIN #notReportedFederallyLeas nrflea
-		ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
-	WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 	AND RemovalLength <> 'MISSING'
 	AND SexEdFactsCode <> 'MISSING'
 	GROUP BY s.LeaIdentifierSeaAccountability
@@ -829,9 +824,9 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSD
 	FROM #C088staging_LEA  s
-	LEFT JOIN #notReportedFederallyLeas nrflea
-		ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
-	WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 	AND LEPRemovalLength <> 'MISSING'
 	GROUP BY s.LeaIdentifierSeaAccountability
 		, LEPRemovalLength
@@ -879,9 +874,9 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_ST1
 	FROM #C088staging_LEA  s
-	LEFT JOIN #notReportedFederallyLeas nrflea
-		ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
-	WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 	AND RemovalLength <> 'MISSING'
 	GROUP BY s.LeaIdentifierSeaAccountability
 		, RemovalLength
@@ -925,9 +920,9 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_TOT
 	FROM #C088staging_LEA  s
-	LEFT JOIN #notReportedFederallyLeas nrflea
-		ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
-	WHERE nrflea.LeaIdentifierSeaAccountability IS NULL -- exclude non-federally reported LEAs
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 	AND RemovalLength <> 'MISSING'
 	GROUP BY s.LeaIdentifierSeaAccountability
 

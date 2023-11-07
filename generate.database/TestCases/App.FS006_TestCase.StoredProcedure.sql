@@ -206,9 +206,9 @@ BEGIN
 		INNER JOIN (
 				SELECT StudentIdentifierState, DisciplineMethod
 					,CASE 
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) >= 0.5 
-							and sum(cast(DurationOfDisciplinaryAction as float)) <= 10 THEN 'LTOREQ10'
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) > 10 THEN 'GREATER10'
+						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 0.5 
+							and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) <= 10 THEN 'LTOREQ10'
+						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
 						ELSE 'MISSING'
 					END AS RemovalLength
 				FROM #C006Staging 
@@ -224,9 +224,9 @@ BEGIN
 		INNER JOIN (
 				SELECT StudentIdentifierState, DisciplineMethod, EnglishLearnerStatusEdFactsCode
 					,CASE 
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) >= 0.5 
-							and sum(cast(DurationOfDisciplinaryAction as float)) <= 10 THEN 'LTOREQ10'
-						WHEN sum(cast(DurationOfDisciplinaryAction as float)) > 10 THEN 'GREATER10'
+						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 0.5 
+							and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) <= 10 THEN 'LTOREQ10'
+						WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
 						ELSE 'MISSING'
 					END AS LEPRemovalLength
 				FROM #C006Staging 
