@@ -34,7 +34,7 @@ BEGIN
 	ALTER INDEX ALL ON Staging.OrganizationProgramType								  REBUILD;
 	ALTER INDEX ALL ON Staging.OrganizationSchoolComprehensiveAndTargetedSupport	  REBUILD;
 	ALTER INDEX ALL ON Staging.OrganizationSchoolIndicatorStatus					  REBUILD;
-	ALTER INDEX ALL ON Staging.K12PersonStatus											  REBUILD;
+	ALTER INDEX ALL ON Staging.PersonStatus											  REBUILD;
 	ALTER INDEX ALL ON Staging.ProgramParticipationCTE								  REBUILD;
 	ALTER INDEX ALL ON Staging.ProgramParticipationNorD								  REBUILD;
 	ALTER INDEX ALL ON Staging.ProgramParticipationSpecialEducation					  REBUILD;
