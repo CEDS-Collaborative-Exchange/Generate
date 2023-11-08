@@ -20,6 +20,9 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#vwK12Demographics') IS NOT NULL DROP TABLE #vwK12Demographics
 		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
 		IF OBJECT_ID(N'tempdb..#vwIdeaStatuses') IS NOT NULL DROP TABLE #vwIdeaStatuses
+		IF OBJECT_ID(N'tempdb..#vwEconomicallyDisadvantagedStatuses') IS NOT NULL DROP TABLE #vwEconomicallyDisadvantagedStatuses
+		IF OBJECT_ID(N'tempdb..#vwHomelessnessStatuses') IS NOT NULL DROP TABLE #vwHomelessnessStatuses
+		IF OBJECT_ID(N'tempdb..#vwMigrantStatuses') IS NOT NULL DROP TABLE #vwMigrantStatuses
 
 	--Set the standard variables used throughout
 		DECLARE 
@@ -39,24 +42,24 @@ BEGIN
 	--Create the temp views (and any relevant indexes) needed for this domain
 		SELECT *
 		INTO #vwK12AcademicAwardStatuses
-		FROM RDS.vwDimK12StudentStatuses
+		FROM RDS.vwDimK12AcademicAwardStatuses
 		WHERE SchoolYear = @SchoolYear
 		CREATE CLUSTERED INDEX ix_tempvwK12AcademicAwardStatuses 
-			ON #vwK12AcademicAwardStatuses (HighSchoolDiplomaTypeCode, NSLPDirectCertificationIndicatorCode);
+			ON #vwK12AcademicAwardStatuses (HighSchoolDiplomaTypeCode);
 
 		SELECT *
 		INTO #vwK12Demographics
 		FROM RDS.vwDimK12Demographics
 		WHERE SchoolYear = @SchoolYear
-		CREATE CLUSTERED INDEX ix_tempvwK12Demographics 
-			ON #vwK12Demographics (EnglishLearnerStatusMap, EconomicDisadvantageStatusCode, HomelessnessStatusCode, HomelessPrimaryNighttimeResidenceCode, HomelessUnaccompaniedYouthStatusCode, MigrantStatusCode, MilitaryConnectedStudentIndicatorCode);
+		--CREATE CLUSTERED INDEX ix_tempvwK12Demographics 
+		--	ON #vwK12Demographics (EnglishLearnerStatusMap, EconomicDisadvantageStatusCode, HomelessnessStatusCode, HomelessPrimaryNighttimeResidenceCode, HomelessUnaccompaniedYouthStatusCode, MigrantStatusCode, MilitaryConnectedStudentIndicatorCode);
 
 		SELECT *
 		INTO #vwIdeaStatuses
 		FROM RDS.vwDimIdeaStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwIdeaStatuses ON #vwIdeaStatuses (IdeaIndicatorMap, PrimaryDisabilityTypeMap, IdeaEducationalEnvironmentMap);
+		--CREATE CLUSTERED INDEX ix_tempvwIdeaStatuses ON #vwIdeaStatuses (IdeaIndicatorMap, PrimaryDisabilityTypeMap, IdeaEducationalEnvironmentMap);
 
 		SELECT *
 		INTO #vwRaces
@@ -64,6 +67,42 @@ BEGIN
 		WHERE SchoolYear = @SchoolYear
 
 		CREATE CLUSTERED INDEX ix_tempvwRaces ON #vwRaces (RaceMap);
+
+		SELECT *
+		INTO #vwHomelessnessStatuses
+		FROM RDS.vwDimHomelessnessStatuses
+		WHERE SchoolYear = @SchoolYear
+			AND HomelessPrimaryNighttimeResidenceCode =  'MISSING'
+			AND HomelessUnaccompaniedYouthStatusCode = 'MISSING'
+			AND HomelessServicedIndicatorCode = 'MISSING'
+
+
+		SELECT *
+		INTO #vwEconomicallyDisadvantagedStatuses
+		FROM RDS.vwDimEconomicallyDisadvantagedStatuses
+		WHERE SchoolYear = @SchoolYear
+			AND EligibilityStatusForSchoolFoodServiceProgramsCode = 'MISSING'
+			AND NationalSchoolLunchProgramDirectCertificationIndicatorCode = 'MISSING'
+
+		CREATE CLUSTERED INDEX ix_tempvwEconomicallyDisadvantagedStatuses
+			ON #vwEconomicallyDisadvantagedStatuses (EconomicDisadvantageStatusMap) --, EligibilityStatusForSchoolFoodServiceProgramsMap, NationalSchoolLunchProgramDirectCertificationIndicatorMap);
+
+
+		SELECT *
+		INTO #vwMigrantStatuses
+		FROM RDS.vwDimMigrantStatuses
+		WHERE SchoolYear = @SchoolYear
+			AND MigrantEducationProgramEnrollmentTypeCode = 'MISSING' 
+			AND ContinuationOfServicesReasonCode = 'MISSING'
+			AND MigrantEducationProgramServicesTypeCode = 'MISSING'
+			AND MigrantPrioritizedForServicesCode = 'MISSING'
+			AND MEPContinuationOfServicesStatusCode = 'MISSING'
+			and ConsolidatedMEPFundsStatusCode = 'MISSING'
+
+		CREATE CLUSTERED INDEX ix_tempvwMigrantStatuses
+			ON #vwMigrantStatuses (MigrantStatusMap) --, MigrantEducationProgramEnrollmentTypeCode, ContinuationOfServicesReasonCode, MigrantEducationProgramServicesTypeCode, MigrantPrioritizedForServicesCode, MEPContinuationOfServicesStatusCode, ConsolidatedMepFundsStatusCode);
+
+
 
 	--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
@@ -127,11 +166,11 @@ BEGIN
 			, -1														IEUId									
 			, ISNULL(rdl.DimLeaID, -1)									LEAId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId							
-			, ISNULL(rdp.DimPeopleId, -1)								K12StudentId							
+			, ISNULL(rdp.DimPersonId, -1)								K12StudentId							
 			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId							
 			, -1														LanguageId							
-			, ISNULL(rdhs.DimMigrantStatusId, -1)						MigrantStatusId						
-			, ISNULL(rdkaas.DimK12AcademicAwardStatusId, -1)				K12AcademicAwardStatusId					
+			, ISNULL(rdms.DimMigrantStatusId, -1)						MigrantStatusId						
+			, ISNULL(rdkaas.DimK12AcademicAwardStatusId, -1)			K12AcademicAwardStatusId					
 			, -1														TitleIStatusId						
 			, -1														TitleIIIStatusId						
 			, -1														AttendanceId							
@@ -152,6 +191,19 @@ BEGIN
 		FROM Staging.K12Enrollment ske
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
+		JOIN RDS.DimPeople rdp
+			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
+			AND rdp.IsActiveK12Student = 1
+			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
+			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
+			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
+			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
+			AND ((rdp.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
+				OR (rdp.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdp.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
+		JOIN RDS.DimSeas rds
+			ON ((rds.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
+				OR (rds.RecordStartDateTime < @ReportingStartDate AND ISNULL(rds.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
+
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LEAIdentifierSeaAccountability = rdl.LeaIdentifierSea
 			AND ((rdl.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
@@ -160,9 +212,11 @@ BEGIN
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND ((rdksch.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (rdksch.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdksch.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
-		JOIN RDS.DimSeas rds
-			ON ((rds.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (rds.RecordStartDateTime < @ReportingStartDate AND ISNULL(rds.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
+		JOIN RDS.vwDimK12Demographics rdkd
+			ON rsy.SchoolYear = rdkd.SchoolYear
+			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+		JOIN #vwK12AcademicAwardStatuses rdkaas
+			ON ISNULL(ske.HighSchoolDiplomaType, 'MISSING') = ISNULL(rdkaas.HighSchoolDiplomaTypeCode, rdkaas.HighSchoolDiplomaTypeMap)
 	--disability
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
@@ -208,11 +262,6 @@ BEGIN
 			AND migrant.MigrantStatus = 1
 			AND ((migrant.Migrant_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (migrant.Migrant_StatusStartDate < @ReportingStartDate AND ISNULL(migrant.Migrant_StatusEndDate, GETDATE()) > @ReportingStartDate))
-		JOIN RDS.vwDimK12Demographics rdkd
-			ON rsy.SchoolYear = rdkd.SchoolYear
-			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
-		JOIN #vwDimK12AcademicAwardStatuses rdkaas
-			ON ISNULL(ske.HighSchoolDiplomaType, 'MISSING') = ISNULL(rdkaas.HighSchoolDiplomaTypeCode, rdkaas.HighSchoolDiplomaTypeMap)
 	--english learner (RDS)
 		LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
 			ON rsy.SchoolYear = rdels.SchoolYear
@@ -225,7 +274,7 @@ BEGIN
 			AND rdis.[IdeaEducationalEnvironmentForSchoolAgeCode] = 'MISSING'
 			AND rdis.[IdeaEducationalEnvironmentForEarlyChildhoodCode] = 'MISSING'
 	--homelessness (RDS)
-		LEFT JOIN #vwHomelessnessStatus rdhs
+		LEFT JOIN #vwHomelessnessStatuses rdhs
 			ON ISNULL(CAST(homeless.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)
 			AND rdhs.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
 			AND rdhs.HomelessUnaccompaniedYouthStatusCode = 'MISSING'
@@ -238,7 +287,7 @@ BEGIN
 		LEFT JOIN #vwMigrantStatuses rdms
 			ON ISNULL(CAST(migrant.MigrantStatus AS SMALLINT), -1) = ISNULL(CAST(rdms.MigrantStatusMap AS SMALLINT), -1)
 	--race (RDS)
-		LEFT JOIN #vwDimRaces rdr
+		LEFT JOIN #vwRaces rdr
 			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
 				CASE
 					when ske.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
@@ -246,15 +295,6 @@ BEGIN
 					ELSE 'Missing'
 				END
 				AND rsy.SchoolYear = rdr.SchoolYear
-		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.StateStudentIdentifier
-			AND rdp.IsActiveK12Student = 1
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
-			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
-			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND ((rdp.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (rdp.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdp.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
 		WHERE (ske.EnrollmentEntryDate BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (ske.EnrollmentEntryDate < @ReportingStartDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) > @ReportingStartDate)
 		AND ISNULL(ske.HighSchoolDiplomaType, '') <> ''
