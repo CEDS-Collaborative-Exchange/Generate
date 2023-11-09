@@ -4711,7 +4711,7 @@ BEGIN
 
 				set @sqlCountJoins = @sqlCountJoins + '
 				inner join ( 
-					select K12StaffId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFullTimeEquivalency
+					select K12StaffId, K12StaffCategoryId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFullTimeEquivalency
 					from rds.' + @factTable + ' fact '
 
 					if @reportLevel = 'lea'
@@ -4735,8 +4735,8 @@ BEGIN
 					where fact.SchoolYearId = @dimSchoolYearId 
 					and fact.FactTypeId = @dimFactTypeId 
 					and fact.LeaId <> -1
-					group by K12StaffId
-				) K12StaffCount on K12StaffCount.K12StaffId = fact.K12StaffId'
+					group by K12StaffId, K12StaffCategoryId
+				) K12StaffCount on K12StaffCount.K12StaffId = fact.K12StaffId and K12StaffCount.K12StaffCategoryId = fact.K12StaffCategoryId'
 				
 			
 				set @sql = @sql + '
