@@ -69,7 +69,7 @@ BEGIN
 	declare @toggleGrade13 as bit
  	declare @toggleUngraded as bit
 	declare @toggleAdultEd as bit
-	declare @toggleGradCompltrResponse as varchar(200)
+	declare @istoggleGradOther as bit
 	declare @toggleEnglishLearnerProf as bit
 	declare @toggleEnglishLearnerTitleIII as bit
 	declare @toggleDisplacedHomemakers as bit
@@ -206,21 +206,10 @@ BEGIN
             and ResponseValue in ('5 Years', '6 Years', '7 Years', '8 Years', '9 Years')
         END
 
-	Select @toggleGradCompltrResponse = COALESCE(@toggleGradCompltrResponse + ', ' +
-		case 
-			when ResponseValue = 'Regular diploma that indicates a student meets or exceeds the requirements of a regular diploma.' THEN '''REGDIP'''
-			When ResponseValue ='Other high school completion credentials for meeting criteria other than the requirements for a regular diploma(i.e. certificate of completion, certificate of attendance).' 
-				THEN '''OTHCOM''' 
-		end,
-		case when ResponseValue = 'Regular diploma that indicates a student meets or exceeds the requirements of a regular diploma.' THEN '''REGDIP'''
-			When ResponseValue ='Other high school completion credentials for meeting criteria other than the requirements for a regular diploma(i.e. certificate of completion, certificate of attendance).' 
-				THEN '''OTHCOM''' 
-		end)
-	from app.ToggleResponses r
-	inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId 
+	select @istoggleGradOther = ISNULL( case when r.ResponseValue = 'true' then 1 else 0 end,0) 
+	from app.ToggleQuestions q 
+	left outer join app.ToggleResponses r on r.ToggleQuestionId = q.ToggleQuestionId
 	where q.EmapsQuestionAbbrv = 'GRADRPT'
-		
-	Set @toggleGradCompltrResponse = ISNULL(@toggleGradCompltrResponse,'''REGDIP'', ''OTHCOM''')
 
 	select @toggleCteDiploma = COALESCE(@toggleCteDiploma + ', ''', '''') + 
 		case 
@@ -1281,11 +1270,6 @@ BEGIN
 			end
 			else if @categoryCode in ('DIPLCREDTYPE')
 			begin
-				-- Check Toggle settings
-				if exists (select 1 from app.ToggleResponses r
-							inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId 
-							where q.EmapsQuestionAbbrv = 'GRADRPT')
-				begin
 					set @sqlCategoryOptions = @sqlCategoryOptions + '
 						insert into #cat_' + @reportField + '
 						SELECT distinct o.CategoryOptionCode
@@ -1296,27 +1280,13 @@ BEGIN
 						inner join app.ToggleResponses r on o.CategoryOptionCode = 
 								case
 									when o.CategoryOptionCode = ''MISSING'' then o.CategoryOptionCode
+									when o.CategoryOptionCode = ''REGDIP'' then o.CategoryOptionCode
 									else
-										case when r.ResponseValue =''Regular diploma that indicates a student meets or exceeds the requirements of a regular diploma.'' Then ''REGDIP''
-										else  ''OTHCOM'' end
+										case when ISNULL(r.ResponseValue, ''false'') =''true'' Then ''OTHCOM'' end
 								end
 						inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId 
 						where q.EmapsQuestionAbbrv = ''GRADRPT''
 						'
-				end
-				else
-				begin
-
-					set @sqlCategoryOptions = @sqlCategoryOptions + '
-						insert into #cat_' + @reportField + '
-						SELECT distinct o.CategoryOptionCode
-						from app.CategoryOptions o
-						inner join app.Categories c on o.CategoryId = c.CategoryId
-						and c.CategoryCode = ''' +  @categoryCode + '''
-						and o.CategorySetId = ' + convert(varchar(20), @categorySetId) + '
-						where 1 = 1
-						'
-				end
 			end
 			else if @categoryCode in ('DISCIPLINEACTION', 'ASSESSMENTSUBJECT', 'PERSONNELTYPE')
 			begin
@@ -6981,12 +6951,12 @@ BEGIN
 				end
 		END
 
-		if(@reportCode = 'C040')
-			BEGIN
+		if(@reportCode = 'C040') and (@istoggleGradOther = 0)
+		BEGIN
 				set @sql = @sql + '  delete a from @reportData a
 					where a.' +  @factField + ' = 0   
-					AND HIGHSCHOOLDIPLOMATYPE NOT IN ( ' +  @toggleGradCompltrResponse + ')' 
-			END
+					AND HIGHSCHOOLDIPLOMATYPE = ''OTHCOM''' 
+		END
 
 		if @reportCode in ('c175','c178','c179')
 		begin
