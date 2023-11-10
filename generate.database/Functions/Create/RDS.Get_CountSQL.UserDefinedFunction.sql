@@ -42,13 +42,13 @@ BEGIN
 	declare @tableTypeAbbrv as nvarchar(150)
 	declare @totalIndicator as nvarchar(1)
 
-	IF(@reportCode in ('c204', 'c150', 'c151','c033','c116', 'c175', 'c178', 'c179', 'c185', 'c188', 'c189'))
-	  begin
+	if (@reportCode in ('c204', 'c150', 'c151','c033','c116', 'c175', 'c178', 'c179', 'c185', 'c188', 'c189'))
+	begin
 		set @tableTypeAbbrv=@tableTypeAbbrvs
 		set @totalIndicator=@totalIndicators
-	  end
+	end
 	else
-	  begin
+	begin
 		select 
 			@tableTypeAbbrv = isnull(tt.TableTypeAbbrv, ''),
 			@totalIndicator = 
@@ -506,34 +506,30 @@ BEGIN
 				end
 
 			-- JW 10/20/2023 Fixed C002 SCH Performance by using a #temp table rather than "In subselect"
-			if not @toggleDevDelayAges is null
-			begin
-				select @sql = @sql + char(10)
-				select @sql = @sql + 
+			-- if not @toggleDevDelayAges is null
+			-- begin
+			-- 	select @sql = @sql + char(10)
+			-- 	select @sql = @sql + 
+			-- 		'-- *****************************************************************************
+			-- 		IF OBJECT_ID(''tempdb..#EXCLUDE'') IS NOT NULL DROP TABLE #EXCLUDE
 
-							'-- *****************************************************************************
-							IF OBJECT_ID(''tempdb..#EXCLUDE'') IS NOT NULL DROP TABLE #EXCLUDE
-
-							select distinct fact.K12StudentId
-							into #EXCLUDE
-							from rds.FactK12StudentCounts fact
-							inner join rds.DimAges age 
-								on fact.AgeId = age.DimAgeId
-								and not age.AgeCode in (' + @toggleDevDelayAges + ') 
-							inner join rds.DimK12Schools s 
-								on fact.K12SchoolId = s.DimK12SchoolId
-								and fact.SchoolYearId = @dimSchoolYearId
-								and fact.FactTypeId = @dimFactTypeId
-								and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-							inner join rds.DimIdeaDisabilityTypes idea 
-								on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
-							where idea.IdeaDisabilityTypeEdFactsCode = ''DD''
-							--***************************************************************************'
-
-				 + char(10) + char(10)
-
-			end
-
+			-- 		select distinct fact.K12StudentId
+			-- 		into #EXCLUDE
+			-- 		from rds.FactK12StudentCounts fact
+			-- 		inner join rds.DimAges age 
+			-- 			on fact.AgeId = age.DimAgeId
+			-- 			and not age.AgeCode in (' + @toggleDevDelayAges + ') 
+			-- 		inner join rds.DimK12Schools s 
+			-- 			on fact.K12SchoolId = s.DimK12SchoolId
+			-- 			and fact.SchoolYearId = @dimSchoolYearId
+			-- 			and fact.FactTypeId = @dimFactTypeId
+			-- 			and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+			-- 		inner join rds.DimIdeaDisabilityTypes idea 
+			-- 			on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
+			-- 		where idea.IdeaDisabilityTypeEdFactsCode = ''DD''
+			-- 		--***************************************************************************'
+			-- 		+ char(10) + char(10)
+			-- end
 
 			-- JW 7/20/2023 Fixed FS141 performance issues by using #temp table rather than "In subselect"
 			if @reportCode in ('C141')
@@ -2141,10 +2137,10 @@ BEGIN
 		if @reportCode in ('c002','edenvironmentdisabilitiesage6-21')
 		begin
 			-- Ages 6-21, Has Disability
-			set @sqlCountJoins = @sqlCountJoins + '
-				inner join (
-					select distinct fact.K12StudentId, idea.DimIdeaDisabilityTypeId, p.K12StudentStudentIdentifierState' 
-					+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN ' ,grades.DimGradeLevelId' ELSE '' END +
+			set @sqlCountJoins = @sqlCountJoins + 
+			'	inner join (
+					select distinct fact.K12StudentId, rdidt.DimIdeaDisabilityTypeId, rdp.K12StudentStudentIdentifierState' 
+					+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN ' ,rdgl.DimGradeLevelId' ELSE '' END +
 					'
 					from rds.' + @factTable + ' fact '
 
@@ -2166,11 +2162,11 @@ BEGIN
 					end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimAges age 
-						on fact.AgeId = age.DimAgeId
-						and age.AgeValue >= ' + CAST(IIF(@year > 2019 AND @reportCode = 'c002',5,6) as varchar(10)) + ' and age.AgeValue <= 21
-					inner join rds.DimK12Schools s 
-						on fact.K12SchoolId = s.DimK12SchoolId
+					inner join rds.DimAges rda 
+						on fact.AgeId = rda.DimAgeId
+						and rda.AgeValue >= ' + CAST(IIF(@year > 2019 AND @reportCode = 'c002',5,6) as varchar(10)) + ' and rda.AgeValue <= 21
+					inner join rds.DimK12Schools rds
+						on fact.K12SchoolId = rds.DimK12SchoolId
 						and fact.SchoolYearId = @dimSchoolYearId
 						and fact.FactTypeId = @dimFactTypeId
 						and CASE 
@@ -2179,18 +2175,21 @@ BEGIN
 							WHEN fact.SeaId > 0 THEN fact.SeaId
 							ELSE -1
 						END <> -1
-					inner join rds.DimPeople p
-						on fact.K12StudentId = p.DimPersonId
-					inner join rds.DimIdeaDisabilityTypes idea 
-						on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId'
+					inner join rds.DimPeople rdp
+						on fact.K12StudentId = rdp.DimPersonId
+					inner join rds.DimIdeaStatuses rdis 
+						on fact.IdeaStatusId = rdis.DimIdeaStatusId
+					inner join rds.DimIdeaDisabilityTypes rdidt 
+						on fact.PrimaryDisabilityTypeId = rdidt.DimIdeaDisabilityTypeId'
 					+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN  '
-					inner join rds.DimGradeLevels grades 
-						on fact.GradeLevelId = grades.DimGradeLevelId
-						and (CASE WHEN age.AgeValue = 5 and grades.GradeLevelEdFactsCode in (''MISSING'',''PK'')
+					inner join rds.DimGradeLevels rdgl
+						on fact.GradeLevelId = rdgl.DimGradeLevelId
+						and (CASE WHEN rda.AgeValue = 5 and rdgl.GradeLevelEdFactsCode in (''MISSING'',''PK'')
 							THEN ''''
-							ELSE grades.GradeLevelEdFactsCode
-							END) = grades.GradeLevelEdFactsCode' 
+							ELSE rdgl.GradeLevelEdFactsCode
+							END) = rdgl.GradeLevelEdFactsCode' 
 						ELSE '' END + '
+					where rdis.IdeaIndicatorEdFactsCode = ''IDEA''
 				)  rules on fact.K12StudentId = rules.K12StudentId and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId'
 				+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN ' and fact.GradeLevelId = rules.DimGradeLevelId' ELSE '' END + '
 				'
@@ -2472,7 +2471,7 @@ BEGIN
 				-- Ages 3-5, Has Disability
 				set @sqlCountJoins = @sqlCountJoins + '
 					inner join (
-						select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, idea.DimIdeaDisabilityTypeId
+						select distinct fact.K12StudentId, rdp.K12StudentStudentIdentifierState, rdidt.DimIdeaDisabilityTypeId
 						from rds.' + @factTable + ' fact '
 
 					if @reportLevel = 'lea'
@@ -2493,16 +2492,16 @@ BEGIN
 					end
 
 					set @sqlCountJoins = @sqlCountJoins + '
-						inner join rds.DimAges age 
-							on fact.AgeId = age.DimAgeId
-							and age.AgeValue >= 3 
-							and age.AgeValue <= 5
-						inner join rds.DimPeople p
-							on fact.K12StudentId = p.DimPersonId
-						inner join rds.DimGradeLevels rgl 
-							on fact.GradeLevelId = rgl.DimGradeLevelId
-						inner join rds.DimK12Schools s 
-							on fact.K12SchoolId = s.DimK12SchoolId
+						inner join rds.DimAges rda
+							on fact.AgeId = rda.DimAgeId
+							and rda.AgeValue >= 3 
+							and rda.AgeValue <= 5
+						inner join rds.DimPeople rdp
+							on fact.K12StudentId = rdp.DimPersonId
+						inner join rds.DimGradeLevels rdgl 
+							on fact.GradeLevelId = rdgl.DimGradeLevelId
+						inner join rds.DimK12Schools rdks 
+							on fact.K12SchoolId = rdks.DimK12SchoolId
 							and fact.SchoolYearId = @dimSchoolYearId
 							and fact.FactTypeId = @dimFactTypeId
 							and CASE 
@@ -2511,13 +2510,17 @@ BEGIN
 								WHEN fact.SeaId > 0 THEN fact.SeaId
 								ELSE -1
 							END <> -1
-						inner join rds.DimIdeaDisabilityTypes idea 
-							on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
-						where (age.AgeValue IN (3, 4) OR (age.AgeValue = 5 
-						and rgl.GradeLevelCode IN (''MISSING'',''PK'')))
+						inner join rds.DimIdeaStatuses rdis 
+							on fact.IdeaStatusId = rdis.DimIdeaStatusId
+						inner join rds.DimIdeaDisabilityTypes rdidt 
+							on fact.PrimaryDisabilityTypeId = rdidt.DimIdeaDisabilityTypeId
+						where rdis.IdeaIndicatorEdFactsCode = ''IDEA''
+						and (rda.AgeValue IN (3, 4) OR (rda.AgeValue = 5 
+						and rdgl.GradeLevelCode IN (''MISSING'',''PK'')))
 					) rules		
 						on fact.K12StudentId = rules.K12StudentId 
 						and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId '
+
 			end 
 			else if @year <= 2019
 			begin
@@ -2525,7 +2528,7 @@ BEGIN
 				-- Ages 3-5, Has Disability
 				set @sqlCountJoins = @sqlCountJoins + '
 					inner join (
-						select distinct fact.K12StudentId, idea.DimIdeaDisabilityTypeId
+						select distinct fact.K12StudentId, rdidt.DimIdeaDisabilityTypeId
 						from rds.' + @factTable + ' fact '
 
 					if @reportLevel = 'lea'
@@ -2546,17 +2549,17 @@ BEGIN
 					end
 
 					set @sqlCountJoins = @sqlCountJoins + '
-						inner join rds.DimAges age 
-							on fact.DimAgeId = age.DimAgeId
-							and age.AgeValue >= 3 
-							and age.AgeValue <= 5
-						inner join rds.DimK12Schools s 
-							on fact.K12SchoolId = s.DimK12SchoolId
+						inner join rds.DimAges rda
+							on fact.DimAgeId = rda.DimAgeId
+							and rda.AgeValue >= 3 
+							and rda.AgeValue <= 5
+						inner join rds.DimK12Schools rdks 
+							on fact.K12SchoolId = rdks.DimK12SchoolId
 							and fact.DimCountDateId = @dimSchoolYearId
 							and fact.DimFactTypeId = @dimFactTypeId
 							and IIF(fact.DimSchoolId > 0, fact.DimSchoolId, fact.DimLeaId) <> -1
-						inner join rds.DimIdeaDisabilityTypes idea 
-							on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
+						inner join rds.DimIdeaDisabilityTypes rdidt 
+							on fact.PrimaryDisabilityTypeId = rdidt.DimIdeaDisabilityTypeId
 					) rules 
 						on fact.K12StudentId = rules.K12StudentId 
 						and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId '
@@ -5919,7 +5922,7 @@ BEGIN
 
 			--drop the table if it exists 
 			declare @dropTableSQL nvarchar(max)
-			set @dropTableSQL = 'IF OBJECT_ID(N''[debug].' + QUOTENAME(@debugTableName) + ''',N''U'') IS NOT NULL DROP TABLE [debug].' + QUOTENAME(@debugTableName) + char(10) + char(10)
+			set @dropTableSQL = '		IF OBJECT_ID(N''[debug].' + QUOTENAME(@debugTableName) + ''',N''U'') IS NOT NULL DROP TABLE [debug].' + QUOTENAME(@debugTableName) + char(10) + char(10)
 
 			set @sql += @dropTableSQL
 
@@ -5927,15 +5930,15 @@ BEGIN
 			declare @debugTableCreate nvarchar(max)
 			if @reportCode IN ('C059', 'C070', 'C099', 'C112') 
 			begin
-				set @debugTableCreate = '		select s.K12StaffStaffMemberIdentifierState '
+				set @debugTableCreate = '					select s.K12StaffStaffMemberIdentifierState '
 			end 
 			else if @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
 			begin
-				set @debugTableCreate = '		select K12StudentStudentIdentifierState '   
+				set @debugTableCreate = '					select K12StudentStudentIdentifierState '   
 			end 
 			else  
 			begin
-				set @debugTableCreate = '		select s.K12StudentStudentIdentifierState ' 
+				set @debugTableCreate = '					select s.K12StudentStudentIdentifierState ' 
 			end 
 
 			--set the LEA field in the select if necessary
@@ -5951,46 +5954,46 @@ BEGIN
 			end
 
 			set @debugTableCreate += @sqlCategoryFields + char(10) 
-				+ '		into [debug].' + QUOTENAME(@debugTableName) + char(10)
+				+ '					into [debug].' + QUOTENAME(@debugTableName) + char(10)
 		
 			IF @reportCode IN ('C059', 'C070', 'C099', 'C112')
 			BEGIN
-				set @debugTableCreate += '		from #categorySet c ' + char(10) +
-				'		inner join rds.DimPeople s ' + char(10)
-				+ '			on c.DimK12StaffId = s.DimPersonId ' + char(10)
+				set @debugTableCreate += '					from #categorySet c ' + char(10) +
+				'					inner join rds.DimPeople s ' + char(10)
+				+ '						on c.DimK12StaffId = s.DimPersonId ' + char(10)
 			END 
 			--these reports have been converted to use K12StudentStudentIdentifierState instead of K12StudentId
 			--	in #Students and #categorySet so no need to join to DimPeople
 			ELSE IF @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
 			BEGIN
-				set @debugTableCreate += '		from #categorySet c ' + char(10)
+				set @debugTableCreate += '					from #categorySet c ' + char(10)
 			END
 			ELSE	
 			BEGIN
-				set @debugTableCreate += '		from #categorySet c ' + char(10) +
-				'		inner join rds.DimPeople s ' + char(10)
-				+ '			on c.DimStudentId = s.DimPersonId ' + char(10)
+				set @debugTableCreate += '					from #categorySet c ' + char(10) +
+				'					inner join rds.DimPeople s ' + char(10)
+				+ '						on c.DimStudentId = s.DimPersonId ' + char(10)
 			END 
 
 			--set the LEA join if necessary
 			if @reportLevel = 'LEA' 
 			begin
-				set @debugTableCreate += '		inner join rds.DimLeas l ' + char(10)
-					+ '			on c.DimLeaId = l.DimLeaId '  + char(10)
+				set @debugTableCreate += '					inner join rds.DimLeas l ' + char(10)
+					+ '						on c.DimLeaId = l.DimLeaId '  + char(10)
 			end 
 
 			--set the School join if necessary
 			if @reportLevel = 'SCH' 
 			begin
-				set @debugTableCreate += '		inner join rds.DimK12Schools sc ' + char(10)
-					+ '		on c.DimK12SchoolId = sc.DimK12SchoolId ' + char(10)
+				set @debugTableCreate += '					inner join rds.DimK12Schools sc ' + char(10)
+					+ '						on c.DimK12SchoolId = sc.DimK12SchoolId ' + char(10)
 			end 
 
 		
 			IF @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') BEGIN
-				set @debugTableCreate += '		order by K12StudentStudentIdentifierState ' + char(10)
+				set @debugTableCreate += '					order by K12StudentStudentIdentifierState ' + char(10)
 			END ELSE BEGIN
-				set @debugTableCreate += '		order by s.K12StaffStaffMemberIdentifierState ' + char(10)
+				set @debugTableCreate += '					order by s.K12StaffStaffMemberIdentifierState ' + char(10)
 			END
 
 			set @sql += @debugTableCreate 

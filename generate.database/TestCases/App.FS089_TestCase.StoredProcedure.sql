@@ -181,19 +181,19 @@ BEGIN
 		INTO #c089Staging
 		FROM Staging.K12Enrollment ske
 
-		JOIN Staging.IdeaDisabilityType idea
-			ON ske.StudentIdentifierState = idea.StudentIdentifierState
-			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
-			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
-			AND @ChildCountDate BETWEEN idea.RecordStartDateTime AND ISNULL(idea.RecordEndDateTime, GETDATE())
-			AND idea.IsPrimaryDisability = 1
-
 		JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND @ChildCountDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, GETDATE())
 		
+		LEFT JOIN Staging.IdeaDisabilityType idea
+			ON ske.StudentIdentifierState = idea.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
+			AND @ChildCountDate BETWEEN idea.RecordStartDateTime AND ISNULL(idea.RecordEndDateTime, GETDATE())
+			AND idea.IsPrimaryDisability = 1
+
 		LEFT JOIN Staging.K12PersonRace spr
 			ON ske.SchoolYear = spr.SchoolYear
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState
