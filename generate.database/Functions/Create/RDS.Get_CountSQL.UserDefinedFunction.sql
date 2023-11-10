@@ -396,8 +396,8 @@ BEGIN
 			----------------------------
 		'
 		-- JW 10/20/2023 ----------------------------------------------------------------------------
-		select @sql = @sql + char(10) + 							
-		'IF OBJECT_ID(''tempdb..#categoryset'') IS NOT NULL DROP TABLE #categoryset' + char(10) + char(10)
+		select @sql = @sql + char(10) + char(9) + char(9) + char(9) +							
+		'IF OBJECT_ID(''tempdb..#categoryset'') IS NOT NULL DROP TABLE #categoryset' + char(10)
 		---------------------------------------------------------------------------------------------
 
 		--pull the list of students to use in these reports into the #Students temp table 
@@ -505,34 +505,95 @@ BEGIN
 
 				end
 
-			-- JW 10/20/2023 Fixed C002 SCH Performance by using a #temp table rather than "In subselect"
-			if not @toggleDevDelayAges is null
-			begin
-				select @sql = @sql + char(10)
-				select @sql = @sql + 
+			if @ReportCode in ('C002', 'C089')
+				BEGIN -- C002/C089
+					-- JW 11/10/2023 Fixed C002 Performance by using #temp table rather than join to subselect
+					select @sql = @sql + char(10) + char(9) + char(9) + char(9)
+					select @sql = @sql + 'IF OBJECT_ID(''tempdb..#RULES'') IS NOT NULL DROP TABLE #RULES' + char(10) 
 
-							'-- *****************************************************************************
-							IF OBJECT_ID(''tempdb..#EXCLUDE'') IS NOT NULL DROP TABLE #EXCLUDE
+					select @sql = @sql + '
+							select distinct fact.K12StudentId, idea.DimIdeaDisabilityTypeId, ' + char(10) + 
+							char(9) + char(9) + char(9) + char(9) + char(9) +
+							' p.K12StudentStudentIdentifierState' 
+							+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN ' ,grades.DimGradeLevelId' ELSE '' END +
+							'
+							into #RULES
+							from rds.' + @factTable + ' fact '
 
-							select distinct fact.K12StudentId
-							into #EXCLUDE
-							from rds.FactK12StudentCounts fact
+						if @reportLevel = 'lea'
+						begin
+							set @sql = @sql + '
+							inner join RDS.DimLeas org 
+								on fact.LeaId = org.DimLeaId
+								AND org.ReportedFederally = 1
+								AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+						end 
+						if @reportLevel = 'sch'
+						begin
+							set @sql = @sql + '
+							inner join RDS.DimK12Schools org 
+								on fact.K12SchoolId = org.DimK12SchoolId
+								AND org.ReportedFederally = 1
+								AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+						end
+
+						set @sql = @sql + '
 							inner join rds.DimAges age 
 								on fact.AgeId = age.DimAgeId
-								and not age.AgeCode in (' + @toggleDevDelayAges + ') 
+								and age.AgeValue >= ' + CAST(IIF(@year > 2019 AND @reportCode = 'c002',5,6) as varchar(10)) + ' and age.AgeValue <= 21
 							inner join rds.DimK12Schools s 
 								on fact.K12SchoolId = s.DimK12SchoolId
 								and fact.SchoolYearId = @dimSchoolYearId
 								and fact.FactTypeId = @dimFactTypeId
-								and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+								and CASE 
+									WHEN fact.K12SchoolId > 0 THEN fact.K12SchoolId
+									WHEN fact.LeaId > 0 THEN fact.LeaId
+									WHEN fact.SeaId > 0 THEN fact.SeaId
+									ELSE -1
+								END <> -1
+							inner join rds.DimPeople p
+								on fact.K12StudentId = p.DimPersonId
 							inner join rds.DimIdeaDisabilityTypes idea 
-								on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
-							where idea.IdeaDisabilityTypeEdFactsCode = ''DD''
-							--***************************************************************************'
+								on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId'
+							+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN  '
+							inner join rds.DimGradeLevels grades 
+								on fact.GradeLevelId = grades.DimGradeLevelId
+								and (CASE WHEN age.AgeValue = 5 and grades.GradeLevelEdFactsCode in (''MISSING'',''PK'')
+									THEN ''''
+									ELSE grades.GradeLevelEdFactsCode
+									END) = grades.GradeLevelEdFactsCode' 
+								ELSE '' END + ''			
+			
+		
+					-- JW 10/20/2023 Fixed C002 SCH Performance by using a #temp table rather than "In subselect"
+					if not @toggleDevDelayAges is null
+					begin
+						select @sql = @sql + char(10)
+						select @sql = @sql + 
 
-				 + char(10) + char(10)
+									'-- *****************************************************************************
+									IF OBJECT_ID(''tempdb..#EXCLUDE'') IS NOT NULL DROP TABLE #EXCLUDE
 
-			end
+									select distinct fact.K12StudentId
+									into #EXCLUDE
+									from rds.FactK12StudentCounts fact
+									inner join rds.DimAges age 
+										on fact.AgeId = age.DimAgeId
+										and not age.AgeCode in (' + @toggleDevDelayAges + ') 
+									inner join rds.DimK12Schools s 
+										on fact.K12SchoolId = s.DimK12SchoolId
+										and fact.SchoolYearId = @dimSchoolYearId
+										and fact.FactTypeId = @dimFactTypeId
+										and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+									inner join rds.DimIdeaDisabilityTypes idea 
+										on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
+									where idea.IdeaDisabilityTypeEdFactsCode = ''DD''
+									--***************************************************************************'
+
+						 + char(10) + char(10)
+
+					end
+				END -- C002/C089
 
 
 			-- JW 7/20/2023 Fixed FS141 performance issues by using #temp table rather than "In subselect"
@@ -2142,6 +2203,15 @@ BEGIN
 		begin
 			-- Ages 6-21, Has Disability
 			set @sqlCountJoins = @sqlCountJoins + '
+				inner join #RULES rules ' + char(10) + 
+				'on fact.K12StudentId = rules.K12StudentId and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId'
+				+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN char(10) + ' and fact.GradeLevelId = rules.DimGradeLevelId' ELSE '' END + '
+				' + char(10)
+
+
+/* OLD VERSION PRIOR TO 11/10/2023
+			-- Ages 6-21, Has Disability
+			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
 					select distinct fact.K12StudentId, idea.DimIdeaDisabilityTypeId, p.K12StudentStudentIdentifierState' 
 					+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN ' ,grades.DimGradeLevelId' ELSE '' END +
@@ -2164,7 +2234,6 @@ BEGIN
 							AND org.ReportedFederally = 1
 							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 					end
-
 				set @sqlCountJoins = @sqlCountJoins + '
 					inner join rds.DimAges age 
 						on fact.AgeId = age.DimAgeId
@@ -2194,7 +2263,9 @@ BEGIN
 				)  rules on fact.K12StudentId = rules.K12StudentId and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId'
 				+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN ' and fact.GradeLevelId = rules.DimGradeLevelId' ELSE '' END + '
 				'
-	
+
+*/
+
 			if not @toggleDevDelayAges is null
 			begin
 				-- Exclude DD from counts for invalid ages
