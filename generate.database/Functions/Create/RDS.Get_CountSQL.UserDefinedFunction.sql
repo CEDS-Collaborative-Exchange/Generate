@@ -4707,35 +4707,29 @@ BEGIN
 			if(@reportCode = 'c099')
 			begin
 
-				set @sqlCountJoins = @sqlCountJoins + '
-				inner join ( 
-					select K12StaffId, K12StaffCategoryId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFullTimeEquivalency
-					from rds.' + @factTable + ' fact '
-
-					if @reportLevel = 'lea'
-					begin
-						set @sqlCountJoins = @sqlCountJoins + '
-						inner join RDS.DimLeas org 
-							on fact.LeaId = org.DimLeaId
-							AND org.ReportedFederally = 1
-							AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
-					end 
-					if @reportLevel = 'sch'
-					begin
-						set @sqlCountJoins = @sqlCountJoins + '
-						inner join RDS.DimK12Schools org 
-							on fact.K12SchoolId = org.DimK12SchoolId
-							AND org.ReportedFederally = 1
-							AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
-					end
-
-				set @sqlCountJoins = @sqlCountJoins + '
-					where fact.SchoolYearId = @dimSchoolYearId 
-					and fact.FactTypeId = @dimFactTypeId 
-					and fact.LeaId <> -1
-					group by K12StaffId, K12StaffCategoryId
-				) K12StaffCount on K12StaffCount.K12StaffId = fact.K12StaffId and K12StaffCount.K12StaffCategoryId = fact.K12StaffCategoryId'
-				
+				if @reportLevel = 'sea' 
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join ( select K12StaffId, K12StaffCategoryId, sum(round(StaffFTE, 2)) as StaffFTE
+							from rds.FactK12StaffCounts fact 
+							where fact.SchoolYearId = @dimDateId and fact.FactTypeId = @dimFactTypeId 
+							and fact.SeaId <> -1
+							group by K12StaffId, K12StaffCategoryId
+						) K12StaffCount on K12StaffCount.K12StaffId = fact.K12StaffId 
+							and K12StaffCount.K12StaffCategoryId = fact.K12StaffCategoryId' 
+				end
+				else
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+					inner join ( select K12StaffId, LeaId, K12StaffCategoryId, sum(round(StaffFTE, 2)) as StaffFTE
+							from rds.FactK12StaffCounts fact 
+							where fact.SchoolYearId = @dimDateId and fact.FactTypeId = @dimFactTypeId 
+							and fact.LeaId <> -1
+							group by K12StaffId, LeaId, K12StaffCategoryId
+						) K12StaffCount on K12StaffCount.K12StaffId = fact.K12StaffId
+							and K12StaffCount.LeaId = fact.LeaId
+							and K12StaffCount.K12StaffCategoryId = fact.K12StaffCategoryId' 
+				end
 			
 				set @sql = @sql + '
 
