@@ -1521,7 +1521,8 @@ BEGIN
 				begin
 					if (@reportLevel = 'sea')
 					begin
-						select p.ElectronicMailAddressOrganizational
+						select distinct
+							p.ElectronicMailAddressOrganizational
 							, p.FirstName
 							, p.LastOrSurname
 							, p.TelephoneNumberWork
