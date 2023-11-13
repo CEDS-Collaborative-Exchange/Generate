@@ -218,7 +218,7 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND @ChildCountDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, GETDATE())
 		
-		JOIN Staging.IdeaDisabilityType idea
+		LEFT JOIN Staging.IdeaDisabilityType idea
 			ON ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
@@ -243,8 +243,7 @@ BEGIN
 			ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
 
 		WHERE @ChildCountDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
-		AND sppse.IDEAIndicator  = 1
-		AND idea.IdeaDisabilityTypeCode IS NOT NULL
+		AND sppse.IDEAIndicator = 1
 		AND (rda.AgeValue BETWEEN 6 and 21
 			OR (rda.AgeValue = 5
 				AND ske.GradeLevel IS NOT NULL 

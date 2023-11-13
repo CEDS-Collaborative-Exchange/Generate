@@ -596,7 +596,6 @@ BEGIN
 					end
 				END -- C002/C089
 
-
 			-- JW 7/20/2023 Fixed FS141 performance issues by using #temp table rather than "In subselect"
 			if @reportCode in ('C141')
 				begin
