@@ -19,6 +19,7 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#vwHomelessnessStatuses') IS NOT NULL DROP TABLE #vwHomelessnessStatuses
 		IF OBJECT_ID(N'tempdb..#vwFosterCareStatuses') IS NOT NULL DROP TABLE #vwFosterCareStatuses
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
+		IF OBJECT_ID(N'tempdb..#vwCohortStatuses') IS NOT NULL DROP TABLE #vwCohortStatuses
 
 	BEGIN TRY
 
@@ -75,6 +76,15 @@ BEGIN
 
 		CREATE CLUSTERED INDEX ix_tempvwFosterCareStatuses
 			ON #vwFosterCareStatuses (ProgramParticipationFosterCareCode);
+
+--This view needs much more work to use the Graduation SY, Grad status, and Diploma Type
+		SELECT *
+		INTO #vwCohortStatuses
+		FROM RDS.vwDimCohortStatuses
+		WHERE SchoolYear = @SchoolYear
+
+		CREATE CLUSTERED INDEX ix_tempvwCohortStatuses
+			ON #vwCohortStatuses (CohortStatusCode);
 
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
@@ -134,7 +144,7 @@ BEGIN
 			, ISNULL(rgls.DimGradeLevelId, -1)							GradeLevelId							
 			, -1 														AgeId									
 			, ISNULL(rdr.DimRaceId, -1)									RaceId								
-			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId						
+			, -1														K12DemographicId						
 			, 1															StudentCount							
 			, ISNULL(rds.DimSeaId, -1)									SEAId									
 			, -1														IEUId									
@@ -216,8 +226,8 @@ BEGIN
 			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
 				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
 	--cohort (RDS)
-		-- LEFT JOIN RDS.DimAcademicAwardStatuses rdaas
-		-- 	ON ISNULL(ske.CohortDescription, 'MISSING') = ISNULL(rdaas.NotSureYet , 'MISSING')
+		-- LEFT JOIN RDS.DimCohortStatuses rdcs
+		-- 	ON ISNULL(ske.CohortDescription, 'MISSING') = ISNULL(rdcs.NotSureYet , 'MISSING')
 
 /*
 Mapping above needs research
@@ -225,10 +235,11 @@ I believe Cohort is supposed to be in AcademicAwardStatuses but the dimension do
 */
 
 	--homelessness (RDS)
-		LEFT JOIN #vwHomelessnessStatus rdhs
+		LEFT JOIN #vwHomelessnessStatuses rdhs
 			ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)
-			AND ISNULL(hmNight.HomelessNightTimeResidence, 'MISSING') = ISNULL(rdhs.HomelessPrimaryNighttimeResidenceMap, 'MISSING')
-			AND ISNULL(CAST(hmStatus.HomelessUnaccompaniedYouth AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessUnaccompaniedYouthStatusMap AS SMALLINT), -1)
+			AND rdhs.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
+			AND rdhs.HomelessUnaccompaniedYouthStatusCode = 'MISSING'
+			AND rdhs.HomelessServicedIndicatorCode = 'MISSING'
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON ske.SchoolYear = rdis.SchoolYear
@@ -271,7 +282,7 @@ I believe Cohort is supposed to be in AcademicAwardStatuses but the dimension do
 					ELSE 'Missing'
 				END
 		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.StateStudentIdentifier
+			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND rdp.IsActiveK12Student = 1
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')

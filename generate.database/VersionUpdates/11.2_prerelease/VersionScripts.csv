@@ -7,6 +7,8 @@ VersionUpdates\\11.2_prerelease,Update-DataMigrationTasks-file-list.sql,0
 VersionUpdates\\11.2_prerelease,TableChanges.sql,0
 VersionUpdates\\11.2_prerelease,Update_SSRD.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
+Views\\Drop,RDS.vwDimCohortStatuses.View.sql
+Views\\Create,RDS.vwDimCohortStatuses.View.sql
 Views\\Drop,Debug.vwAssessments_FactTable.View.sql
 Views\\Create,Debug.vwAssessments_FactTable.View.sql
 Views\\Drop,Debug.vwAssessments_StagingTables.View.sql
@@ -99,6 +101,18 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_ChildCount.Stored
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_GraduatesCompleters.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_GraduatesCompleters.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_GraduationRate.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_GraduationRate.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Chronic.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Chronic.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_MigrantEducationProgram.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_MigrantEducationProgram.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 VersionUpdates\\11.2_prerelease,UpdateDbVersion.sql,0

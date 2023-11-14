@@ -215,7 +215,7 @@ BEGIN
 					ELSE 'Missing'
 				END
 		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.StudentIdentifierState
+			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND rdp.IsActiveK12Student = 1
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
