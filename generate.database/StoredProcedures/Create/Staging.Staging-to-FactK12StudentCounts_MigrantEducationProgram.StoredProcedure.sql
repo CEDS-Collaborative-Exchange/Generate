@@ -117,7 +117,7 @@ BEGIN
 			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId							
 			, -1														DisabilityStatusId							
 			, -1														LanguageId							
-			, ISNULL(rdis.DimMigrantStatusId, -1) 						MigrantStatusId						
+			, ISNULL(rdms.DimMigrantStatusId, -1) 						MigrantStatusId						
 			, -1														TitleIStatusId						
 			, -1														TitleIIIStatusId						
 			, -1														AttendanceId							
@@ -188,7 +188,7 @@ BEGIN
 			ON ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
 		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.StudentIdentifierState
+			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND rdp.IsActiveK12Student = 1
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
