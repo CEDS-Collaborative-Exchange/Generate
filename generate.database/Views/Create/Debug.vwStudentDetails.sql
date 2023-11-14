@@ -127,7 +127,14 @@ left join RDS.vwUnduplicatedRaceMap vUndupRace
 
 left join RDS.vwDimRaces ssrdRACE
 	on ssrdRACE.SchoolYear = sk12e.SchoolYear
-	and ssrdRACE.RaceMap = vUndupRace.RaceMap -- spr.RaceType
+	and ISNULL(ssrdRACE.RaceMap, ssrdRACE.RaceCode) =
+				CASE
+					when sk12e.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
+					WHEN vUndupRace.RaceMap IS NOT NULL THEN vUndupRace.RaceMap
+					ELSE 'Missing'
+				END
+
+
 left join RDS.DimRaces rdr
 	on rdr.RaceCode = 
 		case 
