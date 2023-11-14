@@ -56,7 +56,7 @@ BEGIN
 		WHERE SchoolYear = @SchoolYear
 
 		CREATE CLUSTERED INDEX ix_tempvwNeglectedOrDelinquentStatuses 
-			ON #vwNeglectedOrDelinquentStatuses (GradeLevelTypeDescription, GradeLevelMap);
+			ON #vwNeglectedOrDelinquentStatuses (NeglectedOrDelinquentProgramTypeMap);
 
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
@@ -116,7 +116,7 @@ BEGIN
 			, ISNULL(rgls.DimGradeLevelId, -1)							GradeLevelId							
 			, -1 														AgeId									
 			, ISNULL(rdr.DimRaceId, -1)									RaceId								
-			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId						
+			, -1														K12DemographicId						
 			, 1															StudentCount							
 			, ISNULL(rds.DimSeaId, -1)									SEAId									
 			, -1														IEUId									
@@ -182,14 +182,7 @@ BEGIN
 	--neglected or delinquent (RDS)
 		LEFT JOIN #vwNeglectedOrDelinquentStatuses rdnds
 			ON ske.SchoolYear = rdnds.SchoolYear
-			AND ISNULL(nord.NeglectedOrDelinquentProgramType, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentProgramTypeMap, rdnds.IdeaEducationalEnvironmentForSchoolAgeCode)
-			AND rdnds.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
-
-/*
-The mapping above feels incomplete, need to verify the dimension fields/population once the dimension is populated
-The view also needs to be finished
-*/
-
+			AND ISNULL(nord.NeglectedOrDelinquentProgramType, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentProgramTypeMap, rdnds.NeglectedOrDelinquentProgramTypeCode)
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON ske.SchoolYear = rdis.SchoolYear
@@ -215,7 +208,7 @@ The view also needs to be finished
 					ELSE 'Missing'
 				END
 		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.StateStudentIdentifier
+			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND rdp.IsActiveK12Student = 1
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
