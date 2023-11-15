@@ -69,7 +69,7 @@ BEGIN
 	declare @toggleGrade13 as bit
  	declare @toggleUngraded as bit
 	declare @toggleAdultEd as bit
-	declare @toggleGradCompltrResponse as varchar(200)
+	declare @istoggleGradOther as bit
 	declare @toggleEnglishLearnerProf as bit
 	declare @toggleEnglishLearnerTitleIII as bit
 	declare @toggleDisplacedHomemakers as bit
@@ -206,21 +206,10 @@ BEGIN
             and ResponseValue in ('5 Years', '6 Years', '7 Years', '8 Years', '9 Years')
         END
 
-	Select @toggleGradCompltrResponse = COALESCE(@toggleGradCompltrResponse + ', ' +
-		case 
-			when ResponseValue = 'Regular diploma that indicates a student meets or exceeds the requirements of a regular diploma.' THEN '''REGDIP'''
-			When ResponseValue ='Other high school completion credentials for meeting criteria other than the requirements for a regular diploma(i.e. certificate of completion, certificate of attendance).' 
-				THEN '''OTHCOM''' 
-		end,
-		case when ResponseValue = 'Regular diploma that indicates a student meets or exceeds the requirements of a regular diploma.' THEN '''REGDIP'''
-			When ResponseValue ='Other high school completion credentials for meeting criteria other than the requirements for a regular diploma(i.e. certificate of completion, certificate of attendance).' 
-				THEN '''OTHCOM''' 
-		end)
-	from app.ToggleResponses r
-	inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId 
+	select @istoggleGradOther = ISNULL( case when r.ResponseValue = 'true' then 1 else 0 end,0) 
+	from app.ToggleQuestions q 
+	left outer join app.ToggleResponses r on r.ToggleQuestionId = q.ToggleQuestionId
 	where q.EmapsQuestionAbbrv = 'GRADRPT'
-		
-	Set @toggleGradCompltrResponse = ISNULL(@toggleGradCompltrResponse,'''REGDIP'', ''OTHCOM''')
 
 	select @toggleCteDiploma = COALESCE(@toggleCteDiploma + ', ''', '''') + 
 		case 
@@ -504,6 +493,45 @@ BEGIN
 					'CREATE INDEX IDX_Students ON #Students (K12StudentId, K12StudentStudentIdentifierState)' + char(10) + char(10)
 
 				end
+			
+			if @reportCode in ('C040')
+			begin
+				select @sql = @sql + char(10) + char(10)
+
+
+				if @ReportLevel in ('LEA', 'SCH')
+				begin
+						select @sql = @sql + 
+							'if OBJECT_ID(''tempdb..#Grades'') is not null drop table #Grades' + char(10)
+
+						select @sql = @sql + 
+							'if OBJECT_ID(''tempdb..#Membership'') is not null drop table #Membership' + char(10)
+							
+						select @sql = @sql + 
+							'
+							SELECT distinct OrganizationStateId 
+							into #Grades
+							From rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''C039''
+							and c39.reportLevel = ''' + @reportLevel + ''' and c39.reportyear = ''' + @reportYear + '''
+							and c39.gradelevel = ''12''' + char(10)
+
+						select @sql = @sql + 
+							'
+							SELECT distinct OrganizationStateId 
+							into #Membership
+							From rds.ReportEDFactsK12StudentCounts c52 where c52.ReportCode = ''C052''
+							and c52.reportLevel = ''' + @reportLevel + ''' and c52.reportyear = ''' + @reportYear + '''
+							and c52.CategorySetCode = ''TOT'' and c52.studentCount > 0
+							' + char(10)
+
+
+						select @sql = @sql + 
+							'CREATE INDEX IDX_Grades ON #Grades (OrganizationStateId)' + char(10)
+
+						select @sql = @sql + 
+							'CREATE INDEX IDX_Membership ON #Membership (OrganizationStateId)' + char(10)
+				end
+			end
 
 			if @ReportCode in ('C002', 'C089')
 				BEGIN -- C002/C089
@@ -1346,11 +1374,6 @@ BEGIN
 			end
 			else if @categoryCode in ('DIPLCREDTYPE')
 			begin
-				-- Check Toggle settings
-				if exists (select 1 from app.ToggleResponses r
-							inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId 
-							where q.EmapsQuestionAbbrv = 'GRADRPT')
-				begin
 					set @sqlCategoryOptions = @sqlCategoryOptions + '
 						insert into #cat_' + @reportField + '
 						SELECT distinct o.CategoryOptionCode
@@ -1361,27 +1384,13 @@ BEGIN
 						inner join app.ToggleResponses r on o.CategoryOptionCode = 
 								case
 									when o.CategoryOptionCode = ''MISSING'' then o.CategoryOptionCode
+									when o.CategoryOptionCode = ''REGDIP'' then o.CategoryOptionCode
 									else
-										case when r.ResponseValue =''Regular diploma that indicates a student meets or exceeds the requirements of a regular diploma.'' Then ''REGDIP''
-										else  ''OTHCOM'' end
+										case when ISNULL(r.ResponseValue, ''false'') =''true'' Then ''OTHCOM'' end
 								end
 						inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId 
 						where q.EmapsQuestionAbbrv = ''GRADRPT''
 						'
-				end
-				else
-				begin
-
-					set @sqlCategoryOptions = @sqlCategoryOptions + '
-						insert into #cat_' + @reportField + '
-						SELECT distinct o.CategoryOptionCode
-						from app.CategoryOptions o
-						inner join app.Categories c on o.CategoryId = c.CategoryId
-						and c.CategoryCode = ''' +  @categoryCode + '''
-						and o.CategorySetId = ' + convert(varchar(20), @categorySetId) + '
-						where 1 = 1
-						'
-				end
 			end
 			else if @categoryCode in ('DISCIPLINEACTION', 'ASSESSMENTSUBJECT', 'PERSONNELTYPE')
 			begin
@@ -4357,7 +4366,9 @@ BEGIN
 					inner join RDS.DimLeas org 
 						on fact.LeaId = org.DimLeaId
 						AND org.ReportedFederally = 1
-						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')
+					inner join #Grades grades on grades.OrganizationStateId = org.LeaIdentifierSea
+					inner join #Membership membership on membership.OrganizationStateId = org.LeaIdentifierSea'
 				end 
 				if @reportLevel = 'sch'
 				begin
@@ -4365,7 +4376,9 @@ BEGIN
 					inner join RDS.DimK12Schools org 
 						on fact.K12SchoolId = org.DimK12SchoolId
 						AND org.ReportedFederally = 1
-						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')
+					inner join #Grades grades on grades.OrganizationStateId = org.SchoolIdentifierSea
+					inner join #Membership membership on membership.OrganizationStateId = org.SchoolIdentifierSea'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -6970,12 +6983,23 @@ BEGIN
 				end
 		END
 
-		if(@reportCode = 'C040')
-			BEGIN
-				set @sql = @sql + '  delete a from @reportData a
+		if @reportCode = 'C040'
+		BEGIN
+				IF @reportLevel <> 'sea'
+				BEGIN
+					set @sql = @sql + '  delete a from @reportData a
+						where a.' +  @factField + ' = 0   
+						AND a.CategorySetCode <> ''TOT''' 
+				END
+
+				IF @istoggleGradOther = 0
+				BEGIN
+					set @sql = @sql + '  delete a from @reportData a
 					where a.' +  @factField + ' = 0   
-					AND HIGHSCHOOLDIPLOMATYPE NOT IN ( ' +  @toggleGradCompltrResponse + ')' 
-			END
+					AND HIGHSCHOOLDIPLOMATYPE = ''OTHCOM''' 
+				END
+
+		END
 
 		if @reportCode in ('c175','c178','c179')
 		begin
