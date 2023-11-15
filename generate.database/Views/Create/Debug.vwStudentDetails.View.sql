@@ -48,7 +48,7 @@ distinct
 	'[IDEA]' '[IDEA]',
 	sppse.IDEAIndicator 'IDEAIndicator_STG',
 	case
-		when sppse.IDEAIndicator = 1 then 'Yes'
+		when sppse.IDEAIndicator = 1 then 'IDEA'
 		when sppse.IDEAIndicator = 0 then 'No'
 		else 'MISSING'
 	end 'IDEAIndicatorEdFactsCode',
@@ -60,6 +60,7 @@ distinct
 	rIdeaStatus.DimIdeaStatusId,
 
 	sdt.IdeaDisabilityTypeCode,sdt.IsPrimaryDisability,
+
 	sppse.ProgramParticipationBeginDate, sppse.ProgramParticipationEndDate,
 -- LEA
 	'[LEA]' '[LEA]',
@@ -127,7 +128,14 @@ left join RDS.vwUnduplicatedRaceMap vUndupRace
 
 left join RDS.vwDimRaces ssrdRACE
 	on ssrdRACE.SchoolYear = sk12e.SchoolYear
-	and ssrdRACE.RaceMap = vUndupRace.RaceMap -- spr.RaceType
+	and ISNULL(ssrdRACE.RaceMap, ssrdRACE.RaceCode) =
+				CASE
+					when sk12e.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
+					WHEN vUndupRace.RaceMap IS NOT NULL THEN vUndupRace.RaceMap
+					ELSE 'Missing'
+				END
+
+
 left join RDS.DimRaces rdr
 	on rdr.RaceCode = 
 		case 
