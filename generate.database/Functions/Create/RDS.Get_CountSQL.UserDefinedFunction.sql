@@ -517,7 +517,7 @@ BEGIN
 
 						select @sql = @sql + 
 							'
-							SELECT distinct OrganizationStateId 
+							SELECT distinct OrganizationIdentifierSea
 							into #Membership
 							From rds.ReportEDFactsK12StudentCounts c52 where c52.ReportCode = ''C052''
 							and c52.reportLevel = ''' + @reportLevel + ''' and c52.reportyear = ''' + @reportYear + '''
@@ -529,7 +529,7 @@ BEGIN
 							'CREATE INDEX IDX_Grades ON #Grades (OrganizationStateId)' + char(10)
 
 						select @sql = @sql + 
-							'CREATE INDEX IDX_Membership ON #Membership (OrganizationStateId)' + char(10)
+							'CREATE INDEX IDX_Membership ON #Membership (OrganizationIdentifierSea)' + char(10)
 				end
 			end
 
@@ -4368,7 +4368,7 @@ BEGIN
 						AND org.ReportedFederally = 1
 						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')
 					inner join #Grades grades on grades.OrganizationStateId = org.LeaIdentifierSea
-					inner join #Membership membership on membership.OrganizationStateId = org.LeaIdentifierSea'
+					inner join #Membership membership on membership.OrganizationIdentifierSea = org.LeaIdentifierSea'
 				end 
 				if @reportLevel = 'sch'
 				begin
@@ -4378,7 +4378,7 @@ BEGIN
 						AND org.ReportedFederally = 1
 						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')
 					inner join #Grades grades on grades.OrganizationStateId = org.SchoolIdentifierSea
-					inner join #Membership membership on membership.OrganizationStateId = org.SchoolIdentifierSea'
+					inner join #Membership membership on membership.OrganizationIdentifierSea = org.SchoolIdentifierSea'
 				end
 
 			set @sqlCountJoins = @sqlCountJoins + '
