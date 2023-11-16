@@ -214,18 +214,12 @@ BEGIN
  			ON rsy.SchoolYear = rdkd.SchoolYear
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
 
-		--homeless
-		JOIN Staging.PersonStatus hmStatus
-			ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
-			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
-			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
-			AND hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
 
 		JOIN RDS.DimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND rdp.IsActiveK12Student = 1
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
-			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
+			--AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND ske.EnrollmentEntryDate BETWEEN convert(date, rdp.RecordStartDateTime) AND convert(date, ISNULL(rdp.RecordEndDateTime, GETDATE()))
@@ -237,48 +231,108 @@ BEGIN
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
+	
+	--homeless
+		LEFT JOIN Staging.PersonStatus hmStatus
+			ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
+			AND
+				(
+					(
+						ISNULL(hmStatus.Homelessness_StatusStartDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						AND 
+						ISNULL(hmStatus.Homelessness_StatusEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+					) 
+					OR 
+					hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+				)
 
 	--idea disability status
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
 			ON ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
-			AND idea.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
+			AND
+				(
+					(
+						ISNULL(idea.ProgramParticipationBeginDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						AND 
+						ISNULL(idea.ProgramParticipationEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+					) 
+					OR 
+					idea.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+				)
+
 
 	--504 disability status
 		LEFT JOIN Staging.Disability disab
 			ON ske.StudentIdentifierState = disab.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(disab.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(disab.SchoolIdentifierSea, '')
-			AND disab.Disability_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
+			AND
+				(
+					(
+						ISNULL(disab.Disability_StatusStartDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						AND 
+						ISNULL(disab.Disability_StatusEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+					) 
+					OR 
+					disab.Disability_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+				)
 
 	--economic disadvantage
 		LEFT JOIN Staging.PersonStatus ecoDis
 			ON ske.StudentIdentifierState = ecoDis.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(ecoDis.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(ecoDis.SchoolIdentifierSea, '')
-			AND ecoDis.EconomicDisadvantage_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
-
+			AND
+				(
+					(
+						ISNULL(ecoDis.EconomicDisadvantage_StatusStartDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						AND 
+						ISNULL(ecoDis.EconomicDisadvantage_StatusEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+					) 
+					OR 
+					ecoDis.EconomicDisadvantage_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+				)
 	--english learner
 		LEFT JOIN Staging.PersonStatus el 
 			ON ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			AND el.EnglishLearner_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
-
+			AND
+				(
+					(
+						ISNULL(el.EnglishLearner_StatusStartDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						AND 
+						ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+					) 
+					OR 
+					el.EnglishLearner_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+				)
 	--migratory status	
 		LEFT JOIN Staging.PersonStatus migrant
 			ON ske.StudentIdentifierState = migrant.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
-			AND migrant.Migrant_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
+			AND
+				(
+					(
+						ISNULL(migrant.Migrant_StatusStartDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						AND 
+						ISNULL(migrant.Migrant_StatusEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+					) 
+					OR 
+					migrant.Migrant_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+				)
 
 	--race	
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
 			ON ske.SchoolYear = spr.SchoolYear
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState
-			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
-				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
+				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(spr.LeaIdentifierSeaAccountability,'')
+				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(spr.SchoolIdentifierSea,'')
 
 	--homelessness (RDS)
 		LEFT JOIN #vwHomelessnessStatuses rdhs
