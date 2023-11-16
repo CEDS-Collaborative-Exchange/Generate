@@ -996,11 +996,11 @@ BEGIN
 		end
 		else if @dimensionTable = 'DimFirearms'
 		begin
-			set @dimensionPrimaryKey = 'DimFirearmsId'
+			set @dimensionPrimaryKey = 'DimFirearmId'
 		end
-		else if @dimensionTable = 'DimFirearmDisciplines'
+		else if @dimensionTable = 'DimFirearmDisciplineStatuses'
 		begin
-			set @dimensionPrimaryKey = 'DimFirearmDisciplineId'
+			set @dimensionPrimaryKey = 'DimFirearmDisciplineStatusId'
 		end
 		else if @dimensionTable = 'DimGradeLevels'
 		begin
@@ -2428,7 +2428,7 @@ BEGIN
 		begin
 		set @sqlCountJoins = @sqlCountJoins + '
 			inner join (
-				select distinct rdp.K12StudentStudentIdentifierState, df.DimFirearmsId
+				select distinct rdp.K12StudentStudentIdentifierState, df.DimFirearmId
 				from rds.' + @factTable + ' fact '
 
 				if @reportLevel = 'lea'
@@ -2462,11 +2462,11 @@ BEGIN
 						ELSE -1
 					END <> -1
 				inner join rds.DimFirearms df 
-					on fact.FirearmsId = df.DimFirearmsId
+					on fact.FirearmId = df.DimFirearmId
 				where df.FirearmTypeEdFactsCode <> ''MISSING''
 			) rules 
 				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState 
-				and fact.FirearmsId = rules.DimFirearmsId '
+				and fact.FirearmId = rules.DimFirearmId '
 		end
 	else if @reportCode in ('c089','edenvironmentdisabilitiesage3-5')
 		begin
