@@ -115,4 +115,6 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProc
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
 VersionUpdates\\11.2_prerelease,UpdateDbVersion.sql,0
