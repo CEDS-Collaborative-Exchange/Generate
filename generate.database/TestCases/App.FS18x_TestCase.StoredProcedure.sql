@@ -1,6 +1,6 @@
 Create PROCEDURE [App].[FS18x_TestCase]	
-	@SchoolYear SMALLINT = 2023,
-	@FileSpec varchar(5) = 'FS185'
+	@SchoolYear SMALLINT,-- = 2023,
+	@FileSpec varchar(5) --= 'FS185'
 AS
 BEGIN
 
