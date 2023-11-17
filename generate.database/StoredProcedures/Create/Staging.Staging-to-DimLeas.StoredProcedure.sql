@@ -139,7 +139,7 @@ BEGIN
 		FROM Staging.K12Organization sko
 		INNER JOIN Staging.StateDetail ssd
 			ON sko.SchoolYear = ssd.SchoolYear
-		INNER JOIN staging.SourceSystemReferenceData sssrd4
+		LEFT JOIN staging.SourceSystemReferenceData sssrd4
 			ON sko.LEA_Type = sssrd4.InputCode
 			AND sssrd4.TableName = 'RefLeaType'
 			AND sko.SchoolYear = sssrd4.SchoolYear
