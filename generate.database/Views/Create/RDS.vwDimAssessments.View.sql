@@ -18,11 +18,11 @@ AS
 	FROM rds.DimAssessments rda
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
-		ON rda.AssessmentAcademicSubjectCode = sssrd1.OutputCode
+		ON rda.AssessmentTypeCode = sssrd1.OutputCode
 		AND sssrd1.TableName = 'RefAssessmentType'
 		AND rsy.SchoolYear = sssrd1.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd2
-		ON rda.AssessmentTypeCode = sssrd2.OutputCode
+		ON rda.AssessmentAcademicSubjectCode = sssrd2.OutputCode
 		AND sssrd2.TableName = 'RefAcademicSubject'
 		AND rsy.SchoolYear = sssrd2.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd3
@@ -33,3 +33,4 @@ AS
 		ON rda.AssessmentTypeAdministeredToEnglishLearnersCode = sssrd4.OutputCode
 		AND sssrd4.TableName = 'RefAssessmentTypeAdministeredToEnglishLearners'
 		AND rsy.SchoolYear = sssrd4.SchoolYear
+

@@ -33,6 +33,8 @@ Views\\Drop,Debug.vwChildCount_StagingTables.View.sql
 Views\\Create,Debug.vwChildCount_StagingTables.View.sql
 Views\\Drop,RDS.vwDimK12AcademicAwardStatuses.View.sql
 Views\\Create,RDS.vwDimK12AcademicAwardStatuses.View.sql
+Views\\Drop,RDS.vwDimAssessments.View.sql
+Views\\Create,RDS.vwDimAssessments.View.sql
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
 Functions\\Drop,dbo.fn_StripCharacters.UserDefinedFunction.sql 
@@ -113,6 +115,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinq
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 VersionUpdates\\11.2_prerelease,UpdateDbVersion.sql,0
