@@ -219,7 +219,7 @@ BEGIN
 	FROM Staging.K12Organization sko
 	JOIN Staging.StateDetail ssd
 		ON sko.SchoolYear = ssd.SchoolYear
-	JOIN staging.SourceSystemReferenceData sssrd3  -- Changed to INNER JOIN to prevent null schools from inserting into DimK12Schools
+	LEFT JOIN staging.SourceSystemReferenceData sssrd3 
 		ON sko.School_Type = sssrd3.InputCode
 		AND sssrd3.TableName = 'RefSchoolType'
 		AND sko.SchoolYear = sssrd3.SchoolYear
