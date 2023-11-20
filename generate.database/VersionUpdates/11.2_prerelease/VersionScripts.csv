@@ -121,4 +121,6 @@ StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
+StoredProcedures\\Drop,dbo.Get_AssessmentTypeChildrenWithDisabilities.StoredProcedure.sql,0
+StoredProcedures\\Create,dbo.Get_AssessmentTypeChildrenWithDisabilities.StoredProcedure.sql,0
 VersionUpdates\\11.2_prerelease,UpdateDbVersion.sql,0
