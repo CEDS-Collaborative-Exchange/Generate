@@ -21,7 +21,7 @@ BEGIN
 		SELECT 1 as RefAssessmentTypeChildrenWithDisabilitiesId, 'Regular assessments based on grade-level achievement standards without accommodations' as [Description], 
 			   'REGASSWOACC' as Code, 'Regular assessments based on grade-level achievement standards without accommodations' as [Definition], NULL as RefJurisdictionId, 1.0 as SortOrder
 		UNION
-		SELECT 2 as RefAssessmentTypeChildrenWithDisabilitiesId, 'Regular assessments based on grade-level achievement standards without accommodations' as [Description], 
+		SELECT 2 as RefAssessmentTypeChildrenWithDisabilitiesId, 'Regular assessments based on grade-level achievement standards with accommodations' as [Description], 
 			   'REGASSWACC' as Code, 'Regular assessments based on grade-level achievement standards with accommodations' as [Definition], NULL as RefJurisdictionId, 2.0 as SortOrder
 		UNION
 		SELECT 3 as RefAssessmentTypeChildrenWithDisabilitiesId, 'Alternate assessments based on alternate achievement standards' as [Description], 
