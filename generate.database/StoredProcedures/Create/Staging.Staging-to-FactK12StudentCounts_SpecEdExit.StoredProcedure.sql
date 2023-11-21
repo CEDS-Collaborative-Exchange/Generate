@@ -99,42 +99,42 @@ BEGIN
 
 	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
-			StagingId								int not null
-			, SchoolYearId							int null
-			, FactTypeId							int null
-			, GradeLevelId							int null
-			, AgeId									int null
-			, RaceId								int null
-			, K12DemographicId						int null
-			, StudentCount							int null
+			StagingId									int not null
+			, SchoolYearId								int null
+			, FactTypeId								int null
+			, GradeLevelId								int null
+			, AgeId										int null
+			, RaceId									int null
+			, K12DemographicId							int null
+			, StudentCount								int null
 
-			, SEAId									int null
-			, IEUId									int null
-			, LEAId									int null
-			, K12SchoolId							int null
-			, K12StudentId							int null
+			, SEAId										int null
+			, IEUId										int null
+			, LEAId										int null
+			, K12SchoolId								int null
+			, K12StudentId								int null
 
-			, IdeaStatusId							int null
-			, LanguageId							int null
-			, MigrantStatusId						int null
-			, K12StudentStatusId					int null
-			, TitleIStatusId						int null
-			, TitleIIIStatusId						int null
-			, AttendanceId							int null
-			, CohortStatusId						int null
-			, NOrDStatusId							int null
-			, CTEStatusId							int null
-			, K12EnrollmentStatusId					int null
-			, EnglishLearnerStatusId				int null
-			, HomelessnessStatusId					int null
-			, EconomicallyDisadvantagedStatusId		int null
-			, FosterCareStatusId					int null
-			, ImmigrantStatusId						int null
-			, PrimaryDisabilityTypeId				int null
+			, IdeaStatusId								int null
+			, LanguageId								int null
+			, MigrantStatusId							int null
+			, K12StudentStatusId						int null
+			, TitleIStatusId							int null
+			, TitleIIIStatusId							int null
+			, AttendanceId								int null
+			, CohortStatusId							int null
+			, NOrDStatusId								int null
+			, CTEStatusId								int null
+			, K12EnrollmentStatusId						int null
+			, EnglishLearnerStatusId					int null
+			, HomelessnessStatusId						int null
+			, EconomicallyDisadvantagedStatusId			int null
+			, FosterCareStatusId						int null
+			, ImmigrantStatusId							int null
+			, PrimaryDisabilityTypeId					int null
 
-			, SpecialEducationServicesExitDateId	int null
-			, MigrantStudentQualifyingArrivalDateId	int null
-			, LastQualifyingMoveDateId				int null
+			, SpecialEducationServicesExitDateId		int null
+			, MigrantStudentQualifyingArrivalDateId		int null
+			, LastQualifyingMoveDateId					int null
 		)
 
 		INSERT INTO #Facts
@@ -178,6 +178,7 @@ BEGIN
 		FROM Staging.ProgramParticipationSpecialEducation sppse
 		JOIN RDS.DimDates rdd
 			ON sppse.ProgramParticipationEndDate = rdd.DateValue
+	--enrollment
 		JOIN Staging.K12Enrollment ske
 			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
@@ -185,24 +186,39 @@ BEGIN
 			AND rdd.DateValue BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
+	--sea	
+		JOIN RDS.DimSeas rds
+			ON rdd.DateValue BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+	--student
+		JOIN RDS.DimPeople rdp
+			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
+			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
+--			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
+			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
+			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
+			AND rdd.DateValue BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
+			AND IsActiveK12Student = 1
+	--demographics
+		JOIN RDS.vwDimK12Demographics rdkd
+ 			ON rsy.SchoolYear = rdkd.SchoolYear
+			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
+	--age	
+		JOIN RDS.DimAges rda
+			ON RDS.Get_Age(ske.Birthdate, IIF(rdd.DateValue < @ChildCountDate, @PreviousChildCountDate, @ChildCountDate)) = rda.AgeValue
+	--lea	
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
 			AND rdd.DateValue BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
+	--school
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND rdd.DateValue BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
-		JOIN RDS.DimSeas rds
-			ON rdd.DateValue BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+	--race
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr
 			ON ske.SchoolYear = spr.SchoolYear
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState
 			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
 				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
-		JOIN RDS.vwDimK12Demographics rdkd
- 			ON rsy.SchoolYear = rdkd.SchoolYear
-			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
-		JOIN RDS.DimAges rda
-			ON RDS.Get_Age(ske.Birthdate, IIF(rdd.DateValue < @ChildCountDate, @PreviousChildCountDate, @ChildCountDate)) = rda.AgeValue
 		LEFT JOIN #vwRaces rdr
 			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
 				CASE
@@ -211,15 +227,9 @@ BEGIN
 					ELSE 'Missing'
 				END
 				AND rsy.SchoolYear = rdr.SchoolYear
-		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
-			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
-			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND rdd.DateValue BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
-			AND IsActiveK12Student = 1
 		WHERE sppse.ProgramParticipationEndDate IS NOT NULL		
+	--Add condition that the student was in SPED at the beginning of the reporting period CIID-4693
+		AND sppse.ProgramParticipationBeginDate <= @StartDate
 
 	--Get a unique set of Lea IDs to match against for Title I and Migrant update
 		IF OBJECT_ID('tempdb..#uniqueLEAs') IS NOT NULL 

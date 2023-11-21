@@ -101,6 +101,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Dropout.StoredPro
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Dropout.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_GraduatesCompleters.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_GraduatesCompleters.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_GraduationRate.StoredProcedure.sql,0
