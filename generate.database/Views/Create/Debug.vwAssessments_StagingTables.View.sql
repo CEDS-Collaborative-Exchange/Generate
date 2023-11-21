@@ -9,7 +9,6 @@ AS
 				,enrollment.MiddleName
 				,enrollment.Sex
 				,enrollment.BirthDate
-				,enrollment.GradeLevel
 
 				,assess.AssessmentTitle									AS 'Assessment-AssessmentTitle'
 				,assess.AssessmentIdentifier							AS 'Assessment-AssessmentIdentifier'
@@ -21,6 +20,7 @@ AS
 				,assess.AssessmentTypeAdministered						AS 'Assessment-AssessmentTypeAdministered'
 				,assess.AssessmentTypeAdministeredToEnglishLearners		AS 'Assessment-AssessmentTypeAdministeredToEnglishLearners'
 
+				,results.GradeLevelWhenAssessed							AS 'Results-GradeLevelWhenAssessed'
 				,results.AssessmentAdministrationStartDate				AS 'Results-AssessmentAdministrationStartDate'
 				,results.AssessmentIdentifier							AS 'Results-AssessmentIdentifier'
 				,results.AssessmentPerformanceLevelIdentifier			AS 'Results-AssessmentPerformanceLevelIdentifier'
@@ -89,8 +89,8 @@ AS
 	LEFT JOIN Staging.K12PersonRace							race
 			ON		enrollment.SchoolYear									=	race.SchoolYear
 			AND		enrollment.StudentIdentifierState						=	race.StudentIdentifierState
-			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(ideaDisability.LEAIdentifierSeaAccountability, '')
-			AND		ISNULL(enrollment.SchoolIdentifierSea, '')	=	ISNULL(ideaDisability.SchoolIdentifierSea, '')
+			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(race.LEAIdentifierSeaAccountability, '')
+			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(race.SchoolIdentifierSea, '')
 			AND		race.RecordStartDateTime  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 
 	LEFT JOIN Staging.PersonStatus							el
