@@ -63,6 +63,30 @@ BEGIN TRY
 
  		select @ChildCountDate = CAST('10/01/' + cast(@SchoolYear - 1 AS Varchar(4)) AS DATETIME)
 
+		-- Get/Set the reference Start/End dates from toggle 
+		DECLARE @ExitingSpedStartDate DATETIME 
+		DECLARE @UsesDefaultReferenceDates VARCHAR(10)
+		DECLARE @ToggleStartDate DATE
+
+		SELECT @ExitingSpedStartDate = CAST('7/1/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
+
+		SELECT @UsesDefaultReferenceDates = tr.ResponseValue
+		FROM App.ToggleQuestions tq
+		JOIN App.ToggleResponses tr
+			ON tq.ToggleQuestionId = tr.ToggleQuestionId
+		WHERE tq.EmapsQuestionAbbrv = 'DEFEXREFPER'
+
+		IF (@UsesDefaultReferenceDates = 'false') 
+		BEGIN
+			SELECT @ToggleStartDate = tr.ResponseValue
+			FROM App.ToggleQuestions tq
+			JOIN App.ToggleResponses tr
+				ON tq.ToggleQuestionId = tr.ToggleQuestionId
+			WHERE tq.EmapsQuestionAbbrv = 'DEFEXREFDTESTART'
+
+			SELECT @ExitingSpedStartDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@ToggleStartDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ToggleStartDate) AS VARCHAR(2)) AS DATE)
+		END 
+
 		IF OBJECT_ID('tempdb..#disabilityCodes') IS NOT NULL
 		DROP TABLE #disabilityCodes
 
@@ -250,31 +274,31 @@ BEGIN TRY
 				, ske.LeaIdentifierSeaAccountability
 				, ske.SchoolIdentifierSea
 				, ske.Birthdate
-				, case
-					when @ChildCountDate <= sppse.ProgramParticipationEndDate then [RDS].[Get_Age](ske.Birthdate, @ChildCountDate)
-					else [RDS].[Get_Age](ske.BirthDate, DATEADD(year, -1, @ChildCountDate))
-					end as Age
+				, CASE
+					WHEN @ChildCountDate <= sppse.ProgramParticipationEndDate THEN [RDS].[Get_Age](ske.Birthdate, @ChildCountDate)
+					ELSE [RDS].[Get_Age](ske.BirthDate, DATEADD(year, -1, @ChildCountDate))
+				END AS Age
 				, sppse.SpecialEducationExitReason
 				, CASE sppse.SpecialEducationExitReason
-							WHEN 'PartCNoLongerEligible' THEN 'PartCNoLongerEligible'
-							WHEN 'PartBEligibleContinuingPartC' THEN 'PartBEligibleContinuingPartC'
-							WHEN 'WithdrawalByParent' THEN 'TRAN'
-							WHEN 'PartBEligibilityNotDeterminedExitingPartC' THEN 'PartBEligibilityNotDeterminedExitingPartC'
-							WHEN 'Unreachable' THEN 'DROPOUT'
-							WHEN 'Died' THEN 'D'
-							WHEN 'ReceivedCertificate' THEN 'RC'
-							WHEN 'MISSING' THEN 'MISSING'
-							WHEN 'MovedAndContinuing' THEN 'MKC'
-							WHEN 'PartBEligibleExitingPartC' THEN 'PartBEligibleExitingPartC'
-							WHEN 'MovedOutOfState' THEN 'MKC'
-							WHEN 'ReachedMaximumAge' THEN 'RMA'
-							WHEN 'NotPartBEligibleExitingPartCWithoutReferrrals' THEN 'MISSING'
-							WHEN 'GraduatedAlternateDiploma' THEN 'GRADALTDPL'
-							WHEN 'NotPartBEligibleExitingPartCWithReferrrals' THEN 'MISSING'
-							WHEN 'DroppedOut' THEN 'DROPOUT'
-							WHEN 'HighSchoolDiploma' THEN 'GHS'
-							WHEN 'Transferred' THEN 'TRAN'
-						END
+					WHEN 'PartCNoLongerEligible' THEN 'PartCNoLongerEligible'
+					WHEN 'PartBEligibleContinuingPartC' THEN 'PartBEligibleContinuingPartC'
+					WHEN 'WithdrawalByParent' THEN 'TRAN'
+					WHEN 'PartBEligibilityNotDeterminedExitingPartC' THEN 'PartBEligibilityNotDeterminedExitingPartC'
+					WHEN 'Unreachable' THEN 'DROPOUT'
+					WHEN 'Died' THEN 'D'
+					WHEN 'ReceivedCertificate' THEN 'RC'
+					WHEN 'MISSING' THEN 'MISSING'
+					WHEN 'MovedAndContinuing' THEN 'MKC'
+					WHEN 'PartBEligibleExitingPartC' THEN 'PartBEligibleExitingPartC'
+					WHEN 'MovedOutOfState' THEN 'MKC'
+					WHEN 'ReachedMaximumAge' THEN 'RMA'
+					WHEN 'NotPartBEligibleExitingPartCWithoutReferrrals' THEN 'MISSING'
+					WHEN 'GraduatedAlternateDiploma' THEN 'GRADALTDPL'
+					WHEN 'NotPartBEligibleExitingPartCWithReferrrals' THEN 'MISSING'
+					WHEN 'DroppedOut' THEN 'DROPOUT'
+					WHEN 'HighSchoolDiploma' THEN 'GHS'
+					WHEN 'Transferred' THEN 'TRAN'
+				END
 				, sidt.IdeaDisabilityTypeCode
 				, CASE sidt.IdeaDisabilityTypeCode 
 					WHEN 'MISSING' THEN 'MISSING'
@@ -292,7 +316,7 @@ BEGIN TRY
 					WHEN 'Speechlanguageimpairment' THEN 'SLI'
 					WHEN 'Traumaticbraininjury' THEN 'TBI'
 					WHEN 'Visualimpairment' THEN 'VI'
-				  END
+				END
 				, ske.HispanicLatinoEthnicity
 				, spr.RaceType
 				, CASE 
@@ -307,17 +331,17 @@ BEGIN TRY
 					WHEN spr.RaceType = 'DemographicRaceTwoOrMoreRaces' THEN 'MISSING'
 					WHEN spr.RaceType = 'RaceAndEthnicityUnknown' THEN 'MISSING'
 					WHEN spr.RaceType = 'MISSING' THEN 'MISSING'
-				  END
+				END
 				, ske.Sex
 				, CASE ske.Sex
 					WHEN 'Male' THEN 'M'
 					WHEN 'Female' THEN 'F'
 					ELSE 'MISSING'
-					END AS SexEdFactsCode
+				END AS SexEdFactsCode
 				, CASE
 					WHEN sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) THEN EnglishLearnerStatus
 					ELSE 0
-					END AS EnglishLearnerStatus
+				END AS EnglishLearnerStatus
 				, CASE
 					WHEN sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) THEN 
 						CASE 
@@ -326,9 +350,9 @@ BEGIN TRY
 							ELSE 'MISSING'
 						END
 					ELSE 'MISSING'
-					END AS EnglishLearnerStatusEdFactsCode
+				END AS EnglishLearnerStatusEdFactsCode
 			FROM Staging.K12Enrollment ske
-			left JOIN #stuLea latest
+			LEFT JOIN #stuLea latest
 				ON ske.StudentIdentifierState = latest.StudentIdentifierState
 				AND ske.LeaIdentifierSeaAccountability = latest.LeaIdentifierSeaAccountability
 			JOIN Staging.ProgramParticipationSpecialEducation sppse
@@ -360,6 +384,7 @@ BEGIN TRY
 				AND sppse.SpecialEducationExitReason IS NOT NULL
 				AND ske.SchoolYear = @SchoolYear
 				--and sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate and ISNULL(ske.EnrollmentExitDate, getdate())
+				AND sppse.ProgramParticipationBeginDate <= @ExitingSpedStartDate
 
 
 			DELETE FROM #staging
