@@ -22,7 +22,6 @@ BEGIN
 	ALTER INDEX ALL ON Staging.K12PersonRace										  REBUILD;
 	ALTER INDEX ALL ON Staging.K12ProgramParticipation								  REBUILD;
 	ALTER INDEX ALL ON Staging.K12SchoolComprehensiveSupportIdentificationType		  REBUILD;
-	ALTER INDEX ALL ON Staging.K12SchoolTargetedSupportIdentificationType			  REBUILD;
 	ALTER INDEX ALL ON Staging.K12StaffAssignment									  REBUILD;
 	ALTER INDEX ALL ON Staging.K12StudentCourseSection								  REBUILD;
 	ALTER INDEX ALL ON Staging.Migrant												  REBUILD;

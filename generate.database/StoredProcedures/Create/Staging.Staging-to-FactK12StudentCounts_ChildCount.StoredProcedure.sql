@@ -182,14 +182,6 @@ BEGIN
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sppse.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sppse.SchoolIdentifierSea,'')
 				AND @ChildCountDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, GETDATE())
-		--idea disability type			
-			JOIN Staging.IdeaDisabilityType sidt	
-				ON ske.SchoolYear = sidt.SchoolYear
-				AND sidt.StudentIdentifierState = sppse.StudentIdentifierState
-				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
-				AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
-				AND sidt.IsPrimaryDisability = 1
-				AND @ChildCountDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
 		--dimpeople	(rds)
 			JOIN RDS.DimPeople rdp
 				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
@@ -215,6 +207,14 @@ BEGIN
 			LEFT JOIN #vwGradeLevels rgls
 				ON ske.GradeLevel = rgls.GradeLevelMap
 				AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
+		--idea disability type			
+			LEFT JOIN Staging.IdeaDisabilityType sidt	
+				ON ske.SchoolYear = sidt.SchoolYear
+				AND sidt.StudentIdentifierState = sppse.StudentIdentifierState
+				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
+				AND sidt.IsPrimaryDisability = 1
+				AND @ChildCountDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
 		--person status 
 			LEFT JOIN Staging.PersonStatus el 
 				ON ske.StudentIdentifierState = el.StudentIdentifierState
@@ -241,10 +241,10 @@ BEGIN
 					END
 		--idea status (rds)	
 			LEFT JOIN #vwIdeaStatuses rdis
-				ON rdis.IdeaIndicatorCode = 'Yes'
-				AND rdis.SpecialEducationExitReasonCode = 'MISSING'
+				ON ISNULL(CAST(sppse.IdeaIndicator AS SMALLINT), -1) = ISNULL(rdis.IdeaIndicatorMap, -1)
 				AND ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode)
 				AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, rdis.IdeaEducationalEnvironmentForSchoolAgeCode)
+				AND rdis.SpecialEducationExitReasonCode = 'MISSING'
 		--idea disability type (rds)
 			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 				ON sidt.SchoolYear = rdidt.SchoolYear

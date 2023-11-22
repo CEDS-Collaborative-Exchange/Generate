@@ -9,7 +9,6 @@ AS
 				,enrollment.MiddleName
 				,enrollment.Sex
 				,enrollment.BirthDate
-				,enrollment.GradeLevel
 
 				,assess.AssessmentTitle									AS 'Assessment-AssessmentTitle'
 				,assess.AssessmentIdentifier							AS 'Assessment-AssessmentIdentifier'
@@ -21,6 +20,7 @@ AS
 				,assess.AssessmentTypeAdministered						AS 'Assessment-AssessmentTypeAdministered'
 				,assess.AssessmentTypeAdministeredToEnglishLearners		AS 'Assessment-AssessmentTypeAdministeredToEnglishLearners'
 
+				,results.GradeLevelWhenAssessed							AS 'Results-GradeLevelWhenAssessed'
 				,results.AssessmentAdministrationStartDate				AS 'Results-AssessmentAdministrationStartDate'
 				,results.AssessmentIdentifier							AS 'Results-AssessmentIdentifier'
 				,results.AssessmentPerformanceLevelIdentifier			AS 'Results-AssessmentPerformanceLevelIdentifier'
@@ -61,19 +61,6 @@ AS
 				,mil.MilitaryConnected_StatusEndDate
 
 	FROM Staging.K12Enrollment								enrollment		
-	----Join to get the child count date, uses the Day/Month and gets the year from the last migration that was run
-	INNER JOIN (
-		SELECT max(sy.Schoolyear) AS SchoolYear, CAST(CAST(max(sy.Schoolyear) - 1 AS CHAR(4)) + '-' + CAST(MONTH(tr.ResponseValue) AS VARCHAR(2)) + '-' + CAST(DAY(tr.ResponseValue) AS VARCHAR(2)) AS DATE) AS ChildCountDate
-		FROM App.ToggleQuestions tq
-		JOIN App.ToggleResponses tr
-			ON tq.ToggleQuestionId = tr.ToggleQuestionId
-		CROSS JOIN rds.DimSchoolYearDataMigrationTypes dm
-		INNER JOIN rds.dimschoolyears sy
-				on dm.dimschoolyearid = sy.dimschoolyearid	
-		WHERE tq.EmapsQuestionAbbrv = 'CHDCTDTE'
-		AND dm.IsSelected = 1
-		GROUP BY tr.ResponseValue
-	) toggle on toggle.SchoolYear = enrollment.SchoolYear
 
 	INNER JOIN Staging.AssessmentResult						results
 			ON		enrollment.StudentIdentifierState						=	results.StudentIdentifierState
@@ -102,8 +89,8 @@ AS
 	LEFT JOIN Staging.K12PersonRace							race
 			ON		enrollment.SchoolYear									=	race.SchoolYear
 			AND		enrollment.StudentIdentifierState						=	race.StudentIdentifierState
-			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(ideaDisability.LEAIdentifierSeaAccountability, '')
-			AND		ISNULL(enrollment.SchoolIdentifierSea, '')	=	ISNULL(ideaDisability.SchoolIdentifierSea, '')
+			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(race.LEAIdentifierSeaAccountability, '')
+			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(race.SchoolIdentifierSea, '')
 			AND		race.RecordStartDateTime  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 
 	LEFT JOIN Staging.PersonStatus							el

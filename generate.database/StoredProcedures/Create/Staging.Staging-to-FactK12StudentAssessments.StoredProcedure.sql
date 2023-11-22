@@ -4,6 +4,8 @@ Date:	1/6/2022
 Description: Migrates Assessment Data from Staging to RDS.FactK12StudentAssessments
 
 NOTE: This Stored Procedure processes files: 175, 178, 179, 185, 188, 189
+
+JW 11/16/2023: Made changes to address join issues
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentAssessments]
 	@SchoolYear SMALLINT
@@ -27,7 +29,7 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#tempHomelessnessStatus') IS NOT NULL DROP TABLE #tempHomelessnessStatus
 		IF OBJECT_ID(N'tempdb..#tempFosterCareStatus') IS NOT NULL DROP TABLE #tempFosterCareStatus
 		IF OBJECT_ID(N'tempdb..#tempEconomicallyDisadvantagedStatus') IS NOT NULL DROP TABLE #tempEconomicallyDisadvantagedStatus
-		IF OBJECT_ID(N'tempdb..#tempStagingAssessment') IS NOT NULL DROP TABLE #tempStagingAssessment
+		IF OBJECT_ID(N'tempdb..#tempStagingAssessmentResults') IS NOT NULL DROP TABLE #tempStagingAssessmentResults
 		IF OBJECT_ID(N'tempdb..#tempAssessmentAdministrations') IS NOT NULL DROP TABLE #tempAssessmentAdministrations
 		IF OBJECT_ID(N'tempdb..#tempLeas') IS NOT NULL DROP TABLE #tempLeas
 		IF OBJECT_ID(N'tempdb..#tempK12Schools') IS NOT NULL DROP TABLE #tempK12Schools
@@ -102,27 +104,22 @@ BEGIN
 		CREATE CLUSTERED INDEX ix_tempvwRaces 
 			ON #vwRaces (RaceMap);
 
-
-
-	-- #tempStagingAssessment ----------------------------------------------------------------------------------
+	-- #tempStagingAssessmentResults ----------------------------------------------------------------------------------
 	select sar.*, sa.AssessmentShortName, sa.AssessmentFamilyTitle, sa.AssessmentFamilyShortName
-	into #tempStagingAssessment
+	into #tempStagingAssessmentResults
 	from staging.assessmentresult sar
 	LEFT JOIN Staging.Assessment sa
-		ON sar.AssessmentIdentifier = sa.AssessmentIdentifier
+		ON ISNULL(sar.AssessmentIdentifier,'') = ISNULL(sa.AssessmentIdentifier,'')
 		AND ISNULL(sar.AssessmentTitle, '') = ISNULL(sa.AssessmentTitle, '')
 		AND ISNULL(sar.AssessmentAcademicSubject, '') = ISNULL(sa.AssessmentAcademicSubject, '') 
-		--AND ISNULL(sar.AssessmentPurpose, '') = ISNULL(sa.AssessmentPurpose, '') 
-		--AND ISNULL(sar.AssessmentType, '') = ISNULL(sa.AssessmentType, '')
-		--AND ISNULL(sar.AssessmentTypeAdministered, '') = ISNULL(sa.AssessmentTypeAdministered, '')
-		--AND ISNULL(sar.AssessmentTypeAdministeredToEnglishLearners, '') = ISNULL(sa.AssessmentTypeAdministeredToEnglishLearners, '')
 		AND ISNULL(sar.AssessmentPerformanceLevelIdentifier, '') = ISNULL(sa.AssessmentPerformanceLevelIdentifier, '') 
+		AND ISNULL(sar.AssessmentTypeAdministered,'') = ISNULL(sa.AssessmentTypeAdministered,'')
 	where sar.schoolyear = @SchoolYear
 	and sar.AssessmentAdministrationStartDate is not null
 
 		-- Create Index
 			CREATE INDEX IX_tempStagingAssessment 
-				ON #tempStagingAssessment(
+				ON #tempStagingAssessmentResults(
 					AssessmentAdministrationStartDate, AssessmentAdministrationFinishDate, 
 					LeaIdentifierSeaAccountability, SchoolIdentifierSea,
 					AssessmentIdentifier, AssessmentFamilyTitle, AssessmentFamilyShortName, AssessmentShortName, AssessmentTitle, AssessmentAcademicSubject, AssessmentType, 
@@ -347,8 +344,7 @@ BEGIN
 
 	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
-			StagingId										int not null
-			, SchoolYearId									int null
+			SchoolYearId									int null
 			, FactTypeId									int null
 			, SeaId											int null		
 			, IeuId											int null	
@@ -390,8 +386,7 @@ BEGIN
 
 		INSERT INTO #Facts
 		SELECT DISTINCT
-			sar.Id														StagingId
-			, rsy.DimSchoolYearId										SchoolYearId							
+			rsy.DimSchoolYearId										SchoolYearId							
 			, @FactTypeId												FactTypeId							
 			, ISNULL(rds.DimSeaId, -1)									SeaId									
 			, -1														IeuId									
@@ -441,7 +436,7 @@ BEGIN
 				AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
 
 		--assessment results
-			JOIN #tempStagingAssessment sar
+			JOIN #tempStagingAssessmentResults sar
 				ON ske.StudentIdentifierState = sar.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
@@ -463,10 +458,12 @@ BEGIN
 				AND ISNULL(sar.AssessmentFamilyShortName, '') = ISNULL(rda.AssessmentFamilyShortName, '')
 				AND ISNULL(sar.AssessmentShortName, '') = ISNULL(rda.AssessmentShortName, '')
 				AND ISNULL(sar.AssessmentTitle, '') = ISNULL(rda.AssessmentTitle, '')
-				AND ISNULL(sar.AssessmentAcademicSubject, '') = ISNULL(rda.AssessmentAcademicSubjectCode, '')	--RefAcademicSubject
-				AND ISNULL(sar.AssessmentType, '') = ISNULL(rda.AssessmentTypeCode, '')	--RefAssessmentType
-				AND ISNULL(sar.AssessmentTypeAdministered, '') = ISNULL(rda.AssessmentTypeAdministeredCode, '')	--RefAssessmentTypeCildrenWithDisabilities
-				AND ISNULL(sar.AssessmentTypeAdministeredToEnglishLearners, '') = ISNULL(rda.AssessmentTypeAdministeredToEnglishLearnersCode, '')	--RefAssessmentTypeAdministeredToEnglishLearners
+				AND ISNULL(sar.AssessmentAcademicSubject, '') = ISNULL(rda.AssessmentAcademicSubjectMap, '')	--RefAcademicSubject
+				AND ISNULL(sar.AssessmentType, '') = ISNULL(rda.AssessmentTypeMap, '')	--RefAssessmentType
+				AND ISNULL(sar.AssessmentTypeAdministered, '') = ISNULL(rda.AssessmentTypeAdministeredMap, '')	--RefAssessmentTypeCildrenWithDisabilities
+				AND ISNULL(sar.AssessmentTypeAdministeredToEnglishLearners, '') = ISNULL(rda.AssessmentTypeAdministeredToEnglishLearnersMap, '')	--RefAssessmentTypeAdministeredToEnglishLearners
+				and sar.SchoolYear = rda.SchoolYear
+
 
 		--assessment results (rds)
 			LEFT JOIN RDS.vwDimAssessmentResults rdar

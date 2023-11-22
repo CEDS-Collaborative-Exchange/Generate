@@ -7,16 +7,6 @@ BEGIN
 	BEGIN TRANSACTION
 
 		--clear the tables for the next run
-		--DROP TABLE #Staging
-		--DROP TABLE #TC1
-		--DROP TABLE #TC2
-		--DROP TABLE #TC3
-		--DROP TABLE #TC4
-		--DROP TABLE #TC5
-		--DROP TABLE #TC6
-		--DROP TABLE #TC7
-		--DROP TABLE #TC8
-
 		IF OBJECT_ID('tempdb..#Staging') IS NOT NULL
 		DROP TABLE #Staging
 
@@ -100,8 +90,8 @@ BEGIN
 			END AS K12StaffClassificationEdFactsCode
 			, SpecialEducationAgeGroupTaught
 			, CASE SpecialEducationAgeGroupTaught
-				WHEN '3TO5' THEN '3TO5'
-				WHEN '6TO21' THEN '6TO21'
+				WHEN '3TO5' THEN '3TO5NOTK'
+				WHEN '6TO21' THEN 'AGE5KTO21'
 				ELSE 'MISSING'
 			END AS SpecialEducationAgeGroupTaughtEdFactsCode
 			, SpecialEducationTeacherQualificationStatus
@@ -254,11 +244,11 @@ BEGIN
 		-- Gather, evaluate & record the results
 		SELECT 
 			COUNT(DISTINCT StaffMemberIdentifierState) AS StaffCount
-			, SpecialEducationAgeGroupTaught
+			, SpecialEducationAgeGroupTaughtEdFactsCode
 			, sum(FullTimeEquivalency) as FullTimeEquivalency
 		INTO #TC3
 		FROM #staging 
-		GROUP BY SpecialEducationAgeGroupTaught
+		GROUP BY SpecialEducationAgeGroupTaughtEdFactsCode
 
 		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
@@ -272,7 +262,7 @@ BEGIN
 		SELECT DISTINCT
 			 @SqlUnitTestId
 			,'ST2 SEA Match All'
-			,'ST2 SEA Match All - Age Group Taught: ' + s.SpecialEducationAgeGroupTaught 
+			,'ST2 SEA Match All - Age Group Taught: ' + s.SpecialEducationAgeGroupTaughtEdFactsCode
 				+ ' Full Time Equivalency: ' + CAST(s.FullTimeEquivalency as varchar(10))
 			,s.StaffCount
 			,rreksc.StaffCount
@@ -280,7 +270,7 @@ BEGIN
 			,GETDATE()
 		FROM #TC3 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
-			ON s.SpecialEducationAgeGroupTaught = rreksc.SpecialEducationAgeGroupTaught
+			ON s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
 			AND rreksc.ReportCode = 'C070' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'SEA'
@@ -473,13 +463,13 @@ BEGIN
 		SELECT 
 			COUNT(DISTINCT StaffMemberIdentifierState) AS StaffCount
 			, LeaIdentifierSea
-			, SpecialEducationAgeGroupTaught
+			, SpecialEducationAgeGroupTaughtEdFactsCode
 			, sum(FullTimeEquivalency) as FullTimeEquivalency
 		INTO #TC7
 		FROM #staging 
 		WHERE IsLeaReportedFederally = 1
 		GROUP BY LeaIdentifierSea
-				, SpecialEducationAgeGroupTaught
+				, SpecialEducationAgeGroupTaughtEdFactsCode
 
 		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
@@ -494,7 +484,7 @@ BEGIN
 			 @SqlUnitTestId
 			,'ST2 LEA Match All'
 			,'ST2 LEA Match All - LEA Identifier ' + LeaIdentifierSea
-				+ ' Age Group Taught: ' + s.SpecialEducationAgeGroupTaught 
+				+ ' Age Group Taught: ' + s.SpecialEducationAgeGroupTaughtEdFactsCode
 				+ ' Full Time Equivalency: ' + CAST(s.FullTimeEquivalency as varchar(10))
 			,s.StaffCount
 			,rreksc.StaffCount
@@ -502,7 +492,7 @@ BEGIN
 			,GETDATE()
 		FROM #TC7 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
-			ON s.SpecialEducationAgeGroupTaught = rreksc.SpecialEducationAgeGroupTaught
+			ON s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
 			AND s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
 			AND rreksc.ReportCode = 'C070' 
 			AND rreksc.ReportYear = @SchoolYear
@@ -590,42 +580,31 @@ BEGIN
 	END CATCH; 
 
 	--clean up
-	--DROP TABLE #Staging
-	--DROP TABLE #TC1
-	--DROP TABLE #TC2
-	--DROP TABLE #TC3
-	--DROP TABLE #TC4
-	--DROP TABLE #TC5
-	--DROP TABLE #TC6
-	--DROP TABLE #TC7
-	--DROP TABLE #TC8
+	IF OBJECT_ID('tempdb..#Staging') IS NOT NULL
+	DROP TABLE #Staging
 
-		IF OBJECT_ID('tempdb..#Staging') IS NOT NULL
-		DROP TABLE #Staging
+	IF OBJECT_ID('tempdb..#TC1') IS NOT NULL
+	DROP TABLE #TC1
 
-		IF OBJECT_ID('tempdb..#TC1') IS NOT NULL
-		DROP TABLE #TC1
+	IF OBJECT_ID('tempdb..#TC2') IS NOT NULL
+	DROP TABLE #TC2
 
-		IF OBJECT_ID('tempdb..#TC2') IS NOT NULL
-		DROP TABLE #TC2
+	IF OBJECT_ID('tempdb..#TC3') IS NOT NULL
+	DROP TABLE #TC3
 
-		IF OBJECT_ID('tempdb..#TC3') IS NOT NULL
-		DROP TABLE #TC3
+	IF OBJECT_ID('tempdb..#TC4') IS NOT NULL
+	DROP TABLE #TC4
 
-		IF OBJECT_ID('tempdb..#TC4') IS NOT NULL
-		DROP TABLE #TC4
+	IF OBJECT_ID('tempdb..#TC5') IS NOT NULL
+	DROP TABLE #TC5
 
-		IF OBJECT_ID('tempdb..#TC5') IS NOT NULL
-		DROP TABLE #TC5
+	IF OBJECT_ID('tempdb..#TC6') IS NOT NULL
+	DROP TABLE #TC6
 
-		IF OBJECT_ID('tempdb..#TC6') IS NOT NULL
-		DROP TABLE #TC6
+	IF OBJECT_ID('tempdb..#TC7') IS NOT NULL
+	DROP TABLE #TC7
 
-		IF OBJECT_ID('tempdb..#TC7') IS NOT NULL
-		DROP TABLE #TC7
-
-		IF OBJECT_ID('tempdb..#TC8') IS NOT NULL
-		DROP TABLE #TC8
-
+	IF OBJECT_ID('tempdb..#TC8') IS NOT NULL
+	DROP TABLE #TC8
 
 END

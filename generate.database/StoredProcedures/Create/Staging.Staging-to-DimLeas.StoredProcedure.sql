@@ -139,6 +139,10 @@ BEGIN
 		FROM Staging.K12Organization sko
 		INNER JOIN Staging.StateDetail ssd
 			ON sko.SchoolYear = ssd.SchoolYear
+		LEFT JOIN staging.SourceSystemReferenceData sssrd4
+			ON sko.LEA_Type = sssrd4.InputCode
+			AND sssrd4.TableName = 'RefLeaType'
+			AND sko.SchoolYear = sssrd4.SchoolYear
 		LEFT JOIN Staging.OrganizationAddress smam
 			ON sko.LEAIdentifierSea = smam.OrganizationIdentifier
 			AND smam.OrganizationType in (select LeaOrganizationType from #organizationTypes ot where ot.SchoolYear = sko.SchoolYear)
@@ -163,17 +167,18 @@ BEGIN
 			ON sko.LEA_CharterLeaStatus = sssrd3.InputCode
 			AND sssrd3.TableName = 'RefCharterLeaStatus'
 			AND sko.SchoolYear = sssrd3.SchoolYear
-		LEFT JOIN staging.SourceSystemReferenceData sssrd4
-			ON sko.LEA_Type = sssrd4.InputCode
-			AND sssrd4.TableName = 'RefLeaType'
-			AND sko.SchoolYear = sssrd4.SchoolYear
-		WHERE @dataCollectionName IS NULL
+
+		WHERE 
+			sko.LeaIdentifierSea is not null 
+			AND
+			(@dataCollectionName IS NULL
 			OR (
 				sko.DataCollectionName = @dataCollectionName
 				AND ssd.DataCollectionName = @dataCollectionName
 				AND smam.DataCollectionName = @dataCollectionName
 				AND smap.DataCollectionName = @dataCollectionName
 				AND sop.DataCollectionName = @dataCollectionName
+				)
 			)
 
 	)

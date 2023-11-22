@@ -219,6 +219,11 @@ BEGIN
 	FROM Staging.K12Organization sko
 	JOIN Staging.StateDetail ssd
 		ON sko.SchoolYear = ssd.SchoolYear
+	LEFT JOIN staging.SourceSystemReferenceData sssrd3 
+		ON sko.School_Type = sssrd3.InputCode
+		AND sssrd3.TableName = 'RefSchoolType'
+		AND sko.SchoolYear = sssrd3.SchoolYear
+
 	LEFT JOIN Staging.OrganizationAddress smam
 		ON sko.SchoolIdentifierSea = smam.OrganizationIdentifier
 		AND smam.AddressTypeForOrganization = (select MailingAddressType from #organizationLocationTypes lt WHERE lt.SchoolYear = smam.SchoolYear)
@@ -240,10 +245,6 @@ BEGIN
 		ON sko.LEA_Type = sssrd2.InputCode
 		AND sssrd2.TableName = 'RefLeaType'
 		AND sko.SchoolYear = sssrd2.SchoolYear
-	LEFT JOIN staging.SourceSystemReferenceData sssrd3
-		ON sko.School_Type = sssrd3.InputCode
-		AND sssrd3.TableName = 'RefSchoolType'
-		AND sko.SchoolYear = sssrd3.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd4
 		ON sko.School_ReconstitutedStatus = sssrd4.InputCode
 		AND sssrd4.TableName = 'RefReconstitutedStatus'
@@ -252,14 +253,16 @@ BEGIN
 		ON sko.School_AdministrativeFundingControl = sssrd5.InputCode
 		AND sssrd5.TableName = 'RefAdministrativeFundingControl'
 		AND sko.SchoolYear = sssrd5.SchoolYear
-	WHERE @DataCollectionName IS NULL	
+	WHERE 
+		sko.SchoolIdentifierSea is not null and -- Prevent null schools from inserting into DimK12Schools
+		(@DataCollectionName IS NULL	
 		OR (
 			sko.DataCollectionName = @dataCollectionName
 			AND ssd.DataCollectionName = @dataCollectionName
 			AND smam.DataCollectionName = @dataCollectionName
 			AND smap.DataCollectionName = @dataCollectionName
 			AND sop.DataCollectionName = @dataCollectionName
-		)
+		))
 
 
 	-- SchoolIdentifierState and RecordStartDateTime must always be unique in Staging.K12Organaization

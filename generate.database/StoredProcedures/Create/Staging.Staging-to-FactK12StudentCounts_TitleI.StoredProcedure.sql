@@ -72,6 +72,8 @@ BEGIN
 		INTO #vwTitleIStatuses
 		FROM RDS.vwDimTitleIStatuses
 		WHERE SchoolYear = @SchoolYear
+		AND TitleIProgramTypeCode in ('SchoolwideProgram','TargetedAssistanceProgram')
+		AND TitleISchoolStatusCode in ('SWELIGSWPROG', 'TGELGBTGPROG')
 
 		CREATE CLUSTERED INDEX ix_tempvwTitleIStatuses
 			ON #vwTitleIStatuses (TitleIInstructionalServicesCode, TitleIProgramTypeCode, TitleISchoolStatusCode, TitleISupportServicesCode);
@@ -79,7 +81,7 @@ BEGIN
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
-		WHERE FactTypeCode = 'dropout'	--DimFactTypeId = 7
+		WHERE FactTypeCode = 'titleI'	--DimFactTypeId = 12
 
 		--Clear the Fact table of the data about to be migrated  
 		DELETE RDS.FactK12StudentCounts
@@ -134,7 +136,7 @@ BEGIN
 			, ISNULL(rgls.DimGradeLevelId, -1)							GradeLevelId							
 			, -1 														AgeId									
 			, ISNULL(rdr.DimRaceId, -1)									RaceId								
-			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId						
+			, -1														K12DemographicId						
 			, 1															StudentCount							
 			, ISNULL(rds.DimSeaId, -1)									SEAId									
 			, -1														IEUId									
@@ -144,8 +146,8 @@ BEGIN
 			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId							
 			, -1														DisabilityStatusId							
 			, -1														LanguageId							
-			, ISNULL(rdis.DimMigrantStatusId, -1) 						MigrantStatusId						
-			, ISNULL(rdtis.DimTitleIStatusId, -1)						TitleIStatusId						
+			, ISNULL(rdms.DimMigrantStatusId, -1) 						MigrantStatusId						
+			, ISNULL(rdt1s.DimTitleIStatusId, -1)						TitleIStatusId						
 			, -1														TitleIIIStatusId						
 			, -1														AttendanceId							
 			, -1 														CohortStatusId						
@@ -163,6 +165,9 @@ BEGIN
 			, -1														LastQualifyingMoveDateId						
 
 		FROM Staging.K12Enrollment ske
+		JOIN Staging.K12Organization sko
+			ON ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sko.LeaIdentifierSea, '')
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sko.SchoolIdentifierSea, '')
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 		LEFT JOIN RDS.DimLeas rdl
@@ -211,18 +216,17 @@ BEGIN
 				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
 	--title I (RDS)
 		LEFT JOIN #vwTitleIStatuses rdt1s
-			ON ISNULL(title1.TitleIIndicator, 'MISSING') = ISNULL(rdt1s.TitleIProgramTypeMap, 'MISSING')
-
-/*
-Need to figure out the above mapping.  The 4 fields in the DimTitleIStatuses table relate to the Organization, need to find where the 
-Title I Indicator from Staging.ProgramParticipationTitleI is supposd to be mapped to.
-*/
+			ON ISNULL(sko.LEA_TitleIProgramType, 'MISSING') = ISNULL(rdt1s.TitleIProgramTypeMap, 'MISSING')
+			AND ISNULL(sko.LEA_TitleIinstructionalService, 'MISSING') = ISNULL(rdt1s.TitleIInstructionalServicesMap, 'MISSING')
+			AND ISNULL(sko.LEA_K12LeaTitleISupportService, 'MISSING') = ISNULL(rdt1s.TitleISupportServicesMap, 'MISSING')
+			AND ISNULL(sko.School_TitleIPartASchoolDesignation, 'MISSING') = ISNULL(rdt1s.TitleIProgramTypeMap, 'MISSING')
 
 	--homelessness (RDS)
 		LEFT JOIN #vwHomelessnessStatuses rdhs
 			ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)
-			AND ISNULL(hmNight.HomelessNightTimeResidence, 'MISSING') = ISNULL(rdhs.HomelessPrimaryNighttimeResidenceMap, 'MISSING')
-			AND ISNULL(CAST(hmStatus.HomelessUnaccompaniedYouth AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessUnaccompaniedYouthStatusMap AS SMALLINT), -1)
+			AND rdhs.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
+			AND rdhs.HomelessUnaccompaniedYouthStatusCode = 'MISSING'
+			AND rdhs.HomelessServicedIndicatorCode = 'MISSING' 
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON ske.SchoolYear = rdis.SchoolYear
@@ -255,7 +259,7 @@ Title I Indicator from Staging.ProgramParticipationTitleI is supposd to be mappe
 					ELSE 'Missing'
 				END
 		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.StateStudentIdentifier
+			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND rdp.IsActiveK12Student = 1
 			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
 			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
