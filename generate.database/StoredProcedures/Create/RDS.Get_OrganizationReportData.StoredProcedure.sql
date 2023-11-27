@@ -121,7 +121,8 @@ BEGIN
 			TargetedSupportCode,
 			AdditionalTargetedSupportandImprovementCode,
 			CAST(null as varchar(50)) as GRADELEVEL,
-			AppropriationMethodCode
+			AppropriationMethodCode,
+			CharterSchoolAuthorizerType
         from RDS.ReportEDFactsOrganizationCounts fact
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
@@ -237,7 +238,8 @@ BEGIN
 			TargetedSupportImprovementCode,
 			TargetedSupportCode,
 			AdditionalTargetedSupportandImprovementCode,
-			AppropriationMethodCode
+			AppropriationMethodCode,
+			CharterSchoolAuthorizerType
         from RDS.ReportEDFactsOrganizationCounts fact
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
@@ -357,7 +359,8 @@ BEGIN
 			TargetedSupportImprovementCode,
 			TargetedSupportCode,
 			AdditionalTargetedSupportandImprovementCode,
-			AppropriationMethodCode
+			AppropriationMethodCode,
+			CharterSchoolAuthorizerType
 		from rds.ReportEDFactsOrganizationCounts fact
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
@@ -626,7 +629,8 @@ BEGIN
 			TargetedSupportImprovementCode,
 			TargetedSupportCode,
 			AdditionalTargetedSupportandImprovementCode,
-			AppropriationMethodCode
+			AppropriationMethodCode,
+			CharterSchoolAuthorizerType
         from rds.ReportEDFactsOrganizationCounts fact
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
@@ -746,7 +750,8 @@ BEGIN
 			NULL AS TargetedSupportCode,
 			NULL AS AdditionalTargetedSupportandImprovementCode,
 			NULL AS AppropriationMethodCode,
-			NULL as GRADELEVEL
+			NULL as GRADELEVEL,
+			NULL AS CharterSchoolAuthorizerType
         from rds.ReportEDFactsOrganizationCounts fact
 		where reportcode = @reportCode 
 			and ReportLevel = @reportLevel 
@@ -884,7 +889,8 @@ BEGIN
 			TargetedSupportImprovementCode,
 			TargetedSupportCode,
 			AdditionalTargetedSupportandImprovementCode,
-			AppropriationMethodCode
+			AppropriationMethodCode,
+			CharterSchoolAuthorizerType
         from rds.ReportEDFactsOrganizationCounts fact
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
@@ -896,7 +902,8 @@ BEGIN
                             GRADELEVEL =     Cast(STUFF((SELECT DISTINCT ', ' + GRADELEVEL
                             FROM rds.ReportEDFactsOrganizationCounts b 
                             WHERE b.OrganizationStateId = a.OrganizationStateId
-                            and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='c205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+                            and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear 
+							and [CategorySetCode] = (case when @reportCode='c205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
                             and b.reportYear = a.reportYear and a.ReportLevel = b.ReportLevel
                             FOR XML PATH('')), 1, 2, '') as varchar(100))
                 FROM rds.ReportEDFactsOrganizationCounts a
