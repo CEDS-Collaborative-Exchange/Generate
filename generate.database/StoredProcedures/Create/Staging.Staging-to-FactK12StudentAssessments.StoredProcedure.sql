@@ -64,8 +64,6 @@ BEGIN
 		CREATE NONCLUSTERED INDEX ix_tempvwAssessments -- JW
 			ON #vwAssessments (AssessmentTitle, AssessmentTypeMap, AssessmentTypeAdministeredMap, AssessmentTypeAdministeredToEnglishLearnersMap);
 
-
-
 		SELECT *
 		INTO #vwAssessmentResults
 		FROM RDS.vwDimAssessmentResults
@@ -105,17 +103,17 @@ BEGIN
 			ON #vwRaces (RaceMap);
 
 	-- #tempStagingAssessmentResults ----------------------------------------------------------------------------------
-	select sar.*, sa.AssessmentShortName, sa.AssessmentFamilyTitle, sa.AssessmentFamilyShortName
-	into #tempStagingAssessmentResults
-	from staging.assessmentresult sar
-	LEFT JOIN Staging.Assessment sa
-		ON ISNULL(sar.AssessmentIdentifier,'') = ISNULL(sa.AssessmentIdentifier,'')
-		AND ISNULL(sar.AssessmentTitle, '') = ISNULL(sa.AssessmentTitle, '')
-		AND ISNULL(sar.AssessmentAcademicSubject, '') = ISNULL(sa.AssessmentAcademicSubject, '') 
-		AND ISNULL(sar.AssessmentPerformanceLevelIdentifier, '') = ISNULL(sa.AssessmentPerformanceLevelIdentifier, '') 
-		AND ISNULL(sar.AssessmentTypeAdministered,'') = ISNULL(sa.AssessmentTypeAdministered,'')
-	where sar.schoolyear = @SchoolYear
-	and sar.AssessmentAdministrationStartDate is not null
+		SELECT sar.*, sa.AssessmentShortName, sa.AssessmentFamilyTitle, sa.AssessmentFamilyShortName
+		INTO #tempStagingAssessmentResults
+		FROM staging.assessmentresult sar
+		LEFT JOIN Staging.Assessment sa
+			ON ISNULL(sar.AssessmentIdentifier,'') = ISNULL(sa.AssessmentIdentifier,'')
+			AND ISNULL(sar.AssessmentTitle, '') = ISNULL(sa.AssessmentTitle, '')
+			AND ISNULL(sar.AssessmentAcademicSubject, '') = ISNULL(sa.AssessmentAcademicSubject, '') 
+			AND ISNULL(sar.AssessmentPerformanceLevelIdentifier, '') = ISNULL(sa.AssessmentPerformanceLevelIdentifier, '') 
+			AND ISNULL(sar.AssessmentTypeAdministered,'') = ISNULL(sa.AssessmentTypeAdministered,'')
+		WHERE sar.schoolyear = @SchoolYear
+		AND sar.AssessmentAdministrationStartDate IS NOT NULL
 
 		-- Create Index
 			CREATE INDEX IX_tempStagingAssessment 
@@ -126,27 +124,24 @@ BEGIN
 					AssessmentTypeAdministered, AssessmentTypeAdministeredToEnglishLearners, AssessmentScoreMetricType)
 
 	-- #tempLeas ----------------------------------------------------------------------------
-	select DimLeaId, LeaIdentifierSea, convert(date, RecordStartDateTime) RecordStartDateTime, convert(date, RecordEndDateTime) RecordEndDateTime
-	into #tempLeas
-	from RDS.DimLeas
-	where convert(date, RecordStartDateTime) between @SYStartDate and @SYEndDate
+		SELECT DimLeaId, LeaIdentifierSea, CONVERT(DATE, RecordStartDateTime) RecordStartDateTime, CONVERT(DATE, RecordEndDateTime) RecordEndDateTime
+		INTO #tempLeas
+		FROM RDS.DimLeas
+		WHERE CONVERT(DATE, RecordStartDateTime) between @SYStartDate and @SYEndDate
 
 		-- Create Index
 			CREATE INDEX IX_tempLeas
 				ON #tempLeas(LeaIdentifierSea, RecordStartDateTime, RecordEndDateTime)
 
-
 	-- #tempK12Schools ------------------------------------------------------------------------
-	select DimK12SchoolId, SchoolIdentifierSea, convert(date, RecordStartDateTime) RecordStartDateTime, convert(date, RecordEndDateTime) RecordEndDateTime
-	into #tempK12Schools
-	from RDS.DimK12Schools
-	where convert(date, RecordStartDateTime) between @SYStartDate and @SYEndDate
+		SELECT DimK12SchoolId, SchoolIdentifierSea, CONVERT(DATE, RecordStartDateTime) RecordStartDateTime, CONVERT(DATE, RecordEndDateTime) RecordEndDateTime
+		INTO #tempK12Schools
+		FROM RDS.DimK12Schools
+		WHERE CONVERT(DATE, RecordStartDateTime) between @SYStartDate and @SYEndDate
 
 		-- Create Index
 			CREATE INDEX IX_tempK12Schools
 				ON #tempK12Schools(SchoolIdentifierSea, RecordStartDateTime, RecordEndDateTime)
-
-
 
 	-- #tempAssessmentAdministrations -------------------------------------------------------------------
 		SELECT DimAssessmentAdministrationId, AssessmentIdentifier, AssessmentIdentificationSystem, 
@@ -191,8 +186,6 @@ BEGIN
 			CREATE INDEX IX_tempIdeaStatus 
 				ON #tempIdeaStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, ProgramParticipationBeginDate, ProgramParticipationEndDate)
 
-
-
 	-- #tempELStatus ----------------------------------------------------------------------
 		SELECT DISTINCT 
 			StudentIdentifierState
@@ -213,8 +206,6 @@ BEGIN
 		-- Create Index 
 			CREATE INDEX IX_tempELStatus 
 				ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusEndDate)
-
-
 
 	-- #tempMigrantStatus --------------------------------------------------------------------------------------
 		SELECT DISTINCT 
@@ -308,7 +299,6 @@ BEGIN
 			CREATE INDEX IX_tempEconomicallyDisadvantagedStatus
 				ON #tempEconomicallyDisadvantagedStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, EconomicDisadvantage_StatusStartDate, EconomicDisadvantage_StatusEndDate)
 
-
 	-- #tempMilitaryStatus ------------------------------------------------------------------------
 		SELECT DISTINCT 
 			StudentIdentifierState
@@ -331,7 +321,6 @@ BEGIN
 		-- Create Index  
 			CREATE INDEX IX_tempMilitaryStatus 
 				ON #tempMilitaryStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, MilitaryConnected_StatusStartDate, MilitaryConnected_StatusEndDate)
-
 
 
 		SELECT @FactTypeId = DimFactTypeId 
