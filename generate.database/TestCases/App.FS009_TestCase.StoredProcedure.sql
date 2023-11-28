@@ -384,12 +384,12 @@ BEGIN TRY
 				AND sppse.SpecialEducationExitReason IS NOT NULL
 				AND ske.SchoolYear = @SchoolYear
 				--and sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate and ISNULL(ske.EnrollmentExitDate, getdate())
-				AND sppse.ProgramParticipationBeginDate <= @ExitingSpedStartDate
+--NOTE: The application of this rule is being discussed and will be addressed in a future release.  For now, the rule is being commented out. CIID-4693
+--				AND sppse.ProgramParticipationBeginDate <= @ExitingSpedStartDate
 
 
 			DELETE FROM #staging
 			WHERE Age NOT BETWEEN 14 AND 21
-
 
 			-- Gather, evaluate & record the results
 			/* Test Case 1:
