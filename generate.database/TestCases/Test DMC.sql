@@ -31,7 +31,7 @@ EXEC RDS.Create_Reports 'titleIIIELOct', 0, 'studentcounts' -- FS141
 
 PRINT 'RDS migration for Child Count (C116)' -- No WORKING test for FS116
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C116')
-EXEC RDS.Create_Reports 'titleIIIELSY', 0, 'studentcounts' -- FS141
+EXEC RDS.Create_Reports 'titleIIIELSY', 0, 'studentcounts' -- FS116
 -- Execution time: 15 seconds - No records created
 PRINT 'RDS migration for Child Count (FS194)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C118','C194')
@@ -41,10 +41,10 @@ PRINT 'RDS migration for Child Count (C005,C006,C007,C088,C143,C144)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C005','C006','C007','C088','C143','C144')
 EXEC RDS.Create_Reports 'submission', 0, 'disciplinecounts' -- FS005, FS006, FS007, FS086, FS088, FS143, FS144
 -- Execution time: 2 minutes - No recors created
---PRINT 'RDS migration for Child Count (C175,C178,C179,C185,C188,C189)'
---UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C175','C178','C179','C185','C188','C189')
---EXEC RDS.Create_Reports 'submission', 0, 'studentassessments' -- FS175, FS178, FS179, FS185, FS188, FS189, No tests yet for FS113, FS125, FS126, FS139, FS137, FS050, FS142, FS157
--- Execution time -- ERROR with debug table - table name too long
+PRINT 'RDS migration for Assessments (C175,C178,C179,C185,C188,C189)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C175','C178','C179','C185','C188','C189')
+EXEC RDS.Create_Reports 'submission', 0, 'studentassessments' -- FS175, FS178, FS179, FS185, FS188, FS189, No tests yet for FS113, FS125, FS126, FS139, FS137, FS050, FS142, FS157
+-- Execution time: 40 seconds
 PRINT 'RDS migration for Personnel (C070,C099,C112)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C070','C099','C112')
 EXEC RDS.Create_Reports 'submission', 0, 'personnelcounts' -- FS070, FS099, FS112, no tests yet for FS059, FS067, FS203
@@ -116,12 +116,12 @@ PRINT 'End-to-End Test for FS143'
 EXEC App.FS143_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS144'
 EXEC App.FS144_TestCase							@SchoolYear
---PRINT 'End-to-End Test for FS175'
---EXEC App.FS175_TestCase							@SchoolYear
---PRINT 'End-to-End Test for FS178'
---EXEC App.FS178_TestCase							@SchoolYear
---PRINT 'End-to-End Test for FS179'
---EXEC App.FS179_TestCase							@SchoolYear
+PRINT 'End-to-End Test for FS175'
+EXEC App.FS17x_TestCase							@SchoolYear, 'FS175'
+PRINT 'End-to-End Test for FS178'
+EXEC App.FS17x_TestCase							@SchoolYear, 'FS178'
+PRINT 'End-to-End Test for FS179'
+EXEC App.FS17x_TestCase							@SchoolYear, 'FS179'
 PRINT 'End-to-End Test for FS185'
 EXEC App.FS18x_TestCase							@SchoolYear, 'FS185'
 PRINT 'End-to-End Test for FS188'
@@ -134,12 +134,5 @@ EXEC App.FS194_TestCase							@SchoolYear
 --EXEC App.FS212_TestCase							@SchoolYear
 --PRINT 'End-to-End Test for zz_DimK12Schools_Charter_NA_TestCase'
 --EXEC App.zz_DimK12Schools_Charter_NA_TestCase	@SchoolYear
-
-PRINT 'End-to-End Test for FS175'
-EXEC App.FS17x_TestCase							@SchoolYear, 'FS175'
-PRINT 'End-to-End Test for FS178'
-EXEC App.FS17x_TestCase							@SchoolYear, 'FS178'
-PRINT 'End-to-End Test for FS179'
-EXEC App.FS17x_TestCase							@SchoolYear, 'FS179'
 
 
