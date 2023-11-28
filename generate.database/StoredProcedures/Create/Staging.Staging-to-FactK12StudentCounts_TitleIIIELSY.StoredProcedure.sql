@@ -236,25 +236,25 @@ BEGIN
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND rdksch.RecordStartDateTime  <= @SYEndDate
 			AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate) >= @SYStartDate
-	--title III (RDS)
+	--title III (rds)
 		LEFT JOIN #vwTitleIIIStatuses rdt3s
 			ON ISNULL(sppt3.TitleIIIImmigrantStatus, -1) = ISNULL(rdt3s.TitleIIIImmigrantParticipationStatusMap, rdt3s.TitleIIIImmigrantParticipationStatusCode)
 			AND ISNULL(sppt3.TitleIIILanguageInstructionProgramType, 'MISSING') = ISNULL(rdt3s.TitleIIILanguageInstructionProgramTypeMap, rdt3s.TitleIIILanguageInstructionProgramTypeCode)
 			AND ISNULL(sppt3.Proficiency_TitleIII, 'MISSING') = ISNULL(rdt3s.ProficiencyStatusMap, rdt3s.ProficiencyStatusCode) 
 			AND ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING') = ISNULL(rdt3s.TitleIIIAccountabilityProgressStatusMap, rdt3s.TitleIIIAccountabilityProgressStatusCode)
 			AND rdt3s.ProgramParticipationTitleIIILiepCode = 'MISSING'
-	--english learner (RDS)
+	--english learner (rds)
 		LEFT JOIN #vwEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdels.EnglishLearnerStatusMap AS SMALLINT), -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
-	--languages (RDS)
+	--languages (rds)
 		LEFT JOIN #vwLanguages rdvl
 			ON ISNULL(el.ISO_639_2_NativeLanguage, 'MISSING') = ISNULL(rdvl.Iso6392LanguageMap, 'MISSING')
-	--grade (RDS)
+	--grade (rds)
 		LEFT JOIN #vwGradeLevels rgls
 			ON ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
-	--race (RDS)	
+	--race (rds)	
 		LEFT JOIN #vwUnduplicatedRaceMap spr 
 			ON ske.SchoolYear = spr.SchoolYear
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState

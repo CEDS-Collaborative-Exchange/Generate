@@ -221,7 +221,7 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND ISNULL(sppse.ProgramParticipationBeginDate, @ReportingDate) <= @ReportingDate
 			AND ISNULL(sppse.ProgramParticipationEndDate, @ReportingDate) >= @ReportingDate
-	--english learner (RDS)
+	--english learner (rds)
 		LEFT JOIN #vwEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdels.EnglishLearnerStatusMap AS SMALLINT), -1)
 			AND ISNULL(CAST(el.PerkinsEnglishLearnerStatus  AS SMALLINT), -1) = ISNULL(CAST(rdels.PerkinsEnglishLearnerStatusMap AS SMALLINT), -1)
@@ -231,14 +231,14 @@ BEGIN
 			AND rdis.SpecialEducationExitReasonCode = 'MISSING'
 			AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
 			AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
-	--languages (RDS)
+	--languages (rds)
 		LEFT JOIN #vwLanguages rdvl
 			ON ISNULL(el.ISO_639_2_NativeLanguage, 'MISSING') = ISNULL(rdvl.Iso6392LanguageMap, 'MISSING')
-	--grade (RDS)
+	--grade (rds)
 		LEFT JOIN #vwGradeLevels rgls
 			ON ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
-	--race (RDS)	
+	--race (rds)	
 		LEFT JOIN #vwUnduplicatedRaceMap spr 
 			ON ske.SchoolYear = spr.SchoolYear
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState
