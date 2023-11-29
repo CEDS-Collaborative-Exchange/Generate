@@ -1,53 +1,10 @@
-CREATE VIEW [Debug].[vwDirectory_FactTable] 
+CREATE VIEW [Debug].[vwDirectorySCH_FactTable] 
 AS
 SELECT	
 			  Fact.SchoolYearId
 			, SchoolYears.SchoolYear
-			, Fact.SeaId
-			, SEAs.SeaOrganizationIdentifierSea
-			, SEAs.SeaOrganizationName
-			, SEAs.StateAnsiCode
-			, SEAs.WebSiteAddress
-			, SEAs.TelephoneNumber
-			, SEAs.MailingAddressStreetNumberAndName
-			, SEAs.MailingAddressApartmentRoomOrSuiteNumber
-			, SEAs.MailingAddressCity
-			, SEAs.MailingAddressPostalCode
-			, SEAs.MailingAddressStateAbbreviation
-			, SEAs.PhysicalAddressStreetNumberAndName
-			, SEAs.PhysicalAddressApartmentRoomOrSuiteNumber
-			, SEAs.PhysicalAddressCity
-			, SEAs.PhysicalAddressPostalCode
-			, SEAs.PhysicalAddressStateAbbreviation
-			, SEAs.RecordStartDateTime
-			, SEAs.RecordEndDateTime
-			, Fact.LeaId		
-			, LEAs.StateAnsiCode
-			, LEAs.LeaIdentifierSea
-			, LEAs.LeaIdentifierNces
-			, LEAs.LeaOrganizationName
-			, LEAs.OutOfStateIndicator
-			, LEAs.LeaTypeEdFactsCode
-			, LEAs.WebSiteAddress
-			, LEAs.LeaSupervisoryUnionIdentificationNumber
-			, LEAs.TelephoneNumber
-			, LEAs.MailingAddressStreetNumberAndName
-			, LEAs.MailingAddressApartmentRoomOrSuiteNumber
-			, LEAs.MailingAddressCity
-			, LEAs.MailingAddressPostalCode
-			, LEAs.MailingAddressStateAbbreviation
-			, LEAs.PhysicalAddressStreetNumberAndName
-			, LEAs.PhysicalAddressApartmentRoomOrSuiteNumber
-			, LEAs.PhysicalAddressCity
-			, LEAs.PhysicalAddressPostalCode
-			, LEAs.PhysicalAddressStateAbbreviation
-			, LEAs.LeaOperationalStatusEdFactsCode
-			, LEAs.OperationalStatusEffectiveDate
-			, LEAs.RecordStartDateTime
-			, LEAs.RecordEndDateTime
-			, LEAs.CharterLeaStatus
-			, LEAs.PriorLeaIdentifierSea
-			, Fact.K12SchoolId		
+			, Fact.K12SchoolId
+			, Schools.ReportedFederally							
 			, Schools.StateAnsiCode
 			, Schools.LeaIdentifierSea
 			, Schools.LeaIdentifierNces
@@ -77,12 +34,10 @@ SELECT
 			, Schools.ReconstitutedStatus
 			, Schools.CharterSchoolContractIdNumber
 			, PrimaryAuthorizers.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea AS CharterSchoolAuthorizerPrimary
-			, SecondaryAuthorizers.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea AS CharterSchoolAuthorizerAdditional
+			, SecondaryAuthorizers.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea AS CharterSchoolAuthorizerSecondary
  	FROM		RDS.FactOrganizationCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears					ON Fact.SchoolYearId										= SchoolYears.DimSchoolYearId	
-	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT							ON SchoolYears.dimschoolyearid								= DMT.dimschoolyearid		
-	LEFT JOIN   RDS.DimSeas                         SEAs						ON Fact.SeaId    											= SEAs.DimSeaId	
-	LEFT JOIN	RDS.DimLeas							LEAs						ON Fact.LeaId												= LEAs.DimLeaId
+	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT							ON SchoolYears.DimSchoolYearId								= DMT.DimSchoolYearId		
 	LEFT JOIN	RDS.DimK12Schools					Schools						ON Fact.K12SchoolId											= Schools.DimK12SchoolId
 	LEFT JOIN	RDS.DimCharterSchoolAuthorizers		PrimaryAuthorizers			ON Fact.AuthorizingBodyCharterSchoolAuthorizerId			= PrimaryAuthorizers.DimCharterSchoolAuthorizerId
 	LEFT JOIN	RDS.DimCharterSchoolAuthorizers		SecondaryAuthorizers		ON Fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId	= SecondaryAuthorizers.DimCharterSchoolAuthorizerId
@@ -97,6 +52,6 @@ SELECT
 		--AND SchoolYears.SchoolYear = 2023
 
 	AND Fact.FactTypeId = 21
-	--AND SEAs.SeaOrganizationIdentifierSea = '789'
-	--AND LEAs.LeaIdentifierSeaAccountability = '123'
+	AND Fact.K12SchoolId > -1	
 	--AND Schools.SchoolIdentifierSea = '456'
+	--AND Schools.SchoolOperationalStatusEdFactsCode IN (1,2,7)
