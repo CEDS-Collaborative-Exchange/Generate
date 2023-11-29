@@ -294,8 +294,8 @@ BEGIN
 					ELSE 'Missing'
 				END
 				AND rsy.SchoolYear = rdr.SchoolYear
-		WHERE (ske.EnrollmentEntryDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (ske.EnrollmentEntryDate < @ReportingStartDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) > @ReportingStartDate)
+		WHERE ((ske.EnrollmentEntryDate BETWEEN @ReportingStartDate and @ReportingEndDate)
+				OR (ske.EnrollmentEntryDate < @ReportingStartDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) > @ReportingStartDate))
 		AND ISNULL(ske.HighSchoolDiplomaType, '') <> ''
 
 		INSERT INTO RDS.FactK12StudentCounts (
