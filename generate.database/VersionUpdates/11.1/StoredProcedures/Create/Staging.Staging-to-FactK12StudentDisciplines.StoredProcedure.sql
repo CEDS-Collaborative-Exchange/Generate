@@ -329,8 +329,9 @@ BEGIN
 
 		--idea disability type (rds)
 			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
-				ON ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
-			
+				ON rdidt.SchoolYear = rsy.SchoolYear
+				AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
+
 		--grade levels (rds)
 			LEFT JOIN #vwGradeLevels rgls
 				ON rsy.SchoolYear = rgls.SchoolYear
@@ -345,7 +346,8 @@ BEGIN
 				AND ISNULL(ske.SchoolIdentifierSea,'') 				= ISNULL(spr.SchoolIdentifierSea,'')
 
 			LEFT JOIN #vwRaces rdr
-				ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
+				ON rsy.SchoolYear = rdr.SchoolYear
+				AND ISNULL(rdr.RaceMap, rdr.RaceCode) =
 					CASE
 						WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HispanicorLatinoEthnicity'
 						WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
@@ -366,7 +368,7 @@ BEGIN
 
 		--firearm disciplines (rds)
 			LEFT JOIN RDS.vwDimFirearmDisciplineStatuses rdfds
-				ON rsy.SchoolYear = rdis.SchoolYear                                                       
+				ON rsy.SchoolYear = rdfds.SchoolYear                                                       
 				AND ISNULL(sd.DisciplineMethodFirearm, 'MISSING')   	= ISNULL(rdfds.DisciplineMethodForFirearmsIncidentsMap, rdfds.DisciplineMethodForFirearmsIncidentsCode)
 				AND ISNULL(sd.IDEADisciplineMethodFirearm, 'MISSING')   = ISNULL(rdfds.IdeaDisciplineMethodForFirearmsIncidentsMap, rdfds.IdeaDisciplineMethodForFirearmsIncidentsCode) 
 
