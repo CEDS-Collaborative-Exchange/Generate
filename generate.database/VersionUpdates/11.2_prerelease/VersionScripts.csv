@@ -33,6 +33,12 @@ Views\\Drop,Debug.vwExiting_StagingTables.View.sql
 Views\\Create,Debug.vwExiting_StagingTables.View.sql
 Views\\Drop,Debug.vwChildCount_StagingTables.View.sql
 Views\\Create,Debug.vwChildCount_StagingTables.View.sql
+Views\\Drop,Debug.vwDirectoryLiteSEA_FactTable.View.sql
+Views\\Create,Debug.vwDirectoryLiteSEA_FactTable.View.sql
+Views\\Drop,Debug.vwDirectoryLiteLEA_FactTable.View.sql
+Views\\Create,Debug.vwDirectoryLiteLEA_FactTable.View.sql
+Views\\Drop,Debug.vwDirectoryLiteSCH_FactTable.View.sql
+Views\\Create,Debug.vwDirectoryLiteSCH_FactTable.View.sql
 Views\\Drop,Debug.vwDirectorySEA_FactTable.View.sql
 Views\\Create,Debug.vwDirectorySEA_FactTable.View.sql
 Views\\Drop,Debug.vwDirectoryLEA_FactTable.View.sql
