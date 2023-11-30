@@ -1,4 +1,4 @@
-create PROCEDURE [Utilities].[Compare_DIRECTORY]
+CREATE PROCEDURE [Utilities].[Compare_DIRECTORY]
 	@DatabaseName varchar(100),
 	@SchemaName varchar(100),
 	@SubmissionYear int,
@@ -24,7 +24,7 @@ This process assumes the following:
 4. The @LegacyTableName exists, is populated, and has the exact column names from the Generate Metadata
 
 10/17/2023 JW: Updated for V11
-
+11/29/2023 JW: Fixed issues with SCH comparison
 *****************************************************************/
 
 
@@ -149,15 +149,15 @@ if @ReportCode = 'C029'
 					Website					WebAddress,
 					Telephone				PhoneNumber,
 					MailingAddressStreet	MailingAddress1,
---					NULL					MailingAddress2,
---					NULL					MailingAddress3,
+					NULL					MailingAddress2,
+					NULL					MailingAddress3,
 					MailingAddressCity		MailingCity,
 					MailingAddressState		MailingPostalStateCode,
 					left(MailingAddressPostalCode,5)	 MailingZipCode,
 					case when len(MailingAddressPostalCode)=10 then right(MailingAddressPostalCode,4) else '''' end	 MailingZipcodePlus4,
 					PhysicalAddressStreet	LocationAddress1,
---					NULL					LocationAddress2,
---					NULL					LocationAddress3,
+					NULL					LocationAddress2,
+					NULL					LocationAddress3,
 					PhysicalAddressCity		LocationCity,
 					PhysicalAddressState	LocationPostalStateCode,
 					left(PhysicalAddressPostalCode,5)	 LocationZipCode,
@@ -170,8 +170,8 @@ if @ReportCode = 'C029'
 					PriorSchoolStateIdentifier	PriorStateSchoolID,
 					ReconstitutedStatus	ReconstitutedStatus,
 					NULL	Filler,
-					CharterSchoolAuthorizer,
-					CharterSchoolSecondaryAuthorizer,
+					CharterSchoolAuthorizerIdPrimary,
+					CharterSchoolAuthorizerIdSecondary,
 					NULL					Explanation'
 			end
 	end
