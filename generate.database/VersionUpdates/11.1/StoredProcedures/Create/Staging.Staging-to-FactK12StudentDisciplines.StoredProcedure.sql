@@ -330,7 +330,7 @@ BEGIN
 		--idea disability type (rds)
 			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 				ON ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
-			
+
 		--grade levels (rds)
 			LEFT JOIN #vwGradeLevels rgls
 				ON rsy.SchoolYear = rgls.SchoolYear
@@ -363,6 +363,7 @@ BEGIN
 					ELSE 0
 					END) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 --				AND ISNULL(CAST(sps.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
+
 
 		--firearm disciplines (rds)
 			LEFT JOIN RDS.vwDimFirearmDisciplineStatuses rdfds

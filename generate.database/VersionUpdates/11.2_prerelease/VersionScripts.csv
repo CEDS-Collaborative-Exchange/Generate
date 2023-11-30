@@ -148,4 +148,5 @@ StoredProcedures\\Create,dbo.Get_AssessmentTypeChildrenWithDisabilities.StoredPr
 StoredProcedures\\Drop,Utilities.Compare_DIRECTORY.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.Compare_DIRECTORY.StoredProcedure.sql,0
 VersionUpdates\\11.2_prerelease,UpdateDbVersion.sql,0
+VersionUpdates\\11.2_prerelease,Update-ViewDefintion-C059.sql,0
 
