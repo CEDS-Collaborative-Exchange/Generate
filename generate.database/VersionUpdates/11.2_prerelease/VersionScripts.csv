@@ -33,6 +33,12 @@ Views\\Drop,Debug.vwExiting_StagingTables.View.sql
 Views\\Create,Debug.vwExiting_StagingTables.View.sql
 Views\\Drop,Debug.vwChildCount_StagingTables.View.sql
 Views\\Create,Debug.vwChildCount_StagingTables.View.sql
+Views\\Drop,Debug.vwDirectorySEA_FactTable.View.sql
+Views\\Create,Debug.vwDirectorySEA_FactTable.View.sql
+Views\\Drop,Debug.vwDirectoryLEA_FactTable.View.sql
+Views\\Create,Debug.vwDirectoryLEA_FactTable.View.sql
+Views\\Drop,Debug.vwDirectorySCH_FactTable.View.sql
+Views\\Create,Debug.vwDirectorySCH_FactTable.View.sql
 Views\\Drop,RDS.vwDimK12AcademicAwardStatuses.View.sql
 Views\\Create,RDS.vwDimK12AcademicAwardStatuses.View.sql
 Views\\Drop,RDS.vwDimAssessments.View.sql
