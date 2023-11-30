@@ -366,6 +366,7 @@ BEGIN
 					END) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 --				AND ISNULL(CAST(sps.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 
+
 		--firearm disciplines (rds)
 			LEFT JOIN RDS.vwDimFirearmDisciplineStatuses rdfds
 				ON rsy.SchoolYear = rdfds.SchoolYear                                                       
