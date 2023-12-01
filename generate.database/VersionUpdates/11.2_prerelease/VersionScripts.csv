@@ -7,6 +7,16 @@ VersionUpdates\\11.2_prerelease,Update-DataMigrationTasks-file-list.sql,0
 VersionUpdates\\11.2_prerelease,TableChanges.sql,0
 VersionUpdates\\11.2_prerelease,Update_SSRD.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
+Views\\Drop,RDS.vwDimCteStatuses.View.sql
+Views\\Create,RDS.vwDimCteStatuses.View.sql
+Views\\Drop,RDS.vwDimDisabilityStatuses.View.sql
+Views\\Create,RDS.vwDimDisabilityStatuses.View.sql
+Views\\Drop,RDS.vwDimMigrantStatuses.View.sql
+Views\\Create,RDS.vwDimMigrantStatuses.View.sql
+Views\\Drop,RDS.vwDimMilitaryStatuses.View.sql
+Views\\Create,RDS.vwDimMilitaryStatuses.View.sql
+Views\\Drop,RDS.vwDimTitleIIIStatuses.View.sql
+Views\\Create,RDS.vwDimTitleIIIStatuses.View.sql
 Views\\Drop,RDS.vwDimCohortStatuses.View.sql
 Views\\Create,RDS.vwDimCohortStatuses.View.sql
 Views\\Drop,RDS.vwDimTitleIIIStatuses.View.sql
