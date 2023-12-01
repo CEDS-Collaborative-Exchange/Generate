@@ -3,17 +3,17 @@ AS
 SELECT DISTINCT	
 			Fact.SchoolYearId
 			, SchoolYears.SchoolYear
-			, LEAs.LeaIdentifierSea								AS LEA_Identifier
-			, LEAs.LeaOrganizationName							AS LEA_Name
+			, LEAs.LeaIdentifierSea
+			, LEAs.LeaOrganizationName
 			, CASE LEAs.ReportedFederally
 				WHEN 1 THEN 'Yes'
 				WHEN 0 THEN 'No'
-			ELSE 'MISSING' END									AS LEA_ReportedFederally
-			, LEAs.LeaTypeCode									AS LEA_Type
-			, LEAs.LeaOperationalStatus							AS LEA_OperationalStatus
-			, LEAs.OperationalStatusEffectiveDate				AS LEA_OperationalStatusEffectiveDate
-			, LEAs.RecordStartDateTime							AS LEA_RecordStartDateTime
-			, LEAs.RecordEndDateTime							AS LEA_RecordEndDateTime
+			ELSE 'MISSING' END									AS LEAReportedFederally
+			, LEAs.LeaTypeCode
+			, LEAs.LeaOperationalStatus
+			, LEAs.OperationalStatusEffectiveDate
+			, LEAs.RecordStartDateTime
+			, LEAs.RecordEndDateTime
  	FROM		RDS.FactOrganizationCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId				= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.DimSchoolYearId		= DMT.DimSchoolYearId		
