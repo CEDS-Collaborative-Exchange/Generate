@@ -10,7 +10,7 @@ AS
 			ELSE -1
 		  END AS CteAeDisplacedHomemakerIndicatorMap
 		, rdcs.CteNontraditionalGenderStatusCode
-		, sssrd1.OutputCode AS CteNontraditionalGenderStatusMap
+		, ISNULL(sssrd1.InputCode, 'MISSING') AS CteNontraditionalGenderStatusMap
 		, rdcs.CteNontraditionalCompletionCode
 		, CASE rdcs.CteNontraditionalCompletionCode 
 			WHEN 'Yes' THEN 1 
