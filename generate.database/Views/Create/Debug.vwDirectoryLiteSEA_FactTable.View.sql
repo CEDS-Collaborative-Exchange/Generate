@@ -3,10 +3,10 @@ AS
 SELECT DISTINCT	
 			Fact.SchoolYearId
 			, SchoolYears.SchoolYear
-			, SEAs.SeaOrganizationIdentifierSea					AS SEA_Identifier
-			, SEAs.SeaOrganizationName							AS SEA_OrganizationName
-			, SEAs.RecordStartDateTime							AS SEA_RecordStartDateTime
-			, SEAs.RecordEndDateTime							AS SEA_RecordEndDateTime
+			, SEAs.SeaOrganizationIdentifierSea
+			, SEAs.SeaOrganizationName
+			, SEAs.RecordStartDateTime
+			, SEAs.RecordEndDateTime
  	FROM		RDS.FactOrganizationCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears			ON Fact.SchoolYearId				= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT					ON SchoolYears.DimSchoolYearId		= DMT.DimSchoolYearId		

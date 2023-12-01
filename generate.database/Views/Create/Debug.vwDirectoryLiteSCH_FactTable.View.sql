@@ -3,19 +3,19 @@ AS
 SELECT DISTINCT	
 			Fact.SchoolYearId
 			, SchoolYears.SchoolYear
-			, Schools.LeaIdentifierSea							AS School_LeaIdentifierSea
-			, Schools.LeaOrganizationName						AS School_LeaOrganizationName
+			, Schools.LeaIdentifierSea
+			, Schools.LeaOrganizationName
 			, CASE Schools.ReportedFederally
 				WHEN 1 THEN 'Yes'
 				WHEN 0 THEN 'No'
-			ELSE 'MISSING' END									AS School_ReportedFederally
-			, Schools.SchoolIdentifierSea						AS School_Identifier
-			, Schools.NameOfInstitution							AS School_Name
-			, Schools.SchoolTypeCode							AS School_Type
-			, Schools.SchoolOperationalStatus					AS School_OperationalStatus
-			, Schools.SchoolOperationalStatusEffectiveDate		AS School_OperationalStatusEffectiveDate
-			, Schools.RecordStartDateTime						AS School_RecordStartDateTime
-			, Schools.RecordEndDateTime							AS School_RecordEndDateTime
+			ELSE 'MISSING' END									AS SchoolReportedFederally
+			, Schools.SchoolIdentifierSea
+			, Schools.NameOfInstitution
+			, Schools.SchoolTypeCode
+			, Schools.SchoolOperationalStatus
+			, Schools.SchoolOperationalStatusEffectiveDate
+			, Schools.RecordStartDateTime
+			, Schools.RecordEndDateTime
  	FROM		RDS.FactOrganizationCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId				= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.DimSchoolYearId		= DMT.DimSchoolYearId		
