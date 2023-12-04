@@ -4,13 +4,16 @@ SELECT
 			  Fact.SchoolYearId
 			, SchoolYears.SchoolYear
 			, Fact.LeaId
-			, LEAs.ReportedFederally		
+			, CASE LEAs.ReportedFederally
+				WHEN 1 THEN 'Yes'
+				WHEN 0 THEN 'No'
+			ELSE 'MISSING' END AS LEA_ReportedFederally	
 			, LEAs.StateAnsiCode
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaIdentifierNces
 			, LEAs.LeaOrganizationName
 			, LEAs.OutOfStateIndicator
-			, LEAs.LeaTypeEdFactsCode
+			, LEAs.LeaTypeCode
 			, LEAs.WebSiteAddress
 			, LEAs.LeaSupervisoryUnionIdentificationNumber
 			, LEAs.TelephoneNumber
@@ -24,7 +27,7 @@ SELECT
 			, LEAs.PhysicalAddressCity
 			, LEAs.PhysicalAddressPostalCode
 			, LEAs.PhysicalAddressStateAbbreviation
-			, LEAs.LeaOperationalStatusEdFactsCode
+			, LEAs.LeaOperationalStatus
 			, LEAs.OperationalStatusEffectiveDate
 			, LEAs.RecordStartDateTime
 			, LEAs.RecordEndDateTime
@@ -46,5 +49,7 @@ SELECT
 
 	AND Fact.FactTypeId = 21
 	AND Fact.LeaId > -1	
-	--AND LEAs.LeaIdentifierSeaAccountability = '123'
-	--AND LEAs.LeaOperationalStatusEdFactsCode IN (1,2,3)
+	--AND LEAs.LeaIdentifierSea = '123'
+	--AND LEAs.LeaOperationalStatus IN ('Open', 'New', 'Closed', 'FutureAgency')
+	--AND LEAs.LeaTypeCode IN ('ServiceAgency', 'RegularNotInSupervisoryUnion','StateOperatedAgency','FederalOperatedAgency', 'Other')
+
