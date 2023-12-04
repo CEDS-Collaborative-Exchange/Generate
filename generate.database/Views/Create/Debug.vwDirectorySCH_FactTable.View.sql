@@ -4,14 +4,17 @@ SELECT
 			  Fact.SchoolYearId
 			, SchoolYears.SchoolYear
 			, Fact.K12SchoolId
-			, Schools.ReportedFederally							
+			, CASE Schools.ReportedFederally
+				WHEN 1 THEN 'Yes'
+				WHEN 0 THEN 'No'
+			ELSE 'MISSING' END AS School_ReportedFederally					
 			, Schools.StateAnsiCode
 			, Schools.LeaIdentifierSea
 			, Schools.LeaIdentifierNces
 			, Schools.LeaOrganizationName
 			, Schools.SchoolIdentifierSea
 			, Schools.NameOfInstitution
-			, Schools.SchoolTypeEdFactsCode
+			, Schools.SchoolTypeCode
 			, Schools.OutOfStateIndicator
 			, Schools.WebSiteAddress
 			, Schools.TelephoneNumber
@@ -25,7 +28,7 @@ SELECT
 			, Schools.PhysicalAddressCity
 			, Schools.PhysicalAddressPostalCode
 			, Schools.PhysicalAddressStateAbbreviation
-			, Schools.SchoolOperationalStatusEdFactsCode
+			, Schools.SchoolOperationalStatus
 			, Schools.SchoolOperationalStatusEffectiveDate
 			, Schools.RecordStartDateTime
 			, Schools.RecordEndDateTime
@@ -53,5 +56,6 @@ SELECT
 
 	AND Fact.FactTypeId = 21
 	AND Fact.K12SchoolId > -1	
-	--AND Schools.SchoolIdentifierSea = '456'
-	--AND Schools.SchoolOperationalStatusEdFactsCode IN (1,2,7)
+	--AND Schools.SchoolIdentifierSea = '010456'
+	--AND Schools.SchoolOperationalStatus = 'Open'      --'Open', 'Closed', 'New', 'FutureSchool'
+	--AND Schools.SchoolTypeCode = 'Regular' 			--'CareerAndTechnical', 'Alternative', 'Special', 'Reportable', 'Regular'
