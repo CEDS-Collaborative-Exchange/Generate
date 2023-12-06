@@ -252,64 +252,53 @@ BEGIN
 				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') 	= ISNULL(ske.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sd.SchoolIdentifierSea, '') 				= ISNULL(ske.SchoolIdentifierSea, '')
 				AND sd.DisciplinaryActionStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @EndDate)
-
 			JOIN RDS.DimSchoolYears rsy
 				ON ske.SchoolYear = rsy.SchoolYear
-
 		--seas (rds)                                        
 			JOIN RDS.DimSeas rds
 				ON sd.DisciplinaryActionStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())           
-
 		--age
 			JOIN RDS.DimAges rda
 				ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
-
 		--demographics                                
 			JOIN RDS.vwDimK12Demographics rdkd
 				ON rsy.SchoolYear = rdkd.SchoolYear
 				AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
-			
 		--dimpeople (rds)
 			JOIN RDS.DimPeople rdp
 				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 				AND IsActiveK12Student = 1
 				AND ISNULL(ske.FirstName, '') 				= ISNULL(rdp.FirstName, '')
-				AND ISNULL(ske.MiddleName, '') 				= ISNULL(rdp.MiddleName, '')
+--				AND ISNULL(ske.MiddleName, '') 				= ISNULL(rdp.MiddleName, '')
 				AND ISNULL(ske.LastOrSurname, 'MISSING')	= rdp.LastOrSurname
 				AND ISNULL(ske.Birthdate, '1/1/1900') 		= ISNULL(rdp.BirthDate, '1/1/1900')
 				AND sd.DisciplinaryActionStartDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @EndDate)
-
 		--program participation special education              
 			LEFT JOIN #tempIdeaStatus sppse
 				ON sd.StudentIdentifierState 						= sppse.StudentIdentifierState
 				AND ISNULL(sd.LEAIdentifierSeaAccountability,'') 	= ISNULL(sppse.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(sd.SchoolIdentifierSea,'') 				= ISNULL(sppse.SchoolIdentifierSea,'')
 				AND sd.DisciplinaryActionStartDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @EndDate)
-			
 		--idea disability type
 			LEFT JOIN #tempIdeaDisability sidt
 				ON sidt.StudentIdentifierState 						= sd.StudentIdentifierState
 				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sd.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sidt.SchoolIdentifierSea, '') 			= ISNULL(sd.SchoolIdentifierSea, '')
 				AND sd.DisciplinaryActionStartDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
-			
 		--english learner                 
 			LEFT JOIN #tempELStatus el
 				ON sd.StudentIdentifierState = el.StudentIdentifierState
 				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 				AND sd.DisciplinaryActionStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @EndDate)
-
 		--leas (rds)
 			LEFT JOIN RDS.DimLeas rdl
 				ON sd.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
 				AND sd.DisciplinaryActionStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @EndDate)
-
 		--schools (rds)
 			LEFT JOIN RDS.DimK12Schools rdksch
 				ON sd.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 				AND sd.DisciplinaryActionStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @EndDate)
-
 		-- discipline status (rds)
 			LEFT JOIN #vwDisciplineStatuses rddisc
 				ON rsy.SchoolYear = rddisc.SchoolYear
@@ -318,7 +307,6 @@ BEGIN
 				AND ISNULL(CAST(sd.EducationalServicesAfterRemoval AS SMALLINT), -1)   	= ISNULL(rddisc.EducationalServicesAfterRemovalMap, -1)
 				AND ISNULL(sd.IdeaInterimRemoval, 'MISSING')                            = ISNULL(rddisc.IdeaInterimRemovalMap, rddisc.IdeaInterimRemovalCode)
 				AND ISNULL(sd.IdeaInterimRemovalReason, 'MISSING')                      = ISNULL(rddisc.IdeaInterimRemovalReasonMap, rddisc.IdeaInterimRemovalReasonCode)
-			
 		--idea status (rds)	
 			LEFT JOIN #vwIdeaStatuses rdis
 				ON rsy.SchoolYear = rdis.SchoolYear
@@ -326,25 +314,21 @@ BEGIN
 				AND rdis.SpecialEducationExitReasonCode = 'MISSING'
 				AND ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode)
 				AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'MISSING')		= ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, rdis.IdeaEducationalEnvironmentForSchoolAgeCode)
-
 		--idea disability type (rds)
 			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt                
 				ON rdidt.SchoolYear = rsy.SchoolYear
                 AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
-		
 		--grade levels (rds)
 			LEFT JOIN #vwGradeLevels rgls
 				ON rsy.SchoolYear = rgls.SchoolYear
 				AND ske.GradeLevel = rgls.GradeLevelMap
 				AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
-			
 		--race (rds)                                                                      
 			LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  Using a view that resolves multiple race records by returinging the value TwoOrMoreRaces
 				ON rsy.SchoolYear = spr.SchoolYear
 				AND ske.StudentIdentifierState = spr.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'')	= ISNULL(spr.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') 				= ISNULL(spr.SchoolIdentifierSea,'')
-
 			LEFT JOIN #vwRaces rdr
 				ON rsy.SchoolYear = rdr.SchoolYear
                 AND ISNULL(rdr.RaceMap, rdr.RaceCode) =
@@ -353,7 +337,6 @@ BEGIN
 						WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 						ELSE 'Missing'
 					END
-						
 		--english learner (rds)
 			LEFT JOIN #vwEnglishLearnerStatuses rdels
 				ON rsy.SchoolYear = rdels.SchoolYear
@@ -365,21 +348,17 @@ BEGIN
 					ELSE 0
 					END) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 --				AND ISNULL(CAST(sps.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
-
 		--firearm disciplines (rds)
 			LEFT JOIN RDS.vwDimFirearmDisciplineStatuses rdfds
 				ON rsy.SchoolYear = rdfds.SchoolYear                                                       
 				AND ISNULL(sd.DisciplineMethodFirearm, 'MISSING')   	= ISNULL(rdfds.DisciplineMethodForFirearmsIncidentsMap, rdfds.DisciplineMethodForFirearmsIncidentsCode)
 				AND ISNULL(sd.IDEADisciplineMethodFirearm, 'MISSING')   = ISNULL(rdfds.IdeaDisciplineMethodForFirearmsIncidentsMap, rdfds.IdeaDisciplineMethodForFirearmsIncidentsCode) 
-
 		-- incident date
 			LEFT JOIN RDS.DimDates incident 
 				ON sd.IncidentDate =  incident.DateValue
-
 		-- disciplinary action start date
 			LEFT JOIN RDS.DimDates disaction 
 				ON sd.DisciplinaryActionStartDate =  disaction.DateValue
-			
 		-- firearm type
 			LEFT JOIN RDS.vwDimFirearms rdf
 				ON rsy.SchoolYear = rdf.SchoolYear                                                         
@@ -514,7 +493,7 @@ BEGIN
 			, DisciplineCount
 		FROM #Facts
 
-		ALTER INDEX ALL ON RDS.FactK12StudentCounts REBUILD
+		ALTER INDEX ALL ON RDS.FactK12StudentDisciplines REBUILD
 	
 	END TRY
 	BEGIN CATCH
