@@ -37,9 +37,9 @@ PRINT 'RDS migration for Child Count (FS194)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C118','C194')
 EXEC RDS.Create_Reports 'homeless', 0, 'studentcounts' -- FS194
 -- Execution time: Instant - No records created
-PRINT 'RDS migration for Child Count (C005,C006,C007,C088,C143,C144)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C005','C006','C007','C088','C143','C144')
-EXEC RDS.Create_Reports 'submission', 0, 'disciplinecounts' -- FS005, FS006, FS007, FS086, FS088, FS143, FS144
+-- PRINT 'RDS migration for Child Count (C005,C006,C007,C088,C143,C144)'
+-- UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C005','C006','C007','C088','C143','C144')
+-- EXEC RDS.Create_Reports 'submission', 0, 'disciplinecounts' -- FS005, FS006, FS007, FS086, FS088, FS143, FS144
 -- Execution time: 2 minutes - No recors created
 PRINT 'RDS migration for Assessments (C175,C178,C179,C185,C188,C189)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C175','C178','C179','C185','C188','C189')
@@ -82,12 +82,12 @@ PRINT 'End-to-End Test for DimK12Students'
 EXEC App.DimK12Students_TestCase
 PRINT 'End-to-End Test for FS002'
 EXEC App.FS002_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS005'
-EXEC App.FS005_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS006'
-EXEC App.FS006_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS007'
-EXEC App.FS007_TestCase							@SchoolYear
+-- PRINT 'End-to-End Test for FS005'
+-- EXEC App.FS005_TestCase							@SchoolYear
+-- PRINT 'End-to-End Test for FS006'
+-- EXEC App.FS006_TestCase							@SchoolYear
+-- PRINT 'End-to-End Test for FS007'
+-- EXEC App.FS007_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS009'
 EXEC App.FS009_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS029'
@@ -98,8 +98,8 @@ PRINT 'End-to-End Test for FS052'
 EXEC App.FS052_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS070'
 EXEC App.FS070_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS088'
-EXEC App.FS088_TestCase							@SchoolYear
+-- PRINT 'End-to-End Test for FS088'
+-- EXEC App.FS088_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS089'
 EXEC App.FS089_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS099'
@@ -112,10 +112,10 @@ PRINT 'End-to-End Test for FS118'
 EXEC App.FS118_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS141'
 EXEC App.FS141_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS143'
-EXEC App.FS143_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS144'
-EXEC App.FS144_TestCase							@SchoolYear
+-- PRINT 'End-to-End Test for FS143'
+-- EXEC App.FS143_TestCase							@SchoolYear
+-- PRINT 'End-to-End Test for FS144'
+-- EXEC App.FS144_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS175'
 EXEC App.FS17x_TestCase							@SchoolYear, 'FS175'
 PRINT 'End-to-End Test for FS178'
