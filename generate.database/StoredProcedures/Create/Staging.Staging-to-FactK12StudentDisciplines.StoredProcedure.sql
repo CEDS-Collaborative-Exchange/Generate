@@ -364,54 +364,55 @@ BEGIN
 				ON rsy.SchoolYear = rdf.SchoolYear                                                         
 				AND ISNULL(sd.FirearmType, 'MISSING') 	= ISNULL(rdf.FirearmTypeMap, rdf.FirearmTypeCode)
 
-			--IF EXISTS (SELECT 1 FROM Staging.ProgramParticipationCTE) BEGIN
+		--IF EXISTS (SELECT 1 FROM Staging.ProgramParticipationCTE) 
+		--BEGIN
 
-			--            IF OBJECT_ID('tempdb.dbo.#vwDimCteStatuses', 'U') IS NOT NULL 
-			--                           DROP TABLE #vwDimCteStatuses;                            
-			--            SELECT v.* INTO #vwDimCteStatuses FROM RDS.vwDimCteStatuses v
-			--            WHERE v.SchoolYear = @SchoolYear
-			--            CREATE INDEX IX_vwDimCteStatuses ON #vwDimCteStatuses(SchoolYear, CteProgramMap, CteAeDisplacedHomemakerIndicatorMap, CteNontraditionalGenderStatusMap, RepresentationStatusMap, SingleParentOrSinglePregnantWomanMap, CteGraduationRateInclusionMap, LepPerkinsStatusMap) INCLUDE (CteProgramCode, CteAeDisplacedHomemakerIndicatorCode, CteNontraditionalGenderStatusCode, RepresentationStatusCode, SingleParentOrSinglePregnantWomanCode, CteGraduationRateInclusionCode, LepPerkinsStatusCode)
+			-- IF OBJECT_ID('tempdb.dbo.#vwDimCteStatuses', 'U') IS NOT NULL 
+			-- 				DROP TABLE #vwDimCteStatuses;                            
+			-- SELECT v.* INTO #vwDimCteStatuses FROM RDS.vwDimCteStatuses v
+			-- WHERE v.SchoolYear = @SchoolYear
+			-- CREATE INDEX IX_vwDimCteStatuses ON #vwDimCteStatuses(SchoolYear, CteProgramMap, CteAeDisplacedHomemakerIndicatorMap, CteNontraditionalGenderStatusMap, RepresentationStatusMap, SingleParentOrSinglePregnantWomanMap, CteGraduationRateInclusionMap, LepPerkinsStatusMap) INCLUDE (CteProgramCode, CteAeDisplacedHomemakerIndicatorCode, CteNontraditionalGenderStatusCode, RepresentationStatusCode, SingleParentOrSinglePregnantWomanCode, CteGraduationRateInclusionCode, LepPerkinsStatusCode)
 
-			--/*  Update the #Facts table */                                
-				-- UPDATE #Facts
-				-- SET CteStatusId = ISNULL(rdcs.DimCteStatusId, -1)
-				-- FROM #Facts fact
-				-- JOIN Staging.Discipline sd
-				-- 	ON fact.StagingId = sd.Id
-				-- LEFT JOIN Staging.ProgramParticipationCTE sppc_part_conc
-				-- 	ON sd.StudentIdentifierState = sppc_part_conc.StudentIdentifierState
-				-- 	AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_part_conc.LeaIdentifierSeaAccountability, '')
-				-- 	AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sppc_part_conc.SchoolIdentifierSea, '')
-				-- 	AND sd.DisciplinaryActionStartDate BETWEEN sppc_part_conc.ProgramParticipationBeginDate AND ISNULL(sppc_part_conc.ProgramParticipationEndDate, @EndDate)
-				-- LEFT JOIN Staging.ProgramParticipationCTE sppc_dhm
-				-- 	ON sd.StudentIdentifierState = sppc_dhm.StudentIdentifierState
-				-- 	AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_dhm.LeaIdentifierSeaAccountability, '')
-				-- 	AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sppc_dhm.SchoolIdentifierSea, '')
-				-- 	AND sd.DisciplinaryActionStartDate BETWEEN sppc_dhm.DisplacedHomeMaker_StatusStartDate AND ISNULL(sppc_dhm.DisplacedHomeMaker_StatusEndDate, @EndDate)
-				-- LEFT JOIN Staging.ProgramParticipationCTE sppc_sp
-				-- 	ON sd.StudentIdentifierState = sppc_sp.StudentIdentifierState
-				-- 	AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_sp.LeaIdentifierSeaAccountability, '')
-				-- 	AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sppc_sp.SchoolIdentifierSea, '')
-				-- 	AND sd.DisciplinaryActionStartDate BETWEEN sppc_sp.SingleParent_StatusStartDate AND ISNULL(sppc_sp.SingleParent_StatusEndDate, @EndDate)
-				-- LEFT JOIN Staging.PersonStatus sps
-				-- 	ON sd.StudentIdentifierState = sps.StudentIdentifierState
-				-- 	AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sps.LeaIdentifierSeaAccountability, '')
-				-- 	AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sps.SchoolIdentifierSea, '')
-				-- 	AND sd.DisciplinaryActionStartDate BETWEEN sps.PerkinsLEPStatus_StatusStartDate AND ISNULL(sps.PerkinsLEPStatus_StatusEndDate, @EndDate)
-				-- LEFT JOIN #vwDimCteStatuses rdcs
-				-- 	ON CASE
-				-- 		WHEN ISNULL(sppc_part_conc.CteConcentrator, 0) = 1 THEN 2
-				-- 		WHEN ISNULL(sppc_part_conc.CteParticipant, 0) = 1  THEN 1
-				-- 		WHEN sppc_part_conc.CteParticipant = 0                                                                                                                      THEN 0
-				-- 		ELSE -1
-				-- 	END                                                                                                                                                                                                                                                                                  = ISNULL(rdcs.CteProgramMap, -1)
-				-- 	AND ISNULL(CAST(sppc_dhm.DisplacedHomeMakerIndicator AS SMALLINT), -1)		= ISNULL(rdcs.CteAeDisplacedHomemakerIndicatorMap, -1)
-				-- 	AND ISNULL(CAST(sppc_part_conc.NonTraditionalGenderStatus AS SMALLINT), -1) = ISNULL(rdcs.CteNontraditionalGenderStatusMap, -1)
-				-- 	AND ISNULL(CAST(sppc_part_conc.NonTraditionalGenderStatus AS SMALLINT), -1) = ISNULL(rdcs.RepresentationStatusMap, -1)
-				-- 	AND ISNULL(CAST(sppc_sp.SingleParentIndicator AS SMALLINT), -1)             = ISNULL(rdcs.SingleParentOrSinglePregnantWomanMap, -1)
-				-- 	AND ISNULL(CAST(sppc_sp.SingleParentIndicator AS SMALLINT), -1)             = ISNULL(rdcs.SingleParentOrSinglePregnantWomanMap, -1)
-				-- 	AND ISNULL(CAST(sps.PerkinsLEPStatus AS SMALLINT), -1)                      = ISNULL(rdcs.LepPerkinsStatusMap, -1)
-			--END
+		--/*  Update the #Facts table */                                
+			-- UPDATE #Facts
+			-- SET CteStatusId = ISNULL(rdcs.DimCteStatusId, -1)
+			-- FROM #Facts fact
+			-- JOIN Staging.Discipline sd
+			-- 	ON fact.StagingId = sd.Id
+			-- LEFT JOIN Staging.ProgramParticipationCTE sppc_part_conc
+			-- 	ON sd.StudentIdentifierState = sppc_part_conc.StudentIdentifierState
+			-- 	AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_part_conc.LeaIdentifierSeaAccountability, '')
+			-- 	AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sppc_part_conc.SchoolIdentifierSea, '')
+			-- 	AND sd.DisciplinaryActionStartDate BETWEEN sppc_part_conc.ProgramParticipationBeginDate AND ISNULL(sppc_part_conc.ProgramParticipationEndDate, @EndDate)
+			-- LEFT JOIN Staging.ProgramParticipationCTE sppc_dhm
+			-- 	ON sd.StudentIdentifierState = sppc_dhm.StudentIdentifierState
+			-- 	AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_dhm.LeaIdentifierSeaAccountability, '')
+			-- 	AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sppc_dhm.SchoolIdentifierSea, '')
+			-- 	AND sd.DisciplinaryActionStartDate BETWEEN sppc_dhm.DisplacedHomeMaker_StatusStartDate AND ISNULL(sppc_dhm.DisplacedHomeMaker_StatusEndDate, @EndDate)
+			-- LEFT JOIN Staging.ProgramParticipationCTE sppc_sp
+			-- 	ON sd.StudentIdentifierState = sppc_sp.StudentIdentifierState
+			-- 	AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sppc_sp.LeaIdentifierSeaAccountability, '')
+			-- 	AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sppc_sp.SchoolIdentifierSea, '')
+			-- 	AND sd.DisciplinaryActionStartDate BETWEEN sppc_sp.SingleParent_StatusStartDate AND ISNULL(sppc_sp.SingleParent_StatusEndDate, @EndDate)
+			-- LEFT JOIN Staging.PersonStatus sps
+			-- 	ON sd.StudentIdentifierState = sps.StudentIdentifierState
+			-- 	AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(sps.LeaIdentifierSeaAccountability, '')
+			-- 	AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(sps.SchoolIdentifierSea, '')
+			-- 	AND sd.DisciplinaryActionStartDate BETWEEN sps.PerkinsLEPStatus_StatusStartDate AND ISNULL(sps.PerkinsLEPStatus_StatusEndDate, @EndDate)
+			-- LEFT JOIN #vwDimCteStatuses rdcs
+			-- 	ON CASE
+			-- 		WHEN ISNULL(sppc_part_conc.CteConcentrator, 0) = 1 THEN 2
+			-- 		WHEN ISNULL(sppc_part_conc.CteParticipant, 0) = 1  THEN 1
+			-- 		WHEN sppc_part_conc.CteParticipant = 0                                                                                                                      THEN 0
+			-- 		ELSE -1
+			-- 	END                                                                                                                                                                                                                                                                                  = ISNULL(rdcs.CteProgramMap, -1)
+			-- 	AND ISNULL(CAST(sppc_dhm.DisplacedHomeMakerIndicator AS SMALLINT), -1)		= ISNULL(rdcs.CteAeDisplacedHomemakerIndicatorMap, -1)
+			-- 	AND ISNULL(CAST(sppc_part_conc.NonTraditionalGenderStatus AS SMALLINT), -1) = ISNULL(rdcs.CteNontraditionalGenderStatusMap, -1)
+			-- 	AND ISNULL(CAST(sppc_part_conc.NonTraditionalGenderStatus AS SMALLINT), -1) = ISNULL(rdcs.RepresentationStatusMap, -1)
+			-- 	AND ISNULL(CAST(sppc_sp.SingleParentIndicator AS SMALLINT), -1)             = ISNULL(rdcs.SingleParentOrSinglePregnantWomanMap, -1)
+			-- 	AND ISNULL(CAST(sppc_sp.SingleParentIndicator AS SMALLINT), -1)             = ISNULL(rdcs.SingleParentOrSinglePregnantWomanMap, -1)
+			-- 	AND ISNULL(CAST(sps.PerkinsLEPStatus AS SMALLINT), -1)                      = ISNULL(rdcs.LepPerkinsStatusMap, -1)
+		--END
 
 	--Final insert into RDS.FactK12StudentDisciplines table
 		INSERT INTO RDS.FactK12StudentDisciplines (
