@@ -147,6 +147,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct.Sto
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
@@ -159,4 +161,3 @@ StoredProcedures\\Drop,Utilities.Compare_DIRECTORY.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.Compare_DIRECTORY.StoredProcedure.sql,0
 VersionUpdates\\11.2_prerelease,UpdateDbVersion.sql,0
 VersionUpdates\\11.2_prerelease,Update-ViewDefintion-C059.sql,0
-
