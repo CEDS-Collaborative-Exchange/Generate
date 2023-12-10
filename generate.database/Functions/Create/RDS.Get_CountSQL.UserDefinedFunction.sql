@@ -26,7 +26,6 @@ BEGIN
 	inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
 	where r.ReportCode = @reportCode
 
-
 	-- @dimFactTypeId
 	select @dimFactTypeId = DimFactTypeId from rds.DimFactTypes where FactTypeCode = @factTypeCode
 	
@@ -7076,7 +7075,6 @@ BEGIN
 					where a.' +  @factField + ' = 0   
 					AND HIGHSCHOOLDIPLOMATYPE NOT IN ( ' +  @toggleCteDiploma + ')'
 			END
-
 
 		set @sql = @sql + @sqlRemoveMissing
 	end
