@@ -1,4 +1,4 @@
-CREATE VIEW [Debug].[vwDirectorySEA_FactTable] 
+CREATE VIEW [Debug].[vwDirectoryLiteSEA_FactTable] 
 AS
 SELECT DISTINCT	
 			Fact.SchoolYearId
