@@ -1755,6 +1755,8 @@ BEGIN
 						
 						set @sqlCategoryReturnField = ' 
 							case 
+								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+								WHEN rdar.AssessmentRegistrationCompletionStatusCode = ''DidNotParticipate'' THEN ''NPART''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''REGASSWOACC'' THEN ''REGPARTWOACC''	
 								WHEN assmnt.AssessmentTypeAdministeredCode =''REGASSWACC'' THEN ''REGPARTWACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
@@ -1762,8 +1764,6 @@ BEGIN
 								WHEN assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
-								WHEN rdar.AssessmentRegistrationCompletionStatusCode = ''DidNotParticipate'' THEN ''NPART''
-								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
 								else ''MISSING''
 							end'
 					end
@@ -1772,6 +1772,8 @@ BEGIN
 						
 						set @sqlCategoryReturnField = ' 
 							case 
+								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+								WHEN rdar.AssessmentRegistrationCompletionStatusCode = ''DidNotParticipate'' THEN ''NPART''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWOACC'' THEN ''PHSRGASMIWOACC''	
 								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWACC'' THEN ''PHSRGASMIWACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
@@ -1785,8 +1787,6 @@ BEGIN
 								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWOACC'' THEN ''PLSNRHSASMWOACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWACC'' THEN ''PLSNRHSASMWACC''
-								WHEN rdar.AssessmentRegistrationCompletionStatusCode = ''DidNotParticipate'' THEN ''NPART''
-								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
 								else ''MISSING''
 							end'
 					end
@@ -7006,6 +7006,14 @@ BEGIN
 				END
 
 		END
+
+		if @reportCode in ('c175','c178','c179','c185','c188','c189')
+		begin
+				set @sql = @sql + ' delete a from @reportData a
+					where a.' +  @factField + ' = 0   
+					and a.RACE in (''MAP'',''MF'',''MHN'',''MPR'')
+				'	
+		end
 
 		if @reportCode in ('c175','c178','c179')
 		begin
