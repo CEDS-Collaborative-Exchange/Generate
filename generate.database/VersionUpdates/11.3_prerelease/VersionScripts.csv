@@ -1,2 +1,18 @@
 VersionUpdates\\11.3_prerelease,Restore 11.2.sql,0
+VersionUpdates\\11.3_prerelease,UpdateEdFactsMigrantCodes.sql,0
+VersionUpdates\\11.3_prerelease,Metadata-Updates.sql,0
+Views\\Drop,RDS.vwDimMigrantStatuses.View.sql
+Views\\Create,RDS.vwDimMigrantStatuses.View.sql
+Views\\Drop,RDS.vwDimMilitaryStatuses.View.sql
+Views\\Create,RDS.vwDimMilitaryStatuses.View.sql
+Views\\Drop,RDS.vwDimAssessments.View.sql
+Views\\Create,RDS.vwDimAssessments.View.sql
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
+StoredProcedures\\Drop,Staging.ValidateStagingData.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.ValidateStagingData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 VersionUpdates\\11.3_prerelease,UpdateDbVersion.sql,0
