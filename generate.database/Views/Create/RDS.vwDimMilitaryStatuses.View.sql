@@ -1,7 +1,7 @@
 CREATE VIEW rds.vwDimMilitaryStatuses 
 AS
 	SELECT
-		rdms.DimMilitaryStatusId
+		  rdms.DimMilitaryStatusId
 		, rsy.SchoolYear
 		, rdms.MilitaryConnectedStudentIndicatorCode
 		, ISNULL(sssrd1.InputCode, 'MISSING') AS MilitaryConnectedStudentIndicatorMap
