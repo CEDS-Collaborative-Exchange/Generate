@@ -83,6 +83,7 @@ BEGIN
 	declare @istoggleExcludeCorrectionalAge12to17 as bit
 	declare @istoggleExcludeCorrectionalAge18to21 as bit
 	declare @istoggleExcludeCorrectionalAgeAll as bit
+	declare @istoggleRaceMap as bit
 
 
 	-- Get Custom Child Count Date (if available)
@@ -241,6 +242,11 @@ BEGIN
 	from app.ToggleQuestions q 
 	left outer join app.ToggleResponses r on r.ToggleQuestionId = q.ToggleQuestionId
 	where q.EmapsQuestionAbbrv = 'ENVSACORFAC'
+
+	select @istoggleRaceMap = ISNULL( case when r.ResponseValue = 'true' then 1 else 0 end,0) 
+	from app.ToggleQuestions q 
+	left outer join app.ToggleResponses r on r.ToggleQuestionId = q.ToggleQuestionId
+	where q.EmapsQuestionAbbrv = 'ASSESSRACEMAP'
 
 	-- Determine Fact/Report Tables
 	declare @factTable as varchar(50)
@@ -1610,17 +1616,35 @@ BEGIN
 					end
 				else if @categoryCode = 'MAJORREG'
 					begin
-						set @sqlCategoryReturnField = '
-						case 
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''AM7'' then ''MAN''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''AS7'' then ''MA''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''BL7'' then ''MB''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''HI7'' then ''MHL''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''MU7'' then ''MM''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''PI7'' then ''MNP''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''WH7'' then ''MW''
-							else ''MISSING''
-						end'
+							IF @istoggleRaceMap = 1
+							BEGIN
+								set @sqlCategoryReturnField = '
+									case 
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''AM7'' then ''MAN''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''AS7'' then ''MAP''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''BL7'' then ''MB''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''HI7'' then ''MHL''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''MU7'' then ''MM''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''PI7'' then ''MAP''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''WH7'' then ''MW''
+										else ''MISSING''
+										end'
+							END
+							ELSE
+							BEGIN
+								set @sqlCategoryReturnField = '
+									case 
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''AM7'' then ''MAN''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''AS7'' then ''MA''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''BL7'' then ''MB''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''HI7'' then ''MHL''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''MU7'' then ''MM''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''PI7'' then ''MNP''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''WH7'' then ''MW''
+										else ''MISSING''
+										end'
+							END
+
 					end
 				else if @categoryCode in ('DISABSTATIDEA', 'DISABSTATUS', 'DISABIDEASTATUS')
 					begin
