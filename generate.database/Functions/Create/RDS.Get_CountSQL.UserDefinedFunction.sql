@@ -83,6 +83,7 @@ BEGIN
 	declare @istoggleExcludeCorrectionalAge12to17 as bit
 	declare @istoggleExcludeCorrectionalAge18to21 as bit
 	declare @istoggleExcludeCorrectionalAgeAll as bit
+	declare @istoggleRaceMap as bit
 
 
 	-- Get Custom Child Count Date (if available)
@@ -241,6 +242,11 @@ BEGIN
 	from app.ToggleQuestions q 
 	left outer join app.ToggleResponses r on r.ToggleQuestionId = q.ToggleQuestionId
 	where q.EmapsQuestionAbbrv = 'ENVSACORFAC'
+
+	select @istoggleRaceMap = ISNULL( case when r.ResponseValue = 'true' then 1 else 0 end,0) 
+	from app.ToggleQuestions q 
+	left outer join app.ToggleResponses r on r.ToggleQuestionId = q.ToggleQuestionId
+	where q.EmapsQuestionAbbrv = 'ASSESSRACEMAP'
 
 	-- Determine Fact/Report Tables
 	declare @factTable as varchar(50)
@@ -1610,17 +1616,35 @@ BEGIN
 					end
 				else if @categoryCode = 'MAJORREG'
 					begin
-						set @sqlCategoryReturnField = '
-						case 
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''AM7'' then ''MAN''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''AS7'' then ''MA''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''BL7'' then ''MB''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''HI7'' then ''MHL''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''MU7'' then ''MM''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''PI7'' then ''MNP''
-							when CAT_' + @reportField + '.RaceEdFactsCode = ''WH7'' then ''MW''
-							else ''MISSING''
-						end'
+							IF @istoggleRaceMap = 1
+							BEGIN
+								set @sqlCategoryReturnField = '
+									case 
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''AM7'' then ''MAN''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''AS7'' then ''MAP''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''BL7'' then ''MB''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''HI7'' then ''MHL''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''MU7'' then ''MM''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''PI7'' then ''MAP''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''WH7'' then ''MW''
+										else ''MISSING''
+										end'
+							END
+							ELSE
+							BEGIN
+								set @sqlCategoryReturnField = '
+									case 
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''AM7'' then ''MAN''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''AS7'' then ''MA''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''BL7'' then ''MB''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''HI7'' then ''MHL''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''MU7'' then ''MM''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''PI7'' then ''MNP''
+										when CAT_' + @reportField + '.RaceEdFactsCode = ''WH7'' then ''MW''
+										else ''MISSING''
+										end'
+							END
+
 					end
 				else if @categoryCode in ('DISABSTATIDEA', 'DISABSTATUS', 'DISABIDEASTATUS')
 					begin
@@ -1755,6 +1779,8 @@ BEGIN
 						
 						set @sqlCategoryReturnField = ' 
 							case 
+								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+								WHEN rdar.AssessmentRegistrationParticipationIndicatorCode = ''DidNotParticipate'' THEN ''NPART''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''REGASSWOACC'' THEN ''REGPARTWOACC''	
 								WHEN assmnt.AssessmentTypeAdministeredCode =''REGASSWACC'' THEN ''REGPARTWACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
@@ -1762,8 +1788,6 @@ BEGIN
 								WHEN assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
-								WHEN rdar.AssessmentRegistrationCompletionStatusCode = ''DidNotParticipate'' THEN ''NPART''
-								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
 								else ''MISSING''
 							end'
 					end
@@ -1772,6 +1796,8 @@ BEGIN
 						
 						set @sqlCategoryReturnField = ' 
 							case 
+								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+								WHEN rdar.AssessmentRegistrationParticipationIndicatorCode = ''DidNotParticipate'' THEN ''NPART''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWOACC'' THEN ''PHSRGASMIWOACC''	
 								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWACC'' THEN ''PHSRGASMIWACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
@@ -1785,8 +1811,6 @@ BEGIN
 								WHEN assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWOACC'' THEN ''PLSNRHSASMWOACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWACC'' THEN ''PLSNRHSASMWACC''
-								WHEN rdar.AssessmentRegistrationCompletionStatusCode = ''DidNotParticipate'' THEN ''NPART''
-								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
 								else ''MISSING''
 							end'
 					end
@@ -7006,6 +7030,14 @@ BEGIN
 				END
 
 		END
+
+		if @reportCode in ('c175','c178','c179','c185','c188','c189')
+		begin
+				set @sql = @sql + ' delete a from @reportData a
+					where a.' +  @factField + ' = 0   
+					and a.RACE in (''MAP'',''MF'',''MHN'',''MPR'')
+				'	
+		end
 
 		if @reportCode in ('c175','c178','c179')
 		begin

@@ -63,18 +63,18 @@ BEGIN
 			, AssessmentFamilyShortName
 			, AssessmentTitle
 			, AssessmentShortName
-			, sssrd1.OutputCode					as AssessmentTypeCode
-			, NULL								as AssessmentTypeDescription
-			, sssrd1.OutputCode					as AssessmentTypeEdFactsCode
-			, sssrd2.OutputCode					as AssessmentAcademicSubjectCode
-			, NULL								as AssessmentAcademicSubjectDescription
-			, NULL								as AssessmentAcademicSubjecteEdFactsCode
-			, sssrd3.OutputCode					as AssessmentTypeAdministeredCode
-			, NULL								as AssessmentTypeAdministeredDescription
-			, NULL								as AssessmentTypeAdministeredEdFactsCode
-			, sssrd4.OutputCode					as AssessmentTypeAdministeredToEnglishLearnersCode
-			, NULL								as AssessmentTypeAdministeredToEnglishLearnersDescription
-			, NULL								as AssessmentTypeAdministeredToEnglishLearnersEdFactsCode
+			, ISNULL(sssrd1.OutputCode, 'MISSING')		as AssessmentTypeCode
+			, NULL										as AssessmentTypeDescription
+			, ISNULL(sssrd1.OutputCode, 'MISSING')		as AssessmentTypeEdFactsCode
+			, ISNULL(sssrd2.OutputCode, 'MISSING')		as AssessmentAcademicSubjectCode
+			, NULL										as AssessmentAcademicSubjectDescription
+			, NULL										as AssessmentAcademicSubjecteEdFactsCode
+			, ISNULL(sssrd3.OutputCode, 'MISSING')		as AssessmentTypeAdministeredCode
+			, NULL										as AssessmentTypeAdministeredDescription
+			, NULL										as AssessmentTypeAdministeredEdFactsCode
+			, ISNULL(sssrd4.OutputCode, 'MISSING')		as AssessmentTypeAdministeredToEnglishLearnersCode
+			, NULL										as AssessmentTypeAdministeredToEnglishLearnersDescription
+			, NULL										as AssessmentTypeAdministeredToEnglishLearnersEdFactsCode
 		FROM Staging.Assessment sa
 		CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 		LEFT JOIN staging.SourceSystemReferenceData sssrd1
@@ -183,10 +183,10 @@ BEGIN
 				AND ISNULL(trgt.AssessmentFamilyShortName, '') = ISNULL(src.AssessmentFamilyShortName, '')
 				AND ISNULL(trgt.AssessmentTitle, '') = ISNULL(src.AssessmentTitle, '')
 				AND ISNULL(trgt.AssessmentShortName, '') = ISNULL(src.AssessmentShortName, '')
-				AND ISNULL(trgt.AssessmentTypeCode, '') = ISNULL(src.AssessmentTypeCode, '')
-				AND ISNULL(trgt.AssessmentAcademicSubjectCode, '') = ISNULL(src.AssessmentAcademicSubjectCode, '')
-				AND ISNULL(trgt.AssessmentTypeAdministeredCode, '') = ISNULL(src.AssessmentTypeAdministeredCode, '')
-				AND ISNULL(trgt.AssessmentTypeAdministeredToEnglishLearnersCode, '') = ISNULL(src.AssessmentTypeAdministeredToEnglishLearnersCode, '')
+				AND ISNULL(trgt.AssessmentTypeCode, 'MISSING') = ISNULL(src.AssessmentTypeCode, 'MISSING')
+				AND ISNULL(trgt.AssessmentAcademicSubjectCode, 'MISSING') = ISNULL(src.AssessmentAcademicSubjectCode, 'MISSING')
+				AND ISNULL(trgt.AssessmentTypeAdministeredCode, 'MISSING') = ISNULL(src.AssessmentTypeAdministeredCode, 'MISSING')
+				AND ISNULL(trgt.AssessmentTypeAdministeredToEnglishLearnersCode, 'MISSING') = ISNULL(src.AssessmentTypeAdministeredToEnglishLearnersCode, 'MISSING')
 		WHEN NOT MATCHED BY TARGET THEN     --- Records Exists in Source but NOT in Target
 		INSERT (
 			AssessmentIdentifierState
