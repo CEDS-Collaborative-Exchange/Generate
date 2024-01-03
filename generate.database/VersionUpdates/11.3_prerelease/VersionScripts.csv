@@ -9,6 +9,8 @@ Views\\Drop,RDS.vwDimAssessments.View.sql
 Views\\Create,RDS.vwDimAssessments.View.sql
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
+StoredProcedures\\Drop,Staging.ValidateStagingData.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.ValidateStagingData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
