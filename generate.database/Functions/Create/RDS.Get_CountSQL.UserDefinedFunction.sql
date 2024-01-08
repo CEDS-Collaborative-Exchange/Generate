@@ -1781,6 +1781,7 @@ BEGIN
 							case 
 								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
 								WHEN rdar.AssessmentRegistrationParticipationIndicatorCode = ''DidNotParticipate'' THEN ''NPART''
+								WHEN assmnt.AssessmentTypeAdministeredToEnglishLearnersCode in (''REGELPASMNT'', ''ALTELPASMNTALT'') then ''PARTELP''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''REGASSWOACC'' THEN ''REGPARTWOACC''	
 								WHEN assmnt.AssessmentTypeAdministeredCode =''REGASSWACC'' THEN ''REGPARTWACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
@@ -1798,6 +1799,7 @@ BEGIN
 							case 
 								WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
 								WHEN rdar.AssessmentRegistrationParticipationIndicatorCode = ''DidNotParticipate'' THEN ''NPART''
+								WHEN assmnt.AssessmentTypeAdministeredToEnglishLearnersCode in (''REGELPASMNT'', ''ALTELPASMNTALT'') then ''PARTELP''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWOACC'' THEN ''PHSRGASMIWOACC''	
 								WHEN assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWACC'' THEN ''PHSRGASMIWACC''
 								WHEN assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
