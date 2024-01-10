@@ -4,6 +4,8 @@ Date:	5/1/2022
 Description: Migrates Organization Data from Staging to RDS.FactOrganizationCounts
 
 NOTE: This Stored Procedure processes files: 029, 035, 039, 103, 129, 130, 131, 163, 170, 190, 193, 196, 197, 198, 205, 206
+
+1/10/2024 JW CIID-5731
 ************************************************************************/
 CREATE PROCEDURE Staging.[Staging-to-FactOrganizationCounts]
 	@SchoolYear smallint 
@@ -181,6 +183,9 @@ BEGIN
 		INTO #SortLEAs
 		FROM 
 			RDS.DimLeas
+		-- CIID-5731 Begin --
+		WHERE RecordStartDateTime BETWEEN Staging.GetFiscalYearStartDate(@SchoolYear) AND Staging.GetFiscalYearEndDate(@SchoolYear) 
+		-- CIID-5731 End --
 
 		SELECT * 
 		INTO #DistinctLEAs
@@ -294,6 +299,9 @@ BEGIN
 				ORDER BY RecordStartDateTime desc) row_num
 		INTO #SortSchools
 		FROM RDS.DimK12Schools
+		-- CIID-5731 Begin --
+		WHERE RecordStartDateTime BETWEEN Staging.GetFiscalYearStartDate(@SchoolYear) AND Staging.GetFiscalYearEndDate(@SchoolYear) 
+		-- CIID-5731 End --
 
 
 		SELECT * 

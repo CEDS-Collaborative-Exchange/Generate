@@ -270,6 +270,9 @@ BEGIN
 							, [TitleiPartaAllocations]
 						)
 						select 
+							-- CIID-5731 ----------
+							DISTINCT
+							-- END CIID-5731 ------
 							@categorySetCode
 							, latestLea.CharterLeaStatus as CharterLeaStatusEdFactsCode
 							, latestLea.LeaTypeEdFactsCode
