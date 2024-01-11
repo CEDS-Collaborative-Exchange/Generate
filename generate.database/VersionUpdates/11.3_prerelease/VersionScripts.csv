@@ -1,4 +1,5 @@
 VersionUpdates\\11.3_prerelease,Restore 11.2.sql,0
+VersionUpdates\\11.3_prerelease,CorrectDataMigrationTasks.sql,0
 VersionUpdates\\11.3_prerelease,UpdateEdFactsMigrantCodes.sql,0
 VersionUpdates\\11.3_prerelease,Metadata-Updates.sql,0
 VersionUpdates\\11.3_prerelease,Metadata-2023-Updates.sql,0
