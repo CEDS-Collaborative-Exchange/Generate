@@ -425,9 +425,6 @@ BEGIN
 		--assessments (rds)
 			LEFT JOIN #vwAssessments rda
 				ON ISNULL(sar.AssessmentIdentifier, 'MISSING') = ISNULL(rda.AssessmentIdentifierState, 'MISSING')
-				--AND ISNULL(sar.AssessmentFamilyShortName, 'MISSING') = ISNULL(rda.AssessmentFamilyShortName, 'MISSING')
-				--AND ISNULL(sar.AssessmentShortName, 'MISSING') = ISNULL(rda.AssessmentShortName, 'MISSING')
-				--AND ISNULL(sar.AssessmentTitle, 'MISSING') = ISNULL(rda.AssessmentTitle, 'MISSING')
 				AND ISNULL(sar.AssessmentAcademicSubject, 'MISSING') = ISNULL(rda.AssessmentAcademicSubjectMap, rda.AssessmentAcademicSubjectCode)	--RefAcademicSubject
 				AND ISNULL(sar.AssessmentType, 'MISSING') = ISNULL(rda.AssessmentTypeMap, rda.AssessmentTypeCode)	--RefAssessmentType
 				AND ISNULL(sar.AssessmentTypeAdministered, 'MISSING') = ISNULL(rda.AssessmentTypeAdministeredMap, rda.AssessmentTypeAdministeredCode)	--RefAssessmentTypeCildrenWithDisabilities
@@ -645,6 +642,7 @@ BEGIN
 			  rfksa.FactK12StudentAssessmentId
 			, rdsy.SchoolYear
 			, CASE 
+				WHEN ISNULL(rhLEA.StudentIdentifierState,'') <> '' THEN 'HispanicOrLatinoEthnicity'
 				WHEN ISNULL(rh.StudentIdentifierState, '') <> '' THEN 'HispanicOrLatinoEthnicity'
 				ELSE ISNULL(spr.RaceMap, 'MISSING')
 			  END AS RaceMap
@@ -658,10 +656,14 @@ BEGIN
 			ON rfksa.K12SchoolId = rdks.DimK12SchoolId
 		JOIN RDS.DimLeas rdlsAcc
 			ON rfksa.LeaId = rdlsAcc.DimLeaID
+		LEFT JOIN #raceHispanic rhLEA
+			ON rhLEA.StudentIdentifierState = rdp.K12StudentStudentIdentifierState 
+			AND ISNULL(rhLEA.LeaIdentifierSeaAccountability, '') = rdlsAcc.LeaIdentifierSea
 		LEFT JOIN #raceHispanic rh
 			ON rh.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND ISNULL(rh.LeaIdentifierSeaAccountability, '') = rdlsAcc.LeaIdentifierSea
-			AND ISNULL(rh.SchoolIdentifierSea, '') = rdks.SchoolIdentifierSea
+			AND ISNULL(rhLEA.LeaIdentifierSeaAccountability, '') = ISNULL(rh.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(rh.LeaIdentifierSeaAccountability, '') = ISNULL(rdlsAcc.LeaIdentifierSea, '')
+			AND ISNULL(rh.SchoolIdentifierSea, '') = ISNULL(rdks.SchoolIdentifierSea, '')
 		-- LEFT JOIN RDS.DimDataCollections rddc
 		-- 	ON rfksa.DataCollectionId = rddc.DimDataCollectionId
 		-- 	AND rddc.DataCollectionName = @DataCollectionName
