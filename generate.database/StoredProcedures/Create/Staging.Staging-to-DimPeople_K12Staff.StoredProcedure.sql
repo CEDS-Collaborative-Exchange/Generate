@@ -89,6 +89,10 @@ BEGIN
 		);
 
 		--End date previous records
+		UPDATE RDS.DimPeople
+        SET RecordEndDateTime = NULL
+        WHERE IsActiveK12Staff = 1
+
 		;WITH upd AS (
 			SELECT 
 				  startd.K12StaffStaffMemberIdentifierState
