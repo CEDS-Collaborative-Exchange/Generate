@@ -687,7 +687,7 @@ BEGIN
 
 
 
-			-- JW 7/20/2022 Fixed Discipline performance issues by using #temp table rather than "In subselect"
+			-- JW 7/20/2022 Fixed Discipline performance issues by using #temp table for #Students rather than "In subselect"
 			if @reportCode in ('c088','c143')
 			begin
 				select @sql = @sql + char(10)
@@ -739,6 +739,81 @@ BEGIN
 
 				select @sql = @sql + char(10) + 
 				'CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState)' + char(10) + char(10)
+
+				-- JW CIID-6435 -----------------------------------------------------------------------------------------
+				-- Fixed C088/C143 Performance by using #temp table for #RULES rather than join to subselect
+				select @sql = @sql + char(10) + char(9) + char(9) + char(9)
+				select @sql = @sql + 'IF OBJECT_ID(''tempdb..#RULES'') IS NOT NULL DROP TABLE #RULES' + char(10) 
+
+				select @sql = @sql + '
+				select distinct rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId, rdds.DimDisciplineStatusId
+				into #RULES
+				from rds.' + @factTable + ' fact '
+
+				if @reportLevel = 'lea'
+				begin
+					set @sql = @sql + '
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+				end 
+				if @reportLevel = 'sch'
+				begin
+					set @sql = @sql + '
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						AND org.ReportedFederally = 1
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+				end
+
+				set @sql = @sql + '
+					inner join rds.DimPeople rdp
+						on fact.K12StudentId = rdp.DimPersonId
+					inner join #Students Students
+						on Students.K12StudentStudentIdentifierState = rdp.K12StudentStudentIdentifierState '
+
+				if @reportLevel = 'lea'
+				begin
+					select @sql = @sql + '
+						and Students.LeaId = fact.LeaId'                             
+				end
+
+				set @sql = @sql + '
+					inner join rds.DimAges age 
+						on fact.AgeId = age.DimAgeId
+						and age.AgeValue >= 3 
+						and age.AgeValue <= 21
+					inner join rds.DimK12Schools s 
+						on fact.K12SchoolId = s.DimK12SchoolId
+						and fact.SchoolYearId = @dimSchoolYearId
+						and fact.FactTypeId = @dimFactTypeId
+						and CASE 
+							WHEN fact.K12SchoolId > 0 THEN fact.K12SchoolId
+							WHEN fact.LeaId > 0 THEN fact.LeaId
+							WHEN fact.SeaId > 0 THEN fact.SeaId
+							ELSE -1
+						END <> -1
+					inner join rds.DimIdeaStatuses rdis
+						on fact.IdeaStatusId = rdis.DimIdeaStatusId
+					inner join rds.DimDisciplineStatuses rdds
+						on fact.DisciplineStatusId = rdds.DimDisciplineStatusId
+					where rdis.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
+						and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
+						and (rdds.DisciplineMethodOfChildrenWithDisabilitiesCode <> ''MISSING''
+							or rdds.DisciplinaryActionTakenCode IN (''03086'', ''03087'')
+							or rdds.IdeaInterimRemovalReasonCode <> ''MISSING''
+							or rdds.IdeaInterimRemovalCode <> ''MISSING'')
+
+				'
+				 + char(10) + char(10)
+
+				select @sql = @sql + 'CREATE INDEX IDX_Rules ON #Rules (K12StudentStudentIdentifierState, DimIdeaStatusId, DimDisciplineStatusId)' + char(10) + char(10)
+
+				-- END CIID-6435 -----------------------------------------------
+
+			END -- C088/C143			
+
 
 			end
 			else if @reportCode in ('c007')
@@ -2687,92 +2762,10 @@ BEGIN
 		begin
 		-- Ages 3-21, Has Disability, Duration >= 0.5 
 			set @sqlCountJoins = @sqlCountJoins + '
-			inner join (
-				select distinct rdp.K12StudentStudentIdentifierState, rdis.DimIdeaStatusId, rdds.DimDisciplineStatusId
-				from rds.' + @factTable + ' fact '
-
-				if @reportLevel = 'lea'
-				begin
-					set @sqlCountJoins = @sqlCountJoins + '
-					inner join RDS.DimLeas org 
-						on fact.LeaId = org.DimLeaId
-						AND org.ReportedFederally = 1
-						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
-				end 
-				if @reportLevel = 'sch'
-				begin
-					set @sqlCountJoins = @sqlCountJoins + '
-					inner join RDS.DimK12Schools org 
-						on fact.K12SchoolId = org.DimK12SchoolId
-						AND org.ReportedFederally = 1
-						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
-				end
-
-			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople rdp
-					on fact.K12StudentId = rdp.DimPersonId
-				inner join #Students Students
-					on Students.K12StudentStudentIdentifierState = rdp.K12StudentStudentIdentifierState '
-
-			if @reportLevel = 'lea'
-			begin
-                select @sqlCountJoins = @sqlCountJoins + '
-                    and Students.LeaId = fact.LeaId'                             
-            end
-
-			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimAges age 
-					on fact.AgeId = age.DimAgeId
-					and age.AgeValue >= 3 
-					and age.AgeValue <= 21
-				inner join rds.DimK12Schools s 
-					on fact.K12SchoolId = s.DimK12SchoolId
-					and fact.SchoolYearId = @dimSchoolYearId
-					and fact.FactTypeId = @dimFactTypeId
-					and CASE 
-						WHEN fact.K12SchoolId > 0 THEN fact.K12SchoolId
-						WHEN fact.LeaId > 0 THEN fact.LeaId
-						WHEN fact.SeaId > 0 THEN fact.SeaId
-						ELSE -1
-					END <> -1
-				inner join rds.DimIdeaStatuses rdis
-					on fact.IdeaStatusId = rdis.DimIdeaStatusId
-				inner join rds.DimDisciplineStatuses rdds
-					on fact.DisciplineStatusId = rdds.DimDisciplineStatusId
-				where rdis.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
-					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
-					and (rdds.DisciplineMethodOfChildrenWithDisabilitiesCode <> ''MISSING''
-						or rdds.DisciplinaryActionTakenCode IN (''03086'', ''03087'')
-						or rdds.IdeaInterimRemovalReasonCode <> ''MISSING''
-						or rdds.IdeaInterimRemovalCode <> ''MISSING'')
-
-			) rules 
+			inner join #RULES rules 
 				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState
 				and fact.IdeaStatusId = rules.DimIdeaStatusId 
 				and fact.DisciplineStatusId = rules.DimDisciplineStatusId '
-
-			-- JW 7/20/2022
-			--select @sqlCountJoins = @sqlCountJoins + char(10)
-			--select @sqlCountJoins = @sqlCountJoins + '
-			--	INNER JOIN RDS.DimPeople stu
-			--		on fact.K12StudentId = stu.DimPersonId
-			--	INNER JOIN #Students Students
-			--		on Students.K12StudentStudentIdentifierState = stu.K12StudentStudentIdentifierState' + char(10)
-
-			/*
-			and fact.K12StudentId IN (
-					SELECT K12StudentId 
-					FROM RDS.FactK12StudentDisciplines rfksd 
-					inner join rds.DimIdeaStatuses rdis on rfksd.IdeaStatusId = rdis.DimIdeaStatusId
-					inner join rds.DimDisciplines rdds on rfksd.DisciplineStatusId = rdds.DimDisciplineStatusId
-					where rdis.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
-					and rdis.IdeaIndicatorEdFactsCode = ''IDEA''
-					and (rdds.DisciplineMethodOfChildrenWithDisabilitiesCode <> ''MISSING''
-						or rdds.DisciplinaryActionTakenCode IN (''03086'', ''03087'')
-						or rdds.IdeaInterimRemovalReasonCode <> ''MISSING''
-						or rdds.IdeaInterimRemovalCode <> ''MISSING'')
-					GROUP BY K12StudentId HAVING SUM(rfksd.DurationOfDisciplinaryAction) >= 0.5)
-			'*/
 
 			if CHARINDEX('DisciplinaryActionTaken', @categorySetReportFieldList) > 0 and CHARINDEX('IdeaInterimRemoval', @categorySetReportFieldList) > 0
 			begin
