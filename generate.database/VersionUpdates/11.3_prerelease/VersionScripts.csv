@@ -15,8 +15,8 @@ StoredProcedures\\Drop,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimAssessments.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
-StoredProcedures\\Drop,Staging.Staging-to-FactK12OrganizationCounts.StoredProcedure.sql,0
-StoredProcedures\\Create,Staging.Staging-to-FactK12OrganizationCounts.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 VersionUpdates\\11.3_prerelease,UpdateDbVersion.sql,0
