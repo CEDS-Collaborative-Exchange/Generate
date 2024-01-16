@@ -48,7 +48,7 @@ distinct
 	'[IDEA]' '[IDEA]',
 	sppse.IDEAIndicator 'IDEAIndicator_STG',
 	case
-		when sppse.IDEAIndicator = 1 then 'IDEA'
+		when sppse.IDEAIndicator = 1 then 'Yes'
 		when sppse.IDEAIndicator = 0 then 'No'
 		else 'MISSING'
 	end 'IDEAIndicatorEdFactsCode',
@@ -60,11 +60,10 @@ distinct
 	rIdeaStatus.DimIdeaStatusId,
 
 	sdt.IdeaDisabilityTypeCode,sdt.IsPrimaryDisability,
-
 	sppse.ProgramParticipationBeginDate, sppse.ProgramParticipationEndDate,
 -- LEA
 	'[LEA]' '[LEA]',
-	sk12e.LeaIdentifierSeaAccountability, sko.LEA_OperationalStatus, sko.LEA_OperationalStatusEffectiveDate, sko.LEA_IsReportedFederally,
+	sk12e.LeaIdentifierSeaAccountability, LEA.LEA_OperationalStatus, LEA.LEA_OperationalStatusEffectiveDate, LEA.LEA_IsReportedFederally,
 -- School
 	'[SCHOOL]' '[SCHOOL]',
 	sk12e.SchoolIdentifierSea, sko.School_OperationalStatus, sko.School_OperationalStatusEffectiveDate, sko.School_IsReportedFederally
@@ -93,9 +92,13 @@ from staging.K12Enrollment sk12e
 	) Membership on Membership.SchoolYear = sk12e.SchoolYear
 
 
+inner join staging.K12Organization LEA
+	on isnull(LEA.LeaIdentifierSea,'') = isnull(sk12e.LeaIdentifierSeaAccountability ,'')
+
 left join staging.K12Organization sko
-	on isnull(sko.LeaIdentifierSea,'') = isnull(sk12e.LeaIdentifierSeaAccountability ,'')
-		and isnull(sko.SchoolIdentifierSea,'') = isnull(sk12e.SchoolIdentifierSea, '')
+	on (isnull(sko.LeaIdentifierSea,'') = isnull(sk12e.LeaIdentifierSeaAccountability ,'')
+		and isnull(sko.SchoolIdentifierSea,'') = isnull(sk12e.SchoolIdentifierSea, ''))
+
 left join staging.ProgramParticipationSpecialEducation sppse
 	on sk12e.StudentIdentifierState = sppse.StudentIdentifierState
 		and isnull(sk12e.LeaIdentifierSeaAccountability,'') = isnull(sppse.LeaIdentifierSeaAccountability,'')
@@ -128,14 +131,7 @@ left join RDS.vwUnduplicatedRaceMap vUndupRace
 
 left join RDS.vwDimRaces ssrdRACE
 	on ssrdRACE.SchoolYear = sk12e.SchoolYear
-	and ISNULL(ssrdRACE.RaceMap, ssrdRACE.RaceCode) =
-				CASE
-					when sk12e.HispanicLatinoEthnicity = 1 then 'HispanicorLatinoEthnicity'
-					WHEN vUndupRace.RaceMap IS NOT NULL THEN vUndupRace.RaceMap
-					ELSE 'Missing'
-				END
-
-
+	and ssrdRACE.RaceMap = vUndupRace.RaceMap -- spr.RaceType
 left join RDS.DimRaces rdr
 	on rdr.RaceCode = 
 		case 

@@ -629,61 +629,60 @@ BEGIN
 
 	--Populate the assessment race bridge table
 		IF OBJECT_ID(N'tempdb..#raceHispanic') IS NOT NULL DROP TABLE #raceHispanic
+	IF OBJECT_ID(N'tempdb..#temp') IS NOT NULL DROP TABLE #temp
 
-		SELECT 	
-			StudentIdentifierState
-			, LeaIdentifierSeaAccountability
-			, SchoolIdentifierSea
-		INTO #raceHispanic
-		FROM staging.K12Enrollment
-		WHERE HispanicLatinoEthnicity = 1
+	SELECT 	
+		StudentIdentifierState
+		, LeaIdentifierSeaAccountability
+		, SchoolIdentifierSea
+	INTO #raceHispanic
+	FROM staging.K12Enrollment
+	WHERE HispanicLatinoEthnicity = 1
 
-		SELECT DISTINCT
-			  rfksa.FactK12StudentAssessmentId
-			, rdsy.SchoolYear
-			, CASE 
-				WHEN ISNULL(rhLEA.StudentIdentifierState,'') <> '' THEN 'HispanicOrLatinoEthnicity'
-				WHEN ISNULL(rh.StudentIdentifierState, '') <> '' THEN 'HispanicOrLatinoEthnicity'
-				ELSE ISNULL(spr.RaceMap, 'MISSING')
-			  END AS RaceMap
-		INTO #temp
-		FROM RDS.FactK12StudentAssessments rfksa
-		JOIN RDS.DimSchoolYears rdsy
-			ON rfksa.SchoolYearId = rdsy.DimSchoolYearId
-		JOIN RDS.DimPeople rdp
-			ON rfksa.K12StudentId = rdp.DimPersonId
-		JOIN RDS.DimK12Schools rdks
-			ON rfksa.K12SchoolId = rdks.DimK12SchoolId
-		JOIN RDS.DimLeas rdlsAcc
-			ON rfksa.LeaId = rdlsAcc.DimLeaID
-		LEFT JOIN #raceHispanic rhLEA
-			ON rhLEA.StudentIdentifierState = rdp.K12StudentStudentIdentifierState 
-			AND ISNULL(rhLEA.LeaIdentifierSeaAccountability, '') = rdlsAcc.LeaIdentifierSea
-		LEFT JOIN #raceHispanic rh
-			ON rh.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND ISNULL(rhLEA.LeaIdentifierSeaAccountability, '') = ISNULL(rh.LeaIdentifierSeaAccountability, '')
-			AND ISNULL(rh.LeaIdentifierSeaAccountability, '') = ISNULL(rdlsAcc.LeaIdentifierSea, '')
-			AND ISNULL(rh.SchoolIdentifierSea, '') = ISNULL(rdks.SchoolIdentifierSea, '')
-		-- LEFT JOIN RDS.DimDataCollections rddc
-		-- 	ON rfksa.DataCollectionId = rddc.DimDataCollectionId
-		-- 	AND rddc.DataCollectionName = @DataCollectionName
-		--race (staging + function)	
-		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
-			ON rdsy.SchoolYear = spr.SchoolYear
-			AND rdp.K12StudentStudentIdentifierState = spr.StudentIdentifierState
-			AND (rdks.SchoolIdentifierSea = spr.SchoolIdentifierSea
-				OR rdlsAcc.LeaIdentifierSea = spr.LeaIdentifierSeaAccountability)
+	SELECT DISTINCT
+		  rfksa.FactK12StudentAssessmentId
+		, rdsy.SchoolYear
+		, CASE 
+			WHEN ISNULL(rh.StudentIdentifierState, '') <> '' or ISNULL(rhLEA.StudentIdentifierState,'') <> '' THEN 'HispanicOrLatinoEthnicity'
+			ELSE ISNULL(spr.RaceMap, 'MISSING')
+		  END AS RaceMap
+	INTO #temp
+	FROM RDS.FactK12StudentAssessments rfksa
+	JOIN RDS.DimSchoolYears rdsy
+		ON rfksa.SchoolYearId = rdsy.DimSchoolYearId
+	JOIN RDS.DimPeople rdp
+		ON rfksa.K12StudentId = rdp.DimPersonId
+	JOIN RDS.DimK12Schools rdks
+		ON rfksa.K12SchoolId = rdks.DimK12SchoolId
+	JOIN RDS.DimLeas rdlsAcc
+		ON rfksa.LeaId = rdlsAcc.DimLeaID
 
-		INSERT INTO RDS.BridgeK12StudentAssessmentRaces (
-			FactK12StudentAssessmentId
-			, RaceId          
-		)
-		SELECT DISTINCT
-			t.FactK12StudentAssessmentId
-			, rdr.DimRaceId 
-		FROM #temp t 
-		JOIN #vwRaces rdr
-			ON t.RaceMap = ISNULL(rdr.RaceMap, rdr.RaceCode)
+	left JOIN #raceHispanic rhLEA
+		on rhLEA.StudentIdentifierState = rdp.K12StudentStudentIdentifierState 
+		and ISNULL(rhLEA.LeaIdentifierSeaAccountability, '') = rdlsAcc.LeaIdentifierSea
+
+	LEFT JOIN #raceHispanic rh
+		ON rh.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
+		and rhLEA.LeaIdentifierSeaAccountability = rh.LeaIdentifierSeaAccountability
+		AND ISNULL(rh.LeaIdentifierSeaAccountability, '') = rdlsAcc.LeaIdentifierSea
+		AND ISNULL(rh.SchoolIdentifierSea, '') = isnull(rdks.SchoolIdentifierSea, '')
+	--race (staging + function)	
+	LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
+		ON rdsy.SchoolYear = spr.SchoolYear
+		AND rdp.K12StudentStudentIdentifierState = spr.StudentIdentifierState
+		AND (rdks.SchoolIdentifierSea = spr.SchoolIdentifierSea
+			OR rdlsAcc.LeaIdentifierSea = spr.LeaIdentifierSeaAccountability)
+			
+	INSERT INTO RDS.BridgeK12StudentAssessmentRaces (
+		FactK12StudentAssessmentId
+		, RaceId          
+	)
+	SELECT DISTINCT
+		t.FactK12StudentAssessmentId
+		, rdr.DimRaceId 
+	FROM #temp t 
+	JOIN #vwRaces rdr
+		ON t.RaceMap = ISNULL(rdr.RaceMap, rdr.RaceCode)
 
 	--Populate the accommodations bridge table
 		INSERT INTO RDS.BridgeK12StudentAssessmentAccommodations (

@@ -10,6 +10,8 @@ Views\\Drop,RDS.vwDimMilitaryStatuses.View.sql
 Views\\Create,RDS.vwDimMilitaryStatuses.View.sql
 Views\\Drop,RDS.vwDimAssessments.View.sql
 Views\\Create,RDS.vwDimAssessments.View.sql
+Views\\Drop,debug.vwStudentDetails.View.sql
+Views\\Create,debug.vwStudentDetails.View.sql
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
 StoredProcedures\\Drop,Staging.ValidateStagingData.StoredProcedure.sql,0
