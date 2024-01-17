@@ -1,8 +1,6 @@
 ﻿CREATE PROCEDURE [App].[FS029_TestCase]
 	@SchoolYear SMALLINT
 AS
-BEGIN
-
 BEGIN TRY
 	--BEGIN TRANSACTIONs
 		
@@ -586,6 +584,8 @@ BEGIN TRY
 			, physical.AddressCity as PhysicalAddressCity
 			, physical.StateAbbreviation as PhysicalStateAbbreviation
 			, physical.AddressPostalCode as PhysicalAddressPostalCode
+			, sko.PriorSchoolIdentifierSea as PriorSchoolStateIdentifier
+			, sko.School_PriorLeaIdentifierSea as PriorLeaStateIdentifier
 		INTO #schools_staging
 		FROM Staging.K12Organization sko
 		INNER JOIN staging.SourceSystemReferenceData sssrd3
@@ -629,6 +629,8 @@ BEGIN TRY
 			, PhysicalAddressCity
 			, PhysicalAddressState
 			, PhysicalAddressPostalCode
+			, PriorSchoolStateIdentifier
+			, PriorLeaStateIdentifier
 		INTO #schools_reporting
 		from RDS.ReportEDFactsOrganizationCounts
 		where reportcode = 'c029' and ReportLevel = 'SCH' and ReportYear = @SchoolYear
@@ -1006,6 +1008,54 @@ BEGIN TRY
 		FROM #schools_staging s
 		left JOIN #schools_reporting r 
 			ON s.SchoolIdentifierSea = r.OrganizationStateId
+
+		-- CIID-6443 ---------------------------------------------------
+		INSERT INTO App.SqlUnitTestCASEResult (
+			[SqlUnitTestId]
+			,[TestCASEName]
+			,[TestCASEDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT distinct
+			@SqlUnitTestId
+			,'PriorSchoolStateIdentifier Match'
+			,'PriorSchoolStateIdentifier Match ' + s.PriorSchoolStateIdentifier
+			,s.PriorSchoolStateIdentifier
+			,r.PriorSchoolStateIdentifier
+			,CASE WHEN ISNULL(s.PriorSchoolStateIdentifier, '') = ISNULL(r.PriorSchoolStateIdentifier, '') THEN 1 
+				ELSE 0 END
+			,GETDATE()
+		FROM #schools_staging s
+		left JOIN #schools_reporting r 
+			ON s.SchoolIdentifierSea = r.OrganizationStateId
+
+	-- CIID-6443 ------------------------------------------------------
+		INSERT INTO App.SqlUnitTestCASEResult (
+			[SqlUnitTestId]
+			,[TestCASEName]
+			,[TestCASEDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT distinct
+			@SqlUnitTestId
+			,'PriorLEAStateIdentifier Match'
+			,'PriorLEAStateIdentifier Match ' + s.PriorLeaStateIdentifier
+			,s.PriorLeaStateIdentifier
+			,r.PriorLeaStateIdentifier
+			,CASE WHEN ISNULL(s.PriorLeaStateIdentifier, '') = ISNULL(r.PriorLeaStateIdentifier, '') THEN 1 
+				ELSE 0 END
+			,GETDATE()
+		FROM #schools_staging s
+		left JOIN #schools_reporting r 
+			ON s.SchoolIdentifierSea = r.OrganizationStateId
+
+
 
 		drop table #leas_staging
 		drop table #leas_reporting
