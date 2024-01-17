@@ -114,7 +114,7 @@ BEGIN
 
 		, sko.LEAIdentifierNCES
 		, sko.LEAIdentifierSea
-		, sko.PriorLEAIdentifierSea 
+		, sko.School_PriorLEAIdentifierSea -- CIID-6443
 		, sko.LEAOrganizationName
 		, sssrd2.OutputCode AS LeaTypeCode-- LEA_Type
 		, CASE sssrd2.OutputCode 
