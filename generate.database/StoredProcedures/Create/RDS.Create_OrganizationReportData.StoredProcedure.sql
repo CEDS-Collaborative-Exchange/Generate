@@ -103,7 +103,7 @@ BEGIN
 		and cs.SubmissionYear = @reportYear
 
 		declare @categorySetCntr as int
-		set @categorySetCntr = 0
+		set @categorySetCntr = 1
 
 		DECLARE categoryset_cursor CURSOR FOR 
 		SELECT cs.CategorySetId, o.LevelCode, cs.CategorySetCode
@@ -1849,8 +1849,8 @@ BEGIN
 					and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 				
 				end
-			set @categorySetCntr = @categorySetCntr + 1
 			END			-- @runAsTest = 1	
+			set @categorySetCntr = @categorySetCntr + 1
 			FETCH NEXT FROM categoryset_cursor INTO @categorySetId, @reportLevel, @categorySetCode
 		END			-- categoryset_cursor
 		CLOSE categoryset_cursor
