@@ -8,7 +8,7 @@ from app.CategoryOptions o
 where cs.GenerateReportId = 54
 and c.CategoryCode = 'LANGHOME'
 and cs.CategorySetCode = 'CSB'    
-and cs.SubmissionYear = 2023
+and cs.SubmissionYear >= 2023
 and o.CategoryOptionCode in 
 ('afh','akk','ang','arc','art','ave','bod','ces','chb','chg','chu','cop','cym','deu',
 'dum','egy','ell','elx','enm','epo','eus','fas','fra','frm','fro','gez','gmh','goh',
