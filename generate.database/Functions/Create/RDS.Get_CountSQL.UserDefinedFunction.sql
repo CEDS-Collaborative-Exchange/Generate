@@ -1661,6 +1661,16 @@ BEGIN
 						delete from @reportData where ' + @reportField + ' <> ''MISSING''					
 					end
 				'
+
+				if @reportCode = 'c141' and @categorySetCode = 'csb'
+				begin
+					set @sqlRemoveMissing = @sqlRemoveMissing + '
+						if exists (select 1 from @reportData where ' + @factField + ' > 0)
+						begin
+							delete from @reportData where ' + @reportField + ' <> ''MISSING'' AND ' + @factField + ' = 0
+						end
+					'
+				end
 			end
 		end
 
