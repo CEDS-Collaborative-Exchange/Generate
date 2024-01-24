@@ -7000,11 +7000,21 @@ BEGIN
 
 		if @reportCode in ('c175','c178','c179','c185','c188','c189')
 		begin
-			set @sql = @sql + ' delete a from @reportData a
-				where a.' +  @factField + ' = 0   
-				and a.RACE in (''MAP'',''MF'',''MHN'',''MPR'')
-			'	
-		end
+			if @istoggleRaceMap = 1
+			begin
+				set @sql = @sql + ' delete a from @reportData a
+					where a.' +  @factField + ' = 0   
+					and a.RACE in (''MA'',''MNP'',''MF'',''MHN'',''MPR'')
+				'	
+			end
+			else
+			begin
+				set @sql = @sql + ' delete a from @reportData a
+					where a.' +  @factField + ' = 0   
+					and a.RACE in (''MAP'',''MF'',''MHN'',''MPR'')
+				'	
+			end
+		end	
 
 		if @reportCode in ('c175','c178','c179')
 		begin
