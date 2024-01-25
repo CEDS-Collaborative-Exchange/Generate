@@ -5,7 +5,7 @@ from app.CategoryOptions o
         on o.CategorySetId = cs.CategorySetId
     inner join app.Categories c 
         on o.CategoryId = c.CategoryId
-where cs.GenerateReportId = 54
+where cs.GenerateReportId in (54, 58)
 and c.CategoryCode = 'LANGHOME'
 and cs.CategorySetCode = 'CSB'    
 and cs.SubmissionYear >= 2023
