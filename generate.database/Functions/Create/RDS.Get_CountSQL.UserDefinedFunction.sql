@@ -6906,6 +6906,13 @@ BEGIN
 					AND PrimaryDisabilityType = ''DD'' '
 				end
 			END
+			ELSE
+			BEGIN
+				if @reportCode in ('c002', 'c089')
+				begin
+					set @sql = @sql + '  delete a from @reportData a where PrimaryDisabilityType = ''DD'' '
+				end
+			END
 
 			IF @istoggleExcludeCorrectionalAgeAll = 1
 			BEGIN
