@@ -1079,6 +1079,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimAssessmentId'
 		end
+		else if @dimensionTable = 'DimAssessmentRegistrations'
+		begin
+			set @dimensionPrimaryKey = 'DimAssessmentRegistrationId'
+		end
 		else if @dimensionTable = 'DimAssessmentStatuses'
 		begin
 			set @dimensionPrimaryKey = 'DimAssessmentStatusId'
@@ -1115,6 +1119,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimFirearmDisciplineStatusId'
 		end
+		else if @dimensionTable = 'DimFosterCareStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimFosterCareStatusId'
+		end
 		else if @dimensionTable = 'DimGradeLevels'
 		begin
 			set @dimensionPrimaryKey = 'DimGradeLevelId'
@@ -1130,6 +1138,14 @@ BEGIN
 		else if @dimensionTable = 'DimIdeaDisabilityTypes'
 		begin
 			set @dimensionPrimaryKey = 'DimIdeaDisabilityTypeId'
+		end
+		else if @dimensionTable = 'DimImmigrantStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimImmigrantStatusId'
+		end
+		else if @dimensionTable = 'DimK12AcademicAwardStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimK12AcademicAwardStatusId'
 		end
 		else if @dimensionTable = 'DimK12Demographics'
 		begin
@@ -1167,10 +1183,6 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimPersonId'
 		end
-		else if @dimensionTable = 'DimPeopleStatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimPeopleStatusId'
-		end
 		else if @dimensionTable = 'DimRaces'
 		begin
 			set @dimensionPrimaryKey = 'DimRaceId'
@@ -1182,18 +1194,6 @@ BEGIN
 		else if @dimensionTable = 'DimTitleIIIStatuses'
 		begin
 			set @dimensionPrimaryKey = 'DimTitleIIIStatusId'
-		end
-		else if @dimensionTable = 'DimFosterCareStatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimFosterCareStatusId'
-		end
-		else if @dimensionTable = 'DimAssessmentRegistrations'
-		begin
-			set @dimensionPrimaryKey = 'DimAssessmentRegistrationId'
-		end
-		else if @dimensionTable = 'DimK12AcademicAwardStatuses'
-		begin
-			set @dimensionPrimaryKey = 'DimK12AcademicAwardStatusId'
 		end
 			
 		set @factKey = REPLACE(@dimensionPrimaryKey, 'Dim', '')
@@ -7000,11 +7000,21 @@ BEGIN
 
 		if @reportCode in ('c175','c178','c179','c185','c188','c189')
 		begin
-			set @sql = @sql + ' delete a from @reportData a
-				where a.' +  @factField + ' = 0   
-				and a.RACE in (''MAP'',''MF'',''MHN'',''MPR'')
-			'	
-		end
+			if @istoggleRaceMap = 1
+			begin
+				set @sql = @sql + ' delete a from @reportData a
+					where a.' +  @factField + ' = 0   
+					and a.RACE in (''MA'',''MNP'',''MF'',''MHN'',''MPR'')
+				'	
+			end
+			else
+			begin
+				set @sql = @sql + ' delete a from @reportData a
+					where a.' +  @factField + ' = 0   
+					and a.RACE in (''MAP'',''MF'',''MHN'',''MPR'')
+				'	
+			end
+		end	
 
 		if @reportCode in ('c175','c178','c179')
 		begin
