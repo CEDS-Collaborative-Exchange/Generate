@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [App].[Wrapper_Migrate_Mep_to_RDS]
+﻿CREATE PROCEDURE [App].[Wrapper_Migrate_MigrantEducationProgram_to_RDS]
 AS
 BEGIN
 

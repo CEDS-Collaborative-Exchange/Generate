@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [App].[Wrapper_Migrate_HsGradEnroll_to_RDS]
+﻿CREATE PROCEDURE [App].[Wrapper_Migrate_HsGradPSEnroll_to_RDS]
 AS
 BEGIN
 

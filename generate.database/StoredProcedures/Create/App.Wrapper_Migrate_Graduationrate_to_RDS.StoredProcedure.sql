@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [App].[Wrapper_Migrate_GradRate_to_RDS]
+﻿CREATE PROCEDURE [App].[Wrapper_Migrate_GraduationRate_to_RDS]
 AS
 BEGIN
 

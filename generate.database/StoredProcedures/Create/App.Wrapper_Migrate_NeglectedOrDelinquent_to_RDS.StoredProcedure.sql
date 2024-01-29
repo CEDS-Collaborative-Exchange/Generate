@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [App].[Wrapper_Migrate_NorD_to_RDS]
+﻿CREATE PROCEDURE [App].[Wrapper_Migrate_NeglectedOrDelinquent_to_RDS]
 AS
 BEGIN
 

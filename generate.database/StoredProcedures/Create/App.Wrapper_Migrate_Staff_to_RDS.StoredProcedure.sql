@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [App].[Wrapper_Migrate_Personnel_to_RDS]
+﻿CREATE PROCEDURE [App].[Wrapper_Migrate_Staff_to_RDS]
 AS
 BEGIN
 
