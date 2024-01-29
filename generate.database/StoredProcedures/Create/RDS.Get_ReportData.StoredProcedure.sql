@@ -480,13 +480,12 @@ BEGIN
 			'
 		end			-- END @isPerformanceSql = 1
 
-	if @reportLevel <> 'sea' AND @reportCode in ('c002','c089')
-	begin
-		if @categorySetCode = 'TOT'
+	if @reportCode in ('c002', 'c089')
 		begin
-			set @includeZeroCounts = 1
+			set @includeZeroCounts = 0
+			if @reportLevel = 'SEA' set @includeZeroCounts = 1
+			if @reportLevel <> 'SEA' and @categorySetCode = 'TOT' set @includeZeroCounts = 1
 		end
-	end
 
 	if @reportCode in ('c033')
 	begin
