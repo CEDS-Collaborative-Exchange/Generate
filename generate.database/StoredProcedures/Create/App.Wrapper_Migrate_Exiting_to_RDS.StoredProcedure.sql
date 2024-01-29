@@ -11,42 +11,42 @@ BEGIN
 		--Populate DimPeople
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Exiting - Start Staging-to-DimPeople_K12Students')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Exiting 1 of 6 - Staging-to-DimPeople_K12Students')
 
 			exec [Staging].[Staging-to-DimPeople_K12Students] NULL
 
 		--Populate DimSeas
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Exiting - Start Migrate_DimSeas')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Exiting 2 of 6 - Staging-to-DimSeas')
 
 			exec [Staging].[Staging-to-DimSeas] 'directory', NULL, 0
 
 		--Populate DimLeas
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Exiting - Start Migrate_DimLeas')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Exiting 3 of 6 - Staging-to-DimLeas')
 
 			exec [Staging].[Staging-to-DimLeas] 'directory', NULL, 0
 
 		--Populate DimK12Schools
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Exiting - Start Migrate_DimK12Schools')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Exiting 4 of 6 - Staging-to-DimK12Schools')
 
 			exec [Staging].[Staging-to-DimK12Schools] NULL, 0
 
 		--clear the data from the fact table
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Exiting - Start Empty for Exiting')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Exiting 5 of 6 - Empty RDS')
 
 			exec [rds].[Empty_RDS]  'specedexit'
 
 		--Populate the fact table
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Exiting - Start Staging-to-FactK12StudentCounts_SpecEdExit for Submission reports')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Exiting 6 of 6 - Staging-to-FactK12StudentCounts_SpecEdExit')
 
 			--remove the cursor if a previous migraton stopped/failed
 			if cursor_status('global','selectedYears_cursor') >= -1
@@ -79,12 +79,12 @@ BEGIN
 		--RDS migration complete
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Complete - Exiting')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Exiting Complete')
 
 	END TRY
 	BEGIN CATCH
 		insert into app.DataMigrationHistories
-		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Exiting failed to run - ' + ERROR_MESSAGE())
+		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Exiting failed to run - ' + ERROR_MESSAGE())
 	END CATCH
 
 	SET NOCOUNT OFF;
