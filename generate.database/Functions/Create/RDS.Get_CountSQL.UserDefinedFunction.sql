@@ -2349,7 +2349,7 @@ BEGIN
 					set @sqlRemoveMissing = @sqlRemoveMissing + '
 
 					-- Remove DD counts for invalid ages
-					delete from #categorySet where PrimaryDisabilityType = ''DD''
+					delete from #categorySet where IdeaDisabilityType = ''DD''
 					'
 				end
 			end
@@ -2703,7 +2703,7 @@ BEGIN
 				begin
 					set @sqlRemoveMissing = @sqlRemoveMissing + '
 						-- Remove DD counts for invalid ages
-						delete from #categorySet where PrimaryDisabilityType = ''DD''
+						delete from #categorySet where IdeaDisabilityType = ''DD''
 					'
 				end
 			end
@@ -6906,21 +6906,21 @@ BEGIN
 				begin
 					set @sql = @sql + '  delete a from @reportData a
 					where a.' +  @factField + ' = 0   
-					AND PrimaryDisabilityType = ''DD'' '
+					AND IdeaDisabilityType = ''DD'' '
 				end
 
 				if @reportCode = 'c089' AND @toggleDevDelay3to5 is null
 				begin
 					set @sql = @sql + '  delete a from @reportData a
 					where a.' +  @factField + ' = 0   
-					AND PrimaryDisabilityType = ''DD'' '
+					AND IdeaDisabilityType = ''DD'' '
 				end
 			END
 			ELSE
 			BEGIN
 				if @reportCode in ('c002', 'c089')
 				begin
-					set @sql = @sql + '  delete a from @reportData a where PrimaryDisabilityType = ''DD'' '
+					set @sql = @sql + '  delete a from @reportData a where IdeaDisabilityType = ''DD'' '
 				end
 			END
 
