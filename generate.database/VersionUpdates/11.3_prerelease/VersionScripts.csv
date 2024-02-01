@@ -13,6 +13,12 @@ Views\\Drop,RDS.vwDimMilitaryStatuses.View.sql
 Views\\Create,RDS.vwDimMilitaryStatuses.View.sql
 Views\\Drop,RDS.vwDimAssessments.View.sql
 Views\\Create,RDS.vwDimAssessments.View.sql
+Views\\Drop,RDS.vwDimDisciplineStatuses.View.sql
+Views\\Create,RDS.vwDimDisciplineStatuses.View.sql
+Views\\Drop,RDS.vwDimPsEnrollmentStatuses.View.sql
+Views\\Create,RDS.vwDimPsEnrollmentStatuses.View.sql
+Views\\Drop,RDS.vwDimGradeLevels.View.sql
+Views\\Create,RDS.vwDimGradeLevels.View.sql
 Views\\Drop,debug.vwStudentDetails.View.sql
 Views\\Create,debug.vwStudentDetails.View.sql
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 

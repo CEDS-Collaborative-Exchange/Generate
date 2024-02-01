@@ -1,8 +1,8 @@
-create VIEW RDS.vwDimGradeLevels
+CREATE VIEW RDS.vwDimGradeLevels
 AS
 	SELECT
 		  DimGradeLevelId
-		, sssrd.SchoolYear
+		, rsy.SchoolYear
 		, GradeLevelCode 
 		, sssrd.InputCode AS GradeLevelMap
 		, sssrd.TableFilter AS GradeLevelTypeCode
