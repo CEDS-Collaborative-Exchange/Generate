@@ -7,6 +7,9 @@ VersionUpdates\\11.3_prerelease,Metadata-2023-Updates.sql,0
 VersionUpdates\\11.3_prerelease,Metadata-2024-Updates.sql,0
 VersionUpdates\\11.3_prerelease,ReplaceStagingValidationRules.sql,0
 VersionUpdates\\11.3_prerelease,AddUniqueConstraintonStagingK12PersonRace.sql,0
+VersionUpdates\\11.3_prerelease,Metadata-2022-DataPopulationSummary-Updates.sql,0
+VersionUpdates\\11.3_prerelease,Metadata-2023-DataPopulationSummary-Updates.sql,0
+VersionUpdates\\11.3_prerelease,Metadata-2024-DataPopulationSummary-Updates.sql,0
 Views\\Drop,RDS.vwDimMigrantStatuses.View.sql
 Views\\Create,RDS.vwDimMigrantStatuses.View.sql
 Views\\Drop,RDS.vwDimMilitaryStatuses.View.sql
@@ -35,6 +38,10 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProced
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_DataPopulation.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_DataPopulation.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Wrapper_Migrate_DataPopulation_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Wrapper_Migrate_DataPopulation_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0

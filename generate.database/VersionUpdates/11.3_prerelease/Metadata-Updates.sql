@@ -22,3 +22,5 @@ update app.filecolumns
 set dimensionid = 23
 where columnname = 'testingstatusid'
 and displayname = 'Participation Status S'
+
+Update app.DataMigrationTasks set StoredProcedureName = 'App.Wrapper_Migrate_DataPopulation_to_RDS' where StoredProcedureName = 'App.Wrapper_Migrate_StudentCounts_to_RDS'
