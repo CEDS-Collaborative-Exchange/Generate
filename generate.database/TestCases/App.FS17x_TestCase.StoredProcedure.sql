@@ -380,7 +380,7 @@ Use the @FileSpec parameter to pass in one of the
 		[MigrantStatusEdFactsCode] = CASE WHEN ms.MigrantStatus = 1 THEN 'MS' ELSE 'MISSING' END,
 		[HomelessnessStatusEdFactsCode] = CASE WHEN hs.HomelessnessStatus = 1 THEN 'HOMELSENRL' ELSE 'MISSING' END,
 		[ProgramType_FosterCareEdFactsCode] = CASE WHEN fc.ProgramType_FosterCare = 1 THEN 'FCS' ELSE 'MISSING' END,
-		[MilitaryConnectedStudentIndicatorEdFactsCode] = CASE WHEN  mcs.MilitaryConnectedStudentIndicator is not null AND mcs.MilitaryConnectedStudentIndicator NOT IN ('Unknown', 'NotMilitaryConnected')
+		[MilitaryConnectedStudentIndicatorEdFactsCode] = CASE WHEN  mcs.MilitaryConnectedStudentIndicator is not null AND mcs.MilitaryConnectedStudentIndicator NOT IN ('Unknown', 'NotMilitaryConnected','Unknown_1', 'NotMilitaryConnected_1')
 															  THEN 'MILCNCTD' ELSE 'MISSING' END 
 		,ppse.IDEAEducationalEnvironmentForSchoolAge
 		,asr.AssessmentAdministrationStartDate

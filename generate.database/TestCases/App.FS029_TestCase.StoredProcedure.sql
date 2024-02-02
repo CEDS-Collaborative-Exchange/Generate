@@ -62,6 +62,14 @@ BEGIN TRY
 				WHEN 'Inactive' THEN 6 
 				WHEN 'FutureAgency' THEN 7 
 				WHEN 'Reopened' THEN 8 
+				WHEN 'Open_1' THEN 1 
+				WHEN 'Closed_1' THEN 2 
+				WHEN 'New_1' THEN 3 
+				WHEN 'Added_1' THEN 4 
+				WHEN 'ChangedBoundary_1' THEN 5 
+				WHEN 'Inactive_1' THEN 6 
+				WHEN 'FutureAgency_1' THEN 7 
+				WHEN 'Reopened_1' THEN 8 
 				ELSE NULL
 			END LEA_OperationalStatus
 		  	,sko.LEA_OperationalStatusEffectiveDate
@@ -86,11 +94,11 @@ BEGIN TRY
 		FROM Staging.K12Organization sko
 		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressApartmentRoomOrSuiteNumber, AddressCity, StateAbbreviation, AddressPostalCode
 		  			from Staging.OrganizationAddress
-		  			where AddressTypeForOrganization = 'Mailing' 
+		  			where AddressTypeForOrganization in ('Mailing','Mailing_1') 
 				) mailing on mailing.OrganizationIdentifier = sko.LEAIdentifierSea
 		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressApartmentRoomOrSuiteNumber, AddressCity, StateAbbreviation, AddressPostalCode
 		  			from Staging.OrganizationAddress
-		  			where AddressTypeForOrganization = 'Physical' 
+		  			where AddressTypeForOrganization in ('Physical', 'Physical_1') 
 				) physical on physical.OrganizationIdentifier = sko.LEAIdentifierSea
 		left join Staging.OrganizationPhone phone on phone.OrganizationIdentifier = sko.LEAIdentifierSea
 		LEFT JOIN staging.SourceSystemReferenceData sssrd1
@@ -594,10 +602,10 @@ BEGIN TRY
 			AND sko.SchoolYear = sssrd3.SchoolYear
 		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressApartmentRoomOrSuiteNumber, AddressCity, StateAbbreviation, AddressPostalCode
 			from Staging.OrganizationAddress
-			where AddressTypeForOrganization = 'Mailing' ) mailing on mailing.OrganizationIdentifier = sko.SchoolIdentifierSea
+			where AddressTypeForOrganization in ('Mailing','Mailing_1') ) mailing on mailing.OrganizationIdentifier = sko.SchoolIdentifierSea
 		left join (select OrganizationIdentifier, AddressStreetNumberAndName, AddressApartmentRoomOrSuiteNumber, AddressCity, StateAbbreviation, AddressPostalCode
 			from Staging.OrganizationAddress
-			where AddressTypeForOrganization = 'Physical' ) physical on physical.OrganizationIdentifier = sko.SchoolIdentifierSea
+			where AddressTypeForOrganization in ('Physical','Physical_1') ) physical on physical.OrganizationIdentifier = sko.SchoolIdentifierSea
 		left join Staging.OrganizationPhone phone on phone.OrganizationIdentifier = sko.SchoolIdentifierSea
 		LEFT JOIN staging.SourceSystemReferenceData sssrd1
 			ON sko.School_OperationalStatus = sssrd1.InputCode

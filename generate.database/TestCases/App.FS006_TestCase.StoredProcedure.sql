@@ -106,6 +106,8 @@ BEGIN
 		, CASE ske.Sex
 			WHEN 'Male'		THEN 'M'
 			WHEN 'Female'	THEN 'F'
+			WHEN 'Male_1'		THEN 'M'
+			WHEN 'Female_1'	THEN 'F'
 			ELSE 'MISSING'
 			END AS SexEdFactsCode
 		, sppse.ProgramParticipationEndDate
@@ -124,6 +126,20 @@ BEGIN
             WHEN 'Speechlanguageimpairment'		THEN 'SLI'
             WHEN 'Traumaticbraininjury'			THEN 'TBI'
             WHEN 'Visualimpairment'				THEN 'VI'
+            WHEN 'Autism_1' THEN 'AUT'
+            WHEN 'Deafblindness_1' THEN 'DB'
+            WHEN 'Deafness_1' THEN 'DB'
+            WHEN 'Developmentaldelay_1' THEN 'DD'
+            WHEN 'Emotionaldisturbance_1' THEN 'EMN'
+            WHEN 'Hearingimpairment_1' THEN 'HI'
+            WHEN 'Intellectualdisability_1' THEN 'ID'
+            WHEN 'Multipledisabilities_1' THEN 'MD'
+            WHEN 'Orthopedicimpairment_1' THEN 'OI'
+            WHEN 'Otherhealthimpairment_1' THEN 'OHI'
+            WHEN 'Specificlearningdisability_1' THEN 'SLD'
+            WHEN 'Speechlanguageimpairment_1' THEN 'SLI'
+            WHEN 'Traumaticbraininjury_1' THEN 'TBI'
+            WHEN 'Visualimpairment_1' THEN 'VI'
             ELSE sidt.IdeaDisabilityTypeCode
 		END AS IdeaDisabilityType
 		, spr.RaceType
@@ -190,9 +206,9 @@ BEGIN
 			OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceCode)
 	WHERE sppse.IDEAIndicator = 1
 		AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
-		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') <> 'PPPS'
-		AND ISNULL(sd.DisciplineMethodOfCwd, '') in ('InSchool','OutOfSchool')
-		AND ISNULL(sd.IdeaInterimRemoval, '') NOT IN ('REMDW', 'REMHO')
+		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') NOT IN ('PPPS', 'PPPS_1')
+		AND ISNULL(sd.DisciplineMethodOfCwd, '') in ('InSchool','OutOfSchool', 'InSchool_1','OutOfSchool_1')
+		AND ISNULL(sd.IdeaInterimRemoval, '') NOT IN ('REMDW', 'REMHO', 'REMDW_1', 'REMHO_1')
 		AND rds.Get_Age(ske.Birthdate, @ChildCountDate) BETWEEN 3 AND 21	
 		--Discipline Date with SY range 
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
