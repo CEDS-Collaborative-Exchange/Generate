@@ -16,21 +16,21 @@ BEGIN
 		--Populate DimSeas
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-DimSeas')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 1 of 6 - Staging-to-DimSeas')
 
 			exec [Staging].[Staging-to-DimSeas] 'directory', NULL, 0
 
 		--Populate DimLeas
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-DimLeas')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 2 of 6 - Staging-to-DimLeas')
 
 			exec [Staging].[Staging-to-DimLeas] 'directory', NULL, 0
 
 		--Populate DimK12Schools
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-DimK12Schools')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 3 of 6 - Staging-to-DimK12Schools')
 
 		exec [Staging].[Staging-to-DimK12Schools] NULL, 0
 
@@ -38,14 +38,14 @@ BEGIN
 		--Populate Charter Authorizer	
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-DimCharterSchoolAuthorizers')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 4 of 6 - Staging-to-DimCharterSchoolAuthorizers')
 
 		exec Staging.[Staging-to-DimCharterSchoolAuthorizers] 
 
 		--Populate Charter Management Organizations
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-DimCharterSchoolManagementOrganizations')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 5 of 6 - Staging-to-DimCharterSchoolManagementOrganizations')
 
 			exec Staging.[Staging-to-DimCharterSchoolManagementOrganizations] 
 
@@ -53,7 +53,7 @@ BEGIN
 		--Populate the Fact table
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory - Start Staging-to-FactOrganizationCounts')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory 6 of 6 - Staging-to-FactOrganizationCounts')
 
 			--remove the cursor if a previous migraton stopped/failed
 			if cursor_status('global','selectedYears_cursor') >= -1
@@ -84,7 +84,7 @@ BEGIN
 				end try
 				begin catch
 					insert into app.DataMigrationHistories
-					(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory failed to run - ' + ERROR_MESSAGE())
+					(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Staging-to-FactOrganizationCounts failed to run - ' + ERROR_MESSAGE())
 				end catch
 
 
@@ -96,12 +96,12 @@ BEGIN
 		--RDS migration complete
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Complete - Directory')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory Complete')
 
 	END TRY
 	BEGIN CATCH
 		insert into app.DataMigrationHistories
-		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Directory failed to run - ' + ERROR_MESSAGE())
+		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Directory failed to run - ' + ERROR_MESSAGE())
 	END CATCH
 
     SET NOCOUNT OFF;
