@@ -131,7 +131,7 @@ BEGIN
 	SELECT DISTINCT LEAIdentifierSea
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
-		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
 
 
 	--Get the Schools that should not be reported against
@@ -146,7 +146,7 @@ BEGIN
 	SELECT DISTINCT SchoolIdentifierSea
 	FROM Staging.K12Organization
 	WHERE School_IsReportedFederally = 0
-		OR School_OperationalStatus in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
+		OR School_OperationalStatus in ('Closed', 'FutureSchool', 'Inactive', 'MISSING', 'Closed_1', 'FutureSchool_1', 'Inactive_1')
 
 	--Get the data needed for the tests
 	SELECT  
@@ -171,6 +171,20 @@ BEGIN
             WHEN 'Speechlanguageimpairment' THEN 'SLI'
             WHEN 'Traumaticbraininjury' THEN 'TBI'
             WHEN 'Visualimpairment' THEN 'VI'
+            WHEN 'Autism_1' THEN 'AUT'
+            WHEN 'Deafblindness_1' THEN 'DB'
+            WHEN 'Deafness_1' THEN 'DB'
+            WHEN 'Developmentaldelay_1' THEN 'DD'
+            WHEN 'Emotionaldisturbance_1' THEN 'EMN'
+            WHEN 'Hearingimpairment_1' THEN 'HI'
+            WHEN 'Intellectualdisability_1' THEN 'ID'
+            WHEN 'Multipledisabilities_1' THEN 'MD'
+            WHEN 'Orthopedicimpairment_1' THEN 'OI'
+            WHEN 'Otherhealthimpairment_1' THEN 'OHI'
+            WHEN 'Specificlearningdisability_1' THEN 'SLD'
+            WHEN 'Speechlanguageimpairment_1' THEN 'SLI'
+            WHEN 'Traumaticbraininjury_1' THEN 'TBI'
+            WHEN 'Visualimpairment_1' THEN 'VI'
             ELSE idea.IdeaDisabilityTypeCode
 		END AS IdeaDisabilityTypeCode,
 		CASE 
@@ -181,10 +195,18 @@ BEGIN
 			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander' THEN 'PI7'
 			WHEN spr.RaceType = 'White' THEN 'WH7'
 			WHEN spr.RaceType = 'TwoorMoreRaces' THEN 'MU7'
+			WHEN spr.RaceType = 'AmericanIndianorAlaskaNative_1' THEN 'AM7'
+			WHEN spr.RaceType = 'Asian_1' THEN 'AS7'
+			WHEN spr.RaceType = 'BlackorAfricanAmerican_1' THEN 'BL7'
+			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander_1' THEN 'PI7'
+			WHEN spr.RaceType = 'White_1' THEN 'WH7'
+			WHEN spr.RaceType = 'TwoorMoreRaces_1' THEN 'MU7'
 		END AS RaceEdFactsCode,
 		CASE ske.Sex
 				WHEN 'Male' THEN 'M'
 				WHEN 'Female' THEN 'F'
+				WHEN 'Male_1' THEN 'M'
+				WHEN 'Female_1' THEN 'F'
 				ELSE 'MISSING'
 			  END AS SexEdFactsCode,
 		CASE 
@@ -247,7 +269,7 @@ BEGIN
 		AND (rda.AgeValue BETWEEN 6 and 21
 			OR (rda.AgeValue = 5
 				AND ske.GradeLevel IS NOT NULL 
-				AND ske.GradeLevel NOT IN ('PK')))
+				AND ske.GradeLevel NOT IN ('PK', 'PK_1')))
 		
 	
 	--Handle the Race records to match the unduplicated code 
@@ -432,7 +454,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			RaceEdFactsCode,
@@ -605,7 +627,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			IdeaDisabilityTypeCode,
@@ -765,7 +787,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			RaceEdFactsCode,
@@ -933,7 +955,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			SexEdFactsCode,
@@ -1116,7 +1138,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			SexEdFactsCode,
@@ -1265,7 +1287,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			SexEdFactsCode
@@ -1406,7 +1428,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			AgeValue
@@ -1543,7 +1565,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			IdeaDisabilityTypeCode
@@ -1683,7 +1705,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			RaceEdFactsCode
@@ -1825,7 +1847,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			EnglishLearnerStatusEdFactsCode
@@ -1967,7 +1989,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			IDEAEducationalEnvironmentForSchoolAge
@@ -2122,7 +2144,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea,
 			AgeValue,
@@ -2251,7 +2273,7 @@ BEGIN
 		LEFT JOIN #excludedSchools esch
 			ON c.SchoolIdentifierSea = esch.SchoolIdentifierSea
 		WHERE esch.SchoolIdentifierSea IS NULL -- exclude non reported Schools
-		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS')
+		AND IDEAEducationalEnvironmentForSchoolAge NOT IN ('HH', 'PPPS', 'HH_1', 'PPPS_1')
 		GROUP BY 
 			c.SchoolIdentifierSea
 		

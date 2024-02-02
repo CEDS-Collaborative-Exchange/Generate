@@ -68,14 +68,14 @@ BEGIN
 		SET @expectedResult = 1
 		INSERT INTO App.SqlUnitTest 
 		(
-				[UnitTestName]
+			[UnitTestName]
 			, [StoredProcedureName]
 			, [TestScope]
 			, [IsActive]
 		)
 		VALUES 
 		(
-				@UnitTestName
+			@UnitTestName
 			, @StoredProcedureName				
 			, @TestScope
 			, 1
@@ -337,6 +337,14 @@ BEGIN
 				WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWACC' THEN 'PIADAPLASMWACC'
 				WHEN asr.AssessmentRegistrationParticipationIndicator = 0 THEN 'NPART'
 				WHEN asr.AssessmentRegistrationReasonNotTested = '03454' THEN 'MEDEXEMPT'
+				WHEN asr.AssessmentTypeAdministered ='REGASSWOACC_1' THEN 'REGPARTWOACC'	
+				WHEN asr.AssessmentTypeAdministered ='REGASSWACC_1' THEN 'REGPARTWACC'
+				WHEN asr.AssessmentTypeAdministered ='ALTASSALTACH_1' THEN 'ALTPARTALTACH'
+				WHEN asr.AssessmentTypeAdministered ='ADVASMTWOACC_1' THEN 'PADVASMWOACC'
+				WHEN asr.AssessmentTypeAdministered ='ADVASMTWACC_1' THEN 'PADVASMWACC'
+				WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWOACC_1' THEN 'PIADAPLASMWOACC'
+				WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWACC_1' THEN 'PIADAPLASMWACC'
+				WHEN asr.AssessmentRegistrationReasonNotTested = '03454_1' THEN 'MEDEXEMPT'
 				ELSE 'MISSING'
 		end as ParticipationStatus,
 		[RaceEdFactsCode] = CASE rdr.RaceEdFactsCode
@@ -523,7 +531,12 @@ BEGIN
 			-- CSB LG ------------------------------
 			SELECT AssessmentRegistrationParticipationIndicator
 				,GRADELEVEL
-				,[SEX] = CASE SEX WHEN 'M' THEN 'Male' WHEN 'F' THEN 'Female' END
+				,[SEX] = CASE SEX 
+					WHEN 'M' THEN 'Male' 
+					WHEN 'M_1' THEN 'Male' 
+					WHEN 'F' THEN 'Female' 
+					WHEN 'F_1' THEN 'Female' 
+				END
 				,ReportCode
 				,ReportYear
 				,ReportLevel

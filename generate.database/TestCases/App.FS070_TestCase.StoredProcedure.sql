@@ -86,19 +86,23 @@ BEGIN
 			, CASE K12StaffClassification
 				WHEN 'SpecialEducationTeachers' THEN 'SpecialEducationTeachers'
 				WHEN 'Paraprofessionals' THEN 'Paraprofessionals'
+				WHEN 'SpecialEducationTeachers_1' THEN 'SpecialEducationTeachers'
+				WHEN 'Paraprofessionals_1' THEN 'Paraprofessionals'
 				ELSE 'MISSING'
 			END AS K12StaffClassificationEdFactsCode
 			, SpecialEducationAgeGroupTaught
 			, CASE SpecialEducationAgeGroupTaught
 				WHEN '3TO5' THEN '3TO5NOTK'
 				WHEN '6TO21' THEN 'AGE5KTO21'
+				WHEN '3TO5_1' THEN '3TO5NOTK'
+				WHEN '6TO21_1' THEN 'AGE5KTO21'
 				ELSE 'MISSING'
 			END AS SpecialEducationAgeGroupTaughtEdFactsCode
 			, SpecialEducationTeacherQualificationStatus
 			, AssignmentStartDate
 			, AssignmentEndDate
 			, CASE WHEN sko.LEA_IsReportedFederally = 1
-					AND sko.LEA_OperationalStatus IN ('New', 'Added', 'Open', 'Reopened', 'ChangedBoundary') THEN 1
+					AND sko.LEA_OperationalStatus IN ('New', 'Added', 'Open', 'Reopened', 'ChangedBoundary','New_1', 'Added_1', 'Open_1', 'Reopened_1', 'ChangedBoundary_1') THEN 1
 				ELSE 0
 			  END AS [IsLeaReportedFederally]
 		INTO #staging

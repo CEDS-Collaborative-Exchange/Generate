@@ -149,6 +149,20 @@ BEGIN
             WHEN 'Speechlanguageimpairment' THEN 'SLI'
             WHEN 'Traumaticbraininjury' THEN 'TBI'
             WHEN 'Visualimpairment' THEN 'VI'
+            WHEN 'Autism_1' THEN 'AUT'
+            WHEN 'Deafblindness_1' THEN 'DB'
+            WHEN 'Deafness_1' THEN 'DB'
+            WHEN 'Developmentaldelay_1' THEN 'DD'
+            WHEN 'Emotionaldisturbance_1' THEN 'EMN'
+            WHEN 'Hearingimpairment_1' THEN 'HI'
+            WHEN 'Intellectualdisability_1' THEN 'ID'
+            WHEN 'Multipledisabilities_1' THEN 'MD'
+            WHEN 'Orthopedicimpairment_1' THEN 'OI'
+            WHEN 'Otherhealthimpairment_1' THEN 'OHI'
+            WHEN 'Specificlearningdisability_1' THEN 'SLD'
+            WHEN 'Speechlanguageimpairment_1' THEN 'SLI'
+            WHEN 'Traumaticbraininjury_1' THEN 'TBI'
+            WHEN 'Visualimpairment_1' THEN 'VI'
             ELSE idea.IdeaDisabilityTypeCode
 		END AS IDEADISABILITYTYPE
 		, ske.HispanicLatinoEthnicity
@@ -161,11 +175,19 @@ BEGIN
 			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander' THEN 'PI7'
 			WHEN spr.RaceType = 'White' THEN 'WH7'
 			WHEN spr.RaceType = 'TwoorMoreRaces' THEN 'MU7'
+			WHEN spr.RaceType = 'AmericanIndianorAlaskaNative_1' THEN 'AM7'
+			WHEN spr.RaceType = 'Asian_1' THEN 'AS7'
+			WHEN spr.RaceType = 'BlackorAfricanAmerican_1' THEN 'BL7'
+			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander_1' THEN 'PI7'
+			WHEN spr.RaceType = 'White_1' THEN 'WH7'
+			WHEN spr.RaceType = 'TwoorMoreRaces_1' THEN 'MU7'
 		END AS RaceEdFactsCode
 		, ske.Sex
 		, CASE ske.Sex
 			WHEN 'Male' THEN 'M'
 			WHEN 'Female' THEN 'F'
+			WHEN 'Male_1' THEN 'M'
+			WHEN 'Female_1' THEN 'F'
 			ELSE 'MISSING'
 			END AS SexEdFactsCode
 		, CASE
@@ -242,7 +264,7 @@ BEGIN
 	LEFT JOIN rds.DimIdeaStatuses dis on rdis.DimIdeaStatusId = dis.DimIdeaStatusId
 	WHERE sppse.IDEAIndicator = 1
 	AND idea.IdeaDisabilityTypeCode IS NOT NULL
-	AND CAT_IDEAINTERIMREMOVAL.IdeaInterimRemovalEdFactsCode in ('REMDW', 'REMHO')
+	AND CAT_IDEAINTERIMREMOVAL.IdeaInterimRemovalEdFactsCode in ('REMDW', 'REMHO') 
 	AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
 	AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
             BETWEEN @SYStart AND @SYEnd 
