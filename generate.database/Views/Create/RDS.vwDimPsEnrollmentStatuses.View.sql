@@ -4,7 +4,7 @@ AS
 		  [DimPsEnrollmentStatusId]
 		, rsy.SchoolYear
 		, [PostsecondaryExitOrWithdrawalTypeCode]                
-		, ISNULL(sssrd.InputCode, 'MISSING') AS [PostsecondaryExitOrWithdrawalTypeMap]         
+		, sssrd.InputCode AS [PostsecondaryExitOrWithdrawalTypeMap]         
 	FROM rds.DimPsEnrollmentStatuses rdpes
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd

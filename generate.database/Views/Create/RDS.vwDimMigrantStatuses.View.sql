@@ -10,11 +10,11 @@ AS
 			ELSE -1
 		  END AS MigrantStatusMap
 		, rdms.MigrantEducationProgramEnrollmentTypeCode
-		, ISNULL(sssrd1.InputCode, 'MISSING') AS MigrantEducationProgramEnrollmentTypeMap
+		, sssrd1.InputCode AS MigrantEducationProgramEnrollmentTypeMap
 		, rdms.ContinuationOfServicesReasonCode
-		, ISNULL(sssrd2.InputCode, 'MISSING') AS ContinuationOfServicesReasonMap
+		, sssrd2.InputCode AS ContinuationOfServicesReasonMap
 		, rdms.MigrantEducationProgramServicesTypeCode
-		, ISNULL(sssrd3.InputCode, 'MISSING') AS MigrantEducationProgramServicesTypeMap
+		, sssrd3.InputCode AS MigrantEducationProgramServicesTypeMap
 		, rdms.MigrantPrioritizedForServicesCode
 		, CASE rdms.MigrantPrioritizedForServicesCode 
 			WHEN 'Yes' THEN 1 

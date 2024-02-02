@@ -4,9 +4,9 @@ AS
           [DimPsInstitutionStatusId]                   
 		, rsy.SchoolYear
         , LevelOfInstitutionCode                   
-        , ISNULL(sssrd1.InputCode, 'MISSING') AS [LevelOfInstitututionMap]           
+        , sssrd1.InputCode AS [LevelOfInstitututionMap]           
         , [ControlOfInstitutionCode]                   
-        , ISNULL(sssrd2.InputCode, 'MISSING') AS [ControlOfInstitutionMap]            
+        , sssrd2.InputCode AS [ControlOfInstitutionMap]            
         , VirtualIndicatorCode                           
         , case VirtualIndicatorCode
             WHEN 'Yes' THEN 1
@@ -14,11 +14,11 @@ AS
             ELSE NULL
           END AS [VirtualIndicatorMap]                           
         , [CarnegieBasicClassificationCode]            
-        , ISNULL(sssrd3.InputCode, 'MISSING') AS [CarnegieBasicClassificationMap]     
+        , sssrd3.InputCode AS [CarnegieBasicClassificationMap]     
         , [MostPrevalentLevelOfInstitutionCode]        
-        , ISNULL(sssrd4.InputCode, 'MISSING') AS [MostPrevalentLevelOfInstitutionMap] 
+        , sssrd4.InputCode AS [MostPrevalentLevelOfInstitutionMap] 
         , PredominantCalendarSystemCode              
-        , ISNULL(sssrd5.InputCode, 'MISSING') AS [PredominentCalendarSystemMap]  
+        , sssrd5.InputCode AS [PredominentCalendarSystemMap]  
     FROM rds.[DimPsInstitutionStatuses] rdpis
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1

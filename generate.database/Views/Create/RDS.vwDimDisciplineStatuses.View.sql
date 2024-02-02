@@ -4,9 +4,9 @@ AS
 		DimDisciplineStatusId
 		, rsy.SchoolYear
 		, rdds.DisciplinaryActionTakenCode
-		, ISNULL(sssrd1.InputCode, 'MISSING') AS DisciplinaryActionTakenMap
+		, sssrd1.InputCode AS DisciplinaryActionTakenMap
 		, DisciplineMethodOfChildrenWithDisabilitiesCode
-		, ISNULL(sssrd2.InputCode, 'MISSING') AS DisciplineMethodOfChildrenWithDisabilitiesMap
+		, sssrd2.InputCode AS DisciplineMethodOfChildrenWithDisabilitiesMap
 		, EducationalServicesAfterRemovalCode
 		, CASE EducationalServicesAfterRemovalCode
 			WHEN 'YES' THEN 1
@@ -14,9 +14,9 @@ AS
 			WHEN 'MISSING' THEN -1
 			END AS EducationalServicesAfterRemovalMap
 		, IdeaInterimRemovalCode
-		, ISNULL(sssrd3.InputCode, 'MISSING') AS IdeaInterimRemovalMap
+		, sssrd3.InputCode AS IdeaInterimRemovalMap
 		, IdeaInterimRemovalReasonCode
-		, ISNULL(sssrd4.InputCode, 'MISSING') AS IdeaInterimRemovalReasonMap
+		, sssrd4.InputCode AS IdeaInterimRemovalReasonMap
 	FROM rds.DimDisciplineStatuses rdds
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1

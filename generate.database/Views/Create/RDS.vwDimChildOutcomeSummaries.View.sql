@@ -3,7 +3,7 @@ AS
 	SELECT  rdcos.DimChildOutcomeSummaryId
 			, rsy.SchoolYear
 			, rdcos.COSRatingACode
-			, ISNULL(rdcos.COSRatingACode, 'MISSING') AS COSRatingAMap
+			, rdcos.COSRatingACode AS COSRatingAMap
 			, rdcos.COSProgressAIndicatorCode
 			, CASE rdcos.COSProgressAIndicatorCode 
 				WHEN 'Yes' THEN 1 
@@ -11,7 +11,7 @@ AS
 				ELSE 0
 			END AS COSProgressAIndicatorMap
 			, rdcos.COSRatingBCode
-			, ISNULL(rdcos.COSRatingBCode, 'MISSING') AS COSRatingBMap
+			, rdcos.COSRatingBCode AS COSRatingBMap
 			, rdcos.COSProgressBIndicatorCode
 			, CASE rdcos.COSProgressBIndicatorCode 
 				WHEN 'Yes' THEN 1 
@@ -19,7 +19,7 @@ AS
 				ELSE 0
 			END AS COSProgressBIndicatorMap
 			, rdcos.COSRatingCCode
-			, ISNULL(rdcos.COSRatingCCode, 'MISSING') AS COSRatingCMap
+			, rdcos.COSRatingCCode AS COSRatingCMap
 			, rdcos.COSProgressCIndicatorCode
 			, CASE rdcos.COSProgressCIndicatorCode 
 				WHEN 'Yes' THEN 1 
