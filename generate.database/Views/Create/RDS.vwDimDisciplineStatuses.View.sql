@@ -11,7 +11,7 @@ AS
 		, CASE EducationalServicesAfterRemovalCode
 			WHEN 'YES' THEN 1
 			WHEN 'NO' THEN 0
-			WHEN 'MISSING' THEN -1
+			ELSE -1
 			END AS EducationalServicesAfterRemovalMap
 		, IdeaInterimRemovalCode
 		, sssrd3.InputCode AS IdeaInterimRemovalMap
