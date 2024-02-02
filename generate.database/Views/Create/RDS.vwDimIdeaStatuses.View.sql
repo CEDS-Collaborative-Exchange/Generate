@@ -13,7 +13,6 @@ AS
 		, CASE IdeaIndicatorCode
 			WHEN 'Yes' THEN 1
 			WHEN 'No' THEN 0
-			ELSE -1
 		END AS IdeaIndicatorMap
 	FROM rds.DimIdeaStatuses rdis
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
