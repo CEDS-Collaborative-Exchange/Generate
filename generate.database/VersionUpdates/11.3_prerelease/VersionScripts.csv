@@ -33,8 +33,6 @@ Views\\Drop,rds.vwDimChildOutcomeSummaries.View.sql
 Views\\Create,rds.vwDimChildOutcomeSummaries.View.sql
 Views\\Drop,rds.vwDimComprehensiveAndTargetedSupports.View.sql
 Views\\Create,rds.vwDimComprehensiveAndTargetedSupports.View.sql
-Views\\Drop,rds.vwDimComprehensiveSupportReasonApplicabilities.View.sql
-Views\\Create,rds.vwDimComprehensiveSupportReasonApplicabilities.View.sql
 Views\\Drop,rds.vwDimCteStatuses.View.sql
 Views\\Create,rds.vwDimCteStatuses.View.sql
 Views\\Drop,rds.vwDimIndividualizedProgramStatuses.View.sql
@@ -121,8 +119,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProced
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
-StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIII_ELSY.StoredProcedure.sql,0
-StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIII_ELSY.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_DataPopulation.StoredProcedure.sql,0
