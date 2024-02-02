@@ -2166,14 +2166,14 @@ BEGIN
 				else
 				begin
 				if(@reportCode in ('yeartoyearexitcount') and @categorySetCode in ('exitOnly','exitWithSex','exitWithDisabilityType','exitWithLEPStatus','exitWithRaceEthnic','exitWithAge')
-				and @reportField IN ('SEX','PrimaryDisabilityType','RACE','LEPSTATUS','AGE'))
+				and @reportField IN ('SEX','IdeaDisabilityType','RACE','LEPSTATUS','AGE'))
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
 						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '
 						inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
 							on ' + LEFT(@sqlCategoryReturnField ,(len(@sqlCategoryReturnField)- 11)) + 'EdfactsCode = CAT_' + @reportField + '_temp.Code'
 				end
-				else if(@reportCode in ('yeartoyearremovalcount') and @categorySetCode in ('removaltype','removaltypewithgender','removaltypewithdisabilitytype','removaltypewithlepstatus','removaltypewithraceethnic','removaltypewithage') and @reportField IN ('SEX','PrimaryDisabilityType','RACE','LEPSTATUS','AGE'))
+				else if(@reportCode in ('yeartoyearremovalcount') and @categorySetCode in ('removaltype','removaltypewithgender','removaltypewithdisabilitytype','removaltypewithlepstatus','removaltypewithraceethnic','removaltypewithage') and @reportField IN ('SEX','IdeaDisabilityType','RACE','LEPSTATUS','AGE'))
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
 						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '
@@ -2243,7 +2243,7 @@ BEGIN
 		if @reportCode in ('c002','edenvironmentdisabilitiesage6-21','c089','disciplinaryremovals','c006','c005')
 		begin
 
-			IF CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) = 0 
+			IF CHARINDEX('IdeaDisabilityType', @categorySetReportFieldList) = 0 
 			begin
 				set @reportFilterJoin = 'inner join rds.DimIdeaDisabilityTypes idea on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId'
 
@@ -2258,7 +2258,7 @@ BEGIN
 					set @reportFilterCondition = ' and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode not in (''HH'', ''PPPS'')'
 				end
 			end
-			ELSE IF @reportLevel = 'sch' AND CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) > 0 and @reportCode = 'c002'
+			ELSE IF @reportLevel = 'sch' AND CHARINDEX('IdeaDisabilityType', @categorySetReportFieldList) > 0 and @reportCode = 'c002'
 			begin
 				set @reportFilterJoin = 'inner join rds.DimIdeaStatuses IdeaEducationalEnvironment on fact.IdeaStatusId = IdeaEducationalEnvironment.DimIdeaStatusId'
 				set @reportFilterCondition = 'and IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode not in (''HH'', ''PPPS'')'
@@ -2344,12 +2344,12 @@ BEGIN
 				set @queryFactFilter = @queryFactFilter + '
 				and exclude.K12StudentId IS NULL'
 
-				if @toggleDevDelay6to9 is null and CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) > 0
+				if @toggleDevDelay6to9 is null and CHARINDEX('IdeaDisabilityType', @categorySetReportFieldList) > 0
 				begin
 					set @sqlRemoveMissing = @sqlRemoveMissing + '
 
 					-- Remove DD counts for invalid ages
-					delete from #categorySet where PrimaryDisabilityType = ''DD''
+					delete from #categorySet where IdeaDisabilityType = ''DD''
 					'
 				end
 			end
@@ -2699,11 +2699,11 @@ BEGIN
 						where idea.IdeaDisabilityTypeEdFactsCode = ''DD''
 					)'
 						
-				if @toggleDevDelay3to5 is null and CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) > 0
+				if @toggleDevDelay3to5 is null and CHARINDEX('IdeaDisabilityType', @categorySetReportFieldList) > 0
 				begin
 					set @sqlRemoveMissing = @sqlRemoveMissing + '
 						-- Remove DD counts for invalid ages
-						delete from #categorySet where PrimaryDisabilityType = ''DD''
+						delete from #categorySet where IdeaDisabilityType = ''DD''
 					'
 				end
 			end
@@ -5001,7 +5001,7 @@ BEGIN
 					set @reportFilterCondition = @reportFilterCondition + ' and CAT_DisciplineMethodOfChildrenWithDisabilities.IdeaInterimRemovalEDFactsCode NOT IN (''REMDW'', ''REMHO'') '
 				end
 
-				if CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) > 0 
+				if CHARINDEX('IdeaDisabilityType', @categorySetReportFieldList) > 0 
 				begin
 					set @sqlCategoryQualifiedSubDimensionFields = @sqlCategoryQualifiedSubDimensionFields 
 							+ ', CAT_PRIMARYDISABILITYTYPE.IdeaDisabilityTypeCode'
@@ -6906,21 +6906,21 @@ BEGIN
 				begin
 					set @sql = @sql + '  delete a from @reportData a
 					where a.' +  @factField + ' = 0   
-					AND PrimaryDisabilityType = ''DD'' '
+					AND IdeaDisabilityType = ''DD'' '
 				end
 
 				if @reportCode = 'c089' AND @toggleDevDelay3to5 is null
 				begin
 					set @sql = @sql + '  delete a from @reportData a
 					where a.' +  @factField + ' = 0   
-					AND PrimaryDisabilityType = ''DD'' '
+					AND IdeaDisabilityType = ''DD'' '
 				end
 			END
 			ELSE
 			BEGIN
 				if @reportCode in ('c002', 'c089')
 				begin
-					set @sql = @sql + '  delete a from @reportData a where PrimaryDisabilityType = ''DD'' '
+					set @sql = @sql + '  delete a from @reportData a where IdeaDisabilityType = ''DD'' '
 				end
 			END
 

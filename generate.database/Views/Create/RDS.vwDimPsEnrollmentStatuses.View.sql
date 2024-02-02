@@ -1,8 +1,8 @@
-CREATE VIEW rds.vwDimPsEnrollmentStatuses
+CREATE VIEW RDS.vwDimPsEnrollmentStatuses
 AS
 	SELECT
 		  [DimPsEnrollmentStatusId]
-		, sssrd.SchoolYear
+		, rsy.SchoolYear
 		, [PostsecondaryExitOrWithdrawalTypeCode]                
 		, ISNULL(sssrd.InputCode, 'MISSING') AS [PostsecondaryExitOrWithdrawalTypeMap]         
 	FROM rds.DimPsEnrollmentStatuses rdpes
