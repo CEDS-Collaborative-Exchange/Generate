@@ -49,15 +49,13 @@ BEGIN
 
 	BEGIN
 		SET @expectedResult = 1
-		INSERT INTO App.SqlUnitTest 
-		(
+		INSERT INTO App.SqlUnitTest (
 			[UnitTestName]
 			, [StoredProcedureName]
 			, [TestScope]
 			, [IsActive]
 		)
-		VALUES 
-		(
+		VALUES (
 			'FS005_UnitTestCase'
 			, 'FS005_TestCase'				
 			, 'FS005'
@@ -191,9 +189,9 @@ BEGIN
 			ELSE 'MISSING'
 			END AS SexEdFactsCode
 		, CASE
-					WHEN sd.DisciplinaryActionStartDate BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, GETDATE()) THEN EnglishLearnerStatus
-					ELSE 0
-					END AS EnglishLearnerStatus
+			WHEN sd.DisciplinaryActionStartDate BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, GETDATE()) THEN EnglishLearnerStatus
+			ELSE 0
+			END AS EnglishLearnerStatus
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
 				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart)  
@@ -255,11 +253,11 @@ BEGIN
 		AND ISNULL(sd.IdeaInterimRemovalReason, 'MISSING')                      = ISNULL(rddisc.IdeaInterimRemovalReasonMap, rddisc.IdeaInterimRemovalReasonCode)
 	INNER JOIN RDS.DimDisciplineStatuses CAT_IDEAINTERIMREMOVAL on rddisc.DimDisciplineStatusId = CAT_IDEAINTERIMREMOVAL.DimDisciplineStatusId
 	JOIN #vwIdeaStatuses rdis
-				ON rdis.SchoolYear = @SchoolYear
-				AND rdis.IdeaIndicatorCode = 'Yes'
-				AND rdis.SpecialEducationExitReasonCode = 'MISSING'
-				AND ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode)
-				AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, rdis.IdeaEducationalEnvironmentForSchoolAgeCode)
+		ON rdis.SchoolYear = @SchoolYear
+		AND rdis.IdeaIndicatorCode = 'Yes'
+		AND rdis.SpecialEducationExitReasonCode = 'MISSING'
+		AND ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode)
+		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, rdis.IdeaEducationalEnvironmentForSchoolAgeCode)
 
 	LEFT JOIN rds.DimIdeaStatuses dis on rdis.DimIdeaStatusId = dis.DimIdeaStatusId
 	WHERE sppse.IDEAIndicator = 1
@@ -317,15 +315,13 @@ BEGIN
 		, GETDATE()
 	FROM #S_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.IDEADISABILITYTYPE = rreksd.[IDEADISABILITYTYPE]
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSA'
 	
-	select sum(studentcount) from #S_CSA
-
 	DROP TABLE #S_CSA
 
 
@@ -364,7 +360,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_CSB s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IDEAINTERIMREMOVAL
 		AND s.RaceEdFactsCode = rreksd.RACE
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear
@@ -410,7 +406,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_CSC s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.SexEdFactsCode = rreksd.SEX
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear
@@ -455,7 +451,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_CSD s
 	LEFT  JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear
@@ -496,7 +492,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_ST1 s
 	LEFT  JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
@@ -562,7 +558,7 @@ BEGIN
 		, GETDATE()
 	FROM #L_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND s.IDEADISABILITYTYPE = rreksd.IDEADISABILITYTYPE
 		AND rreksd.ReportCode = 'C005' 
@@ -614,7 +610,7 @@ BEGIN
 		, GETDATE()
 	FROM #L_CSB s
 	JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
-		ON s.IdeaInterimRemoval = rreksd.IdeaInterimRemoval
+		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.RaceEdFactsCode = rreksd.RACE
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND rreksd.ReportCode = 'C005' 
@@ -666,7 +662,7 @@ BEGIN
 		, GETDATE()
 	FROM #L_CSC s
 	JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
-		ON s.IdeaInterimRemoval = rreksd.IdeaInterimRemoval
+		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.SexEdFactsCode = rreksd.SEX
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND rreksd.ReportCode = 'C005' 
@@ -717,7 +713,7 @@ BEGIN
 		, GETDATE()
 	FROM #L_CSD s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
-		ON s.IdeaInterimRemoval = rreksd.IdeaInterimRemoval
+		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND rreksd.ReportCode = 'C005' 
@@ -765,7 +761,7 @@ BEGIN
 		, GETDATE()
 	FROM #L_ST1 s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
-		ON s.IdeaInterimRemoval = rreksd.IdeaInterimRemoval
+		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear

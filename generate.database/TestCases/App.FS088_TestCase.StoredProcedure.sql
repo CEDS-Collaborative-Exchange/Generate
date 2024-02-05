@@ -981,5 +981,11 @@ BEGIN
 			
 	DROP TABLE #L_TOT
 
+	--select *
+	--from App.SqlUnitTestCaseResult sr
+	--	inner join App.SqlUnitTest s
+	--		on s.SqlUnitTestId = sr.SqlUnitTestId
+	--where s.UnitTestName like '%088%'
+	--and passed = 0
 
 END
