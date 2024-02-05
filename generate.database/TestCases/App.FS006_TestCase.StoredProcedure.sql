@@ -93,7 +93,7 @@ BEGIN
 	SELECT DISTINCT LEAIdentifierSea
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
-		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
 
 	-- Gather, evaluate & record the results
 	SELECT  
@@ -126,20 +126,20 @@ BEGIN
             WHEN 'Speechlanguageimpairment'		THEN 'SLI'
             WHEN 'Traumaticbraininjury'			THEN 'TBI'
             WHEN 'Visualimpairment'				THEN 'VI'
-            WHEN 'Autism_1' THEN 'AUT'
-            WHEN 'Deafblindness_1' THEN 'DB'
-            WHEN 'Deafness_1' THEN 'DB'
-            WHEN 'Developmentaldelay_1' THEN 'DD'
-            WHEN 'Emotionaldisturbance_1' THEN 'EMN'
-            WHEN 'Hearingimpairment_1' THEN 'HI'
-            WHEN 'Intellectualdisability_1' THEN 'ID'
-            WHEN 'Multipledisabilities_1' THEN 'MD'
-            WHEN 'Orthopedicimpairment_1' THEN 'OI'
-            WHEN 'Otherhealthimpairment_1' THEN 'OHI'
+            WHEN 'Autism_1'						THEN 'AUT'
+            WHEN 'Deafblindness_1'				THEN 'DB'
+            WHEN 'Deafness_1'					THEN 'DB'
+            WHEN 'Developmentaldelay_1'			THEN 'DD'
+            WHEN 'Emotionaldisturbance_1'		THEN 'EMN'
+            WHEN 'Hearingimpairment_1'			THEN 'HI'
+            WHEN 'Intellectualdisability_1'		THEN 'ID'
+            WHEN 'Multipledisabilities_1'		THEN 'MD'
+            WHEN 'Orthopedicimpairment_1'		THEN 'OI'
+            WHEN 'Otherhealthimpairment_1'		THEN 'OHI'
             WHEN 'Specificlearningdisability_1' THEN 'SLD'
-            WHEN 'Speechlanguageimpairment_1' THEN 'SLI'
-            WHEN 'Traumaticbraininjury_1' THEN 'TBI'
-            WHEN 'Visualimpairment_1' THEN 'VI'
+            WHEN 'Speechlanguageimpairment_1'	THEN 'SLI'
+            WHEN 'Traumaticbraininjury_1'		THEN 'TBI'
+            WHEN 'Visualimpairment_1'			THEN 'VI'
             ELSE sidt.IdeaDisabilityTypeCode
 		END AS IdeaDisabilityType
 		, spr.RaceType
@@ -289,7 +289,7 @@ BEGIN
 		,GETDATE()
 	FROM #S_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
-		ON s.DisciplineMethod  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		ON replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.IdeaDisabilityType = rreksd.IdeaDisabilityType
 		AND rreksd.ReportCode = 'C006' 
@@ -336,7 +336,7 @@ BEGIN
 		,GETDATE()
 	FROM #S_CSB s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.DisciplineMethod  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		ON replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.RaceEdFactsCode = rreksd.Race
 		AND rreksd.ReportCode = 'C006' 
@@ -385,7 +385,7 @@ BEGIN
 		,GETDATE()
 	FROM #S_CSC s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.DisciplineMethod  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		ON replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.SexEdFactsCode = rreksd.Sex
 		AND rreksd.ReportCode = 'C006' 
@@ -433,7 +433,7 @@ BEGIN
 		,GETDATE()
 	FROM #S_CSD s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.DisciplineMethod  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		ON replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.LEPRemovalLength = rreksd.RemovalLength
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.EnglishLearnerStatus
 		AND rreksd.ReportCode = 'C006' 
@@ -535,7 +535,7 @@ BEGIN
 	FROM #L_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-		AND s.DisciplineMethod  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		AND replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.IdeaDisabilityType = rreksd.IdeaDisabilityType
 		AND rreksd.ReportCode = 'C006' 
@@ -577,7 +577,7 @@ BEGIN
 		,[TestDateTime]
 	)
 	SELECT 
-			@SqlUnitTestId
+		@SqlUnitTestId
 		,'CSB LEA Match All'
 		,'CSB LEA Match All - LEA Identifier - ' + s.LeaIdentifierSeaAccountability
 			+ '; Discipline Method: ' + s.DisciplineMethod
@@ -590,7 +590,7 @@ BEGIN
 	FROM #L_CSB s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-		AND s.DisciplineMethod  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		AND replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.RaceEdFactsCode = rreksd.Race
 		AND rreksd.ReportCode = 'C006' 
@@ -646,7 +646,7 @@ BEGIN
 	FROM #L_CSC s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-		AND s.DisciplineMethod  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		AND replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.SexEdFactsCode = rreksd.Sex
 		AND rreksd.ReportCode = 'C006' 
@@ -701,7 +701,7 @@ BEGIN
 	FROM #L_CSD s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-		AND s.DisciplineMethod  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		AND replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.LEPRemovalLength = rreksd.RemovalLength
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.EnglishLearnerStatus
 		AND rreksd.ReportCode = 'C006' 
@@ -753,7 +753,7 @@ BEGIN
 	FROM #L_ST1 s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-		AND s.DisciplineMethod  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		AND replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND rreksd.ReportCode = 'C006' 
 		AND rreksd.ReportYear = @SchoolYear

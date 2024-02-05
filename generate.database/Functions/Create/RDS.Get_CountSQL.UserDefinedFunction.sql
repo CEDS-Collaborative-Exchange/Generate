@@ -5001,7 +5001,7 @@ BEGIN
 					set @reportFilterCondition = @reportFilterCondition + ' and CAT_DisciplineMethodOfChildrenWithDisabilities.IdeaInterimRemovalEDFactsCode NOT IN (''REMDW'', ''REMHO'') '
 				end
 
-				if CHARINDEX('IdeaDisabilityType', @categorySetReportFieldList) > 0 
+				if CHARINDEX('PrimaryDisabilityType', @categorySetReportFieldList) > 0 
 				begin
 					set @sqlCategoryQualifiedSubDimensionFields = @sqlCategoryQualifiedSubDimensionFields 
 							+ ', CAT_PRIMARYDISABILITYTYPE.IdeaDisabilityTypeCode'
