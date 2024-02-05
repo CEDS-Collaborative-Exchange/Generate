@@ -75,6 +75,10 @@ StoredProcedures\\Drop,Staging.ValidateStagingData.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.ValidateStagingData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimSeas.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimSeas.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-To-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-To-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-To-DimPeople_K12Students.StoredProcedure.sql,0

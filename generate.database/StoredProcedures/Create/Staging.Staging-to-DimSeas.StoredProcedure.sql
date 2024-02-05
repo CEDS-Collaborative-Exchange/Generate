@@ -185,13 +185,13 @@ BEGIN
 			, sop.TelephoneNumber
 			, ssd.SeaContact_Identifier
 			, ssd.SeaContact_PositionTitle
-			, smam.AddressStreetNumberAndName AS MailingAddressStreet
+			, left(smam.AddressStreetNumberAndName, 40)  AS MailingAddressStreet
 			, smam.AddressApartmentRoomOrSuiteNumber AS MailingAddressStreet2
 			, smam.AddressCity AS MailingAddressCity
 			, smam.StateAbbreviation AS MailingAddressState
 			, smam.AddressPostalCode AS MailingAddressPostalCode
 			, smam.AddressCountyAnsiCodeCode AS MailingCountyAnsiCode
-			, smap.AddressStreetNumberAndName AS PhysicalAddressStreet
+			, left(smap.AddressStreetNumberAndName, 40) AS PhysicalAddressStreet
 			, smap.AddressApartmentRoomOrSuiteNumber AS PhysicalAddressStreet2
 			, smap.AddressCity AS PhysicalAddressCity
 			, smap.StateAbbreviation AS PhysicalAddressState
