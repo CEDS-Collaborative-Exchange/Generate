@@ -3,9 +3,9 @@ AS
 	SELECT  rdips.DimIndividualizedProgramStatusId
 			, rsy.SchoolYear
 			, rdips.IndividualizedProgramTypeCode
-			, ISNULL(sssrd.InputCode, 'MISSING') AS IndividualizedProgramTypeMap
+			, sssrd.InputCode AS IndividualizedProgramTypeMap
 			, rdips.StudentSupportServiceTypeCode
-			, ISNULL(sssrd1.InputCode, 'MISSING') AS StudentSupportServiceTypeMap
+			, sssrd1.InputCode AS StudentSupportServiceTypeMap
 			, rdips.ConsentToEvaluationIndicatorCode
 			,  CASE rdips.ConsentToEvaluationIndicatorCode 
 			    WHEN 'Yes' THEN 1 

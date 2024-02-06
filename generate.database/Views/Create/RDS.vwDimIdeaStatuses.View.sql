@@ -4,16 +4,15 @@ AS
 		DimIdeaStatusId
 		, rsy.SchoolYear
 		, rdis.SpecialEducationExitReasonCode
-		, ISNULL(sssrd.InputCode, 'MISSING') AS SpecialEducationExitReasonMap
+		, sssrd.InputCode AS SpecialEducationExitReasonMap
 		, rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode
-		, ISNULL(sssrd2.InputCode, 'MISSING') AS IdeaEducationalEnvironmentForEarlyChildhoodMap
+		, sssrd2.InputCode AS IdeaEducationalEnvironmentForEarlyChildhoodMap
 		, rdis.IdeaEducationalEnvironmentForSchoolAgeCode
-		, ISNULL(sssrd3.InputCode, 'MISSING') AS IdeaEducationalEnvironmentForSchoolAgeMap
+		, sssrd3.InputCode AS IdeaEducationalEnvironmentForSchoolAgeMap
 		, IdeaIndicatorCode
 		, CASE IdeaIndicatorCode
 			WHEN 'Yes' THEN 1
 			WHEN 'No' THEN 0
-			WHEN 'MISSING' THEN -1
 		END AS IdeaIndicatorMap
 	FROM rds.DimIdeaStatuses rdis
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
