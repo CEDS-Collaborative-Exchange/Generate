@@ -138,7 +138,7 @@ BEGIN
 				WHEN ISNULL(sssrd4.OutputCode,'MISSING') <> 'IndependentCharterDistrict'
 					AND @charterLeaCount = 0 THEN 'NA'
 				ELSE ISNULL(sssrd3.OutputCode, 'MISSING')
-			END
+			END												AS CharterLeaStatus
 			, ISNULL(sssrd2.OutputCode, 'MISSING') 			AS ReconstitutedStatus
 			, sko.LEA_McKinneyVentoSubgrantRecipient 
 			, sko.LEA_RecordStartDateTime 					AS RecordStartDateTime
