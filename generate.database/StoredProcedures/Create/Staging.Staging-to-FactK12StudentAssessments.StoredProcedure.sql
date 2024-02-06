@@ -410,24 +410,24 @@ BEGIN
 				AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
 		--assessment results
 			JOIN #tempStagingAssessmentResults sar
-				ON ske.StudentIdentifierState = sar.StudentIdentifierState
-				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
-				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
+				ON ske.StudentIdentifierState 						= sar.StudentIdentifierState
+				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') 	= ISNULL(sar.LeaIdentifierSeaAccountability,'')
+				AND ISNULL(ske.SchoolIdentifierSea,'') 				= ISNULL(sar.SchoolIdentifierSea,'')
 		--seas (rds)			
 			JOIN RDS.DimSeas rds
 				ON sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @Today)		
 		--dimpeople	(rds)
 			JOIN RDS.DimPeople rdp
-				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-				AND IsActiveK12Student = 1
-				AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
+				ON ske.StudentIdentifierState 			= rdp.K12StudentStudentIdentifierState
+				AND IsActiveK12Student 					= 1
+				AND ISNULL(ske.Birthdate, '1/1/1900') 	= ISNULL(rdp.BirthDate, '1/1/1900')
 				AND ISNULL(sar.AssessmentAdministrationStartDate, '1/1/1900') BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @Today)
 		--assessments (rds)
 			LEFT JOIN #vwAssessments rda
-				ON ISNULL(sar.AssessmentIdentifier, 'MISSING') = ISNULL(rda.AssessmentIdentifierState, 'MISSING')
-				AND ISNULL(sar.AssessmentAcademicSubject, 'MISSING') = ISNULL(rda.AssessmentAcademicSubjectMap, rda.AssessmentAcademicSubjectCode)	--RefAcademicSubject
-				AND ISNULL(sar.AssessmentType, 'MISSING') = ISNULL(rda.AssessmentTypeMap, rda.AssessmentTypeCode)	--RefAssessmentType
-				AND ISNULL(sar.AssessmentTypeAdministered, 'MISSING') = ISNULL(rda.AssessmentTypeAdministeredMap, rda.AssessmentTypeAdministeredCode)	--RefAssessmentTypeCildrenWithDisabilities
+				ON ISNULL(sar.AssessmentIdentifier, 'MISSING') 			= ISNULL(rda.AssessmentIdentifierState, 'MISSING')
+				AND ISNULL(sar.AssessmentAcademicSubject, 'MISSING') 	= ISNULL(rda.AssessmentAcademicSubjectMap, rda.AssessmentAcademicSubjectCode)	--RefAcademicSubject
+				AND ISNULL(sar.AssessmentType, 'MISSING') 				= ISNULL(rda.AssessmentTypeMap, rda.AssessmentTypeCode)	--RefAssessmentType
+				AND ISNULL(sar.AssessmentTypeAdministered, 'MISSING') 	= ISNULL(rda.AssessmentTypeAdministeredMap, rda.AssessmentTypeAdministeredCode)	--RefAssessmentTypeCildrenWithDisabilities
 				AND ISNULL(sar.AssessmentTypeAdministeredToEnglishLearners, 'MISSING') = ISNULL(rda.AssessmentTypeAdministeredToEnglishLearnersMap, rda.AssessmentTypeAdministeredToEnglishLearnersCode)	--RefAssessmentTypeAdministeredToEnglishLearners
 				and sar.SchoolYear = rda.SchoolYear
 		--assessment results (rds)
@@ -435,25 +435,25 @@ BEGIN
 				ON ISNULL(sar.AssessmentScoreMetricType, '') = ISNULL(rdar.AssessmentScoreMetricTypeCode, '')	--RefScoreMetricType
 		--assessment registrations (rds)
 			LEFT JOIN #vwAssessmentRegistrations rdars
-				ON ISNULL(CAST(sar.AssessmentRegistrationParticipationIndicator AS SMALLINT), -1) = ISNULL(rdars.AssessmentRegistrationParticipationIndicatorMap, -1)
-				AND ISNULL(sar.AssessmentRegistrationReasonNotCompleting, 'MISSING') = ISNULL(rdars.AssessmentRegistrationReasonNotCompletingMap, rdars.AssessmentRegistrationReasonNotCompletingCode)	--RefAssessmentReasonNotCompleting
-				AND ISNULL(sar.AssessmentRegistrationReasonNotTested, 'MISSING') = ISNULL(rdars.ReasonNotTestedMap, rdars.ReasonNotTestedCode)	--RefReasonNotTested
-				AND rdars.StateFullAcademicYearCode = 'MISSING'
-				AND rdars.LeaFullAcademicYearCode = 'MISSING'
-				AND rdars.SchoolFullAcademicYearCode = 'MISSING'
-				AND rdars.AssessmentRegistrationCompletionStatusCode = 'MISSING'
+				ON ISNULL(CAST(sar.AssessmentRegistrationParticipationIndicator AS SMALLINT), -1) 	= ISNULL(rdars.AssessmentRegistrationParticipationIndicatorMap, -1)
+				AND ISNULL(sar.AssessmentRegistrationReasonNotCompleting, 'MISSING') 				= ISNULL(rdars.AssessmentRegistrationReasonNotCompletingMap, rdars.AssessmentRegistrationReasonNotCompletingCode)	--RefAssessmentReasonNotCompleting
+				AND ISNULL(sar.AssessmentRegistrationReasonNotTested, 'MISSING') 					= ISNULL(rdars.ReasonNotTestedMap, rdars.ReasonNotTestedCode)	--RefReasonNotTested
+				AND rdars.StateFullAcademicYearCode 												= 'MISSING'
+				AND rdars.LeaFullAcademicYearCode 													= 'MISSING'
+				AND rdars.SchoolFullAcademicYearCode 												= 'MISSING'
+				AND rdars.AssessmentRegistrationCompletionStatusCode 								= 'MISSING'
 		--assessment administration (rds)
 			LEFT JOIN #tempAssessmentAdministrations rdaa
-				ON sar.LeaIdentifierSeaAccountability = rdaa.LEAIdentifierSea
-				AND sar.SchoolIdentifierSea = rdaa.SchoolIdentifierSea
-				AND sar.AssessmentIdentifier = rdaa.AssessmentIdentifier
-				AND ISNULL(sar.AssessmentFamilyTitle, '') = ISNULL(rdaa.AssessmentAdministrationAssessmentFamily, '')
-				AND ISNULL(sar.AssessmentAdministrationStartDate, '1900-01-01') = ISNULL(rdaa.AssessmentAdministrationStartDate, '1900-01-01')
-				AND ISNULL(sar.AssessmentAdministrationFinishDate, '1900-01-01') = ISNULL(rdaa.AssessmentAdministrationFinishDate, '1900-01-01')
+				ON sar.LeaIdentifierSeaAccountability 								= rdaa.LEAIdentifierSea
+				AND sar.SchoolIdentifierSea 										= rdaa.SchoolIdentifierSea
+				AND sar.AssessmentIdentifier 										= rdaa.AssessmentIdentifier
+				AND ISNULL(sar.AssessmentFamilyTitle, '') 							= ISNULL(rdaa.AssessmentAdministrationAssessmentFamily, '')
+				AND ISNULL(sar.AssessmentAdministrationStartDate, '1900-01-01') 	= ISNULL(rdaa.AssessmentAdministrationStartDate, '1900-01-01')
+				AND ISNULL(sar.AssessmentAdministrationFinishDate, '1900-01-01') 	= ISNULL(rdaa.AssessmentAdministrationFinishDate, '1900-01-01')
 		--assessment performance levels (rds)
 			LEFT JOIN RDS.DimAssessmentPerformanceLevels rdapl
-				ON ISNULL(sar.AssessmentPerformanceLevelIdentifier, '') = ISNULL(rdapl.AssessmentPerformanceLevelIdentifier, '')
-				AND ISNULL(sar.AssessmentPerformanceLevelLabel, '') = ISNULL(rdapl.AssessmentPerformanceLevelLabel, '')
+				ON ISNULL(sar.AssessmentPerformanceLevelIdentifier, '') 	= ISNULL(rdapl.AssessmentPerformanceLevelIdentifier, '')
+				AND ISNULL(sar.AssessmentPerformanceLevelLabel, '') 		= ISNULL(rdapl.AssessmentPerformanceLevelLabel, '')
 		--leas (rds)	
 			LEFT JOIN #tempLeas rdl -- RDS.DimLeas rdl
 				ON ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(rdl.LeaIdentifierSea, '')
@@ -468,65 +468,65 @@ BEGIN
 				--AND rgls.GradeLevelTypeDescription = 'Grade Level When Assessed'
 		--idea (staging)	
 			LEFT JOIN #tempIdeaStatus idea
-				ON ske.StudentIdentifierState = idea.StudentIdentifierState
-				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(idea.LeaIdentifierSeaAccountability,'')
-				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(idea.SchoolIdentifierSea,'')
+				ON ske.StudentIdentifierState 						= idea.StudentIdentifierState
+				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') 	= ISNULL(idea.LeaIdentifierSeaAccountability,'')
+				AND ISNULL(ske.SchoolIdentifierSea,'') 				= ISNULL(idea.SchoolIdentifierSea,'')
 				AND ((idea.ProgramParticipationBeginDate BETWEEN @SYStartDate and @SYEndDate 
 						AND idea.ProgramParticipationBeginDate <= sar.AssessmentAdministrationStartDate) 
 					AND ISNULL(idea.ProgramParticipationEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
 		--english learner (staging)
 			LEFT JOIN #tempELStatus el 
-				ON sar.StudentIdentifierState = el.StudentIdentifierState
-				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
-				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
+				ON sar.StudentIdentifierState 						= el.StudentIdentifierState
+				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') 	= ISNULL(el.LeaIdentifierSeaAccountability, '') 
+				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(el.SchoolIdentifierSea, '')
 				AND ((el.EnglishLearner_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND el.EnglishLearner_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
 					AND ISNULL(el.EnglishLearner_StatusEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
 		--migratory status (staging)	
 			LEFT JOIN #tempMigrantStatus migrant
-				ON sar.StudentIdentifierState = migrant.StudentIdentifierState
-				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
-				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
+				ON sar.StudentIdentifierState 						= migrant.StudentIdentifierState
+				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') 	= ISNULL(migrant.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(migrant.SchoolIdentifierSea, '')
 				AND ((migrant.Migrant_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND migrant.Migrant_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
 					AND ISNULL(migrant.Migrant_StatusEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
 		--homelessness status (staging)	
 			LEFT JOIN #tempHomelessnessStatus hmStatus
-				ON sar.StudentIdentifierState = hmStatus.StudentIdentifierState
-				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
-				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
+				ON sar.StudentIdentifierState 						= hmStatus.StudentIdentifierState
+				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') 	= ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(hmStatus.SchoolIdentifierSea, '')
 				AND ((hmStatus.Homelessness_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND hmStatus.Homelessness_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
 					AND ISNULL(hmStatus.Homelessness_StatusEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
 		--foster care status (staging)	
 			LEFT JOIN #tempFosterCareStatus foster
-				ON sar.StudentIdentifierState = foster.StudentIdentifierState
-				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') = ISNULL(foster.LeaIdentifierSeaAccountability, '')
-				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(foster.SchoolIdentifierSea, '')
+				ON sar.StudentIdentifierState 						= foster.StudentIdentifierState
+				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') 	= ISNULL(foster.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(foster.SchoolIdentifierSea, '')
 				AND ((foster.FosterCare_ProgramParticipationStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND foster.FosterCare_ProgramParticipationStartDate <= sar.AssessmentAdministrationStartDate) 
 					AND ISNULL(foster.FosterCare_ProgramParticipationEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
 		--economically disadvantaged status (staging)	
 			LEFT JOIN #tempEconomicallyDisadvantagedStatus ecoDisStatus
-				ON sar.StudentIdentifierState = ecoDisStatus.StudentIdentifierState
-				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') = ISNULL(ecoDisStatus.LeaIdentifierSeaAccountability, '')
-				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(ecoDisStatus.SchoolIdentifierSea, '')
+				ON sar.StudentIdentifierState 						= ecoDisStatus.StudentIdentifierState
+				AND ISNULL(sar.LeaIdentifierSeaAccountability, '')	= ISNULL(ecoDisStatus.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(ecoDisStatus.SchoolIdentifierSea, '')
 				AND ((ecoDisStatus.EconomicDisadvantage_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND ecoDisStatus.EconomicDisadvantage_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
 					AND ISNULL(ecoDisStatus.EconomicDisadvantage_StatusEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
 		--military status (staging)	
 			LEFT JOIN #tempMilitaryStatus military
-				ON sar.StudentIdentifierState = military.StudentIdentifierState
-				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') = ISNULL(military.LeaIdentifierSeaAccountability, '')
-				AND ISNULL(sar.SchoolIdentifierSea, '') = ISNULL(military.SchoolIdentifierSea, '')
+				ON sar.StudentIdentifierState 						= military.StudentIdentifierState
+				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') 	= ISNULL(military.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(military.SchoolIdentifierSea, '')
 				AND ((military.MilitaryConnected_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND military.MilitaryConnected_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
 					AND ISNULL(military.MilitaryConnected_StatusEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
 		--race (staging + function)	
 			LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
-				ON ske.SchoolYear = spr.SchoolYear
-				AND ske.StudentIdentifierState = spr.StudentIdentifierState
-				AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
+				ON ske.SchoolYear 				= spr.SchoolYear
+				AND ske.StudentIdentifierState 	= spr.StudentIdentifierState
+				AND (ske.SchoolIdentifierSea 	= spr.SchoolIdentifierSea
 					OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
 		--race (RDS)	
 			LEFT JOIN #vwRaces rdr
@@ -658,20 +658,20 @@ BEGIN
 		ON rfksa.LeaId = rdlsAcc.DimLeaID
 
 	left JOIN #raceHispanic rhLEA
-		on rhLEA.StudentIdentifierState = rdp.K12StudentStudentIdentifierState 
-		and ISNULL(rhLEA.LeaIdentifierSeaAccountability, '') = rdlsAcc.LeaIdentifierSea
+		on rhLEA.StudentIdentifierState 						= rdp.K12StudentStudentIdentifierState 
+		and ISNULL(rhLEA.LeaIdentifierSeaAccountability, '') 	= rdlsAcc.LeaIdentifierSea
 
 	LEFT JOIN #raceHispanic rh
-		ON rh.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-		and rhLEA.LeaIdentifierSeaAccountability = rh.LeaIdentifierSeaAccountability
-		AND ISNULL(rh.LeaIdentifierSeaAccountability, '') = rdlsAcc.LeaIdentifierSea
-		AND ISNULL(rh.SchoolIdentifierSea, '') = isnull(rdks.SchoolIdentifierSea, '')
+		ON rh.StudentIdentifierState 						= rdp.K12StudentStudentIdentifierState
+		and rhLEA.LeaIdentifierSeaAccountability 			= rh.LeaIdentifierSeaAccountability
+		AND ISNULL(rh.LeaIdentifierSeaAccountability, '') 	= rdlsAcc.LeaIdentifierSea
+		AND ISNULL(rh.SchoolIdentifierSea, '') 				= isnull(rdks.SchoolIdentifierSea, '')
 	--race (staging + function)	
 	LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
 		ON rdsy.SchoolYear = spr.SchoolYear
-		AND rdp.K12StudentStudentIdentifierState = spr.StudentIdentifierState
-		AND (rdks.SchoolIdentifierSea = spr.SchoolIdentifierSea
-			OR rdlsAcc.LeaIdentifierSea = spr.LeaIdentifierSeaAccountability)
+		AND rdp.K12StudentStudentIdentifierState 	= spr.StudentIdentifierState
+		AND (rdks.SchoolIdentifierSea 				= spr.SchoolIdentifierSea
+			OR rdlsAcc.LeaIdentifierSea 			= spr.LeaIdentifierSeaAccountability)
 			
 	INSERT INTO RDS.BridgeK12StudentAssessmentRaces (
 		FactK12StudentAssessmentId

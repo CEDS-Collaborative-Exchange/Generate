@@ -24,3 +24,12 @@ where columnname = 'testingstatusid'
 and displayname = 'Participation Status S'
 
 Update app.DataMigrationTasks set StoredProcedureName = 'App.Wrapper_Migrate_DataPopulation_to_RDS' where StoredProcedureName = 'App.Wrapper_Migrate_StudentCounts_to_RDS'
+
+Update rds.DimSeas set MailingAddressStreetNumberAndName = left(MailingAddressStreetNumberAndName, 40), 
+					   PhysicalAddressStreetNumberAndName = left(PhysicalAddressStreetNumberAndName, 40)
+
+Update rds.DimLeas set MailingAddressStreetNumberAndName = left(MailingAddressStreetNumberAndName, 40), 
+					   PhysicalAddressStreetNumberAndName = left(PhysicalAddressStreetNumberAndName, 40)
+
+Update rds.DimK12Schools set MailingAddressStreetNumberAndName = left(MailingAddressStreetNumberAndName, 40), 
+					         PhysicalAddressStreetNumberAndName = left(PhysicalAddressStreetNumberAndName, 40)

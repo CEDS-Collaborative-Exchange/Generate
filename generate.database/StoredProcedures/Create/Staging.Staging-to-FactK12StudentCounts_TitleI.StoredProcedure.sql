@@ -216,10 +216,10 @@ BEGIN
 				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
 	--title I (RDS)
 		LEFT JOIN #vwTitleIStatuses rdt1s
-			ON ISNULL(sko.LEA_TitleIProgramType, 'MISSING') = ISNULL(rdt1s.TitleIProgramTypeMap, 'MISSING')
-			AND ISNULL(sko.LEA_TitleIinstructionalService, 'MISSING') = ISNULL(rdt1s.TitleIInstructionalServicesMap, 'MISSING')
-			AND ISNULL(sko.LEA_K12LeaTitleISupportService, 'MISSING') = ISNULL(rdt1s.TitleISupportServicesMap, 'MISSING')
-			AND ISNULL(sko.School_TitleIPartASchoolDesignation, 'MISSING') = ISNULL(rdt1s.TitleIProgramTypeMap, 'MISSING')
+			ON ISNULL(sko.LEA_TitleIProgramType, 'MISSING') 				= ISNULL(rdt1s.TitleIProgramTypeMap, rdt1s.TitleIProgramTypeCode)
+			AND ISNULL(sko.LEA_TitleIinstructionalService, 'MISSING') 		= ISNULL(rdt1s.TitleIInstructionalServicesMap, rdt1s.TitleIInstructionalServicesCode)
+			AND ISNULL(sko.LEA_K12LeaTitleISupportService, 'MISSING') 		= ISNULL(rdt1s.TitleISupportServicesMap, rdt1s.TitleISupportServicesCode)
+			AND ISNULL(sko.School_TitleIPartASchoolDesignation, 'MISSING') 	= ISNULL(rdt1s.TitleIProgramTypeMap, rdt1s.TitleIProgramTypeCode)
 
 	--homelessness (RDS)
 		LEFT JOIN #vwHomelessnessStatuses rdhs

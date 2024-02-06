@@ -4,7 +4,7 @@ AS
 		  DimK12DemographicId
 		, rsy.SchoolYear
 		, SexCode
-		, ISNULL(sssrd1.InputCode, 'MISSING') AS SexMap
+		, sssrd1.InputCode AS SexMap
 	FROM rds.DimK12Demographics rdkd
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1

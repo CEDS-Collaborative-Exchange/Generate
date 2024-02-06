@@ -182,7 +182,7 @@ BEGIN
 		, sko.School_CharterContractRenewalDate
 		, sko.School_CharterContractIDNumber
 
-		, smam.AddressStreetNumberAndName 			AS MailingAddressStreetNumberAndName
+		, left(smam.AddressStreetNumberAndName, 40) AS MailingAddressStreetNumberAndName
 		, smam.AddressApartmentRoomOrSuiteNumber 	AS MailingAddressApartmentRoomOrSuiteNumber
 		, smam.AddressCity	 						AS MailingAddressCity
 		, smam.StateAbbreviation 					AS MailingAddressStateAbbreviation
@@ -192,7 +192,7 @@ BEGIN
 			WHEN ssd.StateAbbreviationCode <> smap.StateAbbreviation THEN 1
 			ELSE 0
 		END AS OutOfStateIndicator
-		, smap.AddressStreetNumberAndName 			AS PhysicalAddressStreetNumberAndName
+		, left(smap.AddressStreetNumberAndName, 40)	AS PhysicalAddressStreetNumberAndName
 		, smap.AddressApartmentRoomOrSuiteNumber 	AS PhysicalAddressApartmentRoomOrSuiteNumber
 		, smap.AddressCity 							AS PhysicalAddressCity
 		, smap.StateAbbreviation 					AS PhysicalAddressState

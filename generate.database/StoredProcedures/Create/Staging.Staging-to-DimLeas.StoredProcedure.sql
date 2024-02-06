@@ -97,7 +97,7 @@ BEGIN
 				WHEN 'IndependentCharterDistrict' THEN 7
 				ELSE -1
 			END 											AS LeaTypeEdfactsCode
-			, smam.AddressStreetNumberAndName 				AS MailingAddressStreetNumberAndName
+			, left(smam.AddressStreetNumberAndName, 40) 	AS MailingAddressStreetNumberAndName
 			, smam.AddressApartmentRoomOrSuiteNumber 		AS MailingAddressApartmentRoomOrSuiteNumber
 			, smam.AddressCity 								AS MailingAddressCity
 			, smam.StateAbbreviation 						AS MailingAddressStateAbbreviation
@@ -108,7 +108,7 @@ BEGIN
 					OR smam.StateAbbreviation <> ssd.StateAbbreviationCode THEN '1' 
 				ELSE 0 
 			END 											AS OutOfStateIndicator
-			, smap.AddressStreetNumberAndName 				AS PhysicalAddressStreetNumberAndName
+			, left(smap.AddressStreetNumberAndName, 40) 	AS PhysicalAddressStreetNumberAndName
 			, smap.AddressApartmentRoomOrSuiteNumber		AS PhysicalAddressApartmentRoomOrSuiteNumber
 			, smap.AddressCity 								AS PhysicalAddressCity
 			, smap.StateAbbreviation 						AS PhysicalAddressStateAbbreviation

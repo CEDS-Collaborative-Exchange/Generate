@@ -4,7 +4,7 @@ AS
 		  DimK12ProgramTypeId
 		, rsy.SchoolYear
 		, ProgramTypeCode
-		, ISNULL(sssrd.InputCode, 'MISSING') AS ProgramTypeMap
+		, sssrd.InputCode AS ProgramTypeMap
 	FROM rds.DimK12ProgramTypes rdkpt
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd
