@@ -69,9 +69,8 @@ BEGIN
 		DECLARE @factTypeId AS INT
 		SELECT @factTypeId = DimFactTypeId FROM rds.DimFactTypes WHERE FactTypeCode = 'directory'
 
-		DECLARE @dimSeaId AS INT, @DimK12StaffId INT, @DimIeuId INT, @dimLeaId INT, @DimK12SchoolId INT, @IsCharterSchool AS BIT, 
-			@leaOrganizationId AS INT, 
-			@schoolOrganizationId AS INT
+		DECLARE @dimSeaId AS INT, @DimK12StaffId INT, @DimIeuId INT, @dimLeaId INT, @DimK12SchoolId INT
+			, @IsCharterSchool AS BIT, @leaOrganizationId AS INT, @schoolOrganizationId AS INT
 		
 		DECLARE @count AS INT
 		DECLARE @dimCharterSchoolManagerId AS INT
@@ -79,13 +78,10 @@ BEGIN
 		DECLARE @dimCharterSchoolAuthorizerId AS INT
 		DECLARE @dimCharterSchoolSecondaryAuthorizerId AS INT
 
-		DECLARE @leaOperationalStatustypeId AS INT, @schOperationalStatustypeId AS INT, @charterLeaCount AS INT
+		DECLARE @leaOperationalStatustypeId AS INT, @schOperationalStatustypeId AS INT
 		SELECT @leaOperationalStatustypeId = RefOperationalStatusTypeId FROM dbo.RefOperationalStatusType WHERE Code = '000174'
 		SELECT @schOperationalStatustypeId = RefOperationalStatusTypeId FROM dbo.RefOperationalStatusType WHERE Code = '000533'
 		
-		SELECT @charterLeaCount = count(OrganizationId) FROM dbo.K12Lea WHERE CharterSchoolIndicator = 1
-	
-
 		-- DELETE RECORDS FOR SCHOOL YEAR FROM FACT TABLE
 		DELETE FROM rds.FactOrganizationCounts 
 		WHERE SchoolYearId = @SchoolYearId
@@ -193,7 +189,6 @@ BEGIN
 		WHERE LeaIdentifierSea IS NOT NULL
 		AND row_num = 1
 	
-
 		INSERT INTO
 		[RDS].[FactOrganizationCounts] (
 			[SchoolYearId]

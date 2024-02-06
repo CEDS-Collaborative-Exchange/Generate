@@ -12,8 +12,14 @@ BEGIN
 	select @StateANSICode = (select Code from dbo.RefStateANSICode where [Description] = @StateName)
 
 	--Get the count of LEAs that are marked as Charter
-	declare @charterLeaCount as int
-	select @charterLeaCount = count(LEAIdentifierSea) from staging.K12Organization where LEA_CharterSchoolIndicator = 1
+	declare @charterLeaCount as int = 0
+	select @charterLeaCount = count(distinct LEAIdentifierSea) 
+	from staging.K12Organization sko
+		left join staging.SourceSystemReferenceData sssrd
+			on sko.LEA_Type = sssrd.InputCode
+			and sssrd.TableName = 'RefLeaType'
+			and sko.SchoolYear = sssrd.SchoolYear
+	where sssrd.OutputCode = 'IndependentCharterDistrict'
 
 	--Insert the default 'missing' row if it doesn't exist
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimLeas WHERE DimLeaID = -1)
@@ -126,12 +132,13 @@ BEGIN
 			END 											AS LeaOperationalStatusEdfactsCode
 			, sko.LEA_OperationalStatusEffectiveDate 		AS OperationalStatusEffectiveDate
 			, sko.LEA_IsReportedFederally 					AS ReportedFederally
-			, CASE											
-				WHEN sko.LEA_CharterSchoolIndicator = 1 
-					AND ISNULL(sssrd4.OutputCode,'MISSING') in ('RegularNotInSupervisoryUnion', 'IndependentCharterDistrict')
-					THEN ISNULL(sssrd3.OutputCode, 'MISSING') 
-				ELSE IIF(@charterLeaCount > 0,'NOTCHR','NA') 
-			END 											AS CharterLeaStatus
+			, CASE 
+				WHEN ISNULL(sssrd4.OutputCode,'MISSING') <> 'IndependentCharterDistrict'
+					AND @charterLeaCount > 0 THEN 'NOTCHR'
+				WHEN ISNULL(sssrd4.OutputCode,'MISSING') <> 'IndependentCharterDistrict'
+					AND @charterLeaCount = 0 THEN 'NA'
+				ELSE ISNULL(sssrd3.OutputCode, 'MISSING')
+			END												AS CharterLeaStatus
 			, ISNULL(sssrd2.OutputCode, 'MISSING') 			AS ReconstitutedStatus
 			, sko.LEA_McKinneyVentoSubgrantRecipient 
 			, sko.LEA_RecordStartDateTime 					AS RecordStartDateTime
