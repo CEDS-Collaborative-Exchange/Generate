@@ -12,7 +12,6 @@ Use the @FileSpec parameter to pass in one of the
 
 	SET NOCOUNT ON
 
-
 	if @FileSpec not in ('FS175', 'FS178', 'FS179')
 		begin
 			print 'Invalid File Spec!  Must be FS175, FS178, FS179'
@@ -22,9 +21,9 @@ Use the @FileSpec parameter to pass in one of the
 	DECLARE @UnitTestName VARCHAR(100) = @FileSpec + '_UnitTestCase'
 	DECLARE @AssessmentAcademicSubject VARCHAR(10) =
 		case
-			when @FileSpec = 'FS175' then '01166' 
-			when @FileSpec = 'FS178' then '13373'
-			when @FileSpec = 'FS179' then '00562'
+			when @FileSpec = 'FS175' then '01166_1' 
+			when @FileSpec = 'FS178' then '13373_1'
+			when @FileSpec = 'FS179' then '00562_1'
 		end
 
 	DECLARE @StoredProcedureName VARCHAR(100) = @FileSpec + '_TestCase'
@@ -36,8 +35,6 @@ Use the @FileSpec parameter to pass in one of the
 			when @FileSpec = 'FS178' then 'RLA'
 			when @FileSpec = 'FS179' then 'SCIENCE'
 		end
-
-
 
 /*	
 	DECLARE @UnitTestName VARCHAR(100) = 'FS175_UnitTestCase'
@@ -60,21 +57,18 @@ Use the @FileSpec parameter to pass in one of the
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 	----------------------------------------------------------------------
 
-
 	-- Define the test
 	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
 	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = @UnitTestName) 
 	BEGIN
 		SET @expectedResult = 1
-		INSERT INTO App.SqlUnitTest 
-		(
+		INSERT INTO App.SqlUnitTest (
 				[UnitTestName]
 			, [StoredProcedureName]
 			, [TestScope]
 			, [IsActive]
 		)
-		VALUES 
-		(
+		VALUES (
 				@UnitTestName
 			, @StoredProcedureName				
 			, @TestScope
@@ -93,115 +87,115 @@ Use the @FileSpec parameter to pass in one of the
 
 	-- Clear out last run
 	DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId
-	
 
-		--DROP TEMP TABLES IF EXIST
-		IF OBJECT_ID('tempdb..#LowerGrades') IS NOT NULL DROP TABLE #LowerGrades
-		IF OBJECT_ID('tempdb..#HSGrades') IS NOT NULL DROP TABLE #HSGrades
-		IF OBJECT_ID('tempdb..#staging') IS NOT NULL DROP TABLE #staging
-		IF OBJECT_ID(N'tempdb..#StagingAssessmentResult') IS NOT NULL DROP TABLE #StagingAssessmentResult
-		IF OBJECT_ID(N'tempdb..#StagingAssessment') IS NOT NULL DROP TABLE #StagingAssessment
-		IF OBJECT_ID(N'tempdb..#StagingPersonStatus') IS NOT NULL DROP TABLE #StagingPersonStatus
-		IF OBJECT_ID(N'tempdb..#StagingK12Enrollment') IS NOT NULL DROP TABLE #StagingK12Enrollment
-		IF OBJECT_ID(N'tempdb..#StagingPersonRace') IS NOT NULL DROP TABLE #StagingPersonRace
-		IF OBJECT_ID(N'tempdb..#DimRaces') IS NOT NULL DROP TABLE #DimRaces
-		IF OBJECT_ID(N'tempdb..#DimAssessments') IS NOT NULL DROP TABLE #DimAssessments
-		IF OBJECT_ID(N'tempdb..#ToggleAssessments') IS NOT NULL DROP TABLE #ToggleAssessments
-		IF OBJECT_ID(N'tempdb..#DimSchoolYears') IS NOT NULL DROP TABLE #DimSchoolYears
-
-
-		-- Temp tables for LOWER GRADES ------------------------------
-		IF OBJECT_ID('tempdb..#CSA_LG') IS NOT NULL DROP TABLE #CSA_LG
-		IF OBJECT_ID('tempdb..#CSB_LG') IS NOT NULL DROP TABLE #CSB_LG
-		IF OBJECT_ID('tempdb..#CSC_LG') IS NOT NULL DROP TABLE #CSC_LG
-		IF OBJECT_ID('tempdb..#CSD_LG') IS NOT NULL DROP TABLE #CSD_LG
-		IF OBJECT_ID('tempdb..#CSE_LG') IS NOT NULL DROP TABLE #CSE_LG
-		IF OBJECT_ID('tempdb..#CSF_LG') IS NOT NULL DROP TABLE #CSF_LG
-		IF OBJECT_ID('tempdb..#CSG_LG') IS NOT NULL DROP TABLE #CSG_LG
-		IF OBJECT_ID('tempdb..#CSH_LG') IS NOT NULL DROP TABLE #CSH_LG
-		IF OBJECT_ID('tempdb..#CSI_LG') IS NOT NULL DROP TABLE #CSI_LG
-		IF OBJECT_ID('tempdb..#CSJ_LG') IS NOT NULL DROP TABLE #CSJ_LG
-		IF OBJECT_ID('tempdb..#ST1_LG') IS NOT NULL DROP TABLE #ST1_LG
-
-		IF OBJECT_ID('tempdb..#CSA_LG_TESTCASE') IS NOT NULL DROP TABLE #CSA_LG_TESTCASE
-		IF OBJECT_ID('tempdb..#CSB_LG_TESTCASE') IS NOT NULL DROP TABLE #CSB_LG_TESTCASE
-		IF OBJECT_ID('tempdb..#CSC_LG_TESTCASE') IS NOT NULL DROP TABLE #CSC_LG_TESTCASE
-		IF OBJECT_ID('tempdb..#CSD_LG_TESTCASE') IS NOT NULL DROP TABLE #CSD_LG_TESTCASE
-		IF OBJECT_ID('tempdb..#CSE_LG_TESTCASE') IS NOT NULL DROP TABLE #CSE_LG_TESTCASE
-		IF OBJECT_ID('tempdb..#CSF_LG_TESTCASE') IS NOT NULL DROP TABLE #CSF_LG_TESTCASE
-		IF OBJECT_ID('tempdb..#CSG_LG_TESTCASE') IS NOT NULL DROP TABLE #CSG_LG_TESTCASE
-		IF OBJECT_ID('tempdb..#CSH_LG_TESTCASE') IS NOT NULL DROP TABLE #CSH_LG_TESTCASE
-		IF OBJECT_ID('tempdb..#CSI_LG_TESTCASE') IS NOT NULL DROP TABLE #CSI_LG_TESTCASE
-		IF OBJECT_ID('tempdb..#CSJ_LG_TESTCASE') IS NOT NULL DROP TABLE #CSJ_LG_TESTCASE
-		IF OBJECT_ID('tempdb..#ST1_LG_TESTCASE') IS NOT NULL DROP TABLE #ST1_LG_TESTCASE
+	--DROP TEMP TABLES IF EXIST
+	IF OBJECT_ID('tempdb..#LowerGrades') IS NOT NULL DROP TABLE #LowerGrades
+	IF OBJECT_ID('tempdb..#HSGrades') IS NOT NULL DROP TABLE #HSGrades
+	IF OBJECT_ID('tempdb..#staging') IS NOT NULL DROP TABLE #staging
+	IF OBJECT_ID(N'tempdb..#StagingAssessmentResult') IS NOT NULL DROP TABLE #StagingAssessmentResult
+	IF OBJECT_ID(N'tempdb..#StagingAssessment') IS NOT NULL DROP TABLE #StagingAssessment
+	IF OBJECT_ID(N'tempdb..#StagingPersonStatus') IS NOT NULL DROP TABLE #StagingPersonStatus
+	IF OBJECT_ID(N'tempdb..#StagingProgramParticipationSpecialEducation') IS NOT NULL DROP TABLE #StagingProgramParticipationSpecialEducation
+	IF OBJECT_ID(N'tempdb..#StagingK12Enrollment') IS NOT NULL DROP TABLE #StagingK12Enrollment
+	IF OBJECT_ID(N'tempdb..#StagingPersonRace') IS NOT NULL DROP TABLE #StagingPersonRace
+	IF OBJECT_ID(N'tempdb..#DimRaces') IS NOT NULL DROP TABLE #DimRaces
+	IF OBJECT_ID(N'tempdb..#DimAssessments') IS NOT NULL DROP TABLE #DimAssessments
+	IF OBJECT_ID(N'tempdb..#ToggleAssessments') IS NOT NULL DROP TABLE #ToggleAssessments
+	IF OBJECT_ID(N'tempdb..#DimSchoolYears') IS NOT NULL DROP TABLE #DimSchoolYears
 
 
-		-- Temp tables for HIGH SCHOOL -------------------------------
-		IF OBJECT_ID('tempdb..#CSA_HS') IS NOT NULL DROP TABLE #CSA_HS
-		IF OBJECT_ID('tempdb..#CSB_HS') IS NOT NULL DROP TABLE #CSB_HS
-		IF OBJECT_ID('tempdb..#CSC_HS') IS NOT NULL DROP TABLE #CSC_HS
-		IF OBJECT_ID('tempdb..#CSD_HS') IS NOT NULL DROP TABLE #CSD_HS
-		IF OBJECT_ID('tempdb..#CSE_HS') IS NOT NULL DROP TABLE #CSE_HS
-		IF OBJECT_ID('tempdb..#CSF_HS') IS NOT NULL DROP TABLE #CSF_HS
-		IF OBJECT_ID('tempdb..#CSG_HS') IS NOT NULL DROP TABLE #CSG_HS
-		IF OBJECT_ID('tempdb..#CSH_HS') IS NOT NULL DROP TABLE #CSH_HS
-		IF OBJECT_ID('tempdb..#CSI_HS') IS NOT NULL DROP TABLE #CSI_HS
-		IF OBJECT_ID('tempdb..#CSJ_HS') IS NOT NULL DROP TABLE #CSJ_HS
-		IF OBJECT_ID('tempdb..#ST1_HS') IS NOT NULL DROP TABLE #ST1_HS
+	-- Temp tables for LOWER GRADES ------------------------------
+	IF OBJECT_ID('tempdb..#CSA_LG') IS NOT NULL DROP TABLE #CSA_LG
+	IF OBJECT_ID('tempdb..#CSB_LG') IS NOT NULL DROP TABLE #CSB_LG
+	IF OBJECT_ID('tempdb..#CSC_LG') IS NOT NULL DROP TABLE #CSC_LG
+	IF OBJECT_ID('tempdb..#CSD_LG') IS NOT NULL DROP TABLE #CSD_LG
+	IF OBJECT_ID('tempdb..#CSE_LG') IS NOT NULL DROP TABLE #CSE_LG
+	IF OBJECT_ID('tempdb..#CSF_LG') IS NOT NULL DROP TABLE #CSF_LG
+	IF OBJECT_ID('tempdb..#CSG_LG') IS NOT NULL DROP TABLE #CSG_LG
+	IF OBJECT_ID('tempdb..#CSH_LG') IS NOT NULL DROP TABLE #CSH_LG
+	IF OBJECT_ID('tempdb..#CSI_LG') IS NOT NULL DROP TABLE #CSI_LG
+	IF OBJECT_ID('tempdb..#CSJ_LG') IS NOT NULL DROP TABLE #CSJ_LG
+	IF OBJECT_ID('tempdb..#ST1_LG') IS NOT NULL DROP TABLE #ST1_LG
 
-		IF OBJECT_ID('tempdb..#CSA_HS_TESTCASE') IS NOT NULL DROP TABLE #CSA_HS_TESTCASE
-		IF OBJECT_ID('tempdb..#CSB_HS_TESTCASE') IS NOT NULL DROP TABLE #CSB_HS_TESTCASE
-		IF OBJECT_ID('tempdb..#CSC_HS_TESTCASE') IS NOT NULL DROP TABLE #CSC_HS_TESTCASE
-		IF OBJECT_ID('tempdb..#CSD_HS_TESTCASE') IS NOT NULL DROP TABLE #CSD_HS_TESTCASE
-		IF OBJECT_ID('tempdb..#CSE_HS_TESTCASE') IS NOT NULL DROP TABLE #CSE_HS_TESTCASE
-		IF OBJECT_ID('tempdb..#CSF_HS_TESTCASE') IS NOT NULL DROP TABLE #CSF_HS_TESTCASE
-		IF OBJECT_ID('tempdb..#CSG_HS_TESTCASE') IS NOT NULL DROP TABLE #CSG_HS_TESTCASE
-		IF OBJECT_ID('tempdb..#CSH_HS_TESTCASE') IS NOT NULL DROP TABLE #CSH_HS_TESTCASE
-		IF OBJECT_ID('tempdb..#CSI_HS_TESTCASE') IS NOT NULL DROP TABLE #CSI_HS_TESTCASE
-		IF OBJECT_ID('tempdb..#CSJ_HS_TESTCASE') IS NOT NULL DROP TABLE #CSJ_HS_TESTCASE
-		IF OBJECT_ID('tempdb..#ST1_HS_TESTCASE') IS NOT NULL DROP TABLE #ST1_HS_TESTCASE
+	IF OBJECT_ID('tempdb..#CSA_LG_TESTCASE') IS NOT NULL DROP TABLE #CSA_LG_TESTCASE
+	IF OBJECT_ID('tempdb..#CSB_LG_TESTCASE') IS NOT NULL DROP TABLE #CSB_LG_TESTCASE
+	IF OBJECT_ID('tempdb..#CSC_LG_TESTCASE') IS NOT NULL DROP TABLE #CSC_LG_TESTCASE
+	IF OBJECT_ID('tempdb..#CSD_LG_TESTCASE') IS NOT NULL DROP TABLE #CSD_LG_TESTCASE
+	IF OBJECT_ID('tempdb..#CSE_LG_TESTCASE') IS NOT NULL DROP TABLE #CSE_LG_TESTCASE
+	IF OBJECT_ID('tempdb..#CSF_LG_TESTCASE') IS NOT NULL DROP TABLE #CSF_LG_TESTCASE
+	IF OBJECT_ID('tempdb..#CSG_LG_TESTCASE') IS NOT NULL DROP TABLE #CSG_LG_TESTCASE
+	IF OBJECT_ID('tempdb..#CSH_LG_TESTCASE') IS NOT NULL DROP TABLE #CSH_LG_TESTCASE
+	IF OBJECT_ID('tempdb..#CSI_LG_TESTCASE') IS NOT NULL DROP TABLE #CSI_LG_TESTCASE
+	IF OBJECT_ID('tempdb..#CSJ_LG_TESTCASE') IS NOT NULL DROP TABLE #CSJ_LG_TESTCASE
+	IF OBJECT_ID('tempdb..#ST1_LG_TESTCASE') IS NOT NULL DROP TABLE #ST1_LG_TESTCASE
 
-		-- Populate Temp Table Grade Levels -----------------------------------
-		create table #LowerGrades (GradeLevel char(2))
-		create table #HSGrades (GradeLevel char(2))
 
-		if @FileSpec in ('FS175', 'FS178')
-			begin
-				insert into #LowerGrades (GradeLevel)
-				values 
-					('03'),
-					('04'),
-					('05'),
-					('06'),
-					('07'),
-					('08')
+	-- Temp tables for HIGH SCHOOL -------------------------------
+	IF OBJECT_ID('tempdb..#CSA_HS') IS NOT NULL DROP TABLE #CSA_HS
+	IF OBJECT_ID('tempdb..#CSB_HS') IS NOT NULL DROP TABLE #CSB_HS
+	IF OBJECT_ID('tempdb..#CSC_HS') IS NOT NULL DROP TABLE #CSC_HS
+	IF OBJECT_ID('tempdb..#CSD_HS') IS NOT NULL DROP TABLE #CSD_HS
+	IF OBJECT_ID('tempdb..#CSE_HS') IS NOT NULL DROP TABLE #CSE_HS
+	IF OBJECT_ID('tempdb..#CSF_HS') IS NOT NULL DROP TABLE #CSF_HS
+	IF OBJECT_ID('tempdb..#CSG_HS') IS NOT NULL DROP TABLE #CSG_HS
+	IF OBJECT_ID('tempdb..#CSH_HS') IS NOT NULL DROP TABLE #CSH_HS
+	IF OBJECT_ID('tempdb..#CSI_HS') IS NOT NULL DROP TABLE #CSI_HS
+	IF OBJECT_ID('tempdb..#CSJ_HS') IS NOT NULL DROP TABLE #CSJ_HS
+	IF OBJECT_ID('tempdb..#ST1_HS') IS NOT NULL DROP TABLE #ST1_HS
+
+	IF OBJECT_ID('tempdb..#CSA_HS_TESTCASE') IS NOT NULL DROP TABLE #CSA_HS_TESTCASE
+	IF OBJECT_ID('tempdb..#CSB_HS_TESTCASE') IS NOT NULL DROP TABLE #CSB_HS_TESTCASE
+	IF OBJECT_ID('tempdb..#CSC_HS_TESTCASE') IS NOT NULL DROP TABLE #CSC_HS_TESTCASE
+	IF OBJECT_ID('tempdb..#CSD_HS_TESTCASE') IS NOT NULL DROP TABLE #CSD_HS_TESTCASE
+	IF OBJECT_ID('tempdb..#CSE_HS_TESTCASE') IS NOT NULL DROP TABLE #CSE_HS_TESTCASE
+	IF OBJECT_ID('tempdb..#CSF_HS_TESTCASE') IS NOT NULL DROP TABLE #CSF_HS_TESTCASE
+	IF OBJECT_ID('tempdb..#CSG_HS_TESTCASE') IS NOT NULL DROP TABLE #CSG_HS_TESTCASE
+	IF OBJECT_ID('tempdb..#CSH_HS_TESTCASE') IS NOT NULL DROP TABLE #CSH_HS_TESTCASE
+	IF OBJECT_ID('tempdb..#CSI_HS_TESTCASE') IS NOT NULL DROP TABLE #CSI_HS_TESTCASE
+	IF OBJECT_ID('tempdb..#CSJ_HS_TESTCASE') IS NOT NULL DROP TABLE #CSJ_HS_TESTCASE
+	IF OBJECT_ID('tempdb..#ST1_HS_TESTCASE') IS NOT NULL DROP TABLE #ST1_HS_TESTCASE
+
+	-- Populate Temp Table Grade Levels -----------------------------------
+	create table #LowerGrades (GradeLevel char(2))
+	create table #HSGrades (GradeLevel char(2))
+
+	if @FileSpec in ('FS175', 'FS178')
+		begin
+			insert into #LowerGrades (GradeLevel)
+			values 
+				('03'),
+				('04'),
+				('05'),
+				('06'),
+				('07'),
+				('08')
 					
-				insert into #HSGrades (GradeLevel)
-				values
-					('09'),
-					('10'),
-					('11'),
-					('12')
+			insert into #HSGrades (GradeLevel)
+			values
+				('09'),
+				('10'),
+				('11'),
+				('12')
 					
-			end
-		if @FileSpec = ('FS179')
-			begin
-				insert into #LowerGrades (GradeLevel)
-				values
-					('03'),
-					('04'),
-					('05'),
-					('06'),
-					('07'),
-					('08'),
-					('09')
+		end
+	if @FileSpec = ('FS179')
+		begin
+			insert into #LowerGrades (GradeLevel)
+			values
+				('03'),
+				('04'),
+				('05'),
+				('06'),
+				('07'),
+				('08'),
+				('09')
 
-				insert into #HSGrades (GradeLevel)
-				values
-					('10'),
-					('11'),
-					('12')
-			end
+			insert into #HSGrades (GradeLevel)
+			values
+				('10'),
+				('11'),
+				('12')
+		end
 
 	DECLARE @ChildCountDate DATETIME
 	
@@ -215,8 +209,8 @@ Use the @FileSpec parameter to pass in one of the
 		WHERE [AssessmentAcademicSubject] = @AssessmentAcademicSubject
 		--AND AssessmentType = @AssessmentType
 
-				CREATE NONCLUSTERED INDEX IX_a ON #StagingAssessment (AssessmentTitle,AssessmentAcademicSubject,AssessmentPurpose,
-				AssessmentPerformanceLevelIdentifier)
+			CREATE NONCLUSTERED INDEX IX_a ON #StagingAssessment (AssessmentTitle,AssessmentAcademicSubject,AssessmentPurpose,
+			AssessmentPerformanceLevelIdentifier)
 
 	-- #StagingAssessmentResult ----------------------------------------------------------------------------
 		SELECT ReportTotal.*, rdg.GradeLevelCode, ssrd.OutputCode AssessmentAcademicSubjectCode--, ssrd1.OutputCode AssessmentPurposeCode
@@ -244,11 +238,9 @@ Use the @FileSpec parameter to pass in one of the
 --and ReportTotal.studentidentifierstate = '0000388798'
 --return
 
-
-				CREATE NONCLUSTERED INDEX IX_asr ON #StagingAssessmentResult (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea,
-				SchoolYear,GradeLevelWhenAssessed,AssessmentTitle,AssessmentAcademicSubject,--AssessmentPurpose,
-				AssessmentPerformanceLevelIdentifier)
-
+			CREATE NONCLUSTERED INDEX IX_asr ON #StagingAssessmentResult (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea,
+			SchoolYear,GradeLevelWhenAssessed,AssessmentTitle,AssessmentAcademicSubject,--AssessmentPurpose,
+			AssessmentPerformanceLevelIdentifier)
 
 	-- #DimAssessments ---------------------------------------------------------------------------------------
 		SELECT DISTINCT
@@ -275,33 +267,29 @@ Use the @FileSpec parameter to pass in one of the
 
 			CREATE NONCLUSTERED INDEX IX_ta ON #ToggleAssessments (AssessmentTypeCode,Grade,[Subject])
 
-
 	-- #StagingPersonStatus ---------------------------------------------------------------------------------------
 		SELECT 
-			case when sdt.StudentIdentifierState is NULL then 0 else 1 end as IDEAIndicator
-			,sdt.RecordStartDateTime [IDEA_StatusStartDate]
-			,sdt.RecordEndDateTime [IDEA_StatusEndDate] 
-			,EnglishLearnerStatus
-			,[EnglishLearner_StatusStartDate]
-			,[EnglishLearner_StatusEndDate]
-			,EconomicDisadvantageStatus
-			,[EconomicDisadvantage_StatusStartDate]
-			,[EconomicDisadvantage_StatusEndDate]
-			,MigrantStatus
-			,[Migrant_StatusStartDate]
-			,[Migrant_StatusEndDate]
-			,HomelessnessStatus
-			,[Homelessness_StatusStartDate]
-			,[Homelessness_StatusEndDate]
-			,ProgramType_FosterCare
-			,[FosterCare_ProgramParticipationStartDate]
-			,[FosterCare_ProgramParticipationEndDate]
-			,MilitaryConnectedStudentIndicator
-			,[MilitaryConnected_StatusStartDate]
-			,[MilitaryConnected_StatusEndDate]
-			,sps.StudentIdentifierState
-			,sps.LeaIdentifierSeaAccountability
-			,sps.SchoolIdentifierSea		
+			EnglishLearnerStatus
+			, EnglishLearner_StatusStartDate
+			, EnglishLearner_StatusEndDate
+			, EconomicDisadvantageStatus
+			, EconomicDisadvantage_StatusStartDate
+			, EconomicDisadvantage_StatusEndDate
+			, MigrantStatus
+			, Migrant_StatusStartDate
+			, Migrant_StatusEndDate
+			, HomelessnessStatus
+			, Homelessness_StatusStartDate
+			, Homelessness_StatusEndDate
+			, ProgramType_FosterCare
+			, FosterCare_ProgramParticipationStartDate
+			, FosterCare_ProgramParticipationEndDate
+			, MilitaryConnectedStudentIndicator
+			, MilitaryConnected_StatusStartDate
+			, MilitaryConnected_StatusEndDate
+			, sps.StudentIdentifierState
+			, sps.LeaIdentifierSeaAccountability
+			, sps.SchoolIdentifierSea		
 		INTO #StagingPersonStatus
 		FROM Staging.PersonStatus sps
 		left join Staging.IdeaDisabilityType sdt
@@ -310,6 +298,19 @@ Use the @FileSpec parameter to pass in one of the
 			and sps.SchoolIdentifierSea = sdt.SchoolIdentifierSea
 
 			CREATE NONCLUSTERED INDEX IX_sps ON #StagingPersonStatus (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
+
+	-- #StagingProgramParticipationSpecialEducation ----------------------------------------------------------------
+		SELECT 
+			sppse.IDEAIndicator
+			, sppse.ProgramParticipationBeginDate		[IDEA_StatusStartDate]
+			, sppse.ProgramParticipationEndDate			[IDEA_StatusEndDate] 
+			, sppse.StudentIdentifierState
+			, sppse.LeaIdentifierSeaAccountability
+			, sppse.SchoolIdentifierSea		
+		INTO #StagingProgramParticipationSpecialEducation
+		FROM Staging.ProgramParticipationSpecialEducation sppse
+
+			CREATE NONCLUSTERED INDEX IX_spppse ON #StagingProgramParticipationSpecialEducation (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
 
 	-- #StagingK12Enrollment --------------------------------------------------------------------------------------
 		SELECT [Sex]
@@ -342,7 +343,6 @@ Use the @FileSpec parameter to pass in one of the
 			on v.DimRaceId = d.DimRaceId
 		where SchoolYear = @SchoolYear
 
-
 	-- #DimSchoolYears ---------------------------------------------------------------------------------------
 		SELECT 
 			SchoolYear
@@ -354,17 +354,17 @@ Use the @FileSpec parameter to pass in one of the
 
 	-- #Staging ----------------------------------------------------------------------------------------------
 	SELECT 
-		asr.[StudentIdentifierState],
-		asr.[LeaIdentifierSeaAccountability],
-		asr.[SchoolIdentifierSea],
-		a.[AssessmentTitle],
-		a.[AssessmentAcademicSubject],
-		a.[AssessmentPurpose],
-		ProficiencyStatus = CASE WHEN CAST(RIGHT(a.AssessmentPerformanceLevelIdentifier,1) AS INT) < ta.ProficientOrAboveLevel THEN 'NOTPROFICIENT' ELSE 'PROFICIENT' END,
-		a.[AssessmentPerformanceLevelIdentifier],
-		asr.[GradeLevelWhenAssessed],
-		ds.AssessmentTypeAdministeredCode,
-		[RaceEdFactsCode] = CASE rdr.RaceEdFactsCode
+		asr.StudentIdentifierState
+		, asr.LeaIdentifierSeaAccountability
+		, asr.SchoolIdentifierSea
+		, a.AssessmentTitle
+		, a.AssessmentAcademicSubject
+		, a.AssessmentPurpose
+		, ProficiencyStatus = CASE WHEN CAST(RIGHT(a.AssessmentPerformanceLevelIdentifier,1) AS INT) < ta.ProficientOrAboveLevel THEN 'NOTPROFICIENT' ELSE 'PROFICIENT' END
+		, a.AssessmentPerformanceLevelIdentifier
+		, asr.GradeLevelWhenAssessed
+		, ds.AssessmentTypeAdministeredCode
+		, RaceEdFactsCode = CASE rdr.RaceEdFactsCode
 							WHEN 'AM7' THEN 'MAN'
 							WHEN 'AS7' THEN 'MA'
 							WHEN 'BL7' THEN 'MB'
@@ -372,26 +372,25 @@ Use the @FileSpec parameter to pass in one of the
 							WHEN 'MU7' THEN 'MM'
 							WHEN 'PI7' THEN 'MNP'
 							WHEN 'WH7' THEN 'MW'
-							END,
-		ske.[Sex],
-		[DisabilityStatusEdFactsCode] = CASE WHEN idea.IDEAIndicator = 1 THEN 'WDIS' ELSE 'MISSING' END,
-		[EnglishLearnerStatusEdFactsCode] = CASE WHEN el.EnglishLearnerStatus = 1 THEN 'LEP' ELSE 'MISSING' END,
-		[EconomicDisadvantageStatusEdFactsCode] = CASE WHEN eco.EconomicDisadvantageStatus = 1 THEN 'ECODIS' ELSE 'MISSING' END,
-		[MigrantStatusEdFactsCode] = CASE WHEN ms.MigrantStatus = 1 THEN 'MS' ELSE 'MISSING' END,
-		[HomelessnessStatusEdFactsCode] = CASE WHEN hs.HomelessnessStatus = 1 THEN 'HOMELSENRL' ELSE 'MISSING' END,
-		[ProgramType_FosterCareEdFactsCode] = CASE WHEN fc.ProgramType_FosterCare = 1 THEN 'FCS' ELSE 'MISSING' END,
-		[MilitaryConnectedStudentIndicatorEdFactsCode] = CASE WHEN  mcs.MilitaryConnectedStudentIndicator is not null AND mcs.MilitaryConnectedStudentIndicator NOT IN ('Unknown', 'NotMilitaryConnected','Unknown_1', 'NotMilitaryConnected_1')
+						END
+		, ske.Sex
+		, DisabilityStatusEdFactsCode = CASE WHEN idea.IDEAIndicator = 1 THEN 'WDIS' ELSE 'MISSING' END
+		, EnglishLearnerStatusEdFactsCode = CASE WHEN el.EnglishLearnerStatus = 1 THEN 'LEP' ELSE 'MISSING' END
+		, EconomicDisadvantageStatusEdFactsCode = CASE WHEN eco.EconomicDisadvantageStatus = 1 THEN 'ECODIS' ELSE 'MISSING' END
+		, MigrantStatusEdFactsCode = CASE WHEN ms.MigrantStatus = 1 THEN 'MS' ELSE 'MISSING' END
+		, HomelessnessStatusEdFactsCode = CASE WHEN hs.HomelessnessStatus = 1 THEN 'HOMELSENRL' ELSE 'MISSING' END
+		, ProgramType_FosterCareEdFactsCode = CASE WHEN fc.ProgramType_FosterCare = 1 THEN 'FCS' ELSE 'MISSING' END
+		, MilitaryConnectedStudentIndicatorEdFactsCode = CASE WHEN  mcs.MilitaryConnectedStudentIndicator is not null AND mcs.MilitaryConnectedStudentIndicator NOT IN ('Unknown', 'NotMilitaryConnected','Unknown_1', 'NotMilitaryConnected_1')
 															  THEN 'MILCNCTD' ELSE 'MISSING' END 
-		,ppse.IDEAEducationalEnvironmentForSchoolAge
-		,asr.AssessmentAdministrationStartDate
+		, ppse.IDEAEducationalEnvironmentForSchoolAge
+		, asr.AssessmentAdministrationStartDate
 		, idea.IDEA_StatusStartDate
 		, idea.IDEA_StatusEndDate
-		,spr.RecordStartDateTime
-		,spr.RecordEndDateTime
-		,sy.SessionBeginDate
-		,sy.SessionEndDate
+		, spr.RecordStartDateTime
+		, spr.RecordEndDateTime
+		, sy.SessionBeginDate
+		, sy.SessionEndDate
 	INTO #staging
-
 	FROM #StagingAssessment a		
 	INNER JOIN #StagingAssessmentResult asr 
 		ON a.AssessmentIdentifier = asr.AssessmentIdentifier
@@ -411,21 +410,19 @@ Use the @FileSpec parameter to pass in one of the
 			AND a.AssessmentTypeAdministered = ds.AssessmentTypeAdministeredMap
 			AND a.AssessmentPerformanceLevelIdentifier = ds.AssessmentPerformanceLevelIdentifier
 	INNER JOIN #ToggleAssessments ta
-		ON ds.AssessmentTypeAdministeredCode = ta.AssessmentTypeCode
-			AND asr.GradeLevelCode = ta.Grade
+		ON ds.AssessmentTypeAdministeredCode = replace(ta.AssessmentTypeCode, '_1', '')
+			AND asr.GradeLevelCode = replace(ta.Grade, '_1', '')
 			AND asr.AssessmentAcademicSubject = CASE ta.[Subject] WHEN @SubjectAbbrv THEN @AssessmentAcademicSubject ELSE 'NOMATCH' END
-	LEFT JOIN #StagingPersonStatus idea
+	LEFT JOIN #StagingProgramParticipationSpecialEducation idea
 		ON idea.StudentIdentifierState = asr.StudentIdentifierState
 			AND idea.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND idea.SchoolIdentifierSea = asr.SchoolIdentifierSea
 			--AND a.AssessmentAdministrationStartDate BETWEEN idea.IDEA_StatusStartDate AND ISNULL(idea.IDEA_StatusEndDate,GETDATE()) --
 			AND idea.IDEAIndicator = 1
-
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(idea.SchoolIdentifierSea,'')
 				AND ((idea.IDEA_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND idea.IDEA_StatusStartDate <=  asr.AssessmentAdministrationStartDate) 
 					AND ISNULL(idea.IDEA_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
-
 
 	LEFT JOIN #StagingPersonStatus el
 		ON el.StudentIdentifierState = asr.StudentIdentifierState
@@ -433,12 +430,9 @@ Use the @FileSpec parameter to pass in one of the
 			AND el.SchoolIdentifierSea = asr.SchoolIdentifierSea
 			--AND a.AssessmentAdministrationStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate,GETDATE()) --
 			AND el.EnglishLearnerStatus = 1
-
-
 				AND ((el.EnglishLearner_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND el.EnglishLearner_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
 					AND ISNULL(el.EnglishLearner_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
-
 
 	LEFT JOIN #StagingPersonStatus eco
 		ON eco.StudentIdentifierState = asr.StudentIdentifierState
@@ -446,11 +440,9 @@ Use the @FileSpec parameter to pass in one of the
 			AND eco.SchoolIdentifierSea = asr.SchoolIdentifierSea
 			--AND a.AssessmentAdministrationStartDate BETWEEN eco.EconomicDisadvantage_StatusStartDate AND ISNULL(eco.EconomicDisadvantage_StatusEndDate,GETDATE())
 			and eco.EconomicDisadvantageStatus = 1
-
 				AND ((eco.EconomicDisadvantage_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND eco.EconomicDisadvantage_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
 					AND ISNULL(eco.EconomicDisadvantage_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
-
 
 	LEFT JOIN #StagingPersonStatus ms
 		ON ms.StudentIdentifierState = asr.StudentIdentifierState
@@ -458,12 +450,9 @@ Use the @FileSpec parameter to pass in one of the
 			AND ms.SchoolIdentifierSea = asr.SchoolIdentifierSea
 			--AND a.AssessmentAdministrationStartDate BETWEEN ms.Migrant_StatusStartDate AND ISNULL(ms.Migrant_StatusEndDate,GETDATE())
 			AND ms.MigrantStatus = 1
-
 				AND ((ms.Migrant_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND ms.Migrant_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
 					AND ISNULL(ms.Migrant_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
-
-
 
 	LEFT JOIN #StagingPersonStatus hs
 		ON hs.StudentIdentifierState = asr.StudentIdentifierState
@@ -471,11 +460,9 @@ Use the @FileSpec parameter to pass in one of the
 			AND hs.SchoolIdentifierSea = asr.SchoolIdentifierSea
 			--AND a.AssessmentAdministrationStartDate BETWEEN hs.Homelessness_StatusStartDate AND ISNULL(hs.Homelessness_StatusEndDate,GETDATE())
 			AND hs.HomelessnessStatus = 1
-
 				AND ((hs.Homelessness_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND hs.Homelessness_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
 					AND ISNULL(hs.Homelessness_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
-
 
 	LEFT JOIN #StagingPersonStatus fc
 		ON fc.StudentIdentifierState = asr.StudentIdentifierState
@@ -483,11 +470,9 @@ Use the @FileSpec parameter to pass in one of the
 			AND fc.SchoolIdentifierSea = asr.SchoolIdentifierSea
 			--AND a.AssessmentAdministrationStartDate BETWEEN fc.FosterCare_ProgramParticipationStartDate AND ISNULL(fc.FosterCare_ProgramParticipationEndDate,GETDATE()) --
 			AND fc.ProgramType_FosterCare = 1
-
 				AND ((fc.FosterCare_ProgramParticipationStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND fc.FosterCare_ProgramParticipationStartDate <= asr.AssessmentAdministrationStartDate) 
 					AND ISNULL(fc.FosterCare_ProgramParticipationEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
-
 
 	LEFT JOIN #StagingPersonStatus mcs
 		ON mcs.StudentIdentifierState = asr.StudentIdentifierState
@@ -495,11 +480,9 @@ Use the @FileSpec parameter to pass in one of the
 			AND mcs.SchoolIdentifierSea = asr.SchoolIdentifierSea
 			--AND a.AssessmentAdministrationStartDate BETWEEN mcs.MilitaryConnected_StatusStartDate AND ISNULL(mcs.MilitaryConnected_StatusEndDate,GETDATE()) --
 			AND case when mcs.MilitaryConnectedStudentIndicator IS NULL then 0 else 1 end = 1
-
 				AND ((mcs.MilitaryConnected_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND mcs.MilitaryConnected_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
 					AND ISNULL(mcs.MilitaryConnected_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
-
 
 	LEFT JOIN #StagingPersonRace spr
 		ON spr.StudentIdentifierState = ske.StudentIdentifierState
@@ -517,636 +500,631 @@ Use the @FileSpec parameter to pass in one of the
 			AND ppse.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND ppse.SchoolIdentifierSea = asr.SchoolIdentifierSea
 	WHERE asr.SchoolYear = @SchoolYear
-	AND ta.[Subject] = @SubjectAbbrv
-
+	AND replace(ta.[Subject], '_1', '') = @SubjectAbbrv
 
 -----------------------------------------------------------------------------------------------------------------
 -- BUILD CATEGORY SET TEMP TABLES FROM REPORT TABLE ---------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
-			-- CSA LG ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,RACE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSA_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #LowerGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSA'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,RACE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSA LG ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,RACE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSA_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #LowerGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSA'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,RACE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSB LG ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,[SEX] = CASE SEX WHEN 'M' THEN 'Male' WHEN 'F' THEN 'Female' END
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSB_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #LowerGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSB'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,SEX
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSB LG ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,[SEX] = CASE SEX 
+					WHEN 'M' THEN 'Male' 
+					WHEN 'F' THEN 'Female' 
+					WHEN 'M_1' THEN 'Male' 
+					WHEN 'F_1' THEN 'Female' 
+				END
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSB_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #LowerGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSB'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,SEX
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSC LG ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSC_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #LowerGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSC'
-			 AND IDEAINDICATOR IN ('WDIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSC LG ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSC_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #LowerGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSC'
+		AND IDEAINDICATOR IN ('WDIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
+	-- CSD LG ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ENGLISHLEARNERSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSD_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #LowerGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSD'
+		AND ENGLISHLEARNERSTATUS IN ('LEP','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ENGLISHLEARNERSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSD LG ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ENGLISHLEARNERSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSD_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #LowerGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSD'
-			 AND ENGLISHLEARNERSTATUS IN ('LEP','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ENGLISHLEARNERSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSE LG ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ECONOMICDISADVANTAGESTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSE_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #LowerGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSE'
+		AND ECONOMICDISADVANTAGESTATUS IN ('ECODIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ECONOMICDISADVANTAGESTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSE LG ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ECONOMICDISADVANTAGESTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSE_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #LowerGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSE'
-			 AND ECONOMICDISADVANTAGESTATUS IN ('ECODIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ECONOMICDISADVANTAGESTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSF LG ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,MIGRANTSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSF_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #LowerGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSF'
+		AND MIGRANTSTATUS IN ('MS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,MIGRANTSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSF LG ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,MIGRANTSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSF_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #LowerGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSF'
-			 AND MIGRANTSTATUS IN ('MS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,MIGRANTSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSG LG ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,HOMELESSNESSSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSG_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #LowerGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSG'
+		AND HOMELESSNESSSTATUS IN ('HOMELSENRL','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,HOMELESSNESSSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSG LG ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,HOMELESSNESSSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSG_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #LowerGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSG'
-			 AND HOMELESSNESSSTATUS IN ('HOMELSENRL','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,HOMELESSNESSSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSH LG ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,PROGRAMPARTICIPATIONFOSTERCARE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSH_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #LowerGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSH'
+		AND PROGRAMPARTICIPATIONFOSTERCARE IN ('FCS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,PROGRAMPARTICIPATIONFOSTERCARE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
+	-- CSI LG ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,MILITARYCONNECTEDSTUDENTINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSI_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #LowerGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSI'
+		AND MILITARYCONNECTEDSTUDENTINDICATOR IN ('MILCNCTD','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,MILITARYCONNECTEDSTUDENTINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSH LG ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,PROGRAMPARTICIPATIONFOSTERCARE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSH_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #LowerGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSH'
-			 AND PROGRAMPARTICIPATIONFOSTERCARE IN ('FCS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,PROGRAMPARTICIPATIONFOSTERCARE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSJ LG ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,RACE
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSJ_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #LowerGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSJ'
+		AND IDEAINDICATOR IN ('WDIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,RACE
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSI LG ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,MILITARYCONNECTEDSTUDENTINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSI_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #LowerGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSI'
-			 AND MILITARYCONNECTEDSTUDENTINDICATOR IN ('MILCNCTD','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,MILITARYCONNECTEDSTUDENTINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			-- CSJ LG ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,RACE
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSJ_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #LowerGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSJ'
-			 AND IDEAINDICATOR IN ('WDIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,RACE
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-
-			-- ST1 LG ------------------------------
-			 SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #ST1_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #LowerGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'ST1'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-
-
+	-- ST1 LG ------------------------------
+		SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #ST1_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #LowerGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'ST1'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
 -- HIGH SCHOOL -------------------------
-			-- CSA HS ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,RACE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSA_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #HSGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSA'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,RACE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-			 
+	-- CSA HS ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,RACE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSA_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #HSGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSA'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,RACE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSB HS ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,[SEX] = CASE SEX WHEN 'M' THEN 'Male' WHEN 'F' THEN 'Female' END
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSB_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #HSGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel 
-			 WHERE CategorySetCode = 'CSB'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,SEX
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSB HS ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,[SEX] = CASE SEX 
+					WHEN 'M' THEN 'Male' 
+					WHEN 'F' THEN 'Female' 
+					WHEN 'M_1' THEN 'Male' 
+					WHEN 'F_1' THEN 'Female' 
+				END
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSB_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #HSGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel 
+		WHERE CategorySetCode = 'CSB'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,SEX
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSC HS ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSC_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #HSGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSC'
-			 AND IDEAINDICATOR IN ('WDIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSC HS ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSC_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #HSGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSC'
+		AND IDEAINDICATOR IN ('WDIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
+	-- CSD HS ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ENGLISHLEARNERSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSD_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #HSGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSD'
+		AND ENGLISHLEARNERSTATUS IN ('LEP','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ENGLISHLEARNERSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSD HS ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ENGLISHLEARNERSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSD_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #HSGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSD'
-			 AND ENGLISHLEARNERSTATUS IN ('LEP','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ENGLISHLEARNERSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSE HS ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ECONOMICDISADVANTAGESTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSE_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #HSGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSE'
+		AND ECONOMICDISADVANTAGESTATUS IN ('ECODIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ECONOMICDISADVANTAGESTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
+	-- CSF HS ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,MIGRANTSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSF_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #HSGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSF'
+		AND MIGRANTSTATUS IN ('MS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,MIGRANTSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSE HS ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ECONOMICDISADVANTAGESTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSE_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #HSGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSE'
-			 AND ECONOMICDISADVANTAGESTATUS IN ('ECODIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ECONOMICDISADVANTAGESTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSG HS ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,HOMELESSNESSSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSG_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #HSGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSG'
+		AND HOMELESSNESSSTATUS IN ('HOMELSENRL','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,HOMELESSNESSSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSF HS ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,MIGRANTSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSF_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #HSGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSF'
-			 AND MIGRANTSTATUS IN ('MS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,MIGRANTSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSH HS ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,PROGRAMPARTICIPATIONFOSTERCARE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSH_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #HSGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSH'
+		AND PROGRAMPARTICIPATIONFOSTERCARE IN ('FCS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,PROGRAMPARTICIPATIONFOSTERCARE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSG HS ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,HOMELESSNESSSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSG_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #HSGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSG'
-			 AND HOMELESSNESSSTATUS IN ('HOMELSENRL','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,HOMELESSNESSSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSI HS ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,MILITARYCONNECTEDSTUDENTINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSI_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #HSGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSI'
+		AND MILITARYCONNECTEDSTUDENTINDICATOR IN ('MILCNCTD','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,MILITARYCONNECTEDSTUDENTINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSH HS ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,PROGRAMPARTICIPATIONFOSTERCARE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSH_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #HSGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSH'
-			 AND PROGRAMPARTICIPATIONFOSTERCARE IN ('FCS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,PROGRAMPARTICIPATIONFOSTERCARE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSJ HS ------------------------------
+	SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,RACE
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSJ_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #HSGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'CSJ'
+		AND IDEAINDICATOR IN ('WDIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,RACE
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSI HS ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,MILITARYCONNECTEDSTUDENTINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSI_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #HSGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSI'
-			 AND MILITARYCONNECTEDSTUDENTINDICATOR IN ('MILCNCTD','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,MILITARYCONNECTEDSTUDENTINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			-- CSJ HS ------------------------------
-			SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,RACE
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSJ_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #HSGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'CSJ'
-			 AND IDEAINDICATOR IN ('WDIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,RACE
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-
-			-- ST1 HS ------------------------------
-			 SELECT ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #ST1_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments rpt
-			 INNER JOIN #HSGrades lg
-				on Rpt.GRADELEVEL = lg.GradeLevel
-			 WHERE CategorySetCode = 'ST1'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY ASSESSMENTTYPEADMINISTERED
-				,ProficiencyStatus
-				,rpt.GRADELEVEL
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-
-
-
+	-- ST1 HS ------------------------------
+		SELECT ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #ST1_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments rpt
+		INNER JOIN #HSGrades lg
+		on Rpt.GRADELEVEL = lg.GradeLevel
+		WHERE CategorySetCode = 'ST1'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY ASSESSMENTTYPEADMINISTERED
+		,ProficiencyStatus
+		,rpt.GRADELEVEL
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
 ----------------------------------------------------------------------------------------------------
 -- BEGIN WRITING TEST CASES 
@@ -1168,35 +1146,35 @@ Use the @FileSpec parameter to pass in one of the
 			,GradeLevelWhenAssessed
 			,RaceEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSA LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSA LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
-									  + '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSA_LG_TESTCASE TestCaseTotal
-			JOIN #CSA_LG ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.RaceEdFactsCode = ReportTotal.RACE
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSA'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSA LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSA LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSA_LG_TESTCASE TestCaseTotal
+		JOIN #CSA_LG ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.RaceEdFactsCode = ReportTotal.RACE
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSA'
 
 	-- TEST CASE CSB LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSB_LG_TESTCASE') IS NOT NULL DROP TABLE #CSB_LG_TESTCASE
@@ -1214,37 +1192,36 @@ Use the @FileSpec parameter to pass in one of the
 			,GradeLevelWhenAssessed
 			,Sex
 		
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSB LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSB LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
-									  + '; Sex Membership: ' + TestCaseTotal.Sex 
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSB_LG_TESTCASE TestCaseTotal
-			JOIN #CSB_LG ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.Sex = ReportTotal.SEX
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSB'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSB LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSB LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Sex Membership: ' + TestCaseTotal.Sex 
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSB_LG_TESTCASE TestCaseTotal
+		JOIN #CSB_LG ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND replace(TestCaseTotal.Sex, '_1', '') = ReportTotal.SEX
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSB'
 	
-
 	-- TEST CASE CSC LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSC_LG_TESTCASE') IS NOT NULL DROP TABLE #CSC_LG_TESTCASE
 
@@ -1256,44 +1233,43 @@ Use the @FileSpec parameter to pass in one of the
 			,COUNT(DISTINCT StudentIdentifierState) AS AssessmentCount
 		INTO #CSC_LG_TESTCASE
 		FROM #staging 
-		where ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS')  -- PPPS should only be excluded from the Disability Category Set
+		WHERE ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPS_1')  -- PPPS should only be excluded from the Disability Category Set
 
 		GROUP BY AssessmentTypeAdministeredCode
 				,ProficiencyStatus
 				,GradeLevelWhenAssessed
 				,DisabilityStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSC LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSC LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
-									  + '; Disability Status ' + TestCaseTotal.DisabilityStatusEdFactsCode
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSC LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSC LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; Disability Status ' + TestCaseTotal.DisabilityStatusEdFactsCode
 								  
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSC_LG_TESTCASE TestCaseTotal
-			JOIN #CSC_LG ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.DisabilityStatusEdFactsCode = ReportTotal.IDEAINDICATOR
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSC'
-	
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSC_LG_TESTCASE TestCaseTotal
+		JOIN #CSC_LG ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.DisabilityStatusEdFactsCode = ReportTotal.IDEAINDICATOR
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSC'
 
 	-- TEST CASE CSD LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSD_LG_TESTCASE') IS NOT NULL DROP TABLE #CSD_LG_TESTCASE
@@ -1311,37 +1287,36 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,EnglishLearnerStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSD LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSD LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
-									  + '; EnglishLearner Status: ' + TestCaseTotal.EnglishLearnerStatusEdFactsCode 
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSD_LG_TESTCASE TestCaseTotal
-			JOIN #CSD_LG ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.EnglishLearnerStatusEdFactsCode = ReportTotal.ENGLISHLEARNERSTATUS
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSD'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSD LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSD LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; EnglishLearner Status: ' + TestCaseTotal.EnglishLearnerStatusEdFactsCode 
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSD_LG_TESTCASE TestCaseTotal
+		JOIN #CSD_LG ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.EnglishLearnerStatusEdFactsCode = ReportTotal.ENGLISHLEARNERSTATUS
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSD'
 	
-
 	-- TEST CASE CSE LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSE_LG_TESTCASE') IS NOT NULL DROP TABLE #CSE_LG_TESTCASE
 
@@ -1358,35 +1333,35 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,EconomicDisadvantageStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSE LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSE LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
-									  + '; Economic Disadvantage Status: ' + TestCaseTotal.EconomicDisadvantageStatusEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSE_LG_TESTCASE TestCaseTotal
-			JOIN #CSE_LG ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.EconomicDisadvantageStatusEdFactsCode = ReportTotal.ECONOMICDISADVANTAGESTATUS
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSE'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSE LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSE LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; Economic Disadvantage Status: ' + TestCaseTotal.EconomicDisadvantageStatusEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSE_LG_TESTCASE TestCaseTotal
+		JOIN #CSE_LG ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.EconomicDisadvantageStatusEdFactsCode = ReportTotal.ECONOMICDISADVANTAGESTATUS
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSE'
 	
 	-- TEST CASE CSF LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSF_LG_TESTCASE') IS NOT NULL DROP TABLE #CSF_LG_TESTCASE
@@ -1404,36 +1379,35 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,MigrantStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSF LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSF LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
-									  + '; Migrant Status: ' + TestCaseTotal.MigrantStatusEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSF_LG_TESTCASE TestCaseTotal
-			JOIN #CSF_LG ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.MigrantStatusEdFactsCode = ReportTotal.MIGRANTSTATUS
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSF'
-
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSF LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSF LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Migrant Status: ' + TestCaseTotal.MigrantStatusEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSF_LG_TESTCASE TestCaseTotal
+		JOIN #CSF_LG ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.MigrantStatusEdFactsCode = ReportTotal.MIGRANTSTATUS
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSF'
 
 	-- TEST CASE CSG LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSG_LG_TESTCASE') IS NOT NULL DROP TABLE #CSG_LG_TESTCASE
@@ -1451,38 +1425,36 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,HomelessnessStatusEdFactsCode		
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSG LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSG LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
-									  + '; Homelessness Status: ' + TestCaseTotal.HomelessnessStatusEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSG_LG_TESTCASE TestCaseTotal
-			JOIN #CSG_LG ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.HomelessnessStatusEdFactsCode = ReportTotal.HOMELESSNESSSTATUS
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSG'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSG LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSG LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Homelessness Status: ' + TestCaseTotal.HomelessnessStatusEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSG_LG_TESTCASE TestCaseTotal
+		JOIN #CSG_LG ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.HomelessnessStatusEdFactsCode = ReportTotal.HOMELESSNESSSTATUS
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSG'
 
-
-		
 	-- TEST CASE CSH LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSH_LG_TESTCASE') IS NOT NULL DROP TABLE #CSH_LG_TESTCASE
 
@@ -1499,40 +1471,38 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,ProgramType_FosterCareEdFactsCode
 		
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSH LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSH LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
-									  + '; Foster Care: ' + TestCaseTotal.ProgramType_FosterCareEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSH_LG_TESTCASE TestCaseTotal
-			JOIN #CSH_LG ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.ProgramType_FosterCareEdFactsCode = ReportTotal.PROGRAMPARTICIPATIONFOSTERCARE
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSH'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSH LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSH LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Foster Care: ' + TestCaseTotal.ProgramType_FosterCareEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSH_LG_TESTCASE TestCaseTotal
+		JOIN #CSH_LG ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.ProgramType_FosterCareEdFactsCode = ReportTotal.PROGRAMPARTICIPATIONFOSTERCARE
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSH'
 	
-
 	-- TEST CASE CSI LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSI_LG_TESTCASE') IS NOT NULL DROP TABLE #CSI_LG_TESTCASE
-
 
 		SELECT 
 			 AssessmentTypeAdministeredCode
@@ -1547,35 +1517,35 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,MilitaryConnectedStudentIndicatorEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSI LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSI LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
-									  + '; Military Connected Student: ' + TestCaseTotal.MilitaryConnectedStudentIndicatorEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSI_LG_TESTCASE TestCaseTotal
-			JOIN #CSI_LG ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.MilitaryConnectedStudentIndicatorEdFactsCode = ReportTotal.MILITARYCONNECTEDSTUDENTINDICATOR
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSI'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSI LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSI LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Military Connected Student: ' + TestCaseTotal.MilitaryConnectedStudentIndicatorEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSI_LG_TESTCASE TestCaseTotal
+		JOIN #CSI_LG ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.MilitaryConnectedStudentIndicatorEdFactsCode = ReportTotal.MILITARYCONNECTEDSTUDENTINDICATOR
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSI'
 
 	-- TEST CASE CSJ LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSJ_LG_TESTCASE') IS NOT NULL DROP TABLE #CSJ_LG_TESTCASE
@@ -1589,7 +1559,7 @@ Use the @FileSpec parameter to pass in one of the
 			,COUNT(DISTINCT StudentIdentifierState) AS AssessmentCount
 		INTO #CSJ_LG_TESTCASE
 		FROM #staging 
-		where ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS')  -- PPPS should only be excluded from the Disability Category Set
+		WHERE ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPPS_1')  -- PPPS should only be excluded from the Disability Category Set
 
 		GROUP BY AssessmentTypeAdministeredCode
 			,ProficiencyStatus
@@ -1597,42 +1567,40 @@ Use the @FileSpec parameter to pass in one of the
 			,RaceEdFactsCode
 			,DisabilityStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSJ LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSJ LG' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
-									  + '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
-									  + '; Disability Status: ' + TestCaseTotal.DisabilityStatusEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSJ_LG_TESTCASE TestCaseTotal
-			JOIN #CSJ_LG ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.RaceEdFactsCode = ReportTotal.RACE
-				AND TestCaseTotal.DisabilityStatusEdFactsCode = ReportTotal.IDEAINDICATOR
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSJ'
-	
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSJ LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSJ LG' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
+									+ '; Disability Status: ' + TestCaseTotal.DisabilityStatusEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSJ_LG_TESTCASE TestCaseTotal
+		JOIN #CSJ_LG ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.RaceEdFactsCode = ReportTotal.RACE
+			AND TestCaseTotal.DisabilityStatusEdFactsCode = ReportTotal.IDEAINDICATOR
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSJ'
 
 	-- TEST CASE ST1 LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#ST1_LG_TESTCASE') IS NOT NULL DROP TABLE #ST1_LG_TESTCASE
-
 
 		SELECT 
 			 AssessmentTypeAdministeredCode
@@ -1668,12 +1636,10 @@ Use the @FileSpec parameter to pass in one of the
 		JOIN #ST1_LG ReportTotal 
 			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
 			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-			And TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
 			AND ReportTotal.ReportCode = @ReportCode 
 			AND ReportTotal.ReportYear = @SchoolYear
 			AND ReportTotal.CategorySetCode = 'ST1'
-	
-
 
 -- HIGH SCHOOL ------------------------------------------------------------------------------------------
 	-- TEST CASE CSA HS ------------------------------------------------------------------
@@ -1692,36 +1658,35 @@ Use the @FileSpec parameter to pass in one of the
 			,GradeLevelWhenAssessed
 			,RaceEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSA HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSA HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
-									  + '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSA_HS_TESTCASE TestCaseTotal
-			JOIN #CSA_HS ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.RaceEdFactsCode = ReportTotal.RACE
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSA'
-
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSA HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSA HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSA_HS_TESTCASE TestCaseTotal
+		JOIN #CSA_HS ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.RaceEdFactsCode = ReportTotal.RACE
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSA'
 
 	-- TEST CASE CSB HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSB_HS_TESTCASE') IS NOT NULL DROP TABLE #CSB_HS_TESTCASE
@@ -1739,36 +1704,35 @@ Use the @FileSpec parameter to pass in one of the
 			,GradeLevelWhenAssessed
 			,Sex
 		
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSB HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSB HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
-									  + '; Sex Membership: ' + TestCaseTotal.Sex 
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSB_HS_TESTCASE TestCaseTotal
-			JOIN #CSB_HS ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.Sex = ReportTotal.SEX
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSB'
-	
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSB HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSB HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Sex Membership: ' + TestCaseTotal.Sex 
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSB_HS_TESTCASE TestCaseTotal
+		JOIN #CSB_HS ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND replace(TestCaseTotal.Sex, '_1', '') = ReportTotal.SEX
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSB'
 
 	-- TEST CASE CSC HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSC_HS_TESTCASE') IS NOT NULL DROP TABLE #CSC_HS_TESTCASE
@@ -1781,45 +1745,44 @@ Use the @FileSpec parameter to pass in one of the
 			,COUNT(DISTINCT StudentIdentifierState) AS AssessmentCount
 		INTO #CSC_HS_TESTCASE
 		FROM #staging 
-		where ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS')  -- PPPS should only be excluded from the Disability Category Set
+		WHERE ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPPS_1')  -- PPPS should only be excluded from the Disability Category Set
 
 		GROUP BY AssessmentTypeAdministeredCode
 				,ProficiencyStatus
 				,GradeLevelWhenAssessed
 				,DisabilityStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSC HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSC HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
-									  + '; Disability Status ' + TestCaseTotal.DisabilityStatusEdFactsCode
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSC HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSC HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; Disability Status ' + TestCaseTotal.DisabilityStatusEdFactsCode
 								  
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSC_HS_TESTCASE TestCaseTotal
-			JOIN #CSC_HS ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.DisabilityStatusEdFactsCode = ReportTotal.IDEAINDICATOR
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSC'
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSC_HS_TESTCASE TestCaseTotal
+		JOIN #CSC_HS ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.DisabilityStatusEdFactsCode = ReportTotal.IDEAINDICATOR
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSC'
 	
-
 	-- TEST CASE CSD HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSD_HS_TESTCASE') IS NOT NULL DROP TABLE #CSD_HS_TESTCASE
 
@@ -1836,37 +1799,36 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,EnglishLearnerStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSD HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSD HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
-									  + '; EnglishLearner Status: ' + TestCaseTotal.EnglishLearnerStatusEdFactsCode 
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSD_HS_TESTCASE TestCaseTotal
-			JOIN #CSD_HS ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.EnglishLearnerStatusEdFactsCode = ReportTotal.ENGLISHLEARNERSTATUS
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSD'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSD HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSD HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; EnglishLearner Status: ' + TestCaseTotal.EnglishLearnerStatusEdFactsCode 
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSD_HS_TESTCASE TestCaseTotal
+		JOIN #CSD_HS ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.EnglishLearnerStatusEdFactsCode = ReportTotal.ENGLISHLEARNERSTATUS
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSD'
 	
-
 	-- TEST CASE CSE HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSE_HS_TESTCASE') IS NOT NULL DROP TABLE #CSE_HS_TESTCASE
 
@@ -1883,35 +1845,35 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,EconomicDisadvantageStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSE HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSE HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
-									  + '; Economic Disadvantage Status: ' + TestCaseTotal.EconomicDisadvantageStatusEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSE_HS_TESTCASE TestCaseTotal
-			JOIN #CSE_HS ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.EconomicDisadvantageStatusEdFactsCode = ReportTotal.ECONOMICDISADVANTAGESTATUS
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSE'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSE HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSE HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; Economic Disadvantage Status: ' + TestCaseTotal.EconomicDisadvantageStatusEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSE_HS_TESTCASE TestCaseTotal
+		JOIN #CSE_HS ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.EconomicDisadvantageStatusEdFactsCode = ReportTotal.ECONOMICDISADVANTAGESTATUS
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSE'
 	
 	-- TEST CASE CSF HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSF_HS_TESTCASE') IS NOT NULL DROP TABLE #CSF_HS_TESTCASE
@@ -1929,36 +1891,35 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,MigrantStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSF HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSF HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
-									  + '; Migrant Status: ' + TestCaseTotal.MigrantStatusEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSF_HS_TESTCASE TestCaseTotal
-			JOIN #CSF_HS ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.MigrantStatusEdFactsCode = ReportTotal.MIGRANTSTATUS
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSF'
-
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSF HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSF HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Migrant Status: ' + TestCaseTotal.MigrantStatusEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSF_HS_TESTCASE TestCaseTotal
+		JOIN #CSF_HS ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.MigrantStatusEdFactsCode = ReportTotal.MIGRANTSTATUS
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSF'
 
 	-- TEST CASE CSG HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSG_HS_TESTCASE') IS NOT NULL DROP TABLE #CSG_HS_TESTCASE
@@ -1976,37 +1937,36 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,HomelessnessStatusEdFactsCode		
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSG HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSG HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
-									  + '; Homelessness Status: ' + TestCaseTotal.HomelessnessStatusEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSG_HS_TESTCASE TestCaseTotal
-			JOIN #CSG_HS ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.HomelessnessStatusEdFactsCode = ReportTotal.HOMELESSNESSSTATUS
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSG'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSG HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSG HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Homelessness Status: ' + TestCaseTotal.HomelessnessStatusEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSG_HS_TESTCASE TestCaseTotal
+		JOIN #CSG_HS ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.HomelessnessStatusEdFactsCode = ReportTotal.HOMELESSNESSSTATUS
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSG'
 
-		
 	-- TEST CASE CSH HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSH_HS_TESTCASE') IS NOT NULL DROP TABLE #CSH_HS_TESTCASE
 
@@ -2023,37 +1983,36 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,ProgramType_FosterCareEdFactsCode
 		
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSH HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSH HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
-									  + '; Foster Care: ' + TestCaseTotal.ProgramType_FosterCareEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSH_HS_TESTCASE TestCaseTotal
-			JOIN #CSH_HS ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.ProgramType_FosterCareEdFactsCode = ReportTotal.PROGRAMPARTICIPATIONFOSTERCARE
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSH'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSH HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSH HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Foster Care: ' + TestCaseTotal.ProgramType_FosterCareEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSH_HS_TESTCASE TestCaseTotal
+		JOIN #CSH_HS ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.ProgramType_FosterCareEdFactsCode = ReportTotal.PROGRAMPARTICIPATIONFOSTERCARE
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSH'
 	
-
 	-- TEST CASE CSI HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSI_HS_TESTCASE') IS NOT NULL DROP TABLE #CSI_HS_TESTCASE
 
@@ -2071,35 +2030,35 @@ Use the @FileSpec parameter to pass in one of the
 				,GradeLevelWhenAssessed
 				,MilitaryConnectedStudentIndicatorEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSI HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSI HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
-									  + '; Military Connected Student: ' + TestCaseTotal.MilitaryConnectedStudentIndicatorEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSI_HS_TESTCASE TestCaseTotal
-			JOIN #CSI_HS ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.MilitaryConnectedStudentIndicatorEdFactsCode = ReportTotal.MILITARYCONNECTEDSTUDENTINDICATOR
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSI'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSI HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSI HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Military Connected Student: ' + TestCaseTotal.MilitaryConnectedStudentIndicatorEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSI_HS_TESTCASE TestCaseTotal
+		JOIN #CSI_HS ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.MilitaryConnectedStudentIndicatorEdFactsCode = ReportTotal.MILITARYCONNECTEDSTUDENTINDICATOR
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSI'
 
 	-- TEST CASE CSJ HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSJ_HS_TESTCASE') IS NOT NULL DROP TABLE #CSJ_HS_TESTCASE
@@ -2113,7 +2072,7 @@ Use the @FileSpec parameter to pass in one of the
 			,COUNT(DISTINCT StudentIdentifierState) AS AssessmentCount
 		INTO #CSJ_HS_TESTCASE
 		FROM #staging 
-		where ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS')  -- PPPS should only be excluded from the Disability Category Set
+		WHERE ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPPS_1')  -- PPPS should only be excluded from the Disability Category Set
 
 		GROUP BY AssessmentTypeAdministeredCode
 			,ProficiencyStatus
@@ -2121,42 +2080,40 @@ Use the @FileSpec parameter to pass in one of the
 			,RaceEdFactsCode
 			,DisabilityStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSJ HS' + UPPER(ReportTotal.ReportLevel) + ' Match All'
-				,'CSJ HS' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
-									  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
-									  + '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
-									  + '; Disability Status: ' + TestCaseTotal.DisabilityStatusEdFactsCode
-				,TestCaseTotal.AssessmentCount
-				,ReportTotal.AssessmentCount
-				,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSJ_HS_TESTCASE TestCaseTotal
-			JOIN #CSJ_HS ReportTotal 
-				ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
-				AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-				AND TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
-				AND TestCaseTotal.RaceEdFactsCode = ReportTotal.RACE
-				AND TestCaseTotal.DisabilityStatusEdFactsCode = ReportTotal.IDEAINDICATOR
-				AND ReportTotal.ReportCode = @ReportCode 
-				AND ReportTotal.ReportYear = @SchoolYear
-				AND ReportTotal.CategorySetCode = 'CSJ'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSJ HS' + UPPER(ReportTotal.ReportLevel) + ' Match All'
+			,'CSJ HS' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
+									+ '; Disability Status: ' + TestCaseTotal.DisabilityStatusEdFactsCode
+			,TestCaseTotal.AssessmentCount
+			,ReportTotal.AssessmentCount
+			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSJ_HS_TESTCASE TestCaseTotal
+		JOIN #CSJ_HS ReportTotal 
+			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
+			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
+			AND TestCaseTotal.RaceEdFactsCode = ReportTotal.RACE
+			AND TestCaseTotal.DisabilityStatusEdFactsCode = ReportTotal.IDEAINDICATOR
+			AND ReportTotal.ReportCode = @ReportCode 
+			AND ReportTotal.ReportYear = @SchoolYear
+			AND ReportTotal.CategorySetCode = 'CSJ'
 	
-
 	-- TEST CASE ST1 HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#ST1_HS_TESTCASE') IS NOT NULL DROP TABLE #ST1_HS_TESTCASE
-
 
 		SELECT 
 			 AssessmentTypeAdministeredCode
@@ -2192,11 +2149,17 @@ Use the @FileSpec parameter to pass in one of the
 		JOIN #ST1_HS ReportTotal 
 			ON TestCaseTotal.AssessmentTypeAdministeredCode = ReportTotal.ASSESSMENTTYPEADMINISTERED
 			AND TestCaseTotal.ProficiencyStatus = ReportTotal.ProficiencyStatus
-			And TestCaseTotal.GradeLevelWhenAssessed = ReportTotal.GRADELEVEL
+			AND replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') = ReportTotal.GRADELEVEL
 			AND ReportTotal.ReportCode = @ReportCode 
 			AND ReportTotal.ReportYear = @SchoolYear
 			AND ReportTotal.CategorySetCode = 'ST1'
-	
 
+		--Query to find the tests that did not match
+		-- select * 
+		-- from App.SqlUnitTestCaseResult r
+		-- 	inner join App.SqlUnitTest t
+		-- 		on r.SqlUnitTestId = t.SqlUnitTestId
+		-- WHERE t.TestScope = @FileSpec
+		-- AND Passed = 0
 
 END
