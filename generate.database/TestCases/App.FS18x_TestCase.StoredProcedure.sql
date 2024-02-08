@@ -4,9 +4,7 @@ Create PROCEDURE [App].[FS18x_TestCase]
 AS
 BEGIN
 
-
 	SET NOCOUNT ON
-
 
 	if @FileSpec not in ('FS185', 'FS188', 'FS189')
 		begin
@@ -17,9 +15,9 @@ BEGIN
 	DECLARE @UnitTestName VARCHAR(100) = @FileSpec + '_UnitTestCase'
 	DECLARE @AssessmentAcademicSubject VARCHAR(10) =
 		case
-			when @FileSpec = 'FS185' then '01166' 
-			when @FileSpec = 'FS188' then '13373'
-			when @FileSpec = 'FS189' then '00562'
+			when @FileSpec = 'FS185' then '01166_1' 
+			when @FileSpec = 'FS188' then '13373_1'
+			when @FileSpec = 'FS189' then '00562_1'
 		end
 
 	DECLARE @StoredProcedureName VARCHAR(100) = @FileSpec + '_TestCase'
@@ -60,21 +58,18 @@ BEGIN
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 	----------------------------------------------------------------------
 
-
 	-- Define the test
 	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
 	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = @UnitTestName) 
 	BEGIN
 		SET @expectedResult = 1
-		INSERT INTO App.SqlUnitTest 
-		(
+		INSERT INTO App.SqlUnitTest (
 			[UnitTestName]
 			, [StoredProcedureName]
 			, [TestScope]
 			, [IsActive]
 		)
-		VALUES 
-		(
+		VALUES (
 			@UnitTestName
 			, @StoredProcedureName				
 			, @TestScope
@@ -91,11 +86,8 @@ BEGIN
 		WHERE UnitTestName = @UnitTestName
 	END
 
-
 	-- Clear out last run
 	DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId
-
-
 
 		--DROP TEMP TABLES IF EXIST
 		IF OBJECT_ID('tempdb..#LowerGrades') IS NOT NULL DROP TABLE #LowerGrades
@@ -104,6 +96,7 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#StagingAssessmentResult') IS NOT NULL DROP TABLE #StagingAssessmentResult
 		IF OBJECT_ID(N'tempdb..#StagingAssessment') IS NOT NULL DROP TABLE #StagingAssessment
 		IF OBJECT_ID(N'tempdb..#StagingPersonStatus') IS NOT NULL DROP TABLE #StagingPersonStatus
+		IF OBJECT_ID(N'tempdb..#StagingProgramParticipationSpecialEducation') IS NOT NULL DROP TABLE #StagingProgramParticipationSpecialEducation
 		IF OBJECT_ID(N'tempdb..#StagingK12Enrollment') IS NOT NULL DROP TABLE #StagingK12Enrollment
 		IF OBJECT_ID(N'tempdb..#StagingPersonRace') IS NOT NULL DROP TABLE #StagingPersonRace
 		IF OBJECT_ID(N'tempdb..#DimRaces') IS NOT NULL DROP TABLE #DimRaces
@@ -166,7 +159,6 @@ BEGIN
 		-- Populate Temp Table Grade Levels -----------------------------------
 		create table #LowerGrades (GradeLevel char(2))
 		create table #HSGrades (GradeLevel char(2))
-
 		
 	DECLARE @ChildCountDate DATETIME
 	
@@ -180,8 +172,8 @@ BEGIN
 		WHERE [AssessmentAcademicSubject] = @AssessmentAcademicSubject
 		--AND AssessmentType = @AssessmentType
 
-				CREATE NONCLUSTERED INDEX IX_a ON #StagingAssessment (AssessmentTitle,AssessmentAcademicSubject,AssessmentPurpose,
-				AssessmentPerformanceLevelIdentifier)
+			CREATE NONCLUSTERED INDEX IX_a ON #StagingAssessment (AssessmentTitle,AssessmentAcademicSubject,AssessmentPurpose,
+			AssessmentPerformanceLevelIdentifier)
 
 	-- #StagingAssessmentResult ----------------------------------------------------------------------------
 		SELECT sar.*, rdg.GradeLevelCode, ssrd.OutputCode AssessmentAcademicSubjectCode--, ssrd1.OutputCode AssessmentPurposeCode
@@ -208,11 +200,9 @@ BEGIN
 --and sar.studentidentifierstate = '0000388798'
 --return
 
-
-				CREATE NONCLUSTERED INDEX IX_asr ON #StagingAssessmentResult (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea,
-				SchoolYear,GradeLevelWhenAssessed,AssessmentTitle,AssessmentAcademicSubject,--AssessmentPurpose,
-				AssessmentPerformanceLevelIdentifier)
-
+			CREATE NONCLUSTERED INDEX IX_asr ON #StagingAssessmentResult (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea,
+			SchoolYear,GradeLevelWhenAssessed,AssessmentTitle,AssessmentAcademicSubject,--AssessmentPurpose,
+			AssessmentPerformanceLevelIdentifier)
 
 	-- #DimAssessments ---------------------------------------------------------------------------------------
 		SELECT DISTINCT
@@ -231,41 +221,36 @@ BEGIN
 			CREATE NONCLUSTERED INDEX IX_ds ON #DimAssessments (AssessmentAcademicSubjectCode,AssessmentTypeAdministeredCode,AssessmentPerformanceLevelIdentifier)
 
 	-- #ToggleAssessments ---------------------------------------------------------------------------------------
-		SELECT 
-		*
+		SELECT *
 		INTO #ToggleAssessments
 		FROM App.ToggleAssessments
 		WHERE [Subject] = @SubjectAbbrv
 
 			CREATE NONCLUSTERED INDEX IX_ta ON #ToggleAssessments (AssessmentTypeCode,Grade,[Subject])
 
-
 	-- #StagingPersonStatus ---------------------------------------------------------------------------------------
 		SELECT 
-			case when sdt.StudentIdentifierState is NULL then 0 else 1 end as IDEAIndicator
-			,sdt.RecordStartDateTime [IDEA_StatusStartDate]
-			,sdt.RecordEndDateTime [IDEA_StatusEndDate] 
-			,EnglishLearnerStatus
-			,[EnglishLearner_StatusStartDate]
-			,[EnglishLearner_StatusEndDate]
-			,EconomicDisadvantageStatus
-			,[EconomicDisadvantage_StatusStartDate]
-			,[EconomicDisadvantage_StatusEndDate]
-			,MigrantStatus
-			,[Migrant_StatusStartDate]
-			,[Migrant_StatusEndDate]
-			,HomelessnessStatus
-			,[Homelessness_StatusStartDate]
-			,[Homelessness_StatusEndDate]
-			,ProgramType_FosterCare
-			,[FosterCare_ProgramParticipationStartDate]
-			,[FosterCare_ProgramParticipationEndDate]
-			,MilitaryConnectedStudentIndicator
-			,[MilitaryConnected_StatusStartDate]
-			,[MilitaryConnected_StatusEndDate]
-			,sps.StudentIdentifierState
-			,sps.LeaIdentifierSeaAccountability
-			,sps.SchoolIdentifierSea		
+			EnglishLearnerStatus
+			, EnglishLearner_StatusStartDate
+			, EnglishLearner_StatusEndDate
+			, EconomicDisadvantageStatus
+			, EconomicDisadvantage_StatusStartDate
+			, EconomicDisadvantage_StatusEndDate
+			, MigrantStatus
+			, Migrant_StatusStartDate
+			, Migrant_StatusEndDate
+			, HomelessnessStatus
+			, Homelessness_StatusStartDate
+			, Homelessness_StatusEndDate
+			, ProgramType_FosterCare
+			, FosterCare_ProgramParticipationStartDate
+			, FosterCare_ProgramParticipationEndDate
+			, MilitaryConnectedStudentIndicator
+			, MilitaryConnected_StatusStartDate
+			, MilitaryConnected_StatusEndDate
+			, sps.StudentIdentifierState
+			, sps.LeaIdentifierSeaAccountability
+			, sps.SchoolIdentifierSea		
 		INTO #StagingPersonStatus
 		FROM Staging.PersonStatus sps
 		left join Staging.IdeaDisabilityType sdt
@@ -274,6 +259,19 @@ BEGIN
 			and sps.SchoolIdentifierSea = sdt.SchoolIdentifierSea
 
 			CREATE NONCLUSTERED INDEX IX_sps ON #StagingPersonStatus (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
+
+	-- #StagingProgramParticipationSpecialEducation ----------------------------------------------------------------
+		SELECT 
+			sppse.IDEAIndicator
+			, sppse.ProgramParticipationBeginDate		[IDEA_StatusStartDate]
+			, sppse.ProgramParticipationEndDate			[IDEA_StatusEndDate] 
+			, sppse.StudentIdentifierState
+			, sppse.LeaIdentifierSeaAccountability
+			, sppse.SchoolIdentifierSea		
+		INTO #StagingProgramParticipationSpecialEducation
+		FROM Staging.ProgramParticipationSpecialEducation sppse
+
+			CREATE NONCLUSTERED INDEX IX_spppse ON #StagingProgramParticipationSpecialEducation (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
 
 	-- #StagingK12Enrollment --------------------------------------------------------------------------------------
 		SELECT [Sex]
@@ -306,48 +304,47 @@ BEGIN
 			on v.DimRaceId = d.DimRaceId
 		where SchoolYear = @SchoolYear
 
-
 	-- #DimSchoolYears ---------------------------------------------------------------------------------------
 		SELECT 
 			SchoolYear
-				,SessionBeginDate
-				,SessionEndDate
+			,SessionBeginDate
+			,SessionEndDate
 		INTO #DimSchoolYears
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
 	-- #Staging ----------------------------------------------------------------------------------------------
 	SELECT 
-		asr.[StudentIdentifierState],
-		asr.[LeaIdentifierSeaAccountability],
-		asr.[SchoolIdentifierSea],
-		a.[AssessmentTitle],
-		a.[AssessmentAcademicSubject],
-		a.[AssessmentPurpose],
-		a.[AssessmentPerformanceLevelIdentifier],
-		asr.[GradeLevelWhenAssessed],
-		ds.AssessmentTypeAdministeredCode,
-		case 
-				WHEN asr.AssessmentTypeAdministered ='REGASSWOACC' THEN 'REGPARTWOACC'	
-				WHEN asr.AssessmentTypeAdministered ='REGASSWACC' THEN 'REGPARTWACC'
-				WHEN asr.AssessmentTypeAdministered ='ALTASSALTACH' THEN 'ALTPARTALTACH'
-				WHEN asr.AssessmentTypeAdministered ='ADVASMTWOACC' THEN 'PADVASMWOACC'
-				WHEN asr.AssessmentTypeAdministered ='ADVASMTWACC' THEN 'PADVASMWACC'
-				WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWOACC' THEN 'PIADAPLASMWOACC'
-				WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWACC' THEN 'PIADAPLASMWACC'
-				WHEN asr.AssessmentRegistrationParticipationIndicator = 0 THEN 'NPART'
-				WHEN asr.AssessmentRegistrationReasonNotTested = '03454' THEN 'MEDEXEMPT'
-				WHEN asr.AssessmentTypeAdministered ='REGASSWOACC_1' THEN 'REGPARTWOACC'	
-				WHEN asr.AssessmentTypeAdministered ='REGASSWACC_1' THEN 'REGPARTWACC'
-				WHEN asr.AssessmentTypeAdministered ='ALTASSALTACH_1' THEN 'ALTPARTALTACH'
-				WHEN asr.AssessmentTypeAdministered ='ADVASMTWOACC_1' THEN 'PADVASMWOACC'
-				WHEN asr.AssessmentTypeAdministered ='ADVASMTWACC_1' THEN 'PADVASMWACC'
-				WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWOACC_1' THEN 'PIADAPLASMWOACC'
-				WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWACC_1' THEN 'PIADAPLASMWACC'
-				WHEN asr.AssessmentRegistrationReasonNotTested = '03454_1' THEN 'MEDEXEMPT'
-				ELSE 'MISSING'
-		end as ParticipationStatus,
-		[RaceEdFactsCode] = CASE rdr.RaceEdFactsCode
+		asr.StudentIdentifierState
+		, asr.LeaIdentifierSeaAccountability
+		, asr.SchoolIdentifierSea
+		, a.AssessmentTitle
+		, a.AssessmentAcademicSubject
+		, a.AssessmentPurpose
+		, a.AssessmentPerformanceLevelIdentifier
+		, asr.GradeLevelWhenAssessed
+		, ds.AssessmentTypeAdministeredCode
+		, case 
+			WHEN asr.AssessmentTypeAdministered ='REGASSWOACC' THEN 'REGPARTWOACC'	
+			WHEN asr.AssessmentTypeAdministered ='REGASSWACC' THEN 'REGPARTWACC'
+			WHEN asr.AssessmentTypeAdministered ='ALTASSALTACH' THEN 'ALTPARTALTACH'
+			WHEN asr.AssessmentTypeAdministered ='ADVASMTWOACC' THEN 'PADVASMWOACC'
+			WHEN asr.AssessmentTypeAdministered ='ADVASMTWACC' THEN 'PADVASMWACC'
+			WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWOACC' THEN 'PIADAPLASMWOACC'
+			WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWACC' THEN 'PIADAPLASMWACC'
+			WHEN asr.AssessmentRegistrationParticipationIndicator = 0 THEN 'NPART'
+			WHEN asr.AssessmentRegistrationReasonNotTested = '03454' THEN 'MEDEXEMPT'
+			WHEN asr.AssessmentTypeAdministered ='REGASSWOACC_1' THEN 'REGPARTWOACC'	
+			WHEN asr.AssessmentTypeAdministered ='REGASSWACC_1' THEN 'REGPARTWACC'
+			WHEN asr.AssessmentTypeAdministered ='ALTASSALTACH_1' THEN 'ALTPARTALTACH'
+			WHEN asr.AssessmentTypeAdministered ='ADVASMTWOACC_1' THEN 'PADVASMWOACC'
+			WHEN asr.AssessmentTypeAdministered ='ADVASMTWACC_1' THEN 'PADVASMWACC'
+			WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWOACC_1' THEN 'PIADAPLASMWOACC'
+			WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWACC_1' THEN 'PIADAPLASMWACC'
+			WHEN asr.AssessmentRegistrationReasonNotTested = '03454_1' THEN 'MEDEXEMPT'
+			ELSE 'MISSING'
+		end as ParticipationStatus
+		, RaceEdFactsCode = CASE rdr.RaceEdFactsCode
 							WHEN 'AM7' THEN 'MAN'
 							WHEN 'AS7' THEN 'MA'
 							WHEN 'BL7' THEN 'MB'
@@ -355,27 +352,26 @@ BEGIN
 							WHEN 'MU7' THEN 'MM'
 							WHEN 'PI7' THEN 'MNP'
 							WHEN 'WH7' THEN 'MW'
-							END,
-		ske.[Sex],
-		[DisabilityStatusEdFactsCode] = CASE WHEN idea.IDEAIndicator = 1 THEN 'WDIS' ELSE 'MISSING' END,
-		[EnglishLearnerStatusEdFactsCode] = CASE WHEN el.EnglishLearnerStatus = 1 THEN 'LEP' ELSE 'MISSING' END,
-		[EconomicDisadvantageStatusEdFactsCode] = CASE WHEN eco.EconomicDisadvantageStatus = 1 THEN 'ECODIS' ELSE 'MISSING' END,
-		[MigrantStatusEdFactsCode] = CASE WHEN ms.MigrantStatus = 1 THEN 'MS' ELSE 'MISSING' END,
-		[HomelessnessStatusEdFactsCode] = CASE WHEN hs.HomelessnessStatus = 1 THEN 'HOMELSENRL' ELSE 'MISSING' END,
-		[ProgramType_FosterCareEdFactsCode] = CASE WHEN fc.ProgramType_FosterCare = 1 THEN 'FCS' ELSE 'MISSING' END,
-		[MilitaryConnectedStudentIndicatorEdFactsCode] = CASE WHEN  mcs.MilitaryConnectedStudentIndicator is not null 
+							END
+		,ske.Sex
+		, DisabilityStatusEdFactsCode = CASE WHEN idea.IDEAIndicator = 1 THEN 'WDIS' ELSE 'MISSING' END
+		, EnglishLearnerStatusEdFactsCode = CASE WHEN el.EnglishLearnerStatus = 1 THEN 'LEP' ELSE 'MISSING' END
+		, EconomicDisadvantageStatusEdFactsCode = CASE WHEN eco.EconomicDisadvantageStatus = 1 THEN 'ECODIS' ELSE 'MISSING' END
+		, MigrantStatusEdFactsCode = CASE WHEN ms.MigrantStatus = 1 THEN 'MS' ELSE 'MISSING' END
+		, HomelessnessStatusEdFactsCode = CASE WHEN hs.HomelessnessStatus = 1 THEN 'HOMELSENRL' ELSE 'MISSING' END
+		, ProgramType_FosterCareEdFactsCode = CASE WHEN fc.ProgramType_FosterCare = 1 THEN 'FCS' ELSE 'MISSING' END
+		, MilitaryConnectedStudentIndicatorEdFactsCode = CASE WHEN  mcs.MilitaryConnectedStudentIndicator is not null 
 															  AND mcs.MilitaryConnectedStudentIndicator NOT IN ('Unknown', 'NotMilitaryConnected')
 														 THEN 'MILCNCTD' ELSE 'MISSING' END 
-		,ppse.IDEAEducationalEnvironmentForSchoolAge 
-		,asr.AssessmentAdministrationStartDate
+		, ppse.IDEAEducationalEnvironmentForSchoolAge 
+		, asr.AssessmentAdministrationStartDate
 		, idea.IDEA_StatusStartDate
 		, idea.IDEA_StatusEndDate
-		,spr.RecordStartDateTime
-		,spr.RecordEndDateTime
-		,sy.SessionBeginDate
-		,sy.SessionEndDate
+		, spr.RecordStartDateTime
+		, spr.RecordEndDateTime
+		, sy.SessionBeginDate
+		, sy.SessionEndDate
 	INTO #staging
-
 	FROM #StagingAssessment a		
 	INNER JOIN #StagingAssessmentResult asr 
 		ON a.AssessmentIdentifier = asr.AssessmentIdentifier
@@ -395,10 +391,10 @@ BEGIN
 			AND a.AssessmentTypeAdministered = ds.AssessmentTypeAdministeredMap
 			AND a.AssessmentPerformanceLevelIdentifier = ds.AssessmentPerformanceLevelIdentifier
 	INNER JOIN #ToggleAssessments ta
-		ON ds.AssessmentTypeAdministeredCode = ta.AssessmentTypeCode
-			AND asr.GradeLevelCode = ta.Grade
-			AND asr.AssessmentAcademicSubject = CASE ta.[Subject] WHEN @SubjectAbbrv THEN @AssessmentAcademicSubject ELSE 'NOMATCH' END
-	LEFT JOIN #StagingPersonStatus idea
+		ON ds.AssessmentTypeAdministeredCode = replace(ta.AssessmentTypeCode, '_1', '')
+			AND asr.GradeLevelCode = replace(ta.Grade, '_1', '')
+			AND asr.AssessmentAcademicSubject = CASE ta.[Subject] WHEN 'MATH' THEN '01166_1' ELSE 'NOMATCH' END --             WHEN @SubjectAbbrv THEN @AssessmentAcademicSubject ELSE 'NOMATCH' END
+	LEFT JOIN #StagingProgramParticipationSPecialEducation idea
 		ON idea.StudentIdentifierState = asr.StudentIdentifierState
 			AND idea.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND idea.SchoolIdentifierSea = asr.SchoolIdentifierSea
@@ -478,594 +474,566 @@ BEGIN
 			AND ppse.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND ppse.SchoolIdentifierSea = asr.SchoolIdentifierSea
 	WHERE asr.SchoolYear = @SchoolYear
-	AND ta.[Subject] = @SubjectAbbrv
-	--AND ISNULL(ppse.IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS') 
-
+	AND replace(ta.[Subject], '_1', '') = @SubjectAbbrv
+	--AND ISNULL(ppse.IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPPS_1') 
 
 -----------------------------------------------------------------------------------------------------------------
--- BUILD CSA TEMPT TABLES FROM REPORT TABLE ---------------------------------------------------------------------
+-- BUILD CSA TEMP TABLES FROM REPORT TABLE ---------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
-			-- CSA LG ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,RACE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSA_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSA'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,RACE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSA LG ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,RACE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSA_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSA'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,RACE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
+	-- CSB LG ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,[SEX] = CASE SEX 
+			WHEN 'M' THEN 'Male' 
+			WHEN 'M_1' THEN 'Male' 
+			WHEN 'F' THEN 'Female' 
+			WHEN 'F_1' THEN 'Female' 
+		END
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSB_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSB'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,SEX
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
---select gradelevel, reportcode, ASSESSMENTACADEMICSUBJECT, CAtegorysetcode, count(*) 
---select * from rds.ReportEDFactsK12StudentAssessments
---where reportcode = 'C179'
---group by gradelevel, reportcode, ASSESSMENTACADEMICSUBJECT, CategorySetCode
---order by reportcode, ASSESSMENTACADEMICSUBJECT, CategorySetCode
+	-- CSC LG ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSC_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSC'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
+		AND IDEAINDICATOR IN ('WDIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
---select reportlevel, categorysetcode, gradelevel, count(*) 'Records', sum(AssessmentCount) 'AssessmentCount'
---from rds.ReportEDFactsK12StudentAssessments
---where reportcode = 'c179' and reportyear = '2023'
---group by reportlevel, categorysetcode, gradelevel
---order by categorysetcode, reportlevel
+	-- CSD LG ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ENGLISHLEARNERSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSD_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSD'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
+		AND ENGLISHLEARNERSTATUS IN ('LEP','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ENGLISHLEARNERSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
+	-- CSE LG ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ECONOMICDISADVANTAGESTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSE_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments 
+		WHERE CategorySetCode = 'CSE'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
+		AND ECONOMICDISADVANTAGESTATUS IN ('ECODIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ECONOMICDISADVANTAGESTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
+	-- CSF LG ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,MIGRANTSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSF_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments 
+		WHERE CategorySetCode = 'CSF'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
+		AND MIGRANTSTATUS IN ('MS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,MIGRANTSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
---select * from staging.AssessmentResult where AssessmentAcademicSubject = '00562'
+	-- CSG LG ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,HOMElESSNESSSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSG_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSG'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
+		AND HOMElESSNESSSTATUS IN ('HOMELSENRL','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,HOMElESSNESSSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
+	-- CSH LG ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,PROGRAMPARTICIPATIONFOSTERCARE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSH_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSH'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
+		AND PROGRAMPARTICIPATIONFOSTERCARE IN ('FCS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,PROGRAMPARTICIPATIONFOSTERCARE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
+	-- CSI LG ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,MILITARYCONNECTEDSTUDENTINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSI_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSI'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
+		AND MILITARYCONNECTEDSTUDENTINDICATOR IN ('MILCNCTD','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,MILITARYCONNECTEDSTUDENTINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSB LG ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,[SEX] = CASE SEX 
-					WHEN 'M' THEN 'Male' 
-					WHEN 'M_1' THEN 'Male' 
-					WHEN 'F' THEN 'Female' 
-					WHEN 'F_1' THEN 'Female' 
-				END
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSB_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSB'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,SEX
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSJ LG ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,RACE
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSJ_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSJ'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
+		AND IDEAINDICATOR IN ('WDIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,RACE
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSC LG ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSC_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSC'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
-			 AND IDEAINDICATOR IN ('WDIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-
-			-- CSD LG ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ENGLISHLEARNERSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSD_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSD'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
-			 AND ENGLISHLEARNERSTATUS IN ('LEP','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ENGLISHLEARNERSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			-- CSE LG ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ECONOMICDISADVANTAGESTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSE_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments 
-			 WHERE CategorySetCode = 'CSE'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
-			 AND ECONOMICDISADVANTAGESTATUS IN ('ECODIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ECONOMICDISADVANTAGESTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			-- CSF LG ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,MIGRANTSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSF_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments 
-			 WHERE CategorySetCode = 'CSF'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
-			 AND MIGRANTSTATUS IN ('MS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,MIGRANTSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			-- CSG LG ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,HOMElESSNESSSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSG_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSG'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
-			 AND HOMElESSNESSSTATUS IN ('HOMELSENRL','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,HOMElESSNESSSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			-- CSH LG ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,PROGRAMPARTICIPATIONFOSTERCARE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSH_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSH'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
-			 AND PROGRAMPARTICIPATIONFOSTERCARE IN ('FCS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,PROGRAMPARTICIPATIONFOSTERCARE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			-- CSI LG ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,MILITARYCONNECTEDSTUDENTINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSI_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSI'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
-			 AND MILITARYCONNECTEDSTUDENTINDICATOR IN ('MILCNCTD','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,MILITARYCONNECTEDSTUDENTINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			-- CSJ LG ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,RACE
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSJ_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSJ'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
-			 AND IDEAINDICATOR IN ('WDIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,RACE
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-
-			-- ST1 LG ------------------------------
-			 SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #ST1_LG
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'ST1'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-
-
+	-- ST1 LG ------------------------------
+		SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #ST1_LG
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'ST1'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'LG'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
 -- HIGH SCHOOL -------------------------
-			-- CSA HS ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,RACE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSA_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSA'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,RACE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-			 
+	-- CSA HS ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,RACE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSA_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSA'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,RACE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSB HS ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,[SEX] = CASE SEX WHEN 'M' THEN 'Male' WHEN 'F' THEN 'Female' END
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSB_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSB'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,SEX
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSB HS ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,[SEX] = CASE SEX 
+			WHEN 'M' THEN 'Male' 
+			WHEN 'M_1' THEN 'Male' 
+			WHEN 'F' THEN 'Female' 
+			WHEN 'F_1' THEN 'Female' 
+		END	
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSB_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSB'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,SEX
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSC HS ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSC_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSC'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
-			 AND IDEAINDICATOR IN ('WDIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSC HS ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSC_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSC'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
+		AND IDEAINDICATOR IN ('WDIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
+	-- CSD HS ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ENGLISHLEARNERSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSD_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSD'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
+		AND ENGLISHLEARNERSTATUS IN ('LEP','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ENGLISHLEARNERSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSD HS ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ENGLISHLEARNERSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSD_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSD'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
-			 AND ENGLISHLEARNERSTATUS IN ('LEP','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ENGLISHLEARNERSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSE HS ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ECONOMICDISADVANTAGESTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSE_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSE'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
+		AND ECONOMICDISADVANTAGESTATUS IN ('ECODIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ECONOMICDISADVANTAGESTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
+	-- CSF HS ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,MIGRANTSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSF_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSF'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
+		AND MIGRANTSTATUS IN ('MS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,MIGRANTSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSE HS ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ECONOMICDISADVANTAGESTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSE_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSE'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
-			 AND ECONOMICDISADVANTAGESTATUS IN ('ECODIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ECONOMICDISADVANTAGESTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSG HS ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,HOMElESSNESSSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSG_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSG'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
+		AND HOMElESSNESSSTATUS IN ('HOMELSENRL','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,HOMElESSNESSSTATUS
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSF HS ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,MIGRANTSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSF_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSF'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
-			 AND MIGRANTSTATUS IN ('MS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,MIGRANTSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSH HS ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,PROGRAMPARTICIPATIONFOSTERCARE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSH_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSH'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
+		AND PROGRAMPARTICIPATIONFOSTERCARE IN ('FCS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,PROGRAMPARTICIPATIONFOSTERCARE
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSG HS ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,HOMElESSNESSSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSG_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSG'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
-			 AND HOMElESSNESSSTATUS IN ('HOMELSENRL','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,HOMElESSNESSSTATUS
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSI HS ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,MILITARYCONNECTEDSTUDENTINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSI_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSI'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
+		AND MILITARYCONNECTEDSTUDENTINDICATOR IN ('MILCNCTD','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,MILITARYCONNECTEDSTUDENTINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSH HS ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,PROGRAMPARTICIPATIONFOSTERCARE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSH_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSH'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
-			 AND PROGRAMPARTICIPATIONFOSTERCARE IN ('FCS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,PROGRAMPARTICIPATIONFOSTERCARE
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
+	-- CSJ HS ------------------------------
+	SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,RACE
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #CSJ_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'CSJ'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
+		AND IDEAINDICATOR IN ('WDIS','MISSING')
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,RACE
+		,IDEAINDICATOR
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
-			-- CSI HS ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,MILITARYCONNECTEDSTUDENTINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSI_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSI'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
-			 AND MILITARYCONNECTEDSTUDENTINDICATOR IN ('MILCNCTD','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,MILITARYCONNECTEDSTUDENTINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-			-- CSJ HS ------------------------------
-			SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,RACE
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #CSJ_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'CSJ'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
-			 AND IDEAINDICATOR IN ('WDIS','MISSING')
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,RACE
-				,IDEAINDICATOR
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-
-			-- ST1 HS ------------------------------
-			 SELECT AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-				,AssessmentCount = SUM(AssessmentCount)
-			 INTO #ST1_HS
-			 FROM RDS.ReportEDFactsK12StudentAssessments
-			 WHERE CategorySetCode = 'ST1'
-			 AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
-			 AND ReportYear = @SchoolYear
-				AND ReportCode = @ReportCode 
-				AND ReportLevel = 'SEA'
-			 GROUP BY AssessmentRegistrationParticipationIndicator
-				,GRADELEVEL
-				,ReportCode
-				,ReportYear
-				,ReportLevel
-				,CategorySetCode
-
-
-
-
+	-- ST1 HS ------------------------------
+		SELECT AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
+		,AssessmentCount = SUM(AssessmentCount)
+		INTO #ST1_HS
+		FROM RDS.ReportEDFactsK12StudentAssessments
+		WHERE CategorySetCode = 'ST1'
+		AND TableTypeAbbrv = @TableTypeAbbrv + 'HS'
+		AND ReportYear = @SchoolYear
+		AND ReportCode = @ReportCode 
+		AND ReportLevel = 'SEA'
+		GROUP BY AssessmentRegistrationParticipationIndicator
+		,GRADELEVEL
+		,ReportCode
+		,ReportYear
+		,ReportLevel
+		,CategorySetCode
 
 ----------------------------------------------------------------------------------------------------
 -- BEGIN WRITING TEST CASES 
@@ -1073,7 +1041,6 @@ BEGIN
 
 	-- TEST CASE CSA LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSA_LG_TESTCASE') IS NOT NULL DROP TABLE #CSA_LG_TESTCASE
-
 
 		SELECT 
 			 ParticipationStatus
@@ -1086,35 +1053,34 @@ BEGIN
 			,GradeLevelWhenAssessed
 			,RaceEdFactsCode
 
-
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSA LG ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSA LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed  
-									  + '; Race Ethnicity: ' + s.RaceEdFactsCode  
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSA_LG_TESTCASE s
-			JOIN #CSA_LG sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.RaceEdFactsCode = sar.RACE
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSA'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSA LG ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSA LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+									+ '; Race Ethnicity: ' + s.RaceEdFactsCode  
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSA_LG_TESTCASE s
+		JOIN #CSA_LG sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.RaceEdFactsCode = sar.RACE
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSA'
 
 
 	-- TEST CASE CSB LG ------------------------------------------------------------------
@@ -1131,36 +1097,35 @@ BEGIN
 			,GradeLevelWhenAssessed
 			,Sex
 		
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSB LG ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSB LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed  
-									  + '; Sex Membership: ' + s.Sex 
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSB_LG_TESTCASE s
-			JOIN #CSB_LG sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.Sex = sar.SEX
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSB'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSB LG ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSB LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+									+ '; Sex Membership: ' + s.Sex 
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSB_LG_TESTCASE s
+		JOIN #CSB_LG sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND replace(s.Sex, '_1', '') = sar.SEX
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSB'
 	
-
 	-- TEST CASE CSC LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSC_LG_TESTCASE') IS NOT NULL DROP TABLE #CSC_LG_TESTCASE
 
@@ -1171,42 +1136,40 @@ BEGIN
 			,COUNT(DISTINCT StudentIdentifierState) AS AssessmentCount
 		INTO #CSC_LG_TESTCASE
 		FROM #staging 
-		where ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS')  -- PPPS should only be excluded from the Disability Category Set
+		WHERE ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPPS_1')  -- PPPS should only be excluded from the Disability Category Set
 		GROUP BY ParticipationStatus
 				,GradeLevelWhenAssessed
 				,DisabilityStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSC LG ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSC LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed 
-									  + '; Disability Status ' + S.DisabilityStatusEdFactsCode
-								  
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSC_LG_TESTCASE s
-			JOIN #CSC_LG sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.DisabilityStatusEdFactsCode = sar.IDEAINDICATOR
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSC'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+			@SqlUnitTestId
+			,'CSC LG ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSC LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; Disability Status ' + S.DisabilityStatusEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSC_LG_TESTCASE s
+		JOIN #CSC_LG sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.DisabilityStatusEdFactsCode = sar.IDEAINDICATOR
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSC'
 	
-
 	-- TEST CASE CSD LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSD_LG_TESTCASE') IS NOT NULL DROP TABLE #CSD_LG_TESTCASE
 
@@ -1221,38 +1184,35 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,EnglishLearnerStatusEdFactsCode
 
-
-
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSD LG ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSD LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed 
-									  + '; EnglishLearner Status: ' + s.EnglishLearnerStatusEdFactsCode 
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSD_LG_TESTCASE s
-			JOIN #CSD_LG sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.EnglishLearnerStatusEdFactsCode = sar.ENGLISHLEARNERSTATUS
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSD'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSD LG ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSD LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; EnglishLearner Status: ' + s.EnglishLearnerStatusEdFactsCode 
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSD_LG_TESTCASE s
+		JOIN #CSD_LG sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.EnglishLearnerStatusEdFactsCode = sar.ENGLISHLEARNERSTATUS
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSD'
 	
-
 	-- TEST CASE CSE LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSE_LG_TESTCASE') IS NOT NULL DROP TABLE #CSE_LG_TESTCASE
 
@@ -1267,34 +1227,34 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,EconomicDisadvantageStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSE LG ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSE LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed 
-									  + '; Economic Disadvantage Status: ' + s.EconomicDisadvantageStatusEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSE_LG_TESTCASE s
-			JOIN #CSE_LG sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.EconomicDisadvantageStatusEdFactsCode = sar.ECONOMICDISADVANTAGESTATUS
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSE'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSE LG ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSE LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; Economic Disadvantage Status: ' + s.EconomicDisadvantageStatusEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSE_LG_TESTCASE s
+		JOIN #CSE_LG sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.EconomicDisadvantageStatusEdFactsCode = sar.ECONOMICDISADVANTAGESTATUS
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSE'
 	
 	-- TEST CASE CSF LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSF_LG_TESTCASE') IS NOT NULL DROP TABLE #CSF_LG_TESTCASE
@@ -1310,35 +1270,34 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,MigrantStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSF LG ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSF LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed
-									  + '; Migrant Status: ' + s.MigrantStatusEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSF_LG_TESTCASE s
-			JOIN #CSF_LG sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.MigrantStatusEdFactsCode = sar.MIGRANTSTATUS
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSF'
-
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSF LG ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSF LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Migrant Status: ' + s.MigrantStatusEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSF_LG_TESTCASE s
+		JOIN #CSF_LG sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.MigrantStatusEdFactsCode = sar.MIGRANTSTATUS
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSF'
 
 	-- TEST CASE CSG LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSG_LG_TESTCASE') IS NOT NULL DROP TABLE #CSG_LG_TESTCASE
@@ -1354,35 +1313,34 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,HomelessnessStatusEdFactsCode		
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSG LG ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSG LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed
-									  + '; Homelessness Status: ' + s.HomelessnessStatusEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSG_LG_TESTCASE s
-			JOIN #CSG_LG sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.HomelessnessStatusEdFactsCode = sar.HOMElESSNESSSTATUS
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSG'
-
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSG LG ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSG LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Homelessness Status: ' + s.HomelessnessStatusEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSG_LG_TESTCASE s
+		JOIN #CSG_LG sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.HomelessnessStatusEdFactsCode = sar.HOMElESSNESSSTATUS
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSG'
 		
 	-- TEST CASE CSH LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSH_LG_TESTCASE') IS NOT NULL DROP TABLE #CSH_LG_TESTCASE
@@ -1398,39 +1356,37 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,ProgramType_FosterCareEdFactsCode
 		
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSH LG ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSH LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed
-									  + '; Foster Care: ' + s.ProgramType_FosterCareEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSH_LG_TESTCASE s
-			JOIN #CSH_LG sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.ProgramType_FosterCareEdFactsCode = sar.PROGRAMPARTICIPATIONFOSTERCARE
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSH'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSH LG ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSH LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Foster Care: ' + s.ProgramType_FosterCareEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSH_LG_TESTCASE s
+		JOIN #CSH_LG sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.ProgramType_FosterCareEdFactsCode = sar.PROGRAMPARTICIPATIONFOSTERCARE
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSH'
 	
-
 	-- TEST CASE CSI LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSI_LG_TESTCASE') IS NOT NULL DROP TABLE #CSI_LG_TESTCASE
-
 
 		SELECT 
 			 ParticipationStatus
@@ -1443,34 +1399,34 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,MilitaryConnectedStudentIndicatorEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSI LG ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSI LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed
-									  + '; Military Connected Student: ' + s.MilitaryConnectedStudentIndicatorEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSI_LG_TESTCASE s
-			JOIN #CSI_LG sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.MilitaryConnectedStudentIndicatorEdFactsCode = sar.MILITARYCONNECTEDSTUDENTINDICATOR
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSI'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSI LG ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSI LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Military Connected Student: ' + s.MilitaryConnectedStudentIndicatorEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSI_LG_TESTCASE s
+		JOIN #CSI_LG sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.MilitaryConnectedStudentIndicatorEdFactsCode = sar.MILITARYCONNECTEDSTUDENTINDICATOR
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSI'
 
 	-- TEST CASE CSJ LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSJ_LG_TESTCASE') IS NOT NULL DROP TABLE #CSJ_LG_TESTCASE
@@ -1483,47 +1439,45 @@ BEGIN
 			,COUNT(DISTINCT StudentIdentifierState) AS AssessmentCount
 		INTO #CSJ_LG_TESTCASE
 		FROM #staging 
-		where ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS')  -- PPPS should only be excluded from the Disability Category Set
+		WHERE ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPPS_1')  -- PPPS should only be excluded from the Disability Category Set
 		GROUP BY ParticipationStatus
 			,GradeLevelWhenAssessed
 			,RaceEdFactsCode
 			,DisabilityStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSJ LG ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSJ LG' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed  
-									  + '; Race Ethnicity: ' + s.RaceEdFactsCode  
-									  + '; Disability Status: ' + s.DisabilityStatusEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSJ_LG_TESTCASE s
-			JOIN #CSJ_LG sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.RaceEdFactsCode = sar.RACE
-				AND s.DisabilityStatusEdFactsCode = sar.IDEAINDICATOR
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSJ'
-	
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSJ LG ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSJ LG' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+									+ '; Race Ethnicity: ' + s.RaceEdFactsCode  
+									+ '; Disability Status: ' + s.DisabilityStatusEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSJ_LG_TESTCASE s
+		JOIN #CSJ_LG sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.RaceEdFactsCode = sar.RACE
+			AND s.DisabilityStatusEdFactsCode = sar.IDEAINDICATOR
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSJ'
 
 	-- TEST CASE ST1 LG ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#ST1_LG_TESTCASE') IS NOT NULL DROP TABLE #ST1_LG_TESTCASE
-
 
 		SELECT 
 			 ParticipationStatus
@@ -1556,12 +1510,10 @@ BEGIN
 		FROM #ST1_LG_TESTCASE s
 		JOIN #ST1_LG sar 
 			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-			And s.GradeLevelWhenAssessed = sar.GRADELEVEL
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
 			AND sar.ReportCode = @ReportCode 
 			AND sar.ReportYear = @SchoolYear
 			AND sar.CategorySetCode = 'ST1'
-	
-
 
 -- HIGH SCHOOL ------------------------------------------------------------------------------------------
 	-- TEST CASE CSA HS ------------------------------------------------------------------
@@ -1578,35 +1530,34 @@ BEGIN
 			,GradeLevelWhenAssessed
 			,RaceEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSA HS ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSA HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed  
-									  + '; Race Ethnicity: ' + s.RaceEdFactsCode  
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSA_HS_TESTCASE s
-			JOIN #CSA_HS sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.RaceEdFactsCode = sar.RACE
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSA'
-
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSA HS ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSA HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+									+ '; Race Ethnicity: ' + s.RaceEdFactsCode  
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSA_HS_TESTCASE s
+		JOIN #CSA_HS sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.RaceEdFactsCode = sar.RACE
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSA'
 
 	-- TEST CASE CSB HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSB_HS_TESTCASE') IS NOT NULL DROP TABLE #CSB_HS_TESTCASE
@@ -1622,36 +1573,35 @@ BEGIN
 			,GradeLevelWhenAssessed
 			,Sex
 		
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSB HS ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSB HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed  
-									  + '; Sex Membership: ' + s.Sex 
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSB_HS_TESTCASE s
-			JOIN #CSB_HS sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.Sex = sar.SEX
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSB'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSB HS ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSB HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+									+ '; Sex Membership: ' + s.Sex 
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+  		FROM #CSB_HS_TESTCASE s
+		JOIN #CSB_HS sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND replace(s.Sex, '_1', '') = sar.SEX
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSB'
 	
-
 	-- TEST CASE CSC HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSC_HS_TESTCASE') IS NOT NULL DROP TABLE #CSC_HS_TESTCASE
 
@@ -1662,41 +1612,40 @@ BEGIN
 			,COUNT(DISTINCT StudentIdentifierState) AS AssessmentCount
 		INTO #CSC_HS_TESTCASE
 		FROM #staging 
-		where ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS')  -- PPPS should only be excluded from the Disability Category Set
+		WHERE ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPPS_1')  -- PPPS should only be excluded from the Disability Category Set
 		GROUP BY ParticipationStatus
 				,GradeLevelWhenAssessed
 				,DisabilityStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSC HS ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSC HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed 
-									  + '; Disability Status ' + S.DisabilityStatusEdFactsCode
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSC HS ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSC HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; Disability Status ' + S.DisabilityStatusEdFactsCode
 								  
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSC_HS_TESTCASE s
-			JOIN #CSC_HS sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.DisabilityStatusEdFactsCode = sar.IDEAINDICATOR
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSC'
-	
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSC_HS_TESTCASE s
+		JOIN #CSC_HS sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.DisabilityStatusEdFactsCode = sar.IDEAINDICATOR
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSC'
 
 	-- TEST CASE CSD HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSD_HS_TESTCASE') IS NOT NULL DROP TABLE #CSD_HS_TESTCASE
@@ -1712,36 +1661,35 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,EnglishLearnerStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSD HS ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSD HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed 
-									  + '; EnglishLearner Status: ' + s.EnglishLearnerStatusEdFactsCode 
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSD_HS_TESTCASE s
-			JOIN #CSD_HS sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.EnglishLearnerStatusEdFactsCode = sar.ENGLISHLEARNERSTATUS
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSD'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSD HS ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSD HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; EnglishLearner Status: ' + s.EnglishLearnerStatusEdFactsCode 
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSD_HS_TESTCASE s
+		JOIN #CSD_HS sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.EnglishLearnerStatusEdFactsCode = sar.ENGLISHLEARNERSTATUS
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSD'
 	
-
 	-- TEST CASE CSE HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSE_HS_TESTCASE') IS NOT NULL DROP TABLE #CSE_HS_TESTCASE
 
@@ -1756,34 +1704,34 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,EconomicDisadvantageStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSE HS ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSE HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed 
-									  + '; Economic Disadvantage Status: ' + s.EconomicDisadvantageStatusEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSE_HS_TESTCASE s
-			JOIN #CSE_HS sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.EconomicDisadvantageStatusEdFactsCode = sar.ECONOMICDISADVANTAGESTATUS
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSE'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSE HS ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSE HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; Economic Disadvantage Status: ' + s.EconomicDisadvantageStatusEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSE_HS_TESTCASE s
+		JOIN #CSE_HS sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.EconomicDisadvantageStatusEdFactsCode = sar.ECONOMICDISADVANTAGESTATUS
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSE'
 	
 	-- TEST CASE CSF HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSF_HS_TESTCASE') IS NOT NULL DROP TABLE #CSF_HS_TESTCASE
@@ -1799,35 +1747,34 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,MigrantStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSF HS ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSF HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed
-									  + '; Migrant Status: ' + s.MigrantStatusEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSF_HS_TESTCASE s
-			JOIN #CSF_HS sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.MigrantStatusEdFactsCode = sar.MIGRANTSTATUS
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSF'
-
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSF HS ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSF HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Migrant Status: ' + s.MigrantStatusEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSF_HS_TESTCASE s
+		JOIN #CSF_HS sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.MigrantStatusEdFactsCode = sar.MIGRANTSTATUS
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSF'
 
 	-- TEST CASE CSG HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSG_HS_TESTCASE') IS NOT NULL DROP TABLE #CSG_HS_TESTCASE
@@ -1843,36 +1790,35 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,HomelessnessStatusEdFactsCode		
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSG HS ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSG HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed
-									  + '; Homelessness Status: ' + s.HomelessnessStatusEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSG_HS_TESTCASE s
-			JOIN #CSG_HS sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.HomelessnessStatusEdFactsCode = sar.HOMElESSNESSSTATUS
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSG'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSG HS ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSG HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Homelessness Status: ' + s.HomelessnessStatusEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSG_HS_TESTCASE s
+		JOIN #CSG_HS sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.HomelessnessStatusEdFactsCode = sar.HOMElESSNESSSTATUS
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSG'
 
-		
 	-- TEST CASE CSH HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSH_HS_TESTCASE') IS NOT NULL DROP TABLE #CSH_HS_TESTCASE
 
@@ -1887,36 +1833,35 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,ProgramType_FosterCareEdFactsCode
 		
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSH HS ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSH HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed
-									  + '; Foster Care: ' + s.ProgramType_FosterCareEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSH_HS_TESTCASE s
-			JOIN #CSH_HS sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.ProgramType_FosterCareEdFactsCode = sar.PROGRAMPARTICIPATIONFOSTERCARE
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSH'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSH HS ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSH HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Foster Care: ' + s.ProgramType_FosterCareEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSH_HS_TESTCASE s
+		JOIN #CSH_HS sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.ProgramType_FosterCareEdFactsCode = sar.PROGRAMPARTICIPATIONFOSTERCARE
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSH'
 	
-
 	-- TEST CASE CSI HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSI_HS_TESTCASE') IS NOT NULL DROP TABLE #CSI_HS_TESTCASE
 
@@ -1932,34 +1877,34 @@ BEGIN
 				,GradeLevelWhenAssessed
 				,MilitaryConnectedStudentIndicatorEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSI HS ' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSI HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed
-									  + '; Military Connected Student: ' + s.MilitaryConnectedStudentIndicatorEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSI_HS_TESTCASE s
-			JOIN #CSI_HS sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.MilitaryConnectedStudentIndicatorEdFactsCode = sar.MILITARYCONNECTEDSTUDENTINDICATOR
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSI'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSI HS ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSI HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Military Connected Student: ' + s.MilitaryConnectedStudentIndicatorEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+		FROM #CSI_HS_TESTCASE s
+		JOIN #CSI_HS sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.MilitaryConnectedStudentIndicatorEdFactsCode = sar.MILITARYCONNECTEDSTUDENTINDICATOR
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSI'
 
 	-- TEST CASE CSJ HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSJ_HS_TESTCASE') IS NOT NULL DROP TABLE #CSJ_HS_TESTCASE
@@ -1972,44 +1917,43 @@ BEGIN
 			,COUNT(DISTINCT StudentIdentifierState) AS AssessmentCount
 		INTO #CSJ_HS_TESTCASE
 		FROM #staging 
-		where ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS')  -- PPPS should only be excluded from the Disability Category Set
+		WHERE ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPPS_1')  -- PPPS should only be excluded from the Disability Category Set
 		GROUP BY ParticipationStatus
 			,GradeLevelWhenAssessed
 			,RaceEdFactsCode
 			,DisabilityStatusEdFactsCode
 
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT 
-				 @SqlUnitTestId
-				,'CSJ HS' + UPPER(sar.ReportLevel) + ' Match All'
-				,'CSJ HS' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
-									  + '; Grade Level: ' + s.GradeLevelWhenAssessed  
-									  + '; Race Ethnicity: ' + s.RaceEdFactsCode  
-									  + '; Disability Status: ' + s.DisabilityStatusEdFactsCode
-				,s.AssessmentCount
-				,sar.AssessmentCount
-				,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
-				,GETDATE()
-			FROM #CSJ_HS_TESTCASE s
-			JOIN #CSJ_HS sar 
-				ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-				AND s.GradeLevelWhenAssessed = sar.GRADELEVEL
-				AND s.RaceEdFactsCode = sar.RACE
-				AND s.DisabilityStatusEdFactsCode = sar.IDEAINDICATOR
-				AND sar.ReportCode = @ReportCode 
-				AND sar.ReportYear = @SchoolYear
-				AND sar.CategorySetCode = 'CSJ'
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT 
+				@SqlUnitTestId
+			,'CSJ HS' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSJ HS' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
+									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+									+ '; Race Ethnicity: ' + s.RaceEdFactsCode  
+									+ '; Disability Status: ' + s.DisabilityStatusEdFactsCode
+			,s.AssessmentCount
+			,sar.AssessmentCount
+			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
+			,GETDATE()
+ 		FROM #CSJ_HS_TESTCASE s
+		JOIN #CSJ_HS sar 
+			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
+			AND s.RaceEdFactsCode = sar.RACE
+			AND s.DisabilityStatusEdFactsCode = sar.IDEAINDICATOR
+			AND sar.ReportCode = @ReportCode 
+			AND sar.ReportYear = @SchoolYear
+			AND sar.CategorySetCode = 'CSJ'
 	
-
 	-- TEST CASE ST1 HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#ST1_HS_TESTCASE') IS NOT NULL DROP TABLE #ST1_HS_TESTCASE
 
@@ -2045,10 +1989,18 @@ BEGIN
 		FROM #ST1_HS_TESTCASE s
 		JOIN #ST1_HS sar 
 			ON s.ParticipationStatus = sar.AssessmentRegistrationParticipationIndicator
-			And s.GradeLevelWhenAssessed = sar.GRADELEVEL
+			AND replace(s.GradeLevelWhenAssessed, '_1', '') = sar.GRADELEVEL
 			AND sar.ReportCode = @ReportCode 
 			AND sar.ReportYear = @SchoolYear
 			AND sar.CategorySetCode = 'ST1'
 	
+		--Query to find the tests that did not match
+		-- select * 
+		-- from App.SqlUnitTestCaseResult r
+		-- 	inner join App.SqlUnitTest t
+		-- 		on r.SqlUnitTestId = t.SqlUnitTestId
+		-- WHERE t.TestScope = @FileSpec
+		-- AND Passed = 0
+
 	   	 
 END
