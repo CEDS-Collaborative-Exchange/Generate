@@ -244,7 +244,7 @@ Teachers (FTE) by Credential Status and SPED Support Services Category
 	FROM #TC3 s
 	LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
 		ON s.SpecialEducationSupportServicesCategoryEdFactsCode = rreksc.SpecialEducationSupportServicesCategory
-		AND s.EdFactsCertificationStatus = rreksc.EDFACTSCERTIFICATIONSTATUS
+		AND replace(s.EdFactsCertificationStatus, '_1', '') = rreksc.EDFACTSCERTIFICATIONSTATUS
 		AND s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
 		AND rreksc.ReportCode = 'C099' 
 		AND rreksc.ReportYear = @SchoolYear
@@ -300,13 +300,13 @@ Subtotal by SPED Support Services Category
 
 	DROP TABLE #TC4
 
+	--Query to find the tests that did not pass
 	--select * 
 	--from App.SqlUnitTestCaseResult r
 	--	inner join App.SqlUnitTest t
 	--		on r.SqlUnitTestId = t.SqlUnitTestId
-	--WHERE TestCaseName = 'ST1 LEA Match All' 
-	--AND t.TestScope = 'FS099'
-	--AND Passed = 1
+	--WHERE t.TestScope = 'FS099'
+	--AND Passed = 0
 
 END
 
