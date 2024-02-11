@@ -152,7 +152,7 @@ BEGIN
 		WHERE 1 = 1
 		and sps.HomelessnessStatus = 1
 	-- Grades UG and 13 added to this list because our Toggle doesn't allow these
-		AND isnull(GradeLevel, 'xx') not in ('AE', 'ABE', '13', 'UG')
+		AND isnull(GradeLevel, 'xx') not in ('AE', 'ABE', '13', 'UG', 'AE_1', 'ABE_1', '13_1', 'UG_1')
 		AND ske.StudentIdentifierState not like ('%CI%')
 
 
@@ -168,7 +168,7 @@ BEGIN
 	SELECT DISTINCT LEAIdentifierSea
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
-		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
 
 
 	-- Gather, evaluate & record the results
@@ -181,6 +181,8 @@ BEGIN
 		, CASE ske.Sex
 			WHEN 'Male'		THEN 'M'
 			WHEN 'Female'	THEN 'F'
+			WHEN 'Male_1'	THEN 'M'
+			WHEN 'Female_1'	THEN 'F'
 			ELSE 'MISSING'
 		END AS SexEdFactsCode
 		, idea.ProgramParticipationEndDate
@@ -206,13 +208,19 @@ BEGIN
 			WHEN 'SheltersTransitionalHousing'	THEN 'STH'
 			WHEN 'Transitional Housing'			THEN 'STH'
 			WHEN 'Unsheltered'					THEN 'U'
+			WHEN 'DoubledUp_1'					THEN 'D'
+			WHEN 'HotelMotel_1'					THEN 'HM'
+			WHEN 'Shelter_1'					THEN 'STH'
+			WHEN 'SheltersTransitionalHousing_1'THEN 'STH'
+			WHEN 'Transitional Housing_1'		THEN 'STH'
+			WHEN 'Unsheltered_1'				THEN 'U'
 			ELSE 'MISSING'
 		END AS HomelessPrimaryNighttimeResidenceEdFactsCode
 
 	--Age/Grade
 		, CASE WHEN rds.Get_Age(ske.Birthdate, @SYStart) >= 3
 					AND rds.Get_Age(ske.Birthdate, @SYStart) <= 5
-					AND ISNULL(ske.GradeLevel, 'PK') = 'PK'
+					AND ISNULL(ske.GradeLevel, 'PK') in ('PK', 'PK_1')
 				THEN '3TO5NOTK'
 				ELSE ISNULL(ske.GradeLevel, 'MISSING')
 		END AS GradeLevelEdFactsCode	
@@ -271,7 +279,7 @@ BEGIN
 	--race (rds)
 	LEFT JOIN RDS.DimRaces rdr
 		ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
-			OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceCode)
+			OR (ske.HispanicLatinoEthnicity = 0 AND replace(spr.RaceType, '_1', '') = rdr.RaceCode)
 
 	WHERE ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') 
 		BETWEEN @SYStart AND @SYEnd
@@ -308,7 +316,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
-		ON s.GradeLevelEdFactsCode = rreksc.GRADELEVEL
+		ON replace(s.GradeLevelEdFactsCode, '_1', '') = rreksc.GRADELEVEL
 		AND rreksc.ReportCode = 'C118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
@@ -587,7 +595,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_CSH s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
-		ON s.RaceEdFactsCode = rreksc.RACE
+		ON replace(s.RaceEdFactsCode, '_1', '') = rreksc.RACE
 		AND rreksc.ReportCode = 'C118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
@@ -672,7 +680,7 @@ BEGIN
 	FROM #L_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-		AND s.GradeLevelEdFactsCode = rreksc.GRADELEVEL
+		AND replace(s.GradeLevelEdFactsCode, '_1', '') = rreksc.GRADELEVEL
 		AND rreksc.ReportCode = 'C118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
@@ -1002,7 +1010,7 @@ BEGIN
 	FROM #L_CSH s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-		AND s.RaceEdFactsCode = rreksc.RACE
+		AND replace(s.RaceEdFactsCode, '_1', '') = rreksc.RACE
 		AND rreksc.ReportCode = 'C118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
@@ -1057,7 +1065,7 @@ BEGIN
 	--from App.SqlUnitTestCaseResult sr
 	--	inner join App.SqlUnitTest s
 	--		on s.SqlUnitTestId = sr.SqlUnitTestId
-	--where s.UnitTestName like '%118%'
-	--and passed = 1
+	--where s.TestScope = 'FS118'
+	--and passed = 0
 
 END
