@@ -238,11 +238,11 @@ BEGIN
 			AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate) >= @SYStartDate
 	--title III (rds)
 		LEFT JOIN #vwTitleIIIStatuses rdt3s
-			ON ISNULL(sppt3.TitleIIIImmigrantStatus, -1) = ISNULL(rdt3s.TitleIIIImmigrantParticipationStatusMap, rdt3s.TitleIIIImmigrantParticipationStatusCode)
+			ON ISNULL(sppt3.TitleIIIImmigrantStatus, -1) 						= ISNULL(CAST(rdt3s.TitleIIIImmigrantParticipationStatusMap AS SMALLINT), -1)
 			AND ISNULL(sppt3.TitleIIILanguageInstructionProgramType, 'MISSING') = ISNULL(rdt3s.TitleIIILanguageInstructionProgramTypeMap, rdt3s.TitleIIILanguageInstructionProgramTypeCode)
-			AND ISNULL(sppt3.Proficiency_TitleIII, 'MISSING') = ISNULL(rdt3s.ProficiencyStatusMap, rdt3s.ProficiencyStatusCode) 
-			AND ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING') = ISNULL(rdt3s.TitleIIIAccountabilityProgressStatusMap, rdt3s.TitleIIIAccountabilityProgressStatusCode)
-			AND rdt3s.ProgramParticipationTitleIIILiepCode = 'MISSING'
+			AND ISNULL(sppt3.Proficiency_TitleIII, 'MISSING') 					= ISNULL(rdt3s.ProficiencyStatusMap, rdt3s.ProficiencyStatusCode) 
+			AND ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING') 	= ISNULL(rdt3s.TitleIIIAccountabilityProgressStatusMap, rdt3s.TitleIIIAccountabilityProgressStatusCode)
+			AND rdt3s.ProgramParticipationTitleIIILiepCode 						= 'MISSING'
 	--english learner (rds)
 		LEFT JOIN #vwEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdels.EnglishLearnerStatusMap AS SMALLINT), -1)

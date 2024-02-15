@@ -15,11 +15,11 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 			ELSE -1
 		  END AS TitleIIIProgramParticipationLiepMap
 		, rdt3s.ProficiencyStatusCode
-		, ISNULL(sssrd1.InputCode, 'MISSING') AS ProficiencyStatusMap
+		, sssrd1.InputCode AS ProficiencyStatusMap
 		, rdt3s.TitleIIIAccountabilityProgressStatusCode
-		, ISNULL(sssrd2.InputCode, 'MISSING') as TitleIIIAccountabilityProgressStatusMap
+		, sssrd2.InputCode as TitleIIIAccountabilityProgressStatusMap
 		, rdt3s.TitleIIILanguageInstructionProgramTypeCode
-		, ISNULL(sssrd3.InputCode, 'MISSING') as TitleIIILanguageInstructionProgramTypeMap
+		, sssrd3.InputCode as TitleIIILanguageInstructionProgramTypeMap
   	FROM rds.DimTitleIIIStatuses rdt3s
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	--ProficiencyStatusCode

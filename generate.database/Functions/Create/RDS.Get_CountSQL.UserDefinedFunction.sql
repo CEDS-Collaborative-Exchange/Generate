@@ -2353,6 +2353,17 @@ BEGIN
 					'
 				end
 			end
+			else
+			begin
+				if CHARINDEX('IdeaDisabilityType', @categorySetReportFieldList) > 0
+				begin
+					set @sqlRemoveMissing = @sqlRemoveMissing + '
+
+					-- Remove DD counts for invalid ages
+					delete from #categorySet where IdeaDisabilityType = ''DD''
+					'
+				end
+			end
 		end
 		else if @reportCode in ('c005')
 		begin
