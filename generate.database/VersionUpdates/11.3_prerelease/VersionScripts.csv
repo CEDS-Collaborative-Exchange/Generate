@@ -3,6 +3,8 @@ VersionUpdates\\11.3_prerelease,CorrectDataMigrationTasks.sql,0
 VersionUpdates\\11.3_prerelease,Remove-IDS-ColumnIds-From-Staging.sql,0
 VersionUpdates\\11.3_prerelease,UpdateEdFactsMigrantCodes.sql,0
 VersionUpdates\\11.3_prerelease,RemoveObsoleteLanguages.sql,0
+VersionUpdates\\11.3_prerelease,RDS.TableChanges.sql,0
+VersionUpdates\\11.3_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\11.3_prerelease,Metadata-Updates.sql,0
 VersionUpdates\\11.3_prerelease,Metadata-2023-Updates.sql,0
 VersionUpdates\\11.3_prerelease,Metadata-2024-Updates.sql,0

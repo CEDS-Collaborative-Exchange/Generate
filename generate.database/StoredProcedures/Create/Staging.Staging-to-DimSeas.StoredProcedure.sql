@@ -185,18 +185,18 @@ BEGIN
 			, sop.TelephoneNumber
 			, ssd.SeaContact_Identifier
 			, ssd.SeaContact_PositionTitle
-			, left(smam.AddressStreetNumberAndName, 40)  AS MailingAddressStreet
-			, smam.AddressApartmentRoomOrSuiteNumber AS MailingAddressStreet2
-			, smam.AddressCity AS MailingAddressCity
-			, smam.StateAbbreviation AS MailingAddressState
-			, smam.AddressPostalCode AS MailingAddressPostalCode
-			, smam.AddressCountyAnsiCodeCode AS MailingCountyAnsiCode
-			, left(smap.AddressStreetNumberAndName, 40) AS PhysicalAddressStreet
-			, smap.AddressApartmentRoomOrSuiteNumber AS PhysicalAddressStreet2
-			, smap.AddressCity AS PhysicalAddressCity
-			, smap.StateAbbreviation AS PhysicalAddressState
-			, smap.AddressPostalCode AS PhysicalAddressPostalCode
-			, smap.AddressCountyAnsiCodeCode AS PhysicalCountyAnsiCode
+			, smam.AddressStreetNumberAndName				AS MailingAddressStreet
+			, smam.AddressApartmentRoomOrSuiteNumber 		AS MailingAddressStreet2
+			, smam.AddressCity 								AS MailingAddressCity
+			, smam.StateAbbreviation 						AS MailingAddressState
+			, smam.AddressPostalCode 						AS MailingAddressPostalCode
+			, smam.AddressCountyAnsiCodeCode 				AS MailingCountyAnsiCode
+			, smap.AddressStreetNumberAndName				AS PhysicalAddressStreet
+			, smap.AddressApartmentRoomOrSuiteNumber 		AS PhysicalAddressStreet2
+			, smap.AddressCity 								AS PhysicalAddressCity
+			, smap.StateAbbreviation 						AS PhysicalAddressState
+			, smap.AddressPostalCode 						AS PhysicalAddressPostalCode
+			, smap.AddressCountyAnsiCodeCode 				AS PhysicalCountyAnsiCode
 			, ssd.RecordStartDateTime 
 			, ssd.RecordEndDateTime 
 		FROM Staging.StateDetail ssd
