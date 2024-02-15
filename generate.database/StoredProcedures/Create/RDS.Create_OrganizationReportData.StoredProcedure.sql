@@ -1166,7 +1166,7 @@ BEGIN
 							, @reportCode
 							, @reportLevel
 							, @reportYear
-							, statuses.GunFreeSchoolsActReportingStatusCode as GunFreeStatusCode
+							, statuses.GunFreeSchoolsActReportingStatusEdFactsCode as GunFreeStatusCode
 						from rds.FactOrganizationCounts fact
 							inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId
@@ -1208,7 +1208,7 @@ BEGIN
 							, sch.StateAbbreviationCode
 							, sch.StateAbbreviationDescription as StateName
 							, 0 as TotalIndicator
-							, statuses.GunFreeSchoolsActReportingStatusCode as GunFreeStatusCode
+							, statuses.GunFreeSchoolsActReportingStatusEdFactsCode as GunFreeStatusCode
 						from rds.FactOrganizationCounts fact
 							inner join rds.DimSchoolYears d
 								on fact.SchoolYearId = d.DimSchoolYearId

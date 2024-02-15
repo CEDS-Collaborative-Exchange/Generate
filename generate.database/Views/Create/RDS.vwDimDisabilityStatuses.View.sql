@@ -16,9 +16,9 @@ AS
 			ELSE -1
 		  END AS Section504StatusMap
 		, rdds.DisabilityConditionTypeCode
-		, ISNULL(sssrd1.InputCode, 'MISSING') AS DisabilityConditionTypeMap
+		, sssrd1.InputCode AS DisabilityConditionTypeMap
 		, rdds.DisabilityDeterminationSourceTypeCode
-		, ISNULL(sssrd2.InputCode, 'MISSING') AS DisabilityDeterminationSourceTypeMap
+		, sssrd2.InputCode AS DisabilityDeterminationSourceTypeMap
 	FROM rds.DimDisabilityStatuses rdds
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1

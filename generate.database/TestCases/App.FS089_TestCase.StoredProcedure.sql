@@ -127,20 +127,34 @@ BEGIN
 		rda.AgeValue,
 		ske.GradeLevel,
 		CASE idea.IdeaDisabilityTypeCode
-            WHEN 'Autism' THEN 'AUT'
-            WHEN 'Deafblindness' THEN 'DB'
-            WHEN 'Deafness' THEN 'DB'
-            WHEN 'Developmentaldelay' THEN 'DD'
-            WHEN 'Emotionaldisturbance' THEN 'EMN'
-            WHEN 'Hearingimpairment' THEN 'HI'
-            WHEN 'Intellectualdisability' THEN 'ID'
-            WHEN 'Multipledisabilities' THEN 'MD'
-            WHEN 'Orthopedicimpairment' THEN 'OI'
-            WHEN 'Otherhealthimpairment' THEN 'OHI'
-            WHEN 'Specificlearningdisability' THEN 'SLD'
-            WHEN 'Speechlanguageimpairment' THEN 'SLI'
-            WHEN 'Traumaticbraininjury' THEN 'TBI'
-            WHEN 'Visualimpairment' THEN 'VI'
+            WHEN 'Autism'						THEN 'AUT'
+            WHEN 'Deafblindness'				THEN 'DB'
+            WHEN 'Deafness'						THEN 'DB'
+            WHEN 'Developmentaldelay'			THEN 'DD'
+            WHEN 'Emotionaldisturbance'			THEN 'EMN'
+            WHEN 'Hearingimpairment'			THEN 'HI'
+            WHEN 'Intellectualdisability'		THEN 'ID'
+            WHEN 'Multipledisabilities'			THEN 'MD'
+            WHEN 'Orthopedicimpairment'			THEN 'OI'
+            WHEN 'Otherhealthimpairment'		THEN 'OHI'
+            WHEN 'Specificlearningdisability'	THEN 'SLD'
+            WHEN 'Speechlanguageimpairment'		THEN 'SLI'
+            WHEN 'Traumaticbraininjury'			THEN 'TBI'
+            WHEN 'Visualimpairment'				THEN 'VI'
+            WHEN 'Autism_1'						THEN 'AUT'
+            WHEN 'Deafblindness_1'				THEN 'DB'
+            WHEN 'Deafness_1'					THEN 'DB'
+            WHEN 'Developmentaldelay_1'			THEN 'DD'
+            WHEN 'Emotionaldisturbance_1'		THEN 'EMN'
+            WHEN 'Hearingimpairment_1'			THEN 'HI'
+            WHEN 'Intellectualdisability_1'		THEN 'ID'
+            WHEN 'Multipledisabilities_1'		THEN 'MD'
+            WHEN 'Orthopedicimpairment_1'		THEN 'OI'
+            WHEN 'Otherhealthimpairment_1'		THEN 'OHI'
+            WHEN 'Specificlearningdisability_1' THEN 'SLD'
+            WHEN 'Speechlanguageimpairment_1'	THEN 'SLI'
+            WHEN 'Traumaticbraininjury_1'		THEN 'TBI'
+            WHEN 'Visualimpairment_1'			THEN 'VI'
             ELSE idea.IdeaDisabilityTypeCode
 		END AS IdeaDisabilityTypeCode,
 		CASE 
@@ -151,12 +165,20 @@ BEGIN
 			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander' THEN 'PI7'
 			WHEN spr.RaceType = 'White' THEN 'WH7'
 			WHEN spr.RaceType = 'TwoorMoreRaces' THEN 'MU7'
+			WHEN spr.RaceType = 'AmericanIndianorAlaskaNative_1' THEN 'AM7'
+			WHEN spr.RaceType = 'Asian_1' THEN 'AS7'
+			WHEN spr.RaceType = 'BlackorAfricanAmerican_1' THEN 'BL7'
+			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander_1' THEN 'PI7'
+			WHEN spr.RaceType = 'White_1' THEN 'WH7'
+			WHEN spr.RaceType = 'TwoorMoreRaces_1' THEN 'MU7'
 		END AS RaceEdFactsCode,
 		CASE ske.Sex
-				WHEN 'Male' THEN 'M'
-				WHEN 'Female' THEN 'F'
-				ELSE 'MISSING'
-			  END AS SexEdFactsCode,
+			WHEN 'Male'		THEN 'M'
+			WHEN 'Female'	THEN 'F'
+			WHEN 'Male_1'	THEN 'M'
+			WHEN 'Female_1'	THEN 'F'
+			ELSE 'MISSING'
+		END AS SexEdFactsCode,
 		CASE 
 			WHEN ISNULL(el.EnglishLearnerStatus, '') <> '' 
 				AND @ChildCountDate
@@ -215,34 +237,10 @@ BEGIN
 		and (rda.AgeValue in (3,4)
 			OR (rda.AgeValue = 5
 				AND (ske.GradeLevel IS NULL 
-					OR ske.GradeLevel = 'PK')))
-
-					
-	-- select * 
-	-- from #c089Staging c
-	-- left join debug.c089_sea_CSC_2023_EDENVIDEAEC_SEX t
-	-- 	on c.StudentIdentifierState = t.K12StudentStudentIdentifierState
-	-- 	and c.SexEdFactsCode = t.SEX
-	-- 	and c.IDEAEducationalEnvironmentForEarlyChildhood = t.IDEAEDUCATIONALENVIRONMENTFOREARLYCHILDHOOD
-	-- where t.K12StudentStudentIdentifierState is null
-	-- 	and c.SexEdFactsCode = 'F'
-	-- 	and c.IDEAEducationalEnvironmentForEarlyChildhood = 'REC10YOTHLOC'
-
-	-- select * 
-	-- from  #c089Staging c
-	-- left join debug.c089_sea_ST5_2023_LEPBOTH t
-	-- 	on c.StudentIdentifierState = t.K12StudentStudentIdentifierState
-	-- 	and c.EnglishLearnerStatusEdFactsCode = t.ENGLISHLEARNERSTATUS
-	-- where /* c.StudentIdentifierState is null
-	-- 	and */
-	-- 	t.K12StudentStudentIdentifierState is null
-	-- 	and c.EnglishLearnerStatusEdFactsCode = 'nlep'
-	-- 	--and t.ENGLISHLEARNERSTATUS = 'nlep'
-	-- order by c.SexEdFactsCode
-
-	-- select StudentIdentifierState from #c089Staging t group by StudentIdentifierState having count(1) > 1
-	-- select t.K12StudentStudentIdentifierState from debug.c089_sea_ST5_2023_LEPBOTH t group by t.K12StudentStudentIdentifierState having count(1) > 1
-
+					OR ske.GradeLevel in ('PK', 'PK_1')
+					)
+				)
+			)
 
 	-- Gather, evaluate & record the results
 
@@ -1298,6 +1296,15 @@ BEGIN
 			AND rreksd.CategorySetCode = 'TOT'
 
 		DROP TABLE #L_TOT7
+
+	--check the results
+
+	--select *
+	--from App.SqlUnitTestCaseResult sr
+	--	inner join App.SqlUnitTest s
+	--		on s.SqlUnitTestId = sr.SqlUnitTestId
+	--where s.UnitTestName like '%089%'
+	--and passed = 1
 
 
 END

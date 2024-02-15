@@ -4,13 +4,13 @@ AS
 		  rdms.DimMilitaryStatusId
 		, rsy.SchoolYear
 		, rdms.MilitaryConnectedStudentIndicatorCode
-		, ISNULL(sssrd1.InputCode, 'MISSING') AS MilitaryConnectedStudentIndicatorMap
+		, sssrd1.InputCode AS MilitaryConnectedStudentIndicatorMap
 		, rdms.MilitaryActiveStudentIndicatorCode
-		, ISNULL(sssrd2.InputCode, 'MISSING') AS MilitaryActiveStudentIndicatorMap
+		, sssrd2.InputCode AS MilitaryActiveStudentIndicatorMap
 		, rdms.MilitaryBranchCode
-		, ISNULL(sssrd3.InputCode, 'MISSING') AS MilitaryBranchMap
+		, sssrd3.InputCode AS MilitaryBranchMap
 		, rdms.MilitaryVeteranStudentIndicatorCode
-		, ISNULL(sssrd4.InputCode, 'MISSING') AS MilitaryVeteranStudentIndicatorMap
+		, sssrd4.InputCode AS MilitaryVeteranStudentIndicatorMap
 	FROM rds.DimMilitaryStatuses rdms
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
