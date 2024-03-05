@@ -1,2 +1,27 @@
 VersionUpdates\\12.0_prerelease,Restore 11.3.sql,0
 VersionUpdates\\12.0_prerelease,UpdateDbVersion.sql,0
+VersionUpdates\\12.0_prerelease,UpdateDbVersion.sql,0
+VersionUpdates\\12.0\\Tables\\Drop,Staging.StagingValidationRules.Table.sql
+VersionUpdates\\12.0\\Tables\\Create,Staging.StagingValidationRules.Table.sql
+VersionUpdates\\12.0\\Tables\\Drop,Staging.StagingValidationResults.Table.sql
+VersionUpdates\\12.0\\Tables\\Create,Staging.StagingValidationResults.Table.sql
+VersionUpdates\\12.0\\Tables\\Drop,Staging.StagingValidationRules_ReportsXREF.Table.sql
+VersionUpdates\\12.0\\Tables\\Create,Staging.StagingValidationRules_ReportsXREF.Table.sql
+VersionUpdates\\12.0\\Tables\\Drop,App.GenerateStagingColumns.Table.sql
+VersionUpdates\\12.0\\Tables\\Create,App.GenerateStagingColumns.Table.sql
+VersionUpdates\\12.0\\Views\\Drop,App.vwStagingRelationships.View.sql
+VersionUpdates\\12.0\\Views\\Create,App.vwStagingRelationships.View.sql
+VersionUpdates\\12.0\\Views\\Drop,Staging.vwStagingValidationRules.View.sql
+VersionUpdates\\12.0\\Views\\Create,Staging.vwStagingValidationRules.View.sql
+VersionUpdates\\12.0\\StoredProcedures\\Drop,Staging.StagingValidation_AssignRuleToReports.StoredProcedure.sql
+VersionUpdates\\12.0\\StoredProcedures\\Create,Staging.StagingValidation_AssignRuleToReports.StoredProcedure.sql
+VersionUpdates\\12.0\\StoredProcedures\\Drop,Staging.StagingValidation_Execute.StoredProcedure.sql
+VersionUpdates\\12.0\\StoredProcedures\\Create,Staging.StagingValidation_Execute.StoredProcedure.sql
+VersionUpdates\\12.0\\StoredProcedures\\Drop,Staging.StagingValidation_GetResults.StoredProcedure.sql
+VersionUpdates\\12.0\\StoredProcedures\\Create,Staging.StagingValidation_GetResults.StoredProcedure.sql
+VersionUpdates\\12.0\\StoredProcedures\\Drop,Staging.StagingValidation_InsertRule.StoredProcedure.sql
+VersionUpdates\\12.0\\StoredProcedures\\Create,Staging.StagingValidation_InsertRule.StoredProcedure.sql
+VersionUpdates\\12.0\\StoredProcedures\\Drop,Staging.ValidateStagingData_GetResults.StoredProcedure.sql
+VersionUpdates\\12.0\\StoredProcedures\\Drop,Staging.ValidateStagingData.StoredProcedure.sql
+VersionUpdates\\12.0_prerelease,Populate App.GenerateStagingColumns.sql,0
+VersionUpdates\\12.0_prerelease,Populate Staging.StagingValidationRules.sql,0
