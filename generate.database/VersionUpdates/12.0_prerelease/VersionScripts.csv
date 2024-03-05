@@ -1,2 +1,6 @@
 VersionUpdates\\12.0_prerelease,Restore 11.3.sql,0
+VersionUpdates\\12.0_prerelease,UpdateMetadata.sql,0
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql 
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
+Metadata,App.ViewDefinitions.Metadata.sql,0
 VersionUpdates\\12.0_prerelease,UpdateDbVersion.sql,0
