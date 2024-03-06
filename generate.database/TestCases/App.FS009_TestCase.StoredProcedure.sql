@@ -298,6 +298,24 @@ BEGIN TRY
 					WHEN 'DroppedOut' THEN 'DROPOUT'
 					WHEN 'HighSchoolDiploma' THEN 'GHS'
 					WHEN 'Transferred' THEN 'TRAN'
+					WHEN 'PartCNoLongerEligible_1' THEN 'PartCNoLongerEligible'
+					WHEN 'PartBEligibleContinuingPartC_1' THEN 'PartBEligibleContinuingPartC'
+					WHEN 'WithdrawalByParent_1' THEN 'TRAN'
+					WHEN 'PartBEligibilityNotDeterminedExitingPartC_1' THEN 'PartBEligibilityNotDeterminedExitingPartC'
+					WHEN 'Unreachable_1' THEN 'DROPOUT'
+					WHEN 'Died_1' THEN 'D'
+					WHEN 'ReceivedCertificate_1' THEN 'RC'
+					WHEN 'MISSING_1' THEN 'MISSING'
+					WHEN 'MovedAndContinuing_1' THEN 'MKC'
+					WHEN 'PartBEligibleExitingPartC_1' THEN 'PartBEligibleExitingPartC'
+					WHEN 'MovedOutOfState_1' THEN 'MKC'
+					WHEN 'ReachedMaximumAge_1' THEN 'RMA'
+					WHEN 'NotPartBEligibleExitingPartCWithoutReferrrals_1' THEN 'MISSING'
+					WHEN 'GraduatedAlternateDiploma_1' THEN 'GRADALTDPL'
+					WHEN 'NotPartBEligibleExitingPartCWithReferrrals_1' THEN 'MISSING'
+					WHEN 'DroppedOut_1' THEN 'DROPOUT'
+					WHEN 'HighSchoolDiploma_1' THEN 'GHS'
+					WHEN 'Transferred_1' THEN 'TRAN'
 				END
 				, sidt.IdeaDisabilityTypeCode
 				, CASE sidt.IdeaDisabilityTypeCode 
@@ -316,6 +334,21 @@ BEGIN TRY
 					WHEN 'Speechlanguageimpairment' THEN 'SLI'
 					WHEN 'Traumaticbraininjury' THEN 'TBI'
 					WHEN 'Visualimpairment' THEN 'VI'
+					WHEN 'MISSING_1' THEN 'MISSING'
+					WHEN 'Autism_1' THEN 'AUT'
+					WHEN 'Deafblindness_1' THEN 'DB'
+					WHEN 'Deafness_1' THEN 'DB'
+					WHEN 'Developmentaldelay_1' THEN 'DD'
+					WHEN 'Emotionaldisturbance_1' THEN 'EMN'
+					WHEN 'Hearingimpairment_1' THEN 'HI'
+					WHEN 'Intellectualdisability_1' THEN 'ID'
+					WHEN 'Multipledisabilities_1' THEN 'MD'
+					WHEN 'Orthopedicimpairment_1' THEN 'OI'
+					WHEN 'Otherhealthimpairment_1' THEN 'OHI'
+					WHEN 'Specificlearningdisability_1' THEN 'SLD'
+					WHEN 'Speechlanguageimpairment_1' THEN 'SLI'
+					WHEN 'Traumaticbraininjury_1' THEN 'TBI'
+					WHEN 'Visualimpairment_1' THEN 'VI'
 				END
 				, ske.HispanicLatinoEthnicity
 				, spr.RaceType
@@ -331,11 +364,23 @@ BEGIN TRY
 					WHEN spr.RaceType = 'DemographicRaceTwoOrMoreRaces' THEN 'MISSING'
 					WHEN spr.RaceType = 'RaceAndEthnicityUnknown' THEN 'MISSING'
 					WHEN spr.RaceType = 'MISSING' THEN 'MISSING'
+					WHEN spr.RaceType = 'AmericanIndianorAlaskaNative_1' THEN 'AM7'
+					WHEN spr.RaceType = 'Asian_1' THEN 'AS7'
+					WHEN spr.RaceType = 'BlackorAfricanAmerican_1' THEN 'BL7'
+					WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander_1' THEN 'PI7'
+					WHEN spr.RaceType = 'White_1' THEN 'WH7'
+					WHEN spr.RaceType = 'TwoorMoreRaces_1' THEN 'MU7'
+					WHEN spr.RaceType = 'HispanicorLatinoEthnicity_1' THEN 'HI7'
+					WHEN spr.RaceType = 'DemographicRaceTwoOrMoreRaces_1' THEN 'MISSING'
+					WHEN spr.RaceType = 'RaceAndEthnicityUnknown_1' THEN 'MISSING'
+					WHEN spr.RaceType = 'MISSING_1' THEN 'MISSING'
 				END
 				, ske.Sex
 				, CASE ske.Sex
 					WHEN 'Male' THEN 'M'
 					WHEN 'Female' THEN 'F'
+					WHEN 'Male_1' THEN 'M'
+					WHEN 'Female_1' THEN 'F'
 					ELSE 'MISSING'
 				END AS SexEdFactsCode
 				, CASE

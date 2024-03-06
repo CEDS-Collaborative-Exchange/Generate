@@ -34,7 +34,7 @@ BEGIN
 		@SQL varchar(max) = '', 
 		@Error varchar(max) = '',
 		@TableName varchar(50) = '', 
-		@SnapshotDate varchar(100) = (select convert(varchar, getdate(), 27))
+		@SnapshotDate varchar(100) = (select convert(varchar, getdate(), 23))
 
 
 

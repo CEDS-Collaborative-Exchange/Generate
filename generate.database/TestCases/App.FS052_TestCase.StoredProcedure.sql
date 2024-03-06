@@ -151,10 +151,18 @@ BEGIN
 			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander' THEN 'PI7'
 			WHEN spr.RaceType = 'White' THEN 'WH7'
 			WHEN spr.RaceType = 'TwoorMoreRaces' THEN 'MU7'
+			WHEN spr.RaceType = 'AmericanIndianorAlaskaNative_1' THEN 'AM7'
+			WHEN spr.RaceType = 'Asian_1' THEN 'AS7'
+			WHEN spr.RaceType = 'BlackorAfricanAmerican_1' THEN 'BL7'
+			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander_1' THEN 'PI7'
+			WHEN spr.RaceType = 'White_1' THEN 'WH7'
+			WHEN spr.RaceType = 'TwoorMoreRaces_1' THEN 'MU7'
 		END AS RaceEdFactsCode,
 		CASE ske.Sex
 				WHEN 'Male' THEN 'M'
 				WHEN 'Female' THEN 'F'
+				WHEN 'Male_1' THEN 'M'
+				WHEN 'Female_1' THEN 'F'
 				ELSE 'MISSING'
 		END AS SexEdFactsCode
 

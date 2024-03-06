@@ -20,7 +20,6 @@ BEGIN
 	IF OBJECT_ID('tempdb..#C005Staging_LEA') IS NOT NULL
 	DROP TABLE #C005Staging_LEA
 
-
 	IF OBJECT_ID('tempdb..#S_CSA') IS NOT NULL
 	DROP TABLE #S_CSA
 	IF OBJECT_ID('tempdb..#S_CSB') IS NOT NULL
@@ -43,21 +42,29 @@ BEGIN
 	IF OBJECT_ID('tempdb..#L_ST1') IS NOT NULL
 	DROP TABLE #L_ST1
 
+	--create the race view to handle the conversion to Multiple Races
+	IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
+
+	SELECT * 
+	INTO #vwRaces 
+	FROM RDS.vwDimRaces
+	WHERE SchoolYear = @SchoolYear
+
+	CREATE CLUSTERED INDEX ix_tempvwRaces ON #vwRaces (RaceMap);
+
 	-- Define the test
 	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
 	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS005_UnitTestCase') 
 
 	BEGIN
 		SET @expectedResult = 1
-		INSERT INTO App.SqlUnitTest 
-		(
+		INSERT INTO App.SqlUnitTest (
 			[UnitTestName]
 			, [StoredProcedureName]
 			, [TestScope]
 			, [IsActive]
 		)
-		VALUES 
-		(
+		VALUES (
 			'FS005_UnitTestCase'
 			, 'FS005_TestCase'				
 			, 'FS005'
@@ -149,29 +156,51 @@ BEGIN
             WHEN 'Speechlanguageimpairment' THEN 'SLI'
             WHEN 'Traumaticbraininjury' THEN 'TBI'
             WHEN 'Visualimpairment' THEN 'VI'
+            WHEN 'Autism_1' THEN 'AUT'
+            WHEN 'Deafblindness_1' THEN 'DB'
+            WHEN 'Deafness_1' THEN 'DB'
+            WHEN 'Developmentaldelay_1' THEN 'DD'
+            WHEN 'Emotionaldisturbance_1' THEN 'EMN'
+            WHEN 'Hearingimpairment_1' THEN 'HI'
+            WHEN 'Intellectualdisability_1' THEN 'ID'
+            WHEN 'Multipledisabilities_1' THEN 'MD'
+            WHEN 'Orthopedicimpairment_1' THEN 'OI'
+            WHEN 'Otherhealthimpairment_1' THEN 'OHI'
+            WHEN 'Specificlearningdisability_1' THEN 'SLD'
+            WHEN 'Speechlanguageimpairment_1' THEN 'SLI'
+            WHEN 'Traumaticbraininjury_1' THEN 'TBI'
+            WHEN 'Visualimpairment_1' THEN 'VI'
             ELSE idea.IdeaDisabilityTypeCode
 		END AS IDEADISABILITYTYPE
 		, ske.HispanicLatinoEthnicity
-		, spr.RaceType
+		, spr.RaceMap
 		, CASE 
 			WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HI7' 
-			WHEN spr.RaceType = 'AmericanIndianorAlaskaNative' THEN 'AM7'
-			WHEN spr.RaceType = 'Asian' THEN 'AS7'
-			WHEN spr.RaceType = 'BlackorAfricanAmerican' THEN 'BL7'
-			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander' THEN 'PI7'
-			WHEN spr.RaceType = 'White' THEN 'WH7'
-			WHEN spr.RaceType = 'TwoorMoreRaces' THEN 'MU7'
+			WHEN spr.RaceMap = 'AmericanIndianorAlaskaNative' THEN 'AM7'
+			WHEN spr.RaceMap = 'Asian' THEN 'AS7'
+			WHEN spr.RaceMap = 'BlackorAfricanAmerican' THEN 'BL7'
+			WHEN spr.RaceMap = 'NativeHawaiianorOtherPacificIslander' THEN 'PI7'
+			WHEN spr.RaceMap = 'White' THEN 'WH7'
+			WHEN spr.RaceMap = 'TwoorMoreRaces' THEN 'MU7'
+			WHEN spr.RaceMap = 'AmericanIndianorAlaskaNative_1' THEN 'AM7'
+			WHEN spr.RaceMap = 'Asian_1' THEN 'AS7'
+			WHEN spr.RaceMap = 'BlackorAfricanAmerican_1' THEN 'BL7'
+			WHEN spr.RaceMap = 'NativeHawaiianorOtherPacificIslander_1' THEN 'PI7'
+			WHEN spr.RaceMap = 'White_1' THEN 'WH7'
+			WHEN spr.RaceMap = 'TwoorMoreRaces_1' THEN 'MU7'
 		END AS RaceEdFactsCode
 		, ske.Sex
 		, CASE ske.Sex
 			WHEN 'Male' THEN 'M'
 			WHEN 'Female' THEN 'F'
+			WHEN 'Male_1' THEN 'M'
+			WHEN 'Female_1' THEN 'F'
 			ELSE 'MISSING'
 			END AS SexEdFactsCode
 		, CASE
-					WHEN sd.DisciplinaryActionStartDate BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, GETDATE()) THEN EnglishLearnerStatus
-					ELSE 0
-					END AS EnglishLearnerStatus
+			WHEN sd.DisciplinaryActionStartDate BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, GETDATE()) THEN EnglishLearnerStatus
+			ELSE 0
+			END AS EnglishLearnerStatus
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
 				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart)  
@@ -209,11 +238,6 @@ BEGIN
 		--Discipline Date within Program Participation range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, @SYStart) AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
-	LEFT JOIN Staging.K12PersonRace spr
-		ON spr.StudentIdentifierState = ske.StudentIdentifierState
-		AND spr.SchoolYear = ske.SchoolYear
-		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
 	LEFT JOIN Staging.IdeaDisabilityType idea
         ON sppse.StudentIdentifierState = idea.StudentIdentifierState
         AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
@@ -221,33 +245,26 @@ BEGIN
         AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)  
 			BETWEEN idea.RecordStartDateTime AND ISNULL(idea.RecordEndDateTime, GETDATE())
         AND idea.IsPrimaryDisability = 1
-	LEFT JOIN RDS.DimRaces rdr
-		ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
-			OR (ISNULL(ske.HispanicLatinoEthnicity, 0) = 0 AND spr.RaceType = rdr.RaceCode)
-	LEFT JOIN #vwDisciplineStatuses rddisc
-		ON rddisc.SchoolYear = @SchoolYear
-		AND ISNULL(sd.DisciplinaryActionTaken, 'MISSING')						= ISNULL(rddisc.DisciplinaryActionTakenMap, rddisc.DisciplinaryActionTakenCode)
-		AND ISNULL(sd.DisciplineMethodOfCwd, 'MISSING')                         = ISNULL(rddisc.DisciplineMethodOfChildrenWithDisabilitiesMap, rddisc.DisciplineMethodOfChildrenWithDisabilitiesCode)
-		AND ISNULL(CAST(sd.EducationalServicesAfterRemoval AS SMALLINT), -1)   	= ISNULL(rddisc.EducationalServicesAfterRemovalMap, -1)
-		AND ISNULL(sd.IdeaInterimRemoval, 'MISSING')                            = ISNULL(rddisc.IdeaInterimRemovalMap, rddisc.IdeaInterimRemovalCode)
-		AND ISNULL(sd.IdeaInterimRemovalReason, 'MISSING')                      = ISNULL(rddisc.IdeaInterimRemovalReasonMap, rddisc.IdeaInterimRemovalReasonCode)
-	INNER JOIN RDS.DimDisciplineStatuses CAT_IDEAINTERIMREMOVAL on rddisc.DimDisciplineStatusId = CAT_IDEAINTERIMREMOVAL.DimDisciplineStatusId
-	JOIN #vwIdeaStatuses rdis
-				ON rdis.SchoolYear = @SchoolYear
-				AND rdis.IdeaIndicatorCode = 'Yes'
-				AND rdis.SpecialEducationExitReasonCode = 'MISSING'
-				AND ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode)
-				AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, rdis.IdeaEducationalEnvironmentForSchoolAgeCode)
-
-	LEFT JOIN rds.DimIdeaStatuses dis on rdis.DimIdeaStatusId = dis.DimIdeaStatusId
+	LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  Using a view that resolves multiple race records by returning the value TwoOrMoreRaces
+		ON spr.SchoolYear = @SchoolYear
+		AND ske.StudentIdentifierState = spr.StudentIdentifierState
+		AND ISNULL(ske.LEAIdentifierSeaAccountability,'')	= ISNULL(spr.LeaIdentifierSeaAccountability,'')
+		AND ISNULL(ske.SchoolIdentifierSea,'') 				= ISNULL(spr.SchoolIdentifierSea,'')
+	LEFT JOIN #vwRaces rdr
+		ON rdr.SchoolYear = @SchoolYear
+		AND ISNULL(rdr.RaceMap, rdr.RaceCode) =
+			CASE
+				WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HispanicorLatinoEthnicity'
+				WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
+				ELSE 'Missing'
+			END
 	WHERE sppse.IDEAIndicator = 1
 	AND idea.IdeaDisabilityTypeCode IS NOT NULL
-	AND CAT_IDEAINTERIMREMOVAL.IdeaInterimRemovalEdFactsCode in ('REMDW', 'REMHO')
+	AND sd.IdeaInterimRemoval in ('REMDW_1', 'REMHO_1') 
 	AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
 	AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
             BETWEEN @SYStart AND @SYEnd 
-	and rdis.IdeaEducationalEnvironmentForSchoolAgeCode <> 'PPPS'
-	--AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') <> 'PPPS'
+	and ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') NOT IN ('PPPS', 'PPPS_1')
 	AND rds.Get_Age(ske.Birthdate, DATEFROMPARTS(CASE WHEN @cutOffMonth >= 7 THEN @SchoolYear - 1 
 		ELSE @SchoolYear 
 		END, @cutOffMonth, @cutOffDay)
@@ -295,15 +312,13 @@ BEGIN
 		, GETDATE()
 	FROM #S_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.IDEADISABILITYTYPE = rreksd.[IDEADISABILITYTYPE]
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSA'
 	
-	select sum(studentcount) from #S_CSA
-
 	DROP TABLE #S_CSA
 
 
@@ -342,7 +357,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_CSB s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IDEAINTERIMREMOVAL
 		AND s.RaceEdFactsCode = rreksd.RACE
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear
@@ -388,7 +403,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_CSC s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.SexEdFactsCode = rreksd.SEX
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear
@@ -433,7 +448,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_CSD s
 	LEFT  JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear
@@ -474,7 +489,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_ST1 s
 	LEFT  JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
@@ -540,7 +555,7 @@ BEGIN
 		, GETDATE()
 	FROM #L_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.IdeaInterimRemoval= rreksd.IDEAINTERIMREMOVAL
+		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND s.IDEADISABILITYTYPE = rreksd.IDEADISABILITYTYPE
 		AND rreksd.ReportCode = 'C005' 
@@ -556,7 +571,7 @@ BEGIN
 		CSB at the LEA level
 	***********************************************************************/
 	SELECT 
-			IdeaInterimRemoval
+		IdeaInterimRemoval
 		, RaceEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
@@ -592,7 +607,7 @@ BEGIN
 		, GETDATE()
 	FROM #L_CSB s
 	JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
-		ON s.IdeaInterimRemoval = rreksd.IdeaInterimRemoval
+		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.RaceEdFactsCode = rreksd.RACE
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND rreksd.ReportCode = 'C005' 
@@ -644,7 +659,7 @@ BEGIN
 		, GETDATE()
 	FROM #L_CSC s
 	JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
-		ON s.IdeaInterimRemoval = rreksd.IdeaInterimRemoval
+		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.SexEdFactsCode = rreksd.SEX
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND rreksd.ReportCode = 'C005' 
@@ -695,7 +710,7 @@ BEGIN
 		, GETDATE()
 	FROM #L_CSD s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
-		ON s.IdeaInterimRemoval = rreksd.IdeaInterimRemoval
+		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND rreksd.ReportCode = 'C005' 
@@ -743,7 +758,7 @@ BEGIN
 		, GETDATE()
 	FROM #L_ST1 s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
-		ON s.IdeaInterimRemoval = rreksd.IdeaInterimRemoval
+		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND rreksd.ReportCode = 'C005' 
 		AND rreksd.ReportYear = @SchoolYear
@@ -751,5 +766,14 @@ BEGIN
 		AND rreksd.CategorySetCode = 'ST1'
 			
 	DROP TABLE #L_ST1
+
+	--check the results
+
+	select *
+	from App.SqlUnitTestCaseResult sr
+		inner join App.SqlUnitTest s
+			on s.SqlUnitTestId = sr.SqlUnitTestId
+	where s.UnitTestName like '%005%'
+	and passed = 0
 
 END

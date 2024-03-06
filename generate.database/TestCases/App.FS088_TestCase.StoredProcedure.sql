@@ -94,7 +94,7 @@ BEGIN
 	SELECT DISTINCT LEAIdentifierSea
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
-		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING','Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING_1')
 
 	IF OBJECT_ID('tempdb..#vwDisciplineStatuses') IS NOT NULL
 	DROP TABLE #vwDisciplineStatuses
@@ -155,6 +155,20 @@ BEGIN
             WHEN 'Speechlanguageimpairment' THEN 'SLI'
             WHEN 'Traumaticbraininjury' THEN 'TBI'
             WHEN 'Visualimpairment' THEN 'VI'
+            WHEN 'Autism_1' THEN 'AUT'
+            WHEN 'Deafblindness_1' THEN 'DB'
+            WHEN 'Deafness_1' THEN 'DB'
+            WHEN 'Developmentaldelay_1' THEN 'DD'
+            WHEN 'Emotionaldisturbance_1' THEN 'EMN'
+            WHEN 'Hearingimpairment_1' THEN 'HI'
+            WHEN 'Intellectualdisability_1' THEN 'ID'
+            WHEN 'Multipledisabilities_1' THEN 'MD'
+            WHEN 'Orthopedicimpairment_1' THEN 'OI'
+            WHEN 'Otherhealthimpairment_1' THEN 'OHI'
+            WHEN 'Specificlearningdisability_1' THEN 'SLD'
+            WHEN 'Speechlanguageimpairment_1' THEN 'SLI'
+            WHEN 'Traumaticbraininjury_1' THEN 'TBI'
+            WHEN 'Visualimpairment_1' THEN 'VI'
             ELSE idea.IdeaDisabilityTypeCode
 		END AS IDEADISABILITYTYPE
 		, ske.HispanicLatinoEthnicity
@@ -167,11 +181,19 @@ BEGIN
 			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander' THEN 'PI7'
 			WHEN spr.RaceType = 'White' THEN 'WH7'
 			WHEN spr.RaceType = 'TwoorMoreRaces' THEN 'MU7'
+			WHEN spr.RaceType = 'AmericanIndianorAlaskaNative_1' THEN 'AM7'
+			WHEN spr.RaceType = 'Asian_1' THEN 'AS7'
+			WHEN spr.RaceType = 'BlackorAfricanAmerican_1' THEN 'BL7'
+			WHEN spr.RaceType = 'NativeHawaiianorOtherPacificIslander_1' THEN 'PI7'
+			WHEN spr.RaceType = 'White_1' THEN 'WH7'
+			WHEN spr.RaceType = 'TwoorMoreRaces_1' THEN 'MU7'
 		END AS RaceEdFactsCode
 		, ske.Sex
 		, CASE ske.Sex
 			WHEN 'Male' THEN 'M'
 			WHEN 'Female' THEN 'F'
+			WHEN 'Male_1' THEN 'M'
+			WHEN 'Female_1' THEN 'F'
 			ELSE 'MISSING'
 			END AS SexEdFactsCode
 		, CASE
@@ -194,6 +216,8 @@ BEGIN
 		, CASE sd.IdeaInterimRemoval
 			WHEN 'REMDW' THEN 'REMDW'
 			WHEN 'REMHO' THEN 'REMHO'
+			WHEN 'REMDW_1' THEN 'REMDW'
+			WHEN 'REMHO_1' THEN 'REMHO'
 			ELSE 'MISSING'
 		  END AS IdeaInterimRemovalEdFactsCode
 		, sd.DisciplineMethodOfCwd AS DisciplineMethod
@@ -202,6 +226,9 @@ BEGIN
 			WHEN 'Drugs' THEN 'D'
 			WHEN 'Weapons' THEN 'W'
 			WHEN 'SeriousBodilyInjury' THEN 'SBI'
+			WHEN 'Drugs_1' THEN 'D'
+			WHEN 'Weapons_1' THEN 'W'
+			WHEN 'SeriousBodilyInjury_1' THEN 'SBI'
 			ELSE 'MISSING'
 		END as IdeaInterimRemovalReasonEdFactsCode
 		, DurationOfDisciplinaryAction
@@ -274,8 +301,8 @@ BEGIN
 		--AND sppse.IDEAIndicator = 1
 		and rdis.IdeaEducationalEnvironmentForSchoolAgeCode <> 'PPPS'
 		AND (
-			ISNULL(sd.DisciplineMethodOfCwd, '') in ('InSchool','OutOfSchool')
-			OR CAT_IDEAINTERIMREMOVAL.DisciplinaryActionTakenCode in ('03086', '03087')
+			ISNULL(sd.DisciplineMethodOfCwd, '') in ('InSchool','OutOfSchool','InSchool_1','OutOfSchool_1')
+			OR CAT_IDEAINTERIMREMOVAL.DisciplinaryActionTakenCode in ('03086', '03087','03086_1', '03087_1')
 	--		OR CAT_IDEAINTERIMREMOVAL.DisciplineMethodOfChildrenWithDisabilitiesCode <> 'MISSING'
 			)
 		AND rds.Get_Age(ske.Birthdate, DATEFROMPARTS(CASE WHEN @cutOffMonth >= 7 THEN @SchoolYear - 1 
@@ -954,5 +981,11 @@ BEGIN
 			
 	DROP TABLE #L_TOT
 
+	--select *
+	--from App.SqlUnitTestCaseResult sr
+	--	inner join App.SqlUnitTest s
+	--		on s.SqlUnitTestId = sr.SqlUnitTestId
+	--where s.UnitTestName like '%088%'
+	--and passed = 0
 
 END

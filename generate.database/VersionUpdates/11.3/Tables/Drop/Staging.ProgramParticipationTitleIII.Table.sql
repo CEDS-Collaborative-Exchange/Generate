@@ -1,0 +1,3 @@
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Staging' AND TABLE_NAME = 'ProgramParticipationTitleIII') BEGIN
+	DROP TABLE [Staging].[ProgramParticipationTitleIII]
+END

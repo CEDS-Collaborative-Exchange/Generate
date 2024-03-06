@@ -75,7 +75,7 @@ BEGIN
 	SELECT DISTINCT LEAIdentifierSea
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
-		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
 
 	SELECT 
 		ske.LeaIdentifierSeaAccountability
@@ -98,11 +98,13 @@ BEGIN
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, @SYStart) AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
 	WHERE ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
-		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') <> 'PPPS'
-		AND sd.DisciplinaryActionTaken IN ('03086', '03087')
+		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') NOT IN ('PPPS', 'PPPS_1')
+		AND sd.DisciplinaryActionTaken IN ('03086', '03087', '03086_1', '03087_1')
 		AND ((ISNULL(sppse.IDEAIndicator, 0) = 1 
 			AND rds.Get_Age(ske.Birthdate, @ChildCountDate) BETWEEN 3 AND 21)	
-			OR (ISNULL(sppse.IDEAIndicator, 0) = 0 AND ske.GradeLevel in ('KG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12')))
+			OR (ISNULL(sppse.IDEAIndicator, 0) = 0 AND ske.GradeLevel in ('KG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12',
+				'KG_1', '01_1', '02_1', '03_1', '04_1', '05_1', '06_1', '07_1', '08_1', '09_1', '10_1', '11_1', '12_1')
+			))
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN @SYStart AND @SYEnd
 	GROUP BY ske.LeaIdentifierSeaAccountability
@@ -242,6 +244,6 @@ BEGIN
 	--	inner join App.SqlUnitTest s
 	--		on s.SqlUnitTestId = sr.SqlUnitTestId
 	--where s.UnitTestName like '%144%'
-	--and passed = 1
+	--and passed = 0
 
 END

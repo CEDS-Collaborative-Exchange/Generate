@@ -3,9 +3,6 @@ CREATE PROCEDURE [App].[FS112_TestCase]
 AS
 BEGIN
 
-	BEGIN TRY
-	BEGIN TRANSACTION
-
 		--clear the tables for the next run
 		IF OBJECT_ID('tempdb..#Staging') IS NOT NULL
 		DROP TABLE #Staging
@@ -85,6 +82,8 @@ BEGIN
 			, CASE K12StaffClassification
 				WHEN 'SpecialEducationTeachers' THEN 'SpecialEducationTeachers'
 				WHEN 'Paraprofessionals' THEN 'Paraprofessionals'
+				WHEN 'SpecialEducationTeachers_1' THEN 'SpecialEducationTeachers'
+				WHEN 'Paraprofessionals_1' THEN 'Paraprofessionals'
 				ELSE 'MISSING'
 			END AS K12StaffClassificationEdFactsCode
 			, EdFactsCertificationStatus
@@ -92,18 +91,22 @@ BEGIN
 			, CASE ParaprofessionalQualificationStatus
 				WHEN 'Qualified' THEN 'Q'
 				WHEN 'NotQualified' THEN 'NQ'
+				WHEN 'Qualified_1' THEN 'Q'
+				WHEN 'NotQualified_1' THEN 'NQ'
 				ELSE 'MISSING'
 			END AS ParaprofessionalQualificationStatusEdFactsCode
 			, SpecialEducationAgeGroupTaught
 			, CASE SpecialEducationAgeGroupTaught
 				WHEN '3TO5' THEN '3TO5NOTK'
 				WHEN '6TO21' THEN 'AGE5KTO21'
+				WHEN '3TO5_1' THEN '3TO5NOTK'
+				WHEN '6TO21_1' THEN 'AGE5KTO21'
 				ELSE 'MISSING'
 			END AS SpecialEducationAgeGroupTaughtEdFactsCode
 			, AssignmentStartDate
 			, AssignmentEndDate
 			, CASE WHEN sko.LEA_IsReportedFederally = 1
-					AND sko.LEA_OperationalStatus IN ('New', 'Added', 'Open', 'Reopened', 'ChangedBoundary') THEN 1
+					AND sko.LEA_OperationalStatus IN ('New', 'Added', 'Open', 'Reopened', 'ChangedBoundary', 'New_1', 'Added_1', 'Open_1', 'Reopened_1', 'ChangedBoundary_1') THEN 1
 				ELSE 0
 			  END AS [IsLeaReportedFederally]
 		INTO #staging
@@ -164,15 +167,6 @@ BEGIN
 
 		DROP TABLE #TC1
 
-		--Query to find the tests that did not match
-		--select *
-		--from App.SqlUnitTestCaseResult r
-		--	inner join App.SqlUnitTest t
-		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'CSA SEA Match All' 
-		--AND t.TestScope = 'FS112'
-		--AND Passed = 0
-
 
 /* Test Case 2:
 	ST1 at the SEA level
@@ -217,15 +211,6 @@ BEGIN
 
 		DROP TABLE #TC2
 
-		--Query to find the tests that did not match
-		--select *
-		--from App.SqlUnitTestCaseResult r
-		--	inner join App.SqlUnitTest t
-		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'ST1 SEA Match All' 
-		--AND t.TestScope = 'FS112'
-		--AND Passed = 0
-
 		
 /* Test Case 3:
 	ST2 at the SEA level
@@ -269,15 +254,6 @@ BEGIN
 
 		DROP TABLE #TC3
 
-		--Query to find the tests that did not match
-		--select *
-		--from App.SqlUnitTestCaseResult r
-		--	inner join App.SqlUnitTest t
-		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'ST2 SEA Match All' 
-		--AND t.TestScope = 'FS112'
-		--AND Passed = 0
-
 
 /* Test Case 4:
 	TOT at the SEA level
@@ -313,15 +289,6 @@ BEGIN
 			
 		DROP TABLE #TC4
 
-		--Query to find the tests that did not match
-		--select *
-		--from App.SqlUnitTestCaseResult r
-		--	inner join App.SqlUnitTest t
-		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'TOT SEA Match All' 
-		--AND t.TestScope = 'FS112'
-		--AND Passed = 0
-	
 		----------------------------------------
 		--- LEA level tests					 ---
 		----------------------------------------
@@ -379,14 +346,6 @@ BEGIN
 
 		DROP TABLE #TC5
 	
-		--Query to find the tests that did not match
-		--select * 
-		--from App.SqlUnitTestCaseResult r
-		--	inner join App.SqlUnitTest t
-		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'CSA LEA Match All' 
-		--AND t.TestScope = 'FS112'
-		--AND Passed = 0
 
 /* Test Case 6:
 	ST1 at the LEA level
@@ -435,15 +394,6 @@ BEGIN
 			AND rreksc.CategorySetCode = 'ST1'
 
 		DROP TABLE #TC6
-
-		--Query to find the tests that did not match
-		--select * 
-		--from App.SqlUnitTestCaseResult r
-		--	inner join App.SqlUnitTest t
-		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'ST1 LEA Match All' 
-		--AND t.TestScope = 'FS112'
-		--AND Passed = 0
 
 		
 /* Test Case 7:
@@ -494,15 +444,6 @@ BEGIN
 
 		DROP TABLE #TC7
 
-		--Query to find the tests that did not match
-		--select * 
-		--from App.SqlUnitTestCaseResult r
-		--	inner join App.SqlUnitTest t
-		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'ST2 LEA Match All' 
-		--AND t.TestScope = 'FS112'
-		--AND Passed = 0
-
 
 /* Test Case 8:
 	TOT at the LEA level
@@ -551,53 +492,6 @@ BEGIN
 		--WHERE TestCaseName = 'TOT LEA Match All' 
 		--AND t.TestScope = 'FS112'
 		--AND Passed = 0
-		
-		COMMIT TRANSACTION
-
-	END TRY
-	BEGIN CATCH
-
-		IF @@TRANCOUNT > 0
-		BEGIN
-			ROLLBACK TRANSACTION
-		END
-
-		DECLARE @msg AS NVARCHAR(MAX)
-		SET @msg = ERROR_MESSAGE()
-		DECLARE @sev AS INT
-		SET @sev = ERROR_SEVERITY()
-
-		RAISERROR(@msg, @sev, 1)
-
-	END CATCH; 
-
-	--clean up
-		IF OBJECT_ID('tempdb..#Staging') IS NOT NULL
-		DROP TABLE #Staging
-
-		IF OBJECT_ID('tempdb..#TC1') IS NOT NULL
-		DROP TABLE #TC1
-
-		IF OBJECT_ID('tempdb..#TC2') IS NOT NULL
-		DROP TABLE #TC2
-
-		IF OBJECT_ID('tempdb..#TC3') IS NOT NULL
-		DROP TABLE #TC3
-
-		IF OBJECT_ID('tempdb..#TC4') IS NOT NULL
-		DROP TABLE #TC4
-
-		IF OBJECT_ID('tempdb..#TC5') IS NOT NULL
-		DROP TABLE #TC5
-
-		IF OBJECT_ID('tempdb..#TC6') IS NOT NULL
-		DROP TABLE #TC6
-
-		IF OBJECT_ID('tempdb..#TC7') IS NOT NULL
-		DROP TABLE #TC7
-
-		IF OBJECT_ID('tempdb..#TC8') IS NOT NULL
-		DROP TABLE #TC8
 
 END
 
