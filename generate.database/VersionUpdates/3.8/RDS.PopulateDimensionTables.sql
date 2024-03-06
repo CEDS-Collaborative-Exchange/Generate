@@ -200,48 +200,48 @@ begin try
 	------------------------------------------------
 	-- Populate DimScedCodes					  --
 	------------------------------------------------
-	--IF NOT EXISTS (SELECT 1 FROM RDS.DimScedCodes d WHERE d.ScedCourseCode = 'MISSING') BEGIN
-	--	SET IDENTITY_INSERT RDS.DimScedCodes ON
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimScedCodes d WHERE d.ScedCourseCode = 'MISSING') BEGIN
+		SET IDENTITY_INSERT RDS.DimScedCodes ON
 
-	--	INSERT INTO RDS.DimScedCodes 
-	--	(DimScedCodeId,ScedCourseCode,ScedCourseTitle,ScedCourseDescription,ScedCourseLevelCode,ScedCourseLevelDescription,
-	--ScedCourseSubjectAreaCode,ScedCourseSubjectAreaDescription,ScedGradeSpan,ScedSequenceOfCourse)
-	--	VALUES (-1,'-1','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','-1','MISSING')
+		INSERT INTO RDS.DimScedCodes 
+		(DimScedCodeId,ScedCourseCode,ScedCourseTitle,ScedCourseDescription,ScedCourseLevelCode,ScedCourseLevelDescription,
+	ScedCourseSubjectAreaCode,ScedCourseSubjectAreaDescription,ScedGradeSpan,ScedSequenceOfCourse)
+		VALUES (-1,'-1','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','-1','MISSING')
 
-	--	SET IDENTITY_INSERT RDS.DimScedCodes OFF
-	--END
+		SET IDENTITY_INSERT RDS.DimScedCodes OFF
+	END
 
-	--INSERT INTO RDS.DimScedCodes 
-	--	(
-	--	ScedCourseCode
-	--	,ScedCourseTitle
-	--	,ScedCourseDescription
-	--	,ScedCourseLevelCode
-	--	,ScedCourseLevelDescription
-	--	,ScedCourseSubjectAreaCode
-	--	,ScedCourseSubjectAreaDescription
-	--	,ScedGradeSpan
-	--	,ScedSequenceOfCourse    
-	--	)
-	--Select DISTINCT
-	--	c.[SCEDCourseCode], 
-	--	'MISSING' as [ScedCourseTitle], 
-	--	'MISSING' as [ScedCourseDescription], 
-	--	'MISSING' as [ScedCourseLevelCode], 
-	--	'MISSING' as [ScedCourseLevelDescription], 
-	--	'MISSING' as [ScedCourseSubjectAreaCode], 
-	--	'MISSING' as [ScedCourseSubjectAreaDescription], 
-	--	'-1'	  as [ScedGradeSpan], 
-	--	'MISSING' as [ScedSequenceOfCourse]
-	--From dbo.K12Course c
-	--	JOIN dbo.OrganizationIdentifier oi
-	--		on c.OrganizationId = oi.OrganizationId
-	--	JOIN dbo.OrganizationDetail od
-	--		on c.OrganizationId = od.OrganizationId
-	--	LEFT JOIN rds.DimScedCodes cs
-	--		ON oi.Identifier = cs.ScedCourseCode
-	--			and od.Name = cs.ScedCourseDescription
-	--WHERE cs.DimScedCodeId IS NULL 
+	INSERT INTO RDS.DimScedCodes 
+		(
+		ScedCourseCode
+		,ScedCourseTitle
+		,ScedCourseDescription
+		,ScedCourseLevelCode
+		,ScedCourseLevelDescription
+		,ScedCourseSubjectAreaCode
+		,ScedCourseSubjectAreaDescription
+		,ScedGradeSpan
+		,ScedSequenceOfCourse    
+		)
+	Select DISTINCT
+		c.[SCEDCourseCode], 
+		'MISSING' as [ScedCourseTitle], 
+		'MISSING' as [ScedCourseDescription], 
+		'MISSING' as [ScedCourseLevelCode], 
+		'MISSING' as [ScedCourseLevelDescription], 
+		'MISSING' as [ScedCourseSubjectAreaCode], 
+		'MISSING' as [ScedCourseSubjectAreaDescription], 
+		'-1'	  as [ScedGradeSpan], 
+		'MISSING' as [ScedSequenceOfCourse]
+	From dbo.K12Course c
+		JOIN dbo.OrganizationIdentifier oi
+			on c.OrganizationId = oi.OrganizationId
+		JOIN dbo.OrganizationDetail od
+			on c.OrganizationId = od.OrganizationId
+		LEFT JOIN rds.DimScedCodes cs
+			ON oi.Identifier = cs.ScedCourseCode
+				and od.Name = cs.ScedCourseDescription
+	WHERE cs.DimScedCodeId IS NULL 
 
 	------------------------------------------------
 	-- Populate DimDates						 ---
