@@ -1708,6 +1708,10 @@ BEGIN
 				begin
 					set @sqlCategoryReturnField = 'CAT_' + @reportField + '.RaceDescription'
 				end
+				else if @factTypeCode = 'datapopulation'
+				begin
+					set @sqlCategoryReturnField = 'CAT_' + @reportField + '.RaceCode'
+				end
 				else
 				begin
 					set @sqlCategoryReturnField = 'CAT_' + @reportField + '.RaceEdFactsCode'
@@ -5763,7 +5767,7 @@ BEGIN
 			else
 			-- all other report codes
 			begin
-				if(@factReportTable = 'ReportEDFactsK12StudentCounts')
+				if(@factReportTable = 'ReportEDFactsK12StudentCounts' and @factTypeCode <> 'datapopulation')
 				begin
 					set @sql = @sql + '
 						----------------------------

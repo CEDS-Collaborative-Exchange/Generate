@@ -1,2 +1,18 @@
 VersionUpdates\\12.0_prerelease,Restore 11.3.sql,0
+VersionUpdates\\12.0_prerelease,UpdateMetadata.sql,0
+VersionUpdates\\12.0_prerelease,Create-RDS-Tables.sql,0
+VersionUpdates\\12.0_prerelease,Create-Staging-Tables.sql,0
+VersionUpdates\\12.0_prerelease,Metadata-Updates.sql,0
+VersionUpdates\\12.0_prerelease,Junk-Table-Dimension-Population-V11.0.0.0.sql,0
+VersionUpdates\\12.0_prerelease,app.TableChanges.sql
+Metadata,App.ViewDefinitions.Metadata.sql,0
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimAccessibleEducationMaterialProviders.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12AccessibleEducationMaterialAssignments.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimIeus.sql,0
+Views\\Create,RDS.vwDimAccessibleEducationMaterialStatuses.sql,0
+Views\\Create,RDS.vwAccessibleEducationMaterialAssignments.sql,0
+StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
 VersionUpdates\\12.0_prerelease,UpdateDbVersion.sql,0
