@@ -208,29 +208,35 @@ BEGIN
 		--Discipline Date within English Learner range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) and ISNULL (sps.EnglishLearner_StatusEndDate, @SYEnd)
-	LEFT JOIN Staging.K12PersonRace spr
-		ON spr.StudentIdentifierState = ske.StudentIdentifierState
-		AND ISNULL(spr.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
-		AND ISNULL(spr.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
-		AND spr.SchoolYear = ske.SchoolYear
+	LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  Using a view that resolves multiple race records by returning the value TwoOrMoreRaces
+		ON spr.SchoolYear = @SchoolYear
+		AND ske.StudentIdentifierState = spr.StudentIdentifierState
+		AND ISNULL(ske.LEAIdentifierSeaAccountability,'')	= ISNULL(spr.LeaIdentifierSeaAccountability,'')
+		AND ISNULL(ske.SchoolIdentifierSea,'') 				= ISNULL(spr.SchoolIdentifierSea,'')
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
-	LEFT JOIN RDS.DimRaces rdr
-		ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
-			OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceCode)
+	LEFT JOIN #vwRaces rdr
+		ON rdr.SchoolYear = @SchoolYear
+		AND ISNULL(rdr.RaceMap, rdr.RaceCode) =
+			CASE
+				WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HispanicorLatinoEthnicity'
+				WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
+				ELSE 'Missing'
+			END
 	WHERE sppse.IDEAIndicator = 1
 		AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
-		AND ske.StudentIdentifierState not like 'C%'
-		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') <> 'PPPS'
+		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') NOT IN ('PPPS', 'PPPS_1')
 		AND rds.Get_Age(ske.Birthdate, @ChildCountDate) BETWEEN 3 AND 21	
 		AND (ISNULL(sd.DisciplineMethodOfCwd, '') <> ''
-			OR sd.DisciplinaryActionTaken IN ('03086', '03087')
+			OR sd.DisciplinaryActionTaken IN ('03086', '03087', '03086_1', '03087_1')
 			OR ISNULL(sd.IdeaInterimRemovalReason, '') <> ''
             OR ISNULL(sd.IdeaInterimRemoval, '') <> '')
 		--Discipline Date with SY range 
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN @SYStart AND @SYEnd
 
+--temp fix to address bad test records
+		AND ske.StudentIdentifierState not like 'CIID%'
 
 	-- Gather, evaluate & record the results
 	/**********************************************************************
