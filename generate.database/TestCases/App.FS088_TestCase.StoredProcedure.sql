@@ -316,6 +316,9 @@ BEGIN
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN @SYStart AND @SYEnd
 
+--temp fix to address bad test records
+		AND ske.StudentIdentifierState not like 'CIID%'
+
 	--Set the EDFacts value for removal length
 	UPDATE s
 	SET s.RemovalLength = tmp.RemovalLength
