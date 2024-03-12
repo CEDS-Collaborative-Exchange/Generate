@@ -277,7 +277,7 @@ BEGIN
 		BETWEEN @SYStart AND @SYEnd
 
 --temp fix to address bad test records
-	AND ske.StudentIdentifierState not like 'CIID%'
+--	AND ske.StudentIdentifierState not like 'CIID%'
 	
 			
 	/**********************************************************************
