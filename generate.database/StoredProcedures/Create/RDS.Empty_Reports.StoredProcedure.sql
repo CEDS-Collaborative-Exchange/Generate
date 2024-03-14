@@ -1,6 +1,5 @@
 ﻿CREATE PROCEDURE [RDS].[Empty_Reports]
-	@factTypeCode as varchar(50),
-	@reportType as varchar(50)=null
+	@factTypeCode as varchar(50)
 AS
 BEGIN
 
@@ -25,27 +24,16 @@ begin try
 
 	 insert into app.DataMigrationHistories
 	(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
-	values	(getutcdate(), @dataMigrationTypeId, 'Empty Selected Reports: ' + @factTypeCode + ' Report Type ' + ISNULL(@reportType, ''))			
+	values	(getutcdate(), @dataMigrationTypeId, 'Empty Selected Reports: ' + @factTypeCode)			
 
 		if @factTypeCode = 'datapopulation'
 		begin	
-				if(@reportType='studentcounts')
-				begin
 					delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
 					select ReportCode
 					from app.GenerateReports r
-					where r.ReportCode in ('studentcount','studentsex','studentdisability','studentrace','studentswdtitle1','studentsubpopulation')
+					where r.ReportCode in ('studentcount','studentsex','studentdisability','studentrace','studentsubpopulation')
 					 and r.IsLocked=1) 
 					and ReportYear = @selectedReportYear
-				end
-				else if(@reportType='disciplinecounts')
-				begin
-					delete from rds.ReportEDFactsK12StudentDisciplines where ReportCode in (
-					select ReportCode
-					from app.GenerateReports r
-					where r.ReportCode in ('studentdiscipline') and r.IsLocked=1) and ReportYear = @selectedReportYear
-								
-				end
 		end	
 		else if @factTypeCode = 'directory'
 		begin
@@ -147,7 +135,7 @@ begin try
 			delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
-				where r.ReportCode in ('c037','c134') and r.IsLocked=1) and ReportYear = @selectedReportYear
+				where r.ReportCode in ('c037','c134','studentswdtitle1') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end
 		else if @factTypeCode = 'mep'
 		begin	
@@ -222,15 +210,13 @@ begin try
 				and r.ReportCode in ('studentfederalprogramsparticipation', 'studentmultifedprogsparticipation') and r.IsLocked=1) 
 				and  ReportYear = @selectedReportYear
 		end
-		else if @factTypeCode = 'submission'
+		else if @factTypeCode = 'discipline'
 		begin
-			if(@reportType='disciplinecounts')
-			begin
 				delete from rds.ReportEDFactsK12StudentDisciplines where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
-				and r.ReportCode in ('c005', 'c006', 'c007','c086','c088','c143','c144','disciplinaryremovals','yeartoyearremoval') 
+				and r.ReportCode in ('c005', 'c006', 'c007','c086','c088','c143','c144','disciplinaryremovals','yeartoyearremoval', 'studentdiscipline') 
 				and r.IsLocked=1) and  ReportYear = @selectedReportYear
 
 				delete from rds.FactCustomCounts where ReportCode in (
@@ -238,14 +224,15 @@ begin try
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
 				and r.ReportCode in ('indicator4a','indicator4b') and r.IsLocked=1) and  ReportYear = @selectedReportYear
-			end
-			else if(@reportType='studentassessments')
-			begin
+		end
+		else if @factTypeCode = 'assessment'
+		begin
 				delete from rds.ReportEDFactsK12StudentAssessments where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
-				where r.ReportCode in ('c126', 'c139','c175','c178','c179','c185','c188','c189','c138','c137','c050','c142','c157','stateassessmentsperformance') and r.IsLocked=1) 
+				where r.ReportCode in ('c126', 'c139','c175','c178','c179','c185','c188','c189','c138','c137','c050','c142','c157','stateassessmentsperformance') 
+				and r.IsLocked=1) 
 				and  ReportYear = @selectedReportYear
 								
 
@@ -262,16 +249,14 @@ begin try
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
 				where r.ReportCode in ('yeartoyearattendance') and r.IsLocked=1) and  ReportYear = @selectedReportYear
-
-			end
-			else if(@reportType='personnelcounts')
-			begin
+		end
+		else if @factTypeCode = 'staff'
+		begin
 				delete from rds.ReportEDFactsK12StaffCounts where ReportCode in (
 				select ReportCode
 				from app.GenerateReports r
 				inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
 				and r.ReportCode in ('c070', 'c099','c112','c059','c067') and r.IsLocked=1)  and  ReportYear = @selectedReportYear
-			end
 		end
 	   	 
 	commit transaction

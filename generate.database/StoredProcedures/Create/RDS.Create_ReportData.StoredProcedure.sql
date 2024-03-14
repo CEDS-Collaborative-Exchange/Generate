@@ -24,8 +24,7 @@ BEGIN
 		select @dimFactTypeId = DimFactTypeId from rds.DimFactTypes where FactTypeCode = @dimFactTypeCode
 		select  @dataMigrationTypeId = DataMigrationTypeId from app.DataMigrationTypes where DataMigrationTypeCode = 'report'
 
-		select @dimFactTypeId = DimFactTypeId from rds.DimFactTypes where FactTypeCode = @dimFactTypeCode
-	
+		
 		-- Get Fact/Report Tables/Fields
 
 		declare @factTable as varchar(50)

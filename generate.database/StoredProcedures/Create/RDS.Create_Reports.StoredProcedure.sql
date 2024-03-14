@@ -61,15 +61,7 @@ begin try
 						exec [RDS].[Create_ReportData]	@reportCode = 'studentrace', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
 					end
 
-					if exists (select 'c' from app.GenerateReports where ReportCode = 'studentswdtitle1' and IsLocked = 1 and UseLegacyReportMigration = 1)
-					begin
-						-- Log history
-						insert into app.DataMigrationHistories
-						(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
-						values	(getutcdate(), @dataMigrationTypeId, 'Data Population Summary - studentswdtitle1')
-
-						exec [RDS].[Create_ReportData]	@reportCode = 'studentswdtitle1', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
-					end
+					
 
 					if exists (select 'c' from app.GenerateReports where ReportCode = 'studentsubpopulation' and IsLocked = 1 and UseLegacyReportMigration = 1)
 					begin			
@@ -435,6 +427,16 @@ begin try
 						values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c134')
 
 						exec [RDS].[Create_ReportData]	@reportCode = 'c134', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
+					end
+
+					if exists (select 'c' from app.GenerateReports where ReportCode = 'studentswdtitle1' and IsLocked = 1 and UseLegacyReportMigration = 1)
+					begin
+						-- Log history
+						insert into app.DataMigrationHistories
+						(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
+						values	(getutcdate(), @dataMigrationTypeId, 'Data Population Summary - studentswdtitle1')
+
+						exec [RDS].[Create_ReportData]	@reportCode = 'studentswdtitle1', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
 					end
 				end
 		if @factTypeCode = 'mep'
