@@ -61,7 +61,7 @@ BEGIN
 	SELECT DISTINCT LEAIdentifierSea
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
-		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
 
 	-- Gather, evaluate & record the results
 	SELECT  
@@ -74,7 +74,7 @@ BEGIN
 		, hmStatus.HomelessServicedIndicator
 --Age/Grade
 		, CASE	WHEN rda.AgeValue < 3 THEN 'UNDER3'
-				WHEN rda.AgeValue in (3,4,5) AND isnull(ske.GradeLevel, 'PK') = 'PK' THEN '3TO5NOTK'
+				WHEN rda.AgeValue in (3,4,5) AND isnull(ske.GradeLevel, 'PK') in ('PK', 'PK_1') THEN '3TO5NOTK'
 		END AS AgeEdFactsCode	
 	INTO #C194Staging
 	FROM Staging.K12Enrollment ske
@@ -94,7 +94,7 @@ BEGIN
 
 	WHERE hmStatus.HomelessServicedIndicator = 1
 	AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
-	AND ISNULL(ske.GradeLevel, 'PK') = 'PK'
+	AND ISNULL(ske.GradeLevel, 'PK') in ('PK', 'PK_1')
 	AND rda.AgeValue between 0 and 5
 	--Homeless Date with SY range 
 	AND ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') 
