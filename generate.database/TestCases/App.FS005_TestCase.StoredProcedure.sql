@@ -42,16 +42,6 @@ BEGIN
 	IF OBJECT_ID('tempdb..#L_ST1') IS NOT NULL
 	DROP TABLE #L_ST1
 
-	--create the race view to handle the conversion to Multiple Races
-	IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
-
-	SELECT * 
-	INTO #vwRaces 
-	FROM RDS.vwDimRaces
-	WHERE SchoolYear = @SchoolYear
-
-	CREATE CLUSTERED INDEX ix_tempvwRaces ON #vwRaces (RaceMap);
-
 	-- Define the test
 	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
 	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS005_UnitTestCase') 
@@ -117,21 +107,15 @@ BEGIN
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
 
-	IF OBJECT_ID('tempdb..#vwDisciplineStatuses') IS NOT NULL
-	DROP TABLE #vwDisciplineStatuses
+	--create the race view to handle the conversion to Multiple Races
+	IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
 
 	SELECT * 
-	INTO #vwDisciplineStatuses 
-	FROM RDS.vwDimDisciplineStatuses 
+	INTO #vwRaces 
+	FROM RDS.vwDimRaces
 	WHERE SchoolYear = @SchoolYear
 
-	IF OBJECT_ID('tempdb..#vwIdeaStatuses') IS NOT NULL
-	DROP TABLE #vwIdeaStatuses
-
-	SELECT *
-	INTO #vwIdeaStatuses
-	FROM RDS.vwDimIdeaStatuses
-	WHERE SchoolYear = @SchoolYear
+	CREATE CLUSTERED INDEX ix_tempvwRaces ON #vwRaces (RaceMap);
 
 	-- Gather, evaluate & record the results
 	SELECT  

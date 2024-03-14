@@ -110,6 +110,16 @@ BEGIN
 
 	CREATE INDEX IX_StudentsWithEnoughDuration ON #StudentsWithEnoughDuration(StudentIdentifierState)
 
+	--create the race view to handle the conversion to Multiple Races
+	IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
+
+	SELECT * 
+	INTO #vwRaces 
+	FROM RDS.vwDimRaces
+	WHERE SchoolYear = @SchoolYear
+
+	CREATE CLUSTERED INDEX ix_tempvwRaces ON #vwRaces (RaceMap);
+
 	--Get the LEAs that should not be reported against
 	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL
 	DROP TABLE #excludedLeas
@@ -124,7 +134,7 @@ BEGIN
 	WHERE LEA_IsReportedFederally = 0
 		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
 
-	SELECT  
+	SELECT DISTINCT  
 		ske.StudentIdentifierState
 		, ske.LeaIdentifierSeaAccountability
 		, ske.SchoolIdentifierSea
@@ -134,6 +144,8 @@ BEGIN
 		, CASE ske.Sex
 			WHEN 'Male'		THEN 'M'
 			WHEN 'Female'	THEN 'F'
+			WHEN 'Male_1'	THEN 'M'
+			WHEN 'Female_1' THEN 'F'
 			ELSE 'MISSING'
 			END AS SexEdFactsCode
 		, sppse.ProgramParticipationEndDate
@@ -152,10 +164,38 @@ BEGIN
             WHEN 'Speechlanguageimpairment'		THEN 'SLI'
             WHEN 'Traumaticbraininjury'			THEN 'TBI'
             WHEN 'Visualimpairment'				THEN 'VI'
+            WHEN 'Autism_1'						THEN 'AUT'
+            WHEN 'Deafblindness_1'				THEN 'DB'
+            WHEN 'Deafness_1'					THEN 'DB'
+            WHEN 'Developmentaldelay_1'			THEN 'DD'
+            WHEN 'Emotionaldisturbance_1'		THEN 'EMN'
+            WHEN 'Hearingimpairment_1'			THEN 'HI'
+            WHEN 'Intellectualdisability_1'		THEN 'ID'
+            WHEN 'Multipledisabilities_1'		THEN 'MD'
+            WHEN 'Orthopedicimpairment_1'		THEN 'OI'
+            WHEN 'Otherhealthimpairment_1'		THEN 'OHI'
+            WHEN 'Specificlearningdisability_1' THEN 'SLD'
+            WHEN 'Speechlanguageimpairment_1'	THEN 'SLI'
+            WHEN 'Traumaticbraininjury_1'		THEN 'TBI'
+            WHEN 'Visualimpairment_1'			THEN 'VI'
             ELSE sidt.IdeaDisabilityTypeCode
 		END AS IdeaDisabilityType
-		, spr.RaceType
-		, rdr.RaceEdFactsCode
+		, spr.RaceMap
+		, CASE 
+			WHEN ske.HispanicLatinoEthnicity = 1						THEN 'HI7' 
+			WHEN spr.RaceMap = 'AmericanIndianorAlaskaNative'			THEN 'AM7'
+			WHEN spr.RaceMap = 'Asian'									THEN 'AS7'
+			WHEN spr.RaceMap = 'BlackorAfricanAmerican'					THEN 'BL7'
+			WHEN spr.RaceMap = 'NativeHawaiianorOtherPacificIslander'	THEN 'PI7'
+			WHEN spr.RaceMap = 'White'									THEN 'WH7'
+			WHEN spr.RaceMap = 'TwoorMoreRaces'							THEN 'MU7'
+			WHEN spr.RaceMap = 'AmericanIndianorAlaskaNative_1'			THEN 'AM7'
+			WHEN spr.RaceMap = 'Asian_1'								THEN 'AS7'
+			WHEN spr.RaceMap = 'BlackorAfricanAmerican_1'				THEN 'BL7'
+			WHEN spr.RaceMap = 'NativeHawaiianorOtherPacificIslander_1' THEN 'PI7'
+			WHEN spr.RaceMap = 'White_1'								THEN 'WH7'
+			WHEN spr.RaceMap = 'TwoorMoreRaces_1'						THEN 'MU7'
+		END AS RaceEdFactsCode
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
 				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
@@ -213,8 +253,6 @@ BEGIN
 		AND ske.StudentIdentifierState = spr.StudentIdentifierState
 		AND ISNULL(ske.LEAIdentifierSeaAccountability,'')	= ISNULL(spr.LeaIdentifierSeaAccountability,'')
 		AND ISNULL(ske.SchoolIdentifierSea,'') 				= ISNULL(spr.SchoolIdentifierSea,'')
-		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
 	LEFT JOIN #vwRaces rdr
 		ON rdr.SchoolYear = @SchoolYear
 		AND ISNULL(rdr.RaceMap, rdr.RaceCode) =
@@ -236,7 +274,7 @@ BEGIN
 			BETWEEN @SYStart AND @SYEnd
 
 --temp fix to address bad test records
-		AND ske.StudentIdentifierState not like 'CIID%'
+--		AND ske.StudentIdentifierState not like 'CIID%'
 
 	-- Gather, evaluate & record the results
 	/**********************************************************************
@@ -354,7 +392,6 @@ BEGIN
 
 	DROP TABLE #S_CSC
 
-	
 	/**********************************************************************
 		Test Case 4:
 		CSD at the SEA level
@@ -394,7 +431,6 @@ BEGIN
 			
 	DROP TABLE #S_CSD
 
-
 	/**********************************************************************
 		Test Case 5:
 		ST1 at the SEA level
@@ -429,8 +465,6 @@ BEGIN
 		AND rreksd.CategorySetCode = 'TOT'
 			
 	DROP TABLE #S_ST1
-
-
 
 	----------------------------------------
 	--- LEA level tests					 ---
@@ -480,7 +514,6 @@ BEGIN
 
 	DROP TABLE #L_CSA
 
-
 	/**********************************************************************
 		Test Case 2:
 		CSB at the LEA level
@@ -497,7 +530,6 @@ BEGIN
 	GROUP BY s.LeaIdentifierSeaAccountability
 		, RaceEdFactsCode
 		
-
 	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
@@ -526,7 +558,6 @@ BEGIN
 		AND rreksd.CategorySetCode = 'CSB'
 
 	DROP TABLE #L_CSB
-
 
 	/**********************************************************************
 		Test Case 3:
@@ -574,7 +605,6 @@ BEGIN
 
 	DROP TABLE #L_CSC
 
-
 	/**********************************************************************
 		Test Case 4:
 		CSD at the LEA level
@@ -620,7 +650,6 @@ BEGIN
 		AND rreksd.CategorySetCode = 'CSD'
 			
 	DROP TABLE #L_CSD
-
 
 	/**********************************************************************
 		Test Case 5:
@@ -671,6 +700,5 @@ BEGIN
 	--		on s.SqlUnitTestId = sr.SqlUnitTestId
 	--where s.UnitTestName like '%143%'
 	--and passed = 0
-
 
 END
