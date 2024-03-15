@@ -90,26 +90,40 @@ BEGIN
 		AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN ISNULL(ske.EnrollmentEntryDate, @SYStart) and ISNULL (ske.EnrollmentExitDate, @SYEnd)
-	JOIN Staging.ProgramParticipationSpecialEducation sppse
+	LEFT JOIN Staging.ProgramParticipationSpecialEducation sppse
 		ON sppse.StudentIdentifierState = ske.StudentIdentifierState
 		AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
 		AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
 		--Discipline Date within Program Participation range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, @SYStart) AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
+	LEFT JOIN Staging.IdeaDisabilityType sidt
+        ON ske.StudentIdentifierState = sidt.StudentIdentifierState
+        AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sidt.LeaIdentifierSeaAccountability, '')
+        AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sidt.SchoolIdentifierSea, '')
+        AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)  
+			BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+        AND sidt.IsPrimaryDisability = 1
 	WHERE ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
 		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') NOT IN ('PPPS', 'PPPS_1')
 		AND sd.DisciplinaryActionTaken IN ('03086', '03087', '03086_1', '03087_1')
 		AND ((ISNULL(sppse.IDEAIndicator, 0) = 1 
-			AND rds.Get_Age(ske.Birthdate, @ChildCountDate) BETWEEN 3 AND 21)	
+				AND rds.Get_Age(ske.Birthdate, @ChildCountDate) BETWEEN 3 AND 21
+				AND ISNULL(sidt.IdeaDisabilityTypeCode, '') <> '' )	
 			OR (ISNULL(sppse.IDEAIndicator, 0) = 0 AND ske.GradeLevel in ('KG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12',
-				'KG_1', '01_1', '02_1', '03_1', '04_1', '05_1', '06_1', '07_1', '08_1', '09_1', '10_1', '11_1', '12_1')
-			))
+					'KG_1', '01_1', '02_1', '03_1', '04_1', '05_1', '06_1', '07_1', '08_1', '09_1', '10_1', '11_1', '12_1')
+				)
+			)
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN @SYStart AND @SYEnd
+
+--temp fix to address bad test records
+		AND ske.StudentIdentifierState not like 'CIID%'
+
 	GROUP BY ske.LeaIdentifierSeaAccountability
 		, ISNULL(sppse.IDEAIndicator, 0)
 		, sd.EducationalServicesAfterRemoval
+
 
 	/**********************************************************************
 		Test Case 1: 

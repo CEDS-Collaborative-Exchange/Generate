@@ -81,6 +81,16 @@ BEGIN
 
     select @ChildCountDate = convert(varchar, @CutoffMonth) + '/' + convert(varchar, @CutoffDay) + '/' + convert(varchar, @SchoolYear -1)
 
+	--create the race view to handle the conversion to Multiple Races
+	IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
+
+	SELECT * 
+	INTO #vwRaces 
+	FROM RDS.vwDimRaces
+	WHERE SchoolYear = @SchoolYear
+
+	CREATE CLUSTERED INDEX ix_tempvwRaces ON #vwRaces (RaceMap);
+
 	--Get the LEAs that should not be reported against
 	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL
 	DROP TABLE #excludedLeas
@@ -142,8 +152,22 @@ BEGIN
             WHEN 'Visualimpairment_1'			THEN 'VI'
             ELSE sidt.IdeaDisabilityTypeCode
 		END AS IdeaDisabilityType
-		, spr.RaceType
-		, rdr.RaceEdFactsCode
+		, spr.RaceMap
+		, CASE 
+			WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HI7' 
+			WHEN spr.RaceMap = 'AmericanIndianorAlaskaNative' THEN 'AM7'
+			WHEN spr.RaceMap = 'Asian' THEN 'AS7'
+			WHEN spr.RaceMap = 'BlackorAfricanAmerican' THEN 'BL7'
+			WHEN spr.RaceMap = 'NativeHawaiianorOtherPacificIslander' THEN 'PI7'
+			WHEN spr.RaceMap = 'White' THEN 'WH7'
+			WHEN spr.RaceMap = 'TwoorMoreRaces' THEN 'MU7'
+			WHEN spr.RaceMap = 'AmericanIndianorAlaskaNative_1' THEN 'AM7'
+			WHEN spr.RaceMap = 'Asian_1' THEN 'AS7'
+			WHEN spr.RaceMap = 'BlackorAfricanAmerican_1' THEN 'BL7'
+			WHEN spr.RaceMap = 'NativeHawaiianorOtherPacificIslander_1' THEN 'PI7'
+			WHEN spr.RaceMap = 'White_1' THEN 'WH7'
+			WHEN spr.RaceMap = 'TwoorMoreRaces_1' THEN 'MU7'
+		END AS RaceEdFactsCode
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
 				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
@@ -187,13 +211,6 @@ BEGIN
 		--Discipline Date within English Learner range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) and ISNULL (sps.EnglishLearner_StatusEndDate, @SYEnd)
-	LEFT JOIN Staging.K12PersonRace spr
-		ON spr.StudentIdentifierState = ske.StudentIdentifierState
-		AND ISNULL(spr.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
-		AND ISNULL(spr.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
-		AND spr.SchoolYear = ske.SchoolYear
-		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
 	LEFT JOIN Staging.IdeaDisabilityType sidt
         ON ske.StudentIdentifierState = sidt.StudentIdentifierState
         AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sidt.LeaIdentifierSeaAccountability, '')
@@ -201,9 +218,19 @@ BEGIN
         AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)  
 			BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
         AND sidt.IsPrimaryDisability = 1
-	LEFT JOIN RDS.DimRaces rdr
-		ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
-			OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceCode)
+	LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  Using a view that resolves multiple race records by returning the value TwoOrMoreRaces
+		ON spr.SchoolYear = @SchoolYear
+		AND ske.StudentIdentifierState = spr.StudentIdentifierState
+		AND ISNULL(ske.LEAIdentifierSeaAccountability,'')	= ISNULL(spr.LeaIdentifierSeaAccountability,'')
+		AND ISNULL(ske.SchoolIdentifierSea,'') 				= ISNULL(spr.SchoolIdentifierSea,'')
+	LEFT JOIN #vwRaces rdr
+		ON rdr.SchoolYear = @SchoolYear
+		AND ISNULL(rdr.RaceMap, rdr.RaceCode) =
+			CASE
+				WHEN ske.HispanicLatinoEthnicity = 1 THEN 'HispanicorLatinoEthnicity'
+				WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
+				ELSE 'Missing'
+			END
 	WHERE sppse.IDEAIndicator = 1
 		AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
 		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') NOT IN ('PPPS', 'PPPS_1')
@@ -214,6 +241,8 @@ BEGIN
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN @SYStart AND @SYEnd
 
+--temp fix to address bad test records
+	AND ske.StudentIdentifierState not like 'CIID%'
 
 	--Set the EDFacts value for removal length
 	UPDATE s
@@ -433,7 +462,7 @@ BEGIN
 		,GETDATE()
 	FROM #S_CSD s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		ON replace(s.DisciplineMethod, '_1', '') = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.LEPRemovalLength = rreksd.RemovalLength
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.EnglishLearnerStatus
 		AND rreksd.ReportCode = 'C006' 
@@ -478,7 +507,7 @@ BEGIN
 		,GETDATE()
 	FROM #S_ST1 s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON s.DisciplineMethod = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		ON replace(s.DisciplineMethod, '_1', '') = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND rreksd.ReportCode = 'C006' 
 		AND rreksd.ReportYear = @SchoolYear
@@ -646,9 +675,9 @@ BEGIN
 	FROM #L_CSC s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-		AND replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		AND replace(s.DisciplineMethod, '_1', '') = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
-		AND s.SexEdFactsCode = rreksd.Sex
+		AND replace(s.SexEdFactsCode, '_1', '') = rreksd.Sex
 		AND rreksd.ReportCode = 'C006' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
@@ -741,7 +770,7 @@ BEGIN
 		,[TestDateTime]
 	)
 	SELECT 
-			@SqlUnitTestId
+		@SqlUnitTestId
 		,'ST1 LEA Match All'
 		,'ST1 LEA Match All - LEA Identifier - ' + s.LeaIdentifierSeaAccountability
 			+ '; Discipline Method: ' + s.DisciplineMethod
@@ -753,7 +782,7 @@ BEGIN
 	FROM #L_ST1 s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-		AND replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
+		AND replace(s.DisciplineMethod, '_1', '') = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND rreksd.ReportCode = 'C006' 
 		AND rreksd.ReportYear = @SchoolYear
