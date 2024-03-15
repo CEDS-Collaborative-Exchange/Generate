@@ -51,7 +51,7 @@ BEGIN
 		
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
-		WHERE FactTypeCode = 'Submission'
+		WHERE FactTypeCode = 'staff'
 
 		DELETE RDS.FactK12StaffCounts
 		WHERE SchoolYearId = @SchoolYearId 

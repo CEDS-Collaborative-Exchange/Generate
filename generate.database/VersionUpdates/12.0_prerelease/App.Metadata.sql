@@ -67,69 +67,92 @@ END
   where DataMigrationTypeId = 3 and StoredProcedureName like '%Empty_Reports%'
   and (LEN(StoredProcedureName) - LEN(REPLACE(StoredProcedureName, ',', ''))) = 1
 
-
+  IF NOT EXISTS(SELECT 1 FROM app.DataMigrationTasks where DataMigrationTypeId = 3
+  and StoredProcedureName like '%Empty_Reports%' and StoredProcedureName like '%discipline%')
+  BEGIN
+      INSERT INTO [App].[DataMigrationTasks]
+            ([DataMigrationTypeId]
+            ,[IsActive]
+            ,[RunAfterGenerateMigration]
+            ,[RunBeforeGenerateMigration]
+            ,[StoredProcedureName]
+            ,[TaskSequence]
+            ,[IsSelected]
+            ,[Description])
+    VALUES (3,1,0,0,'rds.Empty_Reports ''discipline''',55,1,'')
+  END
+  
+  IF NOT EXISTS(SELECT 1 FROM app.DataMigrationTasks where DataMigrationTypeId = 3
+  and StoredProcedureName like '%create_reports%' and StoredProcedureName like '%discipline%')
+  BEGIN
     INSERT INTO [App].[DataMigrationTasks]
-           ([DataMigrationTypeId]
-           ,[IsActive]
-           ,[RunAfterGenerateMigration]
-           ,[RunBeforeGenerateMigration]
-           ,[StoredProcedureName]
-           ,[TaskSequence]
-           ,[IsSelected]
-           ,[Description])
-  VALUES (3,1,0,0,'rds.Empty_Reports ''discipline''',55,1,'')
-  
-  INSERT INTO [App].[DataMigrationTasks]
-           ([DataMigrationTypeId]
-           ,[IsActive]
-           ,[RunAfterGenerateMigration]
-           ,[RunBeforeGenerateMigration]
-           ,[StoredProcedureName]
-           ,[TaskSequence]
-           ,[IsSelected]
-           ,[Description])
-  VALUES (3,1,0,0,'rds.create_reports ''discipline'',0',56,1,'')
+            ([DataMigrationTypeId]
+            ,[IsActive]
+            ,[RunAfterGenerateMigration]
+            ,[RunBeforeGenerateMigration]
+            ,[StoredProcedureName]
+            ,[TaskSequence]
+            ,[IsSelected]
+            ,[Description])
+    VALUES (3,1,0,0,'rds.create_reports ''discipline'',0',56,1,'')
+  END
 
-  INSERT INTO [App].[DataMigrationTasks]
-           ([DataMigrationTypeId]
-           ,[IsActive]
-           ,[RunAfterGenerateMigration]
-           ,[RunBeforeGenerateMigration]
-           ,[StoredProcedureName]
-           ,[TaskSequence]
-           ,[IsSelected]
-           ,[Description])
-  VALUES (3,1,0,0,'rds.Empty_Reports ''assessment''',57,1,'')
+  IF NOT EXISTS(SELECT 1 FROM app.DataMigrationTasks where DataMigrationTypeId = 3
+  and StoredProcedureName like '%Empty_Reports%' and StoredProcedureName like '%assessment%')
+  BEGIN
+    INSERT INTO [App].[DataMigrationTasks]
+            ([DataMigrationTypeId]
+            ,[IsActive]
+            ,[RunAfterGenerateMigration]
+            ,[RunBeforeGenerateMigration]
+            ,[StoredProcedureName]
+            ,[TaskSequence]
+            ,[IsSelected]
+            ,[Description])
+    VALUES (3,1,0,0,'rds.Empty_Reports ''assessment''',57,1,'')
+  END
   
-  INSERT INTO [App].[DataMigrationTasks]
-           ([DataMigrationTypeId]
-           ,[IsActive]
-           ,[RunAfterGenerateMigration]
-           ,[RunBeforeGenerateMigration]
-           ,[StoredProcedureName]
-           ,[TaskSequence]
-           ,[IsSelected]
-           ,[Description])
-  VALUES (3,1,0,0,'rds.create_reports ''assessment'',0',58,1,'')
+  IF NOT EXISTS(SELECT 1 FROM app.DataMigrationTasks where DataMigrationTypeId = 3
+  and StoredProcedureName like '%create_reports%' and StoredProcedureName like '%assessment%')
+  BEGIN
+    INSERT INTO [App].[DataMigrationTasks]
+            ([DataMigrationTypeId]
+            ,[IsActive]
+            ,[RunAfterGenerateMigration]
+            ,[RunBeforeGenerateMigration]
+            ,[StoredProcedureName]
+            ,[TaskSequence]
+            ,[IsSelected]
+            ,[Description])
+    VALUES (3,1,0,0,'rds.create_reports ''assessment'',0',58,1,'')
+  END
 
-  INSERT INTO [App].[DataMigrationTasks]
-           ([DataMigrationTypeId]
-           ,[IsActive]
-           ,[RunAfterGenerateMigration]
-           ,[RunBeforeGenerateMigration]
-           ,[StoredProcedureName]
-           ,[TaskSequence]
-           ,[IsSelected]
-           ,[Description])
-  VALUES (3,1,0,0,'rds.Empty_Reports ''staff''',59,1,'')
+  IF NOT EXISTS(SELECT 1 FROM app.DataMigrationTasks where DataMigrationTypeId = 3
+  and StoredProcedureName like '%Empty_Reports%' and StoredProcedureName like '%staff%')
+  BEGIN
+    INSERT INTO [App].[DataMigrationTasks]
+            ([DataMigrationTypeId]
+            ,[IsActive]
+            ,[RunAfterGenerateMigration]
+            ,[RunBeforeGenerateMigration]
+            ,[StoredProcedureName]
+            ,[TaskSequence]
+            ,[IsSelected]
+            ,[Description])
+    VALUES (3,1,0,0,'rds.Empty_Reports ''staff''',59,1,'')
+  END
   
-  INSERT INTO [App].[DataMigrationTasks]
-           ([DataMigrationTypeId]
-           ,[IsActive]
-           ,[RunAfterGenerateMigration]
-           ,[RunBeforeGenerateMigration]
-           ,[StoredProcedureName]
-           ,[TaskSequence]
-           ,[IsSelected]
-           ,[Description])
-  VALUES (3,1,0,0,'rds.create_reports ''staff'',0',60,1,'')
+  IF NOT EXISTS(SELECT 1 FROM app.DataMigrationTasks where DataMigrationTypeId = 3
+  and StoredProcedureName like '%create_reports%' and StoredProcedureName like '%staff%')
+  BEGIN
+    INSERT INTO [App].[DataMigrationTasks]
+            ([DataMigrationTypeId]
+            ,[IsActive]
+            ,[RunAfterGenerateMigration]
+            ,[RunBeforeGenerateMigration]
+            ,[StoredProcedureName]
+            ,[TaskSequence]
+            ,[IsSelected]
+            ,[Description])
+    VALUES (3,1,0,0,'rds.create_reports ''staff'',0',60,1,'')
+  END

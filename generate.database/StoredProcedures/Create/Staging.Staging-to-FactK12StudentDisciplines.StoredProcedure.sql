@@ -163,7 +163,7 @@ BEGIN
 	--Set the Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
-		WHERE FactTypeCode = 'submission'
+		WHERE FactTypeCode = 'discipline'
 
 	-- Clear the Fact table for the SY being migrated
 		DELETE RDS.FactK12StudentDisciplines
