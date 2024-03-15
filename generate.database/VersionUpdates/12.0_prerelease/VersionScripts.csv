@@ -2,9 +2,6 @@ VersionUpdates\\12.0_prerelease,Restore 11.3.sql,0
 VersionUpdates\\12.0_prerelease,UpdateMetadata.sql,0
 VersionUpdates\\12.0_prerelease,Create-RDS-Tables.sql,0
 VersionUpdates\\12.0_prerelease,Create-Staging-Tables.sql,0
-StoredProcedures\\Create,Staging.Staging-to-DimAccessibleEducationMaterialProviders.sql,0
-StoredProcedures\\Create,Staging.Staging-to-FactK12AccessibleEducationMaterialAssignments.sql,0
-StoredProcedures\\Create,Staging.Staging-to-DimIeus.sql,0
 Views\\Create,RDS.vwDimAccessibleEducationMaterialStatuses.sql,0
 Views\\Create,RDS.vwDimRuralStatuses.sql,0
 Views\\Create,RDS.vwAccessibleEducationMaterialAssignments.sql,0
@@ -22,14 +19,12 @@ Tables\\Drop,Staging.StagingValidationRules_ReportsXREF.Table.sql
 Tables\\Create,Staging.StagingValidationRules_ReportsXREF.Table.sql
 Tables\\Drop,App.GenerateStagingColumns.Table.sql
 Tables\\Create,App.GenerateStagingColumns.Table.sql
-Views\\Create,RDS.vwDimAccessibleEducationMaterialStatuses.sql,0
-Views\\Create,RDS.vwAccessibleEducationMaterialAssignments.sql,0
 Views\\Drop,App.vwStagingRelationships.View.sql
 Views\\Create,App.vwStagingRelationships.View.sql
 Views\\Drop,Staging.vwStagingValidationRules.View.sql
 Views\\Create,Staging.vwStagingValidationRules.View.sql
 StoredProcedures\\Drop,Staging.StagingValidation_AssignRuleToReports.StoredProcedure.sql
-StoredProcedures\\Create,Staging.StagingValidation_AssignRuleToReports.StoredProcedure.sql
+StoredProcedures\\Create,Staging.StagingValidation_AssignRuleToReports.sql
 StoredProcedures\\Drop,Staging.StagingValidation_Execute.StoredProcedure.sql
 StoredProcedures\\Create,Staging.StagingValidation_Execute.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.StagingValidation_GetResults.StoredProcedure.sql
