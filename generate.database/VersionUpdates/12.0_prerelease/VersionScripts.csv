@@ -2,6 +2,12 @@ VersionUpdates\\12.0_prerelease,Restore 11.3.sql,0
 VersionUpdates\\12.0_prerelease,UpdateMetadata.sql,0
 VersionUpdates\\12.0_prerelease,Create-RDS-Tables.sql,0
 VersionUpdates\\12.0_prerelease,Create-Staging-Tables.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimAccessibleEducationMaterialProviders.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12AccessibleEducationMaterialAssignments.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimIeus.sql,0
+Views\\Create,RDS.vwDimAccessibleEducationMaterialStatuses.sql,0
+Views\\Create,RDS.vwDimRuralStatuses.sql,0
+Views\\Create,RDS.vwAccessibleEducationMaterialAssignments.sql,0
 VersionUpdates\\12.0_prerelease,Metadata-Updates.sql,0
 VersionUpdates\\12.0_prerelease,Junk-Table-Dimension-Population-V11.0.0.0.sql,0
 VersionUpdates\\12.0_prerelease,app.TableChanges.sql
