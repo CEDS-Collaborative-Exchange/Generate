@@ -67,6 +67,10 @@ END
   where DataMigrationTypeId = 3 and StoredProcedureName like '%Empty_Reports%'
   and (LEN(StoredProcedureName) - LEN(REPLACE(StoredProcedureName, ',', ''))) = 1
 
+  Update app.DataMigrationTasks
+  set StoredProcedureName = 'App.Wrapper_Migrate_Staff_to_RDS'
+  where DataMigrationTypeId = 2 and StoredProcedureName like 'App.Wrapper_Migrate_Personnel_to_RDS'
+
   IF NOT EXISTS(SELECT 1 FROM app.DataMigrationTasks where DataMigrationTypeId = 3
   and StoredProcedureName like '%Empty_Reports%' and StoredProcedureName like '%discipline%')
   BEGIN
@@ -156,3 +160,17 @@ END
             ,[Description])
     VALUES (3,1,0,0,'rds.create_reports ''staff'',0',60,1,'')
   END
+
+
+
+declare @submissionFactTypeId as int, @newFactTypeId as int
+
+select @submissionFactTypeId = DimFactTypeId from rds.DimFactTypes where FactTypeCode = 'submission'
+select @newFactTypeId = DimFactTypeId from rds.DimFactTypes where FactTypeCode = 'discipline'
+Update rds.FactK12StudentDisciplines set FactTypeId = @newFactTypeId where FactTypeId = @submissionFactTypeId
+
+select @newFactTypeId = DimFactTypeId from rds.DimFactTypes where FactTypeCode = 'assessment'
+Update rds.FactK12StudentAssessments set FactTypeId = @newFactTypeId where FactTypeId = @submissionFactTypeId
+
+select @newFactTypeId = DimFactTypeId from rds.DimFactTypes where FactTypeCode = 'staff'
+Update rds.FactK12StaffCounts set FactTypeId = @newFactTypeId where FactTypeId = @submissionFactTypeId
