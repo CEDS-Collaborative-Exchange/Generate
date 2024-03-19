@@ -42,4 +42,35 @@ having count(*) > 1',
 	@CreatedBy = 'Generate',
 	@Enabled = 1
 
-    
+ 
+exec Staging.StagingValidation_InsertRule
+	@ReportGroupOrCode = 'All',
+	@StagingTableName = 'K12Organization',
+	@StagingColumnName = 'LEA_RecordStartDateTime',
+	@RuleDscr = 'LEA_RecordStartDateTime must be before LEA_RecordEndDateTime',
+	@Condition = 'where LEA_RecordStartDateTime > isnull(LEA_RecordEndDateTime, getdate())',
+	@ValidationMessage = 'LEA_RecordStartDateTime must be before LEA_RecordEndDateTime',
+	@CreatedBy = 'Generate',
+	@Enabled = 1
+
+exec Staging.StagingValidation_InsertRule
+	@ReportGroupOrCode = 'All',
+	@StagingTableName = 'K12Enrollment',
+	@StagingColumnName = 'StudentIdentifierState',
+	@RuleDscr = 'A student has multiple versions of demographic information',
+	@Condition = 'select a.StudentIdentifierState, a.LeaIdentifierSeaAccountability, a.SchoolIdentifierSea,
+	a.FirstName, a.MiddleName, a.LastOrSurname, a.Birthdate, a.Sex, a.HispanicLatinoEthnicity
+from staging.K12Enrollment a
+left join staging.K12Enrollment b
+	on a.StudentIdentifierState = b.StudentIdentifierState
+where a.FirstName <> b.firstname
+or a.MiddleName <> b.MiddleName
+or a.LastOrSurname <> b.LastOrSurname
+or a.Birthdate <> b.Birthdate
+or a.sex <> b.sex
+or a.HispanicLatinoEthnicity <> b.HispanicLatinoEthnicity',
+	@ValidationMessage = 'A student has multiple versions of demographic information',
+	@CreatedBy = 'Generate',
+	@Enabled = 1
+
+
