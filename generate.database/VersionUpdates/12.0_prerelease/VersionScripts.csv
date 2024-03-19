@@ -40,4 +40,5 @@ StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
 VersionUpdates\\12.0_prerelease,Populate App.GenerateStagingColumns.sql,0
 VersionUpdates\\12.0_prerelease,Populate Staging.StagingValidationRules.sql,0
+VersionUpdates\\12.0_prerelease,Insert Staging Validation Rules.sql,0
 VersionUpdates\\12.0_prerelease,UpdateDbVersion.sql,0
