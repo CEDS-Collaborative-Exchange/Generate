@@ -7,7 +7,7 @@ BEGIN
 
 	-- Verify @ReportGroupOrCodeParm is Valid
 	if not exists (
-		select top 1 * from App.vwReportCode_StagingTables 
+		select top 1 * from App.vwStagingRelationships 
 		where ReportCode = @ReportGroupOrCode or ReportGroup = @ReportGroupOrCode)
 		begin
 			select '*** INVALID VALUE FOR @ReportGroupOrCode.  VALID OPTIONS ARE:','' VALID_VALUES

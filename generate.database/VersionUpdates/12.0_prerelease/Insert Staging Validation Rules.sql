@@ -73,4 +73,14 @@ or a.HispanicLatinoEthnicity <> b.HispanicLatinoEthnicity',
 	@CreatedBy = 'Generate',
 	@Enabled = 1
 
+exec Staging.StagingValidation_InsertRule
+	@ReportGroupOrCode = 'C141',
+	@StagingTableName = 'ProgramParticipationSpecialEducation',
+	@StagingColumnName = 'IdeaIndicator',
+	@RuleDscr = 'Cannot be NULL',
+	@Condition = 'Required',
+	@ValidationMessage = 'Cannot be NULL',
+	@CreatedBy = 'Generate',
+	@Enabled = 1
 
+    
