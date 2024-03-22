@@ -1,7 +1,7 @@
 PRINT 'Install test scripts'
 
 PRINT 'Update Toggle'
-DECLARE @SchoolYear SMALLINT = 2023
+DECLARE @SchoolYear SMALLINT = 2024
 update App.ToggleResponses set ResponseValue = '10/01/' + CAST(@SchoolYear - 1 AS VARCHAR) where ToggleResponseId = 1
 
 DECLARE  @DimSchoolYearId INT
@@ -80,42 +80,32 @@ EXEC RDS.Create_ReportData 'C052', 'membership', 0
 
 PRINT 'End-to-End Test for DimK12Students'
 EXEC App.DimK12Students_TestCase
+PRINT 'End-to-End Test for FS029'
+EXEC App.FS029_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS002'
 EXEC App.FS002_TestCase							@SchoolYear
+PRINT 'End-to-End Test for FS089'
+EXEC App.FS089_TestCase							@SchoolYear
+PRINT 'End-to-End Test for FS009'
+EXEC App.FS009_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS005'
 EXEC App.FS005_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS006'
 EXEC App.FS006_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS007'
 EXEC App.FS007_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS009'
-EXEC App.FS009_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS029'
-EXEC App.FS029_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS033'
-EXEC App.FS033_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS052'
-EXEC App.FS052_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS070'
-EXEC App.FS070_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS088'
 EXEC App.FS088_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS089'
-EXEC App.FS089_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS099'
-EXEC App.FS099_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS112'
-EXEC App.FS112_TestCase							@SchoolYear
--- PRINT 'End-to-End Test for FS116'
--- EXEC App.FS116_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS118'
-EXEC App.FS118_TestCase							@SchoolYear
-PRINT 'End-to-End Test for FS141'
-EXEC App.FS141_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS143'
 EXEC App.FS143_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS144'
 EXEC App.FS144_TestCase							@SchoolYear
+PRINT 'End-to-End Test for FS070'
+EXEC App.FS070_TestCase							@SchoolYear
+PRINT 'End-to-End Test for FS099'
+EXEC App.FS099_TestCase							@SchoolYear
+PRINT 'End-to-End Test for FS112'
+EXEC App.FS112_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS175'
 EXEC App.FS17x_TestCase							@SchoolYear, 'FS175'
 PRINT 'End-to-End Test for FS178'
@@ -128,6 +118,16 @@ PRINT 'End-to-End Test for FS188'
 EXEC App.FS18x_TestCase							@SchoolYear, 'FS188'
 PRINT 'End-to-End Test for FS189'
 EXEC App.FS18x_TestCase							@SchoolYear, 'FS189'
+PRINT 'End-to-End Test for FS033'
+EXEC App.FS033_TestCase							@SchoolYear
+PRINT 'End-to-End Test for FS052'
+EXEC App.FS052_TestCase							@SchoolYear
+-- PRINT 'End-to-End Test for FS116'
+-- EXEC App.FS116_TestCase							@SchoolYear
+PRINT 'End-to-End Test for FS118'
+EXEC App.FS118_TestCase							@SchoolYear
+PRINT 'End-to-End Test for FS141'
+EXEC App.FS141_TestCase							@SchoolYear
 PRINT 'End-to-End Test for FS194'
 EXEC App.FS194_TestCase							@SchoolYear
 --PRINT 'End-to-End Test for FS212'
