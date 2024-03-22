@@ -16,6 +16,30 @@ BEGIN
 	VALUES('staff', 'Staff Data')
 END
 
+update rds.DimFactTypes
+set FactTypeCode = 'graduatescompleters'
+where FactTypeCode = 'grad'
+ 
+update rds.DimFactTypes
+set FactTypeCode = 'graduationrate'
+where FactTypeCode = 'gradrate'
+ 
+update rds.DimFactTypes
+set FactTypeCode = 'hsgradpsenroll'
+where FactTypeCode = 'hsgradenroll'
+ 
+update rds.DimFactTypes
+set FactTypeCode = 'migranteducationprogram'
+where FactTypeCode = 'mep'
+ 
+update rds.DimFactTypes
+set FactTypeCode = 'neglectedordelinquent'
+where FactTypeCode = 'nord'
+ 
+update rds.DimFactTypes
+set FactTypeCode = 'exiting'
+where FactTypeCode = 'specedexit'
+
 
   delete from app.DataMigrationTasks
   where DataMigrationTypeId = 3 and StoredProcedureName like '%create_reports%'

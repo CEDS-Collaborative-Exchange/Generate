@@ -57,7 +57,7 @@ begin try
 					and r.IsLocked=1) 
 					and  ReportYear = @selectedReportYear
 		end
-		else if @factTypeCode = 'specedexit'
+		else if @factTypeCode = 'exiting'
 		begin
 
 				delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
@@ -91,7 +91,7 @@ begin try
 				from app.GenerateReports r
 				where r.ReportCode in ('c032') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end
-		else if @factTypeCode = 'grad'
+		else if @factTypeCode = 'graduatescompleters'
 		begin	
 				
 			delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
@@ -137,7 +137,7 @@ begin try
 				from app.GenerateReports r
 				where r.ReportCode in ('c037','c134','studentswdtitle1') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end
-		else if @factTypeCode = 'mep'
+		else if @factTypeCode = 'migranteducationprogram'
 		begin	
 				
 			delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
@@ -153,7 +153,7 @@ begin try
 				from app.GenerateReports r
 				where r.ReportCode in ('c165') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end
-		else if @factTypeCode = 'nord'
+		else if @factTypeCode = 'neglectedordelinquent'
 		begin	
 				
 			delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
@@ -177,7 +177,7 @@ begin try
 				from app.GenerateReports r
 				where r.ReportCode in ('c195') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end
-		else if @factTypeCode = 'gradrate'
+		else if @factTypeCode = 'graduationrate'
 		begin	
 				
 			delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (
@@ -185,7 +185,7 @@ begin try
 				from app.GenerateReports r
 				where r.ReportCode in ('c150','c151') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end
-		else if @factTypeCode = 'hsgradenroll'
+		else if @factTypeCode = 'hsgradpsenroll'
 		begin	
 				
 			delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (

@@ -145,7 +145,7 @@ begin try
 					end
 			
 				end
-		if @factTypeCode = 'specedexit'
+		if @factTypeCode = 'exiting'
 				begin
 
 					if exists (select 'c' from app.GenerateReports where ReportCode = 'c009' and IsLocked = 1 and UseLegacyReportMigration = 1)
@@ -304,7 +304,7 @@ begin try
 					end
 
 				end
-		if @factTypeCode = 'grad'
+		if @factTypeCode = 'graduatescompleters'
 				begin
 					if exists (select 'c' from app.GenerateReports where ReportCode = 'c040' and IsLocked = 1 and UseLegacyReportMigration = 1)
 					begin
@@ -439,7 +439,7 @@ begin try
 						exec [RDS].[Create_ReportData]	@reportCode = 'studentswdtitle1', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
 					end
 				end
-		if @factTypeCode = 'mep'
+		if @factTypeCode = 'migranteducationprogram'
 				begin
 					 if exists (select 'c' from app.GenerateReports where ReportCode = 'c054' and IsLocked = 1 and UseLegacyReportMigration = 1)
 					begin
@@ -494,7 +494,7 @@ begin try
 						exec [RDS].[Create_ReportData]	@reportCode = 'c165', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
 					end
 				end
-		if @factTypeCode = 'nord'
+		if @factTypeCode = 'neglectedordelinquent'
 				begin
 			  
 
@@ -575,7 +575,7 @@ begin try
 						exec [RDS].[Create_ReportData]	@reportCode = 'c195', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest	
 					end
 				end
-		if @factTypeCode = 'gradrate'
+		if @factTypeCode = 'graduationrate'
 				begin
 					 if exists (select 'c' from app.GenerateReports where ReportCode = 'c150' and IsLocked = 1 and UseLegacyReportMigration = 1)
 					begin			
@@ -597,7 +597,7 @@ begin try
 						exec [RDS].[Create_ReportData]	@reportCode = 'c151', @dimFactTypeCode = @factTypeCode, @runAsTest = @runAsTest
 					end
 				end
-		if @factTypeCode = 'hsgradenroll'
+		if @factTypeCode = 'hsgradpsenroll'
 				begin
 					if exists (select 'c' from app.GenerateReports where ReportCode = 'c160' and IsLocked = 1 and UseLegacyReportMigration = 1)
 					begin			

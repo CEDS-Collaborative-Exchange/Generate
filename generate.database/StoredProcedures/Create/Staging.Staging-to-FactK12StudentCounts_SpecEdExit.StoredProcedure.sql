@@ -88,7 +88,7 @@ BEGIN
 
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
-		WHERE FactTypeCode = 'specedexit'
+		WHERE FactTypeCode = 'exiting'
 
 		DELETE RDS.FactK12StudentCounts
 		WHERE SchoolYearId = @SchoolYearId 
