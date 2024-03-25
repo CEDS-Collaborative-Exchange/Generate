@@ -40,7 +40,7 @@ BEGIN
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Neglected or Delinquent 5 of 6 - Empty RDS')
 
-			exec [rds].[Empty_RDS] 'NOrD'
+			exec [rds].[Empty_RDS] 'neglectedordelinquent'
 
 		--Populate the fact table
 			--write out message to DataMigrationHistories

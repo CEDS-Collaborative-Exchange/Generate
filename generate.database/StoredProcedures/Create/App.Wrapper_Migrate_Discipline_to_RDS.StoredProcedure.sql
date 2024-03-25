@@ -42,7 +42,7 @@ BEGIN
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Discipline 5 of 6 - Empty RDS')
 
-			exec [rds].[Empty_RDS] 'submission', 'disciplinecounts'
+			exec [rds].[Empty_RDS] 'discipline'
 
 		--Populate the fact table
 			--write out message to DataMigrationHistories

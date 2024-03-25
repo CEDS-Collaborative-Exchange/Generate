@@ -1,6 +1,5 @@
 CREATE PROCEDURE [RDS].[Empty_RDS]
-	@factTypeCode as varchar(50),
-	@reportType as varchar(50)=null
+	@factTypeCode as varchar(50)
 AS
 BEGIN
 
@@ -28,54 +27,42 @@ begin try
 	and dm.DataMigrationTypeCode = 'rds'
 
 		
-	if @factTypeCode in ('datapopulation', 'submission')
+		if @factTypeCode = 'discipline'
 		begin	
-				
-				if(@reportType='studentcounts')
-				begin
-					insert into #factTable(factId)
-					select FactK12StudentCountId from rds.FactK12StudentCounts where FactTypeId = @dimFactTypeId and SchoolYearId in (select DimSchoolYearId from #selectedSchoolYears)
+			insert into #factTable(factId)
+			select FactK12StudentDisciplineId from rds.FactK12StudentDisciplines 
+			where FactTypeId = @dimFactTypeId and SchoolYearId in (select DimSchoolYearId from #selectedSchoolYears)
 
-					delete from rds.FactK12StudentCounts where FactK12StudentCountId in (select factId from #factTable)
-	
-				end
-				else if(@reportType='disciplinecounts')
-				begin
-					insert into #factTable(factId)
-					select FactK12StudentDisciplineId from rds.FactK12StudentDisciplines where FactTypeId = @dimFactTypeId and SchoolYearId in (select DimSchoolYearId from #selectedSchoolYears)
+			delete from rds.FactK12StudentDisciplines where FactK12StudentDisciplineId in (select factId from #factTable)
+		end
+		else if @factTypeCode = 'staff'
+		begin	
+			insert into #factTable(factId)
+			select FactK12StaffCountId from rds.FactK12StaffCounts 
+			where FactTypeId = @dimFactTypeId and SchoolYearId in (select DimSchoolYearId from #selectedSchoolYears)
 
-					delete from rds.FactK12StudentDisciplines where FactK12StudentDisciplineId in (select factId from #factTable)
-	
-				end
-				else if(@reportType='studentassessments')
-				begin
+			delete from rds.FactK12StaffCounts where FactK12StaffCountId in (select factId from #factTable)
+		end
+		else if @factTypeCode = 'assessment'
+		begin	
+			insert into #factTable(factId)
+			select FactK12StudentAssessmentId from rds.FactK12StudentAssessments 
+			where FactTypeId = @dimFactTypeId and SchoolYearId in (select DimSchoolYearId from #selectedSchoolYears)
 
-					insert into #factTable(factId)
-					select FactK12StudentAssessmentId from rds.FactK12StudentAssessments where FactTypeId = @dimFactTypeId and SchoolYearId in (select DimSchoolYearId from #selectedSchoolYears)
+			delete from RDS.BridgeK12StudentAssessmentRaces where FactK12StudentAssessmentId in (select factId from #factTable)
 
-					delete from RDS.BridgeK12StudentAssessmentRaces where FactK12StudentAssessmentId in (select factId from #factTable)
+			delete from RDS.BridgeK12StudentAssessmentAccommodations where FactK12StudentAssessmentId in (select factId from #factTable)
 
-					delete from RDS.BridgeK12StudentAssessmentAccommodations where FactK12StudentAssessmentId in (select factId from #factTable)
+			delete from rds.FactK12StudentAssessments where FactK12StudentAssessmentId in (select factId from #factTable)
+		end
+		else if @factTypeCode = 'attendance'
+		begin	
+			insert into #factTable(factId)
+			select factK12StudentAttendanceRateId from rds.FactK12StudentAttendanceRates 
+			where FactTypeId = @dimFactTypeId and SchoolYearId in (select DimSchoolYearId from #selectedSchoolYears)
 
-					delete from rds.FactK12StudentAssessments where FactK12StudentAssessmentId in (select factId from #factTable)
-
-				end
-				else if(@reportType='personnelcounts')
-				begin
-					insert into #factTable(factId)
-					select FactK12StaffCountId from rds.FactK12StaffCounts where FactTypeId = @dimFactTypeId and SchoolYearId in (select DimSchoolYearId from #selectedSchoolYears)
-
-					delete from rds.FactK12StaffCounts where FactK12StaffCountId in (select factId from #factTable)
-				end
-				else if(@reportType='studentattendance')
-				begin
-					insert into #factTable(factId)
-					select factK12StudentAttendanceId from rds.FactK12StudentAttendance where FactTypeId = @dimFactTypeId and SchoolYearId in (select DimSchoolYearId from #selectedSchoolYears)
-
-					delete from rds.FactK12StudentAttendance where factK12StudentAttendanceId in (select factId from #factTable)
-	
-				end
-		end	
+			delete from rds.FactK12StudentAttendanceRates where factK12StudentAttendanceRateId in (select factId from #factTable)
+		end
 		else
 		begin
 			insert into #factTable(factId)
