@@ -218,8 +218,7 @@ BEGIN
 		AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 		AND ISNULL(saema.LearningResourceIssuedDate, @CountDate) BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
 	LEFT JOIN RDS.vwDimIdeaStatuses rdis
-		ON rdis.IdeaIndicatorCode = 'Yes'
-		AND rdis.SpecialEducationExitReasonCode = 'MISSING'
+		ON rdis.SpecialEducationExitReasonCode = 'MISSING'
 		AND ISNULL(sppse.IDEAEducationalEnvironmentForEarlyChildhood,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForEarlyChildhoodMap, rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode)
 		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge,'MISSING') = ISNULL(rdis.IdeaEducationalEnvironmentForSchoolAgeMap, rdis.IdeaEducationalEnvironmentForSchoolAgeCode)
 	LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidtPrimary

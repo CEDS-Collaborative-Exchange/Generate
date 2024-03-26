@@ -41,7 +41,7 @@ BEGIN
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Exiting 5 of 6 - Empty RDS')
 
-			exec [rds].[Empty_RDS]  'specedexit'
+			exec [rds].[Empty_RDS]  'exiting'
 
 		--Populate the fact table
 			--write out message to DataMigrationHistories

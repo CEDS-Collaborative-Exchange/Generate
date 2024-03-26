@@ -40,7 +40,7 @@ BEGIN
 			insert into app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Graduates/Completers 5 of 6 - Empty RDS')
 
-			exec [rds].[Empty_RDS] 'Grad'
+			exec [rds].[Empty_RDS] 'graduatescompleters'
 
 		--Populate the fact table
 			--write out message to DataMigrationHistories

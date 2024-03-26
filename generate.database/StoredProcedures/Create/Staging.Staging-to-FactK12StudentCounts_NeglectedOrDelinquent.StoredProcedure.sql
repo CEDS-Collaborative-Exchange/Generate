@@ -61,7 +61,7 @@ BEGIN
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
-		WHERE FactTypeCode = 'nord'	--DimFactTypeId = 15
+		WHERE FactTypeCode = 'neglectedordelinquent'	--DimFactTypeId = 15
 
 		--Clear the Fact table of the data about to be migrated  
 		DELETE RDS.FactK12StudentCounts

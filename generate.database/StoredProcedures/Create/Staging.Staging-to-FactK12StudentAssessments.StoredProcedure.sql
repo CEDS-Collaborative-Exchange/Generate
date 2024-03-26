@@ -313,7 +313,7 @@ BEGIN
 	--Set the Fact Type	
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
-		WHERE FactTypeCode = 'Submission'  --Assessments is still in the submission group
+		WHERE FactTypeCode = 'assessment'  --Assessments is still in the submission group
 
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts

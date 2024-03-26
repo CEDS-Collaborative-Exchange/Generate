@@ -107,7 +107,7 @@ BEGIN
 	--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
-		WHERE FactTypeCode = 'Grad'  --FactTypeId = 8
+		WHERE FactTypeCode = 'graduatescompleters'  --FactTypeId = 8
 
 		DELETE RDS.FactK12StudentCounts
 		WHERE SchoolYearId = @SchoolYearId 
