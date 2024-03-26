@@ -2,16 +2,16 @@ CREATE view [App].[vwStagingRelationships]
 as
 
 select 
-	rg. ReportGroupId, rg.ReportGroup, 
+	rft.DimFactTypeId, rft.FactTypeCode, 
 	r.GenerateReportId, r.ReportCode, r.ReportName,
 	gst.StagingTableId, gst.StagingTableName, gsc.StagingColumnId, gsc.StagingColumnName,
 	gsc.SSRDRefTableName, gsc.SSRDTableFilter
 
 from app.GenerateReports r
-left join app.GenerateReportGroups_ReportsXREF rgrx
-	on r.GenerateReportId = rgrx.GenerateReportId
-left join app.GenerateReportGroups rg
-	on rgrx.ReportGroupId = rg.ReportGroupId
+left join app.FactType_ReportsXREF frx
+	on r.GenerateReportId = frx.GenerateReportId
+left join rds.DimFactTypes rft
+	on frx.FactTypeId = rft.DimFactTypeId
 left join App.GenerateReport_GenerateStagingTablesXREF rgsx
 	on rgsx.GenerateReportId = r.GenerateReportId
 left join App.GenerateStagingTables gst

@@ -1,13 +1,13 @@
 create PROCEDURE [Staging].[StagingValidation_Execute]
 	@SchoolYear int,
-	@ReportGroupOrCode varchar(50),
+	@FactTypeOrReportCode varchar(50),
 	@RemoveHistory bit = 0, --1
 	@PrintSQL bit = 0  -- 1
 AS
 
 --declare
 --	@SchoolYear int = 2023,
---	@ReportGroupOrCode varchar(50) = 'Exiting',
+--	@FactTypeOrReportCode varchar(50) = 'Exiting',
 --	@TruncateResultsTable bit = 0, -- 1
 --	@PrintSQL bit = 0
 
@@ -16,14 +16,14 @@ BEGIN
 	set NOCOUNT ON
 
 
-	-- Verify @ReportGroupOrCode is Valid
+	-- Verify @FactTypeOrReportCode is Valid
 	if not exists (
 		select top 1 * from App.vwStagingRelationships 
-		where ReportCode = @ReportGroupOrCode or ReportGroup = @ReportGroupOrCode)
+		where ReportCode = @FactTypeOrReportCode or FactTypeCode = @FactTypeOrReportCode)
 		begin
-			select '*** INVALID VALUE FOR @ReportGroupOrCode.  VALID OPTIONS ARE:','' VALID_VALUES
+			select '*** INVALID VALUE FOR @FactTypeOrReportCode.  VALID OPTIONS ARE:','' VALID_VALUES
 			union
-			select distinct 'Report Group', ReportGroup from App.vwReportCode_StagingTables
+			select distinct 'Report Group', FactTypeCode from App.vwReportCode_StagingTables
 			union
 			select distinct 'Report Code', ReportCode from App.vwReportCode_StagingTables
 			order by 1
@@ -37,8 +37,8 @@ BEGIN
 		select * 
 		into #vwStagingRelationships
 		from app.vwStagingRelationships
-		where ReportGroup = @ReportGroupOrCode 
-		or ReportCode = @ReportGroupOrCode
+		where FactTypeCode = @FactTypeOrReportCode 
+		or ReportCode = @FactTypeOrReportCode
 
 		--select * from #vwStagingValidation
 
@@ -47,7 +47,7 @@ BEGIN
 	if @RemoveHistory = 1
 		begin
 			delete from Staging.StagingValidationResults
-			where SchoolYear = @SchoolYear and ReportGroupOrCode = @ReportGroupOrCode
+			where SchoolYear = @SchoolYear and FactTypeOrReportCode = @FactTypeOrReportCode
 		end
 	-----------------------------------------------------------------
 
@@ -69,7 +69,7 @@ BEGIN
 		@ErrorMessage varchar(500),
 		@ShowRecordsSQL varchar(max),
 		@SQL_Part varchar(max),
-		@ReportGroup varchar(50),
+		@FactType varchar(50),
 		@ReportCode varchar(10),
 
 		@NullValue varchar(100) = 'A value in this column cannot be NULL or empty.  A valid value must exist.',
@@ -102,7 +102,7 @@ BEGIN
 			select @SQL += '		select ' + char(10)
 			select @SQL += '		''' + convert(varchar, @StagingValidationRuleId) + ''', '
 			select @SQL += '''' + convert(varchar, @SchoolYear) + ''','''
-			select @SQL += isnull(@ReportGroupOrCode, isnull(@ReportGroup,'')) + ''', ' 
+			select @SQL += isnull(@FactTypeOrReportCode, isnull(@FactType,'')) + ''', ' 
 			select @SQL += '''' + @TableName + ''', '
 			select @SQL += 'NULL, ' 
 			select @SQL += '''' + @Severity_CRITICAL + ''', ' 
@@ -127,7 +127,7 @@ BEGIN
 					select 
 						-9					StagingValidationRuleId,
 						@SchoolYear			SchoolYear,
-						@ReportGroupOrCode	ReportGroupOrCode,
+						@FactTypeOrReportCode	FactTypeOrReportCode,
 						@TableName			StagingTableName,
 						@ColumnName			ColumnName,
 						'Rule_Error'		Severity,
@@ -198,7 +198,7 @@ BEGIN
 						select @SQL += '		select ' + char(10)
 						select @SQL += '		''' + convert(varchar, @StagingValidationRuleId) + ''', '
 						select @SQL += '''' + convert(varchar, @SchoolYear) + ''','''
-						select @SQL +=	isnull(@ReportGroupOrCode, isnull(@ReportGroup,'')) + ''', '
+						select @SQL +=	isnull(@FactTypeOrReportCode, isnull(@FactType,'')) + ''', '
 						select @SQL += '''' + @TableName + ''', '
 						select @SQL += '''' + @ColumnName + ''', ' 
 						select @SQL += '''' + @Severity_ERROR + ''', '
@@ -223,7 +223,7 @@ BEGIN
 					select 
 						-9					StagingValidationRuleId,
 						@SchoolYear			SchoolYear,
-						@ReportGroupOrCode	ReportGroupOrCode,
+						@FactTypeOrReportCode	FactTypeOrReportCode,
 						@TableName			StagingTableName,
 						@ColumnName			ColumnName,
 						'Rule_Error'		Severity,
@@ -281,7 +281,7 @@ BEGIN
 			select @SQL += '		select ' + char(10)
 			select @SQL += '		''' + convert(varchar, @StagingValidationRuleId) + ''', '
 			select @SQL += '''' + convert(varchar, @SchoolYear) + ''','''
-			select @SQL +=	isnull(@ReportGroupOrCode, isnull(@ReportGroup,'')) + ''', '
+			select @SQL +=	isnull(@FactTypeOrReportCode, isnull(@FactType,'')) + ''', '
 			select @SQL += '''' + @TableName + ''', '
 			select @SQL += '''' + @ColumnName + ''', ' 
 			select @SQL += '''' + @Severity_Error + ''', '
@@ -306,7 +306,7 @@ BEGIN
 					select 
 						-9					StagingValidationRuleId,
 						@SchoolYear			SchoolYear,
-						@ReportGroupOrCode	ReportGroupOrCode,
+						@FactTypeOrReportCode	FactTypeOrReportCode,
 						@TableName			StagingTableName,
 						@ColumnName			ColumnName,
 						'Rule_Error'		Severity,
@@ -367,7 +367,7 @@ BEGIN
 			select @SQL += '		select ' + char(10)
 			select @SQL += '		''' + convert(varchar, @StagingValidationRuleId) + ''', '
 			select @SQL += '''' + convert(varchar, @SchoolYear) + ''','''
-			select @SQL +=	isnull(@ReportGroupOrCode, isnull(@ReportGroup,'')) + ''', '
+			select @SQL +=	isnull(@FactTypeOrReportCode, isnull(@FactType,'')) + ''', '
 			select @SQL += '''' + @TableName + ''', '
 			select @SQL += '''' + @ColumnName + ''', ' 
 			select @SQL += '''' + @Severity_INFORMATIONAL + ''', '
@@ -392,7 +392,7 @@ BEGIN
 					select 
 						-9					StagingValidationRuleId,
 						@SchoolYear			SchoolYear,
-						@ReportGroupOrCode	ReportGroupOrCode,
+						@FactTypeOrReportCode	FactTypeOrReportCode,
 						@TableName			StagingTableName,
 						@ColumnName			ColumnName,
 						'Rule_Error'		Severity,
@@ -456,7 +456,7 @@ BEGIN
 			select @SQL += '		select ' + char(10)
 			select @SQL += '		''' + convert(varchar, @StagingValidationRuleId) + ''', '
 			select @SQL += '''' + convert(varchar, @SchoolYear) + ''','''
-			select @SQL +=	isnull(@ReportGroupOrCode, isnull(@ReportGroup,'')) + ''', '
+			select @SQL +=	isnull(@FactTypeOrReportCode, isnull(@FactType,'')) + ''', '
 			select @SQL += '''' + @TableName + ''', '
 			select @SQL += '''' + @ColumnName + ''', ' 
 			select @SQL += '''' + @Severity_INFORMATIONAL + ''', '
@@ -481,7 +481,7 @@ BEGIN
 					select 
 						-9					StagingValidationRuleId,
 						@SchoolYear			SchoolYear,
-						@ReportGroupOrCode	ReportGroupOrCode,
+						@FactTypeOrReportCode	FactTypeOrReportCode,
 						@TableName			StagingTableName,
 						@ColumnName			ColumnName,
 						'Rule_Error'		Severity,

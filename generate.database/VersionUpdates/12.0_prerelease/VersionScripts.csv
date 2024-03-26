@@ -19,10 +19,16 @@ Tables\\Drop,Staging.StagingValidationRules_ReportsXREF.Table.sql
 Tables\\Create,Staging.StagingValidationRules_ReportsXREF.Table.sql
 Tables\\Drop,App.GenerateStagingColumns.Table.sql
 Tables\\Create,App.GenerateStagingColumns.Table.sql
+Tables\\Drop,App.GenerateReportGroups_ReportsXREF.Table.sql
+Tables\\Drop,App.GenerateReportGroups.Table.sql
+Tables\\Drop,App.FactType_ReportsXREF.Table.sql
+Tables\\Create,App.FactType_ReportsXREF.Table.sql
 Views\\Drop,App.vwStagingRelationships.View.sql
 Views\\Create,App.vwStagingRelationships.View.sql
 Views\\Drop,Staging.vwStagingValidationRules.View.sql
 Views\\Create,Staging.vwStagingValidationRules.View.sql
+Views\\Drop,App.vwReportCode_StagingTables.View.sql
+Views\\Create,App.vwReportCode_StagingTables.View.sql
 StoredProcedures\\Drop,Staging.StagingValidation_AssignRuleToReports.StoredProcedure.sql
 StoredProcedures\\Create,Staging.StagingValidation_AssignRuleToReports.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.StagingValidation_Execute.StoredProcedure.sql
@@ -43,9 +49,12 @@ StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.sql,0
 StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.Compare_DIRECTORY.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.Compare_DIRECTORY.StoredProcedure.sql,0
 VersionUpdates\\12.0_prerelease,Populate App.GenerateStagingColumns.sql,0
+VersionUpdates\\12.0_prerelease,Populate App.FactType_ReportsXREF.sql,0
 VersionUpdates\\12.0_prerelease,Populate Staging.StagingValidationRules.sql,0
 VersionUpdates\\12.0_prerelease,Insert Staging Validation Rules.sql,0
 VersionUpdates\\12.0_prerelease,Update App.GenerateReport_GenerateStagingTablesXREF.sql,0

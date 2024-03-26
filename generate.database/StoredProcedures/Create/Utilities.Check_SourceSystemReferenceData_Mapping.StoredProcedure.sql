@@ -1,10 +1,9 @@
 CREATE PROCEDURE [Utilities].[Check_SourceSystemReferenceData_Mapping]
-	@generateReportGroup varchar(50) = null,
+	@FactTypeCode varchar(50) = null,
 	@schoolYear smallint,
 	@showUnmappedOnly bit = 0
 AS 
 BEGIN
-
 	/*
 	Sample Execution: exec [Utilities].[Check_SourceSystemReferenceData_Mapping] 'childcount', 2022, 1	
 		-- RUN the Child Count Group (002/089) and only show the reference values that do not have a mapping
@@ -43,22 +42,22 @@ BEGIN
 	-------------------------------------------------	
 
 	--check that report group was provided
-	if isnull(@generateReportGroup, '') = ''
+	if isnull(@FactTypeCode, '') = ''
 	begin 
-		select '*** No value provided for Generate Report Group. Valid options are:' ValidValues
+		select '*** No value provided for FactTypeCode. Valid options are:' ValidValues
 		UNION
-		SELECT DISTINCT ReportGroup FROM [App].[GenerateReportGroups] 
+		SELECT DISTINCT FactTypeCode FROM rds.DimFactTypes
 		return
 	end
 
 	--check that the report group is valid
-	if isnull(@generateReportGroup, '') <> '' 
+	if isnull(@FactTypeCode, '') <> '' 
 	begin
-		if (select count(*) from app.GenerateReportGroups where ReportGroup = @generateReportGroup) < 1
+		if (select count(*) from rds.DimFactTypes where FactTypeCode = @FactTypeCode) < 1
 		begin
 			select '*** Invalid value provided for Generate Report Group. Valid options are:' ValidValues
 			UNION
-			SELECT DISTINCT ReportGroup FROM [App].[GenerateReportGroups] 
+			SELECT DISTINCT FactTypeCode FROM rds.DimFactTypes
 			return
 		end 
 	end
@@ -93,13 +92,13 @@ BEGIN
 		'	FileGroupName ' + char(10) +
 		'	, FileNumber ' + char(10) +
 		')' + char(10) +
-		'select agrg.ReportGroup, agr.GenerateReportId ' + char(10) +	 
-		'from app.GenerateReportGroups_ReportsXREF x ' + char(10) +
-		'	inner join app.GenerateReportGroups agrg ' + char(10) +
-		'		on x.ReportGroupId = agrg.ReportGroupId ' + char(10) +
+		'select agrg.FactTypeCode, agr.GenerateReportId ' + char(10) +	 
+		'from app.FactType_ReportsXREF x ' + char(10) +
+		'	inner join rds.dimFactTypes agrg ' + char(10) +
+		'		on x.FactTypeId = agrg.dimFactTypeId ' + char(10) +
 		'	inner join app.GenerateReports agr ' + char(10) +
 		'		on x.GenerateReportId = agr.GenerateReportId ' + char(10) +
-		'where agrg.ReportGroup = ''' + @generateReportGroup + '''
+		'where agrg.FactTypeCode = ''' + @FactTypeCode + '''
 		'	
 --		print (@tempSql)
 		exec sp_executesql @tempSql
@@ -114,7 +113,7 @@ BEGIN
 		declare @getSQL nvarchar(max)
 		set @getSQL = 
 
-		'select distinct ''' + @generateReportGroup + '''' + char(10) +
+		'select distinct ''' + @FactTypeCode + '''' + char(10) +
 		'	, agst.StagingTableName ' + char(10) +
 		'	, x.CEDSReferenceTable ' + char(10) +
 		'	, x.SSRDTableFilter ' + char(10) +
@@ -128,7 +127,7 @@ BEGIN
 		'	inner join staging.SourceSystemReferenceData sssrd ' + char(10) +
 		'		on x.CEDSReferenceTable = sssrd.TableName ' + char(10) +
 		'		and isnull(x.SSRDTableFilter, ''N/A'') = ISNULL(sssrd.TableFilter, ''N/A'') ' + char(10) +
-		'where x.GenerateReportGroup like (''%' + @generateReportGroup + '%'')' + char(10) +
+		'where x.GenerateReportGroup like (''%' + @FactTypeCode + '%'')' + char(10) +
 		'and sssrd.SchoolYear = ' + convert(varchar, @SchoolYear) + '' + char(10)
 
 		if @showUnmappedOnly = 1
@@ -144,8 +143,7 @@ BEGIN
 
 	end try
 	begin catch
-		select 'Failed to get the report IDs from the Report Group provided', ERROR_MESSAGE()
+		select 'Failed to get the report IDs from the Fact Type provided', ERROR_MESSAGE()
 	end catch
 
 END
-
