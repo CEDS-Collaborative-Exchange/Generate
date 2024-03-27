@@ -1,5 +1,5 @@
 CREATE PROCEDURE [Staging].[StagingValidation_InsertRule]
-	@ReportGroupOrCode varchar(200), 
+	@FactTypeOrReportCode varchar(200), 
 	@StagingTableName varchar(200),
 	@StagingColumnName varchar (200),
 	@RuleDscr varchar(max),
@@ -27,7 +27,7 @@ BEGIN
 
 -- SPLIT @ReportGroupOrCode into table rows -------------------------------------
 	IF OBJECT_ID(N'tempdb..#ReportCodes') IS NOT NULL DROP TABLE #ReportCodes
-	select * into #ReportCodes from dbo.fnSplit(@ReportGroupOrCode, ',')
+	select * into #ReportCodes from dbo.fnSplit(@FactTypeOrReportCode, ',')
 	update #ReportCodes set item = replace(item,'FS','C') -- do this in case they pass in 'FS' for report code rather than 'C'
 
 
@@ -44,13 +44,13 @@ BEGIN
 
 
 	-- INSERT INTO #StagingRelationships FOR MATCHING REPORT GROUPS OR REPORT CODES
-		if @ReportGroupOrCode = 'ALL'
+		if @FactTypeOrReportCode = 'ALL'
 			begin
 				insert into #StagingRelationships
 				select DISTINCT
 					GenerateReportId,
 					ReportCode,
-					ReportGroup,
+					FactTypeCode,
 					StagingTableId,6
 					StagingTableName,
 					StagingColumnId,
@@ -66,7 +66,7 @@ BEGIN
 				select DISTINCT
 					GenerateReportId,
 					ReportCode,
-					ReportGroup,
+					FactTypeCode,
 					StagingTableId,
 					StagingTableName,
 					StagingColumnId,
@@ -74,7 +74,7 @@ BEGIN
 				from app.vwStagingRelationships sr
 				inner join #ReportCodes rc
 					on sr.ReportCode = rc.item
-					or sr.ReportGroup = rc.item
+					or sr.FactTypeCode = rc.item
 				where 
 					StagingTableName = @StagingTableName
 					and StagingColumnName = @StagingColumnName
@@ -107,7 +107,7 @@ BEGIN
 				select DISTINCT
 					@StagingValidationRuleId,
 					case 
-						when @ReportGroupOrCode = 'ALL' then -1 
+						when @FactTypeOrReportCode = 'ALL' then -1 
 						else GenerateReportId
 					end,
 					@Enabled,

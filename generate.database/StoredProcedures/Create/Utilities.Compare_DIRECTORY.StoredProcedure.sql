@@ -25,6 +25,7 @@ This process assumes the following:
 
 10/17/2023 JW: Updated for V11
 11/29/2023 JW: Fixed issues with SCH comparison
+03/25/2024 JW: Added MailingAddressApartmentRoomOrSuiteNumber and PhysicalAddressApartmentRoomOrSuiteNumber
 *****************************************************************/
 
 
@@ -71,14 +72,14 @@ if @ReportCode = 'C029'
 					Website					StateAgencyWebAddress,
 					Telephone				PhoneNumber,
 					MailingAddressStreet	MailingAddress1,
-					NULL					MailingAddress2,
+					MailingAddressApartmentRoomOrSuiteNumber					MailingAddress2,
 					NULL					MailingAddress3,
 					MailingAddressCity		MailingCity,
 					MailingAddressState		MailingPostalStateCode,
 					left(MailingAddressPostalCode,5)	 MailingZipCode,
 					case when len(MailingAddressPostalCode)=10 then right(MailingAddressPostalCode,4) else '''' end	 MailingZipcodePlus4,
 					PhysicalAddressStreet	LocationAddress1,
-					NULL					LocationAddress2,
+					PhysicalAddressApartmentRoomOrSuiteNumber					LocationAddress2,
 					NULL					LocationAddress3,
 					PhysicalAddressCity		LocationCity,
 					PhysicalAddressState	LocationPostalStateCode,
@@ -110,14 +111,14 @@ if @ReportCode = 'C029'
 					SupervisoryUnionIdentificationNumber	SupervisoryUnion,
 					Telephone				LEAPhoneNumber,
 					MailingAddressStreet	MailingAddress1,
-					NULL					MailingAddress2,
+					MailingAddressApartmentRoomOrSuiteNumber					MailingAddress2,
 					NULL					MailingAddress3,
 					MailingAddressCity		MailingCity,
 					MailingAddressState		MailingPostalStateCode,
 					left(MailingAddressPostalCode,5)	 MailingZipCode,
 					case when len(MailingAddressPostalCode)=10 then right(MailingAddressPostalCode,4) else '''' end	 MailingZipcodePlus4,
 					PhysicalAddressStreet	LocationAddress1,
-					NULL					LocationAddress2,
+					PhysicalAddressApartmentRoomOrSuiteNumber					LocationAddress2,
 					NULL					LocationAddress3,
 					PhysicalAddressCity		LocationCity,
 					PhysicalAddressState	LocationPostalStateCode,
@@ -149,14 +150,14 @@ if @ReportCode = 'C029'
 					Website					WebAddress,
 					Telephone				PhoneNumber,
 					MailingAddressStreet	MailingAddress1,
-					NULL					MailingAddress2,
+					MailingAddressApartmentRoomOrSuiteNumber					MailingAddress2,
 					NULL					MailingAddress3,
 					MailingAddressCity		MailingCity,
 					MailingAddressState		MailingPostalStateCode,
 					left(MailingAddressPostalCode,5)	 MailingZipCode,
 					case when len(MailingAddressPostalCode)=10 then right(MailingAddressPostalCode,4) else '''' end	 MailingZipcodePlus4,
 					PhysicalAddressStreet	LocationAddress1,
-					NULL					LocationAddress2,
+					PhysicalAddressApartmentRoomOrSuiteNumber					LocationAddress2,
 					NULL					LocationAddress3,
 					PhysicalAddressCity		LocationCity,
 					PhysicalAddressState	LocationPostalStateCode,

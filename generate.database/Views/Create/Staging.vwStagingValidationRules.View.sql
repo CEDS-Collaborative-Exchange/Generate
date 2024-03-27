@@ -1,13 +1,11 @@
 CREATE view [Staging].[vwStagingValidationRules]
 as
 
---update staging.StagingValidationRules set enabled = 1 where StagingValidationRuleId = 133
-
 select
 	svr.StagingValidationRuleId,
 	X.StagingValidationRuleId StagingValidationRuleId_XREF,
-	avsv.ReportGroup,
-	avsv.ReportGroupId,
+	avsv.FactTypeCode,
+	avsv.DimFactTypeId,
 	avsv.ReportCode,
 	avsv.ReportName,
 	avsv.GenerateReportId,
@@ -32,4 +30,5 @@ left join staging.StagingValidationRules svr
 left join staging.StagingValidationRules_ReportsXREF X
 	on (avsv.GenerateReportId = X.GenerateReportId or X.GenerateReportId = -1)
 	and svr.StagingValidationRuleId = X.StagingValidationRuleId
+
 
