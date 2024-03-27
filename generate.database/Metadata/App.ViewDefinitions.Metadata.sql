@@ -366,7 +366,7 @@ begin try
 						IF (@categorySets = 'TOT')
 						BEGIN
 							SET @fields=@fields+ ',{"binding":"tableTypeAbbrv","header":"Lunch Program Total","dataType":2,"aggregate":0,"showAs":0,"descending":false,"format":"n0","wordWrap":true,"isContentHtml":false}'
-							SET @colFields = @colFields + '"Lunch Program Total"'
+							SET @colFields = @colFields + ',"Lunch Program Total"'
 						END
 					END
 
