@@ -1,5 +1,5 @@
 VersionUpdates\\12.0_prerelease,Restore 11.3.sql,0
-VersionUpdates\\12.0_prerelease,app.TableChanges.sql
+VersionUpdates\\12.0_prerelease,app.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata.sql,0
 VersionUpdates\\12.0_prerelease,UpdateMetadata.sql,0
 VersionUpdates\\12.0_prerelease,Create-RDS-Tables.sql,0
