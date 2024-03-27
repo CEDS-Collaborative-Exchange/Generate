@@ -33,9 +33,14 @@ StoredProcedures\\Drop,Staging.StagingValidation_InsertRule.StoredProcedure.sql
 StoredProcedures\\Create,Staging.StagingValidation_InsertRule.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.ValidateStagingData_GetResults.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.ValidateStagingData.StoredProcedure.sql
-StoredProcedures\\Create,Staging.Staging-to-DimAccessibleEducationMaterialProviders.sql,0
-StoredProcedures\\Create,Staging.Staging-to-FactK12AccessibleEducationMaterialAssignments.sql,0
-StoredProcedures\\Create,Staging.Staging-to-DimIeus.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimAccessibleEducationMaterialProviders.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimAccessibleEducationMaterialProviders.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12AccessibleEducationMaterialAssignments.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12AccessibleEducationMaterialAssignments.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimIeus.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimIeus.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql
