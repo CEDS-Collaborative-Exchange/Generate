@@ -11,9 +11,7 @@
 AS
 BEGIN
 
-
 	SET NOCOUNT ON;
-
 
 	-- Determine Fact/Report Tables
 
@@ -24,14 +22,19 @@ BEGIN
 	declare @selectedYear as int
 	declare @submissionYears as varchar(50), @pivotYears as varchar(50)
 
-	
-	DECLARE @SQL nvarchar(MAX), @tableSql nvarchar(max)
+		DECLARE @SQL nvarchar(MAX), @tableSql nvarchar(max)
 	DECLARE @DeclareSQL nvarchar(MAX), @InsertSQL nvarchar(MAX), @SelectSQL nvarchar(MAX), @GroupBySQL nvarchar(MAX)
 	DECLARE @year1 as varchar(50), @year2 as varchar(50), @year3 as varchar(50), @year4 as varchar(50)
 
 	declare @factTypeCode as varchar(50)
 
-	select @factTypeCode = rds.Get_FactTypeByReport(@reportCode)
+	select @factTypeCode = (select dft.FactTypeCode
+							from app.GenerateReport_FactType grft
+								inner join app.GenerateReports gr
+									on grft.GenerateReportId = gr.GenerateReportId
+								inner join rds.DimFactTypes dft
+									on grft.FactTypeId = dft.DimFactTypeId
+							where gr.ReportCode = @reportCode)
 		
 	-- Determine Fact/Report Tables
 
