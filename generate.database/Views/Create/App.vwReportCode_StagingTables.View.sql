@@ -5,7 +5,7 @@ SELECT DISTINCT r.GenerateReportId, r.ReportCode, st.StagingTableId, st.StagingT
 FROM App.GenerateReport_GenerateStagingTablesXREF rgstx
 inner join App.GenerateReports r
 	on rgstx.GenerateReportId = r.GenerateReportId
-inner JOIN App.FactType_ReportsXREF AS ftrx 
+inner JOIN App.GenerateReport_FactType AS ftrx 
 	ON r.GenerateReportId = ftrx.GenerateReportId
 inner join rds.DimFactTypes AS rft 
 	on rft.DimFactTypeId = ftrx.FactTypeId

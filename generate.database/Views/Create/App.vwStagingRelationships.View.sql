@@ -8,7 +8,7 @@ select
 	gsc.SSRDRefTableName, gsc.SSRDTableFilter
 
 from app.GenerateReports r
-left join app.FactType_ReportsXREF frx
+left join App.GenerateReport_FactType frx
 	on r.GenerateReportId = frx.GenerateReportId
 left join rds.DimFactTypes rft
 	on frx.FactTypeId = rft.DimFactTypeId
