@@ -51,6 +51,16 @@ StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredP
 StoredProcedures\\Create,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.Compare_DIRECTORY.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.Compare_DIRECTORY.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_StateAssessmentProficiencyReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_StateAssessmentProficiencyReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_StudentDisciplinaryRemovalsReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_StudentDisciplinaryRemovalsReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_StudentEducationEnvironmentDisabilitiesReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_StudentEducationEnvironmentDisabilitiesReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_YeartoYearProgressReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_YeartoYearProgressReportData.StoredProcedure.sql,0
 VersionUpdates\\12.0_prerelease,Populate App.GenerateStagingColumns.sql,0
 VersionUpdates\\12.0_prerelease,Populate Staging.StagingValidationRules.sql,0
 VersionUpdates\\12.0_prerelease,Insert Staging Validation Rules.sql,0

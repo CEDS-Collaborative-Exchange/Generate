@@ -6,9 +6,7 @@ CREATE PROCEDURE [RDS].[Get_StudentDisciplinaryRemovalsReportData]
 AS
 BEGIN
 
-
 	SET NOCOUNT ON;
-
 
 	-- Determine Fact/Report Tables
 
@@ -21,7 +19,13 @@ BEGIN
 	DECLARE @DeclareSQL nvarchar(MAX), @InsertSQL nvarchar(MAX), @SelectSQL nvarchar(MAX), @GroupBySQL nvarchar(MAX)
 	declare @factTypeCode as varchar(50)
 
-	select @factTypeCode = rds.Get_FactTypeByReport(@reportCode)
+	select @factTypeCode = (select dft.FactTypeCode
+							from app.GenerateReport_FactType grft
+								inner join app.GenerateReports gr
+									on grft.GenerateReportId = gr.GenerateReportId
+								inner join rds.DimFactTypes dft
+									on grft.FactTypeId = dft.DimFactTypeId
+							where gr.ReportCode = @reportCode)
 		
 	-- Determine Fact/Report Tables
 

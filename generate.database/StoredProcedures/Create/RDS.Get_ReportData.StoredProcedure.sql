@@ -20,7 +20,13 @@ BEGIN
 	declare @factTypeCode as varchar(50)
 	declare @year as int
 
-	select @factTypeCode = rds.Get_FactTypeByReport(@reportCode)
+	select @factTypeCode = (select dft.FactTypeCode
+							from app.GenerateReport_FactType grft
+								inner join app.GenerateReports gr
+									on grft.GenerateReportId = gr.GenerateReportId
+								inner join rds.DimFactTypes dft
+									on grft.FactTypeId = dft.DimFactTypeId
+							where gr.ReportCode = @reportCode)
 
 	select @year = SchoolYear from rds.DimSchoolYears where SchoolYear = @reportYear
 
