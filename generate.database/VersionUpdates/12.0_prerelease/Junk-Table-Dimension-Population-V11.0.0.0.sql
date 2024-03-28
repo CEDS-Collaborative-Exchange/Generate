@@ -2938,7 +2938,7 @@ INSERT INTO #ScedCodes VALUES
 	SELECT 
 		CedsOptionSetCode
 		, CedsOptionSetDescription
-	FROM [CEDS-Elements-V11.0.0.0].[CEDS].CedsOptionSetMapping
+	FROM [CEDS].CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'ERSRuralUrbanContinuumCode'
 
 	CREATE TABLE #RuralResidencyStatusCode (RuralResidencyStatusCode NVARCHAR(50), RuralResidencyStatusDescription NVARCHAR(200))
@@ -2948,7 +2948,7 @@ INSERT INTO #ScedCodes VALUES
 	SELECT 
 		CedsOptionSetCode
 		, CedsOptionSetDescription
-	FROM [CEDS-Elements-V11.0.0.0].[CEDS].CedsOptionSetMapping
+	FROM [CEDS].CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'RuralResidencyStatus'
 
 	INSERT INTO [RDS].[DimRuralStatuses]

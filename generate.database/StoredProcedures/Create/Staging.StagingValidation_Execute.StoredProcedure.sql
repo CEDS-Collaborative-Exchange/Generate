@@ -23,7 +23,7 @@ BEGIN
 		begin
 			select '*** INVALID VALUE FOR @FactTypeOrReportCode.  VALID OPTIONS ARE:','' VALID_VALUES
 			union
-			select distinct 'Report Group', FactTypeCode from App.vwReportCode_StagingTables
+			select distinct 'Fact Type', FactTypeCode from App.vwReportCode_StagingTables
 			union
 			select distinct 'Report Code', ReportCode from App.vwReportCode_StagingTables
 			order by 1
@@ -37,8 +37,9 @@ BEGIN
 		select * 
 		into #vwStagingRelationships
 		from app.vwStagingRelationships
-		where FactTypeCode = @FactTypeOrReportCode 
-		or ReportCode = @FactTypeOrReportCode
+		where (FactTypeCode = @FactTypeOrReportCode 
+		or ReportCode = @FactTypeOrReportCode)
+		 and StagingTableName is not null
 
 		--select * from #vwStagingValidation
 
