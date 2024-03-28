@@ -61,7 +61,7 @@ VALUES ('K12Organization','LEA_OperationalStatus','RefOperationalStatus','000174
 ,('ProgramParticipationSpecialEducation','IDEAEducationalEnvironmentForEarlyChildhood','RefIDEAEducationalEnvironmentEC','')
 ,('ProgramParticipationSpecialEducation','IDEAEducationalEnvironmentForSchoolAge','RefIDEAEducationalEnvironmentSchoolAge','')
 ,('ProgramParticipationSpecialEducation','SpecialEducationExitReason','RefSpecialEducationExitReason','')
-,('IdeaDisabilityType','IdeaDisabilityTypeCode','RefDisabilityType','')
+,('IdeaDisabilityType','IdeaDisabilityTypeCode','RefIdeaDisabilityType','')
 ,('Discipline','DisciplinaryActionTaken','RefDisciplinaryActionTaken','')
 ,('Discipline','DisciplineMethodFirearm','RefDisciplineMethodFirearms','')
 ,('Discipline','IdeaDisciplineMethodFirearm','RefIDEADisciplineMethodFirearm','')

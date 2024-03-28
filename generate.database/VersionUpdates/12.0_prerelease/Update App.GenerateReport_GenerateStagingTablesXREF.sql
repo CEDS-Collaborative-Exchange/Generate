@@ -14,3 +14,7 @@ insert into app.GenerateReport_GenerateStagingTablesXREF (GenerateReportId, Stag
 
 insert into app.GenerateReport_GenerateStagingTablesXREF (GenerateReportId, StagingTableId) 
 	values (54, 18), (54, 51), (54, 17), (54,19), (54,39)
+
+-- Remove invalid combination
+delete from app.GenerateReport_GenerateStagingTablesXREF where StagingTableId = 1 and GenerateReportId = 8
+	
