@@ -236,6 +236,7 @@ BEGIN
 		ON sko.SchoolIdentifierSea = sop.OrganizationIdentifier
 		AND sop.OrganizationType in (select K12SchoolOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = sop.SchoolYear)
 		AND isnull(sko.DataCollectionName,'') = isnull(sop.DataCollectionName,'')
+		AND sop.InstitutionTelephoneNumberType = 'Main'
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
 		ON sko.School_OperationalStatus = sssrd1.InputCode
 		AND sssrd1.TableName = 'RefOperationalStatus'
