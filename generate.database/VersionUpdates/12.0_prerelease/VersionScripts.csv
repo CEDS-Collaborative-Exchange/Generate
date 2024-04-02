@@ -43,6 +43,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12AccessibleEducationMaterialAssi
 StoredProcedures\\Create,Staging.Staging-to-FactK12AccessibleEducationMaterialAssignments.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimIeus.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimIeus.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
@@ -65,6 +67,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinq
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql
 StoredProcedures\\Drop,App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_Staff_to_RDS.StoredProcedure.sql,0

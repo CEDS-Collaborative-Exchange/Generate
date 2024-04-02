@@ -259,7 +259,7 @@ BEGIN
 			AND @MembershipDate BETWEEN rdpch.RecordStartDateTime AND ISNULL(rdpch.RecordEndDateTime, GETDATE())
 	
 		WHERE @MembershipDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
-		AND GradeLevel IN (SELECT GradeLevel FROM @GradesList)
+		AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList)
 
 
 	--Final insert into RDS.FactK12StudentCounts table
