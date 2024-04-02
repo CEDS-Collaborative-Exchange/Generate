@@ -115,6 +115,11 @@ BEGIN
 
 	INTO #c033Staging
 	FROM Staging.K12Enrollment ske
+		LEFT JOIN RDS.vwDimGradeLevels rgls
+			ON rgls.SchoolYear = ske.SchoolYear
+			AND ske.GradeLevel = rgls.GradeLevelMap
+			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
+
 	LEFT JOIN Staging.PersonStatus sps
 		ON ske.StudentIdentifierState = sps.StudentIdentifierState
 		AND --(ske.LEAIdentifierSeaAccountability = sps.LEAIdentifierSeaAccountability
@@ -124,7 +129,7 @@ BEGIN
 		--AND sps.RecordStartDateTime is not null
 		--AND @MemberDate BETWEEN sps.RecordStartDateTime AND ISNULL(sps.RecordEndDateTime, GETDATE())		
 	WHERE @MemberDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
-	AND GradeLevel IN (SELECT GradeLevel FROM @GradesList)
+	AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList)
 
 
 

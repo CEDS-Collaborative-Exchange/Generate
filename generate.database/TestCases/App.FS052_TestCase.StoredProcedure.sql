@@ -168,6 +168,10 @@ BEGIN
 
 	INTO #c052Staging
 	FROM Staging.K12Enrollment ske
+		LEFT JOIN RDS.vwDimGradeLevels rgls
+			ON rgls.SchoolYear = ske.SchoolYear
+			AND ske.GradeLevel = rgls.GradeLevelMap
+			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
 
 		LEFT JOIN Staging.K12PersonRace spr
 			ON ske.SchoolYear = spr.SchoolYear
@@ -178,7 +182,7 @@ BEGIN
 			AND @MemberDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, GETDATE())
 			
 	WHERE @MemberDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
-	AND GradeLevel IN (SELECT GradeLevel FROM @GradesList)
+	AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList)
 
 	--Handle the Race records to match the unduplicated code 
 	IF OBJECT_ID('tempdb..#tempRacesUpdate') IS NOT NULL
