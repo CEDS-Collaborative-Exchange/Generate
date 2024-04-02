@@ -161,6 +161,7 @@ BEGIN
 		LEFT JOIN Staging.OrganizationPhone sop
 			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
 			AND sop.OrganizationType in (select LeaOrganizationType from #organizationTypes ot where ot.SchoolYear = sko.SchoolYear)
+			AND sop.InstitutionTelephoneNumberType = 'Main'
 		LEFT JOIN staging.SourceSystemReferenceData sssrd1
 			ON sko.Lea_OperationalStatus = sssrd1.InputCode
 			AND sssrd1.TableName = 'RefOperationalStatus'
