@@ -1,5 +1,5 @@
 VersionUpdates\\12.0_prerelease,Restore 11.3.sql,0
-VersionUpdates\\12.0_prerelease,app.TableChanges.sql
+VersionUpdates\\12.0_prerelease,app.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata.sql,0
 VersionUpdates\\12.0_prerelease,UpdateMetadata.sql,0
 VersionUpdates\\12.0_prerelease,Create-RDS-Tables.sql,0
@@ -103,6 +103,8 @@ StoredProcedures\\Drop,RDS.Get_StudentDisciplinaryRemovalsReportData.StoredProce
 StoredProcedures\\Create,RDS.Get_StudentDisciplinaryRemovalsReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_StudentEducationEnvironmentDisabilitiesReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_StudentEducationEnvironmentDisabilitiesReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_YeartoYearProgressReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_YeartoYearProgressReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
