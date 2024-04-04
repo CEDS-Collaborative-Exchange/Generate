@@ -3,9 +3,15 @@
 AS
 BEGIN
 
-BEGIN TRY
-	BEGIN TRANSACTION
+set NOCOUNT ON
 
+BEGIN TRY
+--	BEGIN TRANSACTION
+
+		if cursor_status('global','db_cursor') >= -1
+			begin
+				deallocate db_cursor
+			end
 	
 		-- Define the test
 		DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
@@ -131,6 +137,32 @@ BEGIN TRY
 		BEGIN  
 
 			DELETE FROM RDS.ReportEDFactsK12StudentCounts WHERE ReportCode = 'C009' and ReportYear = @schoolYear
+			IF OBJECT_ID('tempdb..#stuLeaTemp') IS NOT NULL	DROP TABLE #stuLeaTemp
+			IF OBJECT_ID('tempdb..#stuLea') IS NOT NULL	DROP TABLE #stuLea
+
+			IF OBJECT_ID('tempdb..#TC1') IS NOT NULL DROP TABLE #TC1
+			IF OBJECT_ID('tempdb..#TC2') IS NOT NULL DROP TABLE #TC2
+			IF OBJECT_ID('tempdb..#TC3') IS NOT NULL DROP TABLE #TC3
+			IF OBJECT_ID('tempdb..#TC4') IS NOT NULL DROP TABLE #TC4
+			IF OBJECT_ID('tempdb..#TC5') IS NOT NULL DROP TABLE #TC5
+			IF OBJECT_ID('tempdb..#TC6') IS NOT NULL DROP TABLE #TC6
+			IF OBJECT_ID('tempdb..#TC7') IS NOT NULL DROP TABLE #TC7
+			IF OBJECT_ID('tempdb..#TC8') IS NOT NULL DROP TABLE #TC8
+			IF OBJECT_ID('tempdb..#TC9') IS NOT NULL DROP TABLE #TC9
+			IF OBJECT_ID('tempdb..#TC10') IS NOT NULL DROP TABLE #TC10
+			IF OBJECT_ID('tempdb..#TC11') IS NOT NULL DROP TABLE #TC11
+			IF OBJECT_ID('tempdb..#TC12') IS NOT NULL DROP TABLE #TC12
+			IF OBJECT_ID('tempdb..#TC13') IS NOT NULL DROP TABLE #TC13
+			IF OBJECT_ID('tempdb..#TC14') IS NOT NULL DROP TABLE #TC14
+			IF OBJECT_ID('tempdb..#TC15') IS NOT NULL DROP TABLE #TC15
+			IF OBJECT_ID('tempdb..#TC16') IS NOT NULL DROP TABLE #TC16
+			IF OBJECT_ID('tempdb..#TC17') IS NOT NULL DROP TABLE #TC17
+			IF OBJECT_ID('tempdb..#TC18') IS NOT NULL DROP TABLE #TC18
+			IF OBJECT_ID('tempdb..#TC19') IS NOT NULL DROP TABLE #TC19
+			IF OBJECT_ID('tempdb..#TC20') IS NOT NULL DROP TABLE #TC20
+			IF OBJECT_ID('tempdb..#TC21') IS NOT NULL DROP TABLE #TC21
+			IF OBJECT_ID('tempdb..#TC22') IS NOT NULL DROP TABLE #TC22
+
 
 			UPDATE atr
 			SET atr.ToggleQuestionOptionId = atqo.ToggleQuestionOptionId
@@ -143,22 +175,17 @@ BEGIN TRY
 				AND atqo.OptionText = @catchmentArea
 
 			UPDATE app.GenerateReports SET IsLocked = 1 WHERE ReportCode = 'C009'
-			EXEC RDS.Create_ReportData 'C009', 'specedexit', 0
+			EXEC RDS.Create_ReportData 'C009', 'exiting', 0
 	
-			IF OBJECT_ID('tempdb..#staging') IS NOT NULL
-			DROP TABLE #staging
+			IF OBJECT_ID('tempdb..#staging') IS NOT NULL DROP TABLE #staging
 
-			IF OBJECT_ID('tempdb..#stuLeaTemp') IS NOT NULL
-			DROP TABLE #stuLeaTemp
+			IF OBJECT_ID('tempdb..#stuLeaTemp') IS NOT NULL	DROP TABLE #stuLeaTemp
 
-			IF OBJECT_ID('tempdb..#stuLea') IS NOT NULL
-			DROP TABLE #stuLea
+			IF OBJECT_ID('tempdb..#stuLea') IS NOT NULL	DROP TABLE #stuLea
 
-			IF OBJECT_ID('tempdb..#CAT_Organizations') IS NOT NULL
-			DROP TABLE #CAT_Organizations
+			IF OBJECT_ID('tempdb..#CAT_Organizations') IS NOT NULL	DROP TABLE #CAT_Organizations
 
-			IF OBJECT_ID('tempdb..#notReportedFederallyLeas') IS NOT NULL
-			DROP TABLE #notReportedFederallyLeas
+			IF OBJECT_ID('tempdb..#notReportedFederallyLeas') IS NOT NULL DROP TABLE #notReportedFederallyLeas
 
 			CREATE TABLE #notReportedFederallyLeas (
 				LeaIdentifierSeaAccountability		VARCHAR(20)
@@ -197,32 +224,32 @@ BEGIN TRY
 			and o.LEAOperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING') AND CONVERT(date, o.OperationalStatusEffectiveDate, 101) between CONVERT(date, '07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)), 101) AND CONVERT(date, '06/30/' + CAST(@SchoolYear AS VARCHAR(4)), 101)
 
 
-			IF @catchmentArea = 'Districtwide (students moving out of district)' BEGIN
+			IF @catchmentArea = 'Districtwide (students moving out of district)' 
+				BEGIN	
+					INSERT INTO #stuLeaTemp
+					SELECT DISTINCT
+						  sppse.StudentIdentifierState
+						, sppse.LeaIdentifierSeaAccountability
+					FROM Staging.ProgramParticipationSpecialEducation sppse
+					WHERE ProgramParticipationEndDate IS NOT NULL
+					GROUP BY StudentIdentifierState	
+						, sppse.LeaIdentifierSeaAccountability
+						, ProgramParticipationEndDate
+					HAVING ProgramParticipationEndDate  = MIN(ProgramParticipationEndDate)
 			
-				INSERT INTO #stuLeaTemp
-				SELECT DISTINCT
-					  sppse.StudentIdentifierState
-					, sppse.LeaIdentifierSeaAccountability
-				FROM Staging.ProgramParticipationSpecialEducation sppse
-				WHERE ProgramParticipationEndDate IS NOT NULL
-				GROUP BY StudentIdentifierState	
-					, sppse.LeaIdentifierSeaAccountability
-					, ProgramParticipationEndDate
-				HAVING ProgramParticipationEndDate  = MIN(ProgramParticipationEndDate)
-			
-			END ELSE BEGIN
-			
-				INSERT INTO #stuLeaTemp
-				SELECT DISTINCT
-					  sppse.StudentIdentifierState
-					, sppse.LeaIdentifierSeaAccountability
-				FROM Staging.ProgramParticipationSpecialEducation sppse
-				GROUP BY StudentIdentifierState
-					, sppse.LeaIdentifierSeaAccountability
-					, ProgramParticipationEndDate
-				HAVING ProgramParticipationEndDate  = MAX(ProgramParticipationEndDate)
-
-			END
+				END 
+			ELSE 
+				BEGIN			
+					INSERT INTO #stuLeaTemp
+					SELECT DISTINCT
+						  sppse.StudentIdentifierState
+						, sppse.LeaIdentifierSeaAccountability
+					FROM Staging.ProgramParticipationSpecialEducation sppse
+					GROUP BY StudentIdentifierState
+						, sppse.LeaIdentifierSeaAccountability
+						, ProgramParticipationEndDate
+					HAVING ProgramParticipationEndDate  = MAX(ProgramParticipationEndDate)
+				END
 			
 			CREATE NONCLUSTERED INDEX [IX_stuLeaTemp] ON #stuLeaTemp(LeaIdentifierSeaAccountability, StudentIdentifierState)
 
@@ -400,10 +427,16 @@ BEGIN TRY
 			LEFT JOIN #stuLea latest
 				ON ske.StudentIdentifierState = latest.StudentIdentifierState
 				AND ske.LeaIdentifierSeaAccountability = latest.LeaIdentifierSeaAccountability
+				and latest.SpecialEducationServicesExitDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) -- JW 4/4/2024
 			JOIN Staging.ProgramParticipationSpecialEducation sppse
 				ON sppse.StudentIdentifierState = latest.StudentIdentifierState
 				AND sppse.LeaIdentifierSeaAccountability = latest.LeaIdentifierSeaAccountability
 				AND sppse.ProgramParticipationEndDate = latest.SpecialEducationServicesExitDate
+				AND sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) -- JW 4/4/2024
+		-- JW 4/4/2024 --------------------------------------------------------------------------------------------------------
+		JOIN RDS.DimSeas rds
+			ON sppse.ProgramParticipationEndDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+		-----------------------------------------------------------------------------------------------------------------------
 			JOIN Staging.IdeaDisabilityType sidt
 				ON sidt.StudentIdentifierState = ske.StudentIdentifierState
 				AND sidt.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
@@ -413,9 +446,12 @@ BEGIN TRY
 			LEFT JOIN Staging.K12PersonRace spr
 				ON ske.StudentIdentifierState = spr.StudentIdentifierState
 				AND ske.LeaIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability
-				AND ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
-				AND spr.SchoolYear = ske.SchoolYear
-				AND sppse.ProgramParticipationEndDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, GETDATE())
+				AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea or spr.SchoolYear = ske.SchoolYear) -- JW 4/4/2024
+
+				--AND ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
+				--AND spr.SchoolYear = ske.SchoolYear
+				-- JW CHECK THIS NEXT LINE...IT'S NOT IN STAGING TO FACT
+				--AND sppse.ProgramParticipationEndDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, GETDATE())
 			LEFT JOIN RDS.DimRaces rdr
 				ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
 					OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceCode)
@@ -425,7 +461,7 @@ BEGIN TRY
 				AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 				AND sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
 			WHERE sppse.ProgramParticipationEndDate is not null
-				--AND sppse.IDEAEducationalEnvironmentForSchoolAge <> 'PPPS'
+				AND sppse.IDEAEducationalEnvironmentForSchoolAge <> 'PPPS' -- JW 4/4/2024 This was commented out, but exists in the actual report migration code
 				AND sppse.SpecialEducationExitReason IS NOT NULL
 				AND ske.SchoolYear = @SchoolYear
 				--and sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate and ISNULL(ske.EnrollmentExitDate, getdate())
@@ -436,7 +472,12 @@ BEGIN TRY
 			DELETE FROM #staging
 			WHERE Age NOT BETWEEN 14 AND 21
 
-			-- Gather, evaluate & record the results
+--select * from #staging where LeaIdentifierSeaAccountability = '997'
+--return
+/**************************************************************************************************************************
+BEGIN CREATING TEST RESULTS
+***************************************************************************************************************************/
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 1:
 				CSA at the SEA level
 			*/
@@ -484,9 +525,8 @@ BEGIN TRY
 				AND rreksc.CategorySetCode = 'CSA'
 	
 
-			DROP TABLE #TC1
 
-					-- Gather, evaluate & record the results
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 2:
 				CSB at the SEA level
 			*/
@@ -528,9 +568,8 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'CSB'
 
-			DROP TABLE #TC2
 
-		
+	-- Gather, evaluate & record the results ----------------------------------------------------------	
 			/* Test Case 3:
 				CSC at the SEA level
 			*/
@@ -573,10 +612,9 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'CSC'
 
-			DROP TABLE #TC3
 
 		
-		
+	-- Gather, evaluate & record the results ----------------------------------------------------------		
 			/* Test Case 4:
 				CSD at the SEA level
 			*/
@@ -619,9 +657,9 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'CSD'
 			
-			DROP TABLE #TC4
 
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 5:
 				ST1 at the SEA level
 			*/
@@ -660,11 +698,10 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST1'
 			
-			DROP TABLE #TC5
-
 		
 		
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 6:
 				ST2 at the SEA level
 			*/
@@ -703,11 +740,11 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST2'
 			
-			DROP TABLE #TC6
 
 		
 
-			/* Test Case 7:
+		-- Gather, evaluate & record the results ----------------------------------------------------------
+		/* Test Case 7:
 				ST3 at the SEA level
 			*/
 			SELECT 
@@ -745,10 +782,10 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST3'
 			
-			DROP TABLE #TC7
 
 		
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 8:
 				ST4 at the SEA level
 			*/
@@ -787,12 +824,12 @@ BEGIN TRY
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST4'
-			
-			DROP TABLE #TC8
+
 
 		
 
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 9:
 				ST5 at the SEA level
 			*/
@@ -831,11 +868,10 @@ BEGIN TRY
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST5'
-			
-			DROP TABLE #TC9
 
 		
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 10:
 				ST6 at the SEA level
 			*/
@@ -876,10 +912,11 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST6'
 			
-			DROP TABLE #TC10
+
 
 		
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 11:
 				TOT at the SEA level
 			*/
@@ -913,15 +950,13 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'TOT'
 			
-			DROP TABLE #TC11
-
-		
+	
 
 
 			----------------------------------------
 			--- LEA level tests					 ---
 			----------------------------------------
-			-- Gather, evaluate & record the results
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 1:
 				CSA at the LEA level
 			*/
@@ -980,11 +1015,8 @@ BEGIN TRY
 
 
 	
-
-			DROP TABLE #TC12
-
 		
-					-- Gather, evaluate & record the results
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 2:
 				CSB at the LEA level
 			*/
@@ -1036,10 +1068,9 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'CSB'
 
-			DROP TABLE #TC13
-
 		
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 3:
 				CSC at the LEA level
 			*/
@@ -1091,10 +1122,9 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'CSC'
 
-			DROP TABLE #TC14
-
 		
 		
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 4:
 				CSD at the LEA level
 			*/
@@ -1146,12 +1176,11 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'CSD'
 			
-			DROP TABLE #TC15
-
 		
 		
 
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 5:
 				ST1 at the LEA level
 			*/
@@ -1199,10 +1228,9 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST1'
 			
-			DROP TABLE #TC16
-
 		
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 6:
 				ST2 at the LEA level
 			*/
@@ -1249,12 +1277,10 @@ BEGIN TRY
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST2'
-			
-			DROP TABLE #TC17
-
 		
 
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 7:
 				ST3 at the LEA level
 			*/
@@ -1302,11 +1328,10 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST3'
 			
-			DROP TABLE #TC18
-
 		
 
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 8:
 				ST4 at the LEA level
 			*/
@@ -1355,11 +1380,10 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST4'
 			
-			DROP TABLE #TC19
-
 		
 
 
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 9:
 				ST5 at the LEA level
 			*/
@@ -1407,12 +1431,11 @@ BEGIN TRY
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST5'
-			
-			DROP TABLE #TC20
 
 		
 
 		
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 10:
 				ST6 at the LEA level
 			*/
@@ -1462,9 +1485,8 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST6'
 			
-			DROP TABLE #TC21
-
 		
+	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 11:
 				TOT at the LEA level
 			*/
@@ -1481,7 +1503,7 @@ BEGIN TRY
 				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 			GROUP BY s.LeaIdentifierSeaAccountability
 			
-			
+------------------------------------------------------------------------
 
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
@@ -1509,16 +1531,7 @@ BEGIN TRY
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'TOT'
 			
-			DROP TABLE #TC22
-			
-			DROP TABLE #stuLea
-			DROP TABLE #stuLeaTemp
 
-			IF OBJECT_ID('tempdb..#stuLea') IS NOT NULL
-			DROP TABLE #stuLea
-
-			IF OBJECT_ID('tempdb..#stuLeaTemp') IS NOT NULL
-			DROP TABLE #stuLeaTemp
 
 		FETCH NEXT FROM db_cursor INTO @catchmentArea 
 	END 
@@ -1526,15 +1539,15 @@ BEGIN TRY
 	CLOSE db_cursor  
 	DEALLOCATE db_cursor
 
-	COMMIT TRANSACTION
+	--COMMIT TRANSACTION
 
 	END TRY
 	BEGIN CATCH
 
-	IF @@TRANCOUNT > 0
-	BEGIN
-		ROLLBACK TRANSACTION
-	END
+	--IF @@TRANCOUNT > 0
+	--BEGIN
+	--	ROLLBACK TRANSACTION
+	--END
 
 	DECLARE @msg AS NVARCHAR(MAX)
 	SET @msg = ERROR_MESSAGE()
