@@ -571,6 +571,7 @@ BEGIN
 								on grades.DimGradeLevelId = bridgeGrades.GradeLevelId
 						where d.SchoolYear = @reportYear 
 						and sch.DimK12SchoolId <> -1 
+						and sch.SchoolTypeEdFactsCode <> '5' -- Exclude Reportable Programs, requirement added for SY 23-24
 						and ISNULL(sch.ReportedFederally, 1) = 1
 						and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 					end
@@ -1799,7 +1800,8 @@ BEGIN
 								left outer join rds.DimGradeLevels grades 
 									on grades.DimGradeLevelId = bridgeGrades.GradeLevelId
 							where dates.SchoolYear = @reportYear 
-							and sch.DimK12SchoolId <> -1 
+							and sch.DimK12SchoolId <> -1
+							and sch.SchoolTypeEdFactsCode <> '5' -- Exclude Reportable Programs, requirement added for SY 23-24
 							and ISNULL(sch.ReportedFederally, 1) = 1
 							and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 						end
