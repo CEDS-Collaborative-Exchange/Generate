@@ -1,4 +1,4 @@
-Create PROCEDURE [RDS].[Create_OrganizationReportData]
+CREATE PROCEDURE [RDS].[Create_OrganizationReportData]
 	@reportCode as varchar(50),
 	@runAsTest as bit
 AS
