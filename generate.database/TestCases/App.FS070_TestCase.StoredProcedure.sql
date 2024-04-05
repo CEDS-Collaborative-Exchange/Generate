@@ -3,6 +3,11 @@ CREATE PROCEDURE [App].[FS070_TestCase]
 AS
 BEGIN
 
+	--Create SY Start / SY End variables
+	declare @SYStart varchar(10) = CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
+	declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
+
+
 	--clear the tables for the next run
 	IF OBJECT_ID('tempdb..#Staging') IS NOT NULL
 	DROP TABLE #Staging
@@ -106,9 +111,9 @@ BEGIN
 	FROM Staging.K12StaffAssignment sksa
 	JOIN Staging.K12Organization sko
 		ON sksa.LeaIdentifierSea = sko.LeaIdentifierSea
-		AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, GETDATE())
+		AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, @SYEnd)
 	WHERE K12StaffClassification in ('SpecialEducationTeachers', 'SpecialEducationTeachers_1') 
-		AND @ChildCountDate BETWEEN sksa.AssignmentStartDate AND ISNULL(sksa.AssignmentEndDate, GETDATE())
+		AND @ChildCountDate BETWEEN sksa.AssignmentStartDate AND ISNULL(sksa.AssignmentEndDate, @SYEnd)
 
 
 	---ST2 SEA Match All - Age Group Taught: 3TO5 Full Time Equivalency: 1493.3700
