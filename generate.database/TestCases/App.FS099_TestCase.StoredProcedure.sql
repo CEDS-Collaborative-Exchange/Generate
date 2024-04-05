@@ -55,7 +55,9 @@ BEGIN
 	SELECT @SPEDProgram = [code] from dbo.RefProgramType where [Definition] = 'Special Education Services'
 
 	--Get School Year End Date
-	DECLARE @SYStartDate datetime = staging.GetFiscalYearStartDate(@schoolYear)
+	--Create SY Start / SY End variables
+	declare @SYStart varchar(10) = CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
+	declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
 
 	-- Get Custom Child Count Date
 	DECLARE @ChildCountDate DATETIME
@@ -105,8 +107,8 @@ BEGIN
 	FROM Staging.K12StaffAssignment sksa
 	JOIN Staging.K12Organization sko
 		ON sksa.LeaIdentifierSea = sko.LeaIdentifierSea
-	WHERE @ChildCountDate BETWEEN AssignmentStartDate AND ISNULL(AssignmentEndDate, GETDATE())
-		AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, GETDATE())
+	WHERE @ChildCountDate BETWEEN AssignmentStartDate AND ISNULL(AssignmentEndDate, @SYEnd)
+		AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, @SYEnd)
 --		AND ProgramTypeCode = @SPEDProgram
 --		WHERE sksa.SchoolYear = @SchoolYear
 
