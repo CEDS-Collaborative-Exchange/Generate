@@ -2,6 +2,9 @@ CREATE PROCEDURE [Staging].[Staging-to-FactK12ProgramParticipations]
 	@DataCollectionName	VARCHAR(60) = NULL
 AS BEGIN
 
+	DECLARE @SYEndDate DATE
+	SELECT @SYEndDate = CAST('6/30/' + CAST((select MAX(SchoolYear) from Staging.K12Enrollment) AS VARCHAR(4)) AS DATE)
+
 	CREATE TABLE #Facts (
 		   [StagingId]									INT
 		 , [DataCollectionId]                   		INT NULL
@@ -102,36 +105,36 @@ AS BEGIN
 		AND ISNULL(skpp.StudentIdentifierState, '')							= ISNULL(sppse.StudentIdentifierState, '')
 	JOIN RDS.DimPeople rdp
 		ON skpp.StudentIdentifierState												= rdp.K12StudentStudentIdentifierState
-		AND ske.RecordStartDateTime													BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime													BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 		AND ISNULL(ske.FirstName, '')												= ISNULL(rdp.FirstName, '')
 		AND ISNULL(ske.MiddleName, '')												= ISNULL(rdp.MiddleName, '')
 		AND ISNULL(ske.LastOrSurname, 'MISSING')									= ISNULL(rdp.LastOrSurname, 'MISSING')
 		AND ISNULL(ske.Birthdate, '1/1/1900')										= ISNULL(rdp.BirthDate, '1/1/1900')
 	LEFT JOIN RDS.DimLeas rdlAcc
 		ON ske.LeaIdentifierSeaAccountability = rdlAcc.LeaIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdlAcc.RecordStartDateTime AND ISNULL(rdlAcc.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdlAcc.RecordStartDateTime AND ISNULL(rdlAcc.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimLeas rdlAtt
 		ON ske.LeaIdentifierSeaAttendance = rdlAtt.LeaIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdlAtt.RecordStartDateTime AND ISNULL(rdlAtt.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdlAtt.RecordStartDateTime AND ISNULL(rdlAtt.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimLeas rdlFun
 		ON ske.LeaIdentifierSeaFunding = rdlFun.LeaIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdlFun.RecordStartDateTime AND ISNULL(rdlFun.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdlFun.RecordStartDateTime AND ISNULL(rdlFun.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimLeas rdlGrad
 		ON ske.LeaIdentifierSeaGraduation = rdlGrad.LeaIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdlGrad.RecordStartDateTime AND ISNULL(rdlGrad.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdlGrad.RecordStartDateTime AND ISNULL(rdlGrad.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimLeas rdlIep
 		ON ske.LeaIdentifierSeaIndividualizedEducationProgram = rdlIep.LeaIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdlIep.RecordStartDateTime AND ISNULL(rdlIep.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdlIep.RecordStartDateTime AND ISNULL(rdlIep.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimK12Schools rdksch
 		ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimIeus rdi
 		ON (ISNULL(rdksch.IeuOrganizationIdentifierSea, '') = rdi.IeuOrganizationIdentifierSea
 			OR ISNULL(rdlAcc.IeuOrganizationIdentifierSea, '') = rdi.IeuOrganizationIdentifierSea
 			OR ISNULL(rdlAtt.IeuOrganizationIdentifierSea, '') = rdi.IeuOrganizationIdentifierSea)
-		AND ske.RecordStartDateTime BETWEEN rdi.RecordStartDateTime AND ISNULL(rdi.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdi.RecordStartDateTime AND ISNULL(rdi.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimSeas rds
-		ON ske.RecordStartDateTime BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+		ON ske.RecordStartDateTime BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	JOIN RDS.DimDataCollections rddc
 		ON skpp.DataCollectionName = rddc.DataCollectionName 
 	JOIN RDS.DimDates entryDate
@@ -174,8 +177,8 @@ AS BEGIN
 			ON fact.StagingId = ske.Id
 		LEFT JOIN RDS.DimPeople rdp
 			ON ske.StudentIdentifierState																			= rdp.K12StudentStudentIdentifierState
-			AND ISNULL(ske.EnrollmentEntryDate, GETDATE())															<= ISNULL(rdp.RecordEndDateTime, GETDATE())
-			AND ISNULL(ske.EnrollmentExitDate, GETDATE())															>= ISNULL(rdp.RecordStartDateTime, GETDATE())
+			AND ISNULL(ske.EnrollmentEntryDate, @SYEndDate)															<= ISNULL(rdp.RecordEndDateTime, @SYEndDate)
+			AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)															>= ISNULL(rdp.RecordStartDateTime, @SYEndDate)
 			AND ISNULL(ske.FirstName, 'MISSING')																	= ISNULL(rdp.FirstName, 'MISSING')
 			AND ISNULL(ske.MiddleName, 'MISSING')																	= ISNULL(rdp.MiddleName, 'MISSING')
 			AND ISNULL(ske.LastOrSurname, 'MISSING')																= ISNULL(rdp.LastOrSurname, 'MISSING')
@@ -287,7 +290,7 @@ AS BEGIN
 		AND ISNULL(rdlsIep.LeaIdentifierSea, '') = ISNULL(ske.LeaIdentifierSeaIndividualizedEducationProgram, '')
 		--AND ske.HispanicLatinoEthnicity = 1
 		AND ISNULL(rddc.DataCollectionName, '') = ISNULL(ske.DataCollectionName, '')
-		AND countStartDate.DateValue BETWEEN ske.RecordStartDateTime AND ISNULL(ske.RecordEndDateTime, GETDATE())
+		AND countStartDate.DateValue BETWEEN ske.RecordStartDateTime AND ISNULL(ske.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN Staging.K12PersonRace skpr
 		ON rdp.K12StudentStudentIdentifierState = skpr.StudentIdentifierState
 		AND	ISNULL(rdks.SchoolIdentifierSea, '') = ISNULL(skpr.SchoolIdentifierSea, '')
@@ -299,7 +302,7 @@ AS BEGIN
 		AND ISNULL(rdlsGrad.LeaIdentifierSea, '') = ISNULL(skpr.LeaIdentifierSeaGraduation, '')
 		AND ISNULL(rdlsIep.LeaIdentifierSea, '') = ISNULL(skpr.LeaIdentifierSeaIndividualizedEducationProgram, '')
 		AND ISNULL(rddc.DataCollectionName, '') = ISNULL(skpr.DataCollectionName, '')
-		AND countStartDate.DateValue	BETWEEN skpr.RecordStartDateTime AND ISNULL(skpr.RecordEndDateTime, GETDATE())
+		AND countStartDate.DateValue	BETWEEN skpr.RecordStartDateTime AND ISNULL(skpr.RecordEndDateTime, @SYEndDate)
 
 	Insert Into RDS.BridgeK12ProgramParticipationRaces
 			(

@@ -236,7 +236,7 @@ BEGIN
 
 --NOTE: The application of this rule is being discussed and will be addressed in a future release.  For now, the rule is being commented out.
 	--Add condition that the student was in SPED at the beginning of the reporting period CIID-4693
---		AND sppse.ProgramParticipationBeginDate <= @StartDate
+--		AND sppse.ProgramParticipationBeginDate <= @SYStartDate
 
 	--Get a unique set of Lea IDs to match against for Title I and Migrant update
 		IF OBJECT_ID('tempdb..#uniqueLEAs') IS NOT NULL 

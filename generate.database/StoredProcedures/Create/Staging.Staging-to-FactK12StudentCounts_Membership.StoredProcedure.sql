@@ -13,10 +13,6 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-		--Create SY Start / SY End variables
-		declare @SYStart varchar(10) = CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
-		declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
-
 	BEGIN TRY
 
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
@@ -28,8 +24,13 @@ BEGIN
 		DECLARE 
 		@FactTypeId INT,
 		@SchoolYearId int,
-		@MembershipDate date
+		@MembershipDate date,
+		@SYStartDate date,
+		@SYEndDate date
 		
+		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
+		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
+
 	--Get the Membership date from Toggle (if set)
 		SELECT @SchoolYearId = DimSchoolYearId 
 		FROM RDS.DimSchoolYears
@@ -215,10 +216,10 @@ BEGIN
 --			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 			AND ISNULL(ske.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND @MembershipDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEnd)
+			AND @MembershipDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 	--sea
 		JOIN RDS.DimSeas rds
-			ON @MembershipDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEnd)
+			ON @MembershipDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--age
 		JOIN RDS.DimAges rda
 			ON RDS.Get_Age(ske.Birthdate, @MembershipDate) = rda.AgeValue
@@ -256,13 +257,13 @@ BEGIN
 	--lea
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND @MembershipDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEnd)
+			AND @MembershipDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 	--school
 		LEFT JOIN RDS.DimK12Schools rdpch
 			ON ske.SchoolIdentifierSea = rdpch.SchoolIdentifierSea
-			AND @MembershipDate BETWEEN rdpch.RecordStartDateTime AND ISNULL(rdpch.RecordEndDateTime, @SYEnd)
+			AND @MembershipDate BETWEEN rdpch.RecordStartDateTime AND ISNULL(rdpch.RecordEndDateTime, @SYEndDate)
 	
-		WHERE @MembershipDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
+		WHERE @MembershipDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 		AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList)
 
 

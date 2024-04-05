@@ -4,6 +4,9 @@ AS
 BEGIN
 	--ALTER INDEX ALL ON RDS.FactPsStudentEnrollments DISABLE
 
+	DECLARE @SYEndDate DATE
+	SELECT @SYEndDate = CAST('6/30/' + CAST((select MAX(SchoolYear) from Staging.PsStudentEnrollment) AS VARCHAR(4)) AS DATE)
+
 	INSERT INTO RDS.FactPsStudentEnrollments	
 		(
 				[SchoolYearId]                 
@@ -41,7 +44,7 @@ BEGIN
 		ON spse.SchoolYear = rsy.SchoolYear
 	INNER JOIN RDS.DimPsInstitutions rdpi
 		ON spse.[InstitutionIpedsUnitId] = rdpi.IPEDSIdentifier
-		AND spse.EntryDate BETWEEN rdpi.RecordStartDateTime AND ISNULL(rdpi.RecordEndDateTime, GETDATE())
+		AND spse.EntryDate BETWEEN rdpi.RecordStartDateTime AND ISNULL(rdpi.RecordEndDateTime, @SYEndDate)
 	INNER JOIN Staging.SourceSystemReferenceData sssrd
 		ON sssrd.SchoolYear = rsy.SchoolYear
 		AND sssrd.TableName = 'RefSex'
@@ -52,7 +55,7 @@ BEGIN
 		AND ISNULL(spse.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 		AND ISNULL(spse.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
 		AND ISNULL(spse.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-		AND spse.EntryDate BETWEEN rdp.RecordStartDatetime AND ISNULL(rdp.RecordEndDatetime , GETDATE())
+		AND spse.EntryDate BETWEEN rdp.RecordStartDatetime AND ISNULL(rdp.RecordEndDatetime , @SYEndDate)
 	LEFT JOIN RDS.vwDimAcademicTermDesignators rdatd
 		ON spse.AcademicTermDesignator = rdatd.AcademicTermDesignatorMap
 		AND spse.SchoolYear = rdatd.SchoolYear

@@ -4,6 +4,9 @@
 AS 
 BEGIN
 
+	DECLARE @SYEndDate DATE
+	SELECT @SYEndDate = CAST('6/30/' + CAST((select MAX(SchoolYear) from Staging.K12Organization) AS VARCHAR(4)) AS DATE)
+
 	DECLARE @StateCode VARCHAR(2), @StateName VARCHAR(50), @StateANSICode VARCHAR(5)
 	SELECT @StateCode = (select StateAbbreviationCode from Staging.StateDetail)
 	SELECT @StateName = (select [Description] from dbo.RefState where Code = @StateCode)
@@ -487,7 +490,7 @@ BEGIN
 		FROM RDS.DimK12Schools rdks
 		JOIN RDS.DimLeas rdl
 			ON rdks.LeaIdentifierSea = rdl.LeaIdentifierSea
-			AND rdks.RecordStartDateTime BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
+			AND rdks.RecordStartDateTime BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 		JOIN Staging.K12Organization sko
 			ON sko.LEAIdentifierSea = rdl.LeaIdentifierSea
 			AND rdks.SchoolIdentifierSea = sko.SchoolIdentifierSea
