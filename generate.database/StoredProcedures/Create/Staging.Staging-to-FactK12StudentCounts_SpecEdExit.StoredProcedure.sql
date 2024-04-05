@@ -48,6 +48,11 @@ BEGIN
 
 	-- Get Reference Period Dates, using Toggle to override if the state uses a custom reference period
 		-- Default date range
+
+		SELECT @SchoolYearId = DimSchoolYearId 
+		FROM RDS.DimSchoolYears
+		WHERE SchoolYear = @SchoolYear
+
 		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 

@@ -5,6 +5,10 @@ BEGIN
 
 set NOCOUNT ON
 
+BEGIN
+
+set NOCOUNT ON
+
 BEGIN TRY
 --	BEGIN TRANSACTION
 
@@ -12,6 +16,10 @@ BEGIN TRY
 			begin
 				deallocate db_cursor
 			end
+
+	--Create SY Start / SY End variables
+	declare @SYStart varchar(10) = CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
+	declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
 	
 		-- Define the test
 		DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
@@ -411,11 +419,11 @@ BEGIN TRY
 					ELSE 'MISSING'
 				END AS SexEdFactsCode
 				, CASE
-					WHEN sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) THEN EnglishLearnerStatus
+					WHEN sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEnd) THEN EnglishLearnerStatus
 					ELSE 0
 				END AS EnglishLearnerStatus
 				, CASE
-					WHEN sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) THEN 
+					WHEN sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEnd) THEN 
 						CASE 
 							WHEN EnglishLearnerStatus = 1 THEN 'LEP'
 							WHEN EnglishLearnerStatus = 0 THEN 'NLEP'
@@ -427,21 +435,21 @@ BEGIN TRY
 			LEFT JOIN #stuLea latest
 				ON ske.StudentIdentifierState = latest.StudentIdentifierState
 				AND ske.LeaIdentifierSeaAccountability = latest.LeaIdentifierSeaAccountability
-				and latest.SpecialEducationServicesExitDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) -- JW 4/4/2024
+				and latest.SpecialEducationServicesExitDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd) -- JW 4/4/2024
 			JOIN Staging.ProgramParticipationSpecialEducation sppse
 				ON sppse.StudentIdentifierState = latest.StudentIdentifierState
 				AND sppse.LeaIdentifierSeaAccountability = latest.LeaIdentifierSeaAccountability
 				AND sppse.ProgramParticipationEndDate = latest.SpecialEducationServicesExitDate
-				AND sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) -- JW 4/4/2024
+				AND sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd) -- JW 4/4/2024
 		-- JW 4/4/2024 --------------------------------------------------------------------------------------------------------
 		JOIN RDS.DimSeas rds
-			ON sppse.ProgramParticipationEndDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+			ON sppse.ProgramParticipationEndDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEnd)
 		-----------------------------------------------------------------------------------------------------------------------
 			JOIN Staging.IdeaDisabilityType sidt
 				ON sidt.StudentIdentifierState = ske.StudentIdentifierState
 				AND sidt.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
 				AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
-				AND sppse.ProgramParticipationEndDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+				AND sppse.ProgramParticipationEndDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEnd)
 				and sidt.IsPrimaryDisability = 1
 			LEFT JOIN Staging.K12PersonRace spr
 				ON ske.StudentIdentifierState = spr.StudentIdentifierState
@@ -451,7 +459,7 @@ BEGIN TRY
 				--AND ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
 				--AND spr.SchoolYear = ske.SchoolYear
 				-- JW CHECK THIS NEXT LINE...IT'S NOT IN STAGING TO FACT
-				--AND sppse.ProgramParticipationEndDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, GETDATE())
+				--AND sppse.ProgramParticipationEndDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
 			LEFT JOIN RDS.DimRaces rdr
 				ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
 					OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceCode)
@@ -459,12 +467,12 @@ BEGIN TRY
 				ON ske.StudentIdentifierState = el.StudentIdentifierState
 				AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-				AND sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
+				AND sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEnd)
 			WHERE sppse.ProgramParticipationEndDate is not null
 				AND sppse.IDEAEducationalEnvironmentForSchoolAge <> 'PPPS' -- JW 4/4/2024 This was commented out, but exists in the actual report migration code
 				AND sppse.SpecialEducationExitReason IS NOT NULL
 				AND ske.SchoolYear = @SchoolYear
-				--and sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate and ISNULL(ske.EnrollmentExitDate, getdate())
+				--and sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate and ISNULL(ske.EnrollmentExitDate, @SYEnd)
 --NOTE: The application of this rule is being discussed and will be addressed in a future release.  For now, the rule is being commented out. CIID-4693
 --				AND sppse.ProgramParticipationBeginDate <= @ExitingSpedStartDate
 

@@ -7,6 +7,9 @@ CREATE PROCEDURE [app].[FS052_TestCase]
 	@SchoolYear INT
 AS
 BEGIN
+		--Create SY Start / SY End variables
+		declare @SYStart varchar(10) = CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
+		declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
 
 	--clear the tables for the next run
 	IF OBJECT_ID('tempdb..#C052Staging') IS NOT NULL
@@ -179,9 +182,9 @@ BEGIN
 			AND (ske.LEAIdentifierSeaAccountability = spr.LEAIdentifierSeaAccountability
 				OR ske.SchoolIdentifierSea = spr.SchoolIdentifierSea)
 			AND spr.RecordStartDateTime is not null
-			AND @MemberDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, GETDATE())
+			AND @MemberDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
 			
-	WHERE @MemberDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
+	WHERE @MemberDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
 	AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList)
 
 	--Handle the Race records to match the unduplicated code 
@@ -211,7 +214,7 @@ BEGIN
 			ON spr.RaceType = sssrd.InputCode
 			AND spr.SchoolYear = sssrd.SchoolYear
 			AND sssrd.TableName = 'RefRace'
-		WHERE @MemberDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, GETDATE())
+		WHERE @MemberDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
 		AND	OutputCode <> 'TwoOrMoreRaces'	
 		GROUP BY
 			StudentIdentifierState

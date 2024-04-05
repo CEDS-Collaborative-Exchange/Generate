@@ -3,6 +3,11 @@ CREATE PROCEDURE [App].[FS033_TestCase]
 AS
 BEGIN
 
+	--Create SY Start / SY End variables
+	declare @SYStart varchar(10) = CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
+	declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
+
+
 	--clear the tables for the next run
 	IF OBJECT_ID('tempdb..#C033Staging') IS NOT NULL
 	DROP TABLE #C033Staging
@@ -127,8 +132,8 @@ BEGIN
 			ske.SchoolIdentifierSea = sps.SchoolIdentifierSea
 			--)
 		--AND sps.RecordStartDateTime is not null
-		--AND @MemberDate BETWEEN sps.RecordStartDateTime AND ISNULL(sps.RecordEndDateTime, GETDATE())		
-	WHERE @MemberDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
+		--AND @MemberDate BETWEEN sps.RecordStartDateTime AND ISNULL(sps.RecordEndDateTime, @SYEnd)		
+	WHERE @MemberDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
 	AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList)
 
 

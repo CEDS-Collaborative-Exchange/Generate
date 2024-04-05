@@ -97,6 +97,8 @@ StoredProcedures\\Drop,Staging.Staging-To-FactPsStudentEnrollments.StoredProcedu
 StoredProcedures\\Create,Staging.Staging-To-FactPsStudentEnrollments.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-To-FactSpecialEducation.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-To-FactSpecialEducation.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Homeless.StoredProcedure.sql
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Homeless.StoredProcedure.sql
 StoredProcedures\\Drop,App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_Staff_to_RDS.StoredProcedure.sql,0
