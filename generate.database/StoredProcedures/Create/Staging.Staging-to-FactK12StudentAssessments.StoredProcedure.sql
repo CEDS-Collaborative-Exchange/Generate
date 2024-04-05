@@ -415,13 +415,13 @@ BEGIN
 				AND ISNULL(ske.SchoolIdentifierSea,'') 				= ISNULL(sar.SchoolIdentifierSea,'')
 		--seas (rds)			
 			JOIN RDS.DimSeas rds
-				ON sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @Today)		
+				ON sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)		
 		--dimpeople	(rds)
 			JOIN RDS.DimPeople rdp
 				ON ske.StudentIdentifierState 			= rdp.K12StudentStudentIdentifierState
 				AND IsActiveK12Student 					= 1
 				AND ISNULL(ske.Birthdate, '1/1/1900') 	= ISNULL(rdp.BirthDate, '1/1/1900')
-				AND ISNULL(sar.AssessmentAdministrationStartDate, '1/1/1900') BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @Today)
+				AND ISNULL(sar.AssessmentAdministrationStartDate, '1/1/1900') BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 		--assessments (rds)
 			LEFT JOIN #vwAssessments rda
 				ON ISNULL(sar.AssessmentIdentifier, 'MISSING') 			= ISNULL(rda.AssessmentIdentifierState, 'MISSING')
@@ -457,11 +457,11 @@ BEGIN
 		--leas (rds)	
 			LEFT JOIN #tempLeas rdl -- RDS.DimLeas rdl
 				ON ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(rdl.LeaIdentifierSea, '')
-				AND sar.AssessmentAdministrationStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @Today)
+				AND sar.AssessmentAdministrationStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 		--schools (rds)
 			LEFT JOIN #tempK12Schools rdksch -- RDS.DimK12Schools rdksch
 				ON ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(rdksch.SchoolIdentifierSea, '')
-				AND sar.AssessmentAdministrationStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @Today)
+				AND sar.AssessmentAdministrationStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 		--grade levels (rds)
 			LEFT JOIN #vwGradeLevels rgls
 				ON ISNULL(ske.GradeLevel, '') = ISNULL(rgls.GradeLevelMap, '')
@@ -473,7 +473,7 @@ BEGIN
 				AND ISNULL(ske.SchoolIdentifierSea,'') 				= ISNULL(idea.SchoolIdentifierSea,'')
 				AND ((idea.ProgramParticipationBeginDate BETWEEN @SYStartDate and @SYEndDate 
 						AND idea.ProgramParticipationBeginDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(idea.ProgramParticipationEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(idea.ProgramParticipationEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
 		--english learner (staging)
 			LEFT JOIN #tempELStatus el 
 				ON sar.StudentIdentifierState 						= el.StudentIdentifierState
@@ -481,7 +481,7 @@ BEGIN
 				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(el.SchoolIdentifierSea, '')
 				AND ((el.EnglishLearner_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND el.EnglishLearner_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(el.EnglishLearner_StatusEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
 		--migratory status (staging)	
 			LEFT JOIN #tempMigrantStatus migrant
 				ON sar.StudentIdentifierState 						= migrant.StudentIdentifierState
@@ -489,7 +489,7 @@ BEGIN
 				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(migrant.SchoolIdentifierSea, '')
 				AND ((migrant.Migrant_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND migrant.Migrant_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(migrant.Migrant_StatusEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(migrant.Migrant_StatusEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
 		--homelessness status (staging)	
 			LEFT JOIN #tempHomelessnessStatus hmStatus
 				ON sar.StudentIdentifierState 						= hmStatus.StudentIdentifierState
@@ -497,7 +497,7 @@ BEGIN
 				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(hmStatus.SchoolIdentifierSea, '')
 				AND ((hmStatus.Homelessness_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND hmStatus.Homelessness_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(hmStatus.Homelessness_StatusEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(hmStatus.Homelessness_StatusEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
 		--foster care status (staging)	
 			LEFT JOIN #tempFosterCareStatus foster
 				ON sar.StudentIdentifierState 						= foster.StudentIdentifierState
@@ -505,7 +505,7 @@ BEGIN
 				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(foster.SchoolIdentifierSea, '')
 				AND ((foster.FosterCare_ProgramParticipationStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND foster.FosterCare_ProgramParticipationStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(foster.FosterCare_ProgramParticipationEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(foster.FosterCare_ProgramParticipationEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
 		--economically disadvantaged status (staging)	
 			LEFT JOIN #tempEconomicallyDisadvantagedStatus ecoDisStatus
 				ON sar.StudentIdentifierState 						= ecoDisStatus.StudentIdentifierState
@@ -513,7 +513,7 @@ BEGIN
 				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(ecoDisStatus.SchoolIdentifierSea, '')
 				AND ((ecoDisStatus.EconomicDisadvantage_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND ecoDisStatus.EconomicDisadvantage_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(ecoDisStatus.EconomicDisadvantage_StatusEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(ecoDisStatus.EconomicDisadvantage_StatusEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
 		--military status (staging)	
 			LEFT JOIN #tempMilitaryStatus military
 				ON sar.StudentIdentifierState 						= military.StudentIdentifierState
@@ -521,7 +521,7 @@ BEGIN
 				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(military.SchoolIdentifierSea, '')
 				AND ((military.MilitaryConnected_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND military.MilitaryConnected_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
-					AND ISNULL(military.MilitaryConnected_StatusEndDate, @Today) >= sar.AssessmentAdministrationStartDate)
+					AND ISNULL(military.MilitaryConnected_StatusEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
 		--race (staging + function)	
 			LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
 				ON ske.SchoolYear 				= spr.SchoolYear
@@ -537,7 +537,7 @@ BEGIN
 						ELSE 'Missing'
 					END
 			WHERE 
-			sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @Today)
+			sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 
 	--Final insert into RDS.FactK12StudentAssessments table
 		DELETE RDS.FactK12StudentAssessments

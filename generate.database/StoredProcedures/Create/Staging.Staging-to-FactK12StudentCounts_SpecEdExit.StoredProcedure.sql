@@ -25,8 +25,8 @@ BEGIN
 		@SchoolYearId int,
 		@ChildCountDate date,
 		@PreviousChildCountDate date,
-		@StartDate DATE,
-		@EndDate DATE,
+		@SYStartDate DATE,
+		@SYEndDate DATE,
 		@UsesDefaultReferenceDates VARCHAR(10),
 		@ToggleStartDate DATE,
 		@ToggleEndDate DATE
@@ -48,8 +48,8 @@ BEGIN
 
 	-- Get Reference Period Dates, using Toggle to override if the state uses a custom reference period
 		-- Default date range
-		SELECT @StartDate = CAST('7/1/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
-		SELECT @EndDate = CAST('6/30/' + CAST(@SchoolYear  AS VARCHAR(4)) AS DATE)
+		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
+		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 
 		-- Custom date range
 		SELECT @UsesDefaultReferenceDates = tr.ResponseValue
@@ -72,8 +72,8 @@ BEGIN
 				ON tq.ToggleQuestionId = tr.ToggleQuestionId
 			WHERE tq.EmapsQuestionAbbrv = 'DEFEXREFDTEEND'
 
-			SELECT @StartDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@ToggleStartDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ToggleStartDate) AS VARCHAR(2)) AS DATE)
-			SELECT @EndDate = CAST(CAST(@SchoolYear AS CHAR(4)) + '-' + CAST(MONTH(@ToggleEndDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ToggleEndDate) AS VARCHAR(2)) AS DATE)
+			SELECT @SYStartDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@ToggleStartDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ToggleStartDate) AS VARCHAR(2)) AS DATE)
+			SELECT @SYEndDate = CAST(CAST(@SchoolYear AS CHAR(4)) + '-' + CAST(MONTH(@ToggleEndDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ToggleEndDate) AS VARCHAR(2)) AS DATE)
 
 		END 
 
@@ -183,12 +183,12 @@ BEGIN
 			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
-			AND rdd.DateValue BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
+			AND rdd.DateValue BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 	--sea	
 		JOIN RDS.DimSeas rds
-			ON rdd.DateValue BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+			ON rdd.DateValue BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--student
 		JOIN RDS.DimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
@@ -196,7 +196,7 @@ BEGIN
 --			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND rdd.DateValue BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
+			AND rdd.DateValue BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 			AND IsActiveK12Student = 1
 	--demographics
 		JOIN RDS.vwDimK12Demographics rdkd
@@ -208,11 +208,11 @@ BEGIN
 	--lea	
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND rdd.DateValue BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
+			AND rdd.DateValue BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 	--school
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND rdd.DateValue BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
+			AND rdd.DateValue BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 	--race
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr
 			ON ske.SchoolYear = spr.SchoolYear
@@ -231,7 +231,7 @@ BEGIN
 
 --NOTE: The application of this rule is being discussed and will be addressed in a future release.  For now, the rule is being commented out.
 	--Add condition that the student was in SPED at the beginning of the reporting period CIID-4693
---		AND sppse.ProgramParticipationBeginDate <= @StartDate
+--		AND sppse.ProgramParticipationBeginDate <= @SYStartDate
 
 	--Get a unique set of Lea IDs to match against for Title I and Migrant update
 		IF OBJECT_ID('tempdb..#uniqueLEAs') IS NOT NULL 
@@ -263,7 +263,7 @@ BEGIN
 			AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND sidt.IsPrimaryDisability = 1
-			AND sppse.ProgramParticipationEndDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+			AND sppse.ProgramParticipationEndDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
 		JOIN RDS.vwDimIdeaStatuses rdis
 			ON  ISNULL(sppse.SpecialEducationExitReason, 'MISSING') = ISNULL(rdis.SpecialEducationExitReasonMap, rdis.SpecialEducationExitReasonCode)
 			AND IdeaIndicatorCode = 'Yes'
@@ -283,7 +283,7 @@ BEGIN
 			ON sppse.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			AND sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
+			AND sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
 		JOIN RDS.vwDimEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'

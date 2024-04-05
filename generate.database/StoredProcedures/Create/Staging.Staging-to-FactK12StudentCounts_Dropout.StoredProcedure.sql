@@ -36,6 +36,9 @@ BEGIN
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
+		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
+		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
+
 		select @DimK12EnrollmentStatusId = (
 			select top 1 DimK12EnrollmentStatusId
 			from rds.vwDimK12EnrollmentStatuses
@@ -59,9 +62,6 @@ BEGIN
 				and EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
 				and SchoolYear = @SchoolYear
 				)
-
-		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
-		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 
 	--Create the temp views (and any relevant indexes) needed for this domain
 		SELECT *
@@ -206,7 +206,7 @@ BEGIN
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 		JOIN RDS.DimSeas rds
-			ON ske.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+			ON ske.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--demographics			
 		JOIN RDS.vwDimK12Demographics rdkd
  			ON rsy.SchoolYear = rdkd.SchoolYear
@@ -218,13 +218,13 @@ BEGIN
 			--AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND ske.EnrollmentEntryDate BETWEEN convert(date, rdp.RecordStartDateTime) AND convert(date, ISNULL(rdp.RecordEndDateTime, GETDATE()))
+			AND ske.EnrollmentEntryDate BETWEEN convert(date, rdp.RecordStartDateTime) AND convert(date, ISNULL(rdp.RecordEndDateTime, @SYEndDate))
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND ske.EnrollmentEntryDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
+			AND ske.EnrollmentEntryDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
+			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 	--homeless
 		LEFT JOIN Staging.PersonStatus hmStatus
 			ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
@@ -233,12 +233,12 @@ BEGIN
 			AND
 				(
 					(
-						ISNULL(hmStatus.Homelessness_StatusStartDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						ISNULL(hmStatus.Homelessness_StatusStartDate, @SYEndDate) <= ske.EnrollmentEntryDate 
 						AND 
-						ISNULL(hmStatus.Homelessness_StatusEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+						ISNULL(hmStatus.Homelessness_StatusEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
 					) 
 					OR 
-					hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+					hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
 				)
 	--idea disability status
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
@@ -248,12 +248,12 @@ BEGIN
 			AND
 				(
 					(
-						ISNULL(idea.ProgramParticipationBeginDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						ISNULL(idea.ProgramParticipationBeginDate, @SYEndDate) <= ske.EnrollmentEntryDate 
 						AND 
-						ISNULL(idea.ProgramParticipationEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+						ISNULL(idea.ProgramParticipationEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
 					) 
 					OR 
-					idea.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+					idea.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
 				)
 	--504 disability status
 		LEFT JOIN Staging.Disability disab
@@ -263,12 +263,12 @@ BEGIN
 			AND
 				(
 					(
-						ISNULL(disab.Disability_StatusStartDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						ISNULL(disab.Disability_StatusStartDate, @SYEndDate) <= ske.EnrollmentEntryDate 
 						AND 
-						ISNULL(disab.Disability_StatusEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+						ISNULL(disab.Disability_StatusEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
 					) 
 					OR 
-					disab.Disability_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+					disab.Disability_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
 				)
 	--economic disadvantage
 		LEFT JOIN Staging.PersonStatus ecoDis
@@ -278,12 +278,12 @@ BEGIN
 			AND
 				(
 					(
-						ISNULL(ecoDis.EconomicDisadvantage_StatusStartDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						ISNULL(ecoDis.EconomicDisadvantage_StatusStartDate, @SYEndDate) <= ske.EnrollmentEntryDate 
 						AND 
-						ISNULL(ecoDis.EconomicDisadvantage_StatusEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+						ISNULL(ecoDis.EconomicDisadvantage_StatusEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
 					) 
 					OR 
-					ecoDis.EconomicDisadvantage_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+					ecoDis.EconomicDisadvantage_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
 				)
 	--english learner
 		LEFT JOIN Staging.PersonStatus el 
@@ -293,12 +293,12 @@ BEGIN
 			AND
 				(
 					(
-						ISNULL(el.EnglishLearner_StatusStartDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						ISNULL(el.EnglishLearner_StatusStartDate, @SYEndDate) <= ske.EnrollmentEntryDate 
 						AND 
-						ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+						ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
 					) 
 					OR 
-					el.EnglishLearner_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+					el.EnglishLearner_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
 				)
 	--migratory status	
 		LEFT JOIN Staging.PersonStatus migrant
@@ -308,12 +308,12 @@ BEGIN
 			AND
 				(
 					(
-						ISNULL(migrant.Migrant_StatusStartDate, GETDATE()) <= ske.EnrollmentEntryDate 
+						ISNULL(migrant.Migrant_StatusStartDate, @SYEndDate) <= ske.EnrollmentEntryDate 
 						AND 
-						ISNULL(migrant.Migrant_StatusEndDate, GETDATE()) >= ske.EnrollmentEntryDate
+						ISNULL(migrant.Migrant_StatusEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
 					) 
 					OR 
-					migrant.Migrant_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) 
+					migrant.Migrant_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
 				)
 	--race	
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 

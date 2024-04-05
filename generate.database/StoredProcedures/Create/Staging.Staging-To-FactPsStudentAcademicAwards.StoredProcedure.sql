@@ -1,6 +1,9 @@
 CREATE PROCEDURE Staging.[Staging-To-FactPsStudentAcademicAwards]
 AS
 
+	DECLARE @SYEndDate DATE
+	SELECT @SYEndDate = CAST('6/30/' + CAST((select MAX(SchoolYear) from Staging.PsStudentAcademicAward) AS VARCHAR(4)) AS DATE)
+
 	IF OBJECT_ID(N'tempdb..#saa') IS NOT NULL DROP TABLE #saa
 
 	SELECT 
@@ -21,7 +24,7 @@ AS
 	FROM Staging.PsStudentAcademicAward spsar
 	LEFT JOIN RDS.DimPsInstitutions rdpi
 		ON spsar.[InstitutionIpedsUnitId] = rdpi.IPEDSIdentifier
-		AND spsar.EntryDate BETWEEN rdpi.RecordStartDateTime AND ISNULL(rdpi.RecordEndDateTime, GETDATE())
+		AND spsar.EntryDate BETWEEN rdpi.RecordStartDateTime AND ISNULL(rdpi.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimPsAcademicAwardTitles rdaat
 		ON spsar.AcademicAwardTitle = rdaat.AcademicAwardTitle
 	LEFT JOIN RDS.vwDimPsAcademicAwardStatuses rdaas
@@ -46,7 +49,7 @@ AS
 		ON s.PsStudentIdentifierState = spse.StudentIdentifierState
 		AND s.InstitutionIpedsUnitId = spse.InstitutionIpedsUnitId
 		AND (s.EntryDate = spse.EntryDate
-			OR s.AcademicAwardDate BETWEEN spse.EntryDate AND ISNULL(spse.ExitDate, GETDATE()))
+			OR s.AcademicAwardDate BETWEEN spse.EntryDate AND ISNULL(spse.ExitDate, @SYEndDate))
 
 	-- Students who received an award before enrolling in the institution
 	; WITH cte AS (
@@ -130,7 +133,7 @@ AS
 		ON (spse.Id IS NOT NULL
 			AND spse.StudentIdentifierState = rdp.PsStudentIdentifierState 
 			AND ISNULL(spse.Birthdate, '01-01-1900') = ISNULL(rdp.Birthdate, '01-01-1900')
-			AND spse.EntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
+			AND spse.EntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 			)
 		OR
 			(spse.Id IS NULL
