@@ -5626,16 +5626,14 @@ BEGIN
 					-- default ReportEDFactsK12StudentCounts
 					----------------------------
 		
-
 					create table #categorySet (	' 
 					+ case when @reportLevel = 'sea' then 'DimSeaId int,'
 							when @reportLevel = 'lea' then 'DimLeaId int,' 
 							else 'DimK12SchoolId int,'
-					end + 'DimStudentId int, K12StudentStudentIdentifierState varchar(50)' + @sqlCategoryFieldDefs + ',
+					end + 'DimStudentId int, K12StudentStudentIdentifierState varchar(50), TableTypeAbbrv varchar(25)' + @sqlCategoryFieldDefs + ',
 					' + @factField + ' int
 				)
 		
-
 				' + case when @reportLevel = 'sea' then '
 					CREATE INDEX IDX_CategorySet ON #CategorySet (DimSeaId)
 					'    when @reportLevel = 'lea' then '
@@ -5653,11 +5651,14 @@ BEGIN
 					(' + case when @reportLevel = 'sea' then 'DimSeaId,'
 								when @reportLevel = 'lea' then 'DimLeaId,' 
 								else 'DimK12SchoolId,'
-						end + 'DimStudentId, K12StudentStudentIdentifierState'  + @sqlCategoryFields + ', ' + @factField + ')
+						end + 'DimStudentId, K12StudentStudentIdentifierState, TableTypeAbbrv'  + @sqlCategoryFields + ', ' + @factField + ') 
 					select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 										when @reportLevel = 'lea' then 'fact.LeaId,' 
 										else 'fact.K12SchoolId,'
-						end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
+						end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState, 
+						CASE WHEN dps.NationalSchoolLunchProgramDirectCertificationIndicatorCode = ''YES'' THEN ''DIRECTCERT''
+							ELSE ''LUNCHFREERED''
+						END' + @sqlCategoryQualifiedDimensionFields + ',
 					sum(isnull(fact.' + @factField + ', 0))
 					from rds.' + @factTable + ' fact ' + 
 					' inner join rds.DimEconomicallyDisadvantagedStatuses dps on fact.EconomicallyDisadvantagedStatusId = dps.DimEconomicallyDisadvantagedStatusId ' + @sqlCountJoins 
@@ -5671,7 +5672,7 @@ BEGIN
 					' group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 										when @reportLevel = 'lea' then 'fact.LeaId,'
 										else 'fact.K12SchoolId,'
-										end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState'  + @sqlCategoryQualifiedDimensionGroupFields + '
+										end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState, dps.NationalSchoolLunchProgramDirectCertificationIndicatorCode'  + @sqlCategoryQualifiedDimensionGroupFields + '
 					' + @sqlHavingClause + '
 					'
 			end			
@@ -5952,82 +5953,115 @@ BEGIN
 
 			--drop the table if it exists 
 			declare @dropTableSQL nvarchar(max)
-			set @dropTableSQL = '		IF OBJECT_ID(N''[debug].' + QUOTENAME(@debugTableName) + ''',N''U'') IS NOT NULL DROP TABLE [debug].' + QUOTENAME(@debugTableName) + char(10) + char(10)
 
+			-- c033 creates the debug table, then adds to it so we have to conditionally drop that table
+			if @reportCode in ('c033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'DIRECTCERT'
+			begin
+				set @dropTableSQL = '       IF OBJECT_ID(N''[debug].' + QUOTENAME(@debugTableName) + ''',N''U'') IS NOT NULL DROP TABLE [debug].' + QUOTENAME(@debugTableName) + char(10) + char(10)
+			end
+			else if @reportCode in ('c033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'LUNCHFREERED' -- if @dropdebugtable = 1 don't drop the table
+			begin
+				set @dropTableSQL = ' ' + char(10)
+			end
+			else
+			begin -- drop the table for all other files
+				set @dropTableSQL = '		IF OBJECT_ID(N''[debug].' + QUOTENAME(@debugTableName) + ''',N''U'') IS NOT NULL DROP TABLE [debug].' + QUOTENAME(@debugTableName) + char(10) + char(10)
+			end
+		
 			set @sql += @dropTableSQL
 
 			--create the table with the insert
 			declare @debugTableCreate nvarchar(max)
-			if @reportCode IN ('C059', 'C070', 'C099', 'C112') 
+
+			-- the debug c033 TOT table already exists, write the additional records into it
+			if @reportCode IN ('C033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'LUNCHFREERED'
 			begin
-				set @debugTableCreate = '					select s.K12StaffStaffMemberIdentifierState '
+				set @debugTableCreate = '		insert into '  + '[debug].' + QUOTENAME(@debugTableName) + char(10)	+	
+				'(
+					K12StudentStudentIdentifierState,
+					schoolIdentifierSea,
+					TableTypeAbbrv
+				)
+				select s.K12StudentStudentIdentifierState , sc.schoolIdentifierSea, c.TableTypeAbbrv				
+				from #categorySet c 
+				inner join rds.DimPeople s 
+					on c.DimStudentId = s.DimPersonId 
+				inner join rds.DimK12Schools sc 
+					on c.DimK12SchoolId = sc.DimK12SchoolId 
+				order by K12StudentStudentIdentifierState '				
 			end 
-			else if @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
-			begin
-				set @debugTableCreate = '					select K12StudentStudentIdentifierState '   
-			end 
-			else  
-			begin
-				set @debugTableCreate = '					select s.K12StudentStudentIdentifierState ' 
-			end 
-
-			--set the LEA field in the select if necessary
-			if @reportLevel	= 'LEA' 
-			begin 
-				set @debugTableCreate += ', l.leaIdentifierSea ' 
-			end
-
-			--set the School field in the select if necessary
-			if @reportLevel = 'SCH' 
-			begin
-				set @debugTableCreate += ', sc.schoolIdentifierSea '  
-			end
-
-			set @debugTableCreate += @sqlCategoryFields + char(10) 
-				+ '					into [debug].' + QUOTENAME(@debugTableName) + char(10)
-		
-			IF @reportCode IN ('C059', 'C070', 'C099', 'C112')
-			BEGIN
-				set @debugTableCreate += '					from #categorySet c ' + char(10) +
-				'					inner join rds.DimPeople s ' + char(10)
-				+ '						on c.DimK12StaffId = s.DimPersonId ' + char(10)
-			END 
-			--these reports have been converted to use K12StudentStudentIdentifierState instead of K12StudentId
-			--	in #Students and #categorySet so no need to join to DimPeople
-			ELSE IF @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
-			BEGIN
-				set @debugTableCreate += '					from #categorySet c ' + char(10)
-			END
-			ELSE	
-			BEGIN
-				set @debugTableCreate += '					from #categorySet c ' + char(10) +
-				'					inner join rds.DimPeople s ' + char(10)
-				+ '						on c.DimStudentId = s.DimPersonId ' + char(10)
-			END 
-
-			--set the LEA join if necessary
-			if @reportLevel = 'LEA' 
-			begin
-				set @debugTableCreate += '					inner join rds.DimLeas l ' + char(10)
-					+ '						on c.DimLeaId = l.DimLeaId '  + char(10)
-			end 
-
-			--set the School join if necessary
-			if @reportLevel = 'SCH' 
-			begin
-				set @debugTableCreate += '					inner join rds.DimK12Schools sc ' + char(10)
-					+ '						on c.DimK12SchoolId = sc.DimK12SchoolId ' + char(10)
-			end 
-
-			if @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') 
-			begin
-				set @debugTableCreate += '					order by K12StudentStudentIdentifierState ' + char(10)
-			end
 			else 
 			begin
-				set @debugTableCreate += '					order by s.K12StaffStaffMemberIdentifierState ' + char(10)
-			end
+				if @reportCode IN ('C059', 'C070', 'C099', 'C112') 
+				begin
+					set @debugTableCreate = '					select s.K12StaffStaffMemberIdentifierState '
+				end 
+				else if @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
+				begin
+					set @debugTableCreate = '					select K12StudentStudentIdentifierState '   
+				end 
+				else  
+				begin
+					set @debugTableCreate = '					select s.K12StudentStudentIdentifierState ' 
+				end 
 
+				--set the LEA field in the select if necessary
+				if @reportLevel	= 'LEA' 
+				begin 
+					set @debugTableCreate += ', l.leaIdentifierSea ' 
+				end
+
+				--set the School field in the select if necessary
+				if @reportLevel = 'SCH' 
+				begin
+					set @debugTableCreate += ', sc.schoolIdentifierSea '  
+				end
+
+				set @debugTableCreate += @sqlCategoryFields + char(10) 
+					+ '					into [debug].' + QUOTENAME(@debugTableName) + char(10)
+			
+				IF @reportCode IN ('C059', 'C070', 'C099', 'C112')
+				BEGIN
+					set @debugTableCreate += '					from #categorySet c ' + char(10) +
+					'					inner join rds.DimPeople s ' + char(10)
+					+ '						on c.DimK12StaffId = s.DimPersonId ' + char(10)
+				END 
+				--these reports have been converted to use K12StudentStudentIdentifierState instead of K12StudentId
+				--	in #Students and #categorySet so no need to join to DimPeople
+				ELSE IF @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
+				BEGIN
+					set @debugTableCreate += '					from #categorySet c ' + char(10)
+				END
+				ELSE	
+				BEGIN
+					set @debugTableCreate += '					from #categorySet c ' + char(10) +
+					'					inner join rds.DimPeople s ' + char(10)
+					+ '						on c.DimStudentId = s.DimPersonId ' + char(10)
+				END 
+
+				--set the LEA join if necessary
+				if @reportLevel = 'LEA' 
+				begin
+					set @debugTableCreate += '					inner join rds.DimLeas l ' + char(10)
+						+ '						on c.DimLeaId = l.DimLeaId '  + char(10)
+				end 
+
+				--set the School join if necessary
+				if @reportLevel = 'SCH' 
+				begin
+					set @debugTableCreate += '					inner join rds.DimK12Schools sc ' + char(10)
+						+ '						on c.DimK12SchoolId = sc.DimK12SchoolId ' + char(10)
+				end 
+
+				if @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') 
+				begin
+					set @debugTableCreate += '					order by K12StudentStudentIdentifierState ' + char(10)
+				end
+				else 
+				begin
+					set @debugTableCreate += '					order by s.K12StaffStaffMemberIdentifierState ' + char(10)
+				end
+			end
 			set @sql += @debugTableCreate 
 
 		end
