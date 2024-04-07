@@ -6053,6 +6053,13 @@ BEGIN
 						+ '						on c.DimK12SchoolId = sc.DimK12SchoolId ' + char(10)
 				end 
 
+				--c033 - special condition to add TableTypeAbbrv to the select criteria 
+				if @reportCode IN ('C033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'DIRECTCERT'
+				begin
+					set @debugTableCreate += ', TableTypeAbbrv '  
+				end
+				--end of c033 code 
+
 				if @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') 
 				begin
 					set @debugTableCreate += '					order by K12StudentStudentIdentifierState ' + char(10)
