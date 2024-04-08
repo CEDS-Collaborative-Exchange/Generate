@@ -17,7 +17,12 @@ BEGIN
 		DECLARE 
 		@FactTypeId INT,
 		@SchoolYearId int,
-		@ChildCountDate date
+		@ChildCountDate date,
+		@SYStartDate date,
+		@SYEndDate date
+
+		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
+		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 		
 	--Setting variables to be used in the select statements 
 		SELECT @SchoolYearId = DimSchoolYearId 
@@ -100,14 +105,14 @@ BEGIN
 	--lea (rds)
 		LEFT JOIN RDS.DimLeas rdl
 			ON ssa.LeaIdentifierSea = rdl.LeaIdentifierSea
-			AND @ChildCountDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
+			AND @ChildCountDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 	--k12 school (rds)
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ssa.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND @ChildCountDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
+			AND @ChildCountDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 	--sea (rds)
 		LEFT JOIN RDS.DimSeas rds
-			ON @ChildCountDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+			ON @ChildCountDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--staff categories (rds)
 		LEFT JOIN #vwK12StaffCategories rdksc 
 			ON rsy.SchoolYear = rdksc.SchoolYear
@@ -138,8 +143,8 @@ BEGIN
 			AND ISNULL(ssa.FirstName, 'MISSING') = ISNULL(rdp.FirstName, 'MISSING')
 			AND ISNULL(ssa.MiddleName, 'MISSING') = ISNULL(rdp.MiddleName, 'MISSING')
 			AND ISNULL(ssa.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
-			AND @ChildCountDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
-			AND @ChildCountDate BETWEEN ssa.AssignmentStartDate AND ISNULL(ssa.AssignmentEndDate, GETDATE())
+			AND @ChildCountDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
+			AND @ChildCountDate BETWEEN ssa.AssignmentStartDate AND ISNULL(ssa.AssignmentEndDate, @SYEndDate)
 		
 	--Final insert into RDS.FactK12StaffCounts table
 		INSERT INTO RDS.FactK12StaffCounts ( 

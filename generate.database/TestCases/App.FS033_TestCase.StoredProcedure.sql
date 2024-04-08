@@ -3,6 +3,11 @@ CREATE PROCEDURE [App].[FS033_TestCase]
 AS
 BEGIN
 
+	--Create SY Start / SY End variables
+	declare @SYStart varchar(10) = CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
+	declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
+
+
 	--clear the tables for the next run
 	IF OBJECT_ID('tempdb..#C033Staging') IS NOT NULL
 	DROP TABLE #C033Staging
@@ -104,17 +109,22 @@ BEGIN
 				--select distinct EligibilityStatusForSchoolFoodServicePrograms from staging.PersonStatus
 				--select distinct NationalSchoolLunchProgramDirectCertificationIndicator from staging.PersonStatus
 		CASE sps.EligibilityStatusForSchoolFoodServicePrograms
-				WHEN 'Free' THEN 'FL'
-				WHEN 'ReducedPrice' THEN 'RPL'
+				WHEN 'Free_1' THEN 'FL'
+				WHEN 'ReducedPrice_1' THEN 'RPL'
 				ELSE 'MISSING'
 		END AS FRLEdFactsCode,
 		sps.EligibilityStatusForSchoolFoodServicePrograms,
 		CASE when sps.NationalSchoolLunchProgramDirectCertificationIndicator = 1 then 'DIRECTCERT'
-			when sps.EligibilityStatusForSchoolFoodServicePrograms in ('Free', 'ReducedPrice') then 'LUNCHFREERED'
+			when sps.EligibilityStatusForSchoolFoodServicePrograms in ('Free_1', 'ReducedPrice_1') then 'LUNCHFREERED'
 		END as DirectCertEdFactsCode
 
 	INTO #c033Staging
 	FROM Staging.K12Enrollment ske
+		LEFT JOIN RDS.vwDimGradeLevels rgls
+			ON rgls.SchoolYear = ske.SchoolYear
+			AND ske.GradeLevel = rgls.GradeLevelMap
+			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
+
 	LEFT JOIN Staging.PersonStatus sps
 		ON ske.StudentIdentifierState = sps.StudentIdentifierState
 		AND --(ske.LEAIdentifierSeaAccountability = sps.LEAIdentifierSeaAccountability
@@ -122,10 +132,9 @@ BEGIN
 			ske.SchoolIdentifierSea = sps.SchoolIdentifierSea
 			--)
 		--AND sps.RecordStartDateTime is not null
-		--AND @MemberDate BETWEEN sps.RecordStartDateTime AND ISNULL(sps.RecordEndDateTime, GETDATE())		
-	WHERE @MemberDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
-	AND GradeLevel IN (SELECT GradeLevel FROM @GradesList)
-
+		--AND @MemberDate BETWEEN sps.RecordStartDateTime AND ISNULL(sps.RecordEndDateTime, @SYEnd)		
+	WHERE @MemberDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
+	AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList)
 
 
 	-------------------------------------------------
@@ -180,7 +189,6 @@ BEGIN
 			AND rreksd.CategorySetCode = 'CSA'
 
 		DROP TABLE #SCH_CSA
-
 
 
 		/**********************************************************************

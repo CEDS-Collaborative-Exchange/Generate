@@ -4,6 +4,9 @@
 AS 
 BEGIN
 
+	DECLARE @SYEndDate DATE
+	SELECT @SYEndDate = CAST('6/30/' + CAST((select MAX(SchoolYear) from Staging.K12Organization) AS VARCHAR(4)) AS DATE)
+
 	DECLARE @StateCode VARCHAR(2), @StateName VARCHAR(50), @StateANSICode VARCHAR(5)
 	SELECT @StateCode = (select StateAbbreviationCode from Staging.StateDetail)
 	SELECT @StateName = (select [Description] from dbo.RefState where Code = @StateCode)
@@ -236,6 +239,7 @@ BEGIN
 		ON sko.SchoolIdentifierSea = sop.OrganizationIdentifier
 		AND sop.OrganizationType in (select K12SchoolOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = sop.SchoolYear)
 		AND isnull(sko.DataCollectionName,'') = isnull(sop.DataCollectionName,'')
+		AND sop.InstitutionTelephoneNumberType = 'Main'
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
 		ON sko.School_OperationalStatus = sssrd1.InputCode
 		AND sssrd1.TableName = 'RefOperationalStatus'
@@ -486,7 +490,7 @@ BEGIN
 		FROM RDS.DimK12Schools rdks
 		JOIN RDS.DimLeas rdl
 			ON rdks.LeaIdentifierSea = rdl.LeaIdentifierSea
-			AND rdks.RecordStartDateTime BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, GETDATE())
+			AND rdks.RecordStartDateTime BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 		JOIN Staging.K12Organization sko
 			ON sko.LEAIdentifierSea = rdl.LeaIdentifierSea
 			AND rdks.SchoolIdentifierSea = sko.SchoolIdentifierSea

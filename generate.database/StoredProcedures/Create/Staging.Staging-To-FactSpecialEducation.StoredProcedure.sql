@@ -8,6 +8,9 @@ BEGIN
 	IF OBJECT_ID(N'tempdb..#SchoolYears') IS NOT NULL DROP TABLE #SchoolYears
 	SELECT DISTINCT SchoolYear INTO #SchoolYears FROM Staging.K12Enrollment
 
+	DECLARE @SYEndDate DATE
+	SELECT @SYEndDate = CAST('6/30/' + CAST((select MAX(SchoolYear) from #SchoolYears) AS VARCHAR(4)) AS DATE)
+
 	--ALTER INDEX ALL ON RDS.FactK12StudentEnrollments DISABLE
 	IF OBJECT_ID(N'tempdb..#vwDimK12Demographics') IS NOT NULL DROP TABLE #vwDimK12Demographics
 	SELECT v.* INTO #vwDimK12Demographics FROM RDS.vwDimK12Demographics v JOIN #SchoolYears t ON v.SchoolYear = t.SchoolYear
@@ -187,7 +190,7 @@ BEGIN
 		AND ISNULL(ske.SchoolIdentifierSea, '')								= ISNULL(sppse.SchoolIdentifierSea, '')
 	INNER JOIN RDS.DimPeople rdp
 		ON ske.StudentIdentifierState										= rdp.K12StudentStudentIdentifierState
-		AND ske.RecordStartDateTime											BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime											BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 		AND ISNULL(ske.FirstName, 'MISSING')								= ISNULL(rdp.FirstName, 'MISSING')
 		AND ISNULL(ske.MiddleName, 'MISSING')								= ISNULL(rdp.MiddleName, 'MISSING')
 		AND ISNULL(ske.LastOrSurname, 'MISSING')							= ISNULL(rdp.LastOrSurname, 'MISSING')
@@ -196,28 +199,28 @@ BEGIN
 		ON ske.SchoolYear = rsy.SchoolYear
 	LEFT JOIN RDS.DimLeas rdlAcc
 		ON ske.LeaIdentifierSeaAccountability = rdlAcc.LeaIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdlAcc.RecordStartDateTime AND ISNULL(rdlAcc.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdlAcc.RecordStartDateTime AND ISNULL(rdlAcc.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimLeas rdlAtt
 		ON ske.LeaIdentifierSeaAttendance = rdlAtt.LeaIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdlAtt.RecordStartDateTime AND ISNULL(rdlAtt.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdlAtt.RecordStartDateTime AND ISNULL(rdlAtt.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimLeas rdlFun
 		ON ske.LeaIdentifierSeaFunding = rdlFun.LeaIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdlFun.RecordStartDateTime AND ISNULL(rdlFun.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdlFun.RecordStartDateTime AND ISNULL(rdlFun.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimLeas rdlGrad
 		ON ske.LeaIdentifierSeaGraduation = rdlGrad.LeaIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdlGrad.RecordStartDateTime AND ISNULL(rdlGrad.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdlGrad.RecordStartDateTime AND ISNULL(rdlGrad.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimLeas rdlIep
 		ON ske.LeaIdentifierSeaIndividualizedEducationProgram = rdlIep.LeaIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdlIep.RecordStartDateTime AND ISNULL(rdlIep.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdlIep.RecordStartDateTime AND ISNULL(rdlIep.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimK12Schools rdksch
 		ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-		AND ske.RecordStartDateTime BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimIeus rdi
 		ON (ISNULL(rdksch.IeuOrganizationIdentifierSea, 'MISSING') = rdi.IeuOrganizationIdentifierSea
 			OR ISNULL(rdlAcc.IeuOrganizationIdentifierSea, 'MISSING') = rdi.IeuOrganizationIdentifierSea)
-		AND ske.RecordStartDateTime BETWEEN rdi.RecordStartDateTime AND ISNULL(rdi.RecordEndDateTime, GETDATE())
+		AND ske.RecordStartDateTime BETWEEN rdi.RecordStartDateTime AND ISNULL(rdi.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimSeas rds
-		ON ske.RecordStartDateTime BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())
+		ON ske.RecordStartDateTime BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.DimDataCollections rddc
 		ON ske.DataCollectionName = rddc.DataCollectionName 
 	LEFT JOIN RDS.DimDates entryDate
@@ -734,7 +737,7 @@ SELECT		  ISNULL([SchoolYearId]											, -1)
 		--AND ISNULL(rdlsGrad.LeaIdentifierSea, '')	= ISNULL(skpr.LeaIdentifierSeaGraduation, '')
 		--AND ISNULL(rdlsIep.LeaIdentifierSea, '')	= ISNULL(skpr.LeaIdentifierSeaIndividualizedEducationProgram, '')
 		AND rddc.DataCollectionName					= skpr.DataCollectionName
-		AND countDate.DateValue						BETWEEN skpr.RecordStartDateTime AND ISNULL(skpr.RecordEndDateTime, GETDATE())
+		AND countDate.DateValue						BETWEEN skpr.RecordStartDateTime AND ISNULL(skpr.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN Staging.K12Enrollment ske
 		ON rdp.K12StudentStudentIdentifierState									= ske.StudentIdentifierState
 		AND ISNULL(rdks.SchoolIdentifierSea, '')							= ISNULL(ske.SchoolIdentifierSea, '')
@@ -745,7 +748,7 @@ SELECT		  ISNULL([SchoolYearId]											, -1)
 		--AND ISNULL(skpr.LeaIdentifierSeaIndividualizedEducationProgram, '') = ISNULL(ske.LeaIdentifierSeaIndividualizedEducationProgram, '')
 		AND ske.HispanicLatinoEthnicity									= 1
 		AND ISNULL(rddc.DataCollectionName, '') = ISNULL(ske.DataCollectionName, '')
-		AND countDate.DateValue BETWEEN ske.RecordStartDateTime AND ISNULL(ske.RecordEndDateTime, GETDATE())
+		AND countDate.DateValue BETWEEN ske.RecordStartDateTime AND ISNULL(ske.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.vwDimRaces rdr
 		ON skpr.SchoolYear = rdr.SchoolYear
 		AND (ISNULL(skpr.RaceType, 'Race and Ethnicity Unknown') = rdr.RaceMap
@@ -791,7 +794,7 @@ SELECT		  ISNULL([SchoolYearId]											, -1)
 		--AND ISNULL(rdlsGrad.LeaIdentifierSea, '')	= ISNULL(sidt.LeaIdentifierSeaGraduation, '')
 		--AND ISNULL(rdlsIep.LeaIdentifierSea, '')	= ISNULL(sidt.LeaIdentifierSeaIndividualizedEducationProgram, '')
 		AND rddc.DataCollectionName = sidt.DataCollectionName
-		AND countDate.DateValue	BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+		AND countDate.DateValue	BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
 	LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 		ON sidt.SchoolYear = rdidt.SchoolYear
 		AND sidt.IdeaDisabilityTypeCode = rdidt.IdeaDisabilityTypeMap

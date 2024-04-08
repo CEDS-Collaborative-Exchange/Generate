@@ -29,11 +29,16 @@ BEGIN
 		@FactTypeId int,
 		@SchoolYearId int,
 		@ReportingStartDate date,
-		@ReportingEndDate date
+		@ReportingEndDate date,
+		@SYStartDate date,
+		@SYEndDate date
 
 		SELECT @SchoolYearId = DimSchoolYearId 
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
+
+		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
+		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 
 		--Set the reporting period as 10-01 to 09-30
 		SELECT @ReportingStartDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-10-01'AS DATE)
@@ -198,19 +203,19 @@ BEGIN
 			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND ((rdp.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (rdp.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdp.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
+				OR (rdp.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdp.RecordEndDateTime, @SYEndDate) > @ReportingStartDate))
 		JOIN RDS.DimSeas rds
 			ON ((rds.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (rds.RecordStartDateTime < @ReportingStartDate AND ISNULL(rds.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
+				OR (rds.RecordStartDateTime < @ReportingStartDate AND ISNULL(rds.RecordEndDateTime, @SYEndDate) > @ReportingStartDate))
 
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LEAIdentifierSeaAccountability = rdl.LeaIdentifierSea
 			AND ((rdl.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (rdl.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdl.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
+				OR (rdl.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdl.RecordEndDateTime, @SYEndDate) > @ReportingStartDate))
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND ((rdksch.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (rdksch.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdksch.RecordEndDateTime, GETDATE()) > @ReportingStartDate))
+				OR (rdksch.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate) > @ReportingStartDate))
 		JOIN RDS.vwDimK12Demographics rdkd
 			ON rsy.SchoolYear = rdkd.SchoolYear
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
@@ -222,7 +227,7 @@ BEGIN
 			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(sppse.LEAIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND ((sppse.ProgramParticipationBeginDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (sppse.ProgramParticipationBeginDate < @ReportingStartDate AND ISNULL(sppse.ProgramParticipationEndDate, GETDATE()) > @ReportingStartDate))
+				OR (sppse.ProgramParticipationBeginDate < @ReportingStartDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate) > @ReportingStartDate))
 	--race
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr
 			ON ske.SchoolYear = spr.SchoolYear
@@ -236,7 +241,7 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND el.EnglishLearnerStatus = 1
 			AND ((el.EnglishLearner_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (el.EnglishLearner_StatusStartDate < @ReportingStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE()) > @ReportingStartDate))
+				OR (el.EnglishLearner_StatusStartDate < @ReportingStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) > @ReportingStartDate))
 	--homelessness
 		LEFT JOIN Staging.PersonStatus homeless 
 			ON ske.StudentIdentifierState = homeless.StudentIdentifierState
@@ -244,7 +249,7 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(homeless.SchoolIdentifierSea, '')
 			AND homeless.HomelessnessStatus = 1
 			AND ((homeless.Homelessness_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (homeless.Homelessness_StatusStartDate < @ReportingStartDate AND ISNULL(homeless.Homelessness_StatusEndDate, GETDATE()) > @ReportingStartDate))
+				OR (homeless.Homelessness_StatusStartDate < @ReportingStartDate AND ISNULL(homeless.Homelessness_StatusEndDate, @SYEndDate) > @ReportingStartDate))
 	--economically disadvantaged
 		LEFT JOIN Staging.PersonStatus ecoDis
 			ON ske.StudentIdentifierState = ecoDis.StudentIdentifierState
@@ -252,7 +257,7 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(ecoDis.SchoolIdentifierSea, '')
 			AND ecoDis.EconomicDisadvantageStatus = 1
 			AND ((ecoDis.EconomicDisadvantage_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (ecoDis.EconomicDisadvantage_StatusStartDate < @ReportingStartDate AND ISNULL(ecoDis.EconomicDisadvantage_StatusEndDate, GETDATE()) > @ReportingStartDate))
+				OR (ecoDis.EconomicDisadvantage_StatusStartDate < @ReportingStartDate AND ISNULL(ecoDis.EconomicDisadvantage_StatusEndDate, @SYEndDate) > @ReportingStartDate))
 	--migrant
 		LEFT JOIN Staging.PersonStatus migrant
 			ON ske.StudentIdentifierState = migrant.StudentIdentifierState
@@ -260,7 +265,7 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
 			AND migrant.MigrantStatus = 1
 			AND ((migrant.Migrant_StatusStartDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (migrant.Migrant_StatusStartDate < @ReportingStartDate AND ISNULL(migrant.Migrant_StatusEndDate, GETDATE()) > @ReportingStartDate))
+				OR (migrant.Migrant_StatusStartDate < @ReportingStartDate AND ISNULL(migrant.Migrant_StatusEndDate, @SYEndDate) > @ReportingStartDate))
 	--english learner (RDS)
 		LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
 			ON rsy.SchoolYear = rdels.SchoolYear
@@ -295,7 +300,7 @@ BEGIN
 				END
 				AND rsy.SchoolYear = rdr.SchoolYear
 		WHERE ((ske.EnrollmentEntryDate BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (ske.EnrollmentEntryDate < @ReportingStartDate AND ISNULL(ske.EnrollmentExitDate, GETDATE()) > @ReportingStartDate))
+				OR (ske.EnrollmentEntryDate < @ReportingStartDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) > @ReportingStartDate))
 		AND ISNULL(ske.HighSchoolDiplomaType, '') <> ''
 
 		INSERT INTO RDS.FactK12StudentCounts (

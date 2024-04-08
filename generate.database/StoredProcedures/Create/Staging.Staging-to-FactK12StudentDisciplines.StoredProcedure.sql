@@ -32,22 +32,21 @@ BEGIN
 		@FactTypeId INT,
 		@SchoolYearId INT,
 		@ChildCountDate DATE,
-		@StartDate DATE,
-		@EndDate DATE
+		@SYStartDate DATE,
+		@SYEndDate DATE
 		
 	--Setting variables to be used in the select statements 
 		SELECT @SchoolYearId = DimSchoolYearId 
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
-		SELECT @StartDate = CAST('7/1/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
-		SELECT @EndDate = CAST('6/30/' + CAST(@SchoolYear  AS VARCHAR(4)) AS DATE)
-
+		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
+		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 		
 		DECLARE @DimSeaId int
 		SELECT @DimSeaId = (
 		SELECT TOP 1 DimSeaId FROM rds.DimSeas 
-		WHERE RecordStartDateTime between @StartDate and @EndDate
+		WHERE RecordStartDateTime between @SYStartDate and @SYEndDate
 		ORDER BY RecordStartDateTime)
 					
 
@@ -136,7 +135,7 @@ BEGIN
 				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sidt.SchoolIdentifierSea, '') 			= ISNULL(sppse.SchoolIdentifierSea, '')
 				AND sidt.IsPrimaryDisability = 1
-				AND sppse.ProgramParticipationBeginDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+				AND sppse.ProgramParticipationBeginDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
 
 	-- Create Index for #tempIdeaDisability
 		CREATE INDEX IX_ideaDisability ON #tempIdeaDisability(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, RecordStartDateTime, RecordEndDateTime, IdeaDisabilityTypeCode)
@@ -258,12 +257,12 @@ BEGIN
 				ON sd.StudentIdentifierState 						= ske.StudentIdentifierState
 				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') 	= ISNULL(ske.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sd.SchoolIdentifierSea, '') 				= ISNULL(ske.SchoolIdentifierSea, '')
-				AND sd.DisciplinaryActionStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @EndDate)
+				AND sd.DisciplinaryActionStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 --			--JOIN RDS.DimSchoolYears rsy
 --			--	ON ske.SchoolYear = rsy.SchoolYear
 		--seas (rds)                                        
 			JOIN RDS.DimSeas rds
-				ON sd.DisciplinaryActionStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, GETDATE())           
+				ON sd.DisciplinaryActionStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)           
 		--age
 			JOIN RDS.DimAges rda
 				ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
@@ -279,33 +278,33 @@ BEGIN
 --				AND ISNULL(ske.MiddleName, '') 				= ISNULL(rdp.MiddleName, '')
 				AND ISNULL(ske.LastOrSurname, 'MISSING')	= rdp.LastOrSurname
 				AND ISNULL(ske.Birthdate, '1/1/1900') 		= ISNULL(rdp.BirthDate, '1/1/1900')
-				AND sd.DisciplinaryActionStartDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @EndDate)
+				AND sd.DisciplinaryActionStartDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 		--program participation special education              
 			LEFT JOIN #tempIdeaStatus sppse
 				ON sd.StudentIdentifierState 						= sppse.StudentIdentifierState
 				AND ISNULL(sd.LEAIdentifierSeaAccountability,'') 	= ISNULL(sppse.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(sd.SchoolIdentifierSea,'') 				= ISNULL(sppse.SchoolIdentifierSea,'')
-				AND sd.DisciplinaryActionStartDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @EndDate)
+				AND sd.DisciplinaryActionStartDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
 		--idea disability type
 			LEFT JOIN #tempIdeaDisability sidt
 				ON sidt.StudentIdentifierState 						= sd.StudentIdentifierState
 				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sd.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sidt.SchoolIdentifierSea, '') 			= ISNULL(sd.SchoolIdentifierSea, '')
-				AND sd.DisciplinaryActionStartDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+				AND sd.DisciplinaryActionStartDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
 		--english learner                 
 			LEFT JOIN #tempELStatus el
 				ON sd.StudentIdentifierState = el.StudentIdentifierState
 				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-				AND sd.DisciplinaryActionStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @EndDate)
+				AND sd.DisciplinaryActionStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
 		--leas (rds)
 			LEFT JOIN RDS.DimLeas rdl
 				ON sd.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-				AND sd.DisciplinaryActionStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @EndDate)
+				AND sd.DisciplinaryActionStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 		--schools (rds)
 			LEFT JOIN RDS.DimK12Schools rdksch
 				ON sd.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-				AND sd.DisciplinaryActionStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @EndDate)
+				AND sd.DisciplinaryActionStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 		-- discipline status (rds)
 			LEFT JOIN #vwDisciplineStatuses rddisc
 				ON rddisc.SchoolYear = @SchoolYear
@@ -350,7 +349,7 @@ BEGIN
 				AND rdels.PerkinsEnglishLearnerStatusCode = 'MISSING'
 				AND (CASE
 					WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-						BETWEEN ISNULL(el.EnglishLearner_StatusStartDate, @StartDate) AND ISNULL(el.EnglishLearner_StatusEndDate, @EndDate) 
+						BETWEEN ISNULL(el.EnglishLearner_StatusStartDate, @SYStartDate) AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) 
 							THEN ISNULL(EnglishLearnerStatus, 0)
 					ELSE 0
 					END) = ISNULL(rdels.EnglishLearnerStatusMap, -1)

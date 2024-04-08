@@ -4,46 +4,27 @@ AS
 BEGIN
 
 	--clear the tables for the next run
-	IF OBJECT_ID('tempdb..#C118Staging') IS NOT NULL
-	DROP TABLE #C118Staging
+	IF OBJECT_ID('tempdb..#C118Staging') IS NOT NULL DROP TABLE #C118Staging
 
-	IF OBJECT_ID('tempdb..#S_CSA') IS NOT NULL
-	DROP TABLE #S_CSA
-	IF OBJECT_ID('tempdb..#S_CSB') IS NOT NULL
-	DROP TABLE #S_CSB
-	IF OBJECT_ID('tempdb..#S_CSC') IS NOT NULL
-	DROP TABLE #S_CSC
-	IF OBJECT_ID('tempdb..#S_CSD') IS NOT NULL
-	DROP TABLE #S_CSD
-	IF OBJECT_ID('tempdb..#S_CSE') IS NOT NULL
-	DROP TABLE #S_CSE
-	IF OBJECT_ID('tempdb..#S_CSF') IS NOT NULL
-	DROP TABLE #S_CSF
-	IF OBJECT_ID('tempdb..#S_CSG') IS NOT NULL
-	DROP TABLE #S_CSG
-	IF OBJECT_ID('tempdb..#S_CSH') IS NOT NULL
-	DROP TABLE #S_CSH
-	IF OBJECT_ID('tempdb..#S_TOT') IS NOT NULL
-	DROP TABLE #S_TOT
+	IF OBJECT_ID('tempdb..#S_CSA') IS NOT NULL DROP TABLE #S_CSA
+	IF OBJECT_ID('tempdb..#S_CSB') IS NOT NULL DROP TABLE #S_CSB
+	IF OBJECT_ID('tempdb..#S_CSC') IS NOT NULL DROP TABLE #S_CSC
+	IF OBJECT_ID('tempdb..#S_CSD') IS NOT NULL DROP TABLE #S_CSD
+	IF OBJECT_ID('tempdb..#S_CSE') IS NOT NULL DROP TABLE #S_CSE
+	IF OBJECT_ID('tempdb..#S_CSF') IS NOT NULL DROP TABLE #S_CSF
+	IF OBJECT_ID('tempdb..#S_CSG') IS NOT NULL DROP TABLE #S_CSG
+	IF OBJECT_ID('tempdb..#S_CSH') IS NOT NULL DROP TABLE #S_CSH
+	IF OBJECT_ID('tempdb..#S_TOT') IS NOT NULL DROP TABLE #S_TOT
 
-	IF OBJECT_ID('tempdb..#L_CSA') IS NOT NULL
-	DROP TABLE #L_CSA
-	IF OBJECT_ID('tempdb..#L_CSB') IS NOT NULL
-	DROP TABLE #L_CSB
-	IF OBJECT_ID('tempdb..#L_CSC') IS NOT NULL
-	DROP TABLE #L_CSC
-	IF OBJECT_ID('tempdb..#L_CSD') IS NOT NULL
-	DROP TABLE #L_CSD
-	IF OBJECT_ID('tempdb..#L_CSE') IS NOT NULL
-	DROP TABLE #L_CSE
-	IF OBJECT_ID('tempdb..#L_CSF') IS NOT NULL
-	DROP TABLE #L_CSF
-	IF OBJECT_ID('tempdb..#L_CSG') IS NOT NULL
-	DROP TABLE #L_CSG
-	IF OBJECT_ID('tempdb..#L_CSH') IS NOT NULL
-	DROP TABLE #L_CSH
-	IF OBJECT_ID('tempdb..#L_TOT') IS NOT NULL
-	DROP TABLE #L_TOT
+	IF OBJECT_ID('tempdb..#L_CSA') IS NOT NULL DROP TABLE #L_CSA
+	IF OBJECT_ID('tempdb..#L_CSB') IS NOT NULL DROP TABLE #L_CSB
+	IF OBJECT_ID('tempdb..#L_CSC') IS NOT NULL DROP TABLE #L_CSC
+	IF OBJECT_ID('tempdb..#L_CSD') IS NOT NULL DROP TABLE #L_CSD
+	IF OBJECT_ID('tempdb..#L_CSE') IS NOT NULL DROP TABLE #L_CSE
+	IF OBJECT_ID('tempdb..#L_CSF') IS NOT NULL DROP TABLE #L_CSF
+	IF OBJECT_ID('tempdb..#L_CSG') IS NOT NULL DROP TABLE #L_CSG
+	IF OBJECT_ID('tempdb..#L_CSH') IS NOT NULL DROP TABLE #L_CSH
+	IF OBJECT_ID('tempdb..#L_TOT') IS NOT NULL DROP TABLE #L_TOT
 
 	--performance 
 	IF OBJECT_ID(N'tempdb..#tempELStatus') IS NOT NULL DROP TABLE #tempELStatus
@@ -153,12 +134,11 @@ BEGIN
 		and sps.HomelessnessStatus = 1
 	-- Grades UG and 13 added to this list because our Toggle doesn't allow these
 		AND isnull(GradeLevel, 'xx') not in ('AE', 'ABE', '13', 'UG', 'AE_1', 'ABE_1', '13_1', 'UG_1')
-		AND ske.StudentIdentifierState not like ('%CI%')
+		--AND ske.StudentIdentifierState not like ('%CI%') -- JW 4/5/2024 Remarked this line.
 
 
 	--Get the LEAs that should not be reported against
-	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL
-	DROP TABLE #excludedLeas
+	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL DROP TABLE #excludedLeas
 
 	CREATE TABLE #excludedLeas (
 		LeaIdentifierSeaAccountability		VARCHAR(20)
@@ -186,7 +166,7 @@ BEGIN
 			ELSE 'MISSING'
 		END AS SexEdFactsCode
 		, idea.ProgramParticipationEndDate
-		, spr.RaceType
+		, spr.RaceMap
 		, rdr.RaceEdFactsCode
 	--English Learner Status
 		, ISNULL(el.EnglishLearnerStatus, 0) AS EnglishLearnerStatus
@@ -238,19 +218,31 @@ BEGIN
 			ELSE 'MISSING'
 		END AS MigrantStatusEdFactsCode
 	INTO #C118Staging
+
 	FROM #tempStudents ske
+	JOIN RDS.DimSchoolYears rsy			-- JW 4/5/2024
+		ON ske.SchoolYear = rsy.SchoolYear	-- JW 4/5/2024
+
 	--homeless
-	LEFT JOIN Staging.PersonStatus hmStatus
+	INNER JOIN Staging.PersonStatus hmStatus -- JW 4/5/2024 changed from LEFT to INNER JOIN
 		ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
 		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
 		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
 		AND hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
+	JOIN RDS.DimSeas rds			-- JW 4/5/2024
+		ON hmStatus.Homelessness_StatusStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEnd) -- JW 4/5/2024
+	
+	--age
+		JOIN RDS.DimAges rda			-- JW 4/5/2024
+			ON RDS.Get_Age(ske.Birthdate, @SYStart) = rda.AgeValue			-- JW 4/5/2024
+
 	--homeless nighttime residence
 	LEFT JOIN Staging.PersonStatus hmNight
 		ON ske.StudentIdentifierState = hmNight.StudentIdentifierState
 		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmNight.LeaIdentifierSeaAccountability, '')
 		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmNight.SchoolIdentifierSea, '')
 		AND hmNight.HomelessNightTimeResidence_StartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
+
 	--disability status
 	LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
 		ON ske.StudentIdentifierState = idea.StudentIdentifierState
@@ -270,20 +262,29 @@ BEGIN
 		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
 		AND hmStatus.Homelessness_StatusStartDate BETWEEN migrant.Migrant_StatusStartDate AND ISNULL(migrant.Migrant_StatusEndDate, @SYEnd)
 	--race	
-	LEFT JOIN Staging.K12PersonRace spr
+	LEFT JOIN RDS.vwUnduplicatedRaceMap spr --Staging.K12PersonRace spr JW 4/5/2024
 		ON spr.StudentIdentifierState = ske.StudentIdentifierState
-		AND ISNULL(spr.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
-		AND ISNULL(spr.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+		-- JW 4/5/2024 -----------------------------------------------------------------------------------
+		AND (ISNULL(spr.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+			OR ISNULL(spr.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, ''))
+--		AND ISNULL(spr.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+--		AND ISNULL(spr.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+	-------------------------------------------------------------------------------------------------------
 		AND spr.SchoolYear = ske.SchoolYear
-		AND CAST(ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') AS DATE) BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
+--		AND CAST(ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') AS DATE) BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
 	--race (rds)
 	LEFT JOIN RDS.DimRaces rdr
 		ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
-			OR (ske.HispanicLatinoEthnicity = 0 AND replace(spr.RaceType, '_1', '') = rdr.RaceCode)
+			OR (ske.HispanicLatinoEthnicity = 0 AND replace(spr.RaceMap, '_1', '') = rdr.RaceCode)
+			or (ske.HispanicLatinoEthnicity is NULL AND replace(spr.RaceMap, '_1', '') = rdr.RaceCode) -- JW 4/5/2024
 
-	WHERE ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') 
-		BETWEEN @SYStart AND @SYEnd
+	WHERE 
+		ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') BETWEEN @SYStart AND @SYEnd
 
+
+		--select * from #C118Staging where StudentIdentifierState = 'CID4771118'
+		--select * from #C118Staging where LeaIdentifierSeaAccountability = '150' and RaceEdFactsCode = 'WH7'
+		--return
 
 	/**********************************************************************
 		Test Case 1:
@@ -574,8 +575,11 @@ BEGIN
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSH
 	FROM #C118staging 
+	where RaceEdFactsCode is not null -- JW 4/5/2024
 	GROUP BY RaceEdFactsCode
 		
+
+
 	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
@@ -986,6 +990,8 @@ BEGIN
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND RaceEdFactsCode is not null -- JW 4/5/2024
+
 	GROUP BY RaceEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		

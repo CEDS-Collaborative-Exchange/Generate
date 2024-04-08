@@ -139,7 +139,7 @@ BEGIN
 					AND @charterLeaCount = 0 THEN 'NA'
 				ELSE ISNULL(sssrd3.OutputCode, 'MISSING')
 			END												AS CharterLeaStatus
-			, ISNULL(sssrd2.OutputCode, 'MISSING') 			AS ReconstitutedStatus
+			, NULL								 			AS ReconstitutedStatus
 			, sko.LEA_McKinneyVentoSubgrantRecipient 
 			, sko.LEA_RecordStartDateTime 					AS RecordStartDateTime
 			, sko.LEA_RecordEndDateTime 					AS RecordEndDateTime
@@ -161,15 +161,12 @@ BEGIN
 		LEFT JOIN Staging.OrganizationPhone sop
 			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
 			AND sop.OrganizationType in (select LeaOrganizationType from #organizationTypes ot where ot.SchoolYear = sko.SchoolYear)
+			AND sop.InstitutionTelephoneNumberType = 'Main'
 		LEFT JOIN staging.SourceSystemReferenceData sssrd1
 			ON sko.Lea_OperationalStatus = sssrd1.InputCode
 			AND sssrd1.TableName = 'RefOperationalStatus'
 			AND sssrd1.TableFilter = '000174'
 			AND sko.SchoolYear = sssrd1.SchoolYear
-		LEFT JOIN staging.SourceSystemReferenceData sssrd2
-			ON sko.School_ReconstitutedStatus = sssrd2.InputCode
-			AND sssrd2.TableName = 'RefReconstitutedStatus'
-			AND sko.SchoolYear = sssrd2.SchoolYear
 		LEFT JOIN staging.SourceSystemReferenceData sssrd3
 			ON sko.LEA_CharterLeaStatus = sssrd3.InputCode
 			AND sssrd3.TableName = 'RefCharterLeaStatus'

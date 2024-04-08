@@ -31,6 +31,9 @@ BEGIN
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
+		DECLARE @SYEndDate DATE
+		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
+
 		--Reporting Date is the closest school day to Oct 1 according to the file spec
 		DECLARE @testDate datetime
 		SELECT @testDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + '10-01' AS DATE)
@@ -195,7 +198,7 @@ BEGIN
 			AND rdp.RecordStartDateTime  <= @ReportingDate
 			AND ISNULL(rdp.RecordEndDateTime, @ReportingDate) >= @ReportingDate
 			AND CONVERT(DATE, ske.EnrollmentEntryDate) = CONVERT(DATE, rdp.RecordStartDateTime)
-			and ISNULL(CONVERT(DATE, ske.EnrollmentExitDate), GETDATE()) = ISNULL(CONVERT(DATE, rdp.RecordEndDateTime), GETDATE())
+			and ISNULL(CONVERT(DATE, ske.EnrollmentExitDate), @SYEndDate) = ISNULL(CONVERT(DATE, rdp.RecordEndDateTime), @SYEndDate)
 	--english learner
 		JOIN Staging.PersonStatus el 
 			ON ske.StudentIdentifierState = el.StudentIdentifierState

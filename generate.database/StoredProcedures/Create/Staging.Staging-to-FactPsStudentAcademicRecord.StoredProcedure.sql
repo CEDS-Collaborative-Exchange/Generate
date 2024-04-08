@@ -3,6 +3,10 @@ AS
 
 	ALTER INDEX ALL ON RDS.FactPsStudentAcademicRecords DISABLE
 
+	DECLARE @SYEndDate DATE
+	SELECT @SYEndDate = CAST('6/30/' + CAST((select MAX(SchoolYear) from Staging.PsStudentEnrollment) AS VARCHAR(4)) AS DATE)
+
+
 	DECLARE @firstDigit smallint = 1, @sql VARCHAR(MAX)
 
 	WHILE @firstDigit < 10
@@ -46,7 +50,7 @@ AS
 			ON rddc.DataCollectionSchoolYear = cast(rsy.SchoolYear as nvarchar(10))
 		JOIN RDS.DimPsInstitutions rdpi
 			ON spsar.[InstitutionIpedsUnitId] = rdpi.IPEDSIdentifier
-			AND spsar.EntryDate BETWEEN rdpi.RecordStartDateTime AND ISNULL(rdpi.RecordEndDateTime, GETDATE())
+			AND spsar.EntryDate BETWEEN rdpi.RecordStartDateTime AND ISNULL(rdpi.RecordEndDateTime, @SYEndDate)
 		LEFT JOIN RDS.vwDimAcademicTermDesignators rdatd
 			ON spsar.AcademicTermDesignator = rdatd.AcademicTermDesignatorMap
 			AND spsar.SchoolYear = rdatd.SchoolYear
@@ -75,12 +79,12 @@ AS
 			AND spse.SchoolYear = rdpd.SchoolYear
 		LEFT JOIN RDS.DimPeople rdp
 			ON spse.StudentIdentifierState = rdp.PsStudentStudentIdentifierState
-			AND spse.RecordStartDateTime BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
+			AND spse.RecordStartDateTime BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 			AND ISNULL(spse.FirstName, '') = ISNULL(rdp.FirstName, '')
 			AND ISNULL(spse.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 			AND ISNULL(spse.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
 			AND ISNULL(spse.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')	
-			AND spsar.EntryDate BETWEEN rdp.RecordStartDatetime AND ISNULL(rdp.RecordEndDatetime , GETDATE())
+			AND spsar.EntryDate BETWEEN rdp.RecordStartDatetime AND ISNULL(rdp.RecordEndDatetime , @SYEndDate)
 		WHERE spsar.StudentIdentifierState like CAST(@firstDigit AS VARCHAR(1)) + '%'
 
 		CREATE NONCLUSTERED INDEX [IX_temp] ON #Temp 
