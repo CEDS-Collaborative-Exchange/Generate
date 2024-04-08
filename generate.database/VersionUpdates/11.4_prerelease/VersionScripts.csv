@@ -1,6 +1,7 @@
 VersionUpdates\\11.4_prerelease,Restore 11.3.sql,0
 VersionUpdates\\11.4_prerelease,app.TableChanges.sql,0
 VersionUpdates\\11.4_prerelease,App.Metadata.sql,0
+VersionUpdates\\11.4_prerelease,App.Rollover-Metadata.sql,0
 VersionUpdates\\11.4_prerelease,UpdateMetadata.sql,0
 VersionUpdates\\11.4_prerelease,Create-RDS-Tables.sql,0
 VersionUpdates\\11.4_prerelease,Create-Staging-Tables.sql,0
