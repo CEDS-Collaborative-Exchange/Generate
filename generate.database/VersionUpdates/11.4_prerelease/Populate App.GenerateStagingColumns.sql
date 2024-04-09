@@ -1,5 +1,3 @@
-use Generate
-
 /***************************************************
 Generate V12
 This script populates a new table named App.GenerateStagingColumns.
