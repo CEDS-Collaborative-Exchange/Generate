@@ -46,13 +46,12 @@ BEGIN
 	DECLARE @SubjectAbbrv VARCHAR(20) = 'MATH'
 */
 	--DECLARE @AssessmentPurpose VARCHAR(10) = '03458'
-	DECLARE @AssessmentType VARCHAR(100) = 'PerformanceAssessment'
+	--DECLARE @AssessmentType VARCHAR(100) = 'PerformanceAssessment_1'
 
 	---------------------------------------------------------------------
 	DECLARE
 		@SYStartDate DATE,
-		@SYEndDate DATE,
-		@Today Date = convert(date, getdate())
+		@SYEndDate DATE
 
 		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
@@ -160,10 +159,25 @@ BEGIN
 		create table #LowerGrades (GradeLevel char(2))
 		create table #HSGrades (GradeLevel char(2))
 		
-	DECLARE @ChildCountDate DATETIME
-	
 	-- Get Custom Child Count Date
-	SELECT @ChildCountDate = CAST('10/01/' + cast(@SchoolYear - 1 AS Varchar(4)) AS DATETIME)
+	DECLARE @cutOffMonth INT, @cutOffDay INT, @customFactTypeDate VARCHAR(10), @ChildCountDate date
+	set @cutOffMonth = 11
+	set @cutOffDay = 1
+
+	select @customFactTypeDate = r.ResponseValue
+	from app.ToggleResponses r
+	INNER join app.ToggleQuestions q 
+		on r.ToggleQuestionId = q.ToggleQuestionId
+	where q.EmapsQuestionAbbrv = 'CHDCTDTE'
+
+	select @cutOffMonth = SUBSTRING(@customFactTypeDate, 0, CHARINDEX('/', @customFactTypeDate))
+	
+	declare @cutOffDayVARCHAR varchar(5)
+	select @cutOffDayVARCHAR = SUBSTRING(@customFactTypeDate, CHARINDEX('/', @customFactTypeDate) + 1, 2)	
+	select @cutOffDay = case when right(@cutOffDayVARCHAR,1) = '/' then left(@CutOffDayVARCHAR,1) else @CutOffDayVARCHAR end
+	
+	select @ChildCountDate = convert(varchar, @CutoffMonth) + '/' + convert(varchar, @CutoffDay) + '/' + convert(varchar, @SchoolYear-1) -- < changed to "-1"
+
 
 	-- #StagingAssessment --------------------------------------------------------------------------------
 		SELECT *
@@ -178,7 +192,6 @@ BEGIN
 	-- #StagingAssessmentResult ----------------------------------------------------------------------------
 		SELECT sar.*, rdg.GradeLevelCode, ssrd.OutputCode AssessmentAcademicSubjectCode--, ssrd1.OutputCode AssessmentPurposeCode
 		INTO #StagingAssessmentResult 
-		--select *
 		FROM Staging.AssessmentResult sar
 		LEFT JOIN RDS.vwDimGradeLevels rdg
 			on sar.GradeLevelWhenAssessed = rdg.GradeLevelMap
@@ -188,17 +201,10 @@ BEGIN
 			on sar.AssessmentAcademicSubject = ssrd.InputCode
 			and sar.SchoolYear = ssrd.SchoolYear
 			and ssrd.TableName = 'RefAcademicSubject'
-		--LEFT JOIN Staging.SourceSystemReferenceData ssrd1
-		--	on sar.AssessmentPurpose = ssrd1.InputCode
-		--	and sar.SchoolYear = ssrd1.SchoolYear
-		--	and ssrd1.TableName = 'RefAssessmentPurpose'
-		WHERE AssessmentRegistrationParticipationIndicator = 1
-		AND AssessmentAcademicSubject = @AssessmentAcademicSubject
+		WHERE 1=1
+		AND AssessmentAcademicSubject = @AssessmentAcademicSubject -- JW
 		AND sar.SchoolYear = @SchoolYear
 		--AND AssessmentType = @AssessmentType
-		--AND ssrd1.OutputCode = @AssessmentPurpose
---and sar.studentidentifierstate = '0000388798'
---return
 
 			CREATE NONCLUSTERED INDEX IX_asr ON #StagingAssessmentResult (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea,
 			SchoolYear,GradeLevelWhenAssessed,AssessmentTitle,AssessmentAcademicSubject,--AssessmentPurpose,
@@ -314,34 +320,36 @@ BEGIN
 		WHERE SchoolYear = @SchoolYear
 
 	-- #Staging ----------------------------------------------------------------------------------------------
-	SELECT 
+
+	SELECT distinct
 		asr.StudentIdentifierState
 		, asr.LeaIdentifierSeaAccountability
 		, asr.SchoolIdentifierSea
 		, a.AssessmentTitle
 		, a.AssessmentAcademicSubject
 		, a.AssessmentPurpose
-		, a.AssessmentPerformanceLevelIdentifier
+		--, a.AssessmentPerformanceLevelIdentifier
 		, asr.GradeLevelWhenAssessed
 		, ds.AssessmentTypeAdministeredCode
 		, case 
-			WHEN asr.AssessmentTypeAdministered ='REGASSWOACC' THEN 'REGPARTWOACC'	
-			WHEN asr.AssessmentTypeAdministered ='REGASSWACC' THEN 'REGPARTWACC'
-			WHEN asr.AssessmentTypeAdministered ='ALTASSALTACH' THEN 'ALTPARTALTACH'
-			WHEN asr.AssessmentTypeAdministered ='ADVASMTWOACC' THEN 'PADVASMWOACC'
-			WHEN asr.AssessmentTypeAdministered ='ADVASMTWACC' THEN 'PADVASMWACC'
-			WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWOACC' THEN 'PIADAPLASMWOACC'
-			WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWACC' THEN 'PIADAPLASMWACC'
-			WHEN asr.AssessmentRegistrationParticipationIndicator = 0 THEN 'NPART'
+
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='REGASSWOACC' THEN 'REGPARTWOACC'	
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='REGASSWACC' THEN 'REGPARTWACC'
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='ALTASSALTACH' THEN 'ALTPARTALTACH'
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='ADVASMTWOACC' THEN 'PADVASMWOACC'
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='ADVASMTWACC' THEN 'PADVASMWACC'
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='IADAPLASMTWOACC' THEN 'PIADAPLASMWOACC'
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='IADAPLASMTWACC' THEN 'PIADAPLASMWACC'
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='REGASSWOACC_1' THEN 'REGPARTWOACC'	
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='REGASSWACC_1' THEN 'REGPARTWACC'
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='ALTASSALTACH_1' THEN 'ALTPARTALTACH'
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='ADVASMTWOACC_1' THEN 'PADVASMWOACC'
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='ADVASMTWACC_1' THEN 'PADVASMWACC'
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='IADAPLASMTWOACC_1' THEN 'PIADAPLASMWOACC'
+			WHEN isnull(asr.AssessmentRegistrationParticipationIndicator, 0) = 1 and asr.AssessmentTypeAdministered ='IADAPLASMTWACC_1' THEN 'PIADAPLASMWACC'
 			WHEN asr.AssessmentRegistrationReasonNotTested = '03454' THEN 'MEDEXEMPT'
-			WHEN asr.AssessmentTypeAdministered ='REGASSWOACC_1' THEN 'REGPARTWOACC'	
-			WHEN asr.AssessmentTypeAdministered ='REGASSWACC_1' THEN 'REGPARTWACC'
-			WHEN asr.AssessmentTypeAdministered ='ALTASSALTACH_1' THEN 'ALTPARTALTACH'
-			WHEN asr.AssessmentTypeAdministered ='ADVASMTWOACC_1' THEN 'PADVASMWOACC'
-			WHEN asr.AssessmentTypeAdministered ='ADVASMTWACC_1' THEN 'PADVASMWACC'
-			WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWOACC_1' THEN 'PIADAPLASMWOACC'
-			WHEN asr.AssessmentTypeAdministered ='IADAPLASMTWACC_1' THEN 'PIADAPLASMWACC'
 			WHEN asr.AssessmentRegistrationReasonNotTested = '03454_1' THEN 'MEDEXEMPT'
+			WHEN asr.AssessmentRegistrationParticipationIndicator = 0 THEN 'NPART'
 			ELSE 'MISSING'
 		end as ParticipationStatus
 		, RaceEdFactsCode = CASE rdr.RaceEdFactsCode
@@ -372,11 +380,12 @@ BEGIN
 		, sy.SessionBeginDate
 		, sy.SessionEndDate
 	INTO #staging
+
 	FROM #StagingAssessment a		
 	INNER JOIN #StagingAssessmentResult asr 
 		ON a.AssessmentIdentifier = asr.AssessmentIdentifier
-			AND a.AssessmentPerformanceLevelIdentifier = asr.AssessmentPerformanceLevelIdentifier
 			AND a.AssessmentTypeAdministered = asr.AssessmentTypeAdministered
+
 	INNER JOIN #StagingK12Enrollment ske
 		ON asr.StudentIdentifierState = ske.StudentIdentifierState
 			AND asr.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
@@ -398,66 +407,59 @@ BEGIN
 		ON idea.StudentIdentifierState = asr.StudentIdentifierState
 			AND idea.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND idea.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			--AND a.AssessmentAdministrationStartDate BETWEEN idea.IDEA_StatusStartDate AND ISNULL(idea.IDEA_StatusEndDate,GETDATE()) --
-			AND idea.IDEAIndicator = 1
+			--AND idea.IDEAIndicator = 1 -- JW
 			AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(idea.SchoolIdentifierSea,'')
 				AND ((idea.IDEA_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND idea.IDEA_StatusStartDate <=  asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(idea.IDEA_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(idea.IDEA_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus el
 		ON el.StudentIdentifierState = asr.StudentIdentifierState
 			AND el.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND el.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			--AND a.AssessmentAdministrationStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate,GETDATE()) --
 			AND el.EnglishLearnerStatus = 1
 			AND ((el.EnglishLearner_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND el.EnglishLearner_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(el.EnglishLearner_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus eco
 		ON eco.StudentIdentifierState = asr.StudentIdentifierState
 			AND eco.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND eco.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			--AND a.AssessmentAdministrationStartDate BETWEEN eco.EconomicDisadvantage_StatusStartDate AND ISNULL(eco.EconomicDisadvantage_StatusEndDate,GETDATE())
 			and eco.EconomicDisadvantageStatus = 1
 			AND ((eco.EconomicDisadvantage_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND eco.EconomicDisadvantage_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(eco.EconomicDisadvantage_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(eco.EconomicDisadvantage_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus ms
 		ON ms.StudentIdentifierState = asr.StudentIdentifierState
 			AND ms.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND ms.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			--AND a.AssessmentAdministrationStartDate BETWEEN ms.Migrant_StatusStartDate AND ISNULL(ms.Migrant_StatusEndDate,GETDATE())
 			AND ms.MigrantStatus = 1
 			AND ((ms.Migrant_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND ms.Migrant_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(ms.Migrant_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(ms.Migrant_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus hs
 		ON hs.StudentIdentifierState = asr.StudentIdentifierState
 			AND hs.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND hs.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			--AND a.AssessmentAdministrationStartDate BETWEEN hs.Homelessness_StatusStartDate AND ISNULL(hs.Homelessness_StatusEndDate,GETDATE())
 			AND hs.HomelessnessStatus = 1
 			AND ((hs.Homelessness_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND hs.Homelessness_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(hs.Homelessness_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(hs.Homelessness_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus fc
 		ON fc.StudentIdentifierState = asr.StudentIdentifierState
 			AND fc.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND fc.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			--AND a.AssessmentAdministrationStartDate BETWEEN fc.FosterCare_ProgramParticipationStartDate AND ISNULL(fc.FosterCare_ProgramParticipationEndDate,GETDATE()) --
 			AND fc.ProgramType_FosterCare = 1
 			AND ((fc.FosterCare_ProgramParticipationStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND fc.FosterCare_ProgramParticipationStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(fc.FosterCare_ProgramParticipationEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(fc.FosterCare_ProgramParticipationEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus mcs
 		ON mcs.StudentIdentifierState = asr.StudentIdentifierState
 			AND mcs.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND mcs.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			--AND a.AssessmentAdministrationStartDate BETWEEN mcs.MilitaryConnected_StatusStartDate AND ISNULL(mcs.MilitaryConnected_StatusEndDate,GETDATE()) --
 			AND case when mcs.MilitaryConnectedStudentIndicator IS NULL then 0 else 1 end = 1
 			AND ((mcs.MilitaryConnected_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND mcs.MilitaryConnected_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(mcs.MilitaryConnected_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(mcs.MilitaryConnected_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonRace spr
 		ON spr.StudentIdentifierState = ske.StudentIdentifierState
 			AND spr.SchoolYear = sy.SchoolYear
@@ -473,9 +475,10 @@ BEGIN
 		ON ppse.StudentIdentifierState = asr.StudentIdentifierState
 			AND ppse.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND ppse.SchoolIdentifierSea = asr.SchoolIdentifierSea
+			
 	WHERE asr.SchoolYear = @SchoolYear
 	AND replace(ta.[Subject], '_1', '') = @SubjectAbbrv
-	--AND ISNULL(ppse.IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPPS_1') 
+
 
 -----------------------------------------------------------------------------------------------------------------
 -- BUILD CSA TEMP TABLES FROM REPORT TABLE ---------------------------------------------------------------------
@@ -503,6 +506,7 @@ BEGIN
 		,ReportYear
 		,ReportLevel
 		,CategorySetCode
+
 
 	-- CSB LG ------------------------------
 	SELECT AssessmentRegistrationParticipationIndicator
@@ -782,6 +786,8 @@ BEGIN
 		,ReportLevel
 		,CategorySetCode
 
+
+
 	-- CSB HS ------------------------------
 	SELECT AssessmentRegistrationParticipationIndicator
 		,GRADELEVEL
@@ -1053,6 +1059,7 @@ BEGIN
 			,GradeLevelWhenAssessed
 			,RaceEdFactsCode
 
+
 		INSERT INTO App.SqlUnitTestCaseResult 
 		(
 			[SqlUnitTestId]
@@ -1067,7 +1074,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSA LG ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSA LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')
 									+ '; Race Ethnicity: ' + s.RaceEdFactsCode  
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1111,7 +1118,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSB LG ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSB LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')  
 									+ '; Sex Membership: ' + s.Sex 
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1155,7 +1162,7 @@ BEGIN
 			@SqlUnitTestId
 			,'CSC LG ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSC LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '') 
 									+ '; Disability Status ' + S.DisabilityStatusEdFactsCode
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1198,7 +1205,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSD LG ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSD LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '') 
 									+ '; EnglishLearner Status: ' + s.EnglishLearnerStatusEdFactsCode 
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1241,7 +1248,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSE LG ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSE LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '') 
 									+ '; Economic Disadvantage Status: ' + s.EconomicDisadvantageStatusEdFactsCode
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1284,7 +1291,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSF LG ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSF LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')
 									+ '; Migrant Status: ' + s.MigrantStatusEdFactsCode
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1327,7 +1334,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSG LG ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSG LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')
 									+ '; Homelessness Status: ' + s.HomelessnessStatusEdFactsCode
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1370,7 +1377,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSH LG ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSH LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')
 									+ '; Foster Care: ' + s.ProgramType_FosterCareEdFactsCode
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1413,7 +1420,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSI LG ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSI LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')
 									+ '; Military Connected Student: ' + s.MilitaryConnectedStudentIndicatorEdFactsCode
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1445,7 +1452,10 @@ BEGIN
 			,RaceEdFactsCode
 			,DisabilityStatusEdFactsCode
 
-		INSERT INTO App.SqlUnitTestCaseResult 
+	--select * from #csj_lg_testcase
+	--return
+	
+	INSERT INTO App.SqlUnitTestCaseResult 
 		(
 			[SqlUnitTestId]
 			,[TestCaseName]
@@ -1458,8 +1468,8 @@ BEGIN
 		SELECT 
 				@SqlUnitTestId
 			,'CSJ LG ' + UPPER(sar.ReportLevel) + ' Match All'
-			,'CSJ LG' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+			,'CSJ LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')  
 									+ '; Race Ethnicity: ' + s.RaceEdFactsCode  
 									+ '; Disability Status: ' + s.DisabilityStatusEdFactsCode
 			,s.AssessmentCount
@@ -1502,7 +1512,7 @@ BEGIN
 			 @SqlUnitTestId
 			,'ST1 LG ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'ST1 LG ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-								   + '; Grade Level: ' + s.GradeLevelWhenAssessed
+								   + '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')
 			,s.AssessmentCount
 			,sar.AssessmentCount
 			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
@@ -1544,7 +1554,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSA HS ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSA HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')  
 									+ '; Race Ethnicity: ' + s.RaceEdFactsCode  
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1558,6 +1568,12 @@ BEGIN
 			AND sar.ReportCode = @ReportCode 
 			AND sar.ReportYear = @SchoolYear
 			AND sar.CategorySetCode = 'CSA'
+
+
+
+--select * from #CSA_HS_TESTCASE where ParticipationStatus = 'MEDEXEMPT' and GradeLevelWhenAssessed = '11_1' and RaceEdFactsCode = 'MW'
+--select * from #CSA_HS where ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = 'MEDEXEMPT' and GradeLevel = '11' and race = 'MW'
+------------------------------
 
 	-- TEST CASE CSB HS ------------------------------------------------------------------
 		IF OBJECT_ID('tempdb..#CSB_HS_TESTCASE') IS NOT NULL DROP TABLE #CSB_HS_TESTCASE
@@ -1587,7 +1603,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSB HS ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSB HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')  
 									+ '; Sex Membership: ' + s.Sex 
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1631,7 +1647,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSC HS ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSC HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '') 
 									+ '; Disability Status ' + S.DisabilityStatusEdFactsCode
 								  
 			,s.AssessmentCount
@@ -1675,7 +1691,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSD HS ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSD HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '') 
 									+ '; EnglishLearner Status: ' + s.EnglishLearnerStatusEdFactsCode 
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1718,7 +1734,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSE HS ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSE HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed 
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '') 
 									+ '; Economic Disadvantage Status: ' + s.EconomicDisadvantageStatusEdFactsCode
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1761,7 +1777,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSF HS ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSF HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')
 									+ '; Migrant Status: ' + s.MigrantStatusEdFactsCode
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1804,7 +1820,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSG HS ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSG HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')
 									+ '; Homelessness Status: ' + s.HomelessnessStatusEdFactsCode
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1847,7 +1863,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSH HS ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSH HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')
 									+ '; Foster Care: ' + s.ProgramType_FosterCareEdFactsCode
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1891,7 +1907,7 @@ BEGIN
 				@SqlUnitTestId
 			,'CSI HS ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'CSI HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')
 									+ '; Military Connected Student: ' + s.MilitaryConnectedStudentIndicatorEdFactsCode
 			,s.AssessmentCount
 			,sar.AssessmentCount
@@ -1923,6 +1939,7 @@ BEGIN
 			,RaceEdFactsCode
 			,DisabilityStatusEdFactsCode
 
+
 		INSERT INTO App.SqlUnitTestCaseResult 
 		(
 			[SqlUnitTestId]
@@ -1935,9 +1952,9 @@ BEGIN
 		)
 		SELECT 
 				@SqlUnitTestId
-			,'CSJ HS' + UPPER(sar.ReportLevel) + ' Match All'
-			,'CSJ HS' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
-									+ '; Grade Level: ' + s.GradeLevelWhenAssessed  
+			,'CSJ HS ' + UPPER(sar.ReportLevel) + ' Match All'
+			,'CSJ HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus +  '; '
+									+ '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')  
 									+ '; Race Ethnicity: ' + s.RaceEdFactsCode  
 									+ '; Disability Status: ' + s.DisabilityStatusEdFactsCode
 			,s.AssessmentCount
@@ -1981,7 +1998,7 @@ BEGIN
 			 @SqlUnitTestId
 			,'ST1 HS ' + UPPER(sar.ReportLevel) + ' Match All'
 			,'ST1 HS ' + UPPER(sar.ReportLevel) + ' Match All - Assessment: ' + s.ParticipationStatus 
-								   + '; Grade Level: ' + s.GradeLevelWhenAssessed
+								   + '; Grade Level: ' + replace(s.GradeLevelWhenAssessed, '_1', '')
 			,s.AssessmentCount
 			,sar.AssessmentCount
 			,CASE WHEN s.AssessmentCount = ISNULL(sar.AssessmentCount, -1) THEN 1 ELSE 0 END
@@ -1993,14 +2010,6 @@ BEGIN
 			AND sar.ReportCode = @ReportCode 
 			AND sar.ReportYear = @SchoolYear
 			AND sar.CategorySetCode = 'ST1'
-	
-		--Query to find the tests that did not match
-		-- select * 
-		-- from App.SqlUnitTestCaseResult r
-		-- 	inner join App.SqlUnitTest t
-		-- 		on r.SqlUnitTestId = t.SqlUnitTestId
-		-- WHERE t.TestScope = @FileSpec
-		-- AND Passed = 0
 
-	   	 
+ 	 
 END

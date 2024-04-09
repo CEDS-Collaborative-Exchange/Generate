@@ -50,9 +50,8 @@ Use the @FileSpec parameter to pass in one of the
 	---------------------------------------------------------------------
 	DECLARE
 		@SYStartDate DATE,
-		@SYEndDate DATE,
-		@Today Date = convert(date, getdate())
-
+		@SYEndDate DATE
+		
 		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 	----------------------------------------------------------------------
@@ -197,10 +196,31 @@ Use the @FileSpec parameter to pass in one of the
 				('12')
 		end
 
-	DECLARE @ChildCountDate DATETIME
+	--DECLARE @ChildCountDate DATETIME
 	
+	---- Get Custom Child Count Date
+	--SELECT @ChildCountDate = CAST('10/01/' + cast(@SchoolYear - 1 AS Varchar(4)) AS DATETIME)
+
 	-- Get Custom Child Count Date
-	SELECT @ChildCountDate = CAST('10/01/' + cast(@SchoolYear - 1 AS Varchar(4)) AS DATETIME)
+	DECLARE @cutOffMonth INT, @cutOffDay INT, @customFactTypeDate VARCHAR(10), @ChildCountDate date
+	set @cutOffMonth = 11
+	set @cutOffDay = 1
+
+	select @customFactTypeDate = r.ResponseValue
+	from app.ToggleResponses r
+	INNER join app.ToggleQuestions q 
+		on r.ToggleQuestionId = q.ToggleQuestionId
+	where q.EmapsQuestionAbbrv = 'CHDCTDTE'
+
+	select @cutOffMonth = SUBSTRING(@customFactTypeDate, 0, CHARINDEX('/', @customFactTypeDate))
+	
+	declare @cutOffDayVARCHAR varchar(5)
+	select @cutOffDayVARCHAR = SUBSTRING(@customFactTypeDate, CHARINDEX('/', @customFactTypeDate) + 1, 2)	
+	select @cutOffDay = case when right(@cutOffDayVARCHAR,1) = '/' then left(@CutOffDayVARCHAR,1) else @CutOffDayVARCHAR end
+	
+	select @ChildCountDate = convert(varchar, @CutoffMonth) + '/' + convert(varchar, @CutoffDay) + '/' + convert(varchar, @SchoolYear-1) -- < changed to "-1"
+
+
 
 	-- #StagingAssessment --------------------------------------------------------------------------------
 		SELECT *
@@ -360,7 +380,7 @@ Use the @FileSpec parameter to pass in one of the
 		, a.AssessmentTitle
 		, a.AssessmentAcademicSubject
 		, a.AssessmentPurpose
-		, ProficiencyStatus = CASE WHEN CAST(RIGHT(a.AssessmentPerformanceLevelIdentifier,1) AS INT) < ta.ProficientOrAboveLevel THEN 'NOTPROFICIENT' ELSE 'PROFICIENT' END
+		, ProficiencyStatus = CASE WHEN CAST(RIGHT(replace(a.AssessmentPerformanceLevelIdentifier, '_1', ''),1) AS INT) < ta.ProficientOrAboveLevel THEN 'NOTPROFICIENT' ELSE 'PROFICIENT' END
 		, a.AssessmentPerformanceLevelIdentifier
 		, asr.GradeLevelWhenAssessed
 		, ds.AssessmentTypeAdministeredCode
@@ -412,7 +432,8 @@ Use the @FileSpec parameter to pass in one of the
 	INNER JOIN #ToggleAssessments ta
 		ON ds.AssessmentTypeAdministeredCode = replace(ta.AssessmentTypeCode, '_1', '')
 			AND asr.GradeLevelCode = replace(ta.Grade, '_1', '')
-			AND asr.AssessmentAcademicSubject = CASE ta.[Subject] WHEN @SubjectAbbrv THEN @AssessmentAcademicSubject ELSE 'NOMATCH' END
+			AND asr.AssessmentAcademicSubject = CASE WHEN ta.[Subject] = @SubjectAbbrv THEN @AssessmentAcademicSubject ELSE 'NOMATCH' END
+
 	LEFT JOIN #StagingProgramParticipationSpecialEducation idea
 		ON idea.StudentIdentifierState = asr.StudentIdentifierState
 			AND idea.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
@@ -422,7 +443,7 @@ Use the @FileSpec parameter to pass in one of the
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(idea.SchoolIdentifierSea,'')
 				AND ((idea.IDEA_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND idea.IDEA_StatusStartDate <=  asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(idea.IDEA_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(idea.IDEA_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 
 	LEFT JOIN #StagingPersonStatus el
 		ON el.StudentIdentifierState = asr.StudentIdentifierState
@@ -432,7 +453,7 @@ Use the @FileSpec parameter to pass in one of the
 			AND el.EnglishLearnerStatus = 1
 				AND ((el.EnglishLearner_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND el.EnglishLearner_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(el.EnglishLearner_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 
 	LEFT JOIN #StagingPersonStatus eco
 		ON eco.StudentIdentifierState = asr.StudentIdentifierState
@@ -442,7 +463,7 @@ Use the @FileSpec parameter to pass in one of the
 			and eco.EconomicDisadvantageStatus = 1
 				AND ((eco.EconomicDisadvantage_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND eco.EconomicDisadvantage_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(eco.EconomicDisadvantage_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(eco.EconomicDisadvantage_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 
 	LEFT JOIN #StagingPersonStatus ms
 		ON ms.StudentIdentifierState = asr.StudentIdentifierState
@@ -452,7 +473,7 @@ Use the @FileSpec parameter to pass in one of the
 			AND ms.MigrantStatus = 1
 				AND ((ms.Migrant_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND ms.Migrant_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(ms.Migrant_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(ms.Migrant_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 
 	LEFT JOIN #StagingPersonStatus hs
 		ON hs.StudentIdentifierState = asr.StudentIdentifierState
@@ -462,7 +483,7 @@ Use the @FileSpec parameter to pass in one of the
 			AND hs.HomelessnessStatus = 1
 				AND ((hs.Homelessness_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND hs.Homelessness_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(hs.Homelessness_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(hs.Homelessness_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 
 	LEFT JOIN #StagingPersonStatus fc
 		ON fc.StudentIdentifierState = asr.StudentIdentifierState
@@ -472,7 +493,7 @@ Use the @FileSpec parameter to pass in one of the
 			AND fc.ProgramType_FosterCare = 1
 				AND ((fc.FosterCare_ProgramParticipationStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND fc.FosterCare_ProgramParticipationStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(fc.FosterCare_ProgramParticipationEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(fc.FosterCare_ProgramParticipationEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 
 	LEFT JOIN #StagingPersonStatus mcs
 		ON mcs.StudentIdentifierState = asr.StudentIdentifierState
@@ -482,7 +503,7 @@ Use the @FileSpec parameter to pass in one of the
 			AND case when mcs.MilitaryConnectedStudentIndicator IS NULL then 0 else 1 end = 1
 				AND ((mcs.MilitaryConnected_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND mcs.MilitaryConnected_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(mcs.MilitaryConnected_StatusEndDate, @Today) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(mcs.MilitaryConnected_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 
 	LEFT JOIN #StagingPersonRace spr
 		ON spr.StudentIdentifierState = ske.StudentIdentifierState
@@ -501,6 +522,7 @@ Use the @FileSpec parameter to pass in one of the
 			AND ppse.SchoolIdentifierSea = asr.SchoolIdentifierSea
 	WHERE asr.SchoolYear = @SchoolYear
 	AND replace(ta.[Subject], '_1', '') = @SubjectAbbrv
+
 
 -----------------------------------------------------------------------------------------------------------------
 -- BUILD CATEGORY SET TEMP TABLES FROM REPORT TABLE ---------------------------------------------------------------------
@@ -1160,7 +1182,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSA LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSA LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') 
 									+ '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1206,7 +1228,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSB LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSB LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Sex Membership: ' + TestCaseTotal.Sex 
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1233,12 +1255,13 @@ Use the @FileSpec parameter to pass in one of the
 			,COUNT(DISTINCT StudentIdentifierState) AS AssessmentCount
 		INTO #CSC_LG_TESTCASE
 		FROM #staging 
-		WHERE ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPS_1')  -- PPPS should only be excluded from the Disability Category Set
+		WHERE ISNULL(IDEAEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPPS_1')  -- PPPS should only be excluded from the Disability Category Set
 
 		GROUP BY AssessmentTypeAdministeredCode
 				,ProficiencyStatus
 				,GradeLevelWhenAssessed
 				,DisabilityStatusEdFactsCode
+
 
 		INSERT INTO App.SqlUnitTestCaseResult 
 		(
@@ -1254,7 +1277,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSC LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSC LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Disability Status ' + TestCaseTotal.DisabilityStatusEdFactsCode
 								  
 			,TestCaseTotal.AssessmentCount
@@ -1301,7 +1324,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSD LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSD LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') 
 									+ '; EnglishLearner Status: ' + TestCaseTotal.EnglishLearnerStatusEdFactsCode 
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1347,7 +1370,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSE LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSE LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Economic Disadvantage Status: ' + TestCaseTotal.EconomicDisadvantageStatusEdFactsCode
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1393,7 +1416,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSF LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSF LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Migrant Status: ' + TestCaseTotal.MigrantStatusEdFactsCode
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1439,7 +1462,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSG LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSG LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Homelessness Status: ' + TestCaseTotal.HomelessnessStatusEdFactsCode
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1485,7 +1508,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSH LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSH LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Foster Care: ' + TestCaseTotal.ProgramType_FosterCareEdFactsCode
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1531,7 +1554,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSI LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSI LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Military Connected Student: ' + TestCaseTotal.MilitaryConnectedStudentIndicatorEdFactsCode
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1581,7 +1604,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSJ LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSJ LG' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') 
 									+ '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
 									+ '; Disability Status: ' + TestCaseTotal.DisabilityStatusEdFactsCode
 			,TestCaseTotal.AssessmentCount
@@ -1627,7 +1650,7 @@ Use the @FileSpec parameter to pass in one of the
 			 @SqlUnitTestId
 			,'ST1 LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'ST1 LG ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-								  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+								  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
 			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
@@ -1672,7 +1695,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSA HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSA HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')  
 									+ '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1718,7 +1741,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSB HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSB HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')  
 									+ '; Sex Membership: ' + TestCaseTotal.Sex 
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1766,7 +1789,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSC HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSC HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Disability Status ' + TestCaseTotal.DisabilityStatusEdFactsCode
 								  
 			,TestCaseTotal.AssessmentCount
@@ -1813,7 +1836,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSD HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSD HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; EnglishLearner Status: ' + TestCaseTotal.EnglishLearnerStatusEdFactsCode 
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1859,7 +1882,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSE HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSE HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed 
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') 
 									+ '; Economic Disadvantage Status: ' + TestCaseTotal.EconomicDisadvantageStatusEdFactsCode
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1905,7 +1928,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSF HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSF HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Migrant Status: ' + TestCaseTotal.MigrantStatusEdFactsCode
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1951,7 +1974,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSG HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSG HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Homelessness Status: ' + TestCaseTotal.HomelessnessStatusEdFactsCode
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -1997,7 +2020,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSH HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSH HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Foster Care: ' + TestCaseTotal.ProgramType_FosterCareEdFactsCode
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -2044,7 +2067,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSI HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSI HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 									+ '; Military Connected Student: ' + TestCaseTotal.MilitaryConnectedStudentIndicatorEdFactsCode
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
@@ -2094,7 +2117,7 @@ Use the @FileSpec parameter to pass in one of the
 				@SqlUnitTestId
 			,'CSJ HS' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'CSJ HS' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode +  '; '
-									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed  
+									+ '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '') 
 									+ '; Race Ethnicity: ' + TestCaseTotal.RaceEdFactsCode  
 									+ '; Disability Status: ' + TestCaseTotal.DisabilityStatusEdFactsCode
 			,TestCaseTotal.AssessmentCount
@@ -2140,7 +2163,7 @@ Use the @FileSpec parameter to pass in one of the
 			 @SqlUnitTestId
 			,'ST1 HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All'
 			,'ST1 HS ' + UPPER(ReportTotal.ReportLevel) + ' Match All - Assessment: ' + TestCaseTotal.AssessmentTypeAdministeredCode 
-								  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + TestCaseTotal.GradeLevelWhenAssessed
+								  + '; Proficiency Status: ' + TestCaseTotal.ProficiencyStatus + '; Grade Level: ' + replace(TestCaseTotal.GradeLevelWhenAssessed, '_1', '')
 			,TestCaseTotal.AssessmentCount
 			,ReportTotal.AssessmentCount
 			,CASE WHEN TestCaseTotal.AssessmentCount = ISNULL(ReportTotal.AssessmentCount, -1) THEN 1 ELSE 0 END
