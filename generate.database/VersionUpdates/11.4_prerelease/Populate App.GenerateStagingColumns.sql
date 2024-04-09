@@ -8,7 +8,7 @@ to populate all of the columns used in App.GenerateStagingColumns.
 This should run AFTER creation of App.GenerateStagingColumns in VersionScripts.
 ****************************************************/
 
-IF OBJECT_ID(N'Generate.App.GenerateStagingColumns') IS NULL return -- In case the table doesn't exist.  
+IF OBJECT_ID(N'App.GenerateStagingColumns') IS NULL return -- In case the table doesn't exist.  
 
 IF OBJECT_ID(N'tempdb..#SSRD') IS NOT NULL DROP TABLE #SSRD
 
