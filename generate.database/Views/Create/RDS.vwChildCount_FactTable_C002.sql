@@ -14,7 +14,7 @@ AS
 		, LeaOrganizationName
 		, SchoolIdentifierSea
 		, NameOfInstitution
-		, vw.K12StudentId
+		, K12StudentId
 		, K12StudentStudentIdentifierState
 		, IdeaDisabilityTypeEdFactsCode
 		, RaceEdFactsCode
@@ -26,8 +26,8 @@ AS
 	FROM Debug.vwChildCount_FactTable vw
 	LEFT JOIN (
 		select distinct K12StudentId
-		from [Debug].[vwChildCount_FactTable] fact
-		WHERE NOT AgeEdFactsCode in (	
+		from [Debug].[vwChildCount_FactTables] fact
+		WHERE NOT Age in (	
 							select replace(ResponseValue, ' Years', '') AS Ages
 							from app.ToggleResponses r
 							inner join app.ToggleQuestions q 
@@ -48,7 +48,7 @@ AS
 							where q.EmapsQuestionAbbrv = 'CHDCTAGEDD'
 								AND ResponseValue LIKE '%5%'
 						) 
-		AND  IdeaDisabilityTypeEdFactsCode = 'DD'
+		AND  IdeaDisabilityTypeCode = 'DD'
 	) dd
 		ON vw.K12StudentId = dd.K12StudentId
 	WHERE AgeEdFactsCode IN ('5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21')
