@@ -7,6 +7,11 @@ EXEC App.Rollover_Previous_Year_Metadata 'c198' , 2022, 2023
 EXEC App.Rollover_Previous_Year_Metadata 'c207' , 2022, 2023
 EXEC App.Rollover_Previous_Year_Metadata 'c211' , 2022, 2023
 
+EXEC App.Rollover_Previous_Year_Metadata 'c035' , 2019, 2020
+EXEC App.Rollover_Previous_Year_Metadata 'c035' , 2020, 2021
+EXEC App.Rollover_Previous_Year_Metadata 'c035' , 2021, 2022
+
+
 
 -- Delete all 2024 metadata
 delete co
@@ -41,7 +46,7 @@ DECLARE csy CURSOR FOR
         WHERE SubmissionYear = 2023
             AND ReportCode IN (
                  'c002','c029'
-                ,'c033','c035','c039','c045'
+                ,'c033','c039','c045'
 				,'c050','c052','c054','c059'
 				,'c067','c089','c116','c118'
 				,'c121','c126','c129'
