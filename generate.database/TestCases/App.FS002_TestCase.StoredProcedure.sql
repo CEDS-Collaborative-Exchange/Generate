@@ -2304,4 +2304,14 @@ BEGIN
 
 		DROP TABLE #SCH_TOT
 
+	-- select *
+	-- from App.SqlUnitTestCaseResult sr
+	-- 	inner join App.SqlUnitTest s
+	-- 		on s.SqlUnitTestId = sr.SqlUnitTestId
+	-- where s.UnitTestName like '%002%'
+	-- and passed = 0
+	-- and convert(date, TestDateTime) = convert(date, GETDATE())
+
+
+
 END

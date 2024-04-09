@@ -21,39 +21,46 @@ EXEC [Staging].[RUN_DMC] @SchoolYear
 
 -- Leave out FS009 because the test will run it for you
 
-PRINT 'RDS migration for Child Count (FS002, FS089)'
+PRINT 'RDS migration for Child Count (C002, C089)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C002','C089')
-EXEC RDS.Create_Reports 'childcount', 0, 'studentcounts' -- FS002, FS089 
+EXEC RDS.Create_Reports 'childcount', 0 -- FS002, FS089 
 -- Execution time: 2 minutes
-PRINT 'RDS migration for Child Count (C141)' -- No WORKING test for FS116
+
+PRINT 'RDS migration for EL Enrolled (C141)' -- 
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C141')
-EXEC RDS.Create_Reports 'titleIIIELOct', 0, 'studentcounts' -- FS141
+EXEC RDS.Create_Reports 'titleIIIELOct', 0 -- FS141
+-- Execution time: Instant - No records created
 
 -- PRINT 'RDS migration for Child Count (C116)' -- No WORKING test for FS116
 -- UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C116')
--- EXEC RDS.Create_Reports 'titleIIIELSY', 0, 'studentcounts' -- FS116
--- Execution time: 15 seconds - No records created
-PRINT 'RDS migration for Child Count (FS194)'
+-- EXEC RDS.Create_Reports 'titleIIIELSY', 0 -- FS116
+-- Execution time: 
+
+PRINT 'RDS migration for Homeless (C118, C194)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C118','C194')
-EXEC RDS.Create_Reports 'homeless', 0, 'studentcounts' -- FS194
--- Execution time: Instant - No records created
-PRINT 'RDS migration for Child Count (C005,C006,C007,C088,C143,C144)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C005','C006','C007','C088','C143','C144')
-EXEC RDS.Create_Reports 'submission', 0, 'disciplinecounts' -- FS005, FS006, FS007, FS086, FS088, FS143, FS144
--- Execution time: 2 minutes - No recors created
+EXEC RDS.Create_Reports 'homeless', 0 -- FS194
+-- Execution time: 2 minutes
+
+PRINT 'RDS migration for Discipline (C005,C006,C007,C086,C088,C143,C144)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C005','C006','C007','C086','C088','C143','C144')
+EXEC RDS.Create_Reports 'discipline', 0 -- FS005, FS006, FS007, FS086, FS088, FS143, FS144
+-- Execution time: 12:22
+
 PRINT 'RDS migration for Assessments (C175,C178,C179,C185,C188,C189)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C175','C178','C179','C185','C188','C189')
-EXEC RDS.Create_Reports 'submission', 0, 'studentassessments' -- FS175, FS178, FS179, FS185, FS188, FS189, No tests yet for FS113, FS125, FS126, FS139, FS137, FS050, FS142, FS157
--- Execution time: 40 seconds
-PRINT 'RDS migration for Personnel (C070,C099,C112)'
+EXEC RDS.Create_Reports 'assessment', 0 -- FS175, FS178, FS179, FS185, FS188, FS189, No tests yet for FS113, FS125, FS126, FS139, FS137, FS050, FS142, FS157
+-- Execution time: 17:39
+
+PRINT 'RDS migration for Staff (C070,C099,C112)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C070','C099','C112')
-EXEC RDS.Create_Reports 'submission', 0, 'personnelcounts' -- FS070, FS099, FS112, no tests yet for FS059, FS067, FS203
--- Execution time -- ERROR "Invalud column name "DimStudentId" for FS070 Line 1334
-PRINT 'RDS migration for Directry (C029)'
+EXEC RDS.Create_Reports 'staff', 0 -- FS070, FS099, FS112, no tests yet for FS059, FS067, FS203
+-- Execution time: :19
+
+PRINT 'RDS migration for Directory (C029, C039)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C029', 'C039')
 EXEC RDS.Create_OrganizationReportData 'C029', 0 -- FS029, no tests yet for FS039, FS129, FS130, FS193, FS190, FS196, FS197, FS198, FS103, FS131, FS205, FS206, FS170, FS035, FS207
 EXEC RDS.Create_OrganizationReportData 'C039', 0 -- There is no test for 039 but it is needed for other migrations
--- Execution time
+-- Execution time: Instant
 
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'specedexit' -- FS009 - The test runs this code for you
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'cte' -- No tests yet 
@@ -61,6 +68,8 @@ PRINT 'RDS migration for Personnel (C033,C052)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c033','c052')
 EXEC RDS.Create_ReportData 'C033', 'membership', 0
 EXEC RDS.Create_ReportData 'C052', 'membership', 0
+-- Execution time: 8:16
+
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'dropout' -- No tests yet FS032
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'grad' -- No tests yet FS040
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'grad' -- No tests yet FS040, FS045
@@ -75,8 +84,6 @@ EXEC RDS.Create_ReportData 'C052', 'membership', 0
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'gradrate' -- No tests yet for FS150, FS151
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'hsgradenroll' -- No tests yet for FS160
 --EXEC RDS.Create_Reports 'organizationstatuscounts', 0, 'organizationstatus' -- no tests yet for FS199, FS200, FS201, FS202
-
-
 
 PRINT 'End-to-End Test for DimK12Students'
 EXEC App.DimK12Students_TestCase

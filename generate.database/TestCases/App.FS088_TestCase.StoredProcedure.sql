@@ -69,7 +69,7 @@ BEGIN
 	declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
 
 	-- Get Custom Child Count Date
-	DECLARE @cutOffMonth INT, @cutOffDay INT, @customFactTypeDate VARCHAR(10)
+	DECLARE @cutOffMonth INT, @cutOffDay INT, @customFactTypeDate VARCHAR(10), @childCountDate date
 	set @cutOffMonth = 11
 	set @cutOffDay = 1
 
@@ -971,5 +971,6 @@ BEGIN
 	--		on s.SqlUnitTestId = sr.SqlUnitTestId
 	--where s.UnitTestName like '%088%'
 	--and passed = 0
+	--and convert(date, TestDateTime) = convert(date, GETDATE())
 
 END

@@ -259,5 +259,6 @@ BEGIN
 	--		on s.SqlUnitTestId = sr.SqlUnitTestId
 	--where s.UnitTestName like '%144%'
 	--and passed = 0
+	--and convert(date, TestDateTime) = convert(date, GETDATE())
 
 END
