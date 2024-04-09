@@ -694,11 +694,12 @@ BEGIN
 
 	--check the results
 
-	--select *
-	--from App.SqlUnitTestCaseResult sr
-	--	inner join App.SqlUnitTest s
-	--		on s.SqlUnitTestId = sr.SqlUnitTestId
-	--where s.UnitTestName like '%143%'
-	--and passed = 0
+	select *
+	from App.SqlUnitTestCaseResult sr
+		inner join App.SqlUnitTest s
+			on s.SqlUnitTestId = sr.SqlUnitTestId
+	where s.UnitTestName like '%143%'
+	and passed = 0
+	and convert(date, TestDateTime) = convert(date, GETDATE())
 
 END
