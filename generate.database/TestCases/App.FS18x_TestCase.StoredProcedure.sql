@@ -186,6 +186,7 @@ BEGIN
 		WHERE [AssessmentAcademicSubject] = @AssessmentAcademicSubject
 		--AND AssessmentType = @AssessmentType
 
+
 			CREATE NONCLUSTERED INDEX IX_a ON #StagingAssessment (AssessmentTitle,AssessmentAcademicSubject,AssessmentPurpose,
 			AssessmentPerformanceLevelIdentifier)
 
@@ -210,6 +211,7 @@ BEGIN
 			SchoolYear,GradeLevelWhenAssessed,AssessmentTitle,AssessmentAcademicSubject,--AssessmentPurpose,
 			AssessmentPerformanceLevelIdentifier)
 
+
 	-- #DimAssessments ---------------------------------------------------------------------------------------
 		SELECT DISTINCT
 			AssessmentIdentifierState, 
@@ -226,13 +228,16 @@ BEGIN
 
 			CREATE NONCLUSTERED INDEX IX_ds ON #DimAssessments (AssessmentAcademicSubjectCode,AssessmentTypeAdministeredCode,AssessmentPerformanceLevelIdentifier)
 
+
+
 	-- #ToggleAssessments ---------------------------------------------------------------------------------------
 		SELECT *
 		INTO #ToggleAssessments
 		FROM App.ToggleAssessments
 		WHERE [Subject] = @SubjectAbbrv
 
-			CREATE NONCLUSTERED INDEX IX_ta ON #ToggleAssessments (AssessmentTypeCode,Grade,[Subject])
+	
+		CREATE NONCLUSTERED INDEX IX_ta ON #ToggleAssessments (AssessmentTypeCode,Grade,[Subject])
 
 	-- #StagingPersonStatus ---------------------------------------------------------------------------------------
 		SELECT 
@@ -266,6 +271,7 @@ BEGIN
 
 			CREATE NONCLUSTERED INDEX IX_sps ON #StagingPersonStatus (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
 
+
 	-- #StagingProgramParticipationSpecialEducation ----------------------------------------------------------------
 		SELECT 
 			sppse.IDEAIndicator
@@ -278,6 +284,8 @@ BEGIN
 		FROM Staging.ProgramParticipationSpecialEducation sppse
 
 			CREATE NONCLUSTERED INDEX IX_spppse ON #StagingProgramParticipationSpecialEducation (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
+
+
 
 	-- #StagingK12Enrollment --------------------------------------------------------------------------------------
 		SELECT [Sex]
@@ -402,7 +410,13 @@ BEGIN
 	INNER JOIN #ToggleAssessments ta
 		ON ds.AssessmentTypeAdministeredCode = replace(ta.AssessmentTypeCode, '_1', '')
 			AND asr.GradeLevelCode = replace(ta.Grade, '_1', '')
-			AND asr.AssessmentAcademicSubject = CASE ta.[Subject] WHEN 'MATH' THEN '01166_1' ELSE 'NOMATCH' END --             WHEN @SubjectAbbrv THEN @AssessmentAcademicSubject ELSE 'NOMATCH' END
+			AND asr.AssessmentAcademicSubject = @AssessmentAcademicSubject
+				--CASE ta.[Subject] 
+				--	WHEN 'MATH' THEN '01166_1' 
+				--	WHEN 'RLA' THEN '13373_1'
+				--	WHEN 'SCIENCE' THEN '00562_1'
+				--	ELSE 'NOMATCH' 
+				--END 
 	LEFT JOIN #StagingProgramParticipationSPecialEducation idea
 		ON idea.StudentIdentifierState = asr.StudentIdentifierState
 			AND idea.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
@@ -478,6 +492,7 @@ BEGIN
 			
 	WHERE asr.SchoolYear = @SchoolYear
 	AND replace(ta.[Subject], '_1', '') = @SubjectAbbrv
+
 
 
 -----------------------------------------------------------------------------------------------------------------
