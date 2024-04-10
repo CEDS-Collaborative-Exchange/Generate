@@ -106,7 +106,14 @@ AS
 			WHEN EnglishLearnerStatus = 1 THEN 'LEP'
 			ELSE 'NLEP'
 		END AS EnglishLearnerStatus
-FROM [Debug].[vwChildCount_StagingTables] vw
+FROM (		
+		SELECT tr.ResponseValue
+		FROM App.ToggleQuestions tq
+		JOIN App.ToggleResponses tr
+			ON tq.ToggleQuestionId = tr.ToggleQuestionId
+		WHERE tq.EmapsQuestionAbbrv = 'CHDCTDTE'
+	) toggle
+CROSS JOIN [Debug].[vwChildCount_StagingTables] vw
 LEFT JOIN excludedLeas el
 	ON vw.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
 LEFT JOIN excludedSchools es
