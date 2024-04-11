@@ -790,14 +790,15 @@ BEGIN
 		AND rreksd.CategorySetCode = 'ST1'
 	
 	DROP TABLE #L_ST1
-
-	-- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS 
+	
+	-- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS
 	if not exists(select top 1 * from app.sqlunittest t
 		inner join app.SqlUnitTestCaseResult r
 			on t.SqlUnitTestId = r.SqlUnitTestId
 			and t.SqlUnitTestId = @SqlUnitTestId)
 	begin
-		INSERT INTO App.SqlUnitTestCaseResult (
+		INSERT INTO App.SqlUnitTestCaseResult 
+		(
 			[SqlUnitTestId]
 			,[TestCaseName]
 			,[TestCaseDetails]
@@ -807,12 +808,12 @@ BEGIN
 			,[TestDateTime]
 		)
 		SELECT DISTINCT
-			@SqlUnitTestId
+			 @SqlUnitTestId
 			,'NO TEST RESULTS'
 			,'NO TEST RESULTS'
 			,-1
 			,-1
-			,-1
+			,0
 			,GETDATE()
 	end
 

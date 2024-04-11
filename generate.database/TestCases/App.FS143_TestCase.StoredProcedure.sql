@@ -274,8 +274,6 @@ BEGIN
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN @SYStart AND @SYEnd
 
---temp fix to address bad test records
---		AND ske.StudentIdentifierState not like 'CIID%'
 
 	-- Gather, evaluate & record the results
 	/**********************************************************************
@@ -714,18 +712,17 @@ BEGIN
 			,'NO TEST RESULTS'
 			,-1
 			,-1
-			,-1
+			,0
 			,GETDATE()
 	end
 
 	--check the results
-
-	select *
-	from App.SqlUnitTestCaseResult sr
-		inner join App.SqlUnitTest s
-			on s.SqlUnitTestId = sr.SqlUnitTestId
-	where s.UnitTestName like '%143%'
-	and passed = 0
-	and convert(date, TestDateTime) = convert(date, GETDATE())
+--	select *
+--	from App.SqlUnitTestCaseResult sr
+--		inner join App.SqlUnitTest s
+--			on s.SqlUnitTestId = sr.SqlUnitTestId
+--	where s.UnitTestName like '%143%'
+--	and passed = 0
+--	and convert(date, TestDateTime) = convert(date, GETDATE())
 
 END

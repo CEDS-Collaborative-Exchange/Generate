@@ -752,18 +752,18 @@ BEGIN
 			,'NO TEST RESULTS'
 			,-1
 			,-1
-			,-1
+			,0
 			,GETDATE()
 	end
 
 	--check the results
 
-	-- select *
-	-- from App.SqlUnitTestCaseResult sr
+	--select *
+	--from App.SqlUnitTestCaseResult sr
 	-- 	inner join App.SqlUnitTest s
 	-- 		on s.SqlUnitTestId = sr.SqlUnitTestId
-	-- where s.UnitTestName like '%005%'
-	-- and passed = 0
+	--where s.UnitTestName like '%005%'
+	--and passed = 0
 	--and convert(date, TestDateTime) = convert(date, GETDATE())
 
 END

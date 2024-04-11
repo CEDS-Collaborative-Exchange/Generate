@@ -272,12 +272,11 @@ BEGIN
 			,'NO TEST RESULTS'
 			,-1
 			,-1
-			,-1
+			,0
 			,GETDATE()
 	end
 
 	--check the results
-
 	--select *
 	--from App.SqlUnitTestCaseResult sr
 	--	inner join App.SqlUnitTest s
