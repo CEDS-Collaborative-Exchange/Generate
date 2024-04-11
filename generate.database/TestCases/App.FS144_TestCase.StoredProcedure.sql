@@ -102,7 +102,7 @@ BEGIN
         AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sidt.LeaIdentifierSeaAccountability, '')
         AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sidt.SchoolIdentifierSea, '')
         AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)  
-			BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+			BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEnd)
         AND sidt.IsPrimaryDisability = 1
 	WHERE ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
 		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') NOT IN ('PPPS', 'PPPS_1')
@@ -250,6 +250,31 @@ BEGIN
 		AND rreksd.CategorySetCode = 'CSA'
 
 	DROP TABLE #L_CSA
+
+	-- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS 
+	if not exists(select top 1 * from app.sqlunittest t
+		inner join app.SqlUnitTestCaseResult r
+			on t.SqlUnitTestId = r.SqlUnitTestId
+			and t.SqlUnitTestId = @SqlUnitTestId)
+	begin
+		INSERT INTO App.SqlUnitTestCaseResult (
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT DISTINCT
+			@SqlUnitTestId
+			,'NO TEST RESULTS'
+			,'NO TEST RESULTS'
+			,-1
+			,-1
+			,-1
+			,GETDATE()
+	end
 
 	--check the results
 
