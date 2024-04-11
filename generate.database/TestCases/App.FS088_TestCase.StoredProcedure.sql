@@ -194,7 +194,8 @@ BEGIN
 			END AS SexEdFactsCode
 		, CASE
 			WHEN CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)  
-				BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, GETDATE()) THEN EnglishLearnerStatus
+				BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
+					THEN EnglishLearnerStatus
 			ELSE 0
 			END AS EnglishLearnerStatus
 		, CASE
@@ -259,7 +260,7 @@ BEGIN
         AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
         AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
         AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)  
-			BETWEEN idea.RecordStartDateTime AND ISNULL(idea.RecordEndDateTime, GETDATE())
+			BETWEEN idea.RecordStartDateTime AND ISNULL(idea.RecordEndDateTime, @SYEnd)
         AND idea.IsPrimaryDisability = 1
 	LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  Using a view that resolves multiple race records by returning the value TwoOrMoreRaces
 		ON spr.SchoolYear = @SchoolYear
@@ -962,6 +963,31 @@ BEGIN
 		AND rreksd.CategorySetCode = 'TOT'
 			
 	DROP TABLE #L_TOT
+
+	-- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS 
+	if not exists(select top 1 * from app.sqlunittest t
+		inner join app.SqlUnitTestCaseResult r
+			on t.SqlUnitTestId = r.SqlUnitTestId
+			and t.SqlUnitTestId = @SqlUnitTestId)
+	begin
+		INSERT INTO App.SqlUnitTestCaseResult (
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT DISTINCT
+			@SqlUnitTestId
+			,'NO TEST RESULTS'
+			,'NO TEST RESULTS'
+			,-1
+			,-1
+			,-1
+			,GETDATE()
+	end
 
 	--check the results
 
