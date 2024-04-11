@@ -813,7 +813,7 @@ BEGIN
 			,'NO TEST RESULTS'
 			,-1
 			,-1
-			,NULL
+			,0
 			,GETDATE()
 	end
 
