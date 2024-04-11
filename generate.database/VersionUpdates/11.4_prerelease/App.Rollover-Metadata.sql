@@ -45,8 +45,9 @@ DECLARE csy CURSOR FOR
 			ON fs.GenerateReportId = agr.GenerateReportId
         WHERE SubmissionYear = 2023
             AND ReportCode IN (
-                 'c002','c029'
-                ,'c033','c039','c045'
+                 'c002','c029','c005','c006','c007','c070'
+                ,'c086','c088','c099','c112','c143','c144'
+                ,'c033','c035','c039','c045'
 				,'c050','c052','c054','c059'
 				,'c067','c089','c116','c118'
 				,'c121','c126','c129'

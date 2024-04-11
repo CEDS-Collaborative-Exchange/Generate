@@ -194,7 +194,8 @@ BEGIN
 			END AS SexEdFactsCode
 		, CASE
 			WHEN CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)  
-				BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, GETDATE()) THEN EnglishLearnerStatus
+				BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
+					THEN EnglishLearnerStatus
 			ELSE 0
 			END AS EnglishLearnerStatus
 		, CASE
@@ -259,7 +260,7 @@ BEGIN
         AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
         AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
         AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)  
-			BETWEEN idea.RecordStartDateTime AND ISNULL(idea.RecordEndDateTime, GETDATE())
+			BETWEEN idea.RecordStartDateTime AND ISNULL(idea.RecordEndDateTime, @SYEnd)
         AND idea.IsPrimaryDisability = 1
 	LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  Using a view that resolves multiple race records by returning the value TwoOrMoreRaces
 		ON spr.SchoolYear = @SchoolYear
