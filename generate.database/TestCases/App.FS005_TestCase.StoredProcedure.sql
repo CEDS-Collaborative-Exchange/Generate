@@ -730,34 +730,6 @@ BEGIN
 		AND rreksd.CategorySetCode = 'ST1'
 			
 	DROP TABLE #L_ST1
-<<<<<<< HEAD
--- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS -------------------------
-if not exists(select top 1 * from app.sqlunittest t
-	inner join app.SqlUnitTestCaseResult r
-		on t.SqlUnitTestId = r.SqlUnitTestId
-		and t.SqlUnitTestId = @SqlUnitTestId)
-begin
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT DISTINCT
-				 @SqlUnitTestId
-				,'NO TEST RESULTS'
-				,'NO TEST RESULTS'
-				,-1
-				,-1
-				,NULL
-				,GETDATE()
-end
-----------------------------------------------------------------------------------
-=======
 
 	-- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS 
 	if not exists(select top 1 * from app.sqlunittest t
@@ -780,19 +752,18 @@ end
 			,'NO TEST RESULTS'
 			,-1
 			,-1
-			,-1
+			,0
 			,GETDATE()
 	end
 
->>>>>>> develop
 	--check the results
 
-	-- select *
-	-- from App.SqlUnitTestCaseResult sr
+	--select *
+	--from App.SqlUnitTestCaseResult sr
 	-- 	inner join App.SqlUnitTest s
 	-- 		on s.SqlUnitTestId = sr.SqlUnitTestId
-	-- where s.UnitTestName like '%005%'
-	-- and passed = 0
+	--where s.UnitTestName like '%005%'
+	--and passed = 0
 	--and convert(date, TestDateTime) = convert(date, GETDATE())
 
 END
