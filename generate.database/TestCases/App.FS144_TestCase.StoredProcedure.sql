@@ -272,37 +272,11 @@ BEGIN
 			,'NO TEST RESULTS'
 			,-1
 			,-1
-			,-1
+			,0
 			,GETDATE()
 	end
 
 	--check the results
--- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS -------------------------
-if not exists(select top 1 * from app.sqlunittest t
-	inner join app.SqlUnitTestCaseResult r
-		on t.SqlUnitTestId = r.SqlUnitTestId
-		and t.SqlUnitTestId = @SqlUnitTestId)
-begin
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT DISTINCT
-				 @SqlUnitTestId
-				,'NO TEST RESULTS'
-				,'NO TEST RESULTS'
-				,-1
-				,-1
-				,NULL
-				,GETDATE()
-end
-----------------------------------------------------------------------------------
 	--select *
 	--from App.SqlUnitTestCaseResult sr
 	--	inner join App.SqlUnitTest s
