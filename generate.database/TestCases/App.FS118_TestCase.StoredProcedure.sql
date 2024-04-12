@@ -136,7 +136,6 @@ BEGIN
 		AND isnull(GradeLevel, 'xx') not in ('AE', 'ABE', '13', 'UG', 'AE_1', 'ABE_1', '13_1', 'UG_1')
 		--AND ske.StudentIdentifierState not like ('%CI%') -- JW 4/5/2024 Remarked this line.
 
-
 	--Get the LEAs that should not be reported against
 	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL DROP TABLE #excludedLeas
 
@@ -149,7 +148,6 @@ BEGIN
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
 		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
-
 
 	-- Gather, evaluate & record the results
 	SELECT  
@@ -222,7 +220,6 @@ BEGIN
 	FROM #tempStudents ske
 	JOIN RDS.DimSchoolYears rsy			-- JW 4/5/2024
 		ON ske.SchoolYear = rsy.SchoolYear	-- JW 4/5/2024
-
 	--homeless
 	INNER JOIN Staging.PersonStatus hmStatus -- JW 4/5/2024 changed from LEFT to INNER JOIN
 		ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
@@ -231,18 +228,15 @@ BEGIN
 		AND hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
 	JOIN RDS.DimSeas rds			-- JW 4/5/2024
 		ON hmStatus.Homelessness_StatusStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEnd) -- JW 4/5/2024
-	
 	--age
-		JOIN RDS.DimAges rda			-- JW 4/5/2024
-			ON RDS.Get_Age(ske.Birthdate, @SYStart) = rda.AgeValue			-- JW 4/5/2024
-
+	JOIN RDS.DimAges rda			-- JW 4/5/2024
+		ON RDS.Get_Age(ske.Birthdate, @SYStart) = rda.AgeValue			-- JW 4/5/2024
 	--homeless nighttime residence
 	LEFT JOIN Staging.PersonStatus hmNight
 		ON ske.StudentIdentifierState = hmNight.StudentIdentifierState
 		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmNight.LeaIdentifierSeaAccountability, '')
 		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmNight.SchoolIdentifierSea, '')
 		AND hmNight.HomelessNightTimeResidence_StartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
-
 	--disability status
 	LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
 		ON ske.StudentIdentifierState = idea.StudentIdentifierState
@@ -281,10 +275,6 @@ BEGIN
 	WHERE 
 		ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') BETWEEN @SYStart AND @SYEnd
 
-
-		--select * from #C118Staging where StudentIdentifierState = 'CID4771118'
-		--select * from #C118Staging where LeaIdentifierSeaAccountability = '150' and RaceEdFactsCode = 'WH7'
-		--return
 
 	/**********************************************************************
 		Test Case 1:
@@ -578,8 +568,6 @@ BEGIN
 	where RaceEdFactsCode is not null -- JW 4/5/2024
 	GROUP BY RaceEdFactsCode
 		
-
-
 	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
@@ -710,7 +698,6 @@ BEGIN
 	GROUP BY HomelessPrimaryNighttimeResidenceEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 
-
 	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
 		, [TestCaseName]
@@ -833,7 +820,6 @@ BEGIN
 		AND rreksc.CategorySetCode = 'CSD'
 			
 	DROP TABLE #L_CSD
-
 
 	/**********************************************************************
 		Test Case 5:
@@ -1065,6 +1051,31 @@ BEGIN
 			
 	DROP TABLE #L_TOT
 
+	-- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS
+	if not exists(select top 1 * from app.sqlunittest t
+		inner join app.SqlUnitTestCaseResult r
+			on t.SqlUnitTestId = r.SqlUnitTestId
+			and t.SqlUnitTestId = @SqlUnitTestId)
+	begin
+		INSERT INTO App.SqlUnitTestCaseResult (
+			[SqlUnitTestId]
+			, [TestCaseName]
+			, [TestCaseDetails]
+			, [ExpectedResult]
+			, [ActualResult]
+			, [Passed]
+			, [TestDateTime]
+		)
+		SELECT DISTINCT
+			@SqlUnitTestId
+			, 'NO TEST RESULTS'
+			, 'NO TEST RESULTS'
+			, -1
+			, -1
+			, 0
+			, GETDATE()
+	end
+
 	--check the results
 
 	--select *
@@ -1073,5 +1084,6 @@ BEGIN
 	--		on s.SqlUnitTestId = sr.SqlUnitTestId
 	--where s.TestScope = 'FS118'
 	--and passed = 0
+	--and convert(date, TestDateTime) = convert(date, GETDATE())
 
 END

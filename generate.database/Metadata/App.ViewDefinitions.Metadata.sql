@@ -5,6 +5,7 @@ begin try
  
 	begin transaction
  
+ 
 	declare @sppaprSubmissionReportTypeId int, @edfactsSubmissionReportTypeId int , @dataPopulationReportTypeId int, @seaId int, @leaId int, @schId int
 	select @seaId=OrganizationLevelId from app.OrganizationLevels where LevelCode='sea'
 	select @leaId=OrganizationLevelId from app.OrganizationLevels where LevelCode='lea'
@@ -57,8 +58,8 @@ begin try
 		--print @reportTypeId
 	---------------Filtering CategorySets base on Report type and iterating to build categoryset ViewDefinition for reports 
 			DECLARE CategorySets_cursor CURSOR FOR
-			SELECT distinct A.GenerateReportId, a.CategorySetId, a.CategorySetCode, OrganizationLevelId, c.GenerateReportTypeId, c.ReportCode FROM app.CategorySets a
-				LEFT JOIN app.CategorySet_Categories b ON a.CategorySetId=b.CategorySetId 
+			SELECT distinct A.GenerateReportId, a.CategorySetId, a.CategorySetCode, OrganizationLevelId, c.GenerateReportTypeId, c.ReportCode 
+			FROM app.CategorySets a
 				INNER JOIN app.GenerateReports c on c.GenerateReportId=a.GenerateReportId 
 				WHERE GenerateReportTypeId= @reportTypeId or c.ReportCode = 'exitspecialeducation'
 			OPEN CategorySets_cursor
@@ -272,7 +273,7 @@ begin try
 							from app.CategorySet_Categories csc
 							inner join app.Categories c on csc.CategoryId = c.CategoryId
 							left outer join app.GenerateReportDisplayTypes d on csc.GenerateReportDisplayTypeID = d.GenerateReportDisplayTypeId
-							WHERE csc.CategorySetId = @categorySetId 			
+							WHERE csc.CategorySetId = @categorySetId and c.CategoryCode <> 'NOCATS'		
 			
 					OPEN Categories_cursor
 					FETCH NEXT FROM Categories_cursor into @cattId,  @categoryName, @categoryCode, @displayType
@@ -366,7 +367,7 @@ begin try
 						IF (@categorySets = 'TOT')
 						BEGIN
 							SET @fields=@fields+ ',{"binding":"tableTypeAbbrv","header":"Lunch Program Total","dataType":2,"aggregate":0,"showAs":0,"descending":false,"format":"n0","wordWrap":true,"isContentHtml":false}'
-							SET @colFields = @colFields + ',"Lunch Program Total"'
+							SET @colFields = @colFields + '"Lunch Program Total"'
 						END
 					END
 

@@ -1,5 +1,5 @@
 Param(
-  [string] $version = "12.0_prerelease",
+  [string] $version = "11.4_prerelease",
   [string] $sqlServer = "(localdb)\MSSQLLocalDB",
   [string] $db = "generate",
   [string] $user,
@@ -10,6 +10,7 @@ Echo "Server = $sqlServer"
 Echo "Database = $db"
 Echo "User = $user"
 Echo "Password = $password"
+
 
 # Example Usage:
 # PS RunDatabaseScripts.ps1 '3.1' '(LocalDb)\MSSQLLocalDB'

@@ -96,15 +96,16 @@ BEGIN
 			ON sd.StudentIdentifierState = ske.StudentIdentifierState
 			AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
-			AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') between ISNULL(ske.EnrollmentEntryDate, '1900-01-01') and ISNULL (ske.EnrollmentExitDate, GETDATE()) 
+			AND ISNULL(sd.DisciplinaryActionStartDate, @SYStart) 
+				between ISNULL(ske.EnrollmentEntryDate, @SYStart) and ISNULL (ske.EnrollmentExitDate, @SYEnd) 
 		JOIN Staging.ProgramParticipationSpecialEducation sppe
 			ON sppe.StudentIdentifierState = sd.StudentIdentifierState
 			AND ISNULL(sppe.LeaIdentifierSeaAccountability, '') = ISNULL(sd.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sppe.SchoolIdentifierSea, '') = ISNULL(sd.SchoolIdentifierSea, '')
 			--Discipline Date within Program Participation range
-			AND ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-				BETWEEN ISNULL(sppe.ProgramParticipationBeginDate, CAST('07/01/' + CAST(2023 - 1 AS VARCHAR(4)) AS DATE)) 
-				AND ISNULL(sppe.ProgramParticipationEndDate, CAST('06/30/' + CAST(2023 AS VARCHAR(4)) AS DATE))
+			AND ISNULL(sd.DisciplinaryActionStartDate, @SYStart) 
+				BETWEEN ISNULL(sppe.ProgramParticipationBeginDate, @SYStart) 
+				AND ISNULL(sppe.ProgramParticipationEndDate, @SYEnd)
 			GROUP BY ske.StudentIdentifierState 
 			HAVING SUM(CAST(sd.DurationOfDisciplinaryAction AS DECIMAL(6, 3))) >= 0.5
 
@@ -132,7 +133,7 @@ BEGIN
 	SELECT DISTINCT LEAIdentifierSea
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
-		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
 
 	SELECT DISTINCT  
 		ske.StudentIdentifierState
@@ -212,6 +213,7 @@ BEGIN
 						END
 			ELSE 'NLEP'
 			END AS EnglishLearnerStatusEdFactsCode
+		, sd.DisciplineIdentifier		
 		, sd.DisciplineMethodOfCwd
         , sd.DisciplinaryActionTaken
         , sd.IdeaInterimRemovalReason
@@ -239,7 +241,7 @@ BEGIN
         AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sidt.LeaIdentifierSeaAccountability, '')
         AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sidt.SchoolIdentifierSea, '')
         AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)  
-			BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, GETDATE())
+			BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEnd)
         AND sidt.IsPrimaryDisability = 1
 	LEFT JOIN Staging.PersonStatus sps
 		ON sps.StudentIdentifierState = sd.StudentIdentifierState
@@ -273,8 +275,6 @@ BEGIN
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
 			BETWEEN @SYStart AND @SYEnd
 
---temp fix to address bad test records
---		AND ske.StudentIdentifierState not like 'CIID%'
 
 	-- Gather, evaluate & record the results
 	/**********************************************************************
@@ -347,7 +347,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.RaceEdFactsCode = rreksd.RACE
 		AND rreksd.ReportCode = 'C143' 
-		AND rreksd.ReportYear = 2023--@SchoolYear
+		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSB'
 
@@ -692,14 +692,38 @@ BEGIN
 			
 	DROP TABLE #L_ST1
 
-	--check the results
+	-- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS 
+	if not exists(select top 1 * from app.sqlunittest t
+		inner join app.SqlUnitTestCaseResult r
+			on t.SqlUnitTestId = r.SqlUnitTestId
+			and t.SqlUnitTestId = @SqlUnitTestId)
+	begin
+		INSERT INTO App.SqlUnitTestCaseResult (
+			[SqlUnitTestId]
+			, [TestCaseName]
+			, [TestCaseDetails]
+			, [ExpectedResult]
+			, [ActualResult]
+			, [Passed]
+			, [TestDateTime]
+		)
+		SELECT DISTINCT
+			@SqlUnitTestId
+			, 'NO TEST RESULTS'
+			, 'NO TEST RESULTS'
+			, -1
+			, -1
+			, 0
+			, GETDATE()
+	end
 
-	select *
-	from App.SqlUnitTestCaseResult sr
-		inner join App.SqlUnitTest s
-			on s.SqlUnitTestId = sr.SqlUnitTestId
-	where s.UnitTestName like '%143%'
-	and passed = 0
-	and convert(date, TestDateTime) = convert(date, GETDATE())
+	--check the results
+--	select *
+--	from App.SqlUnitTestCaseResult sr
+--		inner join App.SqlUnitTest s
+--			on s.SqlUnitTestId = sr.SqlUnitTestId
+--	where s.UnitTestName like '%143%'
+--	and passed = 0
+--	and convert(date, TestDateTime) = convert(date, GETDATE())
 
 END
