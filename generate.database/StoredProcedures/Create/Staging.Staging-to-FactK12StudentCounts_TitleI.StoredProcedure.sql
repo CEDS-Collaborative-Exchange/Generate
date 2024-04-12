@@ -3,7 +3,7 @@ Author: AEM Corp
 Date:	2/20/2023
 Description: Migrates Title I Data from Staging to RDS.FactK12StudentCounts
 
-NOTE: This Stored Procedure processes files: 037, 134
+NOTE: This Stored Procedure processes files: 037, 134, 222
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_TitleI]
 	@SchoolYear SMALLINT
@@ -19,6 +19,8 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#vwMigrantStatuses') IS NOT NULL DROP TABLE #vwMigrantStatuses
 		IF OBJECT_ID(N'tempdb..#vwTitleIStatuses') IS NOT NULL DROP TABLE #vwTitleIStatuses
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
+		IF OBJECT_ID(N'tempdb..#vwFosterCareStatuses') IS NOT NULL DROP TABLE #vwFosterCareStatuses
+
 
 	BEGIN TRY
 
@@ -41,32 +43,32 @@ BEGIN
 		FROM RDS.vwDimGradeLevels
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwGradeLevels 
-			ON #vwGradeLevels (GradeLevelTypeDescription, GradeLevelMap);
+		--CREATE CLUSTERED INDEX ix_tempvwGradeLevels 
+		--	ON #vwGradeLevels (GradeLevelTypeDescription, GradeLevelMap);
 
 		SELECT *
 		INTO #vwRaces
 		FROM RDS.vwDimRaces
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwRaces 
-			ON #vwRaces (RaceMap);
+		--CREATE CLUSTERED INDEX ix_tempvwRaces 
+		--	ON #vwRaces (RaceMap);
 
 		SELECT *
 		INTO #vwHomelessnessStatuses
 		FROM RDS.vwDimHomelessnessStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwHomelessnessStatuses
-			ON #vwHomelessnessStatuses (HomelessnessStatusCode, HomelessPrimaryNighttimeResidenceCode, HomelessUnaccompaniedYouthStatusCode);
+		--CREATE CLUSTERED INDEX ix_tempvwHomelessnessStatuses
+		--	ON #vwHomelessnessStatuses (HomelessnessStatusCode, HomelessPrimaryNighttimeResidenceCode, HomelessUnaccompaniedYouthStatusCode);
 
 		SELECT *
 		INTO #vwMigrantStatuses
 		FROM RDS.vwDimMigrantStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwMigrantStatuses
-			ON #vwMigrantStatuses (MigrantStatusCode, MigrantEducationProgramEnrollmentTypeCode, ContinuationOfServicesReasonCode, ConsolidatedMepFundsStatusCode, MigrantEducationProgramServicesTypeCode, MigrantPrioritizedForServicesCode);
+		--CREATE CLUSTERED INDEX ix_tempvwMigrantStatuses
+		--	ON #vwMigrantStatuses (MigrantStatusCode, MigrantEducationProgramEnrollmentTypeCode, ContinuationOfServicesReasonCode, ConsolidatedMepFundsStatusCode, MigrantEducationProgramServicesTypeCode, MigrantPrioritizedForServicesCode);
 
 		SELECT *
 		INTO #vwTitleIStatuses
@@ -75,18 +77,23 @@ BEGIN
 		AND TitleIProgramTypeCode in ('SchoolwideProgram','TargetedAssistanceProgram')
 		AND TitleISchoolStatusCode in ('SWELIGSWPROG', 'TGELGBTGPROG')
 
-		CREATE CLUSTERED INDEX ix_tempvwTitleIStatuses
-			ON #vwTitleIStatuses (TitleIInstructionalServicesCode, TitleIProgramTypeCode, TitleISchoolStatusCode, TitleISupportServicesCode);
+		--CREATE CLUSTERED INDEX ix_tempvwTitleIStatuses
+		--	ON #vwTitleIStatuses (TitleIInstructionalServicesCode, TitleIProgramTypeCode, TitleISchoolStatusCode, TitleISupportServicesCode);
+
+		-- FOSTER CARE -------------------------------------------
+		SELECT * 
+		INTO #vwFosterCareStatuses
+		FROM RDS.vwDimEconomicallyDisadvantagedStatuses
+		WHERE SchoolYear = @SchoolYear
+		--------------------------------------------------------------
+
+
 
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'titleI'	--DimFactTypeId = 12
 
-		--Clear the Fact table of the data about to be migrated  
-		DELETE RDS.FactK12StudentCounts
-		WHERE SchoolYearId = @SchoolYearId 
-			AND FactTypeId = @FactTypeId
 
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts
@@ -157,7 +164,7 @@ BEGIN
 			, ISNULL(rdels.DimEnglishLearnerStatusId, -1)				EnglishLearnerStatusId				
 			, ISNULL(rdhs.DimHomelessnessStatusId, -1)					HomelessnessStatusId					
 			, -1														EconomicallyDisadvantagedStatusId		
-			, -1														FosterCareStatusId					
+			, ISNULL(rdvfc.DimFosterCareStatusId, -1)					FosterCareStatusId					
 			, -1														ImmigrantStatusId						
 			, -1														PrimaryDisabilityTypeId				
 			, -1														SpecialEducationServicesExitDateId	
@@ -170,14 +177,22 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sko.SchoolIdentifierSea, '')
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
+		JOIN RDS.DimSeas rds
+			ON ske.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
+		JOIN RDS.DimPeople rdp
+			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
+			AND rdp.IsActiveK12Student = 1
+			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
+			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
+			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
+			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
+			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
 			AND ske.EnrollmentEntryDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
-		JOIN RDS.DimSeas rds
-			ON ske.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--title I
 		JOIN Staging.ProgramParticipationTitleI title1
 			ON ske.StudentIdentifierState = title1.StudentIdentifierState
@@ -190,6 +205,12 @@ BEGIN
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+	--foster care
+		JOIN Staging.PersonStatus FosterCareStatus
+			ON ske.StudentIdentifierState = FosterCareStatus.StudentIdentifierState
+			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(FosterCareStatus.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(FosterCareStatus.SchoolIdentifierSea, '')
+			AND FosterCareStatus.FosterCare_ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 	--idea disability status
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
 			ON ske.StudentIdentifierState = idea.StudentIdentifierState
@@ -227,6 +248,12 @@ BEGIN
 			AND rdhs.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
 			AND rdhs.HomelessUnaccompaniedYouthStatusCode = 'MISSING'
 			AND rdhs.HomelessServicedIndicatorCode = 'MISSING' 
+
+	--foster care (RDS)
+		LEFT JOIN RDS.vwDimFosterCareStatuses rdvfc
+			ON ISNULL(CAST(FosterCareStatus.ProgramType_FosterCare AS SMALLINT), -1) = ISNULL(CAST(rdvfc.ProgramParticipationFosterCareMap AS SMALLINT), -1)
+
+
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON ske.SchoolYear = rdis.SchoolYear
@@ -258,15 +285,11 @@ BEGIN
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
-		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND rdp.IsActiveK12Student = 1
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
-			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
-			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 
+	--Clear the Fact table of the data about to be migrated  
+		DELETE RDS.FactK12StudentCounts
+		WHERE SchoolYearId = @SchoolYearId 
+			AND FactTypeId = @FactTypeId
 
 	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (
@@ -342,7 +365,8 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
-		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_TitleI', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', 'FactK12StudentCounts', ERROR_MESSAGE(), 1, NULL, GETDATE())
+	insert into app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
 	END CATCH
 
 END

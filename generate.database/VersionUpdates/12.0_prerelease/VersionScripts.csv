@@ -1,3 +1,5 @@
 VersionUpdates\\12.0_prerelease,Restore 11.4.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql
 VersionUpdates\\12.0_prerelease,UpdateDbVersion.sql,0
 
