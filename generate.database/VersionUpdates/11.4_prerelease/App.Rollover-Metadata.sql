@@ -27,6 +27,7 @@ inner join app.CategorySet_Categories csc on cs.CategorySetId = csc.CategorySetI
 inner join app.Categories c on csc.CategoryId = c.CategoryId
 where SubmissionYear = 2024
 
+
 delete from app.CategorySets where SubmissionYear = 2024
 
 delete fsfc
