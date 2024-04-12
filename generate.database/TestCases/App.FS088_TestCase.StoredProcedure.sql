@@ -83,6 +83,7 @@ BEGIN
 	select @cutOffDay = SUBSTRING(@customFactTypeDate, CHARINDEX('/', @customFactTypeDate) + 1, 2)
 
     select @ChildCountDate = convert(varchar, @CutoffMonth) + '/' + convert(varchar, @CutoffDay) + '/' + convert(varchar, @SchoolYear -1)
+
 	--Get the LEAs that should not be reported against
 	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL
 	DROP TABLE #excludedLeas
@@ -95,7 +96,7 @@ BEGIN
 	SELECT DISTINCT LEAIdentifierSea
 	FROM Staging.K12Organization
 	WHERE LEA_IsReportedFederally = 0
-		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING','Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING_1')
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
 
 	--create the race view to handle the conversion to Multiple Races
 	IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
@@ -107,8 +108,8 @@ BEGIN
 
 	CREATE CLUSTERED INDEX ix_tempvwRaces ON #vwRaces (RaceMap);
 
-	IF OBJECT_ID('tempdb..#C088staging_LEA') IS NOT NULL
-	DROP TABLE #C088staging_LEA
+	IF OBJECT_ID('tempdb..#C088staging') IS NOT NULL
+	DROP TABLE #C088staging
 		IF OBJECT_ID('tempdb..#C088staging') IS NOT NULL
 	DROP TABLE #C088staging
 
@@ -618,36 +619,6 @@ BEGIN
 	----------------------------------------
 	--- LEA level tests					 ---
 	----------------------------------------
-	--Using a separate Staging table for LEA to only include the OPEN LEAs
-	Select * 
-	INTO #C088staging_LEA
-	FROM #C088staging  s
-	JOIN RDS.DimLeas o
-	ON LeaIdentifierSeaAccountability = o.LeaIdentifierSea
-	AND DisciplinaryActionStartDate BETWEEN o.RecordStartDateTime AND ISNULL(o.RecordEndDateTime, @SYEnd)
-		and o.ReportedFederally = 1 
-		and o.DimLeaId <> -1 
-		and o.LEAOperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING') AND CONVERT(date, o.OperationalStatusEffectiveDate, 101) between CONVERT(date, '07/01/2022', 101) AND CONVERT(date, '06/30/2023', 101)
-
-	UPDATE s
-	SET s.RemovalLength = tmp.RemovalLength
-	FROM #C088staging_LEA s
-		INNER JOIN (
-			SELECT StudentIdentifierState
-				,CASE 
-					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 0.5 
-						and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) < 1.5 THEN 'LTOREQ1'
-					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) >= 1.5 
-						and sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) <= 10 THEN '2TO10'
-					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
-					ELSE 'MISSING'
-				END AS RemovalLength
-			FROM #C088Staging_LEA 
-			where ISNULL(IDEADISABILITYTYPE, 'MISSING') <> 'MISSING' -- For CSA only because the studentcount is group by StudentIdentifierState-, IDEADISABILITYTYPE
-			GROUP BY StudentIdentifierState--, IDEADISABILITYTYPE
-		) tmp
-			ON s.StudentIdentifierState =  tmp.StudentIdentifierState
-
 	/**********************************************************************
 		Test Case 7:
 		CSA at the LEA level - Student Count by Removal Length (IDEA) by Disability Category (IDEA)
@@ -658,7 +629,7 @@ BEGIN
 		, IDEADISABILITYTYPE
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSA
-	FROM #C088staging_LEA  s
+	FROM #C088staging  s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
@@ -707,7 +678,7 @@ BEGIN
 
 	UPDATE s
 	SET s.RemovalLength = tmp.RemovalLength
-	FROM #C088staging_LEA s
+	FROM #C088staging s
 		INNER JOIN (
 			SELECT StudentIdentifierState
 				,CASE 
@@ -718,7 +689,7 @@ BEGIN
 					WHEN sum(cast(DurationOfDisciplinaryAction as decimal(5,2))) > 10 THEN 'GREATER10'
 					ELSE 'MISSING'
 				END AS RemovalLength
-			FROM #C088Staging_LEA 
+			FROM #C088staging 
 			--where ISNULL(IDEADISABILITYTYPE, 'MISSING') <> 'MISSING' -- For CSA only
 			GROUP BY StudentIdentifierState--, IDEADISABILITYTYPE
 		) tmp
@@ -730,7 +701,7 @@ BEGIN
 		, RaceEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSB
-	FROM #C088staging_LEA  s
+	FROM #C088staging  s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
@@ -781,7 +752,7 @@ BEGIN
 		, SexEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSC
-	FROM #C088staging_LEA  s
+	FROM #C088staging  s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
@@ -833,7 +804,7 @@ BEGIN
 		, EnglishLearnerStatusEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSD
-	FROM #C088staging_LEA  s
+	FROM #C088staging  s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
@@ -883,7 +854,7 @@ BEGIN
 		, RemovalLength
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_ST1
-	FROM #C088staging_LEA  s
+	FROM #C088staging  s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
@@ -929,7 +900,7 @@ BEGIN
 		s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_TOT
-	FROM #C088staging_LEA  s
+	FROM #C088staging  s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
@@ -964,33 +935,33 @@ BEGIN
 			
 	DROP TABLE #L_TOT
 
-	-- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS
+	-- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS 
 	if not exists(select top 1 * from app.sqlunittest t
 		inner join app.SqlUnitTestCaseResult r
 			on t.SqlUnitTestId = r.SqlUnitTestId
 			and t.SqlUnitTestId = @SqlUnitTestId)
 	begin
-		INSERT INTO App.SqlUnitTestCaseResult 
-		(
+		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
-			,[TestCaseName]
-			,[TestCaseDetails]
-			,[ExpectedResult]
-			,[ActualResult]
-			,[Passed]
-			,[TestDateTime]
+			, [TestCaseName]
+			, [TestCaseDetails]
+			, [ExpectedResult]
+			, [ActualResult]
+			, [Passed]
+			, [TestDateTime]
 		)
 		SELECT DISTINCT
-			 @SqlUnitTestId
-			,'NO TEST RESULTS'
-			,'NO TEST RESULTS'
-			,-1
-			,-1
-			,0
-			,GETDATE()
+			@SqlUnitTestId
+			, 'NO TEST RESULTS'
+			, 'NO TEST RESULTS'
+			, -1
+			, -1
+			, 0
+			, GETDATE()
 	end
 
 	--check the results
+
 	--select *
 	--from App.SqlUnitTestCaseResult sr
 	--	inner join App.SqlUnitTest s
