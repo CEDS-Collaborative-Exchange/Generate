@@ -5,6 +5,7 @@ begin try
  
 	begin transaction
  
+ 
 	declare @sppaprSubmissionReportTypeId int, @edfactsSubmissionReportTypeId int , @dataPopulationReportTypeId int, @seaId int, @leaId int, @schId int
 	select @seaId=OrganizationLevelId from app.OrganizationLevels where LevelCode='sea'
 	select @leaId=OrganizationLevelId from app.OrganizationLevels where LevelCode='lea'
