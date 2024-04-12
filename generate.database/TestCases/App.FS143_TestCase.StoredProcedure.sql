@@ -213,6 +213,7 @@ BEGIN
 						END
 			ELSE 'NLEP'
 			END AS EnglishLearnerStatusEdFactsCode
+		, sd.DisciplineIdentifier		
 		, sd.DisciplineMethodOfCwd
         , sd.DisciplinaryActionTaken
         , sd.IdeaInterimRemovalReason
@@ -699,21 +700,21 @@ BEGIN
 	begin
 		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]
-			,[TestCaseName]
-			,[TestCaseDetails]
-			,[ExpectedResult]
-			,[ActualResult]
-			,[Passed]
-			,[TestDateTime]
+			, [TestCaseName]
+			, [TestCaseDetails]
+			, [ExpectedResult]
+			, [ActualResult]
+			, [Passed]
+			, [TestDateTime]
 		)
 		SELECT DISTINCT
 			@SqlUnitTestId
-			,'NO TEST RESULTS'
-			,'NO TEST RESULTS'
-			,-1
-			,-1
-			,0
-			,GETDATE()
+			, 'NO TEST RESULTS'
+			, 'NO TEST RESULTS'
+			, -1
+			, -1
+			, 0
+			, GETDATE()
 	end
 
 	--check the results

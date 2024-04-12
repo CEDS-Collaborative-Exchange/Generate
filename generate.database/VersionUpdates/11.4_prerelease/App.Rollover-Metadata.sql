@@ -12,7 +12,6 @@ EXEC App.Rollover_Previous_Year_Metadata 'c035' , 2020, 2021
 EXEC App.Rollover_Previous_Year_Metadata 'c035' , 2021, 2022
 
 
-
 -- Delete all 2024 metadata
 delete co
 from app.CategorySets cs 
@@ -47,7 +46,7 @@ DECLARE csy CURSOR FOR
             AND ReportCode IN (
                  'c002','c029','c005','c006','c007','c070'
                 ,'c086','c088','c099','c112','c143','c144'
-                ,'c033','c035','c039','c045'
+                ,'c009','c033','c035','c039','c045'
 				,'c050','c052','c054','c059'
 				,'c067','c089','c116','c118'
 				,'c121','c126','c129'
@@ -66,7 +65,7 @@ DECLARE csy CURSOR FOR
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        EXEC App.Rollover_Previous_Year_Metadata @reportCode , 2023, 2024
+        EXEC App.Rollover_Previous_Year_Metadata @reportCode, 2023, 2024
     
         FETCH NEXT FROM csy INTO @reportCode
     END
