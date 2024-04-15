@@ -2,7 +2,7 @@
 	AS
 		SELECT	DISTINCT 
 			toggle.SchoolYear
-			, toggle.MemebershipDate
+			, toggle.MembershipDate
 			, enrollment.StudentIdentifierState
 			, enrollment.LEAIdentifierSeaAccountability
 			, enrollment.SchoolIdentifierSea
@@ -28,7 +28,7 @@
 
 		FROM 
 			(
-				SELECT max(sy.Schoolyear) AS SchoolYear, CAST(CAST(max(sy.Schoolyear) - 1 AS CHAR(4)) + '-' + CAST(MONTH(tr.ResponseValue) AS VARCHAR(2)) + '-' + CAST(DAY(tr.ResponseValue) AS VARCHAR(2)) AS DATE) AS MemebershipDate
+				SELECT max(sy.Schoolyear) AS SchoolYear, CAST(CAST(max(sy.Schoolyear) - 1 AS CHAR(4)) + '-' + CAST(MONTH(tr.ResponseValue) AS VARCHAR(2)) + '-' + CAST(DAY(tr.ResponseValue) AS VARCHAR(2)) AS DATE) AS MembershipDate
 				FROM App.ToggleQuestions tq
 				JOIN App.ToggleResponses tr
 					ON tq.ToggleQuestionId = tr.ToggleQuestionId
@@ -41,19 +41,19 @@
 			) toggle
 		JOIN Staging.K12Enrollment								enrollment		
 			on toggle.SchoolYear = enrollment.SchoolYear
-			AND toggle.MemebershipDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND toggle.MembershipDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 		LEFT JOIN Staging.K12PersonRace							race
 				ON		enrollment.SchoolYear											=	race.SchoolYear
 				AND		enrollment.StudentIdentifierState								=	race.StudentIdentifierState
 				AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')			=	ISNULL(race.LEAIdentifierSeaAccountability, '')
 				AND		ISNULL(enrollment.SchoolIdentifierSea, '')						=	ISNULL(race.SchoolIdentifierSea, '')
-				AND		toggle.MemebershipDate BETWEEN race.RecordStartDateTime AND ISNULL(race.RecordEndDateTime, GETDATE())
+				AND		toggle.MembershipDate BETWEEN race.RecordStartDateTime AND ISNULL(race.RecordEndDateTime, GETDATE())
 
 		LEFT JOIN Staging.PersonStatus							ecodis
 				ON		ecodis.StudentIdentifierState								    =	enrollment.StudentIdentifierState
 				AND		ISNULL(ecodis.LEAIdentifierSeaAccountability, '')			    =	ISNULL(enrollment.LEAIdentifierSeaAccountability, '')
 				AND		ISNULL(ecodis.SchoolIdentifierSea, '')						    =	ISNULL(enrollment.SchoolIdentifierSea, '')
-				AND		toggle.MemebershipDate BETWEEN EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusEndDate, GETDATE())
+				AND		toggle.MembershipDate BETWEEN EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusEndDate, GETDATE())
 
 		--uncomment/modify the where clause conditions as necessary for validation
 		WHERE 1 = 1
