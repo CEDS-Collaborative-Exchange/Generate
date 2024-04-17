@@ -213,7 +213,7 @@ BEGIN
 						END
 			ELSE 'NLEP'
 			END AS EnglishLearnerStatusEdFactsCode
-		, sd.DisciplineIdentifier		
+		, sd.IncidentIdentifier		
 		, sd.DisciplineMethodOfCwd
         , sd.DisciplinaryActionTaken
         , sd.IdeaInterimRemovalReason
