@@ -493,10 +493,6 @@ BEGIN
 			if @reportLevel <> 'SEA' and @categorySetCode = 'TOT' set @includeZeroCounts = 1
 		end
 
-	if @reportCode in ('c033')
-	begin
-		set @includeZeroCounts = 1
-	end
 
 	if @reportLevel = 'sea' AND @reportCode in ('c005','c006','c007','c088','c143','c144')
 	begin
