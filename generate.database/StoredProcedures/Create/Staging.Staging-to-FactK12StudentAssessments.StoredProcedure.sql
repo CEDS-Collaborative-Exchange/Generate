@@ -6,6 +6,7 @@ Description: Migrates Assessment Data from Staging to RDS.FactK12StudentAssessme
 NOTE: This Stored Procedure processes files: 175, 178, 179, 185, 188, 189
 
 JW 11/16/2023: Made changes to address join issues
+JW 4/10/2024: Added NorD Logic
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentAssessments]
 	@SchoolYear SMALLINT
@@ -33,6 +34,9 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#tempAssessmentAdministrations') IS NOT NULL DROP TABLE #tempAssessmentAdministrations
 		IF OBJECT_ID(N'tempdb..#tempLeas') IS NOT NULL DROP TABLE #tempLeas
 		IF OBJECT_ID(N'tempdb..#tempK12Schools') IS NOT NULL DROP TABLE #tempK12Schools
+
+		IF OBJECT_ID(N'tempdb..#tempNorDStudents') IS NOT NULL DROP TABLE #tempNorDStudents
+
 
 	BEGIN TRY
 
@@ -65,6 +69,8 @@ BEGIN
 
 		CREATE NONCLUSTERED INDEX ix_tempvwAssessments -- JW
 			ON #vwAssessments (AssessmentTitle, AssessmentTypeMap, AssessmentTypeAdministeredMap, AssessmentTypeAdministeredToEnglishLearnersMap);
+
+			select * from rds.vwDimAssessments
 
 	-- #vwAssessmentResults
 		SELECT *
@@ -310,6 +316,24 @@ BEGIN
 		CREATE INDEX IX_tempMilitaryStatus 
 			ON #tempMilitaryStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, MilitaryConnected_StatusStartDate, MilitaryConnected_StatusEndDate)
 
+	-- #tempNorDStudents
+		select sppnord.StudentIdentifierState, sppnord.LeaIdentifierSeaAccountability, vw.DimNOrDStatusId
+		into #tempNorDStudents
+		from Staging.ProgramParticipationNorD sppnord
+		inner join Staging.AssessmentResult sar
+			on sppnord.StudentIdentifierState = sar.StudentIdentifierState
+			and sppnord.LeaIdentifierSeaAccountability = sar.LeaIdentifierSeaAccountability
+			and sar.SchoolIdentifierSea = sppnord.SchoolIdentifierSea
+			and sppnord.ProgramParticipationBeginDate <= sar.AssessmentAdministrationFinishDate
+			and isnull(sppnord.ProgramParticipationEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate 
+		inner join RDS.vwDimNOrDStatuses vw
+			on vw.SchoolYear = @SchoolYear
+			and vw.NeglectedOrDelinquentProgramTypeMap = sppnord.NeglectedOrDelinquentProgramType
+
+		CREATE INDEX IX_NorD 
+			ON #tempNorDStudents(StudentIdentifierState, LeaIdentifierSeaAccountability)
+
+
 	--Set the Fact Type	
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
@@ -396,7 +420,11 @@ BEGIN
 			, ISNULL(rdkd.DimK12DemographicId, -1)							K12DemographicId						
 			, ISNULL(migrant.DimMigrantStatusId, -1)						MigrantStatusId						
 			, ISNULL(military.DimMilitaryStatusId, -1)						MilitaryStatusId						
-			, -1															NOrDStatusId							
+			, case 
+				when rda.AssessmentAcademicSubjectCode in ('01166', '13373') 
+				then ISNULL(nord.DimNOrDStatusId, -1) 
+				else -1 
+			  end															NOrDStatusId							
 			, -1															TitleIStatusId						
 			, -1															TitleIIIStatusId						
 			, -1															FactK12StudentAssessmentAccommodationId
@@ -536,8 +564,20 @@ BEGIN
 						WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 						ELSE 'Missing'
 					END
+		-- NorD ---------------------------------------------------------------------
+			LEFT JOIN #tempNorDStudents NorD
+				on NorD.StudentIdentifierState = sar.StudentIdentifierState
+				and NorD.LeaIdentifierSeaAccountability = sar.LeaIdentifierSeaAccountability
+				
+
 			WHERE 
 			sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+
+
+
+
+
+
 
 	--Final insert into RDS.FactK12StudentAssessments table
 		DELETE RDS.FactK12StudentAssessments
