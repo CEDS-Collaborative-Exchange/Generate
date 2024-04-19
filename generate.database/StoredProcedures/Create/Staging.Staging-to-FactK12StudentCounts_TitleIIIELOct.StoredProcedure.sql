@@ -178,15 +178,13 @@ BEGIN
 			, -1												SpecialEducationServicesExitDateId	
 			, -1												MigrantStudentQualifyingArrivalDateId	
 			, -1												LastQualifyingMoveDateId				
-		
 	--select count(distinct ske.StudentIdentifierState)	
 		FROM Staging.K12Enrollment ske
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 	-- seas (rds)
 		JOIN RDS.DimSeas rds
-			ON convert(date, rds.RecordStartDateTime)  <= @ReportingDate
-			AND ISNULL(convert(date, rds.RecordEndDateTime), @ReportingDate) >= @ReportingDate
+			ON @ReportingDate between convert(date, rds.RecordStartDateTime) and ISNULL(convert(date, rds.RecordEndDateTime), @SYEndDate)
 	-- dimpeople (rds)
 		JOIN RDS.DimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
@@ -195,35 +193,28 @@ BEGIN
 --			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 			AND ISNULL(ske.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND rdp.RecordStartDateTime  <= @ReportingDate
-			AND ISNULL(rdp.RecordEndDateTime, @ReportingDate) >= @ReportingDate
-			AND CONVERT(DATE, ske.EnrollmentEntryDate) = CONVERT(DATE, rdp.RecordStartDateTime)
-			and ISNULL(CONVERT(DATE, ske.EnrollmentExitDate), @SYEndDate) = ISNULL(CONVERT(DATE, rdp.RecordEndDateTime), @SYEndDate)
+			AND @ReportingDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 	--english learner
 		JOIN Staging.PersonStatus el 
 			ON ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			AND ISNULL(el.EnglishLearner_StatusStartDate, @ReportingDate) <= @ReportingDate
-			AND ISNULL(el.EnglishLearner_StatusEndDate, @ReportingDate) >= @ReportingDate
+			AND @ReportingDate between el.EnglishLearner_StatusStartDate and ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
 			AND ISNULL(el.EnglishLearnerStatus,0) = 1
 	-- Leas (rds)
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND rdl.RecordStartDateTime <= @ReportingDate
-			AND ISNULL(rdl.RecordEndDateTime, @ReportingDate) >= @ReportingDate
+			AND @ReportingDate between rdl.RecordStartDateTime and ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 	-- K12Schools (rds)
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND rdksch.RecordStartDateTime  <= @ReportingDate
-			AND ISNULL(rdksch.RecordEndDateTime, @ReportingDate) >= @ReportingDate
+			AND @ReportingDate between rdksch.RecordStartDateTime and ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 	--idea disability	
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
-			AND ISNULL(sppse.ProgramParticipationBeginDate, @ReportingDate) <= @ReportingDate
-			AND ISNULL(sppse.ProgramParticipationEndDate, @ReportingDate) >= @ReportingDate
+			AND @ReportingDate between sppse.ProgramParticipationBeginDate and ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
 	--english learner (rds)
 		LEFT JOIN #vwEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdels.EnglishLearnerStatusMap AS SMALLINT), -1)
@@ -254,10 +245,9 @@ BEGIN
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
-		WHERE ske.EnrollmentEntryDate  <= @ReportingDate
-		AND ISNULL(ske.EnrollmentExitDate, @ReportingDate) >= @ReportingDate
+		WHERE 1 = 1
+		and @ReportingDate between ske.EnrollmentEntryDate and ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 		AND rgls.GradeLevelCode in ('KG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', 'UG')
-
 
 		--Clear the Fact table of the data about to be migrated  
 		DELETE RDS.FactK12StudentCounts
