@@ -68,7 +68,7 @@ BEGIN
 			FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
 			WHILE @@FETCH_STATUS = 0
 			BEGIN
-				exec Staging.[Staging-to-FactK12StudentCounts_SpecEdExit] @submissionYear
+				exec Staging.[Staging-to-FactK12StudentCounts_Exiting] @submissionYear
 
 				FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
 			END
