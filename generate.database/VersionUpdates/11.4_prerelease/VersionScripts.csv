@@ -5,6 +5,7 @@ VersionUpdates\\11.4_prerelease,App.Rollover-Metadata.sql,0
 VersionUpdates\\11.4_prerelease,UpdateMetadata.sql,0
 VersionUpdates\\11.4_prerelease,Create-RDS-Tables.sql,0
 VersionUpdates\\11.4_prerelease,Create-Staging-Tables.sql,0
+VersionUpdates\\11.4_prerelease,CorrectDataMigrationTasks.sql,0
 Views\\Create,RDS.vwDimAccessibleEducationMaterialStatuses.sql,0
 Views\\Create,RDS.vwDimRuralStatuses.sql,0
 Views\\Create,RDS.vwAccessibleEducationMaterialAssignments.sql,0
@@ -67,7 +68,8 @@ StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_MigrantEducatio
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql
-StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Exiting.StoredProcedure.sql
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Exiting.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql,0

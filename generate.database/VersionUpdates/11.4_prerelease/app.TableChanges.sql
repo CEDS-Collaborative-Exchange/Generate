@@ -1,3 +1,12 @@
+--correct the descriptions in rds.DimFactTypes
+update rds.DimFactTypes
+set FactTypeDescription = 'Membership'
+where FactTypeDescription = 'Memebership'
+
+update rds.DimFactTypes
+set FactTypeDescription = 'Graduates/Completers'
+where FactTypeDescription = 'Graduation/Completer'
+
 --add relationships for Staging.IdeaDisabilityType table to the XREF table
 
 --143
