@@ -1,3 +1,10 @@
+--ReportEdFactsOrganizationCounts
+	IF COL_LENGTH('rds.ReportEdFactsOrganizationCounts', 'CharterSchoolAuthorizerType') IS NULL
+	BEGIN
+		ALTER TABLE rds.ReportEdFactsOrganizationCounts ADD CharterSchoolAuthorizerType nvarchar(100);
+	END
+
+
 CREATE TABLE [RDS].[DimAccessibleEducationMaterialProviders]
 (
 	[DimAccessibleEducationMaterialProviderId] int NOT NULL IDENTITY (1, 1),
