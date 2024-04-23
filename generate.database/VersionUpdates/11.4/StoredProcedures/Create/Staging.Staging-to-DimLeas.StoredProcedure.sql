@@ -175,7 +175,7 @@ BEGIN
 			AND sssrd3.TableName = 'RefCharterLeaStatus'
 			AND sko.SchoolYear = sssrd3.SchoolYear
 		WHERE 
-			sssrd2.OutputCode = 'Main'
+			isnull(sssrd2.OutputCode, 'Main') = 'Main'
 			AND sko.LeaIdentifierSea is not null 
 			AND
 			(@dataCollectionName IS NULL
