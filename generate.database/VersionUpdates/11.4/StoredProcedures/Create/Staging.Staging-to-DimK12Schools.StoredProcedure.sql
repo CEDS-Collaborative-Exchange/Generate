@@ -239,7 +239,6 @@ BEGIN
 		ON sko.SchoolIdentifierSea = sop.OrganizationIdentifier
 		AND sop.OrganizationType in (select K12SchoolOrganizationType from #organizationTypes ot WHERE ot.SchoolYear = sop.SchoolYear)
 		AND isnull(sko.DataCollectionName,'') = isnull(sop.DataCollectionName,'')
-		AND sop.InstitutionTelephoneNumberType = 'Main'
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
 		ON sko.School_OperationalStatus = sssrd1.InputCode
 		AND sssrd1.TableName = 'RefOperationalStatus'
@@ -257,8 +256,13 @@ BEGIN
 		ON sko.School_AdministrativeFundingControl = sssrd5.InputCode
 		AND sssrd5.TableName = 'RefAdministrativeFundingControl'
 		AND sko.SchoolYear = sssrd5.SchoolYear
+	LEFT JOIN staging.SourceSystemReferenceData sssrd6
+		ON sop.InstitutionTelephoneNumberType = sssrd6.InputCode
+		AND sssrd6.TableName = 'RefInstitutionTelephoneType'
+		AND sko.SchoolYear = sssrd6.SchoolYear
 	WHERE 
-		sko.SchoolIdentifierSea is not null and -- Prevent null schools from inserting into DimK12Schools
+		sssrd6.OutputCode = 'Main'
+		AND sko.SchoolIdentifierSea is not null and -- Prevent null schools from inserting into DimK12Schools
 		(@DataCollectionName IS NULL	
 		OR (
 			sko.DataCollectionName = @dataCollectionName
