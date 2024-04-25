@@ -161,19 +161,22 @@ BEGIN
 		LEFT JOIN Staging.OrganizationPhone sop
 			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
 			AND sop.OrganizationType in (select LeaOrganizationType from #organizationTypes ot where ot.SchoolYear = sko.SchoolYear)
-			AND sop.InstitutionTelephoneNumberType = 'Main'
 		LEFT JOIN staging.SourceSystemReferenceData sssrd1
 			ON sko.Lea_OperationalStatus = sssrd1.InputCode
 			AND sssrd1.TableName = 'RefOperationalStatus'
 			AND sssrd1.TableFilter = '000174'
 			AND sko.SchoolYear = sssrd1.SchoolYear
+		LEFT JOIN staging.SourceSystemReferenceData sssrd2
+			ON sop.InstitutionTelephoneNumberType = sssrd2.InputCode
+			AND sssrd2.TableName = 'RefInstitutionTelephoneType'
+			AND sko.SchoolYear = sssrd2.SchoolYear
 		LEFT JOIN staging.SourceSystemReferenceData sssrd3
 			ON sko.LEA_CharterLeaStatus = sssrd3.InputCode
 			AND sssrd3.TableName = 'RefCharterLeaStatus'
 			AND sko.SchoolYear = sssrd3.SchoolYear
-
 		WHERE 
-			sko.LeaIdentifierSea is not null 
+			isnull(sssrd2.OutputCode, 'Main') = 'Main'
+			AND sko.LeaIdentifierSea is not null 
 			AND
 			(@dataCollectionName IS NULL
 			OR (
