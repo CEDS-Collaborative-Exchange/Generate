@@ -6,7 +6,7 @@ begin try
 	
 	begin transaction
 
-	update App.GenerateConfigurations set GenerateConfigurationValue = '11.4_prerelease' where GenerateConfigurationCategory = 'Database' and GenerateConfigurationKey = 'DatabaseVersion'
+	update App.GenerateConfigurations set GenerateConfigurationValue = '11.4' where GenerateConfigurationCategory = 'Database' and GenerateConfigurationKey = 'DatabaseVersion'
 	
 	commit transaction
  

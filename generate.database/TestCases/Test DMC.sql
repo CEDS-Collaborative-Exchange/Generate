@@ -29,7 +29,7 @@ EXEC RDS.Create_Reports 'childcount', 0 -- FS002, FS089
 PRINT 'RDS migration for EL Enrolled (C141)' -- 
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C141')
 EXEC RDS.Create_Reports 'titleIIIELOct', 0 -- FS141
--- Execution time: Instant - No records created
+-- Execution time: 35 seconds
 
 -- PRINT 'RDS migration for Child Count (C116)' -- No WORKING test for FS116
 -- UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C116')
