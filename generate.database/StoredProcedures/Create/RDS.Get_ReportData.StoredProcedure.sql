@@ -697,6 +697,7 @@ BEGIN
 	
 	set @sql = @sql + '
 		from @reportData 
+		ORDER BY OrganizationName, OrganizationIdentifierSea
 	'
 
 	set @sql = @sql + '
