@@ -6980,11 +6980,21 @@ BEGIN
 				end
 			END
 
+			DECLARE @IdeaEducationalEnvironmentField VARCHAR(100) = ''
+			IF(@reportCode = 'c002') 
+			BEGIN
+				SET @IdeaEducationalEnvironmentField = 'IDEAEducationalEnvironmentForSchoolAge'
+			END 
+			ELSE
+			BEGIN
+				SET @IdeaEducationalEnvironmentField = 'IDEAEducationalEnvironmentForEarlyChildhood'
+			END
+
 			IF @istoggleExcludeCorrectionalAgeAll = 1
 			BEGIN
 				
 				set @sql = @sql + '  delete a from @reportData a
-					where IDEAEducationalEnvironment = ''CF'' 
+					where ' + @IdeaEducationalEnvironmentField + ' = ''CF'' 
 					'
 
 			END
@@ -6993,7 +7003,7 @@ BEGIN
 				
 				set @sql = @sql + '  delete a from @reportData a
 					where AGE IN (''AGE05K'',''6'',''7'',''8'',''9'',''10'',''11'')
-					AND IDEAEducationalEnvironment = ''CF'' 
+					AND ' + @IdeaEducationalEnvironmentField + ' = ''CF'' 
 					'
 
 			END
@@ -7002,7 +7012,7 @@ BEGIN
 				
 				set @sql = @sql + '  delete a from @reportData a
 					where AGE IN (''12'',''13'',''14'',''15'',''16'',''17'')
-					AND IDEAEducationalEnvironment = ''CF'' 
+					AND ' + @IdeaEducationalEnvironmentField + ' = ''CF'' 
 					'
 
 			END
@@ -7011,7 +7021,7 @@ BEGIN
 				
 				set @sql = @sql + '  delete a from @reportData a
 					where AGE IN (''18'',''19'',''20'',''21'')
-					AND IDEAEducationalEnvironment = ''CF'' 
+					AND ' + @IdeaEducationalEnvironmentField + ' = ''CF'' 
 					'
 
 			END
