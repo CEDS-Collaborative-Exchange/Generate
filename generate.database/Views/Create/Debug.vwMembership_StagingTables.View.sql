@@ -1,4 +1,4 @@
-	CREATE VIEW [debug].[vwMembership_StagingTables] 
+CREATE VIEW [debug].[vwMembership_StagingTables] 
 	AS
 		SELECT	DISTINCT 
 			toggle.SchoolYear
@@ -21,10 +21,16 @@
 			, ecodis.EligibilityStatusForSchoolFoodServicePrograms -- For FS033
 			, ecodis.NationalSchoolLunchProgramDirectCertificationIndicator -- For FS033
 
+			, foster.ProgramType_FosterCare -- For FS222
+			, foster.FosterCare_ProgramParticipationStartDate -- For FS222
+			, foster.FosterCare_ProgramParticipationEndDate -- For FS222
+
 			, enrollment.HispanicLatinoEthnicity
 			, race.RaceType -- For FS052
 			, race.RecordStartDateTime					AS RaceStartDate
 			, race.RecordEndDateTime					AS RaceEndDate
+
+			, org.LEA_TitleIProgramType									
 
 		FROM 
 			(
@@ -41,19 +47,30 @@
 			) toggle
 		JOIN Staging.K12Enrollment								enrollment		
 			on toggle.SchoolYear = enrollment.SchoolYear
-			AND toggle.MembershipDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND toggle.MembershipDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '1/1/9999')
+		JOIN Staging.K12Organization							org
+				ON 		enrollment.SchoolYear 											=	org.Schoolyear
+				AND		ISNULL(enrollment.SchoolIdentifierSea, '')						= 	ISNULL(org.SchoolIdentifierSea, '')
+				AND 	toggle.MembershipDate BETWEEN org.School_RecordStartDateTime AND ISNULL(org.School_RecordEndDateTime, '1/1/9999')
+
 		LEFT JOIN Staging.K12PersonRace							race
 				ON		enrollment.SchoolYear											=	race.SchoolYear
 				AND		enrollment.StudentIdentifierState								=	race.StudentIdentifierState
 				AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')			=	ISNULL(race.LEAIdentifierSeaAccountability, '')
 				AND		ISNULL(enrollment.SchoolIdentifierSea, '')						=	ISNULL(race.SchoolIdentifierSea, '')
-				AND		toggle.MembershipDate BETWEEN race.RecordStartDateTime AND ISNULL(race.RecordEndDateTime, GETDATE())
+				AND		toggle.MembershipDate BETWEEN race.RecordStartDateTime AND ISNULL(race.RecordEndDateTime, '1/1/9999')
 
 		LEFT JOIN Staging.PersonStatus							ecodis
 				ON		ecodis.StudentIdentifierState								    =	enrollment.StudentIdentifierState
 				AND		ISNULL(ecodis.LEAIdentifierSeaAccountability, '')			    =	ISNULL(enrollment.LEAIdentifierSeaAccountability, '')
 				AND		ISNULL(ecodis.SchoolIdentifierSea, '')						    =	ISNULL(enrollment.SchoolIdentifierSea, '')
-				AND		toggle.MembershipDate BETWEEN EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusEndDate, GETDATE())
+				AND		toggle.MembershipDate BETWEEN EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusEndDate, '1/1/9999')
+
+		LEFT JOIN Staging.PersonStatus							foster
+				ON		foster.StudentIdentifierState								    =	enrollment.StudentIdentifierState
+				AND		ISNULL(foster.LEAIdentifierSeaAccountability, '')			    =	ISNULL(enrollment.LEAIdentifierSeaAccountability, '')
+				AND		ISNULL(foster.SchoolIdentifierSea, '')						    =	ISNULL(enrollment.SchoolIdentifierSea, '')
+				AND		toggle.MembershipDate BETWEEN foster.FosterCare_ProgramParticipationStartDate AND ISNULL(foster.FosterCare_ProgramParticipationEndDate, '1/1/9999')
 
 		--uncomment/modify the where clause conditions as necessary for validation
 		WHERE 1 = 1

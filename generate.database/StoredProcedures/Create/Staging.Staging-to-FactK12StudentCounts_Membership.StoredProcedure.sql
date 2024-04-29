@@ -28,7 +28,6 @@ BEGIN
 		@SYEndDate date
 		
 		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
-		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 
 	--Get the Membership date from Toggle (if set)
 		SELECT @SchoolYearId = DimSchoolYearId 
@@ -170,7 +169,7 @@ BEGIN
 			, -1														IdeaStatusId
 			, -1														LanguageId
 			, -1														MigrantStatusId
-			, -1														TitleIStatusId
+			, ISNULL(rdtis.DimTitleIStatusId, -1)						TitleIStatusId
 			, -1														TitleIIIStatusId
 			, -1														AttendanceId
 			, -1														CohortStatusId
@@ -180,7 +179,7 @@ BEGIN
 			, -1														EnglishLearnerStatusId
 			, -1														HomelessnessStatusId
 			, ISNULL(rdeds.DimEconomicallyDisadvantagedStatusId, -1)	EconomicallyDisadvantagedStatusId
-			, -1														FosterCareStatusId
+			, ISNULL(rdfcs.DimFosterCareStatusId, -1)					FosterCareStatusId
 			, -1														ImmigrantStatusId
 			, -1														PrimaryDisabilityTypeId
 			, -1														SpecialEducationServicesExitDateId 
@@ -196,19 +195,19 @@ BEGIN
 --			AND ISNULL(stage.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 			AND ISNULL(stage.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
 			AND ISNULL(stage.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND stage.MemebershipDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
+			AND stage.MembershipDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, '1/1/9999')
 	--economically disadvantaged
 		LEFT JOIN #vwEconomicallyDisadvantagedStatuses rdeds
 			ON rdeds.SchoolYear = stage.SchoolYear
-			AND ISNULL(sps.EligibilityStatusForSchoolFoodServicePrograms, 'MISSING') = ISNULL(rdeds.EligibilityStatusForSchoolFoodServiceProgramsMap, 'MISSING')
-			AND ISNULL(CAST(sps.NationalSchoolLunchProgramDirectCertificationIndicator AS SMALLINT), -1)  = isnull(rdeds.NationalSchoolLunchProgramDirectCertificationIndicatorMap, -1)
-			AND ISNULL(CAST(sps.EconomicDisadvantageStatus as SMALLINT), -1) = ISNULL(rdeds.EconomicDisadvantageStatusMap, -1)
+			AND ISNULL(stage.EligibilityStatusForSchoolFoodServicePrograms, 'MISSING') = ISNULL(rdeds.EligibilityStatusForSchoolFoodServiceProgramsMap, 'MISSING')
+			AND ISNULL(CAST(stage.NationalSchoolLunchProgramDirectCertificationIndicator AS SMALLINT), -1)  = isnull(rdeds.NationalSchoolLunchProgramDirectCertificationIndicatorMap, -1)
+			AND ISNULL(CAST(stage.EconomicDisadvantageStatus as SMALLINT), -1) = ISNULL(rdeds.EconomicDisadvantageStatusMap, -1)
 	--sea
 		JOIN RDS.DimSeas rds
-			ON stage.MemebershipDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
+			ON stage.MembershipDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, '1/1/9999')
 	--age
 		JOIN RDS.DimAges rda
-			ON RDS.Get_Age(stage.Birthdate, stage.MemebershipDate) = rda.AgeValue
+			ON RDS.Get_Age(stage.Birthdate, stage.MembershipDate) = rda.AgeValue
 	--demographics			
 		JOIN RDS.vwDimK12Demographics rdkd
 			ON stage.SchoolYear = rdkd.SchoolYear
@@ -233,16 +232,28 @@ BEGIN
 	--lea
 		LEFT JOIN RDS.DimLeas rdl
 			ON stage.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND stage.MemebershipDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
+			AND stage.MembershipDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, '1/1/9999')
 	--school
 		LEFT JOIN RDS.DimK12Schools rdpch
 			ON stage.SchoolIdentifierSea = rdpch.SchoolIdentifierSea
-			AND stage.MemebershipDate BETWEEN rdpch.RecordStartDateTime AND ISNULL(rdpch.RecordEndDateTime, @SYEndDate)
-	
-		WHERE stage.MemebershipDate BETWEEN stage.EnrollmentEntryDate AND ISNULL(stage.EnrollmentExitDate, @SYEndDate)
+			AND stage.MembershipDate BETWEEN rdpch.RecordStartDateTime AND ISNULL(rdpch.RecordEndDateTime, '1/1/9999')
+
+	-- Foster Care Status
+		LEFT JOIN RDS.vwDimFosterCareStatuses rdfcs
+			ON stage.SchoolYear = rdfcs.SchoolYear
+			AND ISNULL(CAST(stage.ProgramType_FosterCare AS INT), -1) = ISNULL(rdfcs.ProgramParticipationFosterCareMap, rdfcs.ProgramParticipationFosterCareCode)
+
+	-- Title I Status
+		LEFT JOIN RDS.vwDimTitleIStatuses rdtis
+			ON stage.SchoolYear = rdtis.SchoolYear
+			AND ISNULL(stage.LEA_TitleIProgramType, 'MISSING') = ISNULL(rdtis.TitleIProgramTypeMap, rdtis.TitleIProgramTypeCode)
+			AND rdtis.TitleISchoolStatusCode = 'MISSING'
+			AND rdtis.TitleIInstructionalServicesCode = 'MISSING'
+			AND rdtis.TitleISupportServicesCode = 'MISSING'
+
+	WHERE stage.MembershipDate BETWEEN stage.EnrollmentEntryDate AND ISNULL(stage.EnrollmentExitDate, '1/1/9999')
 		AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList)
-
-
+		
 	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (
 			SchoolYearId

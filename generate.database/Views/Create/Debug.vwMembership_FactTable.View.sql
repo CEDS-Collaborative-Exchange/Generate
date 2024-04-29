@@ -1,6 +1,7 @@
 CREATE VIEW [debug].[vwMembership_FactTable] 
 AS
-	SELECT Fact.K12StudentId
+	SELECT	 Fact.FactK12StudentCountId
+			, Fact.K12StudentId
 			, Students.K12StudentStudentIdentifierState
 			, Students.BirthDate
 			, Students.FirstName
@@ -19,9 +20,12 @@ AS
 			, Grades.GradeLevelEdFactsCode
 			, approvedGradeLevels.Grade
 
+			, Foster.ProgramParticipationFosterCareCode
+			, Foster.ProgramParticipationFosterCareEdFactsCode
+			, TitleI.TitleIProgramTypeEdFactsCode
+
 	FROM   		RDS.FactK12StudentCounts					Fact
 	JOIN        RDS.DimSchoolYears                      	SchoolYears		ON Fact.SchoolYearId            = SchoolYears.DimSchoolYearId 
-	JOIN        RDS.DimSchoolYearDataMigrationTypes 		DMT             ON SchoolYears.dimschoolyearid  = DMT.dimschoolyearid             
 	JOIN		RDS.DimPeople								Students		ON Fact.K12StudentId			= Students.DimPersonId			AND Students.IsActiveK12Student = 1
 	JOIN		RDS.DimLeas                             	LEAs            ON Fact.LeaId    				= LEAs.DimLeaId
 	JOIN		RDS.DimK12Schools                       	Schools         ON Fact.K12SchoolId             = Schools.DimK12SchoolId
@@ -30,6 +34,8 @@ AS
 	JOIN		RDS.DimRaces                            	Races           ON Fact.RaceId                  = Races.DimRaceId
 	JOIN		RDS.DimGradeLevels                      	Grades          ON Fact.GradeLevelId            = Grades.DimGradeLevelId
 	JOIN		RDS.DimEconomicallyDisadvantagedStatuses    EconDis         ON Fact.EconomicallyDisadvantagedStatusId = EconDis.DimEconomicallyDisadvantagedStatusId
+	JOIN		RDS.DimFosterCareStatuses					Foster			ON Fact.FosterCareStatusId		= Foster.DimFosterCareStatusId
+	JOIN		RDS.DimTitleIStatuses						TitleI			ON Fact.TitleIStatusId			= TitleI.DimTitleIStatusId
 	LEFT JOIN (
 
 		SELECT *  from (VALUES ('PK'),('KG'),('01'),('02'),('03'),('04'),('05'),('06'),('07'),('08'),('09'),('10'),('11'),('12')) AS Grades(Grade)
@@ -78,4 +84,4 @@ AS
 	--AND Grades.GradeLevelEdFactsCode = '07'
 	--AND Races.RaceEdFactsCode = 'AM7'                                    			--('AM7','AS7','BL7','PI7','WH7','MU7','HI7',NULL)
 	--AND EconDis.NationalSchoolLunchProgramDirectCertificationIndicatorCode  = ''  -- ('YES', 'NO', 'MISSING')
-	--AND EconDis.EligibilityStatusForSchoolFoodServiceProgramsCode = '' 			--('FREE', 'FULLPRICE', 'MISSING', 'OTHER', 'REDUCEDPRICE') 
+	--AND EconDis.EligibilityStatusForSchoolFoodServiceProgramsCode = '' 			--('FREE', 'FULLPRICE', 'MISSING', 'OTHER', 'REDUCEDPRICE') 0
