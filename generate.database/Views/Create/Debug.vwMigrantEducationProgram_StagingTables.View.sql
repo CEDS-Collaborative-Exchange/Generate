@@ -26,7 +26,7 @@ AS
 		, el.EnglishLearner_StatusEndDate
 				
 	FROM Staging.K12Enrollment								enrollment		
-	----Join to get the compare date for the Age calculation
+	--Join to get the compare date for the Age calculation
 	INNER JOIN (
 		SELECT max(sy.Schoolyear) AS SchoolYear, CAST(CAST(max(sy.Schoolyear) - 1 AS CHAR(4)) + '-' + '09-01' AS DATE) AS CompareDate
 		FROM rds.DimSchoolYearDataMigrationTypes dm
@@ -50,8 +50,8 @@ AS
 	LEFT JOIN Staging.K12PersonRace							race
 		ON		enrollment.SchoolYear									=	race.SchoolYear
 		AND		enrollment.StudentIdentifierState						=	race.StudentIdentifierState
-		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(ideaDisability.LEAIdentifierSeaAccountability, '')
-		AND		ISNULL(enrollment.SchoolIdentifierSea, '')	=	ISNULL(ideaDisability.SchoolIdentifierSea, '')
+		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(race.LEAIdentifierSeaAccountability, '')
+		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(race.SchoolIdentifierSea, '')
 		AND		ISNULL(race.RecordEndDateTime, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	LEFT JOIN Staging.PersonStatus							el
