@@ -1,4 +1,4 @@
-CREATE VIEW [debug].[vwImmigrant_FactTable] 
+CREATE VIEW [debug].[vwNeglectedOrDelinquent_FactTable] 
 AS
 	SELECT	Fact.K12StudentId
 			, Students.K12StudentStudentIdentifierState
@@ -12,12 +12,15 @@ AS
 			, Schools.SchoolIdentifierSea
 			, Schools.NameOfInstitution
 
-			--Immigrant
-			, Immigrant.TitleIIIImmigrantParticipationStatusCode
-			--Native Language
-			, Lang.Iso6392LanguageCodeCode
-			--English Learner
-			, EL.EnglishLearnerStatusEdFactsCode
+--These are 2 new fields that don't exist in the dimension at the time the view was created, but will in some format
+			--Neglected or Delinquent 
+			, NorD.EDFactsAcademicorCareerAndTechnicalOutcomeTypeEdFactsCode
+			, NorD.EDFactsAcademicorCareerAndTechnicalOutcomeExitTypeEdFactsCode
+--Not sure these are acually needed, verify
+			-- , NorD.NeglectedOrDelinquentLongTermStatusEdFactsCode
+			-- , NorD.NeglectedOrDelinquentProgramTypeEdFactsCode   
+			-- , NorD.NeglectedProgramTypeEdFactsCode
+			-- , NorD.DelinquentProgramTypeEdFactsCode
 
  	FROM		RDS.FactK12StudentCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
@@ -25,10 +28,8 @@ AS
 	LEFT JOIN	RDS.DimPeople						Students		ON Fact.K12StudentId			= Students.DimPersonId	AND Students.IsActiveK12Student = 1
 	LEFT JOIN	RDS.DimLeas							LEAs			ON Fact.LeaId					= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools					Schools			ON Fact.K12SchoolId				= Schools.DimK12SchoolId
-	LEFT JOIN	RDS.DimEnglishLearnerStatuses		EL				ON Fact.EnglishLearnerStatusId	= EL.DimEnglishLearnerStatusId
-	LEFT JOIN	RDS.DimImmigrantStatuses			Immigrant		ON Fact.ImmigrantStatusId		= Immigrant.DimImmigrantStatusId
-	LEFT JOIN	RDS.DimLanguages					Lang			ON Fact.LanguageId				= Lang.DimLanguageId
-	--uncomment/modify the where clause conditions as necessary for validation
+	LEFT JOIN	RDS.DimNorDStatuses					NorD			ON Fact.NorDStatusId			= NorD.DimNorDStatusId
+
 	WHERE 1 = 1
 	--2 ways to select by SchoolYear, use 1 or the other, not both
 	--the next 2 conditions set the SchoolYear selected to the one from the most recent RDS migration
@@ -36,4 +37,4 @@ AS
 		AND DMT.DataMigrationTypeId = 2
 	--or comment out the lines above and just set the SchoolYear
 		--AND SchoolYears.SchoolYear = 2024
-	AND Fact.FactTypeId = 14
+	AND Fact.FactTypeId = 15

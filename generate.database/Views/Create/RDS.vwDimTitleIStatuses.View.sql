@@ -22,7 +22,7 @@ AS
 		AND sssrd2.TableName = 'RefTitleIProgramType'
 		AND rsy.SchoolYear = sssrd2.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd3
-		ON rdt1s.TitleISchoolStatusCode = sssrd2.OutputCode
+		ON rdt1s.TitleISchoolStatusCode = sssrd3.OutputCode
 		AND sssrd3.TableName = 'RefTitleISchoolStatus'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd4

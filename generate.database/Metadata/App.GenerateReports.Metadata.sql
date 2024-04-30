@@ -873,6 +873,284 @@ begin try
 		(GenerateReportId,OrganizationLevelId)
 		values
 		(@GenerateReportId, 3)
+  
+
+ 		----------------------
+		-- c218
+		----------------------
+ 
+ 
+		IF NOT EXISTS (select 1 from app.GenerateReports where ReportCode ='c218'  and GenerateReportTypeId = @generateReportTypeId)
+		BEGIN
+			INSERT into App.GenerateReports
+			(CedsConnectionId, GenerateReportTypeId,GenerateReportControlTypeId,ShowCategorySetControl, ReportCode, ReportName, ReportShortName, IsActive)
+			values
+			( (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C218%' OR CedsConnectionName like '%FS218%' order by CedsUseCaseId desc),
+			@generateReportTypeId, @GenerateReportControlTypeId, @ShowCategorySetControl, 'c218', 'C218: N or D in Program Outcomes - State Agency', 'C218', 1 )
+ 
+			SET @GenerateReportId = CAST(SCOPE_IDENTITY() AS INT)
+		END
+		ELSE
+		BEGIN
+			select @GenerateReportId = GenerateReportId FROM App.GenerateReports Where ReportCode = 'c218' and GenerateReportTypeId = @generateReportTypeId
+			UPDATE app.GenerateReports SET ReportName ='C218: N or D in Program Outcomes - State Agency',	ReportShortName = 'C218' , IsActive ='1', 
+			CedsConnectionId = 	 (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C218%' OR CedsConnectionName like '%FS226%' order by CedsUseCaseId desc) 
+			WHERE GenerateReportId = @GenerateReportId
+		END
+ 
+		delete from App.GenerateReport_OrganizationLevels where GenerateReportId = @GenerateReportId
+ 
+		INSERT into App.GenerateReport_OrganizationLevels
+		(GenerateReportId,OrganizationLevelId)
+		values
+		(@GenerateReportId, 3)
+		
+
+ 		----------------------
+		-- c219
+		----------------------
+ 
+ 
+		IF NOT EXISTS (select 1 from app.GenerateReports where ReportCode ='c219'  and GenerateReportTypeId = @generateReportTypeId)
+		BEGIN
+			INSERT into App.GenerateReports
+			(CedsConnectionId, GenerateReportTypeId,GenerateReportControlTypeId,ShowCategorySetControl, ReportCode, ReportName, ReportShortName, IsActive)
+			values
+			( (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C219%' OR CedsConnectionName like '%FS219%' order by CedsUseCaseId desc),
+			@generateReportTypeId, @GenerateReportControlTypeId, @ShowCategorySetControl, 'c219', 'C219: N or D in Program Outcomes - LEA', 'C219', 1 )
+ 
+			SET @GenerateReportId = CAST(SCOPE_IDENTITY() AS INT)
+		END
+		ELSE
+		BEGIN
+			select @GenerateReportId = GenerateReportId FROM App.GenerateReports Where ReportCode = 'c219' and GenerateReportTypeId = @generateReportTypeId
+			UPDATE app.GenerateReports SET ReportName ='C219: N or D in Program Outcomes - LEA',	ReportShortName = 'C219' , IsActive ='1', 
+			CedsConnectionId = 	 (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C219%' OR CedsConnectionName like '%FS226%' order by CedsUseCaseId desc) 
+			WHERE GenerateReportId = @GenerateReportId
+		END
+ 
+		delete from App.GenerateReport_OrganizationLevels where GenerateReportId = @GenerateReportId
+ 
+		INSERT into App.GenerateReport_OrganizationLevels
+		(GenerateReportId,OrganizationLevelId)
+		values
+		(@GenerateReportId, 3)
+	
+
+ 		----------------------
+		-- c220
+		----------------------
+ 
+ 
+		IF NOT EXISTS (select 1 from app.GenerateReports where ReportCode ='c220'  and GenerateReportTypeId = @generateReportTypeId)
+		BEGIN
+			INSERT into App.GenerateReports
+			(CedsConnectionId, GenerateReportTypeId,GenerateReportControlTypeId,ShowCategorySetControl, ReportCode, ReportName, ReportShortName, IsActive)
+			values
+			( (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C220%' OR CedsConnectionName like '%FS220%' order by CedsUseCaseId desc),
+			@generateReportTypeId, @GenerateReportControlTypeId, @ShowCategorySetControl, 'c220', 'C220: N or D Exit Outcomes - State Agency', 'C220', 1 )
+ 
+			SET @GenerateReportId = CAST(SCOPE_IDENTITY() AS INT)
+		END
+		ELSE
+		BEGIN
+			select @GenerateReportId = GenerateReportId FROM App.GenerateReports Where ReportCode = 'c220' and GenerateReportTypeId = @generateReportTypeId
+			UPDATE app.GenerateReports SET ReportName ='C220: N or D Exit Outcomes - State Agency',	ReportShortName = 'C220' , IsActive ='1', 
+			CedsConnectionId = 	 (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C220%' OR CedsConnectionName like '%FS226%' order by CedsUseCaseId desc) 
+			WHERE GenerateReportId = @GenerateReportId
+		END
+ 
+		delete from App.GenerateReport_OrganizationLevels where GenerateReportId = @GenerateReportId
+ 
+		INSERT into App.GenerateReport_OrganizationLevels
+		(GenerateReportId,OrganizationLevelId)
+		values
+		(@GenerateReportId, 3)	
+
+ 		----------------------
+		-- c221
+		----------------------
+ 
+ 
+		IF NOT EXISTS (select 1 from app.GenerateReports where ReportCode ='c221'  and GenerateReportTypeId = @generateReportTypeId)
+		BEGIN
+			INSERT into App.GenerateReports
+			(CedsConnectionId, GenerateReportTypeId,GenerateReportControlTypeId,ShowCategorySetControl, ReportCode, ReportName, ReportShortName, IsActive)
+			values
+			( (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C221%' OR CedsConnectionName like '%FS221%' order by CedsUseCaseId desc),
+			@generateReportTypeId, @GenerateReportControlTypeId, @ShowCategorySetControl, 'c221', 'C221: N or D Exit Outcomes - LEA', 'C221', 1 )
+ 
+			SET @GenerateReportId = CAST(SCOPE_IDENTITY() AS INT)
+		END
+		ELSE
+		BEGIN
+			select @GenerateReportId = GenerateReportId FROM App.GenerateReports Where ReportCode = 'c221' and GenerateReportTypeId = @generateReportTypeId
+			UPDATE app.GenerateReports SET ReportName ='C221: N or D Exit Outcomes - LEA',	ReportShortName = 'C221' , IsActive ='1', 
+			CedsConnectionId = 	 (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C221%' OR CedsConnectionName like '%FS226%' order by CedsUseCaseId desc) 
+			WHERE GenerateReportId = @GenerateReportId
+		END
+ 
+		delete from App.GenerateReport_OrganizationLevels where GenerateReportId = @GenerateReportId
+ 
+		INSERT into App.GenerateReport_OrganizationLevels
+		(GenerateReportId,OrganizationLevelId)
+		values
+		(@GenerateReportId, 3)
+
+
+ 		----------------------
+		-- c222
+		----------------------
+ 
+ 
+		IF NOT EXISTS (select 1 from app.GenerateReports where ReportCode ='c222'  and GenerateReportTypeId = @generateReportTypeId)
+		BEGIN
+			INSERT into App.GenerateReports
+			(CedsConnectionId, GenerateReportTypeId,GenerateReportControlTypeId,ShowCategorySetControl, ReportCode, ReportName, ReportShortName, IsActive)
+			values
+			( (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C222%' OR CedsConnectionName like '%FS222%' order by CedsUseCaseId desc),
+			@generateReportTypeId, @GenerateReportControlTypeId, @ShowCategorySetControl, 'c222', 'C222: Foster Care Enrolled', 'C222', 1 )
+ 
+			SET @GenerateReportId = CAST(SCOPE_IDENTITY() AS INT)
+		END
+		ELSE
+		BEGIN
+			select @GenerateReportId = GenerateReportId FROM App.GenerateReports Where ReportCode = 'c222' and GenerateReportTypeId = @generateReportTypeId
+			UPDATE app.GenerateReports SET ReportName ='C222: Foster Care Enrolled',	ReportShortName = 'C222' , IsActive ='1', 
+			CedsConnectionId = 	 (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C222%' OR CedsConnectionName like '%FS226%' order by CedsUseCaseId desc) 
+			WHERE GenerateReportId = @GenerateReportId
+		END
+ 
+		delete from App.GenerateReport_OrganizationLevels where GenerateReportId = @GenerateReportId
+ 
+		INSERT into App.GenerateReport_OrganizationLevels
+		(GenerateReportId,OrganizationLevelId)
+		values
+		(@GenerateReportId, 3)
+
+
+
+ 		----------------------
+		-- c223
+		----------------------
+ 
+ 
+		IF NOT EXISTS (select 1 from app.GenerateReports where ReportCode ='c223'  and GenerateReportTypeId = @generateReportTypeId)
+		BEGIN
+			INSERT into App.GenerateReports
+			(CedsConnectionId, GenerateReportTypeId,GenerateReportControlTypeId,ShowCategorySetControl, ReportCode, ReportName, ReportShortName, IsActive)
+			values
+			( (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C223%' OR CedsConnectionName like '%FS223%' order by CedsUseCaseId desc),
+			@generateReportTypeId, @GenerateReportControlTypeId, @ShowCategorySetControl, 'c223', 'C223: Title I School Status', 'C223', 1 )
+ 
+			SET @GenerateReportId = CAST(SCOPE_IDENTITY() AS INT)
+		END
+		ELSE
+		BEGIN
+			select @GenerateReportId = GenerateReportId FROM App.GenerateReports Where ReportCode = 'c223' and GenerateReportTypeId = @generateReportTypeId
+			UPDATE app.GenerateReports SET ReportName ='C223: Title I School Status',	ReportShortName = 'C223' , IsActive ='1', 
+			CedsConnectionId = 	 (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C223%' OR CedsConnectionName like '%FS226%' order by CedsUseCaseId desc) 
+			WHERE GenerateReportId = @GenerateReportId
+		END
+ 
+		delete from App.GenerateReport_OrganizationLevels where GenerateReportId = @GenerateReportId
+ 
+		INSERT into App.GenerateReport_OrganizationLevels
+		(GenerateReportId,OrganizationLevelId)
+		values
+		(@GenerateReportId, 3)
+
+
+ 		----------------------
+		-- c224
+		----------------------
+ 
+ 
+		IF NOT EXISTS (select 1 from app.GenerateReports where ReportCode ='c224'  and GenerateReportTypeId = @generateReportTypeId)
+		BEGIN
+			INSERT into App.GenerateReports
+			(CedsConnectionId, GenerateReportTypeId,GenerateReportControlTypeId,ShowCategorySetControl, ReportCode, ReportName, ReportShortName, IsActive)
+			values
+			( (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C224%' OR CedsConnectionName like '%FS224%' order by CedsUseCaseId desc),
+			@generateReportTypeId, @GenerateReportControlTypeId, @ShowCategorySetControl, 'c224', 'C224: N or D Assessment Proficiency - State Agency', 'C224', 1 )
+ 
+			SET @GenerateReportId = CAST(SCOPE_IDENTITY() AS INT)
+		END
+		ELSE
+		BEGIN
+			select @GenerateReportId = GenerateReportId FROM App.GenerateReports Where ReportCode = 'c224' and GenerateReportTypeId = @generateReportTypeId
+			UPDATE app.GenerateReports SET ReportName ='C224: N or D Assessment Proficiency - State Agency',	ReportShortName = 'C224' , IsActive ='1', 
+			CedsConnectionId = 	 (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C224%' OR CedsConnectionName like '%FS226%' order by CedsUseCaseId desc) 
+			WHERE GenerateReportId = @GenerateReportId
+		END
+ 
+		delete from App.GenerateReport_OrganizationLevels where GenerateReportId = @GenerateReportId
+ 
+		INSERT into App.GenerateReport_OrganizationLevels
+		(GenerateReportId,OrganizationLevelId)
+		values
+		(@GenerateReportId, 3)
+
+ 
+ 		----------------------
+		-- c225
+		----------------------
+ 
+ 
+		IF NOT EXISTS (select 1 from app.GenerateReports where ReportCode ='c225'  and GenerateReportTypeId = @generateReportTypeId)
+		BEGIN
+			INSERT into App.GenerateReports
+			(CedsConnectionId, GenerateReportTypeId,GenerateReportControlTypeId,ShowCategorySetControl, ReportCode, ReportName, ReportShortName, IsActive)
+			values
+			( (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C225%' OR CedsConnectionName like '%FS225%' order by CedsUseCaseId desc),
+			@generateReportTypeId, @GenerateReportControlTypeId, @ShowCategorySetControl, 'c225', 'C225: N or D Assessment Proficiency - LEA', 'C225', 1 )
+ 
+			SET @GenerateReportId = CAST(SCOPE_IDENTITY() AS INT)
+		END
+		ELSE
+		BEGIN
+			select @GenerateReportId = GenerateReportId FROM App.GenerateReports Where ReportCode = 'c225' and GenerateReportTypeId = @generateReportTypeId
+			UPDATE app.GenerateReports SET ReportName ='C225: N or D Assessment Proficiency - LEA',	ReportShortName = 'C225' , IsActive ='1', 
+			CedsConnectionId = 	 (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C225%' OR CedsConnectionName like '%FS226%' order by CedsUseCaseId desc) 
+			WHERE GenerateReportId = @GenerateReportId
+		END
+ 
+		delete from App.GenerateReport_OrganizationLevels where GenerateReportId = @GenerateReportId
+ 
+		INSERT into App.GenerateReport_OrganizationLevels
+		(GenerateReportId,OrganizationLevelId)
+		values
+		(@GenerateReportId, 3)
+
+ 		----------------------
+		-- c226
+		----------------------
+ 
+ 
+		IF NOT EXISTS (select 1 from app.GenerateReports where ReportCode ='c226'  and GenerateReportTypeId = @generateReportTypeId)
+		BEGIN
+			INSERT into App.GenerateReports
+			(CedsConnectionId, GenerateReportTypeId,GenerateReportControlTypeId,ShowCategorySetControl, ReportCode, ReportName, ReportShortName, IsActive)
+			values
+			( (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C226%' OR CedsConnectionName like '%FS226%' order by CedsUseCaseId desc),
+			@generateReportTypeId, @GenerateReportControlTypeId, @ShowCategorySetControl, 'c226', 'C226: Economically Disadvantaged Students', 'C226', 1 )
+ 
+			SET @GenerateReportId = CAST(SCOPE_IDENTITY() AS INT)
+		END
+		ELSE
+		BEGIN
+			select @GenerateReportId = GenerateReportId FROM App.GenerateReports Where ReportCode = 'c226' and GenerateReportTypeId = @generateReportTypeId
+			UPDATE app.GenerateReports SET ReportName ='C226: Economically Disadvantaged Students',	ReportShortName = 'C226' , IsActive ='1', 
+			CedsConnectionId = 	 (select top 1 CedsConnectionId from App.CedsConnections where CedsConnectionName like '%C226%' OR CedsConnectionName like '%FS226%' order by CedsUseCaseId desc) 
+			WHERE GenerateReportId = @GenerateReportId
+		END
+ 
+		delete from App.GenerateReport_OrganizationLevels where GenerateReportId = @GenerateReportId
+ 
+		INSERT into App.GenerateReport_OrganizationLevels
+		(GenerateReportId,OrganizationLevelId)
+		values
+		(@GenerateReportId, 3)
  
 	commit transaction
  
