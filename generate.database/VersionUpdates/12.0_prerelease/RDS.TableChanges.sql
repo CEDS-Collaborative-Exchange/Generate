@@ -28,24 +28,24 @@ BEGIN
 	ALTER TABLE RDS.DimNOrDStatuses ADD DelinquentProgramTypeEdFactsCode nvarchar(50);
 END
 
-IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedProgramType') IS  NULL
+IF COL_LENGTH('RDS.DimNOrDStatuses', 'NeglectedOrDelinquentAcademicOutcomeIndicatorCode') IS NULL
 BEGIN
-	ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedProgramType nvarchar(100);
+	ALTER TABLE RDS.DimNOrDStatuses ADD NeglectedOrDelinquentAcademicOutcomeIndicatorCode nvarchar(50);
 END
 
-IF COL_LENGTH('Staging.ProgramParticipationNorD', 'DelinquentProgramType') IS NULL
+IF COL_LENGTH('RDS.DimNOrDStatuses', 'NeglectedOrDelinquentAcademicOutcomeIndicatorDescription') IS NULL
 BEGIN
-	ALTER TABLE Staging.ProgramParticipationNorD ADD DelinquentProgramType nvarchar(100);
+	ALTER TABLE RDS.DimNOrDStatuses ADD NeglectedOrDelinquentAcademicOutcomeIndicatorDescription nvarchar(100);
 END
 
-IF COL_LENGTH('RDS.ReportEDFactsK12StudentCounts', 'NEGLECTEDPROGRAMTYPE') IS NULL
+IF COL_LENGTH('RDS.DimNOrDStatuses', 'NeglectedOrDelinquentAcademicAchievementIndicatorCode') IS NULL
 BEGIN
-	ALTER TABLE RDS.ReportEDFactsK12StudentCounts ADD NEGLECTEDPROGRAMTYPE nvarchar(50);
+	ALTER TABLE RDS.DimNOrDStatuses ADD NeglectedOrDelinquentAcademicAchievementIndicatorCode nvarchar(50);
 END
 
-IF COL_LENGTH('RDS.ReportEDFactsK12StudentCounts', 'DELINQUENTPROGRAMTYPE') IS NULL
+IF COL_LENGTH('RDS.DimNOrDStatuses', 'NeglectedOrDelinquentAcademicAchievementIndicatorDescription') IS NULL
 BEGIN
-	ALTER TABLE RDS.ReportEDFactsK12StudentCounts ADD DELINQUENTPROGRAMTYPE nvarchar(50);
+	ALTER TABLE RDS.DimNOrDStatuses ADD NeglectedOrDelinquentAcademicAchievementIndicatorDescription nvarchar(100);
 END
 
 IF COL_LENGTH('RDS.ReportEdFactsK12StudentAssessments', 'NEGLECTEDPROGRAMTYPE') IS NOT NULL

@@ -14,8 +14,8 @@ AS
 
 --These are 2 new fields that don't exist in the dimension at the time the view was created, but will in some format
 			--Neglected or Delinquent 
-			, NorD.EDFactsAcademicorCareerAndTechnicalOutcomeTypeEdFactsCode
-			, NorD.EDFactsAcademicorCareerAndTechnicalOutcomeExitTypeEdFactsCode
+			, NorD.NeglectedOrDelinquentAcademicOutcomeIndicatorCode
+			, NorD.NeglectedOrDelinquentAcademicAchievementIndicatorCode
 --Not sure these are acually needed, verify
 			-- , NorD.NeglectedOrDelinquentLongTermStatusEdFactsCode
 			-- , NorD.NeglectedOrDelinquentProgramTypeEdFactsCode   
