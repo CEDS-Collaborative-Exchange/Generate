@@ -42,9 +42,19 @@
         ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentAcademicAchievementIndicator nvarchar(100);
     END
 
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'EdFactsAcademicOrCareerAndTechnicalOutcomeType') IS NULL
+    BEGIN
+        ALTER TABLE Staging.ProgramParticipationNorD ADD EdFactsAcademicOrCareerAndTechnicalOutcomeType nvarchar(100);
+    END
+
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType') IS NULL
+    BEGIN
+        ALTER TABLE Staging.ProgramParticipationNorD ADD EdFactsAcademicOrCareerAndTechnicalOutcomeExitType nvarchar(100);
+    END
+
     IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentExitOutcomeDate') IS NULL
     BEGIN
-        ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentExitOutcomeDate date;
+        ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentExitOutcomeDate datetime;
     END
 
     IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedProgramType') IS  NULL
@@ -96,6 +106,26 @@
     EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/element/000635' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentAcademicAchievementIndicator'
 
     EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentAcademicAchievementIndicator'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The type of academic or career and technical outcome attained up to 90 days after exiting the facility or program.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'EDFacts Academic or Career and Technical Outcome Exit Type' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001979' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/element/001979' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The type of academic or career and technical outcome attained while enrolled in the program.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'EDFacts Academic or Career and Technical Outcome Type' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001978' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/element/001978' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
+
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
 
     EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The date of the outcome after exiting a neglected or delinquent program' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentExitOutcomeDate'
 
