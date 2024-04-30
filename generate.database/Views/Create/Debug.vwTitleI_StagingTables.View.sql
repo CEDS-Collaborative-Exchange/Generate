@@ -9,7 +9,7 @@ AS
 		, enrollment.MiddleName
 		, enrollment.HispanicLatinoEthnicity
 	
-		, sssrd.OutputCode as School_TitleIPartASchoolDesignation	
+		, sssrd.OutputCode as School_TitleISchoolStatus	
 		, sssrd2.OutputCode as TitleIIndicator	
 
 		, el.EnglishLearnerStatus
@@ -77,7 +77,7 @@ AS
 	LEFT JOIN Staging.SourceSystemReferenceData sssrd
 		ON sssrd.SchoolYear = enrollment.SchoolYear
 		AND sssrd.TableName = 'RefTitleISchoolStatus'
-		AND Schools.School_TitleIPartASchoolDesignation = sssrd.InputCode
+		AND Schools.School_TitleISchoolStatus = sssrd.InputCode
 
 	LEFT JOIN Staging.SourceSystemReferenceData sssrd2
 		ON sssrd2.SchoolYear = enrollment.SchoolYear
