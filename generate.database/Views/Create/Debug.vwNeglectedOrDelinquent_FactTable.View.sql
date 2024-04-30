@@ -12,10 +12,9 @@ AS
 			, Schools.SchoolIdentifierSea
 			, Schools.NameOfInstitution
 
---These are 2 new fields that don't exist in the dimension at the time the view was created, but will in some format
 			--Neglected or Delinquent 
-			, NorD.NeglectedOrDelinquentAcademicOutcomeIndicatorCode
-			, NorD.NeglectedOrDelinquentAcademicAchievementIndicatorCode
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
 --Not sure these are acually needed, verify
 			-- , NorD.NeglectedOrDelinquentLongTermStatusEdFactsCode
 			-- , NorD.NeglectedOrDelinquentProgramTypeEdFactsCode   
