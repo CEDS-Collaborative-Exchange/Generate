@@ -11,7 +11,7 @@
 declare @databaseName as nvarchar(100)
 set @databaseName = 'generate'
 declare @databaseVersion as nvarchar(50)
-set @databaseVersion = '11.3'
+set @databaseVersion = '11.4'
 declare @databaseFilesPath as nvarchar(500)
 set @databaseFilesPath = 'C:\Generate\generate_' + @databaseVersion + '.bak'
 declare @forceRestore as bit

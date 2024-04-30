@@ -1,4 +1,4 @@
-    IF COL_LENGTH('Staging.K12Organization', 'TitleIPartASchoolDesignation') IS NOT NULL
+    IF COL_LENGTH('Staging.K12Organization', 'School_TitleIPartASchoolDesignation') IS NOT NULL
     BEGIN
         EXEC sp_rename 'Staging.K12Organization.School_TitleIPartASchoolDesignation', 'School_TitleISchoolStatus', 'COLUMN';
     END
@@ -35,7 +35,18 @@
     BEGIN
         ALTER TABLE Staging.ProgramParticipationNorD DROP COLUMN RunDateTime;
     END
+
     --Add the new columns
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentAcademicAchievementIndicator') IS NULL
+    BEGIN
+        ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentAcademicAchievementIndicator nvarchar(100);
+    END
+
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentExitOutcomeDate') IS NULL
+    BEGIN
+        ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentExitOutcomeDate date;
+    END
+
     IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedProgramType') IS  NULL
     BEGIN
         ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedProgramType nvarchar(100);
@@ -46,15 +57,6 @@
         ALTER TABLE Staging.ProgramParticipationNorD ADD DelinquentProgramType nvarchar(100);
     END
 
-    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentAcademicAchievementIndicator') IS NULL
-    BEGIN
-        ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentAcademicAchievementIndicator nvarchar(100);
-    END
-
-    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'ExitOutcomeDate') IS NULL
-    BEGIN
-        ALTER TABLE Staging.ProgramParticipationNorD ADD ExitOutcomeDate date;
-    END
     --Add DataCollectionName and RunDateTime back
     IF COL_LENGTH('Staging.ProgramParticipationNorD', 'DataCollectionName') IS NULL
     BEGIN
