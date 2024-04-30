@@ -9,14 +9,13 @@ AS
 		, enrollment.MiddleName
 
 		--Neglected or Delinquent
+		, nord.NeglectedOrDelinquentAcademicAchievementIndicator
+		, nord.NeglectedOrDelinquentAcademicOutcomeIndicator
 		, nord.EdFactsAcademicOrCareerAndTechnicalOutcomeType	
 		, nord.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType
 		, nord.ProgramParticipationBeginDate
 		, nord.ProgramParticipationEndDate
 		, nord.NeglectedOrDelinquentExitOutcomeDate
-		, nord.NeglectedOrDelinquentProgramType
-		, nord.NeglectedProgramType
-		, nord.DelinquentProgramType
 		, nord.DiplomaCredentialAwardDate
 		 
 	FROM Staging.K12Enrollment								enrollment		

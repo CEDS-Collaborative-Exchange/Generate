@@ -13,6 +13,8 @@ AS
 			, Schools.NameOfInstitution
 
 			--Neglected or Delinquent 
+			, NorD.NeglectedOrDelinquentAcademicAchievementIndicatorCode
+			, NorD.NeglectedOrDelinquentAcademicOutcomeIndicatorCode	
 			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
 			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
 --Not sure these are acually needed, verify

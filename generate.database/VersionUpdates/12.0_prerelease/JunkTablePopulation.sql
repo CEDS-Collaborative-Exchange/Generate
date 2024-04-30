@@ -32,6 +32,10 @@
 			,DelinquentProgramTypeCode
 			,DelinquentProgramTypeDescription
 			,DelinquentProgramTypeEdFactsCode
+            ,NeglectedOrDelinquentAcademicAchievementIndicatorCode
+            ,NeglectedOrDelinquentAcademicAchievementIndicatorDescription
+            ,NeglectedOrDelinquentAcademicOutcomeIndicatorCode
+            ,NeglectedOrDelinquentAcademicOutcomeIndicatorDescription
 			,EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
 			,EdFactsAcademicOrCareerAndTechnicalOutcomeTypeDescription
 			,EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode
@@ -39,7 +43,7 @@
 			,EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeDescription
             ,EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode
 		)
-		VALUES (-1, 'MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING')
+		VALUES (-1, 'MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING')
 
 		SET IDENTITY_INSERT RDS.DimNOrDStatuses OFF
 	END
@@ -66,6 +70,32 @@
 		  END
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'NeglectedOrDelinquentProgramType'
+
+	IF OBJECT_ID('tempdb..#NorDAcademicAchievementIndicator') IS NOT NULL 
+	BEGIN
+		DROP TABLE #NorDAcademicAchievementIndicator
+	END
+
+	CREATE TABLE #NorDAcademicAchievementIndicator (NeglectedOrDelinquentAcademicAchievementIndicatorCode VARCHAR(50), NeglectedOrDelinquentAcademicAchievementIndicatorDescription VARCHAR(100))
+
+	INSERT INTO #NorDAcademicAchievementIndicator VALUES ('MISSING', 'MISSING')
+	INSERT INTO #NorDAcademicAchievementIndicator
+	    VALUES ('Yes', 'Yes'),
+                ('No', 'No')
+
+
+	IF OBJECT_ID('tempdb..#NorDAcademicOutcomeIndicator') IS NOT NULL 
+	BEGIN
+		DROP TABLE #NorDAcademicOutcomeIndicator
+	END
+
+	CREATE TABLE #NorDAcademicOutcomeIndicator (NeglectedOrDelinquentAcademicOutcomeIndicatorCode VARCHAR(50), NeglectedOrDelinquentAcademicOutcomeIndicatorDescription VARCHAR(100))
+
+	INSERT INTO #NorDAcademicOutcomeIndicator VALUES ('MISSING', 'MISSING')
+	INSERT INTO #NorDAcademicOutcomeIndicator
+	    VALUES ('Yes', 'Yes'),
+                ('No', 'No')
+
 
 	IF OBJECT_ID('tempdb..#EdFactsAcademicOrCTOutcomeType') IS NOT NULL 
 	BEGIN
@@ -134,22 +164,26 @@
 			('MISSING', 'MISSING', 'MISSING')
 
 	INSERT INTO RDS.DimNOrDStatuses (
-		  NeglectedOrDelinquentProgramTypeCode
-		  , NeglectedOrDelinquentProgramTypeDescription
-		  , NeglectedOrDelinquentProgramTypeEdFactsCode
-		  , NeglectedProgramTypeCode
-		  , NeglectedProgramTypeDescription
-		  , NeglectedProgramTypeEdFactsCode
-		  , DelinquentProgramTypeCode
-		  , DelinquentProgramTypeDescription
-		  , DelinquentProgramTypeEdFactsCode
-		  , EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
-		  , EdFactsAcademicOrCareerAndTechnicalOutcomeTypeDescription
-          , EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode
-		  , EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
-		  , EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeDescription
-          , EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode
-		)
+        NeglectedOrDelinquentProgramTypeCode
+        , NeglectedOrDelinquentProgramTypeDescription
+        , NeglectedOrDelinquentProgramTypeEdFactsCode
+        , NeglectedProgramTypeCode
+        , NeglectedProgramTypeDescription
+        , NeglectedProgramTypeEdFactsCode
+        , DelinquentProgramTypeCode
+        , DelinquentProgramTypeDescription
+        , DelinquentProgramTypeEdFactsCode
+        , NeglectedOrDelinquentAcademicAchievementIndicatorCode
+        , NeglectedOrDelinquentAcademicAchievementIndicatorDescription
+        , NeglectedOrDelinquentAcademicOutcomeIndicatorCode
+        , NeglectedOrDelinquentAcademicOutcomeIndicatorDescription
+        , EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
+        , EdFactsAcademicOrCareerAndTechnicalOutcomeTypeDescription
+        , EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode
+        , EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
+        , EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeDescription
+        , EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode
+    )
 	SELECT 
 		nodpt.NeglectedOrDelinquentProgramTypeCode
 		, nodpt.NeglectedOrDelinquentProgramTypeDescription
@@ -160,6 +194,10 @@
 		, dptc.DelinquentProgramTypeCode
 		, dptc.DelinquentProgramTypeDescription
 		, dptc.DelinquentProgramTypeEdFactsCode
+        , naai.NeglectedOrDelinquentAcademicAchievementIndicatorCode
+        , naai.NeglectedOrDelinquentAcademicAchievementIndicatorDescription
+        , naoi.NeglectedOrDelinquentAcademicOutcomeIndicatorCode
+        , naoi.NeglectedOrDelinquentAcademicOutcomeIndicatorDescription
 		, acot.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
 		, acot.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeDescription
         , acot.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode
@@ -169,19 +207,26 @@
 	FROM #NeglectedOrDelinquentProgramType nodpt
 	CROSS JOIN #NeglectedProgramTypeCode nptc
 	CROSS JOIN #DelinquentProgramTypeCode dptc
+    CROSS JOIN #NorDAcademicAchievementIndicator naai
+    CROSS JOIN #NorDAcademicOutcomeIndicator naoi
 	CROSS JOIN #EdFactsAcademicOrCTOutcomeType acot
 	CROSS JOIN #EdFactsAcademicOrCTOutcomeExitType acoet
 	LEFT JOIN rds.DimNOrDStatuses main
 		ON nodpt.NeglectedOrDelinquentProgramTypeCode = main.NeglectedOrDelinquentProgramTypeCode
 		AND nptc.NeglectedProgramTypeCode = main.NeglectedProgramTypeCode
 		AND dptc.DelinquentProgramTypeCode = main.DelinquentProgramTypeCode
+        AND naai.NeglectedOrDelinquentAcademicAchievementIndicatorCode = main.NeglectedOrDelinquentAcademicAchievementIndicatorCode
+        AND naoi.NeglectedOrDelinquentAcademicOutcomeIndicatorCode = main.NeglectedOrDelinquentAcademicOutcomeIndicatorCode
 		AND acot.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = main.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
 		AND acoet.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = main.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
+
 	WHERE main.DimNOrDStatusId IS NULL
 
 	DROP TABLE #NeglectedOrDelinquentProgramType
 	DROP TABLE #NeglectedProgramTypeCode 
 	DROP TABLE #DelinquentProgramTypeCode
+    DROP TABLE #NorDAcademicAchievementIndicator
+    DROP TABLE #NorDAcademicOutcomeIndicator
 	DROP TABLE #EdFactsAcademicOrCTOutcomeType
 	DROP TABLE #EdFactsAcademicOrCTOutcomeExitType
 
