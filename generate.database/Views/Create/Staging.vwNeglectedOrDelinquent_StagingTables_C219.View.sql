@@ -18,7 +18,7 @@ AS
 	LEFT JOIN excludedLeas el
 		ON vw.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
 	WHERE el.LeaIdentifierSea IS NULL
-		AND NeglectedOrDelinquentAcademicOutcomeIndicator = 'EARNDIPL'
+		AND ISNULL(NeglectedOrDelinquentAcademicOutcomeIndicator, '') <> ''
 		AND TitleIIndicator IN ('01_1', '02_1', '03_1', '04_1')
 		AND CAST(ISNULL(vw.ProgramParticipationBeginDate, '9999-01-01') AS DATE) >= CAST(('7/1/' + CAST((vw.SchoolYear -1) as varchar))  AS Date)
 		AND CAST(ISNULL(vw.ProgramParticipationEndDate, '1900-01-01') AS DATE) <= CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date)
