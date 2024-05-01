@@ -3,10 +3,40 @@ Author: AEM Corp
 Date:	2/20/2023
 Description: Migrates Neglected Or Delinquent Data from Staging to RDS.FactK12StudentCounts
 
-NOTE: This Stored Procedure processes files: 119, 127, 180, 181
+NOTE: This Stored Procedure processes files: 
+FS119 
+	1. Neglected programs participation table - state agency	869	The number of students participating in NEGLECTED programs 
+		under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.
+	2. Delinquent programs participation table - state agency	870	The number of students participating in DELINQUENT programs 
+		under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.
 
-4/29/2024: Added support for FS218, FS219, FS220, FS221
+FS127
+	1. Delinquent programs participation table - LEA	872	The number of students participating in programs for DELINQUENT students 
+		under Title I, Part D, Subpart 2 (LEA) of ESEA, as amended.
+	2. At-Risk programs participation table - LEA	873	The number of students participating in programs for AT-RISK students 
+		under Title I, Part D, Subpart 2 (LEA) of ESEA, as amended.
+
+FS180 - Retired?
+
+FS181 - Retired?
+
+FS218
+	1. The number of students participating in NEGLECTED AND DELINQUENT programs under Title I, Part D, Subpart 1 (State Agency) of ESEA, as amended, 
+		who attained academic and career and technical outcomes while enrolled in the programs.
+
+FS219
+	1. The number of students participating in AT-RISK AND DELINQUENT programs under Title I, Part D, Subpart 2 (LEA) of ESEA, as amended, 
+		who attained academic and career and technical outcomes while enrolled in the programs.
+FS220
+	1. The number of students participating in NEGLECTED AND DELINQUENT programs under Title I, Part D, Subpart 1 (State Agency) of ESEA, as amended, 
+		who attained academic and career and technical outcomes up to 90 calendar days after exiting the program.
+
+FS221
+	1. The number of students participating in AT-RISK AND DELINQUENT programs under Title I, Part D, Subpart 2 (LEA) of ESEA, as amended, 
+		who attained academic and career and technical outcomes up to 90 calendar days after exiting the program.
+
 ************************************************************************/
+
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_NeglectedOrDelinquent]
 	@SchoolYear SMALLINT
 AS
@@ -20,7 +50,7 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
 		IF OBJECT_ID(N'tempdb..#vwNeglectedOrDelinquentStatuses') IS NOT NULL DROP TABLE #vwNeglectedOrDelinquentStatuses
 
-	BEGIN TRY
+--	BEGIN TRY
 
 		DECLARE 
 		@FactTypeId INT,
@@ -58,7 +88,16 @@ BEGIN
 		WHERE SchoolYear = @SchoolYear
 
 		CREATE CLUSTERED INDEX ix_tempvwNeglectedOrDelinquentStatuses 
-			ON #vwNeglectedOrDelinquentStatuses (NeglectedOrDelinquentProgramTypeMap);
+			ON #vwNeglectedOrDelinquentStatuses (
+				NeglectedOrDelinquentLongTermStatusCode,
+				NeglectedProgramTypeCode,
+				DelinquentProgramTypeCode,
+				NeglectedOrDelinquentProgramTypeCode,
+				NeglectedOrDelinquentAcademicAchievementIndicatorMap,
+				NeglectedOrDelinquentAcademicOutcomeIndicatorMap,
+				EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap,
+				EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap
+			);
 
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
@@ -104,9 +143,11 @@ BEGIN
 			, SpecialEducationServicesExitDateId	int null
 			, MigrantStudentQualifyingArrivalDateId	int null
 			, LastQualifyingMoveDateId				int null
-			, NorDProgramParticipationEndDateId		int null -- CIID-6851
-			, NorDDiplomaCredentialAwardDateId		int null -- CIID-6851
+			, StatusStartDateNeglectedOrDelinquentId	int null
+			, StatusEndDateNeglectedOrDelinquentId		int null
+			, OutcomeExitDateNeglectedOrDelinquentId	int null
 		)
+
 
 		INSERT INTO #Facts
 		SELECT DISTINCT
@@ -143,13 +184,15 @@ BEGIN
 			, -1														SpecialEducationServicesExitDateId	
 			, -1														MigrantStudentQualifyingArrivalDateId	
 			, -1														LastQualifyingMoveDateId	
-			, ISNULL(EndDate.DimDateId, -1)								NorDProgramParticipationEndDate -- CIID-6851
-			, ISNULL(AwardDate.DimDateId, -1)							NorDDiplomaCredentialAwardDate -- CIID-6851
+			, ISNULL(BeginDate.DimDateId, -1)							StatusStartDateNeglectedOrDelinquentId
+			, ISNULL(EndDate.DimDateId, -1)								StatusEndDateNeglectedOrDelinquentId
+			, ISNULL(AwardDate.DimDateId, -1)							OutcomeExitDateNeglectedOrDelinquentId		
 
 		FROM Staging.K12Enrollment ske
 
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
+			and ske.SchoolYear = @SchoolYear
 
 		JOIN RDS.DimSeas rds
 			ON ske.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
@@ -169,57 +212,90 @@ BEGIN
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
+
+
 	--negelected or delinquent
 		LEFT JOIN Staging.ProgramParticipationNOrD nord
 			ON ske.StudentIdentifierState = nord.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(nord.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(nord.SchoolIdentifierSea, '')
 			AND nord.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+
 	--idea disability status
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
 			ON ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
 			AND nord.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+
 	--english learner
 		LEFT JOIN Staging.PersonStatus el 
 			ON ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND el.EnglishLearner_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+
 	--race	
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
-			ON ske.SchoolYear = spr.SchoolYear
+			ON spr.SchoolYear = @SchoolYear
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState
 			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
 				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
+
 	--neglected or delinquent (RDS)
 		LEFT JOIN #vwNeglectedOrDelinquentStatuses rdnds
-			ON ske.SchoolYear = rdnds.SchoolYear
-			AND ISNULL(nord.NeglectedOrDelinquentProgramType, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentProgramTypeMap, rdnds.NeglectedOrDelinquentProgramTypeCode)
-			AND ISNULL(nord.NeglectedOrDelinquentAcademicOutcomeIndicator, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorMap, rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorCode)
-			AND ISNULL(nord.NeglectedOrDelinquentAcademicAchievementIndicator, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorMap, rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorCode)
+			ON rdnds.SchoolYear = @SchoolYear
+
+			/* THESE WILL BE NEEDED FOR FS119 and FS127 but for now we are defaulting to 'MISSING' for FS218, FS219, FS220, FS221
+			--AND ISNULL(nord.NeglectedProgramType, 'MISSING') = ISNULL(rdnds.NeglectedProgramTypeMap, rdnds.NeglectedProgramTypeCode)
+			--AND ISNULL(nord.DelinquentProgramType, 'MISSING') = ISNULL(rdnds.DelinquentProgramTypeMap, rdnds.DelinquentProgramTypeCode)
+			--AND ISNULL(nord.NeglectedOrDelinquentProgramType, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentProgramTypeMap, rdnds.NeglectedOrDelinquentProgramTypeCode)
+			*/
+
+			AND rdnds.NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
+			AND rdnds.NeglectedProgramTypeCode = 'MISSING'
+			AND rdnds.DelinquentProgramTypeCode = 'MISSING'
+			AND rdnds.NeglectedOrDelinquentProgramTypeCode = 'MISSING'
+
 
 			AND ISNULL(nord.EdFactsAcademicOrCareerAndTechnicalOutcomeType, 'MISSING') = ISNULL(rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap, rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode)
 			AND ISNULL(nord.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType, 'MISSING') = ISNULL(rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap, rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode)
 
+			AND case 
+					when nord.NeglectedOrDelinquentAcademicOutcomeIndicator = 1 then 'Yes'
+					when nord.NeglectedOrDelinquentAcademicOutcomeIndicator = 0 then 'No'
+					else 'MISSING'
+
+				end
+				= ISNULL(rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorMap, rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorCode)
+
+			AND case 
+					when nord.NeglectedOrDelinquentAcademicAchievementIndicator = 1 then 'Yes'
+					when nord.NeglectedOrDelinquentAcademicAchievementIndicator = 0 then 'No'
+					else 'MISSING'
+
+				end
+				= ISNULL(rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorMap, rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorCode)
 
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
-			ON ske.SchoolYear = rdis.SchoolYear
+			ON rdis.SchoolYear = @SchoolYear
 			AND ISNULL(CAST(idea.IDEAIndicator AS SMALLINT), -1) = ISNULL(rdis.IdeaIndicatorMap, -1)
 			AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
 			AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
 			AND rdis.SpecialEducationExitReasonCode = 'MISSING'
+
 	--english learner (RDS)
 		LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
-			ON rsy.SchoolYear = rdels.SchoolYear
+			ON rdels.SchoolYear = @SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
+
 	--grade (RDS)
 		LEFT JOIN #vwGradeLevels rgls
 			ON ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
+
 	--race (RDS)	
 		LEFT JOIN #vwRaces rdr
 			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
@@ -229,15 +305,20 @@ BEGIN
 					ELSE 'Missing'
 				END
 
-		-- ProgramParticipationEndDate  -- CIID-6851
-			LEFT JOIN RDS.DimDates EndDate 
-				ON nord.ProgramParticipationEndDate = EndDate.DateValue
-		-- NorDDiplomaCredentialAwardDate  -- CIID-6851
-			LEFT JOIN RDS.DimDates AwardDate 
-				ON nord.DiplomaCredentialAwardDate = AwardDate.DateValue
+	-- ProgramParticipationEndDate
+		LEFT JOIN RDS.DimDates BeginDate 
+			ON nord.ProgramParticipationEndDate = BeginDate.DateValue
 
---select * from #facts
---return
+	-- ProgramParticipationEndDate
+		LEFT JOIN RDS.DimDates EndDate 
+			ON nord.ProgramParticipationEndDate = EndDate.DateValue
+
+	-- NorDDiplomaCredentialAwardDate
+		LEFT JOIN RDS.DimDates AwardDate 
+			ON nord.NeglectedOrDelinquentExitOutcomeDate = AwardDate.DateValue
+
+
+
 
 	--Clear the Fact table of the data about to be migrated  
 		DELETE RDS.FactK12StudentCounts
@@ -279,6 +360,10 @@ BEGIN
 			, [SpecialEducationServicesExitDateId]
 			, [MigrantStudentQualifyingArrivalDateId]
 			, [LastQualifyingMoveDateId]
+			, StatusStartDateNeglectedOrDelinquentId
+			, StatusEndDateNeglectedOrDelinquentId
+			, OutcomeExitDateNeglectedOrDelinquentId
+
 		)
 		SELECT 
 			[SchoolYearId]
@@ -313,13 +398,20 @@ BEGIN
 			, [SpecialEducationServicesExitDateId]
 			, [MigrantStudentQualifyingArrivalDateId]
 			, [LastQualifyingMoveDateId]
+			, StatusStartDateNeglectedOrDelinquentId
+			, StatusEndDateNeglectedOrDelinquentId
+			, OutcomeExitDateNeglectedOrDelinquentId
+
 		FROM #Facts
 
 		ALTER INDEX ALL ON RDS.FactK12StudentCounts REBUILD
 
-	END TRY
-	BEGIN CATCH
-		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_NeglectedOrDeliquent', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', 'FactK12StudentCounts', ERROR_MESSAGE(), 1, NULL, GETDATE())
-	END CATCH
+	--END TRY
+	--BEGIN CATCH
+
+	--	insert into app.DataMigrationHistories
+	--		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
+
+	--END CATCH
 
 END

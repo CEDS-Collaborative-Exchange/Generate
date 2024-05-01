@@ -1,3 +1,25 @@
+   -- Add Index on Staging.ProgramParticipationNorD -------------------------------------
+if exists (
+	SELECT * 
+	FROM sys.indexes 
+	WHERE name='IX_ProgramParticipationNOrD_Student_LEA_School_BeginDate_EndDate' 
+	AND object_id = OBJECT_ID('Staging.ProgramParticipationNorD')
+	)
+begin
+	DROP INDEX IX_ProgramParticipationNOrD_Student_LEA_School_BeginDate_EndDate ON Staging.ProgramParticipationNorD
+end
+
+
+CREATE NONCLUSTERED INDEX IX_ProgramParticipationNOrD_Student_LEA_School_BeginDate_EndDate 
+	ON Staging.ProgramParticipationNorD (
+		StudentIdentifierState,
+		LeaIdentifierSeaAccountability,
+		SchoolIdentifierSea,
+		ProgramParticipationBeginDate,
+		ProgramParticipationEndDate
+	) 
+  ---------------------------------------------------------------------------------------- 
+   
     IF COL_LENGTH('Staging.K12Organization', 'School_TitleIPartASchoolDesignation') IS NOT NULL
     BEGIN
         EXEC sp_rename 'Staging.K12Organization.School_TitleIPartASchoolDesignation', 'School_TitleISchoolStatus', 'COLUMN';
