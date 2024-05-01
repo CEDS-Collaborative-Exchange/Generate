@@ -36,10 +36,19 @@
         ALTER TABLE Staging.ProgramParticipationNorD DROP COLUMN RunDateTime;
     END
 
+    --Change the data type of the existing column
+    UPDATE Staging.ProgramParticipationNorD
+    SET NeglectedOrDelinquentAcademicOutcomeIndicator = NULL
+
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentAcademicOutcomeIndicator') IS NOT NULL
+    BEGIN
+        ALTER TABLE Staging.ProgramParticipationNorD ALTER COLUMN NeglectedOrDelinquentAcademicOutcomeIndicator bit;
+    END
+
     --Add the new columns
     IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentAcademicAchievementIndicator') IS NULL
     BEGIN
-        ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentAcademicAchievementIndicator nvarchar(100);
+        ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentAcademicAchievementIndicator bit;
     END
 
     IF COL_LENGTH('Staging.ProgramParticipationNorD', 'EdFactsAcademicOrCareerAndTechnicalOutcomeType') IS NULL
