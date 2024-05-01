@@ -48,6 +48,17 @@
 		SET IDENTITY_INSERT RDS.DimNOrDStatuses OFF
 	END
 
+	IF OBJECT_ID('tempdb..#NeglectedOrDelinquentLongTerm') IS NOT NULL 
+	BEGIN
+		DROP TABLE #NeglectedOrDelinquentLongTerm
+	END
+
+	CREATE TABLE #NeglectedOrDelinquentLongTerm (NeglectedOrDelinquentLongTermStatusCode VARCHAR(50), NeglectedOrDelinquentLongTermStatusDescription VARCHAR(200), NeglectedOrDelinquentLongTermStatusEdFactsCode VARCHAR(50))
+
+	INSERT INTO #NeglectedOrDelinquentLongTerm VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #NeglectedOrDelinquentLongTerm
+	    VALUES ('Yes', 'Yes', 'NDLONGTERM')
+
 	IF OBJECT_ID('tempdb..#NeglectedOrDelinquentProgramType') IS NOT NULL 
 	BEGIN
 		DROP TABLE #NeglectedOrDelinquentProgramType
@@ -164,7 +175,10 @@
 			('MISSING', 'MISSING', 'MISSING')
 
 	INSERT INTO RDS.DimNOrDStatuses (
-        NeglectedOrDelinquentProgramTypeCode
+        NeglectedOrDelinquentLongTermStatusCode
+        , NeglectedOrDelinquentLongTermStatusDescription
+        , NeglectedOrDelinquentLongTermStatusEdFactsCode
+        , NeglectedOrDelinquentProgramTypeCode
         , NeglectedOrDelinquentProgramTypeDescription
         , NeglectedOrDelinquentProgramTypeEdFactsCode
         , NeglectedProgramTypeCode
@@ -185,7 +199,10 @@
         , EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode
     )
 	SELECT 
-		nodpt.NeglectedOrDelinquentProgramTypeCode
+        nlt.NeglectedOrDelinquentLongTermStatusCode
+        , nlt.NeglectedOrDelinquentLongTermStatusDescription
+        , nlt.NeglectedOrDelinquentLongTermStatusEdFactsCode
+		, nodpt.NeglectedOrDelinquentProgramTypeCode
 		, nodpt.NeglectedOrDelinquentProgramTypeDescription
 		, nodpt.NeglectedOrDelinquentProgramTypeEdFactsCode
 		, nptc.NeglectedProgramTypeCode
@@ -204,7 +221,8 @@
 		, acoet.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
 		, acoet.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeDescription
         , acoet.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode
-	FROM #NeglectedOrDelinquentProgramType nodpt
+	FROM #NeglectedOrDelinquentLongTerm nlt
+    CROSS JOIN #NeglectedOrDelinquentProgramType nodpt
 	CROSS JOIN #NeglectedProgramTypeCode nptc
 	CROSS JOIN #DelinquentProgramTypeCode dptc
     CROSS JOIN #NorDAcademicAchievementIndicator naai
@@ -212,7 +230,8 @@
 	CROSS JOIN #EdFactsAcademicOrCTOutcomeType acot
 	CROSS JOIN #EdFactsAcademicOrCTOutcomeExitType acoet
 	LEFT JOIN rds.DimNOrDStatuses main
-		ON nodpt.NeglectedOrDelinquentProgramTypeCode = main.NeglectedOrDelinquentProgramTypeCode
+		ON nlt.NeglectedOrDelinquentLongTermStatusCode = main.NeglectedOrDelinquentLongTermStatusCode
+        AND nodpt.NeglectedOrDelinquentProgramTypeCode = main.NeglectedOrDelinquentProgramTypeCode
 		AND nptc.NeglectedProgramTypeCode = main.NeglectedProgramTypeCode
 		AND dptc.DelinquentProgramTypeCode = main.DelinquentProgramTypeCode
         AND naai.NeglectedOrDelinquentAcademicAchievementIndicatorCode = main.NeglectedOrDelinquentAcademicAchievementIndicatorCode
@@ -222,7 +241,8 @@
 
 	WHERE main.DimNOrDStatusId IS NULL
 
-	DROP TABLE #NeglectedOrDelinquentProgramType
+	DROP TABLE #NeglectedOrDelinquentLongTerm
+    DROP TABLE #NeglectedOrDelinquentProgramType
 	DROP TABLE #NeglectedProgramTypeCode 
 	DROP TABLE #DelinquentProgramTypeCode
     DROP TABLE #NorDAcademicAchievementIndicator
