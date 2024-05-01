@@ -7,7 +7,7 @@ AS
 			OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
 	)
 
-	SELECT  
+	SELECT  DISTINCT
 		vw.StudentIdentifierState
 		,vw.LEAIdentifierSeaAccountability
 		,EdFactsAcademicOrCareerAndTechnicalOutcomeType	
