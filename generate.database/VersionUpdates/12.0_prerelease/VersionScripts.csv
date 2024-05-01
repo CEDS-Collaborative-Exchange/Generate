@@ -48,9 +48,10 @@ Views\\Drop,Debug.vwTitleIIIELOct_FactTable.View.sql
 Views\\Create,Debug.vwTitleIIIELOct_FactTable.View.sql
 Views\\Drop,Debug.vwTitleIIIELSY_FactTable.View.sql
 Views\\Create,Debug.vwTitleIIIELSY_FactTable.View.sql
-
-
-
+Views\\Drop,RDS.vwDimNOrDStatuses.View.sql
+Views\\Create,RDS.vwDimNOrDStatuses.View.sql
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql
 VersionUpdates\\12.0_prerelease,UpdateDbVersion.sql,0

@@ -4,6 +4,8 @@ Date:	2/20/2023
 Description: Migrates Neglected Or Delinquent Data from Staging to RDS.FactK12StudentCounts
 
 NOTE: This Stored Procedure processes files: 119, 127, 180, 181
+
+4/29/2024: Added support for FS218, FS219, FS220, FS221
 ************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_NeglectedOrDelinquent]
 	@SchoolYear SMALLINT
@@ -63,10 +65,6 @@ BEGIN
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'neglectedordelinquent'	--DimFactTypeId = 15
 
-		--Clear the Fact table of the data about to be migrated  
-		DELETE RDS.FactK12StudentCounts
-		WHERE SchoolYearId = @SchoolYearId 
-			AND FactTypeId = @FactTypeId
 
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts
@@ -106,6 +104,8 @@ BEGIN
 			, SpecialEducationServicesExitDateId	int null
 			, MigrantStudentQualifyingArrivalDateId	int null
 			, LastQualifyingMoveDateId				int null
+			, NorDProgramParticipationEndDateId		int null -- CIID-6851
+			, NorDDiplomaCredentialAwardDateId		int null -- CIID-6851
 		)
 
 		INSERT INTO #Facts
@@ -142,19 +142,33 @@ BEGIN
 			, -1														PrimaryDisabilityTypeId				
 			, -1														SpecialEducationServicesExitDateId	
 			, -1														MigrantStudentQualifyingArrivalDateId	
-			, -1														LastQualifyingMoveDateId						
+			, -1														LastQualifyingMoveDateId	
+			, ISNULL(EndDate.DimDateId, -1)								NorDProgramParticipationEndDate -- CIID-6851
+			, ISNULL(AwardDate.DimDateId, -1)							NorDDiplomaCredentialAwardDate -- CIID-6851
 
 		FROM Staging.K12Enrollment ske
+
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
+
+		JOIN RDS.DimSeas rds
+			ON ske.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
+
+		JOIN RDS.DimPeople rdp
+			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
+			AND rdp.IsActiveK12Student = 1
+			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
+			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
+			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
+			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
+			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
+
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
 			AND ske.EnrollmentEntryDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
-		JOIN RDS.DimSeas rds
-			ON ske.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--negelected or delinquent
 		LEFT JOIN Staging.ProgramParticipationNOrD nord
 			ON ske.StudentIdentifierState = nord.StudentIdentifierState
@@ -183,6 +197,13 @@ BEGIN
 		LEFT JOIN #vwNeglectedOrDelinquentStatuses rdnds
 			ON ske.SchoolYear = rdnds.SchoolYear
 			AND ISNULL(nord.NeglectedOrDelinquentProgramType, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentProgramTypeMap, rdnds.NeglectedOrDelinquentProgramTypeCode)
+			AND ISNULL(nord.NeglectedOrDelinquentAcademicOutcomeIndicator, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorMap, rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorCode)
+			AND ISNULL(nord.NeglectedOrDelinquentAcademicAchievementIndicator, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorMap, rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorCode)
+
+			AND ISNULL(nord.EdFactsAcademicOrCareerAndTechnicalOutcomeType, 'MISSING') = ISNULL(rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap, rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode)
+			AND ISNULL(nord.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType, 'MISSING') = ISNULL(rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap, rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode)
+
+
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON ske.SchoolYear = rdis.SchoolYear
@@ -207,14 +228,21 @@ BEGIN
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
-		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND rdp.IsActiveK12Student = 1
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
-			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
-			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
+
+		-- ProgramParticipationEndDate  -- CIID-6851
+			LEFT JOIN RDS.DimDates EndDate 
+				ON nord.ProgramParticipationEndDate = EndDate.DateValue
+		-- NorDDiplomaCredentialAwardDate  -- CIID-6851
+			LEFT JOIN RDS.DimDates AwardDate 
+				ON nord.DiplomaCredentialAwardDate = AwardDate.DateValue
+
+--select * from #facts
+--return
+
+	--Clear the Fact table of the data about to be migrated  
+		DELETE RDS.FactK12StudentCounts
+		WHERE SchoolYearId = @SchoolYearId 
+			AND FactTypeId = @FactTypeId
 
 
 	--Final insert into RDS.FactK12StudentCounts table
