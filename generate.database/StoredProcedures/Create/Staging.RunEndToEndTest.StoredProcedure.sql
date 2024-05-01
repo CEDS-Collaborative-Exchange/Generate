@@ -1,4 +1,4 @@
-CREATE PROCEDURE Staging.RunEndToEndTest
+CREATE PROCEDURE [Staging].[RunEndToEndTest]
 	@ReportCode varchar(10),
 	@SchoolYear VARCHAR(10), 
 	@ReportTableName VARCHAR(50),
@@ -9,7 +9,7 @@ AS
 
 	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
 
-	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS' + @ReportCode + '_UnitTestCase') 
+	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS' + RIGHT(@ReportCode, 3) + '_UnitTestCase') 
 	BEGIN
 		SET @expectedResult = 1
 		INSERT INTO App.SqlUnitTest (
@@ -101,7 +101,7 @@ AS
 				WHEN 'SCH' THEN 'AND rt.OrganizationIdentifierSea = s.SchoolIdentifierSea'
 				ELSE ''
 			END
-			+ ISNULL(STRING_AGG(' AND s.' + d.DimensionFieldName + ' = rt.' + d.DimensionFieldName, CHAR(10) + '			'), '')
+			+ ISNULL(STRING_AGG(' AND convert(varchar, s.' + d.DimensionFieldName + ') = rt.' + d.DimensionFieldName, CHAR(10) + '			'), '')
 	FROM app.GenerateReports gr
 	JOIN app.CategorySets cs
 		on cs.GenerateReportId = gr.GenerateReportId
@@ -132,7 +132,6 @@ AS
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @SQLStatement = REPLACE(REPLACE(@SQLStatement, ',NOCATS', ''), '_NOCATS', '')
-		select @SQLStatement
 		EXEC sp_executesql @SQLStatement;
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END
