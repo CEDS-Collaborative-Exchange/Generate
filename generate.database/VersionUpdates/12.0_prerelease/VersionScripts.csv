@@ -55,4 +55,3 @@ StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDeli
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql
 VersionUpdates\\12.0_prerelease,UpdateDbVersion.sql,0
-
