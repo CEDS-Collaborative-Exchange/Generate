@@ -7,7 +7,8 @@ AS
 		, enrollment.FirstName
 		, enrollment.LastOrSurname
 		, enrollment.MiddleName
-
+		, enrollment.SchoolYear
+		
 		--Neglected or Delinquent
 		, nord.NeglectedOrDelinquentAcademicAchievementIndicator
 		, nord.NeglectedOrDelinquentAcademicOutcomeIndicator
