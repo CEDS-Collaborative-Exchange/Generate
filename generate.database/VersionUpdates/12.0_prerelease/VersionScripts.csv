@@ -1,8 +1,12 @@
 VersionUpdates\\12.0_prerelease,Restore 11.4.sql,0
+VersionUpdates\\12.0_prerelease,App.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,JunkTablePopulation.sql,0
 VersionUpdates\\12.0_prerelease,Staging.TableChages.sql,0
 VersionUpdates\\12.0_prerelease,Insert Staging Validation Rules.sql,0
+VersionUpdates\\12.0_prerelease,App.Metadata-FS224.sql,0
+VersionUpdates\\12.0_prerelease,App.Metadata-FS225.sql,0
+Metadata,App.ViewDefinitions.Metadata.sql,0
 Views\\Drop,Debug.vwChildCount_FactTable.View.sql 
 Views\\Create,Debug.vwChildCount_FactTable.View.sql 
 Views\\Drop,Debug.vwChildCount_StagingTables.View.sql 
@@ -53,6 +57,8 @@ Views\\Drop,Debug.vwTitleIIIELOct_FactTable.View.sql
 Views\\Create,Debug.vwTitleIIIELOct_FactTable.View.sql
 Views\\Drop,Debug.vwTitleIIIELSY_FactTable.View.sql
 Views\\Create,Debug.vwTitleIIIELSY_FactTable.View.sql
+Views\\Drop,Debug.vwNeglectedOrDelinquent_StagingTables_C219.View.sql
+Views\\Create,Debug.vwNeglectedOrDelinquent_StagingTables_C219.View.sql
 Views\\Drop,RDS.vwDimNOrDStatuses.View.sql
 Views\\Create,RDS.vwDimNOrDStatuses.View.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
