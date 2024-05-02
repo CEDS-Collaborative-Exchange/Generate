@@ -1,4 +1,4 @@
-CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_C220] 
+CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTable_C221] 
 AS
 	WITH excludedLeas AS (
 		SELECT DISTINCT LEAIdentifierSea
@@ -9,18 +9,14 @@ AS
 
 	SELECT  DISTINCT
 		vw.StudentIdentifierState
-		,lea.SeaOrganizationIdentifierSea
+		,vw.LEAIdentifierSeaAccountability
+		,vw.NeglectedOrDelinquentAcademicOutcomeIndicator
 		,EdFactsAcademicOrCareerAndTechnicalOutcomeType	
 	FROM [Debug].[vwNeglectedOrDelinquent_StagingTables] vw
-	JOIN [Staging].[ProgramParticipationTitleI] pt 
-		on pt.LeaIdentifierSeaAccountability = vw.LEAIdentifierSeaAccountability
-		and pt.StudentIdentifierState = vw.StudentIdentifierState
-	JOIN [RDS].[DimLeas] lea on lea.LeaIdentifierSea = vw.LeaIdentifierSeaAccountability
 	LEFT JOIN excludedLeas el
 		ON vw.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
 	WHERE el.LeaIdentifierSea IS NULL
 		AND ISNULL(NeglectedOrDelinquentAcademicOutcomeIndicator, '') <> ''
-		AND TitleIIndicator IN ('01_1', '02_1', '03_1', '04_1', '05_1')
 		AND 
 		(
 			(
@@ -38,9 +34,9 @@ AS
 		)
 	GROUP BY
 		 vw.StudentIdentifierState
-		,lea.SeaOrganizationIdentifierSea
+		,vw.LEAIdentifierSeaAccountability
 		,EdFactsAcademicOrCareerAndTechnicalOutcomeType
-
+		,vw.NeglectedOrDelinquentAcademicOutcomeIndicator
 GO
 
 

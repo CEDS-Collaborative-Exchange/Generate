@@ -1,4 +1,4 @@
-CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_C221] 
+CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTable_C220] 
 AS
 	WITH excludedLeas AS (
 		SELECT DISTINCT LEAIdentifierSea
@@ -9,22 +9,20 @@ AS
 
 	SELECT  DISTINCT
 		vw.StudentIdentifierState
-		,vw.LEAIdentifierSeaAccountability
+		,lea.SeaOrganizationIdentifierSea
+		,vw.NeglectedOrDelinquentAcademicAchievementIndicator
 		,EdFactsAcademicOrCareerAndTechnicalOutcomeType	
 	FROM [Debug].[vwNeglectedOrDelinquent_StagingTables] vw
-	JOIN [Staging].[ProgramParticipationTitleI] pt 
-		on pt.LeaIdentifierSeaAccountability = vw.LEAIdentifierSeaAccountability
-		and pt.StudentIdentifierState = vw.StudentIdentifierState
+	JOIN [RDS].[DimLeas] lea on lea.LeaIdentifierSea = vw.LeaIdentifierSeaAccountability
 	LEFT JOIN excludedLeas el
 		ON vw.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
 	WHERE el.LeaIdentifierSea IS NULL
-		AND ISNULL(NeglectedOrDelinquentAcademicOutcomeIndicator, '') <> ''
-		AND TitleIIndicator IN ('01_1', '02_1', '03_1', '04_1', '05_1')
+		AND ISNULL(NeglectedOrDelinquentAcademicAchievementIndicator, '') <> ''
 		AND 
 		(
 			(
-				pt.ProgramParticipationBeginDate >= CAST(('7/1/' + CAST((vw.SchoolYear -1) as varchar))  AS Date)
-				AND CAST(ISNULL(pt.ProgramParticipationEndDate, '1900-01-01') AS DATE) <= CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date)
+				vw.ProgramParticipationBeginDate >= CAST(('7/1/' + CAST((vw.SchoolYear -1) as varchar))  AS Date)
+				AND CAST(ISNULL(vw.ProgramParticipationEndDate, '1900-01-01') AS DATE) <= CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date)
 			) -- Received Title I, Part D, Subpart 1 services
 			OR (
 				 vw.NeglectedOrDelinquentExitOutcomeDate
@@ -37,9 +35,9 @@ AS
 		)
 	GROUP BY
 		 vw.StudentIdentifierState
-		,vw.LEAIdentifierSeaAccountability
+		,lea.SeaOrganizationIdentifierSea
 		,EdFactsAcademicOrCareerAndTechnicalOutcomeType
-
+		,vw.NeglectedOrDelinquentAcademicAchievementIndicator
 GO
 
 
