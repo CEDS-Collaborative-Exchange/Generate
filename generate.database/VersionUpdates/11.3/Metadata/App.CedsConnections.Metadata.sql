@@ -465,7 +465,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- How does this school’s attendance and promotion rates compare to other schools in the LEA and to all schools in the state?
+		-- How does this schoolï¿½s attendance and promotion rates compare to other schools in the LEA and to all schools in the state?
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  65)
@@ -473,12 +473,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('How does this school’s attendance and promotion rates compare to other schools in the LEA and to all schools in the state?','How does this school’s attendance and promotion rates compare to other schools in the LEA and to all schools in the state?','SLDS Community',65)
+			('How does this schoolï¿½s attendance and promotion rates compare to other schools in the LEA and to all schools in the state?','How does this schoolï¿½s attendance and promotion rates compare to other schools in the LEA and to all schools in the state?','SLDS Community',65)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'How does this school’s attendance and promotion rates compare to other schools in the LEA and to all schools in the state?', CedsConnectionName = 'How does this school’s attendance and promotion rates compare to other schools in the LEA and to all schools in the state?', CedsConnectionSource = 'SLDS Community'
+			set CedsConnectionDescription = 'How does this schoolï¿½s attendance and promotion rates compare to other schools in the LEA and to all schools in the state?', CedsConnectionName = 'How does this schoolï¿½s attendance and promotion rates compare to other schools in the LEA and to all schools in the state?', CedsConnectionSource = 'SLDS Community'
 			where CedsUseCaseId = 65
 		END
  
@@ -2021,12 +2021,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The designation of a school’s poverty quartile for purposes of determining classes taught by highly qualified teachers in high and low poverty schools, according to state’s indicator of poverty.','Data Group 699: State poverty designation','EDFacts',189)
+			('The designation of a schoolï¿½s poverty quartile for purposes of determining classes taught by highly qualified teachers in high and low poverty schools, according to stateï¿½s indicator of poverty.','Data Group 699: State poverty designation','EDFacts',189)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The designation of a school’s poverty quartile for purposes of determining classes taught by highly qualified teachers in high and low poverty schools, according to state’s indicator of poverty.', CedsConnectionName = 'Data Group 699: State poverty designation', CedsConnectionSource = 'EDFacts'
+			set CedsConnectionDescription = 'The designation of a schoolï¿½s poverty quartile for purposes of determining classes taught by highly qualified teachers in high and low poverty schools, according to stateï¿½s indicator of poverty.', CedsConnectionName = 'Data Group 699: State poverty designation', CedsConnectionSource = 'EDFacts'
 			where CedsUseCaseId = 189
 		END
  
@@ -2229,7 +2229,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- SY 2014-15 EDFacts File Specification C122 MEP Students Eligible and Served – Summer/Intersession
+		-- SY 2014-15 EDFacts File Specification C122 MEP Students Eligible and Served ï¿½ Summer/Intersession
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  201)
@@ -2237,12 +2237,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The cumulative unduplicated number of eligible migrant students served by a Migrant Education Program (MEP) during the summer/intersession term.','SY 2014-15 EDFacts File Specification C122 MEP Students Eligible and Served – Summer/Intersession','EDFacts File Specification C122 Version 11.1',201)
+			('The cumulative unduplicated number of eligible migrant students served by a Migrant Education Program (MEP) during the summer/intersession term.','SY 2014-15 EDFacts File Specification C122 MEP Students Eligible and Served ï¿½ Summer/Intersession','EDFacts File Specification C122 Version 11.1',201)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The cumulative unduplicated number of eligible migrant students served by a Migrant Education Program (MEP) during the summer/intersession term.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C122 MEP Students Eligible and Served – Summer/Intersession', CedsConnectionSource = 'EDFacts File Specification C122 Version 11.1'
+			set CedsConnectionDescription = 'The cumulative unduplicated number of eligible migrant students served by a Migrant Education Program (MEP) during the summer/intersession term.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C122 MEP Students Eligible and Served ï¿½ Summer/Intersession', CedsConnectionSource = 'EDFacts File Specification C122 Version 11.1'
 			where CedsUseCaseId = 201
 		END
  
@@ -2669,12 +2669,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of career and technical education (CTE) concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the state’s calculation of adequate yearly progress (AYP).','Data Group 681: CTE concentrators academic achievement table','EDFacts',225)
+			('The number of career and technical education (CTE) concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the stateï¿½s calculation of adequate yearly progress (AYP).','Data Group 681: CTE concentrators academic achievement table','EDFacts',225)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of career and technical education (CTE) concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the state’s calculation of adequate yearly progress (AYP).', CedsConnectionName = 'Data Group 681: CTE concentrators academic achievement table', CedsConnectionSource = 'EDFacts'
+			set CedsConnectionDescription = 'The number of career and technical education (CTE) concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the stateï¿½s calculation of adequate yearly progress (AYP).', CedsConnectionName = 'Data Group 681: CTE concentrators academic achievement table', CedsConnectionSource = 'EDFacts'
 			where CedsUseCaseId = 225
 		END
  
@@ -2795,12 +2795,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA.','Data Group 702: CTE concentrator in graduate rate table','EDFacts',232)
+			('The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA.','Data Group 702: CTE concentrator in graduate rate table','EDFacts',232)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA.', CedsConnectionName = 'Data Group 702: CTE concentrator in graduate rate table', CedsConnectionSource = 'EDFacts'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA.', CedsConnectionName = 'Data Group 702: CTE concentrator in graduate rate table', CedsConnectionSource = 'EDFacts'
 			where CedsUseCaseId = 232
 		END
  
@@ -3425,12 +3425,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication that the school was restructured, transformed or otherwise changed as a consequence of the state’s accountability system under ESEA or as a result of School Improvement Grants (SIG), but is not recognized as a new school for CCD purposes.','Data Group 743: Reconstituted Status','EDFacts',268)
+			('An indication that the school was restructured, transformed or otherwise changed as a consequence of the stateï¿½s accountability system under ESEA or as a result of School Improvement Grants (SIG), but is not recognized as a new school for CCD purposes.','Data Group 743: Reconstituted Status','EDFacts',268)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication that the school was restructured, transformed or otherwise changed as a consequence of the state’s accountability system under ESEA or as a result of School Improvement Grants (SIG), but is not recognized as a new school for CCD purposes.', CedsConnectionName = 'Data Group 743: Reconstituted Status', CedsConnectionSource = 'EDFacts'
+			set CedsConnectionDescription = 'An indication that the school was restructured, transformed or otherwise changed as a consequence of the stateï¿½s accountability system under ESEA or as a result of School Improvement Grants (SIG), but is not recognized as a new school for CCD purposes.', CedsConnectionName = 'Data Group 743: Reconstituted Status', CedsConnectionSource = 'EDFacts'
 			where CedsUseCaseId = 268
 		END
  
@@ -3515,12 +3515,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('This includes the following Data Groups:    Data Group 1: LEA Identifier  Data Group 4: LEA Identifier (state)  Data Group 5: School Identifier (state)  Data Group 7: Education Entity Name  Data Group 8: Address Mailing  Data Group 9: Address Location  Data Group 10: Telephone – Education Entity  Data Group 11: Website Address  Data Group 458: CCSSO Contact  Data Group 570: State Agency Number','Basic Directory Data for File Specification N029','EDFacts File Specification v 9.0/National Center for Education Statistics',333)
+			('This includes the following Data Groups:    Data Group 1: LEA Identifier  Data Group 4: LEA Identifier (state)  Data Group 5: School Identifier (state)  Data Group 7: Education Entity Name  Data Group 8: Address Mailing  Data Group 9: Address Location  Data Group 10: Telephone ï¿½ Education Entity  Data Group 11: Website Address  Data Group 458: CCSSO Contact  Data Group 570: State Agency Number','Basic Directory Data for File Specification N029','EDFacts File Specification v 9.0/National Center for Education Statistics',333)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'This includes the following Data Groups:    Data Group 1: LEA Identifier  Data Group 4: LEA Identifier (state)  Data Group 5: School Identifier (state)  Data Group 7: Education Entity Name  Data Group 8: Address Mailing  Data Group 9: Address Location  Data Group 10: Telephone – Education Entity  Data Group 11: Website Address  Data Group 458: CCSSO Contact  Data Group 570: State Agency Number', CedsConnectionName = 'Basic Directory Data for File Specification N029', CedsConnectionSource = 'EDFacts File Specification v 9.0/National Center for Education Statistics'
+			set CedsConnectionDescription = 'This includes the following Data Groups:    Data Group 1: LEA Identifier  Data Group 4: LEA Identifier (state)  Data Group 5: School Identifier (state)  Data Group 7: Education Entity Name  Data Group 8: Address Mailing  Data Group 9: Address Location  Data Group 10: Telephone ï¿½ Education Entity  Data Group 11: Website Address  Data Group 458: CCSSO Contact  Data Group 570: State Agency Number', CedsConnectionName = 'Basic Directory Data for File Specification N029', CedsConnectionSource = 'EDFacts File Specification v 9.0/National Center for Education Statistics'
 			where CedsUseCaseId = 333
 		END
  
@@ -3561,7 +3561,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- What are the definable characteristics of the state’s Birth-8 workforce?
+		-- What are the definable characteristics of the stateï¿½s Birth-8 workforce?
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  395)
@@ -3569,12 +3569,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('What are the definable characteristics of the state’s Birth-8 workforce?','What are the definable characteristics of the state’s Birth-8 workforce?','Maine SLDS',395)
+			('What are the definable characteristics of the stateï¿½s Birth-8 workforce?','What are the definable characteristics of the stateï¿½s Birth-8 workforce?','Maine SLDS',395)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'What are the definable characteristics of the state’s Birth-8 workforce?', CedsConnectionName = 'What are the definable characteristics of the state’s Birth-8 workforce?', CedsConnectionSource = 'Maine SLDS'
+			set CedsConnectionDescription = 'What are the definable characteristics of the stateï¿½s Birth-8 workforce?', CedsConnectionName = 'What are the definable characteristics of the stateï¿½s Birth-8 workforce?', CedsConnectionSource = 'Maine SLDS'
 			where CedsUseCaseId = 395
 		END
  
@@ -3605,17 +3605,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('CONNECTION adapted from Maine’s SLDS Early Childhood Policy Questions - Draft 9.26.2012','What are the definable characteristics of the state''s children who are entering grades K-2','Maine SLDS',498)
+			('CONNECTION adapted from Maineï¿½s SLDS Early Childhood Policy Questions - Draft 9.26.2012','What are the definable characteristics of the state''s children who are entering grades K-2','Maine SLDS',498)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'CONNECTION adapted from Maine’s SLDS Early Childhood Policy Questions - Draft 9.26.2012', CedsConnectionName = 'What are the definable characteristics of the state''s children who are entering grades K-2', CedsConnectionSource = 'Maine SLDS'
+			set CedsConnectionDescription = 'CONNECTION adapted from Maineï¿½s SLDS Early Childhood Policy Questions - Draft 9.26.2012', CedsConnectionName = 'What are the definable characteristics of the state''s children who are entering grades K-2', CedsConnectionSource = 'Maine SLDS'
 			where CedsUseCaseId = 498
 		END
  
 		-----------------------------------------
-		-- What are the definable characteristics of our state’s Birth to 5 programs?
+		-- What are the definable characteristics of our stateï¿½s Birth to 5 programs?
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  499)
@@ -3623,12 +3623,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Generally lists data elements that might be used to compare birth to age programs.  (This use could be further defined as more focused connections that identify specific questions and the required elements.)','What are the definable characteristics of our state’s Birth to 5 programs?','Adapted from Maine’s SLDS Early Childhood Policy Questions - Draft 9.26.2012',499)
+			('Generally lists data elements that might be used to compare birth to age programs.  (This use could be further defined as more focused connections that identify specific questions and the required elements.)','What are the definable characteristics of our stateï¿½s Birth to 5 programs?','Adapted from Maineï¿½s SLDS Early Childhood Policy Questions - Draft 9.26.2012',499)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Generally lists data elements that might be used to compare birth to age programs.  (This use could be further defined as more focused connections that identify specific questions and the required elements.)', CedsConnectionName = 'What are the definable characteristics of our state’s Birth to 5 programs?', CedsConnectionSource = 'Adapted from Maine’s SLDS Early Childhood Policy Questions - Draft 9.26.2012'
+			set CedsConnectionDescription = 'Generally lists data elements that might be used to compare birth to age programs.  (This use could be further defined as more focused connections that identify specific questions and the required elements.)', CedsConnectionName = 'What are the definable characteristics of our stateï¿½s Birth to 5 programs?', CedsConnectionSource = 'Adapted from Maineï¿½s SLDS Early Childhood Policy Questions - Draft 9.26.2012'
 			where CedsUseCaseId = 499
 		END
  
@@ -3641,12 +3641,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('This is a list of data elements that might be used to compare schools on factors that might indicate levels of ability to receive kindergarteners.  (This list may be narrowed down to specific policy questions.  Each could be a connection requiring a more limited set of source data elements and analysis recommendations.)','What definable characteristics exist to measure state schools ability to receive kindergarteners','adapted from Maine’s SLDS Early Childhood Policy Questions - Draft 9.26.2012',500)
+			('This is a list of data elements that might be used to compare schools on factors that might indicate levels of ability to receive kindergarteners.  (This list may be narrowed down to specific policy questions.  Each could be a connection requiring a more limited set of source data elements and analysis recommendations.)','What definable characteristics exist to measure state schools ability to receive kindergarteners','adapted from Maineï¿½s SLDS Early Childhood Policy Questions - Draft 9.26.2012',500)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'This is a list of data elements that might be used to compare schools on factors that might indicate levels of ability to receive kindergarteners.  (This list may be narrowed down to specific policy questions.  Each could be a connection requiring a more limited set of source data elements and analysis recommendations.)', CedsConnectionName = 'What definable characteristics exist to measure state schools ability to receive kindergarteners', CedsConnectionSource = 'adapted from Maine’s SLDS Early Childhood Policy Questions - Draft 9.26.2012'
+			set CedsConnectionDescription = 'This is a list of data elements that might be used to compare schools on factors that might indicate levels of ability to receive kindergarteners.  (This list may be narrowed down to specific policy questions.  Each could be a connection requiring a more limited set of source data elements and analysis recommendations.)', CedsConnectionName = 'What definable characteristics exist to measure state schools ability to receive kindergarteners', CedsConnectionSource = 'adapted from Maineï¿½s SLDS Early Childhood Policy Questions - Draft 9.26.2012'
 			where CedsUseCaseId = 500
 		END
  
@@ -3839,12 +3839,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A multi-state based perspective on the processes and aggregations necessary to submit EDFacts Files C119 and C127 Neglected and Delinquent Participation. These files collect the number of students participating in programs for neglected, delinquent, or at–risk students (N or D) under Title I, Part D, Subpart1 (SEA) and Subpart 2 (LEA) of ESEA as amended.','EDFacts File Specs C119 and C127 Neglected or Delinquent Participation Multi-state based Connection','EDFacts CEDS Connections Workgroup',602)
+			('A multi-state based perspective on the processes and aggregations necessary to submit EDFacts Files C119 and C127 Neglected and Delinquent Participation. These files collect the number of students participating in programs for neglected, delinquent, or atï¿½risk students (N or D) under Title I, Part D, Subpart1 (SEA) and Subpart 2 (LEA) of ESEA as amended.','EDFacts File Specs C119 and C127 Neglected or Delinquent Participation Multi-state based Connection','EDFacts CEDS Connections Workgroup',602)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A multi-state based perspective on the processes and aggregations necessary to submit EDFacts Files C119 and C127 Neglected and Delinquent Participation. These files collect the number of students participating in programs for neglected, delinquent, or at–risk students (N or D) under Title I, Part D, Subpart1 (SEA) and Subpart 2 (LEA) of ESEA as amended.', CedsConnectionName = 'EDFacts File Specs C119 and C127 Neglected or Delinquent Participation Multi-state based Connection', CedsConnectionSource = 'EDFacts CEDS Connections Workgroup'
+			set CedsConnectionDescription = 'A multi-state based perspective on the processes and aggregations necessary to submit EDFacts Files C119 and C127 Neglected and Delinquent Participation. These files collect the number of students participating in programs for neglected, delinquent, or atï¿½risk students (N or D) under Title I, Part D, Subpart1 (SEA) and Subpart 2 (LEA) of ESEA as amended.', CedsConnectionName = 'EDFacts File Specs C119 and C127 Neglected or Delinquent Participation Multi-state based Connection', CedsConnectionSource = 'EDFacts CEDS Connections Workgroup'
 			where CedsUseCaseId = 602
 		END
  
@@ -3947,12 +3947,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The goal of this connection is to understand how teacher effectiveness, as defined as staff evaluation ratings, are related to teachers’ years of experience. We use years of experience in this connection as a measure for teacher quality since research shows that there is a positive relationship between years of experience and teacher effectiveness (as measured by teacher value-added estimates) in the first three to five years of teaching.','Teacher Effectiveness and Experience','SLDS Community',609)
+			('The goal of this connection is to understand how teacher effectiveness, as defined as staff evaluation ratings, are related to teachersï¿½ years of experience. We use years of experience in this connection as a measure for teacher quality since research shows that there is a positive relationship between years of experience and teacher effectiveness (as measured by teacher value-added estimates) in the first three to five years of teaching.','Teacher Effectiveness and Experience','SLDS Community',609)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The goal of this connection is to understand how teacher effectiveness, as defined as staff evaluation ratings, are related to teachers’ years of experience. We use years of experience in this connection as a measure for teacher quality since research shows that there is a positive relationship between years of experience and teacher effectiveness (as measured by teacher value-added estimates) in the first three to five years of teaching.', CedsConnectionName = 'Teacher Effectiveness and Experience', CedsConnectionSource = 'SLDS Community'
+			set CedsConnectionDescription = 'The goal of this connection is to understand how teacher effectiveness, as defined as staff evaluation ratings, are related to teachersï¿½ years of experience. We use years of experience in this connection as a measure for teacher quality since research shows that there is a positive relationship between years of experience and teacher effectiveness (as measured by teacher value-added estimates) in the first three to five years of teaching.', CedsConnectionName = 'Teacher Effectiveness and Experience', CedsConnectionSource = 'SLDS Community'
 			where CedsUseCaseId = 609
 		END
  
@@ -3965,12 +3965,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The goal of this connection is to understand how teacher effectiveness is distributed across states first, and then to better understand how placement might vary at the district and school levels within that state. This metric provide a simple descriptive analysis of teacher effectiveness, which is defined for this connection as a teacher’s staff evaluation outcome.','Teacher Effectiveness','SLDS Community',610)
+			('The goal of this connection is to understand how teacher effectiveness is distributed across states first, and then to better understand how placement might vary at the district and school levels within that state. This metric provide a simple descriptive analysis of teacher effectiveness, which is defined for this connection as a teacherï¿½s staff evaluation outcome.','Teacher Effectiveness','SLDS Community',610)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The goal of this connection is to understand how teacher effectiveness is distributed across states first, and then to better understand how placement might vary at the district and school levels within that state. This metric provide a simple descriptive analysis of teacher effectiveness, which is defined for this connection as a teacher’s staff evaluation outcome.', CedsConnectionName = 'Teacher Effectiveness', CedsConnectionSource = 'SLDS Community'
+			set CedsConnectionDescription = 'The goal of this connection is to understand how teacher effectiveness is distributed across states first, and then to better understand how placement might vary at the district and school levels within that state. This metric provide a simple descriptive analysis of teacher effectiveness, which is defined for this connection as a teacherï¿½s staff evaluation outcome.', CedsConnectionName = 'Teacher Effectiveness', CedsConnectionSource = 'SLDS Community'
 			where CedsUseCaseId = 610
 		END
  
@@ -4091,12 +4091,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Directory records are used to       •	Report program data;  •	Publish the official Directory of all schools and districts;  •	Serve as sampling frame for statistical studies (i.e., NAEP, SASS);  •	Define the universe for the Civil Rights Data Collection (CRDC);  •	Populate the list of schools used on the Free Application for Federal Student Aid (FAFSA)      This document contains technical instructions for building fixed and delimited files used to submit the Directory for each education level.','SY 2014-15 EDFacts File Specification N029 - Directory','EDFacts File Specification v 11.2',648)
+			('Directory records are used to       ï¿½	Report program data;  ï¿½	Publish the official Directory of all schools and districts;  ï¿½	Serve as sampling frame for statistical studies (i.e., NAEP, SASS);  ï¿½	Define the universe for the Civil Rights Data Collection (CRDC);  ï¿½	Populate the list of schools used on the Free Application for Federal Student Aid (FAFSA)      This document contains technical instructions for building fixed and delimited files used to submit the Directory for each education level.','SY 2014-15 EDFacts File Specification N029 - Directory','EDFacts File Specification v 11.2',648)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Directory records are used to       •	Report program data;  •	Publish the official Directory of all schools and districts;  •	Serve as sampling frame for statistical studies (i.e., NAEP, SASS);  •	Define the universe for the Civil Rights Data Collection (CRDC);  •	Populate the list of schools used on the Free Application for Federal Student Aid (FAFSA)      This document contains technical instructions for building fixed and delimited files used to submit the Directory for each education level.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification N029 - Directory', CedsConnectionSource = 'EDFacts File Specification v 11.2'
+			set CedsConnectionDescription = 'Directory records are used to       ï¿½	Report program data;  ï¿½	Publish the official Directory of all schools and districts;  ï¿½	Serve as sampling frame for statistical studies (i.e., NAEP, SASS);  ï¿½	Define the universe for the Civil Rights Data Collection (CRDC);  ï¿½	Populate the list of schools used on the Free Application for Federal Student Aid (FAFSA)      This document contains technical instructions for building fixed and delimited files used to submit the Directory for each education level.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification N029 - Directory', CedsConnectionSource = 'EDFacts File Specification v 11.2'
 			where CedsUseCaseId = 648
 		END
  
@@ -4371,7 +4371,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- SY 2014-15  EDFacts File Specification C172 Assessment Participation – Flexibility Subgroups
+		-- SY 2014-15  EDFacts File Specification C172 Assessment Participation ï¿½ Flexibility Subgroups
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  668)
@@ -4379,12 +4379,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of students  enrolled during the period of the state assessment in mathematics, reading and language arts, and science.   The data collected using this file specification are required to provide transparency around SEA implementation of new reforms and accountability measures under ESEA Flexibility requests. This file needs to be submitted only by states with approved ESEA Flexibility requests that include the use of combined subgroups.','SY 2014-15  EDFacts File Specification C172 Assessment Participation – Flexibility Subgroups','EDFacts File Specification C172 Version 11.0',668)
+			('The unduplicated number of students  enrolled during the period of the state assessment in mathematics, reading and language arts, and science.   The data collected using this file specification are required to provide transparency around SEA implementation of new reforms and accountability measures under ESEA Flexibility requests. This file needs to be submitted only by states with approved ESEA Flexibility requests that include the use of combined subgroups.','SY 2014-15  EDFacts File Specification C172 Assessment Participation ï¿½ Flexibility Subgroups','EDFacts File Specification C172 Version 11.0',668)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of students  enrolled during the period of the state assessment in mathematics, reading and language arts, and science.   The data collected using this file specification are required to provide transparency around SEA implementation of new reforms and accountability measures under ESEA Flexibility requests. This file needs to be submitted only by states with approved ESEA Flexibility requests that include the use of combined subgroups.', CedsConnectionName = 'SY 2014-15  EDFacts File Specification C172 Assessment Participation – Flexibility Subgroups', CedsConnectionSource = 'EDFacts File Specification C172 Version 11.0'
+			set CedsConnectionDescription = 'The unduplicated number of students  enrolled during the period of the state assessment in mathematics, reading and language arts, and science.   The data collected using this file specification are required to provide transparency around SEA implementation of new reforms and accountability measures under ESEA Flexibility requests. This file needs to be submitted only by states with approved ESEA Flexibility requests that include the use of combined subgroups.', CedsConnectionName = 'SY 2014-15  EDFacts File Specification C172 Assessment Participation ï¿½ Flexibility Subgroups', CedsConnectionSource = 'EDFacts File Specification C172 Version 11.0'
 			where CedsUseCaseId = 668
 		END
  
@@ -4451,12 +4451,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The dollar amount of Title I, Part A  allocation reserved by the LEA for parental involvement activities and the dollar amount of funds awarded to an LEA by its SEA in accordance with the ESEA’s regulations that govern the process an SEA uses to adjust the ED-determined Title I, Part A allocations.','SY 2014-15 EDFacts File Specification C193 - Title I Allocations','EDFacts File Specification C193- Version 11.2',672)
+			('The dollar amount of Title I, Part A  allocation reserved by the LEA for parental involvement activities and the dollar amount of funds awarded to an LEA by its SEA in accordance with the ESEAï¿½s regulations that govern the process an SEA uses to adjust the ED-determined Title I, Part A allocations.','SY 2014-15 EDFacts File Specification C193 - Title I Allocations','EDFacts File Specification C193- Version 11.2',672)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The dollar amount of Title I, Part A  allocation reserved by the LEA for parental involvement activities and the dollar amount of funds awarded to an LEA by its SEA in accordance with the ESEA’s regulations that govern the process an SEA uses to adjust the ED-determined Title I, Part A allocations.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C193 - Title I Allocations', CedsConnectionSource = 'EDFacts File Specification C193- Version 11.2'
+			set CedsConnectionDescription = 'The dollar amount of Title I, Part A  allocation reserved by the LEA for parental involvement activities and the dollar amount of funds awarded to an LEA by its SEA in accordance with the ESEAï¿½s regulations that govern the process an SEA uses to adjust the ED-determined Title I, Part A allocations.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C193 - Title I Allocations', CedsConnectionSource = 'EDFacts File Specification C193- Version 11.2'
 			where CedsUseCaseId = 672
 		END
  
@@ -4685,12 +4685,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of career and technical education (CTE) concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the state’s calculation of adequate yearly progress (AYP).','SY 2014-15 EDFacts File Specification C142 CTE Concentrators Academic Attainment','EDFacts File Specification C142 Version 11.1',690)
+			('The number of career and technical education (CTE) concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the stateï¿½s calculation of adequate yearly progress (AYP).','SY 2014-15 EDFacts File Specification C142 CTE Concentrators Academic Attainment','EDFacts File Specification C142 Version 11.1',690)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of career and technical education (CTE) concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the state’s calculation of adequate yearly progress (AYP).', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C142 CTE Concentrators Academic Attainment', CedsConnectionSource = 'EDFacts File Specification C142 Version 11.1'
+			set CedsConnectionDescription = 'The number of career and technical education (CTE) concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the stateï¿½s calculation of adequate yearly progress (AYP).', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C142 CTE Concentrators Academic Attainment', CedsConnectionSource = 'EDFacts File Specification C142 Version 11.1'
 			where CedsUseCaseId = 690
 		END
  
@@ -4721,12 +4721,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA.','SY 2014-15 EDFacts File Specification C154 CTE Concentrators in Graduation Rate','EDFacts File Specification C154  version 11.1',693)
+			('The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA.','SY 2014-15 EDFacts File Specification C154 CTE Concentrators in Graduation Rate','EDFacts File Specification C154  version 11.1',693)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C154 CTE Concentrators in Graduation Rate', CedsConnectionSource = 'EDFacts File Specification C154  version 11.1'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C154 CTE Concentrators in Graduation Rate', CedsConnectionSource = 'EDFacts File Specification C154  version 11.1'
 			where CedsUseCaseId = 693
 		END
  
@@ -4965,7 +4965,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- SY 2014-15 EDFacts File Specification C119 N or D Participation — State Agency
+		-- SY 2014-15 EDFacts File Specification C119 N or D Participation ï¿½ State Agency
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  707)
@@ -4973,17 +4973,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (state agencies) of ESEA as amended by NCLB.','SY 2014-15 EDFacts File Specification C119 N or D Participation — State Agency','EDFacts File Specification C119 Version 11.0',707)
+			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (state agencies) of ESEA as amended by NCLB.','SY 2014-15 EDFacts File Specification C119 N or D Participation ï¿½ State Agency','EDFacts File Specification C119 Version 11.0',707)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (state agencies) of ESEA as amended by NCLB.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C119 N or D Participation — State Agency', CedsConnectionSource = 'EDFacts File Specification C119 Version 11.0'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (state agencies) of ESEA as amended by NCLB.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C119 N or D Participation ï¿½ State Agency', CedsConnectionSource = 'EDFacts File Specification C119 Version 11.0'
 			where CedsUseCaseId = 707
 		END
  
 		-----------------------------------------
-		-- SY 2014-15 EDFacts File Specifications C125 N or D Academic Achievement — LEA
+		-- SY 2014-15 EDFacts File Specifications C125 N or D Academic Achievement ï¿½ LEA
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  708)
@@ -4991,17 +4991,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students served by Title I, Part D, Subpart 2 of ESEA as amended for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','SY 2014-15 EDFacts File Specifications C125 N or D Academic Achievement — LEA','EDFacts File Specification C125 Version 11.0',708)
+			('The number of students served by Title I, Part D, Subpart 2 of ESEA as amended for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','SY 2014-15 EDFacts File Specifications C125 N or D Academic Achievement ï¿½ LEA','EDFacts File Specification C125 Version 11.0',708)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 2 of ESEA as amended for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'SY 2014-15 EDFacts File Specifications C125 N or D Academic Achievement — LEA', CedsConnectionSource = 'EDFacts File Specification C125 Version 11.0'
+			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 2 of ESEA as amended for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'SY 2014-15 EDFacts File Specifications C125 N or D Academic Achievement ï¿½ LEA', CedsConnectionSource = 'EDFacts File Specification C125 Version 11.0'
 			where CedsUseCaseId = 708
 		END
  
 		-----------------------------------------
-		-- SY 2014-15 EDFacts File Specification C127 N or D Participation—LEA
+		-- SY 2014-15 EDFacts File Specification C127 N or D Participationï¿½LEA
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  709)
@@ -5009,12 +5009,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.','SY 2014-15 EDFacts File Specification C127 N or D Participation—LEA','EDFacts File Specification C127 Version 11.0',709)
+			('The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.','SY 2014-15 EDFacts File Specification C127 N or D Participationï¿½LEA','EDFacts File Specification C127 Version 11.0',709)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C127 N or D Participation—LEA', CedsConnectionSource = 'EDFacts File Specification C127 Version 11.0'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C127 N or D Participationï¿½LEA', CedsConnectionSource = 'EDFacts File Specification C127 Version 11.0'
 			where CedsUseCaseId = 709
 		END
  
@@ -5433,7 +5433,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- SY 2014-15 EDFacts File Specification C054 MEP Students Served – 12 Months
+		-- SY 2014-15 EDFacts File Specification C054 MEP Students Served ï¿½ 12 Months
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  735)
@@ -5441,12 +5441,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The cumulative unduplicated number of participating migrant students who received instructional or support services in a Migrant Education Program (MEP).','SY 2014-15 EDFacts File Specification C054 MEP Students Served – 12 Months','EDFacts File Specification v 11.0',735)
+			('The cumulative unduplicated number of participating migrant students who received instructional or support services in a Migrant Education Program (MEP).','SY 2014-15 EDFacts File Specification C054 MEP Students Served ï¿½ 12 Months','EDFacts File Specification v 11.0',735)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The cumulative unduplicated number of participating migrant students who received instructional or support services in a Migrant Education Program (MEP).', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C054 MEP Students Served – 12 Months', CedsConnectionSource = 'EDFacts File Specification v 11.0'
+			set CedsConnectionDescription = 'The cumulative unduplicated number of participating migrant students who received instructional or support services in a Migrant Education Program (MEP).', CedsConnectionName = 'SY 2014-15 EDFacts File Specification C054 MEP Students Served ï¿½ 12 Months', CedsConnectionSource = 'EDFacts File Specification v 11.0'
 			where CedsUseCaseId = 735
 		END
  
@@ -6449,12 +6449,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of a school’s progress on the Academic Achievement Indicator for Mathematics and/or Reading/Language Art','U.S. Department of Education Accountability and Reporting Provisions of ESEA as amended by ESSA, Academic Achievement Indicators','EDFacts Data Set SY 2017-18 and 2018-19 Changes from SY 2016-17 ',2865)
+			('An indication of a schoolï¿½s progress on the Academic Achievement Indicator for Mathematics and/or Reading/Language Art','U.S. Department of Education Accountability and Reporting Provisions of ESEA as amended by ESSA, Academic Achievement Indicators','EDFacts Data Set SY 2017-18 and 2018-19 Changes from SY 2016-17 ',2865)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of a school’s progress on the Academic Achievement Indicator for Mathematics and/or Reading/Language Art', CedsConnectionName = 'U.S. Department of Education Accountability and Reporting Provisions of ESEA as amended by ESSA, Academic Achievement Indicators', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Changes from SY 2016-17 '
+			set CedsConnectionDescription = 'An indication of a schoolï¿½s progress on the Academic Achievement Indicator for Mathematics and/or Reading/Language Art', CedsConnectionName = 'U.S. Department of Education Accountability and Reporting Provisions of ESEA as amended by ESSA, Academic Achievement Indicators', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Changes from SY 2016-17 '
 			where CedsUseCaseId = 2865
 		END
  
@@ -6539,12 +6539,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of a school’s progress on the Academic Achievement or Progress Indicator for Mathematics and  Reading/Language Arts.','EDFacts New Data Group SY 2017-18: Accountability and Reporting Provisions of ESEA, as amended by ESSA, Academic Achievement and Progress Indicators','EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17',2871)
+			('An indication of a schoolï¿½s progress on the Academic Achievement or Progress Indicator for Mathematics and  Reading/Language Arts.','EDFacts New Data Group SY 2017-18: Accountability and Reporting Provisions of ESEA, as amended by ESSA, Academic Achievement and Progress Indicators','EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17',2871)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of a school’s progress on the Academic Achievement or Progress Indicator for Mathematics and  Reading/Language Arts.', CedsConnectionName = 'EDFacts New Data Group SY 2017-18: Accountability and Reporting Provisions of ESEA, as amended by ESSA, Academic Achievement and Progress Indicators', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17'
+			set CedsConnectionDescription = 'An indication of a schoolï¿½s progress on the Academic Achievement or Progress Indicator for Mathematics and  Reading/Language Arts.', CedsConnectionName = 'EDFacts New Data Group SY 2017-18: Accountability and Reporting Provisions of ESEA, as amended by ESSA, Academic Achievement and Progress Indicators', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17'
 			where CedsUseCaseId = 2871
 		END
  
@@ -6557,12 +6557,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of a school’s progress on the Graduation Rate Indicator.','EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, Graduation Rate Indicator','EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17',2872)
+			('An indication of a schoolï¿½s progress on the Graduation Rate Indicator.','EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, Graduation Rate Indicator','EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17',2872)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of a school’s progress on the Graduation Rate Indicator.', CedsConnectionName = 'EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, Graduation Rate Indicator', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17'
+			set CedsConnectionDescription = 'An indication of a schoolï¿½s progress on the Graduation Rate Indicator.', CedsConnectionName = 'EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, Graduation Rate Indicator', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17'
 			where CedsUseCaseId = 2872
 		END
  
@@ -6575,12 +6575,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of a school’s progress on the Summative Rating. (Proposed EDFacts Data Groups based on ESEA, as amended by ESSA)','EDFacts Proposed Items: Accountability and Reporting Provisions of ESEA, as amended by ESSA, Progress on the Summative Rating','EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17',2873)
+			('An indication of a schoolï¿½s progress on the Summative Rating. (Proposed EDFacts Data Groups based on ESEA, as amended by ESSA)','EDFacts Proposed Items: Accountability and Reporting Provisions of ESEA, as amended by ESSA, Progress on the Summative Rating','EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17',2873)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of a school’s progress on the Summative Rating. (Proposed EDFacts Data Groups based on ESEA, as amended by ESSA)', CedsConnectionName = 'EDFacts Proposed Items: Accountability and Reporting Provisions of ESEA, as amended by ESSA, Progress on the Summative Rating', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17'
+			set CedsConnectionDescription = 'An indication of a schoolï¿½s progress on the Summative Rating. (Proposed EDFacts Data Groups based on ESEA, as amended by ESSA)', CedsConnectionName = 'EDFacts Proposed Items: Accountability and Reporting Provisions of ESEA, as amended by ESSA, Progress on the Summative Rating', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17'
 			where CedsUseCaseId = 2873
 		END
  
@@ -6593,12 +6593,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of a school’s progress on the state specific indicators of school quality or student success.','EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, State Specified Indicators','EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17',2874)
+			('An indication of a schoolï¿½s progress on the state specific indicators of school quality or student success.','EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, State Specified Indicators','EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17',2874)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of a school’s progress on the state specific indicators of school quality or student success.', CedsConnectionName = 'EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, State Specified Indicators', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17'
+			set CedsConnectionDescription = 'An indication of a schoolï¿½s progress on the state specific indicators of school quality or student success.', CedsConnectionName = 'EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, State Specified Indicators', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17'
 			where CedsUseCaseId = 2874
 		END
  
@@ -6611,12 +6611,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of a school’s progress in Achieving English Language Proficiency Indicator.','EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, Achieving English Language Proficiency Indicator','EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17',2875)
+			('An indication of a schoolï¿½s progress in Achieving English Language Proficiency Indicator.','EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, Achieving English Language Proficiency Indicator','EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17',2875)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of a school’s progress in Achieving English Language Proficiency Indicator.', CedsConnectionName = 'EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, Achieving English Language Proficiency Indicator', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17'
+			set CedsConnectionDescription = 'An indication of a schoolï¿½s progress in Achieving English Language Proficiency Indicator.', CedsConnectionName = 'EDFacts New Data Group SY 2017-18:  Accountability and Reporting Provisions of ESEA, as amended by ESSA, Achieving English Language Proficiency Indicator', CedsConnectionSource = 'EDFacts Data Set SY 2017-18 and 2018-19 Proposed Changes from SY 2016-17'
 			where CedsUseCaseId = 2875
 		END
  
@@ -7701,7 +7701,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- CSPR II Report | FS122: MEP Students Eligible and Served – Summer/Intersession (Generate) SY 2017-18
+		-- CSPR II Report | FS122: MEP Students Eligible and Served ï¿½ Summer/Intersession (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  2987)
@@ -7709,12 +7709,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).','CSPR II Report | FS122: MEP Students Eligible and Served – Summer/Intersession (Generate) SY 2017-18','SLDS State Support Team',2987)
+			('Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).','CSPR II Report | FS122: MEP Students Eligible and Served ï¿½ Summer/Intersession (Generate) SY 2017-18','SLDS State Support Team',2987)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).', CedsConnectionName = 'CSPR II Report | FS122: MEP Students Eligible and Served – Summer/Intersession (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).', CedsConnectionName = 'CSPR II Report | FS122: MEP Students Eligible and Served ï¿½ Summer/Intersession (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 2987
 		END
  
@@ -7907,12 +7907,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The goal of this connection is to understand how teacher effectiveness, as defined as staff evaluation ratings, are related to teachers’ years of experience. We use years of experience in this connection as a measure for teacher quality since research shows that there is a positive relationship between years of experience and teacher effectiveness (as measured by teacher value-added estimates) in the first three to five years of teaching.','Teacher Effectiveness and Experience_','SLDS Community',3015)
+			('The goal of this connection is to understand how teacher effectiveness, as defined as staff evaluation ratings, are related to teachersï¿½ years of experience. We use years of experience in this connection as a measure for teacher quality since research shows that there is a positive relationship between years of experience and teacher effectiveness (as measured by teacher value-added estimates) in the first three to five years of teaching.','Teacher Effectiveness and Experience_','SLDS Community',3015)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The goal of this connection is to understand how teacher effectiveness, as defined as staff evaluation ratings, are related to teachers’ years of experience. We use years of experience in this connection as a measure for teacher quality since research shows that there is a positive relationship between years of experience and teacher effectiveness (as measured by teacher value-added estimates) in the first three to five years of teaching.', CedsConnectionName = 'Teacher Effectiveness and Experience_', CedsConnectionSource = 'SLDS Community'
+			set CedsConnectionDescription = 'The goal of this connection is to understand how teacher effectiveness, as defined as staff evaluation ratings, are related to teachersï¿½ years of experience. We use years of experience in this connection as a measure for teacher quality since research shows that there is a positive relationship between years of experience and teacher effectiveness (as measured by teacher value-added estimates) in the first three to five years of teaching.', CedsConnectionName = 'Teacher Effectiveness and Experience_', CedsConnectionSource = 'SLDS Community'
 			where CedsUseCaseId = 3015
 		END
  
@@ -8709,7 +8709,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS116 — Title III Students Served (Generate) 2017-18
+		-- FS116 ï¿½ Title III Students Served (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3069)
@@ -8717,17 +8717,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of English learners served by an English language instruction educational program supported with Title III of ESEA, as amended, funds.','FS116 — Title III Students Served (Generate) 2017-18','SLDS State Support Team',3069)
+			('The unduplicated number of English learners served by an English language instruction educational program supported with Title III of ESEA, as amended, funds.','FS116 ï¿½ Title III Students Served (Generate) 2017-18','SLDS State Support Team',3069)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of English learners served by an English language instruction educational program supported with Title III of ESEA, as amended, funds.', CedsConnectionName = 'FS116 — Title III Students Served (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of English learners served by an English language instruction educational program supported with Title III of ESEA, as amended, funds.', CedsConnectionName = 'FS116 ï¿½ Title III Students Served (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3069
 		END
  
 		-----------------------------------------
-		-- FS126 — Title III Former EL Students (Generate) SY 2017-18
+		-- FS126 ï¿½ Title III Former EL Students (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3070)
@@ -8735,17 +8735,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.','FS126 — Title III Former EL Students (Generate) SY 2017-18','SLDS State Support Team',3070)
+			('The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.','FS126 ï¿½ Title III Former EL Students (Generate) SY 2017-18','SLDS State Support Team',3070)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.', CedsConnectionName = 'FS126 — Title III Former EL Students (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.', CedsConnectionName = 'FS126 ï¿½ Title III Former EL Students (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3070
 		END
  
 		-----------------------------------------
-		-- FS204 — Title III English Learners (Generate) 2017-18
+		-- FS204 ï¿½ Title III English Learners (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3071)
@@ -8753,17 +8753,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Title III English learners not proficient within five years and Title III English learners exited.','FS204 — Title III English Learners (Generate) 2017-18','SLDS State Support Team',3071)
+			('Title III English learners not proficient within five years and Title III English learners exited.','FS204 ï¿½ Title III English Learners (Generate) 2017-18','SLDS State Support Team',3071)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Title III English learners not proficient within five years and Title III English learners exited.', CedsConnectionName = 'FS204 — Title III English Learners (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Title III English learners not proficient within five years and Title III English learners exited.', CedsConnectionName = 'FS204 ï¿½ Title III English Learners (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3071
 		END
  
 		-----------------------------------------
-		-- FS137– English Language Proficiency Test (Generate) SY 2017-18
+		-- FS137ï¿½ English Language Proficiency Test (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3073)
@@ -8771,17 +8771,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of English learners who were enrolled at the time of the state annual English language proficiency assessment.','FS137– English Language Proficiency Test (Generate) SY 2017-18','SLDS State Support Team',3073)
+			('The unduplicated number of English learners who were enrolled at the time of the state annual English language proficiency assessment.','FS137ï¿½ English Language Proficiency Test (Generate) SY 2017-18','SLDS State Support Team',3073)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of English learners who were enrolled at the time of the state annual English language proficiency assessment.', CedsConnectionName = 'FS137– English Language Proficiency Test (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of English learners who were enrolled at the time of the state annual English language proficiency assessment.', CedsConnectionName = 'FS137ï¿½ English Language Proficiency Test (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3073
 		END
  
 		-----------------------------------------
-		-- FS139 — English Language Proficiency Results (Generate) SY 2017-18
+		-- FS139 ï¿½ English Language Proficiency Results (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3075)
@@ -8789,17 +8789,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of English learners who took the annual state English language proficiency assessment.','FS139 — English Language Proficiency Results (Generate) SY 2017-18','SLDS State Support Team',3075)
+			('The unduplicated number of English learners who took the annual state English language proficiency assessment.','FS139 ï¿½ English Language Proficiency Results (Generate) SY 2017-18','SLDS State Support Team',3075)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of English learners who took the annual state English language proficiency assessment.', CedsConnectionName = 'FS139 — English Language Proficiency Results (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of English learners who took the annual state English language proficiency assessment.', CedsConnectionName = 'FS139 ï¿½ English Language Proficiency Results (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3075
 		END
  
 		-----------------------------------------
-		-- FS205 — Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2017-18
+		-- FS205 ï¿½ Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3076)
@@ -8807,17 +8807,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the progress in achieving English Language proficiency indicator.','FS205 — Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2017-18','SLDS State Support Team',3076)
+			('A schoolï¿½s performance on the progress in achieving English Language proficiency indicator.','FS205 ï¿½ Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2017-18','SLDS State Support Team',3076)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the progress in achieving English Language proficiency indicator.', CedsConnectionName = 'FS205 — Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the progress in achieving English Language proficiency indicator.', CedsConnectionName = 'FS205 ï¿½ Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3076
 		END
  
 		-----------------------------------------
-		-- FS190 — Charter Authorizer Directory (Generate) SY 2017-18
+		-- FS190 ï¿½ Charter Authorizer Directory (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3077)
@@ -8825,17 +8825,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers','FS190 — Charter Authorizer Directory (Generate) SY 2017-18','SLDS State Support Team',3077)
+			('The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers','FS190 ï¿½ Charter Authorizer Directory (Generate) SY 2017-18','SLDS State Support Team',3077)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers', CedsConnectionName = 'FS190 — Charter Authorizer Directory (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers', CedsConnectionName = 'FS190 ï¿½ Charter Authorizer Directory (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3077
 		END
  
 		-----------------------------------------
-		-- FS198 — Charter Contracts (Generate) 2017-18
+		-- FS198 ï¿½ Charter Contracts (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3078)
@@ -8843,12 +8843,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.','FS198 — Charter Contracts (Generate) 2017-18','SLDS State Support Team',3078)
+			('The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.','FS198 ï¿½ Charter Contracts (Generate) 2017-18','SLDS State Support Team',3078)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.', CedsConnectionName = 'FS198 — Charter Contracts (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.', CedsConnectionName = 'FS198 ï¿½ Charter Contracts (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3078
 		END
  
@@ -8889,7 +8889,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS196 — Management Organizations Directory (Generate) SY 2017-18
+		-- FS196 ï¿½ Management Organizations Directory (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3081)
@@ -8897,17 +8897,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('In this file, states submit the list of organizations that manage one or more charter school in the state.','FS196 — Management Organizations Directory (Generate) SY 2017-18','SLDS State Support Team',3081)
+			('In this file, states submit the list of organizations that manage one or more charter school in the state.','FS196 ï¿½ Management Organizations Directory (Generate) SY 2017-18','SLDS State Support Team',3081)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'In this file, states submit the list of organizations that manage one or more charter school in the state.', CedsConnectionName = 'FS196 — Management Organizations Directory (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'In this file, states submit the list of organizations that manage one or more charter school in the state.', CedsConnectionName = 'FS196 ï¿½ Management Organizations Directory (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3081
 		END
  
 		-----------------------------------------
-		-- FS197 — Crosswalk of Charter Schools to Management Organizations (Generate) 2017-18
+		-- FS197 ï¿½ Crosswalk of Charter Schools to Management Organizations (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3082)
@@ -8915,12 +8915,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.','FS197 — Crosswalk of Charter Schools to Management Organizations (Generate) 2017-18','SLDS State Support Team',3082)
+			('The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.','FS197 ï¿½ Crosswalk of Charter Schools to Management Organizations (Generate) 2017-18','SLDS State Support Team',3082)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.', CedsConnectionName = 'FS197 — Crosswalk of Charter Schools to Management Organizations (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.', CedsConnectionName = 'FS197 ï¿½ Crosswalk of Charter Schools to Management Organizations (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3082
 		END
  
@@ -8943,7 +8943,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS083 — CTE Concentrator Graduates (Generate) SY 2017-18
+		-- FS083 ï¿½ CTE Concentrator Graduates (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3099)
@@ -8951,17 +8951,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who left secondary education and who received a high school diploma or its recognized equivalent.','FS083 — CTE Concentrator Graduates (Generate) SY 2017-18','SLDS State Support Team',3099)
+			('The unduplicated number of CTE concentrators who left secondary education and who received a high school diploma or its recognized equivalent.','FS083 ï¿½ CTE Concentrator Graduates (Generate) SY 2017-18','SLDS State Support Team',3099)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who left secondary education and who received a high school diploma or its recognized equivalent.', CedsConnectionName = 'FS083 — CTE Concentrator Graduates (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who left secondary education and who received a high school diploma or its recognized equivalent.', CedsConnectionName = 'FS083 ï¿½ CTE Concentrator Graduates (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3099
 		END
  
 		-----------------------------------------
-		-- FS142 — CTE Concentrators Academic Achievement (Generate) SY 2017-18
+		-- FS142 ï¿½ CTE Concentrators Academic Achievement (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3100)
@@ -8969,17 +8969,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the state’s calculation of adequate yearly progress (AYP).','FS142 — CTE Concentrators Academic Achievement (Generate) SY 2017-18','SLDS State Support Team',3100)
+			('The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the stateï¿½s calculation of adequate yearly progress (AYP).','FS142 ï¿½ CTE Concentrators Academic Achievement (Generate) SY 2017-18','SLDS State Support Team',3100)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the state’s calculation of adequate yearly progress (AYP).', CedsConnectionName = 'FS142 — CTE Concentrators Academic Achievement (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the stateï¿½s calculation of adequate yearly progress (AYP).', CedsConnectionName = 'FS142 ï¿½ CTE Concentrators Academic Achievement (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3100
 		END
  
 		-----------------------------------------
-		-- FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2017-18
+		-- FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3101)
@@ -8987,17 +8987,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.','FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2017-18','SLDS State Support Team',3101)
+			('The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.','FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2017-18','SLDS State Support Team',3101)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.', CedsConnectionName = 'FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.', CedsConnectionName = 'FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3101
 		END
  
 		-----------------------------------------
-		-- FS155 – CTE Participants in Programs for Non-traditional (Generate) SY 2017-18
+		-- FS155 ï¿½ CTE Participants in Programs for Non-traditional (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3102)
@@ -9005,17 +9005,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE participants who participated in a program that leads to employment in non-traditional fields.','FS155 – CTE Participants in Programs for Non-traditional (Generate) SY 2017-18','SLDS State Support Team',3102)
+			('The unduplicated number of CTE participants who participated in a program that leads to employment in non-traditional fields.','FS155 ï¿½ CTE Participants in Programs for Non-traditional (Generate) SY 2017-18','SLDS State Support Team',3102)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE participants who participated in a program that leads to employment in non-traditional fields.', CedsConnectionName = 'FS155 – CTE Participants in Programs for Non-traditional (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE participants who participated in a program that leads to employment in non-traditional fields.', CedsConnectionName = 'FS155 ï¿½ CTE Participants in Programs for Non-traditional (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3102
 		END
  
 		-----------------------------------------
-		-- FS156 — CTE Concentrators in Programs for Non-traditional (Generate) SY 2017-18
+		-- FS156 ï¿½ CTE Concentrators in Programs for Non-traditional (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3103)
@@ -9023,12 +9023,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.','FS156 — CTE Concentrators in Programs for Non-traditional (Generate) SY 2017-18','SLDS State Support Team',3103)
+			('This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.','FS156 ï¿½ CTE Concentrators in Programs for Non-traditional (Generate) SY 2017-18','SLDS State Support Team',3103)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.', CedsConnectionName = 'FS156 — CTE Concentrators in Programs for Non-traditional (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.', CedsConnectionName = 'FS156 ï¿½ CTE Concentrators in Programs for Non-traditional (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3103
 		END
  
@@ -9051,7 +9051,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS156 – CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2017-18
+		-- FS156 ï¿½ CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3106)
@@ -9059,17 +9059,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who completed a program that leads to employment in non-traditional fields.','FS156 – CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2017-18','SLDS State Support Team',3106)
+			('The unduplicated number of CTE concentrators who completed a program that leads to employment in non-traditional fields.','FS156 ï¿½ CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2017-18','SLDS State Support Team',3106)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who completed a program that leads to employment in non-traditional fields.', CedsConnectionName = 'FS156 – CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who completed a program that leads to employment in non-traditional fields.', CedsConnectionName = 'FS156 ï¿½ CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3106
 		END
  
 		-----------------------------------------
-		-- FS157 — CTE Concentrators Technical Skills (Generate) SY 2017-18
+		-- FS157 ï¿½ CTE Concentrators Technical Skills (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3107)
@@ -9077,17 +9077,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who took technical skill assessments that are aligned with industry-recognized standards.','FS157 — CTE Concentrators Technical Skills (Generate) SY 2017-18','SLDS State Support Team',3107)
+			('The unduplicated number of CTE concentrators who took technical skill assessments that are aligned with industry-recognized standards.','FS157 ï¿½ CTE Concentrators Technical Skills (Generate) SY 2017-18','SLDS State Support Team',3107)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who took technical skill assessments that are aligned with industry-recognized standards.', CedsConnectionName = 'FS157 — CTE Concentrators Technical Skills (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who took technical skill assessments that are aligned with industry-recognized standards.', CedsConnectionName = 'FS157 ï¿½ CTE Concentrators Technical Skills (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3107
 		END
  
 		-----------------------------------------
-		-- FS158 — CTE Concentrators Placement (Generate) 2017-18
+		-- FS158 ï¿½ CTE Concentrators Placement (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3108)
@@ -9095,17 +9095,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.','FS158 — CTE Concentrators Placement (Generate) 2017-18','SLDS State Support Team',3108)
+			('The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.','FS158 ï¿½ CTE Concentrators Placement (Generate) 2017-18','SLDS State Support Team',3108)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.', CedsConnectionName = 'FS158 — CTE Concentrators Placement (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.', CedsConnectionName = 'FS158 ï¿½ CTE Concentrators Placement (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3108
 		END
  
 		-----------------------------------------
-		-- FS189 – Assessment Participation in Science (Generate) SY 2017-18
+		-- FS189 ï¿½ Assessment Participation in Science (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3109)
@@ -9113,12 +9113,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of students who were enrolled during the period of the state assessment in science.','FS189 – Assessment Participation in Science (Generate) SY 2017-18','SLDS State Support Team',3109)
+			('The unduplicated number of students who were enrolled during the period of the state assessment in science.','FS189 ï¿½ Assessment Participation in Science (Generate) SY 2017-18','SLDS State Support Team',3109)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of students who were enrolled during the period of the state assessment in science.', CedsConnectionName = 'FS189 – Assessment Participation in Science (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of students who were enrolled during the period of the state assessment in science.', CedsConnectionName = 'FS189 ï¿½ Assessment Participation in Science (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3109
 		END
  
@@ -9231,7 +9231,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS158 – CTE Concentrators Placement File Specifications (Generate) 2017-18
+		-- FS158 ï¿½ CTE Concentrators Placement File Specifications (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3117)
@@ -9239,17 +9239,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.','FS158 – CTE Concentrators Placement File Specifications (Generate) 2017-18','SLDS State Support Team',3117)
+			('The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.','FS158 ï¿½ CTE Concentrators Placement File Specifications (Generate) 2017-18','SLDS State Support Team',3117)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.', CedsConnectionName = 'FS158 – CTE Concentrators Placement File Specifications (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.', CedsConnectionName = 'FS158 ï¿½ CTE Concentrators Placement File Specifications (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3117
 		END
  
 		-----------------------------------------
-		-- FS169 – CTE Type of Placement (Generate) SY 2017-18
+		-- FS169 ï¿½ CTE Type of Placement (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3118)
@@ -9257,17 +9257,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of CTE concentrators who left secondary education in the cohort which graduated the prior program year and were placed.','FS169 – CTE Type of Placement (Generate) SY 2017-18','SLDS State Support Team',3118)
+			('The number of CTE concentrators who left secondary education in the cohort which graduated the prior program year and were placed.','FS169 ï¿½ CTE Type of Placement (Generate) SY 2017-18','SLDS State Support Team',3118)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of CTE concentrators who left secondary education in the cohort which graduated the prior program year and were placed.', CedsConnectionName = 'FS169 – CTE Type of Placement (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of CTE concentrators who left secondary education in the cohort which graduated the prior program year and were placed.', CedsConnectionName = 'FS169 ï¿½ CTE Type of Placement (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3118
 		END
  
 		-----------------------------------------
-		-- FS130 – ESEA Status (Generate) SY 2017-18
+		-- FS130 ï¿½ ESEA Status (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3123)
@@ -9275,17 +9275,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.','FS130 – ESEA Status (Generate) SY 2017-18','SLDS State Support Team',3123)
+			('The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.','FS130 ï¿½ ESEA Status (Generate) SY 2017-18','SLDS State Support Team',3123)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.', CedsConnectionName = 'FS130 – ESEA Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.', CedsConnectionName = 'FS130 ï¿½ ESEA Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3123
 		END
  
 		-----------------------------------------
-		-- FS103 — Accountability (Generate) 2017-18
+		-- FS103 ï¿½ Accountability (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3126)
@@ -9293,17 +9293,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The classification of a school’s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to state’s indicator of poverty.','FS103 — Accountability (Generate) 2017-18','SLDS State Support Team',3126)
+			('The classification of a schoolï¿½s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to stateï¿½s indicator of poverty.','FS103 ï¿½ Accountability (Generate) 2017-18','SLDS State Support Team',3126)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The classification of a school’s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to state’s indicator of poverty.', CedsConnectionName = 'FS103 — Accountability (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The classification of a schoolï¿½s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to stateï¿½s indicator of poverty.', CedsConnectionName = 'FS103 ï¿½ Accountability (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3126
 		END
  
 		-----------------------------------------
-		-- FS118 — Homeless Students Enrolled (Generate) SY 2017-18
+		-- FS118 ï¿½ Homeless Students Enrolled (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3127)
@@ -9311,17 +9311,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.','FS118 — Homeless Students Enrolled (Generate) SY 2017-18','SLDS State Support Team',3127)
+			('This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.','FS118 ï¿½ Homeless Students Enrolled (Generate) SY 2017-18','SLDS State Support Team',3127)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.', CedsConnectionName = 'FS118 — Homeless Students Enrolled (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.', CedsConnectionName = 'FS118 ï¿½ Homeless Students Enrolled (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3127
 		END
  
 		-----------------------------------------
-		-- FS132 — Section 1003 Funds (Generate) SY 2017-18
+		-- FS132 ï¿½ Section 1003 Funds (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3128)
@@ -9329,17 +9329,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).','FS132 — Section 1003 Funds (Generate) SY 2017-18','SLDS State Support Team',3128)
+			('The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).','FS132 ï¿½ Section 1003 Funds (Generate) SY 2017-18','SLDS State Support Team',3128)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).', CedsConnectionName = 'FS132 — Section 1003 Funds (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).', CedsConnectionName = 'FS132 ï¿½ Section 1003 Funds (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3128
 		END
  
 		-----------------------------------------
-		-- FS170 — LEA Subgrant Status (Generate) SY 2017-18
+		-- FS170 ï¿½ LEA Subgrant Status (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3129)
@@ -9347,17 +9347,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of whether the LEA received a McKinney-Vento subgrant.','FS170 — LEA Subgrant Status (Generate) SY 2017-18','SLDS State Support Team',3129)
+			('An indication of whether the LEA received a McKinney-Vento subgrant.','FS170 ï¿½ LEA Subgrant Status (Generate) SY 2017-18','SLDS State Support Team',3129)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of whether the LEA received a McKinney-Vento subgrant.', CedsConnectionName = 'FS170 — LEA Subgrant Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'An indication of whether the LEA received a McKinney-Vento subgrant.', CedsConnectionName = 'FS170 ï¿½ LEA Subgrant Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3129
 		END
  
 		-----------------------------------------
-		-- FS195 — Chronic Absenteeism (Generate) SY 2017-18
+		-- FS195 ï¿½ Chronic Absenteeism (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3130)
@@ -9365,17 +9365,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of students absent 10% or more school days during the school year','FS195 — Chronic Absenteeism (Generate) SY 2017-18','SLDS State Support Team',3130)
+			('The unduplicated number of students absent 10% or more school days during the school year','FS195 ï¿½ Chronic Absenteeism (Generate) SY 2017-18','SLDS State Support Team',3130)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of students absent 10% or more school days during the school year', CedsConnectionName = 'FS195 — Chronic Absenteeism (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of students absent 10% or more school days during the school year', CedsConnectionName = 'FS195 ï¿½ Chronic Absenteeism (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3130
 		END
  
 		-----------------------------------------
-		-- FS194 — Young Homeless Children Served (McKinney-Vento) (Generate) SY 2017-18
+		-- FS194 ï¿½ Young Homeless Children Served (McKinney-Vento) (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3131)
@@ -9383,17 +9383,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).','FS194 — Young Homeless Children Served (McKinney-Vento) (Generate) SY 2017-18','SLDS State Support Team',3131)
+			('The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).','FS194 ï¿½ Young Homeless Children Served (McKinney-Vento) (Generate) SY 2017-18','SLDS State Support Team',3131)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).', CedsConnectionName = 'FS194 — Young Homeless Children Served (McKinney-Vento) (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).', CedsConnectionName = 'FS194 ï¿½ Young Homeless Children Served (McKinney-Vento) (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3131
 		END
  
 		-----------------------------------------
-		-- FS086 — Students Involved with Firearms (Generate) SY2017-18
+		-- FS086 ï¿½ Students Involved with Firearms (Generate) SY2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3132)
@@ -9401,17 +9401,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of students who were involved in an incident involving a firearm.','FS086 — Students Involved with Firearms (Generate) SY2017-18','SLDS State Support Team',3132)
+			('The unduplicated number of students who were involved in an incident involving a firearm.','FS086 ï¿½ Students Involved with Firearms (Generate) SY2017-18','SLDS State Support Team',3132)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of students who were involved in an incident involving a firearm.', CedsConnectionName = 'FS086 — Students Involved with Firearms (Generate) SY2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of students who were involved in an incident involving a firearm.', CedsConnectionName = 'FS086 ï¿½ Students Involved with Firearms (Generate) SY2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3132
 		END
  
 		-----------------------------------------
-		-- FS131 — LEA End of School Year Status (Generate) SY 2017-18
+		-- FS131 ï¿½ LEA End of School Year Status (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3133)
@@ -9419,17 +9419,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.','FS131 — LEA End of School Year Status (Generate) SY 2017-18','SLDS State Support Team',3133)
+			('An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.','FS131 ï¿½ LEA End of School Year Status (Generate) SY 2017-18','SLDS State Support Team',3133)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.', CedsConnectionName = 'FS131 — LEA End of School Year Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.', CedsConnectionName = 'FS131 ï¿½ LEA End of School Year Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3133
 		END
  
 		-----------------------------------------
-		-- FS163 — Discipline Data (Generate) SY 2017-18
+		-- FS163 ï¿½ Discipline Data (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3134)
@@ -9437,12 +9437,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.','FS163 — Discipline Data (Generate) SY 2017-18','SLDS State Support Team',3134)
+			('An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.','FS163 ï¿½ Discipline Data (Generate) SY 2017-18','SLDS State Support Team',3134)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.', CedsConnectionName = 'FS163 — Discipline Data (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.', CedsConnectionName = 'FS163 ï¿½ Discipline Data (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3134
 		END
  
@@ -9483,7 +9483,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS150 — Adjusted-Cohort Graduation Rate (Generate) SY 2017-18
+		-- FS150 ï¿½ Adjusted-Cohort Graduation Rate (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3140)
@@ -9491,17 +9491,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.','FS150 — Adjusted-Cohort Graduation Rate (Generate) SY 2017-18','SLDS State Support Team',3140)
+			('Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.','FS150 ï¿½ Adjusted-Cohort Graduation Rate (Generate) SY 2017-18','SLDS State Support Team',3140)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.', CedsConnectionName = 'FS150 — Adjusted-Cohort Graduation Rate (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.', CedsConnectionName = 'FS150 ï¿½ Adjusted-Cohort Graduation Rate (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3140
 		END
  
 		-----------------------------------------
-		-- FS160 — High School Graduates Postsecondary Enrollment (Generate) SY 2017-18
+		-- FS160 ï¿½ High School Graduates Postsecondary Enrollment (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3141)
@@ -9509,17 +9509,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.','FS160 — High School Graduates Postsecondary Enrollment (Generate) SY 2017-18','SLDS State Support Team',3141)
+			('The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.','FS160 ï¿½ High School Graduates Postsecondary Enrollment (Generate) SY 2017-18','SLDS State Support Team',3141)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.', CedsConnectionName = 'FS160 — High School Graduates Postsecondary Enrollment (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.', CedsConnectionName = 'FS160 ï¿½ High School Graduates Postsecondary Enrollment (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3141
 		END
  
 		-----------------------------------------
-		-- FS199 — Graduation Rate Indicator Status (Generate) SY 2017-18
+		-- FS199 ï¿½ Graduation Rate Indicator Status (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3142)
@@ -9527,17 +9527,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the Graduation Rate Indicator.','FS199 — Graduation Rate Indicator Status (Generate) SY 2017-18','SLDS State Support Team',3142)
+			('A schoolï¿½s performance on the Graduation Rate Indicator.','FS199 ï¿½ Graduation Rate Indicator Status (Generate) SY 2017-18','SLDS State Support Team',3142)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the Graduation Rate Indicator.', CedsConnectionName = 'FS199 — Graduation Rate Indicator Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the Graduation Rate Indicator.', CedsConnectionName = 'FS199 ï¿½ Graduation Rate Indicator Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3142
 		END
  
 		-----------------------------------------
-		-- FS151 — Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2017-18
+		-- FS151 ï¿½ Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3146)
@@ -9545,12 +9545,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.','FS151 — Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2017-18','SLDS State Support Team',3146)
+			('Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.','FS151 ï¿½ Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2017-18','SLDS State Support Team',3146)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.', CedsConnectionName = 'FS151 — Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.', CedsConnectionName = 'FS151 ï¿½ Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3146
 		END
  
@@ -9861,7 +9861,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS113 — N or D Academic Achievement - State Agency (Generate) 2017-18
+		-- FS113 ï¿½ N or D Academic Achievement - State Agency (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3172)
@@ -9869,17 +9869,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','FS113 — N or D Academic Achievement - State Agency (Generate) 2017-18','SLDS State Support Team',3172)
+			('The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','FS113 ï¿½ N or D Academic Achievement - State Agency (Generate) 2017-18','SLDS State Support Team',3172)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'FS113 — N or D Academic Achievement - State Agency (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'FS113 ï¿½ N or D Academic Achievement - State Agency (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3172
 		END
  
 		-----------------------------------------
-		-- FS119 — N or D Participation - State Agency (Generate) 2017-18
+		-- FS119 ï¿½ N or D Participation - State Agency (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3173)
@@ -9887,17 +9887,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.','FS119 — N or D Participation - State Agency (Generate) 2017-18','SLDS State Support Team',3173)
+			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.','FS119 ï¿½ N or D Participation - State Agency (Generate) 2017-18','SLDS State Support Team',3173)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.', CedsConnectionName = 'FS119 — N or D Participation - State Agency (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.', CedsConnectionName = 'FS119 ï¿½ N or D Participation - State Agency (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3173
 		END
  
 		-----------------------------------------
-		-- FS125 — N or D Academic Achievement - LEA (Generate) 2017-18
+		-- FS125 ï¿½ N or D Academic Achievement - LEA (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3174)
@@ -9905,17 +9905,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','FS125 — N or D Academic Achievement - LEA (Generate) 2017-18','SLDS State Support Team',3174)
+			('The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','FS125 ï¿½ N or D Academic Achievement - LEA (Generate) 2017-18','SLDS State Support Team',3174)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'FS125 — N or D Academic Achievement - LEA (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'FS125 ï¿½ N or D Academic Achievement - LEA (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3174
 		END
  
 		-----------------------------------------
-		-- FS127 — N or D Participation – LEA (Generate) SY 2017-18
+		-- FS127 ï¿½ N or D Participation ï¿½ LEA (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3175)
@@ -9923,17 +9923,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.','FS127 — N or D Participation – LEA (Generate) SY 2017-18','SLDS State Support Team',3175)
+			('The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.','FS127 ï¿½ N or D Participation ï¿½ LEA (Generate) SY 2017-18','SLDS State Support Team',3175)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.', CedsConnectionName = 'FS127 — N or D Participation – LEA (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.', CedsConnectionName = 'FS127 ï¿½ N or D Participation ï¿½ LEA (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3175
 		END
  
 		-----------------------------------------
-		-- FS180 — N or D In Program Outcomes (Generate) 2017-18
+		-- FS180 ï¿½ N or D In Program Outcomes (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3176)
@@ -9941,17 +9941,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','FS180 — N or D In Program Outcomes (Generate) 2017-18','SLDS State Support Team',3176)
+			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','FS180 ï¿½ N or D In Program Outcomes (Generate) 2017-18','SLDS State Support Team',3176)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'FS180 — N or D In Program Outcomes (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'FS180 ï¿½ N or D In Program Outcomes (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3176
 		END
  
 		-----------------------------------------
-		-- FS181 — N or D Exited Program Outcomes (Generate) 2017-18
+		-- FS181 ï¿½ N or D Exited Program Outcomes (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3177)
@@ -9959,12 +9959,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','FS181 — N or D Exited Program Outcomes (Generate) 2017-18','SLDS State Support Team',3177)
+			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','FS181 ï¿½ N or D Exited Program Outcomes (Generate) 2017-18','SLDS State Support Team',3177)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'FS181 — N or D Exited Program Outcomes (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'FS181 ï¿½ N or D Exited Program Outcomes (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3177
 		END
  
@@ -9987,7 +9987,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS200 — Academic Achievement Indicator Status (Generate) 2017-18
+		-- FS200 ï¿½ Academic Achievement Indicator Status (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3181)
@@ -9995,17 +9995,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts','FS200 — Academic Achievement Indicator Status (Generate) 2017-18','SLDS State Support Team',3181)
+			('A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts','FS200 ï¿½ Academic Achievement Indicator Status (Generate) 2017-18','SLDS State Support Team',3181)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts', CedsConnectionName = 'FS200 — Academic Achievement Indicator Status (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts', CedsConnectionName = 'FS200 ï¿½ Academic Achievement Indicator Status (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3181
 		END
  
 		-----------------------------------------
-		-- FS201 — Other Academic Indicator Status (Generate) SY 2017-18
+		-- FS201 ï¿½ Other Academic Indicator Status (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3182)
@@ -10013,17 +10013,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the Other Academic Indicator.','FS201 — Other Academic Indicator Status (Generate) SY 2017-18','SLDS State Support Team',3182)
+			('A schoolï¿½s performance on the Other Academic Indicator.','FS201 ï¿½ Other Academic Indicator Status (Generate) SY 2017-18','SLDS State Support Team',3182)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the Other Academic Indicator.', CedsConnectionName = 'FS201 — Other Academic Indicator Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the Other Academic Indicator.', CedsConnectionName = 'FS201 ï¿½ Other Academic Indicator Status (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3182
 		END
  
 		-----------------------------------------
-		-- FS202 — School Quality or Student Success Indicator Status (Generate) 2017-18
+		-- FS202 ï¿½ School Quality or Student Success Indicator Status (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3183)
@@ -10031,17 +10031,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school''s performance on the state-specific indicators of school quality or student success.','FS202 — School Quality or Student Success Indicator Status (Generate) 2017-18','SLDS State Support Team',3183)
+			('A school''s performance on the state-specific indicators of school quality or student success.','FS202 ï¿½ School Quality or Student Success Indicator Status (Generate) 2017-18','SLDS State Support Team',3183)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school''s performance on the state-specific indicators of school quality or student success.', CedsConnectionName = 'FS202 — School Quality or Student Success Indicator Status (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A school''s performance on the state-specific indicators of school quality or student success.', CedsConnectionName = 'FS202 ï¿½ School Quality or Student Success Indicator Status (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3183
 		END
  
 		-----------------------------------------
-		-- FS203 — Teachers (Generate) 2017-18
+		-- FS203 ï¿½ Teachers (Generate) 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3184)
@@ -10049,12 +10049,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of full-time equivalent teachers.','FS203 — Teachers (Generate) 2017-18','SLDS State Support Team',3184)
+			('The number of full-time equivalent teachers.','FS203 ï¿½ Teachers (Generate) 2017-18','SLDS State Support Team',3184)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of full-time equivalent teachers.', CedsConnectionName = 'FS203 — Teachers (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of full-time equivalent teachers.', CedsConnectionName = 'FS203 ï¿½ Teachers (Generate) 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3184
 		END
  
@@ -10067,12 +10067,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('This Connection can be used to provide employment outcomes information (number of grads, number employed, and median annual earnings) for a cohort of college-graduates who completed an associate or bachelor’s degree.  The cohort will be graduates from a single year and will follow them into employment. The number of grads and number employed can be used to calculate the percent employed.','Median annual earnings for post secondary graduates','SLDS Employment Outcomes Metrics Work group',3186)
+			('This Connection can be used to provide employment outcomes information (number of grads, number employed, and median annual earnings) for a cohort of college-graduates who completed an associate or bachelorï¿½s degree.ï¿½ The cohort will be graduates from a single year and will follow them into employment. The number of grads and number employed can be used to calculate the percent employed.','Median annual earnings for post secondary graduates','SLDS Employment Outcomes Metrics Work group',3186)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'This Connection can be used to provide employment outcomes information (number of grads, number employed, and median annual earnings) for a cohort of college-graduates who completed an associate or bachelor’s degree.  The cohort will be graduates from a single year and will follow them into employment. The number of grads and number employed can be used to calculate the percent employed.', CedsConnectionName = 'Median annual earnings for post secondary graduates', CedsConnectionSource = 'SLDS Employment Outcomes Metrics Work group'
+			set CedsConnectionDescription = 'This Connection can be used to provide employment outcomes information (number of grads, number employed, and median annual earnings) for a cohort of college-graduates who completed an associate or bachelorï¿½s degree.ï¿½ The cohort will be graduates from a single year and will follow them into employment. The number of grads and number employed can be used to calculate the percent employed.', CedsConnectionName = 'Median annual earnings for post secondary graduates', CedsConnectionSource = 'SLDS Employment Outcomes Metrics Work group'
 			where CedsUseCaseId = 3186
 		END
  
@@ -10095,7 +10095,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS190 — Charter Authorizer Directory (Generate) SY 2018-19
+		-- FS190 ï¿½ Charter Authorizer Directory (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3189)
@@ -10103,17 +10103,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers','FS190 — Charter Authorizer Directory (Generate) SY 2018-19','SLDS State Support Team',3189)
+			('The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers','FS190 ï¿½ Charter Authorizer Directory (Generate) SY 2018-19','SLDS State Support Team',3189)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers', CedsConnectionName = 'FS190 — Charter Authorizer Directory (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers', CedsConnectionName = 'FS190 ï¿½ Charter Authorizer Directory (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3189
 		END
  
 		-----------------------------------------
-		-- FS196 — Management Organizations Directory (Generate) SY 2018-19
+		-- FS196 ï¿½ Management Organizations Directory (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3190)
@@ -10121,17 +10121,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('In this file, states submit the list of organizations that manage one or more charter school in the state.','FS196 — Management Organizations Directory (Generate) SY 2018-19','SLDS State Support Team',3190)
+			('In this file, states submit the list of organizations that manage one or more charter school in the state.','FS196 ï¿½ Management Organizations Directory (Generate) SY 2018-19','SLDS State Support Team',3190)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'In this file, states submit the list of organizations that manage one or more charter school in the state.', CedsConnectionName = 'FS196 — Management Organizations Directory (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'In this file, states submit the list of organizations that manage one or more charter school in the state.', CedsConnectionName = 'FS196 ï¿½ Management Organizations Directory (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3190
 		END
  
 		-----------------------------------------
-		-- FS198 — Charter Contracts (Generate) 2018-19
+		-- FS198 ï¿½ Charter Contracts (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3191)
@@ -10139,17 +10139,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.','FS198 — Charter Contracts (Generate) 2018-19','SLDS State Support Team',3191)
+			('The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.','FS198 ï¿½ Charter Contracts (Generate) 2018-19','SLDS State Support Team',3191)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.', CedsConnectionName = 'FS198 — Charter Contracts (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.', CedsConnectionName = 'FS198 ï¿½ Charter Contracts (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3191
 		END
  
 		-----------------------------------------
-		-- FS197 — Crosswalk of Charter Schools to Management Organizations (Generate) 2018-19
+		-- FS197 ï¿½ Crosswalk of Charter Schools to Management Organizations (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3192)
@@ -10157,17 +10157,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.','FS197 — Crosswalk of Charter Schools to Management Organizations (Generate) 2018-19','SLDS State Support Team',3192)
+			('The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.','FS197 ï¿½ Crosswalk of Charter Schools to Management Organizations (Generate) 2018-19','SLDS State Support Team',3192)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.', CedsConnectionName = 'FS197 — Crosswalk of Charter Schools to Management Organizations (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.', CedsConnectionName = 'FS197 ï¿½ Crosswalk of Charter Schools to Management Organizations (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3192
 		END
  
 		-----------------------------------------
-		-- FS130 – ESEA Status (Generate) SY 2018-19
+		-- FS130 ï¿½ ESEA Status (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3193)
@@ -10175,12 +10175,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.','FS130 – ESEA Status (Generate) SY 2018-19','SLDS State Support Team',3193)
+			('The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.','FS130 ï¿½ ESEA Status (Generate) SY 2018-19','SLDS State Support Team',3193)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.', CedsConnectionName = 'FS130 – ESEA Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.', CedsConnectionName = 'FS130 ï¿½ ESEA Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3193
 		END
  
@@ -10329,7 +10329,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS206 — School Support and Improvement SY 2018-19 (Generate)
+		-- FS206 ï¿½ School Support and Improvement SY 2018-19 (Generate)
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3204)
@@ -10337,17 +10337,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication the school is designated by the state as a comprehensive support and improvement (CSI) or targeted support and improvement (TSI) school. The reasons for identification for comprehensive support and improvement (CSI). The reason for identification for targeted support and improvement (TSI).','FS206 — School Support and Improvement SY 2018-19 (Generate)','SLDS State Support Team',3204)
+			('An indication the school is designated by the state as a comprehensive support and improvement (CSI) or targeted support and improvement (TSI) school. The reasons for identification for comprehensive support and improvement (CSI). The reason for identification for targeted support and improvement (TSI).','FS206 ï¿½ School Support and Improvement SY 2018-19 (Generate)','SLDS State Support Team',3204)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication the school is designated by the state as a comprehensive support and improvement (CSI) or targeted support and improvement (TSI) school. The reasons for identification for comprehensive support and improvement (CSI). The reason for identification for targeted support and improvement (TSI).', CedsConnectionName = 'FS206 — School Support and Improvement SY 2018-19 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'An indication the school is designated by the state as a comprehensive support and improvement (CSI) or targeted support and improvement (TSI) school. The reasons for identification for comprehensive support and improvement (CSI). The reason for identification for targeted support and improvement (TSI).', CedsConnectionName = 'FS206 ï¿½ School Support and Improvement SY 2018-19 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3204
 		END
  
 		-----------------------------------------
-		-- FS067 — Title III Teachers (Generate) SY 2017-18
+		-- FS067 ï¿½ Title III Teachers (Generate) SY 2017-18
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3205)
@@ -10355,12 +10355,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated headcount of teachers who taught in language instruction educational programs designed for English learners supported with Title III of ESEA, as amended by ESSA, funds.','FS067 — Title III Teachers (Generate) SY 2017-18','SLDS State Support Team',3205)
+			('The unduplicated headcount of teachers who taught in language instruction educational programs designed for English learners supported with Title III of ESEA, as amended by ESSA, funds.','FS067 ï¿½ Title III Teachers (Generate) SY 2017-18','SLDS State Support Team',3205)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated headcount of teachers who taught in language instruction educational programs designed for English learners supported with Title III of ESEA, as amended by ESSA, funds.', CedsConnectionName = 'FS067 — Title III Teachers (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated headcount of teachers who taught in language instruction educational programs designed for English learners supported with Title III of ESEA, as amended by ESSA, funds.', CedsConnectionName = 'FS067 ï¿½ Title III Teachers (Generate) SY 2017-18', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3205
 		END
  
@@ -10509,7 +10509,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS160 — High School Graduates Postsecondary Enrollment (Generate) SY 2018-19
+		-- FS160 ï¿½ High School Graduates Postsecondary Enrollment (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3218)
@@ -10517,17 +10517,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.','FS160 — High School Graduates Postsecondary Enrollment (Generate) SY 2018-19','SLDS State Support Team',3218)
+			('The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.','FS160 ï¿½ High School Graduates Postsecondary Enrollment (Generate) SY 2018-19','SLDS State Support Team',3218)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.', CedsConnectionName = 'FS160 — High School Graduates Postsecondary Enrollment (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.', CedsConnectionName = 'FS160 ï¿½ High School Graduates Postsecondary Enrollment (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3218
 		END
  
 		-----------------------------------------
-		-- FS163 — Discipline Data (Generate) SY 2018-19
+		-- FS163 ï¿½ Discipline Data (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3219)
@@ -10535,12 +10535,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.','FS163 — Discipline Data (Generate) SY 2018-19','SLDS State Support Team',3219)
+			('An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.','FS163 ï¿½ Discipline Data (Generate) SY 2018-19','SLDS State Support Team',3219)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.', CedsConnectionName = 'FS163 — Discipline Data (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.', CedsConnectionName = 'FS163 ï¿½ Discipline Data (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3219
 		END
  
@@ -10635,7 +10635,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS189 – Assessment Participation in Science File Specifications (Generate) SY 2018-19
+		-- FS189 ï¿½ Assessment Participation in Science File Specifications (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3225)
@@ -10643,17 +10643,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of students who were enrolled during the period of the state assessment in science.','FS189 – Assessment Participation in Science File Specifications (Generate) SY 2018-19','SLDS State Support Team',3225)
+			('The unduplicated number of students who were enrolled during the period of the state assessment in science.','FS189 ï¿½ Assessment Participation in Science File Specifications (Generate) SY 2018-19','SLDS State Support Team',3225)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of students who were enrolled during the period of the state assessment in science.', CedsConnectionName = 'FS189 – Assessment Participation in Science File Specifications (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of students who were enrolled during the period of the state assessment in science.', CedsConnectionName = 'FS189 ï¿½ Assessment Participation in Science File Specifications (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3225
 		END
  
 		-----------------------------------------
-		-- FS189 – Assessment Participation in Science (Generate) SY 2018-19
+		-- FS189 ï¿½ Assessment Participation in Science (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3226)
@@ -10661,12 +10661,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of students who were enrolled during the period of the state assessment in science.','FS189 – Assessment Participation in Science (Generate) SY 2018-19','SLDS State Support Team',3226)
+			('The unduplicated number of students who were enrolled during the period of the state assessment in science.','FS189 ï¿½ Assessment Participation in Science (Generate) SY 2018-19','SLDS State Support Team',3226)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of students who were enrolled during the period of the state assessment in science.', CedsConnectionName = 'FS189 – Assessment Participation in Science (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of students who were enrolled during the period of the state assessment in science.', CedsConnectionName = 'FS189 ï¿½ Assessment Participation in Science (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3226
 		END
  
@@ -10941,7 +10941,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- CSPR II Report | FS122: MEP Students Eligible and Served – Summer/Intersession (Generate) SY 2018-19
+		-- CSPR II Report | FS122: MEP Students Eligible and Served ï¿½ Summer/Intersession (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3242)
@@ -10949,12 +10949,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).','CSPR II Report | FS122: MEP Students Eligible and Served – Summer/Intersession (Generate) SY 2018-19','SLDS State Support Team',3242)
+			('Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).','CSPR II Report | FS122: MEP Students Eligible and Served ï¿½ Summer/Intersession (Generate) SY 2018-19','SLDS State Support Team',3242)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).', CedsConnectionName = 'CSPR II Report | FS122: MEP Students Eligible and Served – Summer/Intersession (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).', CedsConnectionName = 'CSPR II Report | FS122: MEP Students Eligible and Served ï¿½ Summer/Intersession (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3242
 		END
  
@@ -11013,7 +11013,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS083 — CTE Concentrator Graduates (Generate) SY 2018-19
+		-- FS083 ï¿½ CTE Concentrator Graduates (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3246)
@@ -11021,17 +11021,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who left secondary education and who received a high school diploma or its recognized equivalent.','FS083 — CTE Concentrator Graduates (Generate) SY 2018-19','SLDS State Support Team',3246)
+			('The unduplicated number of CTE concentrators who left secondary education and who received a high school diploma or its recognized equivalent.','FS083 ï¿½ CTE Concentrator Graduates (Generate) SY 2018-19','SLDS State Support Team',3246)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who left secondary education and who received a high school diploma or its recognized equivalent.', CedsConnectionName = 'FS083 — CTE Concentrator Graduates (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who left secondary education and who received a high school diploma or its recognized equivalent.', CedsConnectionName = 'FS083 ï¿½ CTE Concentrator Graduates (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3246
 		END
  
 		-----------------------------------------
-		-- FS086 — Students Involved with Firearms (Generate) SY2018-19
+		-- FS086 ï¿½ Students Involved with Firearms (Generate) SY2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3247)
@@ -11039,17 +11039,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of students who were involved in an incident involving a firearm.','FS086 — Students Involved with Firearms (Generate) SY2018-19','SLDS State Support Team',3247)
+			('The unduplicated number of students who were involved in an incident involving a firearm.','FS086 ï¿½ Students Involved with Firearms (Generate) SY2018-19','SLDS State Support Team',3247)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of students who were involved in an incident involving a firearm.', CedsConnectionName = 'FS086 — Students Involved with Firearms (Generate) SY2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of students who were involved in an incident involving a firearm.', CedsConnectionName = 'FS086 ï¿½ Students Involved with Firearms (Generate) SY2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3247
 		END
  
 		-----------------------------------------
-		-- FS103 — Accountability (Generate) 2018-19
+		-- FS103 ï¿½ Accountability (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3248)
@@ -11057,17 +11057,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The classification of a school’s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to state’s indicator of poverty.','FS103 — Accountability (Generate) 2018-19','SLDS State Support Team',3248)
+			('The classification of a schoolï¿½s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to stateï¿½s indicator of poverty.','FS103 ï¿½ Accountability (Generate) 2018-19','SLDS State Support Team',3248)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The classification of a school’s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to state’s indicator of poverty.', CedsConnectionName = 'FS103 — Accountability (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The classification of a schoolï¿½s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to stateï¿½s indicator of poverty.', CedsConnectionName = 'FS103 ï¿½ Accountability (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3248
 		END
  
 		-----------------------------------------
-		-- FS113 — N or D Academic Achievement - State Agency (Generate) 2018-19
+		-- FS113 ï¿½ N or D Academic Achievement - State Agency (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3249)
@@ -11075,17 +11075,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','FS113 — N or D Academic Achievement - State Agency (Generate) 2018-19','SLDS State Support Team',3249)
+			('The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','FS113 ï¿½ N or D Academic Achievement - State Agency (Generate) 2018-19','SLDS State Support Team',3249)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'FS113 — N or D Academic Achievement - State Agency (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'FS113 ï¿½ N or D Academic Achievement - State Agency (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3249
 		END
  
 		-----------------------------------------
-		-- FS116 — Title III Students Served (Generate) 2018-19
+		-- FS116 ï¿½ Title III Students Served (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3250)
@@ -11093,17 +11093,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of English learners served by an English language instruction educational program supported with Title III of ESEA, as amended, funds.','FS116 — Title III Students Served (Generate) 2018-19','SLDS State Support Team',3250)
+			('The unduplicated number of English learners served by an English language instruction educational program supported with Title III of ESEA, as amended, funds.','FS116 ï¿½ Title III Students Served (Generate) 2018-19','SLDS State Support Team',3250)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of English learners served by an English language instruction educational program supported with Title III of ESEA, as amended, funds.', CedsConnectionName = 'FS116 — Title III Students Served (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of English learners served by an English language instruction educational program supported with Title III of ESEA, as amended, funds.', CedsConnectionName = 'FS116 ï¿½ Title III Students Served (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3250
 		END
  
 		-----------------------------------------
-		-- FS118 — Homeless Students Enrolled (Generate) SY 2018-19
+		-- FS118 ï¿½ Homeless Students Enrolled (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3251)
@@ -11111,17 +11111,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.','FS118 — Homeless Students Enrolled (Generate) SY 2018-19','SLDS State Support Team',3251)
+			('This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.','FS118 ï¿½ Homeless Students Enrolled (Generate) SY 2018-19','SLDS State Support Team',3251)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.', CedsConnectionName = 'FS118 — Homeless Students Enrolled (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'This Connection can be used as a template for new EDFacts reports in Generate.  The categories, data elements, analysis recommends, and related connections should be reviewed and updated to meet the needs of the EDFacts report.', CedsConnectionName = 'FS118 ï¿½ Homeless Students Enrolled (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3251
 		END
  
 		-----------------------------------------
-		-- FS119 — N or D Participation - State Agency (Generate) 2018-19
+		-- FS119 ï¿½ N or D Participation - State Agency (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3252)
@@ -11129,17 +11129,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.','FS119 — N or D Participation - State Agency (Generate) 2018-19','SLDS State Support Team',3252)
+			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.','FS119 ï¿½ N or D Participation - State Agency (Generate) 2018-19','SLDS State Support Team',3252)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.', CedsConnectionName = 'FS119 — N or D Participation - State Agency (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.', CedsConnectionName = 'FS119 ï¿½ N or D Participation - State Agency (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3252
 		END
  
 		-----------------------------------------
-		-- FS125 — N or D Academic Achievement - LEA (Generate) 2018-19
+		-- FS125 ï¿½ N or D Academic Achievement - LEA (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3253)
@@ -11147,17 +11147,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','FS125 — N or D Academic Achievement - LEA (Generate) 2018-19','SLDS State Support Team',3253)
+			('The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','FS125 ï¿½ N or D Academic Achievement - LEA (Generate) 2018-19','SLDS State Support Team',3253)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'FS125 — N or D Academic Achievement - LEA (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'FS125 ï¿½ N or D Academic Achievement - LEA (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3253
 		END
  
 		-----------------------------------------
-		-- FS126 — Title III Former EL Students (Generate) SY 2018-19
+		-- FS126 ï¿½ Title III Former EL Students (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3254)
@@ -11165,17 +11165,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.','FS126 — Title III Former EL Students (Generate) SY 2018-19','SLDS State Support Team',3254)
+			('The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.','FS126 ï¿½ Title III Former EL Students (Generate) SY 2018-19','SLDS State Support Team',3254)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.', CedsConnectionName = 'FS126 — Title III Former EL Students (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.', CedsConnectionName = 'FS126 ï¿½ Title III Former EL Students (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3254
 		END
  
 		-----------------------------------------
-		-- FS127 — N or D Participation – LEA (Generate) 2018-19
+		-- FS127 ï¿½ N or D Participation ï¿½ LEA (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3255)
@@ -11183,17 +11183,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.','FS127 — N or D Participation – LEA (Generate) 2018-19','SLDS State Support Team',3255)
+			('The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.','FS127 ï¿½ N or D Participation ï¿½ LEA (Generate) 2018-19','SLDS State Support Team',3255)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.', CedsConnectionName = 'FS127 — N or D Participation – LEA (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected, delinquent, or at-risk students (N or D) under Title I, Part D, Subpart 2 (LEA) of ESEA as amended.', CedsConnectionName = 'FS127 ï¿½ N or D Participation ï¿½ LEA (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3255
 		END
  
 		-----------------------------------------
-		-- FS131 — LEA End of School Year Status (Generate) SY 2018-19
+		-- FS131 ï¿½ LEA End of School Year Status (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3256)
@@ -11201,17 +11201,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.','FS131 — LEA End of School Year Status (Generate) SY 2018-19','SLDS State Support Team',3256)
+			('An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.','FS131 ï¿½ LEA End of School Year Status (Generate) SY 2018-19','SLDS State Support Team',3256)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.', CedsConnectionName = 'FS131 — LEA End of School Year Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.', CedsConnectionName = 'FS131 ï¿½ LEA End of School Year Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3256
 		END
  
 		-----------------------------------------
-		-- FS132 — Section 1003 Funds (Generate) SY 2018-19
+		-- FS132 ï¿½ Section 1003 Funds (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3257)
@@ -11219,12 +11219,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).','FS132 — Section 1003 Funds (Generate) SY 2018-19','SLDS State Support Team',3257)
+			('The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).','FS132 ï¿½ Section 1003 Funds (Generate) SY 2018-19','SLDS State Support Team',3257)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).', CedsConnectionName = 'FS132 — Section 1003 Funds (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).', CedsConnectionName = 'FS132 ï¿½ Section 1003 Funds (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3257
 		END
  
@@ -11247,7 +11247,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS139 — English Language Proficiency Results (Generate) SY 2018-19
+		-- FS139 ï¿½ English Language Proficiency Results (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3259)
@@ -11255,17 +11255,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of English learners who took the annual state English language proficiency assessment.','FS139 — English Language Proficiency Results (Generate) SY 2018-19','SLDS State Support Team',3259)
+			('The unduplicated number of English learners who took the annual state English language proficiency assessment.','FS139 ï¿½ English Language Proficiency Results (Generate) SY 2018-19','SLDS State Support Team',3259)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of English learners who took the annual state English language proficiency assessment.', CedsConnectionName = 'FS139 — English Language Proficiency Results (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of English learners who took the annual state English language proficiency assessment.', CedsConnectionName = 'FS139 ï¿½ English Language Proficiency Results (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3259
 		END
  
 		-----------------------------------------
-		-- FS142 — CTE Concentrators Academic Achievement (Generate) SY 2018-19
+		-- FS142 ï¿½ CTE Concentrators Academic Achievement (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3260)
@@ -11273,17 +11273,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the state’s calculation of adequate yearly progress (AYP).','FS142 — CTE Concentrators Academic Achievement (Generate) SY 2018-19','SLDS State Support Team',3260)
+			('The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the stateï¿½s calculation of adequate yearly progress (AYP).','FS142 ï¿½ CTE Concentrators Academic Achievement (Generate) SY 2018-19','SLDS State Support Team',3260)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the state’s calculation of adequate yearly progress (AYP).', CedsConnectionName = 'FS142 — CTE Concentrators Academic Achievement (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the stateï¿½s calculation of adequate yearly progress (AYP).', CedsConnectionName = 'FS142 ï¿½ CTE Concentrators Academic Achievement (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3260
 		END
  
 		-----------------------------------------
-		-- FS150 — Adjusted-Cohort Graduation Rate (Generate) SY 2018-19
+		-- FS150 ï¿½ Adjusted-Cohort Graduation Rate (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3261)
@@ -11291,17 +11291,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.','FS150 — Adjusted-Cohort Graduation Rate (Generate) SY 2018-19','SLDS State Support Team',3261)
+			('Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.','FS150 ï¿½ Adjusted-Cohort Graduation Rate (Generate) SY 2018-19','SLDS State Support Team',3261)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.', CedsConnectionName = 'FS150 — Adjusted-Cohort Graduation Rate (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.', CedsConnectionName = 'FS150 ï¿½ Adjusted-Cohort Graduation Rate (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3261
 		END
  
 		-----------------------------------------
-		-- FS151 — Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2018-19
+		-- FS151 ï¿½ Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3262)
@@ -11309,17 +11309,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.','FS151 — Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2018-19','SLDS State Support Team',3262)
+			('Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.','FS151 ï¿½ Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2018-19','SLDS State Support Team',3262)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.', CedsConnectionName = 'FS151 — Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Cohorts for four-year, five-year, and six-year adjusted-cohort graduation rate table.', CedsConnectionName = 'FS151 ï¿½ Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3262
 		END
  
 		-----------------------------------------
-		-- FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2018-19
+		-- FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3263)
@@ -11327,17 +11327,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.','FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2018-19','SLDS State Support Team',3263)
+			('The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.','FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2018-19','SLDS State Support Team',3263)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.', CedsConnectionName = 'FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.', CedsConnectionName = 'FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3263
 		END
  
 		-----------------------------------------
-		-- FS155 – CTE Participants in Programs for Non-traditional (Generate) SY 2018-19
+		-- FS155 ï¿½ CTE Participants in Programs for Non-traditional (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3264)
@@ -11345,17 +11345,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE participants who participated in a program that leads to employment in non-traditional fields.','FS155 – CTE Participants in Programs for Non-traditional (Generate) SY 2018-19','SLDS State Support Team',3264)
+			('The unduplicated number of CTE participants who participated in a program that leads to employment in non-traditional fields.','FS155 ï¿½ CTE Participants in Programs for Non-traditional (Generate) SY 2018-19','SLDS State Support Team',3264)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE participants who participated in a program that leads to employment in non-traditional fields.', CedsConnectionName = 'FS155 – CTE Participants in Programs for Non-traditional (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE participants who participated in a program that leads to employment in non-traditional fields.', CedsConnectionName = 'FS155 ï¿½ CTE Participants in Programs for Non-traditional (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3264
 		END
  
 		-----------------------------------------
-		-- FS156 – CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2018-19
+		-- FS156 ï¿½ CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3265)
@@ -11363,17 +11363,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who completed a program that leads to employment in non-traditional fields.','FS156 – CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2018-19','SLDS State Support Team',3265)
+			('The unduplicated number of CTE concentrators who completed a program that leads to employment in non-traditional fields.','FS156 ï¿½ CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2018-19','SLDS State Support Team',3265)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who completed a program that leads to employment in non-traditional fields.', CedsConnectionName = 'FS156 – CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who completed a program that leads to employment in non-traditional fields.', CedsConnectionName = 'FS156 ï¿½ CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3265
 		END
  
 		-----------------------------------------
-		-- FS157 — CTE Concentrators Technical Skills (Generate) SY 2018-19
+		-- FS157 ï¿½ CTE Concentrators Technical Skills (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3266)
@@ -11381,17 +11381,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who took technical skill assessments that are aligned with industry-recognized standards.','FS157 — CTE Concentrators Technical Skills (Generate) SY 2018-19','SLDS State Support Team',3266)
+			('The unduplicated number of CTE concentrators who took technical skill assessments that are aligned with industry-recognized standards.','FS157 ï¿½ CTE Concentrators Technical Skills (Generate) SY 2018-19','SLDS State Support Team',3266)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who took technical skill assessments that are aligned with industry-recognized standards.', CedsConnectionName = 'FS157 — CTE Concentrators Technical Skills (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who took technical skill assessments that are aligned with industry-recognized standards.', CedsConnectionName = 'FS157 ï¿½ CTE Concentrators Technical Skills (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3266
 		END
  
 		-----------------------------------------
-		-- FS158 — CTE Concentrators Placement (Generate) 2018-19
+		-- FS158 ï¿½ CTE Concentrators Placement (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3267)
@@ -11399,17 +11399,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.','FS158 — CTE Concentrators Placement (Generate) 2018-19','SLDS State Support Team',3267)
+			('The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.','FS158 ï¿½ CTE Concentrators Placement (Generate) 2018-19','SLDS State Support Team',3267)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.', CedsConnectionName = 'FS158 — CTE Concentrators Placement (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who left secondary education in the cohort which graduated the prior program year.', CedsConnectionName = 'FS158 ï¿½ CTE Concentrators Placement (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3267
 		END
  
 		-----------------------------------------
-		-- FS169 – CTE Type of Placement (Generate) SY 2018-19
+		-- FS169 ï¿½ CTE Type of Placement (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3268)
@@ -11417,17 +11417,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of CTE concentrators who left secondary education in the cohort which graduated the prior program year and were placed.','FS169 – CTE Type of Placement (Generate) SY 2018-19','SLDS State Support Team',3268)
+			('The number of CTE concentrators who left secondary education in the cohort which graduated the prior program year and were placed.','FS169 ï¿½ CTE Type of Placement (Generate) SY 2018-19','SLDS State Support Team',3268)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of CTE concentrators who left secondary education in the cohort which graduated the prior program year and were placed.', CedsConnectionName = 'FS169 – CTE Type of Placement (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of CTE concentrators who left secondary education in the cohort which graduated the prior program year and were placed.', CedsConnectionName = 'FS169 ï¿½ CTE Type of Placement (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3268
 		END
  
 		-----------------------------------------
-		-- FS180 — N or D In Program Outcomes (Generate) 2018-19
+		-- FS180 ï¿½ N or D In Program Outcomes (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3269)
@@ -11435,17 +11435,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','FS180 — N or D In Program Outcomes (Generate) 2018-19','SLDS State Support Team',3269)
+			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','FS180 ï¿½ N or D In Program Outcomes (Generate) 2018-19','SLDS State Support Team',3269)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'FS180 — N or D In Program Outcomes (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'FS180 ï¿½ N or D In Program Outcomes (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3269
 		END
  
 		-----------------------------------------
-		-- FS181 — N or D Exited Program Outcomes (Generate) 2018-19
+		-- FS181 ï¿½ N or D Exited Program Outcomes (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3270)
@@ -11453,12 +11453,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','FS181 — N or D Exited Program Outcomes (Generate) 2018-19','SLDS State Support Team',3270)
+			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','FS181 ï¿½ N or D Exited Program Outcomes (Generate) 2018-19','SLDS State Support Team',3270)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'FS181 — N or D Exited Program Outcomes (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'FS181 ï¿½ N or D Exited Program Outcomes (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3270
 		END
  
@@ -11481,7 +11481,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS195 — Chronic Absenteeism (Generate) SY 2018-19
+		-- FS195 ï¿½ Chronic Absenteeism (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3272)
@@ -11489,17 +11489,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of students absent 10% or more school days during the school year','FS195 — Chronic Absenteeism (Generate) SY 2018-19','SLDS State Support Team',3272)
+			('The unduplicated number of students absent 10% or more school days during the school year','FS195 ï¿½ Chronic Absenteeism (Generate) SY 2018-19','SLDS State Support Team',3272)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of students absent 10% or more school days during the school year', CedsConnectionName = 'FS195 — Chronic Absenteeism (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of students absent 10% or more school days during the school year', CedsConnectionName = 'FS195 ï¿½ Chronic Absenteeism (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3272
 		END
  
 		-----------------------------------------
-		-- FS200 — Academic Achievement Indicator Status (Generate) 2018-19
+		-- FS200 ï¿½ Academic Achievement Indicator Status (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3273)
@@ -11507,17 +11507,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts','FS200 — Academic Achievement Indicator Status (Generate) 2018-19','SLDS State Support Team',3273)
+			('A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts','FS200 ï¿½ Academic Achievement Indicator Status (Generate) 2018-19','SLDS State Support Team',3273)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts', CedsConnectionName = 'FS200 — Academic Achievement Indicator Status (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts', CedsConnectionName = 'FS200 ï¿½ Academic Achievement Indicator Status (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3273
 		END
  
 		-----------------------------------------
-		-- FS201 — Other Academic Indicator Status (Generate) SY 2018-19
+		-- FS201 ï¿½ Other Academic Indicator Status (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3274)
@@ -11525,17 +11525,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the Other Academic Indicator.','FS201 — Other Academic Indicator Status (Generate) SY 2018-19','SLDS State Support Team',3274)
+			('A schoolï¿½s performance on the Other Academic Indicator.','FS201 ï¿½ Other Academic Indicator Status (Generate) SY 2018-19','SLDS State Support Team',3274)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the Other Academic Indicator.', CedsConnectionName = 'FS201 — Other Academic Indicator Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the Other Academic Indicator.', CedsConnectionName = 'FS201 ï¿½ Other Academic Indicator Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3274
 		END
  
 		-----------------------------------------
-		-- FS202 — School Quality or Student Success Indicator Status (Generate) 2018-19
+		-- FS202 ï¿½ School Quality or Student Success Indicator Status (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3275)
@@ -11543,17 +11543,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school''s performance on the state-specific indicators of school quality or student success.','FS202 — School Quality or Student Success Indicator Status (Generate) 2018-19','SLDS State Support Team',3275)
+			('A school''s performance on the state-specific indicators of school quality or student success.','FS202 ï¿½ School Quality or Student Success Indicator Status (Generate) 2018-19','SLDS State Support Team',3275)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school''s performance on the state-specific indicators of school quality or student success.', CedsConnectionName = 'FS202 — School Quality or Student Success Indicator Status (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A school''s performance on the state-specific indicators of school quality or student success.', CedsConnectionName = 'FS202 ï¿½ School Quality or Student Success Indicator Status (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3275
 		END
  
 		-----------------------------------------
-		-- FS203 — Teachers (Generate) 2018-19
+		-- FS203 ï¿½ Teachers (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3276)
@@ -11561,17 +11561,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of full-time equivalent teachers.','FS203 — Teachers (Generate) 2018-19','SLDS State Support Team',3276)
+			('The number of full-time equivalent teachers.','FS203 ï¿½ Teachers (Generate) 2018-19','SLDS State Support Team',3276)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of full-time equivalent teachers.', CedsConnectionName = 'FS203 — Teachers (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of full-time equivalent teachers.', CedsConnectionName = 'FS203 ï¿½ Teachers (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3276
 		END
  
 		-----------------------------------------
-		-- FS204 — Title III English Learners (Generate) 2018-19
+		-- FS204 ï¿½ Title III English Learners (Generate) 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3277)
@@ -11579,17 +11579,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Title III English learners not proficient within five years and Title III English learners exited.','FS204 — Title III English Learners (Generate) 2018-19','SLDS State Support Team',3277)
+			('Title III English learners not proficient within five years and Title III English learners exited.','FS204 ï¿½ Title III English Learners (Generate) 2018-19','SLDS State Support Team',3277)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Title III English learners not proficient within five years and Title III English learners exited.', CedsConnectionName = 'FS204 — Title III English Learners (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Title III English learners not proficient within five years and Title III English learners exited.', CedsConnectionName = 'FS204 ï¿½ Title III English Learners (Generate) 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3277
 		END
  
 		-----------------------------------------
-		-- FS205 — Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2018-19
+		-- FS205 ï¿½ Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  3278)
@@ -11597,12 +11597,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the progress in achieving English Language proficiency indicator.','FS205 — Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2018-19','SLDS State Support Team',3278)
+			('A schoolï¿½s performance on the progress in achieving English Language proficiency indicator.','FS205 ï¿½ Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2018-19','SLDS State Support Team',3278)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the progress in achieving English Language proficiency indicator.', CedsConnectionName = 'FS205 — Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the progress in achieving English Language proficiency indicator.', CedsConnectionName = 'FS205 ï¿½ Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 3278
 		END
  
@@ -11679,7 +11679,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS170 — LEA Subgrant Status (Generate) SY 2018-19
+		-- FS170 ï¿½ LEA Subgrant Status (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  4275)
@@ -11687,17 +11687,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of whether the LEA received a McKinney-Vento subgrant.','FS170 — LEA Subgrant Status (Generate) SY 2018-19','SLDS State Support Team',4275)
+			('An indication of whether the LEA received a McKinney-Vento subgrant.','FS170 ï¿½ LEA Subgrant Status (Generate) SY 2018-19','SLDS State Support Team',4275)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of whether the LEA received a McKinney-Vento subgrant.', CedsConnectionName = 'FS170 — LEA Subgrant Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'An indication of whether the LEA received a McKinney-Vento subgrant.', CedsConnectionName = 'FS170 ï¿½ LEA Subgrant Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 4275
 		END
  
 		-----------------------------------------
-		-- FS199 — Graduation Rate Indicator Status (Generate) SY 2018-19
+		-- FS199 ï¿½ Graduation Rate Indicator Status (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  4276)
@@ -11705,12 +11705,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the Graduation Rate Indicator.','FS199 — Graduation Rate Indicator Status (Generate) SY 2018-19','SLDS State Support Team',4276)
+			('A schoolï¿½s performance on the Graduation Rate Indicator.','FS199 ï¿½ Graduation Rate Indicator Status (Generate) SY 2018-19','SLDS State Support Team',4276)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the Graduation Rate Indicator.', CedsConnectionName = 'FS199 — Graduation Rate Indicator Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the Graduation Rate Indicator.', CedsConnectionName = 'FS199 ï¿½ Graduation Rate Indicator Status (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 4276
 		END
  
@@ -11931,7 +11931,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- What percentage of last year’s high school graduates need remediation in college and how do these percentages vary by student demographic characteristics?
+		-- What percentage of last yearï¿½s high school graduates need remediation in college and how do these percentages vary by student demographic characteristics?
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  4319)
@@ -11939,12 +11939,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('College Remediation Rates for Subgroups','What percentage of last year’s high school graduates need remediation in college and how do these percentages vary by student demographic characteristics?','SLDS Workgroup - Scaling Research with CEDS',4319)
+			('College Remediation Rates for Subgroups','What percentage of last yearï¿½s high school graduates need remediation in college and how do these percentages vary by student demographic characteristics?','SLDS Workgroup - Scaling Research with CEDS',4319)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'College Remediation Rates for Subgroups', CedsConnectionName = 'What percentage of last year’s high school graduates need remediation in college and how do these percentages vary by student demographic characteristics?', CedsConnectionSource = 'SLDS Workgroup - Scaling Research with CEDS'
+			set CedsConnectionDescription = 'College Remediation Rates for Subgroups', CedsConnectionName = 'What percentage of last yearï¿½s high school graduates need remediation in college and how do these percentages vary by student demographic characteristics?', CedsConnectionSource = 'SLDS Workgroup - Scaling Research with CEDS'
 			where CedsUseCaseId = 4319
 		END
  
@@ -12057,7 +12057,7 @@ begin try
 		END
  
 		-----------------------------------------
-		--  IDEA 618 Report | FS002: Children with Disabilities (IDEA) School Age (Generate) 2019-20
+		-- ï¿½IDEA 618 Report | FS002: Children with Disabilities (IDEA) School Age (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  4337)
@@ -12065,12 +12065,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of children with disabilities (IDEA) who are receiving services and are ages 5 (in kindergarten) through 21',' IDEA 618 Report | FS002: Children with Disabilities (IDEA) School Age (Generate) 2019-20','Center for the Integration of IDEA Data (CIID)',4337)
+			('The unduplicated number of children with disabilities (IDEA) who are receiving services and are ages 5 (in kindergarten) through 21','ï¿½IDEA 618 Report | FS002: Children with Disabilities (IDEA) School Age (Generate) 2019-20','Center for the Integration of IDEA Data (CIID)',4337)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of children with disabilities (IDEA) who are receiving services and are ages 5 (in kindergarten) through 21', CedsConnectionName = ' IDEA 618 Report | FS002: Children with Disabilities (IDEA) School Age (Generate) 2019-20', CedsConnectionSource = 'Center for the Integration of IDEA Data (CIID)'
+			set CedsConnectionDescription = 'The unduplicated number of children with disabilities (IDEA) who are receiving services and are ages 5 (in kindergarten) through 21', CedsConnectionName = 'ï¿½IDEA 618 Report | FS002: Children with Disabilities (IDEA) School Age (Generate) 2019-20', CedsConnectionSource = 'Center for the Integration of IDEA Data (CIID)'
 			where CedsUseCaseId = 4337
 		END
  
@@ -12111,7 +12111,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS130 – ESEA Status (Generate) SY 2019-20
+		-- FS130 ï¿½ ESEA Status (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  4347)
@@ -12119,17 +12119,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.','FS130 – ESEA Status (Generate) SY 2019-20','SLDS State Support Team',4347)
+			('The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.','FS130 ï¿½ ESEA Status (Generate) SY 2019-20','SLDS State Support Team',4347)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.', CedsConnectionName = 'FS130 – ESEA Status (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The classification of the improvement stage of the school; and an indication of whether the school is identified as persistently dangerous in accordance with state definition.', CedsConnectionName = 'FS130 ï¿½ ESEA Status (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 4347
 		END
  
 		-----------------------------------------
-		-- FS190 — Charter Authorizer Directory (Generate) SY 2019-20
+		-- FS190 ï¿½ Charter Authorizer Directory (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  4348)
@@ -12137,17 +12137,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers','FS190 — Charter Authorizer Directory (Generate) SY 2019-20','SLDS State Support Team',4348)
+			('The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers','FS190 ï¿½ Charter Authorizer Directory (Generate) SY 2019-20','SLDS State Support Team',4348)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers', CedsConnectionName = 'FS190 — Charter Authorizer Directory (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are required to ensure completeness of data on charter schools and authorizers', CedsConnectionName = 'FS190 ï¿½ Charter Authorizer Directory (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 4348
 		END
  
 		-----------------------------------------
-		-- FS142 — CTE Concentrators Academic Achievement (Generate) SY 2019-20
+		-- FS142 ï¿½ CTE Concentrators Academic Achievement (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  4352)
@@ -12155,17 +12155,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the state’s calculation of adequate yearly progress (AYP).','FS142 — CTE Concentrators Academic Achievement (Generate) SY 2019-20','SLDS State Support Team',4352)
+			('The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the stateï¿½s calculation of adequate yearly progress (AYP).','FS142 ï¿½ CTE Concentrators Academic Achievement (Generate) SY 2019-20','SLDS State Support Team',4352)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the state’s calculation of adequate yearly progress (AYP).', CedsConnectionName = 'FS142 — CTE Concentrators Academic Achievement (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of CTE concentrators who left secondary education during the school year for whom a proficiency score on the state assessment was included in the stateï¿½s calculation of adequate yearly progress (AYP).', CedsConnectionName = 'FS142 ï¿½ CTE Concentrators Academic Achievement (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 4352
 		END
  
 		-----------------------------------------
-		-- FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2019-20
+		-- FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  4353)
@@ -12173,12 +12173,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.','FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2019-20','SLDS State Support Team',4353)
+			('The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.','FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2019-20','SLDS State Support Team',4353)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.', CedsConnectionName = 'FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.', CedsConnectionName = 'FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 4353
 		END
  
@@ -12191,17 +12191,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.','FS154 - CTE Concentrators in Graduation Rate (Generate) SY 2019-20','SLDS State Support Team',4354)
+			('The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.','FS154 - CTE Concentrators in Graduation Rate (Generate) SY 2019-20','SLDS State Support Team',4354)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the state’s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.', CedsConnectionName = 'FS154 - CTE Concentrators in Graduation Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its graduation rate as described in section 1111 (b)(2)(C)(vi) of the ESEA, as amended.', CedsConnectionName = 'FS154 - CTE Concentrators in Graduation Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 4354
 		END
  
 		-----------------------------------------
-		-- FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2019-20
+		-- FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  4355)
@@ -12209,12 +12209,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who were included in the state’s computation of its four-year adjusted cohort graduation rate as defined in section 8101 of ESEA, as amended. (Revised 2019-20)','FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2019-20','SLDS State Support Team',4355)
+			('The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its four-year adjusted cohort graduation rate as defined in section 8101 of ESEA, as amended. (Revised 2019-20)','FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2019-20','SLDS State Support Team',4355)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the state’s computation of its four-year adjusted cohort graduation rate as defined in section 8101 of ESEA, as amended. (Revised 2019-20)', CedsConnectionName = 'FS154 — CTE Concentrators in Graduation Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its four-year adjusted cohort graduation rate as defined in section 8101 of ESEA, as amended. (Revised 2019-20)', CedsConnectionName = 'FS154 ï¿½ CTE Concentrators in Graduation Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 4355
 		END
  
@@ -12399,7 +12399,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS189 – Assessment Participation in Science (Generate) SY 2019-20
+		-- FS189 ï¿½ Assessment Participation in Science (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5373)
@@ -12407,17 +12407,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of students who were enrolled during the period of the state assessment in science.','FS189 – Assessment Participation in Science (Generate) SY 2019-20','SLDS State Support Team',5373)
+			('The unduplicated number of students who were enrolled during the period of the state assessment in science.','FS189 ï¿½ Assessment Participation in Science (Generate) SY 2019-20','SLDS State Support Team',5373)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of students who were enrolled during the period of the state assessment in science.', CedsConnectionName = 'FS189 – Assessment Participation in Science (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of students who were enrolled during the period of the state assessment in science.', CedsConnectionName = 'FS189 ï¿½ Assessment Participation in Science (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5373
 		END
  
 		-----------------------------------------
-		-- FS197 — Crosswalk of Charter Schools to Management Organizations (Generate) 2019-20
+		-- FS197 ï¿½ Crosswalk of Charter Schools to Management Organizations (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5374)
@@ -12425,17 +12425,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.','FS197 — Crosswalk of Charter Schools to Management Organizations (Generate) 2019-20','SLDS State Support Team',5374)
+			('The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.','FS197 ï¿½ Crosswalk of Charter Schools to Management Organizations (Generate) 2019-20','SLDS State Support Team',5374)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.', CedsConnectionName = 'FS197 — Crosswalk of Charter Schools to Management Organizations (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are gathered to provide the Charter School Program Office of the U.S. Department of Education insight into the extent and scope of the relationships between CMOs and EMOs with charter schools.', CedsConnectionName = 'FS197 ï¿½ Crosswalk of Charter Schools to Management Organizations (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5374
 		END
  
 		-----------------------------------------
-		-- X-FS198 — Charter Contracts (Generate) 2019-20
+		-- X-FS198 ï¿½ Charter Contracts (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5375)
@@ -12443,17 +12443,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.','X-FS198 — Charter Contracts (Generate) 2019-20','SLDS State Support Team',5375)
+			('The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.','X-FS198 ï¿½ Charter Contracts (Generate) 2019-20','SLDS State Support Team',5375)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.', CedsConnectionName = 'X-FS198 — Charter Contracts (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are to enable OII/CSP to obtain a complete list of charter schools in the United States. OII/CSP goes through a complex reconciliation process to compile a directory of all charter schools that are in operation across the nation. These data will fill in the data gaps so that for each school year OII/CSP has a complete and accurate directory of charter schools.', CedsConnectionName = 'X-FS198 ï¿½ Charter Contracts (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5375
 		END
  
 		-----------------------------------------
-		-- FS212 — Comprehensive Support and Targeted Support Identification SY 2019-20 (Generate)
+		-- FS212 ï¿½ Comprehensive Support and Targeted Support Identification SY 2019-20 (Generate)
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5376)
@@ -12461,12 +12461,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('FS212 captures the reasons for identification of schools reported in FS206 as "comprehensive support and improvement (CSI)" and the reasons for identification as "targeted support and improvement (TSI) and/or Additional Targeted Support and Improvement (ATSI)."','FS212 — Comprehensive Support and Targeted Support Identification SY 2019-20 (Generate)','SLDS State Support Team',5376)
+			('FS212 captures the reasons for identification of schools reported in FS206 as "comprehensive support and improvement (CSI)" and the reasons for identification as "targeted support and improvement (TSI) and/or Additional Targeted Support and Improvement (ATSI)."','FS212 ï¿½ Comprehensive Support and Targeted Support Identification SY 2019-20 (Generate)','SLDS State Support Team',5376)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'FS212 captures the reasons for identification of schools reported in FS206 as "comprehensive support and improvement (CSI)" and the reasons for identification as "targeted support and improvement (TSI) and/or Additional Targeted Support and Improvement (ATSI)."', CedsConnectionName = 'FS212 — Comprehensive Support and Targeted Support Identification SY 2019-20 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'FS212 captures the reasons for identification of schools reported in FS206 as "comprehensive support and improvement (CSI)" and the reasons for identification as "targeted support and improvement (TSI) and/or Additional Targeted Support and Improvement (ATSI)."', CedsConnectionName = 'FS212 ï¿½ Comprehensive Support and Targeted Support Identification SY 2019-20 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5376
 		END
  
@@ -12795,7 +12795,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS086 — Students Involved with Firearms (Generate) SY2019-20
+		-- FS086 ï¿½ Students Involved with Firearms (Generate) SY2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5571)
@@ -12803,12 +12803,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of students who were involved in an incident involving a firearm.','FS086 — Students Involved with Firearms (Generate) SY2019-20','SLDS State Support Team',5571)
+			('The unduplicated number of students who were involved in an incident involving a firearm.','FS086 ï¿½ Students Involved with Firearms (Generate) SY2019-20','SLDS State Support Team',5571)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of students who were involved in an incident involving a firearm.', CedsConnectionName = 'FS086 — Students Involved with Firearms (Generate) SY2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of students who were involved in an incident involving a firearm.', CedsConnectionName = 'FS086 ï¿½ Students Involved with Firearms (Generate) SY2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5571
 		END
  
@@ -12849,7 +12849,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS103 — Accountability (Generate) 2019-20
+		-- FS103 ï¿½ Accountability (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5574)
@@ -12857,17 +12857,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The classification of a school’s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to state’s indicator of poverty.','FS103 — Accountability (Generate) 2019-20','SLDS State Support Team',5574)
+			('The classification of a schoolï¿½s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to stateï¿½s indicator of poverty.','FS103 ï¿½ Accountability (Generate) 2019-20','SLDS State Support Team',5574)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The classification of a school’s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to state’s indicator of poverty.', CedsConnectionName = 'FS103 — Accountability (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The classification of a schoolï¿½s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to stateï¿½s indicator of poverty.', CedsConnectionName = 'FS103 ï¿½ Accountability (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5574
 		END
  
 		-----------------------------------------
-		-- FS113 — N or D Academic Achievement - State Agency (Generate) 2019-20
+		-- FS113 ï¿½ N or D Academic Achievement - State Agency (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5575)
@@ -12875,17 +12875,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','FS113 — N or D Academic Achievement - State Agency (Generate) 2019-20','SLDS State Support Team',5575)
+			('The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','FS113 ï¿½ N or D Academic Achievement - State Agency (Generate) 2019-20','SLDS State Support Team',5575)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'FS113 — N or D Academic Achievement - State Agency (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 1 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'FS113 ï¿½ N or D Academic Achievement - State Agency (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5575
 		END
  
 		-----------------------------------------
-		-- FS119 — N or D Participation - State Agency (Generate) 2019-20
+		-- FS119 ï¿½ N or D Participation - State Agency (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5576)
@@ -12893,12 +12893,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.','FS119 — N or D Participation - State Agency (Generate) 2019-20','SLDS State Support Team',5576)
+			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.','FS119 ï¿½ N or D Participation - State Agency (Generate) 2019-20','SLDS State Support Team',5576)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.', CedsConnectionName = 'FS119 — N or D Participation - State Agency (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended.', CedsConnectionName = 'FS119 ï¿½ N or D Participation - State Agency (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5576
 		END
  
@@ -12921,7 +12921,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- CSPR II Report | FS122: MEP Students Eligible and Served – Summer/Intersession (Generate) SY 2019-20
+		-- CSPR II Report | FS122: MEP Students Eligible and Served ï¿½ Summer/Intersession (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5578)
@@ -12929,17 +12929,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).','CSPR II Report | FS122: MEP Students Eligible and Served – Summer/Intersession (Generate) SY 2019-20','SLDS State Support Team',5578)
+			('Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).','CSPR II Report | FS122: MEP Students Eligible and Served ï¿½ Summer/Intersession (Generate) SY 2019-20','SLDS State Support Team',5578)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).', CedsConnectionName = 'CSPR II Report | FS122: MEP Students Eligible and Served – Summer/Intersession (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).', CedsConnectionName = 'CSPR II Report | FS122: MEP Students Eligible and Served ï¿½ Summer/Intersession (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5578
 		END
  
 		-----------------------------------------
-		-- X - FS125 — N or D Academic Achievement - LEA (Generate) 2019-20
+		-- X - FS125 ï¿½ N or D Academic Achievement - LEA (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5579)
@@ -12947,12 +12947,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','X - FS125 — N or D Academic Achievement - LEA (Generate) 2019-20','SLDS State Support Team',5579)
+			('The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.','X - FS125 ï¿½ N or D Academic Achievement - LEA (Generate) 2019-20','SLDS State Support Team',5579)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'X - FS125 — N or D Academic Achievement - LEA (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students served by Title I, Part D, Subpart 2 of ESEA, as amended, for at least 90 consecutive days during the reporting period who took both a pre- and post-test.', CedsConnectionName = 'X - FS125 ï¿½ N or D Academic Achievement - LEA (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5579
 		END
  
@@ -13011,7 +13011,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS131 — LEA End of School Year Status (Generate) SY 2019-20
+		-- FS131 ï¿½ LEA End of School Year Status (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5583)
@@ -13019,17 +13019,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.','FS131 — LEA End of School Year Status (Generate) SY 2019-20','SLDS State Support Team',5583)
+			('An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.','FS131 ï¿½ LEA End of School Year Status (Generate) SY 2019-20','SLDS State Support Team',5583)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.', CedsConnectionName = 'FS131 — LEA End of School Year Status (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'An indication that the local educational agency (LEA) notified the state of the LEA''s intention to use REAP-Flex Alternative Uses of Funding Authority during the school year as specified in the Title V, Section 5211 of ESEA, as amended.', CedsConnectionName = 'FS131 ï¿½ LEA End of School Year Status (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5583
 		END
  
 		-----------------------------------------
-		-- FS132 — Section 1003 Funds (Generate) SY 2019-20
+		-- FS132 ï¿½ Section 1003 Funds (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5584)
@@ -13037,12 +13037,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).','FS132 — Section 1003 Funds (Generate) SY 2019-20','SLDS State Support Team',5584)
+			('The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).','FS132 ï¿½ Section 1003 Funds (Generate) SY 2019-20','SLDS State Support Team',5584)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).', CedsConnectionName = 'FS132 — Section 1003 Funds (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The data collected using this file specification are used to monitor and report performance on programs and activities supported by the Elementary and Secondary Education Act (ESEA), as amended.  Data group 794 will be used to populate the Consolidated State Performance Report (CSPR).', CedsConnectionName = 'FS132 ï¿½ Section 1003 Funds (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5584
 		END
  
@@ -13083,7 +13083,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS150 — Adjusted-Cohort Graduation Rate (Generate) SY 2019-20
+		-- FS150 ï¿½ Adjusted-Cohort Graduation Rate (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5587)
@@ -13091,17 +13091,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Cohorts for four-year, five-year, six-year, seven-year, eight-year, nine-year and ten-year adjusted-cohort graduation rate table.  (Revised SY 2019-20)','FS150 — Adjusted-Cohort Graduation Rate (Generate) SY 2019-20','SLDS State Support Team',5587)
+			('Cohorts for four-year, five-year, six-year, seven-year, eight-year, nine-year and ten-year adjusted-cohort graduation rate table.  (Revised SY 2019-20)','FS150 ï¿½ Adjusted-Cohort Graduation Rate (Generate) SY 2019-20','SLDS State Support Team',5587)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Cohorts for four-year, five-year, six-year, seven-year, eight-year, nine-year and ten-year adjusted-cohort graduation rate table.  (Revised SY 2019-20)', CedsConnectionName = 'FS150 — Adjusted-Cohort Graduation Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Cohorts for four-year, five-year, six-year, seven-year, eight-year, nine-year and ten-year adjusted-cohort graduation rate table.  (Revised SY 2019-20)', CedsConnectionName = 'FS150 ï¿½ Adjusted-Cohort Graduation Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5587
 		END
  
 		-----------------------------------------
-		-- FS151 — Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2019-20
+		-- FS151 ï¿½ Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5588)
@@ -13109,17 +13109,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Cohorts for four-year, five-year, six-year, seven-year, eight-year, nine-year and ten-year adjusted-cohort graduation rate table.  (Revised SY 2019-20)','FS151 — Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2019-20','SLDS State Support Team',5588)
+			('Cohorts for four-year, five-year, six-year, seven-year, eight-year, nine-year and ten-year adjusted-cohort graduation rate table.  (Revised SY 2019-20)','FS151 ï¿½ Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2019-20','SLDS State Support Team',5588)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Cohorts for four-year, five-year, six-year, seven-year, eight-year, nine-year and ten-year adjusted-cohort graduation rate table.  (Revised SY 2019-20)', CedsConnectionName = 'FS151 — Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Cohorts for four-year, five-year, six-year, seven-year, eight-year, nine-year and ten-year adjusted-cohort graduation rate table.  (Revised SY 2019-20)', CedsConnectionName = 'FS151 ï¿½ Cohorts for Adjusted-Cohort Graduation Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5588
 		END
  
 		-----------------------------------------
-		-- DO NOT USE  FS160 — High School Graduates Postsecondary Enrollment (Generate) SY 2019-20
+		-- DO NOT USE  FS160 ï¿½ High School Graduates Postsecondary Enrollment (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5589)
@@ -13127,12 +13127,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.','DO NOT USE  FS160 — High School Graduates Postsecondary Enrollment (Generate) SY 2019-20','SLDS State Support Team',5589)
+			('The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.','DO NOT USE  FS160 ï¿½ High School Graduates Postsecondary Enrollment (Generate) SY 2019-20','SLDS State Support Team',5589)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.', CedsConnectionName = 'DO NOT USE  FS160 — High School Graduates Postsecondary Enrollment (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students who graduated the previous academic year who enrolled or did not enroll in an institution of higher education (IHE) during the academic year immediately following the previous academic year.', CedsConnectionName = 'DO NOT USE  FS160 ï¿½ High School Graduates Postsecondary Enrollment (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5589
 		END
  
@@ -13155,7 +13155,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- DO NOT USE FS163 — Discipline Data (Generate) SY 2019-20
+		-- DO NOT USE FS163 ï¿½ Discipline Data (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5591)
@@ -13163,12 +13163,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.','DO NOT USE FS163 — Discipline Data (Generate) SY 2019-20','SLDS State Support Team',5591)
+			('An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.','DO NOT USE FS163 ï¿½ Discipline Data (Generate) SY 2019-20','SLDS State Support Team',5591)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.', CedsConnectionName = 'DO NOT USE FS163 — Discipline Data (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'An indication of whether the school or local education agency (LEA) submitted a Gun-Free Schools Act (GFSA) of 1994 report to the state, as defined by Title 18, Section 921.', CedsConnectionName = 'DO NOT USE FS163 ï¿½ Discipline Data (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5591
 		END
  
@@ -13209,7 +13209,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS170 — LEA Subgrant Status (Generate) SY 2019-20
+		-- FS170 ï¿½ LEA Subgrant Status (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5594)
@@ -13217,17 +13217,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('An indication of whether the LEA received a McKinney-Vento subgrant.','FS170 — LEA Subgrant Status (Generate) SY 2019-20','SLDS State Support Team',5594)
+			('An indication of whether the LEA received a McKinney-Vento subgrant.','FS170 ï¿½ LEA Subgrant Status (Generate) SY 2019-20','SLDS State Support Team',5594)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'An indication of whether the LEA received a McKinney-Vento subgrant.', CedsConnectionName = 'FS170 — LEA Subgrant Status (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'An indication of whether the LEA received a McKinney-Vento subgrant.', CedsConnectionName = 'FS170 ï¿½ LEA Subgrant Status (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5594
 		END
  
 		-----------------------------------------
-		-- do not use FS180 — N or D In Program Outcomes (Generate) 2019-20
+		-- do not use FS180 ï¿½ N or D In Program Outcomes (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5595)
@@ -13235,12 +13235,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','do not use FS180 — N or D In Program Outcomes (Generate) 2019-20','SLDS State Support Team',5595)
+			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','do not use FS180 ï¿½ N or D In Program Outcomes (Generate) 2019-20','SLDS State Support Team',5595)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'do not use FS180 — N or D In Program Outcomes (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency and LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'do not use FS180 ï¿½ N or D In Program Outcomes (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5595
 		END
  
@@ -13263,7 +13263,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS181 — N or D Exited Program Outcomes (Generate) 2019-20
+		-- FS181 ï¿½ N or D Exited Program Outcomes (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5597)
@@ -13271,12 +13271,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) and Subpart 2 (LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','FS181 — N or D Exited Program Outcomes (Generate) 2019-20','SLDS State Support Team',5597)
+			('The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) and Subpart 2 (LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.','FS181 ï¿½ N or D Exited Program Outcomes (Generate) 2019-20','SLDS State Support Team',5597)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) and Subpart 2 (LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'FS181 — N or D Exited Program Outcomes (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of students participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (State Agency) and Subpart 2 (LEA) of ESEA, as amended, who attained academic and career and technical outcomes while enrolled in the programs.', CedsConnectionName = 'FS181 ï¿½ N or D Exited Program Outcomes (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5597
 		END
  
@@ -13299,7 +13299,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS194 — Young Homeless Children Served (McKinney-Vento) (Generate) SY 2019-20
+		-- FS194 ï¿½ Young Homeless Children Served (McKinney-Vento) (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5599)
@@ -13307,17 +13307,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).','FS194 — Young Homeless Children Served (McKinney-Vento) (Generate) SY 2019-20','SLDS State Support Team',5599)
+			('The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).','FS194 ï¿½ Young Homeless Children Served (McKinney-Vento) (Generate) SY 2019-20','SLDS State Support Team',5599)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).', CedsConnectionName = 'FS194 — Young Homeless Children Served (McKinney-Vento) (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).', CedsConnectionName = 'FS194 ï¿½ Young Homeless Children Served (McKinney-Vento) (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5599
 		END
  
 		-----------------------------------------
-		-- FS195 — Chronic Absenteeism (Generate) SY 2019-20
+		-- FS195 ï¿½ Chronic Absenteeism (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5600)
@@ -13325,17 +13325,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of students absent 10% or more school days during the school year','FS195 — Chronic Absenteeism (Generate) SY 2019-20','SLDS State Support Team',5600)
+			('The unduplicated number of students absent 10% or more school days during the school year','FS195 ï¿½ Chronic Absenteeism (Generate) SY 2019-20','SLDS State Support Team',5600)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of students absent 10% or more school days during the school year', CedsConnectionName = 'FS195 — Chronic Absenteeism (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of students absent 10% or more school days during the school year', CedsConnectionName = 'FS195 ï¿½ Chronic Absenteeism (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5600
 		END
  
 		-----------------------------------------
-		-- FS203 — Teachers (Generate) 2019-20
+		-- FS203 ï¿½ Teachers (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5601)
@@ -13343,17 +13343,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of full-time equivalent teachers.','FS203 — Teachers (Generate) 2019-20','SLDS State Support Team',5601)
+			('The number of full-time equivalent teachers.','FS203 ï¿½ Teachers (Generate) 2019-20','SLDS State Support Team',5601)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of full-time equivalent teachers.', CedsConnectionName = 'FS203 — Teachers (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of full-time equivalent teachers.', CedsConnectionName = 'FS203 ï¿½ Teachers (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5601
 		END
  
 		-----------------------------------------
-		-- FS156 – CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2019-20
+		-- FS156 ï¿½ CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5602)
@@ -13361,12 +13361,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators in career and technical education programs and programs of study that leads to non-traditional fields. (Revised 2019-20)','FS156 – CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2019-20','SLDS State Support Team',5602)
+			('The unduplicated number of CTE concentrators in career and technical education programs and programs of study that leads to non-traditional fields. (Revised 2019-20)','FS156 ï¿½ CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2019-20','SLDS State Support Team',5602)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators in career and technical education programs and programs of study that leads to non-traditional fields. (Revised 2019-20)', CedsConnectionName = 'FS156 – CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators in career and technical education programs and programs of study that leads to non-traditional fields. (Revised 2019-20)', CedsConnectionName = 'FS156 ï¿½ CTE Concentrators in Programs for Non-traditional Fields (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5602
 		END
  
@@ -13397,12 +13397,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of CTE concentrators who were included in the state’s computation of its extended-year adjusted cohort graduation rate as defined in section 8101 of ESEA, as amended.','FS213 - CTE Concentrators in Extended Year Graduate Rate (Generate) SY 2019-20','SLDS State Support Team',5604)
+			('The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its extended-year adjusted cohort graduation rate as defined in section 8101 of ESEA, as amended.','FS213 - CTE Concentrators in Extended Year Graduate Rate (Generate) SY 2019-20','SLDS State Support Team',5604)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the state’s computation of its extended-year adjusted cohort graduation rate as defined in section 8101 of ESEA, as amended.', CedsConnectionName = 'FS213 - CTE Concentrators in Extended Year Graduate Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of CTE concentrators who were included in the stateï¿½s computation of its extended-year adjusted cohort graduation rate as defined in section 8101 of ESEA, as amended.', CedsConnectionName = 'FS213 - CTE Concentrators in Extended Year Graduate Rate (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5604
 		END
  
@@ -13533,7 +13533,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS194 — Young Homeless Children Served (McKinney-Vento) (Generate) SY 2018-19
+		-- FS194 ï¿½ Young Homeless Children Served (McKinney-Vento) (Generate) SY 2018-19
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5616)
@@ -13541,17 +13541,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).','FS194 — Young Homeless Children Served (McKinney-Vento) (Generate) SY 2018-19','SLDS State Support Team',5616)
+			('The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).','FS194 ï¿½ Young Homeless Children Served (McKinney-Vento) (Generate) SY 2018-19','SLDS State Support Team',5616)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).', CedsConnectionName = 'FS194 — Young Homeless Children Served (McKinney-Vento) (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of homeless children who are birth through age 5 (not Kindergarten) and received services under program subgrants funded by Subtitle VII-B of the McKinney-Vento Homeless Assistance Act (2015).', CedsConnectionName = 'FS194 ï¿½ Young Homeless Children Served (McKinney-Vento) (Generate) SY 2018-19', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5616
 		END
  
 		-----------------------------------------
-		-- FS126 — Title III Former EL Students (Generate) SY 2019-20
+		-- FS126 ï¿½ Title III Former EL Students (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5643)
@@ -13559,12 +13559,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.  NOT COLLECTED IN SY2019-20 DUE TO COVID-19.','FS126 — Title III Former EL Students (Generate) SY 2019-20','SLDS State Support Team',5643)
+			('The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.  NOT COLLECTED IN SY2019-20 DUE TO COVID-19.','FS126 ï¿½ Title III Former EL Students (Generate) SY 2019-20','SLDS State Support Team',5643)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.  NOT COLLECTED IN SY2019-20 DUE TO COVID-19.', CedsConnectionName = 'FS126 — Title III Former EL Students (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The number of former English learners who are meeting and not meeting the challenging State academic standards as measured by proficiency for each of the four years after such children are no longer receiving services under Title III of ESEA, as amended.  NOT COLLECTED IN SY2019-20 DUE TO COVID-19.', CedsConnectionName = 'FS126 ï¿½ Title III Former EL Students (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5643
 		END
  
@@ -13587,7 +13587,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- FS139 — English Language Proficiency Results (Generate) SY 2019-20
+		-- FS139 ï¿½ English Language Proficiency Results (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5646)
@@ -13595,12 +13595,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The unduplicated number of English learners who took the annual state English language proficiency assessment. NOT COLLECTED IN SY 19-20 DUE TO COVID 19.','FS139 — English Language Proficiency Results (Generate) SY 2019-20','SLDS State Support Team',5646)
+			('The unduplicated number of English learners who took the annual state English language proficiency assessment. NOT COLLECTED IN SY 19-20 DUE TO COVID 19.','FS139 ï¿½ English Language Proficiency Results (Generate) SY 2019-20','SLDS State Support Team',5646)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The unduplicated number of English learners who took the annual state English language proficiency assessment. NOT COLLECTED IN SY 19-20 DUE TO COVID 19.', CedsConnectionName = 'FS139 — English Language Proficiency Results (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The unduplicated number of English learners who took the annual state English language proficiency assessment. NOT COLLECTED IN SY 19-20 DUE TO COVID 19.', CedsConnectionName = 'FS139 ï¿½ English Language Proficiency Results (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5646
 		END
  
@@ -13613,17 +13613,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the Graduation Rate Indicator. (NOT COLLECTED IN EDFACTS DUE TO COVID-19)','FS199 - Graduation Rate Indicator Status (Generate) 2019-20','SLDS State Support Team',5647)
+			('A schoolï¿½s performance on the Graduation Rate Indicator. (NOT COLLECTED IN EDFACTS DUE TO COVID-19)','FS199 - Graduation Rate Indicator Status (Generate) 2019-20','SLDS State Support Team',5647)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the Graduation Rate Indicator. (NOT COLLECTED IN EDFACTS DUE TO COVID-19)', CedsConnectionName = 'FS199 - Graduation Rate Indicator Status (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the Graduation Rate Indicator. (NOT COLLECTED IN EDFACTS DUE TO COVID-19)', CedsConnectionName = 'FS199 - Graduation Rate Indicator Status (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5647
 		END
  
 		-----------------------------------------
-		-- FS200 — Academic Achievement Indicator Status (Generate) 2019-20
+		-- FS200 ï¿½ Academic Achievement Indicator Status (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5649)
@@ -13631,17 +13631,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts  NOT COLLECTED IN SY 2019-20 DUE TO COVID 19','FS200 — Academic Achievement Indicator Status (Generate) 2019-20','SLDS State Support Team',5649)
+			('A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts  NOT COLLECTED IN SY 2019-20 DUE TO COVID 19','FS200 ï¿½ Academic Achievement Indicator Status (Generate) 2019-20','SLDS State Support Team',5649)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts  NOT COLLECTED IN SY 2019-20 DUE TO COVID 19', CedsConnectionName = 'FS200 — Academic Achievement Indicator Status (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A school''s performance on the Academic Achievement Indicator for both Mathematics and Reading/Language Arts  NOT COLLECTED IN SY 2019-20 DUE TO COVID 19', CedsConnectionName = 'FS200 ï¿½ Academic Achievement Indicator Status (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5649
 		END
  
 		-----------------------------------------
-		-- FS201 — Other Academic Indicator Status (Generate) SY 2019-20
+		-- FS201 ï¿½ Other Academic Indicator Status (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5650)
@@ -13649,17 +13649,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the Other Academic Indicator.  NOT COLLECTED IN SY 2019-20 DUE TO COVID 19','FS201 — Other Academic Indicator Status (Generate) SY 2019-20','SLDS State Support Team',5650)
+			('A schoolï¿½s performance on the Other Academic Indicator.  NOT COLLECTED IN SY 2019-20 DUE TO COVID 19','FS201 ï¿½ Other Academic Indicator Status (Generate) SY 2019-20','SLDS State Support Team',5650)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the Other Academic Indicator.  NOT COLLECTED IN SY 2019-20 DUE TO COVID 19', CedsConnectionName = 'FS201 — Other Academic Indicator Status (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the Other Academic Indicator.  NOT COLLECTED IN SY 2019-20 DUE TO COVID 19', CedsConnectionName = 'FS201 ï¿½ Other Academic Indicator Status (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5650
 		END
  
 		-----------------------------------------
-		-- FS202 — School Quality or Student Success Indicator Status (Generate) 2019-20
+		-- FS202 ï¿½ School Quality or Student Success Indicator Status (Generate) 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5651)
@@ -13667,17 +13667,17 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school''s performance on the state-specific indicators of school quality or student success. NOT COLLECTED IN SY 2019-20 DUE TO COVID 19','FS202 — School Quality or Student Success Indicator Status (Generate) 2019-20','SLDS State Support Team',5651)
+			('A school''s performance on the state-specific indicators of school quality or student success. NOT COLLECTED IN SY 2019-20 DUE TO COVID 19','FS202 ï¿½ School Quality or Student Success Indicator Status (Generate) 2019-20','SLDS State Support Team',5651)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school''s performance on the state-specific indicators of school quality or student success. NOT COLLECTED IN SY 2019-20 DUE TO COVID 19', CedsConnectionName = 'FS202 — School Quality or Student Success Indicator Status (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A school''s performance on the state-specific indicators of school quality or student success. NOT COLLECTED IN SY 2019-20 DUE TO COVID 19', CedsConnectionName = 'FS202 ï¿½ School Quality or Student Success Indicator Status (Generate) 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5651
 		END
  
 		-----------------------------------------
-		-- FS205 — Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2019-20
+		-- FS205 ï¿½ Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2019-20
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  5652)
@@ -13685,12 +13685,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the progress in achieving English Language proficiency indicator.','FS205 — Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2019-20','SLDS State Support Team',5652)
+			('A schoolï¿½s performance on the progress in achieving English Language proficiency indicator.','FS205 ï¿½ Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2019-20','SLDS State Support Team',5652)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the progress in achieving English Language proficiency indicator.', CedsConnectionName = 'FS205 — Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the progress in achieving English Language proficiency indicator.', CedsConnectionName = 'FS205 ï¿½ Progress Achieving English Language Proficiency Indicator Status (Generate) SY 2019-20', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 5652
 		END
  
@@ -14325,7 +14325,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- CSPR II Report | FS122 MEP Students Eligible and Served – Summer/Intersession SY 2020-21 (Generate)
+		-- CSPR II Report | FS122 MEP Students Eligible and Served ï¿½ Summer/Intersession SY 2020-21 (Generate)
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  6717)
@@ -14333,12 +14333,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).','CSPR II Report | FS122 MEP Students Eligible and Served – Summer/Intersession SY 2020-21 (Generate)','SLDS State Support Team',6717)
+			('Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).','CSPR II Report | FS122 MEP Students Eligible and Served ï¿½ Summer/Intersession SY 2020-21 (Generate)','SLDS State Support Team',6717)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).', CedsConnectionName = 'CSPR II Report | FS122 MEP Students Eligible and Served – Summer/Intersession SY 2020-21 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).', CedsConnectionName = 'CSPR II Report | FS122 MEP Students Eligible and Served ï¿½ Summer/Intersession SY 2020-21 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 6717
 		END
  
@@ -14477,12 +14477,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The classification of a school’s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to state’s indicator of poverty. (NOTE: Connection name changed from "Accountability" to "Poverty Quartile" in 2020-21)','FS103 Poverty Quartile SY 2020-21 (Generate)','SLDS State Support Team',6725)
+			('The classification of a schoolï¿½s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to stateï¿½s indicator of poverty. (NOTE: Connection name changed from "Accountability" to "Poverty Quartile" in 2020-21)','FS103 Poverty Quartile SY 2020-21 (Generate)','SLDS State Support Team',6725)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The classification of a school’s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to state’s indicator of poverty. (NOTE: Connection name changed from "Accountability" to "Poverty Quartile" in 2020-21)', CedsConnectionName = 'FS103 Poverty Quartile SY 2020-21 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The classification of a schoolï¿½s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to stateï¿½s indicator of poverty. (NOTE: Connection name changed from "Accountability" to "Poverty Quartile" in 2020-21)', CedsConnectionName = 'FS103 Poverty Quartile SY 2020-21 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 6725
 		END
  
@@ -15305,12 +15305,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('The classification of a school’s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to state’s indicator of poverty.','FS103 Poverty Quartile SY 2021-22 (Generate)','SLDS State Support Team',9755)
+			('The classification of a schoolï¿½s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to stateï¿½s indicator of poverty.','FS103 Poverty Quartile SY 2021-22 (Generate)','SLDS State Support Team',9755)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'The classification of a school’s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to state’s indicator of poverty.', CedsConnectionName = 'FS103 Poverty Quartile SY 2021-22 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'The classification of a schoolï¿½s poverty quartile for purposes of determining the number of inexperienced, emergency/provisional credentialed, and out-of-field teachers in high and low poverty schools, according to stateï¿½s indicator of poverty.', CedsConnectionName = 'FS103 Poverty Quartile SY 2021-22 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 9755
 		END
  
@@ -15387,7 +15387,7 @@ begin try
 		END
  
 		-----------------------------------------
-		-- CSPR II Report | FS122 MEP Students Eligible and Served – Summer/Intersession SY 2021-22 (Generate)
+		-- CSPR II Report | FS122 MEP Students Eligible and Served ï¿½ Summer/Intersession SY 2021-22 (Generate)
 		-----------------------------------------
  
 		IF NOT EXISTS (Select 1 from app.[CedsConnections] where [CedsUseCaseId] =  10740)
@@ -15395,12 +15395,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).','CSPR II Report | FS122 MEP Students Eligible and Served – Summer/Intersession SY 2021-22 (Generate)','SLDS State Support Team',10740)
+			('Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).','CSPR II Report | FS122 MEP Students Eligible and Served ï¿½ Summer/Intersession SY 2021-22 (Generate)','SLDS State Support Team',10740)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).', CedsConnectionName = 'CSPR II Report | FS122 MEP Students Eligible and Served – Summer/Intersession SY 2021-22 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'Connection for Generate, EDFacts File FS122, created in collaboration with the EDFacts Partner Support Center (PSC) and the Center for the Integration of IDEA Data (CIID).', CedsConnectionName = 'CSPR II Report | FS122 MEP Students Eligible and Served ï¿½ Summer/Intersession SY 2021-22 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 10740
 		END
  
@@ -16079,12 +16079,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the Graduation Rate Indicator.','FS199 Graduation Rate Indicator Status SY 2021-22 (Generate)','SLDS State Support Team',10779)
+			('A schoolï¿½s performance on the Graduation Rate Indicator.','FS199 Graduation Rate Indicator Status SY 2021-22 (Generate)','SLDS State Support Team',10779)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the Graduation Rate Indicator.', CedsConnectionName = 'FS199 Graduation Rate Indicator Status SY 2021-22 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the Graduation Rate Indicator.', CedsConnectionName = 'FS199 Graduation Rate Indicator Status SY 2021-22 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 10779
 		END
  
@@ -16133,12 +16133,12 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the Other Academic Indicator.','FS201 Other Academic Indicator Status SY 2021-22 (Generate)','SLDS State Support Team',11781)
+			('A schoolï¿½s performance on the Other Academic Indicator.','FS201 Other Academic Indicator Status SY 2021-22 (Generate)','SLDS State Support Team',11781)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the Other Academic Indicator.', CedsConnectionName = 'FS201 Other Academic Indicator Status SY 2021-22 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the Other Academic Indicator.', CedsConnectionName = 'FS201 Other Academic Indicator Status SY 2021-22 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 11781
 		END
  
@@ -16169,14 +16169,15 @@ begin try
 			INSERT INTO app.cedsConnections
 			([CedsConnectionDescription],[CedsConnectionName],[CedsConnectionSource],[CedsUseCaseId])
 			VALUES
-			('A school’s performance on the progress in achieving English Language proficiency indicator.','FS205 Progress Achieving English Language Proficiency Indicator Status SY 2021-22 (Generate)','SLDS State Support Team',12781)
+			('A schoolï¿½s performance on the progress in achieving English Language proficiency indicator.','FS205 Progress Achieving English Language Proficiency Indicator Status SY 2021-22 (Generate)','SLDS State Support Team',12781)
 		END
 		ELSE
 		BEGIN
 			update App.CedsConnections
-			set CedsConnectionDescription = 'A school’s performance on the progress in achieving English Language proficiency indicator.', CedsConnectionName = 'FS205 Progress Achieving English Language Proficiency Indicator Status SY 2021-22 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
+			set CedsConnectionDescription = 'A schoolï¿½s performance on the progress in achieving English Language proficiency indicator.', CedsConnectionName = 'FS205 Progress Achieving English Language Proficiency Indicator Status SY 2021-22 (Generate)', CedsConnectionSource = 'SLDS State Support Team'
 			where CedsUseCaseId = 12781
-		END
+		END 
+
  
 	commit transaction
  

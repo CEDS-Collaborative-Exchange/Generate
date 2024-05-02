@@ -46,7 +46,7 @@ UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C005','C006','
 EXEC RDS.Create_Reports 'discipline', 0 -- FS005, FS006, FS007, FS086, FS088, FS143, FS144
 -- Execution time: 12:22
 
-PRINT 'RDS migration for Assessments (C175,C178,C179,C185,C188,C189)'
+PRINT 'RDS migration for Assessments (C175,C178,C179,C185,C188,C189, C224, C225)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C175','C178','C179','C185','C188','C189')
 EXEC RDS.Create_Reports 'assessment', 0 -- FS175, FS178, FS179, FS185, FS188, FS189, No tests yet for FS113, FS125, FS126, FS139, FS137, FS050, FS142, FS157
 -- Execution time: 17:39
@@ -69,6 +69,10 @@ UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c033','c052')
 EXEC RDS.Create_ReportData 'C033', 'membership', 0
 EXEC RDS.Create_ReportData 'C052', 'membership', 0
 -- Execution time: 8:16
+
+--PRINT 'RDS migration for NeglectedOrDelinquent (C218, C219, C220, C221)'
+--UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C218', 'C219', 'C220', 'C221')
+--EXEC RDS.Create_Reports 'NeglectedOrDelinquent', 0 -- FS070, FS099, FS112, no tests yet for FS059, FS067, FS203
 
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'dropout' -- No tests yet FS032
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'grad' -- No tests yet FS040
@@ -141,5 +145,18 @@ EXEC App.FS194_TestCase							@SchoolYear
 --EXEC App.FS212_TestCase							@SchoolYear
 --PRINT 'End-to-End Test for zz_DimK12Schools_Charter_NA_TestCase'
 --EXEC App.zz_DimK12Schools_Charter_NA_TestCase	@SchoolYear
+
+--PRINT 'End-to-End Test for FS218'
+--EXEC Staging.RunEndToEndTest	 'C218', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+--PRINT 'End-to-End Test for FS219'
+--EXEC Staging.RunEndToEndTest	 'C219', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+--PRINT 'End-to-End Test for FS220'
+--EXEC Staging.RunEndToEndTest	 'C220', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+--PRINT 'End-to-End Test for FS221'
+--EXEC Staging.RunEndToEndTest	 'C221', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+--PRINT 'End-to-End Test for FS224'
+--EXEC Staging.RunEndToEndTest	 'C224', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
+--PRINT 'End-to-End Test for FS225'
+--EXEC Staging.RunEndToEndTest	 'C225', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
 
 
