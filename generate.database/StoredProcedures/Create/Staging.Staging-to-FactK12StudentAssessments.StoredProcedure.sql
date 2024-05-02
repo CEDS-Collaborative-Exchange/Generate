@@ -85,8 +85,8 @@ BEGIN
 		from Staging.ProgramParticipationNorD sppnord
 		inner join Staging.AssessmentResult sar
 			on sppnord.StudentIdentifierState = sar.StudentIdentifierState
-			and sppnord.LeaIdentifierSeaAccountability = sar.LeaIdentifierSeaAccountability
-			and sar.SchoolIdentifierSea = sppnord.SchoolIdentifierSea
+			and sar.LeaIdentifierSeaAccountability = isnull(sppnord.LeaIdentifierSeaAccountability,'')
+			and sar.SchoolIdentifierSea = isnull(sppnord.SchoolIdentifierSea, '')
 			and sppnord.ProgramParticipationBeginDate <= sar.AssessmentAdministrationFinishDate
 			and isnull(sppnord.ProgramParticipationEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate 
 		left join #vwNOrDStatuses vw
