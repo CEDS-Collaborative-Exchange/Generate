@@ -34,7 +34,7 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#tempAssessmentAdministrations') IS NOT NULL DROP TABLE #tempAssessmentAdministrations
 		IF OBJECT_ID(N'tempdb..#tempLeas') IS NOT NULL DROP TABLE #tempLeas
 		IF OBJECT_ID(N'tempdb..#tempK12Schools') IS NOT NULL DROP TABLE #tempK12Schools
-
+		IF OBJECT_ID(N'tempdb..#vwNOrDStatuses') IS NOT NULL DROP TABLE #vwNOrDStatuses
 		IF OBJECT_ID(N'tempdb..#tempNorDStudents') IS NOT NULL DROP TABLE #tempNorDStudents
 
 
@@ -60,6 +60,59 @@ BEGIN
 		WHERE SchoolYear = @SchoolYear
 
 	--Create the temp views (and any relevant indexes) needed for this domain
+	-- #vwNOrDStatuses
+		SELECT *
+		INTO #vwNOrDStatuses
+		FROM RDS.vwDimNOrDStatuses
+		WHERE SchoolYear = @SchoolYear
+
+		CREATE CLUSTERED INDEX ix_tempvwNOrDStatuses 
+			ON #vwNOrDStatuses (
+				NeglectedOrDelinquentLongTermStatusCode,
+				NeglectedProgramTypeCode,
+				DelinquentProgramTypeCode,
+				NeglectedOrDelinquentProgramTypeCode,
+				NeglectedOrDelinquentAcademicAchievementIndicatorMap,
+				NeglectedOrDelinquentAcademicOutcomeIndicatorMap,
+				EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap,
+				EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap
+			);
+
+
+	-- #tempNorDStudents
+		select distinct sppnord.StudentIdentifierState, sppnord.LeaIdentifierSeaAccountability, vw.DimNOrDStatusId
+		into #tempNorDStudents
+		from Staging.ProgramParticipationNorD sppnord
+		inner join Staging.AssessmentResult sar
+			on sppnord.StudentIdentifierState = sar.StudentIdentifierState
+			and sppnord.LeaIdentifierSeaAccountability = sar.LeaIdentifierSeaAccountability
+			and sar.SchoolIdentifierSea = sppnord.SchoolIdentifierSea
+			and sppnord.ProgramParticipationBeginDate <= sar.AssessmentAdministrationFinishDate
+			and isnull(sppnord.ProgramParticipationEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate 
+		left join #vwNOrDStatuses vw
+			on vw.SchoolYear = @SchoolYear
+			and vw.NeglectedOrDelinquentProgramTypeMap = sppnord.NeglectedOrDelinquentProgramType
+			AND vw.NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
+			AND vw.NeglectedProgramTypeCode = 'MISSING'
+			AND vw.DelinquentProgramTypeCode = 'MISSING'
+			AND EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
+			AND EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
+			AND (
+					(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator = 1 
+					and NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'Yes' 
+					and sppnord.NeglectedOrDelinquentAcademicAchievementIndicator = 0
+					and NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'No')
+				OR	(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator = 0
+					and NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'No' 
+					and sppnord.NeglectedOrDelinquentAcademicAchievementIndicator = 1
+					and NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'Yes')
+				)
+
+		CREATE INDEX IX_NorD 
+			ON #tempNorDStudents(StudentIdentifierState, LeaIdentifierSeaAccountability)
+
+			--select * from #tempNorDStudents
+			--return
 
 	-- #vwAssessments
 		SELECT *
@@ -70,7 +123,6 @@ BEGIN
 		CREATE NONCLUSTERED INDEX ix_tempvwAssessments -- JW
 			ON #vwAssessments (AssessmentTitle, AssessmentTypeMap, AssessmentTypeAdministeredMap, AssessmentTypeAdministeredToEnglishLearnersMap);
 
-			select * from rds.vwDimAssessments
 
 	-- #vwAssessmentResults
 		SELECT *
@@ -316,22 +368,6 @@ BEGIN
 		CREATE INDEX IX_tempMilitaryStatus 
 			ON #tempMilitaryStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, MilitaryConnected_StatusStartDate, MilitaryConnected_StatusEndDate)
 
-	-- #tempNorDStudents
-		select sppnord.StudentIdentifierState, sppnord.LeaIdentifierSeaAccountability, vw.DimNOrDStatusId
-		into #tempNorDStudents
-		from Staging.ProgramParticipationNorD sppnord
-		inner join Staging.AssessmentResult sar
-			on sppnord.StudentIdentifierState = sar.StudentIdentifierState
-			and sppnord.LeaIdentifierSeaAccountability = sar.LeaIdentifierSeaAccountability
-			and sar.SchoolIdentifierSea = sppnord.SchoolIdentifierSea
-			and sppnord.ProgramParticipationBeginDate <= sar.AssessmentAdministrationFinishDate
-			and isnull(sppnord.ProgramParticipationEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate 
-		inner join RDS.vwDimNOrDStatuses vw
-			on vw.SchoolYear = @SchoolYear
-			and vw.NeglectedOrDelinquentProgramTypeMap = sppnord.NeglectedOrDelinquentProgramType
-
-		CREATE INDEX IX_NorD 
-			ON #tempNorDStudents(StudentIdentifierState, LeaIdentifierSeaAccountability)
 
 
 	--Set the Fact Type	
@@ -421,7 +457,7 @@ BEGIN
 			, ISNULL(migrant.DimMigrantStatusId, -1)						MigrantStatusId						
 			, ISNULL(military.DimMilitaryStatusId, -1)						MilitaryStatusId						
 			, case 
-				when rda.AssessmentAcademicSubjectCode in ('01166', '13373') 
+				when rda.AssessmentAcademicSubjectCode in ('01166', '13373') -- Math and RLA only
 				then ISNULL(nord.DimNOrDStatusId, -1) 
 				else -1 
 			  end															NOrDStatusId							
@@ -572,11 +608,6 @@ BEGIN
 
 			WHERE 
 			sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
-
-
-
-
-
 
 
 	--Final insert into RDS.FactK12StudentAssessments table
