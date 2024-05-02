@@ -2,11 +2,11 @@ VersionUpdates\\12.0_prerelease,Restore 11.4.sql,0
 VersionUpdates\\12.0_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,JunkTablePopulation.sql,0
 VersionUpdates\\12.0_prerelease,Staging.TableChages.sql,0
+VersionUpdates\\12.0_prerelease,Insert Staging Validation Rules.sql,0
 Views\\Drop,Debug.vwChildCount_FactTable.View.sql 
 Views\\Create,Debug.vwChildCount_FactTable.View.sql 
 Views\\Drop,Debug.vwChildCount_StagingTables.View.sql 
 Views\\Create,Debug.vwChildCount_StagingTables.View.sql 
-VersionUpdates\\12.0_prerelease,Insert Staging Validation Rules.sql,0
 Views\\Drop,rds.vwDimNOrDStatuses.View.sql
 Views\\Create,rds.vwDimNOrDStatuses.View.sql
 Views\\Drop,Debug.vwMembership_StagingTables.View.sql
