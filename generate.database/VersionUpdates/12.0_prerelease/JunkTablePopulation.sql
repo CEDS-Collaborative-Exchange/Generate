@@ -124,6 +124,15 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
 
+	--the CedsOptionSetMapping table has duplicates in it, temp fix until that is resolved
+	;with cte as (
+		select EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode, ROW_NUMBER() OVER(PARTITION BY EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode ORDER BY EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode) as 'rownum' 
+		from #EdFactsAcademicOrCTOutcomeType
+		)
+	delete from cte
+	where  rownum > 1
+
+
 	IF OBJECT_ID('tempdb..#EdFactsAcademicOrCTOutcomeExitType') IS NOT NULL 
 	BEGIN
 		DROP TABLE #EdFactsAcademicOrCTOutcomeExitType
@@ -139,6 +148,15 @@
 		, CedsOptionSetCode
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+
+	--the CedsOptionSetMapping table has duplicates in it, temp fix until that is resolved
+	;with cte as (
+		select EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode, ROW_NUMBER() OVER(PARTITION BY EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode ORDER BY EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode) as 'rownum' 
+		from #EdFactsAcademicOrCTOutcomeExitType
+		)
+	delete from cte
+	where  rownum > 1
+
 
 	IF OBJECT_ID('tempdb..#NeglectedProgramTypeCode') IS NOT NULL 
 	BEGIN
