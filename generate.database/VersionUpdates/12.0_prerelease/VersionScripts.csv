@@ -81,4 +81,6 @@ StoredProcedures\\Create,Staging.RunEndToEndTest.StoredProcedure.sql
 StoredProcedures\\Drop,RDS.CreateDebugTables.StoredProcedure.sql
 StoredProcedures\\Create,RDS.CreateDebugTables.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Migrate_Data_ETL_IMPLEMENTATION_STEP06_PsStudentEnrollment_WithPerson_EncapsulatedCode.StoredProcedure.sql
+Functions\\Drop,RDS.Get_FactTypeByReport.UserDefinedFunction.sql
+Functions\\Create,RDS.Get_FactTypeByReport.UserDefinedFunction.sql
 VersionUpdates\\12.0_prerelease,UpdateDbVersion.sql,0

@@ -68,9 +68,13 @@ BEGIN
 	begin
 		set @factTypeCode = 'immigrant'
 	end 
-	else if(@reportCode in ('c119', 'c127', 'c180', 'c181'))
+	else if(@reportCode in ('c119', 'c127', 'c180', 'c181', 'c218', 'c219', 'c220', 'c221'))
 	begin
-		set @factTypeCode = 'nord'
+		set @factTypeCode = 'NeglectedOrDelinquent'
+	end 
+		else if(@reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189', 'c224', 'c225'))
+	begin
+		set @factTypeCode = 'Assessment'
 	end 
 	else if(@reportCode in ('c118', 'c194'))
 	begin
