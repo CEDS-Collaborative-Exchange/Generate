@@ -18,6 +18,33 @@ CREATE NONCLUSTERED INDEX IX_ProgramParticipationNOrD_Student_LEA_School_BeginDa
 		ProgramParticipationBeginDate,
 		ProgramParticipationEndDate
 	) 
+
+-------------------------------------------------------------------------
+if exists (
+	SELECT * 
+	FROM sys.indexes 
+	WHERE name='IX_ProgramParticipationNOrD_NorDColumns' 
+	AND object_id = OBJECT_ID('Staging.ProgramParticipationNorD')
+	)
+begin
+	DROP INDEX IX_ProgramParticipationNOrD_NorDColumns ON Staging.ProgramParticipationNorD
+end
+
+
+CREATE NONCLUSTERED INDEX IX_ProgramParticipationNOrD_NorDColumns 
+	ON Staging.ProgramParticipationNorD (
+		NeglectedOrDelinquentProgramType,
+		NeglectedProgramType,
+		DelinquentProgramType,
+		EdFactsAcademicOrCareerAndTechnicalOutcomeType,
+		EdFactsAcademicOrCareerAndTechnicalOutcomeExitType,
+		NeglectedOrDelinquentAcademicOutcomeIndicator,
+		NeglectedOrDelinquentAcademicAchievementIndicator
+	)
+
+
+
+
   ---------------------------------------------------------------------------------------- 
    
     IF COL_LENGTH('Staging.K12Organization', 'School_TitleIPartASchoolDesignation') IS NOT NULL

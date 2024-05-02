@@ -329,6 +329,15 @@ BEGIN
 		inner join RDS.vwDimNOrDStatuses vw
 			on vw.SchoolYear = @SchoolYear
 			and vw.NeglectedOrDelinquentProgramTypeMap = sppnord.NeglectedOrDelinquentProgramType
+			AND vw.NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
+			AND vw.NeglectedProgramTypeCode = 'MISSING'
+			AND vw.DelinquentProgramTypeCode = 'MISSING'
+			AND vw.NeglectedOrDelinquentProgramTypeCode = 'MISSING'
+			AND EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
+			AND EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
+			AND NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
+			AND NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'MISSING'
+
 
 		CREATE INDEX IX_NorD 
 			ON #tempNorDStudents(StudentIdentifierState, LeaIdentifierSeaAccountability)
