@@ -1,11 +1,14 @@
 	------------------------------------------------
 	-- Populate DimNOrDStatuses			 ---
 	------------------------------------------------
+	
+	IF OBJECT_ID('rds.[FK_FactK12StudentDisciplines_NOrDStatusId]', 'F') IS NOT NULL 
+		ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [FK_FactK12StudentDisciplines_NOrDStatusId];
+
+	IF OBJECT_ID('rds.[FK_FactK12StudentCounts_NOrDStatusId]', 'F') IS NOT NULL 
+		ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [FK_FactK12StudentCounts_NOrDStatusId];
+
     --Drop the partially created values from the table
-	ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [FK_FactK12StudentDisciplines_NOrDStatusId];
-	ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [FK_FactK12StudentCounts_NOrDStatusId];
-
-
 	DELETE FROM RDS.DimNOrDStatuses 
 
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimNOrDStatuses 
@@ -48,6 +51,7 @@
 		SET IDENTITY_INSERT RDS.DimNOrDStatuses OFF
 	END
 
+	--NeglectedOrDelinquentLongTermStatus
 	IF OBJECT_ID('tempdb..#NeglectedOrDelinquentLongTerm') IS NOT NULL 
 	BEGIN
 		DROP TABLE #NeglectedOrDelinquentLongTerm
@@ -59,6 +63,7 @@
 	INSERT INTO #NeglectedOrDelinquentLongTerm
 	    VALUES ('Yes', 'Yes', 'NDLONGTERM')
 
+	--NeglectedOrDelinquentProgramType
 	IF OBJECT_ID('tempdb..#NeglectedOrDelinquentProgramType') IS NOT NULL 
 	BEGIN
 		DROP TABLE #NeglectedOrDelinquentProgramType
@@ -82,6 +87,7 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'NeglectedOrDelinquentProgramType'
 
+	--NeglectedOrDelinquentAcademicAchievementIndicator
 	IF OBJECT_ID('tempdb..#NorDAcademicAchievementIndicator') IS NOT NULL 
 	BEGIN
 		DROP TABLE #NorDAcademicAchievementIndicator
@@ -94,7 +100,7 @@
 	    VALUES ('Yes', 'Yes'),
                 ('No', 'No')
 
-
+	--NeglectedOrDelinquentAcademicOutcomeIndicator
 	IF OBJECT_ID('tempdb..#NorDAcademicOutcomeIndicator') IS NOT NULL 
 	BEGIN
 		DROP TABLE #NorDAcademicOutcomeIndicator
@@ -107,7 +113,7 @@
 	    VALUES ('Yes', 'Yes'),
                 ('No', 'No')
 
-
+	--EdFactsAcademicOrCareerAndTechnicalOutcomeType
 	IF OBJECT_ID('tempdb..#EdFactsAcademicOrCTOutcomeType') IS NOT NULL 
 	BEGIN
 		DROP TABLE #EdFactsAcademicOrCTOutcomeType
@@ -124,6 +130,15 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
 
+		--the CedsOptionSetMapping table has duplicates in it, temp fix until that is resolved
+		;with cte as (
+			select EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode, ROW_NUMBER() OVER(PARTITION BY EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode ORDER BY EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode) as 'rownum' 
+			from #EdFactsAcademicOrCTOutcomeType
+			)
+		delete from cte
+		where  rownum > 1
+
+	--EdFactsAcademicOrCareerAndTechnicalOutcomeExitType
 	IF OBJECT_ID('tempdb..#EdFactsAcademicOrCTOutcomeExitType') IS NOT NULL 
 	BEGIN
 		DROP TABLE #EdFactsAcademicOrCTOutcomeExitType
@@ -140,6 +155,15 @@
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
 
+		--the CedsOptionSetMapping table has duplicates in it, temp fix until that is resolved
+		;with cte as (
+			select EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode, ROW_NUMBER() OVER(PARTITION BY EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode ORDER BY EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode) as 'rownum' 
+			from #EdFactsAcademicOrCTOutcomeExitType
+			)
+		delete from cte
+		where  rownum > 1
+
+	--NeglectedProgramType
 	IF OBJECT_ID('tempdb..#NeglectedProgramTypeCode') IS NOT NULL 
 	BEGIN
 		DROP TABLE #NeglectedProgramTypeCode
@@ -155,6 +179,7 @@
 			('OTHER','Other Programs', 'OTHER'),
 			('MISSING', 'MISSING', 'MISSING')
 
+	--DelinquentProgramType
 	IF OBJECT_ID('tempdb..#DelinquentProgramTypeCode') IS NOT NULL 
 	BEGIN
 		DROP TABLE #DelinquentProgramTypeCode
@@ -173,6 +198,7 @@
 			('SHELTERS','Shelters', 'SHELTERS'),
 			('OTHER','Other Programs', 'OTHER'),
 			('MISSING', 'MISSING', 'MISSING')
+
 
 	INSERT INTO RDS.DimNOrDStatuses (
         NeglectedOrDelinquentLongTermStatusCode
@@ -250,4 +276,19 @@
 	DROP TABLE #EdFactsAcademicOrCTOutcomeType
 	DROP TABLE #EdFactsAcademicOrCTOutcomeExitType
 
+--Add the Fact table constraints back in
+	IF OBJECT_ID('rds.[FK_FactK12StudentCounts_NOrDStatusId]', 'F') IS NULL 
+	BEGIN
+		ALTER TABLE [RDS].[FactK12StudentCounts] WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_NOrDStatusId] FOREIGN KEY([NorDStatusId])
+		REFERENCES [RDS].[DimNorDStatuses] ([DimNorDStatusId])
 
+		ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_NOrDStatusId]
+	END
+		
+	IF OBJECT_ID('rds.[FK_FactK12StudentDisciplines_NOrDStatusId]', 'F') IS NULL 
+	BEGIN
+		ALTER TABLE [RDS].[FactK12StudentDisciplines] WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentDisciplines_NOrDStatusId] FOREIGN KEY([NorDStatusId])
+		REFERENCES [RDS].[DimNorDStatuses] ([DimNorDStatusId])
+
+		ALTER TABLE [RDS].[FactK12StudentDisciplines] CHECK CONSTRAINT [FK_FactK12StudentDisciplines_NOrDStatusId]
+	END
