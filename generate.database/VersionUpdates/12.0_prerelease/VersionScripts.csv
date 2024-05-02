@@ -54,6 +54,8 @@ Views\\Drop,Debug.vwTitleIIIELSY_FactTable.View.sql
 Views\\Create,Debug.vwTitleIIIELSY_FactTable.View.sql
 Views\\Drop,Debug.vwNeglectedOrDelinquent_StagingTables_C219.View.sql
 Views\\Create,Debug.vwNeglectedOrDelinquent_StagingTables_C219.View.sql
+Views\\Drop,Debug.vwNeglectedOrDelinquent_StagingTables_C220.View.sql
+Views\\Create,Debug.vwNeglectedOrDelinquent_StagingTables_C220.View.sql
 Views\\Drop,RDS.vwDimNOrDStatuses.View.sql
 Views\\Create,RDS.vwDimNOrDStatuses.View.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
