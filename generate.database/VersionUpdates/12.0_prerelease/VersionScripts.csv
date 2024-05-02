@@ -57,10 +57,14 @@ Views\\Drop,Debug.vwTitleIIIELOct_FactTable.View.sql
 Views\\Create,Debug.vwTitleIIIELOct_FactTable.View.sql
 Views\\Drop,Debug.vwTitleIIIELSY_FactTable.View.sql
 Views\\Create,Debug.vwTitleIIIELSY_FactTable.View.sql
+Views\\Drop,Debug.vwNeglectedOrDelinquent_StagingTables_C218.View.sql
+Views\\Create,Debug.vwNeglectedOrDelinquent_StagingTables_C218.View.sql
 Views\\Drop,Debug.vwNeglectedOrDelinquent_StagingTables_C219.View.sql
 Views\\Create,Debug.vwNeglectedOrDelinquent_StagingTables_C219.View.sql
 Views\\Drop,Debug.vwNeglectedOrDelinquent_StagingTables_C221.View.sql
 Views\\Create,Debug.vwNeglectedOrDelinquent_StagingTables_C221.View.sql
+Views\\Drop,Debug.vwNeglectedOrDelinquent_StagingTables_C220.View.sql
+Views\\Create,Debug.vwNeglectedOrDelinquent_StagingTables_C220.View.sql
 Views\\Drop,RDS.vwDimNOrDStatuses.View.sql
 Views\\Create,RDS.vwDimNOrDStatuses.View.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
@@ -68,7 +72,7 @@ StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDeli
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql
-StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql
+StoredProcedures\\Create,Staging.Staging-o-FactK12StudentAssessments.StoredProcedure.sql
 StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql 
 StoredProcedures\\Create,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql 
 StoredProcedures\\Drop,Staging.RunEndToEndTest.StoredProcedure.sql 
