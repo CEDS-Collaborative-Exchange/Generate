@@ -4,6 +4,7 @@ VersionUpdates\\12.0_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,JunkTablePopulation.sql,0
 VersionUpdates\\12.0_prerelease,Staging.TableChages.sql,0
 VersionUpdates\\12.0_prerelease,Insert Staging Validation Rules.sql,0
+VersionUpdates\\12.0_prerelease,App.Metadata-FS218.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS224.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS225.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
