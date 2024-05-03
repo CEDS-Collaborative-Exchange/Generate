@@ -65,18 +65,28 @@ BEGIN
 		INTO #vwNOrDStatuses
 		FROM RDS.vwDimNOrDStatuses
 		WHERE SchoolYear = @SchoolYear
+			AND NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
+			AND NeglectedOrDelinquentProgramTypeCode = 'MISSING'
+			AND NeglectedProgramTypeCode = 'MISSING'
+			AND DelinquentProgramTypeCode = 'MISSING'
+			AND NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'MISSING'
+			and NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
+			AND EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
+			AND EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
+			AND NeglectedOrDelinquentStatusCode = 'MISSING'
 
-		CREATE CLUSTERED INDEX ix_tempvwNOrDStatuses 
-			ON #vwNOrDStatuses (
-				NeglectedOrDelinquentLongTermStatusCode,
-				NeglectedProgramTypeCode,
-				DelinquentProgramTypeCode,
-				NeglectedOrDelinquentProgramTypeCode,
-				NeglectedOrDelinquentAcademicAchievementIndicatorMap,
-				NeglectedOrDelinquentAcademicOutcomeIndicatorMap,
-				EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap,
-				EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap
-			);
+		--CREATE CLUSTERED INDEX ix_tempvwNOrDStatuses 
+		--	ON #vwNOrDStatuses (
+		--		NeglectedOrDelinquentProgramEnrollmentSubpartCode,
+		--		NeglectedOrDelinquentLongTermStatusCode,
+		--		NeglectedProgramTypeCode,
+		--		DelinquentProgramTypeCode,
+		--		NeglectedOrDelinquentProgramTypeCode,
+		--		NeglectedOrDelinquentAcademicAchievementIndicatorMap,
+		--		NeglectedOrDelinquentAcademicOutcomeIndicatorMap,
+		--		EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap,
+		--		EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap
+		--	);
 
 
 	-- #tempNorDStudents
@@ -91,22 +101,8 @@ BEGIN
 			and isnull(sppnord.ProgramParticipationEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate 
 		left join #vwNOrDStatuses vw
 			on vw.SchoolYear = @SchoolYear
-			and vw.NeglectedOrDelinquentProgramTypeMap = sppnord.NeglectedOrDelinquentProgramType
-			AND vw.NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
-			AND vw.NeglectedProgramTypeCode = 'MISSING'
-			AND vw.DelinquentProgramTypeCode = 'MISSING'
-			AND EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
-			AND EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
-			AND (
-					(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator = 1 
-					and NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'Yes' 
-					and sppnord.NeglectedOrDelinquentAcademicAchievementIndicator = 0
-					and NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'No')
-				OR	(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator = 0
-					and NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'No' 
-					and sppnord.NeglectedOrDelinquentAcademicAchievementIndicator = 1
-					and NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'Yes')
-				)
+			AND vw.NeglectedOrDelinquentProgramEnrollmentSubpartMap = sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart
+		where sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart is not NULL
 
 		CREATE INDEX IX_NorD 
 			ON #tempNorDStudents(StudentIdentifierState, LeaIdentifierSeaAccountability)
