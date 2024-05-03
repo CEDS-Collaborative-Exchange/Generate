@@ -14,6 +14,8 @@
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimNOrDStatuses 
 			WHERE NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
 			AND NeglectedOrDelinquentProgramTypeCode = 'MISSING'
+			AND NeglectedOrDelinquentStatusCode = 'MISSING'
+			AND NeglectedOrDelinquentProgramEnrollmentSubpartCode = 'MISSING'
 			AND NeglectedProgramTypeCode = 'MISSING'
 			AND DelinquentProgramTypeCode = 'MISSING'
 			AND EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
@@ -28,7 +30,10 @@
 			,NeglectedOrDelinquentLongTermStatusEdFactsCode
 			,NeglectedOrDelinquentProgramTypeCode
 			,NeglectedOrDelinquentProgramTypeDescription
-			,NeglectedOrDelinquentProgramTypeEdFactsCode
+			,NeglectedOrDelinquentStatusCode
+			,NeglectedOrDelinquentStatusDescription
+			,NeglectedOrDelinquentProgramEnrollmentSubpartCode
+			,NeglectedOrDelinquentProgramEnrollmentSubpartDescription
 			,NeglectedProgramTypeCode
 			,NeglectedProgramTypeDescription
 			,NeglectedProgramTypeEdFactsCode
@@ -46,7 +51,7 @@
 			,EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeDescription
             ,EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode
 		)
-		VALUES (-1, 'MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING')
+		VALUES (-1, 'MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING', 'MISSING','MISSING', 'MISSING')
 
 		SET IDENTITY_INSERT RDS.DimNOrDStatuses OFF
 	END
@@ -86,6 +91,35 @@
 		  END
 	FROM CEDS.CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'NeglectedOrDelinquentProgramType'
+
+--NeglectedOrDelinquentProgramEnrollmentSubpart
+	IF OBJECT_ID('tempdb..#NeglectedOrDelinquentProgramEnrollmentSubpart') IS NOT NULL 
+	BEGIN
+		DROP TABLE #NeglectedOrDelinquentProgramEnrollmentSubpart
+	END
+
+	CREATE TABLE #NeglectedOrDelinquentProgramEnrollmentSubpart (NeglectedOrDelinquentProgramEnrollmentSubpartCode VARCHAR(50), NeglectedOrDelinquentProgramEnrollmentSubpartDescription VARCHAR(200))
+
+	INSERT INTO #NeglectedOrDelinquentProgramEnrollmentSubpart VALUES ('MISSING', 'MISSING')
+	INSERT INTO #NeglectedOrDelinquentProgramEnrollmentSubpart
+	VALUES ('1', 'Subpart 1 (State Program)'),
+		   ('2', 'Subpart 2 (LEA Program)')
+
+	--NeglectedOrDelinquentStatus
+	IF OBJECT_ID('tempdb..#NeglectedOrDelinquentStatus') IS NOT NULL 
+	BEGIN
+		DROP TABLE #NeglectedOrDelinquentStatus
+	END
+
+	CREATE TABLE #NeglectedOrDelinquentStatus (NeglectedOrDelinquentStatusCode VARCHAR(50), NeglectedOrDelinquentStatusDescription VARCHAR(200))
+
+	INSERT INTO #NeglectedOrDelinquentStatus VALUES ('MISSING', 'MISSING')
+	INSERT INTO #NeglectedOrDelinquentStatus
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM CEDS.CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'NeglectedOrDelinquentStatus'
 
 	--NeglectedOrDelinquentAcademicAchievementIndicator
 	IF OBJECT_ID('tempdb..#NorDAcademicAchievementIndicator') IS NOT NULL 
@@ -207,6 +241,10 @@
         , NeglectedOrDelinquentProgramTypeCode
         , NeglectedOrDelinquentProgramTypeDescription
         , NeglectedOrDelinquentProgramTypeEdFactsCode
+		, NeglectedOrDelinquentStatusCode
+		, NeglectedOrDelinquentStatusDescription
+		, NeglectedOrDelinquentProgramEnrollmentSubpartCode
+		, NeglectedOrDelinquentProgramEnrollmentSubpartDescription
         , NeglectedProgramTypeCode
         , NeglectedProgramTypeDescription
         , NeglectedProgramTypeEdFactsCode
@@ -231,6 +269,10 @@
 		, nodpt.NeglectedOrDelinquentProgramTypeCode
 		, nodpt.NeglectedOrDelinquentProgramTypeDescription
 		, nodpt.NeglectedOrDelinquentProgramTypeEdFactsCode
+		, nds.NeglectedOrDelinquentStatusCode
+		, nds.NeglectedOrDelinquentStatusDescription
+		, ndpes.NeglectedOrDelinquentProgramEnrollmentSubpartCode
+		, ndpes.NeglectedOrDelinquentProgramEnrollmentSubpartDescription
 		, nptc.NeglectedProgramTypeCode
 		, nptc.NeglectedProgramTypeDescription
 		, nptc.NeglectedProgramTypeEdFactsCode
@@ -250,6 +292,8 @@
 	FROM #NeglectedOrDelinquentLongTerm nlt
     CROSS JOIN #NeglectedOrDelinquentProgramType nodpt
 	CROSS JOIN #NeglectedProgramTypeCode nptc
+	CROSS JOIN #NeglectedOrDelinquentStatus nds
+	CROSS JOIN #NeglectedOrDelinquentProgramEnrollmentSubpart ndpes
 	CROSS JOIN #DelinquentProgramTypeCode dptc
     CROSS JOIN #NorDAcademicAchievementIndicator naai
     CROSS JOIN #NorDAcademicOutcomeIndicator naoi
@@ -259,6 +303,8 @@
 		ON nlt.NeglectedOrDelinquentLongTermStatusCode = main.NeglectedOrDelinquentLongTermStatusCode
         AND nodpt.NeglectedOrDelinquentProgramTypeCode = main.NeglectedOrDelinquentProgramTypeCode
 		AND nptc.NeglectedProgramTypeCode = main.NeglectedProgramTypeCode
+		AND nds.NeglectedOrDelinquentStatusCode = main.NeglectedOrDelinquentStatusCode
+		AND ndpes.NeglectedOrDelinquentProgramEnrollmentSubpartCode = main.NeglectedOrDelinquentProgramEnrollmentSubpartCode
 		AND dptc.DelinquentProgramTypeCode = main.DelinquentProgramTypeCode
         AND naai.NeglectedOrDelinquentAcademicAchievementIndicatorCode = main.NeglectedOrDelinquentAcademicAchievementIndicatorCode
         AND naoi.NeglectedOrDelinquentAcademicOutcomeIndicatorCode = main.NeglectedOrDelinquentAcademicOutcomeIndicatorCode
@@ -270,6 +316,8 @@
 	DROP TABLE #NeglectedOrDelinquentLongTerm
     DROP TABLE #NeglectedOrDelinquentProgramType
 	DROP TABLE #NeglectedProgramTypeCode 
+	DROP TABLE #NeglectedProgramStatus 
+	DROP TABLE #NeglectedOrDelinquentProgramEnrollmentSubpart 
 	DROP TABLE #DelinquentProgramTypeCode
     DROP TABLE #NorDAcademicAchievementIndicator
     DROP TABLE #NorDAcademicOutcomeIndicator
