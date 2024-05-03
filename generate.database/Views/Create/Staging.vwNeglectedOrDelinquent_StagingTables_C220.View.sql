@@ -10,17 +10,14 @@ AS
 	SELECT  DISTINCT
 		vw.StudentIdentifierState
 		,lea.SeaOrganizationIdentifierSea
+		,vw.NeglectedOrDelinquentAcademicAchievementIndicator
 		,EdFactsAcademicOrCareerAndTechnicalOutcomeType	
 	FROM [Debug].[vwNeglectedOrDelinquent_StagingTables] vw
-	JOIN [Staging].[ProgramParticipationTitleI] pt 
-		on pt.LeaIdentifierSeaAccountability = vw.LEAIdentifierSeaAccountability
-		and pt.StudentIdentifierState = vw.StudentIdentifierState
 	JOIN [RDS].[DimLeas] lea on lea.LeaIdentifierSea = vw.LeaIdentifierSeaAccountability
 	LEFT JOIN excludedLeas el
 		ON vw.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
 	WHERE el.LeaIdentifierSea IS NULL
-		AND ISNULL(NeglectedOrDelinquentAcademicOutcomeIndicator, '') <> ''
-		AND TitleIIndicator IN ('01_1', '02_1', '03_1', '04_1', '05_1')
+		AND ISNULL(NeglectedOrDelinquentAcademicAchievementIndicator, '') <> ''
 		AND 
 		(
 			(
@@ -40,7 +37,7 @@ AS
 		 vw.StudentIdentifierState
 		,lea.SeaOrganizationIdentifierSea
 		,EdFactsAcademicOrCareerAndTechnicalOutcomeType
-
+		,vw.NeglectedOrDelinquentAcademicAchievementIndicator
 GO
 
 
