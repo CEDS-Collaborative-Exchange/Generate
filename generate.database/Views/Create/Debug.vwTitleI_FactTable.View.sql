@@ -15,13 +15,15 @@ AS
 			, Races.RaceEdFactsCode
 
 			--Homeless	
-			, Home.HomelessnessStatusCode
+			, Home.HomelessnessStatusEdFactsCode
 			--IDEA Indicator
 			, Idea.IdeaIndicatorEdFactsCode
 			--English Learner
 			, EL.EnglishLearnerStatusEdFactsCode
 			--Migrant 
-			, Mig.MigrantStatusCode
+			, Mig.MigrantStatusEdFactsCode
+			--Foster
+			, Foster.ProgramParticipationFosterCareEdFactsCode
 
  	FROM		RDS.FactK12StudentCounts					Fact
 	JOIN		RDS.DimSchoolYears							SchoolYears	ON Fact.SchoolYearId				= SchoolYears.DimSchoolYearId	
@@ -35,6 +37,7 @@ AS
 	LEFT JOIN	RDS.DimHomelessnessStatuses					Home		ON Fact.HomelessnessStatusId		= Home.DimHomelessnessStatusId
 	LEFT JOIN	RDS.DimMigrantStatuses						Mig			ON Fact.MigrantStatusId				= Mig.DimMigrantStatusId
 	LEFT JOIN	RDS.DimTitleIStatuses						Title1		ON Fact.TitleIStatusId				= Title1.DimTitleIStatusId
+	LEFT JOIN 	RDS.DimFosterCareStatuses					Foster		ON Fact.FosterCareStatusId			= Foster.DimFosterCareStatusId
 
 	WHERE 1 = 1
 	--2 ways to select by SchoolYear, use 1 or the other, not both
@@ -45,3 +48,4 @@ AS
 		--AND SchoolYears.SchoolYear = 2024
 	AND Fact.FactTypeId = 12
 	AND Title1.TitleISchoolStatusEdFactsCode in ('TGELGBTGPROG', 'SWELIGTGPROG', 'SWELIGSWPROG')
+	AND LEAs.LeaOperationalStatus NOT IN ('Closed', 'Inactive', 'FutureAgency')

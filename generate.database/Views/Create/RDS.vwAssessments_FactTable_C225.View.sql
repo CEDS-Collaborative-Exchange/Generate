@@ -18,3 +18,5 @@ AS
         AND f.GradeLevelEdFactsCode = ata.Grade
     WHERE f.NeglectedOrDelinquentProgramTypeCode <> 'MISSING'
         AND f.AssessmentAcademicSubjectCode IN ('01166', '13373')
+        AND f.NeglectedOrDelinquentStatusCode = 'Yes'
+	    AND f.NeglectedOrDelinquentProgramEnrollmentSubpartCode = '2'
