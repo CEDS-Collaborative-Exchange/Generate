@@ -1,7 +1,7 @@
 declare @reportCode as varchar(50)
 declare @generateReportId as INT, @factTypeId as INT, @tableTypeId as INT, @categorySetId as INT, @categoryId as INT, @fileSubmissionId as INT, @fileColumnId as INT, @factTableId as INT
 
-SET @reportCode = 'c218'
+SET @reportCode = 'c220'
 
 SELECT @factTableId = FactTableId FROM app.FactTables where FactTableName = 'FactK12StudentCounts'
 
@@ -21,10 +21,10 @@ BEGIN
 			   ,[ShowSubFilterControl]
 			   ,[IsLocked]
 			   ,[UseLegacyReportMigration])
-	VALUES(2,3,1,@reportCode,'N or D in Program Outcomes - State Agency',@reportCode,1,1,0,0,0,0,1)
+	VALUES(2,3,1,@reportCode,'N or D Exit Outcomes - State Agency',@reportCode,1,1,0,0,0,0,1)
 END
 
-UPDATE app.GenerateReports SET FactTableId = @factTableId, ReportTypeAbbreviation = 'NDPROGOUTSTATE' where ReportCode = @reportCode
+UPDATE app.GenerateReports SET FactTableId = @factTableId, ReportTypeAbbreviation = 'NDEXITSTA' where ReportCode = @reportCode
 
 SELECT @generateReportId = GenerateReportId FROM app.GenerateReports where ReportCode = @reportCode
 SELECT @factTypeId = DimFactTypeId FROM rds.DimFactTypes where FactTypeCode = 'neglectedordelinquent'
@@ -42,13 +42,13 @@ BEGIN
 END
 
 
-IF NOT EXISTS(SELECT 1 FROM app.TableTypes where TableTypeAbbrv = 'NDPROGOUTSTATE')
+IF NOT EXISTS(SELECT 1 FROM app.TableTypes where TableTypeAbbrv = 'NDEXITOUTSTATE')
 BEGIN
 	INSERT INTO [App].[TableTypes](TableTypeAbbrv, TableTypeName, EdFactsTableTypeId)
-    VALUES('NDPROGOUTSTATE', 'N or D in Program Outcomes – State Agency', -1)
+    VALUES('NDEXITOUTSTATE', 'N or D Exit Outcomes – State Agency', -1)
 END
 
-SELECT @tableTypeId = TableTypeId FROM app.TableTypes where TableTypeAbbrv = 'NDPROGOUTSTATE'
+SELECT @tableTypeId = TableTypeId FROM app.TableTypes where TableTypeAbbrv = 'NDEXITOUTSTATE'
 
 
 IF NOT EXISTS(SELECT 1 FROM app.GenerateReport_TableType where GenerateReportId = @generateReportId AND TableTypeId = @tableTypeId)
@@ -72,7 +72,7 @@ BEGIN
  	SELECT @categorySetId = CategorySetId from app.Categorysets where GenerateReportId = @generateReportId AND OrganizationLevelId = 1 AND SubmissionYear = '2024' AND CategorySetCode = 'CSA'
 END
 
-SELECT @categoryId = CategoryId FROM app.Categories where CategoryCode = 'ACADVOCOUTCOME'
+SELECT @categoryId = CategoryId FROM app.Categories where CategoryCode = 'ACADVOCOUTCOMEX'
 
 IF NOT EXISTS(SELECT 1 FROM app.CategorySet_Categories where CategorySetId = @categorySetId AND CategoryId = @categoryId)
 BEGIN
@@ -80,6 +80,13 @@ BEGIN
     VALUES(@categorySetId, @categoryId)
 END
 
+IF NOT EXISTS(SELECT 1 FROM app.CategoryOptions where CategorySetId = @categorySetId AND CategoryId = @categoryId AND CategoryOptionCode = 'ENROLLSCH')
+BEGIN
+	INSERT INTO App.CategoryOptions
+	(CategorySetId, CategoryId, CategoryOptionCode, CategoryOptionName, EdFactsCategoryCodeId) 
+	values
+	(@categorySetId, @categoryId, 'ENROLLSCH', 'Enrolled in local district school', 8569)
+END
 
 IF NOT EXISTS(SELECT 1 FROM app.CategoryOptions where CategorySetId = @categorySetId AND CategoryId = @categoryId AND CategoryOptionCode = 'EARNGED')
 BEGIN
@@ -146,15 +153,15 @@ BEGIN
 	(@categorySetId, @categoryId, 'MISSING', 'Missing', -1)
 END
 
-If NOT EXISTS(Select 1 from App.FileSubmissions where FileSubmissionDescription = 'SEA ND PROGRAM OUTCOME STATE' and GenerateReportId = @generateReportId
+If NOT EXISTS(Select 1 from App.FileSubmissions where FileSubmissionDescription = 'SEA ND EXIT OUTCOME STATE' and GenerateReportId = @generateReportId
 					and OrganizationLevelId = 1 and SubmissionYear = '2024')
 BEGIN
 	INSERT INTO App.FileSubmissions ([FileSubmissionDescription], [GenerateReportId], [OrganizationLevelId], [SubmissionYear])
-	values ('SEA ND PROGRAM OUTCOME STATE', @GenerateReportId, 1, '2024')
+	values ('SEA ND EXIT OUTCOME STATE', @GenerateReportId, 1, '2024')
  
 END
 
-SELECT @fileSubmissionId = FileSubmissionId FROM app.FileSubmissions where FileSubmissionDescription = 'SEA ND PROGRAM OUTCOME STATE'
+SELECT @fileSubmissionId = FileSubmissionId FROM app.FileSubmissions where FileSubmissionDescription = 'SEA ND EXIT OUTCOME STATE'
 
 SELECT @fileColumnId = FileColumnId from app.FileColumns where ColumnName = 'FileRecordNumber' AND LEN(DisplayName) > 0
 If NOT EXISTS(SELECT 1 FROM App.FileSubmission_FileColumns Where FileSubmissionId = @fileSubmissionId AND FileColumnId = @fileColumnId)
@@ -210,7 +217,7 @@ BEGIN
 	(@fileSubmissionId, @fileColumnId, 68, 0, 6, 49)
 END
 
-SELECT @fileColumnId = FileColumnId from app.FileColumns where ColumnName = 'AcadVocOutcomeID' AND DisplayName = 'Academic / Vocational Outcomes'
+SELECT @fileColumnId = FileColumnId from app.FileColumns where ColumnName = 'AcadVocOutcomeID' AND DisplayName = 'Academic / Career and Technical Outcomes (Exit)'
 If NOT EXISTS(SELECT 1 FROM App.FileSubmission_FileColumns Where FileSubmissionId = @fileSubmissionId AND FileColumnId = @fileColumnId)
 BEGIN
 	INSERT INTO App.FileSubmission_FileColumns

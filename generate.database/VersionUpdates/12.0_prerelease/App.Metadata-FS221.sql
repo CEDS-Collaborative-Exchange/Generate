@@ -21,7 +21,7 @@ BEGIN
 			   ,[ShowSubFilterControl]
 			   ,[IsLocked]
 			   ,[UseLegacyReportMigration])
-	VALUES(2,3,1,@reportCode,'N or D Exit Outcomes – LEA',@reportCode,1,1,0,0,0,0,1)
+	VALUES(2,3,1,@reportCode,'N or D Exit Outcomes - LEA',@reportCode,1,1,0,0,0,0,1)
 END
 
 UPDATE app.GenerateReports SET FactTableId = @factTableId, ReportTypeAbbreviation = 'NDEXITLEA' where ReportCode = @reportCode
