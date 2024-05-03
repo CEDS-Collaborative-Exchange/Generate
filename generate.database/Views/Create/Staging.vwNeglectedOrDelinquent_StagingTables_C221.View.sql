@@ -7,36 +7,27 @@ AS
 			OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
 	)
 
-	SELECT  DISTINCT
+	SELECT distinct
 		vw.StudentIdentifierState
-		,vw.LEAIdentifierSeaAccountability
-		,vw.NeglectedOrDelinquentAcademicOutcomeIndicator
-		,EdFactsAcademicOrCareerAndTechnicalOutcomeType	
+		,lea.SeaOrganizationIdentifierSea
+		,NeglectedOrDelinquentProgramEnrollmentSubpart
+		,EdFactsAcademicOrCareerAndTechnicalOutcomeExitType	
 	FROM [Debug].[vwNeglectedOrDelinquent_StagingTables] vw
+	JOIN Staging.SourceSystemReferenceData sssrd
+		on sssrd.SchoolYear = vw.SchoolYear
+		and sssrd.TableName = 'refNeglectedOrDelinquentProgramEnrollmentSubpart'
+		and sssrd.InputCode = vw.NeglectedOrDelinquentProgramEnrollmentSubpart
+	JOIN [RDS].[DimLeas] lea on lea.LeaIdentifierSea = vw.LEAIdentifierSeaAccountability
 	LEFT JOIN excludedLeas el
 		ON vw.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
 	WHERE el.LeaIdentifierSea IS NULL
-		AND ISNULL(NeglectedOrDelinquentAcademicOutcomeIndicator, '') <> ''
-		AND 
-		(
-			(
-				vw.ProgramParticipationBeginDate >= CAST(('7/1/' + CAST((vw.SchoolYear -1) as varchar))  AS Date)
-				AND CAST(ISNULL(vw.ProgramParticipationEndDate, '1900-01-01') AS DATE) <= CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date)
-			) -- Received Title I, Part D, Subpart 1 services
-			OR (
-				 vw.NeglectedOrDelinquentExitOutcomeDate
-					BETWEEN CAST(('7/1/' + CAST((vw.SchoolYear -1) as varchar))  AS Date) AND CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date)
-			) -- Exited the program
-			OR (
-				vw.DiplomaCredentialAwardDate
-					BETWEEN vw.NeglectedOrDelinquentExitOutcomeDate AND DATEADD (DAY, 90, vw.NeglectedOrDelinquentExitOutcomeDate)
-			) -- Earned an academic or career and technical outcome up to 90 calendar days after exiting from the program
-		)
-	GROUP BY
-		 vw.StudentIdentifierState
-		,vw.LEAIdentifierSeaAccountability
-		,EdFactsAcademicOrCareerAndTechnicalOutcomeType
-		,vw.NeglectedOrDelinquentAcademicOutcomeIndicator
-GO
+		AND vw.NeglectedOrDelinquentStatus = 1 -- Only students marked as NorD
+		AND sssrd.OutputCode = 2 -- Subpart 2 only (LEA)
+		AND vw.ProgramParticipationBeginDate >= CAST(('7/1/' + CAST((vw.SchoolYear -1) as varchar))  AS Date)
+		AND CAST(ISNULL(vw.ProgramParticipationEndDate, '1900-01-01') AS DATE) <= CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date)
+
+
+
+
 
 

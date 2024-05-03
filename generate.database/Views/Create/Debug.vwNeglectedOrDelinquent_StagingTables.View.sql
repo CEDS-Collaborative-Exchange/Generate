@@ -10,15 +10,22 @@ AS
 		, enrollment.SchoolYear
 		
 		--Neglected or Delinquent
+		, nord.NeglectedOrDelinquentStatus
+		, nord.NeglectedOrDelinquentProgramEnrollmentSubpart
+		, nord.ProgramParticipationBeginDate
+		, nord.ProgramParticipationEndDate
+		, nord.NeglectedOrDelinquentProgramType
 		, nord.NeglectedOrDelinquentAcademicAchievementIndicator
 		, nord.NeglectedOrDelinquentAcademicOutcomeIndicator
 		, nord.EdFactsAcademicOrCareerAndTechnicalOutcomeType	
 		, nord.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType
-		, nord.ProgramParticipationBeginDate
-		, nord.ProgramParticipationEndDate
 		, nord.NeglectedOrDelinquentExitOutcomeDate
 		, nord.DiplomaCredentialAwardDate
-		 
+		, nord.ProgressLevel_Reading
+		, nord.ProgressLevel_Math
+		, nord.NeglectedProgramType
+		, nord.DelinquentProgramType
+		
 	FROM Staging.K12Enrollment								enrollment		
 
 	INNER JOIN Staging.ProgramParticipationNorD				nord
@@ -30,3 +37,4 @@ AS
 	--WHERE 1 = 1
 	--AND ISNULL(nord.EdFactsAcademicOrCareerAndTechnicalOutcomeType, '') <> ''
 	--	OR ISNULL(nord.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType, '') <> ''
+
