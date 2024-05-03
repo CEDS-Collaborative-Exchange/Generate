@@ -317,7 +317,7 @@
 	DROP TABLE #NeglectedOrDelinquentLongTerm
     DROP TABLE #NeglectedOrDelinquentProgramType
 	DROP TABLE #NeglectedProgramTypeCode 
-	DROP TABLE #NeglectedOrDelinquentStatus 
+	DROP TABLE #NeglectedOrDelinquentStatus
 	DROP TABLE #NeglectedOrDelinquentProgramEnrollmentSubpart 
 	DROP TABLE #DelinquentProgramTypeCode
     DROP TABLE #NorDAcademicAchievementIndicator
