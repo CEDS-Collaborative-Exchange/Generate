@@ -28,6 +28,7 @@ AS
 	
 GO
 
+
 CREATE UNIQUE CLUSTERED INDEX iux_CategoryCodeOptionsByReportAndYear
 ON app.CategoryCodeOptionsByReportAndYear (ReportCode, SubmissionYear, CategorySetCode, TableTypeId, CategoryCode, CategoryOptionCode);
 

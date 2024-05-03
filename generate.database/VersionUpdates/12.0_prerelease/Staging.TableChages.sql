@@ -62,22 +62,22 @@ CREATE NONCLUSTERED INDEX IX_ProgramParticipationNOrD_Student_LEA_School_BeginDa
     UPDATE Staging.ProgramParticipationNorD
     SET NeglectedOrDelinquentAcademicOutcomeIndicator = NULL
 
-    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentStatus') IS NOT NULL
-    BEGIN
-        ALTER TABLE Staging.ProgramParticipationNorD ALTER COLUMN NeglectedOrDelinquentStatus bit;
-    END
-
-    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentProgramEnrollmentSubpart') IS NOT NULL
-    BEGIN
-        ALTER TABLE Staging.ProgramParticipationNorD ALTER COLUMN NeglectedOrDelinquentProgramEnrollmentSubpart nvarchar(100);
-    END
-
     IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentAcademicOutcomeIndicator') IS NOT NULL
     BEGIN
         ALTER TABLE Staging.ProgramParticipationNorD ALTER COLUMN NeglectedOrDelinquentAcademicOutcomeIndicator bit;
     END
 
     --Add the new columns
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentStatus') IS NULL
+    BEGIN
+        ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentStatus bit;
+    END
+
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentProgramEnrollmentSubpart') IS NULL
+    BEGIN
+        ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentProgramEnrollmentSubpart nvarchar(100);
+    END
+
     IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentAcademicAchievementIndicator') IS NULL
     BEGIN
         ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentAcademicAchievementIndicator bit;
