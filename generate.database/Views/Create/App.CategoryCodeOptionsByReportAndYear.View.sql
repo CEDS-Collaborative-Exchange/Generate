@@ -1,4 +1,4 @@
-CREATE VIEW app.CateogryCodeOptionsByReportAndYear
+CREATE VIEW app.CategoryCodeOptionsByReportAndYear
 WITH SCHEMABINDING
 AS
     SELECT 
@@ -28,8 +28,8 @@ AS
 	
 GO
 
-CREATE UNIQUE CLUSTERED INDEX iux_CateogryCodeOptionsByReportAndYear
-ON app.CateogryCodeOptionsByReportAndYear (ReportCode, SubmissionYear, CategorySetCode, TableTypeId, CategoryCode, CategoryOptionCode);
+CREATE UNIQUE CLUSTERED INDEX iux_CategoryCodeOptionsByReportAndYear
+ON app.CategoryCodeOptionsByReportAndYear (ReportCode, SubmissionYear, CategorySetCode, TableTypeId, CategoryCode, CategoryOptionCode);
 
-CREATE NONCLUSTERED INDEX ix_CateogryCodeOptionsByReportAndYear_ReportCode_SubmissionYear_CategoryCode
-ON app.CateogryCodeOptionsByReportAndYear (ReportCode, SubmissionYear, TableTypeAbbrv, CategoryCode);
+CREATE NONCLUSTERED INDEX ix_CategoryCodeOptionsByReportAndYear_ReportCode_SubmissionYear_CategoryCode
+ON app.CategoryCodeOptionsByReportAndYear (ReportCode, SubmissionYear, TableTypeAbbrv, CategoryCode);
