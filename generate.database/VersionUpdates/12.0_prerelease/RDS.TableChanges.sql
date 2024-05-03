@@ -2,6 +2,26 @@
 -- DimNorDStatuses
 -------------------------------------------
 
+	IF COL_LENGTH('RDS.DimNOrDStatuses', 'NeglectedOrDelinquentStatusCode') IS NULL
+	BEGIN
+		ALTER TABLE RDS.DimNOrDStatuses ADD NeglectedOrDelinquentStatusCode nvarchar(50);
+	END
+
+	IF COL_LENGTH('RDS.DimNOrDStatuses', 'NeglectedOrDelinquentStatusDescription') IS NULL
+	BEGIN
+		ALTER TABLE RDS.DimNOrDStatuses ADD NeglectedOrDelinquentStatusDescription nvarchar(100);
+	END
+
+	IF COL_LENGTH('RDS.DimNOrDStatuses', 'NeglectedOrDelinquentProgramEnrollmentSubpartCode') IS NULL
+	BEGIN
+		ALTER TABLE RDS.DimNOrDStatuses ADD NeglectedOrDelinquentProgramEnrollmentSubpartCode nvarchar(50);
+	END
+
+	IF COL_LENGTH('RDS.DimNOrDStatuses', 'NeglectedOrDelinquentProgramEnrollmentSubpartDescription') IS NULL
+	BEGIN
+		ALTER TABLE RDS.DimNOrDStatuses ADD NeglectedOrDelinquentProgramEnrollmentSubpartDescription nvarchar(100);
+	END
+
 	IF COL_LENGTH('RDS.DimNOrDStatuses', 'NeglectedProgramTypeCode') IS NULL
 	BEGIN
 		ALTER TABLE RDS.DimNOrDStatuses ADD NeglectedProgramTypeCode nvarchar(50);
