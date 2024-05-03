@@ -1,7 +1,8 @@
 CREATE VIEW [debug].[vwTitleI_StagingTables] 
 AS
 	SELECT	DISTINCT 
-		enrollment.StudentIdentifierState
+		  enrollment.SchoolYear
+		, enrollment.StudentIdentifierState
 		, enrollment.LEAIdentifierSeaAccountability
 		, enrollment.SchoolIdentifierSea
 		, enrollment.FirstName
@@ -27,7 +28,11 @@ AS
 		, idea.IDEAIndicator
 		, idea.ProgramParticipationBeginDate
 		, idea.ProgramParticipationEndDate
-				
+
+		, foster.ProgramType_FosterCare	
+		, foster.FosterCare_ProgramParticipationStartDate
+		, foster.FosterCare_ProgramParticipationEndDate
+
 		, race.RaceType
 		, race.RecordStartDateTime
 		, race.RecordEndDateTime
@@ -66,6 +71,12 @@ AS
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(idea.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(idea.SchoolIdentifierSea, '')
 		AND		ISNULL(idea.ProgramParticipationEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+
+	LEFT JOIN Staging.PersonStatus							foster
+		ON		enrollment.StudentIdentifierState						=	foster.StudentIdentifierState
+		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(foster.LEAIdentifierSeaAccountability, '')
+		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(foster.SchoolIdentifierSea, '')
+		AND		ISNULL(foster.FosterCare_ProgramParticipationEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	LEFT JOIN Staging.K12PersonRace							race
 		ON		enrollment.SchoolYear									=	race.SchoolYear

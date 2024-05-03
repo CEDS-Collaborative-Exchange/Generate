@@ -12,9 +12,12 @@ AS
 			, LEAs.LeaOrganizationName
 			, Schools.SchoolIdentifierSea
 			, Schools.NameOfInstitution
+			, Schools.SchoolOperationalStatus
+			, Schools.SchoolTypeCode
 
 			, EconDis.NationalSchoolLunchProgramDirectCertificationIndicatorCode  --FRL
-			, EconDis.EligibilityStatusForSchoolFoodServiceProgramsCode  --FRL
+			, EconDis.EligibilityStatusForSchoolFoodServiceProgramsEdFactsCode  --FRL
+			, EconDis.EconomicDisadvantageStatusCode
 
 			, Races.RaceEdFactsCode
 			, Grades.GradeLevelEdFactsCode

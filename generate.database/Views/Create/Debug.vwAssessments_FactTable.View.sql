@@ -1,6 +1,7 @@
 CREATE VIEW [Debug].[vwAssessments_FactTable] 
 AS
 	SELECT	Fact.K12StudentId
+			, SchoolYears.SchoolYear
 			, Students.K12StudentStudentIdentifierState
 			, Students.BirthDate
 			, Students.FirstName
@@ -15,8 +16,12 @@ AS
 			, Assess.AssessmentTitle
 			, Assess.AssessmentIdentifierState
 			, Assess.AssessmentAcademicSubjectCode
+			, Assess.AssessmentAcademicSubjectDescription
+			, Assess.AssessmentAcademicSubjectEdFactsCode
 			, Assess.AssessmentTypeAdministeredCode
 			, Assess.AssessmentTypeAdministeredToEnglishLearnersCode
+			
+			, AssessPerf.AssessmentPerformanceLevelLabel
 
 			, AssessReg.AssessmentRegistrationParticipationIndicatorCode
 			, AssessReg.AssessmentRegistrationReasonNotCompletingCode
@@ -39,6 +44,9 @@ AS
 			, Fstr.ProgramParticipationFosterCareCode
 			--Military Connected
 			, Mil.MilitaryConnectedStudentIndicatorCode
+			--N or D
+			, NorD.NeglectedOrDelinquentStatusCode
+			, NorD.NeglectedOrDelinquentProgramEnrollmentSubpartCode
 
  	FROM		RDS.FactK12StudentAssessments				Fact
 	JOIN		RDS.DimSchoolYears							SchoolYears	ON Fact.SchoolYearId						= SchoolYears.DimSchoolYearId	
@@ -59,6 +67,7 @@ AS
 	LEFT JOIN	RDS.DimHomelessnessStatuses					Hmls		ON Fact.HomelessnessStatusId				= Hmls.DimHomelessnessStatusId
 	LEFT JOIN	RDS.DimFosterCareStatuses					Fstr		ON Fact.FosterCareStatusId					= Fstr.DimFosterCareStatusId
 	LEFT JOIN	RDS.DimMilitaryStatuses						Mil			ON Fact.MilitaryStatusId					= Mil.DimMilitaryStatusId
+	LEFT JOIN	RDS.DimNorDStatuses						    NorD		ON Fact.NorDStatusId						= NorD.DimNorDStatusId
 	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1
 	--2 ways to select by SchoolYear, use 1 or the other, not both
@@ -67,8 +76,8 @@ AS
 		AND DMT.DataMigrationTypeId = 2
 	--or comment out the lines above and just set the SchoolYear
 		--AND SchoolYears.SchoolYear = 2023
-
-	AND Fact.FactTypeId = 2
+		
+	AND Fact.FactTypeId = 25
 	--AND Students.StudentIdentifierState = '12345678'	
 	--AND LEAs.LeaIdentifierSeaAccountability = '123'
 	--AND Schools.SchoolIdentifierSea = '456'
