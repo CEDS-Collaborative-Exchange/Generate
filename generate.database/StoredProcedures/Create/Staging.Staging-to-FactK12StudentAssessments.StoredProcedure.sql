@@ -73,7 +73,7 @@ BEGIN
 			and NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
 			AND EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
 			AND EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
-			AND NeglectedOrDelinquentStatusCode = 'MISSING'
+--			AND NeglectedOrDelinquentStatusCode = 'MISSING'
 
 		--CREATE CLUSTERED INDEX ix_tempvwNOrDStatuses 
 		--	ON #vwNOrDStatuses (
@@ -102,7 +102,10 @@ BEGIN
 		left join #vwNOrDStatuses vw
 			on vw.SchoolYear = @SchoolYear
 			AND vw.NeglectedOrDelinquentProgramEnrollmentSubpartMap = sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart
+			AND vw.NeglectedOrDelinquentStatusMap = sppnord.NeglectedOrDelinquentStatus
 		where sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart is not NULL
+			and sppnord.NeglectedOrDelinquentStatus = 1 -- Only get NorD students
+
 
 		CREATE INDEX IX_NorD 
 			ON #tempNorDStudents(StudentIdentifierState, LeaIdentifierSeaAccountability)

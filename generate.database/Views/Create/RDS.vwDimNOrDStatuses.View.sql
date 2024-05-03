@@ -5,7 +5,12 @@ AS
 		, rsy.SchoolYear
 
 		, rdnods.NeglectedOrDelinquentStatusCode
-		, sssrd8.InputCode as NeglectedOrDelinquentStatusMap
+		, case 
+				when rdnods.NeglectedOrDelinquentStatusCode = 'Yes' then 1
+				when rdnods.NeglectedOrDelinquentStatusCode = 'No' then 0
+				else NULL 
+			end
+				as NeglectedOrDelinquentStatusMap
 
 		, rdnods.NeglectedOrDelinquentProgramEnrollmentSubpartCode
 		, sssrd7.InputCode as NeglectedOrDelinquentProgramEnrollmentSubpartMap
@@ -33,7 +38,6 @@ AS
 		
 		, rdnods.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
 		, sssrd6.InputCode as EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap
-
 
 
 	FROM rds.DimNOrDStatuses rdnods
@@ -66,14 +70,7 @@ AS
 		ON rdnods.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = sssrd6.OutputCode
 		AND sssrd6.TableName = 'RefEdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode'
 		AND rsy.SchoolYear = sssrd6.SchoolYear
-
 	LEFT JOIN staging.SourceSystemReferenceData sssrd7
 		ON rdnods.NeglectedOrDelinquentProgramEnrollmentSubpartCode = sssrd7.OutputCode
 		AND sssrd7.TableName = 'RefNeglectedOrDelinquentProgramEnrollmentSubpart'
 		AND rsy.SchoolYear = sssrd7.SchoolYear
-
-	LEFT JOIN staging.SourceSystemReferenceData sssrd8
-		ON rdnods.NeglectedOrDelinquentStatusCode = sssrd8.OutputCode
-		AND sssrd8.TableName = 'RefNeglectedOrDelinquentStatusCode'
-		AND rsy.SchoolYear = sssrd8.SchoolYear
-
