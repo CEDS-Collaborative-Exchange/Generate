@@ -6,8 +6,22 @@ RETURNS Varchar(50)
 AS
 BEGIN
 
+BEGIN
+
 	DECLARE @factTypeCode as varchar(50)
 
+
+	select @factTypeCode = (select dft.FactTypeCode
+							from app.GenerateReport_FactType grft
+								inner join app.GenerateReports gr
+									on grft.GenerateReportId = gr.GenerateReportId
+								inner join rds.DimFactTypes dft
+									on grft.FactTypeId = dft.DimFactTypeId
+							where gr.ReportCode = @reportCode)
+
+	return @factTypeCode	
+
+	/* OLD WAY PRIOR TO V12
 	if(@reportCode in ('c029','c035','c039','c129','c130','c163','c170','c190','c193','c196','c197','c198','c103','c131','c205', 'c206'))
 	begin
 		set @factTypeCode = 'directory'
@@ -68,9 +82,9 @@ BEGIN
 	begin
 		set @factTypeCode = 'immigrant'
 	end 
-	else if(@reportCode in ('c119', 'c127', 'c180', 'c181'))
+	else if(@reportCode in ('c119', 'c127', 'c180', 'c181', 'c218', 'c219', 'c220', 'c221'))
 	begin
-		set @factTypeCode = 'nord'
+		set @factTypeCode = 'NeglectedOrDelinquent'
 	end 
 	else if(@reportCode in ('c118', 'c194'))
 	begin
@@ -102,5 +116,7 @@ BEGIN
 	end
 
 	return @factTypeCode
+	*/
+END
 
 END
