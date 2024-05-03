@@ -28,10 +28,8 @@ AS
 	
 GO
 
-
 CREATE UNIQUE CLUSTERED INDEX iux_CateogryCodeOptionsByReportAndYear
 ON app.CateogryCodeOptionsByReportAndYear (ReportCode, SubmissionYear, CategorySetCode, TableTypeId, CategoryCode, CategoryOptionCode);
-
 
 CREATE NONCLUSTERED INDEX ix_CateogryCodeOptionsByReportAndYear_ReportCode_SubmissionYear_CategoryCode
 ON app.CateogryCodeOptionsByReportAndYear (ReportCode, SubmissionYear, TableTypeAbbrv, CategoryCode);

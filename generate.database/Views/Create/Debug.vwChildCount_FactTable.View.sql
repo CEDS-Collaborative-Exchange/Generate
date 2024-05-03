@@ -1,59 +1,52 @@
-CREATE VIEW [RDS].[vwChildCount_FactTable_C002] 
+CREATE VIEW [debug].[vwChildCount_FactTable] 
 AS
-	SELECT
-		  SchoolYear
-		, SeaId
-		, LeaId
-		, K12SchoolId
-		, StateANSICode
-		, StateAbbreviationCode
-		, StateAbbreviationDescription
-		, SeaOrganizationIdentifierSea
-		, SeaOrganizationName
-		, LeaIdentifierSea
-		, LeaOrganizationName
-		, SchoolIdentifierSea
-		, NameOfInstitution
-		, vw.K12StudentId
-		, K12StudentStudentIdentifierState
-		, IdeaDisabilityTypeEdFactsCode
-		, RaceEdFactsCode
-		, SexEdFactsCode
-		, AgeEdFactsCode
-		, IdeaEducationalEnvironmentForSchoolAgeEdFactsCode
-		, EnglishLearnerStatusEdFactsCode
-		, 1 AS StudentCount
-	FROM Debug.vwChildCount_FactTable vw
-	LEFT JOIN (
-		select distinct K12StudentId
-		from [Debug].[vwChildCount_FactTable] fact
-		WHERE NOT AgeEdFactsCode in (	
-							select replace(ResponseValue, ' Years', '') AS Ages
-							from app.ToggleResponses r
-							inner join app.ToggleQuestions q 
-							on r.ToggleQuestionId = q.ToggleQuestionId 
-							where q.EmapsQuestionAbbrv = 'CHDCTAGEDD'
-							UNION
-							select 'AGE05K'
-							from app.ToggleResponses r
-							inner join app.ToggleQuestions q 
-							on r.ToggleQuestionId = q.ToggleQuestionId 
-							where q.EmapsQuestionAbbrv = 'CHDCTAGEDD'
-								AND ResponseValue LIKE '%5%'
-							UNION
-							select 'AGE05NOTK'
-							from app.ToggleResponses r
-							inner join app.ToggleQuestions q 
-							on r.ToggleQuestionId = q.ToggleQuestionId 
-							where q.EmapsQuestionAbbrv = 'CHDCTAGEDD'
-								AND ResponseValue LIKE '%5%'
-						) 
-		AND  IdeaDisabilityTypeEdFactsCode = 'DD'
-	) dd
-		ON vw.K12StudentId = dd.K12StudentId
-	WHERE AgeEdFactsCode IN ('5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21')
-		AND (CASE 
-				WHEN AgeEdFactsCode = '5' AND GradeLevelEdFactsCode in ('MISSING','PK') THEN 0
-				ELSE 1
-			END) = 1
-		AND dd.K12StudentId IS NULL
+	SELECT	Fact.K12StudentId
+			, Students.K12StudentStudentIdentifierState
+			, Students.BirthDate
+			, Students.FirstName
+			, Students.LastOrSurname
+			, Students.MiddleName
+			, Demo.SexCode
+			, LEAs.LeaIdentifierSea
+			, LEAs.LeaIdentifierNces
+			, LEAs.LeaOrganizationName
+			, Schools.SchoolIdentifierSea
+			, Schools.NameOfInstitution
+
+			, Ages.AgeEdFactsCode
+			, Races.RaceEdFactsCode
+			, Grades.GradeLevelEdFactsCode
+
+			--Primary Disability
+			, IDEADisability.IdeaDisabilityTypeEdFactsCode
+			--IDEA Indicator
+			, IDEAStatus.IdeaIndicatorEdFactsCode
+			--EducationEnvironment
+			, IDEAStatus.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode
+			, IDEAStatus.IdeaEducationalEnvironmentForEarlyChildhoodEdFactsCode
+			--English Learner
+			, EL.EnglishLearnerStatusEdFactsCode
+
+ 	FROM		RDS.FactK12StudentCounts			Fact
+	JOIN		RDS.DimSchoolYears					SchoolYears			ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
+	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT					ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid		
+	LEFT JOIN	RDS.DimPeople						Students			ON Fact.K12StudentId			= Students.DimPersonId			AND Students.IsActiveK12Student = 1
+	LEFT JOIN	RDS.DimLeas							LEAs				ON Fact.LeaId					= LEAs.DimLeaId
+	LEFT JOIN	RDS.DimK12Schools					Schools				ON Fact.K12SchoolId				= Schools.DimK12SchoolId
+	LEFT JOIN	RDS.DimIdeaStatuses					IDEAStatus			ON Fact.IdeaStatusId			= IDEAStatus.DimIdeaStatusId
+    LEFT JOIN   RDS.DimIdeaDisabilityTypes         	IDEADisability  	ON Fact.PrimaryDisabilityTypeId = IDEADisability.DimIdeaDisabilityTypeId
+	LEFT JOIN	RDS.DimK12Demographics				Demo				ON Fact.K12DemographicId		= Demo.DimK12DemographicId
+	LEFT JOIN	RDS.DimEnglishLearnerStatuses		EL					ON Fact.EnglishLearnerStatusId	= EL.DimEnglishLearnerStatusId
+	LEFT JOIN	RDS.DimAges							Ages				ON Fact.AgeId					= Ages.DimAgeId      
+	LEFT JOIN	RDS.DimRaces						Races				ON Fact.RaceId					= Races.DimRaceId
+	LEFT JOIN	RDS.DimGradeLevels					Grades				ON Fact.GradeLevelId			= Grades.DimGradeLevelId
+	--uncomment/modify the where clause conditions as necessary for validation
+	WHERE 1 = 1
+	--2 ways to select by SchoolYear, use 1 or the other, not both
+	--the next 2 conditions set the SchoolYear selected to the one from the most recent RDS migration
+		AND DMT.IsSelected = 1
+		AND DMT.DataMigrationTypeId = 2
+	--or comment out the lines above and just set the SchoolYear
+		--AND SchoolYears.SchoolYear = 2024
+
+	AND Fact.FactTypeId = 3
