@@ -93,11 +93,6 @@ CREATE NONCLUSTERED INDEX IX_ProgramParticipationNOrD_Student_LEA_School_BeginDa
         ALTER TABLE Staging.ProgramParticipationNorD ADD EdFactsAcademicOrCareerAndTechnicalOutcomeExitType nvarchar(100);
     END
 
-    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentExitOutcomeDate') IS NULL
-    BEGIN
-        ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedOrDelinquentExitOutcomeDate datetime;
-    END
-
     IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedProgramType') IS  NULL
     BEGIN
         ALTER TABLE Staging.ProgramParticipationNorD ADD NeglectedProgramType nvarchar(100);
@@ -168,15 +163,25 @@ CREATE NONCLUSTERED INDEX IX_ProgramParticipationNOrD_Student_LEA_School_BeginDa
 
     EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
 
-    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The date of the outcome after exiting a neglected or delinquent program' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentExitOutcomeDate'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The subpart for the Title I, Part D program that served the student.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
 
-    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Neglected or Delinquent Exit Outcome Date' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentExitOutcomeDate'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Neglected Or Delinquent Program Enrollment Subpart' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
 
-    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'NA' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentExitOutcomeDate'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'NA' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
 
-    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'NA' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentExitOutcomeDate'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'NA' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
 
-    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentExitOutcomeDate'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'An indication that the student is participating in programs for neglected or delinquent students (N or D) under Title I, Part D, Subpart 1 (state agencies) or Subpart 2 (lea agencies) of ESEA as amended.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Neglected Or Delinquent Status' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000193' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/element/000193' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
+
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
 
     EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The type of delinquent programs under Title I, Part D, Subpart 1 (State Agency) of ESEA as amended or under Title I, Part D, Subpart 2 (LEA) of ESEA, as amended.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DelinquentProgramType'
 
