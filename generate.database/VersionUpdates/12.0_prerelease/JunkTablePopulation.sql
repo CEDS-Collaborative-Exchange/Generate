@@ -30,6 +30,7 @@
 			,NeglectedOrDelinquentLongTermStatusEdFactsCode
 			,NeglectedOrDelinquentProgramTypeCode
 			,NeglectedOrDelinquentProgramTypeDescription
+			,NeglectedOrDelinquentProgramTypeEdFactsCode
 			,NeglectedOrDelinquentStatusCode
 			,NeglectedOrDelinquentStatusDescription
 			,NeglectedOrDelinquentProgramEnrollmentSubpartCode
@@ -51,7 +52,7 @@
 			,EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeDescription
             ,EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode
 		)
-		VALUES (-1, 'MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING', 'MISSING','MISSING', 'MISSING')
+		VALUES (-1, 'MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING','MISSING', 'MISSING','MISSING', 'MISSING')
 
 		SET IDENTITY_INSERT RDS.DimNOrDStatuses OFF
 	END
@@ -316,7 +317,7 @@
 	DROP TABLE #NeglectedOrDelinquentLongTerm
     DROP TABLE #NeglectedOrDelinquentProgramType
 	DROP TABLE #NeglectedProgramTypeCode 
-	DROP TABLE #NeglectedProgramStatus 
+	DROP TABLE #NeglectedOrDelinquentStatus 
 	DROP TABLE #NeglectedOrDelinquentProgramEnrollmentSubpart 
 	DROP TABLE #DelinquentProgramTypeCode
     DROP TABLE #NorDAcademicAchievementIndicator
