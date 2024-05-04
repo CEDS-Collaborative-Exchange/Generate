@@ -49,22 +49,23 @@ AS
     SELECT N'
 		;WITH StagingData AS (
 			SELECT
-				COUNT(' + CASE WHEN @IsDistinctCount = 1 THEN 'DISTINCT' ELSE '' END + ' ' + @IdentifierToCount + ') AS ' + @CountColumn + 
+				COUNT(' + CASE WHEN @IsDistinctCount = 1 THEN 'DISTINCT' ELSE '' END + ' ' + @IdentifierToCount + ') AS ' + @CountColumn + char(10) +
+				ISNULL(STRING_AGG(',' + d.DimensionFieldName, CHAR(10) + '				'), '') + 
 				CASE aol.LevelCode 
 					WHEN 'LEA' THEN ', LEAIdentifierSeaAccountability AS LeaIdentifierSea'
 					WHEN 'SCH' THEN ', SchoolIdentifierSea'
 					ELSE ''
 				END + '
-				' + ISNULL(STRING_AGG(', ' + d.DimensionFieldName, CHAR(10) + '				'), '') + '
 			FROM ##' + @ReportCode + 'Staging
 			GROUP BY 
-			' + 
+			' 			
+				+ ISNULL(STRING_AGG(d.DimensionFieldName, ',' + CHAR(10) + '				'), '') +  
+				CASE WHEN COUNT(d.DimensionFieldName) > 0 AND aol.LevelCode <> 'SEA' THEN ', ' ELSE '' END +
 				CASE aol.LevelCode 
 					WHEN 'LEA' THEN 'LEAIdentifierSeaAccountability'
 					WHEN 'SCH' THEN 'SchoolIdentifierSea'
 					ELSE ''
-				END 
-			+ ISNULL(STRING_AGG(', ' + d.DimensionFieldName, CHAR(10) + '				'), '') + '
+				END  + '
 		)
 
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -83,6 +84,7 @@ AS
 			CASE aol.LevelCode 
 				WHEN 'LEA' THEN '''LEA: '' + rt.OrganizationIdentifierSea + '  
 				WHEN 'SCH' THEN '''SCH: '' + rt.OrganizationIdentifierSea + ' 
+				ELSE ''
 			END 
 			+ ISNULL(STRING_AGG('''  ' + c.CategoryCode + ': ''+ convert(varchar, s.' + d.DimensionFieldName + ')', ' + ' + CHAR(10) + '				'), '''TOT''') + '
 			,s.' + @CountColumn + '
