@@ -2,9 +2,14 @@ CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_C218]
 AS
 	WITH excludedLeas AS (
 		SELECT DISTINCT LEAIdentifierSea
-		FROM Staging.K12Organization
+		FROM Staging.K12Organization sko
+			LEFT JOIN Staging.SourceSystemReferenceData sssrd
+				ON sko.SchoolYear = sssrd.SchoolYear
+				AND sko.LEA_OperationalStatus = sssrd.InputCode
+				AND sssrd.Tablename = 'RefOperationalStatus'
+				AND sssrd.TableFilter = '000174'
 		WHERE LEA_IsReportedFederally = 0
-			OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
+			OR sssrd.OutputCode in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
 	)
 
 	SELECT  DISTINCT
@@ -18,6 +23,7 @@ AS
 	JOIN [RDS].[DimLeas] lea on lea.LeaIdentifierSea = vw.LEAIdentifierSeaAccountability
 	LEFT JOIN excludedLeas el
 		ON vw.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
+
 	WHERE el.LeaIdentifierSea IS NULL
 		AND vw.NeglectedOrDelinquentStatus = 1 -- Only students marked as NorD
 		AND vw.NeglectedOrDelingquentProgramEnrollmentSubpartEdFactsCode = 1
