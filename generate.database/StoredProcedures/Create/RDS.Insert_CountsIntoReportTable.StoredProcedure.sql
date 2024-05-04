@@ -54,7 +54,7 @@ AS
 			TableTypeAbbrv,
 			TotalIndicator,
 			' + CASE WHEN CategorySetCode = 'TOT' THEN '' ELSE '' + ISNULL(STRING_AGG(d.DimensionFieldName, ','), '') + ',' END + '
-			StudentCount
+			' + @CountColumn + '
 				
 		)
 		select 
@@ -130,9 +130,9 @@ AS
 		on c.CategoryId = csc.CategoryId
 	JOIN app.OrganizationLevels aol
 		ON cs.OrganizationLevelId = aol.OrganizationLevelId
-	left join app.GenerateReport_TableType grtt
+	LEFT JOIN app.GenerateReport_TableType grtt
 		on gr.GenerateReportId = grtt.GenerateReportId
-	left JOIN app.TableTypes att
+	JOIN app.TableTypes att
 		ON cs.TableTypeId = att.TableTypeId
 			OR grtt.TableTypeId = att.TableTypeId
 	LEFT JOIN app.Category_Dimensions cd
@@ -155,7 +155,7 @@ AS
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @SQLStatement = REPLACE(REPLACE(@SQLStatement, ',NOCATS', ''), '_NOCATS', '')
-		--select @SQLStatement
+		select @SQLStatement
 		EXEC sp_executesql @SQLStatement;
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END
@@ -252,8 +252,11 @@ AS
 		on c.CategoryId = csc.CategoryId
 	JOIN app.OrganizationLevels aol
 		ON cs.OrganizationLevelId = aol.OrganizationLevelId
+	LEFT JOIN app.GenerateReport_TableType grtt
+		on gr.GenerateReportId = grtt.GenerateReportId
 	JOIN app.TableTypes att
 		ON cs.TableTypeId = att.TableTypeId
+			OR grtt.TableTypeId = att.TableTypeId
 	LEFT JOIN app.Category_Dimensions cd
 		ON c.CategoryId = cd.CategoryId
 	LEFT JOIN app.Dimensions d
@@ -273,7 +276,7 @@ AS
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @SQLStatement = REPLACE(REPLACE(@SQLStatement, ',NOCATS', ''), '_NOCATS', '')
-		--select @SQLStatement
+		select @SQLStatement
 		EXEC sp_executesql @SQLStatement;
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END

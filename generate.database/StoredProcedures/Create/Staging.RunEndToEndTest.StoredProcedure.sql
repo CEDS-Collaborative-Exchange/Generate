@@ -135,6 +135,7 @@ AS
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @SQLStatement = REPLACE(REPLACE(@SQLStatement, ',NOCATS', ''), '_NOCATS', '')
+		select @SQLStatement
 		EXEC sp_executesql @SQLStatement;
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END

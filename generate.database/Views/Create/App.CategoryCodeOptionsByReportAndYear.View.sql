@@ -1,7 +1,7 @@
 CREATE VIEW app.CategoryCodeOptionsByReportAndYear
 WITH SCHEMABINDING
 AS
-    SELECT 
+    SELECT DISTINCT
         o.CategoryOptionCode,
         c.CategoryCode,
 		cs.CategorySetCode,
@@ -21,10 +21,11 @@ AS
     JOIN app.CategoryOptions o 
 		ON o.CategoryId = c.CategoryId 
 		AND cs.CategorySetId = o.CategorySetId
+	LEFT JOIN app.GenerateReport_TableType grtt
+		on gr.GenerateReportId = grtt.GenerateReportId
 	JOIN app.TableTypes tt
 		ON cs.TableTypeId = tt.TableTypeId
-	WHERE cs.OrganizationLevelId = 1
-		AND cs.TableTypeId IS NOT NULL
+			OR grtt.TableTypeId = tt.TableTypeId
 	
 GO
 

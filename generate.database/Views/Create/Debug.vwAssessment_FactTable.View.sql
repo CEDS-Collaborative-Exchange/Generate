@@ -7,6 +7,13 @@ AS
 			, Students.FirstName
 			, Students.LastOrSurname
 			, Students.MiddleName
+			
+			, SEA.StateANSICode
+			, SEA.StateAbbreviationCode
+			, SEA.StateAbbreviationDescription
+			, SEA.SeaOrganizationIdentifierSea
+			, SEA.SeaOrganizationName
+
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaIdentifierNces
 			, LEAs.LeaOrganizationName
@@ -52,6 +59,7 @@ AS
 	JOIN		RDS.DimSchoolYears							SchoolYears	ON Fact.SchoolYearId						= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes			DMT			ON SchoolYears.dimschoolyearid				= DMT.dimschoolyearid		
 	LEFT JOIN	RDS.DimPeople								Students	ON Fact.K12StudentId						= Students.DimPersonId			AND Students.IsActiveK12Student = 1
+	LEFT JOIN	RDS.DimSeas									SEA			ON Fact.SeaId								= SEA.DimSeaId
 	LEFT JOIN	RDS.DimLeas									LEAs		ON Fact.LeaId								= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools							Schools		ON Fact.K12SchoolId							= Schools.DimK12SchoolId
 	LEFT JOIN	RDS.DimAssessments							Assess		ON Fact.AssessmentId						= Assess.DimAssessmentId	
