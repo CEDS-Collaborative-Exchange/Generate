@@ -94,7 +94,7 @@ BEGIN
 			and NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
 
 
-/*
+
 		CREATE CLUSTERED INDEX ix_tempvwNorDStatuses 
 			ON #vwNorDStatuses (
 				NeglectedOrDelinquentLongTermStatusCode,
@@ -106,7 +106,7 @@ BEGIN
 				EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap,
 				EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap
 			);
-*/
+
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
@@ -194,7 +194,7 @@ BEGIN
 			, -1														LastQualifyingMoveDateId	
 			, ISNULL(BeginDate.DimDateId, -1)							StatusStartDateNeglectedOrDelinquentId
 			, ISNULL(EndDate.DimDateId, -1)								StatusEndDateNeglectedOrDelinquentId
-			, ISNULL(AwardDate.DimDateId, -1)							OutcomeExitDateNeglectedOrDelinquentId		
+			, -1														OutcomeExitDateNeglectedOrDelinquentId		
 
 		FROM Staging.K12Enrollment ske
 
@@ -301,10 +301,6 @@ BEGIN
 	-- ProgramParticipationEndDate
 		LEFT JOIN RDS.DimDates EndDate 
 			ON sppnord.ProgramParticipationEndDate = EndDate.DateValue
-
-	-- NorDDiplomaCredentialAwardDate
-		LEFT JOIN RDS.DimDates AwardDate 
-			ON sppnord.NeglectedOrDelinquentExitOutcomeDate = AwardDate.DateValue
 
 		where sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart is not NULL
 			and sppnord.NeglectedOrDelinquentStatus = 1 -- Only get NorD students
