@@ -12,7 +12,17 @@ AS
 			, Schools.SchoolIdentifierSea
 			, Schools.NameOfInstitution
 
-			, NorD.*
+			--Neglected or Delinquent 
+			, NorD.NeglectedOrDelinquentStatusCode
+			, NorD.NeglectedOrDelinquentStatusDescription
+			, NorD.NeglectedOrDelinquentProgramEnrollmentSubpartCode
+			, NorD.NeglectedOrDelinquentProgramEnrollmentSubpartDescription
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeDescription
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeDescription
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode
 
  	FROM		RDS.FactK12StudentCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
