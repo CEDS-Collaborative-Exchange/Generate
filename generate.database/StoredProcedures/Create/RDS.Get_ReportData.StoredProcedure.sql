@@ -20,13 +20,7 @@ BEGIN
 	declare @factTypeCode as varchar(50)
 	declare @year as int
 
-	select @factTypeCode = (select dft.FactTypeCode
-							from app.GenerateReport_FactType grft
-								inner join app.GenerateReports gr
-									on grft.GenerateReportId = gr.GenerateReportId
-								inner join rds.DimFactTypes dft
-									on grft.FactTypeId = dft.DimFactTypeId
-							where gr.ReportCode = @reportCode)
+	select @factTypeCode = RDS.Get_FactTypeByReport(@ReportCode)
 
 	select @year = SchoolYear from rds.DimSchoolYears where SchoolYear = @reportYear
 
@@ -38,8 +32,11 @@ BEGIN
 	inner join app.GenerateReports r on ft.FactTableId = r.FactTableId
 	where r.ReportCode = @reportCode
 
-
-
+	--Manually exclude the 0 counts from the Reports that are using the new dynamic logic
+	if @reportCode in ('c218','c219','c220','c221','c222','c224','c225','c226')
+	begin
+		set @includeZeroCounts = 0
+	end
 
 	if @factTable = 'FactCustomCounts'
 	begin
