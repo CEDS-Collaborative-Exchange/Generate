@@ -28,11 +28,11 @@
 	
 	-- NorDStudents with Assessments
 	SELECT DISTINCT 
-		  CASE ta.[Subject]
+		  sar.StudentIdentifierState
+		, CASE ta.[Subject]
 		  	WHEN 'Math' THEN 'M'
 			ELSE ta.Subject
 		  END AS AssessmentAcademicSubject
-		, sar.LeaIdentifierSeaAccountability
 		, ProficiencyStatus = CASE WHEN CAST(RIGHT(replace(sar.[Assessment-AssessmentPerformanceLevelIdentifier], '_1', ''),1) AS INT) < ta.ProficientOrAboveLevel THEN 'NOTPROFICIENT' ELSE 'PROFICIENT' END
 		, sar.schoolyear
 	FROM [debug].[vwAssessment_StagingTables] sar

@@ -1,6 +1,4 @@
 ﻿CREATE VIEW staging.vwAssessment_StagingTables_C225
-
-
 AS
 	-- PerformanceLevels requires DimAssessmentPerformanceLevels, SourceSystemReferenceData table AssessmentPerformanceLevelMap, and ToggleAssessments
 	WITH
@@ -12,7 +10,6 @@ AS
 			WHERE LEA_IsReportedFederally = 0
 				OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
 		)
-	
 	,
 		ToggleAssessments
 		AS
@@ -35,12 +32,13 @@ AS
 
 	-- NorDStudents with Assessments
 	SELECT DISTINCT 
-		  CASE ta.[Subject]
+		  sar.StudentIdentifierState
+		, CASE ta.[Subject]
 		  	WHEN 'MATH' THEN 'M'
 			ELSE ta.Subject
 		  END AS AssessmentAcademicSubject
 		, ProficiencyStatus = CASE WHEN CAST(RIGHT(replace(sar.[Assessment-AssessmentPerformanceLevelIdentifier], '_1', ''),1) AS INT) < ta.ProficientOrAboveLevel THEN 'NOTPROFICIENT' ELSE 'PROFICIENT' END
-		, sar.LEAIdentifierSeaAccountability  AS OrganizationIdentifierSea
+		, sar.LEAIdentifierSeaAccountability 
 		, sar.schoolyear
 	FROM [debug].[vwAssessment_StagingTables] sar
 	JOIN Staging.SourceSystemReferenceData sssrd

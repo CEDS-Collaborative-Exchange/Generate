@@ -63,8 +63,8 @@ AS
 
 				, nord.NeglectedOrDelinquentStatus
 				, nord.NeglectedOrDelinquentProgramEnrollmentSubpart
-				, nord.ProgramParticipationBeginDate
-				, nord.ProgramParticipationEndDate
+				, nord.ProgramParticipationBeginDate				AS 'NorDProgramParticipationBeginDate'
+				, nord.ProgramParticipationEndDate					AS 'NorDProgramParticipationEndDate'
 
 	FROM Staging.K12Enrollment								enrollment		
 
