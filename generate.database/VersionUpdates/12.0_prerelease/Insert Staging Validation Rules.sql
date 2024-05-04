@@ -702,57 +702,6 @@ exec Staging.StagingValidation_InsertRule
 
 
 -- ProgramParticipationNorD -----------------------------------------------------------------
-exec Staging.StagingValidation_InsertRule
-	@FactTypeOrReportCode = 'C224, C225, C218, C219, C220, C221',
-	@StagingTableName = 'ProgramParticipationSpecialNorD',
-	@StagingColumnName = 'NeglectedOrDelinquentAcademicOutcomeIndicator',
-	@RuleDscr = 'NeglectedOrDelinquentAcademicOutcomeIndicator or NeglectedOrDelinquentAcademicAchievementIndicator Required',
-	@Condition = 'select * from Staging.ProgramParticipationNorD
-		where ISNULL(NeglectedOrDelinquentAcademicOutcomeIndicator, 0) <> 1
-		and ISNULL(NeglectedOrDelinquentAcademicAchievementIndicator, 0) <> 1',
-	@ValidationMessage = 'Either NeglectedOrDelinquentAcademicOutcomeIndicator or NeglectedOrDelinquentAcademicAchievementIndicator must contain a 1',
-	@CreatedBy = 'Generate',
-	@Enabled = 1
-
-exec Staging.StagingValidation_InsertRule
-	@FactTypeOrReportCode = 'C224, C225, C218, C219, C220, C221',
-	@StagingTableName = 'ProgramParticipationSpecialNorD',
-	@StagingColumnName = 'NeglectedOrDelinquentAcademicOutcomeIndicator',
-	@RuleDscr = 'NeglectedOrDelinquentAcademicOutcomeIndicator and NeglectedOrDelinquentAcademicAchievementIndicator Cannot Both = 1',
-	@Condition = 'select * from Staging.ProgramParticipationNorD
-		where ISNULL(NeglectedOrDelinquentAcademicOutcomeIndicator, 0) = 1
-		and ISNULL(NeglectedOrDelinquentAcademicAchievementIndicator, 0) = 1',
-	@ValidationMessage = 'Either NeglectedOrDelinquentAcademicOutcomeIndicator or NeglectedOrDelinquentAcademicAchievementIndicator must contain a 1, but not both',
-	@CreatedBy = 'Generate',
-	@Enabled = 1	
-
-exec Staging.StagingValidation_InsertRule
-	@FactTypeOrReportCode = 'C218, C219, C220, C221',
-	@StagingTableName = 'ProgramParticipationSpecialNorD',
-	@StagingColumnName = 'EdFactsAcademicOrCareerAndTechnicalOutcomeType',
-	@RuleDscr = 'EdFactsAcademicOrCareerAndTechnicalOutcomeType or EdFactsAcademicOrCareerAndTechnicalOutcomeExitType are required if Outcome or Achievement Indicator = 1',
-	@Condition = 'select * from Staging.ProgramParticipationNorD
-		where (ISNULL(NeglectedOrDelinquentAcademicOutcomeIndicator, 0) = 1
-		or ISNULL(NeglectedOrDelinquentAcademicAchievementIndicator, 0)  = 1)
-		and (EdFactsAcademicOrCareerAndTechnicalOutcomeType is null and EdFactsAcademicOrCareerAndTechnicalOutcomeExitType is null)',
-	@ValidationMessage = 'EdFactsAcademicOrCareerAndTechnicalOutcomeType or EdFactsAcademicOrCareerAndTechnicalOutcomeExitType are required if Outcome or Achievement Indicator = 1',
-	@CreatedBy = 'Generate',
-	@Enabled = 1
-
-exec Staging.StagingValidation_InsertRule
-	@FactTypeOrReportCode = 'C224, C225, C218, C219, C220, C221',
-	@StagingTableName = 'ProgramParticipationSpecialNorD',
-	@StagingColumnName = 'NeglectedOrDelinquentAcademicOutcomeIndicator',
-	@RuleDscr = 'Both EdFactsAcademicOrCareerAndTechnicalOutcomeType and EdFactsAcademicOrCareerAndTechnicalOutcomeExitType cannot be populated',
-	@Condition = 'select * from Staging.ProgramParticipationNorD
-		where EdFactsAcademicOrCareerAndTechnicalOutcomeType is not null
-		and EdFactsAcademicOrCareerAndTechnicalOutcomeExitType is not null',
-	@ValidationMessage = 'Either EdFactsAcademicOrCareerAndTechnicalOutcomeType or EdFactsAcademicOrCareerAndTechnicalOutcomeExitType must contain a value, but not both',
-	@CreatedBy = 'Generate',
-	@Enabled = 1
-
-
-
 
 
 
