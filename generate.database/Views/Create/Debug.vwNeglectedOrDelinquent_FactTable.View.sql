@@ -13,15 +13,16 @@ AS
 			, Schools.NameOfInstitution
 
 			--Neglected or Delinquent 
-			, NorD.NeglectedOrDelinquentAcademicAchievementIndicatorCode
-			, NorD.NeglectedOrDelinquentAcademicOutcomeIndicatorCode	
+			, NorD.NeglectedOrDelinquentStatusCode
+			, NorD.NeglectedOrDelinquentStatusDescription
+			, NorD.NeglectedOrDelinquentProgramEnrollmentSubpartCode
+			, NorD.NeglectedOrDelinquentProgramEnrollmentSubpartDescription
 			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeDescription
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode
 			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
---Not sure these are acually needed, verify
-			-- , NorD.NeglectedOrDelinquentLongTermStatusEdFactsCode
-			-- , NorD.NeglectedOrDelinquentProgramTypeEdFactsCode   
-			-- , NorD.NeglectedProgramTypeEdFactsCode
-			-- , NorD.DelinquentProgramTypeEdFactsCode
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeDescription
+			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode
 
  	FROM		RDS.FactK12StudentCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
