@@ -21,10 +21,6 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 			, ecodis.EligibilityStatusForSchoolFoodServicePrograms -- For FS033
 			, ecodis.NationalSchoolLunchProgramDirectCertificationIndicator -- For FS033
 
-			, foster.ProgramType_FosterCare -- For FS222
-			, foster.FosterCare_ProgramParticipationStartDate -- For FS222
-			, foster.FosterCare_ProgramParticipationEndDate -- For FS222
-
 			, enrollment.HispanicLatinoEthnicity
 			, race.RaceType -- For FS052
 			, race.RecordStartDateTime					AS RaceStartDate
