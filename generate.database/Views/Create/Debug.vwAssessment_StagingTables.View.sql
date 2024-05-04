@@ -1,4 +1,4 @@
-CREATE VIEW [Debug].[vwAssessments_StagingTables] 
+CREATE VIEW [Debug].[vwAssessment_StagingTables] 
 AS
 	SELECT		DISTINCT 
 				enrollment.StudentIdentifierState

@@ -66,12 +66,6 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 				AND		ISNULL(ecodis.SchoolIdentifierSea, '')						    =	ISNULL(enrollment.SchoolIdentifierSea, '')
 				AND		toggle.MembershipDate BETWEEN EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusEndDate, '1/1/9999')
 
-		LEFT JOIN Staging.PersonStatus							foster
-				ON		foster.StudentIdentifierState								    =	enrollment.StudentIdentifierState
-				AND		ISNULL(foster.LEAIdentifierSeaAccountability, '')			    =	ISNULL(enrollment.LEAIdentifierSeaAccountability, '')
-				AND		ISNULL(foster.SchoolIdentifierSea, '')						    =	ISNULL(enrollment.SchoolIdentifierSea, '')
-				AND		toggle.MembershipDate BETWEEN foster.FosterCare_ProgramParticipationStartDate AND ISNULL(foster.FosterCare_ProgramParticipationEndDate, '1/1/9999')
-
 		--uncomment/modify the where clause conditions as necessary for validation
 		WHERE 1 = 1
 		--AND enrollment.StudentIdentifierState = '12345678'	

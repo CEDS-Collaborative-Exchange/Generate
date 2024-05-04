@@ -9,7 +9,7 @@ AS
             WHEN ata.ProficientOrAboveLevel <= ata.PerformanceLevels THEN 'PROFICIENT'
             ELSE 'NOTPROFICIENT'
         END AS PROFICIENCYSTATUS
-    FROM  debug.vwAssessments_FactTable f
+    FROM  debug.vwAssessment_FactTable f
     JOIN  App.ToggleAssessments ata
         ON RIGHT(f.AssessmentPerformanceLevelLabel, 1) = ata.PerformanceLevels
         AND f.AssessmentAcademicSubjectCode = ata.Subject

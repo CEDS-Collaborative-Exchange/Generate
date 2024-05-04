@@ -1,4 +1,4 @@
-CREATE VIEW [RDS].[vwAssessments_FactTable_C224] 
+CREATE VIEW [RDS].[vwAssessment_FactTable_C224] 
 AS
     SELECT 
         f.SchoolYear
@@ -12,7 +12,7 @@ AS
             WHEN ata.ProficientOrAboveLevel <= RIGHT(f.AssessmentPerformanceLevelLabel, 1) THEN 'PROFICIENT'
             ELSE 'NOTPROFICIENT'
         END AS PROFICIENCYSTATUS
-    FROM  debug.vwAssessments_FactTable f
+    FROM  debug.vwAssessment_FactTable f
     JOIN  App.ToggleAssessments ata
         ON f.AssessmentAcademicSubjectEdFactsCode = ata.Subject
         AND f.AssessmentTitle = ata.AssessmentName

@@ -12,3 +12,25 @@ BEGIN
 		[TableTypeAbbrv], [EdFactsTableTypeId]  ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 END
+
+DECLARE @AssessmentFactTypeId INT, @GenerateReportId INT
+SELECT @AssessmentFactTypeId = DimFactTypeId 
+FROM RDS.DimFactTypes 
+WHERE FactTypeCode = 'Assessment'
+
+SELECT @GenerateReportId = GenerateReportId
+FROM App.GenerateReports
+WHERE ReportCode = 'C224'
+
+UPDATE App.GenerateReport_FactType
+SET FactTypeId = @AssessmentFactTypeId
+WHERE GenerateReportId = @GenerateReportId
+
+SELECT @GenerateReportId = GenerateReportId
+FROM App.GenerateReports
+WHERE ReportCode = 'C225'
+
+UPDATE App.GenerateReport_FactType
+SET FactTypeId = @AssessmentFactTypeId
+WHERE GenerateReportId = @GenerateReportId
+	
