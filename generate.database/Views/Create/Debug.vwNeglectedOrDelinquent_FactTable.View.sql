@@ -7,6 +7,11 @@ AS
 			, Students.FirstName
 			, Students.LastOrSurname
 			, Students.MiddleName
+			, SEAs.StateANSICode
+			, SEAs.StateAbbreviationCode
+			, SEAs.StateAbbreviationDescription
+			, SEAs.SeaOrganizationIdentifierSea
+			, SEAs.SeaOrganizationName
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaIdentifierNces
 			, LEAs.LeaOrganizationName
@@ -27,7 +32,8 @@ AS
 
  	FROM		RDS.FactK12StudentCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
-	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid		
+	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid
+	JOIN		RDS.DimSeas							SEAs			on Fact.SeaId					= SEAs.DimSeaId
 	LEFT JOIN	RDS.DimPeople						Students		ON Fact.K12StudentId			= Students.DimPersonId	AND Students.IsActiveK12Student = 1
 	LEFT JOIN	RDS.DimLeas							LEAs			ON Fact.LeaId					= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools					Schools			ON Fact.K12SchoolId				= Schools.DimK12SchoolId
@@ -41,3 +47,5 @@ AS
 	----or comment out the lines above and just set the SchoolYear
 	--	--AND SchoolYears.SchoolYear = 2024
 	AND Fact.FactTypeId = 15
+
+	
