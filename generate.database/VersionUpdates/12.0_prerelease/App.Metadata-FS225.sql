@@ -27,7 +27,7 @@ END
 UPDATE app.GenerateReports SET FactTableId = @factTableId, ReportTypeAbbreviation = 'NDACACLEA' where ReportCode = @reportCode
 
 SELECT @generateReportId = GenerateReportId FROM app.GenerateReports where ReportCode = @reportCode
-SELECT @factTypeId = DimFactTypeId FROM rds.DimFactTypes where FactTypeCode = 'neglectedordelinquent'
+SELECT @factTypeId = DimFactTypeId FROM rds.DimFactTypes where FactTypeCode = 'Assessment'
 
 IF NOT EXISTS(SELECT 1 FROM app.GenerateReport_FactType where GenerateReportId = @generateReportId AND FactTypeId = @factTypeId)
 BEGIN
