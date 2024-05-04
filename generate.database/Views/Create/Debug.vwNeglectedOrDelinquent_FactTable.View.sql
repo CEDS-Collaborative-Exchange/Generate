@@ -1,6 +1,7 @@
 CREATE VIEW [debug].[vwNeglectedOrDelinquent_FactTable] 
 AS
 	SELECT	Fact.K12StudentId
+			, SchoolYears.SchoolYear
 			, Students.K12StudentStudentIdentifierState
 			, Students.BirthDate
 			, Students.FirstName
