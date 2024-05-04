@@ -15,6 +15,7 @@ AS
 SELECT  DISTINCT
 		vw.StudentIdentifierState
 		,lea.SeaOrganizationIdentifierSea
+		,vw.LEAIdentifierSeaAccountability
 		,NeglectedOrDelinquentProgramEnrollmentSubpart
 		,vw.NeglectedOrDelingquentProgramEnrollmentSubpartEdFactsCode
 		,vw.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType EdFactsAcademicOrCareerAndTechnicalOutcomeExitType_Staging
@@ -29,10 +30,3 @@ SELECT  DISTINCT
 		AND vw.ProgramParticipationBeginDate >= CAST(('7/1/' + CAST((vw.SchoolYear -1) as varchar))  AS Date)
 		AND CAST(ISNULL(vw.ProgramParticipationEndDate, '1900-01-01') AS DATE) <= CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date)
 		AND vw.ProgramParticipationBeginDate BETWEEN vw.EnrollmentEntryDate AND ISNULL(vw.EnrollmentExitDate, CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date))
-
-
-
-
-
-
-
