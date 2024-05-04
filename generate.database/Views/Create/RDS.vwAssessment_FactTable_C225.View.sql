@@ -11,12 +11,10 @@ AS
         END AS PROFICIENCYSTATUS
     FROM  debug.vwAssessment_FactTable f
     JOIN  App.ToggleAssessments ata
-        ON RIGHT(f.AssessmentPerformanceLevelLabel, 1) = ata.PerformanceLevels
-        AND f.AssessmentAcademicSubjectCode = ata.Subject
+        ON f.AssessmentAcademicSubjectEdFactsCode = ata.Subject
         AND f.AssessmentTitle = ata.AssessmentName
         AND f.AssessmentTypeAdministeredCode = ata.AssessmentTypeCode
         AND f.GradeLevelEdFactsCode = ata.Grade
-    WHERE f.NeglectedOrDelinquentProgramTypeCode <> 'MISSING'
-        AND f.AssessmentAcademicSubjectCode IN ('01166', '13373')
-        AND f.NeglectedOrDelinquentStatusCode = 'Yes'
+    WHERE f.AssessmentAcademicSubjectCode IN ('01166', '13373')
+		AND f.NeglectedOrDelinquentStatusCode = 'Yes'
 	    AND f.NeglectedOrDelinquentProgramEnrollmentSubpartCode = '2'

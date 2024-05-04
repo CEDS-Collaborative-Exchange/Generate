@@ -111,8 +111,11 @@ AS
 		on c.CategoryId = csc.CategoryId
 	JOIN app.OrganizationLevels aol
 		ON cs.OrganizationLevelId = aol.OrganizationLevelId
-	JOIN app.TableTypes att
+	LEFT JOIN app.GenerateReport_TableType grtt
+		on gr.GenerateReportId = grtt.GenerateReportId
+	LEFT JOIN app.TableTypes att
 		ON cs.TableTypeId = att.TableTypeId
+			OR grtt.TableTypeId = att.TableTypeId
 	LEFT JOIN app.Category_Dimensions cd
 		ON c.CategoryId = cd.CategoryId
 	LEFT JOIN app.Dimensions d
