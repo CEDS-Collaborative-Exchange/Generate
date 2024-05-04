@@ -12,16 +12,7 @@ AS
 			, Schools.SchoolIdentifierSea
 			, Schools.NameOfInstitution
 
-			--Neglected or Delinquent 
-			, NorD.NeglectedOrDelinquentAcademicAchievementIndicatorCode
-			, NorD.NeglectedOrDelinquentAcademicOutcomeIndicatorCode	
-			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
-			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
---Not sure these are acually needed, verify
-			-- , NorD.NeglectedOrDelinquentLongTermStatusEdFactsCode
-			-- , NorD.NeglectedOrDelinquentProgramTypeEdFactsCode   
-			-- , NorD.NeglectedProgramTypeEdFactsCode
-			-- , NorD.DelinquentProgramTypeEdFactsCode
+			, NorD.*
 
  	FROM		RDS.FactK12StudentCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
@@ -32,10 +23,10 @@ AS
 	LEFT JOIN	RDS.DimNorDStatuses					NorD			ON Fact.NorDStatusId			= NorD.DimNorDStatusId
 
 	WHERE 1 = 1
-	--2 ways to select by SchoolYear, use 1 or the other, not both
-	--the next 2 conditions set the SchoolYear selected to the one from the most recent RDS migration
+	----2 ways to select by SchoolYear, use 1 or the other, not both
+	----the next 2 conditions set the SchoolYear selected to the one from the most recent RDS migration
 		AND DMT.IsSelected = 1
-		AND DMT.DataMigrationTypeId = 2
-	--or comment out the lines above and just set the SchoolYear
-		--AND SchoolYears.SchoolYear = 2024
+		AND DMT.DataMigrationTypeId = 3
+	----or comment out the lines above and just set the SchoolYear
+	--	--AND SchoolYears.SchoolYear = 2024
 	AND Fact.FactTypeId = 15

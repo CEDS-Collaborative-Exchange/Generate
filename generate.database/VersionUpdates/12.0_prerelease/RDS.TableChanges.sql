@@ -130,12 +130,6 @@
 			CONSTRAINT [DF_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId]  DEFAULT ((-1)) WITH VALUES;
 	END
 
-	IF COL_LENGTH('RDS.FactK12StudentCounts', 'OutcomeExitDateNeglectedOrDelinquentId') IS NULL
-	BEGIN
-		ALTER TABLE RDS.FactK12StudentCounts ADD OutcomeExitDateNeglectedOrDelinquentId INT NOT NULL
-			CONSTRAINT [DF_FactK12StudentCounts_OutcomeExitDateNeglectedOrDelinquentId]  DEFAULT ((-1)) WITH VALUES;
-	END
-
 	ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId] FOREIGN KEY([StatusStartDateNeglectedOrDelinquentId])
 	REFERENCES [RDS].[DimDates] ([DimDateId])
 
@@ -146,9 +140,4 @@
 
 	ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId]
 
-	ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_OutcomeExitDateNeglectedOrDelinquentId] FOREIGN KEY([OutcomeExitDateNeglectedOrDelinquentId])
-	REFERENCES [RDS].[DimDates] ([DimDateId])
-
-	ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_OutcomeExitDateNeglectedOrDelinquentId]
-
-
+	
