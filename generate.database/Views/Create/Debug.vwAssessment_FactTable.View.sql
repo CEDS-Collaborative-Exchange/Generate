@@ -1,4 +1,4 @@
-CREATE VIEW [Debug].[vwAssessments_FactTable] 
+CREATE VIEW [Debug].[vwAssessment_FactTable] 
 AS
 	SELECT	Fact.K12StudentId
 			, SchoolYears.SchoolYear

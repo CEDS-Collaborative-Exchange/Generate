@@ -7,6 +7,18 @@ CREATE PROCEDURE RDS.Insert_CountsIntoReportTable
 	@IsDistinctCount bit
 AS 
 
+	DECLARE @FactTypeCode VARCHAR(50)
+	select @FactTypeCode = RDS.Get_FactTypeByReport(@ReportCode)
+
+	--select @FactTypeCode = (select dft.FactTypeCode
+	--						from app.GenerateReport_FactType grft
+	--							inner join app.GenerateReports gr
+	--								on grft.GenerateReportId = gr.GenerateReportId
+	--							inner join rds.DimFactTypes dft
+	--								on grft.FactTypeId = dft.DimFactTypeId
+	--						where gr.ReportCode = @reportCode)
+
+
 	DECLARE @SchoolYearId INT
 	SELECT @SchoolYearId = DimSchoolYearId
 	FROM RDS.DimSchoolYears 
@@ -22,7 +34,7 @@ AS
 		;WITH PermittedValues AS (
 			SELECT DISTINCT 
 			' + STRING_AGG('pv' + c.CategoryCode + '.CategoryOptionCode AS ' + c.CategoryCode, CHAR(10) + '		, ') + '
-			FROM ' + STRING_AGG('app.CateogryCodeOptionsByReportAndYear pv' + c.CategoryCode, CHAR(10) + '		CROSS JOIN ') + '
+			FROM ' + STRING_AGG('app.CategoryCodeOptionsByReportAndYear pv' + c.CategoryCode, CHAR(10) + '		CROSS JOIN ') + '
 			WHERE ' + STRING_AGG('pv' + c.CategoryCode + '.ReportCode = ''' + @ReportCode + ''' AND pv' + c.CategoryCode + '.SubmissionYear = ' + @SubmissionYear + ' AND pv' + c.CategoryCode + '.CategorySetCode = ''' + cs.CategorySetCode + ''' AND pv' + c.CategoryCode + '.CategoryCode = ''' + c.CategoryCode + ''' AND pv' + c.CategoryCode + '.TableTypeAbbrv = ''' + att.TableTypeAbbrv + '''', ' AND ') + '
 		)
 		insert into rds.' + @ReportTableName + '
@@ -79,7 +91,7 @@ AS
 				  END + ''' as TotalIndicator, ' 
 				  + CASE WHEN CategorySetCode = 'TOT' THEN '' ELSE '' + ISNULL(STRING_AGG(DimensionFieldName + 'EDFactsCode', ','), '') + ',' END + '
 			count(' + CASE @IsDistinctCount WHEN 1 THEN 'DISTINCT' ELSE '' END + ' cs.' + @IdentifierToCount + ')
-		FROM rds.vw' + rds.Get_FactTypeByReport(@ReportCode) + '_FactTable_' + @ReportCode + ' cs 
+		FROM rds.vw' + @FactTypeCode + '_FactTable_' + @ReportCode + ' cs 
 		' + CASE 
 				WHEN cs.CategorySetCode <> 'TOT' 
 					THEN 'JOIN PermittedValues pv ON ' + STRING_AGG('cs.' + D.DimensionFieldName + 'EdFactsCode = pv.' + c.CategoryCode, ' AND ')
@@ -118,12 +130,16 @@ AS
 		on c.CategoryId = csc.CategoryId
 	JOIN app.OrganizationLevels aol
 		ON cs.OrganizationLevelId = aol.OrganizationLevelId
-	JOIN app.TableTypes att
+	left join app.GenerateReport_TableType grtt
+		on gr.GenerateReportId = grtt.GenerateReportId
+	left JOIN app.TableTypes att
 		ON cs.TableTypeId = att.TableTypeId
+			OR grtt.TableTypeId = att.TableTypeId
 	LEFT JOIN app.Category_Dimensions cd
 		ON c.CategoryId = cd.CategoryId
 	LEFT JOIN app.Dimensions d
 		ON cd.DimensionId = d.DimensionId
+	
 	WHERE cs.SubmissionYear = @SubmissionYear
 		AND gr.ReportCode = @ReportCode
 	GROUP BY 
@@ -154,7 +170,7 @@ AS
 		;WITH PermittedValues AS (
 			SELECT DISTINCT 
 			' + STRING_AGG('pv' + c.CategoryCode + '.CategoryOptionCode AS ' + c.CategoryCode, CHAR(10) + '		, ') + '
-			FROM ' + STRING_AGG('app.CateogryCodeOptionsByReportAndYear pv' + c.CategoryCode, CHAR(10) + '		CROSS JOIN ') + '
+			FROM ' + STRING_AGG('app.CategoryCodeOptionsByReportAndYear pv' + c.CategoryCode, CHAR(10) + '		CROSS JOIN ') + '
 			WHERE ' + STRING_AGG('pv' + c.CategoryCode + '.ReportCode = ''' + @ReportCode + ''' AND pv' + c.CategoryCode + '.SubmissionYear = ' + @SubmissionYear + ' AND pv' + c.CategoryCode + '.CategorySetCode = ''' + cs.CategorySetCode + ''' AND pv' + c.CategoryCode + '.CategoryCode = ''' + c.CategoryCode + ''' AND pv' + c.CategoryCode + '.TableTypeAbbrv = ''' + att.TableTypeAbbrv + '''', ' AND ') + '
 
 		)
