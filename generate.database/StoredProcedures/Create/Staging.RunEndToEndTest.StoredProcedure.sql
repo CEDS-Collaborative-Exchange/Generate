@@ -41,7 +41,7 @@ AS
 	SET @SQLStatement = 
 	'SELECT *
 	INTO ##' + @ReportCode + 'Staging
-	FROM Staging.vw' + rds.Get_FactTypeByReport(@ReportCode) + '_StagingTable_' + @ReportCode 
+	FROM Staging.vw' + rds.Get_FactTypeByReport(@ReportCode) + '_StagingTables_' + @ReportCode 
 
 	EXEC sp_executesql @SQLStatement;
 
