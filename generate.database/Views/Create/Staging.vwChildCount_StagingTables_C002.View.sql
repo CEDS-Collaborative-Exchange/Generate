@@ -1,4 +1,4 @@
-CREATE VIEW Staging.vwChildCount_StagingTable_C089
+CREATE VIEW Staging.vwChildCount_StagingTables_C002 
 AS
 	WITH excludedLeas AS (
 		SELECT DISTINCT LEAIdentifierSea
@@ -6,11 +6,45 @@ AS
 		WHERE LEA_IsReportedFederally = 0
 			OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
 	)
+	, excludedSchools AS (
+
+		SELECT DISTINCT SchoolIdentifierSea
+		FROM Staging.K12Organization
+		WHERE School_IsReportedFederally = 0
+			OR School_OperationalStatus in ('Closed', 'FutureSchool', 'Inactive', 'MISSING', 'Closed_1', 'FutureSchool_1', 'Inactive_1')
+	)
+	, excludeDD AS (
+		select distinct StudentIdentifierState
+		from [Debug].[vwChildCount_StagingTables] Stage
+		WHERE NOT CalculatedAge in (	
+										select replace(ResponseValue, ' Years', '') AS Ages
+										from app.ToggleResponses r
+										inner join app.ToggleQuestions q 
+										on r.ToggleQuestionId = q.ToggleQuestionId 
+										where q.EmapsQuestionAbbrv = 'CHDCTAGEDD'
+										UNION
+										select 'AGE05K'
+										from app.ToggleResponses r
+										inner join app.ToggleQuestions q 
+										on r.ToggleQuestionId = q.ToggleQuestionId 
+										where q.EmapsQuestionAbbrv = 'CHDCTAGEDD'
+											AND ResponseValue LIKE '%5%'
+										UNION
+										select 'AGE05NOTK'
+										from app.ToggleResponses r
+										inner join app.ToggleQuestions q 
+										on r.ToggleQuestionId = q.ToggleQuestionId 
+										where q.EmapsQuestionAbbrv = 'CHDCTAGEDD'
+											AND ResponseValue LIKE '%5%'
+									) 
+		AND  IdeaDisabilityTypeCode = 'DD'
+	)
 	--Get the data needed for the tests
 	SELECT  
-		StudentIdentifierState,
+		vw.StudentIdentifierState,
 		LeaIdentifierSeaAccountability,
-		IDEAEducationalEnvironmentForEarlyChildhood,
+		vw.SchoolIdentifierSea,
+		IDEAEducationalEnvironmentForSchoolAge,
 		CalculatedAge AS Age,
 		GradeLevel,
 		SchoolYear,
@@ -72,19 +106,30 @@ AS
 			WHEN EnglishLearnerStatus = 1 THEN 'LEP'
 			ELSE 'NLEP'
 		END AS EnglishLearnerStatus
-FROM [Debug].[vwChildCount_StagingTables] vw
+FROM (		
+		SELECT tr.ResponseValue
+		FROM App.ToggleQuestions tq
+		JOIN App.ToggleResponses tr
+			ON tq.ToggleQuestionId = tr.ToggleQuestionId
+		WHERE tq.EmapsQuestionAbbrv = 'CHDCTDTE'
+	) toggle
+CROSS JOIN [Debug].[vwChildCount_StagingTables] vw
 LEFT JOIN excludedLeas el
 	ON vw.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
+LEFT JOIN excludedSchools es
+	ON vw.SchoolIdentifierSea = es.SchoolIdentifierSea
 LEFT JOIN excludeDD dd
-	ON vw.K12StudentId = dd.K12StudentId
+    ON vw.StudentIdentifierState = dd.StudentIdentifierState
 WHERE el.LeaIdentifierSea IS NULL
+AND es.SchoolIdentifierSea IS NULL
+AND dd.StudentIdentifierState IS NULL
 AND IDEAIndicator = 1
-AND (CalculatedAge BETWEEN 3 and 4
+AND (CalculatedAge BETWEEN 6 and 21
 	OR (CalculatedAge = 5
-		AND GradeLevel IS NULL 
-		AND GradeLevel IN ('PK', 'PK_1')))
+		AND GradeLevel IS NOT NULL 
+		AND GradeLevel NOT IN ('PK', 'PK_1')))
 GROUP BY
-		StudentIdentifierState
+	  vw.StudentIdentifierState
 	, LeaIdentifierSeaAccountability
 	, vw.SchoolIdentifierSea
 	, SchoolYear
@@ -92,7 +137,7 @@ GROUP BY
 	, CalculatedAge
 	, IdeaDisabilityTypeCode
 	, CalculatedAge
-	, IDEAEducationalEnvironmentForEarlyChildhood
+	, IDEAEducationalEnvironmentForSchoolAge
 	, GradeLevel
 	, EnglishLearnerStatus
 GO
