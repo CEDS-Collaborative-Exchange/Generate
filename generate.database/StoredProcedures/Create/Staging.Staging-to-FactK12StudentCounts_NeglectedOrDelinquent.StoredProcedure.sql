@@ -93,8 +93,6 @@ BEGIN
 			AND NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'MISSING'
 			and NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
 
-
-
 		CREATE CLUSTERED INDEX ix_tempvwNorDStatuses 
 			ON #vwNorDStatuses (
 				NeglectedOrDelinquentLongTermStatusCode,
@@ -112,49 +110,47 @@ BEGIN
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'neglectedordelinquent'	--DimFactTypeId = 15
 
-
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts
 		
 	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
-			StagingId								int not null
-			, SchoolYearId							int null
-			, FactTypeId							int null
-			, GradeLevelId							int null
-			, AgeId									int null
-			, RaceId								int null
-			, K12DemographicId						int null
-			, StudentCount							int null
-			, SEAId									int null
-			, IEUId									int null
-			, LEAId									int null
-			, K12SchoolId							int null
-			, K12StudentId							int null
-			, IdeaStatusId							int null
-			, DisabilityStatusId					int null
-			, LanguageId							int null
-			, MigrantStatusId						int null
-			, TitleIStatusId						int null
-			, TitleIIIStatusId						int null
-			, AttendanceId							int null
-			, CohortStatusId						int null
-			, NOrDStatusId							int null
-			, CTEStatusId							int null
-			, K12EnrollmentStatusId					int null
-			, EnglishLearnerStatusId				int null
-			, HomelessnessStatusId					int null
-			, EconomicallyDisadvantagedStatusId		int null
-			, FosterCareStatusId					int null
-			, ImmigrantStatusId						int null
-			, PrimaryDisabilityTypeId				int null
-			, SpecialEducationServicesExitDateId	int null
-			, MigrantStudentQualifyingArrivalDateId	int null
-			, LastQualifyingMoveDateId				int null
+			StagingId									int not null
+			, SchoolYearId								int null
+			, FactTypeId								int null
+			, GradeLevelId								int null
+			, AgeId										int null
+			, RaceId									int null
+			, K12DemographicId							int null
+			, StudentCount								int null
+			, SEAId										int null
+			, IEUId										int null
+			, LEAId										int null
+			, K12SchoolId								int null
+			, K12StudentId								int null
+			, IdeaStatusId								int null
+			, DisabilityStatusId						int null
+			, LanguageId								int null
+			, MigrantStatusId							int null
+			, TitleIStatusId							int null
+			, TitleIIIStatusId							int null
+			, AttendanceId								int null
+			, CohortStatusId							int null
+			, NOrDStatusId								int null
+			, CTEStatusId								int null
+			, K12EnrollmentStatusId						int null
+			, EnglishLearnerStatusId					int null
+			, HomelessnessStatusId						int null
+			, EconomicallyDisadvantagedStatusId			int null
+			, FosterCareStatusId						int null
+			, ImmigrantStatusId							int null
+			, PrimaryDisabilityTypeId					int null
+			, SpecialEducationServicesExitDateId		int null
+			, MigrantStudentQualifyingArrivalDateId		int null
+			, LastQualifyingMoveDateId					int null
 			, StatusStartDateNeglectedOrDelinquentId	int null
 			, StatusEndDateNeglectedOrDelinquentId		int null
 		)
-
 
 		INSERT INTO #Facts
 		SELECT DISTINCT
@@ -193,15 +189,12 @@ BEGIN
 			, -1														LastQualifyingMoveDateId	
 			, ISNULL(BeginDate.DimDateId, -1)							StatusStartDateNeglectedOrDelinquentId
 			, ISNULL(EndDate.DimDateId, -1)								StatusEndDateNeglectedOrDelinquentId
-			
-
 		FROM Staging.K12Enrollment ske
 
 		JOIN Staging.K12Organization sko
 			on isnull(ske.LeaIdentifierSeaAccountability,'') = isnull(sko.LeaIdentifierSea,'')
 			and isnull(ske.SchoolIdentifierSea,'') = isnull(sko.SchoolIdentifierSea,'')
 			and LEA_IsReportedFederally = 1
-			and LEA_OperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
 
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
@@ -307,16 +300,21 @@ BEGIN
 		LEFT JOIN RDS.DimDates EndDate 
 			ON sppnord.ProgramParticipationEndDate = EndDate.DateValue
 
-		where sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart is not NULL
-			and sppnord.NeglectedOrDelinquentStatus = 1 -- Only get NorD students
+	--Lea Operational Status	
+		LEFT JOIN Staging.SourceSystemReferenceData sssrd
+			ON sko.SchoolYear = sssrd.SchoolYear
+			AND sko.LEA_OperationalStatus = sssrd.InputCode
+			AND sssrd.Tablename = 'RefOperationalStatus'
+			AND sssrd.TableFilter = '000174'
 
-
+		WHERE sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart is not NULL
+			AND sppnord.NeglectedOrDelinquentStatus = 1 -- Only get NorD students
+			AND sssrd.OutputCode not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
 
 	--Clear the Fact table of the data about to be migrated  
 		DELETE RDS.FactK12StudentCounts
 		WHERE SchoolYearId = @SchoolYearId 
 			AND FactTypeId = @FactTypeId
-
 
 	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (
@@ -354,8 +352,6 @@ BEGIN
 			, [LastQualifyingMoveDateId]
 			, StatusStartDateNeglectedOrDelinquentId
 			, StatusEndDateNeglectedOrDelinquentId
-
-
 		)
 		SELECT 
 			[SchoolYearId]
@@ -392,7 +388,6 @@ BEGIN
 			, [LastQualifyingMoveDateId]
 			, StatusStartDateNeglectedOrDelinquentId
 			, StatusEndDateNeglectedOrDelinquentId
-
 		FROM #Facts
 
 		ALTER INDEX ALL ON RDS.FactK12StudentCounts REBUILD
@@ -400,7 +395,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 
-		insert into app.DataMigrationHistories
+		INSERT INTO app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
 
 	END CATCH
