@@ -1,4 +1,5 @@
-CREATE VIEW [Debug].[vwAssessments_StagingTables] 
+
+CREATE VIEW [debug].[vwAssessments_StagingTables] 
 AS
 	SELECT		DISTINCT 
 				enrollment.StudentIdentifierState
@@ -9,6 +10,7 @@ AS
 				,enrollment.MiddleName
 				,enrollment.Sex
 				,enrollment.BirthDate
+				,enrollment.SchoolYear
 
 				,assess.AssessmentTitle									AS 'Assessment-AssessmentTitle'
 				,assess.AssessmentIdentifier							AS 'Assessment-AssessmentIdentifier'
@@ -77,61 +79,61 @@ AS
 			ON		enrollment.StudentIdentifierState						=	programparticipation.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(programparticipation.LEAIdentifierSeaAccountability, '') 
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(programparticipation.SchoolIdentifierSea, '')
-			AND		programparticipation.ProgramParticipationBeginDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND		programparticipation.ProgramParticipationBeginDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
 
 	LEFT JOIN Staging.IdeaDisabilityType					ideaDisability
 			ON		enrollment.StudentIdentifierState						=	ideaDisability.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(ideaDisability.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(ideaDisability.SchoolIdentifierSea, '')
 			AND 	ideaDisability.IsPrimaryDisability = 1
-			AND		ideaDisability.RecordStartDateTime  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND		ideaDisability.RecordStartDateTime  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
 
 	LEFT JOIN Staging.K12PersonRace							race
 			ON		enrollment.SchoolYear									=	race.SchoolYear
 			AND		enrollment.StudentIdentifierState						=	race.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(race.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(race.SchoolIdentifierSea, '')
-			AND		race.RecordStartDateTime  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND		race.RecordStartDateTime  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate,'6/30/' + convert(varchar,enrollment.SchoolYear))
 
 	LEFT JOIN Staging.PersonStatus							el
 			ON		enrollment.StudentIdentifierState						=	el.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(el.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(el.SchoolIdentifierSea, '')
-			AND		el.EnglishLearner_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND		el.EnglishLearner_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
 
 	LEFT JOIN Staging.PersonStatus							econ
 			ON		enrollment.StudentIdentifierState						=	econ.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(econ.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(econ.SchoolIdentifierSea, '')
-			AND		econ.EconomicDisadvantage_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND		econ.EconomicDisadvantage_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate,'6/30/' + convert(varchar,enrollment.SchoolYear))
 
 	LEFT JOIN Staging.PersonStatus							migr
 			ON		enrollment.StudentIdentifierState						=	migr.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(migr.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(migr.SchoolIdentifierSea, '')
-			AND		migr.Migrant_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND		migr.Migrant_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
 
 	LEFT JOIN Staging.PersonStatus							home
 			ON		enrollment.StudentIdentifierState						=	home.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(home.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(home.SchoolIdentifierSea, '')
-			AND		home.Homelessness_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND		home.Homelessness_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
 
 	LEFT JOIN Staging.PersonStatus							foster
 			ON		enrollment.StudentIdentifierState						=	foster.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(foster.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(foster.SchoolIdentifierSea, '')
-			AND		foster.FosterCare_ProgramParticipationStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND		foster.FosterCare_ProgramParticipationStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
 
 	LEFT JOIN Staging.PersonStatus							mil
 			ON		enrollment.StudentIdentifierState						=	mil.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(mil.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(mil.SchoolIdentifierSea, '')
-			AND		mil.MilitaryConnected_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND		mil.MilitaryConnected_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
 
 	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1
-	AND assess.AssessmentAdministrationStartDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+	AND assess.AssessmentAdministrationStartDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
 	--AND enrollment.StudentIdentifierState = '12345678'	
 	--AND enrollment.LeaIdentifierSeaAccountability = '123'
 	--AND enrollment.SchoolIdentifierSea = '456'
@@ -162,3 +164,5 @@ AS
 	--AND mil.MilitaryConnected_StatusStartDate = ''
 	--AND mil.MilitaryConnected_StatusEndDate = ''
 	
+
+
