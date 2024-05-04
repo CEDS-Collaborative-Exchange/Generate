@@ -79,6 +79,12 @@ Views\\Drop,Staging.vwTitleI_StagingTables_C222.View.sql
 Views\\Create,Staging.vwTitleI_StagingTables_C222.View.sql
 Views\\Drop,RDS.vwDimNOrDStatuses.View.sql
 Views\\Create,RDS.vwDimNOrDStatuses.View.sql
+Views\\Drop,Staging.vwAssessments_StagingTables.View.sql
+Views\\Create,Staging.vwAssessments_StagingTables.View.sql
+Views\\Drop,Staging.vwAssessments_StagingTable_C225.View.sql
+Views\\Create,Staging.vwAssessments_StagingTable_C225.View.sql
+Views\\Drop,Staging.vwAssessments_StagingTable_C224.View.sql
+Views\\Create,Staging.vwAssessments_StagingTable_C224.View.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql
