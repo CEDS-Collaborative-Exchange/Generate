@@ -3,7 +3,7 @@ declare @generateReportId as INT, @factTypeId as INT, @tableTypeId as INT, @cate
 
 SET @reportCode = 'c225'
 
-SELECT @factTableId = FactTableId FROM app.FactTables where FactTableName = 'FactK12StudentCounts'
+SELECT @factTableId = FactTableId FROM app.FactTables where FactTableName = 'FactK12StudentAssessments'
 
 IF NOT EXISTS(SELECT 1 FROM app.GenerateReports where ReportCode = @reportCode)
 BEGIN

@@ -34,3 +34,7 @@ UPDATE App.GenerateReport_FactType
 SET FactTypeId = @AssessmentFactTypeId
 WHERE GenerateReportId = @GenerateReportId
 	
+-- Update name of NorD Wrapper
+update app.DataMigrationTasks
+set StoredProcedureName = 'App.Wrapper_Migrate_NeglectedOrDelinquent_to_RDS', Description = '119, 127, 218, 219, 220, 221'
+where StoredProcedureName = 'App.Wrapper_Migrate_NorD_to_RDS'

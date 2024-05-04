@@ -19,7 +19,6 @@ AS
 		, nord.NeglectedOrDelinquentAcademicOutcomeIndicator
 		, nord.EdFactsAcademicOrCareerAndTechnicalOutcomeType	
 		, nord.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType
-		, nord.NeglectedOrDelinquentExitOutcomeDate
 		, nord.DiplomaCredentialAwardDate
 		, nord.ProgressLevel_Reading
 		, nord.ProgressLevel_Math
