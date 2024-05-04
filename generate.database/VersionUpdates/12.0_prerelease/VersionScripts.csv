@@ -79,8 +79,8 @@ Views\\Drop,Staging.vwTitleI_StagingTables_C222.View.sql
 Views\\Create,Staging.vwTitleI_StagingTables_C222.View.sql
 Views\\Drop,RDS.vwDimNOrDStatuses.View.sql
 Views\\Create,RDS.vwDimNOrDStatuses.View.sql
-Views\\Drop,Staging.vwAssessments_StagingTables.View.sql
-Views\\Create,Staging.vwAssessments_StagingTables.View.sql
+Views\\Drop,Debug.vwAssessments_StagingTables.View.sql
+Views\\Create,Debug.vwAssessments_StagingTables.View.sql
 Views\\Drop,Staging.vwAssessments_StagingTable_C225.View.sql
 Views\\Create,Staging.vwAssessments_StagingTable_C225.View.sql
 Views\\Drop,Staging.vwAssessments_StagingTable_C224.View.sql

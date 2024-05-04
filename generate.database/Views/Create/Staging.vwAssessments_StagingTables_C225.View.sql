@@ -1,4 +1,5 @@
-﻿CREATE VIEW staging.vwAssessment_StagingTables_C224
+﻿CREATE VIEW staging.vwAssessments_StagingTables_C225
+	
 	
 	AS
 	-- PerformanceLevels requires DimAssessmentPerformanceLevels, SourceSystemReferenceData table AssessmentPerformanceLevelMap, and ToggleAssessments
@@ -29,8 +30,9 @@
 	-- NorDStudents with Assessments
 	   SELECT DISTINCT ta.[Subject] AS AssessmentAcademicSubject
 		   ,ProficiencyStatus = CASE WHEN CAST(RIGHT(replace(sar.[Assessment-AssessmentPerformanceLevelIdentifier], '_1', ''),1) AS INT) < ta.ProficientOrAboveLevel THEN 'NOTPROFICIENT' ELSE 'PROFICIENT' END
+ 		   ,sar.LEAIdentifierSeaAccountability  AS OrganizationIdentifierSea
 		   ,sar.schoolyear
-            FROM [Debug].[vwNeglectedOrDelinquent_StagingTables] vw
+           FROM [Debug].[vwNeglectedOrDelinquent_StagingTables] vw
             INNER JOIN[debug].[vwAssessments_StagingTables] sar
                   ON vw.StudentIdentifierState = sar.StudentIdentifierState
                   AND sar.LeaIdentifierSeaAccountability = isnull(vw.LeaIdentifierSeaAccountability,'')
@@ -47,10 +49,11 @@
 			ON replace(sar.[Assessment-AssessmentTypeAdministered], '_1', '') = replace(ta.AssessmentTypeCode, '_1', '')
 			AND replace(sar.[Results-GradeLevelWhenAssessed], '_1', '') = replace(ta.Grade, '_1', '') 
 			AND	replace(sar.[Assessment-AssessmentAcademicSubject], '_1', '') = replace(ta.AssessmentAcademicSubject, '_1', '')	
+	
 		WHERE
 		el.LeaIdentifierSea IS NULL	
 		AND vw.NeglectedOrDelinquentStatus = 1 -- Only students marked as NorD
-		AND sssrd.OutputCode = 1 -- Subpart 1 only (SEA)
+		AND sssrd.OutputCode = 2 -- Subpart 2 only (LEA)
 		AND vw.ProgramParticipationBeginDate >= CAST(('7/1/' + CAST((vw.SchoolYear -1) as varchar))  AS Date)
 		AND CAST(ISNULL(vw.ProgramParticipationEndDate, '1900-01-01') AS DATE) <= CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date)
 	
