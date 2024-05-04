@@ -14,15 +14,17 @@ AS
 
 	SELECT  DISTINCT
 		vw.StudentIdentifierState
-		,lea.SeaOrganizationIdentifierSea
-		,NeglectedOrDelinquentProgramEnrollmentSubpart
-		,vw.NeglectedOrDelingquentProgramEnrollmentSubpartEdFactsCode
-		,vw.EdFactsAcademicOrCareerAndTechnicalOutcomeType EdFactsAcademicOrCareerAndTechnicalOutcomeType_Staging
-		,EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode as EdFactsAcademicOrCareerAndTechnicalOutcomeType	
+		, lea.SeaOrganizationIdentifierSea
+		, vw.LEAIdentifierSeaAccountability
+		, NeglectedOrDelinquentProgramEnrollmentSubpart
+		, vw.NeglectedOrDelingquentProgramEnrollmentSubpartEdFactsCode
+		, vw.EdFactsAcademicOrCareerAndTechnicalOutcomeType EdFactsAcademicOrCareerAndTechnicalOutcomeType_Staging
+		, EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode as EdFactsAcademicOrCareerAndTechnicalOutcomeType	
 	FROM [Debug].[vwNeglectedOrDelinquent_StagingTables] vw
-	JOIN [RDS].[DimLeas] lea on lea.LeaIdentifierSea = vw.LEAIdentifierSeaAccountability
+	JOIN [RDS].[DimLeas] lea 
+		on lea.LeaIdentifierSea = vw.LEAIdentifierSeaAccountability
 	LEFT JOIN excludedLeas el
-		ON vw.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
+		ON  el.LeaIdentifierSea = vw.LEAIdentifierSeaAccountability
 	WHERE el.LeaIdentifierSea IS NULL
 		AND vw.NeglectedOrDelinquentStatus = 1 -- Only students marked as NorD
 		AND vw.NeglectedOrDelingquentProgramEnrollmentSubpartEdFactsCode = 2
