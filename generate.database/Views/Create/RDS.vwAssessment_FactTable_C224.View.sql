@@ -1,17 +1,25 @@
 CREATE VIEW [RDS].[vwAssessment_FactTable_C224] 
 AS
     SELECT 
-        f.SchoolYear
+          f.SchoolYear
         , f.K12StudentStudentIdentifierState
+		, f.StateANSICode
+		, f.StateAbbreviationCode
+		, f.StateAbbreviationDescription
+		, f.SeaOrganizationIdentifierSea
+		, f.SeaOrganizationName
         , f.AssessmentAcademicSubjectCode
-		, f.AssessmentAcademicSubjectEdFactsCode
+		, CASE f.AssessmentAcademicSubjectEdFactsCode
+            WHEN 'Math' THEN 'M'
+            ELSE f.AssessmentAcademicSubjectEdFactsCode
+          END AS AssessmentAcademicSubjectEdFactsCode
 		, ata.ProficientOrAboveLevel
 		, ata.PerformanceLevels
 		, RIGHT(f.AssessmentPerformanceLevelLabel, 1) AS AssessmentPerformanceLevelLabel
         , CASE
             WHEN ata.ProficientOrAboveLevel <= RIGHT(f.AssessmentPerformanceLevelLabel, 1) THEN 'PROFICIENT'
             ELSE 'NOTPROFICIENT'
-        END AS PROFICIENCYSTATUS
+        END AS ProficiencyStatusEdFactsCode
     FROM  debug.vwAssessment_FactTable f
     JOIN  App.ToggleAssessments ata
         ON f.AssessmentAcademicSubjectEdFactsCode = ata.Subject
