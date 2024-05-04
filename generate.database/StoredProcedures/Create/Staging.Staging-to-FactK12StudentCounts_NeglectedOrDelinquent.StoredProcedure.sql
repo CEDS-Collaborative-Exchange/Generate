@@ -153,7 +153,6 @@ BEGIN
 			, LastQualifyingMoveDateId				int null
 			, StatusStartDateNeglectedOrDelinquentId	int null
 			, StatusEndDateNeglectedOrDelinquentId		int null
-			, OutcomeExitDateNeglectedOrDelinquentId	int null
 		)
 
 
@@ -194,7 +193,7 @@ BEGIN
 			, -1														LastQualifyingMoveDateId	
 			, ISNULL(BeginDate.DimDateId, -1)							StatusStartDateNeglectedOrDelinquentId
 			, ISNULL(EndDate.DimDateId, -1)								StatusEndDateNeglectedOrDelinquentId
-			, -1														OutcomeExitDateNeglectedOrDelinquentId		
+			
 
 		FROM Staging.K12Enrollment ske
 
@@ -349,7 +348,7 @@ BEGIN
 			, [LastQualifyingMoveDateId]
 			, StatusStartDateNeglectedOrDelinquentId
 			, StatusEndDateNeglectedOrDelinquentId
-			, OutcomeExitDateNeglectedOrDelinquentId
+
 
 		)
 		SELECT 
@@ -387,7 +386,6 @@ BEGIN
 			, [LastQualifyingMoveDateId]
 			, StatusStartDateNeglectedOrDelinquentId
 			, StatusEndDateNeglectedOrDelinquentId
-			, OutcomeExitDateNeglectedOrDelinquentId
 
 		FROM #Facts
 
