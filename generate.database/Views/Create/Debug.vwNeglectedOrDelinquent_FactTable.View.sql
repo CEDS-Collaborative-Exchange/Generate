@@ -19,6 +19,8 @@ AS
 			, Schools.NameOfInstitution
 
 			--Neglected or Delinquent 
+			, NorD.NeglectedOrDelinquentProgramTypeCode
+			, NorD.NeglectedOrDelinquentProgramTypeEdFactsCode
 			, NorD.NeglectedOrDelinquentStatusCode
 			, NorD.NeglectedOrDelinquentStatusDescription
 			, NorD.NeglectedOrDelinquentProgramEnrollmentSubpartCode
@@ -48,4 +50,4 @@ AS
 	--	--AND SchoolYears.SchoolYear = 2024
 	AND Fact.FactTypeId = 15
 
-	
+

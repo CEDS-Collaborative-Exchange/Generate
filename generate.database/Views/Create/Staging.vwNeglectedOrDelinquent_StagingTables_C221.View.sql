@@ -7,24 +7,24 @@ AS
 			OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
 	)
 
-	SELECT distinct
+SELECT  DISTINCT
 		vw.StudentIdentifierState
 		,lea.SeaOrganizationIdentifierSea
 		,NeglectedOrDelinquentProgramEnrollmentSubpart
-		,EdFactsAcademicOrCareerAndTechnicalOutcomeExitType	
+		,vw.NeglectedOrDelingquentProgramEnrollmentSubpartEdFactsCode
+		,vw.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType EdFactsAcademicOrCareerAndTechnicalOutcomeExitType_Staging
+		,EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode as EdFactsAcademicOrCareerAndTechnicalOutcomeExitType	
 	FROM [Debug].[vwNeglectedOrDelinquent_StagingTables] vw
-	JOIN Staging.SourceSystemReferenceData sssrd
-		on sssrd.SchoolYear = vw.SchoolYear
-		and sssrd.TableName = 'refNeglectedOrDelinquentProgramEnrollmentSubpart'
-		and sssrd.InputCode = vw.NeglectedOrDelinquentProgramEnrollmentSubpart
 	JOIN [RDS].[DimLeas] lea on lea.LeaIdentifierSea = vw.LEAIdentifierSeaAccountability
 	LEFT JOIN excludedLeas el
 		ON vw.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
 	WHERE el.LeaIdentifierSea IS NULL
 		AND vw.NeglectedOrDelinquentStatus = 1 -- Only students marked as NorD
-		AND sssrd.OutputCode = 2 -- Subpart 2 only (LEA)
+		AND vw.NeglectedOrDelingquentProgramEnrollmentSubpartEdFactsCode = 2
 		AND vw.ProgramParticipationBeginDate >= CAST(('7/1/' + CAST((vw.SchoolYear -1) as varchar))  AS Date)
 		AND CAST(ISNULL(vw.ProgramParticipationEndDate, '1900-01-01') AS DATE) <= CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date)
+		AND vw.ProgramParticipationBeginDate BETWEEN vw.EnrollmentEntryDate AND ISNULL(vw.EnrollmentExitDate, CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date))
+
 
 
 

@@ -197,6 +197,12 @@ BEGIN
 
 		FROM Staging.K12Enrollment ske
 
+		JOIN Staging.K12Organization sko
+			on isnull(ske.LeaIdentifierSeaAccountability,'') = isnull(sko.LeaIdentifierSea,'')
+			and isnull(ske.SchoolIdentifierSea,'') = isnull(sko.SchoolIdentifierSea,'')
+			and LEA_IsReportedFederally = 1
+			and LEA_OperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING', 'Closed_1', 'FutureAgency_1', 'Inactive_1')
+
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 			and ske.SchoolYear = @SchoolYear
