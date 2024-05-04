@@ -31,7 +31,7 @@
 		   ,ProficiencyStatus = CASE WHEN CAST(RIGHT(replace(sar.[Assessment-AssessmentPerformanceLevelIdentifier], '_1', ''),1) AS INT) < ta.ProficientOrAboveLevel THEN 'NOTPROFICIENT' ELSE 'PROFICIENT' END
 		   ,sar.schoolyear
             FROM [Debug].[vwNeglectedOrDelinquent_StagingTables] vw
-            INNER JOIN[debug].[vwAssessments_StagingTables] sar
+            INNER JOIN[debug].[vwAssessment_StagingTables] sar
                   ON vw.StudentIdentifierState = sar.StudentIdentifierState
                   AND sar.LeaIdentifierSeaAccountability = isnull(vw.LeaIdentifierSeaAccountability,'')
                   AND sar.SchoolIdentifierSea = isnull(vw.SchoolIdentifierSea, '')

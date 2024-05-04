@@ -7,7 +7,7 @@ AS
 		, f.AssessmentAcademicSubjectEdFactsCode
 		, ata.ProficientOrAboveLevel
 		, ata.PerformanceLevels
-		, RIGHT(f.AssessmentPerformanceLevelLabel, 1)
+		, RIGHT(f.AssessmentPerformanceLevelLabel, 1) AS AssessmentPerformanceLevelLabel
         , CASE
             WHEN ata.ProficientOrAboveLevel <= RIGHT(f.AssessmentPerformanceLevelLabel, 1) THEN 'PROFICIENT'
             ELSE 'NOTPROFICIENT'

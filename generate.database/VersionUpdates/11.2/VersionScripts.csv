@@ -21,10 +21,10 @@ VersionUpdates\\11.2\\Views\\Drop,RDS.vwDimCohortStatuses.View.sql
 VersionUpdates\\11.2\\Views\\Create,RDS.vwDimCohortStatuses.View.sql
 VersionUpdates\\11.2\\Views\\Drop,RDS.vwDimTitleIIIStatuses.View.sql
 VersionUpdates\\11.2\\Views\\Create,RDS.vwDimTitleIIIStatuses.View.sql
-VersionUpdates\\11.2\\Views\\Drop,Debug.vwAssessments_FactTable.View.sql
-VersionUpdates\\11.2\\Views\\Create,Debug.vwAssessments_FactTable.View.sql
-VersionUpdates\\11.2\\Views\\Drop,Debug.vwAssessments_StagingTables.View.sql
-VersionUpdates\\11.2\\Views\\Create,Debug.vwAssessments_StagingTables.View.sql
+VersionUpdates\\11.2\\Views\\Drop,Debug.vwAssessment_FactTable.View.sql
+VersionUpdates\\11.2\\Views\\Create,Debug.vwAssessment_FactTable.View.sql
+VersionUpdates\\11.2\\Views\\Drop,Debug.vwAssessment_StagingTables.View.sql
+VersionUpdates\\11.2\\Views\\Create,Debug.vwAssessment_StagingTables.View.sql
 VersionUpdates\\11.2\\Views\\Drop,Debug.vwHomeless_FactTable.View.sql
 VersionUpdates\\11.2\\Views\\Create,Debug.vwHomeless_FactTable.View.sql
 VersionUpdates\\11.2\\Views\\Drop,Debug.vwHomeless_StagingTables.View.sql
