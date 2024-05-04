@@ -21,10 +21,6 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 			, ecodis.EligibilityStatusForSchoolFoodServicePrograms -- For FS033
 			, ecodis.NationalSchoolLunchProgramDirectCertificationIndicator -- For FS033
 
-			, foster.ProgramType_FosterCare -- For FS222
-			, foster.FosterCare_ProgramParticipationStartDate -- For FS222
-			, foster.FosterCare_ProgramParticipationEndDate -- For FS222
-
 			, enrollment.HispanicLatinoEthnicity
 			, race.RaceType -- For FS052
 			, race.RecordStartDateTime					AS RaceStartDate
@@ -65,12 +61,6 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 				AND		ISNULL(ecodis.LEAIdentifierSeaAccountability, '')			    =	ISNULL(enrollment.LEAIdentifierSeaAccountability, '')
 				AND		ISNULL(ecodis.SchoolIdentifierSea, '')						    =	ISNULL(enrollment.SchoolIdentifierSea, '')
 				AND		toggle.MembershipDate BETWEEN EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusEndDate, '1/1/9999')
-
-		LEFT JOIN Staging.PersonStatus							foster
-				ON		foster.StudentIdentifierState								    =	enrollment.StudentIdentifierState
-				AND		ISNULL(foster.LEAIdentifierSeaAccountability, '')			    =	ISNULL(enrollment.LEAIdentifierSeaAccountability, '')
-				AND		ISNULL(foster.SchoolIdentifierSea, '')						    =	ISNULL(enrollment.SchoolIdentifierSea, '')
-				AND		toggle.MembershipDate BETWEEN foster.FosterCare_ProgramParticipationStartDate AND ISNULL(foster.FosterCare_ProgramParticipationEndDate, '1/1/9999')
 
 		--uncomment/modify the where clause conditions as necessary for validation
 		WHERE 1 = 1
