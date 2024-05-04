@@ -64,11 +64,11 @@ AS
 		AND rsy.SchoolYear = sssrd3.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd5
 		ON rdnods.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = sssrd5.OutputCode
-		AND sssrd5.TableName = 'RefEdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode'
+		AND sssrd5.TableName = 'RefEdFactsAcademicOrCareerAndTechnicalOutcomeType'
 		AND rsy.SchoolYear = sssrd5.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd6
 		ON rdnods.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = sssrd6.OutputCode
-		AND sssrd6.TableName = 'RefEdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode'
+		AND sssrd6.TableName = 'RefEdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
 		AND rsy.SchoolYear = sssrd6.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd7
 		ON rdnods.NeglectedOrDelinquentProgramEnrollmentSubpartCode = sssrd7.OutputCode
