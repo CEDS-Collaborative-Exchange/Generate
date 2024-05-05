@@ -23,6 +23,8 @@ AS
             ELSE 'NOTPROFICIENT'
         END AS ProficiencyStatusEdFactsCode
     FROM  debug.vwAssessment_FactTable f
+    JOIN rds.DimLeas rdl
+        ON f.DimLeaId = rdl.DimLeaId
     JOIN  App.ToggleAssessments ata
         ON f.AssessmentAcademicSubjectEdFactsCode = ata.Subject
         AND f.AssessmentTitle = ata.AssessmentName
@@ -31,3 +33,4 @@ AS
     WHERE f.AssessmentAcademicSubjectCode IN ('01166', '13373')
 		AND f.NeglectedOrDelinquentStatusCode = 'Yes'
 	    AND f.NeglectedOrDelinquentProgramEnrollmentSubpartCode = '2'
+        AND rdl.LeaOperationalStatus NOT IN ('Closed', 'FutureAgency', 'Inactive', 'MISSING')        

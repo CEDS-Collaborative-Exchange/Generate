@@ -17,6 +17,7 @@ AS
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaIdentifierNces
 			, LEAs.LeaOrganizationName
+			, LEAs.DimLeaId	
 			, Schools.SchoolIdentifierSea
 			, Schools.NameOfInstitution
 

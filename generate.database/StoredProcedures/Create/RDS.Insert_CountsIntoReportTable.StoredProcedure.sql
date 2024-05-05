@@ -1,4 +1,4 @@
-CREATE PROCEDURE RDS.Insert_CountsIntoReportTable
+CREATE PROCEDURE [RDS].[Insert_CountsIntoReportTable]
 	@ReportCode varchar(10),
 	@SubmissionYear VARCHAR(10), 
 	@ReportTableName VARCHAR(50),
@@ -151,7 +151,7 @@ AS
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @SQLStatement = REPLACE(REPLACE(@SQLStatement, ',NOCATS', ''), '_NOCATS', '')
-		select @SQLStatement
+		--select @SQLStatement
 		EXEC sp_executesql @SQLStatement;
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END
@@ -328,7 +328,7 @@ AS
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @SQLStatement = REPLACE(REPLACE(@SQLStatement, ',NOCATS', ''), '_NOCATS', '')
-		select @SQLStatement
+		--select @SQLStatement
 		EXEC sp_executesql @SQLStatement;
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END

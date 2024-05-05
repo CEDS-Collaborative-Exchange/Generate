@@ -21,6 +21,8 @@ AS
             ELSE 'NOTPROFICIENT'
         END AS ProficiencyStatusEdFactsCode
     FROM  debug.vwAssessment_FactTable f
+    JOIN rds.DimLeas rdl
+        ON f.DimLeaId = rdl.DimLeaId
     JOIN  App.ToggleAssessments ata
         ON f.AssessmentAcademicSubjectEdFactsCode = ata.Subject
         AND f.AssessmentTitle = ata.AssessmentName
@@ -32,3 +34,4 @@ AS
         AND f.AssessmentRegistrationParticipationIndicatorCode = 'Participated'
         AND f.AssessmentRegistrationReasonNotCompletingCode = 'MISSING'
         AND f.AssessmentPerformanceLevelLabel IS NOT NULL
+        AND rdl.LeaOperationalStatus NOT IN ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
