@@ -13,16 +13,17 @@ AS
 
 				,assess.AssessmentTitle									AS 'Assessment-AssessmentTitle'
 				,assess.AssessmentIdentifier							AS 'Assessment-AssessmentIdentifier'
-				,assess.AssessmentAdministrationStartDate				AS 'Assessment-AssessmentAdministrationStartDate'
-				,assess.AssessmentAdministrationFinishDate				AS 'Assessment-AssessmentAdministrationFinishDate'
 				,assess.AssessmentAcademicSubject						AS 'Assessment-AssessmentAcademicSubject'
+				,assess.AssessmentAdministrationFinishDate				AS 'Assessment-AssessmentAdministrationFinishDate'
 				,assess.AssessmentPurpose								AS 'Assessment-AssessmentPurpose'
 				,assess.AssessmentPerformanceLevelIdentifier			AS 'Assessment-AssessmentPerformanceLevelIdentifier'
 				,assess.AssessmentTypeAdministered						AS 'Assessment-AssessmentTypeAdministered'
 				,assess.AssessmentTypeAdministeredToEnglishLearners		AS 'Assessment-AssessmentTypeAdministeredToEnglishLearners'
 
+				,results.AssessmentTypeAdministered						AS 'Results-AssessmentTypeAdministered'
 				,results.GradeLevelWhenAssessed							AS 'Results-GradeLevelWhenAssessed'
 				,results.AssessmentAdministrationStartDate				AS 'Results-AssessmentAdministrationStartDate'
+				,results.AssessmentAcademicSubject						AS 'Results-AssessmentAcademicSubject'
 				,results.AssessmentIdentifier							AS 'Results-AssessmentIdentifier'
 				,results.AssessmentPerformanceLevelIdentifier			AS 'Results-AssessmentPerformanceLevelIdentifier'
 				,results.AssessmentRegistrationParticipationIndicator	AS 'Results-AssessmentRegistrationParticipationIndicator'
@@ -135,14 +136,14 @@ AS
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(mil.SchoolIdentifierSea, '')
 		AND		mil.MilitaryConnected_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
 
-	INNER JOIN Staging.ProgramParticipationNorD				nord
+	LEFT JOIN Staging.ProgramParticipationNorD				nord
 		ON		enrollment.StudentIdentifierState						=	nord.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(nord.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(nord.SchoolIdentifierSea, '')
 
 	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1
-	AND assess.AssessmentAdministrationStartDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
+	AND results.AssessmentAdministrationStartDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
 	--AND enrollment.StudentIdentifierState = '12345678'	
 	--AND enrollment.LeaIdentifierSeaAccountability = '123'
 	--AND enrollment.SchoolIdentifierSea = '456'

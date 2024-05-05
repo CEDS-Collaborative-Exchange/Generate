@@ -97,8 +97,8 @@ BEGIN
 			on sppnord.StudentIdentifierState = sar.StudentIdentifierState
 			and sar.LeaIdentifierSeaAccountability = isnull(sppnord.LeaIdentifierSeaAccountability,'')
 			and sar.SchoolIdentifierSea = isnull(sppnord.SchoolIdentifierSea, '')
-			and sppnord.ProgramParticipationBeginDate <= sar.AssessmentAdministrationFinishDate
-			and isnull(sppnord.ProgramParticipationEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate 
+			and sppnord.ProgramParticipationBeginDate <= CAST('6/30/' + CAST(sar.SchoolYear AS VARCHAR(4)) AS Date) -- Only students who were in the program during the school year
+			and isnull(sppnord.ProgramParticipationEndDate, '1/1/9999') >= CAST('7/1/' + CAST(sar.SchoolYear - 1 AS VARCHAR(10))  AS Date) -- Only students who were in the program during the school year
 		left join #vwNOrDStatuses vw
 			on vw.SchoolYear = @SchoolYear
 			AND vw.NeglectedOrDelinquentProgramEnrollmentSubpartMap = sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart
