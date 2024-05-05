@@ -15,6 +15,7 @@ AS
 				,assess.AssessmentIdentifier							AS 'Assessment-AssessmentIdentifier'
 				,assess.AssessmentAcademicSubject						AS 'Assessment-AssessmentAcademicSubject'
 				,assess.AssessmentAdministrationFinishDate				AS 'Assessment-AssessmentAdministrationFinishDate'
+				,assess.AssessmentType									AS 'Assessment-AssessmentType'		
 				,assess.AssessmentPurpose								AS 'Assessment-AssessmentPurpose'
 				,assess.AssessmentPerformanceLevelIdentifier			AS 'Assessment-AssessmentPerformanceLevelIdentifier'
 				,assess.AssessmentTypeAdministered						AS 'Assessment-AssessmentTypeAdministered'
@@ -29,6 +30,7 @@ AS
 				,results.AssessmentRegistrationParticipationIndicator	AS 'Results-AssessmentRegistrationParticipationIndicator'
 				,results.AssessmentRegistrationReasonNotCompleting		AS 'Results-AssessmentRegistrationReasonNotCompleting'
 				,results.AssessmentRegistrationReasonNotTested			AS 'Results-AssessmentRegistrationReasonNotTested'
+				,results.AssessmentScoreMetricType						AS 'Results-AssessmentScoreMetricType'
 
 				,race.RaceType
 				,race.RecordStartDateTime
