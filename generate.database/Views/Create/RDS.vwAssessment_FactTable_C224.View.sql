@@ -29,3 +29,6 @@ AS
     WHERE f.AssessmentAcademicSubjectCode IN ('01166', '13373')
 		AND f.NeglectedOrDelinquentStatusCode = 'Yes'
 	    AND f.NeglectedOrDelinquentProgramEnrollmentSubpartCode = '1'
+        AND f.AssessmentRegistrationParticipationIndicatorCode = 'Participated'
+        AND f.AssessmentRegistrationReasonNotCompletingCode = 'MISSING'
+        AND f.AssessmentPerformanceLevelLabel IS NOT NULL

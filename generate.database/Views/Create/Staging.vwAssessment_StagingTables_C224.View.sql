@@ -48,8 +48,10 @@
 		AND	replace(sar.[Assessment-AssessmentAcademicSubject], '_1', '') = replace(ta.AssessmentAcademicSubject, '_1', '')	
 	WHERE
 		    el.LeaIdentifierSea IS NULL	
+		AND sar.[Results-AssessmentRegistrationParticipationIndicator] = 1 -- Only students who participated in the assessment
 		AND sar.NeglectedOrDelinquentStatus = 1 -- Only students marked as NorD
 		AND sssrd.OutputCode = 1 -- Subpart 1 only (SEA)
-		AND sar.NorDProgramParticipationBeginDate <= CAST(('6/30/' + CAST((sar.SchoolYear) as varchar))  AS Date)
-		AND CAST(ISNULL(sar.NorDProgramParticipationEndDate, '9999-01-01') AS DATE) >= CAST(('7/1/' + CAST(sar.SchoolYear - 1 as varchar))  AS Date)
-	
+		AND sar.NorDProgramParticipationBeginDate <= CAST(('6/30/' + CAST((sar.SchoolYear) as varchar))  AS Date) -- Only students who were in the program during the school year
+			AND CAST(ISNULL(sar.NorDProgramParticipationEndDate, '9999-01-01') AS DATE) >= CAST(('7/1/' + CAST(sar.SchoolYear - 1 as varchar))  AS Date)
+		AND sar.[Results-AssessmentRegistrationReasonNotCompleting] IS NULL -- Only students who completed the assessment
+		AND sar.[Results-AssessmentPerformanceLevelIdentifier] IS NOT NULL -- Only students who have a performance level

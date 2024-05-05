@@ -36,12 +36,21 @@ AS
 	-- Clear out last run
 	DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId
 
-	DECLARE @SQLStatement NVARCHAR(MAX);
+	DECLARE @SQLStatement NVARCHAR(MAX), @factTypeCode VARCHAR(100);
+
+	select @factTypeCode = (select dft.FactTypeCode
+							from app.GenerateReport_FactType grft
+								inner join app.GenerateReports gr
+									on grft.GenerateReportId = gr.GenerateReportId
+								inner join rds.DimFactTypes dft
+									on grft.FactTypeId = dft.DimFactTypeId
+							where gr.ReportCode = @reportCode)
 
 	SET @SQLStatement = 
 	'SELECT *
 	INTO ##' + @ReportCode + 'Staging
-	FROM Staging.vw' + rds.Get_FactTypeByReport(@ReportCode) + '_StagingTables_' + @ReportCode 
+	FROM Staging.vw' + @factTypeCode + '_StagingTables_' + @ReportCode 
+
 
 	EXEC sp_executesql @SQLStatement;
 
