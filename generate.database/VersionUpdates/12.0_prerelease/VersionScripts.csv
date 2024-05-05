@@ -3,6 +3,7 @@ VersionUpdates\\12.0_prerelease,App.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,JunkTablePopulation.sql,0
 VersionUpdates\\12.0_prerelease,Staging.TableChages.sql,0
+VersionUpdates\\12.0_prerelease,CorrectDataMigrationTasks.sql,0
 VersionUpdates\\12.0_prerelease,Insert Staging Validation Rules.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS218.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS219.sql,0
@@ -113,6 +114,10 @@ StoredProcedures\\Drop,Staging.RunEndToEndTest.StoredProcedure.sql
 StoredProcedures\\Create,Staging.RunEndToEndTest.StoredProcedure.sql 
 StoredProcedures\\Drop,RDS.CreateDebugTables.StoredProcedure.sql
 StoredProcedures\\Create,RDS.CreateDebugTables.StoredProcedure.sql
+StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql
+StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql
+StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql
+StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Migrate_Data_ETL_IMPLEMENTATION_STEP06_PsStudentEnrollment_WithPerson_EncapsulatedCode.StoredProcedure.sql
 Functions\\Drop,RDS.Get_FactTypeByReport.UserDefinedFunction.sql
 Functions\\Create,RDS.Get_FactTypeByReport.UserDefinedFunction.sql

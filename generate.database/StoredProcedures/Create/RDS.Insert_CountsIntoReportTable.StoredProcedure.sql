@@ -10,15 +10,6 @@ AS
 	DECLARE @FactTypeCode VARCHAR(50)
 	select @FactTypeCode = RDS.Get_FactTypeByReport(@ReportCode)
 
-	--select @FactTypeCode = (select dft.FactTypeCode
-	--						from app.GenerateReport_FactType grft
-	--							inner join app.GenerateReports gr
-	--								on grft.GenerateReportId = gr.GenerateReportId
-	--							inner join rds.DimFactTypes dft
-	--								on grft.FactTypeId = dft.DimFactTypeId
-	--						where gr.ReportCode = @reportCode)
-
-
 	DECLARE @SchoolYearId INT
 	SELECT @SchoolYearId = DimSchoolYearId
 	FROM RDS.DimSchoolYears 
