@@ -34,4 +34,4 @@ AS
         AND f.AssessmentRegistrationParticipationIndicatorCode = 'Participated'
         AND f.AssessmentRegistrationReasonNotCompletingCode = 'MISSING'
         AND f.AssessmentPerformanceLevelLabel IS NOT NULL
-        AND rdl.OperationalStatus NOT IN ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+        AND rdl.LeaOperationalStatus NOT IN ('Closed', 'FutureAgency', 'Inactive', 'MISSING')

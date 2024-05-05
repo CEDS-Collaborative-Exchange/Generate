@@ -33,4 +33,4 @@ AS
     WHERE f.AssessmentAcademicSubjectCode IN ('01166', '13373')
 		AND f.NeglectedOrDelinquentStatusCode = 'Yes'
 	    AND f.NeglectedOrDelinquentProgramEnrollmentSubpartCode = '2'
-        AND rdl.OperationalStatus NOT IN ('Closed', 'FutureAgency', 'Inactive', 'MISSING')        
+        AND rdl.LeaOperationalStatus NOT IN ('Closed', 'FutureAgency', 'Inactive', 'MISSING')        
