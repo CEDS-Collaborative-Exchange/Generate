@@ -19,15 +19,15 @@ AS
 
 	DECLARE cursor_name CURSOR FOR
     SELECT N'
-		DELETE FROM rds.' + @ReportTableName + ' WHERE ReportCode = ''' + @ReportCode + ''' AND ReportYear = ''' + @SubmissionYear + CASE WHEN STRING_AGG(c.CategoryCode, '') THEN '' ELSE ''' AND CategorySetCode = ''' + CategorySetCode END + ''' AND ReportLevel = ''' + aol.LevelCode + '''
+		DELETE FROM rds.' + @ReportTableName + ' WHERE ReportCode = ''' + @ReportCode + ''' AND ReportYear = ''' + @SubmissionYear + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE ''' AND CategorySetCode = ''' + CategorySetCode END + ''' AND ReportLevel = ''' + aol.LevelCode + '''
 
 		-- insert ' + aol.LevelCode + ' sql
-		' + CASE WHEN STRING_AGG(c.CategoryCode, '') THEN '' ELSE '
+		' + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE '
 		;WITH PermittedValues AS (
 			SELECT DISTINCT 
-			' + ISNULL(STRING_AGG('pv' + c.CategoryCode + '.CategoryOptionCode AS ' + c.CategoryCode, CHAR(10) + '		, ') + '
-			FROM ' + ISNULL(STRING_AGG('app.CategoryCodeOptionsByReportAndYear pv' + c.CategoryCode, CHAR(10) + '		CROSS JOIN ') + '
-			WHERE ' + ISNULL(STRING_AGG('pv' + c.CategoryCode + '.ReportCode = ''' + @ReportCode + ''' AND pv' + c.CategoryCode + '.SubmissionYear = ' + @SubmissionYear + ' AND pv' + c.CategoryCode + '.CategorySetCode = ''' + cs.CategorySetCode + ''' AND pv' + c.CategoryCode + '.CategoryCode = ''' + c.CategoryCode + ''' AND pv' + c.CategoryCode + '.TableTypeAbbrv = ''' + att.TableTypeAbbrv + '''', ' AND ') + '
+			' + STRING_AGG('pv' + c.CategoryCode + '.CategoryOptionCode AS ' + c.CategoryCode, CHAR(10) + '		, ') + '
+			FROM ' + STRING_AGG('app.CategoryCodeOptionsByReportAndYear pv' + c.CategoryCode, CHAR(10) + '		CROSS JOIN ') + '
+			WHERE ' + STRING_AGG('pv' + c.CategoryCode + '.ReportCode = ''' + @ReportCode + ''' AND pv' + c.CategoryCode + '.SubmissionYear = ' + @SubmissionYear + ' AND pv' + c.CategoryCode + '.CategorySetCode = ''' + cs.CategorySetCode + ''' AND pv' + c.CategoryCode + '.CategoryCode = ''' + c.CategoryCode + ''' AND pv' + c.CategoryCode + '.TableTypeAbbrv = ''' + att.TableTypeAbbrv + '''', ' AND ') + '
 		)' END + '
 		insert into rds.' + @ReportTableName + '
 		(
@@ -45,7 +45,7 @@ AS
 			ParentOrganizationIdentifierSea,
 			TableTypeAbbrv,
 			TotalIndicator,
-			' + CASE WHEN STRING_AGG(c.CategoryCode, '') OR CategorySetCode = 'TOT' THEN '' ELSE '' + ISNULL(STRING_AGG(d.DimensionFieldName, ','), '') + ',' END + '
+			' + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' OR CategorySetCode = 'TOT' THEN '' ELSE '' + ISNULL(STRING_AGG(d.DimensionFieldName, ','), '') + ',' END + '
 			' + @CountColumn + '
 				
 		)
@@ -54,7 +54,7 @@ AS
 			''' + SubmissionYear + ''',
 			''' + LevelCode + ''',
 			''' + CategorySetCode + ''',
-			' + CASE WHEN STRING_AGG(c.CategoryCode, '') OR CategorySetCode = 'TOT' THEN 'NULL,' ELSE '''' + ISNULL(STRING_AGG('|' + CategoryCode + '|', ','), '') + ''',' END + '
+			' + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' OR CategorySetCode = 'TOT' THEN 'NULL,' ELSE '''' + ISNULL(STRING_AGG('|' + CategoryCode + '|', ','), '') + ''',' END + '
 			StateANSICode,
 			StateAbbreviationCode,
 			StateAbbreviationDescription,
@@ -77,12 +77,12 @@ AS
 			END  + ',
 			''' + att.TableTypeAbbrv + ''' as TableTypeAbbrv,
 			''' + CASE 
-					WHEN STRING_AGG(c.CategoryCode, '') 
+					WHEN STRING_AGG(c.CategoryCode, '') = ''
 						OR cs.CategorySetCode = 'TOT'
 						OR cs.CategorySetCode LIKE 'ST%' THEN 'Y'
 					ELSE 'N'
 				  END + ''' as TotalIndicator, ' 
-				  + CASE WHEN STRING_AGG(c.CategoryCode, '') OR CategorySetCode = 'TOT' THEN '' ELSE '' + ISNULL(STRING_AGG(DimensionFieldName + 'EDFactsCode', ','), '') + ',' END + '
+				  + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' OR CategorySetCode = 'TOT' THEN '' ELSE '' + ISNULL(STRING_AGG(DimensionFieldName + 'EDFactsCode', ','), '') + ',' END + '
 			count(' + CASE @IsDistinctCount WHEN 1 THEN 'DISTINCT' ELSE '' END + ' cs.' + @IdentifierToCount + ')
 		FROM rds.vw' + @FactTypeCode + '_FactTable_' + @ReportCode + ' cs 
 		' + CASE 
@@ -111,7 +111,7 @@ AS
 				WHEN 'LEA' THEN 'LeaOrganizationName' 
 				WHEN 'SCH' THEN 'NameOfInstitution'			
 			END  + '
-			'  + CASE WHEN STRING_AGG(c.CategoryCode, '') OR CategorySetCode = 'TOT' THEN '' ELSE ',' + ISNULL(STRING_AGG(DimensionFieldName + 'EdFactsCode', ','), '')  END + '
+			'  + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' OR CategorySetCode = 'TOT' THEN '' ELSE ',' + ISNULL(STRING_AGG(DimensionFieldName + 'EdFactsCode', ','), '')  END + '
 			
 			'
 	FROM app.GenerateReports gr
@@ -236,7 +236,7 @@ AS
 			ParentOrganizationIdentifierSea,
 			TableTypeAbbrv,
 			TotalIndicator,
-			' + CASE WHEN STRING_AGG(c.CategoryCode, '') OR CategorySetCode = 'TOT' THEN '' ELSE '' + ISNULL(STRING_AGG(d.DimensionFieldName, ','), '') + ',' END + '
+			' + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' OR CategorySetCode = 'TOT' THEN '' ELSE '' + ISNULL(STRING_AGG(d.DimensionFieldName, ','), '') + ',' END + '
 			' + @CountColumn + '
 				
 		)
@@ -244,8 +244,8 @@ AS
 			''' + ReportCode + ''',
 			''' + SubmissionYear + ''',
 			''' + LevelCode + ''',
-			''' + CASE WHEN STRING_AGG(c.CategoryCode, '') THEN '' ELSE CategorySetCode END + ''',
-			' + CASE WHEN STRING_AGG(c.CategoryCode, '') OR CategorySetCode = 'TOT' THEN 'NULL,' ELSE '''' + ISNULL(STRING_AGG('|' + CategoryCode + '|', ','), '') + ''',' END + '
+			''' + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE CategorySetCode END + ''',
+			' + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' OR CategorySetCode = 'TOT' THEN 'NULL,' ELSE '''' + ISNULL(STRING_AGG('|' + CategoryCode + '|', ','), '') + ''',' END + '
 			org.StateANSICode,
 			org.StateAbbreviationCode,
 			org.StateAbbreviationDescription,
@@ -268,12 +268,12 @@ AS
 			END  + ',
 			''' + att.TableTypeAbbrv + ''' as TableTypeAbbrv,
 			''' + CASE 
-					WHEN STRING_AGG(c.CategoryCode, '') 
+					WHEN STRING_AGG(c.CategoryCode, '') = ''
 						OR cs.CategorySetCode = 'TOT'
 						OR cs.CategorySetCode LIKE 'ST%' THEN 'Y'
 					ELSE 'N'
 				  END + ''' as TotalIndicator, ' 
-				  + CASE WHEN STRING_AGG(c.CategoryCode, '') THEN '' ELSE STRING_AGG('pv.' + CategoryCode, ',') END + ',
+				  + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE STRING_AGG('pv.' + CategoryCode, ',') END + ',
 			0
 		FROM PermittedValues pv
 			 ' + CASE WHEN aol.LevelCode <> 'SEA' THEN 'CROSS JOIN (SELECT LeaId, K12SchoolId FROM RDS.FactOrganizationCounts WHERE SchoolYearId = ' + CAST(@SchoolYearId AS VARCHAR(100))  END + ') rfoc
@@ -283,7 +283,7 @@ AS
 				END + '
 		LEFT JOIN RDS.' + @ReportTableName + ' rt
 			ON 
-			' + CASE WHEN STRING_AGG(c.CategoryCode, '') THEN '' ELSE 'rt.CategorySetCode  = ''' + cs.CategorySetCode + ''' AND ' END + '
+			' + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE 'rt.CategorySetCode  = ''' + cs.CategorySetCode + ''' AND ' END + '
 			rt.TableTypeAbbrv = ''' + att.TableTypeAbbrv + ''' AND rt.ReportYear = 2023 and rt.ReportLevel = ''' + aol.LevelCode + ''' AND ' + 
 			STRING_AGG('rt.' + d.DimensionFieldName + ' = pv.' + c.CategoryCode, ' AND ') +
 			CASE 
@@ -335,4 +335,3 @@ AS
 
 	CLOSE cursor_name;
 	DEALLOCATE cursor_name;
-
