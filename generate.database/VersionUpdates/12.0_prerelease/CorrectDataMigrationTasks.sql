@@ -32,29 +32,29 @@ and StoredProcedureName = 'App.Wrapper_Migrate_Personnel_to_RDS'
 update app.DataMigrationTasks
 set Description = concat(Description, ', 226')
 where StoredProcedureName like '%Membership%'
-where DataMigrationTypeId = 2
+and DataMigrationTypeId = 2
 
 update app.DataMigrationTasks
 set Description = concat(Description, ', 218, 219, 220, 221')
 where StoredProcedureName like '%Neglected%'
-where DataMigrationTypeId = 2
+and DataMigrationTypeId = 2
 
 update app.DataMigrationTasks
 set Description = concat(Description, ', 222')
 where StoredProcedureName like '%TitleI_%'
-where DataMigrationTypeId = 2
+and DataMigrationTypeId = 2
 
 update app.DataMigrationTasks
 set Description = concat(Description, ', 224, 225')
 where StoredProcedureName like '%Assessment%'
-where DataMigrationTypeId = 2
+and DataMigrationTypeId = 2
 
 update app.DataMigrationTasks
 set Description = concat(Description, ', 210, 211')
 where StoredProcedureName like '%TitleIIIELSY%'
-where DataMigrationTypeId = 2
+and DataMigrationTypeId = 2
 
 update app.DataMigrationTasks
 set Description = concat(Description, ', 199')
 where StoredProcedureName like '%Graduation%'
-where DataMigrationTypeId = 2
+and DataMigrationTypeId = 2
