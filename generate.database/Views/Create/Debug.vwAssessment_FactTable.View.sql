@@ -84,26 +84,6 @@ AS
 		AND DMT.IsSelected = 1
 		AND DMT.DataMigrationTypeId = 2
 	--or comment out the lines above and just set the SchoolYear
-		--AND SchoolYears.SchoolYear = 2023
+		--AND SchoolYears.SchoolYear = 2024
 		
 	AND Fact.FactTypeId = 25
-	--AND Students.StudentIdentifierState = '12345678'	
-	--AND LEAs.LeaIdentifierSeaAccountability = '123'
-	--AND Schools.SchoolIdentifierSea = '456'
-	--AND Grades.GradeLevelEdFactsCode = '07'
-	--AND Races.RaceEdFactsCode = 'AM7'								--('AM7','AS7','BL7','PI7','WH7','MU7','HI7',NULL)
-	--AND Assess.AssessmentTitle = ''
-	--AND Assess.AssessmentIdentifierState = ''
-	--AND Assess.AssessmentAcademicSubjectCode = ''
-	--AND Assess.AssessmentTypeAdministeredCode = ''
-	--AND Assess.AssessmentTypeAdministeredToEnglishLearnersCode = ''
-	--AND AssessReg.AssessmentRegistrationParticipationIndicatorCode = ''
-	--AND AssessReg.AssessmentRegistrationReasonNotCompletingCode = ''
-	--AND AssessReg.ReasonNotTestedCode = ''
-	--AND EL.EnglishLearnerStatusEdFactsCode = 'LEP'				--('LEP', 'NLEP', 'MISSING')
-	--AND IDEAStatus.IdeaIndicatorEdFactsCode = 'IDEA'				--('IDEA', 'MISSING')
-	--AND Econ.EconomicDisadvantageStatusCode = 'Yes'				--('Yes','No','MISSING')
-	--AND Migr.MigrantStatusCode = 'Yes'							--('Yes','No','MISSING')
-	--AND Hmls.HomelessnessStatusCode = 'Yes'						--('Yes','No','MISSING')
-	--AND Fstr.ProgramParticipationFosterCareCode = 'Yes'			--('Yes','No','MISSING')
-	--AND Mil.MilitaryConnectedStudentIndicatorCode = 'ActiveDuty'	--('ActiveDuty','NationalGuardOrReserve','NotMilitaryConnected','Unknown','MISSING')

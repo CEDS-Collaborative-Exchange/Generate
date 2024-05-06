@@ -107,8 +107,6 @@ StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql
 StoredProcedures\\Create,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql 
 StoredProcedures\\Drop,Staging.RunEndToEndTest.StoredProcedure.sql 
 StoredProcedures\\Create,Staging.RunEndToEndTest.StoredProcedure.sql 
-StoredProcedures\\Drop,RDS.CreateDebugTables.StoredProcedure.sql
-StoredProcedures\\Create,RDS.CreateDebugTables.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql

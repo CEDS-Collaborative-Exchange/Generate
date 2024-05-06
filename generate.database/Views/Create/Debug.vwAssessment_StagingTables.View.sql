@@ -143,38 +143,7 @@ AS
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(nord.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(nord.SchoolIdentifierSea, '')
 
-	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1
 	AND results.AssessmentAdministrationStartDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
-	--AND enrollment.StudentIdentifierState = '12345678'	
-	--AND enrollment.LeaIdentifierSeaAccountability = '123'
-	--AND enrollment.SchoolIdentifierSea = '456'
-	--AND enrollment.FirstName = ''
-	--AND enrollment.LastOrSurname = ''
-	--AND enrollment.BirthDate = ''
-	--AND race.RaceType = ''
-	--AND race.RecordStartDateTime = ''
-	--AND race.RecordEndDateTime = ''
-	--AND programparticipation.ProgramParticipationBeginDate = ''
-	--AND programparticipation.ProgramParticipationEndDate = ''
-	--AND el.EnglishLearnerStatus = ''	--0 or 1
-	--AND el.EnglishLearner_StatusStartDate = ''
-	--AND el.EnglishLearner_StatusEndDate = ''
-	--AND econ.EconomicDisadvantageStatus = ''	--0 or 1
-	--AND econ.EconomicDisadvantage_StatusStartDate = ''
-	--AND econ.EconomicDisadvantage_StatusEndDate = ''
-	--AND migr.MigrantStatus = ''	--0 or 1
-	--AND migr.Migrant_StatusStartDate = ''
-	--AND migr.Migrant_StatusEndDate = ''
-	--AND home.HomelessnessStatus = ''	--0 or 1
-	--AND home.Homelessness_StatusStartDate = ''
-	--AND home.Homelessness_StatusEndDate = ''
-	--AND foster.ProgramType_FosterCare = ''	--0 or 1
-	--AND foster.FosterCare_ProgramParticipationStartDate = ''
-	--AND foster.FosterCare_ProgramParticipationEndDate = ''
-	--AND mil.MilitaryConnectedStudentIndicator = ''	--Unknown, ActiveDuty, NationalGuardOrReserve, NotMilitaryConnected
-	--AND mil.MilitaryConnected_StatusStartDate = ''
-	--AND mil.MilitaryConnected_StatusEndDate = ''
-	
 
 

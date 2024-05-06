@@ -38,13 +38,7 @@ AS
 
 	DECLARE @SQLStatement NVARCHAR(MAX), @factTypeCode VARCHAR(100);
 
-	select @factTypeCode = (select dft.FactTypeCode
-							from app.GenerateReport_FactType grft
-								inner join app.GenerateReports gr
-									on grft.GenerateReportId = gr.GenerateReportId
-								inner join rds.DimFactTypes dft
-									on grft.FactTypeId = dft.DimFactTypeId
-							where gr.ReportCode = @reportCode)
+	select @factTypeCode = RDS.Get_FactTypeByReport(@ReportCode)
 
 	SET @SQLStatement = 
 	'SELECT *
