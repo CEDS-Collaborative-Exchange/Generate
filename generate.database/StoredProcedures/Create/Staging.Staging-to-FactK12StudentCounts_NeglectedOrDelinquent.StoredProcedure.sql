@@ -394,10 +394,8 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
-
 		INSERT INTO app.DataMigrationHistories
 			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
-
 	END CATCH
 
 END

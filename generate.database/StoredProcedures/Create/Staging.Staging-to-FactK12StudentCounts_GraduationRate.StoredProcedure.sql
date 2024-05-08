@@ -365,7 +365,9 @@ I believe Cohort is supposed to be in AcademicAwardStatuses but the dimension do
 
 	END TRY
 	BEGIN CATCH
-		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_GraduationRate', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', 'FactK12StudentCounts', ERROR_MESSAGE(), 1, NULL, GETDATE())
+		insert into app.DataMigrationHistories
+		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
+		values	(getutcdate(), 4, 'ERROR: ' + ERROR_MESSAGE())
 	END CATCH
 
 END
