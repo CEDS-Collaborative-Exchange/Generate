@@ -121,6 +121,7 @@ StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql
 StoredProcedures\\Drop,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql
 StoredProcedures\\Create,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql
+StoredProcedures\\Drop,Utilities.Compare_C029.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Migrate_Data_ETL_IMPLEMENTATION_STEP06_PsStudentEnrollment_WithPerson_EncapsulatedCode.StoredProcedure.sql
 Functions\\Drop,RDS.Get_FactTypeByReport.UserDefinedFunction.sql
 Functions\\Create,RDS.Get_FactTypeByReport.UserDefinedFunction.sql
