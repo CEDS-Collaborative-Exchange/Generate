@@ -32,9 +32,9 @@ declare
 	@ComparisonResultsTableName varchar(200) = ''
 
 
-if @ReportCode not in ('C175', 'C178', 'C179', 'C185', 'C188', 'C189')
+if @ReportCode not in ('C175', 'C178', 'C179', 'C185', 'C188', 'C189', 'C224', 'C225')
 	begin
-		print '@ReportCode must be C175, C178, C179, C185, C188, C189'
+		print '@ReportCode must be C175, C178, C179, C185, C188, C189, C224, C225'
 		return
 	end
 
@@ -192,7 +192,6 @@ if @ReportCode in ('C185', 'C188', 'C189')
 					TotalIndicator											TotalIndicator,
 					NULL													Explanation,
 					AssessmentCount											Amount'
-
 			end
 
 		if @ReportLevel = 'SCH'
@@ -223,7 +222,39 @@ if @ReportCode in ('C185', 'C188', 'C189')
 					NULL													Explanation,
 					AssessmentCount											Amount'
 			end
+end
+if @ReportCode in ('C224')
+	begin
+		select @SQL = @SQL + '
+		select distinct 
+			NULL								FileRecordNumber,
+			StateANSICode						FIPSStateCode,
+			''01''								StateAgencyNumber,
+			NULL								Filler1,
+			NULL								Filler2,
+			TableTypeAbbrv						TableTypeAbbrv,
+			AssessmentAcademicSubject			SubjectId,
+			ProficiencyStatus					ProficiencyStatusID,
+			TotalIndicator						TotalIndicator,
+			NULL								Explanation,
+			AssessmentCount						Amount'
+		end
 
+if @ReportCode in ('C225')
+	begin
+		select @SQL = @SQL + '
+		select distinct 
+			NULL								FileRecordNumber,
+			StateANSICode						FIPSStateCode,
+			''01''								StateAgencyNumber,
+			OrganizationIdentifierSea			StateLEAIDNumber,
+			NULL								Filler1,
+			TableTypeAbbrv						TableTypeAbbrv,
+			AssessmentAcademicSubject			SubjectId,
+			ProficiencyStatus					ProficiencyStatusID,
+			TotalIndicator						TotalIndicator,
+			NULL								Explanation,
+			AssessmentCount						Amount'
 		end
 
 select @SQL = @SQL + char(10) +
