@@ -32,9 +32,9 @@ declare
 	@ComparisonResultsTableName varchar(200) = ''
 
 
-if @ReportCode not in ('C175', 'C178', 'C179', 'C185', 'C188', 'C189')
+if @ReportCode not in ('C175', 'C178', 'C179', 'C185', 'C188', 'C189', 'C224', 'C225')
 	begin
-		print '@ReportCode must be C175, C178, C179, C185, C188, C189'
+		print '@ReportCode must be C175, C178, C179, C185, C188, C189, C224, C225'
 		return
 	end
 
@@ -47,6 +47,8 @@ exec Utilities.CreateSubmissionFileTable
 	@Label = @Label,
 	@ShowSQL = 0, 
 	@CreatedTableName = @CreatedTableName OUTPUT
+
+
 
 select @SQL = 'INSERT INTO ' + @CreatedTableName
 if @ReportCode in ('C175', 'C178', 'C179')
@@ -194,36 +196,39 @@ if @ReportCode in ('C185', 'C188', 'C189')
 					AssessmentCount											Amount'
 
 			end
+end
+if @ReportCode in ('C224')
+	begin
+		select @SQL = @SQL + '
+		select distinct 
+			NULL								FileRecordNumber,
+			StateANSICode						FIPSStateCode,
+			''01''								StateAgencyNumber,
+			NULL								Filler1,
+			NULL								Filler2,
+			TableTypeAbbrv						TableTypeAbbrv,
+			AssessmentAcademicSubject			SubjectId,
+			ProficiencyStatus					ProficiencyStatusID,
+			TotalIndicator						TotalIndicator,
+			NULL								Explanation,
+			AssessmentCount						Amount'
+		end
 
-		if @ReportLevel = 'SCH'
-			begin
-				select @SQL = @SQL + '
-				select distinct 
-					NULL													FileRecordNumber,
-					StateANSICode											FIPSStateCode,
-					''01''													StateAgencyNumber,
-					ParentOrganizationIdentifierSea							StateLEAIDNumber,
-					OrganizationIdentifierSea								StateSchoolIDNumber,
-					TableTypeAbbrv											TableTypeAbbrv,
-					GradeLevel												GradeLevelId,
-					RACE													RaceEthnicityId,
-					SEX														GenderId,
-					IDEAINDICATOR											DisabilityStatusId,
-					ENGLISHLEARNERSTATUS									LEPStatusID,
-					MIGRANTSTATUS											MigrantStatusId,
-					ECONOMICDISADVANTAGESTATUS								EconDisadvantagedStatusId,
-					HOMElESSNESSSTATUS										HomelessServedID,
-					PROGRAMPARTICIPATIONFOSTERCARE							FosterCareStatusID,
-					MILITARYCONNECTEDSTUDENTINDICATOR						MilitaryConnectedStudentStatusID,
-					NULL													Filler5,
-					NULL													Filler7,
-					NULL													Filler6,
-					ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR			TestingStatusId,
-					TotalIndicator											TotalIndicator,
-					NULL													Explanation,
-					AssessmentCount											Amount'
-			end
-
+if @ReportCode in ('C225')
+	begin
+		select @SQL = @SQL + '
+		select distinct 
+			NULL								FileRecordNumber,
+			StateANSICode						FIPSStateCode,
+			''01''								StateAgencyNumber,
+			OrganizationIdentifierSea			StateLEAIDNumber,
+			NULL								Filler1,
+			TableTypeAbbrv						TableTypeAbbrv,
+			AssessmentAcademicSubject			SubjectId,
+			ProficiencyStatus					ProficiencyStatusID,
+			TotalIndicator						TotalIndicator,
+			NULL								Explanation,
+			AssessmentCount						Amount'
 		end
 
 select @SQL = @SQL + char(10) +
