@@ -48,8 +48,6 @@ exec Utilities.CreateSubmissionFileTable
 	@ShowSQL = 0, 
 	@CreatedTableName = @CreatedTableName OUTPUT
 
-
-
 select @SQL = 'INSERT INTO ' + @CreatedTableName
 if @ReportCode in ('C175', 'C178', 'C179')
 	begin
@@ -194,7 +192,35 @@ if @ReportCode in ('C185', 'C188', 'C189')
 					TotalIndicator											TotalIndicator,
 					NULL													Explanation,
 					AssessmentCount											Amount'
+			end
 
+		if @ReportLevel = 'SCH'
+			begin
+				select @SQL = @SQL + '
+				select distinct 
+					NULL													FileRecordNumber,
+					StateANSICode											FIPSStateCode,
+					''01''													StateAgencyNumber,
+					ParentOrganizationIdentifierSea							StateLEAIDNumber,
+					OrganizationIdentifierSea								StateSchoolIDNumber,
+					TableTypeAbbrv											TableTypeAbbrv,
+					GradeLevel												GradeLevelId,
+					RACE													RaceEthnicityId,
+					SEX														GenderId,
+					IDEAINDICATOR											DisabilityStatusId,
+					ENGLISHLEARNERSTATUS									LEPStatusID,
+					MIGRANTSTATUS											MigrantStatusId,
+					ECONOMICDISADVANTAGESTATUS								EconDisadvantagedStatusId,
+					HOMElESSNESSSTATUS										HomelessServedID,
+					PROGRAMPARTICIPATIONFOSTERCARE							FosterCareStatusID,
+					MILITARYCONNECTEDSTUDENTINDICATOR						MilitaryConnectedStudentStatusID,
+					NULL													Filler5,
+					NULL													Filler7,
+					NULL													Filler6,
+					ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR			TestingStatusId,
+					TotalIndicator											TotalIndicator,
+					NULL													Explanation,
+					AssessmentCount											Amount'
 			end
 end
 if @ReportCode in ('C224')
