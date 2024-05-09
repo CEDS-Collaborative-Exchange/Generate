@@ -203,7 +203,9 @@ BEGIN
 			
 	END TRY
 	BEGIN CATCH
-		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactOrganizationCounts_ComprehensiveAndTargetedSupport', 'RDS.FactOrganizationCounts', 'FactOrganziationCounts', 'FactOrganziationCounts', ERROR_MESSAGE(), 1, NULL, GETDATE())
+		insert into app.DataMigrationHistories
+		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
+		values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
 	END CATCH
 
 		
