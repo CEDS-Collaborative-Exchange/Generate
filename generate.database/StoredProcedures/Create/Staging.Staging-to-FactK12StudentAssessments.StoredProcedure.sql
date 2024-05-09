@@ -782,7 +782,7 @@ BEGIN
 
 	insert into app.DataMigrationHistories
 		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
-		values	(getutcdate(), 4, 'ERROR: ' + ERROR_MESSAGE())
+		values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
 	END CATCH
 
 END
