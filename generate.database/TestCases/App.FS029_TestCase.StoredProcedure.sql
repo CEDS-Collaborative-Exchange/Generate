@@ -4,8 +4,14 @@ AS
 BEGIN TRY
 	--BEGIN TRANSACTIONs
 		
-		DECLARE @charterLeaCount AS INT
-		SELECT @charterLeaCount = count(LeaIdentifierSea) FROM staging.K12Organization WHERE LEA_CharterSchoolIndicator = 1
+		DECLARE @charterLeaCount as int = 0
+		SELECT @charterLeaCount = count(distinct LEAIdentifierSea) 
+		FROM staging.K12Organization sko
+			LEFT JOIN staging.SourceSystemReferenceData sssrd
+				ON sko.LEA_Type = sssrd.InputCode
+				AND sssrd.TableName = 'RefLeaType'
+				AND sko.SchoolYear = sssrd.SchoolYear
+		WHERE sssrd.OutputCode = 'IndependentCharterDistrict'
 
 		 --Define the test
 		DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
@@ -213,29 +219,45 @@ BEGIN TRY
 			,[Passed]
 			,[TestDateTime]
 		 )
+
 		SELECT distinct
 			@SqlUnitTestId
 			,'CharterLeaStatus Match'
 			,'CharterLeaStatus Match ' + s.LEAIdentifierSea
+
 			, CASE 
-			WHEN s.LEA_CharterSchoolIndicator = 1 
-				AND leaType.Code = 'RegularNotInSupervisoryUnion' THEN ISNULL(s.LEA_CharterLeaStatus, 'MISSING') 
-			ELSE IIF(@charterLeaCount > 0,'NOTCHR','NA') 
-			END AS LEA_CharterLeaStatus
+				WHEN ISNULL(sssrd.OutputCode,'MISSING') <> 'IndependentCharterDistrict'
+					AND @charterLeaCount > 0 THEN 'NOTCHR'
+				WHEN ISNULL(sssrd.OutputCode,'MISSING') <> 'IndependentCharterDistrict'
+					AND @charterLeaCount = 0 THEN 'NA'
+				ELSE ISNULL(sssrd2.OutputCode, 'MISSING')
+			END  AS LEA_CharterLeaStatus		
+
 			,r.CharterLeaStatus
 			,CASE WHEN 
-			CASE 
-			WHEN s.LEA_CharterSchoolIndicator = 1 
-				AND leaType.Code = 'RegularNotInSupervisoryUnion' THEN ISNULL(s.LEA_CharterLeaStatus, 'MISSING') 
-			ELSE IIF(@charterLeaCount > 0,'NOTCHR','NA') 
-			END = isnull(r.CharterLeaStatus,'') THEN 1 
-				ELSE 'MISSING' END
+				CASE 
+					WHEN ISNULL(sssrd.OutputCode,'MISSING') <> 'IndependentCharterDistrict'
+						AND @charterLeaCount > 0 THEN 'NOTCHR'
+					WHEN ISNULL(sssrd.OutputCode,'MISSING') <> 'IndependentCharterDistrict'
+						AND @charterLeaCount = 0 THEN 'NA'
+					ELSE ISNULL(sssrd2.OutputCode, 'MISSING')
+				END
+				= isnull(r.CharterLeaStatus,'MISSING') THEN 1
+				ELSE 0
+			END
 			,GETDATE()
+
 		FROM #leas_staging s
-		left JOIN #leas_reporting r 
+		LEFT JOIN #leas_reporting r 
 			ON s.LEAIdentifierSea = r.OrganizationStateId
-		left JOIN dbo.RefLeaType leaType 
-			ON s.LEA_Type = leaType.RefLeaTypeId
+		LEFT JOIN staging.SourceSystemReferenceData sssrd
+			ON s.LEA_Type = sssrd.InputCode
+			AND sssrd.TableName = 'RefLeaType'
+			AND sssrd.SchoolYear = @SchoolYear
+		LEFT JOIN staging.SourceSystemReferenceData sssrd2
+			ON s.LEA_CharterLeaStatus = sssrd2.InputCode
+			AND sssrd2.TableName = 'RefCharterLeaStatus'
+			AND sssrd2.SchoolYear = @SchoolYear
 
 		INSERT INTO App.SqlUnitTestCASEResult (
 			[SqlUnitTestId]
@@ -272,13 +294,17 @@ BEGIN TRY
 			@SqlUnitTestId
 			,'LEAType Match'
 			,'LEAType Match ' + s.LEAIdentifierSea
-			,s.LEA_Type
+			,replace(s.LEA_Type, '_1','')
 			,r.LEAType
-			,CASE WHEN isnull(s.LEA_Type,'') = isnull(r.LEAType,'') THEN 1 
+			,CASE WHEN isnull(replace(s.LEA_Type, '_1',''), '') = isnull(r.LEAType, '') THEN 1 
 				ELSE 0 END
 			,GETDATE()
 		FROM #leas_staging s
-		left JOIN #leas_reporting r 
+		LEFT JOIN staging.SourceSystemReferenceData sssrd
+			ON s.LEA_Type = sssrd.InputCode
+			AND sssrd.TableName = 'RefLeaType'
+			AND sssrd.SchoolYear = @SchoolYear
+		LEFT JOIN #leas_reporting r 
 			ON s.LEAIdentifierSea = r.OrganizationStateId
 
 		INSERT INTO App.SqlUnitTestCASEResult (
@@ -1070,59 +1096,43 @@ BEGIN TRY
 		drop table #schools_staging
 		drop table #schools_reporting
 
-		-- select count(*), passed
-		-- from app.SqlUnitTestCaseResult r
-		-- 	inner join app.SqlUnitTest t
-		-- 		on r.SqlUnitTestId = t.SqlUnitTestId
-		-- where TestScope = 'FS029'
-		-- group by passed
-
-
 	--COMMIT TRANSACTION
 
-	END TRY
-	BEGIN CATCH
+	-- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS
+	if not exists 
+		(select top 1 * 
+			from app.sqlunittest t
+				inner join app.SqlUnitTestCaseResult r
+					on t.SqlUnitTestId = r.SqlUnitTestId
+			where t.SqlUnitTestId = @SqlUnitTestId
+		)
+	begin
+		INSERT INTO App.SqlUnitTestCaseResult (
+			SqlUnitTestId
+			, TestCaseName
+			, TestCaseDetails
+			, ExpectedResult
+			, ActualResult
+			, Passed
+			, TestDateTime
+		)
+		SELECT DISTINCT
+			@SqlUnitTestId
+			, 'NO TEST RESULTS'
+			, 'NO TEST RESULTS'
+			, -1
+			, -1
+			, NULL
+			, GETDATE()
+	end
 
-	--IF @@TRANCOUNT > 0
-	--BEGIN
-	--	ROLLBACK TRANSACTION
-	--END
-
-	DECLARE @msg AS NVARCHAR(MAX)
-	SET @msg = ERROR_MESSAGE()
-
-	DECLARE @sev AS INT
-	SET @sev = ERROR_SEVERITY()
-
-	RAISERROR(@msg, @sev, 1)
-
-	END CATCH; 
-
--- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS -------------------------
-if not exists(select top 1 * from app.sqlunittest t
-	inner join app.SqlUnitTestCaseResult r
-		on t.SqlUnitTestId = r.SqlUnitTestId
-		and t.SqlUnitTestId = @SqlUnitTestId)
-begin
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT DISTINCT
-				 @SqlUnitTestId
-				,'NO TEST RESULTS'
-				,'NO TEST RESULTS'
-				,-1
-				,-1
-				,NULL
-				,GETDATE()
-end
-----------------------------------------------------------------------------------
+	--check the results
+	--select *
+	--from App.SqlUnitTestCaseResult sr
+	--	inner join App.SqlUnitTest s
+	--		on s.SqlUnitTestId = sr.SqlUnitTestId
+	--where s.UnitTestName like '%029%'
+	--and passed = 0
+	--and convert(date, TestDateTime) = convert(date, GETDATE())
 
 END
