@@ -118,7 +118,7 @@ BEGIN
 		INNER JOIN RDS.DimSchoolYears rsy
 			ON sko.SchoolYear = rsy.SchoolYear
 		LEFT JOIN RDS.DimK12Schools rdksch
-			ON sko.SchoolIdentifierSea = rdksch.SchoolIdentifierState
+			ON sko.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 		INNER JOIN Staging.K12SchoolComprehensiveSupportIdentificationType scsupp
 			ON sko.SchoolIdentifierSea = scsupp.SchoolIdentifierSea
 		INNER JOIN #vwDimComprehensiveAndTargetedSupports vcts
@@ -191,7 +191,7 @@ BEGIN
 		INNER JOIN RDS.DimSchoolYears rsy
 			ON sko.SchoolYear = rsy.SchoolYear
 		LEFT JOIN RDS.DimK12Schools rdksch
-			ON sko.SchoolIdentifierSea = rdksch.SchoolIdentifierState
+			ON sko.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 		INNER JOIN Staging.K12SchoolTargetedSupportIdentificationType sktsup
 			ON sko.SchoolIdentifierSea = sktsup.SchoolIdentifierSea
 		INNER JOIN #vwDimSubgroups vs
