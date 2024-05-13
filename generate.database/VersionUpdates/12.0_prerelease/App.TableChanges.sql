@@ -38,28 +38,8 @@ BEGIN
 	ALTER TABLE App.DataMigrationHistories ADD UserName nvarchar(100);
 END
 
-DECLARE @AssessmentFactTypeId INT, @GenerateReportId INT
-SELECT @AssessmentFactTypeId = DimFactTypeId 
-FROM RDS.DimFactTypes 
-WHERE FactTypeCode = 'Assessment'
+IF COL_LENGTH('App.DataMigrationTasks', 'FactTypeId') IS NULL
+BEGIN
+	ALTER TABLE App.DataMigrationTasks ADD FactTypeId int NOT NULL default(-1);
+END
 
-SELECT @GenerateReportId = GenerateReportId
-FROM App.GenerateReports
-WHERE ReportCode = 'C224'
-
-UPDATE App.GenerateReport_FactType
-SET FactTypeId = @AssessmentFactTypeId
-WHERE GenerateReportId = @GenerateReportId
-
-SELECT @GenerateReportId = GenerateReportId
-FROM App.GenerateReports
-WHERE ReportCode = 'C225'
-
-UPDATE App.GenerateReport_FactType
-SET FactTypeId = @AssessmentFactTypeId
-WHERE GenerateReportId = @GenerateReportId
-	
--- Update name of NorD Wrapper
-update app.DataMigrationTasks
-set StoredProcedureName = 'App.Wrapper_Migrate_NeglectedOrDelinquent_to_RDS', Description = '119, 127, 218, 219, 220, 221'
-where StoredProcedureName = 'App.Wrapper_Migrate_NorD_to_RDS'

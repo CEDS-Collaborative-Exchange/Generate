@@ -127,93 +127,93 @@ BEGIN
 		CLOSE dataMigrationTasks_cursor
 		DEALLOCATE dataMigrationTasks_cursor
 
-		-- ODS migration tasks
+		-- Source to Staging migration tasks
 		-------------------------------------
 
-		IF (@dataMigrationTypeCode = 'ods')
-		BEGIN
-
-			DECLARE task_cursor CURSOR FOR 
-			select years.SY, tasks.StoredProcedureName
-			from
-			(select CAST(d.SchoolYear as smallint) as SY from rds.DimSchoolYearDataMigrationTypes ddt
-			inner join rds.DimDataMigrationTypes r on ddt.DataMigrationTypeId = r.DimDataMigrationTypeId
-			inner join rds.DimSchoolYears d on ddt.DimSchoolYearId = d.DimSchoolYearId
-			where r.DataMigrationTypeCode = 'ods' and ddt.IsSelected = 1) years
-			CROSS JOIN (SELECT StoredProcedureName, TaskSequence
-				FROM App.DataMigrationTasks
-				WHERE IsActive = 1 and RunBeforeGenerateMigration = 0 and RunAfterGenerateMigration = 0 and IsSelected=1
-				and DataMigrationTypeId = @dataMigrationTypeId
-				) tasks
-			order by years.SY,tasks.TaskSequence asc
+		DECLARE source_task_cursor CURSOR FOR 
+		select CAST(sy.SchoolYear as smallint) as SY, ddt.StoredProcedureName
+		from app.GenerateReports app
+		inner join app.GenerateReport_FactType app_ft on app.GenerateReportId = app_ft.GenerateReportId
+		inner join rds.DimFactTypes ft on app_ft.FactTypeId = ft.DimFactTypeId
+		inner join app.DataMigrationTasks ddt on app_ft.FactTypeId = ddt.FactTypeId
+		inner join app.DataMigrationTypes dmt on dmt.DataMigrationTypeId = ddt.DataMigrationTypeId
+		inner join rds.DimSchoolYearDataMigrationTypes sydmt on dmt.DataMigrationTypeId = sydmt.DataMigrationTypeId
+		inner join rds.DimSchoolYears sy on sydmt.DimSchoolYearId = sy.DimSchoolYearId
+		where app.IsLocked = 1 and app.IsActive = 1 and ddt.IsSelected = 1 and dmt.DataMigrationTypeCode = 'report'
+		and ddt.IsActive = 1 and RunBeforeGenerateMigration = 0 and RunAfterGenerateMigration = 0
+		and sydmt.IsSelected = 1 and ddt.StoredProcedureName like '%Source-to-Staging%'
+		order by ft.FactTypeCode, ddt.TaskSequence
 
 						
 
-			OPEN task_cursor
-			FETCH NEXT FROM task_cursor INTO @sy , @storedProcedureName
+		OPEN source_task_cursor
+		FETCH NEXT FROM source_task_cursor INTO @sy , @storedProcedureName
 
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-					-- Log migration history
-					if not exists(select * from app.DataMigrationTypes 
-					where DataMigrationTypeCode= @dataMigrationTypeCode and DataMigrationTypeCode='report')
-					begin
-						insert into App.DataMigrationHistories
-						(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage)
-						values
-						(getutcdate(), @dataMigrationTypeId, @storedProcedureName)
-					end
-					print 'exec ' + @storedProcedureName
-
-					EXECUTE sp_executesql @storedProcedureName, N'@SchoolYear smallint', @SchoolYear = @sy
-
-				FETCH NEXT FROM task_cursor INTO @sy , @storedProcedureName
-			END
-			
-
-			CLOSE task_cursor
-			DEALLOCATE task_cursor
-
-		END
-		ELSE
+		WHILE @@FETCH_STATUS = 0
 		BEGIN
-
-			-- Generate
-			--------------
-
-			DECLARE dataMigrationTasks_cursor CURSOR FOR 
-			SELECT StoredProcedureName
-			FROM App.DataMigrationTasks
-			WHERE IsActive = 1 and RunBeforeGenerateMigration = 0 and RunAfterGenerateMigration = 0 and IsSelected=1
-			and DataMigrationTypeId = @dataMigrationTypeId 
-			ORDER BY TaskSequence
-
-			OPEN dataMigrationTasks_cursor
-			FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName
-
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-
 				-- Log migration history
-				if not exists(select * from app.DataMigrationTypes where DataMigrationTypeCode= @dataMigrationTypeCode and DataMigrationTypeCode='report')
+				if not exists(select * from app.DataMigrationTypes 
+				where DataMigrationTypeCode= @dataMigrationTypeCode and DataMigrationTypeCode='report')
 				begin
-				insert into App.DataMigrationHistories
-				(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage)
-				values
-				(getutcdate(), @dataMigrationTypeId, @storedProcedureName)
+					insert into App.DataMigrationHistories
+					(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage)
+					values
+					(getutcdate(), @dataMigrationTypeId, @storedProcedureName)
 				end
 				print 'exec ' + @storedProcedureName
 
-				EXECUTE sp_executesql @storedProcedureName
+				EXECUTE sp_executesql @storedProcedureName, N'@SchoolYear smallint', @SchoolYear = @sy
 
-
-				FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName
-			END
-
-			CLOSE dataMigrationTasks_cursor
-			DEALLOCATE dataMigrationTasks_cursor
-
+			FETCH NEXT FROM source_task_cursor INTO @sy , @storedProcedureName
 		END
+			
+
+		CLOSE source_task_cursor
+		DEALLOCATE source_task_cursor
+
+
+		-- Generate
+		--------------
+
+		DECLARE dataMigrationTasks_cursor CURSOR FOR 
+		select distinct ddt.StoredProcedureName, ddt.TaskSequence
+		from app.GenerateReports app
+		inner join app.GenerateReport_FactType app_ft on app.GenerateReportId = app_ft.GenerateReportId
+		inner join rds.DimFactTypes ft on app_ft.FactTypeId = ft.DimFactTypeId
+		inner join app.DataMigrationTasks ddt on app_ft.FactTypeId = ddt.FactTypeId
+		inner join app.DataMigrationTypes dmt on dmt.DataMigrationTypeId = ddt.DataMigrationTypeId
+		inner join rds.DimSchoolYearDataMigrationTypes sydmt on dmt.DataMigrationTypeId = sydmt.DataMigrationTypeId
+		inner join rds.DimSchoolYears sy on sydmt.DimSchoolYearId = sy.DimSchoolYearId
+		where app.IsLocked = 1 and app.IsActive = 1 and ddt.IsSelected = 1 and dmt.DataMigrationTypeCode = 'report'
+		and ddt.IsActive = 1 and RunBeforeGenerateMigration = 0 and RunAfterGenerateMigration = 0
+		and sydmt.IsSelected = 1 and ddt.StoredProcedureName not like '%Source-to-Staging%'
+		order by ddt.TaskSequence
+
+		OPEN dataMigrationTasks_cursor
+		FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName, @taskSequence
+
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+
+			-- Log migration history
+			if not exists(select * from app.DataMigrationTypes where DataMigrationTypeCode= @dataMigrationTypeCode and DataMigrationTypeCode='report')
+			begin
+			insert into App.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage)
+			values
+			(getutcdate(), @dataMigrationTypeId, @storedProcedureName)
+			end
+			print 'exec ' + @storedProcedureName
+
+			EXECUTE sp_executesql @storedProcedureName
+
+
+			FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName, @taskSequence
+		END
+
+		CLOSE dataMigrationTasks_cursor
+		DEALLOCATE dataMigrationTasks_cursor
+
 
 		-- Post
 		--------------
