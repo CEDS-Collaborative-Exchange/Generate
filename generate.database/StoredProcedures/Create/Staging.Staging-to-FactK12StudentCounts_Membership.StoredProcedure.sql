@@ -179,7 +179,7 @@ BEGIN
 			, -1														EnglishLearnerStatusId
 			, -1														HomelessnessStatusId
 			, ISNULL(rdeds.DimEconomicallyDisadvantagedStatusId, -1)	EconomicallyDisadvantagedStatusId
-			, ISNULL(rdfcs.DimFosterCareStatusId, -1)					FosterCareStatusId
+			, -1 														FosterCareStatusId
 			, -1														ImmigrantStatusId
 			, -1														PrimaryDisabilityTypeId
 			, -1														SpecialEducationServicesExitDateId 
@@ -237,11 +237,6 @@ BEGIN
 		LEFT JOIN RDS.DimK12Schools rdpch
 			ON stage.SchoolIdentifierSea = rdpch.SchoolIdentifierSea
 			AND stage.MembershipDate BETWEEN rdpch.RecordStartDateTime AND ISNULL(rdpch.RecordEndDateTime, '1/1/9999')
-
-	-- Foster Care Status
-		LEFT JOIN RDS.vwDimFosterCareStatuses rdfcs
-			ON stage.SchoolYear = rdfcs.SchoolYear
-			AND ISNULL(CAST(stage.ProgramType_FosterCare AS INT), -1) = ISNULL(rdfcs.ProgramParticipationFosterCareMap, rdfcs.ProgramParticipationFosterCareCode)
 
 	-- Title I Status
 		LEFT JOIN RDS.vwDimTitleIStatuses rdtis
