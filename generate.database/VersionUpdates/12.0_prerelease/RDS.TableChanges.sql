@@ -140,4 +140,38 @@
 
 	ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId]
 
+-------------------------------------------
+-- DimFactTypes
+-------------------------------------------
+	create table #reportCodes (
+		FactType varchar(100) 
+		, ReportCodes varchar(500)
+	)
+
+	insert into #reportCodes
+	SELECT rdft.FactTypeCode,
+		STUFF((SELECT ',' + replace(r.ReportCode, 'c', '')
+				FROM app.GenerateReport_FactType rf
+				inner join rds.DimFactTypes f
+					on rf.FactTypeId = f.DimFactTypeId
+				inner join app.GenerateReports r
+					on rf.GenerateReportId = r.GenerateReportId
+			WHERE f.FactTypeCode = rdft.FactTypeCode
+			AND len(r.ReportCode) = 4
+			ORDER BY replace(r.ReportCode, 'c', '')
+				FOR XML PATH(''), TYPE).value('text()[1]', 'nvarchar(max)')
+		, 1, LEN(','), '') AS XmlPathList
+	FROM rds.DimFactTypes rdft
+	GROUP BY rdft.FactTypeCode
+
+	update f
+	set f.FactTypeDescription = concat(f.FactTypeDescription, ' - ', rc.ReportCodes)
+	from rds.DimFactTypes f
+		inner join #reportCodes rc
+			on f.FactTypeCode = rc.FactType
+	where isnull(rc.ReportCodes, '') <> ''
+
+	drop table #reportCodes
+
+
 	

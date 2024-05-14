@@ -779,11 +779,10 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
-		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentAssessments', 'RDS.FactK12StudentAssessments', 'FactK12StudentAssessments', 'FactK12StudentAssessments', ERROR_MESSAGE(), 1, NULL, @Today)
 
-		INSERT INTO app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
-
+	insert into app.DataMigrationHistories
+		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
+		values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
 	END CATCH
 
 END

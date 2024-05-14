@@ -366,7 +366,9 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
-		INSERT INTO Staging.ValidationErrors VALUES ('Staging.Staging-to-FactK12StudentCounts_SpecEdExit', 'RDS.FactK12StudentCounts', 'FactK12StudentCounts', NULL, ERROR_MESSAGE(), 1, NULL, GETDATE())
+		insert into app.DataMigrationHistories
+		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
+		values	(getutcdate(), 4, 'ERROR: ' + ERROR_MESSAGE())
 	END CATCH
 
 END
