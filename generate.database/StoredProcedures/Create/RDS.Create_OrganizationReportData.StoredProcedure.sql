@@ -578,6 +578,9 @@ BEGIN
 				end
 				else if (@reportCode = 'c129')
 				BEGIN		
+					--Schools opened after 10/01 should not be included
+					declare @compareDate date = concat(@ReportYear -1, '-10-01')
+
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[CategorySetCode]
 						, [CharterSchoolAuthorizerIdPrimary]
@@ -597,7 +600,7 @@ BEGIN
 						, [TITLE1SCHOOLSTATUS]							
 						, [TotalIndicator]
 						, [VIRTUALSCHSTATUS]
-						, [MAGNETSTATUS]							
+--						, [MAGNETSTATUS]							
 					)
 					select distinct @categorySetCode
 						, isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
@@ -617,7 +620,7 @@ BEGIN
 						, titleIStatus.TitleISchoolStatusEdFactsCode
 						, 0 as TotalIndicator
 						, schStatus.VirtualSchoolStatusEdFactsCode
-						, MagnetOrSpecialProgramEmphasisSchoolEdFactsCode
+--						, MagnetOrSpecialProgramEmphasisSchoolEdFactsCode
 					from rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 							on fact.SchoolYearId = d.DimSchoolYearId
@@ -635,6 +638,8 @@ BEGIN
 					and sch.DimK12SchoolId <> -1
 					and ISNULL(sch.ReportedFederally, 1) = 1 
 					and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
+					and sch.SchoolOperationalStatusEffectiveDate <= @compareDate
+					and sch.SchoolTypeCode <> 'Reportable'
 				END
 				else if (@reportCode = 'c130')
 				BEGIN		
@@ -1808,14 +1813,12 @@ BEGIN
 					end
 					else if (@reportCode ='c129')
 					BEGIN	
+						--Schools opened after 10/01 should not be included
+						declare @compareDate date = concat(@ReportYear -1, '-10-01')
+
 						select distinct @categorySetCode
-						 						-- JW 6/26/2023...should these be blank?
-						, ''
-						, ''
-						/**********************************
-						, sch.CharterSchoolAuthorizerIdPrimary
-						, sch.CharterSchoolAuthorizerIdSecondary
-						************************************/
+						, isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
+						, isnull(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '') 
 						, schStatus.NSLPStatusEdFactsCode
 						, 1 as OrganizationCount
 						, sch.NameOfInstitution as OrganizationName 
@@ -1831,7 +1834,7 @@ BEGIN
 						, titleIStatus.TitleISchoolStatusEdFactsCode
 						, 0 as TotalIndicator
 						, schStatus.VirtualSchoolStatusEdFactsCode
-						, MagnetOrSpecialProgramEmphasisSchoolEdFactsCode
+--						, MagnetOrSpecialProgramEmphasisSchoolEdFactsCode
 					from rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears dates
 							on fact.SchoolYearId = dates.DimSchoolYearId
@@ -1849,6 +1852,8 @@ BEGIN
 					and sch.DimK12SchoolId <> -1
 					and ISNULL(sch.ReportedFederally, 1) = 1 
 					and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
+					and sch.SchoolOperationalStatusEffectiveDate <= @compareDate
+					and sch.SchoolTypeCode <> 'Reportable'
 				
 				end
 			END			-- @runAsTest = 1	
