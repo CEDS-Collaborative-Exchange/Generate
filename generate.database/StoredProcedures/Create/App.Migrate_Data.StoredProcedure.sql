@@ -89,21 +89,24 @@ BEGIN
 
 		-- Execute migration tasks
 
-		DECLARE @storedProcedureName as nvarchar(2000)
+		DECLARE @storedProcedureName as nvarchar(2000), @migrationTaskList as varchar(1000)
 		DECLARE @sy as smallint
+		DECLARE @taskSequence as int, @migrationTaskId as int
 
 		-- Pre
 		--------------
 
+		SET @migrationTaskList = ''
+
 		DECLARE dataMigrationTasks_cursor CURSOR FOR 
-		SELECT StoredProcedureName
+		SELECT StoredProcedureName, DataMigrationTaskId
 		FROM App.DataMigrationTasks
 		WHERE IsActive = 1 and RunBeforeGenerateMigration = 1 and IsSelected=1
 		and DataMigrationTypeId = @dataMigrationTypeId
 		ORDER BY TaskSequence
 
 		OPEN dataMigrationTasks_cursor
-		FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName
+		FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName, @migrationTaskId
 
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -118,10 +121,12 @@ BEGIN
 			end
 			print 'exec ' + @storedProcedureName
 
+			SET @migrationTaskList = @migrationTaskList + CAST(@migrationTaskId as varchar(10)) + ','
+
 			EXECUTE sp_executesql @storedProcedureName
 
 
-			FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName
+			FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName, @migrationTaskId
 		END
 
 		CLOSE dataMigrationTasks_cursor
@@ -131,7 +136,7 @@ BEGIN
 		-------------------------------------
 
 		DECLARE source_task_cursor CURSOR FOR 
-		select CAST(sy.SchoolYear as smallint) as SY, ddt.StoredProcedureName
+		select CAST(sy.SchoolYear as smallint) as SY, ddt.StoredProcedureName, ddt.DataMigrationTaskId
 		from app.GenerateReports app
 		inner join app.GenerateReport_FactType app_ft on app.GenerateReportId = app_ft.GenerateReportId
 		inner join rds.DimFactTypes ft on app_ft.FactTypeId = ft.DimFactTypeId
@@ -144,10 +149,10 @@ BEGIN
 		and sydmt.IsSelected = 1 and ddt.StoredProcedureName like '%Source-to-Staging%'
 		order by ft.FactTypeCode, ddt.TaskSequence
 
-						
+		
 
 		OPEN source_task_cursor
-		FETCH NEXT FROM source_task_cursor INTO @sy , @storedProcedureName
+		FETCH NEXT FROM source_task_cursor INTO @sy , @storedProcedureName, @migrationTaskId
 
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -162,9 +167,11 @@ BEGIN
 				end
 				print 'exec ' + @storedProcedureName
 
+				SET @migrationTaskList = @migrationTaskList + CAST(@migrationTaskId as varchar(10)) + ','
+
 				EXECUTE sp_executesql @storedProcedureName, N'@SchoolYear smallint', @SchoolYear = @sy
 
-			FETCH NEXT FROM source_task_cursor INTO @sy , @storedProcedureName
+			FETCH NEXT FROM source_task_cursor INTO @sy , @storedProcedureName, @migrationTaskId
 		END
 			
 
@@ -176,7 +183,7 @@ BEGIN
 		--------------
 
 		DECLARE dataMigrationTasks_cursor CURSOR FOR 
-		select distinct ddt.StoredProcedureName, ddt.TaskSequence
+		select distinct ddt.StoredProcedureName, ddt.TaskSequence, ddt.DataMigrationTaskId
 		from app.GenerateReports app
 		inner join app.GenerateReport_FactType app_ft on app.GenerateReportId = app_ft.GenerateReportId
 		inner join rds.DimFactTypes ft on app_ft.FactTypeId = ft.DimFactTypeId
@@ -187,10 +194,10 @@ BEGIN
 		where app.IsLocked = 1 and app.IsActive = 1 and ddt.IsSelected = 1 and dmt.DataMigrationTypeCode = 'report'
 		and ddt.IsActive = 1 and RunBeforeGenerateMigration = 0 and RunAfterGenerateMigration = 0
 		and sydmt.IsSelected = 1 and ddt.StoredProcedureName not like '%Source-to-Staging%'
-		order by ddt.TaskSequence
+		order by ddt.TaskSequence, ddt.DataMigrationTaskId
 
 		OPEN dataMigrationTasks_cursor
-		FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName, @taskSequence
+		FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName, @taskSequence, @migrationTaskId
 
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -205,10 +212,12 @@ BEGIN
 			end
 			print 'exec ' + @storedProcedureName
 
+			SET @migrationTaskList = @migrationTaskList + CAST(@migrationTaskId as varchar(10)) + ','
+
 			EXECUTE sp_executesql @storedProcedureName
 
 
-			FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName, @taskSequence
+			FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName, @taskSequence, @migrationTaskId
 		END
 
 		CLOSE dataMigrationTasks_cursor
@@ -219,14 +228,14 @@ BEGIN
 		--------------
 	
 		DECLARE dataMigrationTasks_cursor CURSOR FOR 
-		SELECT StoredProcedureName
+		SELECT StoredProcedureName, DataMigrationTaskId
 		FROM App.DataMigrationTasks
 		WHERE IsActive = 1 and RunAfterGenerateMigration = 1 and IsSelected=1
 		and DataMigrationTypeId = @dataMigrationTypeId
 		ORDER BY TaskSequence
 
 		OPEN dataMigrationTasks_cursor
-		FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName
+		FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName, @migrationTaskId
 
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -241,10 +250,12 @@ BEGIN
 			end
 			print 'exec ' + @storedProcedureName
 
+			SET @migrationTaskList = @migrationTaskList + CAST(@migrationTaskId as varchar(10)) + ','
+
 			EXECUTE sp_executesql @storedProcedureName
 
 
-			FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName
+			FETCH NEXT FROM dataMigrationTasks_cursor INTO @storedProcedureName, @migrationTaskId
 		END
 
 		CLOSE dataMigrationTasks_cursor
@@ -278,7 +289,10 @@ BEGIN
 			declare @durationInSeconds as int
 			set @durationInSeconds =  DateDiff(second, @startDate, @endDate)
 
-			update App.DataMigrations set DataMigrationStatusId = @successStatusId, LastDurationInSeconds = @durationInSeconds
+			set @migrationTaskList = CASE WHEN RIGHT(@migrationTaskList,1)=',' THEN LEFT(@migrationTaskList,LEN(@migrationTaskList)-1) ELSE @migrationTaskList END
+
+			update App.DataMigrations set DataMigrationStatusId = @successStatusId, LastDurationInSeconds = @durationInSeconds,
+										  DataMigrationTaskList = @migrationTaskList
 			where DataMigrationId = @dataMigrationId
 	
 			insert into App.DataMigrationHistories

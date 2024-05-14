@@ -30,7 +30,7 @@ END
 
 IF COL_LENGTH('App.DataMigrations', 'DataMigrationTaskList') IS NULL
 BEGIN
-	ALTER TABLE App.DataMigrations ADD ReportList nvarchar(50);
+	ALTER TABLE App.DataMigrations ADD DataMigrationTaskList nvarchar(50);
 END
 
 IF COL_LENGTH('App.DataMigrationHistories', 'UserName') IS NULL
