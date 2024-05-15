@@ -1,6 +1,6 @@
 DECLARE @AssessmentFactTypeId INT, @GenerateReportId INT
-declare @rdsDataMigrationTypeCode as varchar(50), @reportDataMigrationTypeCode as varchar(50)
-declare @factTypeId as int
+declare @rdsDataMigrationTypeId as varchar(50), @reportDataMigrationTypeId as varchar(50)
+declare @factTypeId as int, @taskSquence as int
 declare @factTypeCode as varchar(100)
 
 SELECT @AssessmentFactTypeId = DimFactTypeId 
@@ -69,7 +69,7 @@ set StoredProcedureName = 'rds.create_reports ''hsgradpsenroll'',0'
 where StoredProcedureName = 'rds.create_reports ''hsgradenroll'',0'
 
 
-
+SET @taskSquence = 301
 DECLARE factType_cursor CURSOR FOR 
 SELECT DimFactTypeId, lower(FactTypeCode)
 FROM rds.DimFactTypes
@@ -86,6 +86,21 @@ BEGIN
 	Update app.DataMigrationTasks set FactTypeId = @factTypeId
 	where lower(StoredProcedureName) like '%' + @factTypeCode + '%'
 
+    INSERT INTO [App].[DataMigrationTasks]
+			   ([DataMigrationTypeId]
+			   ,[IsActive]
+			   ,[RunAfterGenerateMigration]
+			   ,[RunBeforeGenerateMigration]
+			   ,[StoredProcedureName]
+			   ,[TaskSequence]
+			   ,[IsSelected]
+			   ,[Description]
+			   ,[TaskName]
+			   ,[FactTypeId])
+	VALUES(5, 1, 0, 0, 'Staging.StagingValidation_Execute @SchoolYear, @FactTypeOrReportCode', @taskSquence, 1, 'Staging Validation for ' + @factTypeCode, '', @factTypeId)
+
+	SET @taskSquence = @taskSquence + 1
+
 	FETCH NEXT FROM factType_cursor INTO @factTypeId, @factTypeCode
 END
 
@@ -94,9 +109,8 @@ DEALLOCATE factType_cursor
 
 
 
-select @rdsDataMigrationTypeCode = DataMigrationTypeCode from app.DataMigrationTypes where DataMigrationTypeCode = 'rds'
-select @reportDataMigrationTypeCode = DataMigrationTypeCode from app.DataMigrationTypes where DataMigrationTypeCode = 'report'
+select @rdsDataMigrationTypeId = DataMigrationTypeId from app.DataMigrationTypes where DataMigrationTypeCode = 'rds'
+select @reportDataMigrationTypeId = DataMigrationTypeId from app.DataMigrationTypes where DataMigrationTypeCode = 'report'
 
-Update app.DataMigrationTasks set TaskSequence = TaskSequence + 100 where DataMigrationTypeId = @rdsDataMigrationTypeCode
-Update app.DataMigrationTasks set TaskSequence = TaskSequence + 200 where DataMigrationTypeId = @reportDataMigrationTypeCode
-Update app.DataMigrationTasks set DataMigrationTypeId = @reportDataMigrationTypeCode
+Update app.DataMigrationTasks set TaskSequence = TaskSequence + 100, IsSelected = 1 where DataMigrationTypeId = @rdsDataMigrationTypeId
+Update app.DataMigrationTasks set TaskSequence = TaskSequence + 200 where DataMigrationTypeId = @reportDataMigrationTypeId

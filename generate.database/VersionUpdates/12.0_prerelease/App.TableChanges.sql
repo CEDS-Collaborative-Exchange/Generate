@@ -33,11 +33,6 @@ BEGIN
 	ALTER TABLE App.DataMigrations ADD DataMigrationTaskList nvarchar(50);
 END
 
-IF COL_LENGTH('App.DataMigrationHistories', 'UserName') IS NULL
-BEGIN
-	ALTER TABLE App.DataMigrationHistories ADD UserName nvarchar(100);
-END
-
 IF COL_LENGTH('App.DataMigrationTasks', 'FactTypeId') IS NULL
 BEGIN
 	ALTER TABLE App.DataMigrationTasks ADD FactTypeId int NOT NULL default(-1);
