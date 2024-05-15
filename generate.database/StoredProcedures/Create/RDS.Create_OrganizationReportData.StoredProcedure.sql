@@ -7,6 +7,9 @@ BEGIN
 	SET NOCOUNT ON;
 	declare @tableTypeAbbrv as nvarchar(50)
 	
+	--FS129 - Schools opened after 10/01 should not be included
+	declare @compareDate date
+
 	-- Get DataMigrationId and DimFactTypeId
 	declare @dataMigrationTypeId as int, @dimFactTypeId as int
 
@@ -579,7 +582,7 @@ BEGIN
 				else if (@reportCode = 'c129')
 				BEGIN		
 					--Schools opened after 10/01 should not be included
-					declare @compareDate date = concat(@ReportYear -1, '-10-01')
+					set @compareDate = concat(@ReportYear -1, '-10-01')
 
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[CategorySetCode]
@@ -1814,7 +1817,7 @@ BEGIN
 					else if (@reportCode ='c129')
 					BEGIN	
 						--Schools opened after 10/01 should not be included
-						declare @compareDate date = concat(@ReportYear -1, '-10-01')
+						set @compareDate = concat(@ReportYear -1, '-10-01')
 
 						select distinct @categorySetCode
 						, isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
