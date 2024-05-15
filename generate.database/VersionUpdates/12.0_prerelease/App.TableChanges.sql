@@ -38,3 +38,20 @@ BEGIN
 	ALTER TABLE App.DataMigrationTasks ADD FactTypeId int NOT NULL default(-1);
 END
 
+UPDATE App.GenerateReport_FactType
+SET FactTypeId = @AssessmentFactTypeId
+WHERE GenerateReportId = @GenerateReportId
+	
+-- Update name of NorD Wrapper
+update app.DataMigrationTasks
+set StoredProcedureName = 'App.Wrapper_Migrate_NeglectedOrDelinquent_to_RDS', Description = '119, 127, 218, 219, 220, 221'
+where StoredProcedureName = 'App.Wrapper_Migrate_NorD_to_RDS'
+
+--Update the table names for app.FactTables for Organization reports
+update ft
+set FactReportTableName = 'ReportEDFactsOrganizationCounts'
+	, FactReportTableIdName = 'ReportEDFactsOrganizationCountId'
+from app.FactTables ft 
+inner join app.GenerateReports r 
+	on ft.FactTableId = r.FactTableId
+where r.ReportCode in ('c029','c039','c035','c129','c190')
