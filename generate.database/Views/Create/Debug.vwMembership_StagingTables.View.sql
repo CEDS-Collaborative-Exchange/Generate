@@ -60,7 +60,7 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 				ON		ecodis.StudentIdentifierState								    =	enrollment.StudentIdentifierState
 				AND		ISNULL(ecodis.LEAIdentifierSeaAccountability, '')			    =	ISNULL(enrollment.LEAIdentifierSeaAccountability, '')
 				AND		ISNULL(ecodis.SchoolIdentifierSea, '')						    =	ISNULL(enrollment.SchoolIdentifierSea, '')
-				AND		toggle.MembershipDate BETWEEN EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusEndDate, '1/1/9999')
+				
 
 		--uncomment/modify the where clause conditions as necessary for validation
 		WHERE 1 = 1
