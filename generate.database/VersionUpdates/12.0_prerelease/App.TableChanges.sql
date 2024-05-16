@@ -38,20 +38,19 @@ BEGIN
 	ALTER TABLE App.DataMigrationTasks ADD FactTypeId int NOT NULL default(-1);
 END
 
-UPDATE App.GenerateReport_FactType
-SET FactTypeId = @AssessmentFactTypeId
-WHERE GenerateReportId = @GenerateReportId
-	
--- Update name of NorD Wrapper
-update app.DataMigrationTasks
-set StoredProcedureName = 'App.Wrapper_Migrate_NeglectedOrDelinquent_to_RDS', Description = '119, 127, 218, 219, 220, 221'
-where StoredProcedureName = 'App.Wrapper_Migrate_NorD_to_RDS'
+ALTER TABLE [App].[DataMigrationTasks] DROP CONSTRAINT [UX_DataMigrationTasks]
 
---Update the table names for app.FactTables for Organization reports
-update ft
-set FactReportTableName = 'ReportEDFactsOrganizationCounts'
-	, FactReportTableIdName = 'ReportEDFactsOrganizationCountId'
-from app.FactTables ft 
-inner join app.GenerateReports r 
-	on ft.FactTableId = r.FactTableId
-where r.ReportCode in ('c029','c039','c035','c129','c190')
+SET ANSI_PADDING ON
+GO
+
+ALTER TABLE [App].[DataMigrationTasks] ADD  CONSTRAINT [UX_DataMigrationTasks] UNIQUE NONCLUSTERED 
+(
+	[DataMigrationTypeId] ASC,
+	[StoredProcedureName] ASC,
+	[FactTypeId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+
+
+
+	
+

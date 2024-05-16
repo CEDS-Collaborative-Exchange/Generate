@@ -1,6 +1,6 @@
 VersionUpdates\\12.0_prerelease,Restore 11.4.sql,0
 VersionUpdates\\12.0_prerelease,App.TableChanges.sql,0
-VersionUpdates\\12.0_prerelease,RDS.Table Changes.sql,0
+VersionUpdates\\12.0_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,JunkTablePopulation.sql,0
 VersionUpdates\\12.0_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,CorrectDataMigrationTasks.sql,0
