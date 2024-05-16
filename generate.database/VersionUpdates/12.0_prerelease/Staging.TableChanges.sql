@@ -114,6 +114,11 @@ CREATE NONCLUSTERED INDEX IX_ProgramParticipationNOrD_Student_LEA_School_BeginDa
         ALTER TABLE Staging.ProgramParticipationNorD ADD RunDateTime datetime;
     END
 
+    IF COL_LENGTH('Staging.PsStudentAcademicRecord', 'CourseId') IS NULL
+    BEGIN
+        ALTER TABLE Staging.PsStudentAcademicRecord ADD CourseId int;
+    END
+
     --add the index
     CREATE NONCLUSTERED INDEX [IX_Staging_ProgramParticipationNOrD_DataCollectionName] ON [Staging].[ProgramParticipationNorD]
     (
