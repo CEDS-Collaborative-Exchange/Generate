@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [App].[FS029_TestCase]
 	@SchoolYear SMALLINT
 AS
-BEGIN TRY
+BEGIN
 	--BEGIN TRANSACTIONs
 		
 		DECLARE @charterLeaCount as int = 0
