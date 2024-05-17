@@ -662,7 +662,7 @@ BEGIN
 	BEGIN
 		SELECT
             CAST(ROW_NUMBER() OVER(ORDER BY fact.OrganizationStateId ASC) AS INT) as ReportEDFactsOrganizationCountId,                     
-            @categorySetCode AS CategorySetCode, 
+            isnull(@categorySetCode,'CSA') AS CategorySetCode, 
 			@reportCode as ReportCode, 
             @reportYear as ReportYear,
             @reportLevel as ReportLevel,
@@ -729,8 +729,8 @@ BEGIN
 			NULL AS PriorSchoolStateIdentifier,
 			NULL AS UpdatedOperationalStatus,
 			NULL AS UpdatedOperationalStatusId,
-			NULL AS TitleiParentalInvolveRes,
-			NULL AS TitleiPartaAllocations,
+			0 AS TitleiParentalInvolveRes,
+			0 AS TitleiPartaAllocations,
 			fact.LeaStateIdentifier,
 			fact.LeaNcesIdentifier,												
 			NULL AS ManagementOrganizationType,

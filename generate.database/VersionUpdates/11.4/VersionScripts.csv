@@ -140,6 +140,8 @@ VersionUpdates\\11.4\\StoredProcedures\\Drop,RDS.Get_StudentEducationEnvironment
 VersionUpdates\\11.4\\StoredProcedures\\Create,RDS.Get_StudentEducationEnvironmentDisabilitiesReportData.StoredProcedure.sql,0
 VersionUpdates\\11.4\\StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 VersionUpdates\\11.4\\StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+VersionUpdates\\11.4\\StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
+VersionUpdates\\11.4\\StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 VersionUpdates\\11.4\\StoredProcedures\\Drop,RDS.Get_YeartoYearProgressReportData.StoredProcedure.sql,0
 VersionUpdates\\11.4\\StoredProcedures\\Create,RDS.Get_YeartoYearProgressReportData.StoredProcedure.sql,0
 VersionUpdates\\11.4\\StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql,0
