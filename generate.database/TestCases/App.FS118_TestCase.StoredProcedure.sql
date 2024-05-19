@@ -123,6 +123,9 @@ BEGIN
 			, ske.Birthdate
 			, ske.GradeLevel
 			, ske.SchoolYear
+			, sps.Homelessness_StatusStartDate
+			, sps.Homelessness_StatusEndDate
+			, sps.HomelessUnaccompaniedYouth
 		INTO #tempStudents
 		FROM Staging.K12Enrollment ske
 			JOIN Staging.PersonStatus sps
@@ -134,7 +137,6 @@ BEGIN
 		and sps.HomelessnessStatus = 1
 	-- Grades UG and 13 added to this list because our Toggle doesn't allow these
 		AND isnull(GradeLevel, 'xx') not in ('AE', 'ABE', '13', 'UG', 'AE_1', 'ABE_1', '13_1', 'UG_1')
-		--AND ske.StudentIdentifierState not like ('%CI%') -- JW 4/5/2024 Remarked this line.
 
 	--Get the LEAs that should not be reported against
 	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL DROP TABLE #excludedLeas
@@ -151,12 +153,12 @@ BEGIN
 
 	-- Gather, evaluate & record the results
 	SELECT  
-		ske.StudentIdentifierState
-		, ske.LeaIdentifierSeaAccountability
-		, ske.SchoolIdentifierSea
-		, ske.HispanicLatinoEthnicity
-		, ske.Sex
-		, CASE ske.Sex
+		hmStudents.StudentIdentifierState
+		, hmStudents.LeaIdentifierSeaAccountability
+		, hmStudents.SchoolIdentifierSea
+		, hmStudents.HispanicLatinoEthnicity
+		, hmStudents.Sex
+		, CASE hmStudents.Sex
 			WHEN 'Male'		THEN 'M'
 			WHEN 'Female'	THEN 'F'
 			WHEN 'Male_1'	THEN 'M'
@@ -173,8 +175,8 @@ BEGIN
 			ELSE 'MISSING'
 		END AS EnglishLearnerStatusEdFactsCode
 	--Homelessness
-		, hmStatus.HomelessUnaccompaniedYouth
-		, CASE WHEN hmStatus.HomelessUnaccompaniedYouth = 1 THEN 'UY'
+		, hmStudents.HomelessUnaccompaniedYouth
+		, CASE WHEN hmStudents.HomelessUnaccompaniedYouth = 1 THEN 'UY'
 				ELSE 'MISSING'
 		END AS HomelessUnaccompaniedYouthEdFactsCode		
 
@@ -196,11 +198,11 @@ BEGIN
 		END AS HomelessPrimaryNighttimeResidenceEdFactsCode
 
 	--Age/Grade
-		, CASE WHEN rds.Get_Age(ske.Birthdate, @SYStart) >= 3
-					AND rds.Get_Age(ske.Birthdate, @SYStart) <= 5
-					AND ISNULL(ske.GradeLevel, 'PK') in ('PK', 'PK_1')
+		, CASE WHEN rds.Get_Age(hmStudents.Birthdate, @SYStart) >= 3
+					AND rds.Get_Age(hmStudents.Birthdate, @SYStart) <= 5
+					AND ISNULL(hmStudents.GradeLevel, 'PK') in ('PK', 'PK_1')
 				THEN '3TO5NOTK'
-				ELSE ISNULL(ske.GradeLevel, 'MISSING')
+				ELSE ISNULL(hmStudents.GradeLevel, 'MISSING')
 		END AS GradeLevelEdFactsCode	
 
 	--Disability Status
@@ -216,65 +218,62 @@ BEGIN
 			ELSE 'MISSING'
 		END AS MigrantStatusEdFactsCode
 	INTO #C118Staging
-
-	FROM #tempStudents ske
+	FROM #tempStudents hmStudents
 	JOIN RDS.DimSchoolYears rsy			-- JW 4/5/2024
-		ON ske.SchoolYear = rsy.SchoolYear	-- JW 4/5/2024
-	--homeless
-	INNER JOIN Staging.PersonStatus hmStatus -- JW 4/5/2024 changed from LEFT to INNER JOIN
-		ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
-		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
-		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
-		AND hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
+		ON hmStudents.SchoolYear = rsy.SchoolYear	-- JW 4/5/2024
 	JOIN RDS.DimSeas rds			-- JW 4/5/2024
-		ON hmStatus.Homelessness_StatusStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEnd) -- JW 4/5/2024
+		ON hmStudents.Homelessness_StatusStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEnd) -- JW 4/5/2024
 	--age
 	JOIN RDS.DimAges rda			-- JW 4/5/2024
-		ON RDS.Get_Age(ske.Birthdate, @SYStart) = rda.AgeValue			-- JW 4/5/2024
+		ON RDS.Get_Age(hmStudents.Birthdate, @SYStart) = rda.AgeValue			-- JW 4/5/2024
 	--homeless nighttime residence
 	LEFT JOIN Staging.PersonStatus hmNight
-		ON ske.StudentIdentifierState = hmNight.StudentIdentifierState
-		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmNight.LeaIdentifierSeaAccountability, '')
-		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmNight.SchoolIdentifierSea, '')
-		AND hmNight.HomelessNightTimeResidence_StartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
+		ON hmStudents.StudentIdentifierState = hmNight.StudentIdentifierState
+		AND ISNULL(hmStudents.LeaIdentifierSeaAccountability, '') = ISNULL(hmNight.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(hmStudents.SchoolIdentifierSea, '') = ISNULL(hmNight.SchoolIdentifierSea, '')
+		AND hmNight.HomelessNightTimeResidence_StartDate BETWEEN hmStudents.EnrollmentEntryDate AND ISNULL(hmStudents.EnrollmentExitDate, @SYEnd)
 	--disability status
 	LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
-		ON ske.StudentIdentifierState = idea.StudentIdentifierState
-		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
-		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
-		AND hmStatus.Homelessness_StatusStartDate BETWEEN idea.ProgramParticipationBeginDate AND ISNULL(idea.ProgramParticipationEndDate, @SYEnd)
+		ON hmStudents.StudentIdentifierState = idea.StudentIdentifierState
+		AND ISNULL(hmStudents.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(hmStudents.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
+		AND hmStudents.Homelessness_StatusStartDate BETWEEN idea.ProgramParticipationBeginDate AND ISNULL(idea.ProgramParticipationEndDate, @SYEnd)
 	--english learner
 	LEFT JOIN #tempELStatus el 
-		ON ske.StudentIdentifierState = el.StudentIdentifierState
-		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
-		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-		AND hmStatus.Homelessness_StatusStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEnd)
+		ON hmStudents.StudentIdentifierState = el.StudentIdentifierState
+		AND ISNULL(hmStudents.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
+		AND ISNULL(hmStudents.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
+		AND hmStudents.Homelessness_StatusStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEnd)
 	--migratory status	
 	LEFT JOIN #tempMigrantStatus migrant
-		ON ske.StudentIdentifierState = migrant.StudentIdentifierState
-		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
-		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
-		AND hmStatus.Homelessness_StatusStartDate BETWEEN migrant.Migrant_StatusStartDate AND ISNULL(migrant.Migrant_StatusEndDate, @SYEnd)
+		ON hmStudents.StudentIdentifierState = migrant.StudentIdentifierState
+		AND ISNULL(hmStudents.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
+		AND ISNULL(hmStudents.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
+		AND hmStudents.Homelessness_StatusStartDate BETWEEN migrant.Migrant_StatusStartDate AND ISNULL(migrant.Migrant_StatusEndDate, @SYEnd)
 	--race	
 	LEFT JOIN RDS.vwUnduplicatedRaceMap spr --Staging.K12PersonRace spr JW 4/5/2024
-		ON spr.StudentIdentifierState = ske.StudentIdentifierState
+		ON spr.StudentIdentifierState = hmStudents.StudentIdentifierState
 		-- JW 4/5/2024 -----------------------------------------------------------------------------------
-		AND (ISNULL(spr.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
-			OR ISNULL(spr.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, ''))
---		AND ISNULL(spr.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
---		AND ISNULL(spr.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+		AND (ISNULL(spr.LeaIdentifierSeaAccountability, '') = ISNULL(hmStudents.LeaIdentifierSeaAccountability, '')
+			OR ISNULL(spr.SchoolIdentifierSea, '') = ISNULL(hmStudents.SchoolIdentifierSea, ''))
+--		AND ISNULL(spr.LeaIdentifierSeaAccountability, '') = ISNULL(hmStudents.LeaIdentifierSeaAccountability, '')
+--		AND ISNULL(spr.SchoolIdentifierSea, '') = ISNULL(hmStudents.SchoolIdentifierSea, '')
 	-------------------------------------------------------------------------------------------------------
-		AND spr.SchoolYear = ske.SchoolYear
+		AND spr.SchoolYear = hmStudents.SchoolYear
 --		AND CAST(ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') AS DATE) BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
 	--race (rds)
 	LEFT JOIN RDS.DimRaces rdr
-		ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
-			OR (ske.HispanicLatinoEthnicity = 0 AND replace(spr.RaceMap, '_1', '') = rdr.RaceCode)
-			or (ske.HispanicLatinoEthnicity is NULL AND replace(spr.RaceMap, '_1', '') = rdr.RaceCode) -- JW 4/5/2024
+		ON (hmStudents.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
+			OR (hmStudents.HispanicLatinoEthnicity = 0 AND replace(spr.RaceMap, '_1', '') = rdr.RaceCode)
+			or (hmStudents.HispanicLatinoEthnicity is NULL AND replace(spr.RaceMap, '_1', '') = rdr.RaceCode) -- JW 4/5/2024
 
 	WHERE 
-		ISNULL(hmStatus.Homelessness_StatusStartDate, '1900-01-01') BETWEEN @SYStart AND @SYEnd
+		ISNULL(hmStudents.Homelessness_StatusStartDate, '1900-01-01') BETWEEN @SYStart AND @SYEnd
 
+
+select *
+from #C118Staging
+where StudentIdentifierState like 'cid%'
 
 	/**********************************************************************
 		Test Case 1:
@@ -339,7 +338,7 @@ BEGIN
 	SELECT DISTINCT
 		@SqlUnitTestId
 		, 'CSB SEA Match All'
-		, 'CSB SEA Match All - Homeless Primary Mighttime Residence: ' + HomelessPrimaryNighttimeResidenceEdFactsCode 
+		, 'CSB SEA Match All - Homeless Primary Nighttime Residence: ' + HomelessPrimaryNighttimeResidenceEdFactsCode 
 		, s.StudentCount
 		, rreksc.StudentCount
 		, CASE WHEN s.StudentCount = ISNULL(rreksc.StudentCount, -1) THEN 1 ELSE 0 END
