@@ -8,6 +8,7 @@ VersionUpdates\\12.0_prerelease,UpdateSSRD.sql,0
 VersionUpdates\\12.0_prerelease,Insert Staging Validation Rules.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS009.sql,0
+VersionUpdates\\12.0_prerelease,App.Metadata-FS129.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS218.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS219.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS220.sql,0
