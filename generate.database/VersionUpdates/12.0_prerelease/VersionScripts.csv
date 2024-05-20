@@ -1,11 +1,12 @@
 VersionUpdates\\12.0_prerelease,Restore 11.4.sql,0
 VersionUpdates\\12.0_prerelease,App.TableChanges.sql,0
-VersionUpdates\\12.0_prerelease,RDS.Table Changes.sql,0
+VersionUpdates\\12.0_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,JunkTablePopulation.sql,0
 VersionUpdates\\12.0_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,CorrectDataMigrationTasks.sql,0
 VersionUpdates\\12.0_prerelease,UpdateSSRD.sql,0
 VersionUpdates\\12.0_prerelease,Insert Staging Validation Rules.sql,0
+VersionUpdates\\12.0_prerelease,App.Metadata.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS009.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS218.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS219.sql,0
@@ -121,6 +122,8 @@ StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql
 StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql
 StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql
+StoredProcedures\\Drop,App.Migrate_Data.StoredProcedure.sql
+StoredProcedures\\Create,App.Migrate_Data.StoredProcedure.sql
 StoredProcedures\\Drop,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql
 StoredProcedures\\Create,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql
