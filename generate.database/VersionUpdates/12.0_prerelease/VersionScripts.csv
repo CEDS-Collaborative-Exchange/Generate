@@ -16,6 +16,7 @@ VersionUpdates\\12.0_prerelease,App.Metadata-FS223.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS224.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS225.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS226.sql,0
+VersionUpdates\\12.0_prerelease,App.Metadata-PS.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
 Scripts,EnableQuotedIdentifiers.script.sql,0
 Views\\Drop,App.CategoryCodeOptionsByReportAndYear.View.sql 
@@ -161,6 +162,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactOrganizationCounts_ComprehensiveAn
 StoredProcedures\\Create,Staging.Staging-to-FactOrganizationCounts_ComprehensiveAndTargetedSupport.StoredProcedure.sql
 StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql
 StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql
+StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql
+StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql
 StoredProcedures\\Drop,Utilities.Compare_C029.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Migrate_Data_ETL_IMPLEMENTATION_STEP06_PsStudentEnrollment_WithPerson_EncapsulatedCode.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Migrate_Data_Validation_Logging.StoredProcedure.sql

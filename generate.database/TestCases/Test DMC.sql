@@ -70,40 +70,44 @@ EXEC RDS.Create_ReportData 'C033', 'membership', 0
 EXEC RDS.Create_ReportData 'C052', 'membership', 0
 -- Execution time: 8:16
 
-PRINT 'Report migration for NeglectedOrDelinquent (C218, C219, C220, C221)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C218', 'C219', 'C220', 'C221')
 
-		exec [RDS].[Insert_CountsIntoReportTable]
-				@ReportCode  = 'C218',
-				@SubmissionYear = @SchoolYear, 
-				@ReportTableName =  'ReportEdFactsK12StudentCounts',
-				@IdentifierToCount = 'K12StudentStudentIdentifierState',
-				@CountColumn = 'StudentCount',
-				@IsDistinctCount  = 1
+-------------------------------------------------------------------- 
+--These are the report migrations using the new method
+-------------------------------------------------------------------- 
+-- PRINT 'Report migration for NeglectedOrDelinquent (C218, C219, C220, C221)'
+-- UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C218', 'C219', 'C220', 'C221')
 
-		exec [RDS].[Insert_CountsIntoReportTable]
-				@ReportCode  = 'C219',
-				@SubmissionYear = @SchoolYear, 
-				@ReportTableName =  'ReportEdFactsK12StudentCounts',
-				@IdentifierToCount = 'K12StudentStudentIdentifierState',
-				@CountColumn = 'StudentCount',
-				@IsDistinctCount  = 1
+-- 		exec [RDS].[Insert_CountsIntoReportTable]
+-- 				@ReportCode  = 'C218',
+-- 				@SubmissionYear = @SchoolYear, 
+-- 				@ReportTableName =  'ReportEdFactsK12StudentCounts',
+-- 				@IdentifierToCount = 'K12StudentStudentIdentifierState',
+-- 				@CountColumn = 'StudentCount',
+-- 				@IsDistinctCount  = 1
 
-		exec [RDS].[Insert_CountsIntoReportTable]
-				@ReportCode  = 'C220',
-				@SubmissionYear = @SchoolYear, 
-				@ReportTableName =  'ReportEdFactsK12StudentCounts',
-				@IdentifierToCount = 'K12StudentStudentIdentifierState',
-				@CountColumn = 'StudentCount',
-				@IsDistinctCount  = 1
+-- 		exec [RDS].[Insert_CountsIntoReportTable]
+-- 				@ReportCode  = 'C219',
+-- 				@SubmissionYear = @SchoolYear, 
+-- 				@ReportTableName =  'ReportEdFactsK12StudentCounts',
+-- 				@IdentifierToCount = 'K12StudentStudentIdentifierState',
+-- 				@CountColumn = 'StudentCount',
+-- 				@IsDistinctCount  = 1
 
-		exec [RDS].[Insert_CountsIntoReportTable]
-				@ReportCode  = 'C221',
-				@SubmissionYear = @SchoolYear, 
-				@ReportTableName =  'ReportEdFactsK12StudentCounts',
-				@IdentifierToCount = 'K12StudentStudentIdentifierState',
-				@CountColumn = 'StudentCount',
-				@IsDistinctCount  = 1
+-- 		exec [RDS].[Insert_CountsIntoReportTable]
+-- 				@ReportCode  = 'C220',
+-- 				@SubmissionYear = @SchoolYear, 
+-- 				@ReportTableName =  'ReportEdFactsK12StudentCounts',
+-- 				@IdentifierToCount = 'K12StudentStudentIdentifierState',
+-- 				@CountColumn = 'StudentCount',
+-- 				@IsDistinctCount  = 1
+
+-- 		exec [RDS].[Insert_CountsIntoReportTable]
+-- 				@ReportCode  = 'C221',
+-- 				@SubmissionYear = @SchoolYear, 
+-- 				@ReportTableName =  'ReportEdFactsK12StudentCounts',
+-- 				@IdentifierToCount = 'K12StudentStudentIdentifierState',
+-- 				@CountColumn = 'StudentCount',
+-- 				@IsDistinctCount  = 1
 
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'dropout' -- No tests yet FS032
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'grad' -- No tests yet FS040
@@ -177,17 +181,20 @@ EXEC App.FS194_TestCase							@SchoolYear
 --PRINT 'End-to-End Test for zz_DimK12Schools_Charter_NA_TestCase'
 --EXEC App.zz_DimK12Schools_Charter_NA_TestCase	@SchoolYear
 
-PRINT 'End-to-End Test for FS218'
-EXEC Staging.RunEndToEndTest	 'C218', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
-PRINT 'End-to-End Test for FS219'
-EXEC Staging.RunEndToEndTest	 'C219', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
-PRINT 'End-to-End Test for FS220'
-EXEC Staging.RunEndToEndTest	 'C220', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
-PRINT 'End-to-End Test for FS221'
-EXEC Staging.RunEndToEndTest	 'C221', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
-PRINT 'End-to-End Test for FS224'
-EXEC Staging.RunEndToEndTest	 'C224', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
-PRINT 'End-to-End Test for FS225'
-EXEC Staging.RunEndToEndTest	 'C225', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
+-------------------------------------------------------------------- 
+--These are the tests using the new method
+-------------------------------------------------------------------- 
+--PRINT 'End-to-End Test for FS218'
+-- EXEC Staging.RunEndToEndTest	 'C218', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+-- PRINT 'End-to-End Test for FS219'
+-- EXEC Staging.RunEndToEndTest	 'C219', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+-- PRINT 'End-to-End Test for FS220'
+-- EXEC Staging.RunEndToEndTest	 'C220', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+-- PRINT 'End-to-End Test for FS221'
+-- EXEC Staging.RunEndToEndTest	 'C221', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+-- PRINT 'End-to-End Test for FS224'
+-- EXEC Staging.RunEndToEndTest	 'C224', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
+-- PRINT 'End-to-End Test for FS225'
+-- EXEC Staging.RunEndToEndTest	 'C225', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
 
 

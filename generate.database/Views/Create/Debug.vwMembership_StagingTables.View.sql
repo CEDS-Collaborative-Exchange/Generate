@@ -10,19 +10,19 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 			, enrollment.LastOrSurname
 			, enrollment.MiddleName
 			, enrollment.BirthDate
-			, enrollment.Sex -- For FS052
-			, enrollment.GradeLevel -- For FS052
+			, enrollment.Sex 													-- For FS052
+			, enrollment.GradeLevel 											-- For FS052
 			, enrollment.EnrollmentEntryDate
 			, enrollment.EnrollmentExitDate
 
-			, ecodis.EconomicDisadvantageStatus -- For FS226
-			, ecodis.EconomicDisadvantage_StatusStartDate -- For FS226 and FS033
-			, ecodis.EconomicDisadvantage_StatusEndDate -- For FS226 and FS033
-			, ecodis.EligibilityStatusForSchoolFoodServicePrograms -- For FS033
-			, ecodis.NationalSchoolLunchProgramDirectCertificationIndicator -- For FS033
+			, ecodis.EconomicDisadvantageStatus 								-- For FS226
+			, ecodis.EconomicDisadvantage_StatusStartDate 						-- For FS226 and FS033
+			, ecodis.EconomicDisadvantage_StatusEndDate 						-- For FS226 and FS033
+			, ecodis.EligibilityStatusForSchoolFoodServicePrograms 				-- For FS033
+			, ecodis.NationalSchoolLunchProgramDirectCertificationIndicator 	-- For FS033
 
 			, enrollment.HispanicLatinoEthnicity
-			, race.RaceType -- For FS052
+			, race.RaceType 													-- For FS052
 			, race.RecordStartDateTime					AS RaceStartDate
 			, race.RecordEndDateTime					AS RaceEndDate
 
@@ -44,7 +44,7 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 		JOIN Staging.K12Enrollment								enrollment		
 			on toggle.SchoolYear = enrollment.SchoolYear
 			AND toggle.MembershipDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '1/1/9999')
-		JOIN Staging.K12Organization							org
+		LEFT JOIN Staging.K12Organization						org
 				ON 		enrollment.SchoolYear 											=	org.Schoolyear
 				AND		ISNULL(enrollment.SchoolIdentifierSea, '')						= 	ISNULL(org.SchoolIdentifierSea, '')
 				AND 	toggle.MembershipDate BETWEEN org.School_RecordStartDateTime AND ISNULL(org.School_RecordEndDateTime, '1/1/9999')
@@ -60,14 +60,6 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 				ON		ecodis.StudentIdentifierState								    =	enrollment.StudentIdentifierState
 				AND		ISNULL(ecodis.LEAIdentifierSeaAccountability, '')			    =	ISNULL(enrollment.LEAIdentifierSeaAccountability, '')
 				AND		ISNULL(ecodis.SchoolIdentifierSea, '')						    =	ISNULL(enrollment.SchoolIdentifierSea, '')
-				AND		toggle.MembershipDate BETWEEN EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusEndDate, '1/1/9999')
+				
 
-		--uncomment/modify the where clause conditions as necessary for validation
 		WHERE 1 = 1
-		--AND enrollment.StudentIdentifierState = '12345678'	
-		--AND enrollment.LeaIdentifierSeaAccountability = '123'
-		--AND enrollment.SchoolIdentifierSea = '456'
-		--AND [RDS].[Get_Age] (enrollment.BirthDate, dates.ResponseValue) = '12'
-		--AND enrollment.FirstName = ''
-		--AND enrollment.LastOrSurname = ''
-		--AND enrollment.BirthDate = ''
