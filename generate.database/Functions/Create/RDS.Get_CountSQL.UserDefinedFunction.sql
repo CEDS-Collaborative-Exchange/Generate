@@ -1634,6 +1634,31 @@ BEGIN
 						delete from #categorySet where ' + @reportField + ' <> ''MISSING''					
 					end
 				'
+				if @reportCode = 'c118' --deduplicate properly
+				begin
+					if @reportLevel = 'sea'
+					begin
+						set @sqlRemoveMissing = @sqlRemoveMissing + '						
+						;with cte as (
+							select K12StudentStudentIdentifierState, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState ORDER BY EnrollmentEntryDateId) as ''rownum'' 
+							from #CategorySet
+						)
+						delete from cte
+						where  rownum > 1'
+					end 
+					else if @reportLevel = 'lea'
+					begin
+						set @sqlRemoveMissing = @sqlRemoveMissing + '						
+						;with cte as (
+							select K12StudentStudentIdentifierState, DimLeaId, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState, DimLeaId ORDER BY EnrollmentEntryDateId) as ''rownum'' 
+							from #CategorySet
+						)
+						delete from cte
+						where  rownum > 1'
+					end 
+				end
+
+
 			end
 		end
 		
@@ -5704,8 +5729,8 @@ BEGIN
 					+ case when @reportLevel = 'sea' then 'DimSeaId int,'
 							when @reportLevel = 'lea' then 'DimLeaId int,' 
 							else 'DimK12SchoolId int,'
-					end + 'DimStudentId int,
-					K12StudentStudentIdentifierState varchar(50)' + @sqlCategoryFieldDefs + ',
+					end + 'K12StudentStudentIdentifierState varchar(50),' 
+						+ 'EnrollmentEntryDateId int' + @sqlCategoryFieldDefs + ',
 					' + @factField + ' int
 					) 
 
@@ -5726,24 +5751,16 @@ BEGIN
 								when @reportLevel = 'lea' then 'DimLeaId,' 
 								else 'DimK12SchoolId,'
 
-						end + 'DimStudentId, K12StudentStudentIdentifierState'  + @sqlCategoryFields + ', ' + @factField + ')
-					select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
-										when @reportLevel = 'lea' then 'fact.LeaId,' 
-										else 'fact.K12SchoolId,'
-						end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields +
-						case when @ReportCode = 'C116' then
-						',	count(distinct K12StudentId) '
-						else
-						',	sum(isnull(fact.' + @factField + ', 0)) '
-						end +
+						end + 'K12StudentStudentIdentifierState, EnrollmentEntryDateId'  + @sqlCategoryFields + ', ' + @factField + ')
+					select  ' + case @reportLevel
+									when 'sea' then 'fact.SeaId,' + char(10)
+									when 'lea' then '						fact.LeaId,' + char(10)
+								else '						fact.K12SchoolId,' + char(10)
+						end + '						p.K12StudentStudentIdentifierState,' + char(10)
+						+ '						fact.EnrollmentEntryDateId' + char(10)
+						+ @sqlCategoryQualifiedDimensionFields + char(10) +
+						',	sum(isnull(fact.' + @factField + ', 0)) ' + char(10) +
 					'from rds.' + @factTable + ' fact ' + char(10)
-						if @reportCode = 'C052'
-							begin
-								select @sql = @sql + char(10) +
-								char(9) + char(9) + char(9) + char(9) + char(9) + char(9) +
-								'inner join #Students rules
-								on fact.K12StudentId = rules.K12StudentId' + char(10)					
-							end
 						
 					select @sql = @sql + @sqlCountJoins + char(10)
 
@@ -5757,10 +5774,13 @@ BEGIN
 
 					and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
 					and fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition +
-					' group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
-										when @reportLevel = 'lea' then 'fact.LeaId,'
-										else 'fact.K12SchoolId,'
-										end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState'  + @sqlCategoryQualifiedDimensionGroupFields + '
+					' group by ' + case @reportLevel 
+										when 'sea' then 'fact.SeaId,' + char(10)
+										when 'lea' then '						fact.LeaId,' + char(10)
+									else '						fact.K12SchoolId,' + char(10)
+									end + '						p.K12StudentStudentIdentifierState,' + char(10)
+									+ '						fact.EnrollmentEntryDateId'  + char(10)
+									+ 						@sqlCategoryQualifiedDimensionGroupFields + '
 					' + @sqlHavingClause + '
 					'
 
@@ -5913,12 +5933,12 @@ BEGIN
 		set @sumOperation = 'sum(isnull(' + @factField + ', 0))'
 
 		if @reportCode in ('c141','c009','c175', 'c178', 'c179', 'c185', 'c188', 
-			'c189', 'c121', 'c194', 'c082', 'c083', 'c154', 'c155', 'c156', 'c157', 'c158', 'c118',
+			'c189', 'c121', 'c194', 'c082', 'c083', 'c154', 'c155', 'c156', 'c157', 'c158',
 			'C052') -- JW 6/30/2023 Added C052
 		begin
 			set @sumOperation = 'count(distinct cs.dimStudentId )'
 		end
-		else if @reportCode in ('c002', 'c089', 'c005','c006','c086','c088','c144', 'c116')
+		else if @reportCode in ('c002', 'c089', 'c005','c006','c086','c088','c144', 'c116', 'c118')
 		begin
 			set @sumOperation = 'count(distinct cs.K12StudentStudentIdentifierState )'
 		end
@@ -5996,7 +6016,7 @@ BEGIN
 				begin
 					set @debugTableCreate = '					select s.K12StaffStaffMemberIdentifierState '
 				end 
-				else if @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
+				else if @reportCode IN ('c005','c006','c007','c086','c088','c143','c144','c118') 
 				begin
 					set @debugTableCreate = '					select K12StudentStudentIdentifierState '   
 				end 
@@ -6035,7 +6055,7 @@ BEGIN
 				END 
 				--these reports have been converted to use K12StudentStudentIdentifierState instead of K12StudentId
 				--	in #Students and #categorySet so no need to join to DimPeople
-				ELSE IF @reportCode IN ('c005','c006','c007','c086','c088','c143','c144') 
+				ELSE IF @reportCode IN ('c005','c006','c007','c086','c088','c143','c144','c118') 
 				BEGIN
 					set @debugTableCreate += '					from #categorySet c ' + char(10)
 				END

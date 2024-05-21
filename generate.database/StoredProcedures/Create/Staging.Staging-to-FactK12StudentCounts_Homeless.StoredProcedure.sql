@@ -148,6 +148,8 @@ BEGIN
 			, SpecialEducationServicesExitDateId	int null
 			, MigrantStudentQualifyingArrivalDateId	int null
 			, LastQualifyingMoveDateId				int null
+			, EnrollmentEntryDateId					int null
+			, EnrollmentExitDateId					int null
 		)
 
 		INSERT INTO #Facts
@@ -185,8 +187,14 @@ BEGIN
 			, -1											SpecialEducationServicesExitDateId	
 			, -1											MigrantStudentQualifyingArrivalDateId	
 			, -1											LastQualifyingMoveDateId						
+			, ISNULL(enrollEntry.DimDateId, -1)				EnrollmentEntryDateId
+			, ISNULL(enrollExit.DimDateId, -1)				EnrollmentExitDateId
 
 		FROM Staging.K12Enrollment ske
+		JOIN RDS.DimDates enrollEntry
+			ON ske.EnrollmentEntryDate = enrollEntry.DateValue
+		JOIN RDS.DimDates enrollExit
+			ON ske.EnrollmentEntryDate = enrollExit.DateValue
 	--homeless
 		JOIN Staging.PersonStatus hmStatus
 			ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
@@ -338,6 +346,8 @@ BEGIN
 			, [SpecialEducationServicesExitDateId]
 			, [MigrantStudentQualifyingArrivalDateId]
 			, [LastQualifyingMoveDateId]
+			, [EnrollmentEntryDateId]
+			, [EnrollmentExitDateId]
 		)
 		SELECT 
 			[SchoolYearId]
@@ -372,6 +382,8 @@ BEGIN
 			, [SpecialEducationServicesExitDateId]
 			, [MigrantStudentQualifyingArrivalDateId]
 			, [LastQualifyingMoveDateId]
+			, [EnrollmentEntryDateId]
+			, [EnrollmentExitDateId]
 		FROM #Facts
 
 		ALTER INDEX ALL ON RDS.FactK12StudentCounts REBUILD
