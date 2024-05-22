@@ -14,10 +14,10 @@ AS
 		, CAST(ur.value as varchar(max))		[Url]
 	FROM		INFORMATION_SCHEMA.COLUMNS	c 
 	INNER JOIN	INFORMATION_SCHEMA.TABLES	t ON t.TABLE_NAME = c.TABLE_NAME 
-	OUTER APPLY fn_listextendedproperty ('CEDS_Def_Desc', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) de
-	OUTER APPLY fn_listextendedproperty ('CEDS_ElementTechnicalName', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) el
-	OUTER APPLY fn_listextendedproperty ('CEDS_URL', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) ur
-	OUTER APPLY fn_listextendedproperty ('CEDS_GlobalId', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) gi
+	OUTER APPLY sys.fn_listextendedproperty ('CEDS_Def_Desc', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) de
+	OUTER APPLY sys.fn_listextendedproperty ('CEDS_ElementTechnicalName', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) el
+	OUTER APPLY sys.fn_listextendedproperty ('CEDS_URL', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) ur
+	OUTER APPLY sys.fn_listextendedproperty ('CEDS_GlobalId', 'schema', 'rds', N'table', c.TABLE_NAME, N'column', c.COLUMN_NAME) gi
 	WHERE t.table_type = 'BASE TABLE'
 		AND (de.value IS NOT NULL OR gi.value IS NOT NULL)
 
@@ -35,9 +35,9 @@ AS
 		, CAST(de.value as varchar(max))		[Description]
 		, CAST(ur.value as varchar(max))		[Url]
 	FROM		INFORMATION_SCHEMA.TABLES	t 
-	OUTER APPLY fn_listextendedproperty ('CEDS_Def_Desc', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) de
-	OUTER APPLY fn_listextendedproperty ('CEDS_ElementTechnicalName', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) el
-	OUTER APPLY fn_listextendedproperty ('CEDS_URL', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) ur
-	OUTER APPLY fn_listextendedproperty ('CEDS_GlobalId', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) gi
+	OUTER APPLY sys.fn_listextendedproperty ('CEDS_Def_Desc', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) de
+	OUTER APPLY sys.fn_listextendedproperty ('CEDS_ElementTechnicalName', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) el
+	OUTER APPLY sys.fn_listextendedproperty ('CEDS_URL', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) ur
+	OUTER APPLY sys.fn_listextendedproperty ('CEDS_GlobalId', 'schema', 'rds', N'table', t.TABLE_NAME, NULL, DEFAULT) gi
 	WHERE t.table_type = 'BASE TABLE'
 		AND (de.value IS NOT NULL OR gi.value IS NOT NULL)

@@ -48,7 +48,7 @@ AS
 
 	SET @SQLStatement = 
 	'SELECT *
-	INTO ##' + @ReportCode + 'Staging
+	INTO #' + @ReportCode + 'Staging
 	FROM Staging.vw' + @factTypeCode + '_StagingTables_' + @ReportCode 
 
 
