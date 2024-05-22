@@ -24,9 +24,7 @@ Views\\Drop,App.CategoryCodeOptionsByReportAndYear.View.sql
 Views\\Create,App.CategoryCodeOptionsByReportAndYear.View.sql 
 Scripts,DisableQuotedIdentifiers.script.sql,0
 Views\\Drop,dbo.vwCEDSMapping.View.sql 
-Views\\Create,dbo.vwCEDSMapping.View.sql 
 Views\\Drop,dbo.vwCEDSElementDetails.View.sql
-Views\\Create,dbo.vwCEDSElementDetails.View.sql
 Views\\Drop,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql
 Views\\Create,RDS.vwCEDS_DataWarehouse_Extended_Properties.View.sql
 Views\\Drop,Debug.vwChildCount_FactTable.View.sql 
