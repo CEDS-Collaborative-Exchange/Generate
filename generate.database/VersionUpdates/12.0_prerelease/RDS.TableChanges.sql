@@ -146,6 +146,28 @@ GO
 
 	ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId]
 
+    IF COL_LENGTH('RDS.FactK12StudentCounts', 'EnrollmentEntryDateId') IS NULL
+    BEGIN
+        ALTER TABLE RDS.FactK12StudentCounts ADD EnrollmentEntryDateId INT NOT NULL
+            CONSTRAINT [DF_FactK12StudentCounts_EnrollmentEntryDateId] DEFAULT ((-1)) WITH VALUES;
+    END
+
+    IF COL_LENGTH('RDS.FactK12StudentCounts', 'EnrollmentExitDateId') IS NULL
+    BEGIN
+        ALTER TABLE RDS.FactK12StudentCounts ADD EnrollmentExitDateId INT NOT NULL
+            CONSTRAINT [DF_FactK12StudentCounts_EnrollmentExitDateId]  DEFAULT ((-1)) WITH VALUES;
+    END
+
+    ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_EnrollmentEntryDateId] FOREIGN KEY([EnrollmentEntryDateId])
+    REFERENCES [RDS].[DimDates] ([DimDateId])
+
+    ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_EnrollmentEntryDateId]
+
+    ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_EnrollmentExitDateId] FOREIGN KEY([EnrollmentExitDateId])
+    REFERENCES [RDS].[DimDates] ([DimDateId])
+
+    ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_EnrollmentExitDateId]
+
 -------------------------------------------
 -- DimFactTypes
 -------------------------------------------

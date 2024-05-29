@@ -175,5 +175,6 @@ StoredProcedures\\Drop,Staging.Migrate_Data_Validation_Logging.StoredProcedure.s
 Tables\\Drop,Staging.ValidationErrors.Table.sql
 Functions\\Drop,RDS.Get_FactTypeByReport.UserDefinedFunction.sql
 Functions\\Create,RDS.Get_FactTypeByReport.UserDefinedFunction.sql
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql
 VersionUpdates\\12.0_prerelease,UpdateDbVersion.sql,0
-

@@ -156,6 +156,7 @@ BEGIN
 		hmStudents.StudentIdentifierState
 		, hmStudents.LeaIdentifierSeaAccountability
 		, hmStudents.SchoolIdentifierSea
+		, hmStudents.EnrollmentEntryDate
 		, hmStudents.HispanicLatinoEthnicity
 		, hmStudents.Sex
 		, CASE hmStudents.Sex
@@ -271,20 +272,21 @@ BEGIN
 		ISNULL(hmStudents.Homelessness_StatusStartDate, '1900-01-01') BETWEEN @SYStart AND @SYEnd
 
 
-select *
-from #C118Staging
-where StudentIdentifierState like 'cid%'
-
 	/**********************************************************************
 		Test Case 1:
 		CSA at the SEA level - Student Count by Age/Grade (Basic)
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		GradeLevelEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSA
-	FROM #C118staging 
+	FROM cte 
 	WHERE GradeLevelEdFactsCode not in ('PK','MISSING')
+		AND rownum = 1
 	GROUP BY GradeLevelEdFactsCode
 
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -318,12 +320,17 @@ where StudentIdentifierState like 'cid%'
 		Test Case 2:
 		CSB at the SEA level - Student Count by Homeless Primary Nighttime Residence
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		HomelessPrimaryNighttimeResidenceEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSB
-	FROM #C118staging 
+	FROM cte 
 	WHERE HomelessPrimaryNighttimeResidenceEdFactsCode <> 'MISSING'
+		AND rownum = 1
 	GROUP BY HomelessPrimaryNighttimeResidenceEdFactsCode
 
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -353,17 +360,21 @@ where StudentIdentifierState like 'cid%'
 
 	DROP TABLE #S_CSB
 
-
 	/**********************************************************************
 		Test Case 3:
 		CSC at the SEA level - Student Count by Disability Status (Only)
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		DisabilityStatusEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSC
-	FROM #C118staging 
+	FROM cte 
 	WHERE DisabilityStatusEdFactsCode <> 'MISSING'
+		AND rownum = 1
 	GROUP BY DisabilityStatusEdFactsCode
 		
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -398,12 +409,17 @@ where StudentIdentifierState like 'cid%'
 		Test Case 4:
 		CSD at the SEA level - Student Count by English Learner Status (Only)
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		EnglishLearnerStatusEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSD
-	FROM #C118staging
+	FROM cte
 	WHERE EnglishLearnerStatusEdFactsCode = 'LEP'
+		AND rownum = 1
 	GROUP BY EnglishLearnerStatusEdFactsCode
 		
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -438,12 +454,17 @@ where StudentIdentifierState like 'cid%'
 		Test Case 5:
 		CSE at the SEA level - Student Count by Migratory Status
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		MigrantStatusEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSE
-	FROM #C118staging 
+	FROM cte
 	WHERE MigrantStatusEdFactsCode <> 'MISSING'
+		AND rownum = 1
 	GROUP BY MigrantStatusEdFactsCode
 		
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -477,12 +498,17 @@ where StudentIdentifierState like 'cid%'
 		Test Case 6:
 		CSF at the SEA level - Student Count by Homeless Unaccompanied Youth Status
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		HomelessUnaccompaniedYouthEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSF
-	FROM #C118staging 
+	FROM cte
 	WHERE HomelessUnaccompaniedYouthEdFactsCode <> 'MISSING'
+		AND rownum = 1
 	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
 		
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -515,14 +541,19 @@ where StudentIdentifierState like 'cid%'
 		CSG at the SEA level - Student Count by Homeless Unaccompanied Youth Status 
 								by Homeless Primary Nighttime Residence
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		HomelessUnaccompaniedYouthEdFactsCode
 		, HomelessPrimaryNighttimeResidenceEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSG
-	FROM #C118staging 
+	FROM cte
 	WHERE HomelessUnaccompaniedYouthEdFactsCode <> 'MISSING'
-		AND HomelessPrimaryNighttimeResidenceEdFactsCode <> 'MISSING'
+	AND HomelessPrimaryNighttimeResidenceEdFactsCode <> 'MISSING'
+		AND rownum = 1
 	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
 			, HomelessPrimaryNighttimeResidenceEdFactsCode
 
@@ -559,12 +590,17 @@ where StudentIdentifierState like 'cid%'
 		Test Case 8:
 		CSH at the SEA level - Student Count by Racial Ethnic
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		RaceEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSH
-	FROM #C118staging 
-	where RaceEdFactsCode is not null -- JW 4/5/2024
+	FROM cte
+	WHERE RaceEdFactsCode is not null -- JW 4/5/2024
+		AND rownum = 1
 	GROUP BY RaceEdFactsCode
 		
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -598,10 +634,15 @@ where StudentIdentifierState like 'cid%'
 		Test Case 9:
 		TOT at the SEA level
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_TOT
-	FROM #C118staging 
+	FROM cte
+	WHERE rownum = 1
 		
 	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
@@ -637,16 +678,21 @@ where StudentIdentifierState like 'cid%'
 		Test Case 1:
 		CSA at the LEA level - Student Count by Age/Grade (Basic)
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState, LeaIdentifierSeaAccountability ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		GradeLevelEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSA 
-	FROM #C118staging s
+	FROM cte s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
-	AND GradeLevelEdFactsCode not in ('PK','MISSING')
+		AND GradeLevelEdFactsCode not in ('PK','MISSING')
+		AND rownum = 1
 	GROUP BY GradeLevelEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		
@@ -684,16 +730,21 @@ where StudentIdentifierState like 'cid%'
 		Test Case 2:
 		CSB at the LEA level - Student Count by Homeless Primary Nighttime Residence
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState, LeaIdentifierSeaAccountability ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		HomelessPrimaryNighttimeResidenceEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSB
-	FROM #C118staging s
+	FROM cte s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE HomelessPrimaryNighttimeResidenceEdFactsCode <> 'MISSING'
 		AND elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND rownum = 1
 	GROUP BY HomelessPrimaryNighttimeResidenceEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 
@@ -731,16 +782,21 @@ where StudentIdentifierState like 'cid%'
 		Test Case 3:
 		CSC at the LEA level - Student Count by Disability Status (Only)
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState, LeaIdentifierSeaAccountability ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		DisabilityStatusEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSC
-	FROM #C118staging s
+	FROM cte s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE DisabilityStatusEdFactsCode <> 'MISSING'
 		AND elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND rownum = 1
 	GROUP BY DisabilityStatusEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		
@@ -778,16 +834,21 @@ where StudentIdentifierState like 'cid%'
 		Test Case 4:
 		CSD at the LEA level - Student Count by English Learner Status (Only)
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState, LeaIdentifierSeaAccountability ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		EnglishLearnerStatusEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSD
-	FROM #C118staging s
+	FROM cte s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE EnglishLearnerStatusEdFactsCode = 'LEP'
 		AND elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND rownum = 1
 	GROUP BY EnglishLearnerStatusEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		
@@ -824,16 +885,21 @@ where StudentIdentifierState like 'cid%'
 		Test Case 5:
 		CSE at the LEA level - Student Count by Migratory Status
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState, LeaIdentifierSeaAccountability ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		MigrantStatusEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSE
-	FROM #C118staging s
+	FROM cte s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE MigrantStatusEdFactsCode <> 'MISSING'
 		AND elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND rownum = 1
 	GROUP BY MigrantStatusEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		
@@ -870,16 +936,21 @@ where StudentIdentifierState like 'cid%'
 		Test Case 6:
 		CSF at the LEA level - Student Count by Homeless Unaccompanied Youth Status
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState, LeaIdentifierSeaAccountability ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		HomelessUnaccompaniedYouthEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSF
-	FROM #C118staging s
+	FROM cte s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE HomelessUnaccompaniedYouthEdFactsCode <> 'MISSING'
 		AND elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND rownum = 1
 	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		
@@ -915,18 +986,23 @@ where StudentIdentifierState like 'cid%'
 		CSG at the LEA level - Student Count by Homeless Unaccompanied Youth Status 
 								by Homeless Primary Nighttime Residence
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState, LeaIdentifierSeaAccountability ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		HomelessUnaccompaniedYouthEdFactsCode
 		, HomelessPrimaryNighttimeResidenceEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSG
-	FROM #C118staging s
+	FROM cte s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE HomelessUnaccompaniedYouthEdFactsCode <> 'MISSING'
 		AND HomelessPrimaryNighttimeResidenceEdFactsCode <> 'MISSING'
 		AND elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND rownum = 1
 	GROUP BY HomelessUnaccompaniedYouthEdFactsCode
 		, HomelessPrimaryNighttimeResidenceEdFactsCode
 		, s.LeaIdentifierSeaAccountability
@@ -966,17 +1042,21 @@ where StudentIdentifierState like 'cid%'
 		Test Case 8:
 		CSH at the LEA level - Student Count by Racial Ethnic
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState, LeaIdentifierSeaAccountability ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		RaceEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSH
-	FROM #C118staging s
+	FROM cte s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		AND RaceEdFactsCode is not null -- JW 4/5/2024
-
+		AND rownum = 1
 	GROUP BY RaceEdFactsCode
 		, s.LeaIdentifierSeaAccountability
 		
@@ -1013,14 +1093,19 @@ where StudentIdentifierState like 'cid%'
 		Test Case 9:
 		TOT at the LEA level
 	***********************************************************************/
+	;with cte as (
+		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState, LeaIdentifierSeaAccountability ORDER BY EnrollmentEntryDate) as 'rownum' 
+		from #C118Staging
+	)
 	SELECT 
 		s.LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_TOT
-	FROM #C118staging s
+	FROM cte s
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND rownum = 1
 	GROUP BY s.LeaIdentifierSeaAccountability
 		
 	INSERT INTO App.SqlUnitTestCaseResult (
@@ -1077,12 +1162,12 @@ where StudentIdentifierState like 'cid%'
 
 	--check the results
 
-	--select *
-	--from App.SqlUnitTestCaseResult sr
-	--	inner join App.SqlUnitTest s
-	--		on s.SqlUnitTestId = sr.SqlUnitTestId
-	--where s.TestScope = 'FS118'
-	--and passed = 0
-	--and convert(date, TestDateTime) = convert(date, GETDATE())
+	-- select *
+	-- from App.SqlUnitTestCaseResult sr
+	-- 	inner join App.SqlUnitTest s
+	-- 		on s.SqlUnitTestId = sr.SqlUnitTestId
+	-- where s.TestScope = 'FS118'
+	-- and passed = 1
+	-- and convert(date, TestDateTime) = convert(date, GETDATE())
 
 END
