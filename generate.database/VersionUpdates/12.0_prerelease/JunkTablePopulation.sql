@@ -1,3 +1,6 @@
+/*  Commenting out this table population script because it is long-running and we 
+	need to determine if we need to break this dimension up
+
 	------------------------------------------------
 	-- Populate DimNOrDStatuses			 ---
 	------------------------------------------------
@@ -341,3 +344,5 @@
 
 		ALTER TABLE [RDS].[FactK12StudentDisciplines] CHECK CONSTRAINT [FK_FactK12StudentDisciplines_NOrDStatusId]
 	END
+
+*/
