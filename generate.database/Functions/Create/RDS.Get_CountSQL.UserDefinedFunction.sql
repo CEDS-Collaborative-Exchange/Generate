@@ -374,6 +374,10 @@ BEGIN
 			' from rds.FactOrganizationCounts f inner join ' + case when @reportLevel = 'lea' then 'rds.DimLeas l'  else 'rds.DimK12Schools l' end  +  
 			' on ' +  case when @reportLevel = 'lea' then 'f.LeaId = l.DimLeaId '  else 'f.K12SchoolId = l.DimK12SchoolId ' end  +
 			' where f.SchoolYearId = ' + CAST(@dimSchoolYearId as varchar(10)) +
+
+			--exclude Reportable Programs from c052 School level  CIID-6941	
+			case when @reportCode = 'c052' and @reportLevel = 'sch' then 'and l.SchoolTypeCode <> ''Reportable'' ' end +
+
 			' group by ' +  case when @reportLevel = 'lea' then 'LEAIdentifierSea'  else 'SchoolIdentifierSea' end + 
 			') status on status.OperationalStatusEffectiveDate = ' +  case when @reportLevel = 'lea' then 's.OperationalStatusEffectiveDate'  else 's.SchoolOperationalStatusEffectiveDate' end 
 			+ '	AND status.stateIdentifier = s.' +  case when @reportLevel = 'lea' then 'LEAIdentifierSea'  else 'SchoolIdentifierSea' end
