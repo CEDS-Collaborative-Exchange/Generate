@@ -10,6 +10,9 @@ BEGIN
 		declare @dataMigrationTypeId as int
 		declare @dataMigrationTypeCode as varchar(50)
 		declare @factTypeCode as varchar(50)
+		declare @startDate as DateTime
+		declare @endDate as DateTime
+		declare @durationInSeconds as int
 
 	
 		-- Check to see if a migration is pending
@@ -326,13 +329,11 @@ BEGIN
 		if @shouldMarkAsComplete = 1
 		begin
 
-			declare @startDate as DateTime
-			declare @endDate as DateTime
+			
 
 			select @startDate = LastTriggerDate from App.DataMigrations where DataMigrationId = @dataMigrationId
 			set @endDate = getutcdate()
 
-			declare @durationInSeconds as int
 			set @durationInSeconds =  DateDiff(second, @startDate, @endDate)
 
 			set @migrationTaskList = CASE WHEN RIGHT(@migrationTaskList,1)=',' THEN LEFT(@migrationTaskList,LEN(@migrationTaskList)-1) ELSE @migrationTaskList END
@@ -357,6 +358,13 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
+
+		set @migrationTaskList = CASE WHEN RIGHT(@migrationTaskList,1)=',' THEN LEFT(@migrationTaskList,LEN(@migrationTaskList)-1) ELSE @migrationTaskList END
+
+		update App.DataMigrations set  DataMigrationTaskList = @migrationTaskList
+		where DataMigrationId = @dataMigrationId
+
+		update app.GenerateReports set IsLocked = 0
 
 		declare @msg as nvarchar(max)
 		set @msg = ERROR_MESSAGE()
