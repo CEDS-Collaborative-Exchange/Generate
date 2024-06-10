@@ -8,10 +8,16 @@ BEGIN
 	IF OBJECT_ID(N'tempdb..#CharterSchoolAuthorizers') IS NOT NULL DROP TABLE #CharterSchoolAuthorizers
 
     DECLARE @StateCode varchar(2), @StateName varchar(50), @StateANSICode varchar(5), @SchoolYear int
-    SELECT @StateCode = (select distinct StateAbbreviationCode from Staging.StateDetail)
+    SELECT @StateCode = StateAbbreviationCode from Staging.StateDetail
     SELECT @StateName = (select [Description] from dbo.RefState where Code = @StateCode)
     SELECT @StateANSICode = (select Code from dbo.RefStateANSICode where [Description] = @StateName)
-    SELECT @SchoolYear = (select max(SchoolYear) from Staging.StateDetail)
+    SELECT @SchoolYear = (	select sy.SchoolYear
+							from rds.DimSchoolYearDataMigrationTypes dm
+								inner join rds.dimschoolyears sy
+									on dm.dimschoolyearid = sy.dimschoolyearid
+							where IsSelected = 1
+							and dm.DataMigrationTypeId = 2
+						)
 
 	IF NOT EXISTS (SELECT 1 FROM rds.DimCharterSchoolAuthorizers WHERE DimCharterSchoolAuthorizerId = -1)
 	BEGIN
