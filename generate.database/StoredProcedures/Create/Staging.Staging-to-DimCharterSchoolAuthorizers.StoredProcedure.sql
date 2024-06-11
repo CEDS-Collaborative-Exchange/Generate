@@ -9,8 +9,16 @@ BEGIN
 
     DECLARE @StateCode varchar(2), @StateName varchar(50), @StateANSICode varchar(5), @SchoolYear int
     SELECT @StateCode = StateAbbreviationCode from Staging.StateDetail
-    SELECT @StateName = (select [Description] from dbo.RefState where Code = @StateCode)
-    SELECT @StateANSICode = (select Code from dbo.RefStateANSICode where [Description] = @StateName)
+	SELECT @StateName = (	select CedsOptionSetDescription 
+							from ceds.CedsOptionSetMapping 
+							where CedsElementTechnicalName = 'StateAbbreviation' 
+							and CedsOptionSetCode = @StateCode
+						)
+	SELECT @StateANSICode = (	select CedsOptionSetCode 
+								from ceds.CedsOptionSetMapping 
+								where CedsElementTechnicalName = 'StateANSICode' 
+								and CedsOptionSetDescription = @StateName
+							)
     SELECT @SchoolYear = (	select sy.SchoolYear
 							from rds.DimSchoolYearDataMigrationTypes dm
 								inner join rds.dimschoolyears sy
