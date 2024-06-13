@@ -1,2 +1,2 @@
-IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[Staging].[vwChildCount_StagingTable_C002]'))
-    DROP VIEW [Staging].[vwChildCount_StagingTable_C002]
+IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[Staging].[vwMembership_StagingTables_C226]'))
+    DROP VIEW [Staging].[vwMembership_StagingTables_C226]
