@@ -2,6 +2,7 @@ DECLARE @AssessmentFactTypeId INT, @GenerateReportId INT
 declare @rdsDataMigrationTypeId as varchar(50), @reportDataMigrationTypeId as varchar(50)
 declare @factTypeId as int, @taskSquence as int
 declare @factTypeCode as varchar(100)
+declare @dimensionTableId as INT, @categoryId as INT, @dimensionId as INT, @factTableId as INT
 
 SELECT @AssessmentFactTypeId = DimFactTypeId 
 FROM RDS.DimFactTypes 
@@ -157,3 +158,98 @@ SET QUOTED_IDENTIFIER ON
 	where isnull(rc.ReportCodes, '') <> ''
 
 SET QUOTED_IDENTIFIER ON
+
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'AssessmentTypeAdministered'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'ASMTADMNMTHHS' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'GradeLevel'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'GRADELVLHS' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'AssessmentTypeAdministered'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'ASMTADMNMTHLG' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'GradeLevel'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'GRADELVLLG' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'AssessmentTypeAdministered'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'ASMTADMNRLAHS' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'AssessmentTypeAdministered'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'ASMTADMNRLALG' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'AssessmentTypeAdministered'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'ASMTADMNSCIHS' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'GradeLevel'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'GRADELVLHSSCI|' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'AssessmentTypeAdministered'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'ASMTADMNSCILG' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'GradeLevel'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'GRADELVLLGSCI|' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
