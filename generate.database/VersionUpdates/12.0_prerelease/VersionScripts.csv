@@ -19,9 +19,10 @@ VersionUpdates\\12.0_prerelease,App.Metadata-FS225.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-FS226.sql,0
 VersionUpdates\\12.0_prerelease,App.Metadata-PS.sql,0
 Metadata,App.ViewDefinitions.Metadata.sql,0
-Scripts,EnableQuotedIdentifiers.script.sql,0
 Views\\Drop,App.CategoryCodeOptionsByReportAndYear.View.sql 
+Scripts,EnableQuotedIdentifiers.script.sql,0
 Views\\Create,App.CategoryCodeOptionsByReportAndYear.View.sql 
+Indexes,app.CategoryCodeOptionsByReportAndYear.sql, 0
 Scripts,DisableQuotedIdentifiers.script.sql,0
 Views\\Drop,dbo.vwCEDSMapping.View.sql 
 Views\\Drop,dbo.vwCEDSElementDetails.View.sql

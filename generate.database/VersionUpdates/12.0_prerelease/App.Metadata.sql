@@ -131,6 +131,8 @@ inner join app.GenerateReports r
 	on ft.FactTableId = r.FactTableId
 where r.ReportCode in ('c029','c039','c035','c129','c190')
 
+SET QUOTED_IDENTIFIER ON
+
 -------------------------------------------
 -- DimFactTypes
 -------------------------------------------
@@ -153,3 +155,5 @@ where r.ReportCode in ('c029','c039','c035','c129','c190')
 	GROUP BY rdft.FactTypeCode) rc
 			on f.FactTypeCode = rc.FactTypeCode
 	where isnull(rc.ReportCodes, '') <> ''
+
+SET QUOTED_IDENTIFIER ON

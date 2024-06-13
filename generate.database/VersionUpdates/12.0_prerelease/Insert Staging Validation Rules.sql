@@ -1,3 +1,4 @@
+SET QUOTED_IDENTIFIER ON
 -- Generate V12 Staging Validation Rules
 delete from staging.StagingValidationRules_ReportsXREF where CreatedBy = 'Generate'
 delete from Staging.StagingValidationRules where CreatedBy = 'Generate'
@@ -706,7 +707,7 @@ exec Staging.StagingValidation_InsertRule
 
 
 
-
+SET QUOTED_IDENTIFIER OFF
 
 
 

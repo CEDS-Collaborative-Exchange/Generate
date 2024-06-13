@@ -1,3 +1,4 @@
+
 CREATE VIEW app.CategoryCodeOptionsByReportAndYear
 WITH SCHEMABINDING
 AS
@@ -27,11 +28,5 @@ AS
 		ON cs.TableTypeId = tt.TableTypeId
 			OR grtt.TableTypeId = tt.TableTypeId
 	
-GO
 
 
-CREATE UNIQUE CLUSTERED INDEX iux_CategoryCodeOptionsByReportAndYear
-ON app.CategoryCodeOptionsByReportAndYear (ReportCode, SubmissionYear, CategorySetCode, TableTypeId, CategoryCode, CategoryOptionCode);
-
-CREATE NONCLUSTERED INDEX ix_CategoryCodeOptionsByReportAndYear_ReportCode_SubmissionYear_CategoryCode
-ON app.CategoryCodeOptionsByReportAndYear (ReportCode, SubmissionYear, TableTypeAbbrv, CategoryCode);

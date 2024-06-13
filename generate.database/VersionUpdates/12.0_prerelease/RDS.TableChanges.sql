@@ -136,15 +136,22 @@ GO
 			CONSTRAINT [DF_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId]  DEFAULT ((-1)) WITH VALUES;
 	END
 
-	ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId] FOREIGN KEY([StatusStartDateNeglectedOrDelinquentId])
-	REFERENCES [RDS].[DimDates] ([DimDateId])
+	IF (OBJECT_ID('FK_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId') IS NOT NULL)
+	BEGIN
+		ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId] FOREIGN KEY([StatusStartDateNeglectedOrDelinquentId])
+		REFERENCES [RDS].[DimDates] ([DimDateId])
 
-	ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId]
+		ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId]
+	END
 
-	ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId] FOREIGN KEY([StatusEndDateNeglectedOrDelinquentId])
-	REFERENCES [RDS].[DimDates] ([DimDateId])
+	
+	IF (OBJECT_ID('FK_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId') IS NOT NULL)
+	BEGIN
+		ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId] FOREIGN KEY([StatusEndDateNeglectedOrDelinquentId])
+		REFERENCES [RDS].[DimDates] ([DimDateId])
 
-	ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId]
+		ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId]
+	END
 
     IF COL_LENGTH('RDS.FactK12StudentCounts', 'EnrollmentEntryDateId') IS NULL
     BEGIN
@@ -158,15 +165,23 @@ GO
             CONSTRAINT [DF_FactK12StudentCounts_EnrollmentExitDateId]  DEFAULT ((-1)) WITH VALUES;
     END
 
-    ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_EnrollmentEntryDateId] FOREIGN KEY([EnrollmentEntryDateId])
-    REFERENCES [RDS].[DimDates] ([DimDateId])
+	IF (OBJECT_ID('FK_FactK12StudentCounts_EnrollmentEntryDateId') IS NOT NULL)
+	BEGIN
+		ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_EnrollmentEntryDateId] FOREIGN KEY([EnrollmentEntryDateId])
+		REFERENCES [RDS].[DimDates] ([DimDateId])
 
-    ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_EnrollmentEntryDateId]
+		ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_EnrollmentEntryDateId]
+	END
 
-    ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_EnrollmentExitDateId] FOREIGN KEY([EnrollmentExitDateId])
-    REFERENCES [RDS].[DimDates] ([DimDateId])
+    IF (OBJECT_ID('FK_FactK12StudentCounts_EnrollmentExitDateId') IS NOT NULL)
+	BEGIN
 
-    ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_EnrollmentExitDateId]
+		ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_EnrollmentExitDateId] FOREIGN KEY([EnrollmentExitDateId])
+		REFERENCES [RDS].[DimDates] ([DimDateId])
+
+		ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_EnrollmentExitDateId]
+
+	END
 
 
 
