@@ -227,7 +227,7 @@ END
 
 
 SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'GradeLevel'
-SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'GRADELVLHSSCI|' order by CategoryId desc
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'GRADELVLHSSCI' order by CategoryId desc
 
 IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
 BEGIN
@@ -246,7 +246,34 @@ END
 
 
 SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'GradeLevel'
-SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'GRADELVLLGSCI|' order by CategoryId desc
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'GRADELVLLGSCI' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'AssessmentAcademicSubject'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'ACADSUBASSESNOSCI' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'AssessmentRegistrationParticipationIndicator'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSMTHLG' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'AssessmentRegistrationParticipationIndicator'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'PARTSTATUSMTHHS' order by CategoryId desc
 
 IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
 BEGIN

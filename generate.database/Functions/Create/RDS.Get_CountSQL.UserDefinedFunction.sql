@@ -5348,7 +5348,7 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 			end
-			else if(@reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189', 'c157'))
+			else if(@reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189', 'c157', 'c139'))
 			begin
 				set @sql = @sql + '
 
