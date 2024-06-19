@@ -279,3 +279,6 @@ SET ANSI_NULLS, QUOTED_IDENTIFIER ON;
 	GROUP BY rdft.FactTypeCode) rc
 			on f.FactTypeCode = rc.FactTypeCode
 	where isnull(rc.ReportCodes, '') <> ''
+
+	update rds.dimfacttypes set FactTypeDescription = 'ASSESSMENT - 113,125,126,137,138,139,142,175,178,179,185,188,189,224,225'
+	where FactTypeCode = 'assessment'
