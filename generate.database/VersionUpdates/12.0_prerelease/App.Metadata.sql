@@ -132,34 +132,6 @@ inner join app.GenerateReports r
 	on ft.FactTableId = r.FactTableId
 where r.ReportCode in ('c029','c039','c035','c129','c190')
 
-SET QUOTED_IDENTIFIER ON
-
--------------------------------------------
--- DimFactTypes
--------------------------------------------
-	update f
-	set f.FactTypeDescription = concat(f.FactTypeDescription, ' - ', rc.ReportCodes)
-	from rds.DimFactTypes f
-		inner join (SELECT rdft.FactTypeCode,
-		STUFF((SELECT ',' + replace(r.ReportCode, 'c', '') 
-				FROM app.GenerateReport_FactType rf
-				inner join rds.DimFactTypes f
-					on rf.FactTypeId = f.DimFactTypeId
-				inner join app.GenerateReports r
-					on rf.GenerateReportId = r.GenerateReportId
-			WHERE f.FactTypeCode = rdft.FactTypeCode
-			AND len(r.ReportCode) = 4
-			ORDER BY replace(r.ReportCode, 'c', '')
-				FOR XML PATH(''), TYPE).value('text()[1]', 'nvarchar(max)')
-		, 1, LEN(','), '') AS ReportCodes
-	FROM rds.DimFactTypes rdft
-	GROUP BY rdft.FactTypeCode) rc
-			on f.FactTypeCode = rc.FactTypeCode
-	where isnull(rc.ReportCodes, '') <> ''
-
-SET QUOTED_IDENTIFIER ON
-
-
 SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'AssessmentTypeAdministered'
 SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'ASMTADMNMTHHS' order by CategoryId desc
 
@@ -280,3 +252,30 @@ BEGIN
     INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
     VALUES (@categoryId, @dimensionId)
 END
+
+SET ANSI_NULLS, QUOTED_IDENTIFIER ON;
+
+-------------------------------------------
+-- DimFactTypes
+-------------------------------------------
+	Update rds.dimfacttypes set FactTypeDescription = ''
+
+	update f
+	set f.FactTypeDescription = concat(upper(rc.FactTypeCode), ' - ', rc.ReportCodes)
+	from rds.DimFactTypes f
+		inner join (SELECT rdft.FactTypeCode,
+		STUFF((SELECT ',' + replace(r.ReportCode, 'c', '') 
+				FROM app.GenerateReport_FactType rf
+				inner join rds.DimFactTypes f
+					on rf.FactTypeId = f.DimFactTypeId
+				inner join app.GenerateReports r
+					on rf.GenerateReportId = r.GenerateReportId
+			WHERE f.FactTypeCode = rdft.FactTypeCode
+			AND len(r.ReportCode) = 4
+			ORDER BY replace(r.ReportCode, 'c', '')
+				FOR XML PATH(''), TYPE).value('text()[1]', 'nvarchar(max)')
+		, 1, LEN(','), '') AS ReportCodes
+	FROM rds.DimFactTypes rdft
+	GROUP BY rdft.FactTypeCode) rc
+			on f.FactTypeCode = rc.FactTypeCode
+	where isnull(rc.ReportCodes, '') <> ''

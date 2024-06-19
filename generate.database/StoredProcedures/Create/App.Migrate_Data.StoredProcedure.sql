@@ -359,13 +359,6 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 
-		set @migrationTaskList = CASE WHEN RIGHT(@migrationTaskList,1)=',' THEN LEFT(@migrationTaskList,LEN(@migrationTaskList)-1) ELSE @migrationTaskList END
-
-		update App.DataMigrations set  DataMigrationTaskList = @migrationTaskList
-		where DataMigrationId = @dataMigrationId
-
-		update app.GenerateReports set IsLocked = 0
-
 		declare @msg as nvarchar(max)
 		set @msg = ERROR_MESSAGE()
 
