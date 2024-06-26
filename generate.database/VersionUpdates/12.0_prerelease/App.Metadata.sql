@@ -282,3 +282,17 @@ SET ANSI_NULLS, QUOTED_IDENTIFIER ON;
 
 	update rds.dimfacttypes set FactTypeDescription = 'ASSESSMENT - 113,125,126,137,138,139,142,175,178,179,185,188,189,224,225'
 	where FactTypeCode = 'assessment'
+
+	update rds.dimfacttypes set FactTypeDescription = 'DATAPOPULATION - studentsex,studentswdtitle1,studentcount,studentdiscipline,studentdisability,studentsubpopulation,studentrace'
+	where FactTypeCode = 'datapopulation'
+
+	update rds.dimfacttypes set FactTypeDescription = 'SPPAPR - indicator4a,indicator4b,indicator9,indicator10'
+	where FactTypeCode = 'sppapr'
+
+	update rds.dimfacttypes set FactTypeDescription = 'GRADUATIONRATE - 150,151'
+	where FactTypeCode = 'graduationrate'
+
+	update rds.dimfacttypes set FactTypeDescription = 'OTHER - Other Miscellaneous Reports'
+	where FactTypeCode = 'other'
+
+	delete from rds.DimFactTypes where FactTypeCode = 'submission'
