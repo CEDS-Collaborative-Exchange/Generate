@@ -29,86 +29,96 @@ CREATE NONCLUSTERED INDEX IX_ProgramParticipationNOrD_Student_LEA_School_BeginDa
 --Add the columns for the N or D file specs
 ------------------------------------------------
     --drop extended properties and indexes
-    	EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'DataCollectionName') IS NOT NULL
+    BEGIN
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
 
-    EXEC sys. sp_dropextendedproperty @name=N'MS_Description',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+        EXEC sys. sp_dropextendedproperty @name=N'MS_Description',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    END
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentAcademicAchievementIndicator'
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType') IS NOT NULL
+    BEGIN
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentAcademicAchievementIndicator'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentAcademicAchievementIndicator'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentAcademicAchievementIndicator'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'MS_Description',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentAcademicAchievementIndicator'
+        EXEC sys. sp_dropextendedproperty @name=N'MS_Description',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+    END
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'EdFactsAcademicOrCareerAndTechnicalOutcomeType') IS NOT NULL
+    BEGIN
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'MS_Description',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
+        EXEC sys. sp_dropextendedproperty @name=N'MS_Description', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
+    END
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentProgramEnrollmentSubpart') IS NOT NULL
+    BEGIN
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc',@level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element',@level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL',@level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
 
-    EXEC sys. sp_dropextendedproperty @name=N'MS_Description', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'EdFactsAcademicOrCareerAndTechnicalOutcomeType'
+        EXEC sys. sp_dropextendedproperty @name=N'MS_Description', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
+    END
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc',@level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedOrDelinquentStatus') IS NOT NULL
+    BEGIN
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element',@level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL',@level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
 
-    EXEC sys. sp_dropextendedproperty @name=N'MS_Description', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentProgramEnrollmentSubpart'
+        EXEC sys. sp_dropextendedproperty @name=N'MS_Description', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
+    END
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'DelinquentProgramType') IS NOT NULL
+    BEGIN
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DelinquentProgramType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DelinquentProgramType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DelinquentProgramType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DelinquentProgramType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'MS_Description', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedOrDelinquentStatus'
+        EXEC sys. sp_dropextendedproperty @name=N'MS_Description', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DelinquentProgramType'
+    END
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DelinquentProgramType'
+    IF COL_LENGTH('Staging.ProgramParticipationNorD', 'NeglectedProgramType') IS NOT NULL
+    BEGIN
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedProgramType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DelinquentProgramType'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedProgramType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DelinquentProgramType'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedProgramType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DelinquentProgramType'
+        EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedProgramType'
 
-    EXEC sys. sp_dropextendedproperty @name=N'MS_Description', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DelinquentProgramType'
-
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedProgramType'
-
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedProgramType'
-
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_GlobalId', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedProgramType'
-
-    EXEC sys. sp_dropextendedproperty @name=N'CEDS_URL', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedProgramType'
-
-    EXEC sys. sp_dropextendedproperty @name=N'MS_Description', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedProgramType'
-
+        EXEC sys. sp_dropextendedproperty @name=N'MS_Description', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'NeglectedProgramType'
+    END
 
     DROP INDEX [IX_Staging_ProgramParticipationNOrD_DataCollectionName] ON [Staging].[ProgramParticipationNorD]
 
