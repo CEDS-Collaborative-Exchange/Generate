@@ -294,3 +294,5 @@ SET ANSI_NULLS, QUOTED_IDENTIFIER ON;
 
 	update rds.dimfacttypes set FactTypeDescription = 'OTHER - Other Miscellaneous Reports'
 	where FactTypeCode = 'other'
+
+	delete from rds.DimFactTypes where FactTypeCode = 'submission'
