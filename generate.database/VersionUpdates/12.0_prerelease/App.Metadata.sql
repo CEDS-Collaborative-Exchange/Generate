@@ -295,4 +295,13 @@ SET ANSI_NULLS, QUOTED_IDENTIFIER ON;
 	update rds.dimfacttypes set FactTypeDescription = 'OTHER - Other Miscellaneous Reports'
 	where FactTypeCode = 'other'
 
+	update rds.dimfacttypes set FactTypeDescription = 'MEMBERSHIP - 033,052,226'
+	where FactTypeCode = 'membership'
+
+	update rds.dimfacttypes set FactTypeDescription = 'NEGLECTEDORDELINQUENT - 119,127,218,219,220,221'
+	where FactTypeCode = 'neglectedordelinquent'
+
+	update rds.dimfacttypes set FactTypeDescription = 'STAFF - 059,067,070,099,112,203'
+	where FactTypeCode = 'staff'
+
 	delete from rds.DimFactTypes where FactTypeCode = 'submission'
