@@ -98,7 +98,7 @@ BEGIN
 			, ISNULL(credIss.DimDateId, -1)				CredentialIssuanceDateId
 			, ISNULL(credExp.DimDateId, -1)				CredentialExpirationDateId
 			, 1											StaffCounts
-			, FullTimeEquivalency						StaffFullTimeEquivalency
+			, ISNULL(FullTimeEquivalency, -1)			StaffFullTimeEquivalency
 		FROM Staging.K12StaffAssignment ssa
 		JOIN RDS.DimSchoolYears rsy
 			ON ssa.SchoolYear = rsy.SchoolYear
