@@ -10,8 +10,26 @@ CREATE PROCEDURE [RDS].[Get_ReportData]
 
 AS
 BEGIN
+
+	--declare
+	--@reportCode as varchar(50) = 'C002',
+	--@reportLevel as varchar(50) = 'SCH',
+	--@reportYear as varchar(50) = '2024',
+	--@categorySetCode as varchar(50) = NULL,
+	--@includeZeroCounts as bit = 0,
+	--@includeFriendlyCaptions as bit = NULL,
+	--@obscureMissingCategoryCounts as bit = NULL,
+	--@isOnlineReport as bit=0
+
 	SET NOCOUNT ON;
--- Determine Fact/Report Tables
+
+	--just in case the cursor wasn't removed
+	if cursor_status('global','categoryset_cursor') >= -1
+	begin
+		deallocate categoryset_cursor
+	end
+
+	-- Determine Fact/Report Tables
 	declare @factTable as varchar(50)
 	declare @factField as varchar(50)
 	declare @factReportTable as varchar(50)
@@ -20,7 +38,13 @@ BEGIN
 	declare @factTypeCode as varchar(50)
 	declare @year as int
 
-	select @factTypeCode = RDS.Get_FactTypeByReport(@ReportCode)
+	select @factTypeCode = (select dft.FactTypeCode
+							from app.GenerateReport_FactType grft
+								inner join app.GenerateReports gr
+									on grft.GenerateReportId = gr.GenerateReportId
+								inner join rds.DimFactTypes dft
+									on grft.FactTypeId = dft.DimFactTypeId
+							where gr.ReportCode = @reportCode)
 
 	select @year = SchoolYear from rds.DimSchoolYears where SchoolYear = @reportYear
 
@@ -489,7 +513,6 @@ BEGIN
 			if @reportLevel = 'SEA' set @includeZeroCounts = 1
 			if @reportLevel <> 'SEA' and @categorySetCode = 'TOT' set @includeZeroCounts = 1
 		end
-
 
 	if @reportLevel = 'sea' AND @reportCode in ('c005','c006','c007','c088','c143','c144')
 	begin

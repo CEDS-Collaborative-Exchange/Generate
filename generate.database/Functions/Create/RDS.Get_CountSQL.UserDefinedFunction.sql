@@ -13,6 +13,19 @@ CREATE FUNCTION [RDS].[Get_CountSQL] (
 RETURNS nvarchar(MAX)
 AS
 BEGIN
+
+--declare
+
+--	@reportCode as nvarchar(150) = 'C002',
+--	@reportLevel as nvarchar(10) = 'SCH',
+--	@reportYear as nvarchar(10) = '2024',
+--	@categorySetCode as nvarchar(150)  = 'TOT',	
+--	@sqlType as nvarchar(50) = 'zero',
+--	@includeOrganizations as bit  = 1,
+--	@isFileGenerator as bit = 1,
+--	@tableTypeAbbrvs as nvarchar(150) = 'IDEADISAB',
+--	@totalIndicators as nvarchar(1) = 'YES',
+--	@factTypeCode as varchar(50) = 'childcount'
 	
 	declare @sql as nvarchar(max)
 	set @sql = ''
@@ -210,6 +223,8 @@ BEGIN
 		on r.ToggleQuestionId = q.ToggleQuestionId 
 	where q.EmapsQuestionAbbrv = 'CHDCTAGEDD'
 	and ResponseValue in ('3 Years', '4 Years', '5 Years')
+	select @toggleDevDelay3to5 = @toggleDevDelay3to5 + ', ''AGE05NOTK'''
+
 	
 	IF @reportYear IN ('2017-18', '2018-19', '2019-20')
 	BEGIN
@@ -227,6 +242,7 @@ BEGIN
 	    inner join app.ToggleQuestions q on r.ToggleQuestionId = q.ToggleQuestionId 
 	    where q.EmapsQuestionAbbrv = 'CHDCTAGEDD'
 	    and ResponseValue in ('5 Years', '6 Years', '7 Years', '8 Years', '9 Years')
+		select @toggleDevDelay6to9 = @toggleDevDelay6to9 + ', ''AGE05K'''
 	END
 	
 	select @istoggleGradOther = ISNULL( case when r.ResponseValue = 'true' then 1 else 0 end,0) 
@@ -373,10 +389,26 @@ BEGIN
 					else 'SchoolIdentifierSea as stateIdentifier, max(SchoolOperationalStatusEffectiveDate) as OperationalStatusEffectiveDate' end  +  
 			' from rds.FactOrganizationCounts f inner join ' + case when @reportLevel = 'lea' then 'rds.DimLeas l'  else 'rds.DimK12Schools l' end  +  
 			' on ' +  case when @reportLevel = 'lea' then 'f.LeaId = l.DimLeaId '  else 'f.K12SchoolId = l.DimK12SchoolId ' end  +
+
+			--exclude 'NSLP No' Schools from the c033 School level	
+			case when @reportCode = 'c033' and @reportLevel = 'sch' 
+				then ' inner join rds.DimK12SchoolStatuses rdkss on f.K12SchoolStatusId = rdkss.DimK12SchoolStatusId ' 
+				else ''
+			end +
+
 			' where f.SchoolYearId = ' + CAST(@dimSchoolYearId as varchar(10)) +
 
-			--exclude Reportable Programs from c052 School level  CIID-6941	
-			case when @reportCode = 'c052' and @reportLevel = 'sch' then 'and l.SchoolTypeCode <> ''Reportable'' ' end +
+			--exclude Reportable Programs from c033/c052 School level	
+			case when @reportCode in ('c033','c052') and @reportLevel = 'sch' 
+				then 'and l.SchoolTypeCode <> ''Reportable'' '
+				else ''
+			end +
+
+			--exclude 'NSLP No' Schools from the c033 School level	
+			case when @reportCode in ('c033') and @reportLevel = 'sch' 
+				then ' and rdkss.NslpStatusEdFactsCode <> ''NSLPNO'' ' 
+				else ''
+			end +
 
 			' group by ' +  case when @reportLevel = 'lea' then 'LEAIdentifierSea'  else 'SchoolIdentifierSea' end + 
 			') status on status.OperationalStatusEffectiveDate = ' +  case when @reportLevel = 'lea' then 's.OperationalStatusEffectiveDate'  else 's.SchoolOperationalStatusEffectiveDate' end 
@@ -560,9 +592,31 @@ BEGIN
 						and c52.CategorySetCode = ''TOT'' and c52.studentCount > 0
 						' + char(10)
 
-
 					select @sql = @sql + 
 						'CREATE INDEX IDX_Grades ON #Grades (OrganizationStateId)' + char(10)
+
+					select @sql = @sql + 
+						'CREATE INDEX IDX_Membership ON #Membership (OrganizationIdentifierSea)' + char(10)
+				end
+			end
+
+			if @reportCode in ('c033')
+			begin
+				select @sql = @sql + char(10) + char(10)
+
+				if @ReportLevel = 'sch'
+				begin
+					select @sql = @sql + 
+						'if OBJECT_ID(''tempdb..#Membership'') is not null drop table #Membership' + char(10)
+							
+					select @sql = @sql + 
+						'
+						select distinct OrganizationIdentifierSea
+						into #Membership
+						From rds.ReportEDFactsK12StudentCounts c52 where c52.ReportCode = ''c052''
+						and c52.reportLevel = ''sch'' and c52.reportyear = ''' + @reportYear + '''
+						and c52.CategorySetCode = ''TOT'' and c52.studentCount > 0
+						' + char(10)
 
 					select @sql = @sql + 
 						'CREATE INDEX IDX_Membership ON #Membership (OrganizationIdentifierSea)' + char(10)
@@ -632,11 +686,10 @@ BEGIN
 				-- JW 10/20/2023 Fixed C002 SCH Performance by using a #temp table rather than "In subselect"
 				if not @toggleDevDelayAges is null
 				begin
-					select @sql = @sql + char(10)
+					select @sql = @sql + char(10) + char(10)
 					select @sql = @sql + 
 	
-								'-- *****************************************************************************
-								IF OBJECT_ID(''tempdb..#EXCLUDE'') IS NOT NULL DROP TABLE #EXCLUDE
+								'IF OBJECT_ID(''tempdb..#EXCLUDE'') IS NOT NULL DROP TABLE #EXCLUDE
 	
 								select distinct fact.K12StudentId
 								into #EXCLUDE
@@ -652,7 +705,7 @@ BEGIN
 								inner join rds.DimIdeaDisabilityTypes idea 
 									on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId
 								where idea.IdeaDisabilityTypeEdFactsCode = ''DD''
-								--***************************************************************************'
+								'
 	
 					 + char(10) + char(10)
 	
@@ -4486,7 +4539,9 @@ BEGIN
 					inner join RDS.DimK12Schools org 
 						on fact.K12SchoolId = org.DimK12SchoolId
 						AND org.ReportedFederally = 1
-						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')
+					inner join #Membership membership 
+						on membership.OrganizationIdentifierSea = org.SchoolIdentifierSea' 
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -4521,7 +4576,9 @@ BEGIN
 					inner join RDS.DimK12Schools org 
 						on fact.K12SchoolId = org.DimK12SchoolId
 						AND org.ReportedFederally = 1
-						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')
+					inner join #Membership membership 
+						on membership.OrganizationIdentifierSea = org.SchoolIdentifierSea' 
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -6950,13 +7007,13 @@ BEGIN
                 where a.StudentCount = 0
                 AND OrganizationIdentifierSea NOT IN
                 (
-                SELECT DISTINCT dl.LeaIdentifierSea
-                FROM RDS.BridgeLeaGradeLevels blgl
-                JOIN RDS.DimLeas dl
-                    ON blgl.LeaId = dl.DimLeaID
-                JOIN RDS.DimGradeLevels dgl
-                    ON blgl.GradeLevelId = dgl.DimGradeLevelId
-                WHERE GradeLevelCode IN (''KG'', ''PK'')
+					SELECT DISTINCT dl.LeaIdentifierSea
+					FROM RDS.BridgeLeaGradeLevels blgl
+					JOIN RDS.DimLeas dl
+						ON blgl.LeaId = dl.DimLeaID
+					JOIN RDS.DimGradeLevels dgl
+						ON blgl.GradeLevelId = dgl.DimGradeLevelId
+					WHERE GradeLevelCode IN (''KG'', ''PK'')
                 )
 				'
 			END
@@ -6968,32 +7025,71 @@ BEGIN
                 where a.StudentCount = 0
                 AND OrganizationIdentifierSea NOT IN
                 (
-                SELECT DISTINCT dl.LeaIdentifierSea
-                FROM RDS.BridgeLeaGradeLevels blgl
-                JOIN RDS.DimLeas dl
-                    ON blgl.LeaId = dl.DimLeaID
-                JOIN RDS.DimGradeLevels dgl
-                    ON blgl.GradeLevelId = dgl.DimGradeLevelId
-                WHERE GradeLevelCode IN (''PK'')
+					SELECT DISTINCT dl.LeaIdentifierSea
+					FROM RDS.BridgeLeaGradeLevels blgl
+					JOIN RDS.DimLeas dl
+						ON blgl.LeaId = dl.DimLeaID
+					JOIN RDS.DimGradeLevels dgl
+						ON blgl.GradeLevelId = dgl.DimGradeLevelId
+					WHERE GradeLevelCode IN (''PK'')
                 )
 				'
 			END 
+			ELSE IF @year >= 2023 AND @reportCode = 'C002' and @reportLevel = 'SCH'
+			BEGIN
+				SET @sql = @sql + ' 
 
+				delete a from @reportData a
+                where a.StudentCount = 0
+                AND OrganizationIdentifierSea IN
+                (
+					select SchoolIdentifierSea from (
+					(select K12SchoolId from rds.BridgeK12SchoolGradeLevels where GradeLevelId = 1) OffersPK
+					inner join rds.DimK12Schools Schools
+						on OffersPK.K12SchoolId = Schools.dimK12SchoolId
+					inner join 
+					(select K12SchoolId, count(*) CountOf from rds.BridgeK12SchoolGradeLevels group by K12SchoolId having count(*) = 1) OneGradeOnly
+					on OffersPK.K12SchoolId = OneGradeOnly.K12SchoolId
+					)                
+				)
+				'
+			END 			
+	
 			IF @toggleDevDelayAges is not null
 			BEGIN
 
-				if @reportCode = 'c002' AND @toggleDevDelay6to9 is null
+				if @reportCode = 'c002' 
 				begin
-					set @sql = @sql + '  delete a from @reportData a
-					where a.' +  @factField + ' = 0   
-					AND IdeaDisabilityType = ''DD'' '
+					if @toggleDevDelay6to9 is null
+					begin
+						set @sql = @sql + '  delete a from @reportData a
+						where a.' +  @factField + ' = 0   
+						AND IdeaDisabilityType = ''DD'' '
+					end
+					else
+					begin
+						set @sql = @sql + '  delete a from @reportData a
+						where a.' +  @factField + ' = 0   
+						AND IdeaDisabilityType = ''DD''
+						AND AGE not in (' + @toggleDevDelay6to9 + ')'
+					end
 				end
 
-				if @reportCode = 'c089' AND @toggleDevDelay3to5 is null
+				if @reportCode = 'c089' 
 				begin
-					set @sql = @sql + '  delete a from @reportData a
-					where a.' +  @factField + ' = 0   
-					AND IdeaDisabilityType = ''DD'' '
+					if @toggleDevDelay3to5 is null
+					begin
+						set @sql = @sql + '  delete a from @reportData a
+						where a.' +  @factField + ' = 0   
+						AND IdeaDisabilityType = ''DD'' '
+					end
+					else
+					begin
+						set @sql = @sql + '  delete a from @reportData a
+						where a.' +  @factField + ' = 0   
+						AND IdeaDisabilityType = ''DD''
+						AND AGE not in (' + @toggleDevDelay3to5 + ')'
+					end
 				end
 			END
 			ELSE
