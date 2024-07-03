@@ -600,10 +600,8 @@ BEGIN
 						, [StateANSICode]
 						, [StateCode]
 						, [StateName]
-						, [TITLE1SCHOOLSTATUS]							
 						, [TotalIndicator]
 						, [VIRTUALSCHSTATUS]
---						, [MAGNETSTATUS]							
 					)
 					select distinct @categorySetCode
 						, isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
@@ -620,10 +618,8 @@ BEGIN
 						, sch.StateANSICode
 						, sch.StateAbbreviationCode
 						, sch.StateAbbreviationDescription
-						, titleIStatus.TitleISchoolStatusEdFactsCode
 						, 0 as TotalIndicator
 						, schStatus.VirtualSchoolStatusEdFactsCode
---						, MagnetOrSpecialProgramEmphasisSchoolEdFactsCode
 					from rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 							on fact.SchoolYearId = d.DimSchoolYearId
@@ -635,8 +631,6 @@ BEGIN
 							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
-						left outer join rds.DimTitleIStatuses titleIStatus 
-							on fact.TitleIStatusId = titleIStatus.DimTitleIStatusId		
 					where d.SchoolYear = @reportYear 
 					and sch.DimK12SchoolId <> -1
 					and ISNULL(sch.ReportedFederally, 1) = 1 

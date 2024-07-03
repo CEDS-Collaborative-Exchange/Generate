@@ -782,8 +782,7 @@ BEGIN
 			as GRADELEVEL
 			---------------------------------------------------------------------------------
 
-
-		from
+		FROM
 		(select  distinct       
 			@reportCode as ReportCode, 
             @reportYear as ReportYear,
