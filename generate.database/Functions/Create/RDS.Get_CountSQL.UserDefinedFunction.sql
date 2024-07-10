@@ -489,8 +489,19 @@ BEGIN
 				'if OBJECT_ID(''tempdb..#Students'') is not null drop table #Students' + char(10)
 
 				select @sql = @sql +
-				'select	distinct fact.K12StudentId, people.K12StudentStudentIdentifierState
-				into #Students
+				'select	distinct fact.K12StudentId, people.K12StudentStudentIdentifierState'
+
+				--this condition was added to ensure the Reportable Program schools are removed for 052 in the 
+				--	later code by joining on the School as well as Student Id.  If a student has more than 
+				--	1 enrollment in the SY and one of them is a Reportable Program, it was being included 
+				--	because the join was only on Student Id 
+				if @reportLevel = 'SCH'
+				begin
+					select @sql = @sql + ', fact.K12SchoolId'
+				end 
+
+				select @sql = @sql +
+				char(10) + 'into #Students
 				from rds.' + @factTable + ' fact
 				inner join rds.DimPeople people
 					on fact.K12StudentId = people.DimPersonId' + char(10)
@@ -5902,6 +5913,10 @@ BEGIN
 							char(9) + char(9) + char(9) + char(9) + char(9) + char(9) +
 							'inner join #Students rules
 							on fact.K12StudentId = rules.K12StudentId' + char(10)					
+							if @reportLevel = 'sch'
+							begin
+								select @sql = @sql + char(10) + 'and fact.K12SchoolId = rules.K12SchoolId'
+							end
 						end
 						
 				select @sql = @sql + @sqlCountJoins + char(10)
