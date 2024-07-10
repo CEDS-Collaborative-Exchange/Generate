@@ -707,6 +707,10 @@ BEGIN
 			'
 
 	set @sql = @sql + '
+			select count(*) as totalRecords from @reportData 
+	'
+
+	set @sql = @sql + '
 		IF OBJECT_ID(''#CAT_Organizations'') IS NOT NULL
 			DROP TABLE #CAT_Organizations
 	'
