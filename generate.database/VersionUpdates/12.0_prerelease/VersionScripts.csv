@@ -112,6 +112,8 @@ Views\\Drop,RDS.vwNeglectedOrDelinquent_FactTable_C220.View.sql
 Views\\Create,RDS.vwNeglectedOrDelinquent_FactTable_C220.View.sql
 Views\\Drop,RDS.vwNeglectedOrDelinquent_FactTable_C221.View.sql
 Views\\Create,RDS.vwNeglectedOrDelinquent_FactTable_C221.View.sql
+Views\\Drop,RDS.vwDimFirearmDisciplineStatuses.View.sql
+Views\\Create,RDS.vwDimFirearmDisciplineStatuses.View.sql
 StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql 
 StoredProcedures\\Create,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql 
 StoredProcedures\\Drop,Staging.RunEndToEndTest.StoredProcedure.sql 

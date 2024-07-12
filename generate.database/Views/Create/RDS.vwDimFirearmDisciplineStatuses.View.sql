@@ -14,6 +14,6 @@ AS
 		AND sssrd.TableName = 'RefDisciplineMethodFirearms'
 		AND rsy.SchoolYear = sssrd.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd2
-		ON rdfds.DisciplineMethodForFirearmsIncidentsCode = sssrd.OutputCode
-		AND sssrd.TableName = 'RefIdeaDisciplineMethodFirearm'
-		AND rsy.SchoolYear = sssrd.SchoolYear
+		ON rdfds.IdeaDisciplineMethodForFirearmsIncidentsCode = sssrd2.OutputCode
+		AND sssrd2.TableName = 'RefIdeaDisciplineMethodFirearm'
+		AND rsy.SchoolYear = sssrd2.SchoolYear
