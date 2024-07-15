@@ -93,7 +93,7 @@ BEGIN
 		'	, FileNumber ' + char(10) +
 		')' + char(10) +
 		'select agrg.FactTypeCode, agr.GenerateReportId ' + char(10) +	 
-		'from app.FactType_ReportsXREF x ' + char(10) +
+		'from app.GenerateReport_FactType x ' + char(10) +
 		'	inner join rds.dimFactTypes agrg ' + char(10) +
 		'		on x.FactTypeId = agrg.dimFactTypeId ' + char(10) +
 		'	inner join app.GenerateReports agr ' + char(10) +
