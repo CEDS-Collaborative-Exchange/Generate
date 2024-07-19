@@ -75,8 +75,7 @@ DECLARE factType_cursor CURSOR FOR
 SELECT DimFactTypeId, lower(FactTypeCode)
 FROM rds.DimFactTypes
 where DimFactTypeId > 0
-order by DimFactTypeId
-
+order by DimFactTypeId desc
 
 OPEN factType_cursor
 FETCH NEXT FROM factType_cursor INTO @factTypeId, @factTypeCode
@@ -109,8 +108,6 @@ END
 
 CLOSE factType_cursor
 DEALLOCATE factType_cursor
-
-
 
 select @rdsDataMigrationTypeId = DataMigrationTypeId from app.DataMigrationTypes where DataMigrationTypeCode = 'rds'
 select @reportDataMigrationTypeId = DataMigrationTypeId from app.DataMigrationTypes where DataMigrationTypeCode = 'report'
