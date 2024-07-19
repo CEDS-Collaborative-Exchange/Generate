@@ -253,6 +253,15 @@ BEGIN
     VALUES (@categoryId, @dimensionId)
 END
 
+select @dimensionId = DimensionId from app.Dimensions where DimensionFieldName = 'ISO6392LanguageCode'
+
+update fc set fc.DimensionId = @dimensionId 
+from app.GenerateReports r
+inner join app.FileSubmissions fs on r.GenerateReportId = fs.GenerateReportId
+inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
+inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
+where r.ReportCode = 'c141' and fc.ColumnName = 'HomeLanguageID'
+
 SET ANSI_NULLS, QUOTED_IDENTIFIER ON;
 
 -------------------------------------------
