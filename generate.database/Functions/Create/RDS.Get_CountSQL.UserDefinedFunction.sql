@@ -441,6 +441,38 @@ BEGIN
 									+  ' between CONVERT(date, ''' + @calculatedSYStartDate + ''',101) AND CONVERT(date, ''' + @calculatedSYEndDate + ''',101)'
 			end
 			
+			--remove the schools that do not have student counts in 052
+			if @reportCode in ('c033')
+			begin
+				select @sql = @sql + char(10) + char(10)
+
+				if @ReportLevel = 'sch'
+				begin
+					select @sql = @sql + 
+						'if OBJECT_ID(''tempdb..#Membership'') is not null drop table #Membership' + char(10)
+							
+					select @sql = @sql + 
+						'
+						select distinct OrganizationIdentifierSea
+						into #Membership
+						from rds.ReportEDFactsK12StudentCounts c52 
+						where c52.ReportCode = ''c052''
+						and c52.reportLevel = ''sch'' 
+						and c52.reportyear = ''' + @reportYear + '''
+						and c52.CategorySetCode = ''TOT'' 
+						and c52.studentCount > 0
+						' + char(10)
+
+					select @sql = @sql + 
+						'CREATE INDEX IDX_Membership ON #Membership (OrganizationIdentifierSea)' + char(10) + char(10) + char(10)
+
+					set @sql = @sql + '  delete a 
+						from #CAT_Organizations a
+						left join #membership m
+							on a.OrganizationIdentifierSea = m.OrganizationIdentifierSea
+						where m.OrganizationIdentifierSea is NULL'
+				end
+			end
 		end
 		else
 		begin
