@@ -99,6 +99,7 @@ BEGIN
 	declare @istoggleMinAge as bit
 	declare @toggleMinAgeGrad as varchar(50)
 	declare @toggleBasisOfExit as bit
+	declare @istoggleAlternateDiploma as bit
 	declare @toggleChildCountDate as varchar(10)
 	declare @istoggleExcludeCorrectionalAge5to11 as bit
 	declare @istoggleExcludeCorrectionalAge12to17 as bit
@@ -197,7 +198,15 @@ BEGIN
 	from app.ToggleQuestions q 
 	left outer join app.ToggleResponses r 
 		on r.ToggleQuestionId = q.ToggleQuestionId
-	where q.EmapsQuestionAbbrv = 'DEFEXCERTIF'
+	where q.EmapsQuestionAbbrv = 'DEFEXCERT'
+
+	select @istoggleAlternateDiploma = ISNULL( case when r.ResponseValue = 'true' then 1 else 0 end,0) 
+	from app.ToggleQuestions q 
+	left outer join app.ToggleResponses r 
+		on r.ToggleQuestionId = q.ToggleQuestionId
+	where q.EmapsQuestionAbbrv = 'DEFEXDLPDIS'
+
+	
 
 	-- Get Toggle Values
 	---------------------------------------------
@@ -2632,7 +2641,21 @@ BEGIN
 					END <> -1
 				inner join rds.DimIdeaStatuses idea 
 					on fact.IdeaStatusId = idea.DimIdeaStatusId
-				where idea.SpecialEducationExitReasonEdFactsCode <> ''MISSING''
+				where idea.SpecialEducationExitReasonEdFactsCode <> ''MISSING'''
+			
+			if(@toggleBasisOfExit = 0)
+			BEGIN
+				set @sqlCountJoins = @sqlCountJoins + '
+				and idea.SpecialEducationExitReasonEdFactsCode <> ''RC'''
+			END
+
+			if(@istoggleAlternateDiploma = 0)
+			BEGIN
+				set @sqlCountJoins = @sqlCountJoins + '
+				and idea.SpecialEducationExitReasonEdFactsCode <> ''GRADALTDPL'''
+			END
+
+			set @sqlCountJoins = @sqlCountJoins + '
 				and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode <> ''PPPS''
 				group by fact.K12StudentId, p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId 
 			) rules 
@@ -7168,8 +7191,13 @@ BEGIN
 			if(@toggleBasisOfExit = 0)
 			begin
 				set @sql = @sql + '  delete a from @reportData a
-				where a.' +  @factField + ' = 0
-				AND SpecialEducationExitReason IN (''GHS'',''GRADALTDPL'',''RC'')'
+				where SpecialEducationExitReason = ''RC'''
+			end
+
+			if(@istoggleAlternateDiploma = 0)
+			begin
+				set @sql = @sql + '  delete a from @reportData a
+				where SpecialEducationExitReason = ''GRADALTDPL'''
 			end
 
 			if(LEN(@toggleMaxAge) > 0)
