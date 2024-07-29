@@ -4864,7 +4864,6 @@ BEGIN
 				and fact.TitleiiiStatusId = rules.DimTitleIIIStatusId'
 		end
 
-		-- JW 12/7/2022 ------------------------------------------------------
 		else if @reportCode in ('c059')
 		begin
 
@@ -4876,31 +4875,40 @@ BEGIN
 			if @reportLevel = 'lea'
 			begin
 				set @sqlCountJoins = @sqlCountJoins + '
-				inner join RDS.DimLeas org 
-					on fact.LeaId = org.DimLeaId
-					AND org.ReportedFederally = 1
-					AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+					inner join RDS.DimLeas org 
+						on fact.LeaId = org.DimLeaId
+						AND org.ReportedFederally = 1
+						AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
 			end 
 			if @reportLevel = 'sch'
 			begin
 				set @sqlCountJoins = @sqlCountJoins + '
-				inner join RDS.DimK12Schools org 
-					on fact.K12SchoolId = org.DimK12SchoolId
-					AND org.ReportedFederally = 1
-					AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+					inner join RDS.DimK12Schools org 
+						on fact.K12SchoolId = org.DimK12SchoolId
+						and org.ReportedFederally = 1
+						and org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimK12StaffCategories s 
-					on fact.K12StaffCategoryId = s.DimK12StaffCategoryId				
-					and fact.SchoolYearId = @dimSchoolYearId
-					and fact.FactTypeId = @dimFactTypeId
-					and fact.LeaId <> -1
+					inner join rds.DimK12StaffCategories s 
+						on fact.K12StaffCategoryId = s.DimK12StaffCategoryId				
+						and fact.SchoolYearId = @dimSchoolYearId
+						and fact.FactTypeId = @dimFactTypeId
+						and fact.LeaId <> -1'
+
+			if @reportLevel = 'sch'
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+					where s.K12StaffClassificationCode in (''PrekindergartenTeachers'',''KindergartenTeachers'',''ElementaryTeachers'',''SecondaryTeachers'',''UngradedTeachers'')
+				'
+			end
+
+			set @sqlCountJoins = @sqlCountJoins + '
 			) rules
 				on fact.K12StaffId = rules.K12StaffId 
 				and fact.K12StaffCategoryId = rules.DimK12StaffCategoryId'
+
 		end
-		----------------------------------------------------------------------
 		
 		-- Insert actual count data
 		if(@factReportTable = 'ReportEDFactsK12StaffCounts')
