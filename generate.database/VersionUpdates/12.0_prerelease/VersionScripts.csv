@@ -174,8 +174,8 @@ StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql
 StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql
 StoredProcedures\\Drop,RDS.Get_MembershipReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_MembershipReportData.StoredProcedure.sql,0
-StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.sql
-StoredProcedures\\Create,Utilities.Check_SourceSystemReferenceData_Mapping.sql
+StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql
+StoredProcedures\\Create,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql
 StoredProcedures\\Drop,Utilities.Compare_C029.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Migrate_Data_ETL_IMPLEMENTATION_STEP06_PsStudentEnrollment_WithPerson_EncapsulatedCode.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Migrate_Data_Validation_Logging.StoredProcedure.sql
