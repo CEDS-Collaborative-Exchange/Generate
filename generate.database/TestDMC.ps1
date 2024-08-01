@@ -1,5 +1,5 @@
 Param(
-  [string] $sqlServer = "192.168.51.53",
+  [string] $sqlServer = "(localdb)\MSSQLLocalDB",
   [string] $db = "generate",
   [string] $user,
   [string] $password,

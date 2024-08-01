@@ -31,7 +31,7 @@ CREATE NONCLUSTERED INDEX IX_ProgramParticipationNOrD_Student_LEA_School_BeginDa
     --drop extended properties and indexes
     IF COL_LENGTH('Staging.ProgramParticipationNorD', 'DataCollectionName') IS NOT NULL
     BEGIN
-        EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+        --EXEC sys. sp_dropextendedproperty @name=N'CEDS_Def_Desc', @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
 
         EXEC sys. sp_dropextendedproperty @name=N'CEDS_Element',  @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
 

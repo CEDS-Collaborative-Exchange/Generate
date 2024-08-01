@@ -46,8 +46,8 @@ BEGIN TRY
 		FROM 
 		(	SELECT [Id]
 					  ,[SchoolYear]
-					  ,[LEA_Identifier_State]
-					  ,[School_Identifier_State]
+					  ,[LEAIdentifierSea]
+					  ,[SchooIdentifierSea]
 					  ,[ComprehensiveSupport]
 					  ,'' AS [Subgroup]
 					  ,[ComprehensiveSupportReasonApplicability]
@@ -58,8 +58,8 @@ BEGIN TRY
 				UNION ALL
 				SELECT [Id]
 					  ,[SchoolYear]
-					  ,[LEA_Identifier_State]
-					  ,[School_Identifier_State]
+					  ,[LEAIdentifierSea]
+					  ,[SchooIdentifierSea]
 					  ,'' AS [ComprehensiveSupport]
 					  ,[Subgroup]
 					  ,[ComprehensiveSupportReasonApplicability]
