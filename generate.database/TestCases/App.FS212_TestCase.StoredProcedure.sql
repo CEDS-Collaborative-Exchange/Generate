@@ -47,7 +47,7 @@ BEGIN TRY
 		(	SELECT [Id]
 					  ,[SchoolYear]
 					  ,[LEAIdentifierSea]
-					  ,[SchooIdentifierSea]
+					  ,[SchoolIdentifierSea]
 					  ,[ComprehensiveSupport]
 					  ,'' AS [Subgroup]
 					  ,[ComprehensiveSupportReasonApplicability]
@@ -55,18 +55,18 @@ BEGIN TRY
 					  ,[RecordEndDateTime]
 				FROM [Staging].[K12SchoolComprehensiveSupportIdentificationType] 
 				WHERE SchoolYear = @SchoolYear
-				UNION ALL
-				SELECT [Id]
-					  ,[SchoolYear]
-					  ,[LEAIdentifierSea]
-					  ,[SchooIdentifierSea]
-					  ,'' AS [ComprehensiveSupport]
-					  ,[Subgroup]
-					  ,[ComprehensiveSupportReasonApplicability]
-					  ,[RecordStartDateTime]
-					  ,[RecordEndDateTime]      
-				FROM [Staging].[K12SchoolTargetedSupportIdentificationType]
-				WHERE SchoolYear = @SchoolYear
+				-- UNION ALL
+				-- SELECT [Id]
+				-- 	  ,[SchoolYear]
+				-- 	  ,[LEAIdentifierSea]
+				-- 	  ,[SchooIdentifierSea]
+				-- 	  ,'' AS [ComprehensiveSupport]
+				-- 	  ,[Subgroup]
+				-- 	  ,[ComprehensiveSupportReasonApplicability]
+				-- 	  ,[RecordStartDateTime]
+				-- 	  ,[RecordEndDateTime]      
+				-- FROM [Staging].[K12SchoolTargetedSupportIdentificationType]
+				-- WHERE SchoolYear = @SchoolYear
 			) K12 
 
 			--SELECT * FROM #staging
