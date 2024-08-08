@@ -43,6 +43,8 @@ try
 
 	Write-Output "TestDMC.ps1 Complete"
 
+	Exit
+
 }
 Catch [Exception]
 {
