@@ -383,85 +383,85 @@ BEGIN
 	END
 	ELSE if (@reportCode = 'c039' AND @categorySetCode is NULL)
 	BEGIN
+
+		--Get the reportable schools that will have no grades offered
+		IF OBJECT_ID(N'tempdb..#reportableSchools') IS NOT NULL DROP TABLE #reportableSchools
+
+		select distinct rdks.SchoolIdentifierSea
+		into #reportableSchools	
+		from rds.FactOrganizationCounts rfoc
+			inner join rds.DimSchoolYearDataMigrationTypes rdsdmt
+				on rfoc.SchoolYearId = rdsdmt.DimSchoolYearId
+				and rdsdmt.DataMigrationTypeId = 3 	
+				and IsSelected = 1
+			inner join rds.dimschoolyears rdsy
+				on rdsdmt.dimschoolyearid = rdsy.dimschoolyearid
+				and rdsy.SchoolYear = @ReportYear
+			inner join rds.DimK12Schools rdks
+				on rdks.DimK12SchoolId = rfoc.K12SchoolId
+		where rdks.SchoolTypeCode = 'Reportable'
+
+		CREATE INDEX IDX_reportableSchools ON #reportableSchools (SchoolIdentifierSea)
+
 		SELECT
             CAST(ROW_NUMBER() OVER(ORDER BY organizationInfo.OrganizationStateId ASC) AS INT) as ReportEDFactsGradesOfferedId,                     
             organizationInfo.*
 		from
-		(select  distinct       
-			@reportCode as ReportCode, 
-            @reportYear as ReportYear,
-            @reportLevel as ReportLevel,
-            'CSA' as CategorySetCode, 
-            fact.StateANSICode,
-            fact.StateCode,
-            fact.StateName,            
-            OrganizationNcesId,
-            OrganizationStateId,
-            OrganizationName,
-            ParentOrganizationStateId,
-			ParentOrganizationNcesId,
-            [TableTypeAbbrv],
-            [TotalIndicator],
-			fact.OperationalStatus,
-			/******************************************************************
-			1/12/2023 JW
-			NOGRADES LOGIC
+			(select  distinct       
+				@reportCode as ReportCode, 
+				@reportYear as ReportYear,
+				@reportLevel as ReportLevel,
+				'CSA' as CategorySetCode, 
+				fact.StateANSICode,
+				fact.StateCode,
+				fact.StateName,            
+				OrganizationNcesId,
+				OrganizationStateId,
+				OrganizationName,
+				ParentOrganizationStateId,
+				ParentOrganizationNcesId,
+				[TableTypeAbbrv],
+				[TotalIndicator],
+				fact.OperationalStatus,
+				-- NOTE: the Fact table doesn't store Operational Status as words, but rather the number (as a varchar).
+				-- 2=closed   6=inactive   7=future
+				case 
+					when @ReportLevel = 'SCH' and fact.OperationalStatus in ('2','6','7') then 'NOGRADES' -- File spec doesn't mention how to handle non-operational schools, so making this assumption
+					when @ReportLevel = 'LEA' and fact.OperationalStatus in ('2','6','7') then 'NOGRADES'
+					when @ReportLevel = 'LEA' and Fact.OrganizationStateId in (
+							-- LEAs with No Schools
+							select distinct isnull(LEA.OrganizationStateId,'')
+							from rds.ReportEDFactsOrganizationCounts LEA
+							full outer join rds.ReportEDFactsOrganizationCounts SCH
+								on isnull(SCH.ReportCode,'') = isnull(LEA.ReportCode,'')
+								and isnull(SCH.ReportYear,'') = isnull(LEA.ReportYear,'')
+								and isnull(SCH.ParentOrganizationStateId,'') = isnull(LEA.OrganizationStateId,'')
+								and isnull(SCH.ReportLevel,'SCH') = 'SCH'
+								and isnull(LEA.ReportLevel,'LEA') = 'LEA'
+							left join #reportableSchools rs 	
+								on SCH.OrganizationStateId = rs.SchoolIdentifierSea
+							where LEA.ReportCode = 'c039' 
+								and LEA.ReportYear = @ReportYear
+								and LEA.ReportLevel = 'LEA'
+								and SCH.ParentOrganizationStateId is null	
+							) then 'NOGRADES'
+				else ISNULL(GRADELEVEL, 'UG') 
+				end as GRADELEVEL
+			from rds.ReportEDFactsOrganizationCounts fact
+				left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir 
+					on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
+				left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir 
+					on fact.OrganizationStateId = schDir.OrganizationIdentifierState
+			where reportcode = @reportCode and ReportLevel = @reportLevel 
+			and ReportYear = @reportYear
+			) organizationInfo     
 
-			FS039 says:
-			No students and thus no grades at this educational unit.  
-			Used by LEAs that provide support services but do not operate schools.  
-			Never used for operational schools.
-			********************************************************************/
-			-- Previous Logic ---------------------------------------------------------------
-			-- case when fact.OperationalStatus in ('Inactive','Closed','Future') then 'NOGRADES'
-			-- else ISNULL(GRADELEVEL, 'UG') end as GRADELEVEL
-
-			-- New Logic --------------------------------------------------------------------
-			-- NOTE: the Fact table doesn't store Operational Status as words, but rather the number (as a varchar).
-			-- 2=closed   6=inactive   7=future
-			case 
-				when @ReportLevel = 'SCH' and fact.OperationalStatus in ('2','6','7') then 'NOGRADES' -- File spec doesn't mention how to handle non-operational schools, so making this assumption
-				when @ReportLevel = 'LEA' and fact.OperationalStatus in ('2','6','7') then 'NOGRADES'
-				when @ReportLevel = 'LEA' and Fact.OrganizationStateId in (
-						-- LEAs with No Schools
-						select distinct isnull(LEA.OrganizationStateId,'')
-						from rds.ReportEDFactsOrganizationCounts LEA
-						full outer join rds.ReportEDFactsOrganizationCounts SCH
-							on isnull(SCH.ReportCode,'') = isnull(LEA.ReportCode,'')
-							and isnull(SCH.ReportYear,'') = isnull(LEA.ReportYear,'')
-							and isnull(SCH.ParentOrganizationStateId,'') = isnull(LEA.OrganizationStateId,'')
-							and isnull(SCH.ReportLevel,'SCH') = 'SCH'
-							and isnull(LEA.ReportLevel,'LEA') = 'LEA'
-						where LEA.ReportCode = 'c039' 
-							and LEA.ReportYear = @ReportYear
-							and LEA.ReportLevel = 'LEA'
-							and SCH.ParentOrganizationStateId is null	
-						) then 'NOGRADES'
-			else ISNULL(GRADELEVEL, 'UG') end as GRADELEVEL
-			---------------------------------------------------------------------------------
-		
-        from rds.ReportEDFactsOrganizationCounts fact
-			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
-			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
-		where reportcode = @reportCode and ReportLevel = @reportLevel 
-		and ReportYear = @reportYear
-		) organizationInfo     
-
-      
 	END
 	ELSE if (@reportCode = 'c039')
 	BEGIN
 		SELECT
             CAST(ROW_NUMBER() OVER(ORDER BY organizationInfo.OrganizationStateId ASC) AS INT) as ReportEDFactsGradesOfferedId,                     
             organizationInfo.*,
-
-			-- Previous Logic ---------------------------------------------------------------
-			--case when Len(gradesOffered.GRADELEVEL) > 0 then gradesOffered.GRADELEVEL
-			--     when Len(gradesOffered.GRADELEVEL) = 0 AND organizationInfo.OperationalStatus in ('Inactive','Closed','Future') then 'NOGRADES'
-			--	 else 'UG'
-			--end as GRADELEVEL
-
-			-- New Logic --------------------------------------------------------------------
 			-- NOTE: the Fact table doesn't store Operational Status as words, but rather the number (as a varchar).
 			-- 2=closed   6=inactive   7=future
 			case 
@@ -469,46 +469,46 @@ BEGIN
 				when @ReportLevel = 'LEA' and Len(isnull(gradesOffered.GRADELEVEL,'')) = 0 AND organizationInfo.OperationalStatus not in ('2','6','7') then 'NOGRADES'
 				when @ReportLevel = 'SCH' and organizationInfo.OperationalStatus in ('2','6','7') then 'NOGRADES' -- File spec doesn't mention how to handle non-operational schools, so making this assumption
 				when @ReportLevel = 'LEA' and organizationInfo.OperationalStatus in ('2','6','7') then 'NOGRADES'
-			else ISNULL(GRADELEVEL, 'UG') end 
-			as GRADELEVEL
-			---------------------------------------------------------------------------------
-
-
+			else ISNULL(GRADELEVEL, 'UG') 
+			end as GRADELEVEL
 		from
-		(select  distinct       
-			@reportCode as ReportCode, 
-            @reportYear as ReportYear,
-            @reportLevel as ReportLevel,
-            'CSA' as CategorySetCode, 
-             fact.StateANSICode,
-            fact.StateCode,
-            fact.StateName,            
-            OrganizationNcesId,
-            OrganizationStateId,
-            OrganizationName,
-            ParentOrganizationStateId,
-			ParentOrganizationNcesId,
-            [TableTypeAbbrv],
-            [TotalIndicator],
-			OperationalStatus
-        from rds.ReportEDFactsOrganizationCounts fact
-			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
-			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
-		where reportcode = @reportCode
-		and ReportLevel = @reportLevel 
-		and ReportYear = @reportYear and CategorySetCode =  isnull(@categorySetCode,'CSA')
-		) organizationInfo     
-        inner join (SELECT OrganizationStateId,[ReportYear], reportLevel, 
-                            GRADELEVEL =     Cast(STUFF((SELECT DISTINCT ', ' + GRADELEVEL
-                            FROM rds.ReportEDFactsOrganizationCounts b 
-                            WHERE b.OrganizationStateId = a.OrganizationStateId
-                            and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='c205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
-                            and b.reportYear = a.reportYear and a.ReportLevel = b.ReportLevel
-                            FOR XML PATH('')), 1, 2, '') as varchar(100))
-                FROM rds.ReportEDFactsOrganizationCounts a
-                GROUP BY OrganizationStateId, ReportYear, reportLevel
-       ) gradesOffered 
-		on organizationInfo.OrganizationStateId = gradesOffered.OrganizationStateId
+			(select  distinct       
+				@reportCode as ReportCode, 
+				@reportYear as ReportYear,
+				@reportLevel as ReportLevel,
+				'CSA' as CategorySetCode, 
+				fact.StateANSICode,
+				fact.StateCode,
+				fact.StateName,            
+				OrganizationNcesId,
+				OrganizationStateId,
+				OrganizationName,
+				ParentOrganizationStateId,
+				ParentOrganizationNcesId,
+				[TableTypeAbbrv],
+				[TotalIndicator],
+				OperationalStatus
+			from rds.ReportEDFactsOrganizationCounts fact
+				left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir 
+					on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
+				left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir
+					on fact.OrganizationStateId = schDir.OrganizationIdentifierState
+			where reportcode = @reportCode
+			and ReportLevel = @reportLevel 
+			and ReportYear = @reportYear and CategorySetCode =  isnull(@categorySetCode,'CSA')
+			) organizationInfo     
+			inner join 
+				(SELECT OrganizationStateId,[ReportYear], reportLevel, 
+								GRADELEVEL =     Cast(STUFF((SELECT DISTINCT ', ' + GRADELEVEL
+								FROM rds.ReportEDFactsOrganizationCounts b 
+								WHERE b.OrganizationStateId = a.OrganizationStateId
+								and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='c205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+								and b.reportYear = a.reportYear and a.ReportLevel = b.ReportLevel
+								FOR XML PATH('')), 1, 2, '') as varchar(100))
+				FROM rds.ReportEDFactsOrganizationCounts a
+				GROUP BY OrganizationStateId, ReportYear, reportLevel
+				) gradesOffered 
+			on organizationInfo.OrganizationStateId = gradesOffered.OrganizationStateId
             and organizationInfo.reportYear = gradesOffered.ReportYear
             and organizationInfo.ReportLevel = gradesOffered.ReportLevel 
 
