@@ -128,8 +128,6 @@ StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql
 StoredProcedures\\Drop,App.Migrate_Data.StoredProcedure.sql
 StoredProcedures\\Create,App.Migrate_Data.StoredProcedure.sql
-StoredProcedures\\Drop,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql
-StoredProcedures\\Create,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-DimLeas.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql
@@ -184,6 +182,10 @@ StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql
 StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql
 StoredProcedures\\Drop,RDS.Get_MembershipReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_MembershipReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.Cleanup_Grades_Offered.StoredProcedure.sql
+StoredProcedures\\Create,Utilities.Cleanup_Grades_Offered.StoredProcedure.sql
+StoredProcedures\\Drop,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql
+StoredProcedures\\Create,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql
 StoredProcedures\\Drop,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql
 StoredProcedures\\Create,Utilities.Check_SourceSystemReferenceData_Mapping.StoredProcedure.sql
 StoredProcedures\\Drop,Utilities.Compare_C029.StoredProcedure.sql
