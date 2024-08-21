@@ -1,9 +1,11 @@
 VersionUpdates\\12.0_prerelease,Restore 11.4.sql,0
 VersionUpdates\\12.0_prerelease,App.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,RDS.TableChanges.sql,0
+VersionUpdates\\12.0_prerelease,ceds.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,JunkTablePopulation.sql,0
 VersionUpdates\\12.0_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,dbo.TableChanges.sql,0
+VersionUpdates\\12.0_prerelease,CEDS.TableChanges.sql,0
 VersionUpdates\\12.0_prerelease,CorrectDataMigrationTasks.sql,0
 VersionUpdates\\12.0_prerelease,UpdateSSRD.sql,0
 VersionUpdates\\12.0_prerelease,Insert Staging Validation Rules.sql,0
