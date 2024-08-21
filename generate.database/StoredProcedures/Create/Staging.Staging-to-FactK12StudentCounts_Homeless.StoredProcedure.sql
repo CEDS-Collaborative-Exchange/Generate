@@ -222,10 +222,12 @@ BEGIN
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND hmStatus.Homelessness_StatusStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
+			AND (rdl.RecordStartDateTime BETWEEN hmStatus.Homelessness_StatusStartDate AND ISNULL(hmStatus.Homelessness_StatusEndDate, @SYEndDate)
+				OR hmStatus.Homelessness_StatusStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate))
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND hmStatus.Homelessness_StatusStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
+			AND (rdksch.RecordStartDateTime BETWEEN hmStatus.Homelessness_StatusStartDate AND ISNULL(hmStatus.Homelessness_StatusEndDate, @SYEndDate)
+				OR hmStatus.Homelessness_StatusStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate))
 	--homeless nighttime residence
 		LEFT JOIN Staging.PersonStatus hmNight
 			ON ske.StudentIdentifierState = hmNight.StudentIdentifierState

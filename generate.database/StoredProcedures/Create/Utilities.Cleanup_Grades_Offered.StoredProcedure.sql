@@ -92,11 +92,11 @@ BEGIN
 		--Last, add the organization condition based on Organization Type
 		if @organizationType = 'Lea'
 			begin
-				set @deleteSql += 'and dl.LeaIdentifierState = ''' + @organizationIdentifier + ''''
+				set @deleteSql += 'and dl.LeaIdentifierSea = ''' + @organizationIdentifier + ''''
 			end
 		else 
 			begin
-				set @deleteSql += 'and ds.SchoolIdentifierState = ''' + @organizationIdentifier + ''''
+				set @deleteSql += 'and ds.SchoolIdentifierSea = ''' + @organizationIdentifier + ''''
 			end
 	
 		--	print (@deleteSql)

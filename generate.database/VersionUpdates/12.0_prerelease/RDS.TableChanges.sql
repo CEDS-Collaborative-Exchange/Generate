@@ -144,7 +144,7 @@ GO
 		ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId]
 	END
 
-	IF (OBJECT_ID('FK_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId') IS NULL)
+	IF (OBJECT_ID('FK_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId') IS NULL)
 	BEGIN
 		ALTER TABLE [RDS].[FactK12StudentCounts]  WITH NOCHECK ADD CONSTRAINT [FK_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId] FOREIGN KEY([StatusEndDateNeglectedOrDelinquentId])
 		REFERENCES [RDS].[DimDates] ([DimDateId])

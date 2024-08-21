@@ -4,14 +4,28 @@
 AS 
 BEGIN
 
+    DECLARE @SchoolYear int, @StateCode varchar(2), @StateName varchar(50), @StateANSICode varchar(5)
+    SELECT @SchoolYear = (	select sy.SchoolYear
+							from rds.DimSchoolYearDataMigrationTypes dm
+								inner join rds.dimschoolyears sy
+									on dm.dimschoolyearid = sy.dimschoolyearid
+							where IsSelected = 1
+							and dm.DataMigrationTypeId = 2
+						)
+    SELECT @StateCode = StateAbbreviationCode from Staging.StateDetail where SchoolYear = @schoolyear
+	SELECT @StateName = (	select CedsOptionSetDescription 
+							from ceds.CedsOptionSetMapping 
+							where CedsElementTechnicalName = 'StateAbbreviation' 
+							and CedsOptionSetCode = @StateCode
+						)
+	SELECT @StateANSICode = (	select CedsOptionSetCode 
+								from ceds.CedsOptionSetMapping 
+								where CedsElementTechnicalName = 'StateANSICode' 
+								and CedsOptionSetDescription = @StateName
+							)
+
 	DECLARE @SYEndDate DATE
-	SELECT @SYEndDate = CAST('6/30/' + CAST((select MAX(SchoolYear) from Staging.K12Organization) AS VARCHAR(4)) AS DATE)
-
-	DECLARE @StateCode VARCHAR(2), @StateName VARCHAR(50), @StateANSICode VARCHAR(5)
-	SELECT @StateCode = (select StateAbbreviationCode from Staging.StateDetail)
-	SELECT @StateName = (select [Description] from dbo.RefState where Code = @StateCode)
-	SELECT @StateANSICode = (select Code from dbo.RefStateANSICode where [Description] = @StateName)
-
+	SELECT @SYEndDate = CAST('6/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
 
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12Schools WHERE DimK12SchoolId = -1)
 	BEGIN
@@ -280,6 +294,9 @@ BEGIN
 			AND ISNULL(trgt.RecordStartDateTime, '') = ISNULL(src.RecordStartDateTime, '')
 	WHEN MATCHED THEN 
 		UPDATE SET 
+			trgt.StateANSICode								= @StateAnsiCode,
+			trgt.StateAbbreviationCode						= src.StateAbbreviationCode,
+			trgt.StateAbbreviationDescription				= @StateName,
 			trgt.IeuOrganizationName 						= src.IeuOrganizationName,
 			trgt.IeuOrganizationIdentifierSea 				= src.IeuOrganizationIdentifierSea,
 			trgt.LeaOrganizationName 						= src.LeaOrganizationName,

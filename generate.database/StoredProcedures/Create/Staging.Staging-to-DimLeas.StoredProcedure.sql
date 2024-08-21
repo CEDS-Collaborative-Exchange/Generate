@@ -6,10 +6,25 @@ AS
 BEGIN
 
 	--Get the correct values for the state 
-	declare @StateCode varchar(2), @StateName varchar(50), @StateANSICode varchar(5)
-	select @StateCode = (select StateAbbreviationCode from Staging.StateDetail)
-	select @StateName = (select [Description] from dbo.RefState where Code = @StateCode)
-	select @StateANSICode = (select Code from dbo.RefStateANSICode where [Description] = @StateName)
+    DECLARE @SchoolYear int, @StateCode varchar(2), @StateName varchar(50), @StateANSICode varchar(5)
+    SELECT @SchoolYear = (	select sy.SchoolYear
+							from rds.DimSchoolYearDataMigrationTypes dm
+								inner join rds.dimschoolyears sy
+									on dm.dimschoolyearid = sy.dimschoolyearid
+							where IsSelected = 1
+							and dm.DataMigrationTypeId = 2
+						)
+    SELECT @StateCode = StateAbbreviationCode from Staging.StateDetail where SchoolYear = @schoolyear
+	SELECT @StateName = (	select CedsOptionSetDescription 
+							from ceds.CedsOptionSetMapping 
+							where CedsElementTechnicalName = 'StateAbbreviation' 
+							and CedsOptionSetCode = @StateCode
+						)
+	SELECT @StateANSICode = (	select CedsOptionSetCode 
+								from ceds.CedsOptionSetMapping 
+								where CedsElementTechnicalName = 'StateANSICode' 
+								and CedsOptionSetDescription = @StateName
+							)
 
 	--Get the count of LEAs that are marked as Charter
 	declare @charterLeaCount as int = 0
@@ -196,7 +211,10 @@ BEGIN
 		AND ISNULL(trgt.RecordStartDateTime, '') = ISNULL(src.RecordStartDateTime, '')
 	WHEN MATCHED THEN 
 		UPDATE SET 
-			trgt.LeaOrganizationName 							= src.LeaOrganizationName
+			trgt.StateANSICode									= @StateAnsiCode
+			, trgt.StateAbbreviationCode						= src.StateAbbreviationCode
+			, trgt.StateAbbreviationDescription					= @StateName
+			, trgt.LeaOrganizationName 							= src.LeaOrganizationName
 			, trgt.LeaIdentifierNces 							= src.LeaIdentifierNces
 			, trgt.PriorLEAIdentifierSea 						= src.PriorLEAIdentifierSea
 			, trgt.LeaSupervisoryUnionIdentificationNumber 		= src.SupervisoryUnionIdentificationNumber
