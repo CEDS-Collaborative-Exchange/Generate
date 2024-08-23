@@ -217,7 +217,7 @@ BEGIN
 		, smap.AddressCountyAnsiCodeCode			AS PhysicalAddressCountyAnsiCodeCode
 		, NULL
 		, NULL
-		, sop.TelephoneNumber
+		, REPLACE(REPLACE(REPLACE(sop.TelephoneNumber,'-',''),'(',''),')','') AS TelephoneNumber
 		, sko.School_WebSiteAddress
 		, CASE
 			WHEN School_CharterSchoolIndicator IS NULL THEN 'MISSING'

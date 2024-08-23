@@ -129,7 +129,7 @@ BEGIN
 			, smap.StateAbbreviation 						AS PhysicalAddressStateAbbreviation
 			, smap.AddressPostalCode 						AS PhysicalAddressPostalCode
 			, smap.AddressCountyAnsiCodeCode				AS PhysicalAddressCountyAnsiCodeCode
-			, sop.TelephoneNumber
+			, REPLACE(REPLACE(REPLACE(sop.TelephoneNumber,'-',''),'(',''),')','') AS TelephoneNumber
 			, sko.LEA_WebSiteAddress 						AS WebSiteAddress
 			, smap.Longitude
 			, smap.Latitude
