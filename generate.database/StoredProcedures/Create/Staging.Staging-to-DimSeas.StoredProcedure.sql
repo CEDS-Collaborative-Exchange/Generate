@@ -182,7 +182,7 @@ BEGIN
 			, ssd.SeaContact_LastOrSurname
 			, ssd.SeaContact_PersonalTitleOrPrefix
 			, ssd.SeaContact_ElectronicMailAddress
-			, sop.TelephoneNumber
+			, REPLACE(REPLACE(REPLACE(sop.TelephoneNumber,'-',''),'(',''),')','') AS TelephoneNumber
 			, ssd.SeaContact_Identifier
 			, ssd.SeaContact_PositionTitle
 			, smam.AddressStreetNumberAndName				AS MailingAddressStreet
