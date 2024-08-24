@@ -132,6 +132,8 @@ StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql
 StoredProcedures\\Drop,App.Migrate_Data.StoredProcedure.sql
 StoredProcedures\\Create,App.Migrate_Data.StoredProcedure.sql
+StoredProcedures\\Drop,Staging.Staging-to-DimSeas.StoredProcedure.sql
+StoredProcedures\\Create,Staging.Staging-to-DimSeas.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-DimLeas.StoredProcedure.sql
 StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql
