@@ -55,10 +55,10 @@ BEGIN
 		SELECT
 		DISTINCT 
 			sko.LEAIdentifierSea
-		  	,sko.LEAIdentifierNCES
-		  	,sko.LEA_SupervisoryUnionIdentificationNumber
-		  	,sko.LEAOrganizationName
-		  	,sko.LEA_WebSiteAddress
+		  	, sko.LEAIdentifierNCES
+		  	, sko.LEA_SupervisoryUnionIdentificationNumber
+		  	, sko.LEAOrganizationName
+		  	, sko.LEA_WebSiteAddress
 		  	, CASE sssrd1.OutputCode
 				WHEN 'Open' THEN 1 
 				WHEN 'Closed' THEN 2 
@@ -78,14 +78,14 @@ BEGIN
 				WHEN 'Reopened_1' THEN 8 
 				ELSE NULL
 			END LEA_OperationalStatus
-		  	,sko.LEA_OperationalStatusEffectiveDate
-		  	,sko.LEA_CharterLeaStatus
-		  	,sko.LEA_CharterSchoolIndicator
-		  	,isnull(sko.LEA_Type, -1) LEA_Type
-		  	,sko.LEA_IsReportedFederally
-		  	,sko.LEA_RecordStartDateTime
-		  	,sko.LEA_RecordEndDateTime
-		  	, phone.TelephoneNumber
+		  	, sko.LEA_OperationalStatusEffectiveDate
+		  	, sko.LEA_CharterLeaStatus
+		  	, sko.LEA_CharterSchoolIndicator
+		  	, isnull(sko.LEA_Type, -1) LEA_Type
+		  	, sko.LEA_IsReportedFederally
+		  	, sko.LEA_RecordStartDateTime
+		  	, sko.LEA_RecordEndDateTime
+			, REPLACE(REPLACE(REPLACE(phone.TelephoneNumber,'-',''),'(',''),')','') AS TelephoneNumber
 		  	, mailing.AddressStreetNumberAndName as MailingAddressStreetNumberAndName
 		  	, mailing.AddressApartmentRoomOrSuiteNumber as MailingAddressApartmentRoomOrSuiteNumber
 		  	, mailing.AddressCity as MailingAddressCity
@@ -116,16 +116,16 @@ BEGIN
 
 		select	 distinct
 		   	OrganizationStateId
-		  	,OrganizationNcesId
-		  	,SupervisoryUnionIdentificationNumber
-		  	,OrganizationName
-		  	,WebSite
-		  	,OperationalStatus
-		  	,EffectiveDate
-		  	,CharterLeaStatus
-		  	,CharterSchoolIndicator
-		  	,LEAType
-		  	,Telephone
+		  	, OrganizationNcesId
+		  	, SupervisoryUnionIdentificationNumber
+		  	, OrganizationName
+		  	, WebSite
+		  	, OperationalStatus
+		  	, EffectiveDate
+		  	, CharterLeaStatus
+		  	, CharterSchoolIndicator
+		  	, LEAType
+		  	, Telephone
 		  	, MailingAddressStreet
 		  	, MailingAddressApartmentRoomOrSuiteNumber
 		  	, MailingAddressCity
@@ -607,7 +607,7 @@ BEGIN
 			, sko.School_IsReportedFederally
 			, sko.School_RecordStartDateTime
 			, sko.School_RecordEndDateTime
-			, phone.TelephoneNumber
+			, REPLACE(REPLACE(REPLACE(phone.TelephoneNumber,'-',''),'(',''),')','') AS TelephoneNumber
 			, mailing.AddressStreetNumberAndName as MailingAddressStreetNumberAndName
 			, mailing.AddressApartmentRoomOrSuiteNumber as MailingAddressApartmentRoomOrSuiteNumber
 			, mailing.AddressCity as MailingAddressCity
@@ -643,16 +643,16 @@ BEGIN
 
 		select distinct   
 			ParentOrganizationStateId
-			,ParentOrganizationNcesId
-			,OrganizationStateId
-			,OrganizationNcesId
-			,OrganizationName
-			,WebSite
-			,OperationalStatus
-			,EffectiveDate
-			,CharterSchoolStatus
-			,SchoolType
-			,Telephone
+			, ParentOrganizationNcesId
+			, OrganizationStateId
+			, OrganizationNcesId
+			, OrganizationName
+			, WebSite
+			, OperationalStatus
+			, EffectiveDate
+			, CharterSchoolStatus
+			, SchoolType
+			, Telephone
 			, MailingAddressStreet
 			, MailingAddressCity
 			, MailingAddressApartmentRoomOrSuiteNumber
