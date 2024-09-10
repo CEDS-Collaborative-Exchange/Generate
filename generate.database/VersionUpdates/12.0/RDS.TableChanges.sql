@@ -259,8 +259,3 @@ GO
 	update RDS.DimFactTypes
 	set FactTypeDescription = 'TITLEIIIELOCT - 141'
 	where FactType = 'titleIIIELOct'
-
-
-	
-
-
