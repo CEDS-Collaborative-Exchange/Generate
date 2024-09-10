@@ -103,6 +103,17 @@ delete from app.ToggleSections where SectionSequence in (202, 400, 401, 600, 601
 	delete from app.ToggleSections
 	where ToggleSectionId = 29
 
+
+--correct the report - fact type relationship for 150 and 151
+	delete 
+	from app.GenerateReport_FactType
+	where FactTypeId = 9 
+	and GenerateReportId in (75,76)
+
+	insert into app.GenerateReport_FactType
+	values (75,18), (76,18)
+
+
 	
 
 
