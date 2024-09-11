@@ -35,8 +35,6 @@ VersionUpdates\\12.0\\Views\\Drop,Debug.vwChildCount_FactTable.View.sql
 VersionUpdates\\12.0\\Views\\Create,Debug.vwChildCount_FactTable.View.sql 
 VersionUpdates\\12.0\\Views\\Drop,Debug.vwChildCount_StagingTables.View.sql 
 VersionUpdates\\12.0\\Views\\Create,Debug.vwChildCount_StagingTables.View.sql 
-VersionUpdates\\12.0\\Views\\Drop,rds.vwDimNOrDStatuses.View.sql
-VersionUpdates\\12.0\\Views\\Create,rds.vwDimNOrDStatuses.View.sql
 VersionUpdates\\12.0\\Views\\Drop,Debug.vwMembership_StagingTables.View.sql
 VersionUpdates\\12.0\\Views\\Create,Debug.vwMembership_StagingTables.View.sql
 VersionUpdates\\12.0\\Views\\Drop,Debug.vwMembership_FactTable.View.sql
