@@ -40,8 +40,6 @@ END
 
 ALTER TABLE [App].[DataMigrationTasks] DROP CONSTRAINT [UX_DataMigrationTasks]
 
-SET ANSI_PADDING ON
-GO
 
 ALTER TABLE [App].[DataMigrationTasks] ADD  CONSTRAINT [UX_DataMigrationTasks] UNIQUE NONCLUSTERED 
 (
