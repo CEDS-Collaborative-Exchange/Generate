@@ -285,7 +285,7 @@ CREATE NONCLUSTERED INDEX IX_ProgramParticipationNOrD_Student_LEA_School_BeginDa
         [DataCollectionName] ASC
     )
     INCLUDE([LeaIdentifierSeaAccountability],[LeaIdentifierSeaAttendance],[LeaIdentifierSeaFunding],[LeaIdentifierSeaGraduation],[LeaIdentifierSeaIndividualizedEducationProgram],[SchoolIdentifierSea],[StudentIdentifierState]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-    GO
+ 
 
     --add the extended properties
     EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'A human readable name used to identify the data within the collection.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
