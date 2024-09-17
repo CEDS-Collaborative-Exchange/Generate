@@ -93,3 +93,72 @@ INSERT INTO [App].[ToggleResponses]
 		'true'
            ,@ToggleQuestionId
 		)
+
+--------------------------------------------------------------------------
+--Remove the duplicate question from the ToggleQuestions table (CIID-5657)
+--------------------------------------------------------------------------
+
+--first, set the new questions with the same response as the original question
+
+	declare @responseValue nvarchar(5)
+	set @responseValue = (select ResponseValue 
+                              from App.ToggleResponses tr
+                                    inner join app.ToggleQuestions tq
+                                          on tr.toggleQuestionId = tq.ToggleQuestionId
+                              where tq.EmapsQuestionAbbrv = 'DEFEXCERTIF')
+
+	if ISNULL(@responseValue, '') <> ''
+	begin
+
+		declare @a varchar(5)
+		declare @b varchar(5)
+		
+		set @a = (select ToggleQuestionId
+			from app.ToggleQuestions
+			where EmapsQuestionAbbrv = 'DEFEXDLPDIS')
+
+		set @b = (select ToggleQuestionId
+			from app.ToggleQuestions
+			where EmapsQuestionAbbrv = 'DEFEXCERT')
+
+		if (select count(*)
+			from app.ToggleResponses tr
+				inner join app.ToggleQuestions tq
+					on tr.ToggleQuestionId = tq.ToggleQuestionId
+			where tq.EmapsQuestionAbbrv = 'DEFEXDLPDIS') = 1
+		begin
+			update App.ToggleResponses set ResponseValue = @responseValue where ToggleQuestionId = @a
+		end
+		else
+		begin
+			insert into App.ToggleResponses values (@responseValue, @a, NULL)
+		end
+
+		if (select count(*)
+			from app.ToggleResponses tr
+				inner join app.ToggleQuestions tq
+					on tr.ToggleQuestionId = tq.ToggleQuestionId
+			where tq.EmapsQuestionAbbrv = 'DEFEXCERT') = 1
+		begin
+			update App.ToggleResponses set ResponseValue = @responseValue where ToggleQuestionId = @b
+		end
+		else
+		begin
+			insert into App.ToggleResponses values (@responseValue, @b, NULL)
+		end
+
+	end
+
+--second, remove the duplicate question
+
+	--ToggleResponses
+	delete from app.ToggleResponses
+	where ToggleQuestionId = 23
+
+	--ToggleQuestions
+	delete from app.ToggleQuestions
+	where ToggleQuestionId = 23
+
+	--ToggleSections
+	delete from app.ToggleSections
+	where ToggleSectionId = 29
