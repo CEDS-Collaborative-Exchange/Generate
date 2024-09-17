@@ -102,10 +102,10 @@ INSERT INTO [App].[ToggleResponses]
 
 	declare @responseValue nvarchar(5)
 	set @responseValue = (select ResponseValue 
-							from App.ToggleResponses tr
-								inner join app.ToggleQuestions tq
-									on tr.toggleQuestionId = tq.ToggleQuestionId
-							where tq.EmapsQuestionAbbrv = 'DEFEXCERTIF')
+                              from App.ToggleResponses tr
+                                    inner join app.ToggleQuestions tq
+                                          on tr.toggleQuestionId = tq.ToggleQuestionId
+                              where tq.EmapsQuestionAbbrv = 'DEFEXCERTIF')
 
 	if ISNULL(@responseValue, '') <> ''
 	begin
