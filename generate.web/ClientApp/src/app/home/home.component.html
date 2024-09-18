@@ -1,0 +1,107 @@
+<generate-app-breadcrumbs breadcrumbs="Home"></generate-app-breadcrumbs>
+<div class="mdl-grid">
+    <div *ngIf="!userService.isLoggedIn()" id="generate-home__message" class="generate-home__message mdl-js-snackbar mdl-snackbar" aria-live="assertive" aria-atomic="true" aria-relevant="text">
+        <div class="mdl-snackbar__text generate-home__message-text"></div>
+        <button class="mdl-snackbar__action" type="button"><span class="generate-text--screen-reader-only">Activate Toast Notification</span></button>
+    </div>
+    <div class="mdl-cell mdl-cell--10-col-desktop mdl-cell--12-col-tablet">
+
+        <div class="generate-home__section generate-home__section--intro mdl-typography--subhead">
+            Generate allows users to calculate, review, and produce state-defined reports and submission-ready federal reports.
+        </div>
+
+        <div class="generate-home__section mdl-color--blue-grey-50 mdl-color-text--primary mdl-typography--title mdl-typography--text-center mdl-cell--hide-phone">
+            VIEW AVAILABLE REPORTS
+        </div>
+
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--hide-phone">
+
+                <div class="generate-home__reports">
+
+                    <div class="generate-home__reports-computer">
+                        <img src="./assets/images/icon-computer.png" alt="Computer" />
+                    </div>
+
+                    
+                    <div class="generate-home__reports-pill-group">
+
+                        <div class="generate-home__reports-pill">
+                            <div class="generate-home__reports-pill-icon">
+                                <img class="generate-home__reports-files" src="./assets/images/icon-files.png" alt="EDFacts Submission Reports" />
+                            </div>
+                            <a href="#" (click)="gotoReportsEdFacts()">
+                                <div id="link_ReportsEdFacts" class="generate-home__reports-pill-label">
+                                    <span class="generate-home__reports-pill-label-caption">View <span class="generate-text--bold">ED<span class="generate-text--italic">Facts</span></span> Submission Reports</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="generate-home__reports-pill">
+                            <div class="generate-home__reports-pill-icon">
+                                <img class="generate-home__reports-files" src="./assets/images/icon-files.png" alt="SPP/APR Submission Reports" />
+                            </div>
+                            <a href="#" (click)="gotoReportsSppApr()">
+                                <div id="link_ReportsSppApr" class="generate-home__reports-pill-label">
+                                    <span class="generate-home__reports-pill-label-caption">View <span class="generate-text--bold">SPP/APR</span> Submission Reports</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="generate-home__reports-pill">
+                            <div class="generate-home__reports-pill-icon">
+                                <img class="generate-home__reports-files" src="./assets/images/icon-files.png" alt="Reports Library" />
+                            </div>
+                            <a  href="#" (click)="gotoReportsLibrary()">
+                                <div id="link_ReportsLibrary" class="generate-home__reports-pill-label">
+                                    <span class="generate-home__reports-pill-label-caption">View Reports Library</span>
+                                </div>
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+    <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-phone mdl-cell--hide-tablet">
+
+        <div id="generate-home__button--resources" class="generate-home__button">
+            <div class="generate-home__button-caption generate-home__button--resources mdl-typography--subhead mdl-typography--text-center">
+                Resources
+            </div>
+        </div>
+
+        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect generate-home__button-dropdown" for="generate-home__button--resources">
+            <li class="mdl-menu__item mdl-color-text--primary generate-home__button-dropdown-item"><a class="generate-home__button-link mdl-color-text--primary" rel="noopener noreferrer" href="https://ciidta.communities.ed.gov/#communities/pdc/documents/17667" target="_blank">User Guide</a></li>
+            <li class="mdl-menu__item generate-home__button-dropdown-item"><a class="generate-home__button-link mdl-color-text--primary" href="mailto:ciidta@aemcorp.com">CIID Support</a></li>
+            <li class="mdl-menu__item generate-home__button-dropdown-item"><a class="generate-home__button-link mdl-color-text--primary" rel="noopener noreferrer" href="https://ceds.ed.gov/requestAssistance.aspx" target="_blank">CEDS Support</a></li>
+            <li class="mdl-menu__item generate-home__button-dropdown-item"><a class="generate-home__button-link mdl-color-text--primary" rel="noopener noreferrer" href="https://www2.ed.gov/about/inits/ed/edfacts/eden/contacts.html" target="_blank">ED<span class="generate-text--italic">Facts</span> Support</a></li>
+            <li class="mdl-menu__item generate-home__button-dropdown-item"><a class="generate-home__button-link mdl-color-text--primary" rel="noopener noreferrer" href="https://osep.communities.ed.gov/#program" target="_blank">IDEA SPP/APR Indicators Support</a></li>
+            <li class="mdl-menu__item mdl-color-text--primary generate-home__button-dropdown-item"><a class="generate-home__button-link mdl-color-text--primary" href="#" (click)="gotoAboutPage()">About Generate</a></li>
+        </ul>
+
+
+        <div class="generate-home__button">
+            <a href="#" (click)="gotoSummary()">
+                <div class="generate-home__button-caption generate-home__button--summary mdl-typography--subhead mdl-typography--text-center">
+                    Data Population Summary
+                </div>
+            </a>
+        </div>
+
+        <div class="generate-home__button">
+            <a target="_blank" rel="noopener noreferrer" href="https://ciidta.communities.ed.gov/#program">
+                <div class="generate-home__button-caption generate-home__button--ciid mdl-typography--subhead mdl-typography--text-center">
+                    <img src="./assets/images/logo-ciid.png" alt="CIID" />
+                </div>
+            </a>
+        </div>
+
+
+    </div>
+</div>

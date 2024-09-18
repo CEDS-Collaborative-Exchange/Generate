@@ -1,0 +1,274 @@
+<generate-app-breadcrumbs breadcrumbs="Settings > Toggle"></generate-app-breadcrumbs>
+<generate-app-pagetitle pagetitle="Toggle"></generate-app-pagetitle>
+
+<div id="generate-app-toggle__message" class="generate-app-toggle__message mdl-js-snackbar mdl-snackbar" aria-live="assertive" aria-atomic="true" aria-relevant="text">
+    <div class="mdl-snackbar__text"></div>
+    <button class="mdl-snackbar__action" type="button"><span class="generate-text--screen-reader-only">Activate Toast Notification</span></button>
+</div>
+
+
+<form [formGroup]="toggleForm" class="generate-app-toggle__form" (submit)="onSubmit()">
+
+    <div class="generate-app-toggle__button-container">
+        <a class="clickable" (click)="gotoAssessments()">
+            Assessments
+        </a>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-toggle__button" type="submit">
+            Save
+        </button>
+    </div>
+        
+    <div *ngFor="let toggleSection of toggleSections | generateToggleSectionFilter:null" class="generate-app-toggle__card mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__title generate-app-toggle__sectiontitle" aria-live="assertive" aria-atomic="true" aria-relevant="text">
+            <h3 class="mdl-card__title-text generate-app-toggle__sectiontitle-text">
+                {{toggleSection.toggleSectionType.sectionTypeShortName}} - {{toggleSection.sectionTitle}}
+            </h3>
+        </div>
+
+        <div class="mdl-card__supporting-text">
+
+            <fieldset *ngFor="let toggleSubSection of toggleSections | generateToggleSectionFilter:toggleSection.emapsSurveySectionAbbrv">
+
+                <legend class="generate-app-toggle__subsectiontitle">
+                    {{toggleSubSection.sectionTitle}}
+                </legend>
+
+                <div *ngFor="let toggleQuestion of toggleQuestions | generateToggleQuestionFilter:toggleSubSection.toggleSectionId">
+
+                    <div *ngIf="displayQuestions['ctrl_q_' + toggleQuestion.toggleQuestionId]">
+
+                        <div [ngSwitch]="toggleQuestion.toggleQuestionType.toggleQuestionTypeCode" class="mdl-grid generate-app-toggle__question-control">
+
+                            <ng-template ngSwitchCase="text">
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+                                    <div class="mdl-textfield mdl-js-textfield">
+                                        <textarea [formControl]="toggleForm.controls['ctrl_q_' + toggleQuestion.toggleQuestionId]" (change)="setResponse($event)"
+                                                  class="mdl-textfield__input" type="text" rows="1" [attr.id]="'q_' + toggleQuestion.toggleQuestionId"></textarea>
+                                        <label [attr.for]="'q_' + toggleQuestion.toggleQuestionId" class="mdl-textfield__label">Response...</label>
+                                    </div>
+                                </div>
+
+                            </ng-template>
+                            <ng-template ngSwitchCase="integer">
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+
+                                    <div class="mdl-textfield mdl-js-textfield">
+                                        <input [formControl]="toggleForm.controls['ctrl_q_' + toggleQuestion.toggleQuestionId]" (change)="setResponse($event)"
+                                               class="mdl-textfield__input" type="text" pattern="[0-9]*" [attr.id]="'q_' + toggleQuestion.toggleQuestionId" />
+                                        <label [attr.for]="'q_' + toggleQuestion.toggleQuestionId" class="mdl-textfield__label">Number...</label>
+                                        <span class="mdl-textfield__error">Input is not a number!</span>
+                                    </div>
+                                </div>
+
+                            </ng-template>
+                            <ng-template ngSwitchCase="decimal">
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+                                    <div class="mdl-textfield mdl-js-textfield">
+                                        <input [formControl]="toggleForm.controls['ctrl_q_' + toggleQuestion.toggleQuestionId]" (change)="setResponse($event)"
+                                               class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" [attr.id]="'q_' + toggleQuestion.toggleQuestionId" />
+                                        <label [attr.for]="'q_' + toggleQuestion.toggleQuestionId" class="mdl-textfield__label">Decimal...</label>
+                                        <span class="mdl-textfield__error">Input is not a decimal!</span>
+                                    </div>
+                                </div>
+
+                            </ng-template>
+                            <ng-template ngSwitchCase="percent">
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+
+                                    <div class="mdl-textfield mdl-js-textfield">
+                                        <input [formControl]="toggleForm.controls['ctrl_q_' + toggleQuestion.toggleQuestionId]" (change)="setResponse($event)"
+                                               class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" [attr.id]="'q_' + toggleQuestion.toggleQuestionId" />
+                                        <label [attr.for]="'q_' + toggleQuestion.toggleQuestionId" class="mdl-textfield__label">Decimal...</label>
+                                        <span class="mdl-textfield__error">Input is not a decimal!</span>
+                                    </div>
+                                </div>
+                            </ng-template>
+                            <ng-template ngSwitchCase="singleselect">
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}} (single)</div>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+                                    <select [formControl]="toggleForm.controls['ctrl_q_' + toggleQuestion.toggleQuestionId]" [attr.id]="'q_' + toggleQuestion.toggleQuestionId"
+                                            (change)="setResponse($event)" class="generate-app-toggle__dropdown">
+                                        <option *ngFor="let toggleQuestionOption of toggleQuestionOptions | generateToggleQuestionOptionFilter:toggleQuestion.toggleQuestionId"
+                                                [value]="toggleQuestionOption.toggleQuestionOptionId">
+                                            {{toggleQuestionOption.optionText}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </ng-template>
+                            <ng-template ngSwitchCase="multipleselect">
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}} (multi-select)</div>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+                                    <select multiple class="generate-app-toggle__dropdown" [attr.id]="'q_' + toggleQuestion.toggleQuestionId" (change)="setResponse($event)"
+                                            [formControl]="toggleForm.controls['ctrl_q_' + toggleQuestion.toggleQuestionId]">
+                                        <option *ngFor="let toggleQuestionOption of toggleQuestionOptions | generateToggleQuestionOptionFilter:toggleQuestion.toggleQuestionId"
+                                                [value]="toggleQuestionOption.toggleQuestionOptionId">
+                                            {{toggleQuestionOption.optionText}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </ng-template>
+                            <ng-template ngSwitchCase="toggle">
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+                                    <label [attr.for]="'q_' + toggleQuestion.toggleQuestionId" class="mdl-switch mdl-js-switch mdl-js-ripple-effect">
+                                        <input type="checkbox" [attr.id]="'q_' + toggleQuestion.toggleQuestionId" (change)="setResponse($event)"
+                                               [formControl]="toggleForm.controls['ctrl_q_' + toggleQuestion.toggleQuestionId]" class="mdl-switch__input" />
+                                        <span class="mdl-switch__label"> {{ responseValues['ctrl_q_' + toggleQuestion.toggleQuestionId] }} </span>
+                                    </label>
+                                </div>
+                            </ng-template>
+                            <ng-template ngSwitchCase="multitoggle">
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+                                    <ul class="mdl-list">
+                                        <li class="mdl-list__item" *ngFor="let toggleQuestionOption of toggleQuestionOptions | generateToggleQuestionOptionFilter:toggleQuestion.toggleQuestionId">
+                                            <span class="mdl-list__item-primary-content">
+                                                {{toggleQuestionOption.optionText}}
+                                            </span>
+                                            <span class="mdl-list__item-secondary-action">
+                                                <label [attr.for]="'q_'+ toggleQuestion.toggleQuestionId + '_' + toggleQuestionOption.toggleQuestionOptionId"
+                                                       class="mdl-switch mdl-js-switch mdl-js-ripple-effect">
+                                                    <input type="checkbox"
+                                                           [checked]="checkCheckbox(toggleQuestion.toggleQuestionId,toggleQuestionOption.toggleQuestionOptionId)"
+                                                           [attr.name]="toggleQuestion.toggleQuestionId"
+                                                           [attr.id]="'q_'+ toggleQuestion.toggleQuestionId + '_' + toggleQuestionOption.toggleQuestionOptionId"
+                                                           [value]="toggleQuestionOption.toggleQuestionOptionId" (change)="setResponse($event)" class="mdl-switch__input"
+                                                           [attr.formControlName]="toggleForm.controls['ctrl_q_' + toggleQuestion.toggleQuestionId + '_'  + toggleQuestionOption.toggleQuestionOptionId]" />
+                                                    <span class="generate-text--screen-reader-only">Select {{toggleQuestionOption.optionText}}</span>
+                                                </label>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </ng-template>
+                            <ng-template ngSwitchCase="radio">
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+                                    <div *ngFor="let toggleQuestionOption of toggleQuestionOptions | generateToggleQuestionOptionFilter:toggleQuestion.toggleQuestionId">
+                                        <label [attr.for]="'q_'+ toggleQuestion.toggleQuestionId + '_' + toggleQuestionOption.toggleQuestionOptionId"
+                                               class="generate-app-toggle__radio-labeltext mdl-radio mdl-js-radio mdl-js-ripple-effect">
+                                            <input type="radio"
+                                                   [checked]="checkRadioButton(toggleQuestion.toggleQuestionId,toggleQuestionOption.toggleQuestionOptionId)"
+                                                   [attr.name]="toggleQuestion.toggleQuestionId"
+                                                   [attr.id]="'q_'+ toggleQuestion.toggleQuestionId + '_' + toggleQuestionOption.toggleQuestionOptionId"
+                                                   [value]="toggleQuestionOption.toggleQuestionOptionId" (change)="setResponse($event)" class="mdl-radio__button"
+                                                   [attr.formControlName]="toggleForm.controls['ctrl_q_'+ toggleQuestion.toggleQuestionId + '_' + toggleQuestionOption.toggleQuestionOptionId]" />
+                                            <span class="mdl-radio__label">
+                                                {{toggleQuestionOption.optionText}}
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div *ngFor="let toggleQuestionOption of toggleQuestionOptions | generateToggleQuestionOtherOptionFilter:toggleQuestion.toggleQuestionId">
+                                        <div class="generate-app-toggle__question-text">If Other, then please specify</div>
+                                    </div>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone"
+                                     *ngFor="let toggleQuestionOption of toggleQuestionOptions | generateToggleQuestionOtherOptionFilter:toggleQuestion.toggleQuestionId">
+                                    <div class="mdl-textfield mdl-js-textfield">
+                                        <textarea [formControl]="toggleForm.controls['ctrl_q_' + toggleQuestion.toggleQuestionId]"
+                                                  (change)="setOtherRadioResponse($event,toggleQuestionOption.toggleQuestionOptionId)" class="mdl-textfield__input"
+                                                  type="text" rows="1" [attr.id]="'q_' + toggleQuestion.toggleQuestionId"></textarea>
+                                        <label [attr.for]="'q_' + toggleQuestion.toggleQuestionId" class="mdl-textfield__label">Comment...</label>
+                                    </div>
+                                </div>
+
+                            </ng-template>
+                            <ng-template ngSwitchCase="date">
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                </div>
+
+                                <div *ngIf="toggleQuestion.emapsQuestionAbbrv == 'CHDCTDTE'" class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+                                    <generate-app-datepicker #calendar [attr.id]="'q_' + toggleQuestion.toggleQuestionId"
+                                                    format="M/d/yyyy"
+                                                    [isChildCountFilter] =" true"
+                                                    [(value)]="responseDateValues['ctrl_q_' + toggleQuestion.toggleQuestionId]"
+                                                    (valueChanged)="setDateResponse(calendar, toggleQuestion.toggleQuestionId)"
+                                                   >
+                                    </generate-app-datepicker>
+                                </div>
+                                <div *ngIf="toggleQuestion.emapsQuestionAbbrv != 'CHDCTDTE'" class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+                                    <generate-app-datepicker #calendar [attr.id]="'q_' + toggleQuestion.toggleQuestionId"
+                                                   format="M/d/yyyy"
+                                                   [(value)]="responseDateValues['ctrl_q_' + toggleQuestion.toggleQuestionId]"
+                                                   (valueChanged)="setDateResponse(calendar, toggleQuestion.toggleQuestionId)"
+                                                   >
+                                    </generate-app-datepicker>
+                                </div>
+
+                            </ng-template>
+                            <ng-template *ngSwitchDefault>
+
+                                <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+                                    <span> Question Type is not defined.</span>
+                                </div>
+
+                            </ng-template>
+
+                        </div>
+                    </div>
+                </div>
+
+            </fieldset>
+
+        </div>
+    </div>
+
+
+    <div class="generate-app-toggle__button-container">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-toggle__button" type="submit">
+            Save
+        </button>
+    </div>
+
+</form>

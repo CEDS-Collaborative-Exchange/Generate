@@ -1,0 +1,10 @@
+﻿@import '../variables.scss';
+
+.generate-app-about-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: $color-primary !important;
+    margin-left: 10px;
+    vertical-align: middle;
+}

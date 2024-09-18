@@ -1,0 +1,42 @@
+<!--<form class="example-form">
+    <mat-form-field class="example-full-width">
+        <mat-label>Number</mat-label>
+        <input type="text"
+               placeholder="Pick one"
+               aria-label="Number"
+               matInput
+               [formControl]="myControl"
+               [matAutocomplete]="auto">-->
+
+        <!-- Mat-Icon or Span -->
+        <!--<mat-icon matSuffix>
+            <button style="padding: 0; margin: 0; border: 0; background-color: transparent;">
+                <span class="material-icons" matTooltip="Click to select an User">
+                    arrow_drop_down
+                </span>
+            </button>
+        </mat-icon>-->
+
+        <!--<mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+            @for (option of filteredOptions | async; track option) {
+            <mat-option [value]="option">{{option}}</mat-option>
+            }
+        </mat-autocomplete>
+    </mat-form-field>
+</form>-->
+
+<form class="autocomplete-form">
+    <mat-form-field>
+        <input type="text"
+               placeholder="{{placeholder}}"
+               aria-label="Number"
+               matInput
+               [formControl]="myControl"
+               [matAutocomplete]="auto">
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [panelWidth]="400" (optionSelected)="selectedChanged($event)">
+            @for (option of filteredOptions | async; track option) {
+            <mat-option [value]="option" style="height:15px;">{{option}}</mat-option>
+            }
+        </mat-autocomplete>
+    </mat-form-field>
+</form>

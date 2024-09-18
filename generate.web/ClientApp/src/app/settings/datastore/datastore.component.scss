@@ -1,0 +1,199 @@
+@import '../../variables.scss';
+
+.generate_datastore_container{
+    height:60vh;
+}
+.generate-app-data-store__actions
+{
+    padding: 10px;
+    text-align: center;
+}
+.btnbtn{
+      width:350px;
+      border-radius:3px;
+      box-shadow:5px;
+}
+.btnbtn:hover{
+    cursor:pointer;
+    font-weight:bold;
+  
+}
+
+.generate-app-data-store__section
+{
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.generate-app-data-store__header {
+    padding: 10px;
+    text-align: center;
+}
+
+.generate-rds_reportyear__dialog{
+    width: 600px;
+    height:400px;
+}
+
+@import '../../variables.scss';
+
+.generate-app-toggle-assessment__addassessment-container{
+    margin-bottom: 10px;
+    margin-top:35px;
+}
+
+.generate-app-toggle__assesment{
+    background-color: $color-primary-dark;
+}
+
+.generate-app-toggle-assessment__report-icon{
+    color: $color-accent-medium;
+    margin-left: 10px;
+}
+
+.generate-app-toggle-assessment__report-grid{
+    margin-bottom: 10px;
+}
+
+
+.generate-app-toggle-assessment__assessment-folder{
+    color: $color-primary-light;
+}
+
+.generate-app-toggle-assessment__addassessment-folder{
+    color: $color-accent-medium;
+}
+
+.generate-app-toggle-assessment__addAssesment{
+    color: $color-primary;
+}
+
+.generate-app-toggle-assessment__addassessment-circle{
+    color: $color-primary;
+    margin-top: -10px;
+    margin-left: 20px;
+    
+}
+
+.generate-app-toggle-assessment__addassessment-text{
+    padding-left:5px;
+    padding-top :10px;
+}
+
+.generate-app-toggle__assessment-text{
+    color:$color-primary-light;
+}
+
+.generate-app-toggle__assessment-delete{
+    color:$color-primary-light;
+ }
+
+.generate-app-toggle__assessment-edit{
+    color:$color-primary-light;
+}
+
+
+.generate-app-toggle-delete--assessment__dialog{
+    width: 600px;
+}
+
+.generate-rds-report_year__dialog-title{
+    background-color: $color-primary-dark;
+    color:$color-primary-light;
+    margin-bottom:10px;
+    padding-left:5px;
+    line-height: 40px;
+}
+
+.generate-rds_report_year__dialog-footer{
+    background-color: $color-primary-dark;
+    color:$color-primary-light;
+    margin-bottom:10px;
+    padding-left:5px;
+    line-height: 40px;
+    position:absolute;
+    bottom:0;
+    width:97%;
+
+}
+
+.generate-app-toggle-assessment__dialog__assessment{
+    margin-bottom:10px;
+}
+
+.generate-app-toggle-assessment__dialog__assessment-filter{
+    margin-bottom:10px;
+}
+
+.generate-app-toggle-assessment__report-buttons{
+     margin-bottom:20px;
+}
+
+.generate-rds-report-year-controls__sectionlabel
+{
+    margin-right: 5px;
+    font-weight: 700;
+    color: $color-primary;
+    /*width:10px;*/
+}
+
+
+.generate-rds-report_year__dialog-container{
+    
+}
+
+.generate-rds_reportyear__dialog-error 
+{
+    color: $color-primary;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+
+.generate-app-toggle-assessment__reportLevels{
+    margin: 10px;
+}
+
+.generate-app-toggle-assessment__searchfilter{
+    padding-left: 5px;
+    }
+
+.generate-app-toggle-assessment-controls__delete-assessment-Name{
+    margin-left: 5px;
+}
+
+.generate-app-toggle-assessment__dialog__assessment-name{
+    padding-left: 10px;
+}
+
+.generate-app-toggle-assessment__dialog__assessment-type{
+    //padding-left: 10px;
+}
+
+.generate-app-toggle-assessment__dialog__performance-level{
+     padding-left: 10px;
+}
+
+.generate-app-toggle-assessment__dialog__proficiency{
+     padding-left: 10px;
+}
+
+
+.generate-app-toggle-assessment__dialog__grade{
+     padding-left: 10px;
+}
+
+.generate-app-toggle-assessment__dialog__subject{
+    padding-left: 10px;
+}
+
+
+.generate-app-toggle-assessment__dialog__eog{
+     padding-left: 10px;
+}
+
+.cont{
+    position:relative;
+     left: 40%;
+}
+

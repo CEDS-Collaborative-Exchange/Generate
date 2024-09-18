@@ -1,0 +1,146 @@
+﻿@import '../../variables.scss';
+
+.generate-app-indicator4b-controls__sectionlabel
+{
+    margin-right: 5px;
+    font-weight: 700;
+    color: $color-primary-dark;
+}
+
+.generate-app-indicator4b__categoryset-definition{
+    font-style: italic;
+}
+
+.generate-app-indicator4b-controls__export-container
+{
+    float: right;
+    width: 160px;
+}
+
+.generate-app-indicator4b__grid-header
+{
+    margin: 0;
+    padding: 0;
+}
+.generate-app-indicator4b__grid
+{
+    max-height: 450px;
+}
+
+.generate-app-indicator4b__error 
+{
+    color: $color-primary;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.generate-app-indicator4b__title
+{
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 20px;
+}
+
+.generate-app-indicator4b__total
+{
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+}
+.generate-app-indicator4b__pager
+{
+    font-size: 14px;
+}
+.generate-app-indicator4b__pager-top
+{
+    margin-bottom: 10px;
+}
+.generate-app-indicator4b__pager-bottom
+{
+    margin-top: 10px;
+}
+
+.generate-app-indicator4b__table {
+    width: 100%;
+    table-layout: fixed;
+    -ms-word-break: break-word;
+    word-break: break-word;
+    -ms-word-wrap: hyphenate;
+    word-wrap: hyphenate;
+    white-space:pre-wrap;
+}
+
+.generate-app-indicator4b__table-row-header
+{
+    text-align: left;
+    background-color: $color-primary-dark;
+    color: white;
+    cursor: pointer;
+}
+
+.generate-app-indicator4b__table-column-header
+{
+    text-align: center;
+    background-color: $color-primary-dark;
+    color: white;
+    cursor: pointer;
+}
+
+.generate-app-indicator4b__table-subcolumn-header
+{
+    text-align: center;
+    background-color: $color-primary;
+    color: white;
+}
+
+.generate-app-indicator4b__table-row-data-key
+{
+    padding: 4px;
+}
+
+.generate-app-indicator4b__table-row-data
+{
+    text-align: center;
+    padding: 4px;
+}
+
+.generate-app-indicator4b__table-row-subtotal-key
+{
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-accent-light;
+    color: $color-primary-dark;
+}
+
+.generate-app-indicator4b__table-row-subtotal
+{
+    text-align: center;
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-accent-light;
+    color: $color-primary-dark;
+}
+
+.generate-app-indicator4b__table-row-total-key
+{
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-primary-dark;
+    color: $color-primary-light;
+}
+
+.generate-app-indicator4b__table-row-total
+{
+    text-align: center;
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-primary-dark;
+    color: $color-primary-light;
+}
+
+.generate-app-indicator4b__connectionLink
+{
+    margin-top: 10px;
+}
+

@@ -1,0 +1,1786 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <Description>generate web project</Description>
+    <Authors>AEM Corporation</Authors>
+      <PackageId>generate.web</PackageId>
+      <AssemblyName>generate.web</AssemblyName>
+    <RuntimeIdentifiers>win7-x64;win8-x64;win10-x64;debian.8-x64</RuntimeIdentifiers>
+      <DebugType>full</DebugType>
+      <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+	<AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+	<PreserveCompilationContext>true</PreserveCompilationContext>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <IsPackable>false</IsPackable>
+    <SpaRoot>ClientApp\</SpaRoot>
+    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
+	<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+	<ImplicityUsing>enable</ImplicityUsing>
+    <!-- Set this to true if you enable server-side prerendering -->
+    <BuildServerSideRenderer>false</BuildServerSideRenderer>
+
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\generate.core\generate.core.csproj" />
+    <ProjectReference Include="..\generate.infrastructure\generate.infrastructure.csproj" />
+    <ProjectReference Include="..\generate.shared\generate.shared.csproj" />
+    <ProjectReference Include="..\generate.testdata\generate.testdata.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
+    <PackageReference Include="RestSharp" Version="108.0.2" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="DatabaseScripts\VersionUpdates\3.3_prerelease\**" />
+    <Content Remove="$(SpaRoot)**" />
+    <Content Remove="DatabaseScripts\VersionUpdates\3.3_prerelease\**" />
+    <None Remove="$(SpaRoot)**" />
+    <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="DatabaseScripts\VersionUpdates\3.3_prerelease\**" />
+    <None Remove="DatabaseScripts\VersionUpdates\3.3_prerelease\**" />
+  </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="ClientApp\src\app\models\app\schoolYear.ts" />
+      <None Remove="ClientApp\src\app\shared\guards\confirmation.guard.ts" />
+      <None Remove="ClientApp\src\app\shared\reportcontrols\yeartoyearprogress.component.ts" />
+      <None Remove="Updates\app_offline.htm" />
+    </ItemGroup>
+
+    <ItemGroup>
+    <Content Include="ClientApp\src\IBMDomainVerification.html" />
+    <Content Include="Updates\app_offline.htm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Update="Views\**\*;Config\**\*;DatabaseFiles\**\*;DatabaseScripts\**\*;Upgrades\**\*">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup> 
+    <Folder Include="Logs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\models\app\schoolYear.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\guards\confirmation.guard.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\reportcontrols\yeartoyearprogress.component.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DatabaseScripts\TestCases\App.FS002_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS005_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS006_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS007_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS009_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS029_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS070_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS088_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS099_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS112_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS116_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS143_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS144_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS175_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS178_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\TestCases\App.FS212_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.7\StoredProcedures\Create\RDS.Migrate_StudentDisciplines.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\App.Get_CategoriesByCategorySet.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\App.Split.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\dbo.GetCollectionId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\RDS.Get_Age.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\RDS.Get_CountSQL.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\RDS.Get_FactTypeByReport.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\RDS.Get_StudentOrganizations.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetFiscalYearEndDate.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetFiscalYearStartDate.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetOrganizationIdentifierSystemId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetOrganizationIdentifierTypeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetOrganizationRelationshipId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetOrganizationTypeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetPersonIdentificationSystemId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetPersonIdentifierSystemId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetPersonIdentifierTypeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetProgramTypeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetRefIDEAEducationalEnvironmentECId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetRefIDEAEducationalEnvironmentSchoolAgeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetRefInstitutionTelephoneType.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetRefOrganizationLocationTypeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetRefPersonalInformationVerificationId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetRefStateAnsiCode.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetRefStateId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Create\Staging.GetRoleId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\App.Get_CategoriesByCategorySet.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\App.Split.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\dbo.GetCollectionId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\RDS.Get_Age.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\RDS.Get_CountSQL.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\RDS.Get_FactTypeByReport.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\RDS.Get_StudentOrganizations.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetFiscalYearEndDate.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetFiscalYearStartDate.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetOrganizationIdentifierSystemId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetOrganizationIdentifierTypeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetOrganizationRelationshipId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetOrganizationTypeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetPersonIdentificationSystemId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetPersonIdentifierSystemId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetPersonIdentifierTypeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetProgramTypeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetRefIDEAEducationalEnvironmentECId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetRefIDEAEducationalEnvironmentSchoolAgeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetRefInstitutionTelephoneType.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetRefOrganizationLocationTypeId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetRefPersonalInformationVerificationId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetRefStateAnsiCode.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetRefStateId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Functions\Drop\Staging.GetRoleId.UserDefinedFunction.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Jobs\MigrateData.Job.Create.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Jobs\MigrateData.Job.Drop.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.AddCategorySets.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.Categories.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.CategorySets.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.CategorySets_FS_No_CategorySet.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.CedsConnections.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.Corrections.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.DisableInactiveReports.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.FileColumns.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.FileHeader.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.FileSubmissions.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.GenerateReports.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.Rollover_Datapopulation_StateReports.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.TableTypes.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Metadata\App.ViewDefinitions.Metadata.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Schemas\Staging.Schema.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Migrate_Data.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Rollover_Previous_Year_Metadata.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_ChildCount_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Chronic_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_CTE_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Directory_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Discipline_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Dropout_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Exiting_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Gradrate_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Grad_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Homeless_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_HsGradEnroll_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Immigrant_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Membership_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Mep_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_NorD_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Other_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_Personnel_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_SPPAPR_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_StudentCounts_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_TitleIIIELOct_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\App.Wrapper_Migrate_TitleI_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\dbo.Get_AssessmentTypeChildrenWithDisabilities.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\dbo.Get_GradeLevels.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\dbo.Get_Organizations.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\dbo.Migrate_DimPersonnel_adhoc.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\dbo.Migrate_DimStudents_adhoc.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\dbo.Migrate_Organization_adhoc.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\dbo.Migrate_StudentRace_adhoc.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Create_CustomReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Create_OrganizationReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Create_OrganizationStatusReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Create_ReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Create_Reports.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Create_StudentFederalProgramsReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Create_YeartoYearAttendanceReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Empty_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Empty_Reports.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_OrganizationReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_OrganizationStatusReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_ReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_StateAssessmentProficiencyReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_StudentDisciplinaryRemovalsReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_StudentEducationEnvironmentDisabilitiesReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_StudentFederalProgramsReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_StudentsSummary.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_YeartoYearAttendanceReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_YearToYearEnvironmentCountReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_YearToYearExitCountReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_YearToYearExitCountReportData_SchoolLevel.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_YeartoYearProgressReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_YearToYearRemovalCountReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Get_YearToYearStudentCountReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimAges.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimAssessments.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimAssessmentStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimAttendance.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimCharterSchoolAuthorizersAndManagementOrgs.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimCohortStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimComprehensiveAndTargetedSupport_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimComprehensiveSupportIdentificationType_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimCteStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimDates_PsStudents.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimDisciplines.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.migrate_DimEnrollments.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimFirearms.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimFirearmsDiscipline.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimGradeLevels.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimIdeaStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimIeus.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12Courses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12CourseStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12Demographics.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12EnrollmentStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12ProgramTypes.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12Races.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12SchoolIdea.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12Schools.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12SchoolStatuses_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12Schools_Personnel.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12Staff.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12StaffCategories.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12StaffStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12Students.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12StudentsEnrollmentDates.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimK12StudentStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimLanguage.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimLeas.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimLeas.StoredProcedure.sql.orig">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimMigrant.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimNoDProgramStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimOrganizationCalendarSession.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimOrganizationIndicatorStatus_SchoolYears.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimOrganizationStatuses_Lea.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimOrganizationStatuses_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimProgramStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimPsAcademicAwardStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimPsEnrollmentStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimPsInstitutions.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimPsInstitutionStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimPsRaces.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimPsStudentEnrollmentDates.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimPsStudents.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimScedCodes.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolAllStudents.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolEcodis.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolLep.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolRace.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolYears.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolYears_K12Schools.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolYears_K12Staff.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolYears_K12Students.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolYears_Leas.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolYears_Organizations.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolYears_PsStudents.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSchoolYears_Seas.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimSeas.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimTargetedSupportIdentificationType_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimTitleIIIStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimTitleIIIStatuses_Personnel.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimTitleIStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_DimTitleIStatuses_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_K12ProgramParticipation.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_K12StaffCounts.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_K12StaffOrganizations.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_K12StudentCourseSections.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_K12StudentEnrollments.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_K12StudentOrganizations.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_OrganizationCounts.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_OrganizationStatusCounts.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_PsStudentAcademicAwards.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_PsStudentAcademicRecords.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_PsStudentEnrollments.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_PsStudentOrganizations.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_SpecialEdStudentCounts.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_StudentAssessments.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_StudentAttendance.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_StudentCounts.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Migrate_StudentDisciplines.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Populate_DimDataCollection.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\RDS.Populate_DimOrganizationCalendarSession.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_Data_Validation.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_Data_Validation_Logging.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_Assessment.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_CharterSchoolManagementOrganization.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_CompletelyClearDataFromODS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_ComprehensiveAndTargetedSupport.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_Discipline.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_K12Enrollment.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_K12ProgramParticipation.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_K12StaffAssignment.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_Migrant.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_Organization.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_OrganizationAddress.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_OrganizationCalendarSession.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_OrganizationProgramType.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_PersonRace.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_PersonStatus.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_ProgramParticipationCTE.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_ProgramParticipationNorD.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_ProgramParticipationSpecialEducation.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_ProgramParticipationTitleI.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_ProgramParticipationTitleIII.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_PSInstitution.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_PsStudentAcademicAward.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_PsStudentAcademicRecord.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_PsStudentEnrollment.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_StateDefinedCustomIndicator.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Create\Staging.Migrate_StagingToIDS_StudentCourseSection.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Migrate_Data.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Rollover_Previous_Year_Metadata.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Assessments_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_ChildCount_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Chronic_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_CTE_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Directory_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Discipline_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Dropout_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Exiting_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Gradrate_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Grad_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Homeless_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_HsGradEnroll_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Immigrant_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Membership_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Mep_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_NorD_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Other_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_Personnel_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_SPPAPR_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_StudentCounts_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_TitleIIIELOct_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\App.Wrapper_Migrate_TitleI_to_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\dbo.FS212_TestCaseTemplate.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\dbo.Get_AssessmentTypeChildrenWithDisabilities.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\dbo.Get_GradeLevels.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\dbo.Get_Organizations.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\dbo.Migrate_DimPersonnel_adhoc.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\dbo.Migrate_DimStudents_adhoc.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\dbo.Migrate_Organization_adhoc.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\dbo.Migrate_StudentRace_adhoc.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Create_CustomReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Create_OrganizationReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Create_OrganizationStatusReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Create_ReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Create_Reports.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Create_StudentFederalProgramsReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Create_YeartoYearAttendanceReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Empty_RDS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Empty_Reports.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_OrganizationReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_OrganizationStatusReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_ReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_StateAssessmentProficiencyReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_StudentDisciplinaryRemovalsReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_StudentEducationEnvironmentDisabilitiesReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_StudentFederalProgramsReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_StudentsSummary.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_YeartoYearAttendanceReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_YearToYearEnvironmentCountReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_YearToYearExitCountReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_YearToYearExitCountReportData_SchoolLevel.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_YeartoYearProgressReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_YearToYearRemovalCountReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Get_YearToYearStudentCountReportData.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimAges.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimAssessments.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimAssessmentStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimAttendance.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimCharterSchoolAuthorizersAndManagementOrgs.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimCohortStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimComprehensiveAndTargetedSupport_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimComprehensiveSupportIdentificationType_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimCteStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimDates_Directories.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimDates_K12Students.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimDates_PsStudents.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimDirectoryStatuses_Lea.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimDirectoryStatuses_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimDirectoryStatuses_Sea.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimDisciplines.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimEnrollments.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimFirearms.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimFirearmsDiscipline.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimGradeLevels.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimIdeaStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimIeus.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12Courses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12CourseStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12Demographics.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12EnrollmentStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12ProgramTypes.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12Races.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12SchoolIdea.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12Schools.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12SchoolStatuses_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12Schools_Personnel.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12Schools_Students.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12Staff.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12StaffCategories.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12StaffStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12Students.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12StudentsEnrollmentDates.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimK12StudentStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimLanguage.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimLeas.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimMigrant.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimNoDProgramStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimOrganizationCalendarSession.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimOrganizationIndicatorStatus_SchoolYears.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimOrganizationStatuses_Lea.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimOrganizationStatuses_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimProgramStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimPsAcademicAwardStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimPsEnrollmentStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimPsInstitutions.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimPsInstitutionStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimPsRaces.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimPsStudents.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimScedCodes.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolAllStudents.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolEcodis.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolLep.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolRace.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolYears.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolYears_K12Schools.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolYears_K12Staff.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolYears_K12Students.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolYears_Leas.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolYears_Organizations.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolYears_PsStudents.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSchoolYears_Seas.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimSeas.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimTargetedSupportIdentificationType_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimTitleIIIStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimTitleIIIStatuses_Personnel.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimTitleIStatuses.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_DimTitleIStatuses_School.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_K12ProgramParticipation.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_K12StaffCounts.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_K12StaffOrganizations.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_K12StudentCourseSections.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_K12StudentEnrollments.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_K12StudentOrganizations.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_Migrate_DimSchoolEcodis.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_OrganizationCounts.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_OrganizationStatusCounts.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_PsStudentAcademicAwards.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_PsStudentAcademicRecords.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_PsStudentEnrollments.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_PsStudentOrganizations.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_SpecialEdStudentCounts.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_StudentAssessments.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_StudentAttendance.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_StudentCounts.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Migrate_StudentDisciplines.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Populate_DimDataCollection.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\RDS.Populate_DimOrganizationCalendarSession.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_Data_ETL_IMPLEMENTATION_STEP06_PsStudentEnrollment_WithPerson_EncapsulatedCode.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_Data_Validation.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_Data_Validation_Logging.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_Assessment.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_CharterSchoolManagementOrganization.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_CompletelyClearDataFromODS.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_ComprehensiveAndTargetedSupport.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_Discipline.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_K12Enrollment.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_K12ProgramParticipation.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_K12StaffAssignment.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_Migrant.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_Organization.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_OrganizationAddress.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_OrganizationCalendarSession.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_OrganizationProgramType.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_PersonRace.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_PersonStatus.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_ProgramParticipationCTE.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_ProgramParticipationNorD.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_ProgramParticipationSpecialEducation.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_ProgramParticipationTitleI.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_ProgramParticipationTitleIII.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_PSInstitution.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_PsStudentAcademicAward.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_PsStudentAcademicRecord.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_PsStudentEnrollment.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_StateDefinedCustomIndicator.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\StoredProcedures\Drop\Staging.Migrate_StagingToIDS_StudentCourseSection.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\dbo.K12SchoolComprehensiveSupportIdentificationType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\dbo.K12SchoolTargetedSupportIdentificationType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\dbo.RefComprehensiveSupportReasonApplicability.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\dbo.RefSubgroup.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\dbo.RefSubgroupType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\ODS.K12Sea.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\ODS.K12SeaFederalFunds.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\ODS.SourceSystemReferenceData.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\ODSK12SeaAlternateFundUse.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.Assessment.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.AssessmentResult.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.CharterSchoolApprovalAgency.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.CharterSchoolManagementOrganization.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.Discipline.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.Enrollment.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.K12Enrollment.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.K12SchoolComprehensiveSupportIdentificationType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.K12SchoolTargetedSupportIdentificationType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.Migrant.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.Organization.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.OrganizationAddress.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.OrganizationCustomSchoolIndicatorStatusType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.OrganizationFederalFunding.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.OrganizationGradesOffered.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.OrganizationPhone.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.OrganizationSchoolComprehensiveAndTargetedSupport.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.OrganizationSchoolIndicatorStatus.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.Person.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.PersonRace.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.PersonStatus.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.PrimaryDisability.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.ProgramParticipationCTE.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.ProgramParticipationNorD.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.ProgramParticipationSpecialEducation.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.ProgramParticipationTitleI.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.ProgramParticipationTitleIII.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.StaffAssignment.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.StateDefinedCustomIndicator.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.StateDetail.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.StudentCourse.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Create\Staging.ValidationErrors.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\dbo.K12SchoolComprehensiveSupportIdentificationType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\dbo.K12SchoolTargetedSupportIdentificationType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\dbo.RefComprehensiveSupportReasonApplicability.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\dbo.RefSubgroup.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\dbo.RefSubgroupType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\ODS.K12Sea.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\ODS.K12SeaAlternateFundUse.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\ODS.K12SeaFederalFunds.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\ODS.SourceSystemReferenceData.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.Assessment.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.AssessmentResult.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.CharterSchoolApprovalAgency.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.CharterSchoolManagementOrganization.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.Discipline.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.Enrollment.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.K12Enrollment.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.K12SchoolComprehensiveSupportIdentificationType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.K12SchoolTargetedSupportIdentificationType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.Migrant.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.Organization.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.OrganizationAddress.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.OrganizationCustomSchoolIndicatorStatusType.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.OrganizationFederalFunding.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.OrganizationGradesOffered.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.OrganizationPhone.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.OrganizationSchoolComprehensiveAndTargetedSupport.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.OrganizationSchoolIndicatorStatus.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.Person.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.PersonRace.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.PersonStatus.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.PrimaryDisability.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.ProgramParticipationCTE.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.ProgramParticipationNorD.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.ProgramParticipationSpecialEducation.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.ProgramParticipationTitleI.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.ProgramParticipationTitleIII.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.StaffAssignment.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.StateDefinedCustomIndicator.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.StateDetail.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.StudentCourse.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\Tables\Drop\Staging.ValidationErrors.Table.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Create\RDS.K12StaffDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Create\RDS.K12StaffOrganizationTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Create\RDS.K12StudentDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Create\RDS.K12StudentOrganizationTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Create\RDS.LeaDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Create\RDS.PersonnelDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Create\RDS.PsStudentDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Create\RDS.PsStudentOrganizationTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Create\RDS.SchoolDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Create\RDS.SchoolStatusTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Create\RDS.SeaDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Drop\RDS.K12StaffDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Drop\RDS.K12StaffOrganizationTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Drop\RDS.K12StudentDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Drop\RDS.K12StudentOrganizationTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Drop\RDS.LeaDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Drop\RDS.PersonnelDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Drop\RDS.PsStudentDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Drop\RDS.PsStudentOrganizationTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Drop\RDS.SchoolDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Drop\RDS.SchoolStatusTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TableTypes\Drop\RDS.SeaDateTableType.UserDefinedTableType.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS002_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS005_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS006_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS007_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS009_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS029_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS070_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS088_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS099_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS112_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS116_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS143_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS144_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS175_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS178_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\VersionUpdates\3.8\TestCases\App.FS212_TestCase.StoredProcedure.sql">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+    <!-- Ensure Node.js is installed -->
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+  </Target>
+
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --configuration production" />
+
+    <!-- Include the newly-built files in the publish output -->
+    <ItemGroup>
+      <DistFiles Include="$(SpaRoot)dist\**; $(SpaRoot)dist-server\**" />
+      <DistFiles Include="$(SpaRoot)node_modules\**" Condition="'$(BuildServerSideRenderer)' == 'true'" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+  
+</Project>

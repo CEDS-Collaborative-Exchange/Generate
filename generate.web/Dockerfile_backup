@@ -1,0 +1,82 @@
+# Base image
+# FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/windows/servercore/iis:windowsservercore-ltsc2019
+
+# Add VIM and Powershell to PATH
+RUN setx /M PATH "%PATH%;C:\Program Files (x86)\Vim\vim91;C:\Windows\System32\WindowsPowerShell\v1.0"
+
+# Create the final image
+
+RUN powershell -NoProfile -Command Remove-Item -Recurse C:\inetpub\wwwroot\*
+
+WORKDIR /inetpub/wwwroot/
+COPY ./generate.web/bin/production/net6.0/publish ./generate.web
+COPY ./generate.background/bin/production/net6.0/publish ./generate.background
+
+# Set up IIS and install dependencies
+RUN powershell -Command \
+    Import-Module WebAdministration; \
+    Add-WindowsFeature Web-Server; \
+    Add-WindowsFeature Web-AppInit; \
+    # Add-WindowsFeature Web-Asp-Net6; \
+    Invoke-WebRequest -Uri 'https://download.visualstudio.microsoft.com/download/pr/db07eed5-297a-45b8-bea2-1e93c623a88c/6e5a8d3432e6213f071be3751ae53a08/dotnet-hosting-6.0.11-win.exe' -OutFile 'aspnetcore-hostingbundle.exe'; \
+    Start-Process -Wait -FilePath 'aspnetcore-hostingbundle.exe' -ArgumentList '/install', '/quiet'; \
+    Remove-Item -Force 'aspnetcore-hostingbundle.exe'; \
+    # Invoke-WebRequest -Uri 'https://dotnetbinaries.blob.core.windows.net/servicemonitor/2.0.1.10/ServiceMonitor.exe' -OutFile 'c:\ServiceMonitor.exe'; \
+    iisreset
+
+# Switch to PowerShell
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+# Create a new user
+RUN New-LocalUser -Name 'Generate' -Password (ConvertTo-SecureString -AsPlainText 'anW%zHfdFbR=krQKu4ZB' -Force) -PasswordNeverExpires
+
+# Remove default website
+RUN Import-Module WebAdministration; \
+    Remove-Website -Name 'Default Web Site'; \
+    iisreset
+
+# Configure generate.web website in IIS
+RUN Import-Module WebAdministration; \
+    New-WebAppPool -Name generate.web; \
+    Set-ItemProperty "IIS:\AppPools\generate.web" -Name "ProcessModel.IdentityType" -Value "SpecificUser" ; \
+    Set-ItemProperty "IIS:\AppPools\generate.web" -Name "ProcessModel.UserName" -Value "Generate" ; \
+    Set-ItemProperty "IIS:\AppPools\generate.web" -Name "ProcessModel.Password" -Value "anW%zHfdFbR=krQKu4ZB" ; \
+    New-Website -Name "generate.web" -PhysicalPath "c:\inetpub\wwwroot\generate.web" -ApplicationPool "generate.web" -Port 1024 -Force
+
+# Configure generate.background website in IIS
+RUN Import-Module WebAdministration; \
+    New-WebAppPool -Name "generate.background" ; \
+    Set-ItemProperty "IIS:\AppPools\generate.background" -Name "ProcessModel.IdentityType" -Value "SpecificUser" ; \
+    Set-ItemProperty "IIS:\AppPools\generate.background" -Name "ProcessModel.UserName" -Value "Generate" ; \
+    Set-ItemProperty "IIS:\AppPools\generate.background" -Name "ProcessModel.Password" -Value "anW%zHfdFbR=krQKu4ZB" ; \
+    Set-ItemProperty "IIS:\AppPools\generate.background" -Name "managedRuntimeVersion" -Value "v4.0";\
+    Set-ItemProperty "IIS:\AppPools\generate.background" -Name "startMode" -Value "AlwaysRunning"; \
+    # Set-ItemProperty "IIS:\AppPools\generate.background" -Name "applicationDefaults.preloadEnabled" -Value "True"; \
+    Set-ItemProperty "IIS:\AppPools\generate.background" -Name "processModel.idleTimeout" -Value "00:00:00"; \
+    New-Website -Name "generate.background" -PhysicalPath "c:\inetpub\wwwroot\generate.background" -ApplicationPool "generate.background" -Port 1025 -Force
+
+# Download VIM
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 ; \
+    Invoke-WebRequest -Uri "https://github.com/vim/vim-win32-installer/releases/download/v9.1.0/gvim_9.1.0_x86_signed.exe" -OutFile "gvim_9.1.0_x86_signed.exe" ; \
+    Start-Process -FilePath "gvim_9.1.0_x86_signed.exe" -ArgumentList "/S" -Wait ; \
+    Remove-Item "gvim_9.1.0_x86_signed.exe"
+
+# Download and install Telnet
+RUN install-WindowsFeature -Name Telnet-Client
+
+# Switch to CMD
+SHELL ["cmd", "/S", "/C"]
+
+# Assign folder permissions to Generate user account
+RUN mkdir "c:\\inetpub\\wwwroot\\generate.web\\logs"
+RUN mkdir "c:\\inetpub\\wwwroot\\generate.background\\logs"
+RUN icacls "c:\\inetpub\\wwwroot" /grant Generate:(OI)(CI)F /T
+#RUN icacls c:\inetpub\wwwroot /grant:r "Everyone:(OI)(CI)F" /t
+    
+# Expose ports
+EXPOSE 1024
+EXPOSE 1024
+
+# Start IIS
+ENTRYPOINT ["C:\\ServiceMonitor.exe", "w3svc"]

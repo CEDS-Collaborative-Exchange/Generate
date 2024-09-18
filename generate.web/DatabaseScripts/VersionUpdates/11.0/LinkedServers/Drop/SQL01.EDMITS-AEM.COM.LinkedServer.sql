@@ -1,0 +1,1 @@
+IF  EXISTS (SELECT srv.name FROM sys.servers srv WHERE srv.server_id != 0 AND srv.name = N'SQL01.EDMITS-AEM.COM,3748')EXEC master.dbo.sp_dropserver @server=N'SQL01.EDMITS-AEM.COM,3748', @droplogins='droplogins'

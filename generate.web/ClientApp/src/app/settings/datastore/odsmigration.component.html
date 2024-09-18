@@ -1,0 +1,128 @@
+<generate-app-breadcrumbs breadcrumbs="Settings > Data Store > Staging Migrations"></generate-app-breadcrumbs>
+
+<!--<div class="mdl-cell mdl-cell--12-col">
+    <div class="generate-ods-config"><i class="fa fa-sliders" aria-hidden="true" style="font-size:38px;float:right; cursor:pointer;margin-right:30px" (click)="showDialog(odsMigrationConfigurationDialog,-1)"></i></div>
+</div>-->
+
+<div *ngIf="isLoading" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+</div>
+<div *ngIf="!isLoading">
+    <div class="mdl-grid generate-ods-section">
+        <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+        <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
+            <div class="generate-ods-section-title">
+                <h6 class="generate-ods-section-main-title-text">Staging Migration</h6>
+            </div>
+            <div class="generate-ods-migration-subsection">
+                Triggering the Staging Migration process will migrate data from the SLDS or your data source into the Generate Staging tables.
+            </div>
+            <div [hidden]="!showODSMigrateStatus && !showODSMigrateProgress && !showODSMigrateTimeRemaining" class="mdl-typography--text-center">
+                <div class="generate-ods-status" [hidden]="!showODSMigrateStatus"> {{ odsMessage }} </div>
+                <div class="generate-ods-status mdl-progress mdl-js-progress generate-ods__progress" [hidden]="!showODSMigrateProgress" id="odsMigrationStatus"></div>
+                <div class="generate-ods-status" [hidden]="!showODSMigrateTimeRemaining">{{ estimatedODSCompletionTime }}</div>
+            </div>
+
+            <div class="generate-ods-migration-actions" *ngIf="!odsMigrationIsAvailable && !isCanceling">
+                Another migration is already running
+            </div>
+
+            <div *ngIf="odsMigrationIsAvailable && !odsMigrationIsProcessing">
+                <div>
+                    <div class="generate-ods-section-title">
+                        <h6 class="generate-ods-section-title-text">Staging Migration School Years</h6>
+                    </div>
+                    <div class="generate-ods-sections-title">Select the checkbox next to a School Year to enable its migration to Staging. To disable the migration of a School Year, deselect the checkbox. </div>
+                </div>
+                <div class="generate-ods-sections-title">
+                </div>
+                <div>
+                    <div class="generate-ods-section-title">
+                        <h6 class="generate-ods-section-title-text">Staging Migration Tasks</h6>
+                    </div>
+                    <div class="generate-ods-sections-title">Select the checkbox next to the stored procedure to enable a migration task. To disable a migration task, deselect the checkbox. Use the up and down arrows to change the execution order of selected stored procedures.</div>
+                </div>
+                <div class="generate-ods-sections-title">
+                </div>
+            </div>
+
+
+            <div class="generate-ods-migration-actions" *ngIf="userService.isAdmin() && odsMigrationIsAvailable && !odsMigrationIsProcessing">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="showConfirmODSDialog(confirmODSDialog)">
+                    Migrate to STAGING
+                </button>
+            </div>
+            <div class="generate-ods-migration-actions" *ngIf="userService.isAdmin() && odsMigrationIsProcessing && cancelIsAvailable && !isCanceling">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="showConfirmCancellationDialog(confirmCancellationDialog)">
+                    Cancel Migration
+                </button>
+            </div>
+            <div class="generate-ods-migration-actions">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="gotoDataStore()">
+                    Go to Data Store
+                </button>
+            </div>
+
+            <div>
+                <div class="generate-ods-section-title">
+                    <h6 class="generate-ods-section-title-text">Data Migration Log</h6>
+                </div>
+            </div>
+            <div class="generate-ods-sections-title">
+                <gui-grid #migrationGrid [source]="migrationHistoryList" [paging]="paging"
+                          [rowStyle]="rowStyle" [columns]="gridColumns"></gui-grid>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<generate-app-dialog class="modal-content" #confirmODSDialog>
+    <div class="mdl-card mdl-shadow--16dp">
+        <div class="mdl-card__title">
+            <span class="mdl-card__title-text">
+                Confirm Staging Migration
+            </span>
+        </div>
+        <div class="mdl-card__supporting-text">
+            Please confirm.  Clicking OK will overwrite all existing data within the Staging tables.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="confirmODSDialog.hide()">
+                Cancel
+            </button>
+            <button class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="triggerODSMigration(confirmODSDialog)">
+                OK
+            </button>
+        </div>
+    </div>
+</generate-app-dialog>
+
+
+<generate-app-dialog class="modal-content" #confirmCancellationDialog>
+    <div class="mdl-card mdl-shadow--16dp">
+        <div class="mdl-card__title">
+            <span class="mdl-card__title-text">
+                Confirm Cancellation
+            </span>
+        </div>
+        <div class="mdl-card__supporting-text">
+            Please confirm.  Clicking OK will cancel any migration job currently in process.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="confirmCancellationDialog.hide()">
+                Cancel
+            </button>
+            <button class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="cancelMigration(confirmCancellationDialog)">
+                OK
+            </button>
+        </div>
+    </div>
+</generate-app-dialog>

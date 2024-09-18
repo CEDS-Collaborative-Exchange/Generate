@@ -1,0 +1,85 @@
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-charterschools__error">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+<h3 *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-report__title">{{reportDataDto.reportTitle}}</h3>
+<h3 *ngIf="!isLoading && reportDataDto.dataCount < 0" class="generate-app-report__title">Not Yet Implemented</h3>
+
+<div class="mdl-grid generate-app-charterschools__grid-header">
+
+    <div class="mdl-cell mdl-cell--4-col">
+
+    </div>
+    <div class="mdl-cell mdl-cell--4-col mdl-typography--text-center">
+        <div *ngIf="!isLoading" class="generate-app-charterschools__total mdl-typography--text-center">
+            {{dataCountCaption()}} {{reportDataDto.dataCount}}
+        </div>
+    </div>
+
+    <div class="mdl-cell mdl-cell--4-col mdl-typography--text-right">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+
+            <div class="generate-app-charterschools-controls__export-container">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                    Export to Excel
+                </button>
+            </div>
+
+            <div *ngIf="reportParameters.reportType == 'edfactsreport'" class="generate-app-charterschools-controls__createfile-container">
+                <button id="generate-app-charterschools__createfile-button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    Create Submission File <i class="fa fa-caret-down generate-app-report-controls__reporttype-button-icon" aria-hidden="true"></i>
+                </button>
+                <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="generate-app-charterschools__createfile-button">
+                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'tab')" class="mdl-menu__item">Tab Delimited (.tab)</li>
+                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'csv')" class="mdl-menu__item">Comma Delimited (.csv)</li>
+                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'txt')" class="mdl-menu__item">Fixed (.txt)</li>
+                </ul>
+            </div>
+            <div *ngIf="isPending" class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="isLoading" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && (reportParameters.reportType !== 'datapopulation')">
+
+</div>
+<div *ngIf="!isLoading || !hasRecords">
+    <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                        [headers]="['Organization Name','State Agency Number','State Code','LEA Identifier (State)','School Identifier (State)','Progress Achieving English Language','State Defined Status']"
+                        [bindings]="['organizationName','stateAgencyNumber','stateANSICode','leaStateIdentifier','organizationStateId','progressachievingenglishlanguage','statedefinedstatus']"
+                        class="generate-app-charterschools__grid">
+    </generate-app-table>
+</div>
+
+
+<generate-app-dialog class="modal-content" #fileSubmissionWarning>
+    <div class="mdl-card mdl-shadow--16dp">
+        <div class="mdl-card__title">
+            <span class="mdl-card__title-text">
+                Submission Files
+            </span>
+        </div>
+        <div class="mdl-card__supporting-text">
+            Generate does not store submission files. Submission files must be saved on the user's computer or internal network for submission to EDFacts or for other purposes.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <button class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="getFileSubmission(fileSubmissionWarning)">
+                OK
+            </button>
+        </div>
+    </div>
+</generate-app-dialog>
+

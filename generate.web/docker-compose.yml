@@ -1,0 +1,15 @@
+version: '3'
+services:
+  generate:
+    image: svuyuru/generate.web:V11.3
+    ports:
+            - 8080:80
+    build: 
+        context: .
+
+    networks:
+            - web-app
+networks:
+  web-app:
+    name: generate_network
+    external: true

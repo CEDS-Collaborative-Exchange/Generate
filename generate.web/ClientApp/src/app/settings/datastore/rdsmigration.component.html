@@ -1,0 +1,131 @@
+<generate-app-breadcrumbs breadcrumbs="Settings > Data Store > RDS Migrations"></generate-app-breadcrumbs>
+
+<!--<div class="mdl-cell mdl-cell--12-col">
+    <div class="generate-rds-config"><i class="fa fa-sliders" aria-hidden="true" style="font-size:38px;float:right; cursor:pointer; margin-right:30px;" (click)="showDialog(rdsMigrationConfigurationDialog,-1)"></i></div>
+</div>-->
+<div *ngIf="isLoading" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+</div>
+<div *ngIf="!isLoading">
+    <div class="mdl-grid generate-rds-migration-section">
+        <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+        <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
+            <div class="generate-rds-section-title">
+                <h6 class="generate-rds-section-main-title-text">RDS Migration</h6>
+            </div>
+            <div class="generate-rds-migration-subsection">
+                Triggering the Reporting Data Store (RDS) Migration process will migrate data from Staging to the RDS.
+            </div>
+
+            <div [hidden]="!showRDSMigrateStatus && !showRDSMigrateProgress && !showRDSMigrateTimeRemaining" class="mdl-typography--text-center">
+                <div class="generate-rds-status" [hidden]="!showRDSMigrateStatus"> {{ rdsMessage }} </div>
+                <div class="generate-rds-status mdl-progress mdl-js-progress generate-rds__progress" [hidden]="!showRDSMigrateProgress" id="rdsMigrationStatus"></div>
+                <div class="generate-rds-status" [hidden]="!showRDSMigrateTimeRemaining">{{ estimatedRDSCompletionTime }}</div>
+            </div>
+
+            <div class="generate-rds-migration-actions" *ngIf="!rdsMigrationIsAvailable && !isCanceling">
+                Either another migration is already running or Staging migration has not yet been run
+            </div>
+
+            <div *ngIf="rdsMigrationIsAvailable && !rdsMigrationIsProcessing">
+                <div>
+                    <div class="generate-rds-section-title">
+                        <h6 class="generate-rds-section-title-text">RDS Migration School Years</h6>
+                    </div>
+                    <div class="generate-rds-sections-title">Select the checkbox next to a School Year to enable its migration to the RDS. To disable the migration of a School Year, deselect the checkbox. </div>
+                </div>
+                <div class="generate-rds-sections-title">
+
+                </div>
+                <div>
+                    <div class="generate-rds-section-title">
+                        <h6 class="generate-rds-section-title-text">RDS Migration Tasks</h6>
+                    </div>
+                    <div class="generate-rds-sections-title">Select the checkbox next to the stored procedure to enable a migration task. To disable a migration task, deselect the checkbox. Use the up and down arrows to change the execution order of selected stored procedures.</div>
+                </div>
+                <div class="generate-rds-sections-title">
+
+                </div>
+            </div>
+
+
+            <div class="generate-rds-migration-actions" *ngIf="userService.isAdmin() && rdsMigrationIsAvailable && !rdsMigrationIsProcessing">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="showConfirmRDSDialog(confirmRDSDialog)">
+                    Migrate to Reporting Data Store
+                </button>
+            </div>
+
+            <div class="generate-rds-migration-actions" *ngIf="userService.isAdmin() && rdsMigrationIsProcessing && cancelIsAvailable && !isCanceling">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="showConfirmCancellationDialog(confirmCancellationDialog)">
+                    Cancel Migration
+                </button>
+            </div>
+
+            <div class="generate-rds-migration-actions">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="gotoDataStore()">
+                    Go to Data Store
+                </button>
+            </div>
+
+            <div>
+                <div class="generate-rds-section-title">
+                    <h6 class="generate-rds-section-title-text">Data Migration Log</h6>
+                </div>
+            </div>
+            <div class="generate-rds-sections-title">
+                <gui-grid #migrationGrid [source]="migrationHistoryList" [paging]="paging"
+                          [rowStyle]="rowStyle" [columns]="gridColumns"></gui-grid>
+            </div>
+
+        </div>
+        <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+    </div>
+</div>
+
+
+<generate-app-dialog class="modal-content" #confirmRDSDialog>
+    <div class="mdl-card mdl-shadow--16dp">
+        <div class="mdl-card__title">
+            <span class="mdl-card__title-text">
+                Confirm RDS Migration
+            </span>
+        </div>
+        <div class="mdl-card__supporting-text">
+            Please confirm.  Clicking OK will overwrite all existing data within the RDS.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="confirmRDSDialog.hide()">
+                Cancel
+            </button>
+            <button class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="triggerRDSMigration(confirmRDSDialog)">
+                OK
+            </button>
+        </div>
+    </div>
+</generate-app-dialog>
+
+
+<generate-app-dialog class="modal-content" #confirmCancellationDialog>
+    <div class="mdl-card mdl-shadow--16dp">
+        <div class="mdl-card__title">
+            <span class="mdl-card__title-text">
+                Confirm Cancellation
+            </span>
+        </div>
+        <div class="mdl-card__supporting-text">
+            Please confirm.  Clicking OK will cancel any migration job currently in process.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="confirmCancellationDialog.hide()">
+                Cancel
+            </button>
+            <button class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="cancelMigration(confirmCancellationDialog)">
+                OK
+            </button>
+        </div>
+    </div>
+</generate-app-dialog>

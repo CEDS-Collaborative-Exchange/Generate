@@ -1,0 +1,21 @@
+<div class="mdl-grid generate-app-metadata__section">
+    <div class="mdl-cell--12-col-desktop mdl-cell mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+        <div class="generate-metadata-section-title">
+            <h6 class="generate-metadata-section-main-title-text">Metadata</h6>
+        </div>
+        <div class="generate-metadata-subsection mdl-typography--text-center">
+            From this screen you can update the metadata that is used by Generate for all the EDFacts file specifications. This process checks for any changes or updates to the metadata and downloads those changes into Generate. The status of the most recent check is displayed below.
+        </div>
+        <div class="{{metadataStatusCss}}">
+            {{metadataStatusMessage}}
+        </div>
+        <div class="generate-metadata-subsection mdl-typography--text-center">
+            Clicking this button will initiate a metadata update process that will disable the system for the next hour. Please ensure that all data migrations are complete and you are prepared for this downtime before proceeding.
+        </div>
+        <div class="generate-metadata-actions">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" [disabled]="isprocessing" (click)="callFSmetaAPI()">
+                Refresh Metadata from EDPass
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,203 @@
+﻿<#@ template debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ assembly Name="System.Core.dll" #>
+<#@ assembly Name="System.Xml.dll" #>
+<#@ assembly Name="System.Xml.Linq.dll" #>
+<#@ assembly Name="System.Windows.Forms.dll" #>
+<#@ assembly name="EnvDte" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ include file="../../../../VisualStudioHelper.ttinclude" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit;
+using generate.core.Models.IDS;
+
+namespace generate.test.Core.Models.ODS
+{
+    public class OdsModelShould
+	{
+
+	<#
+	// get all namespaces defined in all projects of this solution via the file code model
+	// because the CodeModel is buggy and marks all namespaces as external so that one
+	// cannot decide which namespaces origin from the Visual Studio solution
+
+	List<string> namespaces = new List<string>();
+	namespaces.Add("generate.core.Models.ODS");
+
+	//foreach(var project in VisualStudioHelper.GetAllProjects())
+	//	foreach(var ns in GetAllNamespacesFromProject(project).Where(s => s.StartsWith(namespaceToProcess)).OrderBy(s => s))
+	//		if (!namespaces.Contains(ns) && !namespaces.Any(n => ns.StartsWith(n)))
+	//			namespaces.Add(ns);
+	
+
+	// find the matching namespaces from the CodeModel
+	List<string> codeNamespaceNames = new List<string>();
+
+	List<EnvDTE.CodeNamespace> codeNamespaces = new List<EnvDTE.CodeNamespace>();
+	foreach(EnvDTE.Project project in VisualStudioHelper.GetAllProjects())
+		if (project.CodeModel != null && project.CodeModel.CodeElements != null)
+			foreach(EnvDTE.CodeNamespace codeNs in VisualStudioHelper.CodeModel.GetAllCodeElementsOfType(project.CodeModel.CodeElements,
+																										 EnvDTE.vsCMElement.vsCMElementNamespace,
+																										 true))
+            {
+				if (namespaces.Contains(codeNs.FullName) && !codeNamespaceNames.Any(n => n == codeNs.FullName))
+                {
+					codeNamespaceNames.Add(codeNs.FullName);
+					codeNamespaces.Add(codeNs);
+                }
+            }
+
+	// now walk recursively all namespaces and their children and create a 
+	// tree representing the code model of this solution.
+	WalkElementsRecursively(codeNamespaces.OfType<EnvDTE.CodeElement>(), 0);
+
+
+	#>  
+	}
+}
+<#+
+/// <summary>
+/// This method recursively walks a list of code elements and puts them into a tree view
+/// </summary>
+public void WalkElementsRecursively(IEnumerable<EnvDTE.CodeElement> elements, int recursionDepth)
+{
+	List<string> classes = new List<string>();
+
+	// iterate all elements
+	foreach (EnvDTE.CodeElement element in elements.OrderBy(e => e.FullName))
+    {
+		// check if it contains any children
+		// bear in mind that namespaces need to be treated differently
+		// since their children are stored in the "Members"-Property
+		bool hasChildren = false;
+		IEnumerable<EnvDTE.CodeElement> children = null;
+		if (element is EnvDTE.CodeNamespace)
+        {
+			try 
+			{ 
+				children = (element as EnvDTE.CodeNamespace).Members.OfType<EnvDTE.CodeElement>();
+				hasChildren = (children.Count() > 0); 
+			} catch { }
+        }
+		else
+        {
+			try 
+			{ 
+				children = element.Children.OfType<EnvDTE.CodeElement>(); 
+				hasChildren = (children.Count() > 0); 
+			} catch { }
+        }
+
+
+		// create the visual elements for this item
+		string itemName = "N/A";
+		try
+        {
+			itemName = (element is EnvDTE.CodeNamespace) ? element.FullName : element.FullName.Split('.').Last();
+        } catch { }
+		var elementType = element.Kind.ToString().Replace("vsCMElement", "");
+
+
+		if (elementType == "Class" && !classes.Contains(itemName))
+        {
+			var cls = (EnvDTE.CodeClass)element;
+
+			bool hasMemberCollection = false;
+			List<string> memberCollections = new List<string>();
+
+			foreach (EnvDTE.CodeElement member in cls.Members)
+			{
+				var propertyType = member.Kind.ToString().Replace("vsCMElement", "");
+				if (propertyType != "Function")
+
+				{
+					string dataType = "";
+					switch (member.Kind) 
+					{
+					case EnvDTE.vsCMElement.vsCMElementVariable:
+						EnvDTE.CodeVariable v = ((EnvDTE.CodeVariable)(member));
+						dataType = v.Type.AsString;
+						break;
+					case EnvDTE.vsCMElement.vsCMElementProperty:
+						EnvDTE.CodeProperty p = ((EnvDTE.CodeProperty)(member));
+						dataType = p.Type.AsString;
+						break;
+					}
+					if (dataType.Contains("System.Collections.Generic.ICollection"))
+                    {
+						hasMemberCollection = true;
+						memberCollections.Add(member.Name);
+                    }
+				}
+            }
+
+			if (hasMemberCollection)
+            {
+
+				classes.Add(itemName);
+		#>
+
+		[Fact]
+        public void <#= itemName #>_Constructor()
+        {
+			var new<#= itemName #> = new <#= itemName #>();	
+
+		<#+
+			foreach (string collectionName in memberCollections)
+			{
+		#>
+	Assert.NotNull(new<#= itemName #>.<#= collectionName #>);	
+		<#+
+            }
+		#>
+}
+		<#+
+
+            }
+
+        }
+
+		if (hasChildren)
+        {
+			WalkElementsRecursively(children, recursionDepth + 1);
+		}
+
+    }
+}
+/// <summary>
+/// Getting namespaces that are defined within a Visual Studio Project via the CodeModel is 
+/// buggy, because their InfoLocation Property always returns "vsCMInfoLocationExternal".
+/// This is why this method uses the file code model to retrieve namespaces. You can work with these
+/// to get classes etc. from the CodeModel.
+/// </summary>
+public IEnumerable<string> GetAllNamespacesFromProject(EnvDTE.Project project)
+{
+	List<string> ret = new List<string>();
+
+	// iterate all items contained in the given project
+	foreach(EnvDTE.ProjectItem projectItem in VisualStudioHelper.GetAllProjectItems(project))
+    {
+		// make sure this item provides a file code model
+		if (projectItem.FileCodeModel == null) continue;
+
+		// find all code elements in this file
+		foreach(EnvDTE.CodeElement elem in projectItem.FileCodeModel.CodeElements)
+        {
+			if (elem.Kind == EnvDTE.vsCMElement.vsCMElementNamespace)
+				ret.Add(elem.FullName);
+        }
+    }
+
+	return ret;
+}
+#>

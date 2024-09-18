@@ -1,0 +1,31 @@
+table {
+    width: 100%;
+}
+
+th.mat-mdc-header-cell {
+    color: #000;
+    background-color: #dcdcdc;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Apply background color to even rows */
+tr:nth-child(even) {
+    background-color: #eceff1;
+}
+
+/* Apply background color to odd rows */
+tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow: auto;
+}
+
+.generate-app-report-library__report-icon {
+    color: #FFB74D;
+    margin-left: 10px;
+}

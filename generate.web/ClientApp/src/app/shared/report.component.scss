@@ -1,0 +1,100 @@
+@import '../variables.scss';
+
+
+.generate-app-reports-edfacts__external-link--div
+{
+    margin-top: 10px;       
+}
+
+.generate-app-reports-edfacts__external-link
+{
+    color: $color-primary;
+}
+
+.generate-app-reports-edfacts__external-link--caption
+{
+    margin-left: 10px;
+    color: $color-primary;
+    font-size: 16px;
+}
+
+
+.generate-app-report-controls__datapopulation
+{
+    width: 300px;
+}
+
+.generate-app-report-controls__submission
+{
+    width: 150px;
+}
+
+
+.generate-app-report__error 
+{
+    color: $color-primary;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.generate-app-report-metadata__error {
+    color: red;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+
+.generate-app-report-controls {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.generate-app-report-controls__sectiontitle
+{
+    margin-bottom: 5px;
+    font-weight: 700;
+    color: $color-primary-dark;
+}
+
+.generate-app-report-controls__categoryset
+{
+    width: 280px;
+}
+
+.generate-app-report-controls__year
+{
+    width: 125px;
+}
+
+
+.generate-app-report-controls__reportlevel-button
+{
+    width: 90px;
+    margin-right: 10px;
+    margin-bottom: 2px;
+}
+
+.generate-app-report-controls__reportyear-button
+{
+    width: 90px;
+    margin-right: 10px;
+    margin-bottom: 2px;
+}
+
+
+.generate-app-report-controls__filter-button
+{
+    width: 90px;
+    margin-right: 10px;
+    margin-bottom: 2px;
+}
+
+.generate-app-report-controls__cell-disclosure{
+    color: $color-accent-dark;
+}
+
+.generate-app-report-controls__reportlevel-button-mgmt {
+    width: 300px;
+}

@@ -1,0 +1,117 @@
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-indicator4a__error">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+
+<h3 *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-indicator4a__title">{{reportDataDto.reportTitle}}</h3>
+<h3 *ngIf="!isLoading && reportDataDto.dataCount < 0" class="generate-app-indicator4a__title">Not Yet Implemented</h3>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportType !== 'datapopulation' && reportParameters.reportCategorySet !== undefined" class="mdl-typography--text-center generate-app-indicator4a__categoryset-definition">
+    <span>{{reportParameters.reportCategorySet.categorySetName}}</span><span *ngIf="reportParameters.reportCategorySet.categories.length > 0"> - </span><span *ngFor="let cat of reportParameters.reportCategorySet.categories; let i=index;"><span *ngIf="i > 0">, </span>{{cat}}</span>
+</div>
+
+<div class="mdl-grid generate-app-indicator4a__grid-header">
+
+    <div class="mdl-cell mdl-cell--4-col">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+            <label class="generate-app-indicator4a-controls__sectionlabel" for="generate-app-indicator4a__filter">Filter</label>
+            <input id="generate-app-indicator4a__filter" type="text" class="form-control" [(ngModel)]="filter" />
+        </div>
+    </div>
+
+
+    <div class="mdl-cell mdl-cell--4-col mdl-typography--text-center">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-indicator4a__total mdl-typography--text-center">
+            {{dataCountCaption()}} {{reportDataDto.dataCount}}
+        </div>
+    </div>
+
+
+    <div class="mdl-cell mdl-cell--4-col mdl-typography--text-right">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+
+            <div class="generate-app-indicator4a-controls__export-container">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                    Export to Excel
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="isLoading" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && (reportParameters.reportType !== 'datapopulation')">
+
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords">
+    <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                        [headers]="[
+                                '(1) LEA Identifier', 
+                                '(2) Total Number of Students with Disabilities (Ages 3-21) on the Child Count Date', 
+                                '(3) Total Number of Students without Disabilities (Ages 3-21) on the Child Count Date', 
+                                '(4) Total Number of Students with Disabilities (Ages 3-21) with Suspensions or Expulsions Totaling Greater than 10 days in the Targeted School Year', 
+                                '(5) Total Number of Students without Disabilities (Ages 3-21) with Suspensions or Expulsions Totaling Greater than 10 Days in the Targeted School Year',
+                                '(6) Rate #1: District-Level Suspension/Expulsion Rate for Children with Disabilities (used in B4A Examples 1a, 1b, 2, 3, 4a, 4b, 5, and 6)',
+                                '(7) Rate #2: District-Level Suspension/Expulsion Rate for Children without Disabilities (used in B4A Examples 5 and 6)', 
+                                '(8) Rate #3: State-Level  Suspension/Expulsion Rate for Children with Disabilities (used in B4A Examples 1a and 4)', 
+                                '(9) Rate #4: State Mean Suspension/Expulsion Rate for Children with Disabilities (used in B4A Examples 1b, 3, and 4b)', 
+                                '(10a) Number of LEAs with a Suspension/Expulsion Rate for Children with Disabilities LOWER THAN the rate for this LEA (used in B4A Example #2)', 
+                                '(10b) Percentage of LEAs in the state with a Suspension/Expulsion Rate for Children with Disabilities LOWER THAN this LEA\'s rate? (B4A Example #2)', 
+                                '(11a) LEAs deviation from the State Mean Suspension/Expulsion Rate for Children with Disabilities (used in B4A Example 3)', 
+                                '(11b) Squared deviation from State-Level Suspension/Expulsion Rate for Children with Disabilities (used in B4A Example 3)', 
+                                '(11c) Sum of the squared deviations from the State-Level Suspension/Expulsion Rate for Children with Disabilities (used in B4A Example #3)', 
+                                '(11d) Standard Deviation of State Mean Suspension/Expulsion Rate for Children with Disabilities (Used in B4A Example 3)', 
+                                '(11e) Number of standard deviations that the LEA\'s Suspension/Expulsion Rate for Children with Disabilities is above or below the state mean rate (B4A Example #3)', 
+                                '(12) Rate Ratio of District-Level Suspension/Expulsion Rate for Children with Disabilities Compared with State-Level Rate (B4A Example 4a)', 
+                                '(13) Rate Ratio of District-Level Suspension/Expulsion Rate for Children with Disabilities Compared with State Mean Rate (B4A Example 4b)', 
+                                '(14) Rate Ratio of District-Level Suspension/Expulsion Rate for Children with Disabilities Compared with District\'s Rate for Children without Disabilities (B4A Example 5)', 
+                                '(15) Difference between the District-Level Suspension/Expulsion Rate for Children with Disabilities and District\'s Rate for Children without Disabilities (B4A Example 6)'
+                                ]"
+                        [bindings]="['organizationStateId',
+                                'col_2',
+                                'col_3',
+                                'col_4',
+                                'col_5',
+                                'col_6',
+                                'col_7',
+                                'col_8',
+                                'col_9',
+                                'col_10a',
+                                'col_10b',
+                                'col_11a',
+                                'col_11b',
+                                'col_11c',
+                                'col_11d',
+                                'col_11e',
+                                'col_12',
+                                'col_13',
+                                'col_14',
+                                'col_15'
+                                ]"
+
+                        class="generate-app-edenvironmentdisabilitiesage6-21__grid">
+    </generate-app-table>
+
+</div>
+
+<div *ngIf="!isLoading && !hasRecords" id="generate-app-grid__norecords">No Records to Display.</div>
+
+
+<div *ngIf="!isLoading && (reportParameters.connectionLink !== null || reportParameters.connectionLink !== '')" class="generate-app-indicator4a__connectionLink">
+    For report methodology, see <a href="{{reportParameters.connectionLink}}" target="_blank">Connection Link</a>.
+</div>
+
+

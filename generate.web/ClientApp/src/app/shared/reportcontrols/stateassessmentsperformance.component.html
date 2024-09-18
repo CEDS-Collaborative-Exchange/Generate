@@ -1,0 +1,108 @@
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-stateassessmentperformance__error">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+<h3 *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-stateassessmentperformance__title">{{reportDataDto.reportTitle}}</h3>
+<h3 *ngIf="!isLoading && reportDataDto.dataCount < 0" class="generate-app-stateassessmentperformance__title">Not Yet Implemented</h3>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-stateassessmentperformance__subtitle mdl-typography--text-center">
+    {{reportParameters.reportLevel}} Level, {{reportParameters.reportYear}}
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportLevel === 'lea' && reportParameters.reportLea !== null" class="generate-app-stateassessmentperformance__subtitle mdl-typography--text-center">
+    {{reportParameters.reportLea}}
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportLevel === 'sch' && reportParameters.reportSchool !== null" class="generate-app-stateassessmentperformance__subtitle mdl-typography--text-center">
+    {{reportParameters.reportSchool}}
+</div>
+
+<!--<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportType !== 'datapopulation'" class="mdl-typography--text-center generate-app-stateassessmentperformance__categoryset-definition">
+    <span *ngFor="let cat of reportParameters.reportCategorySet.categories; let i=index;"><span *ngIf="i > 0">, </span>{{cat}}</span>
+</div>-->
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportType !== 'datapopulation'" class="mdl-typography--text-center">
+    <span>{{getReportFilter()}}</span>
+</div>
+
+<div *ngIf="currentReport !== undefined && currentReport.showGraph && currentReport.showData" class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+    <div class="mdl-tabs__tab-bar">
+        <a href="#graph-panel" class="mdl-tabs__tab is-active" (click)="clickedGraphTab()">Graph</a>
+        <a href="#reportdata-panel" class="mdl-tabs__tab" (click)="clickedDataTab()">Data</a>
+    </div>
+
+    <div class="mdl-tabs__panel is-active" id="graph-panel">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-right generate-app-stateassessmentperformance__export">
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+
+                <div class="generate-app-stateassessmentperformance__graph-export">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="exportGraph()">
+                        Export
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && reportParameters.reportLea !== 'all'">
+
+        </div>
+
+        <div *ngIf="!isLoading && hasRecords && reportParameters.reportLea === 'all'">Please select an LEA to view the graph.</div>
+        <div *ngIf="!isLoading && !hasRecords" id="generate-app-grid__norecords">No Records to Display.</div>
+    </div>
+    <div class="mdl-tabs__panel" id="reportdata-panel">
+        <div class="mdl-grid generate-app-stateassessmentperformance__grid-header">
+
+            <div class="mdl-cell mdl-cell--4-col">
+                <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+                    <label class="generate-app-stateassessmentperformance-controls__sectionlabel" for="generate-app-stateassessmentperformance__filter">Filter</label>
+                    <input id="generate-app-stateassessmentperformance__filter" type="text" class="form-control" [(ngModel)]="filter" />
+                </div>
+            </div>
+
+            <div class="mdl-cell mdl-cell--4-col mdl-typography--text-center">
+                <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-stateassessmentperformance__total mdl-typography--text-center">
+                    {{dataCountCaption()}} {{reportDataDto.dataCount}}
+                </div>
+            </div>
+
+
+            <div class="mdl-cell mdl-cell--4-col mdl-typography--text-right">
+                <div class="generate-app-stateassessmentperformance-controls__export-container">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                        Export to Excel
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div *ngIf="isLoading" class="mdl-typography--text-center">
+            <div class="mdl-grid">
+                <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+                    <div class="mdl-spinner mdl-js-spinner is-active"></div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && (reportParameters.reportType !== 'datapopulation')">
+
+        </div>
+
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && performanceLevels !== undefined">
+
+        </div>
+
+        <div *ngIf="!isLoading && !hasRecords">No Records to Display.</div>
+    </div>
+</div>
+
+
+<div *ngIf="!isLoading && reportParameters.connectionLink !== null" class="generate-app-stateassessmentperformance_connectionLink">
+    For report methodology, see <a href="{{reportParameters.connectionLink}}" target="_blank">Connection Link</a>.
+</div>

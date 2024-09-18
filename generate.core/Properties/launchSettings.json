@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ef": {
+      "commandName": "ef",
+      "environmentVariables": {
+        "Hosting:Environment": "Development"
+      }
+    }
+  }
+}

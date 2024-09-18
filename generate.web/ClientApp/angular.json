@@ -1,0 +1,126 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "ClientApp": {
+      "root": "",
+      "sourceRoot": "src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.app.json",
+            "assets": [
+              "src/assets",
+              "src/assets/manifest.json"
+            ],
+            "styles": [
+                "@angular/material/prebuilt-themes/indigo-pink.css",
+                "./node_modules/material-design-lite/material.css",
+                "./node_modules/material-design-lite/dist/material.blue_grey-orange.min.css",
+                "./node_modules/font-awesome/scss/font-awesome.scss",
+                "./node_modules/normalize.css/normalize.css",
+                "src/assets/styles/app_theme.scss",
+                "./node_modules/material-icons/iconfont/material-icons.css",
+                "./node_modules/jquery-ui-dist/jquery-ui.css",
+                "src/assets/styles/pivot.css"
+            ],
+            "scripts": [
+                "./node_modules/material-design-lite/material.min.js",
+                "./node_modules/moment/min/moment.min.js",
+                "./node_modules/jszip/dist/jszip.min.js",
+                "./node_modules/file-saver/dist/FileSaver.min.js",
+                "./node_modules/jquery/dist/jquery.js",
+                "./node_modules/jquery-ui-dist/jquery-ui.js",
+                "./node_modules/pivottable/dist/pivot.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "serviceWorker": true
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "ClientApp:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "ClientApp:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "ClientApp:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.spec.json",
+            "karmaConfig": "src/karma.conf.js",
+            "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "src/styles.css"
+            ],
+            "scripts": [],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/assets/manifest.json"
+            ]
+          }
+        }
+      }
+    },
+    "ClientApp-e2e": {
+      "root": "e2e/",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "ClientApp:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "ClientApp:serve:production"
+            }
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": "35832e69-d6fb-4968-85d9-35976067ca89"
+  }
+}

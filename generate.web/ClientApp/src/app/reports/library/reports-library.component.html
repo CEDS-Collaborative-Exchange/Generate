@@ -1,0 +1,200 @@
+<generate-app-breadcrumbs breadcrumbs="Standard Reports > Reports Library"></generate-app-breadcrumbs>
+<generate-app-pagetitle pagetitle="Reports Library" pagesubtitle=""></generate-app-pagetitle>
+
+<div *ngIf="isLoading" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!isLoading" class="mdl-grid generate-app-report-library__list">
+    <div class="mdl-cell mdl-cell--12-col">
+        <div>
+            <label class="generate-app-report-library-controls__sectionlabel" for="generate-app-report-library__reportLevels">Report Level</label>
+            <generate-app-combo-box #comboReportLevel class="generate-app-report-library__reportLevels" [itemsSource]="reportLevels" [isEditable]="false" displayMemberPath="levelName" selectedValuePath="levelCode"></generate-app-combo-box>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="reportSearch()">
+                GO
+            </button>
+        </div>
+    </div>
+
+    <div class="mdl-cell mdl-cell--12-col mdl-typography--text-right">
+        <div class="generate-app-report-library__addtopic-container">
+            <button class="mdl-button mdl-js-button" (click)="showDialog(topicDialog,-1,'topic')">
+                <span class="fa-stack fa-lg">
+                    <i class="fa fa-folder-open fa-stack-2x generate-app-report-library__addtopic-folder"></i>
+                    <i class="fa fa-plus-circle fa-stack-1x fa-inverse generate-app-report-library__addtopic-circle"></i>
+                </span>
+            </button>
+            <span class="generate-app-report-library__addtopic-text">Add New Report Topic</span>
+        </div>
+    </div>
+
+    <div *ngIf="isResultsView" class="mdl-cell mdl-cell--12-col">
+
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-left">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="gotoTopicsView()">
+                Return to Topics
+            </button>
+        </div>
+
+        <div class="generate-app-report-library__report-grid mdl-cell mdl-cell--12-col">
+            <h3>Search Results</h3>
+            <generate-app-report-library-table #reportGrid [itemsSource]="cvData"
+                                               [headers]="['Name','SEA','LEA','School','Add to Report Topic']"
+                                               [bindings]="['reportName','seaLevel','leaLevel','schLevel']"
+                                                [showDialogFunction]="showDialog"
+                                               class="generate-app-gradesoffered__grid">
+            </generate-app-report-library-table>
+        </div>
+    </div>
+    <div *ngIf="!isResultsView" class="mdl-cell mdl-cell--12-col">
+
+        <div *ngFor="let topic of reportTopics">
+
+            <div class="generate-app-report-library__topic-container">
+
+                <div class="mdl-grid generate-app-report-library__topic">
+
+                    <div class="mdl-cell mdl-cell--6-col">
+                        <button class="mdl-button mdl-js-button" (click)="toggleTopic(topic.generateReportTopicId)" title="Toggle Report Topic">
+                            <i *ngIf="isTopicVisible(topic.generateReportTopicId)" class="fa fa-folder-open-o fa-2x generate-app-report-library__topic-folder" aria-hidden="true"></i>
+                            <i *ngIf="!isTopicVisible(topic.generateReportTopicId)" class="fa fa-folder-o fa-2x generate-app-report-library__topic-folder" aria-hidden="true"></i>
+                        </button>
+                        <span class="generate-app-report-library__topic-text">
+                            {{topic.generateReportTopicName}}
+                        </span>
+                    </div>
+
+                    <div class="mdl-cell mdl-cell--2-col">
+                    </div>
+
+                    <div class="mdl-cell mdl-cell--4-col mdl-textfield--align-right">
+                        <button class="mdl-button mdl-js-button" (click)="showDialog(topicDialog,topic.generateReportTopicId,'topic')" title="Edit Report Topic">
+                            <i class="fa fa-pencil-square-o fa-2x generate-app-report-library__topic-edit" aria-hidden="true"></i>
+                        </button>
+
+                        <button class="mdl-button mdl-js-button" (click)="showDialog(topicDeleteDialog,topic.generateReportTopicId, 'topicdelete')" title="Remove Report Topic">
+                            <i class="fa fa-times fa-2x generate-app-report-library__topic-close" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="generate-app-report-library__report-grid" *ngIf="isTopicVisible(topic.generateReportTopicId)">
+                    <generate-app-report-library-table #reportGrid [itemsSource]="cvData"
+                                        [headers]="['Name','SEA','LEA','School']"
+                                        [bindings]="['reportName','seaLevel','leaLevel','schLevel']"
+                                        [callbackFunction]="gotoReport"
+                                        class="generate-app-gradesoffered__grid">
+                    </generate-app-report-library-table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+<generate-app-dialog #topicDialog class="generate-app-report-library__dialog" [hideTrigger]="'None'" [width]="'700px'">
+    <div>
+        <div class="generate-app-report-library__dialog-title" *ngIf="selectedTopic.generateReportTopicId <= 0">Add Report Topic</div>
+        <div class="generate-app-report-library__dialog-title" *ngIf="selectedTopic.generateReportTopicId > 0">Edit Report Topic</div>
+    </div>
+    <div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-report-library__dialog-error ">
+                {{errorMessage}}
+            </div>
+        </div>
+    </div>
+    <div class="generate-app-report-library__dialog-container mdl-grid">
+        <div class="generate-app-report-library__dialog__topic-name mdl-cell mdl-cell--1-col">
+            <label class="generate-app-report-library-controls__sectionlabel" for="generate-app-report-library__topic-name">Name</label>
+        </div>
+        <div class="generate-app-report-library__dialog__topic-name mdl-cell mdl-cell--11-col">
+            <input #txtTopicName id="generate-app-report-library__topic-name" required class="form-control" type="text" value="{{selectedTopic.generateReportTopicName}}" name="txtTopicName" />
+        </div>
+        <div class="mdl-cell mdl-cell--12-col">
+            <div>
+                <i *ngIf="selectedTopic.generateReportTopicId <= 0">Select reports to be added to this report topic.</i>
+                <i *ngIf="selectedTopic.generateReportTopicId > 0">Select reports to be added to this report topic. Deselect reports to be removed from this topic.</i>
+            </div>
+        </div>
+        <div class="generate-app-report-library__report-grid mdl-cell mdl-cell--12-col">
+            <generate-app-report-library-table #reportGrid [itemsSource]="cvData"
+                                               [headers]="['','Name','SEA','LEA','School']"
+                                               [bindings]="['select','reportName','seaLevel-ck','leaLevel-ck','schLevel-ck']"
+                                            
+                                               class="generate-app-gradesoffered__grid">
+            </generate-app-report-library-table>
+        </div>
+
+        <div class="generate-app-report-library__report-buttons mdl-cell mdl-cell--12-col mdl-typography--text-right">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="saveTopic(topicDialog)" [disabled]="selectedReportIds.length < 1">OK</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="discardTopic(topicDialog)">Cancel</button>
+        </div>
+    </div>
+</generate-app-dialog>
+
+<generate-app-dialog #topicDeleteDialog class="generate-app-report-library__delete-dialog" [hideTrigger]="'None'">
+    <div>
+        <div class="generate-app-report-library__dialog-title">Remove Report Topic</div>
+    </div>
+    <div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-report-library__dialog-error ">
+                {{errorMessage}}
+            </div>
+        </div>
+    </div>
+    <div class="generate-app-report-library__dialog-container mdl-grid">
+        <div class="generate-app-report-library__dialog__topic-name mdl-cell mdl-cell--12-col">
+            <label class="generate-app-report-library-controls__sectionlabel" for="generate-app-report-library__topic-name">Name:</label>
+            <span class="generate-app-report-library-controls__delete-topic-Name"> {{selectedTopic.generateReportTopicName}} </span>
+        </div>
+        <div class="generate-app-report-library__report-buttons mdl-cell mdl-cell--12-col mdl-typography--text-right">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="deleteTopic(topicDeleteDialog)">OK</button>
+        </div>
+    </div>
+</generate-app-dialog>
+
+<generate-app-dialog #reportDialog class="generate-app-report-library__report-dialog" [hideTrigger]="'None'">
+    <div>
+        <div class="generate-app-report-library__dialog-title">Add Report to Report Topics</div>
+    </div>
+    <div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-report-library__dialog-error ">
+                {{errorMessage}}
+            </div>
+        </div>
+    </div>
+    <div class="generate-app-report-library__dialog-container mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col">
+            <i>Select where you would like this report added.</i>
+        </div>
+        <div class="generate-app-report-library__dialog__topic mdl-cell mdl-cell--12-col">
+            <ul class="mdl-list">
+                <li *ngFor="let reportTopic of reportTopics">
+                    <input type="checkbox" [attr.name]="reportTopic.generateReportTopicId"
+                           [(ngModel)]="reportTopic.isActive"
+                           (change)="topic_checkedchange($event,reportTopic)"
+                           [attr.id]="'topic_'+ reportTopic.generateReportTopicId" />
+                    <span class="generate-app-report-library__dialog__topic-name">
+                        {{reportTopic.generateReportTopicName}}
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <div class="generate-app-report-library__report-buttons mdl-cell mdl-cell--12-col mdl-typography--text-right">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="addTopicsToReport(reportDialog)" [disabled]="!isTopicChanged">OK</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="discardReport(reportDialog)">Cancel</button>
+        </div>
+    </div>
+</generate-app-dialog>

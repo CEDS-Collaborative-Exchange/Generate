@@ -1,0 +1,64 @@
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-studentcount__error">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+
+<h3 *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-studentcount__title">{{reportDataDto.reportTitle}}</h3>
+<h3 *ngIf="!isLoading && reportDataDto.dataCount < 0" class="generate-app-studentcount__title">Not Yet Implemented</h3>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportType !== 'datapopulation'" class="mdl-typography--text-center generate-app-studentcount__categoryset-definition">
+    <span>{{reportParameters.reportCategorySet.categorySetName}}</span><span *ngIf="reportParameters.reportCategorySet.categories.length > 0"> - </span><span *ngFor="let cat of reportParameters.reportCategorySet.categories; let i=index;"><span *ngIf="i > 0">, </span>{{cat}}</span>
+</div>
+
+<div class="mdl-grid generate-app-studentcount__grid-header">
+
+    <div class="mdl-cell mdl-cell--4-col">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+            <label class="generate-app-studentcount-controls__sectionlabel" for="generate-app-studentcount__filter">Filter</label>
+            <input id="generate-app-studentcount__filter" type="text" class="form-control" [(ngModel)]="filter" />
+        </div>
+    </div>
+
+
+    <div class="mdl-cell mdl-cell--4-col mdl-typography--text-center">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-studentcount__total mdl-typography--text-center">
+            {{dataCountCaption()}} {{reportDataDto.dataCount}}
+        </div>
+    </div>
+
+
+    <div class="mdl-cell mdl-cell--4-col mdl-typography--text-right">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+
+            <div class="generate-app-studentcount-controls__export-container">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                    Export to Excel
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="isLoading" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && (reportParameters.reportType !== 'datapopulation')">
+
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords">
+
+</div>
+
+<div *ngIf="!isLoading && !hasRecords" id="generate-app-grid__norecords">No Records to Display.</div>
+

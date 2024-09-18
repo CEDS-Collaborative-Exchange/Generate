@@ -1,0 +1,140 @@
+@import '../../variables.scss';
+
+.generate-app-report-library__topic-container{
+    margin-bottom: 10px;
+}
+
+.generate-app-report-library__topic{
+    background-color: $color-primary-dark;
+}
+
+.generate-app-report-library__report-icon{
+    color: $color-accent-medium;
+    margin-left: 10px;
+}
+
+.generate-app-report-library__report-grid{
+    margin-bottom: 10px;
+}
+
+
+.generate-app-report-library__topic-folder{
+    color: $color-primary-light;
+}
+
+.generate-app-report-library__addtopic-folder{
+    color: $color-accent-medium;
+}
+
+.generate-app-report-library__addTopic{
+    color: $color-primary;
+}
+
+.generate-app-report-library__addtopic-circle{
+    color: $color-primary;
+    margin-top: -10px;
+    margin-left: 20px;
+    
+}
+
+.generate-app-report-library__addtopic-text{
+    padding-left:5px;
+    padding-top :10px;
+}
+
+.generate-app-report-library__topic-text{
+    padding: 20px;
+    color:$color-primary-light;
+}
+
+.generate-app-report-library__topic-close{
+    color:$color-primary-light;
+ }
+
+.generate-app-report-library__topic-edit{
+    color:$color-primary-light;
+}
+
+/*.generate-app-report-library__report-topic-dialog{
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -webkit-transform:translate(-50%, -50%);
+  -o-transform:translate(-50%, -50%);
+  transform:translate(-50%, -50%);
+
+}*/
+.generate-app-report-library__dialog{
+    width: 300px;
+}
+
+.generate-app-report-library__dialog-title{
+    background-color: $color-primary-dark;
+    color:$color-primary-light;
+    margin-bottom:10px;
+    padding-left:5px;
+    line-height: 40px;
+}
+
+.generate-app-report-library__dialog__topic{
+    margin-bottom:10px;
+}
+
+.generate-app-report-library__dialog__topic-filter{
+    margin-bottom:10px;
+}
+
+.generate-app-report-library__report-buttons{
+     margin-bottom:20px;
+}
+
+.generate-app-report-library-controls__sectionlabel
+{
+    margin-right: 5px;
+    font-weight: 700;
+    color: $color-primary;
+    /*width:10px;*/
+}
+
+
+.generate-app-report-library__dialog-container{
+    
+}
+
+.generate-app-report-library__dialog-error 
+{
+    color: $color-primary;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+
+.generate-app-report-library__reportLevels{
+    margin: 10px;
+}
+
+.generate-app-report-library__searchfilter{
+    padding-left: 5px;
+    }
+
+.generate-app-report-library-controls__delete-topic-Name{
+    margin-left: 5px;
+}
+
+.generate-app-report-library__dialog__topic-name{
+    padding-left: 10px;
+}
+
+/*.custom-animation {
+    opacity: 0;
+    transform: rotate3d(1, .5, .5, 180deg) scale(0.5);
+    transition: all ease-out 0.4s;
+}
+.custom-animation-visible {
+    opacity: 1;
+    transform: none;
+    transition: all ease-in 0.3s;
+}*/
