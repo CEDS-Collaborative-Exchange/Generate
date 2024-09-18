@@ -60,7 +60,7 @@ BEGIN TRY
 			 ,COUNT(*)
 			 ,CASE WHEN COUNT(*) > 0 THEN 0 ELSE 1 END
 			 ,GETDATE()
-		FROM (SELECT PersonId AS DuplicatePersonIds FROM Staging.ProgramParticipationSpecialEducation GROUP BY PersonId HAVING COUNT(*) > 1) dups
+		FROM (SELECT StudentIdentifierState AS DuplicatePersonIds FROM Staging.ProgramParticipationSpecialEducation GROUP BY StudentIdentifierState HAVING COUNT(*) > 1) dups
 
 
 	

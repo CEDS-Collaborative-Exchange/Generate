@@ -1,5 +1,5 @@
 Param(
-  [string] $sqlServer = "192.168.51.53",
+  [string] $sqlServer = "10.0.2.10",
   [string] $db = "generate",
   [string] $user,
   [string] $password,
@@ -13,7 +13,7 @@ Write-Output "Password = $password"
 # Example Usage:
 # PS TestDMC.ps1 '(LocalDb)\MSSQLLocalDB'
 # PS TestDMC.ps1 "192.168.51.54" "generate" "xxxxxxx"
-# PS TestDMC.ps1 "192.168.51.53" "generate-test" "generate"
+# PS TestDMC.ps1 "10.0.2.10" "generate-test" "generate"
 
 $erroractionpreference = 'stop'
 
@@ -42,6 +42,8 @@ try
 	Write-Output $fileMsg
 
 	Write-Output "TestDMC.ps1 Complete"
+
+	Exit
 
 }
 Catch [Exception]
