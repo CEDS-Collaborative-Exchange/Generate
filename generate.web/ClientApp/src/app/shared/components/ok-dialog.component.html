@@ -1,0 +1,13 @@
+﻿<div class="container" fxLayout="column" fxLayoutAlign="space-evenly stretch">
+    <h1 mat-dialog-title>{{title}}</h1>
+
+    <!-- This is the content of the dialog -->
+    <mat-dialog-content fxFlex>
+        {{message}}
+    </mat-dialog-content>
+
+    <!-- These are the actions of the dialog-->
+    <mat-dialog-actions class="actions">
+        <button mat-raised-button color="primary" (click)="closeDialog('yes')">Ok</button>
+    </mat-dialog-actions>
+</div>

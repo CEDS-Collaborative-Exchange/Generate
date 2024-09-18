@@ -1,0 +1,92 @@
+
+/*.grdiname {
+    font-size: 18pt;
+    text-align: left;
+    border-collapse: collapse;
+    color: red;
+}*/
+
+/*update class pvtTable */
+/*.pvtTable {
+    width: 100% !important;
+}
+
+.pvtUi {
+    font-family: Helvetica,Arial,sans-serif;
+    display: block;
+    width: 100%;
+    overflow: auto;
+    line-height: 20px;
+    font-size: 16px;
+}*/
+
+.search-container {
+    white-space: nowrap;
+}
+
+#search input {
+    font-weight: bold;
+    color: #546d78;
+    vertical-align: middle;
+}
+
+#search label {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: bold;
+    color: #546d78;
+}
+
+#search button {
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: bold;
+    color: #546d78;
+    margin-left: 40px;
+}
+
+.pvtAxisLabel {
+    background-color: #cfd6d6 !important;
+    border: 1px solid #a1a6a6 !important;
+}
+
+table.pvtTable thead tr th:first-child {
+    background-color: #cfd6d6 !important;
+    border: 1px solid #b8bebe !important;
+}
+
+/*table.pvtTable thead tr th:last-child {
+    background-color: #cfd6d6 !important;
+    border: 1px solid #b8bebe !important;
+}*/
+
+
+/*table.pvtTable thead tr th:first-child {
+    background-color: #cfd6d6 !important;
+    border: 1px solid #a1a6a6 !important;
+}*/
+
+
+/*.pvtAxisLabel:last-child {
+    background-color: #cfd6d6 !important;
+    border: 1px solid #a1a6a6 !important;
+}*/
+
+/*#search input {
+    width: 20px;
+    position: relative;
+    left: 200px;
+    vertical-align: middle;
+}
+
+#search label {
+    width: 200px;
+    position: relative;
+    left: -20px;
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: bold;
+    color: #546d78;
+}
+*/

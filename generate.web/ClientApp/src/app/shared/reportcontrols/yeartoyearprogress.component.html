@@ -1,0 +1,98 @@
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-yeartoyearprogress__error">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+    <h3 *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-yeartoyearprogress__title">{{reportDataDto.reportTitle}}</h3>
+    <h3 *ngIf="!isLoading && reportDataDto.dataCount < 0" class="generate-app-yeartoyearprogress__title">Not Yet Implemented</h3>
+
+    <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-yeartoyearprogress__subtitle mdl-typography--text-center">
+        {{reportParameters.reportLevel}} Level
+    </div>
+
+    <div *ngIf="!isLoading && reportParameters.reportLevel === 'lea' && reportParameters.reportLea !== null" class="generate-app-yeartoyearprogress__subtitle mdl-typography--text-center">
+        {{reportParameters.reportLea}}
+    </div>
+
+    <div *ngIf="!isLoading && reportParameters.reportLevel === 'sch' && reportParameters.reportSchool !== null" class="generate-app-yeartoyearprogress__subtitle mdl-typography--text-center">
+        {{reportParameters.reportSchool}}
+    </div>
+
+    <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportType !== 'datapopulation'" class="mdl-typography--text-center">
+        <span>{{getReportFilter()}}</span>
+    </div>
+
+    <div class="mdl-grid generate-app-yeartoyearprogress__grid-header">
+
+        <div class="mdl-cell mdl-cell--4-col">
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+                <label class="generate-app-yeartoyearprogress-controls__sectionlabel" for="generate-app-yeartoyearprogress__filter">Filter</label>
+                <input id="generate-app-yeartoyearprogress__filter" type="text" class="form-control" [(ngModel)]="filter" />
+            </div>
+        </div>
+
+        <div class="mdl-cell mdl-cell--4-col mdl-typography--text-center">
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-yeartoyearprogress__total mdl-typography--text-center">
+                {{dataCountCaption()}} {{reportDataDto.dataCount}}
+            </div>
+        </div>
+
+
+        <div class="mdl-cell mdl-cell--4-col mdl-typography--text-right">
+            <div class="generate-app-yeartoyearprogress-controls__export-container">
+                <button [hidden]="isExporting" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                    Export to Excel
+                </button>
+                <div [hidden]="!isExporting" class="mdl-spinner mdl-js-spinner is-active"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div *ngIf="isLoading" class="mdl-typography--text-center">
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+                <div class="mdl-spinner mdl-js-spinner is-active"></div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && (reportParameters.reportType !== 'datapopulation')">
+
+    </div>
+
+    <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords">
+        <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+            headers="[
+	            'getOrganizationHeader('name')',
+	            'getOrganizationHeader('identifier')',
+	            'Sub-Population',
+	            'Proficiency Status',
+	            'getSchoolYear(3)',
+	            'getSchoolYear(2)',
+	            'getSchoolYear(1)',
+	            'getSchoolYear(0)'
+            ]"
+            bindings="[
+	            'organizationName',
+	            'organizationStateId',
+	            'category1',
+	            'reportFilter',
+	            'col_4',
+	            'col_3',
+	            'col_2',
+	            'col_1'
+            ]"
+             class="generate-app-yeartoyearprogress__grid">
+        </generate-app-table>
+
+    </div>
+
+
+    <div *ngIf="!isLoading && reportParameters.connectionLink !== null" class="generate-app-yeartoyearprogress_connectionLink">
+        For report methodology, see <a href="{{reportParameters.connectionLink}}" target="_blank">Connection Link</a>.
+    </div>

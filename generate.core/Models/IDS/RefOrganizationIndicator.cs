@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace generate.core.Models.IDS
+{
+    public partial class RefOrganizationIndicator
+    {
+        public RefOrganizationIndicator()
+        {
+            OrganizationIndicator = new HashSet<OrganizationIndicator>();
+        }
+
+        public int RefOrganizationIndicatorId { get; set; }
+        public string Description { get; set; }
+        public string Code { get; set; }
+        public string Definition { get; set; }
+        public int? RefJurisdictionId { get; set; }
+        public int? RefOrganizationTypeId { get; set; }
+        public decimal? SortOrder { get; set; }
+
+        public virtual ICollection<OrganizationIndicator> OrganizationIndicator { get; set; }
+        public virtual Organization RefJurisdiction { get; set; }
+        public virtual RefOrganizationType RefOrganizationType { get; set; }
+    }
+}

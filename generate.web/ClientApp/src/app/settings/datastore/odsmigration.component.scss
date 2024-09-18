@@ -1,0 +1,139 @@
+@import '../../variables.scss';
+
+.generate-ods-section {
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.generate-ods-config {
+    float: right;
+    margin-right: 35px;
+}
+
+.generate-ods-migration-subsection {
+    margin: 10px;
+    text-align: center;
+    color: rgba(0,0,0,.54);
+}
+
+.generate-ods-section-title {
+    margin: 20px 50px;
+    padding: 0;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+}
+
+.generate-ods-section-title-text {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    font-weight: 200;
+}
+
+.generate-ods-section-main-title-text {
+    margin: 0;
+    padding: 0;
+    font-size: 24px;
+    font-weight: 300;
+}
+
+.generate-ods-subsection {
+    margin: 5px;
+    text-align: center;
+    color: rgba(0,0,0,.54);
+}
+
+.generate-ods-migration-actions {
+    padding: 10px;
+    text-align: center;
+}
+
+.generate-ods-status {
+    padding: 5px;
+    font-size: 12px;
+    color: $color-primary;
+}
+
+.generate-ods__progress {
+    margin: 0 auto;
+}
+
+.generate-app-data-store__dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+
+
+.generate-rds_reportyear__dialog {
+    width: 600px;
+    height: 400px;
+}
+
+@import '../../variables.scss';
+
+.generate-ods-container {
+    margin-bottom: 10px;
+    margin-top: 35px;
+}
+
+.grid-task {
+    max-height: 300px;
+    max-width: 1140px;
+}
+
+.grid-year {
+    max-height: 150px;
+    max-width: 260px;
+}
+
+.generate-ods-report_year__dialog-title {
+    background-color: $color-primary-dark;
+    color: $color-primary-light;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    line-height: 40px;
+}
+
+.generate-ods_report_year__dialog-footer {
+    background-color: $color-primary-dark;
+    color: $color-primary-light;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    line-height: 40px;
+    position: absolute;
+    bottom: 0;
+    width: 97%;
+}
+
+.generate-ods-report-year-controls__sectionlabel {
+    margin-right: 5px;
+    font-weight: 700;
+    color: $color-primary;
+    /*width:10px;*/
+}
+
+
+.generate-ods-report_year__dialog-container {
+}
+
+.generate-ods-dialog-footer {
+    background-color: $color-primary-dark;
+    color: $color-primary-light;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    line-height: 40px;
+    position: absolute;
+    bottom: 0;
+    width: 97%;
+}
+
+.generate-ods-sections-title {
+    margin: 20px 50px;
+    padding: 0;
+}

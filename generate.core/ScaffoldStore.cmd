@@ -1,0 +1,1 @@
+﻿dotnet ef dbcontext scaffold "Server=AEM-638GS73\SQLExpress;Database=Generate_3_8;Trusted_Connection=true;MultipleActiveResultSets=true;trustServerCertificate=true;" "Microsoft.EntityFrameworkCore.SqlServer" -c "StagingDbContext" -o "Models\Staging" --schema

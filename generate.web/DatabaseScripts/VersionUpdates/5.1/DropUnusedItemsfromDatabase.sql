@@ -1,0 +1,14 @@
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Repopulate_IDS_SSRD_Data_From_EdFi')) drop procedure Staging.Repopulate_IDS_SSRD_Data_From_EdFi
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Repopulate_Staging_All_Organization_Data_From_EdFi')) drop procedure Staging.Repopulate_Staging_All_Organization_Data_From_EdFi
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Repopulate_Staging_Data_From_EdFi')) drop procedure Staging.Repopulate_Staging_Data_From_EdFi
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Repopulate_Staging_Enrollment_Data_From_EdFi')) drop procedure Staging.Repopulate_Staging_Enrollment_Data_From_EdFi
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Repopulate_Staging_Person_Data_From_EdFi')) drop procedure Staging.Repopulate_Staging_Person_Data_From_EdFi
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Repopulate_Staging_PersonRace_Data_From_EdFi')) drop procedure Staging.Repopulate_Staging_PersonRace_Data_From_EdFi
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Repopulate_Staging_PersonStatus_Data_From_EdFi')) drop procedure Staging.Repopulate_Staging_PersonStatus_Data_From_EdFi
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Repopulate_Staging_ProgramParticipationSpecialEducation_Data_From_EdFi')) drop procedure Staging.Repopulate_Staging_ProgramParticipationSpecialEducation_Data_From_EdFi
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Repopulate_Staging_StateDetail_Data_From_EdFi')) drop procedure Staging.Repopulate_Staging_StateDetail_Data_From_EdFi
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('Staging.Migrate_Data_Validation')) drop procedure Staging.Migrate_Data_Validation
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('APP.Migrate_Data_ETL_IMPLEMENTATION_STEP03_Person_EncapsulatedCode')) drop procedure APP.Migrate_Data_ETL_IMPLEMENTATION_STEP03_Person_EncapsulatedCode
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('APP.Migrate_Data_ETL_IMPLEMENTATION_STEP06_Enrollment_EncapsulatedCode')) drop procedure APP.Migrate_Data_ETL_IMPLEMENTATION_STEP06_Enrollment_EncapsulatedCode
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('APP.Migrate_Data_ETL_PRELIMINARY_STEP01_CompletelyClearDataFromODS_tmp')) drop procedure APP.Migrate_Data_ETL_PRELIMINARY_STEP01_CompletelyClearDataFromODS_tmp
+IF EXISTS (SELECT 1 FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('APP.Migrate_Data_Validation_original')) drop procedure APP.Migrate_Data_Validation_original

@@ -1,0 +1,393 @@
+<div *ngIf="reportType !== 'statereport' && currentMigrationStatus == null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="reportType === 'statereport' && currentReport === undefined" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-report-data__error">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+<div *ngIf="errorMessage == null && currentMigrationStatus != null && reportType !== 'statereport'">
+
+    <div class="mdl-grid generate-app-report-controls">
+
+
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center {{metadataStatusCss}}">
+            {{metadataStatusMessage}}
+        </div>
+
+        <div class="mdl-cell {{parameterColumnSpanCss()}}">
+            <div class="generate-app-report-controls__sectiontitle"><label for="generate-app-report-controls__report">Report</label></div>
+            <div>
+                <generate-app-combo-box class="{{reportWidth()}}" #comboReportCode [itemsSource]="generateReports" [isEditable]="false" displayMemberPath="reportShortName"
+                                        (isDroppedDownChanged)="reportChanged($event)" (selectedIndexChanged)="setReportCode($event, comboReportCode, comboYear)"></generate-app-combo-box>
+            </div>
+        </div>
+
+        <div *ngIf="currentReport !== undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
+            <div class="generate-app-report-controls__sectiontitle">Year</div>
+            <div>
+                <generate-app-combo-box #comboYear class="generate-app-report-controls__year" [itemsSource]="submissionYears" [isEditable]="false" (selectedIndexChanged)="setReportYear($event, comboYear)"></generate-app-combo-box>
+            </div>
+        </div>
+
+        <div *ngIf="currentReport === undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
+            <div class="generate-app-report-controls__sectiontitle">Year</div>
+            <div>
+                <generate-app-combo-box #comboYear class="generate-app-report-controls__year" [isReadOnly]="true" [isEditable]="false" [itemsSource]="submissionYears"></generate-app-combo-box>
+            </div>
+        </div>
+
+        <div *ngIf="currentReport !== undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
+            <div class="generate-app-report-controls__sectiontitle">Level</div>
+            <div>
+                <button *ngIf="showReportLevelButton('sea')" class="generate-app-report-controls__reportlevel-button generate-app-report-controls__reportlevel-button-sea mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('sea')}}" (click)="setReportLevel($event, 'sea')">
+                    SEA
+                </button>
+                <button *ngIf="showReportLevelButton('lea')" class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-lea mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('lea')}}" (click)="setReportLevel($event, 'lea')">
+                    LEAs
+                </button>
+                <button *ngIf="showReportLevelButton('sch')" class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-school mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('sch')}}" (click)="setReportLevel($event, 'sch')">
+                    Schools
+                </button>
+                <button *ngIf="showReportLevelButton('CMO')" class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-cmo mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('CMO')}} {{CMOLevelLabelCss('c196')}}" (click)="setReportLevel($event, 'CMO')">
+                    {{getCMOLevelLabel('c196')}}
+                </button>
+                <button *ngIf="showReportLevelButton('CAO')" class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-cao mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('CAO')}}" (click)="setReportLevel($event, 'CAO')">
+                    CAOs
+                </button>
+            </div>
+        </div>
+        <div *ngIf="currentReport === undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
+            <div class="generate-app-report-controls__sectiontitle">Level</div>
+            <div>
+                <button class="generate-app-report-controls__reportlevel-button generate-app-report-controls__reportlevel-button-sea mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised">
+                    SEA
+                </button>
+                <button class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-lea mdl-js-button mdl-js-ripple-effect mdl-button--raised">
+                    LEAs
+                </button>
+                <button class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-school mdl-js-button mdl-js-ripple-effect mdl-button--raised">
+                    Schools
+                </button>
+            </div>
+        </div>
+
+        <div *ngIf="currentReport !== undefined && currentReport.showCategorySetControl && showCategorySet()" class="mdl-cell {{parameterColumnSpanCss()}}">
+            <div *ngIf="currentReport.categorySetControlCaption.length === 0" class="generate-app-report-controls__sectiontitle"><label for="generate-app-report-controls__categoryset">Category Set</label></div>
+            <div *ngIf="currentReport.categorySetControlCaption.length > 0" class="generate-app-report-controls__sectiontitle"><label for="generate-app-report-controls__categoryset">{{currentReport.categorySetControlCaption}}</label></div>
+            <div>
+                <generate-app-combo-box class="generate-app-report-controls__categoryset" #comboCategorySet [itemsSource]="categorySets" [isEditable]="false" displayMemberPath="categorySetName" (selectedIndexChanged)="setReportCategorySet($event, comboCategorySet)"></generate-app-combo-box>
+            </div>
+        </div>
+
+        <div *ngIf="currentReport === undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
+            <div class="generate-app-report-controls__sectiontitle"><label for="generate-app-report-controls__categoryset">Category Set</label></div>
+            <div>
+                <generate-app-combo-box class="generate-app-report-controls__categoryset" #comboCategorySet [isReadOnly]="true" [itemsSource]="categorySets" displayMemberPath="categorySetName" [isEditable]="false"></generate-app-combo-box>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="mdl-grid generate-app-report-controls">
+
+            <div *ngIf="currentReport !== undefined && isDisplayLEA()" class="mdl-cell mdl-cell--3-col">
+                <div class="generate-app-report-controls__sectiontitle">Report LEA</div>
+                <div>
+                    <generate-app-autocomplete #comboReportLea [itemsSource]="leas" [isEditable]="false" displayMemberPath="name" [placeholder]="'Select Lea'"
+                                      [selectedIndex]="getSelectedEntity('lea')" (selectedIndexChanged)="setReportLea($event, comboReportLea)"></generate-app-autocomplete>
+                </div>
+            </div>
+
+            <div *ngIf="currentReport !== undefined && isDisplaySchool()" class="mdl-cell mdl-cell--3-col">
+                <div class="generate-app-report-controls__sectiontitle">Report School</div>
+                <div>
+                    <generate-app-autocomplete #comboReportSchool [itemsSource]="filteredSchools" [isEditable]="false" displayMemberPath="name" [placeholder]="'Select School'"
+                                      [selectedIndex]="getSelectedEntity('sch')" (selectedIndexChanged)="setReportSchool($event, comboReportSchool)"></generate-app-autocomplete>
+                </div>
+            </div>
+         
+    </div>
+
+    <div *ngIf="reportType !== 'statereport' && currentReport !== undefined && showReportData()" class="mdl-grid">
+        <div class="generate-app-report-controls__cell-disclosure mdl-cell mdl-cell--12-col">
+            Reports created by Generate are intended for internal use by SEA officials. They may contain small cell sizes and therefore should not be released to the public prior to review by your state's disclosure review board. Some amount of disclosure avoidance may be required before this report is ready for public consumption.
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'FlexGrid'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c223 [reportParameters]="reportParameters"></generate-app-c223>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'PivotGrid'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-pivotgrid [reportParameters]="reportParameters"></generate-app-pivotgrid>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'StudentCount'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-studentcount [reportParameters]="reportParameters"></generate-app-studentcount>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'Indicator4A'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-indicator4a [reportParameters]="reportParameters"></generate-app-indicator4a>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'Indicator4B'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-indicator4b [reportParameters]="reportParameters"></generate-app-indicator4b>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'C029'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c029 [reportParameters]="reportParameters"></generate-app-c029>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'GradesOffered'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-gradesoffered [reportParameters]="reportParameters"></generate-app-gradesoffered>
+        </div>
+
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'CCDSchool'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-ccdschool [reportParameters]="reportParameters"></generate-app-ccdschool>
+        </div>
+
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'LeaFederalFund'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-leafederalfund [reportParameters]="reportParameters"></generate-app-leafederalfund>
+        </div>
+
+
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'CharterSchool'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-charterschool [reportParameters]="reportParameters"></generate-app-charterschool>
+        </div>
+
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'EarlyCharter'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-earlycharter [reportParameters]="reportParameters"></generate-app-earlycharter>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c198'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c198 [reportParameters]="reportParameters"></generate-app-c198>
+        </div>
+
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c197'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c197 [reportParameters]="reportParameters"></generate-app-c197>
+        </div>
+
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c132'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c132 [reportParameters]="reportParameters"></generate-app-c132>
+        </div>
+
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c199'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c199 [reportParameters]="reportParameters"></generate-app-c199>
+        </div>
+
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c170'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c170 [reportParameters]="reportParameters"></generate-app-c170>
+        </div>
+
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c205'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-205 [reportParameters]="reportParameters"></generate-app-205>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c206'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-206 [reportParameters]="reportParameters"></generate-app-206>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c131'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c131 [reportParameters]="reportParameters"></generate-app-c131>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c163'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c163 [reportParameters]="reportParameters"></generate-app-c163>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c035'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c035 [reportParameters]="reportParameters"></generate-app-c035>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c207'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c207 [reportParameters]="reportParameters"></generate-app-c207>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c223'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-c223 [reportParameters]="reportParameters"></generate-app-c223>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="errorMessage == null && reportType === 'statereport' && currentReport !== undefined">
+
+    <div class="mdl-grid generate-app-report-controls">
+
+        <div class="mdl-cell {{parameterColumnSpanCss()}}">
+            <div class="generate-app-report-controls__sectiontitle">Level</div>
+            <div>
+                <button *ngIf="showReportLevelButton('sea')" class="generate-app-report-controls__reportlevel-button generate-app-report-controls__reportlevel-button-sea mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('sea')}}" (click)="setReportLevel($event, 'sea')">
+                    SEA
+                </button>
+                <button *ngIf="showReportLevelButton('lea')" class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-lea mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('lea')}}" (click)="setReportLevel($event, 'lea')">
+                    LEAs
+                </button>
+                <button *ngIf="showReportLevelButton('sch')" class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-school mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('sch')}}" (click)="setReportLevel($event, 'sch')">
+                    Schools
+                </button>
+                <button *ngIf="showReportLevelButton('CMO')" class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-cmo mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('CMO')}}" (click)="setReportLevel($event, 'CMO')">
+                    CMOs
+                </button>
+                <button *ngIf="showReportLevelButton('CAO')" class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-cao mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('CAO')}}" (click)="setReportLevel($event, 'CAO')">
+                    CAOs
+                </button>
+            </div>
+        </div>
+
+        <div class="mdl-cell {{parameterColumnSpanCss()}}">
+            <div class="generate-app-report-controls__sectiontitle">Year</div>
+            <div>
+                <generate-app-combo-box #comboYear class="generate-app-report-controls__year" [itemsSource]="submissionYears" [isEditable]="false" (selectedIndexChanged)="setReportYear($event, comboYear)"></generate-app-combo-box>
+            </div>
+        </div>
+
+        <div *ngIf="currentReport.showCategorySetControl && showCategorySet()" class="mdl-cell {{parameterColumnSpanCss()}}">
+            <div *ngIf="currentReport.categorySetControlCaption.length === 0" class="generate-app-report-controls__sectiontitle"><label for="generate-app-report-controls__categoryset">Category Set</label></div>
+            <div *ngIf="currentReport.categorySetControlCaption.length > 0" class="generate-app-report-controls__sectiontitle"><label for="generate-app-report-controls__categoryset">{{currentReport.categorySetControlCaption}}</label></div>
+            <div>
+                <generate-app-combo-box class="generate-app-report-controls__categoryset" #comboCategorySet [itemsSource]="categorySets" [isEditable]="false" displayMemberPath="categorySetName" (selectedIndexChanged)="setReportCategorySet($event, comboCategorySet)"></generate-app-combo-box>
+            </div>
+        </div>
+    
+
+        <div *ngIf="currentReport.reportCode !=='yeartoyearexitcount' && currentReport.reportCode !=='yeartoyearremovalcount' && currentReport.showFilterControl" class="mdl-cell mdl-cell--3-col">
+
+            <div class="generate-app-report-controls__sectiontitle">
+                <label for="generate-app-report-controls__filterControl">
+                    {{currentReport.filterControlLabel}}
+                </label>
+            </div>
+            <div>
+                <generate-app-combo-box class="generate-app-report-controls__reportFilter" #comboReportFilter [itemsSource]="reportFilterOptions" [isEditable]="false" displayMemberPath="filterName"
+                              (selectedIndexChanged)="setReportFilterOption($event, comboReportFilter)"></generate-app-combo-box>
+            </div>
+
+        </div>
+
+        <div *ngIf="(currentReport.reportCode === 'yeartoyearexitcount' && reportParameters.reportCategorySetCode ==='exitOnly' || currentReport.reportCode === 'yeartoyearremovalcount' && reportParameters.reportCategorySetCode ==='removaltype') && currentReport.showFilterControl" class="mdl-cell mdl-cell--3-col">
+            <div class="generate-app-report-controls__sectiontitle">
+                <label for="generate-app-report-controls__filterControl">
+                    {{currentReport.filterControlLabel}}
+                </label>
+            </div>
+            <div>
+                <generate-app-combo-box class="generate-app-report-controls__reportFilter" #comboReportFilterYearToYearExit [itemsSource]="reportFilterOptions" [isEditable]="false" displayMemberPath="filterName"
+                              (isDroppedDownChanged)="reportChangedd($event)" (selectedIndexChanged)="setReportFilterOption($event, comboReportFilterYearToYearExit)"></generate-app-combo-box>
+            </div>
+        </div>
+    </div>
+
+    <div class="mdl-grid generate-app-report-controls">
+
+        <div *ngIf="isDisplayLEA()" class="mdl-cell mdl-cell--3-col">
+            <div class="generate-app-report-controls__sectiontitle">Report LEA</div>
+            <div>
+                <generate-app-autocomplete #comboReportLea [itemsSource]="leas" [isEditable]="false" displayMemberPath="name" [placeholder]="'Select Lea'"
+                                  [selectedIndex]="getSelectedEntity('lea')" (selectedIndexChanged)="setReportLea($event, comboReportLea)"></generate-app-autocomplete>
+            </div>
+        </div>
+
+        <div *ngIf="isDisplaySchool()" class="mdl-cell mdl-cell--3-col">
+            <div class="generate-app-report-controls__sectiontitle">Report School</div>
+            <div>
+                <generate-app-autocomplete #comboReportSchool [itemsSource]="filteredSchools" [isEditable]="false" displayMemberPath="name" [placeholder]="'Select School'"
+                                  [selectedIndex]="getSelectedEntity('sch')" (selectedIndexChanged)="setReportSchool($event, comboReportSchool)"></generate-app-autocomplete>
+            </div>
+        </div>
+
+        <div *ngIf="currentReport.showSubFilterControl" class="mdl-cell mdl-cell--3-col">
+            <div class="generate-app-report-controls__sectiontitle">
+                <label for="generate-app-report-controls__reportSubFilter">
+                    {{currentReport.subFilterControlLabel}}
+                </label>
+            </div>
+            <div>
+                <generate-app-combo-box class="generate-app-report-controls__reportSubFilter" #comboReportSubFilter [itemsSource]="reportSubFilterOptions" [isEditable]="false" displayMemberPath="filterName" (selectedIndexChanged)="setReportSubFilterOption($event, comboReportSubFilter)"></generate-app-combo-box>
+            </div>
+        </div>
+
+        <div *ngIf="currentReport.reportCode === 'stateassessmentsperformance' || currentReport.reportCode === 'yeartoyearprogress' || currentReport.reportCode === 'yeartoyearattendance'" class="mdl-cell mdl-cell--3-col">
+            <div class="generate-app-report-controls__sectiontitle">
+                <label for="generate-app-report-controls__reportGradeFilter">
+                    Grade Level
+                </label>
+            </div>
+            <div>
+                <generate-app-combo-box class="generate-app-report-controls__reportGradeFilter" #comboReportGradeFilter [itemsSource]="reportGrades" [isEditable]="false" displayMemberPath="code" (selectedIndexChanged)="setReportGradeOption($event, comboReportGradeFilter)"></generate-app-combo-box>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="reportFilters != null" class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col">
+            <div *ngFor="let filter of reportFilters">
+                {{filter.filterName}}
+                <button *ngFor="let filterItem of filter.filterItems" class="generate-app-report-controls__filter-button mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportYearCss(submissionYear)}}" (click)="setFilter($event, filter.filterName, filterKey)">
+                    {{filterValue}}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="reportType === 'statereport' && currentReport !== undefined && showReportData()" class="mdl-grid">
+        <div class="generate-app-report-controls__cell-disclosure mdl-cell mdl-cell--12-col">
+            Reports created by Generate are intended for internal use by SEA officials. They may contain small cell sizes and therefore should not be released to the public prior to review by your state's disclosure review board. Some amount of disclosure avoidance may be required before this report is ready for public consumption.
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'ExitSpecEd'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-exitspecialeducation [reportParameters]="reportParameters"></generate-app-exitspecialeducation>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'CohortGradRate'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-cohortgraduationrate [reportParameters]="reportParameters"></generate-app-cohortgraduationrate>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'FederalProgramsParticipation'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-studentfederalprogramsparticipation [reportParameters]="reportParameters"></generate-app-studentfederalprogramsparticipation>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'MultipleFederalProgramsParticipation'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-studentmultiplefederalprogramsparticipation [reportParameters]="reportParameters"></generate-app-studentmultiplefederalprogramsparticipation>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'DisciplinaryRemovals'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-disciplinaryremovals [reportParameters]="reportParameters"></generate-app-disciplinaryremovals>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'StateAssessmentsPerformance'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-stateassessmentsperformance [reportParameters]="reportParameters"></generate-app-stateassessmentsperformance>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'EdEnvironmentDisabilitiesAge3-5'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-edenvironmentdisabilitiesage3-5 [reportParameters]="reportParameters"></generate-app-edenvironmentdisabilitiesage3-5>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'EdEnvironmentDisabilitiesAge6-21'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-edenvironmentdisabilitiesage6-21 [reportParameters]="reportParameters"></generate-app-edenvironmentdisabilitiesage6-21>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'yeartoyearchildcount'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-yeartoyearchildcount [reportParameters]="reportParameters"></generate-app-yeartoyearchildcount>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'yeartoyearenvironmentcount'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-yeartoyearenvironmentcount [reportParameters]="reportParameters"></generate-app-yeartoyearenvironmentcount>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'yeartoyearexitcount'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-yeartoyearexitcount [reportParameters]="reportParameters"></generate-app-yeartoyearexitcount>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'yeartoyearremovalcount'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-yeartoyearremovalcount [reportParameters]="reportParameters"></generate-app-yeartoyearremovalcount>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'studentssummary'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-leastudentsprofile [reportParameters]="reportParameters"></generate-app-leastudentsprofile>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'yeartoyearprogress'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-yeartoyearprogress [reportParameters]="reportParameters"></generate-app-yeartoyearprogress>
+        </div>
+        <div *ngIf="currentReport.reportControlType.controlTypeName === 'yeartoyearattendance'" class="mdl-cell mdl-cell--12-col">
+            <generate-app-yeartoyearattendance [reportParameters]="reportParameters"></generate-app-yeartoyearattendance>
+        </div>
+    </div>
+
+    <div class="mdl-cell mdl-cell--12-col mdl-typography--text-left">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="gotoReportsLibrary()">
+            Go to Reports Library
+        </button>
+    </div>
+
+</div>
+

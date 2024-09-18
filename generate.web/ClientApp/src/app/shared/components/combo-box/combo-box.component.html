@@ -1,0 +1,16 @@
+<mat-form-field [style.width.px]="width">
+    <mat-select [(value)]="selectedItem" (selectionChange)="selectedChanged($event)"
+                #appSelect
+                (focus)="openAndSearch(appSelect, appSelect)"
+                panelWidth=""
+                >
+        @for (item of itemsSource; track item) {
+            @if(displayMemberPath){
+                <mat-option [value]="item">{{item[displayMemberPath]}}</mat-option>
+            } @else {
+                <mat-option [value]="item">{{item}}</mat-option>
+            }
+        }
+
+    </mat-select>
+</mat-form-field>

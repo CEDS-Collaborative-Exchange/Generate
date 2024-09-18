@@ -1,0 +1,40 @@
+@import '../../variables.scss';
+
+.generate-app-update__actions
+{
+    padding: 10px;
+    text-align: center;
+}
+.btnbtn{
+      border-radius:3px;
+      box-shadow:5px;
+}
+.btnbtn:hover{
+    cursor:pointer;
+    font-weight:bold;
+  
+}
+
+.generate-app-update__table {
+    width: 100%;
+}
+
+.generate-app-update__header {
+    text-align: center;
+}
+
+.generate-app-update__title {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+
+.generate-app-update__available-header {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.generate-app-update__available-text {
+    text-align: center;
+}

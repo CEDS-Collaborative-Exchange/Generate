@@ -1,0 +1,2 @@
+generate.web/DatabaseFiles/*.bak filter=lfs diff=lfs merge=lfs -text
+generate.testdata/StaticData/*.cs filter=lfs diff=lfs merge=lfs -text

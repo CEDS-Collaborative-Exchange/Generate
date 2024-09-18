@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <DebugType>full</DebugType>
+      <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire.Core" Version="1.7.31" />
+    <PackageReference Include="RestSharp" Version="108.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\generate.core\generate.core.csproj" />
+    <ProjectReference Include="..\generate.shared\generate.shared.csproj" />
+  </ItemGroup>
+
+</Project>

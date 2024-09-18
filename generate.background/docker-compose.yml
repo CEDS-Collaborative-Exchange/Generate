@@ -1,0 +1,32 @@
+version: '3'
+services:
+  generate-sql:
+      container_name: generateSqlContainer
+      image: mcr.microsoft.com/mssql/server:2019-latest
+      volumes:
+        -  C:/Generate:/var/opt/mssql/data
+      ports:
+            - 8002:1433
+      environment:
+            - ACCEPT_EULA=Y
+            - MSSQL_SA_PASSWORD=Password123!
+      networks:
+            - network
+  generate-background:
+      image: svuyuru/generate.background:V11.3
+      ports:
+            - 5000:80
+      build: 
+        context: .
+      
+      depends_on:
+            - generate-sql
+
+      networks:
+            - network
+
+networks:
+  network:
+    driver: bridge
+    name: generate_network
+    

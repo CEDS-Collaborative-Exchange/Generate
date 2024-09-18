@@ -1,0 +1,95 @@
+<div style="margin:10px 0" class="table-responsive">
+    <mat-paginator [pageSizeOptions]="[5, 10, 15, 20, 50]"
+                   showFirstLastButtons
+                   [pageSize]="15"
+                   aria-label="Select page of periodic elements">
+    </mat-paginator>
+    <mat-form-field appearance="outline">
+        <mat-label style="width:200px;">Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Filter" #input>
+    </mat-form-field>
+    <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)" class="mat-elevation-z8">
+
+        @for(item of displayedColumns;let i=$index;track i)
+        {
+        @if(item =='select'){
+            <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+
+                </th>
+                <td mat-cell *matCellDef="let row">
+                    <mat-checkbox (change)="itemSelected($event)" id="{{row.generateReportId}}"></mat-checkbox>
+                </td>
+            </ng-container>
+        }
+        @else {
+        <ng-container matColumnDef="{{item}}">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by {{item}}"> {{displayedHeaders[item]}} </th>
+            <td mat-cell *matCellDef="let element">
+                @if(i == 0 || item=='reportName'){
+                {{element[item]}}
+                }
+                @else{
+
+                @if(item == 'seaLevel' && element.seaLevel){
+                <button id="view_sea_{{item.reportCode}}" class="mdl-button mdl-js-button" (click)="gotoReport(element.reportCode, 'sea')" title="View Report">
+                    View Report <i class="fa fa-search generate-app-report-library__report-icon"> </i>
+                </button>
+                }
+                @else if(item == 'leaLevel' && element.leaLevel){
+                <button id="view_lea_{{item.reportCode}}" class="mdl-button mdl-js-button" (click)="gotoReport(element.reportCode, 'lea')" title="View Report">
+                    View Report <i class="fa fa-search generate-app-report-library__report-icon"> </i>
+                </button>
+                }
+                @else if(item == 'schLevel' && element.schLevel){
+                <button id="view_sch_{{item.reportCode}}" class="mdl-button mdl-js-button" (click)="gotoReport(element.reportCode, 'sch')" title="View Report">
+                    View Report <i class="fa fa-search generate-app-report-library__report-icon"> </i>
+                </button>
+                }
+
+                @else if(item == 'seaLevel-ck') {
+                @if(element.seaLevel){
+                <mat-checkbox checked disabled></mat-checkbox>
+                }
+                @else {
+                <mat-checkbox disabled></mat-checkbox>
+                }
+                }
+                @else if(item == 'leaLevel-ck'){
+                @if(element.leaLevel){
+                <mat-checkbox checked disabled></mat-checkbox>
+                }
+                @else {
+                <mat-checkbox disabled></mat-checkbox>
+                }
+                }
+                @else if(item == 'schLevel-ck'){
+                @if(element.schLevel){
+                <mat-checkbox checked disabled></mat-checkbox>
+                }
+                @else {
+                <mat-checkbox disabled></mat-checkbox>
+                }
+                }
+                @else if(item == 'plus'){
+                <button class="mdl-button mdl-js-button" (click)="showDialog(reportDialog,item.generateReportId,'report')" title="Add to Report Topic">
+                    <i class="fa fa-plus-circle fa-2x generate-app-report-library__addTopic" aria-hidden="true"></i>
+                </button>
+                }
+                }
+            </td>
+        </ng-container>
+        }
+
+        } //for loop ends
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                No Records to Display.
+            </td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,95 @@
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-c199__error">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+<h3 *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-report__title">{{reportDataDto.reportTitle}}</h3>
+<h3 *ngIf="!isLoading && reportDataDto.dataCount < 0" class="generate-app-report__title">Not Yet Implemented</h3>
+
+<div *ngIf="!isLoading" class="mdl-typography--text-center generate-app-pivotgrid__categoryset-definition">
+    <span>{{reportParameters.reportCategorySet.categorySetName}}</span><span *ngIf="reportParameters.reportCategorySet.categories.length > 0"> - </span><span *ngFor="let cat of reportParameters.reportCategorySet.categories; let i=index;"><span *ngIf="i > 0">, </span>{{cat}}</span>
+</div>
+<div class="mdl-grid generate-app-c199__grid-header">
+
+    <div class="mdl-cell mdl-cell--4-col">
+
+        <label class="generate-app-c199-controls__sectionlabel" for="generate-app-c199__filter">Filter</label>
+        <input id="generate-app-gc199__filter" type="text" class="form-control" [(ngModel)]="filter" />
+
+    </div>
+    <div class="mdl-cell mdl-cell--4-col mdl-typography--text-center">
+        <div *ngIf="!isLoading" class="generate-app-c199__total mdl-typography--text-center">
+            {{dataCountCaption()}} {{reportDataDto.dataCount}}
+        </div>
+    </div>
+
+    <div class="mdl-cell mdl-cell--12-col mdl-typography--text-right">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+
+            <div class="generate-app-c199-controls__export-container">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                    Export to Excel
+                </button>
+            </div>
+
+            <div *ngIf="reportParameters.reportType == 'edfactsreport'" class="generate-app-c199-controls__createfile-container">
+                <button id="generate-app-c199__createfile-button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    Create Submission File <i class="fa fa-caret-down generate-app-report-controls__reporttype-button-icon" aria-hidden="true"></i>
+                </button>
+                <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="generate-app-c199__createfile-button">
+                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'tab')" class="mdl-menu__item">Tab Delimited (.tab)</li>
+                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'csv')" class="mdl-menu__item">Comma Delimited (.csv)</li>
+                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'txt')" class="mdl-menu__item">Fixed (.txt)</li>
+                </ul>
+            </div>
+            <div *ngIf="isPending" class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="isLoading" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && (reportParameters.reportType !== 'datapopulation')">
+
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords">
+    <!--May need to change after having report data-->
+    <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                        [headers]="['reportDataDto.structure.rowHeader','School ID','columnHeader']"
+                        [bindings]="['rowKey','organizationStateId','col_ + (i + 1)']"
+                        class="generate-app-flexgrid__grid">
+    </generate-app-table>
+
+</div>
+
+<div *ngIf="!isLoading && (reportParameters.connectionLink !== null || reportParameters.connectionLink !== '')" class="generate-app-c029__connectionLink">
+    For report methodology, see <a href="{{reportParameters.connectionLink}}" target="_blank">Connection Link</a>.
+</div>
+<generate-app-dialog class="modal-content" #fileSubmissionWarning>
+    <div class="mdl-card mdl-shadow--16dp">
+        <div class="mdl-card__title">
+            <span class="mdl-card__title-text">
+                Submission Files
+            </span>
+        </div>
+        <div class="mdl-card__supporting-text">
+            Generate does not store submission files. Submission files must be saved on the user's computer or internal network for submission to EDFacts or for other purposes.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <button class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="getFileSubmission(fileSubmissionWarning)">
+                OK
+            </button>
+        </div>
+    </div>
+</generate-app-dialog>

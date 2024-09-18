@@ -1,0 +1,23 @@
+{
+  "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "outDir": "../out-tsc/app",
+        "module": "esnext",
+        "types": []
+    },
+    "exclude": [
+        "**/test.ts",
+        "**/*.spec.ts",
+        "**/cedsConnection.ts",
+        "**/cedsElement.ts",
+        "**/generateReportDataRowDto.ts",
+        "**/k12Sea.ts",
+        "**/cedsConnection.service.ts",
+        "**/toggleQuestionType.service.ts",
+        "**/k12SEA.service.ts",
+        "**/baseurl.constants.ts",
+        "**/request.ts",
+        "**/environment.prod.ts"
+    ]
+}

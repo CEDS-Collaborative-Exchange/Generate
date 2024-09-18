@@ -1,0 +1,217 @@
+@import '@angular/material/theming';
+@include mat-core();
+
+// Override Typography mixins that do not include font-family configurations
+/////////////////////////////////////////////////////////////////////////////////////
+@mixin mat-sidenav-typography($config) {
+  font-family: mat-font-family($config);
+}
+/////////////////////////////////////////////////////////////////////////////////////
+
+
+// Typography
+$Roboto-typography: mat-typography-config($font-family: '"Roboto", sans-serif;');
+$Montserrat-typography: mat-typography-config($font-family: '"Montserrat", sans-serif;');
+$Raleway-typography: mat-typography-config($font-family: '"Raleway", sans-serif;');
+$Merriweather-typography: mat-typography-config($font-family: '"Merriweather", serif;');
+$Lora-typography: mat-typography-config($font-family: '"Lora", serif;');
+
+
+// TealDeepPurple
+
+$TealDeepPurple-primary: mat-palette($mat-teal);
+$TealDeepPurple-accent: mat-palette($mat-deep-purple);
+
+.TealDeepPurple-primary {
+  color: mat-color($TealDeepPurple-primary);
+}
+.TealDeepPurple-accent {
+  color: mat-color($TealDeepPurple-accent);
+}
+.TealDeepPurple-primary-bg {
+  background-color: mat-color($TealDeepPurple-primary);
+}
+.TealDeepPurple-accent-bg {
+  background-color: mat-color($TealDeepPurple-accent);
+}
+
+.TealDeepPurple_Roboto-theme {
+  @include mat-core($Roboto-typography);
+  $TealDeepPurple_Roboto-theme: mat-light-theme($TealDeepPurple-primary, $TealDeepPurple-accent);
+  @include angular-material-theme($TealDeepPurple_Roboto-theme);
+}
+
+.TealDeepPurple_Montserrat-theme {
+  @include mat-core($Montserrat-typography);
+  $TealDeepPurple_Montserrat-theme: mat-light-theme($TealDeepPurple-primary, $TealDeepPurple-accent);
+  @include angular-material-theme($TealDeepPurple_Montserrat-theme);
+}
+
+.TealDeepPurple_Raleway-theme {
+  @include mat-core($Raleway-typography);
+  $TealDeepPurple_Raleway-theme: mat-light-theme($TealDeepPurple-primary, $TealDeepPurple-accent);
+  @include angular-material-theme($TealDeepPurple_Raleway-theme);
+}
+
+.TealDeepPurple_Merriweather-theme {
+  @include mat-core($Merriweather-typography);
+  $TealDeepPurple_Merriweather-theme: mat-light-theme($TealDeepPurple-primary, $TealDeepPurple-accent);
+  @include angular-material-theme($TealDeepPurple_Merriweather-theme);
+}
+
+.TealDeepPurple_Lora-theme {
+  @include mat-core($Lora-typography);
+  $TealDeepPurple_Lora-theme: mat-light-theme($TealDeepPurple-primary, $TealDeepPurple-accent);
+  @include angular-material-theme($TealDeepPurple_Lora-theme);
+}
+
+// BlueGreyOrange
+
+$BlueGreyOrange-primary: mat-palette($mat-blue-grey);
+$BlueGreyOrange-accent: mat-palette($mat-orange);
+
+.BlueGreyOrange-primary {
+  color: mat-color($BlueGreyOrange-primary);
+}
+.BlueGreyOrange-accent {
+  color: mat-color($BlueGreyOrange-accent);
+}
+.BlueGreyOrange-primary-bg {
+  background-color: mat-color($BlueGreyOrange-primary);
+}
+
+.BlueGreyOrange-accent-bg {
+  background-color: mat-color($BlueGreyOrange-accent);
+}
+
+.BlueGreyOrange_Roboto-theme {
+  @include mat-core($Roboto-typography);
+  $BlueGreyOrange_Roboto-theme: mat-light-theme($BlueGreyOrange-primary, $BlueGreyOrange-accent);
+  @include angular-material-theme($BlueGreyOrange_Roboto-theme);
+}
+
+.BlueGreyOrange_Montserrat-theme {
+  @include mat-core($Montserrat-typography);
+  $BlueGreyOrange_Montserrat-theme: mat-light-theme($BlueGreyOrange-primary, $BlueGreyOrange-accent);
+  @include angular-material-theme($BlueGreyOrange_Montserrat-theme);
+}
+.BlueGreyOrange_Raleway-theme {
+  @include mat-core($Raleway-typography);
+  $BlueGreyOrange_Raleway-theme: mat-light-theme($BlueGreyOrange-primary, $BlueGreyOrange-accent);
+  @include angular-material-theme($BlueGreyOrange_Raleway-theme);
+}
+
+.BlueGreyOrange_Merriweather-theme {
+  @include mat-core($Merriweather-typography);
+  $BlueGreyOrange_Raleway-theme: mat-light-theme($BlueGreyOrange-primary, $BlueGreyOrange-accent);
+  @include angular-material-theme($BlueGreyOrange_Raleway-theme);
+}
+
+.BlueGreyOrange_Lora-theme {
+  @include mat-core($Lora-typography);
+  $BlueGreyOrange_Lora-theme: mat-light-theme($BlueGreyOrange-primary, $BlueGreyOrange-accent);
+  @include angular-material-theme($BlueGreyOrange_Lora-theme);
+}
+
+
+// GreenIndigo
+
+$GreenIndigo-primary: mat-palette($mat-green);
+$GreenIndigo-accent: mat-palette($mat-indigo);
+
+.GreenIndigo-primary {
+  color: mat-color($GreenIndigo-primary);
+}
+.GreenIndigo-accent {
+  color: mat-color($GreenIndigo-accent);
+}
+.GreenIndigo-primary-bg {
+  background-color: mat-color($GreenIndigo-primary);
+}
+
+.GreenIndigo-accent-bg {
+  background-color: mat-color($GreenIndigo-accent);
+}
+
+.GreenIndigo_Roboto-theme {
+  @include mat-core($Roboto-typography);
+  $GreenIndigo_Roboto-theme: mat-light-theme($GreenIndigo-primary, $GreenIndigo-accent);
+  @include angular-material-theme($GreenIndigo_Roboto-theme);
+}
+
+.GreenIndigo_Montserrat-theme {
+  @include mat-core($Montserrat-typography);
+  $GreenIndigo_Montserrat-theme: mat-light-theme($GreenIndigo-primary, $GreenIndigo-accent);
+  @include angular-material-theme($GreenIndigo_Montserrat-theme);
+}
+
+.GreenIndigo_Raleway-theme {
+  @include mat-core($Raleway-typography);
+  $GreenIndigo_Raleway-theme: mat-light-theme($GreenIndigo-primary, $GreenIndigo-accent);
+  @include angular-material-theme($GreenIndigo_Raleway-theme);
+}
+
+.GreenIndigo_Merriweather-theme {
+  @include mat-core($Merriweather-typography);
+  $GreenIndigo_Raleway-theme: mat-light-theme($GreenIndigo-primary, $GreenIndigo-accent);
+  @include angular-material-theme($GreenIndigo_Raleway-theme);
+}
+
+.GreenIndigo_Lora-theme {
+  @include mat-core($Lora-typography);
+  $GreenIndigo_Lora-theme: mat-light-theme($GreenIndigo-primary, $GreenIndigo-accent);
+  @include angular-material-theme($GreenIndigo_Lora-theme);
+}
+
+
+
+// AmberBrown
+
+$AmberBrown-primary: mat-palette($mat-amber);
+$AmberBrown-accent: mat-palette($mat-brown);
+
+.AmberBrown-primary {
+  color: mat-color($AmberBrown-primary);
+}
+
+.AmberBrown-accent {
+  color: mat-color($AmberBrown-accent);
+}
+
+.AmberBrown-primary-bg {
+  background-color: mat-color($AmberBrown-primary);
+}
+
+.AmberBrown-accent-bg {
+  background-color: mat-color($AmberBrown-accent);
+}
+
+.AmberBrown_Roboto-theme {
+  @include mat-core($Roboto-typography);
+  $AmberBrown_Roboto-theme: mat-light-theme($AmberBrown-primary, $AmberBrown-accent);
+  @include angular-material-theme($AmberBrown_Roboto-theme);
+}
+
+.AmberBrown_Montserrat-theme {
+  @include mat-core($Montserrat-typography);
+  $AmberBrown_Montserrat-theme: mat-light-theme($AmberBrown-primary, $AmberBrown-accent);
+  @include angular-material-theme($AmberBrown_Montserrat-theme);
+}
+
+.AmberBrown_Raleway-theme {
+  @include mat-core($Raleway-typography);
+  $AmberBrown_Raleway-theme: mat-light-theme($AmberBrown-primary, $AmberBrown-accent);
+  @include angular-material-theme($AmberBrown_Raleway-theme);
+}
+
+.AmberBrown_Merriweather-theme {
+  @include mat-core($Merriweather-typography);
+  $AmberBrown_Raleway-theme: mat-light-theme($AmberBrown-primary, $AmberBrown-accent);
+  @include angular-material-theme($AmberBrown_Raleway-theme);
+}
+
+.AmberBrown_Lora-theme {
+  @include mat-core($Lora-typography);
+  $AmberBrown_Lora-theme: mat-light-theme($AmberBrown-primary, $AmberBrown-accent);
+  @include angular-material-theme($AmberBrown_Lora-theme);
+}

@@ -1,0 +1,79 @@
+/*
+//////////////////////////////////////
+// Overall APP Styling
+// --------------------------------------------
+// Note: This Component has ViewEncapsulation.None so the styles will bleed out to all other comopon
+//////////////////////////////////////
+*/
+
+
+/*
+// Fonts
+//////////////////////////////////////
+*/
+
+/*@import "~sass-web-fonts/web-fonts";
+$url: web-fonts-url("Oswald:400,700", "Roboto:400,700", "Material Icons");
+@import url($url);
+*/
+
+/*
+// Imports
+//////////////////////////////////////
+*/
+
+/* variables */
+@import "variables.scss";
+
+ 
+/* font-awesome */
+$fa-font-path: "~font-awesome/fonts/";
+
+
+/*
+// Shared Styles
+////////////////////////////
+*/
+
+.generate-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.generate-text--bold
+{
+    font-weight: bold;
+}
+.generate-text--italic
+{
+    font-style: italic;
+}
+.generate-text--screen-reader-only
+{
+    position:absolute;
+    left:-10000px;
+    top:auto;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+}
+
+.generate-text--screen-reader-only-alt
+{
+    position:absolute;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+}
+
+.mdl-tabs__tab-bar  {
+  justify-content: flex-start !important;
+}
+

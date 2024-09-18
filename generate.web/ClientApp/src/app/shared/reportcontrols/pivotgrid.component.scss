@@ -1,0 +1,195 @@
+@import '../../variables.scss';
+
+.generate-app-pivotgrid-controls__sectiontitle
+{
+    margin-bottom: 5px;
+    font-weight: 700;
+    color: $color-primary-dark;
+}
+
+.generate-app-pivotgrid-controls__sectionlabel
+{
+    margin-right: 5px;
+    font-weight: 700;
+    color: $color-primary-dark;
+}
+
+.generate-app-pivotgrid__categoryset-definition{
+    font-style: italic;
+}
+
+.generate-app-pivotgrid-controls__export-container
+{
+    float: right;
+    width: 180px;
+}
+
+.generate-app-pivotgrid-controls__createfile-container
+{
+    float: right;
+    width: 180px;
+}
+
+.generate-app-pivotgrid__grid-header
+{
+    margin: 0;
+    padding: 0;
+}
+.generate-app-pivotgrid__grid
+{
+    max-height: 450px;
+}
+
+.generate-app-pivotgrid__gridtotals
+{
+    vertical-align: top;
+}
+
+
+.generate-app-pivotgrid__error 
+{
+    color: $color-primary;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.generate-app-report__title {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 20px;
+}
+
+.generate-app-pivotgrid__total
+{
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+}
+.generate-app-pivotgrid__pager
+{
+    font-size: 14px;
+}
+.generate-app-pivotgrid__pager-top
+{
+    margin-bottom: 10px;
+}
+.generate-app-pivotgrid__pager-bottom
+{
+    margin-top: 10px;
+}
+
+.generate-app-pivotgrid__table {
+    width: 100%;
+    table-layout: fixed;
+    -ms-word-break: break-word;
+    word-break: break-word;
+    -ms-word-wrap: hyphenate;
+    word-wrap: hyphenate;
+    white-space:pre-wrap;
+}
+
+.generate-app-pivotgrid__table-row-header
+{
+    text-align: left;
+    background-color: $color-primary-dark;
+    color: white;
+    cursor: pointer;
+}
+
+.generate-app-pivotgrid__table-column-header
+{
+    text-align: center;
+    background-color: $color-primary-dark;
+    color: white;
+    cursor: pointer;
+}
+
+.generate-app-pivotgrid__table-subcolumn-header
+{
+    text-align: center;
+    background-color: $color-primary;
+    color: white;
+}
+
+.generate-app-pivotgrid__table-row-data-key
+{
+    padding: 4px;
+}
+
+.generate-app-pivotgrid__table-row-data
+{
+    text-align: center;
+    padding: 4px;
+}
+
+.generate-app-pivotgrid__table-row-subtotal-key
+{
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-accent-light;
+    color: $color-primary-dark;
+}
+
+.generate-app-pivotgrid__table-row-subtotal
+{
+    text-align: center;
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-accent-light;
+    color: $color-primary-dark;
+}
+
+.generate-app-pivotgrid__table-row-total-key
+{
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-primary-dark;
+    color: $color-primary-light;
+}
+
+.generate-app-pivotgrid__table-row-total
+{
+    text-align: center;
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-primary-dark;
+    color: $color-primary-light;
+}
+
+.generate-report-data__dialog{
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -webkit-transform:translate(-50%, -50%);
+  -o-transform:translate(-50%, -50%);
+  transform:translate(-50%, -50%);
+
+}
+
+.generate-app-pivotgrid_connectionLink
+{
+    margin-top: 5px;
+}
+
+.generate-app-pager__slider {
+    width: 300px;
+    padding-left: 5px;
+}
+
+.generate-app-pager__container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:left;
+    padding: 4px;
+}
+
+.generate-app-pager__button{
+    padding-left: 5px;
+}
+.generate-app-pager__display {
+    padding-left: 30px;
+}

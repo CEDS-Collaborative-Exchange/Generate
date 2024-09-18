@@ -1,0 +1,19 @@
+# This is a sample build configuration for .NET Core.
+# Check our guides at https://confluence.atlassian.com/x/VYk8Lw for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+#image: microsoft/dotnet
+#image: microsoft/dotnet
+
+pipelines:
+  default:
+    - step:
+        script: # Modify the commands below to build your repository.
+          #- powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+          #- choco install nodejs
+          #- choco install dotnet-4.6.2
+          #- dotnet restore
+          #- npm install
+          #- dotnet build generate.web --framework netcoreapp1.1
+          #- dotnet publish generate.web --configuration test

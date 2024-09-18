@@ -1,0 +1,111 @@
+﻿@import '../../variables.scss';
+@import '../../../../node_modules/material-design-lite/src/_variables.scss';
+@import '../../../../node_modules/material-design-lite/src/_mixins.scss';
+
+
+.generate-app-toggle__form
+{
+    padding: 5px;
+}
+
+.generate-app-toggle__title 
+{
+    padding: 5px;
+}
+
+.generate-app-toggle__card {
+  width: auto;
+  margin: 20px;
+}
+
+.generate-app-toggle__sectiontitle
+{
+    background-color: $color-primary-light;
+}
+
+.generate-app-toggle__sectiontitle-text
+{
+    color: $color-primary-dark;
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.generate-app-toggle__subsectiontitle{
+    padding: 5px;
+    text-align:left;
+    color: $color-accent-dark;
+    border-bottom: 1px solid $color-primary;
+    width: 100%;
+}
+
+
+
+.generate-app-toggle__question-text{
+    color: $color-primary;
+}
+
+
+.generate-app-toggle__dropdown {
+  $bg-color:deepskyblue;
+  $text-color: black;
+  appearance: none;
+  border: {
+    color: mix($bg-color, black, 80%);
+    radius: .2em;
+    style: solid;
+    width: 1px;
+    right-color: mix($bg-color, black, 60%);
+    bottom-color: mix($bg-color, black, 60%);
+  }
+  color: $text-color;
+  padding: .33em .5em;
+  width: 250px;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+.generate-app-toggle__button-container{
+    display: inline-block;
+    vertical-align: top;
+    padding: 15px;
+    width:75%;
+    overflow:hidden;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.generate-app-toggle__button{
+    float:right;
+    margin-right:25px;
+    min-width: 40px !important;
+}
+
+
+.generate-app-toggle__dialog{
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -webkit-transform:translate(-50%, -50%);
+  -o-transform:translate(-50%, -50%);
+  transform:translate(-50%, -50%);
+
+}
+
+.mdl-card{
+    z-index : auto;
+}
+
+.generate-app-toggle__message{
+  background-color: $color-primary !important;
+ }
+
+.generate-app-toggle__radio-labeltext{
+    display: table;
+}

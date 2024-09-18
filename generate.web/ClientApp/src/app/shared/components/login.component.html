@@ -1,0 +1,66 @@
+<div class="generate-app-login">
+    <div [hidden]="!isAuthenticating" class="mdl-spinner mdl-js-spinner is-active"></div>
+
+    <div *ngIf="!userService.isLoggedIn()" id="generate-app-shared-login__error" class="generate-app-shared-login__error mdl-js-snackbar mdl-snackbar" aria-live="assertive" aria-atomic="true" aria-relevant="text">
+        <div class="mdl-snackbar__text generate-app-shared-login__error-text"></div>
+        <button class="mdl-snackbar__action" type="button"><span class="generate-text--screen-reader-only">Activate Toast Notification</span></button>
+    </div>
+
+    <div *ngIf="!isAuthenticating && !userService.isLoggedIn()">
+        <div *ngIf="isOAuth" class="generate-app-shared-login__button-container">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
+                    (click)="loginAzure()" id="loginButton-lg">
+                Log in
+            </button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
+                    (click)="loginAzure()" id="loginButton-sm">
+                <i class="fa fa-sign-in"></i><span class="generate-text--screen-reader-only">Log in</span>
+            </button>
+        </div>
+        <form *ngIf="!isOAuth" (submit)="login($event, username.value, userpassword.value)">
+
+        <div>
+            <div class="mdl-textfield mdl-js-textfield generate-app-shared-login__textfield">
+                <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__username" type="text" #username id="username" />
+                <label class="mdl-textfield__label" for="username">UserName</label>
+            </div>
+
+            <div class="mdl-textfield mdl-js-textfield generate-app-shared-login__textfield">
+                <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__password" type="password" #userpassword id="userpassword" />
+                <label class="mdl-textfield__label" for="userpassword">Password</label>
+            </div>
+
+            <div class="generate-app-shared-login__button-container">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
+                        (click)="login($event, username.value, userpassword.value)" id="loginButton-lg">
+                    Log in
+                </button>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
+                        (click)="login($event, username.value, userpassword.value)" id="loginButton-sm">
+                    <i class="fa fa-sign-in"></i><span class="generate-text--screen-reader-only">Log in</span>
+                </button>
+            </div>
+        </div>
+
+    </form>
+    </div>
+    <div *ngIf="!isAuthenticating && userService.isLoggedIn()">
+        <form (submit)="logout($event)">
+
+            <div class="generate-app-shared-loggedin__text">
+                {{ userService.getUserDisplayName() }} ({{userService.getRole()}})
+            </div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
+                    (click)="logout($event)" id="logoutButton-lg">
+                Log out
+            </button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
+                    (click)="logout($event)" id="logoutButton-sm">
+                <i class="fa fa-sign-out"></i><span class="generate-text--screen-reader-only">Log out</span>
+            </button>
+        </form>
+    </div>
+    <div *ngIf="userService.isLoggedIn()" class="generate-app-shared-loggedin__text">
+        Timeout: {{timeLeftMinutes}}:{{timeLeftSeconds % 60 < 10 ? '0' + timeLeftSeconds % 60 : timeLeftSeconds % 60}}
+    </div>
+</div>

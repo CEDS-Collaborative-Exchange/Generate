@@ -1,0 +1,180 @@
+﻿@import '../../variables.scss';
+
+.generate-app-cohortgraduationrate-controls__sectiontitle
+{
+    margin-bottom: 5px;
+    font-weight: 700;
+    color: $color-primary-dark;
+}
+
+.generate-app-cohortgraduationrate__subtitle
+{
+    text-transform:uppercase;
+}
+
+.generate-app-cohortgraduationrate-controls__sectionlabel
+{
+    margin-right: 5px;
+    font-weight: 700;
+    color: $color-primary-dark;
+}
+
+.generate-app-cohortgraduationrate__categoryset-definition{
+    font-style: italic;
+}
+
+.generate-app-cohortgraduationrate-controls__export-container
+{
+    float: right;
+    width: 160px;
+}
+
+.generate-app-cohortgraduationrate__grid-header
+{
+    margin: 0;
+    padding: 0;
+}
+.generate-app-cohortgraduationrate__grid
+{
+    max-height: 450px;
+}
+
+.generate-app-cohortgraduationrate__gridtotals
+{
+    vertical-align: top;
+}
+
+
+.generate-app-cohortgraduationrate__error
+{
+    color: $color-primary;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.generate-app-cohortgraduationrate__title
+{
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 20px;
+}
+
+.generate-app-cohortgraduationrate__total
+{
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+}
+.generate-app-cohortgraduationrate__pager
+{
+    font-size: 14px;
+}
+.generate-app-cohortgraduationrate__pager-top
+{
+    margin-bottom: 10px;
+}
+.generate-app-cohortgraduationrate__pager-bottom
+{
+    margin-top: 10px;
+}
+
+.generate-app-cohortgraduationrate__table {
+    width: 100%;
+    table-layout: fixed;
+    -ms-word-break: break-word;
+    word-break: break-word;
+    -ms-word-wrap: hyphenate;
+    word-wrap: hyphenate;
+    white-space:pre-wrap;
+}
+
+.generate-app-cohortgraduationrate__table-row-header
+{
+    text-align: left;
+    background-color: $color-primary-dark;
+    color: white;
+    cursor: pointer;
+}
+
+.generate-app-cohortgraduationrate__table-column-header
+{
+    text-align: center;
+    background-color: $color-primary-dark;
+    color: white;
+    cursor: pointer;
+}
+
+.generate-app-cohortgraduationrate__table-subcolumn-header
+{
+    text-align: center;
+    background-color: $color-primary;
+    color: white;
+}
+
+.generate-app-cohortgraduationrate__table-row-data-key
+{
+    padding: 4px;
+}
+
+.generate-app-cohortgraduationrate__table-row-data
+{
+    text-align: center;
+    padding: 4px;
+}
+
+.generate-app-cohortgraduationrate__table-row-subtotal-key
+{
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-accent-light;
+    color: $color-primary-dark;
+}
+
+.generate-app-cohortgraduationrate__table-row-subtotal
+{
+    text-align: center;
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-accent-light;
+    color: $color-primary-dark;
+}
+
+.generate-app-cohortgraduationrate__table-row-total-key
+{
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-primary-dark;
+    color: $color-primary-light;
+}
+
+.generate-app-cohortgraduationrate__table-row-total
+{
+    text-align: center;
+    padding: 4px;
+    font-weight: 700;
+    background-color: $color-primary-dark;
+    color: $color-primary-light;
+}
+
+.generate-app-cohortgraduationrate_connectionLink
+{
+    margin-top: 5px;
+}
+
+.generate-app-cohortgraduationrate__data-panel{
+    width: 100%;
+}
+
+.generate-app-cohortgraduationrate__graph-panel{
+}
+
+.generate-app-cohortgraduationrate__graph-export{
+    margin-top: 10px;
+    float: right;
+    width: 160px;
+}
+
+.generate-app-cohortgraduationrate-graph{
+    border:none;
+}

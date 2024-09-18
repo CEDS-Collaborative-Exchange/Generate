@@ -1,33 +1,26 @@
-![Generate Logo](/res/icon-generate-xs.png "Generate")
+# Generate - Development Environment #
 
-# Generate
-Welcome to **Generate**! Developed by CIID, Generate is a software application that improves data quality and automates reporting for state education agencies (SEAs) through standardization. Generate can improve SEA data use and reporting to better support administrative and policy work for improved educational outcomes for students with disabilities and their families.
+### How do I get set up? ###
 
-**Why use Generate?**
+The following are required to load/run this application:
 
-- Freely available to all SEAs and is installed inside your state’s environment
-- Automates and simplifies reporting for IDEA EDFacts and State Performance Plan/Annual Performance Report (SPP/APR)
-- Improves consistency across states for IDEA data
-- Supports timely and efficient reporting and submission of EDFacts data
+* Install [Visual Studio 2017 Professional](https://www.visualstudio.com/downloads/download-visual-studio-vs)
+* Install [Git](https://git-scm.com/)
+* Install [.NET Core 2.2 SDK](https://www.microsoft.com/net/download/core#/current)
+* Install [NodeJS](http://nodejs.org/) - version 8 or greater
+* Install SQL Server Express
+* Create an empty database called "generate" on the SQL Server Express instance
+* Using the SQL script, \generate.web\DatabaseFiles\RestoreDatabase.sql, restore the latest generate database.
 
-To connect with other states that are implementing and working with Generate contact the Generate Governance Group at G3@communities360.org.
+The following may be required:
 
-## Getting Started
+The following tools are optional, but may assist in development:
 
-Refer to the Generate Installation Guide for details on how to install and upgrade Generate. 
+* Install [Postman](https://www.getpostman.com/)
+* Install the Web Essentials Visual Studio extension
+* Install Add New File Visual Studio Extension
+* Install Open Command Line Visual Studio Extension
 
-## Contributing
+### Who do I talk to? ###
 
-Please read [Contributing.md](Contributing.md) for details on the process for submitting pull requests to us.
-
-## Versioning
-
-The release schedule for Generate is tied to the ED*Facts* reporting windows.  Major versions are release in August-September, with minor releases in November, January, and March as needed.    
-
-## Authors
-
-See the list of [contributors](Contributors.md) who participated in this project.
-
-## License
-
-This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
+* Douglas Gurich / doug.gurich@aemcorp.com

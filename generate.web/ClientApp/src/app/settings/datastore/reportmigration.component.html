@@ -1,0 +1,188 @@
+<generate-app-breadcrumbs breadcrumbs="Settings > Data Migrations"></generate-app-breadcrumbs>
+
+<mat-tab-group [selectedIndex]="tabIndex" (selectedIndexChange)="getTabContent($event)">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon class="example-tab-icon">thumb_up</mat-icon>
+            Data Migration
+        </ng-template>
+
+        <div *ngIf="isLoading" class="mdl-typography--text-center">
+            <div class="mdl-grid">
+                <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+                    <div class="mdl-spinner mdl-js-spinner is-active"></div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!isLoading">
+            <div class="mdl-grid generate-app-data-store__section">
+                <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+                <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
+                    <!--<div class="generate-report-section-title">
+                    <h6 class="generate-report-section-main-title-text">Data Migration</h6>
+                </div>-->
+                    <div class="generate-report-migration-subsection">
+                        Triggering the Data Migration will migrate data into the Report Warehouse.
+                    </div>
+
+                    <div [hidden]="!showReportMigrateStatus && !showReportMigrateProgress && !showReportMigrateTimeRemaining" class="mdl-typography--text-center">
+                        <div class="generate-report-status" [hidden]="!showReportMigrateStatus"> {{ reportMessage }} </div>
+                        <div class="generate-report-status mdl-progress mdl-js-progress generate-report__progress" style="margin:auto" [hidden]="!showReportMigrateProgress" id="reportMigrationStatus"></div>
+                        <div class="generate-report-status" [hidden]="!showReportMigrateTimeRemaining">{{ estimatedReportCompletionTime }}</div>
+                    </div>
+
+                    <!--<div class="generate-report-migration-actions" *ngIf="!reportMigrationIsAvailable && !isCanceling">
+                    Another migration may already be running
+                </div>-->
+
+                    <div *ngIf="reportMigrationIsAvailable && !reportMigrationIsProcessing">
+                        <div>
+                            <div class="generate-reports-section-title">
+                                <h6 class="generate-reports-section-title-text">Data Migration School Years / Fact Type</h6>
+                            </div>
+                            <div class="generate-reports-section-title">
+                                Select the School Year and Fact Type you want to migrate to the Report Warehouse.
+                            </div>
+                        </div>
+                        <div class="mdl-grid generate-reports-section-title">
+                            <div class="mdl-cell mdl-cell--2-col">
+                                <generate-app-combo-box #comboReportYear id="generate-rds-report-years" [itemsSource]="cvDataYear" [isEditable]="false"
+                                                        displayMemberPath="schoolYear" selectedValuePath="isSelected" style="color: rgb(242,242,242);"
+                                                        [selectedIndex]="selectedIndex"
+                                                        (selectedIndexChanged)="onReportYearUpdate($event,comboReportYear)"
+                                                        [width]="150"></generate-app-combo-box>
+                            </div>
+                            <div class="mdl-cell mdl-cell--8-col">
+                                <generate-app-combo-box #comboFactType id="generate-fact-type" [itemsSource]="cvFactTypes" [isEditable]="false"
+                                                        displayMemberPath="factTypeDescription" style="color: rgb(242,242,242);width:400px"
+                                                        [selectedIndex]="selectedFactTypeIndex" selectedValuePath="factTypeCode"
+                                                        (selectedIndexChanged)="onFactTypeUpdate($event,comboFactType)"
+                                                        [width]="350"></generate-app-combo-box>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="generate-reports-section-title">
+                                <h6 class="generate-reports-section-title-text">Data Migration Tasks</h6>
+                            </div>
+                            <div class="generate-reports-section-title">Select the checkbox next to a Report to enable the migration and overwrite existing data. Deselect the checkbox next to a Report to lock down the report and prevent its data from being overwritten.</div>
+                        </div>
+                        <div class="generate-reports-section-title">
+                            <div>
+                                <generate-app-table #reportGrid [itemsSource]="cvData"
+                                                    [headers]="['Locked','Report Code','Report Title','Report Type','Description']"
+                                                    [bindings]="['select','reportCode','reportName','reportType','description']"
+                                                    (initialized)="reportSelected(reportGrid, $event)"
+                                                    class="generate-app-gradesoffered__grid">
+                                </generate-app-table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="generate-report-migration-actions" *ngIf="userService.isAdmin() && reportMigrationIsAvailable && !reportMigrationIsProcessing">
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="showConfirmReportDialog(confirmReportDialog)">
+                            Migrate to Report Data Store
+                        </button>
+                    </div>
+
+                    <div class="generate-report-migration-actions" *ngIf="userService.isAdmin() && !reportMigrationIsAvailable && !reportMigrationIsProcessing">
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="migrateDirectory()">
+                            Migrate Directory
+                        </button>
+                    </div>
+
+                    <div class="generate-report-migration-actions" *ngIf="userService.isAdmin() && reportMigrationIsProcessing && cancelIsAvailable && !isCanceling">
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="showConfirmCancellationDialog(confirmCancellationDialog)">
+                            Cancel Migration
+                        </button>
+                    </div>
+
+                    <div class="generate-report-migration-actions">
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="gotoDataStore()">
+                            Go to EDFacts Reports
+                        </button>
+                    </div>
+
+                </div>
+                <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+            </div>
+
+        </div>
+
+
+        <generate-app-dialog class="modal-content" #confirmReportDialog>
+            <div class="mdl-card mdl-shadow--16dp">
+                <div class="mdl-card__title">
+                    <span class="mdl-card__title-text">
+                        Confirm Data Migration
+                    </span>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    Please confirm.  Clicking OK will overwrite all existing reports data.
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
+                    <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="confirmReportDialog.hide()">
+                        Cancel
+                    </button>
+                    <button class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="triggerReportMigration(confirmReportDialog)">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </generate-app-dialog>
+
+
+        <generate-app-dialog class="modal-content" #confirmCancellationDialog>
+            <div class="mdl-card mdl-shadow--16dp">
+                <div class="mdl-card__title">
+                    <span class="mdl-card__title-text">
+                        Confirm Cancellation
+                    </span>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    Please confirm.  Clicking OK will cancel any migration job currently in process.
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
+                    <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="confirmCancellationDialog.hide()">
+                        Cancel
+                    </button>
+                    <button class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="cancelMigration(confirmCancellationDialog)">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </generate-app-dialog>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon class="example-tab-icon">thumb_up</mat-icon>
+            Data Migration Log
+        </ng-template>
+        <div>
+            <div class="generate-reports-section-title">
+                <h6 class="generate-reports-section-title-text">Data Migration Log</h6>
+            </div>
+        </div>
+        <div class="generate-reports-section-title">
+            <gui-grid #migrationGrid [source]="migrationHistoryList" [paging]="paging"
+                      [rowStyle]="rowStyle" [columns]="gridColumns"></gui-grid>
+        </div>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon class="staging-tab-icon">thumb_up</mat-icon>
+            Staging Validation Results
+        </ng-template>
+        <div>
+            <div class="generate-reports-section-title">
+                <h6 class="generate-reports-section-title-text">Staging Validation Results</h6>
+            </div>
+        </div>
+        <div class="generate-reports-section-title">
+            <generate-app-table #reportGrid [itemsSource]="stagingValidationResultList"
+                                [headers]="['Fact Type','Table Name','Column','Validation Message','Severity','Record Count','Show Records SQL','Insert Date']"
+                                [bindings]="['factTypeOrReportCode','stagingTableName','columnName','validationMessage','severity','recordCount','showRecordsSQL','insertDate']"
+                                class="generate-app-gradesoffered__grid">
+            </generate-app-table>
+        </div>
+    </mat-tab>
+</mat-tab-group>

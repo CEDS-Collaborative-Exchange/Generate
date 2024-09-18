@@ -1,0 +1,539 @@
+<!--<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">-->
+
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-yeartoyearchildcount__error">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+<div id="generate-app__message" class="generate-app-yeartoyearchildcount__message mdl-js-snackbar mdl-snackbar" aria-live="assertive" aria-atomic="true" aria-relevant="text">
+    <div class="mdl-snackbar__text"></div>
+    <button class="mdl-snackbar__action" type="button"><span class="generate-text--screen-reader-only">Activate Toast Notification</span></button>
+</div>
+
+<h3 *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-yeartoyearchildcount__title">{{reportDataDto.reportTitle}} : {{reportParameters.reportYear}}</h3>
+<h3 *ngIf="!isLoading && reportDataDto.dataCount < 0" class="generate-app-yeartoyearchildcount__title">Not Yet Implemented</h3>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportType !== 'datapopulation'" class="mdl-typography--text-center generate-app-yeartoyearchildcount__categoryset-definition ">
+    <span *ngIf="reportParameters.reportFilter !=='select'">Number and Percentage of Students with </span>  <span *ngFor="let cat of removeSubmissionYear; let i=index;"><span *ngIf="i > 0"> and </span>{{cat}}</span>
+</div>
+
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportLevel === 'lea' && reportParameters.reportLea !== null && reportParameters.reportLea !=='all'" style="margin-top:20px;" class="generate-app-yeartoyearchildcount__title">
+    {{reportParameters.reportLea}}
+</div>
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportLevel === 'lea' && reportParameters.reportLea !== null && reportParameters.reportLea ==='all'" style="margin-top:20px;" class="generate-app-yeartoyearchildcount__title">
+    All LEAs
+</div>
+<div *ngIf="currentReport !== undefined && currentReport.showGraph && currentReport.showData" class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+    <div class="mdl-tabs__tab-bar">
+        <a href="#reportdata-panel" class="mdl-tabs__tab is-active" (click)="clickedDataTab()">Data</a>
+    </div>
+
+    <div class="mdl-tabs__panel is-active" id="reportdata-panel">
+        <div class="mdl-grid generate-app-yeartoyearchildcount__grid-header">
+
+            <div class="mdl-cell mdl-cell--4-col">
+                <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+                </div>
+            </div>
+
+            <div class="mdl-cell mdl-cell--4-col mdl-typography--text-center">
+                <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-yeartoyearchildcount__total mdl-typography--text-center">
+                    <!--{{dataCountCaption()}} {{reportDataDto.dataCount}}-->
+                </div>
+            </div>
+
+            <div class="mdl-cell mdl-cell--4-col mdl-typography--text-right">
+                <div class="generate-app-yeartoyearchildcount-controls__export-container">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                        Export to Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="isLoading" class="mdl-typography--text-center">
+            <div class="mdl-grid">
+                <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+                    <div class="mdl-spinner mdl-js-spinner is-active"></div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && (reportParameters.reportType !== 'datapopulation')">
+
+        </div>
+        <div>
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && (reportParameters.reportFilter ==='withgender' || reportParameters.reportFilter ==='withlepstatus' )">
+                <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                      header="[
+			                       'LEA Name',
+                                        'LEA ID',
+                                        '{{subPopulation}}', 
+                                        '#', 
+                                        '%', 
+                                        '#', 
+                                        '%', 
+                                        '#', 
+                                        '%'
+				                    ]"
+                        [bindings]="[
+					                        'organizationName',
+					                        'organizationStateId',
+					                        'category1',
+					                        'col_1',
+					                        'col_2',
+					                        'col_3',
+					                        'col_4',
+					                        'col_5',
+					                        'col_6'
+					                        ]"
+                                    class="generate-app-leafederalfund__grid">
+                </generate-app-table>
+            </div>
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && reportParameters.reportFilter ==='withraceethnic'">
+                <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                                    headers="[
+	                                    'LEA Name',
+	                                    'LEA ID',
+	                                    '{{subPopulation}}',
+	                                    '#',
+	                                    '%',
+	                                    '#',
+	                                    '%',
+	                                    '#',
+	                                    '%',
+	                                    '#',
+	                                    '%',
+	                                    '#',
+	                                    '%',
+	                                    '#',
+	                                    '#',
+	                                    '%',
+	                                    '#'
+                                    ]"
+                                    bindings="[
+	                                    'organizationName',
+	                                    'organizationStateId',
+	                                    'category1',
+	                                    'col_1',
+	                                    'col_2',
+	                                    'col_3',
+	                                    'col_4',
+	                                    'col_5',
+	                                    'col_6',
+	                                    'col_7',
+	                                    'col_8',
+	                                    'col_9',
+	                                    'col_10',
+	                                    'col_10a',
+	                                    'col_10b',
+	                                    'col_11',
+	                                    'col_11a',
+	                                    'col_11b',
+	                                    'col_11c'
+                                    ]"
+                                    class="generate-app-leafederalfund__grid">
+                </generate-app-table>
+            </div>
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && reportParameters.reportFilter ==='withdisability'">
+                <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                        headers="[
+                           'LEA Name',
+                            'LEA ID',
+                            '{{subPopulation}}',
+                            '#',
+                            '%',
+                            '#',
+                            '%',
+                            '#',
+                            '%',
+                            '#',
+                            '%',
+                            '#',
+                            '%',
+                            '#',
+                            '%',
+                            '#',
+                            '#',
+                            '%',
+                            '#',
+                            '%',
+                            '#',
+                            '%',
+                            '#',
+                            '%',
+                            '#',
+                            '%',
+                            '#',
+                            '%',
+                            '#',
+                            '%',
+                            '#'
+                        ]"
+                        bindings="[
+	                        'organizationName',
+	                        'organizationStateId',
+	                        'category1',
+	                        'col_1',
+	                        'col_2',
+	                        'col_3',
+	                        'col_4',
+	                        'col_5',
+	                        'col_6',
+	                        'col_7',
+	                        'col_8',
+	                        'col_9',
+	                        'col_10',
+	                        'col_10a',
+	                        'col_10b',
+	                        'col_11',
+	                        'col_11a',
+	                        'col_11b',
+	                        'col_11c'
+                        ]"
+                        class="generate-app-charterschools__grid">
+                </generate-app-table>
+            </div>
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && reportParameters.reportCategorySetCode !=='earlychildhood'  && reportParameters.reportCategorySetCode !=='schoolage' && reportParameters.reportFilter ==='withage'">
+                <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                    headers="[
+	                    'LEA Name',
+	                    'LEA ID',
+	                    '{{subPopulation}}',
+	                    '#',
+	                    '%',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#', 
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#',
+	                    '%',
+	                    '#'
+                    ]"
+                    bindings="[
+	                    'organizationName',
+	                    'organizationStateId',
+	                    'category1',
+	                    'col_1',
+	                    'col_2',
+	                    'col_3',
+	                    'col_4',
+	                    'col_5',
+	                    'col_6',
+	                    'col_7',
+	                    'col_8',
+	                    'col_9',
+	                    'col_10',
+	                    'col_10a',
+	                    'col_10b',
+	                    'col_11',
+	                    'col_11a',
+	                    'col_11b',
+	                    'col_11c',
+	                    'col_11d',
+	                    'col_11e',
+	                    'col_12',
+	                    'col_12a',
+	                    'col_12b',
+	                    'col_13',
+	                    'col_14',
+	                    'col_14a',
+	                    'col_14b',
+	                    'col_14c',
+	                    'col_14d',
+	                    'col_15',
+	                    'col_16',
+	                    'col_17',
+	                    'col_18',
+	                    'col_18a',
+	                    'col_18b',
+	                    'col_18c',
+	                    'col_18d',
+	                    'col_18e',
+	                    'col_18f',
+	                    'col_18g',
+	                    'col_18h',
+	                    'col_18i'
+                    ]"
+                    class="generate-app-charterschools__grid">
+                </generate-app-table>
+            </div>
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && reportParameters.reportCategorySetCode ==='schoolage' && reportParameters.reportFilter ==='withage'">
+                <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                        headers="[
+	                        'LEA Name',
+	                        'LEA ID',
+	                        '{{subPopulation}}',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#'
+                        ]"
+                        bindings="[	
+	                        'organizationName',
+	                        'organizationStateId',
+	                        'category1',
+	                        'col_1',
+	                        'col_2',
+	                        'col_3',
+	                        'col_4',
+	                        'col_5',
+	                        'col_6',
+	                        'col_7',
+	                        'col_8',
+	                        'col_9',
+	                        'col_10',
+	                        'col_10a',
+	                        'col_10b',
+	                        'col_11',
+	                        'col_11a',
+	                        'col_11b',
+	                        'col_11c',
+	                        'col_11d',
+	                        'col_11e',
+	                        'col_12',
+	                        'col_12a',
+	                        'col_12b',
+	                        'col_13',
+	                        'col_14',
+	                        'col_14a',
+	                        'col_14b',
+	                        'col_14c',
+	                        'col_14d',
+	                        'col_15',
+	                        'col_16',
+	                        'col_17',
+	                        'col_18',
+	                        'col_18a',
+	                        'col_18b',
+	                        'col_18c'
+                        ]"
+                      class="generate-app-charterschools__grid">
+                </generate-app-table>
+            </div>
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && reportParameters.reportCategorySetCode ==='earlychildhood' && reportParameters.reportFilter ==='withage'">
+                <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                        headers="[                    
+	                        'LEA Name',
+	                        'LEA ID',
+	                        '{{subPopulation}}',
+	                        '#',
+	                        '%', 
+	                        '#', 
+	                        '%', 
+	                        '#', 
+	                        '%', 
+	                        '#', 
+	                        '%'
+                        ]"
+                        headers="[	
+	                        'organizationName',
+	                        'organizationStateId',
+	                        'category1',
+	                        'col_1',
+	                        'col_2',
+	                        'col_3',
+	                        'col_4',
+	                        'col_5',
+	                        'col_6',
+	                        'col_7',
+	                        'col_8'
+                        ]"
+                        class="generate-app-charterschools__grid">
+                </generate-app-table>
+            </div>
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && reportParameters.reportFilter ==='withschoolage'">
+                <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                        headers="[
+	                        'LEA Name',
+	                        'LEA ID', 
+	                        'Subpopulations', 
+	                        '#', 
+	                        '%', 
+	                        '#', 
+	                        '%', 
+	                        '#', 
+	                        '%', 
+	                        '#', 
+	                        '%', 
+	                        '#', 
+	                        '%', 
+	                        '#', 
+	                        '%', 
+	                        '#', 
+	                        '#', 
+	                        '%', 
+	                        '#', 
+	                        '%', 
+	                        '#'
+                        ]"
+                        bindings="[	
+	                        'Subpopulations',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#'
+                        ]"
+                        class="generate-app-charterschools__grid">
+                </generate-app-table>
+            </div>
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && reportParameters.reportFilter ==='withearlychildhood'">
+                <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                        headers="[
+	                        'LEA Name',
+	                        'LEA ID',
+	                        '{{subPopulation}}',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#',
+	                        '%',
+	                        '#'
+                        ]"
+                        bindings="[
+	                    'organizationName',
+	                    'organizationStateId',
+	                    'category1',
+	                    'col_1',
+	                    'col_2',
+	                    'col_3',
+	                    'col_4',
+	                    'col_5',
+	                    'col_6',
+	                    'col_7',
+	                    'col_8',
+	                    'col_9',
+	                    'col_10',
+	                    'col_10a',
+	                    'col_10b',
+	                    'col_11',
+	                    'col_11a',
+	                    'col_11b',
+	                    'col_11c',
+	                    'col_11d',
+	                    'col_11e',
+	                    'col_12',
+	                    'col_12a'
+                    ]"
+                    class="generate-app-charterschools__grid">
+                </generate-app-table>
+            </div>
+
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && reportParameters.reportFilter ==='select'">
+                <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                    headers="[
+                        'LEA Name',
+                        'LEA ID',
+                        '{{subPopulation}}',
+                        'Number of Students' 
+                    ]"
+                     bindings="[
+                        'organizationName',
+                        'organizationStateId',
+                        'category1',
+                        'col_1'
+                    ]"
+                    class="generate-app-charterschools__grid">
+                </generate-app-table>
+            </div>
+            <div class="generate-app-leastudentssummary__footnote " *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords && (reportParameters.reportFilter ==='withdisability' ||reportParameters.reportCategorySetCode ==='disability')  ">
+                N.B.:- Developmental delay is an option only for students in age ranges 3 through 8.
+            </div>
+            <div *ngIf="showNoRecords" id="generate-app-grid__norecords">No Records to Display.</div>
+
+        </div>
+        <div *ngIf="!isLoading && reportParameters.connectionLink !== null" class="generate-app-yeartoyearchildcount_connectionLink">
+            For report methodology, see <a href="{{reportParameters.connectionLink}}" target="_blank">Connection Link</a>.
+        </div>

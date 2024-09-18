@@ -1,0 +1,21 @@
+
+<div class="container mdl-grid">
+    <div id="search" class="mdl-cell mdl-cell--4-col">
+        <label class="generate-app-pivotgrid-controls__sectionlabel" for="searchTable">Search:&nbsp;&nbsp;</label>
+        <input type="checkbox" id="searchTable" (click)="onToggleSearchFilter()" />
+        <button id="resetFilter" (click)="onResetFilter()" style="display:none;">Reset Filter</button>
+    </div>
+    <!-- Angular Material Paginator -->
+    <div class="mdl-cell mdl-cell--8-col">
+        <mat-paginator #paginator [length]="totalItems"
+                                 [pageSize]="itemsPerPage"
+                                 [pageIndex]="currentPage"
+                                 [pageSizeOptions]="[5, 10, 25, 50]"
+                                 showFirstLastButtons
+                                 (page)="pageChange($event)">
+        </mat-paginator>
+    </div>
+</div>
+
+<div id="container"></div>
+<div id="containerExport" style="display:none;"></div>

@@ -1,0 +1,14 @@
+.autocomplete-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.mat-option {
+    height: 15px !important;
+    line-height: 15px !important;
+}
+
+.mat-mdc-option {
+    min-height: 30px !important;
+}

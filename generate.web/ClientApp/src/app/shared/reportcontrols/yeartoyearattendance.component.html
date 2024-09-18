@@ -1,0 +1,106 @@
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-yeartoyearattendance__error">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+    <h3 *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-yeartoyearattendance__title">{{reportDataDto.reportTitle}}</h3>
+    <h3 *ngIf="!isLoading && reportDataDto.dataCount < 0" class="generate-app-yeartoyearattendance__title">Not Yet Implemented</h3>
+
+    <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-yeartoyearattendance__subtitle mdl-typography--text-center">
+        {{reportParameters.reportLevel}} Level        
+    </div>  
+
+    <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-yeartoyearattendance__subtitle mdl-typography--text-center">
+        {{organizationInformation}}
+    </div>
+
+    <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportType !== 'datapopulation'" class="mdl-typography--text-center">
+        <span>{{getReportFilter()}}</span>
+    </div>
+
+    <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="mdl-typography--text-center">
+        <i>Each cell counts all students where that data is available (attendance and proficiency).</i>
+    </div>
+
+    <div class="mdl-grid generate-app-yeartoyearattendance__grid-header">
+
+        <div class="mdl-cell mdl-cell--4-col">
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+                <label class="generate-app-yeartoyearattendance-controls__sectionlabel" for="generate-app-yeartoyearattendance__filter">Filter</label>
+                <input id="generate-app-yeartoyearattendance__filter" type="text" class="form-control" [(ngModel)]="filter" />
+            </div>
+        </div>
+
+        <div class="mdl-cell mdl-cell--4-col mdl-typography--text-center">
+            <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-yeartoyearattendance__total mdl-typography--text-center">
+                {{dataCountCaption()}} {{reportDataDto.dataCount}}
+            </div>
+        </div>
+
+
+        <div class="mdl-cell mdl-cell--4-col mdl-typography--text-right">
+            <div class="generate-app-yeartoyearattendance-controls__export-container">
+                <button [hidden]="isExporting" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                    Export to Excel
+                </button>
+                <div [hidden]="!isExporting" class="mdl-spinner mdl-js-spinner is-active"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div *ngIf="isLoading" class="mdl-typography--text-center">
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+                <div class="mdl-spinner mdl-js-spinner is-active"></div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && (reportParameters.reportType !== 'datapopulation')">
+
+    </div>
+
+    <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords">
+        <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+            headers="[
+                'getOrganizationHeader('name')',
+                'getOrganizationHeader(\'identifier\')',
+                'Sub-Population',
+                'Subject',
+                'Proficiency Status',
+                'Rate',
+                'Count',
+                'Rate',
+                'Count',
+                'Rate',
+                'Count',
+                'Rate',
+                'Count',
+            ]"
+            bindings="[
+	            'organizationName',
+	            'organizationStateId',
+	            'category1',
+	            'category2',
+	            'category4',
+	            'col_7',
+	            'col_8',
+	            'col_5',
+	            'col_6',
+	            'col_3',
+	            'col_4',
+	            'col_1',
+	            'col_2'
+            ]"
+            class="generate-app-yeartoyearattendance__grid">
+        </generate-app-table>
+    </div>
+
+    <div *ngIf="!isLoading && reportParameters.connectionLink !== null" class="generate-app-yeartoyearattendance_connectionLink">
+        For report methodology, see <a href="{{reportParameters.connectionLink}}" target="_blank">Connection Link</a>.
+    </div>

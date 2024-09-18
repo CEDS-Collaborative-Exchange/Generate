@@ -1,0 +1,7 @@
+<mat-form-field>
+    <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [(value)]="value" [matDatepickerFilter]="toggleDateFilter">
+    <mat-datepicker-toggle matIconSuffix [for]="picker">
+        <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+    </mat-datepicker-toggle>
+    <mat-datepicker #picker [startAt]="value"></mat-datepicker>
+</mat-form-field>

@@ -1,0 +1,81 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~sass-web-fonts/web-fonts";
+
+$url: web-fonts-url("Lato", "Lora", "Oswald", "Merriweather", "Montserrat", "Raleway", "Roboto Slab");
+@import url($url);
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+.app-text--screen-reader-only {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+h1 {
+  display: block;
+  font-size: 2em;
+  margin-top: 0.37em;
+  margin-bottom: 0.37em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
+.font_Arial {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.font_CourierNew {
+  font-family: Courier New, Courier, monospace;
+}
+.font_Georgia {
+  font-family: Georgia, serif;
+}
+.font_Lato {
+  font-family: 'Lato', sans-serif;
+}
+.font_Lora {
+  font-family: 'Lora', serif;
+}
+.font_Merriweather {
+  font-family: 'Merriweather', serif;
+}
+.font_Montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+.font_Oswald {
+  font-family: 'Oswald', sans-serif;
+}
+.font_Palatino {
+  font-family: 'Palatino', serif;
+}
+.font_Raleway {
+  font-family: 'Raleway', sans-serif;
+}
+.font_Roboto {
+  font-family: 'Roboto', sans-serif;
+}
+.font_RobotoSlab {
+  font-family: 'Roboto Slab', serif;
+}
+.font_Tahoma {
+  font-family: Tahoma, sans-serif;
+}
+.font_TimesNewRoman {
+  font-family: 'Times New Roman', Times, serif;
+}
+.font_Verdana {
+  font-family: Verdana, Geneva, sans-serif;
+}

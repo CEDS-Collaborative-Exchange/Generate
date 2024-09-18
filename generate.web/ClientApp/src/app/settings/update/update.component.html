@@ -1,0 +1,196 @@
+<generate-app-breadcrumbs breadcrumbs="Settings > Update"></generate-app-breadcrumbs>
+
+<div class="mdl-grid">
+    <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+    <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
+        <div class="generate-app-update__header mdl-typography--body-2-color-contrast">
+            <h4>Update Generate</h4>
+        </div>
+    </div>
+</div>
+
+<div class="mdl-grid" *ngIf="this.updateProcessing">
+    <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+    <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
+        <div class="generate-app-update__title">
+            Update in Progress
+        </div>
+        <div class="generate-app-update__available-text">
+            This page will refresh when complete.
+        </div>
+    </div>
+</div>
+
+
+<div class="mdl-grid" *ngIf="this.updateStatus != null && this.updateStatus.status != 'OK'">
+    <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+    <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
+        <div class="generate-app-update__title">
+            Previous Update Failed
+        </div>
+        <div class="generate-app-update__available-text">
+            Please check the log files for additional information.
+        </div>
+    </div>
+</div>
+
+
+
+<div class="mdl-grid" *ngIf="pendingUpdates.length == 0 && downloadedUpdates.length == 0 && !this.updateProcessing">
+    <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+    <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
+        <div class="generate-app-update__title">
+            No Updates Available
+            <!--{{callService}}-->
+        </div>
+    </div>
+</div>
+
+<div class="mdl-grid" *ngIf="pendingUpdates.length > 0 && !this.updateProcessing">
+    <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+    <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
+        <div *ngIf="pendingUpdates != null && pendingUpdates.length > 0">
+            <div class="generate-app-update__available-header">
+                Available to Download
+            </div>
+            <div class="generate-app-update__available-text">
+
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp generate-app-update__table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="mdl-data-table__cell--non-numeric">Version</th>
+                            <th scope="col" class="mdl-data-table__cell--non-numeric">Release Date</th>
+                            <th scope="col" class="mdl-data-table__cell--non-numeric">Description</th>
+                            <th scope="col" class="mdl-data-table__cell--non-numeric">Backup Database?</th>
+                            <th scope="col" class="mdl-data-table__cell--non-numeric">Release Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let update of pendingUpdates">
+                            <td class="mdl-data-table__cell--non-numeric">{{update.majorVersion}}.{{update.minorVersion}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{formatDateTime(update.releaseDate)}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{update.description}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <span *ngIf="update.databaseBackupSuggested">Recommended</span>
+                                <span *ngIf="!update.databaseBackupSuggested">Optional</span>
+                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <a target="_blank" href="{{update.releaseNotesUrl}}">
+                                    <input type="button" class="btnbtn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" value="View" />
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="generate-app-update__actions" *ngIf="pendingUpdates.length > 1">
+                    Only one update can be applied at a time, therefore when multiple updates are pending, only the next version will be downloaded.
+                </div>
+
+                <div *ngIf="downloadedUpdates.length == 0" class="generate-app-update__actions">
+                    <a [hidden]="downloadingUpdates" href="#" (click)="download()">
+                        <input type="button" class="btnbtn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" value="Download Next Update" />
+                    </a>
+                    <div [hidden]="!downloadingUpdates" class="mdl-spinner mdl-js-spinner is-active"></div>
+                </div>
+            </div>
+            <div class="generate-app-update__available-text" *ngIf="pendingUpdates == null || pendingUpdates.length == 0">
+                There are no updates pending
+            </div>
+        </div>
+
+    </div>
+    <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+</div>
+
+<div class="mdl-grid" *ngIf="downloadedUpdates.length > 0 && !this.updateProcessing">
+
+    <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+    <div class="mdl-cell--10-col-desktop mdl-cell mdl-cell--10-col-tablet mdl-cell--12-col-phone">
+
+        <div *ngIf="downloadedUpdates != null && downloadedUpdates.length > 0">
+            <div class="generate-app-update__available-header">
+                Downloaded and Ready to Apply
+            </div>
+            <div class="generate-app-update__available-text">
+
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp generate-app-update__table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="mdl-data-table__cell--non-numeric">Version</th>
+                            <th scope="col" class="mdl-data-table__cell--non-numeric">Release Date</th>
+                            <th scope="col" class="mdl-data-table__cell--non-numeric">Description</th>
+                            <th scope="col" class="mdl-data-table__cell--non-numeric">Backup Database?</th>
+                            <th scope="col" class="mdl-data-table__cell--non-numeric">Release Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let update of downloadedUpdates">
+                            <td class="mdl-data-table__cell--non-numeric">{{update.majorVersion}}.{{update.minorVersion}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{formatDateTime(update.releaseDate)}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{update.description}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <span *ngIf="update.databaseBackupSuggested">Recommended</span>
+                                <span *ngIf="!update.databaseBackupSuggested">Optional</span>
+                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <a target="_blank" href="{{update.releaseNotesUrl}}">
+                                    <input type="button" class="btnbtn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" value="View" />
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="generate-app-update__actions">
+                    <a href="#" (click)="clear()">
+                        <input type="button" class="btnbtn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" value="Delete Update" />
+                    </a>
+                </div>
+
+                <div class="generate-app-update__actions">
+                    <a href="#" (click)="showConfirmUpdateDialog(confirmUpdateDialog)">
+                        <input type="button" class="btnbtn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" value="Apply Update" />
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="mdl-cell--1-col-desktop mdl-cell mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+</div>
+
+
+
+<generate-app-dialog class="modal-content" #confirmUpdateDialog>
+    <div class="mdl-card mdl-shadow--16dp">
+        <div class="mdl-card__title">
+            <span class="mdl-card__title-text">
+                Confirm Update
+            </span>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <p *ngIf="databaseBackupSuggested">
+                We strongly suggest that you backup your Generate database prior to applying updates.
+            </p>
+            <p *ngIf="!databaseBackupSuggested">
+                Although not required, we recommend that you backup your Generate database prior to applying updates.
+            </p>
+            <p>
+                If you have already backed up your database, or would like to proceed anyway, please press OK to continue.
+            </p>
+            <p>
+                Please note, if you continue with the update, the Generate web site will go offline for a short period while the update is being processed.
+            </p>
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="confirmUpdateDialog.hide()">
+                Cancel
+            </button>
+            <button class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple" (click)="update(confirmUpdateDialog)">
+                OK
+            </button>
+        </div>
+    </div>
+</generate-app-dialog>

@@ -1,0 +1,119 @@
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-indicator4b__error">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+
+<h3 *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-indicator4b__title">{{reportDataDto.reportTitle}}</h3>
+<h3 *ngIf="!isLoading && reportDataDto.dataCount < 0" class="generate-app-indicator4b__title">Not Yet Implemented</h3>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportType !== 'datapopulation'" class="mdl-typography--text-center generate-app-indicator4b__categoryset-definition">
+    <span>{{reportParameters.reportCategorySet.categorySetName}}</span><span *ngIf="reportParameters.reportCategorySet.categories.length > 0"> - </span><span *ngFor="let cat of reportParameters.reportCategorySet.categories; let i=index;"><span *ngIf="i > 0">, </span>{{cat}}</span>
+</div>
+
+<div class="mdl-grid generate-app-indicator4b__grid-header">
+
+    <div class="mdl-cell mdl-cell--4-col">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+            <label class="generate-app-indicator4b-controls__sectionlabel" for="generate-app-indicator4b__filter">Filter</label>
+            <input id="generate-app-indicator4b__filter" type="text" class="form-control" [(ngModel)]="filter" />
+        </div>
+    </div>
+
+
+    <div class="mdl-cell mdl-cell--4-col mdl-typography--text-center">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-indicator4b__total mdl-typography--text-center">
+            {{dataCountCaption()}} {{reportDataDto.dataCount}}
+        </div>
+    </div>
+
+
+    <div class="mdl-cell mdl-cell--4-col mdl-typography--text-right">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+
+            <div class="generate-app-indicator4b-controls__export-container">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                    Export to Excel
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="isLoading" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && (reportParameters.reportType !== 'datapopulation')">
+
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords">
+    <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                        [headers]="[
+                        '(1) LEA Identifier',
+                        '(2) Total Number of Students with Disabilities (Ages 3-21) on the Child Count Date (same as (2) for indicator 4b)',
+                        '(3) Total Number of ' + reportParameters.reportCategorySet.categorySetName + ' Students with Disabilities (Ages 3-21) on the Child Count Date',
+                        '(4) Total Number of Students without Disabilities (Ages 3-21) on the Child Count Date (same as (3) for indicator 4b)',
+                        '(5) Total Number of Students with Disabilities (Ages 3-21) with Suspensions or Expulsions Totaling Greater than 10 days in the Targeted School Year (same as (4) for indicator 4b)', 
+                        '(6) Total Number of ' + reportParameters.reportCategorySet.categorySetName + 'Students with Disabilities (Ages 3-21) with Suspensions or Expulsions Totaling Greater than 10 days in the Targeted School Year', 
+                        '(7) Total Number of Students without Disabilities (Ages 3-21) with Suspensions or Expulsions Totaling Greater than 10 Days in the Targeted School Year (same as (5) for indicator 4b)', 
+                        '(8) Rate #2: District-Level Suspension/Expulsion Rate for Children Without Disabilities (same as (7) for indicator 4b, used in B4B examples 5 and 6)', 
+                        '(9) Rate #3: State-Level  Suspension/Expulsion Rate for Children with Disabilities (same as (8) for indicator 4b, used in B4B examples 1a and 4b)', 
+                        '(10) Rate #5: District-Level Suspension/Expulsion Rate for ' +  reportParameters.reportCategorySet.categorySetName + ' Children with Disabilities (used in B4B examples 1a, 1b, 2, 3, 4b, 4b, 5, and 6)', 
+                        '(11) Rate #6: State Mean Suspension/Expulsion Rate for Children with Disabilities, by Race/Ethnicity (used in B4B Examples #1b, 3, and 4b)', 
+                        '(12a) Number of LEA Suspension/Expulsion Rates for Children with Disabilities, by Race/Ethnicity LOWER THAN the Rate for RACIAL ETHNIC in this LEA (used in B4B Example #2)', 
+                        '(12b) Percentage of LEA Suspension/Expulsion Rates for Children with Disabilities, by Race/Ethnicty LOWER THAN this LEA\'s rate (B4B Example #2)', 
+                        '(13) Deviation of LEA Suspension/Expulsion Rate for ' +  reportParameters.reportCategorySet.categorySetName + ' children with disabilities from the State Mean Suspension/Expulsion Rate for Children with Disabilities, by Race/Ethnicity (used in B4B Example 3)', 
+                        '(14b) Squared deviation of LEA Rate for ' +  reportParameters.reportCategorySet.categorySetName + ' from State-Level Suspension/Expulsion Rate for Children with Disabilities, by Race/Ethnicity (used in B4B Example #3)', 
+                        '(14b) Sum of the squared deviations of LEA Rates from the State-Level Suspension/Expulsion Rate for Children with Disabilities, by Race/Ethnicity (used in B4b Example #3)', 
+                        '(14c) Standard Deviation of State Mean Suspension/Expulsion Rate for Children with Disabilities, by Race/Ethnicity (Used in B4B Example 3)', 
+                        '(14d) Number of standard deviations that the LEA\'s Suspension/Expulsion Rate for ' +  reportParameters.reportCategorySet.categorySetName + ' Children with Disabilities is above or below the State Mean Suspension/Expulsion Rate for Children with Disabilities, by Race/Ethnicity (used in B4B Example #3)', 
+                        '(15) Rate Ratio of District-Level Suspension/Expulsion Rate for ' +  reportParameters.reportCategorySet.categorySetName + ' Children with Disabilities to State-level Suspension/Expulsion Rate for All Children with Disabilities (used in B4B Example #4b)', 
+                         '(16) Rate Ratio of District-Level Expulsion Rates for ' +  reportParameters.reportCategorySet.categorySetName + ' Children with Disabilities to State Mean Suspension/Expulsion Rate for Children with Disabilities, by Race/Ethnicity (used B4B Example #4b)', 
+                        '(17) Rate Ratio of District Expulsion Rates for ' +  reportParameters.reportCategorySet.categorySetName + ' Children with Disabilities to  Suspension/Expulsion Rate for All Children without Disabilities in That Same District (used in B4B Example 5)', 
+                        '(18) Difference between Suspension/Expulsion Rates for ' +  reportParameters.reportCategorySet.categorySetName + ' Children with Disabilities AND the Suspension/Expulsion Rate for All Children without Disabilities in the Same District (used in B4B Example #6)',
+                        ]"
+                        bindings="['organizationStateId',
+		                            'col_2',
+		                            'col_3',
+		                            'col_4',
+		                            'col_5',
+		                            'col_6',
+		                            'col_7',
+		                            'col_8',
+		                            'col_9',
+		                            'col_10',
+		                            'col_11',
+		                            'col_12a',
+		                            'col_12b',
+		                            'col_13',
+		                            'col_14b',
+		                            'col_14b',
+		                            'col_14c',
+		                            'col_14d',
+		                            'col_15',
+		                            'col_16',
+		                            'col_17',
+		                            'col_18',
+		                ]"
+                        class="generate-app-indicator4b__grid">
+    </generate-app-table>
+</div>
+
+<div *ngIf="!isLoading && !hasRecords" id="generate-app-grid__norecords">No Records to Display.</div>
+
+
+<div *ngIf="!isLoading && (reportParameters.connectionLink !== null || reportParameters.connectionLink !== '')" class="generate-app-indicator4b__connectionLink">
+    For report methodology, see <a href="{{reportParameters.connectionLink}}" target="_blank">Connection Link</a>.
+</div>
+
+

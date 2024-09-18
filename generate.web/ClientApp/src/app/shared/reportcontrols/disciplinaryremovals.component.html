@@ -1,0 +1,87 @@
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-disciplinaryremovals__error">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+<h3 *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-disciplinaryremovals__title">{{reportDataDto.reportTitle}}</h3>
+<h3 *ngIf="!isLoading && reportDataDto.dataCount < 0" class="generate-app-disciplinaryremovals__title">Not Yet Implemented</h3>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-disciplinaryremovals__subtitle mdl-typography--text-center">
+    {{reportParameters.reportLevel}} Level, {{reportParameters.reportYear}}
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportLevel === 'lea' && reportParameters.reportLea !== null" class="generate-app-disciplinaryremovals__subtitle mdl-typography--text-center">
+    {{reportParameters.reportLea}}
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportLevel === 'sch' && reportParameters.reportSchool !== null" class="generate-app-disciplinaryremovals__subtitle mdl-typography--text-center">
+    {{reportParameters.reportSchool}}
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportType !== 'datapopulation'" class="mdl-typography--text-center generate-app-disciplinaryremovals__categoryset-definition">
+    <span>{{reportParameters.reportCategorySet.categorySetName}}</span><span *ngIf="reportParameters.reportCategorySet.categories.length > 0"> - </span><span *ngFor="let cat of reportParameters.reportCategorySet.categories; let i=index;"><span *ngIf="i > 0">, </span>{{cat}}</span>
+</div>
+
+<!--<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && reportParameters.reportType !== 'datapopulation'" class="mdl-typography--text-center">
+    <span>{{getReportFilter()}}</span>
+</div>-->
+
+<div class="mdl-grid generate-app-disciplinaryremovals__grid-header">
+
+    <div class="mdl-cell mdl-cell--4-col">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0">
+            <label class="generate-app-disciplinaryremovals-controls__sectionlabel" for="generate-app-disciplinaryremovals__filter">Filter</label>
+            <input id="generate-app-disciplinaryremovals__filter" type="text" class="form-control" [(ngModel)]="filter" />
+        </div>
+    </div>
+
+    <div class="mdl-cell mdl-cell--4-col mdl-typography--text-center">
+        <div *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-disciplinaryremovals__total mdl-typography--text-center">
+            {{dataCountCaption()}} {{reportDataDto.dataCount}}
+        </div>
+    </div>
+
+
+    <div class="mdl-cell mdl-cell--4-col mdl-typography--text-right">
+        <div class="generate-app-disciplinaryremovals-controls__export-container">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                Export to Excel
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<div *ngIf="isLoading" class="mdl-typography--text-center">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && (reportParameters.reportType !== 'datapopulation')">
+
+</div>
+
+<div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && hasRecords">
+    <!--No [headers] entries and will test later after having test data-->
+    <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                        [bindings]="['organizationName','category1','col_2','col_4','col_3','col_5','col_1','col_6','col_7','col_8','col_9','col_10','col_10a','col_10b','col_11']"
+                        class="generate-app-disciplinaryremovals__grid">
+    </generate-app-table>
+</div>
+
+<div *ngIf="!isLoading && !hasRecords" id="generate-app-grid__norecords">No Records to Display.</div>
+
+<div *ngIf="!isLoading" class="generate-app-disciplinaryremovals_footer">
+    <b>Note: The definition of developmental delay is state-determined and applies to Children with Disabilities (IDEA) aged three through nine, or a subset of that age range. See 34C.F.R. Part 300.111(b). Report Created: {{getCurrentDate()}}</b>
+</div>
+
+<div *ngIf="!isLoading && reportParameters.connectionLink !== null" class="generate-app-disciplinaryremovals_connectionLink">
+    For report methodology, see <a href="{{reportParameters.connectionLink}}" target="_blank">Connection Link</a>.
+</div>
