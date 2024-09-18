@@ -1,7 +1,8 @@
 CREATE VIEW [Debug].[vwExiting_StagingTables] 
 AS
 	SELECT		DISTINCT 
-				enrollment.StudentIdentifierState
+     			 enrollment.SchoolYear
+				,enrollment.StudentIdentifierState
 				,enrollment.LEAIdentifierSeaAccountability
 				,enrollment.SchoolIdentifierSea
 				,enrollment.FirstName
@@ -9,6 +10,8 @@ AS
 				,enrollment.MiddleName
 				,enrollment.Sex
 				,enrollment.BirthDate
+				,enrollment.HispanicLatinoEthnicity
+
 				,[RDS].[Get_Age] (enrollment.BirthDate, dates.ResponseValue) AS CalculatedAge 
 
 				,ideaDisability.IdeaDisabilityTypeCode
@@ -16,7 +19,6 @@ AS
 				,programparticipation.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
 				,programparticipation.ProgramParticipationEndDate		AS IDEAProgramParticipationEndDate
 				,programparticipation.SpecialEducationExitReason
-				,programparticipation.IDEAEducationalEnvironmentForSchoolAge
 				
 				,el.EnglishLearnerStatus
 				,el.EnglishLearner_StatusStartDate
