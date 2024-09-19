@@ -13,9 +13,9 @@ Welcome to Generate! Developed by the Center for the Integration of IDEA Data (C
 
 All the documentation for the Generate EDFacts Reports Tool is stored in the `docs` folder. You can access it directly from this repository or visit our [GitBook site](https://center-for-the-integration-of-id.gitbook.io/generate-documentation) for an enhanced reading experience. 
 
-- **[User Guide](docs/User_Guide.md):** Detailed information on using the tool's features.
-- **[Developer Guide](docs/Developer_Guide.md):** Detailed information on using the tool's features.
-- **[Release Notes](docs/Release_Notes.md):** How to configure the tool to suit your environment.
+- **[User Guide](docs/user-guide/):** Detailed information on using the tool's features.
+- **[Developer Guide](docs/developer-guide/):** Detailed information on using the tool's features.
+- **[Release Notes](docs/release-notes/):** How to configure the tool to suit your environment.
 
 ## Contact
 
