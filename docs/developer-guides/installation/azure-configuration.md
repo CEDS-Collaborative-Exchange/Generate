@@ -1,6 +1,0 @@
----
-icon: microsoft
----
-
-# Azure Configuration
-

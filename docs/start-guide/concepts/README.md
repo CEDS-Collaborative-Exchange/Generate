@@ -1,6 +1,0 @@
----
-icon: lightbulb-on
----
-
-# Concepts
-

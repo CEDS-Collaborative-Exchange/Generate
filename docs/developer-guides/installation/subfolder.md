@@ -1,6 +1,0 @@
----
-icon: folders
----
-
-# Subfolder
-

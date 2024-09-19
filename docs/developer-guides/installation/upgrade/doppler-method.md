@@ -1,2 +1,0 @@
-# Doppler method
-

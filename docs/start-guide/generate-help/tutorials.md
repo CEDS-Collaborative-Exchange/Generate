@@ -1,6 +1,0 @@
----
-icon: graduation-cap
----
-
-# Tutorials
-

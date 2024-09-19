@@ -1,6 +1,0 @@
----
-icon: docker
----
-
-# Docker
-
