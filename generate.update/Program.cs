@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using Serilog.Extensions.Hosting;
 
 namespace generate.update
 {
@@ -31,7 +33,7 @@ namespace generate.update
             {
                 Log.Information("Starting web host");
 
-                BuildWebHost(args).Run();
+                BuildWebHost(args).Build().Run();
 
             }
             catch (Exception ex)
@@ -51,10 +53,14 @@ namespace generate.update
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
+        public static IHostBuilder BuildWebHost(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
                 .UseSerilog()
-                .Build();
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+        }
     }
 }

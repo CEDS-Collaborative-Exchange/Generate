@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
@@ -134,7 +135,7 @@ namespace generate.infrastructure.Services
             var updatePath = contentRootPath + "\\Updates";
             foreach (var fileWithFullPath in _fileSystem.Directory.GetFiles(updatePath, "*.zip", System.IO.SearchOption.TopDirectoryOnly))
             {
-                var fileName = _fileSystem.FileInfo.FromFileName(fileWithFullPath).Name;
+                var fileName = _fileSystem.Path.GetFileName(fileWithFullPath);
 
                 if (fileName.Contains("_"))
                 {
@@ -191,7 +192,7 @@ namespace generate.infrastructure.Services
             List<UpdatePackageDto> availableUpdates = new List<UpdatePackageDto>();
             foreach (var d in _fileSystem.Directory.GetFiles(updatePath, "*.zip", System.IO.SearchOption.TopDirectoryOnly))
             {
-                var fileName = _fileSystem.FileInfo.FromFileName(d).Name;
+                var fileName = _fileSystem.Path.GetFileName(d);
                 var filePath = _fileSystem.Path.Combine(updatePath, fileName);
                 var UpdatePackageDtoJsonFile = filePath.Replace(".zip", ".json");
 
@@ -255,7 +256,7 @@ namespace generate.infrastructure.Services
             foreach (var d in _fileSystem.Directory.GetFiles(updatePath, "*.zip", System.IO.SearchOption.TopDirectoryOnly))
             {
                 // Delete zip file
-                var fileName = _fileSystem.FileInfo.FromFileName(d).Name;
+                var fileName = _fileSystem.Path.GetFileName(d);
                 var filePath = _fileSystem.Path.Combine(updatePath, fileName);
                 _fileSystem.File.Delete(filePath);
 

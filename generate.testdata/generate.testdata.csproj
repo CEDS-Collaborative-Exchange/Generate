@@ -2,7 +2,7 @@
 
   <PropertyGroup>
       <DebugType>full</DebugType>
-      <TargetFramework>net6.0</TargetFramework>
+      <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.IO.Abstractions" Version="17.2.3" />
+    <PackageReference Include="System.IO.Abstractions" Version="21.0.29" />
   </ItemGroup>
 
   <ItemGroup>

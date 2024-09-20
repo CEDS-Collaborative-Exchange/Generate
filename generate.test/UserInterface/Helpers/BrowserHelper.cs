@@ -18,7 +18,7 @@ namespace generate.test.UserInterface.Helpers
         {
             var chromeOptions = new ChromeOptions();
 
-            chromeOptions.AddAdditionalCapability("useAutomationExtension", false);
+            //chromeOptions.AddAdditionalCapability("useAutomationExtension", false);
 
             chromeOptions.AddArgument("no-sandbox"); //https://stackoverflow.com/a/50725918/1689770
             //chromeOptions.AddArgument("headless");
