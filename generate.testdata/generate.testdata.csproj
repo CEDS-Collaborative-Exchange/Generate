@@ -1,32 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-      <DebugType>full</DebugType>
-      <TargetFramework>net6.0</TargetFramework>
+    <DebugType>full</DebugType>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="StaticData\ncleadirectory.tab" />
     <None Remove="StaticData\ncschdirectory.tab" />
-	  <None Remove="StaticData\ohleadirectory.tab" />
-	  <None Remove="StaticData\ohschdirectory.tab" />
+    <None Remove="StaticData\ohleadirectory.tab" />
+    <None Remove="StaticData\ohschdirectory.tab" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="StaticData\ncleadirectory.tab" />
     <EmbeddedResource Include="StaticData\ncschdirectory.tab" />
-	  <EmbeddedResource Include="StaticData\ohleadirectory.tab" />
-	  <EmbeddedResource Include="StaticData\ohschdirectory.tab" />
+    <EmbeddedResource Include="StaticData\ohleadirectory.tab" />
+    <EmbeddedResource Include="StaticData\ohschdirectory.tab" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="System.IO.Abstractions" Version="17.2.3" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\generate.core\generate.core.csproj" />
     <ProjectReference Include="..\generate.infrastructure\generate.infrastructure.csproj" />
     <ProjectReference Include="..\generate.shared\generate.shared.csproj" />
   </ItemGroup>
-
 </Project>
