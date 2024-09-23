@@ -206,7 +206,7 @@ export class ReportMigationComponent implements OnDestroy {
             this.directoryCheck();
 
             if (this.selectedFactTypeCode !== undefined && this.selectedFactTypeCode !== null && this.selectedFactTypeCode.length > 0) {
-                var selectedFactTypeId = this.factTypes.filter(t => t.factTypeCode === this.selectedFactTypeCode)[0].dimFactTypeId;
+                let selectedFactTypeId = this.factTypes.filter(t => t.factTypeCode === this.selectedFactTypeCode)[0].dimFactTypeId;
                 this.setFactType(selectedFactTypeId);
                 this.cvData = this.selectedReports.filter(t => t.generateReport_FactTypes.map(t => t.factTypeId).includes(selectedFactTypeId));
             } else {

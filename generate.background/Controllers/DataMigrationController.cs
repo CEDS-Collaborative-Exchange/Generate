@@ -14,12 +14,10 @@ namespace generate.background.Controllers
     public class DataMigrationController : Controller
     {
 
-        private readonly ILogger<DataMigrationController> _logger;
         private readonly IMigrationService _migrationService;
 
         public DataMigrationController(ILogger<DataMigrationController> logger, IMigrationService migrationService)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _migrationService = migrationService ?? throw new ArgumentNullException(nameof(migrationService));
         }
 

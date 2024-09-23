@@ -25,7 +25,7 @@ export class DatepickerComponent {
 
     startDate: Date;
     ngOnInit() {
-
+        // Initialize Component
     }
     dateChange(event) {
         this.value = event.value;

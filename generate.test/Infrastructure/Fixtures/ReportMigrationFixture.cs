@@ -83,7 +83,7 @@ namespace generate.test.Infrastructure.Fixtures
 
             var appSettings = Mock.Of<IOptions<AppSettings>>();
 
-            var context = new RDSDbContext(options, logger, appSettings);
+            var context = new RDSDbContext(options, logger);
 
             context.Database.OpenConnection();
 

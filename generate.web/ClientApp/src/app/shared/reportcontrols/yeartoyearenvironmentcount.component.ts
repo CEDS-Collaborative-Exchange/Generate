@@ -9,7 +9,7 @@ import { Categoriess } from '../../models/app/categorySetDto';
 import { forkJoin } from 'rxjs'
 
 
-declare var componentHandler: any;
+declare let componentHandler: any;
 
 @Component({
     selector: 'generate-app-yeartoyearenvironmentcount',
@@ -242,7 +242,7 @@ export class YearToYearEnvironmentCountComponent implements AfterViewInit, OnCha
     }
 
     getItem(index: string, grid: boolean, subgrid: boolean) {
-        var expandedRow;
+        let expandedRow;
         if (grid && !subgrid) {
             expandedRow = index;
 
@@ -444,10 +444,10 @@ export class YearToYearEnvironmentCountComponent implements AfterViewInit, OnCha
     }
 
     formatItem(args) {
-        var a = args.row;
-        var b = args.col;
-        var cellVal = args.xlsxCell;
-        var group =  args.panel.rows[a].dataItem;
+        let a = args.row;
+        let b = args.col;
+        let cellVal = args.xlsxCell;
+        let group =  args.panel.rows[a].dataItem;
         if (group && group.level == 0) {
             if (b === 3) {
                 cellVal.value = 'All Environments';
@@ -559,10 +559,10 @@ export class YearToYearEnvironmentCountComponent implements AfterViewInit, OnCha
 
     calculatePercentageDifference(s, e) {
         if (e.panel == s.cells) {
-            var row = s.rows[e.row];
-            var col = s.columns[e.col];
-            var tot = 0;
-            var group = null;
+            let row = s.rows[e.row];
+            let col = s.columns[e.col];
+            let tot = 0;
+            let group = null;
             if (group && group.level == 0 && col.binding == 'category1') {
                 e.cell.textContent = col.format !== undefined? col.format : 'All Environments';
             }
@@ -574,12 +574,12 @@ export class YearToYearEnvironmentCountComponent implements AfterViewInit, OnCha
                 e.cell.textContent =  col.format;
             }
             if (group && col.binding == 'col_4') {
-                var tot2 = 0;
-                for (var i = 0; i < group.items.length; i++) {
+                let tot2 = 0;
+                for (let i = 0; i < group.items.length; i++) {
                     tot2 += group.items[i].col_1;
                 }
-                var tot3 = 0;
-                for (var i = 0; i < group.items.length; i++) {
+                let tot3 = 0;
+                for (let i = 0; i < group.items.length; i++) {
                     tot3 += group.items[i].col_2;
                 }
 

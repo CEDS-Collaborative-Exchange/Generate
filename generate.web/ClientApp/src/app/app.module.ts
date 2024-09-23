@@ -42,7 +42,7 @@ export function initializeApp(appConfig: AppConfig) {
 
 export function MSALInstanceFactory(): IPublicClientApplication {
 
-    var clientApp = null;
+    let clientApp = null;
 
     this.appConfig.getConfig().subscribe((res: IAppConfig) => {
 

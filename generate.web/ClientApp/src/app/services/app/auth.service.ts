@@ -67,7 +67,7 @@ export class AuthService {
             });
 
             if (loginResponse && loginResponse.account.idTokenClaims !== null) {
-                var data = {
+                let data = {
                     userName: loginResponse.account.idTokenClaims.preferred_username,
                     givenName: loginResponse.account.idTokenClaims.given_name,
                     lastName: loginResponse.account.idTokenClaims.family_name,

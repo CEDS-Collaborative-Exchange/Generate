@@ -11,9 +11,9 @@ import { forkJoin } from 'rxjs'
 import { Filter } from '../../models/app/categorySetDto'
 import { CatToDisplay } from '../../models/app/categorySetDto';
 
-declare var componentHandler: any;
-declare var saveAs: any;
-declare var alphanum: any;
+declare let componentHandler: any;
+declare let saveAs: any;
+declare let alphanum: any;
 
 @Component({
     selector: 'generate-app-leastudentsprofile',
