@@ -1,3 +1,15 @@
+USE [generate]
+GO
+/****** Object:  UserDefinedFunction [RDS].[Get_CountSQL]    Script Date: 9/23/2024 11:50:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
 CREATE FUNCTION [RDS].[Get_CountSQL] (
 	@reportCode as nvarchar(150),
 	@reportLevel as nvarchar(10),
@@ -214,6 +226,13 @@ BEGIN
 	declare @toggleDevDelayAges as varchar(1000)
 	declare @toggleDevDelay3to5 as varchar(1000)
 	declare @toggleDevDelay6to9 as varchar(1000)
+	declare @groupHS as BIT = 0
+
+	select @groupHS=CASE WHEN ResponseValue = 'true' THEN 1 ELSE 0 END
+	from app.ToggleResponses r
+	inner join app.ToggleQuestions q 
+	on r.ToggleQuestionId = q.ToggleQuestionId 
+	where q.EmapsQuestionAbbrv = 'GRADEHS'
 
 	select @toggleDevDelayAges = COALESCE(@toggleDevDelayAges + ', ''', '''') + replace(ResponseValue, ' Years', '') + ''''
 	from app.ToggleResponses r
@@ -1141,7 +1160,7 @@ BEGIN
 
 	OPEN categoryset_cursor
 	FETCH NEXT FROM categoryset_cursor INTO @categorySetId, @reportField, @dimensionField, @categoryCode, @dimensionTable
-
+	declare @ai int = 0;
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		-- set @cohortYear = '', @cohortYearTotal = ''
@@ -2116,17 +2135,25 @@ BEGIN
 			begin
 				-- Default
 				set @sqlCategoryReturnField = 'CAT_' + @reportField + '.' + @dimensionField
+				--IF @categoryCode = 'GRADELVLHS' AND @dimensionField = 'GradeLevelEdFactsCode' AND @groupHS=1 AND @factTypeCode = 'assessment' AND @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189') AND @reportField = 'GRADELEVEL' 
+				--BEGIN
+				--	set @sqlCategoryReturnField = 'CASE WHEN CAT_' + @reportField + '.' + @dimensionField +' IN (''09'',''10'',''11'',''12'') THEN ''HS'' ELSE CAT_'+ @reportField + '.' + @dimensionField +' END' 
+				--END
+				--ELSE
+				--BEGIN 
+				--	set @sqlCategoryReturnField = 'CAT_' + @reportField + '.' + @dimensionField
+				--END
 			end
 
 			-- Add return value for this category to the list of fields
 			IF(@reportCode = 'c006')
 			begin
-				set @sqlCategoryQualifiedSubSelectDimensionFields = @sqlCategoryQualifiedSubSelectDimensionFields + ', ' + REPLACE(@sqlCategoryReturnField,'CAT_' + @reportField,'fact')
+				set @sqlCategoryQualifiedSubSelectDimensionFields = @sqlCategoryQualifiedSubSelectDimensionFields + ', ' + REPLACE(@sqlCategoryReturnField,'CAT_' + @reportField,'fact') 
 			end
 			IF @reportCode in ('yeartoyearenvironmentcount')
 			begin
 				if @reportField <> 'AGE'
-					set @sqlCategoryQualifiedDimensionFields = @sqlCategoryQualifiedDimensionFields + ', ' + @sqlCategoryReturnField
+					set @sqlCategoryQualifiedDimensionFields = @sqlCategoryQualifiedDimensionFields + ', ' + @sqlCategoryReturnField 
 			end
 			else if @reportcode in ('studentssummary') and (@categorySetCode in ('earlychildhood','genderwithearlychildhood','disabilitywithearlychildhood','raceethnicwithearlychildhood',
 																			'lepstatuswithearlychildhood','earlychildhoodwithdisability','earlychildhoodwithraceethnic','earlychildhoodwithgender',
@@ -2134,11 +2161,26 @@ BEGIN
 															'disabilitywithschoolage','schoolagewithraceethnic','raceethnicwithschoolage','schoolagewithlepstatus','lepstatuswithschoolage'))
 			begin
 				if(@reportField <> 'AGE')
-					set @sqlCategoryQualifiedDimensionFields = @sqlCategoryQualifiedDimensionFields + ', ' + @sqlCategoryReturnField	
+					set @sqlCategoryQualifiedDimensionFields = @sqlCategoryQualifiedDimensionFields + ', ' + @sqlCategoryReturnField 
 			end
 			else
 			begin
-				set @sqlCategoryQualifiedDimensionFields = @sqlCategoryQualifiedDimensionFields + ', ' + @sqlCategoryReturnField		
+				IF  @categoryCode = 'GRADELVLHS' AND @dimensionField = 'GradeLevelEdFactsCode' AND @groupHS=1 AND @factTypeCode = 'assessment' AND @reportCode in ('c175', 'c178', 'c185', 'c188') AND @reportField = 'GRADELEVEL' 
+				BEGIN
+					--set @sqlCategoryReturnField = 'CASE WHEN CAT_' + @reportField + '.' + @dimensionField +' IN (''09'',''10'',''11'',''12'') THEN ''HS'' ELSE CAT_'+ @reportField + '.' + @dimensionField +' END' 
+					set @sqlCategoryQualifiedDimensionFields = @sqlCategoryQualifiedDimensionFields + ', ' + 'CASE WHEN CAT_' + @reportField + '.' + @dimensionField +' IN (''09'',''10'',''11'',''12'') THEN ''HS'' ELSE CAT_'+ @reportField + '.' + @dimensionField +' END' 
+				END
+				ELSE IF  @categoryCode = 'GRADELVLHSSCI' AND @dimensionField = 'GradeLevelEdFactsCode' AND @groupHS=1 AND @factTypeCode = 'assessment' AND @reportCode in ('c179', 'c189') AND @reportField = 'GRADELEVEL' 
+				BEGIN
+					--set @sqlCategoryReturnField = 'CASE WHEN CAT_' + @reportField + '.' + @dimensionField +' IN (''09'',''10'',''11'',''12'') THEN ''HS'' ELSE CAT_'+ @reportField + '.' + @dimensionField +' END' 
+					set @sqlCategoryQualifiedDimensionFields = @sqlCategoryQualifiedDimensionFields + ', ' + 'CASE WHEN CAT_' + @reportField + '.' + @dimensionField +' IN (''10'',''11'',''12'') THEN ''HS'' ELSE CAT_'+ @reportField + '.' + @dimensionField +' END' 
+				END
+				ELSE
+				BEGIN 
+					--set @sqlCategoryReturnField = 'CAT_' + @reportField + '.' + @dimensionField
+					set @sqlCategoryQualifiedDimensionFields = @sqlCategoryQualifiedDimensionFields + ', ' + @sqlCategoryReturnField
+				END
+				--set @sqlCategoryQualifiedDimensionFields = @sqlCategoryQualifiedDimensionFields + ', ' + @sqlCategoryReturnField + EE4
 			end
 			if(@reportCode = 'c006' AND @dimensionField <> 'RemovalLengthEdFactsCode')
 			begin
@@ -2169,7 +2211,7 @@ BEGIN
 				IF @reportCode in ('yeartoyearenvironmentcount')
 				begin
 					if @reportField <> 'AGE'
-						set @sqlCategoryQualifiedDimensionGroupFields = @sqlCategoryQualifiedDimensionGroupFields + ', ' + @sqlCategoryReturnField
+						set @sqlCategoryQualifiedDimensionGroupFields = @sqlCategoryQualifiedDimensionGroupFields + ', ' + @sqlCategoryReturnField 
 				end
 				else if @reportcode in ('studentssummary') and (@categorySetCode in ('earlychildhood','genderwithearlychildhood','disabilitywithearlychildhood','raceethnicwithearlychildhood',
 																					'lepstatuswithearlychildhood','earlychildhoodwithdisability','earlychildhoodwithraceethnic','earlychildhoodwithgender',
@@ -2177,7 +2219,7 @@ BEGIN
 																					'disabilitywithschoolage','schoolagewithraceethnic','raceethnicwithschoolage','schoolagewithlepstatus','lepstatuswithschoolage'))
 				begin
 					if @reportField <> 'AGE'
-						set @sqlCategoryQualifiedDimensionGroupFields = @sqlCategoryQualifiedDimensionGroupFields + ', ' + @sqlCategoryReturnField
+						set @sqlCategoryQualifiedDimensionGroupFields = @sqlCategoryQualifiedDimensionGroupFields + ', ' + @sqlCategoryReturnField 
 				end
 				else
 				begin
@@ -2207,14 +2249,14 @@ BEGIN
 				inner join rds.BridgeK12StudentAssessmentRaces b on fact.FactK12StudentAssessmentId = b.FactK12StudentAssessmentId
 				inner join rds.DimRaces CAT_' + @reportField + ' on b.RaceId = CAT_' + @reportField + '.DimRaceId 
 				inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
-					on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code'
+					on ' + @sqlCategoryReturnField  + ' = CAT_' + @reportField + '_temp.Code'
 			end
 			else if @reportField = 'RACE'
 			begin
 				set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimRaces CAT_' + @reportField + ' on fact.RaceId = CAT_' + @reportField + '.DimRaceId 
 				inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
-					on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code'
+					on ' + @sqlCategoryReturnField  + ' = CAT_' + @reportField + '_temp.Code'
 			end
 			else if (@reportField = 'PROFICIENCYSTATUS' and @reportCode in ('yeartoyearprogress','c175','c178','c179'))
 			BEGIN
@@ -2226,7 +2268,7 @@ BEGIN
 						inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grades.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
 															AND tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeAdministeredCode			
 						inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
-						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
+						on ' + @sqlCategoryReturnField  + ' = CAT_' + @reportField + '_temp.Code
 						'
 			END	
 			else if (@reportField = 'ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR' and @reportCode in ('c185','c188','c189'))
@@ -2269,7 +2311,7 @@ BEGIN
 					inner join RDS.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId 
 					inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grdlevel.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode				
 					inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
-					on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
+					on ' + @sqlCategoryReturnField  + ' = CAT_' + @reportField + '_temp.Code
 					inner join rds.DimCteStatuses cteStatus on fact.CteStatusId = cteStatus.DimCteStatusId			
 							and cteStatus.CteProgramCode =''CTECONC'''
 			END				
@@ -2281,7 +2323,7 @@ BEGIN
 					inner join RDS.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId 
 					inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grdlevel.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
 					inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
-						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
+						on ' + @sqlCategoryReturnField  + ' = CAT_' + @reportField + '_temp.Code
 					inner join rds.DimCteStatuses cteStatus on fact.CteStatusId = cteStatus.DimCteStatusId			
 							and cteStatus.CteProgramCode =''CTECONC'''
 			END	
@@ -2299,7 +2341,7 @@ BEGIN
 					set @sqlCountJoins = @sqlCountJoins + '
 					inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.SchoolYearId = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '
 					inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
-						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code'
+						on ' + @sqlCategoryReturnField  + ' = CAT_' + @reportField + '_temp.Code'
 				end
 				else
 				begin
@@ -2309,21 +2351,21 @@ BEGIN
 					set @sqlCountJoins = @sqlCountJoins + '
 						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '
 						inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
-							on ' + LEFT(@sqlCategoryReturnField ,(len(@sqlCategoryReturnField)- 11)) + 'EdfactsCode = CAT_' + @reportField + '_temp.Code'
+							on ' + LEFT(@sqlCategoryReturnField ,(len(@sqlCategoryReturnField)- 11))  + 'EdfactsCode = CAT_' + @reportField + '_temp.Code'
 				end
 				else if(@reportCode in ('yeartoyearremovalcount') and @categorySetCode in ('removaltype','removaltypewithgender','removaltypewithdisabilitytype','removaltypewithlepstatus','removaltypewithraceethnic','removaltypewithage') and @reportField IN ('SEX','IdeaDisabilityType','RACE','LEPSTATUS','AGE'))
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
 						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '
 						inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
-							on ' + LEFT(@sqlCategoryReturnField ,(len(@sqlCategoryReturnField)- 11)) + 'EdfactsCode = CAT_' + @reportField + '_temp.Code'
+							on ' + LEFT(@sqlCategoryReturnField  ,(len(@sqlCategoryReturnField)- 11)) + 'EdfactsCode = CAT_' + @reportField + '_temp.Code'
 				end
 				else
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
 						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '
 						inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
-							on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code'
+							on ' + @sqlCategoryReturnField  + ' = CAT_' + @reportField + '_temp.Code'
 				end
 			end
 		END		
@@ -2334,7 +2376,7 @@ BEGIN
 				set @sqlCountJoins = @sqlCountJoins + '
 				inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '
 				inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
-					on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code'
+					on ' + @sqlCategoryReturnField  + ' = CAT_' + @reportField + '_temp.Code'
 			end
 		end
 	end		-- END if @sqlType = 'actual'
