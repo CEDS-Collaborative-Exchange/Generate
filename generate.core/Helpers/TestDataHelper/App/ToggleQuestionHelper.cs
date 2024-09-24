@@ -350,7 +350,7 @@ namespace generate.core.Helpers.TestDataHelper.App
             data.Add(new ToggleQuestion()
             {
                 ToggleQuestionId = 55,
-                QuestionText = "What is the end date of enrollment in the IHE in the current academic	year?",
+                QuestionText = "What is the end date of enrollment in the IHE in the current academic year?",
                 EmapsQuestionAbbrv = "IHETIMEPRDENDDTE"
             });
 

@@ -14,8 +14,8 @@ import { forkJoin } from 'rxjs';
 
 
 
-declare var componentHandler: any;
-declare var alphanum: any;
+declare let componentHandler: any;
+declare let alphanum: any;
 
 @Component({
     selector: 'generate-app-studentmultiplefederalprogramsparticipation',

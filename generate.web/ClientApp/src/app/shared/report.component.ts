@@ -25,7 +25,7 @@ import { GenerateReportFilterOptionDto } from '../models/app/generateReportFilte
 import { FlextableComponent } from './components/flextable/flextable.component';
 
 
-declare var componentHandler: any;
+declare let componentHandler: any;
 
 @Component({
     selector: 'generate-app-report',

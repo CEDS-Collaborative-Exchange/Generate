@@ -12,9 +12,9 @@ import { CategorySetDto } from '../../models/app/categorySetDto';
 
 import { FlextableComponent } from '../components/flextable/flextable.component';
 
-declare var componentHandler: any;
-declare var saveAs: any;
-declare var alphanum: any;
+declare let componentHandler: any;
+declare let saveAs: any;
+declare let alphanum: any;
 
 @Component({
     selector: 'generate-app-c029',
@@ -419,7 +419,7 @@ export class c029Component implements AfterViewInit, OnChanges, OnInit {
         let totalCaption = this.dataCountCaption() + " " + this.reportDataDto.dataCount;
 
         let reportCaptionCol = 2;
-        var reportCols = [];
+        let reportCols = [];
         if (this.reportParameters.reportLevel === 'sea') {
             reportCols.push({ wpx: 250 });
             reportCols.push({ wpx: 100 });
@@ -466,7 +466,7 @@ export class c029Component implements AfterViewInit, OnChanges, OnInit {
             reportCols.push({ wpx: 200 });
         }
 
-        var reportRows = [
+        let reportRows = [
             { hpx: 25 }, // row 1 sets to the height of 12 in points
             { hpx: 23 }, // row 2 sets to the height of 16 in pixels
             { hpx: 20 }, // row 2 sets to the height of 16 in pixels
@@ -577,7 +577,7 @@ export class c029Component implements AfterViewInit, OnChanges, OnInit {
 
         //this._http.get(url)
         //    .subscribe(res => {
-        //        //   var blob = new Blob([res._body], { type: 'text/csv' });
+        //        //   let blob = new Blob([res._body], { type: 'text/csv' });
         //        console.log('Returned blob');
         //        let blob = new Blob([res._body], { type: 'text/csv' });
         //        let filename = 'test.csv';

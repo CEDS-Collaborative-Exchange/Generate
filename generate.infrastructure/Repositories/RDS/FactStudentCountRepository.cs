@@ -19,20 +19,14 @@ namespace generate.infrastructure.Repositories.RDS
     {
         private readonly ILogger _logger;
         private readonly RDSDbContext _rdsDbContext;
-        private readonly IDSDbContext _odsDbContext;
-        private readonly IDimensionRepository _dimensionRepository;
 
         public FactStudentCountRepository(
             ILogger<FactStudentCountRepository> logger,
-            IDSDbContext odsDbContext,
-            RDSDbContext rdsDbContext,
-            IDimensionRepository dimensionRepository
+            RDSDbContext rdsDbContext
             )
         {
             _logger = logger;
-            _odsDbContext = odsDbContext;
             _rdsDbContext = rdsDbContext;
-            _dimensionRepository = dimensionRepository;
         }
 
         public void Migrate_StudentCounts(string factTypeCode)

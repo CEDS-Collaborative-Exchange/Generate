@@ -19,24 +19,13 @@ namespace generate.infrastructure.Services
 {
     public class DataMigrationService : IDataMigrationService
     {
-        private IOptions<AppSettings> _appSettings;
-
         private readonly IAppRepository _appRepository;
 
-        private IDataMigrationHistoryService _dataMigrationHistoryService;
-        private IRDSDataMigrationService _rdsDataMigrationService;
-
         public DataMigrationService(
-            IOptions<AppSettings> appSettings,
-            IAppRepository appRepository,
-            IDataMigrationHistoryService dataMigrationHistoryService,
-            IRDSDataMigrationService rdsDataMigrationService
+            IAppRepository appRepository
             )
         {
-            _appSettings = appSettings;
             _appRepository = appRepository;
-            _dataMigrationHistoryService = dataMigrationHistoryService;
-            _rdsDataMigrationService = rdsDataMigrationService;
         }
                
         public CurrentMigrationStatus CurrentMigrationStatus()

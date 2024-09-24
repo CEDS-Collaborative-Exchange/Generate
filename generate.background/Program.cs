@@ -33,13 +33,17 @@ using generate.infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using generate.background.Filters;
 using Microsoft.Extensions.Hosting;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder();
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
+    .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
+
+
 
 builder.Logging.AddSerilog(new LoggerConfiguration()
     .MinimumLevel.Information()
