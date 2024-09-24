@@ -89,20 +89,20 @@ export class UpdateComponent implements AfterViewInit {
         ).subscribe(data => {
 
             this.updateStatus = data[0];
-            var pending = data[1];
-            var downloaded = data[2];
+            let pending = data[1];
+            let downloaded = data[2];
             
             this.pendingUpdates = [];
 
             // There is probably a more elegant way to do this in JS
 
             if (pending != null) {
-                for (var i = 0; i < pending.length; i++) {
-                    var pendingUpdate = pending[i];
+                for (let i = 0; i < pending.length; i++) {
+                    let pendingUpdate = pending[i];
 
-                    var foundUpdate = false;
-                    for (var j = 0; j < downloaded.length; j++) {
-                        var downloadedUpdate = downloaded[j];
+                    let foundUpdate = false;
+                    for (let j = 0; j < downloaded.length; j++) {
+                        let downloadedUpdate = downloaded[j];
                         if (downloadedUpdate.fileName == pendingUpdate.fileName) {
                             foundUpdate = true;
                         }
@@ -135,7 +135,7 @@ export class UpdateComponent implements AfterViewInit {
         ).subscribe(data => {
 
             this.updateStatus = data[0];
-            var downloaded = data[1];
+            let downloaded = data[1];
 
             this.downloadedUpdates = downloaded;
 
@@ -205,7 +205,7 @@ export class UpdateComponent implements AfterViewInit {
         if (d == undefined || d == '' || d == null) {
             return '';
         }
-        var returnDate = moment(d).format('MMMM DD, YYYY')
+        let returnDate = moment(d).format('MMMM DD, YYYY')
         return returnDate;
     }
 

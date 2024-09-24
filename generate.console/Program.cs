@@ -20,6 +20,7 @@ using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Hangfire;
+using System.Reflection;
 
 
 namespace generate.console
@@ -27,7 +28,7 @@ namespace generate.console
     public class Program
     {
         private static IServiceProvider serviceProvider;
-        public static IConfigurationRoot Configuration;
+        private static IConfigurationRoot Configuration;
 
         public Program()
         {
@@ -63,6 +64,7 @@ namespace generate.console
 
             var builder = new ConfigurationBuilder()
                 .AddCommandLine(args)
+                .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
                 .AddEnvironmentVariables();
 
             var config = builder.Build();

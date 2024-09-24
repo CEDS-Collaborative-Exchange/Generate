@@ -182,7 +182,6 @@ namespace generate.testdata
                 // Establish ods contexts
 
                 var stagingConnectionString = _dataSettings.Value.StagingDbContextConnection;
-                var stagingContextLogger = _loggerFactory.CreateLogger<StagingDbContext>();
 
                 DbContextOptions<StagingDbContext> stagingDbOptions = new DbContextOptionsBuilder<StagingDbContext>()
                     .UseSqlServer(stagingConnectionString)
@@ -190,7 +189,7 @@ namespace generate.testdata
 
                 for (int i = 0; i < numberOfParallelTasks; i++)
                 {
-                    stagingContexts[i] = new StagingDbContext(stagingDbOptions, stagingContextLogger, _appSettings);
+                    stagingContexts[i] = new StagingDbContext(stagingDbOptions);
                 }
 
 

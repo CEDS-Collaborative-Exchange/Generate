@@ -49,7 +49,7 @@ namespace generate.test.Infrastructure.Repositories
 
             var appSettings = Mock.Of<IOptions<AppSettings>>();
 
-            var context = new RDSDbContext(options, logger, appSettings);
+            var context = new RDSDbContext(options, logger);
 
             return context;
         }

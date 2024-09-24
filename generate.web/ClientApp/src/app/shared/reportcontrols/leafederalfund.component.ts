@@ -12,9 +12,9 @@ import { CategorySetDto } from '../../models/app/categorySetDto';
 import { Observable } from 'rxjs';
 import { forkJoin } from 'rxjs'
 
-declare var componentHandler: any;
-declare var saveAs: any;
-declare var alphanum: any;
+declare let componentHandler: any;
+declare let saveAs: any;
+declare let alphanum: any;
 
 @Component({
     selector: 'generate-app-leafederalfund',
@@ -420,7 +420,7 @@ export class LeaFederalFundComponent implements AfterViewInit, OnChanges, OnInit
 
         //this._http.get(url)
         //    .subscribe(res => {
-        //        //   var blob = new Blob([res._body], { type: 'text/csv' });
+        //        //   let blob = new Blob([res._body], { type: 'text/csv' });
         //        console.log('Returned blob');
         //        let blob = new Blob([res._body], { type: 'text/csv' });
         //        let filename = 'test.csv';

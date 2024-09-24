@@ -13,8 +13,8 @@ import { Observable } from 'rxjs';
 import { forkJoin } from 'rxjs';
 
 
-declare var componentHandler: any;
-declare var alphanum: any;
+declare let componentHandler: any;
+declare let alphanum: any;
 
 @Component({
     selector: 'generate-app-yeartoyearattendance',
@@ -512,10 +512,10 @@ export class YeartoYearAttendanceComponent implements AfterViewInit, OnChanges, 
         let currentCss: boolean = true;
         let previousCss: boolean = false;
 
-        for (var i = 0; i < grid.rows.length; i++) {
+        for (let i = 0; i < grid.rows.length; i++) {
 
-            var row = grid.rows[i];
-            var item = row.dataItem;
+            let row = grid.rows[i];
+            let item = row.dataItem;
             currentCategory = item.category2;
                       
             //logic to set cssClass of app-alt to odd rows by subject (category2)
