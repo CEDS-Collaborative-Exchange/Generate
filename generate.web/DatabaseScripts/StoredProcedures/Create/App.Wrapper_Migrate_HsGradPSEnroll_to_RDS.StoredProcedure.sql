@@ -64,7 +64,7 @@ BEGIN
 					ON b.DataMigrationTypeId=dd.DataMigrationTypeId 
 			WHERE d.DimSchoolYearId <> -1 
 			AND dd.IsSelected = 1 
-			AND DataMigrationTypeCode = 'RDS'
+			AND DataMigrationTypeCode = 'report'
 
 			OPEN selectedYears_cursor
 			FETCH NEXT FROM selectedYears_cursor INTO @submissionYear

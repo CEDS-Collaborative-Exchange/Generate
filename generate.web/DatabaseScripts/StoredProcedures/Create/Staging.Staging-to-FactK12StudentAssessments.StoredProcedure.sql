@@ -466,7 +466,7 @@ BEGIN
 
 		FROM Staging.K12Enrollment ske
 			JOIN RDS.DimSchoolYears rsy
-				ON ske.SchoolYear = rsy.SchoolYear
+				ON ske.SchoolYear = rsy.SchoolYear AND rsy.SchoolYear = @SchoolYear
 		--demographics			
 			JOIN RDS.vwDimK12Demographics rdkd
  				ON rsy.SchoolYear = rdkd.SchoolYear
