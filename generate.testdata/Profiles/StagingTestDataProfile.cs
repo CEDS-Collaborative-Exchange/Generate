@@ -97,6 +97,7 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<string>> RefMepProjectTypeDistribution { get; set; }
         public List<DataDistribution<string>> LeaRefOperationalStatusDistribution { get; set; }
         public List<DataDistribution<string>> RefCharterLeaStatusDistribution { get; set; }
+        public List<DataDistribution<bool>> IsMcKinneyVentoDistribution { get; set; }
 
 
         #endregion
@@ -614,6 +615,10 @@ namespace generate.testdata.Profiles
             this.RefCharterLeaStatusDistribution.Add(new DataDistribution<string>() { Option = "CHRTIDEAESEA", ExpectedDistribution = 80 });
             this.RefCharterLeaStatusDistribution.Add(new DataDistribution<string>() { Option = "NA", ExpectedDistribution = 90 });
             this.RefCharterLeaStatusDistribution.Add(new DataDistribution<string>() { Option = "NOTCHR", ExpectedDistribution = 100 });
+
+            this.IsMcKinneyVentoDistribution = new List<DataDistribution<bool>>();
+            this.IsMcKinneyVentoDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 60 });
+            this.IsMcKinneyVentoDistribution.Add(new DataDistribution<bool>() { Option = true, ExpectedDistribution = 100 });
 
             #endregion
 
