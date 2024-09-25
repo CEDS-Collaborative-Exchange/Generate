@@ -14,9 +14,9 @@ import { RefState } from '../../models/ods/refState';
 
 import { FlextableComponent } from '../components/flextable/flextable.component';
 
-declare var componentHandler: any;
-declare var saveAs: any;
-declare var alphanum: any;
+declare let componentHandler: any;
+declare let saveAs: any;
+declare let alphanum: any;
 
 @Component({
     selector: 'generate-app-earlycharter',
@@ -273,7 +273,7 @@ export class EarlyCharterComponent implements AfterViewInit, OnChanges, OnInit {
         let totalCaption = this.dataCountCaption() + " " + this.reportDataDto.dataCount;
 
         let reportCaptionCol = 2;
-        var reportCols = [];
+        let reportCols = [];
         if (this.reportParameters.reportLevel === 'sch') {
             reportCols.push({ wpx: 100 });
             reportCols.push({ wpx: 150 });
@@ -284,7 +284,7 @@ export class EarlyCharterComponent implements AfterViewInit, OnChanges, OnInit {
             reportCols.push({ wpx: 250 });
         }
 
-        var reportRows = [
+        let reportRows = [
             { hpx: 25 }, // row 1 sets to the height of 12 in points
             { hpx: 23 }, // row 2 sets to the height of 16 in pixels
             { hpx: 20 }, // row 2 sets to the height of 16 in pixels

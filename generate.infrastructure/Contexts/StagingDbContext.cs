@@ -11,14 +11,8 @@ namespace generate.infrastructure.Contexts
 {
     public partial class StagingDbContext : DbContext
     {
-        private readonly ILogger _logger;
-        private readonly IOptions<AppSettings> _appSettings;
-
-        public StagingDbContext(DbContextOptions<StagingDbContext> options, ILogger<StagingDbContext> logger, IOptions<AppSettings> appSettings) : base(options)
+        public StagingDbContext(DbContextOptions<StagingDbContext> options) : base(options)
         {
-            _logger = logger;
-            _appSettings = appSettings;
-
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -13,9 +13,9 @@ import { Observable } from 'rxjs';
 import { RefState } from '../../models/ods/refState';
 
 
-declare var componentHandler: any;
-declare var saveAs: any;
-declare var alphanum: any;
+declare let componentHandler: any;
+declare let saveAs: any;
+declare let alphanum: any;
 
 @Component({
     selector: 'generate-app-c199',
@@ -423,7 +423,7 @@ export class C199Component implements AfterViewInit, OnChanges, OnInit {
 
         //this._http.get(url)
         //    .subscribe(res => {
-        //        //   var blob = new Blob([res._body], { type: 'text/csv' });
+        //        //   let blob = new Blob([res._body], { type: 'text/csv' });
         //        console.log('Returned blob');
         //        let blob = new Blob([res._body], { type: 'text/csv' });
         //        let filename = 'test.csv';

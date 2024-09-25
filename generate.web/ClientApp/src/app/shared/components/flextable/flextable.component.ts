@@ -47,7 +47,7 @@ export class FlextableComponent {
     reportCaptionCol: number
     constructor(private _liveAnnouncer: LiveAnnouncer) { }
     ngOnInit() {
-
+        // Initialize Component
     }
     ngAfterViewInit() {
         if (this.dataSource !== null && this.dataSource !== undefined) {
@@ -82,7 +82,7 @@ export class FlextableComponent {
         }
 
         this.displayedColumns = this.bindings
-        var selectItem = this.displayedColumns.find(f => f.toLowerCase() == 'select');
+        let selectItem = this.displayedColumns.find(f => f.toLowerCase() == 'select');
         if (selectItem !== undefined) {
             reportData.forEach(f => {
                 f.checked = false;
@@ -93,13 +93,13 @@ export class FlextableComponent {
         this.dataSource.sort = this.sort;
 
         this.displayedHeaders = [];
-        for (var i = 0; i < this.headers.length; i++) {
+        for (let i = 0; i < this.headers.length; i++) {
             this.displayedHeaders[this.bindings[i]] = this.headers[i];
         }
     }
 
     itemSelected(event) {
-        var idx = this.selectedIds.findIndex(f => f == event.source.id);
+        let idx = this.selectedIds.findIndex(f => f == event.source.id);
         if (event.checked) {
             if (idx === -1)
                 this.selectedIds.push(event.source.id);
@@ -117,7 +117,7 @@ export class FlextableComponent {
             const table = document.getElementsByClassName('mat-mdc-table');
             const wb = XLSX.utils.table_to_book(table[0], { sheet: 'Generate Report' });
             const ws = wb.Sheets['Generate Report'];
-            var wscols = [
+            let wscols = [
                 { wpx: 250 },
                 { wpx: 250 },
                 { wpx: 400 },
@@ -137,7 +137,7 @@ export class FlextableComponent {
             else {
                 reportData = this.itemsSource;
             }
-            var wsrows = [
+            let wsrows = [
                 { hpx: 25 }, // row 1 sets to the height of pixels
                 { hpx: 23 }, 
                 { hpx: 20 }, 
@@ -158,7 +158,7 @@ export class FlextableComponent {
             if (ws["!merges"] === undefined)
                 ws["!merges"] = [];
 
-            var new_headers = [];
+            let new_headers = [];
             new_headers.push('');
             new_headers.push(this.reportTitle);
 
@@ -193,14 +193,14 @@ export class FlextableComponent {
 
             let dataRowHeight = this.reportRows[5] !== undefined ? this.reportRows[5] : { hpx: 25 };
 
-            var colTotal = this.reportCols.length;
+            let colTotal = this.reportCols.length;
             let headerRowTotal = 4;
-            var rowTotal = reportData.length + headerRowTotal;
-            for (var i = 4; i <= rowTotal; i++) {
+            let rowTotal = reportData.length + headerRowTotal;
+            for (let i = 4; i <= rowTotal; i++) {
                 ws['!rows'].push(dataRowHeight);
-                for (var j = 0; j <= colTotal; j++) {
+                for (let j = 0; j <= colTotal; j++) {
                     let cellRef = this.columnToLetter(j + 1) + (i + 1).toString();
-                    var cell = ws[cellRef];
+                    let cell = ws[cellRef];
 
                     if (cell !== undefined) {
                         if (i == 4) {
@@ -257,7 +257,7 @@ export class FlextableComponent {
 
     }
     columnToLetter(column) {
-        var temp, letter = '';
+        let temp, letter = '';
         while (column > 0) {
             temp = (column - 1) % 26;
             letter = String.fromCharCode(temp + 65) + letter;

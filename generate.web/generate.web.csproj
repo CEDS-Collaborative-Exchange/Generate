@@ -1,53 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <Description>generate web project</Description>
     <Authors>AEM Corporation</Authors>
-      <PackageId>generate.web</PackageId>
-      <AssemblyName>generate.web</AssemblyName>
-    <RuntimeIdentifiers>win7-x64;win8-x64;win10-x64;debian.8-x64</RuntimeIdentifiers>
-      <DebugType>full</DebugType>
-      <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-	<AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
-	<PreserveCompilationContext>true</PreserveCompilationContext>
+    <PackageId>generate.web</PackageId>
+    <AssemblyName>generate.web</AssemblyName>
+    <RuntimeIdentifiers>win-x64;win-x86;</RuntimeIdentifiers>
+    <DebugType>full</DebugType>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
-	<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
-	<ImplicitUsing>enable</ImplicitUsing>
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+    <ImplicitUsing>enable</ImplicitUsing>
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
-
+    <UserSecretsId>b238522b-2767-4070-9a83-50b6cfba5f2c</UserSecretsId>
   </PropertyGroup>
-
-
   <ItemGroup>
     <ProjectReference Include="..\generate.core\generate.core.csproj" />
     <ProjectReference Include="..\generate.infrastructure\generate.infrastructure.csproj" />
     <ProjectReference Include="..\generate.shared\generate.shared.csproj" />
     <ProjectReference Include="..\generate.testdata\generate.testdata.csproj" />
   </ItemGroup>
-
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.27" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
     <PackageReference Include="Microsoft.Identity.Web" Version="2.19.1" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.8" />
     <PackageReference Include="RestSharp" Version="108.0.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Compile Remove="DatabaseScripts\VersionUpdates\3.3_prerelease\**" />
@@ -58,29 +53,26 @@
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Remove="DatabaseScripts\VersionUpdates\3.3_prerelease\**" />
     <EmbeddedResource Remove="DatabaseScripts\VersionUpdates\5.2\LinkedServers\**" />
     <None Remove="DatabaseScripts\VersionUpdates\3.3_prerelease\**" />
     <None Remove="DatabaseScripts\VersionUpdates\5.2\LinkedServers\**" />
   </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="ClientApp\src\app\models\app\dataMigrationHistory.ts" />
-      <None Remove="ClientApp\src\app\models\app\factType.ts" />
-      <None Remove="ClientApp\src\app\models\app\metadataStatus.ts" />
-      <None Remove="ClientApp\src\app\models\app\schoolYear.ts" />
-      <None Remove="ClientApp\src\app\models\app\stagingValidationResult.ts" />
-      <None Remove="ClientApp\src\app\services\app\auth.service.ts" />
-      <None Remove="ClientApp\src\app\services\app\dataMigrationHistory.service.ts" />
-      <None Remove="ClientApp\src\app\shared\guards\confirmation.guard.ts" />
-      <None Remove="ClientApp\src\app\shared\interceptors\HttpConfigInterceptor.ts" />
-      <None Remove="ClientApp\src\app\shared\reportcontrols\yeartoyearprogress.component.ts" />
-      <None Remove="Updates\app_offline.htm" />
-    </ItemGroup>
-
-    <ItemGroup>
+  <ItemGroup>
+    <None Remove="ClientApp\src\app\models\app\dataMigrationHistory.ts" />
+    <None Remove="ClientApp\src\app\models\app\factType.ts" />
+    <None Remove="ClientApp\src\app\models\app\metadataStatus.ts" />
+    <None Remove="ClientApp\src\app\models\app\schoolYear.ts" />
+    <None Remove="ClientApp\src\app\models\app\stagingValidationResult.ts" />
+    <None Remove="ClientApp\src\app\services\app\auth.service.ts" />
+    <None Remove="ClientApp\src\app\services\app\dataMigrationHistory.service.ts" />
+    <None Remove="ClientApp\src\app\shared\guards\confirmation.guard.ts" />
+    <None Remove="ClientApp\src\app\shared\interceptors\HttpConfigInterceptor.ts" />
+    <None Remove="ClientApp\src\app\shared\reportcontrols\yeartoyearprogress.component.ts" />
+    <None Remove="Updates\app_offline.htm" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="ClientApp\src\IBMDomainVerification.html" />
     <Content Include="Updates\app_offline.htm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -89,12 +81,10 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
   </ItemGroup>
-
-  <ItemGroup> 
-    <Folder Include="ClientApp\src\app\settings\testService\" /> 
+  <ItemGroup>
+    <Folder Include="ClientApp\src\app\settings\testService\" />
     <Folder Include="Logs\" />
   </ItemGroup>
-
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\models\app\dataMigrationHistory.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\app\factType.ts" />
@@ -107,7 +97,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\shared\interceptors\HttpConfigInterceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\reportcontrols\yeartoyearprogress.component.ts" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="DatabaseScripts\TestCases\App.FS002_TestCase.StoredProcedure.sql">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -1775,8 +1764,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
   </ItemGroup>
-
-
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
@@ -1786,12 +1773,10 @@
     <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
   </Target>
-
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --configuration production" />
-
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
       <DistFiles Include="$(SpaRoot)dist\**; $(SpaRoot)dist-server\**" />
@@ -1803,5 +1788,4 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
-  
 </Project>
