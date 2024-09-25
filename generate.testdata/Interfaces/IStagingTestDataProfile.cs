@@ -101,6 +101,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<string>> RefMepProjectTypeDistribution { get; set; }
         List<DataDistribution<string>> LeaRefOperationalStatusDistribution { get; set; }
         List<DataDistribution<string>> RefCharterLeaStatusDistribution { get; set; }
+        List<DataDistribution<bool>> IsMcKinneyVentoDistribution { get; set; }
 
 
         #endregion
