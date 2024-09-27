@@ -24,6 +24,7 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#vwAssessmentRegistrations') IS NOT NULL DROP TABLE #vwAssessmentRegistrations
 
 		IF OBJECT_ID(N'tempdb..#tempIdeaStatus') IS NOT NULL DROP TABLE #tempIdeaStatus
+		IF OBJECT_ID(N'tempdb..#tempTitleIIIStatus') IS NOT NULL DROP TABLE #tempTitleIIIStatus
 		IF OBJECT_ID(N'tempdb..#tempELStatus') IS NOT NULL DROP TABLE #tempELStatus
 		IF OBJECT_ID(N'tempdb..#tempMigrantStatus') IS NOT NULL DROP TABLE #tempMigrantStatus
 		IF OBJECT_ID(N'tempdb..#tempMilitaryStatus') IS NOT NULL DROP TABLE #tempMilitaryStatus
@@ -482,7 +483,7 @@ BEGIN
 				else -1 
 			  end															NOrDStatusId							
 			, -1															TitleIStatusId						
-			, -1															TitleIIIStatusId						
+			, ISNULL(title3.DimTitleIIIStatusId, -1)						TitleIIIStatusId						
 			, -1															FactK12StudentAssessmentAccommodationId
 
 		FROM Staging.K12Enrollment ske
@@ -567,6 +568,14 @@ BEGIN
 				AND ((el.EnglishLearner_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND el.EnglishLearner_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
 					AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
+		--title III (staging)
+			LEFT JOIN #tempTitleIIIStatus title3 
+				ON sar.StudentIdentifierState 						= title3.StudentIdentifierState
+				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') 	= ISNULL(title3.LeaIdentifierSeaAccountability, '') 
+				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(title3.SchoolIdentifierSea, '')
+				AND ((title3.ProgramParticipationBeginDate BETWEEN @SYStartDate and @SYEndDate 
+						AND title3.ProgramParticipationBeginDate <= sar.AssessmentAdministrationStartDate) 
+					AND ISNULL(title3.ProgramParticipationEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
 		--migratory status (staging)	
 			LEFT JOIN #tempMigrantStatus migrant
 				ON sar.StudentIdentifierState 						= migrant.StudentIdentifierState
