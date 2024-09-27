@@ -181,6 +181,4 @@ INSERT INTO Staging.SourceSystemReferenceData VALUES (2024, 'RefNeglectedOrDelin
 INSERT INTO Staging.SourceSystemReferenceData VALUES (2024, 'RefAccessibleFormatIssuedIndicator', NULL, 'Yes', 'Yes'), (2024, 'RefAccessibleFormatIssuedIndicator', NULL, 'No', 'No')
 INSERT INTO Staging.SourceSystemReferenceData VALUES (2024, 'RefAccessibleFormatRequiredIndicator', NULL, 'Yes', 'Yes'), (2024, 'RefAccessibleFormatRequiredIndicator', NULL, 'No', 'No'), (2024, 'RefAccessibleFormatRequiredIndicator', NULL, 'Unknown', 'Unknown')
 INSERT INTO Staging.SourceSystemReferenceData VALUES (2024, 'RefAccessibleFormatType', NULL, 'LEA', 'LEA'), (2024, 'RefAccessibleFormatType', NULL, 'K12School', 'K12School'), (2024, 'RefAccessibleFormatType', NULL, 'NationalOrStateService', 'NationalOrStateService'), (2024, 'RefAccessibleFormatType', NULL, 'NonProfitOrganization', 'NonProfitOrganization')
-INSERT INTO Staging.SourceSystemReferenceData SELECT DISTINCT 2024, 'RefAssessmentAccommodationCategory', NULL, CedsOptionSetCode, CedsOptionSetCode FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'AssessmentAccommodationCategory'
-INSERT INTO Staging.SourceSystemReferenceData SELECT DISTINCT 2024, 'RefAccommodationType', NULL, CedsOptionSetCode, CedsOptionSetCode FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'AccommodationType'
 
