@@ -51,6 +51,8 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<string>> RefAssessmentTypeAdministeredDistribution { get; set; }
         public List<DataDistribution<string>> RefAssessmentTypeAdministeredToEnglishLearnersDistribution { get; set; }
         public List<DataDistribution<string>> RefAssessmentTypeDistribution { get; set; }
+        public List<DataDistribution<string>> AssessmentAccommodationTypeDistribution { get; set; }
+        public List<DataDistribution<string>> AssessmentAccommodationCategoryDistribution { get; set; }
 
 
         #endregion
@@ -617,7 +619,7 @@ namespace generate.testdata.Profiles
             this.RefCharterLeaStatusDistribution.Add(new DataDistribution<string>() { Option = "NOTCHR", ExpectedDistribution = 100 });
 
             this.IsMcKinneyVentoDistribution = new List<DataDistribution<bool>>();
-            this.IsMcKinneyVentoDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 60 });
+            this.IsMcKinneyVentoDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 70 });
             this.IsMcKinneyVentoDistribution.Add(new DataDistribution<bool>() { Option = true, ExpectedDistribution = 100 });
 
             #endregion
@@ -1287,6 +1289,120 @@ namespace generate.testdata.Profiles
             this.RefAssessmentRegistrationReasonNotTested.Add(new DataDistribution<string>() { Option = "03452", ExpectedDistribution = 70 });
             this.RefAssessmentRegistrationReasonNotTested.Add(new DataDistribution<string>() { Option = "03453", ExpectedDistribution = 84 });
             this.RefAssessmentRegistrationReasonNotTested.Add(new DataDistribution<string>() { Option = "09999", ExpectedDistribution = 100 });
+
+            this.AssessmentAccommodationCategoryDistribution = new List<DataDistribution<string>>();
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "Scheduling", ExpectedDistribution = 11 });
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "Setting", ExpectedDistribution = 22 });
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "EquipmentOrTechnology", ExpectedDistribution = 33 });
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "TestAdministration", ExpectedDistribution = 44 });
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "TestMaterial", ExpectedDistribution = 55 });
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "TestResponse", ExpectedDistribution = 66 });
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "EnglishLearner", ExpectedDistribution = 77 });
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "504", ExpectedDistribution = 88 });
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "Other", ExpectedDistribution = 100 });
+
+            this.AssessmentAccommodationTypeDistribution = new List<DataDistribution<string>>();
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00461", ExpectedDistribution = 1 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00462", ExpectedDistribution = 2 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00463", ExpectedDistribution = 3 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00464", ExpectedDistribution = 4 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00465", ExpectedDistribution = 5 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00469", ExpectedDistribution = 6 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00471", ExpectedDistribution = 7 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00473", ExpectedDistribution = 8 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00474", ExpectedDistribution = 9 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00475", ExpectedDistribution = 10 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00476", ExpectedDistribution = 11 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00477", ExpectedDistribution = 12 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00479", ExpectedDistribution = 13 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "00937", ExpectedDistribution = 14 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03513", ExpectedDistribution = 15 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03514", ExpectedDistribution = 16 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03515", ExpectedDistribution = 17 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03517", ExpectedDistribution = 18 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03518", ExpectedDistribution = 19 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03519", ExpectedDistribution = 20 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03522", ExpectedDistribution = 21 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03524", ExpectedDistribution = 22 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03525", ExpectedDistribution = 23 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03526", ExpectedDistribution = 24 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03527", ExpectedDistribution = 25 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03528", ExpectedDistribution = 26 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03529", ExpectedDistribution = 27 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03530", ExpectedDistribution = 28 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03531", ExpectedDistribution = 29 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03533", ExpectedDistribution = 30 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03534", ExpectedDistribution = 31 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03535", ExpectedDistribution = 32 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03536", ExpectedDistribution = 33 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03537", ExpectedDistribution = 34 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03538", ExpectedDistribution = 35 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03539", ExpectedDistribution = 36 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03541", ExpectedDistribution = 37 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03543", ExpectedDistribution = 38 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03544", ExpectedDistribution = 39 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03545", ExpectedDistribution = 40 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03546", ExpectedDistribution = 41 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03547", ExpectedDistribution = 42 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03548", ExpectedDistribution = 43 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03549", ExpectedDistribution = 44 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03550", ExpectedDistribution = 45 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03551", ExpectedDistribution = 46 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03552", ExpectedDistribution = 47 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03553", ExpectedDistribution = 48 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03554", ExpectedDistribution = 49 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03555", ExpectedDistribution = 50 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03556", ExpectedDistribution = 51 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03557", ExpectedDistribution = 52 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03558", ExpectedDistribution = 53 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03559", ExpectedDistribution = 54 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03560", ExpectedDistribution = 55 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03562", ExpectedDistribution = 56 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03563", ExpectedDistribution = 57 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03564", ExpectedDistribution = 58 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03566", ExpectedDistribution = 59 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03567", ExpectedDistribution = 60 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03568", ExpectedDistribution = 61 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03570", ExpectedDistribution = 62 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03571", ExpectedDistribution = 63 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03572", ExpectedDistribution = 64 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "03573", ExpectedDistribution = 65 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "09997", ExpectedDistribution = 66 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "09999", ExpectedDistribution = 67 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13788", ExpectedDistribution = 68 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13789", ExpectedDistribution = 69 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13790", ExpectedDistribution = 70 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13791", ExpectedDistribution = 71 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13792", ExpectedDistribution = 72 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13793", ExpectedDistribution = 73 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13794", ExpectedDistribution = 74 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13795", ExpectedDistribution = 75 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13796", ExpectedDistribution = 76 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13797", ExpectedDistribution = 77 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13798", ExpectedDistribution = 78 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13799", ExpectedDistribution = 79 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13800", ExpectedDistribution = 80 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13801", ExpectedDistribution = 81 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13802", ExpectedDistribution = 82 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13803", ExpectedDistribution = 83 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13804", ExpectedDistribution = 84 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13805", ExpectedDistribution = 85 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "13806", ExpectedDistribution = 86 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "73070", ExpectedDistribution = 87 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75005", ExpectedDistribution = 88 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75006", ExpectedDistribution = 89 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75007", ExpectedDistribution = 90 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75008", ExpectedDistribution = 91 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75009", ExpectedDistribution = 92 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75010", ExpectedDistribution = 93 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75011", ExpectedDistribution = 94 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75012", ExpectedDistribution = 95 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75013", ExpectedDistribution = 96 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75014", ExpectedDistribution = 97 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75015", ExpectedDistribution = 98 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75016", ExpectedDistribution = 99 });
+            this.AssessmentAccommodationTypeDistribution.Add(new DataDistribution<string>() { Option = "75017", ExpectedDistribution = 100 });
+
 
             this.SpecialEdProgramParticipantNowDistribution = new List<DataDistribution<bool>>();
             this.SpecialEdProgramParticipantNowDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 20 });

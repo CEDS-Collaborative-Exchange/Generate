@@ -179,9 +179,9 @@ BEGIN
 
 		CREATE INDEX IX_tempStagingAssessment 
 			ON #tempStagingAssessmentResults(
-				AssessmentAdministrationStartDate, AssessmentAdministrationFinishDate, 
-				LeaIdentifierSeaAccountability, SchoolIdentifierSea,
-				AssessmentIdentifier, AssessmentFamilyTitle, AssessmentFamilyShortName, AssessmentShortName, AssessmentTitle, AssessmentAcademicSubject, AssessmentType, 
+				StudentIdentifierState, AssessmentAdministrationStartDate, AssessmentAdministrationFinishDate, 
+				LeaIdentifierSeaAccountability, SchoolIdentifierSea, AssessmentIdentifier, AssessmentFamilyTitle, 
+				AssessmentFamilyShortName, AssessmentShortName, AssessmentTitle, AssessmentAcademicSubject, AssessmentType, 
 				AssessmentTypeAdministered, AssessmentTypeAdministeredToEnglishLearners, AssessmentScoreMetricType)
 
 	-- #tempLeas 
@@ -367,7 +367,28 @@ BEGIN
 		CREATE INDEX IX_tempMilitaryStatus 
 			ON #tempMilitaryStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, MilitaryConnected_StatusStartDate, MilitaryConnected_StatusEndDate)
 
+	-- #tempTitleIIIStatus
+		SELECT DISTINCT 
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, TitleIIIAccountabilityProgressStatus
+			, ProgramParticipationBeginDate
+			, ProgramParticipationEndDate
+			, rvdt3s.DimTitleIIIStatusId
+		INTO #tempTitleIIIStatus
+		FROM Staging.ProgramParticipationTitleIII sppt3
+		INNER JOIN RDS.vwDimTitleIIIStatuses rvdt3s
+			ON rvdt3s.SchoolYear = @SchoolYear
+			AND rvdt3s.TitleIIIImmigrantParticipationStatusCode 				= 'MISSING'
+			AND rvdt3s.TitleIIILanguageInstructionProgramTypeCode 				= 'MISSING'
+			AND rvdt3s.ProficiencyStatusCode 									= 'MISSING'
+			AND ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING') 	= ISNULL(rvdt3s.TitleIIIAccountabilityProgressStatusMap, rvdt3s.TitleIIIAccountabilityProgressStatusCode)
+			AND rvdt3s.ProgramParticipationTitleIIILiepCode 					= 'MISSING'
+		WHERE sppt3.TitleIIIAccountabilityProgressStatus is not null
 
+		CREATE INDEX IX_tempTitleIIIStatus 
+			ON #tempTitleIIIStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, ProgramParticipationBeginDate, ProgramParticipationEndDate)
 
 	--Set the Fact Type	
 		SELECT @FactTypeId = DimFactTypeId 
@@ -495,7 +516,8 @@ BEGIN
 				and sar.SchoolYear = rda.SchoolYear
 		--assessment results (rds)
 			LEFT JOIN RDS.vwDimAssessmentResults rdar
-				ON ISNULL(sar.AssessmentScoreMetricType, '') = ISNULL(rdar.AssessmentScoreMetricTypeCode, '')	--RefScoreMetricType
+				ON rdar.SchoolYear = rsy.SchoolYear
+				AND ISNULL(sar.AssessmentScoreMetricType, '') = ISNULL(rdar.AssessmentScoreMetricTypeCode, '')	--RefScoreMetricType
 		--assessment registrations (rds)
 			LEFT JOIN #vwAssessmentRegistrations rdars
 				ON ISNULL(CAST(sar.AssessmentRegistrationParticipationIndicator AS SMALLINT), -1) 	= ISNULL(rdars.AssessmentRegistrationParticipationIndicatorMap, -1)

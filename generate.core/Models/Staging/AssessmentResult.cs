@@ -33,6 +33,8 @@ namespace generate.core.Models.Staging
         public string AssessmentPerformanceLevelIdentifier { get; set; }
         public string AssessmentPerformanceLevelLabel { get; set; }
         public string AssessmentScoreMetricType { get; set; }
+        public string AssessmentAccommodationCategory { get; set; }
+        public string AccommodationType { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
         //public int? DataCollectionId { get; set; }
