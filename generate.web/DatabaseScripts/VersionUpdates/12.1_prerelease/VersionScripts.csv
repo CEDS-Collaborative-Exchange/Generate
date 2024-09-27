@@ -1,5 +1,7 @@
 VersionUpdates\\12.1_prerelease,Restore 12.0.sql,0
 VersionUpdates\\12.1_prerelease,App.Metadata.sql,0
+Views\\Drop,RDS.vwNationalAssessments.View.sql,0
+Views\\Create,RDS.vwNationalAssessments.View.sql,0
 StoredProcedures\\Drop,RDS.Empty_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Empty_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0

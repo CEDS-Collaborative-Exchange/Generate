@@ -766,7 +766,6 @@ BEGIN
 				ON rfsa.AssessmentId = rda.DimAssessmentId
 			JOIN RDS.vwAssessmentAccommodations rdaa
 				ON rdaa.AssessmentAccommodationCategoryCode = 'TestAdministration'
-				AND rdaa.AssessmentAccommodationCategoryCode = 'MISSING'
 		WHERE rfsa.SchoolYearId = @SchoolYearId
 		AND rda.AssessmentTypeAdministeredCode in ('REGASSWACC')
 
