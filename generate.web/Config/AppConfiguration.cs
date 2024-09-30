@@ -104,6 +104,7 @@ namespace generate.web.Config
             services.AddScoped<IRDSDataMigrationService, RDSDataMigrationService>();
             services.AddScoped<IStateDefinedReportService, StateDefinedReportService>();
             services.AddScoped<IFSMetadataUpdateService, MetadataUpdateService>();
+            services.AddScoped<IAboutService, AboutService>();
         }
 
 
