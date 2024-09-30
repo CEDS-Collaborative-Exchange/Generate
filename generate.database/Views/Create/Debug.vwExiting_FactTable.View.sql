@@ -7,6 +7,12 @@ CREATE VIEW [Debug].[vwExiting_FactTable] AS
 			,Students.LastOrSurname
 			,Students.MiddleName
 			,Demo.SexCode
+			,Demo.SexEdFactsCode
+			, SEAs.StateANSICode
+			, SEAs.StateAbbreviationCode
+			, SEAs.StateAbbreviationDescription
+			, SEAs.SeaOrganizationIdentifierSea
+			, SEAs.SeaOrganizationName
 			,LEAs.LeaIdentifierSea
 			,LEAs.LeaIdentifierNces
 			,LEAs.LeaOrganizationName
@@ -25,11 +31,17 @@ CREATE VIEW [Debug].[vwExiting_FactTable] AS
 			,IDEAStatus.SpecialEducationExitReasonEdFactsCode
 			--English Learner
 			,ELStatus.EnglishLearnerStatusEdFactsCode
+			, SchoolYears.SchoolYear
+			, Fact.SeaId
+			, Fact.LeaId
+			, Fact.K12SchoolId
+
 
  	FROM		RDS.FactK12StudentCounts   			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears			ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT					ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid		
 	LEFT JOIN	RDS.DimPeople						Students			ON Fact.K12StudentId			= Students.DimPersonId			AND Students.IsActiveK12Student = 1
+	LEFT JOIN	RDS.DimSeas							SEAs				ON Fact.SeaId					= SEAs.DimSeaId
 	LEFT JOIN	RDS.DimLeas							LEAs				ON Fact.LeaId					= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools					Schools				ON Fact.K12SchoolId				= Schools.DimK12SchoolId
 	LEFT JOIN	RDS.DimIdeaStatuses					IDEAStatus			ON Fact.IdeaStatusId			= IDEAStatus.DimIdeaStatusId
@@ -60,6 +72,3 @@ CREATE VIEW [Debug].[vwExiting_FactTable] AS
 	--AND IDEAStatus.IdeaIndicatorEdFactsCode = 'IDEA'				--('IDEA', 'MISSING')
 	--AND IDEAStatus.SpecialEducationExitReasonEdFactsCode = 'MKN'  --('GHS','GRADALTDPL','RC','RMA','MKC','TRAN','DROPOUT','D','MISSING')
 	--AND IDEADisability.IdeaDisabilityTypeEdFactsCode = 'EMN'		--('AUT','DB','DD','EMN','HI','ID','MD','OHI','OI','SLD','SLI','TBI','VI','MISSING')
-
-
-
