@@ -2463,6 +2463,10 @@ namespace generate.testdata.DataGenerators
                         AssessmentTypeAdministered = assessmentAdministration.AssessmentTypeAdministered,
                         AssessmentTypeAdministeredToEnglishLearners = assessmentAdministration.AssessmentTypeAdministeredToEnglishLearners,
                         AssessmentRegistrationParticipationIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefAssessmentParticipationIndicatorDistribution) == "Participated" ? true : false,
+                        // - These are 2 new fields that are being added to staging.AssessmentResult
+                        AssessmentAccommodationCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.AssessmentAccommodationCategoryDistribution),
+                        AccommodationType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.AssessmentAccommodationTypeDistribution),
+
                         AssessmentTitle = assessmentAdministration.AssessmentTitle,
                         AssessmentType = assessmentAdministration.AssessmentType,
                         GradeLevelWhenAssessed = k12Enrollment.GradeLevel,

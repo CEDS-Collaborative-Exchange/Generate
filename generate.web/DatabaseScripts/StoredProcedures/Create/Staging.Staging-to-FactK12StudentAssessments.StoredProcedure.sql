@@ -24,6 +24,7 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#vwAssessmentRegistrations') IS NOT NULL DROP TABLE #vwAssessmentRegistrations
 
 		IF OBJECT_ID(N'tempdb..#tempIdeaStatus') IS NOT NULL DROP TABLE #tempIdeaStatus
+		IF OBJECT_ID(N'tempdb..#tempTitleIIIStatus') IS NOT NULL DROP TABLE #tempTitleIIIStatus
 		IF OBJECT_ID(N'tempdb..#tempELStatus') IS NOT NULL DROP TABLE #tempELStatus
 		IF OBJECT_ID(N'tempdb..#tempMigrantStatus') IS NOT NULL DROP TABLE #tempMigrantStatus
 		IF OBJECT_ID(N'tempdb..#tempMilitaryStatus') IS NOT NULL DROP TABLE #tempMilitaryStatus
@@ -179,9 +180,9 @@ BEGIN
 
 		CREATE INDEX IX_tempStagingAssessment 
 			ON #tempStagingAssessmentResults(
-				AssessmentAdministrationStartDate, AssessmentAdministrationFinishDate, 
-				LeaIdentifierSeaAccountability, SchoolIdentifierSea,
-				AssessmentIdentifier, AssessmentFamilyTitle, AssessmentFamilyShortName, AssessmentShortName, AssessmentTitle, AssessmentAcademicSubject, AssessmentType, 
+				StudentIdentifierState, AssessmentAdministrationStartDate, AssessmentAdministrationFinishDate, 
+				LeaIdentifierSeaAccountability, SchoolIdentifierSea, AssessmentIdentifier, AssessmentFamilyTitle, 
+				AssessmentFamilyShortName, AssessmentShortName, AssessmentTitle, AssessmentAcademicSubject, AssessmentType, 
 				AssessmentTypeAdministered, AssessmentTypeAdministeredToEnglishLearners, AssessmentScoreMetricType)
 
 	-- #tempLeas 
@@ -367,7 +368,28 @@ BEGIN
 		CREATE INDEX IX_tempMilitaryStatus 
 			ON #tempMilitaryStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, MilitaryConnected_StatusStartDate, MilitaryConnected_StatusEndDate)
 
+	-- #tempTitleIIIStatus
+		SELECT DISTINCT 
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, TitleIIIAccountabilityProgressStatus
+			, ProgramParticipationBeginDate
+			, ProgramParticipationEndDate
+			, rvdt3s.DimTitleIIIStatusId
+		INTO #tempTitleIIIStatus
+		FROM Staging.ProgramParticipationTitleIII sppt3
+		INNER JOIN RDS.vwDimTitleIIIStatuses rvdt3s
+			ON rvdt3s.SchoolYear = @SchoolYear
+			AND rvdt3s.TitleIIIImmigrantParticipationStatusCode 				= 'MISSING'
+			AND rvdt3s.TitleIIILanguageInstructionProgramTypeCode 				= 'MISSING'
+			AND rvdt3s.ProficiencyStatusCode 									= 'MISSING'
+			AND ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING') 	= ISNULL(rvdt3s.TitleIIIAccountabilityProgressStatusMap, rvdt3s.TitleIIIAccountabilityProgressStatusCode)
+			AND rvdt3s.ProgramParticipationTitleIIILiepCode 					= 'MISSING'
+		WHERE sppt3.TitleIIIAccountabilityProgressStatus is not null
 
+		CREATE INDEX IX_tempTitleIIIStatus 
+			ON #tempTitleIIIStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, ProgramParticipationBeginDate, ProgramParticipationEndDate)
 
 	--Set the Fact Type	
 		SELECT @FactTypeId = DimFactTypeId 
@@ -461,7 +483,7 @@ BEGIN
 				else -1 
 			  end															NOrDStatusId							
 			, -1															TitleIStatusId						
-			, -1															TitleIIIStatusId						
+			, ISNULL(title3.DimTitleIIIStatusId, -1)						TitleIIIStatusId						
 			, -1															FactK12StudentAssessmentAccommodationId
 
 		FROM Staging.K12Enrollment ske
@@ -495,7 +517,8 @@ BEGIN
 				and sar.SchoolYear = rda.SchoolYear
 		--assessment results (rds)
 			LEFT JOIN RDS.vwDimAssessmentResults rdar
-				ON ISNULL(sar.AssessmentScoreMetricType, '') = ISNULL(rdar.AssessmentScoreMetricTypeCode, '')	--RefScoreMetricType
+				ON rdar.SchoolYear = rsy.SchoolYear
+				AND ISNULL(sar.AssessmentScoreMetricType, '') = ISNULL(rdar.AssessmentScoreMetricTypeCode, '')	--RefScoreMetricType
 		--assessment registrations (rds)
 			LEFT JOIN #vwAssessmentRegistrations rdars
 				ON ISNULL(CAST(sar.AssessmentRegistrationParticipationIndicator AS SMALLINT), -1) 	= ISNULL(rdars.AssessmentRegistrationParticipationIndicatorMap, -1)
@@ -545,6 +568,14 @@ BEGIN
 				AND ((el.EnglishLearner_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND el.EnglishLearner_StatusStartDate <= sar.AssessmentAdministrationStartDate) 
 					AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
+		--title III (staging)
+			LEFT JOIN #tempTitleIIIStatus title3 
+				ON sar.StudentIdentifierState 						= title3.StudentIdentifierState
+				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') 	= ISNULL(title3.LeaIdentifierSeaAccountability, '') 
+				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(title3.SchoolIdentifierSea, '')
+				AND ((title3.ProgramParticipationBeginDate BETWEEN @SYStartDate and @SYEndDate 
+						AND title3.ProgramParticipationBeginDate <= sar.AssessmentAdministrationStartDate) 
+					AND ISNULL(title3.ProgramParticipationEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
 		--migratory status (staging)	
 			LEFT JOIN #tempMigrantStatus migrant
 				ON sar.StudentIdentifierState 						= migrant.StudentIdentifierState
