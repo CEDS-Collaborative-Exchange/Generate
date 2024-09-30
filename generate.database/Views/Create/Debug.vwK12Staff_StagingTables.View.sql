@@ -1,4 +1,4 @@
-CREATE VIEW [Debug].[vwK12Staff_StagingTables] AS
+CREATE VIEW [debug].[vwK12Staff_StagingTables] AS
 
 	SELECT		DISTINCT 
 				StaffMemberIdentifierState
@@ -18,6 +18,7 @@ CREATE VIEW [Debug].[vwK12Staff_StagingTables] AS
 				, CredentialIssuanceDate
 				, CredentialExpirationDate
 				, ParaprofessionalQualificationStatus
+				, SpecialEducationTeacherQualificationStatus
 				, SpecialEducationAgeGroupTaught
 				, HighlyQualifiedTeacherIndicator
 				, AssignmentStartDate
@@ -56,4 +57,7 @@ CREATE VIEW [Debug].[vwK12Staff_StagingTables] AS
 	--AND EDFactsTeacherOutOfFieldStatus = ''
 	--AND RecordStartDateTime = ''
 	--AND RecordEndDateTime = ''
+
+
+
 
