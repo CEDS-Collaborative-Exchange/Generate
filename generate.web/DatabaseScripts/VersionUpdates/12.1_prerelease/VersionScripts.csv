@@ -3,4 +3,6 @@ VersionUpdates\\12.1_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\12.1_prerelease,App.Metadata.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql
+StoredProcedures\\Create,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql
 VersionUpdates\\12.1_prerelease,UpdateDbVersion.sql,0
