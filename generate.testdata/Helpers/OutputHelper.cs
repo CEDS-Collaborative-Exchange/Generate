@@ -492,6 +492,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("truncate table rds.BridgeK12StudentCourseSectionRaces");
                 output.AppendLine("truncate table rds.BridgeK12StudentEnrollmentRaces");
                 output.AppendLine("truncate table rds.BridgeK12StudentDisciplineRaces");
+                output.AppendLine("truncate table rds.BridgeK12StudentAssessmentAccommodations");
                 output.AppendLine("delete from rds.FactK12StaffCounts");
                 output.AppendLine("delete from rds.ReportEDFactsK12StudentAssessments");
                 output.AppendLine("delete from rds.FactK12StudentAssessments");
@@ -846,6 +847,8 @@ namespace generate.testdata.Helpers
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ", 'RefAccessibleFormatIssuedIndicator', NULL, 'Yes', 'Yes'), (", schoolYear, ", 'RefAccessibleFormatIssuedIndicator', NULL, 'No', 'No')"));
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ", 'RefAccessibleFormatRequiredIndicator', NULL, 'Yes', 'Yes'), (", schoolYear, ", 'RefAccessibleFormatRequiredIndicator', NULL, 'No', 'No'), (", schoolYear, ", 'RefAccessibleFormatRequiredIndicator', NULL, 'Unknown', 'Unknown')"));
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'LEA', 'LEA'), (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'K12School', 'K12School'), (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'NationalOrStateService', 'NationalOrStateService'), (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'NonProfitOrganization', 'NonProfitOrganization')"));
+
+            output.AppendLine();
 
             return output;
         }

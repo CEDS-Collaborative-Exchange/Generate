@@ -23,6 +23,7 @@
       , f.ImmigrantStatusId
       , f.MigrantStatusId
       , f.MilitaryStatusId
+	  , f.PrimaryDisabilityTypeId
 	  , race.RaceId
       , f.FactK12StudentAssessmentId
       , f.AssessmentCount
