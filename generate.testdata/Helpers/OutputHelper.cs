@@ -501,6 +501,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("delete from rds.FactK12StudentCounts");
                 output.AppendLine("delete from rds.FactK12StudentDisciplines");
                 output.AppendLine("delete from rds.FactK12AccessibleEducationMaterialAssignments");
+                output.AppendLine("delete from rds.FactK12StudentEnrollments");
                 //output.AppendLine("delete from rds.FactOrganizationCountReports");
                 //output.AppendLine("delete from rds.FactOrganizationCounts");
                 //output.AppendLine("delete from rds.FactOrganizationStatusCountReports");
@@ -522,6 +523,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12StudentCounts', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12StudentDisciplines', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12AccessibleEducationMaterialAssignments', RESEED, 1);");
+                output.AppendLine("DBCC CHECKIDENT('rds.FactK12StudentEnrollments', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationCountReports', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationCounts', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationStatusCountReports', RESEED, 1);");

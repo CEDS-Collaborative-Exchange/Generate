@@ -439,6 +439,7 @@ BEGIN
 			, TitleIStatusId								int null	
 			, TitleIIIStatusId								int null	
 			, FactK12StudentAssessmentAccommodationId		int null	
+			, PrimaryDisabilityTypeId						int null
 		)
 
 		INSERT INTO #Facts
