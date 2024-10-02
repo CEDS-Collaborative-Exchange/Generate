@@ -485,10 +485,11 @@ BEGIN
 			, -1															TitleIStatusId						
 			, ISNULL(title3.DimTitleIIIStatusId, -1)						TitleIIIStatusId						
 			, -1															FactK12StudentAssessmentAccommodationId
+			, ISNULL(rdidt.DimIdeaDisabilityTypeId, -1)					    PrimaryDisabilityTypeId
 
 		FROM Staging.K12Enrollment ske
 			JOIN RDS.DimSchoolYears rsy
-				ON ske.SchoolYear = rsy.SchoolYear
+				ON ske.SchoolYear = rsy.SchoolYear AND rsy.SchoolYear = @SchoolYear
 		--demographics			
 			JOIN RDS.vwDimK12Demographics rdkd
  				ON rsy.SchoolYear = rdkd.SchoolYear
@@ -552,6 +553,14 @@ BEGIN
 			LEFT JOIN #vwGradeLevels rgls
 				ON ISNULL(ske.GradeLevel, '') = ISNULL(rgls.GradeLevelMap, '')
 				--AND rgls.GradeLevelTypeDescription = 'Grade Level When Assessed'
+		--idea disability type			
+			LEFT JOIN Staging.IdeaDisabilityType sidt	
+				ON ske.SchoolYear = sidt.SchoolYear
+				AND sidt.StudentIdentifierState = ske.StudentIdentifierState
+				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
+				AND sidt.IsPrimaryDisability = 1
+				AND sar.AssessmentAdministrationStartDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
 		--idea (staging)	
 			LEFT JOIN #tempIdeaStatus idea
 				ON ske.StudentIdentifierState 						= idea.StudentIdentifierState
@@ -634,7 +643,11 @@ BEGIN
 			LEFT JOIN #tempNorDStudents NorD
 				on NorD.StudentIdentifierState = sar.StudentIdentifierState
 				and NorD.LeaIdentifierSeaAccountability = sar.LeaIdentifierSeaAccountability
-				
+		--idea disability type (rds)
+			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
+				ON sidt.SchoolYear = rdidt.SchoolYear
+				AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
+				AND sidt.IsPrimaryDisability = 1
 
 			WHERE 
 			sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
@@ -684,6 +697,7 @@ BEGIN
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
 			, [FactK12StudentAssessmentAccommodationId]
+			, [PrimaryDisabilityTypeId]
 		)
 		SELECT 
 			[SchoolYearId]							
@@ -724,6 +738,7 @@ BEGIN
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
 			, [FactK12StudentAssessmentAccommodationId]
+			, [PrimaryDisabilityTypeId]
 		FROM #Facts
 
 		ALTER INDEX ALL ON RDS.FactK12StudentAssessments REBUILD
@@ -797,7 +812,6 @@ BEGIN
 				ON rfsa.AssessmentId = rda.DimAssessmentId
 			JOIN RDS.vwAssessmentAccommodations rdaa
 				ON rdaa.AssessmentAccommodationCategoryCode = 'TestAdministration'
-				AND rdaa.AssessmentAccommodationCategoryCode = 'MISSING'
 		WHERE rfsa.SchoolYearId = @SchoolYearId
 		AND rda.AssessmentTypeAdministeredCode in ('REGASSWACC')
 

@@ -24,7 +24,7 @@ begin try
 	from rds.DimSchoolYears d		
 	inner join rds.DimSchoolYearDataMigrationTypes dd on dd.DimSchoolYearId = d.DimSchoolYearId and dd.IsSelected = 1
 	inner join app.DataMigrationTypes dm on dm.DataMigrationTypeId = dd.DataMigrationTypeId 
-	and dm.DataMigrationTypeCode = 'rds'
+	and dm.DataMigrationTypeCode = 'report'
 
 		
 		if @factTypeCode = 'discipline'

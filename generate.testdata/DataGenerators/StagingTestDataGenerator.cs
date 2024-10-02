@@ -1623,7 +1623,15 @@ namespace generate.testdata.DataGenerators
                     else if (s.GradeLevel == "PK") { s.EnrollmentExitDate = entryDate; }
 
                 }
-                s.EnrollmentExitDate = _testDataHelper.GetExitDate(rnd, entryDate, BaseProgramExitDate);
+                //s.EnrollmentExitDate = _testDataHelper.GetExitDate(rnd, entryDate, BaseProgramExitDate);
+
+                if (_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.EnrollmentExitDuringSchoolYearDistribution))
+                {
+                    if (entryDate < BaseProgramExitDate)
+                    {
+                        s.EnrollmentExitDate = _testDataHelper.GetExitDate(rnd, entryDate, BaseProgramExitDate);
+                    }
+                }
 
                 var races = new List<K12PersonRace>();
                 for (int raceCount = 0; raceCount < _testDataHelper.GetRandomIntInRange(rnd, 1, 2); raceCount++)
