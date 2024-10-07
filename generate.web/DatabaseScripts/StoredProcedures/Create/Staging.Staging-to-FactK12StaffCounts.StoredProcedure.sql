@@ -44,14 +44,16 @@ BEGIN
 		FROM RDS.vwDimK12StaffStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwK12StaffStatuses ON #vwK12StaffStatuses (SpecialEducationAgeGroupTaughtMap, EdFactsTeacherInexperiencedStatusMap, EdFactsTeacherOutOfFieldStatusMap, TeachingCredentialTypeMap, ParaprofessionalQualificationStatusMap, HighlyQualifiedTeacherIndicatorMap, SpecialEducationTeacherQualificationStatusMap, EdFactsCertificationStatusMap);
+		CREATE CLUSTERED INDEX ix_tempvwK12StaffStatuses ON #vwK12StaffStatuses (SpecialEducationAgeGroupTaughtMap, EdFactsTeacherInexperiencedStatusMap, EdFactsTeacherOutOfFieldStatusMap
+			, TeachingCredentialTypeMap, ParaprofessionalQualificationStatusMap, HighlyQualifiedTeacherIndicatorMap, SpecialEducationTeacherQualificationStatusMap
+			, EdFactsCertificationStatusMap);
 		
 		SELECT *
 		INTO #vwK12StaffCategories
 		FROM RDS.vwDimK12StaffCategories
 		WHERE SchoolYear = @SchoolYear
 
-    CREATE CLUSTERED INDEX ix_tempvwK12StaffCategories ON #vwK12StaffCategories (K12StaffClassificationMap, SpecialEducationSupportServicesCategoryMap, TitleIProgramStaffCategoryMap);
+	    CREATE CLUSTERED INDEX ix_tempvwK12StaffCategories ON #vwK12StaffCategories (K12StaffClassificationMap, SpecialEducationSupportServicesCategoryMap, TitleIProgramStaffCategoryMap);
 
 		
 		SELECT @FactTypeId = DimFactTypeId 
@@ -127,7 +129,7 @@ BEGIN
 			AND ISNULL(ssa.EdFactsTeacherInexperiencedStatus, 'MISSING') = ISNULL(rdkss.EdFactsTeacherInexperiencedStatusMap, rdkss.EdFactsTeacherInexperiencedStatusCode)
 			AND ISNULL(ssa.TeachingCredentialType, 'MISSING') = ISNULL(rdkss.TeachingCredentialTypeMap, rdkss.TeachingCredentialTypeCode)
 			AND ISNULL(ssa.ParaprofessionalQualificationStatus, 'MISSING') = ISNULL(rdkss.ParaprofessionalQualificationStatusMap, rdkss.ParaprofessionalQualificationStatusCode)
-			AND ISNULL(CAST(ssa.HighlyQualifiedTeacherIndicator AS SMALLINT), -1) = ISNULL(rdkss.HighlyQualifiedTeacherIndicatorMap, -1)
+			AND rdkss.HighlyQualifiedTeacherIndicatorCode = 'MISSING'
 			AND ISNULL(ssa.SpecialEducationTeacherQualificationStatus, 'MISSING') = ISNULL(rdkss.SpecialEducationTeacherQualificationStatusMap, rdkss.SpecialEducationTeacherQualificationStatusCode)
             AND	ISNULL(ssa.EdFactsCertificationStatus, 'MISSING') = ISNULL(rdkss.EdFactsCertificationStatusMap, rdkss.EdFactsCertificationStatusCode)
 	--credential issuance date	
