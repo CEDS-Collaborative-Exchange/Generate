@@ -7,6 +7,12 @@ AS
 			, Students.LastOrSurname
 			, Students.MiddleName
 			, Demo.SexCode
+			, Demo.SexEdFactsCode
+			, SEAs.StateANSICode
+			, SEAs.StateAbbreviationCode
+			, SEAs.StateAbbreviationDescription
+			, SEAs.SeaOrganizationIdentifierSea
+			, SEAs.SeaOrganizationName
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaIdentifierNces
 			, LEAs.LeaOrganizationName
@@ -26,11 +32,16 @@ AS
 			, IDEAStatus.IdeaEducationalEnvironmentForEarlyChildhoodEdFactsCode
 			--English Learner
 			, EL.EnglishLearnerStatusEdFactsCode
+			, SchoolYears.SchoolYear
+			, Fact.SeaId
+			, Fact.LeaId
+			, Fact.K12SchoolId
 
  	FROM		RDS.FactK12StudentCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears			ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT					ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid		
 	LEFT JOIN	RDS.DimPeople						Students			ON Fact.K12StudentId			= Students.DimPersonId			AND Students.IsActiveK12Student = 1
+	LEFT JOIN	RDS.DimSeas							SEAs				ON Fact.SeaId					= SEAs.DimSeaId
 	LEFT JOIN	RDS.DimLeas							LEAs				ON Fact.LeaId					= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools					Schools				ON Fact.K12SchoolId				= Schools.DimK12SchoolId
 	LEFT JOIN	RDS.DimIdeaStatuses					IDEAStatus			ON Fact.IdeaStatusId			= IDEAStatus.DimIdeaStatusId
