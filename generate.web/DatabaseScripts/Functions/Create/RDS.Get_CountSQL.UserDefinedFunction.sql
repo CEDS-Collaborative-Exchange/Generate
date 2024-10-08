@@ -1204,6 +1204,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimCteStatusId'
 		end
+		else if @dimensionTable = 'DimDisabilityStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimDisabilityStatusId'
+		end
 		else if @dimensionTable = 'DimDisciplineStatuses'
 		begin
 			set @dimensionPrimaryKey = 'DimDisciplineStatusId'
