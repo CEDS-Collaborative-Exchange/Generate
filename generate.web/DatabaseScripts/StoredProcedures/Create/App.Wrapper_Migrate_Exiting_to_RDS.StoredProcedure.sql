@@ -62,7 +62,8 @@ BEGIN
 				JOIN rds.DimSchoolYearDataMigrationTypes dd ON dd.DimSchoolYearId = d.DimSchoolYearId
 				JOIN App.DataMigrationTypes b ON b.DataMigrationTypeId=dd.DataMigrationTypeId 
 				WHERE d.DimSchoolYearId <> -1 
-				AND dd.IsSelected=1 AND DataMigrationTypeCode='RDS'
+				AND dd.IsSelected=1 
+				AND DataMigrationTypeCode = 'report'
 
 			OPEN selectedYears_cursor
 			FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
