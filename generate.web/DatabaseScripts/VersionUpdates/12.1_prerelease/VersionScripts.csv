@@ -54,6 +54,8 @@ StoredProcedures\\Drop,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.s
 StoredProcedures\\Create,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql
+StoredProcedures\\Create,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql
 VersionUpdates\\12.1_prerelease,UpdateDbVersion.sql,0
 VersionUpdates\\12.1\\Views\\Drop,Staging.vwExiting_StagingTables_009.View.sql
 VersionUpdates\\12.1\\Views\\Create,Staging.vwExiting_StagingTables_009.View.sql
