@@ -55,6 +55,20 @@ StoredProcedures\\Create,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql
 VersionUpdates\\12.1_prerelease,UpdateDbVersion.sql,0
+
+VersionUpdates\\12.1_prerelease\\Views\\Drop,Debug.vwNeglectedOrDelinquent_FactTable.View.sql
+VersionUpdates\\12.1_prerelease\\Views\\Create,Debug.vwNeglectedOrDelinquent_FactTable.View.sql
+VersionUpdates\\12.1_prerelease\\Views\\Drop,RDS.vwNeglectedOrDelinquent_FactTable_C220.View.sql
+VersionUpdates\\12.1_prerelease\\Views\\Create,RDS.vwNeglectedOrDelinquent_FactTable_C220.View.sql
+VersionUpdates\\12.1_prerelease\\Views\\Drop,Staging.vwNeglectedOrDelinquent_StagingTables_C220.View.sql
+VersionUpdates\\12.1_prerelease\\Views\\Create,Staging.vwNeglectedOrDelinquent_StagingTables_C220.View.sql
+
+VersionUpdates\\12.1_prerelease\\StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
+VersionUpdates\\12.1_prerelease\\StoredProcedures\\Create,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
+
+TestCases,App.FS220_TestCase.StoredProcedure.sql,0
+
+--The folllowing files don't exist
 VersionUpdates\\12.1\\Views\\Drop,Staging.vwExiting_StagingTables_009.View.sql
 VersionUpdates\\12.1\\Views\\Create,Staging.vwExiting_StagingTables_009.View.sql
 VersionUpdates\\12.1\\Views\\Drop,RDS.vwExiting_FactTable_009.View.sql
@@ -67,3 +81,5 @@ VersionUpdates\\12.1\\Views\\Drop,RDS.vwChildCount_FactTable_C002.View.sql
 VersionUpdates\\12.1\\Views\\Create,RDS.vwChildCount_FactTable_C002.View.sql
 VersionUpdates\\12.1\\Views\\Drop,debug.vwChildCount_FactTable.View.sql
 VersionUpdates\\12.1\\Views\\Create,debug.vwChildCount_FactTable.View.sql
+
+
