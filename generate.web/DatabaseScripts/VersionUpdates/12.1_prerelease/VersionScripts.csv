@@ -55,15 +55,4 @@ StoredProcedures\\Create,App.Wrapper_Migrate_TitleIIIELSY_to_RDS.StoredProcedure
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql
 VersionUpdates\\12.1_prerelease,UpdateDbVersion.sql,0
-VersionUpdates\\12.1\\Views\\Drop,Staging.vwExiting_StagingTables_009.View.sql
-VersionUpdates\\12.1\\Views\\Create,Staging.vwExiting_StagingTables_009.View.sql
-VersionUpdates\\12.1\\Views\\Drop,RDS.vwExiting_FactTable_009.View.sql
-VersionUpdates\\12.1\\Views\\Create,RDS.vwExiting_FactTable_009.View.sql
-VersionUpdates\\12.1\\Views\\Drop,debug.vwExiting_FactTable.View.sql
-VersionUpdates\\12.1\\Views\\Create,debug.vwExiting_FactTable.View.sql
-VersionUpdates\\12.1\\Views\\Drop,debug.vwExiting_StagingTables.View.sql
-VersionUpdates\\12.1\\Views\\Create,debug.vwExiting_StagingTables.View.sql
-VersionUpdates\\12.1\\Views\\Drop,RDS.vwChildCount_FactTable_C002.View.sql
-VersionUpdates\\12.1\\Views\\Create,RDS.vwChildCount_FactTable_C002.View.sql
-VersionUpdates\\12.1\\Views\\Drop,debug.vwChildCount_FactTable.View.sql
-VersionUpdates\\12.1\\Views\\Create,debug.vwChildCount_FactTable.View.sql
+
