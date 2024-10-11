@@ -39,9 +39,10 @@ var builder = WebApplication.CreateBuilder();
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
+    .AddEnvironmentVariables(e => e.Prefix = "Data__")
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables();
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
+    
 
 
 
