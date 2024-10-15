@@ -64,8 +64,9 @@ namespace generate.console
 
             var builder = new ConfigurationBuilder()
                 .AddCommandLine(args)
-                .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
-                .AddEnvironmentVariables();
+                .AddEnvironmentVariables(e => e.Prefix = "Data__")
+                .AddUserSecrets(Assembly.GetExecutingAssembly(), true);
+                
 
             var config = builder.Build();
             string environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
