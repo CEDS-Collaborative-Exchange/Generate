@@ -12,7 +12,6 @@ namespace generate.core.Models.RDS
         public string StateANSICode { get; set; }
         public string StateAbbreviationCode { get; set; }
         public string StateAbbreviationDescription { get; set; }
-        //public int OrganizationId { get; set; }
         public string OrganizationIdentifierNces { get; set; }
         public string OrganizationIdentifierSea { get; set; }
         public string OrganizationName { get; set; }
@@ -35,8 +34,6 @@ namespace generate.core.Models.RDS
         public string IDEAINDICATOR { get; set; }
         public string IDEAEDUCATIONALENVIRONMENTFOREARLYCHILDHOOD { get; set; }
         public string IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE { get; set; }
-        //   public string TITLE1SCHOOLSTATUS { get; set; }
-
 
         public string SECTION504STATUS { get; set; }
         public string CTEPARTICIPANT { get; set; }

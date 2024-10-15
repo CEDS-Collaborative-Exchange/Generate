@@ -19,7 +19,6 @@ namespace generate.core.Models.RDS
         public string StateANSICode { get; set; }
         public string StateCode { get; set; }
         public string StateName { get; set; }
-        //public int? OrganizationId { get; set; }
         public string OrganizationNcesId { get; set; }
         public string OrganizationStateId { get; set; }
         public string OrganizationName { get; set; }

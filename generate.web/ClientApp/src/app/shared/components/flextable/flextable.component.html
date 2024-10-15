@@ -8,7 +8,7 @@
         <mat-label style="width:200px;">Filter</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Filter" #input>
     </mat-form-field>
-    <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)" class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" aria-label="Display Report Data" matSort (matSortChange)="announceSortChange($event)" class="mat-elevation-z8">
 
         @for(item of displayedColumns;let i=$index;track i)
         {

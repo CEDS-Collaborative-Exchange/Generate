@@ -25,16 +25,6 @@ namespace generate.core.Models.Staging
         public DateTime? ProgramParticipationExitDate { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? DataCollectionId { get; set; }
-        //public int? PersonID { get; set; }
-        //public int? OrganizationID_LEA { get; set; }
-        //public int? OrganizationID_School { get; set; }
-        //public int? LEAOrganizationPersonRoleID_MigrantProgram { get; set; }
-        //public int? LEAOrganizationID_MigrantProgram { get; set; }
-        //public int? SchoolOrganizationPersonRoleID_MigrantProgram { get; set; }
-        //public int? SchoolOrganizationID_MigrantProgram { get; set; }
-        //public int? PersonProgramParticipationId { get; set; }
-        //public int? ProgramParticipationMigrantId { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
 }

@@ -10,6 +10,5 @@ namespace generate.core.Models.Staging
         public string Code { get; set; }
         public string Definition { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? DataCollectionId { get; set; }
     }
 }

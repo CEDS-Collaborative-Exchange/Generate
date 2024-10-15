@@ -12,9 +12,6 @@ namespace generate.core.Models.Staging
         public DateTime? RecordEndDateTime { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? DataCollectionId { get; set; }
-        //public string OrganizationId { get; set; }
-        //public int? K12SchoolGradeOfferedId { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
 }

@@ -13,15 +13,15 @@ import * as XLSX from '../../../../lib/xlsx-js-style/xlsx.js'
 
 declare let $: any;
 
-export let inclusions: any;
-export let populateReport: any;
-export let reportData: GenerateReportDataDto;
-export let filterBy: any;
-export let filterBy2: any;
-export let gstudentCount: any;
+declare let inclusions: any;
+declare let populateReport: any;
+declare let reportData: GenerateReportDataDto;
+declare let filterBy: any;
+declare let filterBy2: any;
+declare let gstudentCount: any;
 
-export let studentCountColumn: any;
-export let aggregateColumn: any;
+declare let studentCountColumn: any;
+declare let aggregateColumn: any;
 
 @Component({
     selector: 'app-pivottable',
