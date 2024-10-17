@@ -1,19 +1,19 @@
 IF EXISTS (
 select 1 from INFORMATION_SCHEMA.ROUTINES
-where ROUTINE_SCHEMA = 'App' AND  ROUTINE_NAME = 'FS224_TestCase'
+where ROUTINE_SCHEMA = 'App' AND  ROUTINE_NAME = 'FS225_TestCase'
 ) 
 DROP Procedure App.FS224_TestCase
 
 GO
---EXEC  [App].[FS224_TestCase]	 2024
-CREATE PROCEDURE [App].[FS224_TestCase]	
+
+CREATE PROCEDURE [App].[FS225_TestCase]	
 	@SchoolYear SMALLINT
 AS
 BEGIN
 
 	--clear the tables for the next run
-	IF OBJECT_ID('tempdb..#C224Staging') IS NOT NULL
-	DROP TABLE #C224Staging
+	IF OBJECT_ID('tempdb..#C225Staging') IS NOT NULL
+	DROP TABLE #C225Staging
 
 	IF OBJECT_ID('tempdb..#S_CSA') IS NOT NULL
 	DROP TABLE #S_CSA
@@ -23,7 +23,7 @@ BEGIN
 
 	-- Define the test
 	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
-	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS224_UnitTestCase') 
+	IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS225_UnitTestCase') 
 
 	BEGIN
 		SET @expectedResult = 1
@@ -34,9 +34,9 @@ BEGIN
 			, [IsActive]
 		)
 		VALUES (
-			'FS224_UnitTestCase'
-			, 'FS224_TestCase'				
-			, 'FS224'
+			'FS225_UnitTestCase'
+			, 'FS225_TestCase'				
+			, 'FS225'
 			, 1
 		)
 		SET @SqlUnitTestId = @@IDENTITY
@@ -46,7 +46,7 @@ BEGIN
 		SELECT 
 			@SqlUnitTestId = SqlUnitTestId
 		FROM App.SqlUnitTest 
-		WHERE UnitTestName = 'FS224_UnitTestCase'
+		WHERE UnitTestName = 'FS225_UnitTestCase'
 	END
 	
 	-- Clear out last run
@@ -60,25 +60,25 @@ BEGIN
 	-- Gather, evaluate & record the results
 	SELECT  
 		vas.StudentIdentifierState
-	   ,vas.SeaOrganizationIdentifierSea
+	   ,vas.LEAIdentifierSeaAccountability
 	   ,vas.ProficiencyStatus
 	   ,vas.AssessmentAcademicSubject
-	INTO #C224Staging
-	FROM [Staging].[vwAssessment_StagingTables_C224]  vas
+	INTO #C225Staging
+	FROM [Staging].[vwAssessment_StagingTables_C225]  vas
 	WHERE ProficiencyStatus <> 'MISSING' AND AssessmentAcademicSubject <> 'MISSING'
 	AND SchoolYear = @SchoolYear
 
 	/**********************************************************************
 		Test Case 1:
-		CSA at the SEA level - Student Count by SEA
+		CSA at the LEA level - Student Count by LEA
 	***********************************************************************/
-	SELECT SeaOrganizationIdentifierSea
+	SELECT LEAIdentifierSeaAccountability
 		,AssessmentAcademicSubject
 		,ProficiencyStatus
 		, COUNT(DISTINCT StudentIdentifierState) AS AssessmentCount
 	INTO #S_CSA
-	FROM #C224staging 
-	GROUP BY SeaOrganizationIdentifierSea,ProficiencyStatus,AssessmentAcademicSubject
+	FROM #C225staging 
+	GROUP BY LEAIdentifierSeaAccountability,ProficiencyStatus,AssessmentAcademicSubject
 	
 	INSERT INTO App.SqlUnitTestCaseResult (
 		[SqlUnitTestId]
@@ -92,7 +92,7 @@ BEGIN
 	SELECT 
 		@SqlUnitTestId
 		, 'CSA SEA Match All'
-		, 'CSA SEA Match All - SEA: ' + s.SeaOrganizationIdentifierSea
+		, 'CSA LEA Match All - LEA: ' + s.LEAIdentifierSeaAccountability
 		 + '; Academic Subject: ' + rreksa.AssessmentAcademicSubject
 		 + '; Proficiency Status: ' + s.ProficiencyStatus
 		, s.AssessmentCount
@@ -101,16 +101,16 @@ BEGIN
 		, GETDATE()
 	FROM #S_CSA s
 	LEFT JOIN [RDS].[ReportEdFactsK12StudentAssessments] rreksa 
-		ON s.SeaOrganizationIdentifierSea = rreksa.OrganizationIdentifierSea
+		ON s.LEAIdentifierSeaAccountability = rreksa.OrganizationIdentifierSea
 		AND s.AssessmentAcademicSubject = 
 			CASE WHEN rreksa.AssessmentAcademicSubject = 'M' THEN '01166_1'
 			     WHEN rreksa.AssessmentAcademicSubject = 'RLA' THEN '13373_1'
 				 ELSE rreksa.AssessmentAcademicSubject
 			END
 		AND s.ProficiencyStatus = rreksa.PROFICIENCYSTATUS
-		AND rreksa.ReportCode = 'C224' 
+		AND rreksa.ReportCode = 'C225' 
 		AND rreksa.ReportYear = @SchoolYear
-		AND rreksa.ReportLevel = 'SEA'
+		AND rreksa.ReportLevel = 'LEA'
 		AND rreksa.CategorySetCode = 'CSA'
 	DROP TABLE #S_CSA
 

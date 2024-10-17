@@ -1,4 +1,4 @@
-CREATE VIEW [RDS].[vwAssessment_FactTable_C224] 
+CREATE VIEW [RDS].[vwAssessment_FactTable_C225] 
 AS
     SELECT 
           f.SchoolYear
@@ -8,6 +8,8 @@ AS
 		, f.StateAbbreviationDescription
 		, f.SeaOrganizationIdentifierSea
 		, f.SeaOrganizationName
+        , f.LeaIdentifierSea
+        , f.LeaOrganizationName
         , f.AssessmentAcademicSubjectCode
 		, CASE f.AssessmentAcademicSubjectEdFactsCode
             WHEN 'Math' THEN 'M'
@@ -30,11 +32,10 @@ AS
         AND f.GradeLevelEdFactsCode = ata.Grade
     WHERE f.AssessmentAcademicSubjectCode IN ('01166', '13373')
 		AND f.NeglectedOrDelinquentStatusCode = 'Yes'
-	    AND f.NeglectedOrDelinquentProgramEnrollmentSubpartCode = '1'
-        AND f.AssessmentRegistrationParticipationIndicatorCode = 'Participated'
-        AND f.AssessmentRegistrationReasonNotCompletingCode = 'MISSING'
-        AND f.AssessmentPerformanceLevelLabel IS NOT NULL
-        AND rdl.LeaOperationalStatus NOT IN ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
+	    AND f.NeglectedOrDelinquentProgramEnrollmentSubpartCode = '2'
+        AND rdl.LeaOperationalStatus NOT IN ('Closed', 'FutureAgency', 'Inactive', 'MISSING')       
+		and f.AssessmentPerformanceLevelLabel is not null
+		and f.LeaIdentifierSea IS NOT NULL
 GO
 
 
