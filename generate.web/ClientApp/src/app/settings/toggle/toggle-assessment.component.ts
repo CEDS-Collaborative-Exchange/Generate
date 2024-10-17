@@ -34,13 +34,7 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
     private assessmentTypes: AssessmentTypeDto[];
     private eogTypes: string[];
     public selectedToggleAssessment: ToggleAssessment;
-
     selectedAssessmentTypeIndex: number;
-    selectedPerformanceLevelIndex: number;
-    selectedProficientLevelIndex: number;
-    selectedGradeIndex: number;
-    selectedSubjectIndex: number;
-    selectedEogIndex: number;
 
     @ViewChild('comboAssessmentType', { static: false }) comboAssessmentType: any;
     @ViewChild('txtAssessmentName', { static: false }) txtAssessmentName: ElementRef;
@@ -76,17 +70,17 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
     }
 
     getAssessmentTypes() {
-        let subject = this.subjects[this.selectedSubjectIndex];
-        let grade = this.grades[this.selectedGradeIndex];
-
-        console.log("getting assessment types")
+        let subject = this.comboSubject.selectedItem;
+        let grade = this.comboGrade.selectedItem;
 
         if (subject !== undefined && grade !== undefined) {
             if (subject.length > 0 && grade.length > 0) {
                 this._assessmentTypeService.getGradeLevelAssessments(subject, grade).subscribe(
                     data => {
                         this.assessmentTypes = data;
-                        this.assessmentTypes.unshift({ refAssessmentTypeId: 0, code: 'Select', definition: 'Select', description: 'Select' } as AssessmentTypeDto);
+                        this.assessmentTypes.unshift({ refAssessmentTypeChildrenWithDisabilitiesId: 0, code: 'Select', definition: 'Select', description: 'Select' } as AssessmentTypeDto);
+                        this.comboAssessmentType.selectedValue = this.selectedToggleAssessment.assessmentTypeCode;
+                        this.selectedAssessmentTypeIndex = this.assessmentTypes.filter(t => t.code === this.selectedToggleAssessment.assessmentTypeCode)[0].refAssessmentTypeChildrenWithDisabilitiesId;
                     });
             }
         }
@@ -166,21 +160,15 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
             this.selectedToggleAssessment = <ToggleAssessment>{ assessmentName: '', assessmentTypeCode: 'Select', eog: 'Select', grade: 'Select Grade', performanceLevels: 'Select', proficientOrAboveLevel: 'Select', subject: 'Select' };
         }
 
-        console.log(this.selectedToggleAssessment);
+        this.comboEog.selectedItem = this.selectedToggleAssessment.eog;
+        this.comboGrade.selectedItem = this.selectedToggleAssessment.grade;
+        this.comboperformanceLevel.selectedItem = this.selectedToggleAssessment.performanceLevels;
+        this.comboproficientLevel.selectedItem = this.selectedToggleAssessment.proficientOrAboveLevel;
+        this.comboSubject.selectedItem = this.selectedToggleAssessment.subject;
 
-        this.selectedEogIndex = this.eogTypes.findIndex(t => t === this.selectedToggleAssessment.eog);
-        this.selectedGradeIndex = this.grades.findIndex(t => t === this.selectedToggleAssessment.grade);
-        this.selectedPerformanceLevelIndex = this.performanceLevels.findIndex(t => t === this.selectedToggleAssessment.performanceLevels);
-        this.selectedProficientLevelIndex = this.performanceLevels.findIndex(t => t === this.selectedToggleAssessment.proficientOrAboveLevel);
-        this.selectedSubjectIndex = this.subjects.findIndex(t => t === this.selectedToggleAssessment.subject);
         this.txtAssessmentName.nativeElement.value = this.selectedToggleAssessment.assessmentName;
         this.getAssessmentTypes();
 
-
-        setTimeout(() => {
-            console.log(this.selectedToggleAssessment.assessmentTypeCode);
-            this.comboAssessmentType.selectedValue = this.selectedToggleAssessment.assessmentTypeCode;
-        }, 1000);
         
     }
 
@@ -199,12 +187,8 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
 
     saveAssessment(assessmentDialog: any) {
 
-        //console.log(this.selectedPerformanceLevelIndex);
-        //console.log(this.comboperformanceLevel.selectedValue);
-        console.log(this.comboperformanceLevel);
-
-        let selectedPerformanceLevel = this.performanceLevels[this.selectedPerformanceLevelIndex];
-        let selectedProficientLevel = this.performanceLevels[this.selectedProficientLevelIndex];
+        let selectedPerformanceLevel = this.comboperformanceLevel.selectedItem;
+        let selectedProficientLevel = this.comboproficientLevel.selectedItem;
 
         if (Number(selectedPerformanceLevel) < 3) {
             this.errorMessage = 'At least three performance levels must be selected.';
@@ -222,12 +206,12 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
             let iserror: boolean = false;
             let tempAssessments = this.toggleAssessments.filter(f => f.assessmentTypeCode === this.comboAssessmentType.selectedValue && f.assessmentName !== this.txtAssessmentName.nativeElement.value);
             if (tempAssessments.length > 0) {
-                if (this.grades[this.selectedGradeIndex] === 'HS') {
+                if (this.comboGrade.selectedItem === 'HS') {
                     tempAssessments.forEach(a => {
                         if (secondaryGradesList.includes(a.grade)) { iserror = true; }
                     });
                 } else {
-                    if (secondaryGradesList.includes(this.grades[this.selectedGradeIndex])) {
+                    if (secondaryGradesList.includes(this.comboGrade.selectedItem)) {
                         tempAssessments.forEach(a => {
                             if (a.grade === 'HS') { iserror = true; }
                         });
@@ -243,14 +227,14 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
 
 
             this.selectedToggleAssessment.assessmentTypeCode = this.comboAssessmentType.selectedValue;
-            this.selectedToggleAssessment.performanceLevels = this.comboperformanceLevel.selectedValue;
-            this.selectedToggleAssessment.proficientOrAboveLevel = this.comboproficientLevel.selectedValue;
-            this.selectedToggleAssessment.grade = this.comboGrade.selectedValue;
-            this.selectedToggleAssessment.eog = this.comboEog.selectedValue;
+            this.selectedToggleAssessment.performanceLevels = this.comboperformanceLevel.selectedItem;
+            this.selectedToggleAssessment.proficientOrAboveLevel = this.comboproficientLevel.selectedItem;
+            this.selectedToggleAssessment.grade = this.comboGrade.selectedItem;
+            this.selectedToggleAssessment.eog = this.comboEog.selectedItem;
             this.selectedToggleAssessment.assessmentType = this.assessmentTypes.filter(f => f.code === this.comboAssessmentType.selectedValue)[0].description;
 
             this.selectedToggleAssessment.assessmentName = this.txtAssessmentName.nativeElement.value;
-            this.selectedToggleAssessment.subject = this.comboSubject.selectedValue;
+            this.selectedToggleAssessment.subject = this.comboSubject.selectedItem;
 
             if (this.selectedToggleAssessment.toggleAssessmentId > 0) {
                 this._toggleAssessmentService.updateAssessment(this.selectedToggleAssessment)
