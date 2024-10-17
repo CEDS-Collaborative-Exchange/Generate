@@ -76,34 +76,11 @@ namespace generate.core.Models.Staging
         public  DateTime? School_RecordEndDateTime { get; set; }                                                  
         public  string SchoolYear { get; set; }                                                                   
         public  string DataCollectionName { get; set; }                                                           
-        //public  int? DataCollectionId { get; set; }                                                               
-        //public  int? OrganizationId_SEA { get; set; }                                                             
-        //public  int? OrganizationId_IEU { get; set; }                                                             
-        //public  int? OrganizationId_LEA { get; set; }                                                             
-        //public  int? OrganizationId_School { get; set; }                                                          
-        //public  int? K12ProgramOrServiceId_LEA { get; set; }                                                      
-        //public  int? K12LeaTitleISupportServiceId { get; set; }                                                   
-        //public  int? K12ProgramOrServiceId_School { get; set; }                                                   
+                                         
         public  bool? NewIEU { get; set; }                                                                        
         public  bool? NewLEA { get; set; }                                                                        
         public  bool? NewSchool { get; set; }                                                                     
-        //public  bool? IEU_Identifier_State_ChangedIdentifier { get; set; }                                        
-        //public  string IEU_Identifier_State_Identifier_Old { get; set; }                                          
-        //public  bool? LEA_Identifier_State_ChangedIdentifier { get; set; }                                        
-        //public  string LEA_Identifier_State_Identifier_Old { get; set; }                                          
-        //public  bool? School_Identifier_State_ChangedIdentifier { get; set; }                                     
-        //public  string School_Identifier_State_Identifier_Old { get; set; }                                       
-        //public  int? OrganizationRelationshipId_SEAToIEU { get; set; }                                            
-        //public  int? OrganizationRelationshipId_IEUToLEA { get; set; }                                            
-        //public  int? OrganizationRelationshipId_SEAToLEA { get; set; }                                            
-        //public  int? OrganizationRelationshipId_LEAToSchool { get; set; }                                         
-        //public int? OrganizationRelationshipId_SchoolToPrimaryCharterSchoolAuthorizer { get; set; }
-        //public int? OrganizationRelationshipId_SchoolToSecondaryCharterSchoolAuthorizer { get; set; }
-        //public int? OrganizationWebsiteId_LEA { get; set; }                                                      
-        //public  int? OrganizationWebsiteId_School { get; set; }                                                   
-        //public  int? OrganizationOperationalStatusId_IEU { get; set; }                                            
-        //public  int? OrganizationOperationalStatusId_LEA { get; set; }                                            
-        //public  int? OrganizationOperationalStatusId_School { get; set; }                                         
+                                   
         public  DateTime? RunDateTime { get; set; }                                                               
     }                                                                                                             
 }                                                                                                                 

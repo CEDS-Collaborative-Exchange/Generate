@@ -92,19 +92,6 @@ namespace generate.web.Controllers.Api.App
         public JsonResult getMetadataStatus()
         {
            List<GenerateConfiguration> metadataConfig = _appRepository.GetAll<GenerateConfiguration>(0, 0).Where(t => t.GenerateConfigurationCategory == "Metadata").ToList();
-           if(metadataConfig.Count > 0 )
-            {
-                string status = metadataConfig.FirstOrDefault(t => t.GenerateConfigurationKey == "metaStatus").GenerateConfigurationValue;
-                //if(status.ToUpper() != "OK")
-                //{
-                //    GenerateConfiguration generateConfiguration = new GenerateConfiguration();
-                //    generateConfiguration.GenerateConfigurationId = metadataConfig.Count + 1;
-                //    generateConfiguration.GenerateConfigurationCategory = "Metadata";
-                //    generateConfiguration.GenerateConfigurationKey = "BackgroundUrl";
-                //    generateConfiguration.GenerateConfigurationValue = this._backgroundUrl;
-                //    metadataConfig.Add(generateConfiguration);
-                //}
-            }
            return Json(metadataConfig);
         }
 

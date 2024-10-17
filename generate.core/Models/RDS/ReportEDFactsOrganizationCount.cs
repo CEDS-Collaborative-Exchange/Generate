@@ -11,7 +11,6 @@ namespace generate.core.Models.RDS
         public string ReportYear { get; set; }
         public string ReportLevel { get; set; }
         public string CategorySetCode { get; set; }
-        //public string Categories { get; set; }
         public string TableTypeAbbrv { get; set; }
         public string TotalIndicator { get; set; }
 
@@ -19,7 +18,6 @@ namespace generate.core.Models.RDS
         public string StateANSICode { get; set; }
         public string StateCode { get; set; }
         public string StateName { get; set; }
-        //public int OrganizationId { get; set; }
         public string OrganizationNcesId { get; set; }
         public string OrganizationStateId { get; set; }
         public string OrganizationName { get; set; }

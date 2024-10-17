@@ -18,7 +18,6 @@ namespace generate.core.Models.RDS
         public string StateANSICode { get; set; }
         public string StateAbbreviationCode { get; set; }
         public string StateAbbreviationDescription { get; set; }
-        //public int OrganizationId { get; set; }
         public string OrganizationIdentifierNces { get; set; }
         public string OrganizationIdentifierSea { get; set; }
         public string OrganizationName { get; set; }
@@ -31,16 +30,12 @@ namespace generate.core.Models.RDS
         public string SPECIALEDUCATIONSUPPORTSERVICESCATEGORY { get; set; }
         public string TITLEIPROGRAMSTAFFCATEGORY { get; set; }
 
-        //  public string MEPSESSSTF { get; set; }
         public string TITLEIIIACCOUNTABILITYPROGRESSSTATUS { get; set; }
         public string FORMERENGLISHLEARNERYEARSTATUS { get; set; }
         public string TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE { get; set; }
         public string PROFICIENCYSTATUS { get; set; }
         public string TEACHINGCREDENTIALTYPE { get; set; }
         public string PARAPROFESSIONALQUALIFICATIONSTATUS { get; set; }
-        //  public string ASSESSEDFIRSTTIME { get; set; }
-
-        //public string EMERGENCYORPROVISIONALCREDENTIALSTATUS { get; set; }
         public string EDFACTSTEACHEROUTOFFIELDSTATUS { get; set; }
         public string EDFACTSTEACHERINEXPERIENCEDSTATUS { get; set; }
 
@@ -48,7 +43,6 @@ namespace generate.core.Models.RDS
         public int StaffCount { get; set; }
         public decimal StaffFullTimeEquivalency { get; set; }
 
-      //  public string MEPSESSSTF { get; set; }
 
 
     }

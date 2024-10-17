@@ -22,7 +22,6 @@ namespace generate.core.Models.RDS
         public string OrganizationIdentifierNces { get; set; }
         public string OrganizationIdentifierSea { get; set; }
         public string OrganizationName { get; set; }
-        //public int? OrganizationId { get; set; }
         public string ParentOrganizationIdentifierSea { get; set; }
 
 
@@ -74,13 +73,10 @@ namespace generate.core.Models.RDS
         public string FORMERENGLISHLEARNERYEARSTATUS { get; set; }
         public string TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE { get; set; }
         public string PROFICIENCYSTATUS { get; set; }
-        //   public string ASSESSEDFIRSTTIME { get; set; }
 
         public string SINGLEPARENTORSINGLEPREGNANTWOMANSTATUS { get; set; }
         public string CTEAEDISPLACEDHOMEMAKERINDICATOR { get; set; }
         public string CTENONTRADITIONALGENDERSTATUS { get; set; }
-        //public string PLACEMENTSTATUS { get; set; }
-        //public string PLACEMENTTYPE { get; set; }
         public string REPRESENTATIONSTATUS { get; set; }
         public string CTEGRADUATIONRATEINCLUSION { get; set; }
 
@@ -94,8 +90,6 @@ namespace generate.core.Models.RDS
         public string EDFACTSACADEMICORCAREERANDTECHNICALOUTCOMEEXITTYPE { get; set; }
         public string PERKINSENGLISHLEARNERSTATUS { get; set; }
         public int StudentCount { get; set; }
-
-        //public string YEAR { get; set; }
 
         public decimal? ADJUSTEDCOHORTGRADUATIONRATE { get; set; }
 

@@ -29,7 +29,6 @@ namespace generate.core.Models.Staging
         public bool? CteParticipant { get; set; }
         public bool? CteConcentrator { get; set; }
         public bool? CteCompleter { get; set; }
-        //public string CteExitReason { get; set; }
         public bool? SingleParentIndicator { get; set; }
         public DateTime? SingleParent_StatusStartDate { get; set; }
         public DateTime? SingleParent_StatusEndDate { get; set; }
@@ -42,12 +41,6 @@ namespace generate.core.Models.Staging
         public bool? NonTraditionalGenderStatus { get; set; }
         public bool? CTENontraditionalCompletion { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? PersonID { get; set; }
-        //public int? OrganizationID_School { get; set; }
-        //public int? OrganizationPersonRoleID_School { get; set; }
-        //public int? OrganizationPersonRoleID_CTEProgram { get; set; }
-        //public int? OrganizationID_CTEProgram { get; set; }
-        //public int? PersonProgramParticipationId { get; set; }
         public string CteExitReason { get; set; }
         public DateTime? RunDateTime { get; set; }
     }

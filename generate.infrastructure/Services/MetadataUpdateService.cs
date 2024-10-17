@@ -52,27 +52,27 @@ namespace generate.infrastructure.Services
         string _fsMetaCHRLayoutFileName;
         string _bkfsMetaFileLoc;
 
-        string initSubdir = "DataSetYearVersionByAllAbbrv";
-        string detailSubdir = "DataSetYearVersionDetailsByAllAbbrv";
-        string layoutSubdir = "DataSetYearVersionFSLayoutDetailsByAllAbbrv";
-        string configurationCategory = "Metadata";
-        string essKey = "ESSMetadata";
-        string chrKey = "CHRTRMetadata";
-        string splitKey = "||";
-        string dataMigrationStatusName = "Processing";
-        string dataMigrationTypeName = "Report Warehouse";
-        string bkESSflname = "ESS.json";
-        string bkCHRflname = "CHRTR.json";
-        string bkESSflnameFLay = "ESSFLay.json";
-        string bkCHRflnameFLay = "CHRTRFLay.json";
+        readonly string initSubdir = "DataSetYearVersionByAllAbbrv";
+        readonly string detailSubdir = "DataSetYearVersionDetailsByAllAbbrv";
+        readonly string layoutSubdir = "DataSetYearVersionFSLayoutDetailsByAllAbbrv";
+        readonly string configurationCategory = "Metadata";
+        readonly string essKey = "ESSMetadata";
+        readonly string chrKey = "CHRTRMetadata";
+        readonly string splitKey = "||";
+        readonly string dataMigrationStatusName = "Processing";
+        readonly string dataMigrationTypeName = "Report Warehouse";
+        readonly string bkESSflname = "ESS.json";
+        readonly string bkCHRflname = "CHRTR.json";
+        readonly string bkESSflnameFLay = "ESSFLay.json";
+        readonly string bkCHRflnameFLay = "CHRTRFLay.json";
         string bkESSFLay = string.Empty;
         string bkCHRFLay = string.Empty;
         bool _reloadFromBackUp = false;
-        string FSMetalogKey = "MetaLastRunLog";
-        string FSMetasStaKey = "metaStatus";
-        string FSMetastausok = "OK";
-        string FSMetastausFail = "FAILED";
-        string FSMetastausProcessing = "PROCESSING";
+        readonly string FSMetalogKey = "MetaLastRunLog";
+        readonly string FSMetasStaKey = "metaStatus";
+        readonly string FSMetastausok = "OK";
+        readonly string FSMetastausFail = "FAILED";
+        readonly string FSMetastausProcessing = "PROCESSING";
 
         Dictionary<string, string> newCatInfo = new Dictionary<string, string>();
 
@@ -274,14 +274,14 @@ namespace generate.infrastructure.Services
                     maxVersionNumber = initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == "Published" && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
                     nxtYear = maxSubmissionYear + 1;
                     fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
-                    year = int.Parse(charterQuery4.FirstOrDefault().Year);
-                    maxVersNum = charterQuery4.FirstOrDefault().versNum;
-
+                    if (charterQuery4.FirstOrDefault() is not null){ 
+                        year = int.Parse(charterQuery4.FirstOrDefault().Year);
+                        maxVersNum = charterQuery4.FirstOrDefault().versNum;
+                    }
 
                     bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(false, maxSubmissionYear.ToString(), maxVersionNumber);
                     if (!checkPrevFSPop) { skipCHRPop = true; goto skipCHRPopulation; }
 
-                    //string detailUrl = "https://edfacts.ed.gov/generate/DataSetYearVersionDetailsByAllAbbrv?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
                     string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
                     detailUrl = string.Format(detailUrl, collectName, charterDSNameAbbrv, maxVersionNumber.ToString(), fqYrName);
 
@@ -2945,7 +2945,7 @@ namespace generate.infrastructure.Services
             IQueryable<GenerateConfiguration> gc = _appDbContext.GenerateConfigurations
                                                    .Where(q => q.GenerateConfigurationCategory == configurationCategory && q.GenerateConfigurationKey == (IsESSDS ? essKey : chrKey));
 
-            if (gc is null || gc.Count() == 0)
+            if (gc == null || !gc.Any())
             {
                 GenerateConfiguration _gc = new GenerateConfiguration();
                 _gc.GenerateConfigurationCategory = configurationCategory;
@@ -2997,7 +2997,7 @@ namespace generate.infrastructure.Services
             IQueryable<GenerateConfiguration> gc = _appDbContext.GenerateConfigurations
                                                    .Where(q => q.GenerateConfigurationCategory == configurationCategory && q.GenerateConfigurationKey == key);
 
-            if (gc is null || gc.Count() == 0)
+            if (gc == null || !gc.Any())
             {
                 GenerateConfiguration _gc = new GenerateConfiguration();
                 _gc.GenerateConfigurationCategory = configurationCategory;

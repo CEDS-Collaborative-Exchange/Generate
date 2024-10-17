@@ -28,10 +28,7 @@ export class AboutServ extends BaseService {
                     tap(resp => {
                         this.log(`getTaskLists`);
                     }),
-                    catchError(err => {
-                        this.handleError
-                        return of(err.error);
-                    })  
+                    catchError(this.handleError)
               );
 
         /*
