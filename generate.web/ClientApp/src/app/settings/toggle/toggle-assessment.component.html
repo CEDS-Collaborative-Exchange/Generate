@@ -117,7 +117,7 @@
             </div>
             <div class="generate-app-toggle-assessment__dialog__subject mdl-cell mdl-cell--8-col">
                 <generate-app-combo-box #comboSubject id="generate-app-toggle-assessment__subjects" [itemsSource]="subjects" [isEditable]="false"
-                              (selectedIndexChanged)="SubjectChanged($event)">
+                              [selectedIndex]="selectedSubjectIndex" (selectedIndexChanged)="SubjectChanged($event)">
                 </generate-app-combo-box>
             </div>
 
@@ -126,7 +126,7 @@
             </div>
             <div class="generate-app-toggle-assessment__dialog__grade mdl-cell mdl-cell--8-col">
                 <generate-app-combo-box #comboGrade id="generate-app-toggle-assessment__grades" [itemsSource]="grades" [isEditable]="false"
-                              (selectedIndexChanged)="GradeChanged($event)">
+                              [selectedIndex]="selectedGradeIndex" (selectedIndexChanged)="GradeChanged($event)">
                 </generate-app-combo-box>
             </div>
 
@@ -135,7 +135,7 @@
             </div>
             <div class="generate-app-toggle-assessment__dialog__assessment-type mdl-cell mdl-cell--8-col">
                 <generate-app-combo-box #comboAssessmentType id="generate-app-toggle-assessment__assessmentTypes" [itemsSource]="assessmentTypes" [isEditable]="false"
-                              displayMemberPath="description" selectedValuePath="code"></generate-app-combo-box>
+                               [selectedIndex]="selectedAssessmentTypeIndex" displayMemberPath="description" selectedValuePath="code"></generate-app-combo-box>
             </div>
 
             <div class="generate-app-toggle-assessment__dialog__assessment-name mdl-cell mdl-cell--4-col">
@@ -149,21 +149,24 @@
                 <label class="generate-app-toggle-assessment-controls__sectionlabel" for="generate-app-toggle-assessment__performanceLevels"># of Performance Levels: </label>
             </div>
             <div class="generate-app-toggle-assessment__dialog__performance-level mdl-cell mdl-cell--8-col">
-                <generate-app-combo-box #comboperformanceLevel id="generate-app-toggle-assessment__performanceLevels" [itemsSource]="performanceLevels" [isEditable]="false"></generate-app-combo-box>
+                <generate-app-combo-box #comboperformanceLevel id="generate-app-toggle-assessment__performanceLevels" [itemsSource]="performanceLevels"
+                                      [selectedIndex]="selectedPerformanceLevelIndex"  [isEditable]="false"></generate-app-combo-box>
             </div>
 
             <div class="generate-app-toggle-assessment__dialog__proficiency mdl-cell mdl-cell--4-col">
                 <label class="generate-app-toggle-assessment-controls__sectionlabel" for="generate-app-toggle-assessment__proficientLevels">At or Above Proficiency: </label>
             </div>
             <div class="generate-app-toggle-assessment__dialog__proficiency mdl-cell mdl-cell--8-col">
-                <generate-app-combo-box #comboproficientLevel id="generate-app-toggle-assessment__proficientLevels" [itemsSource]="performanceLevels" [isEditable]="false"></generate-app-combo-box>
+                <generate-app-combo-box #comboproficientLevel id="generate-app-toggle-assessment__proficientLevels" [itemsSource]="performanceLevels"
+                                       [selectedIndex]="selectedProficientLevelIndex" [isEditable]="false"></generate-app-combo-box>
             </div>
 
             <div class="generate-app-toggle-assessment__dialog__eog mdl-cell mdl-cell--4-col">
                 <label class="generate-app-toggle-assessment-controls__sectionlabel" for="generate-app-toggle-assessment__eog">EOG/EOC: </label>
             </div>
             <div class="generate-app-toggle-assessment__dialog__eog mdl-cell mdl-cell--8-col">
-                <generate-app-combo-box #comboEog id="generate-app-toggle-assessment__eog" [itemsSource]="eogTypes" [isEditable]="false"></generate-app-combo-box>
+                <generate-app-combo-box #comboEog id="generate-app-toggle-assessment__eog" [itemsSource]="eogTypes"
+                                        [selectedIndex]="selectedEogIndex" [isEditable]="false"></generate-app-combo-box>
             </div>
 
             <div class="generate-app-toggle__assessment-dialog-buttons mdl-cell mdl-cell--12-col mdl-typography--text-right">

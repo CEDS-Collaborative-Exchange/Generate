@@ -35,6 +35,13 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
     private eogTypes: string[];
     public selectedToggleAssessment: ToggleAssessment;
 
+    selectedAssessmentTypeIndex: number;
+    selectedPerformanceLevelIndex: number;
+    selectedProficientLevelIndex: number;
+    selectedGradeIndex: number;
+    selectedSubjectIndex: number;
+    selectedEogIndex: number;
+
     @ViewChild('comboAssessmentType', { static: false }) comboAssessmentType: any;
     @ViewChild('txtAssessmentName', { static: false }) txtAssessmentName: ElementRef;
     @ViewChild('comboperformanceLevel', { static: false }) comboperformanceLevel: any;
@@ -69,8 +76,10 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
     }
 
     getAssessmentTypes() {
-        let subject = this.comboSubject.selectedValue;
-        let grade = this.comboGrade.selectedValue;
+        let subject = this.subjects[this.selectedSubjectIndex];
+        let grade = this.grades[this.selectedGradeIndex];
+
+        console.log("getting assessment types")
 
         if (subject !== undefined && grade !== undefined) {
             if (subject.length > 0 && grade.length > 0) {
@@ -134,7 +143,7 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
     }
 
     populateGrades() {
-        let gradesList = ['Select Grade', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', 'HS'];
+        let gradesList = ['Select Grade', 'PK', 'KG', 'UG', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', 'HS'];
         this.grades = [];
 
         for (let i in gradesList) {
@@ -148,7 +157,6 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
         dlg.modal = true;
         dlg.show();
 
-        console.log("ID is: " + dialogId);
         this.selectedToggleAssessment = null;
 
         if (dialogId > 0) {
@@ -156,18 +164,21 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
 
         } else {
             this.selectedToggleAssessment = <ToggleAssessment>{ assessmentName: '', assessmentTypeCode: 'Select', eog: 'Select', grade: 'Select Grade', performanceLevels: 'Select', proficientOrAboveLevel: 'Select', subject: 'Select' };
-
         }
 
-        
-        this.comboEog.selectedValue = this.selectedToggleAssessment.eog;
-        this.comboGrade.selectedValue = this.selectedToggleAssessment.grade;
-        this.comboperformanceLevel.selectedValue = this.selectedToggleAssessment.performanceLevels;
-        this.comboproficientLevel.selectedValue = this.selectedToggleAssessment.proficientOrAboveLevel;
+        console.log(this.selectedToggleAssessment);
+
+        this.selectedEogIndex = this.eogTypes.findIndex(t => t === this.selectedToggleAssessment.eog);
+        this.selectedGradeIndex = this.grades.findIndex(t => t === this.selectedToggleAssessment.grade);
+        this.selectedPerformanceLevelIndex = this.performanceLevels.findIndex(t => t === this.selectedToggleAssessment.performanceLevels);
+        this.selectedProficientLevelIndex = this.performanceLevels.findIndex(t => t === this.selectedToggleAssessment.proficientOrAboveLevel);
+        this.selectedSubjectIndex = this.subjects.findIndex(t => t === this.selectedToggleAssessment.subject);
         this.txtAssessmentName.nativeElement.value = this.selectedToggleAssessment.assessmentName;
-        this.comboSubject.selectedValue = this.selectedToggleAssessment.subject;
+        this.getAssessmentTypes();
+
 
         setTimeout(() => {
+            console.log(this.selectedToggleAssessment.assessmentTypeCode);
             this.comboAssessmentType.selectedValue = this.selectedToggleAssessment.assessmentTypeCode;
         }, 1000);
         
@@ -176,8 +187,6 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
     removeAssessmentDialog(dlg: any, dialogId: number) {
         dlg.modal = true;
         dlg.show();
-
-        console.log("ID is: " + dialogId);
 
         this.selectedToggleAssessment = this.toggleAssessments.filter(t => { return (t.toggleAssessmentId === dialogId); })[0];
         
@@ -190,58 +199,71 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
 
     saveAssessment(assessmentDialog: any) {
 
-        if (<number>this.comboperformanceLevel.selectedValue < 3) {
+        //console.log(this.selectedPerformanceLevelIndex);
+        //console.log(this.comboperformanceLevel.selectedValue);
+        console.log(this.comboperformanceLevel);
+
+        let selectedPerformanceLevel = this.performanceLevels[this.selectedPerformanceLevelIndex];
+        let selectedProficientLevel = this.performanceLevels[this.selectedProficientLevelIndex];
+
+        if (Number(selectedPerformanceLevel) < 3) {
             this.errorMessage = 'At least three performance levels must be selected.';
             return;
         }
 
-        if (<number>this.comboproficientLevel.selectedValue > <number>this.comboperformanceLevel.selectedValue) {
+        if (Number(selectedProficientLevel) > Number(selectedPerformanceLevel)) {
             this.errorMessage = 'Proficient Level is higher than the total number of performance levels.';
             return;
         }
 
-        let secondaryGradesList = ['09', '10', '11', '12'];
-        let iserror: boolean = false;
-        let tempAssessments = this.toggleAssessments.filter(f => f.assessmentTypeCode === this.comboAssessmentType.selectedValue && f.assessmentName !== this.txtAssessmentName.nativeElement.value);
-        if (tempAssessments.length > 0) {
-            if (this.comboGrade.selectedValue === 'HS') {
-                tempAssessments.forEach(a => {
-                    if (secondaryGradesList.includes(a.grade)) { iserror = true; }
-                });
-            } else {
-                if (secondaryGradesList.includes(this.comboGrade.selectedValue)) {
+        if (this.comboAssessmentType.selectedValue !== undefined || this.comboAssessmentType.selectedValue !== null) {
+
+            let secondaryGradesList = ['09', '10', '11', '12'];
+            let iserror: boolean = false;
+            let tempAssessments = this.toggleAssessments.filter(f => f.assessmentTypeCode === this.comboAssessmentType.selectedValue && f.assessmentName !== this.txtAssessmentName.nativeElement.value);
+            if (tempAssessments.length > 0) {
+                if (this.grades[this.selectedGradeIndex] === 'HS') {
                     tempAssessments.forEach(a => {
-                        if (a.grade === 'HS') { iserror = true; }
+                        if (secondaryGradesList.includes(a.grade)) { iserror = true; }
                     });
+                } else {
+                    if (secondaryGradesList.includes(this.grades[this.selectedGradeIndex])) {
+                        tempAssessments.forEach(a => {
+                            if (a.grade === 'HS') { iserror = true; }
+                        });
+                    }
                 }
             }
-        }
 
-        if (iserror) {
-            this.errorMessage = 'Cannot have grades 9-12 and HS selected for the same assessment type.'
-            return;
-        }
+            if (iserror) {
+                this.errorMessage = 'Cannot have grades 9-12 and HS selected for the same assessment type.'
+                return;
+            }
 
-        this.selectedToggleAssessment.assessmentTypeCode = this.comboAssessmentType.selectedValue;
-        this.selectedToggleAssessment.performanceLevels = this.comboperformanceLevel.selectedValue;
-        this.selectedToggleAssessment.proficientOrAboveLevel = this.comboproficientLevel.selectedValue;
-        this.selectedToggleAssessment.grade = this.comboGrade.selectedValue;
-        this.selectedToggleAssessment.eog = this.comboEog.selectedValue;
-        this.selectedToggleAssessment.assessmentType = this.assessmentTypes.filter(f => f.code === this.selectedToggleAssessment.assessmentTypeCode)[0].description;
-        this.selectedToggleAssessment.assessmentName = this.txtAssessmentName.nativeElement.value;
-        this.selectedToggleAssessment.subject = this.comboSubject.selectedValue;
 
-        if (this.selectedToggleAssessment.toggleAssessmentId > 0) {
-            this._toggleAssessmentService.updateAssessment(this.selectedToggleAssessment)
-                .subscribe(data => {
-                    let idx = this.toggleAssessments.map(s => { return s.toggleAssessmentId }).indexOf(this.selectedToggleAssessment.toggleAssessmentId);
-                    this.toggleAssessments[idx] = this.selectedToggleAssessment;
-                });
-        } else {
-            this._toggleAssessmentService.addAssessment(this.selectedToggleAssessment)
-                .subscribe(data => {
-                    this.getAssessments();
-                });
+
+            this.selectedToggleAssessment.assessmentTypeCode = this.comboAssessmentType.selectedValue;
+            this.selectedToggleAssessment.performanceLevels = this.comboperformanceLevel.selectedValue;
+            this.selectedToggleAssessment.proficientOrAboveLevel = this.comboproficientLevel.selectedValue;
+            this.selectedToggleAssessment.grade = this.comboGrade.selectedValue;
+            this.selectedToggleAssessment.eog = this.comboEog.selectedValue;
+            this.selectedToggleAssessment.assessmentType = this.assessmentTypes.filter(f => f.code === this.comboAssessmentType.selectedValue)[0].description;
+
+            this.selectedToggleAssessment.assessmentName = this.txtAssessmentName.nativeElement.value;
+            this.selectedToggleAssessment.subject = this.comboSubject.selectedValue;
+
+            if (this.selectedToggleAssessment.toggleAssessmentId > 0) {
+                this._toggleAssessmentService.updateAssessment(this.selectedToggleAssessment)
+                    .subscribe(data => {
+                        let idx = this.toggleAssessments.map(s => { return s.toggleAssessmentId }).indexOf(this.selectedToggleAssessment.toggleAssessmentId);
+                        this.toggleAssessments[idx] = this.selectedToggleAssessment;
+                    });
+            } else {
+                this._toggleAssessmentService.addAssessment(this.selectedToggleAssessment)
+                    .subscribe(data => {
+                        this.getAssessments();
+                    });
+            }
         }
         
         this.errorMessage = null
