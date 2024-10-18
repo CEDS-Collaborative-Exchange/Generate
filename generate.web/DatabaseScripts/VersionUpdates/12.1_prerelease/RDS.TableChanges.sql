@@ -3,7 +3,7 @@
         ALTER TABLE RDS.FactK12StudentAssessments ADD PrimaryDisabilityTypeId int not null default(-1)
     END
 
-    IF NOT EXISTS (SELECT * FROM RDS.DimAttendances WHERE AttendanceCode = 'CA')
+    IF NOT EXISTS (SELECT * FROM RDS.DimAttendances WHERE AbsenteeismCode = 'CA')
     BEGIN
         INSERT INTO RDS.DimAttendances
         VALUES ('CA','Chronic Absentee','CA')
