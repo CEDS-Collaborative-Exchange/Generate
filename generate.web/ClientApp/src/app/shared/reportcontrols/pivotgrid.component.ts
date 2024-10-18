@@ -21,9 +21,9 @@ import { IAppConfig } from '../../models/app-config.model';
 import { Subscription } from 'rxjs';
 
 
-declare let saveAs: any;
-declare let componentHandler: any;
-declare let alphanum: any;
+declare var saveAs: any;
+declare var componentHandler: any;
+declare var alphanum: any;
 
 @Component({
     selector: 'generate-app-pivotgrid',
