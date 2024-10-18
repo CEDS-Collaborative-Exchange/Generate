@@ -2685,8 +2685,6 @@ namespace generate.testdata.DataGenerators
             testData.K12Organizations.ForEach(o =>
             {
                 o.School_TitleISchoolStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIschoolStatusDistribution);
-                o.LEA_GunFreeSchoolsActReportingStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefGunFreeSchoolsActReportingStatusDistribution);
-                o.LEA_McKinneyVentoSubgrantRecipient = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.IsMcKinneyVentoDistribution);
                 o.School_GunFreeSchoolsActReportingStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefGunFreeSchoolsActReportingStatusDistribution);
                 o.School_Type = this.IdsReferenceData.RefSchoolTypes.Single(x => x.RefSchoolTypeId == Convert.ToInt32(o.School_Type)).Code;
                 //FS129 columns
@@ -2705,7 +2703,6 @@ namespace generate.testdata.DataGenerators
                 }
 
             });
-
 
             //testData.OrganizationPhones.ForEach(p =>
             //{

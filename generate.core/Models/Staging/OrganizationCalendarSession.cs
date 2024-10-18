@@ -14,10 +14,6 @@ namespace generate.core.Models.Staging
         public string SessionType { get; set; }
         public string AcademicTermDesignator { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? DataCollectionId { get; set; }
-        //public int? OrganizationId { get; set; }
-        //public int? OrganizationCalendarId { get; set; }
-        //public int? OrganizationCalendarSessionId { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
 }

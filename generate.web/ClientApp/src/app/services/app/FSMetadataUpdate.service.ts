@@ -16,11 +16,7 @@ export class FSMetadataUpdate extends BaseService {
     callFSMetaServc() {
 
         let url = this._apiUrl + '/fsservc';
-        console.log("calling method callFSMetaServc" + url);
-
-        //return this.http.get<DataMigrationTask[]>(url, { observe: 'response' })
-        //return this.http.get(url, { observe: 'response' })
-
+  
         return this.http.get(url, { observe: 'response' })
             .pipe(
                 map(resp => {

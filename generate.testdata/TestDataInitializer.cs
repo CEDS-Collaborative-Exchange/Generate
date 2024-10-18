@@ -105,10 +105,6 @@ namespace generate.testdata
             {
                 schoolYear = Convert.ToInt32(generateConfigurations.Where(c => c.GenerateConfigurationKey == "SchoolYear").Select(c => c.GenerateConfigurationValue).FirstOrDefault());
             }
-            if (!schoolYear.HasValue)
-            {
-                schoolYear = DateTime.Now.Year;
-            }
 
             int seed = 1000;
             int.TryParse(generateConfigurations.Where(c => c.GenerateConfigurationKey == "Seed").Select(c => c.GenerateConfigurationValue).FirstOrDefault(), out seed);

@@ -15,14 +15,11 @@ namespace generate.infrastructure.Helpers
     {
 
         private readonly IFSMetadataUpdateService _fsMetadataUpdateService;
-        private readonly ILogger _logger;
 
         public HangfireHelper(
             IFSMetadataUpdateService fsMetadataUpdateService
-            //,ILogger logger
         )
         {
-            //_logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _fsMetadataUpdateService = fsMetadataUpdateService ?? throw new ArgumentNullException(nameof(fsMetadataUpdateService));
         }
 

@@ -10,7 +10,6 @@ namespace generate.core.Interfaces.Services
     public interface IFSMetadataUpdateService
     {
 
-        //List<DataSetYearVersionByAllAbbrv> GetEMDRDSYrInfo();
         bool useWSforFSMetaUpd { get; set; }
         string fsWSURL { get; set; }
         string fsMetaFileLoc { get; set; }
