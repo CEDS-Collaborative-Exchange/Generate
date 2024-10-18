@@ -11,10 +11,12 @@ AS
 			, LEAs.LeaOrganizationName
 			, Schools.SchoolIdentifierSea
 			, Schools.NameOfInstitution
+			--Sex
+			, Demo.SexEdFactsCode
 			--Race
 			, Races.RaceEdFactsCode
 			--Homeless	
-			, Home.HomelessnessStatusCode
+			, Home.HomelessnessStatusEdFactsCode
 			--Economic Disadvantage
 			, ecoDis.EconomicDisadvantageStatusEdFactsCode
 			--English Learner
@@ -31,6 +33,7 @@ AS
 	LEFT JOIN	RDS.DimPeople								Students	ON Fact.K12StudentId						= Students.DimPersonId	AND Students.IsActiveK12Student = 1
 	LEFT JOIN	RDS.DimLeas									LEAs		ON Fact.LeaId								= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools							Schools		ON Fact.K12SchoolId							= Schools.DimK12SchoolId
+	LEFT JOIN	RDS.DimK12Demographics						Demo		ON Fact.K12DemographicId					= Demo.DimK12DemographicId
 	LEFT JOIN	RDS.DimEnglishLearnerStatuses				EL			ON Fact.EnglishLearnerStatusId				= EL.DimEnglishLearnerStatusId
 	LEFT JOIN	RDS.DimEconomicallyDisadvantagedStatuses	EcoDis		ON Fact.EconomicallyDisadvantagedStatusId	= ecoDis.DimEconomicallyDisadvantagedStatusId
 	LEFT JOIN	RDS.DimHomelessnessStatuses					Home		ON Fact.HomelessnessStatusId				= Home.DimHomelessnessStatusId
@@ -46,3 +49,6 @@ AS
 	--or comment out the lines above and just set the SchoolYear
 		--AND SchoolYears.SchoolYear = 2024
 	AND Fact.FactTypeId = 17
+GO
+
+
