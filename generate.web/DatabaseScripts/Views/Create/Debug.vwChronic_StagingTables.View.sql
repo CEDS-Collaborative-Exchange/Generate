@@ -10,6 +10,9 @@ AS
 		, enrollment.MiddleName
 		, enrollment.Sex
 		, enrollment.HispanicLatinoEthnicity
+		, enrollment.NumberOfSchoolDays
+		, enrollment.NumberOfDaysAbsent
+		, enrollment.AttendanceRate
 		
 		, el.EnglishLearnerStatus
 		, el.EnglishLearner_StatusStartDate
@@ -23,9 +26,7 @@ AS
 		, homeless.Homelessness_StatusStartDate
 		, homeless.Homelessness_StatusEndDate
 				
-		--, sec504.DisabilityStatus
-		--, sec504.Disability_StatusStartDate
-		--, sec504.Disability_StatusEndDate
+		, sec504.Section504Status
 				
 		, idea.IDEAIndicator
 		, idea.ProgramParticipationBeginDate
@@ -54,13 +55,12 @@ AS
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(homeless.SchoolIdentifierSea, '')
 			AND		ISNULL(homeless.Homelessness_StatusEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
---This join is causing significant performance issues.  Will look into it further
-	--LEFT JOIN Staging.Disability							sec504
-	--		ON		enrollment.SchoolYear									=	sec504.SchoolYear
-	--		AND		enrollment.StudentIdentifierState						=	sec504.StudentIdentifierState
-	--		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(sec504.LEAIdentifierSeaAccountability, '')
-	--		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(sec504.SchoolIdentifierSea, '')
-	--		AND		ISNULL(sec504.Disability_StatusEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+	LEFT JOIN Staging.Disability							sec504
+			ON		enrollment.SchoolYear									=	sec504.SchoolYear
+			AND		enrollment.StudentIdentifierState						=	sec504.StudentIdentifierState
+			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(sec504.LEAIdentifierSeaAccountability, '')
+			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(sec504.SchoolIdentifierSea, '')
+			AND		ISNULL(sec504.Disability_StatusEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	LEFT JOIN Staging.ProgramParticipationSpecialEducation	idea
 			ON		enrollment.StudentIdentifierState						=	idea.StudentIdentifierState
@@ -76,4 +76,12 @@ AS
 			AND		ISNULL(race.RecordEndDateTime, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	WHERE 1 = 1
-	AND enrollment.AttendanceRate < 0.9
+	AND	
+		CAST((CASE WHEN enrollment.NumberOfSchoolDays = '0' THEN 0
+				WHEN enrollment.NumberOfDaysAbsent = '0' THEN 1
+				ELSE CAST(enrollment.NumberOfSchoolDays - enrollment.NumberOfDaysAbsent  AS decimal(5,2)) / CAST(enrollment.NumberOfSchoolDays AS decimal(5,2))
+			END) AS decimal(5,4)) <= 0.9
+
+GO
+
+

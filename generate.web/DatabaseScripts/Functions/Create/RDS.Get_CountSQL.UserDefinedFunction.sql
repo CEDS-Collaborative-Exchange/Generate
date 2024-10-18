@@ -1967,7 +1967,7 @@ BEGIN
 			begin
 				set @sqlCategoryReturnField = ' 
 					case 
-						when CAT_' + @reportField + '.Section504StatusCode = ''SECTION504'' then ''DISAB504STAT''					
+						when CAT_' + @reportField + '.Section504StatusCode = ''YES'' then ''DISAB504STAT''					
 						else CAT_' + @reportField + '.' + @dimensionField + '
 					end'
 			end
