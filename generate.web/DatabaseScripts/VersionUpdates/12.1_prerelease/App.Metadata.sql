@@ -1,7 +1,7 @@
 DECLARE @GenerateReportId INT
 
 SELECT @GenerateReportId =  [GenerateReportId]
-FROM [Generate].[App].[GenerateReports]
+FROM [App].[GenerateReports]
 WHERE [ReportCode] = 'C059'
 
 Update [App].[CategorySets]
