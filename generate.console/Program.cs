@@ -105,7 +105,7 @@ namespace generate.console
                 }
             }
 
-            if (commandLineArguments.Count > 0)
+            if (!commandLineArguments.Any())
             {
                 Console.WriteLine(GetHelpText());
                 return;
