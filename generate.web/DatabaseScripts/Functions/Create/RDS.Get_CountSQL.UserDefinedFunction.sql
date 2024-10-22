@@ -2013,45 +2013,87 @@ BEGIN
 			end
 			else if (@categoryCode like 'PARTSTATUS%LG')
 			begin
-						
-				set @sqlCategoryReturnField = ' 
-					case 
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''REGASSWOACC'' THEN ''REGPARTWOACC''	
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''REGASSWACC'' THEN ''REGPARTWACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWOACC'' THEN ''PADVASMWOACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
-						WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode = ''DidNotParticipate'' THEN ''NPART''
-						WHEN assmnt.AssessmentTypeAdministeredToEnglishLearnersCode in (''REGELPASMNT'', ''ALTELPASMNTALT'') then ''PARTELP''
-						else ''MISSING''
-					end'
+				IF (@reportCode  IN ('c188'))
+				BEGIN
+					set @sqlCategoryReturnField = ' 
+						case 
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''REGASSWOACC'' THEN ''REGPARTWOACC''	
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''REGASSWACC'' THEN ''REGPARTWACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWOACC'' THEN ''PADVASMWOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
+							WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode = ''DidNotParticipate'' THEN ''NPART''
+							WHEN assmnt.AssessmentTypeAdministeredToEnglishLearnersCode in (''REGELPASMNT'', ''ALTELPASMNTALT'') then ''PARTELP''
+							else ''MISSING''
+						end'
+				END
+				ELSE
+				BEGIN
+					set @sqlCategoryReturnField = ' 
+						case 
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''REGASSWOACC'' THEN ''REGPARTWOACC''	
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''REGASSWACC'' THEN ''REGPARTWACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWOACC'' THEN ''PADVASMWOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
+							WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode = ''DidNotParticipate'' THEN ''NPART''
+							else ''MISSING''
+						end'
+				END
 			end
 			else if (@categoryCode like 'PARTSTATUS%HS')
 			begin
-						
-				set @sqlCategoryReturnField = ' 
-					case 
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWOACC'' THEN ''PHSRGASMIWOACC''	
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWACC'' THEN ''PHSRGASMIWACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT2WOACC'' THEN ''PHSRGASM2WOACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT2WACC'' THEN ''PHSRGASM2WACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT3WOACC'' THEN ''PHSRGASM3WOACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT3WACC'' THEN ''PHSRGASM3WACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWOACC'' THEN ''PADVASMWOACC''	
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWOACC'' THEN ''PLSNRHSASMWOACC''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWACC'' THEN ''PLSNRHSASMWACC''
-						WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
-						WHEN rdar.AssessmentRegistrationParticipationIndicatorCode = ''DidNotParticipate'' THEN ''NPART''
-						WHEN assmnt.AssessmentTypeAdministeredToEnglishLearnersCode in (''REGELPASMNT'', ''ALTELPASMNTALT'') then ''PARTELP''
-						else ''MISSING''
-					end'
+				IF (@reportCode  IN ('c188'))
+				BEGIN
+					set @sqlCategoryReturnField = ' 
+						case 
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWOACC'' THEN ''PHSRGASMIWOACC''	
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWACC'' THEN ''PHSRGASMIWACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT2WOACC'' THEN ''PHSRGASM2WOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT2WACC'' THEN ''PHSRGASM2WACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT3WOACC'' THEN ''PHSRGASM3WOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT3WACC'' THEN ''PHSRGASM3WACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWOACC'' THEN ''PADVASMWOACC''	
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWOACC'' THEN ''PLSNRHSASMWOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWACC'' THEN ''PLSNRHSASMWACC''
+							WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode = ''DidNotParticipate'' THEN ''NPART''
+							WHEN assmnt.AssessmentTypeAdministeredToEnglishLearnersCode in (''REGELPASMNT'', ''ALTELPASMNTALT'') then ''PARTELP''
+							else ''MISSING''
+						end'
+				END
+				ELSE
+				BEGIN
+					set @sqlCategoryReturnField = ' 
+						case 
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWOACC'' THEN ''PHSRGASMIWOACC''	
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMTIWACC'' THEN ''PHSRGASMIWACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ALTASSALTACH'' THEN ''ALTPARTALTACH''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT2WOACC'' THEN ''PHSRGASM2WOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT2WACC'' THEN ''PHSRGASM2WACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT3WOACC'' THEN ''PHSRGASM3WOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''HSREGASMT3WACC'' THEN ''PHSRGASM3WACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWOACC'' THEN ''PADVASMWOACC''	
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''ADVASMTWACC'' THEN ''PADVASMWACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWOACC'' THEN ''PIADAPLASMWOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''IADAPLASMTWACC'' THEN ''PIADAPLASMWACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWOACC'' THEN ''PLSNRHSASMWOACC''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode <> ''DidNotParticipate'' and assmnt.AssessmentTypeAdministeredCode =''LSNRHSASMTWACC'' THEN ''PLSNRHSASMWACC''
+							WHEN rdar.ReasonNotTestedCode = ''03454'' THEN ''MEDEXEMPT''
+							WHEN rdar.AssessmentRegistrationParticipationIndicatorCode = ''DidNotParticipate'' THEN ''NPART''
+							else ''MISSING''
+						end'
+				END
 			end
 			else if (@categoryCode = 'PROFSTATUS' and @reportCode  IN ('yeartoyearprogress','c175','c178','c179'))
 			begin
