@@ -14,8 +14,9 @@ RETURNS nvarchar(MAX)
 AS
 BEGIN
 
---declare
+--For debugging
 
+--declare
 --	@reportCode as nvarchar(150) = 'C002',
 --	@reportLevel as nvarchar(10) = 'SCH',
 --	@reportYear as nvarchar(10) = '2024',
@@ -1979,6 +1980,27 @@ BEGIN
 						else CAT_' + @reportField + '.' + @dimensionField + '
 					end'
 			end
+			else if @categoryCode = 'GRADELVLHS' and @reportCode in ('c175', 'c178', 'c185', 'c188')
+			begin
+				set @sqlCategoryReturnField = ' 
+					case when tgglAssmnt.Grade = ''HS''
+							and CAT_GradeLevel.GradeLevelEdFactsCode IN (''09'',''10'',''11'',''12'') then ''HS''
+						when tgglAssmnt.Grade IN (''09'',''10'',''11'',''12'')
+							and CAT_GradeLevel.GradeLevelEdFactsCode = ''HS'' then tgglAssmnt.Grade
+						else CAT_GradeLevel.GradeLevelEdFactsCode 
+					end'	
+			end
+
+			else if @categoryCode = 'GRADELVLHSSCI' and @reportCode in ('c179', 'c189')
+			begin
+				set @sqlCategoryReturnField = ' 
+					case when tgglAssmnt.Grade = ''HS''
+							and CAT_GradeLevel.GradeLevelEdFactsCode IN (''10'',''11'',''12'') then ''HS''
+						when tgglAssmnt.Grade IN (''10'',''11'',''12'')
+							and CAT_GradeLevel.GradeLevelEdFactsCode = ''HS'' then tgglAssmnt.Grade
+						else CAT_GradeLevel.GradeLevelEdFactsCode 
+					end'	
+			end
 
 			---Begin New Code for c118
 			else if @categoryCode in ('AGE3TOGRADE13', 'AGEGRDWO13')
@@ -2243,44 +2265,65 @@ BEGIN
 			if @reportField = 'RACE' and @reportCode in ('yeartoyearremovalcount','yeartoyearexitcount') and @categorySetCode not in ('raceethnicity','raceethnic')
 			begin
 				set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimRaces CAT_' + @reportField + ' on fact.RaceId = CAT_' + @reportField + '.DimRaceId 
+				inner join rds.DimRaces CAT_' + @reportField + ' 
+					on fact.RaceId = CAT_' + @reportField + '.DimRaceId 
 				inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
 					on CAT_RACE.RaceEdFactsCode = CAT_' + @reportField + '_temp.Code'
 			end
 			else if @reportField = 'RACE' and @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 			begin
 				set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.BridgeK12StudentAssessmentRaces b on fact.FactK12StudentAssessmentId = b.FactK12StudentAssessmentId
-				inner join rds.DimRaces CAT_' + @reportField + ' on b.RaceId = CAT_' + @reportField + '.DimRaceId 
+				inner join rds.BridgeK12StudentAssessmentRaces b 
+					on fact.FactK12StudentAssessmentId = b.FactK12StudentAssessmentId
+				inner join rds.DimRaces CAT_' + @reportField + ' 
+					on b.RaceId = CAT_' + @reportField + '.DimRaceId 
 				inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
 					on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code'
 			end
 			else if @reportField = 'RACE'
 			begin
 				set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimRaces CAT_' + @reportField + ' on fact.RaceId = CAT_' + @reportField + '.DimRaceId 
+				inner join rds.DimRaces CAT_' + @reportField + ' 
+					on fact.RaceId = CAT_' + @reportField + '.DimRaceId 
 				inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
 					on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code'
 			end
 			else if (@reportField = 'PROFICIENCYSTATUS' and @reportCode in ('yeartoyearprogress','c175','c178','c179'))
 			BEGIN
-					set @sqlCountJoins = @sqlCountJoins + '		
-						inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
-						inner join RDS.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId 
-						inner join RDS.DimAssessmentPerformanceLevels assmntPerfLevl on fact.AssessmentPerformanceLevelId = assmntPerfLevl.DimAssessmentPerformanceLevelId
-						inner join RDS.DimGradeLevels grades on fact.GradeLevelWhenAssessedId = grades.DimGradeLevelId
-						inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grades.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
-															AND tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeAdministeredCode			
-						inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
+				set @sqlCountJoins = @sqlCountJoins + '		
+					inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' 
+						on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
+					inner join RDS.DimAssessments assmnt 
+						on fact.AssessmentId = assmnt.DimAssessmentId 
+					inner join RDS.DimAssessmentPerformanceLevels assmntPerfLevl 
+						on fact.AssessmentPerformanceLevelId = assmntPerfLevl.DimAssessmentPerformanceLevelId
+					inner join RDS.DimGradeLevels grades 
+						on fact.GradeLevelWhenAssessedId = grades.DimGradeLevelId
+					inner join APP.ToggleAssessments tgglAssmnt 
+						on tgglAssmnt.Grade = grades.GradeLevelCode 
+						and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
+						and tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeAdministeredCode			
+					inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
 						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
-						'
+					'
 			END	
-			else if (@reportField = 'ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR' and @reportCode in ('c185','c188','c189'))
-			begin
-				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId
-					inner join rds.DimAssessmentRegistrations rdar on fact.AssessmentRegistrationId = rdar.DimAssessmentRegistrationId'
-			end	
+			else if (@reportField = 'GRADELEVEL' and @reportCode in ('c185', 'c188', 'c189'))
+			BEGIN
+				set @sqlCountJoins = @sqlCountJoins + '		
+					inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' 
+						on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
+					inner join rds.DimAssessments assmnt 
+						on fact.AssessmentId = assmnt.DimAssessmentId
+					inner join rds.DimAssessmentRegistrations rdar 
+						on fact.AssessmentRegistrationId = rdar.DimAssessmentRegistrationId
+					inner join APP.ToggleAssessments tgglAssmnt 
+						on tgglAssmnt.Grade = CAT_GradeLevel.GradeLevelCode 
+						and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
+						and tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeAdministeredCode			
+					inner join #cat_' + + @reportField + ' CAT_' + @reportField + '_temp
+						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
+					'
+			END	
 			---Begin New Code for c118
 
 			else if(@reportField = 'GRADELEVEL' and @reportCode in ('c118'))
