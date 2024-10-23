@@ -9,7 +9,7 @@
         <input matInput (keyup)="applyFilter($event)" placeholder="Filter" #input>
     </mat-form-field>
     <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)" class="mat-elevation-z8">
-
+        <caption>&nbsp;&nbsp;</caption>
         @for(item of displayedColumns;let i=$index;track i)
         {
         @if(item =='select'){

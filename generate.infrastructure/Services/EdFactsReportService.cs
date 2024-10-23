@@ -217,64 +217,67 @@ namespace generate.infrastructure.Services
                 }
 
 
-                foreach (var queryItem in queryOrganizationStatusdto)
+                if (queryOrganizationStatusdto is not null)
                 {
-                    dynamic dataRow = new ExpandoObject();
-
-                    dataRow.stateCode = queryItem.StateCode;
-                    dataRow.stateName = queryItem.StateName;
-                    dataRow.organizationStateId = queryItem.OrganizationNcesId;
-
-                    //dataRow.rowId = queryItem.OrganizationId;
-                    dataRow.rowKey = queryItem.OrganizationName;
-
-                    if (reportCode == "c202")
+                    foreach (var queryItem in queryOrganizationStatusdto)
                     {
-                        dataRow.parentOrganizationStateId = queryItem.ParentOrganizationStateId;
-                        //dataRow.parentOrganizationName = queryItem.ParentOrganizationName;
+                        dynamic dataRow = new ExpandoObject();
 
-                        if (categorySetCode == "CSA" || categorySetCode == "CSA1") { dataRow.col_1 = queryItem.RACE; }
-                        if (categorySetCode == "CSB" || categorySetCode == "CSB1") { dataRow.col_1 = queryItem.DISABILITY; }
-                        if (categorySetCode == "CSC" || categorySetCode == "CSC1") { dataRow.col_1 = queryItem.LEPSTATUS; }
-                        if (categorySetCode == "CSD" || categorySetCode == "CSD1") { dataRow.col_1 = queryItem.ECODISSTATUS; }
+                        dataRow.stateCode = queryItem.StateCode;
+                        dataRow.stateName = queryItem.StateName;
+                        dataRow.organizationStateId = queryItem.OrganizationNcesId;
 
-                        if (categorySetCode == "TOT" || categorySetCode == "TOT1")
+                        //dataRow.rowId = queryItem.OrganizationId;
+                        dataRow.rowKey = queryItem.OrganizationName;
+
+                        if (reportCode == "c202")
                         {
-                            dataRow.col_1 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
-                            dataRow.col_2 = queryItem.INDICATORSTATUS;
-                            dataRow.col_3 = queryItem.STATEDEFINEDSTATUSCODE;
+                            dataRow.parentOrganizationStateId = queryItem.ParentOrganizationStateId;
+                            //dataRow.parentOrganizationName = queryItem.ParentOrganizationName;
+
+                            if (categorySetCode == "CSA" || categorySetCode == "CSA1") { dataRow.col_1 = queryItem.RACE; }
+                            if (categorySetCode == "CSB" || categorySetCode == "CSB1") { dataRow.col_1 = queryItem.DISABILITY; }
+                            if (categorySetCode == "CSC" || categorySetCode == "CSC1") { dataRow.col_1 = queryItem.LEPSTATUS; }
+                            if (categorySetCode == "CSD" || categorySetCode == "CSD1") { dataRow.col_1 = queryItem.ECODISSTATUS; }
+
+                            if (categorySetCode == "TOT" || categorySetCode == "TOT1")
+                            {
+                                dataRow.col_1 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
+                                dataRow.col_2 = queryItem.INDICATORSTATUS;
+                                dataRow.col_3 = queryItem.STATEDEFINEDSTATUSCODE;
+                            }
+                            else
+                            {
+                                dataRow.col_2 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
+                                dataRow.col_3 = queryItem.INDICATORSTATUS;
+                                dataRow.col_4 = queryItem.STATEDEFINEDSTATUSCODE;
+                            }
                         }
                         else
                         {
-                            dataRow.col_2 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
-                            dataRow.col_3 = queryItem.INDICATORSTATUS;
-                            dataRow.col_4 = queryItem.STATEDEFINEDSTATUSCODE;
-                        }
-                    }
-                    else
-                    {
-                        if (categorySetCode == "CSA") { dataRow.col_1 = queryItem.RACE; }
-                        if (categorySetCode == "CSB") { dataRow.col_1 = queryItem.DISABILITY; }
-                        if (categorySetCode == "CSC") { dataRow.col_1 = queryItem.LEPSTATUS; }
-                        if (categorySetCode == "CSD") { dataRow.col_1 = queryItem.ECODISSTATUS; }
+                            if (categorySetCode == "CSA") { dataRow.col_1 = queryItem.RACE; }
+                            if (categorySetCode == "CSB") { dataRow.col_1 = queryItem.DISABILITY; }
+                            if (categorySetCode == "CSC") { dataRow.col_1 = queryItem.LEPSTATUS; }
+                            if (categorySetCode == "CSD") { dataRow.col_1 = queryItem.ECODISSTATUS; }
 
-                        if (categorySetCode == "TOT")
-                        {
-                            dataRow.col_1 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
-                            dataRow.col_2 = queryItem.INDICATORSTATUS;
-                            dataRow.col_3 = queryItem.STATEDEFINEDSTATUSCODE;
+                            if (categorySetCode == "TOT")
+                            {
+                                dataRow.col_1 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
+                                dataRow.col_2 = queryItem.INDICATORSTATUS;
+                                dataRow.col_3 = queryItem.STATEDEFINEDSTATUSCODE;
+                            }
+                            else
+                            {
+                                dataRow.col_2 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
+                                dataRow.col_3 = queryItem.INDICATORSTATUS;
+                                dataRow.col_4 = queryItem.STATEDEFINEDSTATUSCODE;
+                            }
                         }
-                        else
-                        {
-                            dataRow.col_2 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
-                            dataRow.col_3 = queryItem.INDICATORSTATUS;
-                            dataRow.col_4 = queryItem.STATEDEFINEDSTATUSCODE;
-                        }
-                    }
 
-                    dataRows.Add(dataRow);
+                        dataRows.Add(dataRow);
 
-                 }
+                    } 
+                }
 
                     reportDto.data.AddRange(dataRows);
 
