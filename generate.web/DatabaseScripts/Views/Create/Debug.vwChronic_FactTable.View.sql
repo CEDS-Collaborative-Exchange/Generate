@@ -49,6 +49,6 @@ AS
 	--or comment out the lines above and just set the SchoolYear
 		--AND SchoolYears.SchoolYear = 2024
 	AND Fact.FactTypeId = 17
-GO
+
 
 

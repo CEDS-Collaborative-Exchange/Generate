@@ -1,5 +1,5 @@
 Param(
-  [string] $version = "12.1_prerelease",
+  [string] $version = "12.1",
   [string] $sqlServer = "(localdb)\MSSQLLocalDB",
   [string] $db = "generate",
   [string] $user,
