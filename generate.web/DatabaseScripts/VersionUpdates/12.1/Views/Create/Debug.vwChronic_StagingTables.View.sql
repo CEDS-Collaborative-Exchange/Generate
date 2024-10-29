@@ -82,6 +82,5 @@ AS
 				ELSE CAST(enrollment.NumberOfSchoolDays - enrollment.NumberOfDaysAbsent  AS decimal(5,2)) / CAST(enrollment.NumberOfSchoolDays AS decimal(5,2))
 			END) AS decimal(5,4)) <= 0.9
 
-GO
 
 
