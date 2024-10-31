@@ -1,10 +1,10 @@
 ---
+icon: memo
 description: >-
   This document describes the technical enhancements to Generate version 11.3
   released in February 2024. The purpose of this document is to communicate the
   technical updates made to Generate in version.
-icon: memo
-cover: ../.gitbook/assets/Generate Release 11.3 Gitbook page banner.png
+cover: ../../.gitbook/assets/Generate Release 11.3 Gitbook page banner.png
 coverY: -36
 layout:
   cover:
@@ -48,18 +48,18 @@ Run the update process from the UI as normal.&#x20;
 The below items do **NOT** require state action, but we wanted to bring your attention to:
 
 * If you are submitting Directory (FS029) through Generate and you run into an issue creating a csv submission file because there are commas in the incoming data, we have an open ticket to address escaping the commas. That work is not complete so if you do experience that issue you can either remove the commas from the incoming data or create a TAB delimited submission file.  &#x20;
-* We added a new Staging Table Snapshot utility. The documentation for this utility is available here -  [staging-table-snapshot.md](../developer-guides/generate-utilities/staging-table-snapshot.md "mention")
+* We added a new Staging Table Snapshot utility. The documentation for this utility is available here -  [staging-table-snapshot.md](../../developer-guides/generate-utilities/staging-table-snapshot.md "mention")
 * We now have a new way of displaying report data in the User Interface that will help us in promoting Generate to the Source Community. The new method is currently applied to most student-level reports only. The look and feel are slightly different, and we will be working on the next release making to make it faster as well. There is a new search feature will allow you to search for elements to filter to leverage for your data analysis. Turn on the search feature by selecting “Search” and then use categories to set filters.
 
 **How to Use the New Search Feature**
 
 1. Activate the search functionality by selecting the **“Search”** option.
 
-<figure><img src="../.gitbook/assets/Release Notes 11.3_Search button highlight.png" alt="Screenshot of the EDFacts Submission Report UI, featuring a table of data. An arrow points to the search checkbox, highlighting its functionality within the interface."><figcaption><p>Select the search box to view the filters</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Release Notes 11.3_Search button highlight.png" alt="Screenshot of the EDFacts Submission Report UI, featuring a table of data. An arrow points to the search checkbox, highlighting its functionality within the interface."><figcaption><p>Select the search box to view the filters</p></figcaption></figure>
 
 2. Utilize categories to set filters, narrowing down your analysis to the most relevant data.
 
-<figure><img src="../.gitbook/assets/image (208).png" alt="Screenshot of filter options for SEA (State Education Agency), SEA ID, Disability Category, Sex, and Racial Ethnic fields."><figcaption><p>Filter options displayed for SEA, SEA ID, Disability Category, Sex, and Racial Ethnic fields, facilitating refined data selection within the interface.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (208).png" alt="Screenshot of filter options for SEA (State Education Agency), SEA ID, Disability Category, Sex, and Racial Ethnic fields."><figcaption><p>Filter options displayed for SEA, SEA ID, Disability Category, Sex, and Racial Ethnic fields, facilitating refined data selection within the interface.</p></figcaption></figure>
 
 {% hint style="warning" %}
 The **Search** feature is currently case and text specific.&#x20;
@@ -67,7 +67,7 @@ The **Search** feature is currently case and text specific.&#x20;
 **Example:** To filter by **Disability Category**, ensure you input the category name exactly as it appears. For instance, to filter for **Deaf-blindness**, type it with the capital 'D', the dash, and the lowercase 'b'.
 {% endhint %}
 
-<figure><img src="../.gitbook/assets/image (206).png" alt="A computer screen displaying a table with filtered results. A red box highlights the &#x27;Disability Category&#x27; section, with &#x27;Deaf-blindness&#x27; typed in the text input field. The table below shows data filtered to display only &#x27;Deaf-blindness&#x27; category."><figcaption><p>Filtering by Disability Category: Ensure precise input for accurate results.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (206).png" alt="A computer screen displaying a table with filtered results. A red box highlights the &#x27;Disability Category&#x27; section, with &#x27;Deaf-blindness&#x27; typed in the text input field. The table below shows data filtered to display only &#x27;Deaf-blindness&#x27; category."><figcaption><p>Filtering by Disability Category: Ensure precise input for accurate results.</p></figcaption></figure>
 
 ***
 

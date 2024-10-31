@@ -65,14 +65,15 @@
 ## Release Notes
 
 * [Introduction](release-notes/introduction.md)
+* [Release Notes 12.1](release-notes/release-notes-12.1.md)
 * [Release Notes 12.0](release-notes/release-notes-12.0.md)
 * [Release Notes 11.4](release-notes/release-notes-11.4.md)
-* [Release Notes 11.3](release-notes/release-notes-11.3.md)
 * [Archive](release-notes/archive/README.md)
+  * [Release Notes 11.3](release-notes/archive/release-notes-11.3.md)
   * [Release Notes 11.2](release-notes/archive/release-notes-11.2.md)
   * [Release Notes 11.1](release-notes/archive/release-notes-11.1.md)
   * [Release Notes 11.0](release-notes/archive/release-notes-11.0.md)
-  * [Release Notes v5.3 ](release-notes/archive/release-notes-v5.3/README.md)
+  * [Release Notes v5.3](release-notes/archive/release-notes-v5.3/README.md)
     * [Generate 5.3 Office Hour](release-notes/archive/release-notes-v5.3/generate-5.3-office-hour.md)
   * [Release Notes v5.2](release-notes/archive/release-notes-v5.2/README.md)
     * [Generate 5.2 Office Hour](release-notes/archive/release-notes-v5.2/generate-5.2-office-hour.md)

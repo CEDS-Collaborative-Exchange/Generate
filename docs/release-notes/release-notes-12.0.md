@@ -1,5 +1,5 @@
 ---
-icon: sparkles
+icon: memo
 description: >-
   This document describes the technical enhancements to Generate version 12.0
   released September 18, 2024.
