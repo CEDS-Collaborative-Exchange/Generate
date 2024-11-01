@@ -28,10 +28,12 @@
       , f.FactK12StudentAssessmentId
       , f.AssessmentCount
 	  , f.AssessmentResultScoreValueRawScore
-	  , ISNULL(proficiency.ProficiencyStatus, 'MISSING') as ProficiencyStatus
+	  , CASE WHEN r.AssessmentRegistrationParticipationIndicatorCode = 'DidNotParticipate' THEN 'MISSING'
+	    ELSE ISNULL(proficiency.ProficiencyStatus, 'MISSING') END as ProficiencyStatus
     FROM rds.FactK12StudentAssessments f
 	inner join rds.DimLeas lea on f.LeaId = lea.DimLeaID
 	inner join rds.DimK12Schools sch on f.K12SchoolId = sch.DimK12SchoolId
+	left join rds.DimAssessmentRegistrations r on f.AssessmentRegistrationId = r.DimAssessmentRegistrationId 
 	left join (select distinct FactK12StudentAssessmentId, RaceId from rds.BridgeK12StudentAssessmentRaces) race on f.FactK12StudentAssessmentId = race.FactK12StudentAssessmentId
 	left join rds.BridgeK12StudentAssessmentAccommodations accomodations on f.FactK12StudentAssessmentAccommodationId = accomodations.FactK12StudentAssessmentAccommodationId
 	left join (
@@ -47,6 +49,6 @@
 			inner join RDS.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId 
 			inner join RDS.DimGradeLevels grades on fact.GradeLevelWhenAssessedId = grades.DimGradeLevelId
 			inner join RDS.DimAssessmentPerformanceLevels assmntPerfLevl on fact.AssessmentPerformanceLevelId = assmntPerfLevl.DimAssessmentPerformanceLevelId
-			left join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grades.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
+			inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grades.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
 														AND tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeAdministeredCode
 	) proficiency on f.K12StudentId = proficiency.K12StudentId and f.SchoolYearId = proficiency.SchoolYearId
