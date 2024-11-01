@@ -1,9 +1,9 @@
 # Base image
-# FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+# FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 
 WORKDIR /app
-COPY ./bin/production/net6.0/publish ./
+COPY ./bin/Release/net8.0 ./
 
 # Expose ports
 EXPOSE 80

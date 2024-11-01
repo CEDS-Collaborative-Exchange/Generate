@@ -799,27 +799,27 @@ BEGIN
 	JOIN #vwRaces rdr
 		ON t.RaceMap = ISNULL(rdr.RaceMap, rdr.RaceCode)
 
-	--Populate the accommodations bridge table
-		INSERT INTO RDS.BridgeK12StudentAssessmentAccommodations (
-		  FactK12StudentAssessmentId
-		  , AssessmentAccommodationId
-		)
-		SELECT rfsa.FactK12StudentAssessmentId
-			, rdaa.DimAssessmentAccommodationId
-		FROM RDS.FactK12StudentAssessments rfsa
-			JOIN RDS.DimAssessments rda
-				ON rfsa.AssessmentId = rda.DimAssessmentId
-			JOIN RDS.vwAssessmentAccommodations rdaa
-				ON rdaa.AssessmentAccommodationCategoryCode = 'TestAdministration'
-		WHERE rfsa.SchoolYearId = @SchoolYearId
-		AND rda.AssessmentTypeAdministeredCode in ('REGASSWACC')
+	----Populate the accommodations bridge table
+	--	INSERT INTO RDS.BridgeK12StudentAssessmentAccommodations (
+	--	  FactK12StudentAssessmentId
+	--	  , AssessmentAccommodationId
+	--	)
+	--	SELECT rfsa.FactK12StudentAssessmentId
+	--		, rdaa.DimAssessmentAccommodationId
+	--	FROM RDS.FactK12StudentAssessments rfsa
+	--		JOIN RDS.DimAssessments rda
+	--			ON rfsa.AssessmentId = rda.DimAssessmentId
+	--		JOIN RDS.vwAssessmentAccommodations rdaa
+	--			ON rdaa.AssessmentAccommodationCategoryCode = 'TestAdministration'
+	--	WHERE rfsa.SchoolYearId = @SchoolYearId
+	--	AND rda.AssessmentTypeAdministeredCode in ('REGASSWACC')
 
-	--Update the Fact Assessment table with the Accomodation Id
-		UPDATE f
-		SET FactK12StudentAssessmentAccommodationId = rbsaa.FactK12StudentAssessmentAccommodationId
-		FROM RDS.FactK12StudentAssessments f
-			JOIN RDS.BridgeK12StudentAssessmentAccommodations rbsaa
-				ON f.FactK12StudentAssessmentId = rbsaa.FactK12StudentAssessmentId
+	----Update the Fact Assessment table with the Accomodation Id
+	--	UPDATE f
+	--	SET FactK12StudentAssessmentAccommodationId = rbsaa.FactK12StudentAssessmentAccommodationId
+	--	FROM RDS.FactK12StudentAssessments f
+	--		JOIN RDS.BridgeK12StudentAssessmentAccommodations rbsaa
+	--			ON f.FactK12StudentAssessmentId = rbsaa.FactK12StudentAssessmentId
 
 	END TRY
 	BEGIN CATCH
