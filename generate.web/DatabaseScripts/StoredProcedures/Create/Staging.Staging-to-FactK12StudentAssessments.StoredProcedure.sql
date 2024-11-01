@@ -17,26 +17,28 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
-	IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
-	IF OBJECT_ID(N'tempdb..#vwAssessments') IS NOT NULL DROP TABLE #vwAssessments
-	IF OBJECT_ID(N'tempdb..#vwAssessmentResults') IS NOT NULL DROP TABLE #vwAssessmentResults
-	IF OBJECT_ID(N'tempdb..#vwAssessmentRegistrations') IS NOT NULL DROP TABLE #vwAssessmentRegistrations
+		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
+		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
+		IF OBJECT_ID(N'tempdb..#vwAssessments') IS NOT NULL DROP TABLE #vwAssessments
+		IF OBJECT_ID(N'tempdb..#vwAssessmentResults') IS NOT NULL DROP TABLE #vwAssessmentResults
+		IF OBJECT_ID(N'tempdb..#vwAssessmentRegistrations') IS NOT NULL DROP TABLE #vwAssessmentRegistrations
 
-	IF OBJECT_ID(N'tempdb..#tempIdeaStatus') IS NOT NULL DROP TABLE #tempIdeaStatus
-	IF OBJECT_ID(N'tempdb..#tempTitleIIIStatus') IS NOT NULL DROP TABLE #tempTitleIIIStatus
-	IF OBJECT_ID(N'tempdb..#tempELStatus') IS NOT NULL DROP TABLE #tempELStatus
-	IF OBJECT_ID(N'tempdb..#tempMigrantStatus') IS NOT NULL DROP TABLE #tempMigrantStatus
-	IF OBJECT_ID(N'tempdb..#tempMilitaryStatus') IS NOT NULL DROP TABLE #tempMilitaryStatus
-	IF OBJECT_ID(N'tempdb..#tempHomelessnessStatus') IS NOT NULL DROP TABLE #tempHomelessnessStatus
-	IF OBJECT_ID(N'tempdb..#tempFosterCareStatus') IS NOT NULL DROP TABLE #tempFosterCareStatus
-	IF OBJECT_ID(N'tempdb..#tempEconomicallyDisadvantagedStatus') IS NOT NULL DROP TABLE #tempEconomicallyDisadvantagedStatus
-	IF OBJECT_ID(N'tempdb..#tempStagingAssessmentResults') IS NOT NULL DROP TABLE #tempStagingAssessmentResults
-	IF OBJECT_ID(N'tempdb..#tempAssessmentAdministrations') IS NOT NULL DROP TABLE #tempAssessmentAdministrations
-	IF OBJECT_ID(N'tempdb..#tempLeas') IS NOT NULL DROP TABLE #tempLeas
-	IF OBJECT_ID(N'tempdb..#tempK12Schools') IS NOT NULL DROP TABLE #tempK12Schools
-	IF OBJECT_ID(N'tempdb..#vwNOrDStatuses') IS NOT NULL DROP TABLE #vwNOrDStatuses
-	IF OBJECT_ID(N'tempdb..#tempNorDStudents') IS NOT NULL DROP TABLE #tempNorDStudents
+		IF OBJECT_ID(N'tempdb..#tempIdeaStatus') IS NOT NULL DROP TABLE #tempIdeaStatus
+		IF OBJECT_ID(N'tempdb..#tempTitleIIIStatus') IS NOT NULL DROP TABLE #tempTitleIIIStatus
+		IF OBJECT_ID(N'tempdb..#tempELStatus') IS NOT NULL DROP TABLE #tempELStatus
+		IF OBJECT_ID(N'tempdb..#tempMigrantStatus') IS NOT NULL DROP TABLE #tempMigrantStatus
+		IF OBJECT_ID(N'tempdb..#tempMilitaryStatus') IS NOT NULL DROP TABLE #tempMilitaryStatus
+		IF OBJECT_ID(N'tempdb..#tempHomelessnessStatus') IS NOT NULL DROP TABLE #tempHomelessnessStatus
+		IF OBJECT_ID(N'tempdb..#tempFosterCareStatus') IS NOT NULL DROP TABLE #tempFosterCareStatus
+		IF OBJECT_ID(N'tempdb..#tempEconomicallyDisadvantagedStatus') IS NOT NULL DROP TABLE #tempEconomicallyDisadvantagedStatus
+		IF OBJECT_ID(N'tempdb..#tempStagingAssessmentResults') IS NOT NULL DROP TABLE #tempStagingAssessmentResults
+		IF OBJECT_ID(N'tempdb..#tempAssessmentAdministrations') IS NOT NULL DROP TABLE #tempAssessmentAdministrations
+		IF OBJECT_ID(N'tempdb..#tempLeas') IS NOT NULL DROP TABLE #tempLeas
+		IF OBJECT_ID(N'tempdb..#tempK12Schools') IS NOT NULL DROP TABLE #tempK12Schools
+		IF OBJECT_ID(N'tempdb..#vwNOrDStatuses') IS NOT NULL DROP TABLE #vwNOrDStatuses
+		IF OBJECT_ID(N'tempdb..#tempNorDStudents') IS NOT NULL DROP TABLE #tempNorDStudents
+		IF OBJECT_ID(N'tempdb..#tempAccomodations') IS NOT NULL DROP TABLE #tempAccomodations
+
 
 	BEGIN TRY
 
@@ -639,7 +641,7 @@ BEGIN
 						WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 						ELSE 'Missing'
 					END
-		-- NorD 
+		-- NorD ---------------------------------------------------------------------
 			LEFT JOIN #tempNorDStudents NorD
 				on NorD.StudentIdentifierState = sar.StudentIdentifierState
 				and NorD.LeaIdentifierSeaAccountability = sar.LeaIdentifierSeaAccountability
@@ -651,6 +653,13 @@ BEGIN
 
 			WHERE 
 			sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+
+
+		DELETE FROM RDS.BridgeK12StudentAssessmentAccommodations
+		WHERE FactK12StudentAssessmentId IN (
+			SELECT FactK12StudentAssessmentId FROM RDS.FactK12StudentAssessments
+			WHERE SchoolYearId = @SchoolYearId 
+			AND FactTypeId = @FactTypeId)
 
 	--Final insert into RDS.FactK12StudentAssessments table
 		DELETE RDS.FactK12StudentAssessments
@@ -799,27 +808,47 @@ BEGIN
 	JOIN #vwRaces rdr
 		ON t.RaceMap = ISNULL(rdr.RaceMap, rdr.RaceCode)
 
-	----Populate the accommodations bridge table
-	--	INSERT INTO RDS.BridgeK12StudentAssessmentAccommodations (
-	--	  FactK12StudentAssessmentId
-	--	  , AssessmentAccommodationId
-	--	)
-	--	SELECT rfsa.FactK12StudentAssessmentId
-	--		, rdaa.DimAssessmentAccommodationId
-	--	FROM RDS.FactK12StudentAssessments rfsa
-	--		JOIN RDS.DimAssessments rda
-	--			ON rfsa.AssessmentId = rda.DimAssessmentId
-	--		JOIN RDS.vwAssessmentAccommodations rdaa
-	--			ON rdaa.AssessmentAccommodationCategoryCode = 'TestAdministration'
-	--	WHERE rfsa.SchoolYearId = @SchoolYearId
-	--	AND rda.AssessmentTypeAdministeredCode in ('REGASSWACC')
+	SELECT 	DISTINCT 
+		  StudentIdentifierState
+		, LeaIdentifierSeaAccountability
+		, SchoolIdentifierSea
+		, vwAcc.AssessmentAccommodationCategoryCode
+		, vwAcc.DimAssessmentAccommodationId
+		, sar.AssessmentIdentifier
+	INTO #tempAccomodations
+	FROM #tempStagingAssessmentResults sar
+	INNER JOIN RDS.vwAssessmentAccommodations vwAcc
+		ON vwAcc.SchoolYear = @SchoolYear
+		AND ISNULL(sar.AssessmentAccommodationCategory, -1) = ISNULL(vwAcc.AssessmentAccommodationCategoryMap, -1)
+		AND ISNULL(sar.AccommodationType,-1) = ISNULL(vwAcc.AccommodationTypeMap, -1)
 
-	----Update the Fact Assessment table with the Accomodation Id
-	--	UPDATE f
-	--	SET FactK12StudentAssessmentAccommodationId = rbsaa.FactK12StudentAssessmentAccommodationId
-	--	FROM RDS.FactK12StudentAssessments f
-	--		JOIN RDS.BridgeK12StudentAssessmentAccommodations rbsaa
-	--			ON f.FactK12StudentAssessmentId = rbsaa.FactK12StudentAssessmentId
+	INSERT INTO RDS.BridgeK12StudentAssessmentAccommodations (
+		  FactK12StudentAssessmentId
+		  , AssessmentAccommodationId
+		)
+	SELECT 	rfsa.FactK12StudentAssessmentId
+			, acc.DimAssessmentAccommodationId
+	FROM RDS.FactK12StudentAssessments rfsa
+			JOIN RDS.DimAssessments rda
+				ON rfsa.AssessmentId = rda.DimAssessmentId
+			JOIN RDS.DimLeas lea on rfsa.LeaId = lea.DimLeaID
+			JOIN RDS.DimK12Schools sch on rfsa.K12SchoolId = sch.DimK12SchoolId
+			JOIN RDS.DimPeople students on rfsa.K12StudentId = students.DimPersonId
+			JOIN #tempAccomodations acc
+				ON lea.LeaIdentifierSea = acc.LeaIdentifierSeaAccountability
+				AND sch.SchoolIdentifierSea = acc.SchoolIdentifierSea
+				AND students.K12StudentStudentIdentifierState = acc.StudentIdentifierState
+				AND rda.AssessmentIdentifierState = acc.AssessmentIdentifier
+		WHERE rfsa.SchoolYearId = @SchoolYearId
+		AND acc.AssessmentAccommodationCategoryCode = 'TestAdministration'
+		AND rda.AssessmentTypeAdministeredCode in ('REGASSWACC')
+
+	--Update the Fact Assessment table with the Accomodation Id
+		UPDATE f
+		SET FactK12StudentAssessmentAccommodationId = rbsaa.FactK12StudentAssessmentAccommodationId
+		FROM RDS.FactK12StudentAssessments f
+			JOIN RDS.BridgeK12StudentAssessmentAccommodations rbsaa
+				ON f.FactK12StudentAssessmentId = rbsaa.FactK12StudentAssessmentId
 
 	END TRY
 	BEGIN CATCH
