@@ -1,4 +1,8 @@
 VersionUpdates\\12.2_prerelease,Restore 12.1.sql,0
 VersionUpdates\\12.2_prerelease,App.Metadata.sql,0
+Views\\Drop,RDS.vwDimAssessmentAccommodations.View.sql,0
+Views\\Create,RDS.vwDimAssessmentAccommodations.View.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 VersionUpdates\\12.2_prerelease,UpdateDbVersion.sql,0
 

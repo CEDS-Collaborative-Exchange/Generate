@@ -37,6 +37,8 @@ BEGIN
 	IF OBJECT_ID(N'tempdb..#tempK12Schools') IS NOT NULL DROP TABLE #tempK12Schools
 	IF OBJECT_ID(N'tempdb..#vwNOrDStatuses') IS NOT NULL DROP TABLE #vwNOrDStatuses
 	IF OBJECT_ID(N'tempdb..#tempNorDStudents') IS NOT NULL DROP TABLE #tempNorDStudents
+	IF OBJECT_ID(N'tempdb..#tempAccomodations') IS NOT NULL DROP TABLE #tempAccomodations
+	
 
 	BEGIN TRY
 
@@ -652,6 +654,12 @@ BEGIN
 			WHERE 
 			sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 
+		DELETE FROM RDS.BridgeK12StudentAssessmentAccommodations
+		WHERE FactK12StudentAssessmentId IN (
+			SELECT FactK12StudentAssessmentId FROM RDS.FactK12StudentAssessments
+			WHERE SchoolYearId = @SchoolYearId 
+			AND FactTypeId = @FactTypeId)
+
 	--Final insert into RDS.FactK12StudentAssessments table
 		DELETE RDS.FactK12StudentAssessments
 		WHERE SchoolYearId = @SchoolYearId 
@@ -787,31 +795,42 @@ BEGIN
 		AND rdp.K12StudentStudentIdentifierState 	= spr.StudentIdentifierState
 		AND (rdks.SchoolIdentifierSea 				= spr.SchoolIdentifierSea
 			OR rdlsAcc.LeaIdentifierSea 			= spr.LeaIdentifierSeaAccountability)
-			
-	INSERT INTO RDS.BridgeK12StudentAssessmentRaces (
-		FactK12StudentAssessmentId
-		, RaceId          
-	)
-	SELECT DISTINCT
-		t.FactK12StudentAssessmentId
-		, rdr.DimRaceId 
-	FROM #temp t 
-	JOIN #vwRaces rdr
-		ON t.RaceMap = ISNULL(rdr.RaceMap, rdr.RaceCode)
 
-	--Populate the accommodations bridge table
-		INSERT INTO RDS.BridgeK12StudentAssessmentAccommodations (
+
+			
+	SELECT 	DISTINCT 
+		  StudentIdentifierState
+		, LeaIdentifierSeaAccountability
+		, SchoolIdentifierSea
+		, vwAcc.AssessmentAccommodationCategoryCode
+		, vwAcc.DimAssessmentAccommodationId
+		, sar.AssessmentIdentifier
+	INTO #tempAccomodations
+	FROM #tempStagingAssessmentResults sar
+	INNER JOIN RDS.vwAssessmentAccommodations vwAcc
+		ON vwAcc.SchoolYear = @SchoolYear
+		AND ISNULL(sar.AssessmentAccommodationCategory, -1) = ISNULL(vwAcc.AssessmentAccommodationCategoryMap, -1)
+		AND ISNULL(sar.AccommodationType,-1) = ISNULL(vwAcc.AccommodationTypeMap, -1)
+
+	INSERT INTO RDS.BridgeK12StudentAssessmentAccommodations (
 		  FactK12StudentAssessmentId
 		  , AssessmentAccommodationId
 		)
-		SELECT rfsa.FactK12StudentAssessmentId
-			, rdaa.DimAssessmentAccommodationId
-		FROM RDS.FactK12StudentAssessments rfsa
+	SELECT 	rfsa.FactK12StudentAssessmentId
+			, acc.DimAssessmentAccommodationId
+	FROM RDS.FactK12StudentAssessments rfsa
 			JOIN RDS.DimAssessments rda
 				ON rfsa.AssessmentId = rda.DimAssessmentId
-			JOIN RDS.vwAssessmentAccommodations rdaa
-				ON rdaa.AssessmentAccommodationCategoryCode = 'TestAdministration'
+			JOIN RDS.DimLeas lea on rfsa.LeaId = lea.DimLeaID
+			JOIN RDS.DimK12Schools sch on rfsa.K12SchoolId = sch.DimK12SchoolId
+			JOIN RDS.DimPeople students on rfsa.K12StudentId = students.DimPersonId
+			JOIN #tempAccomodations acc
+				ON lea.LeaIdentifierSea = acc.LeaIdentifierSeaAccountability
+				AND sch.SchoolIdentifierSea = acc.SchoolIdentifierSea
+				AND students.K12StudentStudentIdentifierState = acc.StudentIdentifierState
+				AND rda.AssessmentIdentifierState = acc.AssessmentIdentifier
 		WHERE rfsa.SchoolYearId = @SchoolYearId
+		AND acc.AssessmentAccommodationCategoryCode = 'TestAdministration'
 		AND rda.AssessmentTypeAdministeredCode in ('REGASSWACC')
 
 	--Update the Fact Assessment table with the Accomodation Id
