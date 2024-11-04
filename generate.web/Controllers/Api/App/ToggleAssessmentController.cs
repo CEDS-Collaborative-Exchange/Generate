@@ -12,6 +12,7 @@ namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/toggleassessments")]
     [ResponseCache(Duration = 0)]
+    [ApiController]
     public class ToggleAssessmentController : Controller
     {
         private IAppRepository _toggleAssessmentRepository;

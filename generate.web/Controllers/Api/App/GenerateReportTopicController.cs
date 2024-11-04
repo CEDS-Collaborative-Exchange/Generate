@@ -13,6 +13,7 @@ namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/generatereporttopics")]
     [ResponseCache(Duration = 0)]
+    [ApiController]
     public class GenerateReportTopicController : Controller
     {
         private IGenerateReportTopicService _generateReportTopicService;

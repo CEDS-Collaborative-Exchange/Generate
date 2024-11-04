@@ -22,6 +22,7 @@ namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/datamigrations")]
     [ResponseCache(Duration = 0)]
+    [ApiController]
     public class DataMigrationController : Controller
     {
         private readonly IOptions<AppSettings> _appSettings;

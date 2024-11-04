@@ -14,16 +14,12 @@ namespace generate.infrastructure.Services
     public class AboutService : IAboutService
     {
         private readonly AppDbContext _appDbContext;
-        private readonly IAppRepository _appRepository;
-        private readonly ILogger<AppUpdateService> _logger;
         string GenerateConfigurationCategory = "Database";
         string GenerateConfigurationKey = "DatabaseVersion";
 
-        public AboutService(AppDbContext appDbContext, IAppRepository appRepository, ILogger<AppUpdateService> logger)
+        public AboutService(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
-            _appRepository = appRepository ?? throw new ArgumentNullException(nameof(appRepository));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public string GetDBVersion()

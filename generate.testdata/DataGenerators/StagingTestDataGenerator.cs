@@ -31,7 +31,6 @@ namespace generate.testdata.DataGenerators
         private readonly IStagingTestDataProfile _testDataProfile;
         private readonly ILoggerFactory _loggerFactory;
         private readonly IOptions<DataSettings> _dataSettings;
-        private readonly IOptions<AppSettings> _appSettings;
 
 
         public IdsReferenceData IdsReferenceData { get; private set; }
@@ -96,8 +95,7 @@ namespace generate.testdata.DataGenerators
             ITestDataHelper testDataHelper,
             IStagingTestDataProfile testDataProfile,
             ILoggerFactory loggerFactory,
-            IOptions<DataSettings> dataSettings,
-            IOptions<AppSettings> appSettings
+            IOptions<DataSettings> dataSettings
         )
         {
             _outputHelper = outputHelper ?? throw new ArgumentNullException(nameof(outputHelper));
@@ -105,7 +103,6 @@ namespace generate.testdata.DataGenerators
             _testDataProfile = testDataProfile ?? throw new ArgumentNullException(nameof(testDataProfile));
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
             _dataSettings = dataSettings ?? throw new ArgumentNullException(nameof(dataSettings));
-            _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         }
 
         public string NewStudentIdentifierState(Random rnd)

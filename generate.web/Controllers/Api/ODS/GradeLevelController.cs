@@ -11,6 +11,7 @@ using generate.infrastructure.Repositories.IDS;
 namespace generate.web.Controllers.Api.ODS
 {
     [Route("api/ods/gradelevels")]
+    [ApiController]
     public class GradeLevelController : Controller
     {
         private IIDSRepository _idsRepository;

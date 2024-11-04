@@ -16,6 +16,7 @@ using generate.core.Interfaces.Repositories.RDS;
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/generatereports")]
+    [ApiController]
     public class GenerateReportController : Controller
     {
         private readonly IGenerateReportService _generateReportService;
