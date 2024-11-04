@@ -113,7 +113,8 @@ namespace generate.infrastructure.Services
 
             // Data
 
-            //List<String> organizations = null;
+            List<String> organizations = null;
+            IEnumerable<ReportEDFactsOrganizationStatusCount> queryOrganizationStatusdto = null;
             dynamic dataRows = new List<ExpandoObject>();
 
             int skip = 0;
@@ -176,42 +177,48 @@ namespace generate.infrastructure.Services
             }
 			else if (report.FactTable.FactTableName == "FactOrganizationStatusCounts")
 			{
-                IEnumerable<ReportEDFactsOrganizationStatusCount> queryOrganizationStatusdto = _factOrganizationStatusCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
+				queryOrganizationStatusdto = _factOrganizationStatusCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
 				reportDto.dataCount = queryOrganizationStatusdto.Select(q => q.OrganizationStateId).Distinct().Count();
 
-                if (reportCode == "c199" || reportCode == "c201" || reportCode == "c200" || reportCode == "c202")
+               
+			}
+
+
+            if (reportCode == "c199" || reportCode == "c201" || reportCode == "c200" || reportCode == "c202")
+            {
+                Dictionary<string, string> columns = new Dictionary<string, string>();
+
+                if (reportCode == "c202")
                 {
-                    Dictionary<string, string> columns = new Dictionary<string, string>();
+                    if (categorySetCode == "CSA" || categorySetCode == "CSA1") { columns.Add("Race", "Race"); }
+                    if (categorySetCode == "CSB" || categorySetCode == "CSB1") { columns.Add("Disability", "Disability"); }
+                    if (categorySetCode == "CSC" || categorySetCode == "CSC1") { columns.Add("LepStatus", "English Learner Status"); }
+                    if (categorySetCode == "CSD" || categorySetCode == "CSD1") { columns.Add("EcoDisStatus", "Economic Disadvantage Status"); }
 
-                    if (reportCode == "c202")
-                    {
-                        if (categorySetCode == "CSA" || categorySetCode == "CSA1") { columns.Add("Race", "Race"); }
-                        if (categorySetCode == "CSB" || categorySetCode == "CSB1") { columns.Add("Disability", "Disability"); }
-                        if (categorySetCode == "CSC" || categorySetCode == "CSC1") { columns.Add("LepStatus", "English Learner Status"); }
-                        if (categorySetCode == "CSD" || categorySetCode == "CSD1") { columns.Add("EcoDisStatus", "Economic Disadvantage Status"); }
+                    columns.Add("STATEDEFINEDCUSTOMINDICATORCODE", "Indicator Type");
+                }
+                else
+                {
+                    if (categorySetCode == "CSA") { columns.Add("Race", "Race"); }
+                    if (categorySetCode == "CSB") { columns.Add("Disability", "Disability"); }
+                    if (categorySetCode == "CSC") { columns.Add("LepStatus", "English Learner Status"); }
+                    if (categorySetCode == "CSD") { columns.Add("EcoDisStatus", "Economic Disadvantage Status"); }
+                }
 
-                        columns.Add("STATEDEFINEDCUSTOMINDICATORCODE", "Indicator Type");
-                    }
-                    else
-                    {
-                        if (categorySetCode == "CSA") { columns.Add("Race", "Race"); }
-                        if (categorySetCode == "CSB") { columns.Add("Disability", "Disability"); }
-                        if (categorySetCode == "CSC") { columns.Add("LepStatus", "English Learner Status"); }
-                        if (categorySetCode == "CSD") { columns.Add("EcoDisStatus", "Economic Disadvantage Status"); }
-                    }
-
-                    columns.Add("IndicatorStatus", "Indicator Status");
-                    columns.Add("StatedefinedStatusCode", "State Defined Status");
+                columns.Add("IndicatorStatus", "Indicator Status");
+                columns.Add("StatedefinedStatusCode", "State Defined Status");
 
 
-                    reportDto.structure.rowHeader = "School Name";
-                    reportDto.structure.columnHeaders = new List<string>();
-                    foreach (var item in columns)
-                    {
-                        reportDto.structure.columnHeaders.Add(item.Value);
-                    }
+                reportDto.structure.rowHeader = "School Name";
+                reportDto.structure.columnHeaders = new List<string>();
+                foreach (var item in columns)
+                {
+                    reportDto.structure.columnHeaders.Add(item.Value);
+                }
 
 
+                if (queryOrganizationStatusdto is not null)
+                {
                     foreach (var queryItem in queryOrganizationStatusdto)
                     {
                         dynamic dataRow = new ExpandoObject();
@@ -269,18 +276,13 @@ namespace generate.infrastructure.Services
 
                         dataRows.Add(dataRow);
 
-                    }
+                    } 
+                }
 
                     reportDto.data.AddRange(dataRows);
 
                 }
-
-
-            }
-
-
-            
-            reportDto.data = dataRows;          
+                reportDto.data = dataRows;          
 
             return reportDto;
         }
