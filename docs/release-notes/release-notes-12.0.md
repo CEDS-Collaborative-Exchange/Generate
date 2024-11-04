@@ -54,12 +54,12 @@ The following ED_Facts_ reports were updated in this release.
 
 #### Type of Impact:
 
-* Data – the changes will improve data quality and completeness.
-* User Interface – the changes impact the Generate User Interface and/or migration process.
-* Source to Staging ETL – the changes may require modifications to the SEA’s Source to Staging ETL
-* Performance – the changes improve the performance of the application.
-* Migration – the changes impact a data migration process.
-* Submission Files – the changes may impact submission file(s)
+* Data – changes will improve data quality and completeness.
+* User Interface – changes impact the Generate User Interface and/or migration process.
+* Source to Staging ETL – changes may require modifications to the SEA’s Source to Staging ETL.
+* Performance – changes improve the performance of the application.
+* Migration – changes impact a data migration process.
+* Submission Files – changes may impact submission file(s).
 * Database – changes to the Generate database structure.
 
 {% tabs %}
