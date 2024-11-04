@@ -14,8 +14,6 @@ namespace generate.core.Models.Staging
         public string ComprehensiveSupportReasonApplicability { get; set; }
         public DateTime? RecordStartDateTime { get; set; }
         public DateTime? RecordEndDateTime { get; set; }
-        //public int? OrganizationId { get; set; }
-        //public int? K12SchoolId { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
 }

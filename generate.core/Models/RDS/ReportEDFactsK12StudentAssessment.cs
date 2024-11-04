@@ -21,7 +21,6 @@ namespace generate.core.Models.RDS
         public string OrganizationIdentifierNces { get; set; }
         public string OrganizationIdentifierSea { get; set; }
         public string OrganizationName { get; set; }
-        //public int? OrganizationId { get; set; }
         public string ParentOrganizationIdentifierSea { get; set; }
 
         public string ECONOMICDISADVANTAGESTATUS { get; set; }
@@ -42,16 +41,12 @@ namespace generate.core.Models.RDS
         public string ASSESSMENTTYPEADMINISTERED { get; set; }
 
         public string SPECIALEDUCATIONEXITREASON { get; set; }
-        //public string IDEADISABILITYTYPE { get; set; }
         public string IDEAINDICATOR { get; set; }
         public string IDEAEDUCATIONALENVIRONMENTFOREARLYCHILDHOOD { get; set; }
         public string IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE { get; set; }
-        //public string SECTION504STATUS { get; set; }
         public string CTEPARTICIPANT { get; set; }
-        //public string TITLEIIIIMMIGRANTPARTICIPATIONSTATUS { get; set; }
         public string ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS { get; set; }
         public string PROGRAMPARTICIPATIONFOSTERCARE { get; set; }
-        //public string TITLEIIIIMMIGRANTSTATUS { get; set; }
         public string HOMELESSSERVICEDINDICATOR { get; set; }
 
         public string RACE { get; set; }

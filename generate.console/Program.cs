@@ -64,8 +64,9 @@ namespace generate.console
 
             var builder = new ConfigurationBuilder()
                 .AddCommandLine(args)
-                .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
-                .AddEnvironmentVariables();
+                .AddEnvironmentVariables(e => e.Prefix = "Data__")
+                .AddUserSecrets(Assembly.GetExecutingAssembly(), true);
+                
 
             var config = builder.Build();
             string environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
@@ -161,10 +162,11 @@ namespace generate.console
             DateTime startTime = DateTime.UtcNow;
 
             string taskToRun = commandLineArguments[0].ToLower();
+            const string invalidString = "Invalid Arguments";
 
             if (taskToRun != "help" && taskToRun != "update" && taskToRun != "testdata")
             {
-                Console.WriteLine("Invalid Arguments");
+                Console.WriteLine(invalidString);
                 Console.WriteLine("-----------------------");
                 Console.WriteLine(GetHelpText());
                 return;
@@ -224,7 +226,7 @@ namespace generate.console
 
                         if (testDataType != "ids" && testDataType != "rds" && testDataType != "staging")
                         {
-                            Console.WriteLine("Invalid Arguments");
+                            Console.WriteLine(invalidString);
                             Console.WriteLine("-----------------------");
                             Console.WriteLine(GetHelpText());
                             return;
@@ -247,7 +249,7 @@ namespace generate.console
 
                         if (formatType != "json" && formatType != "sql" && formatType != "c#")
                         {
-                            Console.WriteLine("Invalid Arguments");
+                            Console.WriteLine(invalidString);
                             Console.WriteLine("-----------------------");
                             Console.WriteLine(GetHelpText());
                             return;
@@ -262,7 +264,7 @@ namespace generate.console
                         }
                         catch (Exception)
                         {
-                            Console.WriteLine("Invalid Arguments");
+                            Console.WriteLine(invalidString);
                             Console.WriteLine("-----------------------");
                             Console.WriteLine(GetHelpText());
                             return;
@@ -270,7 +272,7 @@ namespace generate.console
 
                         if (outputType != "console" && outputType != "file" && outputType != "execute")
                         {
-                            Console.WriteLine("Invalid Arguments");
+                            Console.WriteLine(invalidString);
                             Console.WriteLine("-----------------------");
                             Console.WriteLine(GetHelpText());
                             return;
@@ -278,7 +280,7 @@ namespace generate.console
 
                         if (outputType == "execute" && formatType != "sql")
                         {
-                            Console.WriteLine("Invalid Arguments");
+                            Console.WriteLine(invalidString);
                             Console.WriteLine("-----------------------");
                             Console.WriteLine(GetHelpText());
                             return;
@@ -292,7 +294,7 @@ namespace generate.console
 
                         if (numberOfYears < 1)
                         {
-                            Console.WriteLine("Invalid Arguments");
+                            Console.WriteLine(invalidString);
                             Console.WriteLine("-----------------------");
                             Console.WriteLine(GetHelpText());
                             return;
@@ -306,7 +308,7 @@ namespace generate.console
 
                         if (dataStandardType != "ceds" && dataStandardType != "non-ceds")
                         {
-                            Console.WriteLine("Invalid Arguments");
+                            Console.WriteLine(invalidString);
                             Console.WriteLine("-----------------------");
                             Console.WriteLine(GetHelpText());
                             return;
@@ -320,7 +322,7 @@ namespace generate.console
 
                         if (outputType != "console" && outputType != "file" && outputType != "execute")
                         {
-                            Console.WriteLine("Invalid Arguments");
+                            Console.WriteLine(invalidString);
                             Console.WriteLine("-----------------------");
                             Console.WriteLine(GetHelpText());
                             return;
@@ -328,7 +330,7 @@ namespace generate.console
 
                         if (outputType == "execute" && formatType != "sql")
                         {
-                            Console.WriteLine("Invalid Arguments");
+                            Console.WriteLine(invalidString);
                             Console.WriteLine("-----------------------");
                             Console.WriteLine(GetHelpText());
                             return;

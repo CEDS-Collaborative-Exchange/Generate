@@ -47,6 +47,6 @@
 			inner join RDS.DimAssessments assmnt on fact.AssessmentId = assmnt.DimAssessmentId 
 			inner join RDS.DimGradeLevels grades on fact.GradeLevelWhenAssessedId = grades.DimGradeLevelId
 			inner join RDS.DimAssessmentPerformanceLevels assmntPerfLevl on fact.AssessmentPerformanceLevelId = assmntPerfLevl.DimAssessmentPerformanceLevelId
-			inner join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grades.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
+			left join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grades.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
 														AND tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeAdministeredCode
 	) proficiency on f.K12StudentId = proficiency.K12StudentId and f.SchoolYearId = proficiency.SchoolYearId

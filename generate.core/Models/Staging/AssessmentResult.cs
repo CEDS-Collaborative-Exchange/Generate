@@ -37,20 +37,6 @@ namespace generate.core.Models.Staging
         public string AccommodationType { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? DataCollectionId { get; set; }
-        //public int? AssessmentRegistrationId { get; set; }
-        //public int? AssessmentAdministrationId { get; set; }
-        //public int? AssessmentId { get; set; }
-        //public int? PersonId { get; set; }
-        //public int? AssessmentFormId { get; set; }
-        //public int? AssessmentSubtestId { get; set; }
-        //public int? AssessmentPerformanceLevelId { get; set; }
-        //public int? AssessmentResultId { get; set; }
-        //public int? AssessmentResult_PerformanceLevelId { get; set; }
-        //public int? OrganizationID_LEA { get; set; }
-        //public int? OrganizationPersonRoleId_LEA { get; set; }
-        //public int? OrganizationID_School { get; set; }
-        //public int? OrganizationPersonRoleId_School { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
 }

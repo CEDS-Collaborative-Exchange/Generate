@@ -23,15 +23,6 @@ namespace generate.core.Models.Staging
         public DateTime? ExitDate { get; set; }
         public int? SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? DataCollectionId { get; set; }
-        //public int? PersonId { get; set; }
-        //public int? OrganizationIdLea { get; set; }
-        //public int? OrganizationPersonRoleIdLea { get; set; }
-        //public int? OrganizationIdSchool { get; set; }
-        //public int? OrganizationPersonRoleIdSchool { get; set; }
-        //public int? OrganizationIdCourse { get; set; }
-        //public int? OrganizationIdCourseSection { get; set; }
-        //public int? OrganizationPersonRoleIdCourseSection { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
 }

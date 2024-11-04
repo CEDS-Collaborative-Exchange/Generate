@@ -1,5 +1,5 @@
-﻿export interface AssessmentTypeDto {
-    refAssessmentTypeId: number;
+export interface AssessmentTypeDto {
+    refAssessmentTypeChildrenWithDisabilitiesId: number;
     description: string;
     code: string;
     definition: string;

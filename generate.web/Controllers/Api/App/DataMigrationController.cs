@@ -178,22 +178,25 @@ namespace generate.web.Controllers.Api.App
             {
                 DimSchoolYear dimYear = _rdsRepository.Find<DimSchoolYear>(s => s.SchoolYear == Convert.ToInt16(schoolYear), 0, 0).FirstOrDefault();
 
-                DimSchoolYearDto dt = new DimSchoolYearDto();
-                dt.DimSchoolYearId = dimYear.DimSchoolYearId;
-                dt.SchoolYear = dimYear.SchoolYear.ToString();
-                dt.SessionBeginDate = dimYear.SessionBeginDate;
-                dt.SessionEndDate = dimYear.SessionEndDate;
-
-                var dm = _rdsRepository.Find<DimSchoolYearDataMigrationType>(s => s.DimSchoolYearId == dimYear.DimSchoolYearId && s.DataMigrationTypeId == datamigrationType.DataMigrationTypeId).FirstOrDefault();
-                if (dm == null || dm.IsSelected == false)
-                    dt.IsSelected = false;
-                else
-                    dt.IsSelected = true;
-                if (dm != null)
+                if (dimYear != null)
                 {
-                    dt.DataMigrationTypeId = dm.DataMigrationTypeId;
+                    DimSchoolYearDto dt = new DimSchoolYearDto();
+                    dt.DimSchoolYearId = dimYear.DimSchoolYearId;
+                    dt.SchoolYear = dimYear.SchoolYear.ToString();
+                    dt.SessionBeginDate = dimYear.SessionBeginDate;
+                    dt.SessionEndDate = dimYear.SessionEndDate;
+
+                    var dm = _rdsRepository.Find<DimSchoolYearDataMigrationType>(s => s.DimSchoolYearId == dimYear.DimSchoolYearId && s.DataMigrationTypeId == datamigrationType.DataMigrationTypeId).FirstOrDefault();
+                    if (dm == null || dm.IsSelected == false)
+                        dt.IsSelected = false;
+                    else
+                        dt.IsSelected = true;
+                    if (dm != null)
+                    {
+                        dt.DataMigrationTypeId = dm.DataMigrationTypeId;
+                    }
+                    yearDto.Add(dt);
                 }
-                yearDto.Add(dt);
 
             }
             return Json(yearDto);
@@ -203,8 +206,12 @@ namespace generate.web.Controllers.Api.App
         public JsonResult MigrationTaskLists(string reportType)
         {
             List<DataMigrationTask> dataMigrationTasks = new List<DataMigrationTask>();
-            int id = _appRepository.GetAll<DataMigrationType>(0,0).Where(s=>s.DataMigrationTypeCode==reportType).FirstOrDefault().DataMigrationTypeId;
-            dataMigrationTasks = _appRepository.Find<DataMigrationTask>(a => a.DataMigrationTypeId == id, 0, 0).ToList();
+            IEnumerable<DataMigrationType> migrationList = _appRepository.GetAll<DataMigrationType>(0, 0);
+            if (migrationList != null)
+            {
+                int id = _appRepository.GetAll<DataMigrationType>(0, 0).Where(s => s.DataMigrationTypeCode == reportType).FirstOrDefault().DataMigrationTypeId;
+                dataMigrationTasks = _appRepository.Find<DataMigrationTask>(a => a.DataMigrationTypeId == id, 0, 0).ToList();
+            }
             return Json(dataMigrationTasks);
         }
 
@@ -236,14 +243,18 @@ namespace generate.web.Controllers.Api.App
         public JsonResult GetLastRunFactType()
         {
             DimFactType factType = null;
-            int id = _appRepository.GetAll<DataMigrationType>(0, 0).Where(s => s.DataMigrationTypeCode == "report").FirstOrDefault().DataMigrationTypeId;
-            string taskList = _appRepository.Find<DataMigration>(a => a.DataMigrationTypeId == id, 0, 0).ToList()[0].DataMigrationTaskList;
-            if(taskList != null && taskList.Length > 0)
+            IEnumerable<DataMigrationType> migrationList = _appRepository.GetAll<DataMigrationType>(0, 0);
+            if (migrationList != null)
             {
-                int taskId = Convert.ToInt32(taskList.Split(",")[0]);
-                DataMigrationTask task = _appRepository.GetById<DataMigrationTask>(taskId);
-                factType = _rdsRepository.GetById<DimFactType>(task.FactTypeId);
+                int id = migrationList.Where(s => s.DataMigrationTypeCode == "report").FirstOrDefault().DataMigrationTypeId;
+                string taskList = _appRepository.Find<DataMigration>(a => a.DataMigrationTypeId == id, 0, 0).ToList()[0].DataMigrationTaskList;
+                if (taskList != null && taskList.Length > 0)
+                {
+                    int taskId = Convert.ToInt32(taskList.Split(",")[0]);
+                    DataMigrationTask task = _appRepository.GetById<DataMigrationTask>(taskId);
+                    factType = _rdsRepository.GetById<DimFactType>(task.FactTypeId);
 
+                }
             }
 
             return Json(factType);

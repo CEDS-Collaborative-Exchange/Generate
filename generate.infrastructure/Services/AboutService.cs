@@ -37,20 +37,14 @@ namespace generate.infrastructure.Services
                                                    && gc.GenerateConfigurationKey == GenerateConfigurationKey
                                                    );
 
-            if (gc is null)
+            if (gc == null || !gc.Any())
             {
                 // string genConfigVal = gc.Where(a => a.GenerateConfigurationKey == essKey).Select(a => a.GenerateConfigurationValue).FirstOrDefault();
                 return DBVersion; 
             }
-            else if (gc.Count() == 0)
-            {
-                return DBVersion;
-            }
-            else
-            {
-                DBVersion = gc.Select(a => a.GenerateConfigurationValue).FirstOrDefault();
-                return DBVersion;
-            }            
+
+            DBVersion = gc.Select(a => a.GenerateConfigurationValue).FirstOrDefault();
+            return DBVersion;
 
         }
 

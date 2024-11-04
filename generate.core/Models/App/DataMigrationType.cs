@@ -9,6 +9,6 @@ namespace generate.core.Models.App
         public int DataMigrationTypeId { get; set; }
         public string DataMigrationTypeCode { get; set; }
         public string DataMigrationTypeName { get; set; }
-        //public List<DimSchoolYearDataMigrationType> DimSchoolYearDataMigration { get; set; }
+
     }
 }

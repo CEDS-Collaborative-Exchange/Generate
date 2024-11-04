@@ -501,6 +501,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("delete from rds.FactK12StudentCounts");
                 output.AppendLine("delete from rds.FactK12StudentDisciplines");
                 output.AppendLine("delete from rds.FactK12AccessibleEducationMaterialAssignments");
+                output.AppendLine("delete from rds.FactK12StudentEnrollments");
                 //output.AppendLine("delete from rds.FactOrganizationCountReports");
                 //output.AppendLine("delete from rds.FactOrganizationCounts");
                 //output.AppendLine("delete from rds.FactOrganizationStatusCountReports");
@@ -522,6 +523,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12StudentCounts', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12StudentDisciplines', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12AccessibleEducationMaterialAssignments', RESEED, 1);");
+                output.AppendLine("DBCC CHECKIDENT('rds.FactK12StudentEnrollments', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationCountReports', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationCounts', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationStatusCountReports', RESEED, 1);");
@@ -847,6 +849,8 @@ namespace generate.testdata.Helpers
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ", 'RefAccessibleFormatIssuedIndicator', NULL, 'Yes', 'Yes'), (", schoolYear, ", 'RefAccessibleFormatIssuedIndicator', NULL, 'No', 'No')"));
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ", 'RefAccessibleFormatRequiredIndicator', NULL, 'Yes', 'Yes'), (", schoolYear, ", 'RefAccessibleFormatRequiredIndicator', NULL, 'No', 'No'), (", schoolYear, ", 'RefAccessibleFormatRequiredIndicator', NULL, 'Unknown', 'Unknown')"));
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'LEA', 'LEA'), (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'K12School', 'K12School'), (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'NationalOrStateService', 'NationalOrStateService'), (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'NonProfitOrganization', 'NonProfitOrganization')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData SELECT DISTINCT ", schoolYear, ", 'RefAssessmentAccommodationCategory', NULL, CedsOptionSetCode, CedsOptionSetCode FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'AssessmentAccommodationCategory'"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData SELECT DISTINCT ", schoolYear, ", 'RefAccommodationType', NULL, CedsOptionSetCode, CedsOptionSetCode FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'AccommodationType'"));
 
             output.AppendLine();
 
@@ -988,6 +992,8 @@ namespace generate.testdata.Helpers
             output.AppendLine("Update Staging.AssessmentResult set GradeLevelWhenAssessed =  CASE WHEN GradeLevelWhenAssessed IS NOT NULL THEN GradeLevelWhenAssessed +  '_1' else GradeLevelWhenAssessed END ");
             output.AppendLine("Update Staging.AssessmentResult set AssessmentTypeAdministered =  CASE WHEN AssessmentTypeAdministered IS NOT NULL THEN AssessmentTypeAdministered +  '_1' else AssessmentTypeAdministered END ");
             output.AppendLine("Update Staging.AssessmentResult set AssessmentTypeAdministeredToEnglishLearners =  CASE WHEN AssessmentTypeAdministeredToEnglishLearners IS NOT NULL THEN AssessmentTypeAdministeredToEnglishLearners +  '_1' else AssessmentTypeAdministeredToEnglishLearners END ");
+            output.AppendLine("Update Staging.AssessmentResult set AssessmentAccommodationCategory =  CASE WHEN AssessmentAccommodationCategory IS NOT NULL THEN AssessmentAccommodationCategory +  '_1' else AssessmentAccommodationCategory END ");
+            output.AppendLine("Update Staging.AssessmentResult set AccommodationType =  CASE WHEN AccommodationType IS NOT NULL THEN AccommodationType +  '_1' else AccommodationType END ");
             output.AppendLine("Update Staging.Discipline set FirearmType =  CASE WHEN FirearmType IS NOT NULL THEN FirearmType +  '_1' else FirearmType END ");
             output.AppendLine("Update Staging.Discipline set DisciplineReason =  CASE WHEN DisciplineReason IS NOT NULL THEN DisciplineReason +  '_1' else DisciplineReason END ");
             output.AppendLine("Update Staging.Discipline set DisciplinaryActionTaken =  CASE WHEN DisciplinaryActionTaken IS NOT NULL THEN DisciplinaryActionTaken +  '_1' else DisciplinaryActionTaken END ");

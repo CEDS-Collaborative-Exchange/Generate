@@ -11,17 +11,17 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import * as XLSX from '../../../../lib/xlsx-js-style/xlsx.js'
 //import * as XLSX from '../../../../../node_modules/xlsx-js-style/dist/xlsx.bundle.js'
 
-declare let $: any;
+declare var $: any;
 
-export let inclusions: any;
-export let populateReport: any;
-export let reportData: GenerateReportDataDto;
-export let filterBy: any;
-export let filterBy2: any;
-export let gstudentCount: any;
+export var inclusions: any;
+export var populateReport: any;
+export var reportData: GenerateReportDataDto;
+export var filterBy: any;
+export var filterBy2: any;
+export var gstudentCount: any;
 
-export let studentCountColumn: any;
-export let aggregateColumn: any;
+export var studentCountColumn: any;
+export var aggregateColumn: any;
 
 @Component({
     selector: 'app-pivottable',
@@ -65,7 +65,7 @@ export class PivottableComponent {
         console.log('ngOnInit');
 
         this.populateReport();
-//        this.paginator.firstPage();
+        //        this.paginator.firstPage();
 
         $('.pvtAxisLabel').find('span').remove();
 
@@ -78,7 +78,7 @@ export class PivottableComponent {
                         filterBy['filterCol'] = $(this).closest('.pvtAxisLabel').text();
                         filterBy['filterValue'] = $(this).val();
 
-                        let colKey = $(this).closest('.pvtAxisLabel').text();
+                        var colKey = $(this).closest('.pvtAxisLabel').text();
                         colKey = colKey.replace('*', '');
                         filterBy2[colKey] = $(this).val();
                     });
@@ -93,7 +93,7 @@ export class PivottableComponent {
                 filterBy['filterCol'] = $(this).closest('.pvtAxisLabel').text();
                 filterBy['filterValue'] = $(this).val();
 
-                let colKey = $(this).closest('.pvtAxisLabel').text();
+                var colKey = $(this).closest('.pvtAxisLabel').text();
                 colKey = colKey.replace('*', '');
                 filterBy2[colKey] = $(this).val();
             });
@@ -101,7 +101,7 @@ export class PivottableComponent {
             this.populateReport();
         });
 
-   
+
     }
 
     onSearch() {
@@ -109,7 +109,7 @@ export class PivottableComponent {
             filterBy['filterCol'] = $(this).closest('.pvtAxisLabel').text();
             filterBy['filterValue'] = $(this).val();
 
-            let colKey = $(this).closest('.pvtAxisLabel').text();
+            var colKey = $(this).closest('.pvtAxisLabel').text();
             colKey = colKey.replace('*', '');
             filterBy2[colKey] = $(this).val();
         });
@@ -146,7 +146,7 @@ export class PivottableComponent {
 
         let currentParams = changes['reportDataDto']['currentValue'];
         if (currentParams.reportTitle !== previousParams.reportTitle
-        //    || currentParams.categorySets[0].organizationLevelCode !== previousParams.categorySets[0].organizationLevelCode
+            //    || currentParams.categorySets[0].organizationLevelCode !== previousParams.categorySets[0].organizationLevelCode
             || currentParams.reportYear !== previousParams.reportYear
             || currentParams.reportCategorySetCode !== previousParams.reportCategorySetCode
         ) {
@@ -174,23 +174,23 @@ export class PivottableComponent {
 
     markSearchFields() {
         if ($('.pvtAxisLabel').length == 0) {
-            window.setTimeout(() => {this.markSearchFields()}, 100);
+            window.setTimeout(() => { this.markSearchFields() }, 100);
         }
         else {
             $('.pvtAxisLabel').each((index, element) => {
-                let text = element.innerHTML;
+                var text = element.innerHTML;
                 if ($(element).find('.filter').length == 0) {
-                    let searchField = this.renderer.createElement('div');
+                    var searchField = this.renderer.createElement('div');
                     this.renderer.addClass(searchField, 'search-container');
 
-                    let inputField = this.renderer.createElement('input');
+                    var inputField = this.renderer.createElement('input');
                     this.renderer.setAttribute(inputField, 'type', 'text');
                     this.renderer.addClass(inputField, 'filter');
                     this.renderer.setAttribute(inputField, 'placeholder', text);
 
-                    let button = this.renderer.createElement('button');
+                    var button = this.renderer.createElement('button');
                     this.renderer.listen(button, 'click', this.onSearch.bind(this));
-                    let icon = this.renderer.createElement('i');
+                    var icon = this.renderer.createElement('i');
                     this.renderer.addClass(icon, 'fa');
                     this.renderer.addClass(icon, 'fa-search');
                     this.renderer.appendChild(button, icon);
@@ -199,7 +199,7 @@ export class PivottableComponent {
                     this.renderer.appendChild(searchField, button);
                     this.renderer.appendChild(element, searchField);
 
-                //    this.renderer.setStyle(this.renderer.selectRootElement('.pvtAxisLabel .filter'), 'width', '8em');
+                    //    this.renderer.setStyle(this.renderer.selectRootElement('.pvtAxisLabel .filter'), 'width', '8em');
                 }
             });
         }
@@ -211,7 +211,7 @@ export class PivottableComponent {
             window.setTimeout(this.restoreSearchFields, 100);
         }
         else {
-            for (let key in filterBy2) {
+            for (var key in filterBy2) {
                 $('.pvtAxisLabel').each((index, element) => {
                     if (element.innerHTML.indexOf(key) > -1) {
                         $(element).find('input').val(filterBy2[key]);
@@ -228,7 +228,7 @@ export class PivottableComponent {
             $('#resetFilter').hide();
             $('.search-container').hide();
         }
-}
+    }
 
     onToggleSearchFilter() {
         if ($('#searchTable').prop("checked")) {
@@ -276,7 +276,7 @@ export class PivottableComponent {
     populateReport() {
         if (Object.keys(reportData).length === 0)
             return;
-        let derivers = $.pivotUtilities.derivers;
+        var derivers = $.pivotUtilities.derivers;
         let viewDef: any = JSON.parse(reportData.categorySets[0].viewDefinition);
         let rowDisplayFields: any = viewDef.rowFields;
         let columnDisplayFields: any = viewDef.columnFields;
@@ -288,47 +288,47 @@ export class PivottableComponent {
         if (uiData[0] !== undefined && uiData[0].parentOrganizationIdentifierSea !== undefined) {
             uiData = uiData
                 .sort((a, b) => {
+                    if (a.OrganizationName < b.OrganizationName) {
+                        return -1;
+                    }
+                    if (a.OrganizationName > b.OrganizationName) {
+                        return 1;
+                    }
+
+                    return 0;
+                });
+        }
+
+        uiData = uiData
+            .sort((a, b) => {
                 if (a.OrganizationName < b.OrganizationName) {
                     return -1;
                 }
                 if (a.OrganizationName > b.OrganizationName) {
                     return 1;
                 }
-                
-            return 0;
-            });
-        }
-
-        uiData = uiData
-            .sort((a, b) => {
-            if (a.OrganizationName < b.OrganizationName) {
-                return -1;
-            }
-            if (a.OrganizationName > b.OrganizationName) {
-                return 1;
-            }
-            return 0;
+                return 0;
             })
             .sort((a, b) => {
-            if (a.OrganizationIdentifierSea < b.OrganizationIdentifierSea) {
-                return -1;
-            }
-            if (a.OrganizationIdentifierSea > b.OrganizationIdentifierSea) {
-                return 1;
-            }
-            return 0;
+                if (a.OrganizationIdentifierSea < b.OrganizationIdentifierSea) {
+                    return -1;
+                }
+                if (a.OrganizationIdentifierSea > b.OrganizationIdentifierSea) {
+                    return 1;
+                }
+                return 0;
             })
             .filter(d => {
                 if (Object.keys(filterBy2).length === 0) { return true; }
 
-                let matchFound = true;
-                for (let i = 0; i < Object.keys(filterBy2).length; i++) {
+                var matchFound = true;
+                for (var i = 0; i < Object.keys(filterBy2).length; i++) {
                     if (filterBy2[Object.keys(filterBy2)[i]] != "") {
-                        let dataValue = d[viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding];
-                        let searchValue = filterBy2[Object.keys(filterBy2)[i]];
+                        var dataValue = d[viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding];
+                        var searchValue = filterBy2[Object.keys(filterBy2)[i]];
 
-                        let categoryOption = reportData.categorySets[0].categoryOptions.find(o => o.categoryOptionCode.toLowerCase() == dataValue.toLowerCase());
-                        let categoryOptionName = "";
+                        var categoryOption = reportData.categorySets[0].categoryOptions.find(o => o.categoryOptionCode.toLowerCase() == dataValue.toLowerCase());
+                        var categoryOptionName = "";
                         if (categoryOption != undefined) {
                             categoryOptionName = categoryOption.categoryOptionName;
                         }
@@ -378,7 +378,7 @@ export class PivottableComponent {
                     }
                 }
 
-                if(firstRecordIndex === -1) {
+                if (firstRecordIndex === -1) {
                     firstRecordIndex = 0;
                     this.currentPage = 0
                 }
@@ -410,14 +410,14 @@ export class PivottableComponent {
         this.paginator.length = new Set(this.reportDataDto.data.filter(d => {
             if (Object.keys(filterBy2).length === 0) { return true; }
 
-            let matchFound = true;
-            for (let i = 0; i < Object.keys(filterBy2).length; i++) {
+            var matchFound = true;
+            for (var i = 0; i < Object.keys(filterBy2).length; i++) {
                 if (filterBy2[Object.keys(filterBy2)[i]] != "") {
-                    let dataValue = d[viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding];
-                    let searchValue = filterBy2[Object.keys(filterBy2)[i]];
+                    var dataValue = d[viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding];
+                    var searchValue = filterBy2[Object.keys(filterBy2)[i]];
 
-                    let categoryOption = reportData.categorySets[0].categoryOptions.find(o => o.categoryOptionName.toLowerCase() === searchValue.toLowerCase());
-                    let categoryOptionCode = "";
+                    var categoryOption = reportData.categorySets[0].categoryOptions.find(o => o.categoryOptionName.toLowerCase() === searchValue.toLowerCase());
+                    var categoryOptionCode = "";
                     if (categoryOption != undefined) {
                         categoryOptionCode = categoryOption.categoryOptionCode;
                     }
@@ -477,30 +477,30 @@ export class PivottableComponent {
             }
         });
 
-        let len = viewDef.columnFields.items.length;
+        var len = viewDef.columnFields.items.length;
 
         aggregateColumn = viewDef.columnFields.items[len - 1];
 
         $("#container").pivotUI(uiData, {
-                showUI: false,
-                rows: viewDef.rowFields.items, cols: viewDef.columnFields.items,
-                aggregators: {
-                    aggregateColumn: gstudentCount
-                },
-                derivedAttributes: derivedAttributes,
-                rendererOptions: {
-                    table: {
-                        rowTotals: false,
-                        colTotals: false,
-                        rendererName: "Table",
-                        clickCallback: function (e, value, filters, pivotData) {
-                            let names = [];
-                            pivotData.forEachMatchingRecord(filters,
-                                function (record) { names.push(record.Name); });
-                        }
+            showUI: false,
+            rows: viewDef.rowFields.items, cols: viewDef.columnFields.items,
+            aggregators: {
+                aggregateColumn: gstudentCount
+            },
+            derivedAttributes: derivedAttributes,
+            rendererOptions: {
+                table: {
+                    rowTotals: false,
+                    colTotals: false,
+                    rendererName: "Table",
+                    clickCallback: function (e, value, filters, pivotData) {
+                        var names = [];
+                        pivotData.forEachMatchingRecord(filters,
+                            function (record) { names.push(record.Name); });
                     }
                 }
-            },
+            }
+        },
             true
         );
 
@@ -531,7 +531,7 @@ export class PivottableComponent {
         this.self = this;
         if (Object.keys(reportData).length === 0)
             return;
-        let derivers = $.pivotUtilities.derivers;
+        var derivers = $.pivotUtilities.derivers;
         let viewDef: any = JSON.parse(reportData.categorySets[0].viewDefinition);
         let rowDisplayFields: any = viewDef.rowFields;
         let columnDisplayFields: any = viewDef.columnFields;
@@ -583,7 +583,7 @@ export class PivottableComponent {
             }
         });
 
-        let len = viewDef.columnFields.items.length;
+        var len = viewDef.columnFields.items.length;
 
         aggregateColumn = viewDef.columnFields.items[len - 1];
 
@@ -595,7 +595,7 @@ export class PivottableComponent {
                 aggregateColumn: gstudentCount
             },
             filter: function (rowObj) {
-                for (let key in filterBy2) {
+                for (var key in filterBy2) {
                     if (rowObj[key] === undefined || rowObj[key].indexOf(filterBy2[key]) < 0)
                         return false;
                 }
@@ -609,7 +609,7 @@ export class PivottableComponent {
                     colTotals: false,
                     rendererName: "Table",
                     clickCallback: function (e, value, filters, pivotData) {
-                        let names = [];
+                        var names = [];
                         pivotData.forEachMatchingRecord(filters,
                             function (record) { names.push(record.Name); });
                     }
@@ -618,18 +618,18 @@ export class PivottableComponent {
             onRefresh: function (config) {
                 console.log('load completed');
                 console.log(config);
-                let html = $("#containerExport").html();
+                var html = $("#containerExport").html();
                 const table = document.getElementsByClassName('pvtTable');
-                let colLength = $('#containerExport .pvtTable thead').find('tr:nth-child(1)').children().length;
+                var colLength = $('#containerExport .pvtTable thead').find('tr:nth-child(1)').children().length;
                 $('#containerExport .pvtTable thead').prepend('<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>');
 
-              //Add more rows above, have to change tr:nth-child(5)
+                //Add more rows above, have to change tr:nth-child(5)
                 let firstEmptyCellSpan = $('#containerExport .pvtTable thead tr:last th').length - 2;
                 // The colspan for the first empty cell in the header
                 $('#containerExport .pvtTable thead').find('tr:nth-child(5)').find('th:first').prop('colspan', firstEmptyCellSpan);
                 $('#containerExport .pvtTable thead').find('tr:nth-child(3)').find('th:first').prop('background-color', 'red');
                 $("#containerExport .pvtTable .pvtRowLabel").prop('colspan', '1');
-                let start = Date.now();
+                var start = Date.now();
                 const wb = XLSX.utils.table_to_book(table[1], { sheet: 'Generate Report' });
 
                 //    const wb = XLSX.utils.table_to_book(table, { sheet: 'StyledSheet' });
@@ -641,28 +641,28 @@ export class PivottableComponent {
                 const ws = wb.Sheets['Generate Report'];
 
                 //Set Column width
-                let wscols = [
+                var wscols = [
                     { wpx: 100 },
                     { wpx: 70 }
                 ];
 
-                let reportCaption = $('.generate-app-report__title').text();
+                var reportCaption = $('.generate-app-report__title').text();
                 let index = reportCaption.indexOf(':');
                 let reportCode = reportCaption.substring(0, index);
 
-                let colWidth = 150;
-                let category = $('.generate-app-pivotgrid__categoryset-definition span').html();
+                var colWidth = 150;
+                var category = $('.generate-app-pivotgrid__categoryset-definition span').html();
 
 
                 //Column C
                 if (reportCode.toLowerCase() == "c002") {
-                    if (category.toLowerCase() == "category set a" ||category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c"
-                    || category.toLowerCase() == "category set d") {
+                    if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c"
+                        || category.toLowerCase() == "category set d") {
                         colWidth = 220;
                     }
                 }
                 else if (reportCode.toLowerCase() == "c005") {
-                    if (category.toLowerCase() == "category set a" ||category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d") {
+                    if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d") {
                         colWidth = 500;
                     }
                 }
@@ -748,7 +748,7 @@ export class PivottableComponent {
                             wscols.push({ wpx: 180 });// Column E
                     }
                     else if (reportCode.toLowerCase() == "c189") {
-                      //  wscols.push({ wpx: 200 }); //Column D
+                        //  wscols.push({ wpx: 200 }); //Column D
                         if (category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d" || category.toLowerCase() == "category set f")
                             wscols.push({ wpx: 150 });// Column D
                         //else if (category.toLowerCase() == "category set b")
@@ -757,34 +757,33 @@ export class PivottableComponent {
                     else {
                         wscols.push({ wpx: 300 });
                     }
-                } 
+                }
                 ws['!cols'] = wscols;
 
 
                 //Set data columns
-                let dataColumnNumber = $('#containerExport .pvtTable thead tr:last').prev().find('.pvtColLabel').length;
+                var dataColumnNumber = $('#containerExport .pvtTable thead tr:last').prev().find('.pvtColLabel').length;
                 if (reportCode.toLowerCase() == "c005" && category.toLowerCase() == "subtotal 1") {
-                    for (let i = 0; i <= dataColumnNumber; i++) {
+                    for (var i = 0; i <= dataColumnNumber; i++) {
                         ws['!cols'].push({ wpx: 200 })
                     }
                 }
-                else if ((reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178" || reportCode.toLowerCase() == "c179")&& category.toLowerCase() == "category set j") {
-                    for (let i = 0; i <= dataColumnNumber; i++) {
+                else if ((reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178" || reportCode.toLowerCase() == "c179") && category.toLowerCase() == "category set j") {
+                    for (var i = 0; i <= dataColumnNumber; i++) {
                         ws['!cols'].push({ wpx: 200 })
                     }
                 }
                 else if (reportCode.toLowerCase() == "c178" && category.toLowerCase() == "category set j") {
-                    for (let i = 0; i <= dataColumnNumber; i++) {
+                    for (var i = 0; i <= dataColumnNumber; i++) {
                         ws['!cols'].push({ wpx: 200 })
                     }
                 }
-                else if (reportCode.toLowerCase() == "c185")
-                {
+                else if (reportCode.toLowerCase() == "c185") {
                     let dataCol = 200;
                     if (category.toLowerCase() == "category set j" || category.toLowerCase() == "subtotal 1")
                         dataCol = 100;
 
-                    for (let i = 0; i <= dataColumnNumber; i++) {
+                    for (var i = 0; i <= dataColumnNumber; i++) {
                         ws['!cols'].push({ wpx: dataCol })
                     }
                 }
@@ -793,7 +792,7 @@ export class PivottableComponent {
                     if (category.toLowerCase() == "category set j" || category.toLowerCase() == "subtotal 1")
                         dataCol = 100;
 
-                    for (let i = 0; i <= dataColumnNumber; i++) {
+                    for (var i = 0; i <= dataColumnNumber; i++) {
                         ws['!cols'].push({ wpx: dataCol })
                     }
                 }
@@ -802,15 +801,15 @@ export class PivottableComponent {
                     if (category.toLowerCase() == "subtotal 1")
                         dataCol = 150;
 
-                    for (let i = 0; i <= dataColumnNumber; i++) {
+                    for (var i = 0; i <= dataColumnNumber; i++) {
                         ws['!cols'].push({ wpx: dataCol })
                     }
                 }
                 else {
                     if ($('#containerExport .pvtTable .pvtColLabel').closest('tr').length == 1) {
 
-                        for (let i = 0; i <= dataColumnNumber; i++) {
-                            let len = $('#containerExport .pvtTable .pvtColLabel').eq(i).text().length;
+                        for (var i = 0; i <= dataColumnNumber; i++) {
+                            var len = $('#containerExport .pvtTable .pvtColLabel').eq(i).text().length;
                             if (len >= 13) {
                                 ws['!cols'].push({ wpx: 125 })
                             } else {
@@ -819,8 +818,8 @@ export class PivottableComponent {
                         }
                     } else if ($('#containerExport .pvtTable .pvtColLabel').length >= 2) {
                         dataColumnNumber = $("#containerExport .pvtTable .pvtAxisLabel").closest("tr").eq(1).find('.pvtColLabel').length;
-                        for (let i = 0; i <= dataColumnNumber; i++) {
-                            let len = $("#containerExport .pvtTable .pvtAxisLabel").closest("tr").eq(1).find('.pvtColLabel').eq(i).text().length;
+                        for (var i = 0; i <= dataColumnNumber; i++) {
+                            var len = $("#containerExport .pvtTable .pvtAxisLabel").closest("tr").eq(1).find('.pvtColLabel').eq(i).text().length;
                             if (len >= 13) {
                                 ws['!cols'].push({ wpx: 160 })
                             }
@@ -834,23 +833,23 @@ export class PivottableComponent {
 
 
                 //Set row height
-                let wsrows = [
+                var wsrows = [
                     { hpx: 25 }, // row 1 sets to the height in pixels
-                    { hpx: 20 }, 
-                    { hpx: 20 }, 
-                    { hpx: 20 }, 
+                    { hpx: 20 },
+                    { hpx: 20 },
+                    { hpx: 20 },
                 ];
 
                 ws['!rows'] = wsrows; // ws - worksheet
                 let headerRowLength = $('#containerExport .pvtTable thead tr').length - 4; //4 is caption rows
-                for (let i = 0; i < headerRowLength; i++) {
+                for (var i = 0; i < headerRowLength; i++) {
                     ws['!rows'].push({ hpx: 35 });
                 }
 
                 //Set all data row height
                 let dataRowLength = $('#containerExport .pvtTable tbody tr').length;
-                for (let i = 0; i <= dataRowLength; i++) {
-                    if (reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178" ) {
+                for (var i = 0; i <= dataRowLength; i++) {
+                    if (reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178") {
                         ws['!rows'].push({ hpx: 45 });
                     } else if (reportCode.toLowerCase() == "c179") {
                         if (category.toLowerCase() == "subtotal 1")
@@ -866,22 +865,22 @@ export class PivottableComponent {
 
                 }
                 //first row e.g. A1:AB12
-                let ref = ws["!fullref"];
+                var ref = ws["!fullref"];
                 console.log(ref);
 
-                let range = XLSX.utils.decode_range(ws['!ref']);
+                var range = XLSX.utils.decode_range(ws['!ref']);
                 //0 index based
-                let colTotal = range.e.c;
-                let rowTotal = range.e.r;
+                var colTotal = range.e.c;
+                var rowTotal = range.e.r;
                 //search worksheet ws with the cell type of 's'
 
                 //pvtAxisLabel with darker
-                let pvtAxisLabels = [];
+                var pvtAxisLabels = [];
                 $('#containerExport .pvtAxisLabel').each(function (index, element) {
                     pvtAxisLabels.push(element.getInnerHTML());
                 });
 
-                let pvtRowLabels = [];
+                var pvtRowLabels = [];
                 $('#containerExport .pvtRowLabel').each(function (index, element) {
                     pvtRowLabels.push(element.getInnerHTML());
                 });
@@ -889,10 +888,10 @@ export class PivottableComponent {
                 start = Date.now();
                 colTotal = 3;
 
-                let titleColSpan = 12;
-                let new_headers = [];
+                var titleColSpan = 12;
+                var new_headers = [];
 
-                for (let i = 0; i <= 2; i++) {
+                for (var i = 0; i <= 2; i++) {
                     new_headers.push('');
                 }
 
@@ -905,11 +904,11 @@ export class PivottableComponent {
 
                 new_headers = [];
                 //for loop to add the new headers to the worksheet
-                for (let i = 0; i <= 2; i++) {
+                for (var i = 0; i <= 2; i++) {
                     new_headers.push('');
                 }
 
-                let caption2 = '';
+                var caption2 = '';
                 $('.generate-app-pivotgrid__categoryset-definition').find('span').each(function (idx) {
                     if ($.trim($(this).text()) !== ",")
                         caption2 += $(this).text();
@@ -925,7 +924,7 @@ export class PivottableComponent {
                 ////generate-app-pivotgrid__total
                 new_headers = [];
                 //for loop to add the new headers to the worksheet
-                for (let i = 0; i <= 2; i++) {
+                for (var i = 0; i <= 2; i++) {
                     new_headers.push('');
                 }
 
@@ -944,13 +943,13 @@ export class PivottableComponent {
                 //lighter: #e6eeee
                 //      ws['A4'].s = { font: { italic: true }, fill: { fgColor: { rgb: 'ff0000' } }, alignment: { horizontal: 'center' } };
                 //{compression:true}
-                                //  let newCell = { t: 's', v: '' };
+                //  var newCell = { t: 's', v: '' };
                 // File in the blank cell on pvtAxisLabel
                 ws['A5'] = { t: 's', v: '' };
                 ws['A5'].t = 's';
                 ws['A5'].s = { font: { italic: true }, fill: { fgColor: { rgb: 'cfd6d6' } }, alignment: { horizontal: 'center' } };
 
-                //  let newCell = { t: 's', v: '' };
+                //  var newCell = { t: 's', v: '' };
                 //  ws['C3'] = { t: 's', v: '' };
                 //     ws["!merges"].push({ s: { r: 2, c: 3 }, e: { r: 2, c: 2 }});
                 XLSX.writeFile(wb, exportFile);
@@ -959,17 +958,17 @@ export class PivottableComponent {
             },
             //Utility function
             getColumnQidth: function (columnVal) {
-                let arr = columnVal.split(' ');
-                let longest = arr.reduce(
+                var arr = columnVal.split(' ');
+                var longest = arr.reduce(
                     function (a, b) {
                         return a.length > b.length ? a : b;
                     }
                 );
 
-                return longest? longest.length : 0;
+                return longest ? longest.length : 0;
             },
             columnToLetter: function (column) {
-                let temp, letter = '';
+                var temp, letter = '';
                 while (column > 0) {
                     temp = (column - 1) % 26;
                     letter = String.fromCharCode(temp + 65) + letter;
@@ -994,10 +993,10 @@ export class PivottableComponent {
             }
             else {
                 $('.pvtAxisLabel').each(function () {
-                    let text = $(this).html();
+                    var text = $(this).html();
                     text = '';
                     if ($(this).find('.filter').length == 0) {
-                        let searchField = "<div class='search-container' style='display:none;'>";
+                        var searchField = "<div class='search-container' style='display:none;'>";
                         searchField = searchField + "<input type='text' class='filter' value='' placeholder='" + text + "' />";
                         searchField = searchField + "<button type='button' id='btnSearch' ><i class='fa fa-search' (click)='onSearch()'></i></button>";
                         searchField = searchField + "</div>";
@@ -1016,9 +1015,9 @@ export class PivottableComponent {
                 window.setTimeout(restoreSearchFields, 100);
             }
             else {
-                for (let key in filterBy2) {
+                for (var key in filterBy2) {
                     $('.pvtAxisLabel').each(function () {
-                        let text = $(this).html();
+                        var text = $(this).html();
                         if ($(this).html().indexOf(key) > -1) {
                             $(this).find('input').val(filterBy2[key]);
                         }
@@ -1052,7 +1051,7 @@ export class PivottableComponent {
 
         if (Object.keys(reportData).length === 0)
             return;
-        let derivers = $.pivotUtilities.derivers;
+        var derivers = $.pivotUtilities.derivers;
         let viewDef: any = JSON.parse(reportData.categorySets[0].viewDefinition);
         let rowDisplayFields: any = viewDef.rowFields;
         let columnDisplayFields: any = viewDef.columnFields;
@@ -1104,7 +1103,7 @@ export class PivottableComponent {
             }
         });
 
-        let len = viewDef.columnFields.items.length;
+        var len = viewDef.columnFields.items.length;
 
         aggregateColumn = viewDef.columnFields.items[len - 1];
 
@@ -1116,7 +1115,7 @@ export class PivottableComponent {
                 aggregateColumn: gstudentCount
             },
             filter: function (rowObj) {
-                for (let key in filterBy2) {
+                for (var key in filterBy2) {
                     if (rowObj[key] === undefined || rowObj[key].indexOf(filterBy2[key]) < 0)
                         return false;
                 }
@@ -1130,7 +1129,7 @@ export class PivottableComponent {
                     colTotals: false,
                     rendererName: "Table",
                     clickCallback: function (e, value, filters, pivotData) {
-                        let names = [];
+                        var names = [];
                         pivotData.forEachMatchingRecord(filters,
                             function (record) { names.push(record.Name); });
                     }
@@ -1138,7 +1137,7 @@ export class PivottableComponent {
             },
             onRefresh: function (config) {
                 console.log('completed-onrefresh');
-                let html = $("#containerExport").html();
+                var html = $("#containerExport").html();
                 const table = document.getElementsByClassName('pvtTable');
                 $('#containerExport .pvtTable thead').prepend('<tr><td>n1</td></tr><tr><td>n2</td></tr>');
 
@@ -1154,7 +1153,7 @@ export class PivottableComponent {
                 $('#containerExport .pvtTable th').css('color', 'red');
                 const ws = wb.Sheets['StyledSheet'];
 
-                let wscols = [
+                var wscols = [
                     { wch: 150 },
                     { wch: 70 },
                     { wch: 200 },
@@ -1166,10 +1165,10 @@ export class PivottableComponent {
                     //{ wch: 200 }
                 ];
 
-            //    ws['!cols'] = wscols;
+                //    ws['!cols'] = wscols;
                 ws['!cols'] = [{ width: 20 }, { width: 10 }, { width: 35 }];
 
-                let wsrows = [
+                var wsrows = [
                     { hpt: 12 }, // row 1 sets to the height of 12 in points
                     { hpx: 160 }, // row 2 sets to the height of 16 in pixels
                     { hpx: 160 }, // row 2 sets to the height of 16 in pixels
@@ -1179,31 +1178,31 @@ export class PivottableComponent {
                     { hpx: 160 } // row 2 sets to the height of 16 in pixels
                 ];
 
-             //   ws['!rows'] = wsrows; // ws - worksheet
-             //   ws['!rows'] = [{ height: 200 }, { height: 200 }, { height: 150 }];
+                //   ws['!rows'] = wsrows; // ws - worksheet
+                //   ws['!rows'] = [{ height: 200 }, { height: 200 }, { height: 150 }];
 
                 //first row e.g. A1:AB12
-                let ref = ws["!fullref"];
+                var ref = ws["!fullref"];
                 console.log(ref);
 
-                let range = XLSX.utils.decode_range(ws['!ref']);
+                var range = XLSX.utils.decode_range(ws['!ref']);
                 //0 index based
-                let colTotal = range.e.c;
-                let rowTotal = range.e.r;
+                var colTotal = range.e.c;
+                var rowTotal = range.e.r;
 
                 //pvtAxisLabel with darker
-                let pvtAxisLabels = [];
-                $('#containerExport .pvtAxisLabel').each(function (index,element) {
+                var pvtAxisLabels = [];
+                $('#containerExport .pvtAxisLabel').each(function (index, element) {
                     pvtAxisLabels.push(element.getInnerHTML());
                 });
 
-                let pvtRowLabels = [];
+                var pvtRowLabels = [];
                 $('#containerExport .pvtRowLabel').each(function (index, element) {
                     pvtRowLabels.push(element.getInnerHTML());
                 });
 
-                rowTotal = 3; 
-                let new_headers = ["S", "h", "e", "e", "t", "J", "S"];
+                rowTotal = 3;
+                var new_headers = ["S", "h", "e", "e", "t", "J", "S"];
                 XLSX.utils.sheet_add_aoa(ws, [new_headers],
                     { skipHeader: true, origin: "A1" });
 
@@ -1215,8 +1214,8 @@ export class PivottableComponent {
                 $("#containerExport").html('');
             },
             //Utility function
-            columnToLetter: function(column) {
-                let temp, letter = '';
+            columnToLetter: function (column) {
+                var temp, letter = '';
                 while (column > 0) {
                     temp = (column - 1) % 26;
                     letter = String.fromCharCode(temp + 65) + letter;
@@ -1241,11 +1240,11 @@ export class PivottableComponent {
             }
             else {
                 $('.pvtAxisLabel').each(function () {
-                    let text = $(this).html();
+                    var text = $(this).html();
                     text = '';
                     //       let width = $(this).textWidth(text, $(this).css('font'));
                     if ($(this).find('.filter').length == 0) {
-                        let searchField = "<div class='search-container' style='display:none;'>";
+                        var searchField = "<div class='search-container' style='display:none;'>";
                         searchField = searchField + "<input type='text' class='filter' value='' placeholder='" + text + "' />";
                         searchField = searchField + "<button type='button' id='btnSearch' ><i class='fa fa-search' (click)='onSearch()'></i></button>";
                         searchField = searchField + "</div>";
@@ -1264,9 +1263,9 @@ export class PivottableComponent {
                 window.setTimeout(restoreSearchFields, 100);
             }
             else {
-                for (let key in filterBy2) {
+                for (var key in filterBy2) {
                     $('.pvtAxisLabel').each(function () {
-                        let text = $(this).html();
+                        var text = $(this).html();
                         if ($(this).html().indexOf(key) > -1) {
                             $(this).find('input').val(filterBy2[key]);
                         }
