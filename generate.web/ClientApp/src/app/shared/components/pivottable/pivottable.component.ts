@@ -251,7 +251,7 @@ export class PivottableComponent {
                     return this[studentCountColumn] = record[studentCountColumn];
                 },
                 value: function () {
-                    return Math.round(this[studentCountColumn]);
+                    return this[studentCountColumn];
                 },
                 format: function (x) {
                     //format with thousands separators
