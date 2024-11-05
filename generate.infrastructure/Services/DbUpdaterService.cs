@@ -64,10 +64,14 @@ namespace generate.infrastructure.Services
             {
                 throw new InvalidOperationException("ERROR - Generate database does not exist or is too old.  Please restore using the RestoreDatabase.sql script.");
             }
-            
+
             // Check if database is too old (this new update process requires a baseline version of 2.4)
+            string currentDatabaseVersion = "";
             GenerateConfiguration databaseVersionConfiguration = _appRepository.Find<GenerateConfiguration>(c => c.GenerateConfigurationKey == "DatabaseVersion", 0, 0).FirstOrDefault();
-            string currentDatabaseVersion = databaseVersionConfiguration.GenerateConfigurationValue;
+            if (databaseVersionConfiguration != null)
+            {
+                currentDatabaseVersion = databaseVersionConfiguration.GenerateConfigurationValue;
+            }
             float currentDatabaseVersionValue = 0;
             float.TryParse(currentDatabaseVersion.Replace("_prerelease", ""), out currentDatabaseVersionValue);
             
