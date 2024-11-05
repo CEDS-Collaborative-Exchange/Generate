@@ -24,6 +24,7 @@ namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/fsmetadata")]
     [ResponseCache(Duration = 0)]
+    [ApiController]
     public class FSMetadataCallController : Controller
     {
 

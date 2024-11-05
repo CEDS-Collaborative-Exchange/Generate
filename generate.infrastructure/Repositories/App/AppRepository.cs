@@ -38,16 +38,23 @@ namespace generate.infrastructure.Repositories.App
 
             // Get statuses
             List<DataMigrationStatus> dataMigrationStatuses = GetAllReadOnly<DataMigrationStatus>(0, 0).ToList();
-            DataMigrationStatus pendingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "pending");
-            DataMigrationStatus initialStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "initial");
-            DataMigrationStatus processingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "processing");
+            DataMigrationStatus pendingStatus = null;
+            DataMigrationStatus initialStatus = null;
+            DataMigrationStatus processingStatus = null;
+
+            if (dataMigrationStatuses != null && dataMigrationStatuses.Count > 0)
+            {
+                pendingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "pending");
+                initialStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "initial");
+                processingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "processing");
+            }
 
             // Set Migration Status to pending, set last trigger date
-            if (setToProcessing)
+            if (setToProcessing && processingStatus != null)
             {
                 dataMigration.DataMigrationStatusId = processingStatus.DataMigrationStatusId;
             }
-            else
+            else if(pendingStatus != null)
             {
                 dataMigration.DataMigrationStatusId = pendingStatus.DataMigrationStatusId;
             }
@@ -55,24 +62,27 @@ namespace generate.infrastructure.Repositories.App
             Save();
 
             // Reset statuses of subsequent migrations if needed
-            if (dataMigrationTypeCode == "ods")
+            if (initialStatus != null)
             {
-                // If ODS, set RDS and Report migrations to initial (since they will need to be re-run)
-
-                List<DataMigration> migrations = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == "rds" || m.DataMigrationType.DataMigrationTypeCode == "report").ToList();
-                foreach (var i in migrations)
+                if (dataMigrationTypeCode == "ods")
                 {
-                    i.DataMigrationStatusId = initialStatus.DataMigrationStatusId;
-                }
-                Save();
-            }
-            else if (dataMigrationTypeCode == "rds")
-            {
-                // If RDS, set Report migration to initial (since it will need to be re-run)
+                    // If ODS, set RDS and Report migrations to initial (since they will need to be re-run)
 
-                DataMigration migrations = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == "report").FirstOrDefault();
-                migrations.DataMigrationStatusId = initialStatus.DataMigrationStatusId;
-                Save();
+                    List<DataMigration> migrations = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == "rds" || m.DataMigrationType.DataMigrationTypeCode == "report").ToList();
+                    foreach (var i in migrations)
+                    {
+                        i.DataMigrationStatusId = initialStatus.DataMigrationStatusId;
+                    }
+                    Save();
+                }
+                else if (dataMigrationTypeCode == "rds")
+                {
+                    // If RDS, set Report migration to initial (since it will need to be re-run)
+
+                    DataMigration migrations = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == "report").FirstOrDefault();
+                    migrations.DataMigrationStatusId = initialStatus.DataMigrationStatusId;
+                    Save();
+                }
             }
 
             // Log migration started message

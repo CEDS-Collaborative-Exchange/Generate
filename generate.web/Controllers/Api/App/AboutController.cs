@@ -12,6 +12,7 @@ namespace generate.web.Controllers.Api.App
 
     [Route("api/app/about")]
     [ResponseCache(Duration = 0)]
+    [ApiController]
     public class AboutController : Controller
     {
 

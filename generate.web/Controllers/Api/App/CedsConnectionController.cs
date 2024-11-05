@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/cedsconnections")]
+    [ApiController]
     public class CedsConnectionController: Controller
     {
         private IAppRepository _appRepository;

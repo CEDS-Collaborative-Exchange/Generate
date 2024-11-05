@@ -72,7 +72,7 @@ namespace generate.console
             string environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
 
 
-            if (environment == null)
+            if (environment == "")
             {
                 environment = "development";
             }
@@ -161,10 +161,11 @@ namespace generate.console
         {
             DateTime startTime = DateTime.UtcNow;
 
+            string[] validTasks = ["help", "update", "testdata"];
             string taskToRun = commandLineArguments[0].ToLower();
             const string invalidString = "Invalid Arguments";
 
-            if (taskToRun != "help" && taskToRun != "update" && taskToRun != "testdata")
+            if (!validTasks.Any(t => t == taskToRun))
             {
                 Console.WriteLine(invalidString);
                 Console.WriteLine("-----------------------");
@@ -186,17 +187,15 @@ namespace generate.console
                     IDbUpdaterService dbUpdaterService = serviceProvider.GetService<IDbUpdaterService>();
                     DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory());
                     string rootDir = di.Parent.FullName;
-
-                    Console.WriteLine("Update Path = " + rootDir + "\\generate.web");
-
+                    string updatePath = rootDir + "\\generate.web";
+                    
                     if (environment == "test" || environment == "stage")
                     {
-                        dbUpdaterService.Update(true, "D:\\apps\\generate.web." + environment);
+                        updatePath = "D:\\apps\\generate.web." + environment;
                     }
-                    else
-                    {
-                        dbUpdaterService.Update(true, rootDir + "\\generate.web");
-                    }
+
+                    Console.WriteLine("Update Path = " + updatePath);
+                    dbUpdaterService.Update(true, updatePath);
 
                     break;
 
@@ -212,7 +211,7 @@ namespace generate.console
                     int numberOfYears = 1;
                     string dataStandardType = "ceds";
 
-                    if (commandLineArguments.Count < 8)
+                    if (commandLineArguments.Count < 9)
                     {
                         Console.WriteLine("Insufficient Arguments");
                         Console.WriteLine("-----------------------");
@@ -220,123 +219,82 @@ namespace generate.console
                         return;
                     }
 
-                    if (commandLineArguments.Count >= 2)
-                    {
-                        testDataType = commandLineArguments[1].ToLower();
+                    string[] validTypes = ["ids", "rds", "staging"];
+                    testDataType = commandLineArguments[1].ToLower();
 
-                        if (testDataType != "ids" && testDataType != "rds" && testDataType != "staging")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
+                    if (!validTypes.Any(t => t == testDataType))
+                    {
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
                     }
 
-                    if (commandLineArguments.Count >= 3)
+                    int.TryParse(commandLineArguments[2], out seed);
+                    int.TryParse(commandLineArguments[3], out quantityOfStudents);
+
+                    string[] validFormatTypes = ["json", "sql", "c#"];
+                    formatType = commandLineArguments[4].ToLower();
+
+                    if (!validFormatTypes.Any(t => t == formatType))
                     {
-                        int.TryParse(commandLineArguments[2], out seed);
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
+                    }
+                    
+                    try
+                    {
+                        schoolYear = Convert.ToInt32(commandLineArguments[5]);
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
                     }
 
-                    if (commandLineArguments.Count >= 4)
+
+                    numberOfYears = Convert.ToInt32(commandLineArguments[6]);
+                    if (numberOfYears > 4) { numberOfYears = 4; }
+
+                    if (numberOfYears < 1)
                     {
-                        int.TryParse(commandLineArguments[3], out quantityOfStudents);
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
                     }
 
-                    if (commandLineArguments.Count >= 5)
-                    {
-                        formatType = commandLineArguments[4].ToLower();
+                    dataStandardType = commandLineArguments[7].ToLower();
 
-                        if (formatType != "json" && formatType != "sql" && formatType != "c#")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
+                    if (dataStandardType != "ceds" && dataStandardType != "non-ceds")
+                    {
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
                     }
 
-                    if (commandLineArguments.Count >= 6)
+                    outputType = commandLineArguments[8].ToLower();
+                    string[] validOutputTypes = ["console", "file", "execute"];
+                    if (!validOutputTypes.Any(t => t == outputType))
                     {
-                        try
-                        {
-                            schoolYear = Convert.ToInt32(commandLineArguments[5]);
-                        }
-                        catch (Exception)
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-
-                        if (outputType != "console" && outputType != "file" && outputType != "execute")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-
-                        if (outputType == "execute" && formatType != "sql")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
                     }
 
-                    if (commandLineArguments.Count >= 7)
+                    if (outputType == "execute" && formatType != "sql")
                     {
-                        numberOfYears = Convert.ToInt32(commandLineArguments[6]);
-                        if(numberOfYears > 4) { numberOfYears = 4; }
-
-                        if (numberOfYears < 1)
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
                     }
-
-                    if (commandLineArguments.Count >= 8)
-                    {
-                        dataStandardType = commandLineArguments[7].ToLower();
-
-                        if (dataStandardType != "ceds" && dataStandardType != "non-ceds")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-
-                    }
-
-                    if (commandLineArguments.Count >= 9)
-                    {
-                        outputType = commandLineArguments[8].ToLower();
-
-                        if (outputType != "console" && outputType != "file" && outputType != "execute")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-
-                        if (outputType == "execute" && formatType != "sql")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-                    }
-
 
                     var outputTypeToGenerate = outputType;
 

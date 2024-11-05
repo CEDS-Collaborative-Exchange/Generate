@@ -202,6 +202,11 @@ export class GenerateReportService extends BaseService {
     }
 
     getPagedReport(reportType: string, reportCode: string, reportLevel: string, reportYear: string, reportCategorySetCode: string, reportSort: number, skip: number, take: number, pageSize: number, page: number): Observable<any> {
+
+        if (pageSize === undefined) {
+            pageSize = 10;
+        }
+
         let url = this._apiUrl + '/pages' + '/' + reportType + '/' + reportCode + '/' + reportLevel + '/' + reportYear + '/' + reportCategorySetCode + '?sort=' + reportSort + '&skip=' + skip + '&take=' + take + '&pageSize=' + pageSize + '&page=' + page;
 
 
