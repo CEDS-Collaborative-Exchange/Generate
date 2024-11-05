@@ -72,7 +72,7 @@ namespace generate.console
             string environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
 
 
-            if (environment == null)
+            if (environment == "")
             {
                 environment = "development";
             }
@@ -255,24 +255,6 @@ namespace generate.console
                         Console.WriteLine(GetHelpText());
                         return;
                     }
-
-
-                    //string[] validOutputTypes = ["console", "file", "execute"];
-                    //if (!validOutputTypes.Any(t => t == outputType))
-                    //{
-                    //    Console.WriteLine(invalidString);
-                    //    Console.WriteLine("-----------------------");
-                    //    Console.WriteLine(GetHelpText());
-                    //    return;
-                    //}
-
-                    //if (outputType == "execute" && formatType != "sql")
-                    //{
-                    //    Console.WriteLine(invalidString);
-                    //    Console.WriteLine("-----------------------");
-                    //    Console.WriteLine(GetHelpText());
-                    //    return;
-                    //}
 
 
                     numberOfYears = Convert.ToInt32(commandLineArguments[6]);

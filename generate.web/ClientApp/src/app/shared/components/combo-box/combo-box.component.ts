@@ -76,10 +76,6 @@ export class ComboBoxComponent {
         }
     }
 
-    ngAfterViewInit() {
-
-    }
-
     selectedChanged(event) {
         this.selectedIndexChanged.emit(this.selectedItem);
         this.isDroppedDownChanged.emit(this.selectedItem);
