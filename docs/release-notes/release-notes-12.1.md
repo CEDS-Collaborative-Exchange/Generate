@@ -57,6 +57,12 @@ In Generate v12.1, the field `K12Organization.School_TitleIPartASchoolDesignatio
 
 In Generate 12.1, we have enhanced our testing processes by expanding unit and file specification testing and integrating with EDPass for a streamlined test environment. This integration allows us to validate submission files, verify upload functionality, and conduct data quality checks prior to submission windows, thereby ensuring the reliability and accuracy of Generate’s file specifications.
 
+### Documentation Updates
+
+[GitHub Guide:](../developer-guides/github-guide.md) This guide provides an overview of working with the Generate GitHub repository. It covers essential steps for accessing the repository, forking and cloning the codebase, submitting pull requests, and reporting issues. This resource is designed to help both new and experienced contributors get involved in the development process and collaborate on Generate’s open-source evolution.
+
+[Azure Installation Guide: ](../developer-guides/installation/azure-installation-guide.md)The new installation guide offers step-by-step instructions for setting up Generate in an Azure environment. It includes guidance on configuring necessary Azure resources, optimizing system performance, and ensuring security within the cloud setup. This guide will streamline the installation process for users aiming to leverage Azure for hosting Generate.
+
 ### Generate Enhancements
 
 The following ED_Facts_ reports were updated in this release.
