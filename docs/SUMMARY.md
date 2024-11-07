@@ -61,6 +61,7 @@
     * [Source System Reference Data](developer-guides/generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data.md)
   * [Staging Table Snapshot](developer-guides/generate-utilities/staging-table-snapshot.md)
   * [Fact Type Table Validation Process](developer-guides/generate-utilities/fact-type-table-validation-process.md)
+  * [Debug Views for Staging and the Fact tables](developer-guides/generate-utilities/debug-views-for-staging-and-the-fact-tables.md)
 * [Generate Architecture](developer-guides/generate-architecture.md)
 
 ## Release Notes
