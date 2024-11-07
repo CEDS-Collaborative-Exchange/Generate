@@ -63,6 +63,7 @@
   * [Fact Type Table Validation Process](developer-guides/generate-utilities/fact-type-table-validation-process.md)
   * [Debug Views for Staging and the Fact tables](developer-guides/generate-utilities/debug-views-for-staging-and-the-fact-tables.md)
 * [Generate Architecture](developer-guides/generate-architecture.md)
+* [GitHub Guide](developer-guides/github-guide.md)
 
 ## Release Notes
 
