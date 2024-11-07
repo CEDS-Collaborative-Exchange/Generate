@@ -1748,6 +1748,15 @@ BEGIN
 						delete from #categorySet where ' + @reportField + ' <> ''MISSING''					
 					end
 				'
+
+				if @reportCode = 'c118' AND @categorySetCode = 'CSA'
+				BEGIN
+					set @sqlRemoveMissing = @sqlRemoveMissing + '  
+						delete from #CategorySet 
+						where GRADELEVEL = ''PK''
+						'
+				END
+
 				if @reportCode = 'c118' --deduplicate properly
 				begin
 					if @reportLevel = 'sea'

@@ -1,4 +1,4 @@
-﻿CREATE VIEW RDS.vwNationalAssessments
+﻿CREATE VIEW RDS.vwStateAssessments
   AS 
   
     SELECT 
