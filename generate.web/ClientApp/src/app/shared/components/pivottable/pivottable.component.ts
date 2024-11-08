@@ -624,8 +624,6 @@ export class PivottableComponent {
                 }
             },
             onRefresh: function (config) {
-                console.log('load completed');
-                console.log(config);
                 var html = $("#containerExport").html();
                 const table = document.getElementsByClassName('pvtTable');
                 var colLength = $('#containerExport .pvtTable thead').find('tr:nth-child(1)').children().length;

@@ -399,42 +399,34 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
         forkJoin(
             this._generateReportService.getReportByCodes(this.reportType, newParameters.reportCode),
-            //this._generateReportService.getSubmissionYearss(newParameters.reportCode, this.reportType)
-
         ).subscribe(data => {
 
             this.currentReport = data[0];
-           // this.submissionYears = data[1];
 
-           // this.latestYear = this.submissionYears[0];
+            if (!this.isNullOrUndefined(this.currentReport)) {
+                if (this.currentReport.organizationLevels.filter(t => t.levelCode === newParameters.reportLevel).length < 1) {
+                    for (let i = 0; i < this.currentReport.organizationLevels.length; i++) {
+                        let level: OrganizationLevelDto = this.currentReport.organizationLevels[i];
+                        console.log('Level report is : ' + level.levelCode);
 
-            //if (this.submissionYears.length > 0) {
-            //    newParameters.reportYear = this.submissionYears[0];
-            //}
-
-            /*this.updateSubmissionYear(newParameters.reportCode);*/
-            if (this.isNullOrUndefined(newParameters.reportLevel) && !this.isNullOrUndefined(this.currentReport)) {
-                for (let i = 0; i < this.currentReport.organizationLevels.length; i++) {
-                    let level: OrganizationLevelDto = this.currentReport.organizationLevels[i];
-                    console.log('Level report is : ' + level.levelCode);
-
-                    if (level.levelCode === 'sea') {
-                        newParameters.reportLevel = 'sea';
-                        break;
-                    } else if (level.levelCode === 'lea') {
-                        newParameters.reportLevel = 'lea';
-                        break;
-                    } else if (level.levelCode === 'sch') {
-                        newParameters.reportLevel = 'sch';
-                        break;
-                    }
-                    else if (level.levelCode === 'CAO') {
-                        newParameters.reportLevel = 'CAO';
-                        break;
-                    }
-                    else if (level.levelCode === 'CMO') {
-                        newParameters.reportLevel = 'CMO';
-                        break;
+                        if (level.levelCode === 'sea') {
+                            newParameters.reportLevel = 'sea';
+                            break;
+                        } else if (level.levelCode === 'lea') {
+                            newParameters.reportLevel = 'lea';
+                            break;
+                        } else if (level.levelCode === 'sch') {
+                            newParameters.reportLevel = 'sch';
+                            break;
+                        }
+                        else if (level.levelCode === 'CAO') {
+                            newParameters.reportLevel = 'CAO';
+                            break;
+                        }
+                        else if (level.levelCode === 'CMO') {
+                            newParameters.reportLevel = 'CMO';
+                            break;
+                        }
                     }
                 }
                 /*this.reportParameters.reportLevel = newParameters.reportLevel;*/
@@ -492,9 +484,6 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
             }
 
-
-            //     console.log('Report report Level is: ' + newParameters.reportLevel + ' ' + newParameters.reportYear + ' ' + newParameters.reportCode + ' ' + newParameters.reportCategorySetCode + ' ' + newParameters.reportFilter + ' ' + newParameters.reportFilterValue);
-
             this.reportParameters = newParameters;
 
 
@@ -509,7 +498,6 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
         forkJoin(
             this._generateReportService.getReportByCodes(this.reportType, newParameters.reportCode),
-            /*this._generateReportService.getSubmissionYearss(newParameters.reportCode, this.reportType),*/
             this._gradelevelService.getGradeLevelsOffered(),
             this._organizationService.getLEAs(newParameters.reportYear),
             this._organizationService.getSchools(newParameters.reportYear)
@@ -517,20 +505,10 @@ export class ReportComponent implements AfterViewInit, OnInit {
         ).subscribe(data => {
 
             this.currentReport = data[0];
-            /*this.submissionYears = data[1];*/
-
-           /* this.latestYear = this.submissionYears[0];*/
-
-            //if (this.submissionYears.length > 0) {
-            //    newParameters.reportYear = this.submissionYears[0];
-            //}
-
-            /*this.updateSubmissionYear(newParameters.reportCode);*/
 
             if (newParameters.reportLevel === undefined) {
                 for (let i = 0; i < this.currentReport.organizationLevels.length; i++) {
                     let level: OrganizationLevelDto = this.currentReport.organizationLevels[i];
-                    //   console.log('Level report is : ' + level.levelCode);
 
                     if (level.levelCode === 'sea') {
                         newParameters.reportLevel = 'sea';
@@ -618,8 +596,6 @@ export class ReportComponent implements AfterViewInit, OnInit {
             //else if (newParameters.reportCode === 'studentssummary') {
             //    this.populateFilterOptionsSummary(this.currentReport.reportFilterOptions, newParameters.reportCategorySet.categorySetName);
             //}
-
-            //   console.log('Report report Level is: ' + newParameters.reportLevel + ' ' + newParameters.reportYear + ' ' + newParameters.reportCode + ' ' + newParameters.reportCategorySetCode + ' ' + newParameters.reportFilter + ' ' + newParameters.reportFilterValue);
 
             this.setQueryString(newParameters);
 
@@ -712,8 +688,6 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     getOrganizationLevelByCode(newParameters: GenerateReportParametersDto) {
 
-        console.log('Levels is: ' + newParameters.reportLevel + ' ' + newParameters.reportYear + ' ' + newParameters.reportCode + ' ' + newParameters.reportCategorySetCode);
-
         this._generateReportService.getReportLevelsByCode(this.reportType, newParameters.reportCode, newParameters.reportYear, newParameters.reportCategorySetCode)
             .subscribe(
                 data => {
@@ -757,10 +731,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
             if (comboCategorySet.selectedItem !== undefined) {
 
-                //  console.log('Cat set is: ' + comboCategorySet.selectedItem);
                 reportCategorySet = comboCategorySet.selectedItem;
-
-                //   console.log('Cat set 2 is: ' + newParameters.reportCategorySet.categorySetCode + '/' + reportCategorySet.categorySetCode);
 
                 if (newParameters.reportCategorySet.categorySetCode !== reportCategorySet.categorySetCode) {
                     newParameters.reportCategorySet = reportCategorySet;
@@ -801,59 +772,19 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
             if (comboReportCode.selectedItem !== undefined && this.isReportChanged) {
                 reportCode = comboReportCode.selectedItem.reportCode;
-               
-                console.log('Selected Report is : ' + reportCode);
 
                 if (this.reportParameters.reportCode !== reportCode) {
-
-                    console.log('New Report is : ' + reportCode);
 
                     let newParameters: GenerateReportParametersDto = this.getNewReportParameters();
 
                     newParameters.reportCode = reportCode;
                     newParameters.reportPage = 1;
                     newParameters.reportSort = 1;
-                    /*newParameters.reportLevel = null;*/
                     newParameters.reportCategorySetCode = 'CSA'
-                    /*this.reportParameters = newParameters;*/
 
-                    /*console.log(comboYear.ItemSource);*/
                     if (this.submissionYears !== undefined && this.submissionYears.length > 0) {
-                        /*console.log("Year already selected: " + this.reportParameters.reportYear);*/
-                        //comboYear.selectedValue = this.reportParameters.reportYear;
-                        //comboYear.refresh();
                         this.getReport(newParameters);
-                        //this._generateReportService.getReportLevelsByCode(this.reportType, newParameters.reportCode, newParameters.reportYear, newParameters.reportCategorySetCode)
-                        //    .subscribe(levels => {
-                        //        for (let i = 0; i < levels.length; i++) {
-                        //            let level: OrganizationLevelDto = levels[i];
-
-                        //            if (level.levelCode === 'sea') {
-                        //                newParameters.reportLevel = 'sea';
-                        //                break;
-                        //            } else if (level.levelCode === 'lea') {
-                        //                newParameters.reportLevel = 'lea';
-                        //                break;
-                        //            } else if (level.levelCode === 'sch') {
-                        //                newParameters.reportLevel = 'sch';
-                        //                break;
-                        //            }
-                        //            else if (level.levelCode === 'CAO') {
-                        //                newParameters.reportLevel = 'CAO';
-                        //                break;
-                        //            }
-                        //            else if (level.levelCode === 'CMO') {
-                        //                newParameters.reportLevel = 'CMO';
-                        //                break;
-                        //            }
-                        //        }
-
-                        //        this.reportParameters.reportLevel = newParameters.reportLevel;
-                        //        console.log("New Report Level is : " + newParameters.reportLevel);
-                        //        this.getReport(newParameters);
-                        //    })
                     } else {
-                        console.log("Get Years: ");
                         this.getReportYears(newParameters);
                     }
 
@@ -872,28 +803,22 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     setReportYear(event, comboYear) {
         let newParameters: GenerateReportParametersDto = this.getNewReportParameters();
-        console.log('Set Report Year');
 
         if (!comboYear._focus) {
-            console.log('Set Report Year Combo');
             comboYear.selectedItem = newParameters.reportYear;
         } else {
             if (comboYear.selectedItem !== undefined) {
 
-                console.log('Existing Report Year : ' + newParameters.reportYear);
-                console.log('Set Report Year for : ' + comboYear.selectedItem);
                 if (newParameters.reportYear !== comboYear.selectedItem) {
 
                     newParameters.reportYear = comboYear.selectedItem;
                     newParameters.reportPage = 1;
 
-                    console.log('Report Code in Years is : ' + newParameters.reportCode);
                     this.getReport(newParameters);
 
                     if (this.categorySets !== undefined && this.categorySets.length > 0) {
                         this.categorySets.splice(0, this.categorySets.length);
                     }
-                    console.log(this.categorySets);
                     if (!this.isNullOrUndefined(this.currentReport)) {
                         this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
                     }
