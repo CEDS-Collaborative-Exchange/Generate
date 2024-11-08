@@ -274,6 +274,7 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
 
                             //this.subscriptions.forEach(subscription => subscription.unsubscribe());
                         }
+                        
 
                     },
                     error => this.errorMessage = <any>error));

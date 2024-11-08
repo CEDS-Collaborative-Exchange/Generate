@@ -145,19 +145,27 @@ export class PivottableComponent {
             return true;
 
         let currentParams = changes['reportDataDto']['currentValue'];
-        if (currentParams.reportTitle !== previousParams.reportTitle
-            //    || currentParams.categorySets[0].organizationLevelCode !== previousParams.categorySets[0].organizationLevelCode
-            || currentParams.reportYear !== previousParams.reportYear
-            || currentParams.reportCategorySetCode !== previousParams.reportCategorySetCode
-        ) {
-            ret = true;
-        }
 
-        if (currentParams.reportTitle !== previousParams.reportTitle) {
-            if ($('#searchTable').is(':checked'))
-                $('#searchTable').click();
+        if (!this.isNullOrUndefined(currentParams)) {
+            if (currentParams.reportTitle !== previousParams.reportTitle
+                //    || currentParams.categorySets[0].organizationLevelCode !== previousParams.categorySets[0].organizationLevelCode
+                || currentParams.reportYear !== previousParams.reportYear
+                || currentParams.reportCategorySetCode !== previousParams.reportCategorySetCode
+            ) {
+                ret = true;
+            }
+
+
+            if (currentParams.reportTitle !== previousParams.reportTitle) {
+                if ($('#searchTable').is(':checked'))
+                    $('#searchTable').click();
+            }
         }
         return ret;
+    }
+
+    isNullOrUndefined(value: any): boolean {
+        return value === null || value === undefined;
     }
 
     ngAfterViewInit() {
@@ -274,7 +282,7 @@ export class PivottableComponent {
     }
 
     populateReport() {
-        if (Object.keys(reportData).length === 0)
+        if (this.isNullOrUndefined(reportData) || Object.keys(reportData).length === 0)
             return;
         var derivers = $.pivotUtilities.derivers;
         let viewDef: any = JSON.parse(reportData.categorySets[0].viewDefinition);
