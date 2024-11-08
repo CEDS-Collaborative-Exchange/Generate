@@ -217,6 +217,7 @@ namespace generate.web.Controllers.Api.App
         public JsonResult GetSubmissionYearss(string reportCode, string reportType)
         {
             List<string> returnResults = new List<string>();
+            returnResults.Add("Select School Year");
             IEnumerable<DimSchoolYear> dimYears = _rdsRepository.GetAll<DimSchoolYear>();
 
             if (reportCode == "cohortgraduationrate")
@@ -235,9 +236,7 @@ namespace generate.web.Controllers.Api.App
             }
             else
             {
-                List<string> years;
-
-                years = dimYears.Select(d => d.SchoolYear.ToString()).Distinct().OrderByDescending(d => d).ToList();
+                List<string> years = dimYears.Select(d => d.SchoolYear.ToString()).Distinct().OrderByDescending(d => d).ToList();
                 for (int i = 0; i < years.Count; i++)
                 {
                     string submissionYear = years[i];

@@ -265,8 +265,6 @@ export class ReportComponent implements AfterViewInit, OnInit {
     initializeReportsPage() {
         if (this.reportType !== undefined) {
 
-         
-
             forkJoin(
                 this._generateReportService.getReports(this.reportType),
                 this._dataMigrationService.currentMigrationStatus(),
@@ -279,13 +277,9 @@ export class ReportComponent implements AfterViewInit, OnInit {
                 this.metadataStatus = data[2];
                 let status = '';
 
-                console.log(this.metadataStatus);
                 if (this.metadataStatus !== undefined && this.metadataStatus.length > 0) {
                     this.metadataStatusMessage = this.metadataStatus.filter(t => t.generateConfigurationKey === 'MetaLastRunLog')[0].generateConfigurationValue;
                     status = this.metadataStatus.filter(t => t.generateConfigurationKey === 'metaStatus')[0].generateConfigurationValue;
-                    //if (status.toUpperCase() !== 'OK') {
-                    //    this.backgroundUrl = this.metadataStatus.filter(t => t.generateConfigurationKey === 'BackgroundUrl')[0].generateConfigurationValue;
-                    //}
                     this.metadataCss(status);
                 }
 
@@ -392,51 +386,52 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     }
 
+    getReportYears(newParameters: GenerateReportParametersDto) {
 
+        this._generateReportService.getSubmissionYearss(newParameters.reportCode, this.reportType)
+            .subscribe(years => {
+                this.submissionYears = years;
+            })
+
+    }
 
     getReport(newParameters: GenerateReportParametersDto) {
 
         forkJoin(
             this._generateReportService.getReportByCodes(this.reportType, newParameters.reportCode),
-            this._generateReportService.getSubmissionYearss(newParameters.reportCode, this.reportType)
-
         ).subscribe(data => {
 
             this.currentReport = data[0];
-            this.submissionYears = data[1];
 
-            this.latestYear = this.submissionYears[0];
+            if (!this.isNullOrUndefined(this.currentReport)) {
+                if (this.currentReport.organizationLevels.filter(t => t.levelCode === newParameters.reportLevel).length < 1) {
+                    for (let i = 0; i < this.currentReport.organizationLevels.length; i++) {
+                        let level: OrganizationLevelDto = this.currentReport.organizationLevels[i];
+                        console.log('Level report is : ' + level.levelCode);
 
-            if (this.submissionYears.length > 0) {
-                newParameters.reportYear = this.submissionYears[0];
+                        if (level.levelCode === 'sea') {
+                            newParameters.reportLevel = 'sea';
+                            break;
+                        } else if (level.levelCode === 'lea') {
+                            newParameters.reportLevel = 'lea';
+                            break;
+                        } else if (level.levelCode === 'sch') {
+                            newParameters.reportLevel = 'sch';
+                            break;
+                        }
+                        else if (level.levelCode === 'CAO') {
+                            newParameters.reportLevel = 'CAO';
+                            break;
+                        }
+                        else if (level.levelCode === 'CMO') {
+                            newParameters.reportLevel = 'CMO';
+                            break;
+                        }
+                    }
+                }
+                /*this.reportParameters.reportLevel = newParameters.reportLevel;*/
             }
-
-            this.updateSubmissionYear(newParameters.reportCode);
-
-
-            for (let i = 0; i < this.currentReport.organizationLevels.length; i++) {
-                let level: OrganizationLevelDto = this.currentReport.organizationLevels[i];
-                //  console.log('Level report is : ' + level.levelCode);
-
-                if (level.levelCode === 'sea') {
-                    newParameters.reportLevel = 'sea';
-                    break;
-                } else if (level.levelCode === 'lea') {
-                    newParameters.reportLevel = 'lea';
-                    break;
-                } else if (level.levelCode === 'sch') {
-                    newParameters.reportLevel = 'sch';
-                    break;
-                }
-                else if (level.levelCode === 'CAO') {
-                    newParameters.reportLevel = 'CAO';
-                    break;
-                }
-                else if (level.levelCode === 'CMO') {
-                    newParameters.reportLevel = 'CMO';
-                    break;
-                }
-            }
+            
 
             this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
 
@@ -489,9 +484,6 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
             }
 
-
-            //     console.log('Report report Level is: ' + newParameters.reportLevel + ' ' + newParameters.reportYear + ' ' + newParameters.reportCode + ' ' + newParameters.reportCategorySetCode + ' ' + newParameters.reportFilter + ' ' + newParameters.reportFilterValue);
-
             this.reportParameters = newParameters;
 
 
@@ -506,7 +498,6 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
         forkJoin(
             this._generateReportService.getReportByCodes(this.reportType, newParameters.reportCode),
-            this._generateReportService.getSubmissionYearss(newParameters.reportCode, this.reportType),
             this._gradelevelService.getGradeLevelsOffered(),
             this._organizationService.getLEAs(newParameters.reportYear),
             this._organizationService.getSchools(newParameters.reportYear)
@@ -514,20 +505,10 @@ export class ReportComponent implements AfterViewInit, OnInit {
         ).subscribe(data => {
 
             this.currentReport = data[0];
-            this.submissionYears = data[1];
-
-            this.latestYear = this.submissionYears[0];
-
-            if (this.submissionYears.length > 0) {
-                newParameters.reportYear = this.submissionYears[0];
-            }
-
-            this.updateSubmissionYear(newParameters.reportCode);
 
             if (newParameters.reportLevel === undefined) {
                 for (let i = 0; i < this.currentReport.organizationLevels.length; i++) {
                     let level: OrganizationLevelDto = this.currentReport.organizationLevels[i];
-                    //   console.log('Level report is : ' + level.levelCode);
 
                     if (level.levelCode === 'sea') {
                         newParameters.reportLevel = 'sea';
@@ -561,7 +542,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
             this.getOrganizationLevelByCode(newParameters);
             this.reportFilters = this.currentReport.reportFilters;
 
-            this.populateFilterOptions(this.currentReport.reportFilterOptions, data[2]);
+            this.populateFilterOptions(this.currentReport.reportFilterOptions, data[1]);
 
             if (newParameters.reportFilter === undefined && this.reportFilterOptions !== undefined) {
                 newParameters.reportFilter = this.reportFilterOptions[0].filterCode;
@@ -576,8 +557,8 @@ export class ReportComponent implements AfterViewInit, OnInit {
             }
 
 
-            this.populateLEAs(data[3]);
-            this.populateSchools(data[4]);
+            this.populateLEAs(data[2]);
+            this.populateSchools(data[3]);
 
 
             let lea: OrganizationDto = null;
@@ -616,8 +597,6 @@ export class ReportComponent implements AfterViewInit, OnInit {
             //    this.populateFilterOptionsSummary(this.currentReport.reportFilterOptions, newParameters.reportCategorySet.categorySetName);
             //}
 
-            //   console.log('Report report Level is: ' + newParameters.reportLevel + ' ' + newParameters.reportYear + ' ' + newParameters.reportCode + ' ' + newParameters.reportCategorySetCode + ' ' + newParameters.reportFilter + ' ' + newParameters.reportFilterValue);
-
             this.setQueryString(newParameters);
 
             this.reportParameters = newParameters;
@@ -648,23 +627,25 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
         let returnSet: Array<CategorySetDto> = new Array();
 
-        for (let i = 0; i < categorySets.length; i++) {
-            let categorySet: CategorySetDto = categorySets[i];
+        if (categorySets !== undefined && categorySets.length > 0) {
+            for (let i = 0; i < categorySets.length; i++) {
+                let categorySet: CategorySetDto = categorySets[i];
 
-            if (categorySet.organizationLevelCode === newParameters.reportLevel && categorySet.submissionYear === newParameters.reportYear) {
+                if (categorySet.organizationLevelCode === newParameters.reportLevel && categorySet.submissionYear === newParameters.reportYear) {
 
-                if (categorySet.includeOnFilter !== null) {
-                    if (newParameters.reportFilter === categorySet.includeOnFilter) {
+                    if (categorySet.includeOnFilter !== null) {
+                        if (newParameters.reportFilter === categorySet.includeOnFilter) {
+                            returnSet.push(categorySet);
+                        }
+                    }
+                    else if (categorySet.excludeOnFilter !== null) {
+                        if (newParameters.reportFilter !== categorySet.excludeOnFilter) {
+                            returnSet.push(categorySet);
+                        }
+                    }
+                    else {
                         returnSet.push(categorySet);
                     }
-                }
-                else if (categorySet.excludeOnFilter !== null) {
-                    if (newParameters.reportFilter !== categorySet.excludeOnFilter) {
-                        returnSet.push(categorySet);
-                    }
-                }
-                else {
-                    returnSet.push(categorySet);
                 }
             }
         }
@@ -706,8 +687,6 @@ export class ReportComponent implements AfterViewInit, OnInit {
     }
 
     getOrganizationLevelByCode(newParameters: GenerateReportParametersDto) {
-
-        // console.log('Levels is: ' + newParameters.reportLevel + ' ' + newParameters.reportYear + ' ' + newParameters.reportCode + ' ' + newParameters.reportCategorySetCode);
 
         this._generateReportService.getReportLevelsByCode(this.reportType, newParameters.reportCode, newParameters.reportYear, newParameters.reportCategorySetCode)
             .subscribe(
@@ -752,10 +731,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
             if (comboCategorySet.selectedItem !== undefined) {
 
-                //  console.log('Cat set is: ' + comboCategorySet.selectedItem);
                 reportCategorySet = comboCategorySet.selectedItem;
-
-                //   console.log('Cat set 2 is: ' + newParameters.reportCategorySet.categorySetCode + '/' + reportCategorySet.categorySetCode);
 
                 if (newParameters.reportCategorySet.categorySetCode !== reportCategorySet.categorySetCode) {
                     newParameters.reportCategorySet = reportCategorySet;
@@ -796,22 +772,23 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
             if (comboReportCode.selectedItem !== undefined && this.isReportChanged) {
                 reportCode = comboReportCode.selectedItem.reportCode;
-                //    console.log('Selected Report is : ' + reportCode);
 
                 if (this.reportParameters.reportCode !== reportCode) {
-
-                    if (comboYear !== undefined) {
-                        comboYear.selectedValue = this.reportParameters.reportYear;
-                        comboYear.refresh();
-                    }
 
                     let newParameters: GenerateReportParametersDto = this.getNewReportParameters();
 
                     newParameters.reportCode = reportCode;
                     newParameters.reportPage = 1;
                     newParameters.reportSort = 1;
+                    newParameters.reportCategorySetCode = 'CSA'
 
-                    this.getReport(newParameters);
+                    if (this.submissionYears !== undefined && this.submissionYears.length > 0) {
+                        this.getReport(newParameters);
+                    } else {
+                        this.getReportYears(newParameters);
+                    }
+
+                    this.reportParameters = newParameters;
 
                 }
 
@@ -837,8 +814,14 @@ export class ReportComponent implements AfterViewInit, OnInit {
                     newParameters.reportYear = comboYear.selectedItem;
                     newParameters.reportPage = 1;
 
-                    this.categorySets.splice(0, this.categorySets.length);
-                    this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
+                    this.getReport(newParameters);
+
+                    if (this.categorySets !== undefined && this.categorySets.length > 0) {
+                        this.categorySets.splice(0, this.categorySets.length);
+                    }
+                    if (!this.isNullOrUndefined(this.currentReport)) {
+                        this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
+                    }
 
                     if (this.categorySets !== undefined && this.categorySets.length > 0) {
                         newParameters.reportCategorySet = this.categorySets.filter(t => t.organizationLevelCode === newParameters.reportLevel
@@ -1338,5 +1321,9 @@ export class ReportComponent implements AfterViewInit, OnInit {
         else {
             this.metadataStatusCss = 'generate-app-report-controls__sectiontitle';
         }
+    }
+
+    isNullOrUndefined(value: any): boolean {
+        return value === null || value === undefined;
     }
 }
