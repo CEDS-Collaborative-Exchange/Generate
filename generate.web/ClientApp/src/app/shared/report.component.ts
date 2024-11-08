@@ -277,7 +277,6 @@ export class ReportComponent implements AfterViewInit, OnInit {
                 this.metadataStatus = data[2];
                 let status = '';
 
-                console.log(this.metadataStatus);
                 if (this.metadataStatus !== undefined && this.metadataStatus.length > 0) {
                     this.metadataStatusMessage = this.metadataStatus.filter(t => t.generateConfigurationKey === 'MetaLastRunLog')[0].generateConfigurationValue;
                     status = this.metadataStatus.filter(t => t.generateConfigurationKey === 'metaStatus')[0].generateConfigurationValue;
@@ -438,7 +437,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
                         break;
                     }
                 }
-                this.reportParameters.reportLevel = newParameters.reportLevel;
+                /*this.reportParameters.reportLevel = newParameters.reportLevel;*/
             }
             
 
@@ -823,35 +822,36 @@ export class ReportComponent implements AfterViewInit, OnInit {
                         /*console.log("Year already selected: " + this.reportParameters.reportYear);*/
                         //comboYear.selectedValue = this.reportParameters.reportYear;
                         //comboYear.refresh();
-                        this._generateReportService.getReportLevelsByCode(this.reportType, newParameters.reportCode, newParameters.reportYear, newParameters.reportCategorySetCode)
-                            .subscribe(levels => {
-                                for (let i = 0; i < levels.length; i++) {
-                                    let level: OrganizationLevelDto = levels[i];
+                        this.getReport(newParameters);
+                        //this._generateReportService.getReportLevelsByCode(this.reportType, newParameters.reportCode, newParameters.reportYear, newParameters.reportCategorySetCode)
+                        //    .subscribe(levels => {
+                        //        for (let i = 0; i < levels.length; i++) {
+                        //            let level: OrganizationLevelDto = levels[i];
 
-                                    if (level.levelCode === 'sea') {
-                                        newParameters.reportLevel = 'sea';
-                                        break;
-                                    } else if (level.levelCode === 'lea') {
-                                        newParameters.reportLevel = 'lea';
-                                        break;
-                                    } else if (level.levelCode === 'sch') {
-                                        newParameters.reportLevel = 'sch';
-                                        break;
-                                    }
-                                    else if (level.levelCode === 'CAO') {
-                                        newParameters.reportLevel = 'CAO';
-                                        break;
-                                    }
-                                    else if (level.levelCode === 'CMO') {
-                                        newParameters.reportLevel = 'CMO';
-                                        break;
-                                    }
-                                }
+                        //            if (level.levelCode === 'sea') {
+                        //                newParameters.reportLevel = 'sea';
+                        //                break;
+                        //            } else if (level.levelCode === 'lea') {
+                        //                newParameters.reportLevel = 'lea';
+                        //                break;
+                        //            } else if (level.levelCode === 'sch') {
+                        //                newParameters.reportLevel = 'sch';
+                        //                break;
+                        //            }
+                        //            else if (level.levelCode === 'CAO') {
+                        //                newParameters.reportLevel = 'CAO';
+                        //                break;
+                        //            }
+                        //            else if (level.levelCode === 'CMO') {
+                        //                newParameters.reportLevel = 'CMO';
+                        //                break;
+                        //            }
+                        //        }
 
-                                this.reportParameters.reportLevel = newParameters.reportLevel;
-                                console.log("New Report Level is : " + newParameters.reportLevel);
-                                this.getReport(newParameters);
-                            })
+                        //        this.reportParameters.reportLevel = newParameters.reportLevel;
+                        //        console.log("New Report Level is : " + newParameters.reportLevel);
+                        //        this.getReport(newParameters);
+                        //    })
                     } else {
                         console.log("Get Years: ");
                         this.getReportYears(newParameters);
