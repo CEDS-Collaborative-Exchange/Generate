@@ -10,8 +10,8 @@
 <h3 *ngIf="!isLoading && reportDataDto.dataCount >= 0" class="generate-app-report__title">{{reportDataDto.reportTitle}}</h3>
 <h3 *ngIf="!isLoading && reportDataDto.dataCount < 0" class="generate-app-report__title">Not Yet Implemented</h3>
 
-<div *ngIf="!isLoading && reportDataDto !== null" class="generate-app-directory__subtitle mdl-typography--text-center">
-    {{reportDataDto.data[0].stateName}}
+<div *ngIf="!isLoading && stateName !== undefined && stateName !== null" class="generate-app-directory__subtitle mdl-typography--text-center">
+    {{stateName}}
 </div>
 <div *ngIf="!isLoading && reportDataDto !== null" class="generate-app-c029__total mdl-typography--text-center">
     {{dataCountCaption()}} {{reportDataDto.dataCount}}
