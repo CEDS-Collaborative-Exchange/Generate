@@ -1749,39 +1749,6 @@ BEGIN
 					end
 				'
 
-				if @reportCode = 'c118' AND @categorySetCode = 'CSA'
-				BEGIN
-					set @sqlRemoveMissing = @sqlRemoveMissing + '  
-						delete from #CategorySet 
-						where GRADELEVEL = ''PK''
-						'
-				END
-
-				if @reportCode = 'c118' --deduplicate properly
-				begin
-					if @reportLevel = 'sea'
-					begin
-						set @sqlRemoveMissing = @sqlRemoveMissing + '						
-						;with cte as (
-							select K12StudentStudentIdentifierState, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState ORDER BY EnrollmentEntryDateId) as ''rownum'' 
-							from #CategorySet
-						)
-						delete from cte
-						where  rownum > 1'
-					end 
-					else if @reportLevel = 'lea'
-					begin
-						set @sqlRemoveMissing = @sqlRemoveMissing + '						
-						;with cte as (
-							select K12StudentStudentIdentifierState, DimLeaId, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState, DimLeaId ORDER BY EnrollmentEntryDateId) as ''rownum'' 
-							from #CategorySet
-						)
-						delete from cte
-						where  rownum > 1'
-					end 
-				end
-
-
 			end
 		end
 		
@@ -4059,7 +4026,6 @@ BEGIN
 			set @sqlCountJoins = @sqlCountJoins + '
 					inner join rds.DimGradeLevels dgl 
 						on fact.GradeLevelId = dgl.DimGradeLevelId
-						and fact.LeaId <> -1
 					inner join rds.DimHomelessnessStatuses homeless 
 						on homeless.DimHomelessnessStatusId = fact.HomelessnessStatusId
 				'	
@@ -6016,6 +5982,39 @@ BEGIN
 									+ 						@sqlCategoryQualifiedDimensionGroupFields + '
 					' + @sqlHavingClause + '
 					'
+
+					if @categorySetCode = 'CSA'
+					BEGIN
+						set @sql = @sql + '  
+							delete from #CategorySet 
+							where GRADELEVEL = ''PK''
+							'
+					END
+
+					if @reportLevel = 'sea'
+					begin
+							set @sql = @sql + '						
+							;with cte as (
+								select K12StudentStudentIdentifierState, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState ORDER BY EnrollmentEntryDateId) as ''rownum'' 
+								from #CategorySet
+							)
+							delete s from #CategorySet s
+							inner join cte c on s.K12StudentStudentIdentifierState = c.K12StudentStudentIdentifierState
+							where  rownum > 1
+							'
+					end 
+					else if @reportLevel = 'lea'
+					begin
+							set @sql = @sql + '						
+							;with cte as (
+								select K12StudentStudentIdentifierState, DimLeaId, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState, DimLeaId ORDER BY EnrollmentEntryDateId) as ''rownum'' 
+								from #CategorySet
+							)
+							delete s from #CategorySet s
+							inner join cte c on s.K12StudentStudentIdentifierState = c.K12StudentStudentIdentifierState and s.DimLeaId = c.DimLeaId
+							where  rownum > 1
+							'
+					end 
 
 			end
 			else

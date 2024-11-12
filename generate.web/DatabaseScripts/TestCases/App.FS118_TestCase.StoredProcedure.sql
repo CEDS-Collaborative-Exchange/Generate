@@ -29,7 +29,7 @@ BEGIN
 	--performance 
 	IF OBJECT_ID(N'tempdb..#tempELStatus') IS NOT NULL DROP TABLE #tempELStatus
 	IF OBJECT_ID(N'tempdb..#tempMigrantStatus') IS NOT NULL DROP TABLE #tempMigrantStatus
-	--IF OBJECT_ID(N'tempdb..#tempStudents') IS NOT NULL DROP TABLE #tempStudents
+	IF OBJECT_ID(N'tempdb..#tempStudents') IS NOT NULL DROP TABLE #tempStudents
 
 	-- Define the test
 	DECLARE @SqlUnitTestId INT = 0, @expectedResult INT, @actualResult INT
@@ -111,32 +111,6 @@ BEGIN
 	-- Create Index for #tempMigrantStatus 
 		CREATE INDEX IX_tempMigrantStatus ON #tempMigrantStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Migrant_StatusStartDate, Migrant_StatusEndDate)
 
-	----Create a student temp table 
-	--	SELECT DISTINCT 
-	--		ske.StudentIdentifierState
-	--		, ske.LeaIdentifierSeaAccountability
-	--		, ske.SchoolIdentifierSea
-	--		, ske.EnrollmentEntryDate
-	--		, ske.EnrollmentExitDate
-	--		, ske.HispanicLatinoEthnicity
-	--		, ske.Sex
-	--		, ske.Birthdate
-	--		, ske.GradeLevel
-	--		, ske.SchoolYear
-	--		, sps.Homelessness_StatusStartDate
-	--		, sps.Homelessness_StatusEndDate
-	--		, sps.HomelessUnaccompaniedYouth
-	--	INTO #tempStudents
-	--	FROM Staging.K12Enrollment ske
-	--		JOIN Staging.PersonStatus sps
-	--			ON ske.StudentIdentifierState = sps.StudentIdentifierState
-	--			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sps.LeaIdentifierSeaAccountability, '')
-	--			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sps.SchoolIdentifierSea, '')
-	--			AND sps.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd)
-	--	WHERE 1 = 1
-	--	and sps.HomelessnessStatus = 1
-	---- Grades UG and 13 added to this list because our Toggle doesn't allow these
-	--	AND isnull(GradeLevel, 'xx') not in ('AE', 'ABE', '13', 'UG', 'AE_1', 'ABE_1', '13_1', 'UG_1')
 
 	--Get the LEAs that should not be reported against
 	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL DROP TABLE #excludedLeas
@@ -147,19 +121,27 @@ BEGIN
 
 	INSERT INTO #excludedLeas 
 	SELECT DISTINCT LEAIdentifierSea
-	FROM Staging.K12Organization
+	FROM Staging.K12Organization sko
+	LEFT JOIN Staging.OrganizationPhone sop
+			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
+			AND sop.OrganizationType in (	SELECT InputCode
+										FROM Staging.SourceSystemReferenceData 
+										WHERE TableName = 'RefOrganizationType' 
+											AND TableFilter = '001156'
+											AND OutputCode = 'LEA' AND SchoolYear = @SchoolYear)
 	WHERE LEA_IsReportedFederally = 0
 		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
+		OR sop.OrganizationIdentifier IS NULL
 
 	-- Gather, evaluate & record the results
 	SELECT  
-		hmStudents.StudentIdentifierState
-		, hmStudents.LeaIdentifierSeaAccountability
-		, hmStudents.SchoolIdentifierSea
-		, hmStudents.EnrollmentEntryDate
-		, hmStudents.HispanicLatinoEthnicity
-		, hmStudents.Sex
-		, CASE hmStudents.Sex
+		ske.StudentIdentifierState
+		, ske.LeaIdentifierSeaAccountability
+		, ske.SchoolIdentifierSea
+		, ske.EnrollmentEntryDate
+		, ske.HispanicLatinoEthnicity
+		, ske.Sex
+		, CASE ske.Sex
 			WHEN 'Male'		THEN 'M'
 			WHEN 'Female'	THEN 'F'
 			WHEN 'Male_1'	THEN 'M'
@@ -167,7 +149,7 @@ BEGIN
 			ELSE 'MISSING'
 		END AS SexEdFactsCode
 		, idea.ProgramParticipationEndDate
-		, spr.RaceMap
+		--, spr.RaceMap
 		, rdr.RaceEdFactsCode
 	--English Learner Status
 		, ISNULL(el.EnglishLearnerStatus, 0) AS EnglishLearnerStatus
@@ -176,8 +158,8 @@ BEGIN
 			ELSE 'MISSING'
 		END AS EnglishLearnerStatusEdFactsCode
 	--Homelessness
-		, hmStudents.HomelessUnaccompaniedYouth
-		, CASE WHEN hmStudents.HomelessUnaccompaniedYouth = 1 THEN 'UY'
+		, hmStatus.HomelessUnaccompaniedYouth
+		, CASE WHEN hmStatus.HomelessUnaccompaniedYouth = 1 THEN 'UY'
 				ELSE 'MISSING'
 		END AS HomelessUnaccompaniedYouthEdFactsCode		
 
@@ -199,11 +181,11 @@ BEGIN
 		END AS HomelessPrimaryNighttimeResidenceEdFactsCode
 
 	--Age/Grade
-		, CASE WHEN rds.Get_Age(hmStudents.Birthdate, @SYStart) >= 3
-					AND rds.Get_Age(hmStudents.Birthdate, @SYStart) <= 5
-					AND ISNULL(hmStudents.GradeLevel, 'PK') in ('PK', 'PK_1')
+		, CASE WHEN rds.Get_Age(ske.Birthdate, @SYStart) >= 3
+					AND rds.Get_Age(ske.Birthdate, @SYStart) <= 5
+					AND ISNULL(ske.GradeLevel, 'PK') in ('PK', 'PK_1')
 				THEN '3TO5NOTK'
-				ELSE ISNULL(hmStudents.GradeLevel, 'MISSING')
+				ELSE ISNULL(ske.GradeLevel, 'MISSING')
 		END AS GradeLevelEdFactsCode	
 
 	--Disability Status
@@ -281,15 +263,15 @@ BEGIN
 		CSA at the SEA level - Student Count by Age/Grade (Basic)
 	***********************************************************************/
 	;with cte as (
-		select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
-		from #C118Staging
+	select *, ROW_NUMBER() OVER(PARTITION BY StudentIdentifierState ORDER BY EnrollmentEntryDate) as 'rownum' 
+	from #C118Staging
 	)
 	SELECT 
 		GradeLevelEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSA
 	FROM cte 
-	WHERE GradeLevelEdFactsCode not in ('PK','MISSING')
+	WHERE GradeLevelEdFactsCode not in ('PK', 'PK_1','MISSING')
 		AND rownum = 1
 	GROUP BY GradeLevelEdFactsCode
 
@@ -695,7 +677,7 @@ BEGIN
 	LEFT JOIN #excludedLeas elea
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
-		AND GradeLevelEdFactsCode not in ('PK','MISSING')
+		AND GradeLevelEdFactsCode not in ('PK', 'PK_1','MISSING')
 		AND rownum = 1
 	GROUP BY GradeLevelEdFactsCode
 		, s.LeaIdentifierSeaAccountability
