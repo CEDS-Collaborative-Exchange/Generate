@@ -35,6 +35,7 @@ export class c029Component implements AfterViewInit, OnChanges, OnInit {
     public hasRecords: boolean = false;
     public reportDataDto: GenerateReportDataDto;
     public generateFile: GenerateReport;
+    public stateName: string = null;
 
     public formatToGenerate: string = '';
     public entity: any;
@@ -120,14 +121,18 @@ export class c029Component implements AfterViewInit, OnChanges, OnInit {
                             }
 
                             this.entity = this.reportDataDto.data.filter(s => { return s.organizationStateId === organizationIdentifier })[0];
-                        } else {
+                        } else if (this.reportDataDto !== undefined && this.reportDataDto !== null && this.reportDataDto.data !== null && this.reportDataDto.data !== undefined) {
                             this.entity = this.reportDataDto.data[0];
+                        }
+
+                        if (this.entity !== undefined) {
+                            this.stateName = this.entity.stateName;
                         }
 
                         this.getAddresses(this.reportDataDto, 'physical');
                         this.getAddresses(this.reportDataDto, 'mailing');
 
-                        if (this.reportDataDto === null) {
+                        if (this.reportDataDto === null || this.reportDataDto === undefined) {
                             this.errorMessage = 'Invalid Report';
                         } else {
 
