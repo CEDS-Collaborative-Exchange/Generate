@@ -4,6 +4,10 @@ Views\\Drop,RDS.vwDimAssessmentAccommodations.View.sql,0
 Views\\Create,RDS.vwDimAssessmentAccommodations.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 VersionUpdates\\12.2_prerelease,UpdateDbVersion.sql,0
