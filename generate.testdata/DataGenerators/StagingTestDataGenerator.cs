@@ -2683,6 +2683,7 @@ namespace generate.testdata.DataGenerators
             {
                 o.School_TitleISchoolStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIschoolStatusDistribution);
                 o.School_GunFreeSchoolsActReportingStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefGunFreeSchoolsActReportingStatusDistribution);
+                o.School_SchoolDangerousStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSchoolDangerousStatusDistribution);
                 o.School_Type = this.IdsReferenceData.RefSchoolTypes.Single(x => x.RefSchoolTypeId == Convert.ToInt32(o.School_Type)).Code;
                 //FS129 columns
                 o.School_SharedTimeIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.SharedTimeOrganizationIndicatorValueDistribution);
