@@ -642,8 +642,6 @@ BEGIN
 				BEGIN		
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[CategorySetCode]
-						, [CharterSchoolAuthorizerIdPrimary]
-						, [CharterSchoolAuthorizerIdSecondary]													
 						, [OrganizationCount]
 						, [OrganizationName]
 						, [OrganizationNcesId]
@@ -657,11 +655,9 @@ BEGIN
 						, [StateName]													
 						, [TotalIndicator]
 						, [PersistentlyDangerousStatus]
-						, [ImprovementStatus]			
 					)
-					select distinct @categorySetCode,
-						isnull(primaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
-						, isnull(secondaryAuthorizer.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea, '')
+					select distinct 
+						@categorySetCode
 						, 1 as OrganizationCount
 						, sch.NameOfInstitution as OrganizationName
 						, sch.SchoolIdentifierNces
@@ -674,17 +670,16 @@ BEGIN
 						, sch.StateAbbreviationCode
 						, sch.StateAbbreviationDescription
 						, 0 as TotalIndicator
-						, schStatus.PersistentlyDangerousStatusDescription + ',' + schStatus.PersistentlyDangerousStatusCode
-						, schStatus.SchoolImprovementStatusDescription + ',' + schStatus.SchoolImprovementStatusCode
+						, CASE 
+							when schStatus.PersistentlyDangerousStatusCode <> 'MISSING'
+								then upper(schStatus.PersistentlyDangerousStatusCode) + ' - ' + schStatus.PersistentlyDangerousStatusCode
+							else schStatus.PersistentlyDangerousStatusCode
+						end
 					from rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 							on fact.SchoolYearId = d.DimSchoolYearId
 						inner join rds.DimK12Schools sch 
 							on fact.K12SchoolId = sch.DimK12SchoolId
-						left outer join rds.DimCharterSchoolAuthorizers primaryAuthorizer 
-							on fact.AuthorizingBodyCharterSchoolAuthorizerId = primaryAuthorizer.DimCharterSchoolAuthorizerId
-						left outer join rds.DimCharterSchoolAuthorizers secondaryAuthorizer 
-							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId				
 					where d.SchoolYear = @reportYear 
