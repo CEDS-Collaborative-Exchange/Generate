@@ -134,131 +134,33 @@ BEGIN
 	BEGIN
 		SELECT
             CAST(ROW_NUMBER() OVER(ORDER BY organizationInfo.OrganizationStateId ASC) AS INT) as ReportEDFactsOrganizationCountId,                     
-            organizationInfo.*, gradesOffered.GRADELEVEL 
+            organizationInfo.*
 		from
 		(select  distinct       
 			@reportCode as ReportCode, 
             @reportYear as ReportYear,
             @reportLevel as ReportLevel,
-            NULL as CategorySetCode, 
-            fact.StateANSICode,
-            fact.StateCode,
-            fact.StateName,
+            'CSA' as CategorySetCode, 
+            StateANSICode,
+            StateCode,
+            StateName,
             OrganizationNcesId,
             OrganizationStateId,
             OrganizationName,
             ParentOrganizationStateId,
 			ParentOrganizationNcesId,
-            TITLE1SCHOOLSTATUS,  
-			PROGRESSACHIEVINGENGLISHLANGUAGE,
-			StateDefinedStatus,
-			[MAGNETSTATUS],      
-            SHAREDTIMESTATUS,
-            VIRTUALSCHSTATUS,
-			case when @flag=1 then	
-			RIGHT(PERSISTENTLYDANGEROUSSTATUS,(LEN(PERSISTENTLYDANGEROUSSTATUS)- CHARINDEX(',',PERSISTENTLYDANGEROUSSTATUS)))
-			else 
-			LEFT(PERSISTENTLYDANGEROUSSTATUS,(CHARINDEX(',',PERSISTENTLYDANGEROUSSTATUS)-1))
-			end as PERSISTENTLYDANGEROUSSTATUS,
-			case when @flag=1 then
-			RIGHT(IMPROVEMENTSTATUS,(LEN(IMPROVEMENTSTATUS)-CHARINDEX(',',IMPROVEMENTSTATUS)))
-			ELSE
-			LEFT(IMPROVEMENTSTATUS,(CHARINDEX(',',IMPROVEMENTSTATUS)-1))
-			END AS IMPROVEMENTSTATUS,
-            NSLPSTATUS ,
-            CSSOEmail ,
-            CSSOFirstName ,
-            CSSOLastOrSurname ,
-            CSSOTelephone,
-            CSSOTitle,
-            fact.Website ,
-            fact.Telephone ,
-            fact.MailingAddressStreet,
-			fact.MailingAddressApartmentRoomOrSuiteNumber,
-            fact.MailingAddressCity ,
-            fact.MailingAddressState ,
-            left(fact.MailingAddressPostalCode, 5) as MailingAddressPostalCode,
-            case when LEN(fact.MailingAddressPostalCode) = 10 then right(fact.MailingAddressPostalCode, 4) else '' end as MailingAddressPostalCode2,
-            fact.PhysicalAddressStreet ,
-			fact.PhysicalAddressApartmentRoomOrSuiteNumber,
-            fact.PhysicalAddressCity ,
-            fact.PhysicalAddressState ,
-            left(fact.PhysicalAddressPostalCode, 5) as PhysicalAddressPostalCode,
-			case when LEN(fact.PhysicalAddressPostalCode) = 10 then right(fact.PhysicalAddressPostalCode, 4) else '' end as PhysicalAddressPostalCode2,
-            fact.SupervisoryUnionIdentificationNumber ,
+			PERSISTENTLYDANGEROUSSTATUS,
             OperationalStatus ,
 			case when fact.OperationalStatusId > 0 then fact.OperationalStatusId else '' end as OperationalStatusId,
-            CAST(ISNULL(leaDir.OrganizationTypeEdFactsCode,'') as varchar(50)) as LEAType,
-			isnull(leaDir.OrganizationTypeDescription,'') as LEATypeDescription,
-            CAST(isnull(schDir.OrganizationTypeEdFactsCode,'') as varchar(50)) as SchoolType,
-			isnull(schDir.OrganizationTypeDescription,'') as SchoolTypeDescription,
-             case when @reportLevel = 'lea' then leaDir.ReconstitutedStatus 
-				 when @reportLevel = 'sch' then schDir.ReconstitutedStatus
-				 else NULL
-			end as ReconstitutedStatus,
-            case WHEN fact.OutOfStateIndicator = 1 then 'YES' ELSE 'NO' end as OutOfStateIndicator,
-            schDir.CharterStatus as CharterSchoolStatus,
-            leaDir.CharterStatus as CharterLeaStatus,
-			fact.CHARTERCONTRACTAPPROVALDATE,
-			fact.CHARTERCONTRACTRENEWALDATE,
-			fact.CHARTERSCHOOLCONTRACTIDNUMBER,
-            fact.CharterSchoolAuthorizerIdPrimary ,
-            fact.CharterSchoolAuthorizerIdSecondary ,
-			CharterSchoolManagementOrganization ,
-            CharterSchoolUpdatedManagementOrganization ,
-			STATEPOVERTYDESIGNATION,											
             OrganizationCount,
-            [TableTypeAbbrv],
-            [TotalIndicator],												
-			case 
-				when fact.EffectiveDate IS NOT NULL THEN convert(varchar(10), fact.EffectiveDate, 23)
-				else null
-			end as EffectiveDate,
-			fact.PriorLeaStateIdentifier,
-			fact.PriorSchoolStateIdentifier,
-			CASE WHEN fact.UpdatedOperationalStatus <= 0 THEN '' else fact.UpdatedOperationalStatus end as UpdatedOperationalStatus,
-			case when fact.UpdatedOperationalStatusId <= 0 then '' else fact.UpdatedOperationalStatusId end as UpdatedOperationalStatusId,
-			CAST(isnull(fact.TitleiParentalInvolveRes,'') as int) as TitleiParentalInvolveRes,
-			CAST(isnull(fact.TitleiPartaAllocations,'') as int) as TitleiPartaAllocations,
 			fact.LeaStateIdentifier,
-			fact.LeaNcesIdentifier,												
-			ISNULL(fact.ManagementOrganizationType,'') as ManagementOrganizationType,
-			isnull(SCHOOLIMPROVEMENTFUNDS,0) as SCHOOLIMPROVEMENTFUNDS,
-			CAST(isnull(EconomicallyDisadvantagedStudentCount,0) as int)as EconomicallyDisadvantagedStudentCount,
-			CAST(isnull(fact.McKinneyVentoSubgrantRecipient,'')AS VARCHAR(MAX)) as McKinneyVentoSubgrantRecipient,
-			CAST(isnull(REAPAlternativeFundingStatus,'') as varchar(50)) as REAPAlternativeFundingStatus,
-			CAST(isnull(GunFreeStatus,'') as varchar(50)) as GunFreeStatus,
-			CAST(isnull(GraduationRate,'') as varchar(50)) as GraduationRate,
-			FederalFundAllocationType,
-			FederalProgramCode,
-			ISNULL(FederalFundAllocated, 0) as FederalFundAllocated,
-			ComprehensiveSupportCode,
-			ComprehensiveAndTargetedSupportCode,
-			ComprehensiveSupportImprovementCode,
-			TargetedSupportImprovementCode,
-			TargetedSupportCode,
-			AdditionalTargetedSupportandImprovementCode,
-			AppropriationMethodCode,
-			CharterSchoolAuthorizerType
+			fact.LeaNcesIdentifier
         from RDS.ReportEDFactsOrganizationCounts fact
-			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
-			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
-		where reportcode = @reportCode and ReportLevel = @reportLevel 
-		and ReportYear = @reportYear and [CategorySetCode] = isnull(@categorySetCode,'CSA')
+		where reportcode = @reportCode 
+		and ReportLevel = @reportLevel 
+		and ReportYear = @reportYear 
+		and [CategorySetCode] = isnull(@categorySetCode,'CSA')
         ) organizationInfo       
-		inner join (SELECT OrganizationStateId,[ReportYear], reportLevel, 
-                    GRADELEVEL =     Cast(STUFF((SELECT DISTINCT ', ' + GRADELEVEL
-                    FROM rds.ReportEDFactsOrganizationCounts b 
-                    WHERE b.OrganizationStateId = a.OrganizationStateId
-                    and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = isnull(@categorySetCode,'CSA')
-                    and b.reportYear = a.reportYear and a.ReportLevel = b.ReportLevel
-                    FOR XML PATH('')), 1, 2, '') as varchar(50))
-        FROM rds.ReportEDFactsOrganizationCounts a
-        GROUP BY OrganizationStateId, ReportYear, reportLevel
-		)gradesOffered 
-		on organizationInfo.OrganizationStateId = gradesOffered.OrganizationStateId
-							and organizationInfo.reportYear = gradesOffered.ReportYear
-							and organizationInfo.ReportLevel = gradesOffered.ReportLevel
 	END
 	ELSE if (@reportCode = 'c132')
 	BEGIN
