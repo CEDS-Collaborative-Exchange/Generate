@@ -4847,7 +4847,6 @@ BEGIN
 						on fact.K12StaffCategoryId = s.DimK12StaffCategoryId				
 						and fact.SchoolYearId = @dimSchoolYearId
 						and fact.FactTypeId = @dimFactTypeId
-						and fact.LeaId <> -1
 					where s.K12StaffClassificationCode = ''SpecialEducationTeachers''
 				) rules
 				on fact.K12StaffId = rules.K12StaffId 
@@ -4884,7 +4883,6 @@ BEGIN
 					on fact.K12StaffCategoryId = s.DimK12StaffCategoryId				
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
-					and fact.LeaId <> -1
 				where s.K12StaffClassificationCode = ''Paraprofessionals''
 			) rules
 				on fact.K12StaffId = rules.K12StaffId 

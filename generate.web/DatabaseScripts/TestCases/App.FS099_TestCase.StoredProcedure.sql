@@ -55,13 +55,32 @@ BEGIN
 	SELECT @SPEDProgram = [code] from dbo.RefProgramType where [Definition] = 'Special Education Services'
 
 	--Get School Year End Date
-	--Create SY Start / SY End variables
-	declare @SYStart varchar(10) = CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
-	declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
+	DECLARE @SYStartDate datetime = staging.GetFiscalYearStartDate(@schoolYear)
 
 	-- Get Custom Child Count Date
 	DECLARE @ChildCountDate DATETIME
 	select @ChildCountDate = CAST('10/01/' + cast(@SchoolYear - 1 AS Varchar(4)) AS DATETIME)
+
+		--Get the LEAs that should not be reported against
+	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL DROP TABLE #excludedLeas
+
+	CREATE TABLE #excludedLeas (
+		LeaIdentifierSeaAccountability		VARCHAR(20)
+	)
+
+	INSERT INTO #excludedLeas 
+	SELECT DISTINCT LEAIdentifierSea
+	FROM Staging.K12Organization sko
+	LEFT JOIN Staging.OrganizationPhone sop
+			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
+			AND sop.OrganizationType in (	SELECT InputCode
+										FROM Staging.SourceSystemReferenceData 
+										WHERE TableName = 'RefOrganizationType' 
+											AND TableFilter = '001156'
+											AND OutputCode = 'LEA' AND SchoolYear = @SchoolYear)
+	WHERE LEA_IsReportedFederally = 0
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
+		OR sop.OrganizationIdentifier IS NULL
 
 	SELECT DISTINCT 
 		StaffMemberIdentifierState
@@ -107,8 +126,8 @@ BEGIN
 	FROM Staging.K12StaffAssignment sksa
 	JOIN Staging.K12Organization sko
 		ON sksa.LeaIdentifierSea = sko.LeaIdentifierSea
-	WHERE @ChildCountDate BETWEEN AssignmentStartDate AND ISNULL(AssignmentEndDate, @SYEnd)
-		AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, @SYEnd)
+	WHERE @ChildCountDate BETWEEN AssignmentStartDate AND ISNULL(AssignmentEndDate, GETDATE())
+		AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, GETDATE())
 --		AND ProgramTypeCode = @SPEDProgram
 --		WHERE sksa.SchoolYear = @SchoolYear
 
@@ -217,8 +236,11 @@ Teachers (FTE) by Credential Status and SPED Support Services Category
 		, EdFactsCertificationStatus
 		, sum(FullTimeEquivalency) as FullTimeEquivalency
 	INTO #TC3
-	FROM #staging 
-	WHERE IsLeaReportedFederally = 1
+	FROM #staging s
+	LEFT JOIN #excludedLeas elea
+	ON s.LeaIdentifierSea = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+	AND IsLeaReportedFederally = 1 
 	GROUP BY LeaIdentifierSea
 		, SpecialEducationSupportServicesCategoryEdFactsCode
 		, EdFactsCertificationStatus
@@ -267,8 +289,11 @@ Subtotal by SPED Support Services Category
 		, SpecialEducationSupportServicesCategoryEdFactsCode
 		, sum(FullTimeEquivalency) as FullTimeEquivalency
 	INTO #TC4
-	FROM #staging 
-	WHERE IsLeaReportedFederally = 1
+	FROM #staging s
+	LEFT JOIN #excludedLeas elea
+	ON s.LeaIdentifierSea = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+	AND IsLeaReportedFederally = 1 
 	GROUP BY LeaIdentifierSea
 			, SpecialEducationSupportServicesCategoryEdFactsCode
 
