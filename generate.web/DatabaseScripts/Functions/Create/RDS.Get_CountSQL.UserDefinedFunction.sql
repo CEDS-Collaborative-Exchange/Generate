@@ -2800,7 +2800,7 @@ BEGIN
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					select distinct rdp.K12StudentStudentIdentifierState, df.DimFirearmId
+					select rdp.K12StudentStudentIdentifierState, df.DimFirearmId
 					from rds.' + @factTable + ' fact '
 
 			if @reportLevel = 'lea'
@@ -6175,7 +6175,7 @@ BEGIN
 		begin
 			set @sumOperation = 'count(distinct cs.dimStudentId )'
 		end
-		else if @reportCode in ('c002', 'c089', 'c005','c006','c086','c088','c144', 'c116', 'c118')
+		else if @reportCode in ('c002', 'c089', 'c005','c006','c088','c144', 'c116', 'c118')
 		begin
 			set @sumOperation = 'count(distinct cs.K12StudentStudentIdentifierState )'
 		end
