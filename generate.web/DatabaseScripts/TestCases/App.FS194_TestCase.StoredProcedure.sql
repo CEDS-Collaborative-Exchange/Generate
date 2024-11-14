@@ -59,9 +59,17 @@ BEGIN
 
 	INSERT INTO #excludedLeas 
 	SELECT DISTINCT LEAIdentifierSea
-	FROM Staging.K12Organization
+	FROM Staging.K12Organization sko
+	LEFT JOIN Staging.OrganizationPhone sop
+			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
+			AND sop.OrganizationType in (	SELECT InputCode
+										FROM Staging.SourceSystemReferenceData 
+										WHERE TableName = 'RefOrganizationType' 
+											AND TableFilter = '001156'
+											AND OutputCode = 'LEA' AND SchoolYear = @SchoolYear)
 	WHERE LEA_IsReportedFederally = 0
 		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
+		OR sop.OrganizationIdentifier IS NULL
 
 	-- Gather, evaluate & record the results
 	SELECT  
@@ -154,7 +162,10 @@ BEGIN
 		, LeaIdentifierSeaAccountability
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #L_CSA
-	FROM #C194staging 
+	FROM #C194staging s
+	LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 	GROUP BY AgeEdFactsCode
 		, LeaIdentifierSeaAccountability
 		
