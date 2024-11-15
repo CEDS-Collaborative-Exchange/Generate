@@ -1,6 +1,6 @@
-CREATE PROCEDURE [Utilities].[CompareSubmissionFiles] 
+ALTER PROCEDURE [Utilities].[CompareSubmissionFiles] 
 
-		@DatabaseName varchar(25), -- If NULL then DatabaseName = 'Generate'
+		@DatabaseName varchar(100), -- If NULL then DatabaseName = 'Generate'
 		@SchemaName varchar(25),
 		@SubmissionYear int,
 		@ReportCode varchar(10),
@@ -78,7 +78,7 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 		end
 
 	-- CREATE THE DROP TABLE SQL -------------------------------------------------------------------------------------------
-	select @DropSQL = 'IF EXISTS(SELECT 1 FROM ' + @DatabaseName + '.INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ''' + @SchemaName + ''' AND TABLE_NAME = ''' + @TableName + ''')' + char(10)
+	select @DropSQL = 'IF EXISTS(SELECT 1 FROM [' + @DatabaseName + '].INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ''' + @SchemaName + ''' AND TABLE_NAME = ''' + @TableName + ''')' + char(10)
 	select @DropSQL = @DropSQL + 'BEGIN' + char(10)
 	select @DropSQL = @DropSQL + char(9) + 'DROP TABLE ' + @ComparisonResultsTableName + char(10)
 	select @DropSQL = @DropSQL + 'END'
@@ -191,4 +191,6 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 		return
 	end catch	
 END
+	
+
 	
