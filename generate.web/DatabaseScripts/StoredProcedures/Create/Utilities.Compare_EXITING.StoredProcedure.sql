@@ -1,4 +1,4 @@
-create PROCEDURE [Utilities].[Compare_EXITING]
+CREATE PROCEDURE [Utilities].[Compare_EXITING]
 	@DatabaseName varchar(100),
 	@SchemaName varchar(100),
 	@SubmissionYear int,
@@ -117,7 +117,7 @@ select @SQL = 'INSERT INTO ' + @CreatedTableName
 
 
 select @SQL = @SQL + char(10) +
-		'FROM generate.rds.ReportEDFactsK12StudentCounts FACT
+		'FROM [' + @DatabaseName + '].rds.ReportEDFactsK12StudentCounts FACT
 			where 
 			ReportCode = ''' + @ReportCode + '''
 			and ReportLevel = ''' + @ReportLevel + '''
@@ -147,4 +147,6 @@ else
 	print 'RESULTS ARE LOCATED IN ' + @ComparisonResultsTableName
 
 END
+
+
 

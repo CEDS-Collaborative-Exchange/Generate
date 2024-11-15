@@ -1,4 +1,4 @@
-create PROCEDURE [Utilities].[Compare_ASSESSMENTS]
+CREATE PROCEDURE [Utilities].[Compare_ASSESSMENTS]
 	@DatabaseName varchar(100),
 	@SchemaName varchar(100),
 	@SubmissionYear int,
@@ -258,7 +258,7 @@ if @ReportCode in ('C225')
 		end
 
 select @SQL = @SQL + char(10) +
-		'FROM generate.rds.ReportEdFactsK12StudentAssessments FACT
+		'FROM [' + @DatabaseName + '].rds.ReportEdFactsK12StudentAssessments FACT
 			where 
 			ReportCode = ''' + @ReportCode + '''
 			and ReportLevel = ''' + @ReportLevel + '''
@@ -288,4 +288,5 @@ else
 	print 'RESULTS ARE LOCATED IN ' + @ComparisonResultsTableName
 
 END
+
 

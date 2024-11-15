@@ -1,5 +1,5 @@
 CREATE PROCEDURE [Utilities].[CreateSubmissionFileTable] 
-		@DatabaseName varchar(25) = NULL, -- If NULL then DatabaseName = 'Generate'
+		@DatabaseName varchar(100) = NULL, -- If NULL then DatabaseName = 'Generate'
 		@SchemaName varchar(25),
 		@SubmissionYear int,
 		@ReportCode varchar(10),
@@ -131,3 +131,4 @@ The file will be named as follows: [@SchemaName].[@ReportCode_@ReportLevel_@Subm
 
 
 END
+

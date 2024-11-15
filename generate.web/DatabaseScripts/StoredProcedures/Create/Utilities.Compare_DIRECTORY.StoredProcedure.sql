@@ -212,7 +212,7 @@ if @ReportCode = 'C039'
 	end
 
 	select @SQL = @SQL + char(10) +
-			'FROM generate.rds.ReportEdFactsOrganizationCounts FACT
+			'FROM [' + @DatabaseName + '].rds.ReportEdFactsOrganizationCounts FACT
 				where 
 				ReportCode = ''' + @ReportCode + '''
 				and ReportLevel = ''' + @ReportLevel + '''
@@ -260,4 +260,6 @@ if @ReportCode = 'C039'
 	print 'RESULTS ARE LOCATED IN ' + @ComparisonResultsTableName
 
 END
+
+
 
