@@ -1,4 +1,4 @@
-CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_DataPopulation]
+Create PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_DataPopulation]
 	@SchoolYear SMALLINT
 AS
 
@@ -214,7 +214,7 @@ BEGIN
 			ON ISNULL(sko.LEA_TitleIProgramType, 'MISSING') = ISNULL(rdt1s.TitleIProgramTypeMap, 'MISSING')
 			AND ISNULL(sko.LEA_TitleIinstructionalService, 'MISSING') = ISNULL(rdt1s.TitleIInstructionalServicesMap, 'MISSING')
 			AND ISNULL(sko.LEA_K12LeaTitleISupportService, 'MISSING') = ISNULL(rdt1s.TitleISupportServicesMap, 'MISSING')
-			AND ISNULL(sko.School_TitleIPartASchoolDesignation, 'MISSING') = ISNULL(rdt1s.TitleIProgramTypeMap, 'MISSING')
+			AND ISNULL(sko.School_TitleISchoolStatus, 'MISSING') = ISNULL(rdt1s.TitleIProgramTypeMap, 'MISSING')
 
 		--idea disability type (rds)
 			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt                
