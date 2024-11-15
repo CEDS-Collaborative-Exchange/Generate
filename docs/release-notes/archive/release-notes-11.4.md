@@ -4,7 +4,7 @@ description: >-
   This document describes the technical enhancements to Generate version 11.4
   released in May 2024. The purpose of this document is to communicate the
   technical updates made to Generate in version 11.4.
-cover: ../.gitbook/assets/Picture1 (2).png
+cover: ../../.gitbook/assets/Picture1 (2).png
 coverY: 0
 layout:
   cover:
@@ -34,8 +34,8 @@ Generate version 11.4 is focused on the Child Count files, file specifications F
 
 Generate Version 11.4 introduces a new and improved Staging Validation process. This new validation process includes an expanded library of validation rules and makes it easier to create and manage custom validation rules. Full documentation for the new process can be found here.
 
-{% content-ref url="../developer-guides/generate-utilities/staging-validation/" %}
-[staging-validation](../developer-guides/generate-utilities/staging-validation/)
+{% content-ref url="../../developer-guides/generate-utilities/staging-validation/" %}
+[staging-validation](../../developer-guides/generate-utilities/staging-validation/)
 {% endcontent-ref %}
 
 ### Important Updates
@@ -44,7 +44,7 @@ Generate Version 11.4 introduces a new and improved Staging Validation process. 
 
 Paging Enhancement: Implemented paging functionality to enhance the loading speed of larger result sets in the user interface (UI), ensuring smoother navigation and improved user experience.
 
-<figure><img src="../.gitbook/assets/Slide1.PNG" alt="Screenshot of Generate UI highlighting paging feature."><figcaption><p>Paging feature can be found above the table on the right.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Slide1.PNG" alt="Screenshot of Generate UI highlighting paging feature."><figcaption><p>Paging feature can be found above the table on the right.</p></figcaption></figure>
 
 Expanded Search Functionality:
 
@@ -53,7 +53,7 @@ Expanded Search Functionality:
 * Search by Header Value: Added support for searching based on header values.
 * Search by Permitted Value: Enhanced search functionality to include searching by the underlying permitted value.
 
-<figure><img src="../.gitbook/assets/VideoProject-ezgif.com-overlay (1).gif" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/VideoProject-ezgif.com-overlay (1).gif" alt=""><figcaption></figcaption></figure>
 
 #### Performance Improvements
 

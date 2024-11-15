@@ -2,9 +2,10 @@
 description: >-
   This document provides a description of the technical enhancements to Generate
   version 5.2 released in December 2022.
+coverY: 0
 ---
 
-# Release Notes v5.2
+# Release Notes 5.2
 
 ### RELEASE OVERVIEW&#x20;
 
