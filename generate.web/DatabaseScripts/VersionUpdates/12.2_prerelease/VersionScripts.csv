@@ -10,5 +10,19 @@ StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessments.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.Compare_CHILDCOUNT.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.Compare_CHILDCOUNT.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.Compare_DIRECTORY.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.Compare_DIRECTORY.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.Compare_DISCIPLINE.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.Compare_DISCIPLINE.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.Compare_EXITING.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.Compare_EXITING.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.CompareSubmissionFiles.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.CompareSubmissionFiles.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.CreateSubmissionFileTable.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.CreateSubmissionFileTable.StoredProcedure.sql,0
 VersionUpdates\\12.2_prerelease,UpdateDbVersion.sql,0
 
