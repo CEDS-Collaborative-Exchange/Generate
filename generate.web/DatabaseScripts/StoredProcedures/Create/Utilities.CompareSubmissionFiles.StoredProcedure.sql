@@ -11,6 +11,7 @@ CREATE PROCEDURE [Utilities].[CompareSubmissionFiles]
 		@ComparisonResultsTableName varchar(200) output
 
 
+
 AS
 BEGIN
 /****************************************************************************************
