@@ -220,6 +220,47 @@ Use the @FileSpec parameter to pass in one of the
 	
 	select @ChildCountDate = convert(varchar, @CutoffMonth) + '/' + convert(varchar, @CutoffDay) + '/' + convert(varchar, @SchoolYear-1) -- < changed to "-1"
 
+	----Get the LEAs that should not be reported against
+	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL DROP TABLE #excludedLeas
+	IF OBJECT_ID('tempdb..#excludedSchools') IS NOT NULL DROP TABLE #excludedSchools
+
+	CREATE TABLE #excludedLeas (
+		LeaIdentifierSeaAccountability		VARCHAR(20)
+	)
+
+	CREATE TABLE #excludedSchools (
+		SchIdentifierSea		VARCHAR(20)
+	)
+
+	INSERT INTO #excludedLeas 
+	SELECT DISTINCT LEAIdentifierSea
+	FROM Staging.K12Organization sko
+	LEFT JOIN Staging.OrganizationPhone sop
+			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
+			AND sop.OrganizationType in (	SELECT InputCode
+										FROM Staging.SourceSystemReferenceData 
+										WHERE TableName = 'RefOrganizationType' 
+											AND TableFilter = '001156'
+											AND OutputCode IN ('LEA')
+											AND SchoolYear = @SchoolYear)
+	WHERE LEA_IsReportedFederally = 0
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
+		OR sop.OrganizationIdentifier IS NULL
+
+	INSERT INTO #excludedSchools 
+	SELECT DISTINCT SchoolIdentifierSea
+	FROM Staging.K12Organization sko
+	LEFT JOIN Staging.OrganizationPhone sop
+			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
+			AND sop.OrganizationType in (	SELECT InputCode
+										FROM Staging.SourceSystemReferenceData 
+										WHERE TableName = 'RefOrganizationType' 
+											AND TableFilter = '001156'
+											AND OutputCode IN ('K12School')
+											AND SchoolYear = @SchoolYear)
+	WHERE LEA_IsReportedFederally = 0
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
+		OR sop.OrganizationIdentifier IS NULL
 
 
 	-- #StagingAssessment --------------------------------------------------------------------------------
@@ -345,15 +386,20 @@ Use the @FileSpec parameter to pass in one of the
 
 	-- #StagingPersonRace ---------------------------------------------------------------------------------------
 		SELECT StudentIdentifierState
+			, elea.LeaIdentifierSeaAccountability
+			, esch.SchIdentifierSea
 			,SchoolYear
-			,RaceType
+			,CASE WHEN (elea.LeaIdentifierSeaAccountability IS NOT NULL AND esch.SchIdentifierSea IS NOT NULL)  THEN RaceType 
+			 ELSE 'MISSING' END as RaceType
 			,RecordStartDateTime
 			,RecordEndDateTime
 		INTO #StagingPersonRace
-		FROM Staging.K12PersonRace
+		FROM Staging.K12PersonRace s
+		LEFT JOIN #excludedLeas elea ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability AND elea.LeaIdentifierSeaAccountability IS NULL
+		LEFT JOIN #excludedSchools esch ON s.SchoolIdentifierSea = esch.SchIdentifierSea AND esch.SchIdentifierSea IS NULL
 		WHERE SchoolYear = @SchoolYear
 
-			CREATE NONCLUSTERED INDEX IX_spr ON #StagingPersonRace (StudentIdentifierState,SchoolYear,RaceType,RecordStartDateTime,RecordEndDateTime)
+		CREATE NONCLUSTERED INDEX IX_spr ON #StagingPersonRace (StudentIdentifierState,SchoolYear,RaceType,RecordStartDateTime,RecordEndDateTime)
 
 	-- #DimRaces ---------------------------------------------------------------------------------------
 		SELECT v.*, d.RaceEdFactsCode
@@ -504,10 +550,11 @@ Use the @FileSpec parameter to pass in one of the
 				AND ((mcs.MilitaryConnected_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND mcs.MilitaryConnected_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
 					AND ISNULL(mcs.MilitaryConnected_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
-
 	LEFT JOIN #StagingPersonRace spr
 		ON spr.StudentIdentifierState = ske.StudentIdentifierState
 			AND spr.SchoolYear = sy.SchoolYear
+			AND ske.SchoolIdentifierSea = spr.SchIdentifierSea
+			AND ske.LeaIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability
 			AND ISNULL(asr.AssessmentAdministrationStartDate, spr.RecordStartDateTime)
 			BETWEEN spr.RecordStartDateTime
 				AND ISNULL(spr.RecordEndDateTime, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE))
@@ -522,7 +569,7 @@ Use the @FileSpec parameter to pass in one of the
 			AND ppse.SchoolIdentifierSea = asr.SchoolIdentifierSea
 	WHERE asr.SchoolYear = @SchoolYear
 	AND replace(ta.[Subject], '_1', '') = @SubjectAbbrv
-
+	AND spr.LeaIdentifierSeaAccountability IS NOT NULL AND spr.SchIdentifierSea IS NOT NULL
 
 -----------------------------------------------------------------------------------------------------------------
 -- BUILD CATEGORY SET TEMP TABLES FROM REPORT TABLE ---------------------------------------------------------------------
