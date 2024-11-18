@@ -4760,6 +4760,7 @@ namespace generate.infrastructure.Contexts
         public DbSet<ReportEDFactsK12StudentDiscipline> FactStudentDisciplineReports { get; set; }
         public DbSet<ReportEDFactsOrganizationCount> FactOrganizationCountReports { get; set; }
         public DbSet<ReportEDFactsGradesOffered> GradesOfferedReports { get; set; }
+        public DbSet<ReportEDFactsPersistentlyDangerous> PersistentlyDangerousReports { get; set; }
         public DbSet<ReportEDFactsOrganizationStatusCount> FactOrganizationStatusCountReports { get; set; }
 
         // Stored Procedure Entities (not real entities - should be removed from all migrations)

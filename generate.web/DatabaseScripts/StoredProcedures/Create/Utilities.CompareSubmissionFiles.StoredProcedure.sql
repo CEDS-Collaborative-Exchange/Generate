@@ -1,4 +1,4 @@
-ALTER PROCEDURE [Utilities].[CompareSubmissionFiles] 
+CREATE PROCEDURE [Utilities].[CompareSubmissionFiles] 
 
 		@DatabaseName varchar(100), -- If NULL then DatabaseName = 'Generate'
 		@SchemaName varchar(25),

@@ -167,6 +167,12 @@ namespace generate.infrastructure.Services
                     reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
 
                 }
+                else if (reportCode == "c130")
+                {
+                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
+                    dataRows = query.ToList();
+                    reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
+                }
                 else {
                     var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
                     dataRows = query.ToList();
