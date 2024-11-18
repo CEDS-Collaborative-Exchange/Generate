@@ -1,3 +1,14 @@
+USE [generate]
+GO
+
+/****** Object:  StoredProcedure [Staging].[RunEndToEndTest]    Script Date: 11/18/2024 11:51:59 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
 CREATE PROCEDURE [Staging].[RunEndToEndTest]
 	@ReportCode varchar(10),
 	@SchoolYear VARCHAR(10), 
@@ -48,7 +59,7 @@ AS
 
 	SET @SQLStatement = 
 	'SELECT *
-	INTO #' + @ReportCode + 'Staging
+	INTO ##' + @ReportCode + 'Staging
 	FROM Staging.vw' + @factTypeCode + '_StagingTables_' + @ReportCode 
 
 
@@ -156,3 +167,6 @@ AS
 
 	SET @SQLStatement =	'DROP TABLE ##' + @ReportCode + 'Staging'
 	EXEC sp_executesql @SQLStatement
+GO
+
+

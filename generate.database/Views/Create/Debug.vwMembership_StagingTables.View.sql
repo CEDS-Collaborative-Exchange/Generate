@@ -1,3 +1,14 @@
+USE [generate]
+GO
+
+/****** Object:  View [debug].[vwMembership_StagingTables]    Script Date: 11/18/2024 11:54:04 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
 CREATE VIEW [debug].[vwMembership_StagingTables] 
 	AS
 		SELECT	DISTINCT 
@@ -27,6 +38,8 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 			, race.RecordEndDateTime					AS RaceEndDate
 
 			, org.LEA_TitleIProgramType									
+			, org.School_OperationalStatus
+			, org.School_Type
 
 		FROM 
 			(
@@ -63,3 +76,6 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 				
 
 		WHERE 1 = 1
+GO
+
+
