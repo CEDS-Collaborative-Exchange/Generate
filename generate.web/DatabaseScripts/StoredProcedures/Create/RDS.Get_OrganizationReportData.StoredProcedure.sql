@@ -133,7 +133,7 @@ BEGIN
 	else if (@reportCode = 'c130')
 	BEGIN
 		SELECT
-            CAST(ROW_NUMBER() OVER(ORDER BY organizationInfo.OrganizationStateId ASC) AS INT) as ReportEDFactsOrganizationCountId,                     
+            CAST(ROW_NUMBER() OVER(ORDER BY organizationInfo.OrganizationStateId ASC) AS INT) as ReportEDFactsPersistentlyDangerousId,                     
             organizationInfo.*
 		from
 		(select  distinct       
