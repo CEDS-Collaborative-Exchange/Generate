@@ -1,13 +1,3 @@
-USE [generate]
-GO
-
-/****** Object:  View [RDS].[vwMembership_FactTable_C226]    Script Date: 11/18/2024 11:54:52 AM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER OFF
-GO
-
 CREATE   VIEW [RDS].[vwMembership_FactTable_C226] 
 AS
 	SELECT a.[FactK12StudentCountId]

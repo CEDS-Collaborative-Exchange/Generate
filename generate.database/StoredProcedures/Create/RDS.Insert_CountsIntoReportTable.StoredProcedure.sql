@@ -1,14 +1,3 @@
-USE [generate]
-GO
-
-/****** Object:  StoredProcedure [RDS].[Insert_CountsIntoReportTable]    Script Date: 11/18/2024 11:50:59 AM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
 CREATE PROCEDURE [RDS].[Insert_CountsIntoReportTable]
 	@ReportCode varchar(10),
 	@SubmissionYear VARCHAR(10), 

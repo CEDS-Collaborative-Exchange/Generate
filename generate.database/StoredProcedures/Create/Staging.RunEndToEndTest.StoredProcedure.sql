@@ -1,14 +1,3 @@
-USE [generate]
-GO
-
-/****** Object:  StoredProcedure [Staging].[RunEndToEndTest]    Script Date: 11/18/2024 11:51:59 AM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
 CREATE PROCEDURE [Staging].[RunEndToEndTest]
 	@ReportCode varchar(10),
 	@SchoolYear VARCHAR(10), 
