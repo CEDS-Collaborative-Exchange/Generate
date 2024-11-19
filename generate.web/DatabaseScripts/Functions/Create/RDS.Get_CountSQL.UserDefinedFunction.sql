@@ -31,7 +31,7 @@ BEGIN
 	declare @sql as nvarchar(max)
 	set @sql = ''
 
-	declare @cohortYear varchar(50), @cohortYearTotal varchar(10), @dimFactTypeId as int, @year int, @calculatedMemberDate varchar(10), @calculatedSYStartDate varchar(10), @calculatedSYEndDate varchar(10), @catchmentArea VARCHAR(50)
+	declare @cohortYear varchar(50), @cohortYearTotal varchar(10), @dimFactTypeId as int, @year int, @calculatedMemberDate varchar(10), @calculatedSYStartDate varchar(10), @calculatedSYEndDate varchar(10)
 
 	-- Get GenerateReportTypeCode
 	declare @generateReportTypeCode as varchar(50)
@@ -101,6 +101,8 @@ BEGIN
 	declare @toggleMinAgeGrad as varchar(50)
 	declare @toggleBasisOfExit as bit
 	declare @istoggleAlternateDiploma as bit
+	declare @toggleCatchmentSea as varchar(75)
+	declare @toggleCatchmentLea as varchar(75)
 	declare @toggleChildCountDate as varchar(10)
 	declare @istoggleExcludeCorrectionalAge5to11 as bit
 	declare @istoggleExcludeCorrectionalAge12to17 as bit
@@ -207,7 +209,17 @@ BEGIN
 		on r.ToggleQuestionId = q.ToggleQuestionId
 	where q.EmapsQuestionAbbrv = 'DEFEXDLPDIS'
 
-	
+	select @toggleCatchmentSea = r.ResponseValue
+	from app.ToggleQuestions q
+	left outer join app.ToggleResponses r
+		on r.ToggleQuestionId = q.ToggleQuestionId
+	WHERE q.EmapsQuestionAbbrv = 'DEFEXMOVCONSEA'
+
+	select @toggleCatchmentLea = r.ResponseValue
+	from app.ToggleQuestions q
+	left outer join app.ToggleResponses r
+		on r.ToggleQuestionId = q.ToggleQuestionId
+	WHERE q.EmapsQuestionAbbrv = 'DEFEXMOVCONLEA'
 
 	-- Get Toggle Values
 	---------------------------------------------
@@ -501,7 +513,7 @@ BEGIN
 		'
 		-- JW 10/20/2023 ----------------------------------------------------------------------------
 		select @sql = @sql + char(10) + 							
-		'IF OBJECT_ID(''tempdb..#categoryset'') IS NOT NULL DROP TABLE #categoryset' + char(10) + char(10)
+		'			IF OBJECT_ID(''tempdb..#categoryset'') IS NOT NULL DROP TABLE #categoryset' + char(10) + char(10)
 		---------------------------------------------------------------------------------------------
 
 		--pull the list of students to use in these reports into the #Students temp table 
@@ -615,7 +627,33 @@ BEGIN
 				'CREATE INDEX IDX_Students ON #Students (K12StudentId, K12StudentStudentIdentifierState)' + char(10) + char(10)
 
 			end
-			
+
+			if @reportCode in ('C009')
+			begin
+
+				if @toggleCatchmentSea = 'Entire state (students moving out of state)'
+				begin
+
+					select @sql = @sql + char(10) +
+						'			if OBJECT_ID(''tempdb..#excludeStudents'') is not null drop table #excludeStudents' + char(10)
+
+					select @sql = @sql + 
+					'
+					select distinct StudentIdentifierState
+					into #excludeStudents
+					from staging.ProgramParticipationSpecialEducation
+					where IDEAIndicator = 1
+					and isnull(ProgramParticipationEndDate, ''' + @calculatedSYEndDate + ''') >= ''' + @calculatedSYEndDate + '''
+					order by StudentIdentifierState
+					' + char(10)
+
+					select @sql = @sql + 
+						'			CREATE INDEX IDX_excludeStudents ON #excludeStudents (StudentIdentifierState)' + char(10)
+
+				end
+
+			end	
+
 			if @reportCode in ('C040')
 			begin
 				select @sql = @sql + char(10) + char(10)
@@ -1732,6 +1770,28 @@ BEGIN
 		end		
 		if @sqlType = 'actual'
 		begin
+
+			-- Remove Exiting counts for MKC students still in SPED at SY End					
+			if @generateReportTypeCode = 'edfactsreport'
+			begin
+				if @reportCode = 'c009' 
+					and @toggleCatchmentSea = 'Entire state (students moving out of state)'
+				begin
+					set @sqlRemoveMissing = @sqlRemoveMissing + '
+						-- Remove MKC counts for Students still in SPED at SY End' + char(10) + '
+						if exists (select 1 from #categorySet
+							where SPECIALEDUCATIONEXITREASON = ''MKC'')
+						begin
+							delete c from #categorySet c
+							left join #excludeStudents e 
+								on c.K12StudentStudentIdentifierState = e.StudentIdentifierState
+							where SPECIALEDUCATIONEXITREASON = ''MKC''
+							and e.StudentIdentifierState is not null
+						end
+					'
+				end
+			end
+
 			-- Remove MISSING counts when needed					
 			-- (if at least one non-MISSING count exists, remove MISSING Categories, otherwise remove all except MISSING)
 			if @generateReportTypeCode = 'edfactsreport'
@@ -6422,14 +6482,6 @@ BEGIN
 
 			if(@reportCode in ('C009')) 
 			begin
-				SELECT @catchmentArea = atqo.OptionText 
-				FROM app.ToggleQuestions atq
-				JOIN app.ToggleResponses atr
-					ON atr.ToggleQuestionId = atq.ToggleQuestionId
-				JOIN app.ToggleQuestionOptions atqo
-					ON atr.ToggleQuestionOptionId = atqo.ToggleQuestionOptionId
-				WHERE  atq.EmapsQuestionAbbrv = 'DEFEXMOVCONSEA'
-
 				if @categorySetCode = 'TOT' 
 				begin
 					set @sql = @sql + ' 
@@ -6442,7 +6494,7 @@ BEGIN
 				end
 
 				SELECT @sql = @sql + 
-					CASE @catchmentArea
+					CASE @toggleCatchmentSea
 						WHEN 'Districtwide (students moving out of district)' THEN
 							' MIN(SpecialEducationServicesExitDate) AS SpecialEducationServicesExitDate'
 						ELSE 
@@ -6572,14 +6624,6 @@ BEGIN
 
 				if(@reportCode in ('C009')) 
 				begin
-					SELECT @catchmentArea = atqo.OptionText 
-					FROM app.ToggleQuestions atq
-					JOIN app.ToggleResponses atr
-						ON atr.ToggleQuestionId = atq.ToggleQuestionId
-					JOIN app.ToggleQuestionOptions atqo
-						ON atr.ToggleQuestionOptionId = atqo.ToggleQuestionOptionId
-					WHERE atq.EmapsQuestionAbbrv = 'DEFEXMOVCONLEA'
-
 					if @categorySetCode = 'TOT' 
 					begin
 						set @sql = @sql + ' 
@@ -6592,7 +6636,7 @@ BEGIN
 					end
 									
 					SELECT @sql = @sql + 
-						CASE @catchmentArea
+						CASE @toggleCatchmentLea
 							WHEN 'Districtwide (students moving out of district)' THEN
 								' MIN(SpecialEducationServicesExitDate) AS SpecialEducationServicesExitDate'
 							ELSE 
@@ -7328,6 +7372,15 @@ BEGIN
 				set @sql = @sql + '  delete a from @reportData a
 				where SpecialEducationExitReason = ''RC'''
 			end
+
+			if (@toggleCatchmentSea = 'Entire state (students moving out of state)')
+			begin
+				set @sql = @sql + '  delete a from @reportData a
+				left join #excludeStudents e
+				on a.K12StudentStudentIdentifierState = e.StudentIdentifierState
+				where e.StudentIdentifierState is not null
+				and SpecialEducationExitReason = ''MKC'''
+			end				
 
 			if(@istoggleAlternateDiploma = 0)
 			begin
