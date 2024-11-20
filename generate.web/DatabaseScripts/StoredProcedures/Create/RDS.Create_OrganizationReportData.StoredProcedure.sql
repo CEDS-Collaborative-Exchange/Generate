@@ -672,7 +672,7 @@ BEGIN
 						, 0 as TotalIndicator
 						, CASE 
 							when schStatus.PersistentlyDangerousStatusCode <> 'MISSING'
-								then upper(schStatus.PersistentlyDangerousStatusCode) + ' - ' + schStatus.PersistentlyDangerousStatusCode
+								then upper(schStatus.PersistentlyDangerousStatusCode)
 							else schStatus.PersistentlyDangerousStatusCode
 						end
 					from rds.FactOrganizationCounts fact
