@@ -48,7 +48,7 @@ namespace generate.testdata.Interfaces
         List<string> ListofSchoolNameTypes();
         List<string> ListofStreetTypes();
         List<string> ListofUnitTypes();
-        string GetK12SeaName(string StateName);
+        string GetK12SeaName(string stateName);
         string GetK12LeaName(Random rnd, List<string> placeNames);
         string GetK12SchoolName(Random rnd, List<string> placeNames, List<string> schoolTypes);
         string GetK12SchoolName(Random rnd, List<string> placeNames, string schoolType);

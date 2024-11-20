@@ -184,19 +184,7 @@ namespace generate.console
                     break;
 
                 case "update":
-                    IDbUpdaterService dbUpdaterService = serviceProvider.GetService<IDbUpdaterService>();
-                    DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory());
-                    string rootDir = di.Parent.FullName;
-                    string updatePath = rootDir + "\\generate.web";
-                    
-                    if (environment == "test" || environment == "stage")
-                    {
-                        updatePath = "D:\\apps\\generate.web." + environment;
-                    }
-
-                    Console.WriteLine("Update Path = " + updatePath);
-                    dbUpdaterService.Update(true, updatePath);
-
+                    Update(environment);
                     break;
 
                 case "testdata":
@@ -296,37 +284,9 @@ namespace generate.console
                         return;
                     }
 
-                    var outputTypeToGenerate = outputType;
+                   
 
-                    if (outputType == "execute")
-                    {
-                        outputTypeToGenerate = "file";
-                    }
-
-                    IOptions<AppSettings> appSettings = serviceProvider.GetService<IOptions<AppSettings>>();
-
-                    if (testDataType == "staging")
-                    {
-                        ITestDataInitializer testDataInitializer = serviceProvider.GetService<ITestDataInitializer>();
-                        IStagingTestDataGenerator stagingTestDataGenerator = serviceProvider.GetService<IStagingTestDataGenerator>();
-                        stagingTestDataGenerator.GenerateTestData(seed, quantityOfStudents, schoolYear, numberOfYears, formatType, outputTypeToGenerate, dataStandardType, Directory.GetCurrentDirectory(), testDataInitializer);
-                    }
-                    else if (testDataType == "ids")
-                    {
-                        IIdsTestDataGenerator idsTestDataGenerator = serviceProvider.GetService<IIdsTestDataGenerator>();
-                        idsTestDataGenerator.GenerateTestData(seed, quantityOfStudents, schoolYear, formatType, outputTypeToGenerate, Directory.GetCurrentDirectory());
-                    }
-                    else if (testDataType == "rds")
-                    {
-                        IRdsTestDataGenerator rdsTestDataGenerator = serviceProvider.GetService<IRdsTestDataGenerator>();
-                        rdsTestDataGenerator.GenerateTestData(seed, quantityOfStudents, formatType, outputTypeToGenerate, Directory.GetCurrentDirectory());
-                    }
-
-                    if (outputType == "execute")
-                    {
-                        ITestDataInitializer testDataInitializer = serviceProvider.GetService<ITestDataInitializer>();
-                        testDataInitializer.ExecuteTestData(testDataType, JobCancellationToken.Null, Directory.GetCurrentDirectory());
-                    }
+                    GenerateTestData(testDataType, seed, quantityOfStudents, schoolYear, numberOfYears, formatType, outputType, dataStandardType);
 
                     break;
 
@@ -340,6 +300,55 @@ namespace generate.console
             Console.WriteLine("Duration = " + duration.ToString());
 
 
+        }
+
+        public static void GenerateTestData(string testDataType, int seed, int quantityOfStudents, int schoolYear, int numberOfYears, string formatType, string outputType, string dataStandardType)
+        {
+            string outputTypeToGenerate = outputType;
+
+            if (outputType == "execute")
+            {
+                outputTypeToGenerate = "file";
+            }
+
+            if (testDataType == "staging")
+            {
+                ITestDataInitializer testDataInitializer = serviceProvider.GetService<ITestDataInitializer>();
+                IStagingTestDataGenerator stagingTestDataGenerator = serviceProvider.GetService<IStagingTestDataGenerator>();
+                stagingTestDataGenerator.GenerateTestData(seed, quantityOfStudents, schoolYear, numberOfYears, formatType, outputTypeToGenerate, dataStandardType, Directory.GetCurrentDirectory(), testDataInitializer);
+            }
+            else if (testDataType == "ids")
+            {
+                IIdsTestDataGenerator idsTestDataGenerator = serviceProvider.GetService<IIdsTestDataGenerator>();
+                idsTestDataGenerator.GenerateTestData(seed, quantityOfStudents, schoolYear, formatType, outputTypeToGenerate, Directory.GetCurrentDirectory());
+            }
+            else if (testDataType == "rds")
+            {
+                IRdsTestDataGenerator rdsTestDataGenerator = serviceProvider.GetService<IRdsTestDataGenerator>();
+                rdsTestDataGenerator.GenerateTestData(seed, quantityOfStudents, formatType, outputTypeToGenerate, Directory.GetCurrentDirectory());
+            }
+
+            if (outputType == "execute")
+            {
+                ITestDataInitializer testDataInitializer = serviceProvider.GetService<ITestDataInitializer>();
+                testDataInitializer.ExecuteTestData(testDataType, JobCancellationToken.Null, Directory.GetCurrentDirectory());
+            }
+        }
+
+        public static void Update(string environment)
+        {
+            IDbUpdaterService dbUpdaterService = serviceProvider.GetService<IDbUpdaterService>();
+            DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory());
+            string rootDir = di.Parent.FullName;
+            string updatePath = rootDir + "\\generate.web";
+
+            if (environment == "test" || environment == "stage")
+            {
+                updatePath = "D:\\apps\\generate.web." + environment;
+            }
+
+            Console.WriteLine("Update Path = " + updatePath);
+            dbUpdaterService.Update(true, updatePath);
         }
 
 
