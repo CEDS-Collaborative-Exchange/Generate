@@ -48,7 +48,7 @@ AS
 
 	SET @SQLStatement = 
 	'SELECT *
-	INTO #' + @ReportCode + 'Staging
+	INTO ##' + @ReportCode + 'Staging
 	FROM Staging.vw' + @factTypeCode + '_StagingTables_' + @ReportCode 
 
 
@@ -156,3 +156,6 @@ AS
 
 	SET @SQLStatement =	'DROP TABLE ##' + @ReportCode + 'Staging'
 	EXEC sp_executesql @SQLStatement
+GO
+
+

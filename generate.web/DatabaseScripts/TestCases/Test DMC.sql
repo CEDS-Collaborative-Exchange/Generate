@@ -70,6 +70,8 @@ EXEC RDS.Create_ReportData 'C033', 'membership', 0
 EXEC RDS.Create_ReportData 'C052', 'membership', 0
 -- Execution time: 8:16
 
+PRINT 'RDS migration for Membership (C226)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c226')
 
 -------------------------------------------------------------------- 
 --These are the report migrations using the new method
@@ -108,6 +110,14 @@ EXEC RDS.Create_ReportData 'C052', 'membership', 0
 -- 				@IdentifierToCount = 'K12StudentStudentIdentifierState',
 -- 				@CountColumn = 'StudentCount',
 -- 				@IsDistinctCount  = 1
+
+  		exec [RDS].[Insert_CountsIntoReportTable]
+  				@ReportCode  = 'C226',
+  				@SubmissionYear = @SchoolYear, 
+  				@ReportTableName =  'ReportEdFactsK12StudentCounts',
+  				@IdentifierToCount = 'K12StudentStudentIdentifierState',
+  				@CountColumn = 'StudentCount',
+  				@IsDistinctCount  = 1
 
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'dropout' -- No tests yet FS032
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'grad' -- No tests yet FS040
@@ -196,5 +206,6 @@ EXEC App.FS194_TestCase							@SchoolYear
 -- EXEC Staging.RunEndToEndTest	 'C224', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
 -- PRINT 'End-to-End Test for FS225'
 -- EXEC Staging.RunEndToEndTest	 'C225', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
-
+   PRINT 'End-to-End Test for FS226'
+   EXEC Staging.RunEndToEndTest	 'C226', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
 
