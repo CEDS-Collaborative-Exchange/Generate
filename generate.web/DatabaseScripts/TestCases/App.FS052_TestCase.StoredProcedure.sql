@@ -139,6 +139,27 @@ BEGIN
 	IF @toggleAdultEd = 1
 	INSERT INTO @GradesList VALUES ('ABE')
 
+	IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL
+	DROP TABLE #excludedLeas
+
+	CREATE TABLE #excludedLeas (
+		LeaIdentifierSeaAccountability		VARCHAR(20)
+	)
+
+	INSERT INTO #excludedLeas 
+	SELECT DISTINCT LEAIdentifierSea
+	FROM Staging.K12Organization sko
+	LEFT JOIN Staging.OrganizationPhone sop
+			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
+			AND sop.OrganizationType in (	SELECT InputCode
+										FROM Staging.SourceSystemReferenceData 
+										WHERE TableName = 'RefOrganizationType' 
+											AND TableFilter = '001156'
+											AND OutputCode = 'LEA' AND SchoolYear = @SchoolYear)
+	WHERE LEA_IsReportedFederally = 0
+		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
+		OR sop.OrganizationIdentifier IS NULL
+
 
 	--Get the data needed for the tests
 	SELECT  
@@ -1062,7 +1083,10 @@ BEGIN
 			LEAIdentifierSeaAccountability,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #LEA_TOT
-		FROM #c052staging 
+		FROM #c052staging s
+		LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
 			LEAIdentifierSeaAccountability
 		
