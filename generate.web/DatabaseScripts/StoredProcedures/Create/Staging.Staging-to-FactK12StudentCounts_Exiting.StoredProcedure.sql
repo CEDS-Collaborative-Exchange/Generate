@@ -273,6 +273,7 @@ BEGIN
 			ON  ISNULL(sppse.SpecialEducationExitReason, 'MISSING') = ISNULL(rdis.SpecialEducationExitReasonMap, rdis.SpecialEducationExitReasonCode)
 			AND IdeaIndicatorCode = 'Yes'
 			AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
+			AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
 		JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 			ON sidt.SchoolYear = rdidt.SchoolYear
 			AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
