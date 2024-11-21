@@ -6296,6 +6296,10 @@ BEGIN
 		begin
 			set @sumOperation = 'count(distinct cs.K12StudentStudentIdentifierState )'
 		end
+		else if @reportCode in ('c086')
+		begin
+			set @sumOperation = 'count(distinct cs.IncidentIdentifier)'
+		end
 		else if @reportCode in ('c059', 'c070', 'c099', 'c112', 'c203')
 		begin
 			set @sumOperation = 'sum(round(isnull(' + @factField + ', 0), 2))'
@@ -6586,9 +6590,16 @@ BEGIN
 					sea.SeaOrganizationName ' +
 					@sqlCategoryFields
 				
-			set @sql = @sql + '
-				having sum(' + @factField + ') > 0'
-
+			if @reportCode in ('c086')
+			begin
+				set @sql = @sql + '
+					having count(distinct cs.IncidentIdentifier) > 0'
+			end
+			else
+			begin
+				set @sql = @sql + '
+					having sum(' + @factField + ') > 0'
+			end
 
 		end
 		else if @reportLevel = 'lea'
@@ -6720,9 +6731,6 @@ BEGIN
 						lea.LeaOrganizationName ' +
 						@sqlCategoryFields
 
-				set @sql = @sql + '
-					having sum(' + @factField + ') > 0'
-
 			end		-- END @factReportTable = 'ReportEDFactsK12StudentCounts'
 			else
 			begin
@@ -6822,7 +6830,18 @@ BEGIN
 						lea.LeaIdentifierSea,
 						lea.LeaOrganizationName ' +
 						@sqlCategoryFields + '
-					having sum(' + @factField + ') > 0'
+					'
+
+				if @reportCode in ('c086')
+				begin
+					set @sql = @sql + '
+						having count(distinct cs.IncidentIdentifier) > 0'
+				end
+				else
+				begin
+					set @sql = @sql + '
+						having sum(' + @factField + ') > 0'
+				end
 
 			end
 		end		-- END @reportLevel = 'lea'
