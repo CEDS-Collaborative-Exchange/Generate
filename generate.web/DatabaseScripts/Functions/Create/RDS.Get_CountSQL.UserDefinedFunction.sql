@@ -1776,16 +1776,17 @@ BEGIN
 			begin
 				if @reportCode = 'c009' 
 					and @toggleCatchmentSea = 'Entire state (students moving out of state)'
+					and @reportField = 'SpecialEducationExitReason'
 				begin
 					set @sqlRemoveMissing = @sqlRemoveMissing + '
 						-- Remove MKC counts for Students still in SPED at SY End' + char(10) + '
 						if exists (select 1 from #categorySet
-							where SPECIALEDUCATIONEXITREASON = ''MKC'')
+							where ' + @reportField + ' = ''MKC'')
 						begin
 							delete c from #categorySet c
 							left join #excludeStudents e 
 								on c.K12StudentStudentIdentifierState = e.StudentIdentifierState
-							where SPECIALEDUCATIONEXITREASON = ''MKC''
+							where ' + @reportField + ' = ''MKC''
 							and e.StudentIdentifierState is not null
 						end
 					'
@@ -2827,7 +2828,7 @@ BEGIN
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					select rdp.K12StudentStudentIdentifierState, df.DimFirearmId
+					select distinct rdp.K12StudentStudentIdentifierState, df.DimFirearmId, fact.IncidentIdentifier
 					from rds.' + @factTable + ' fact '
 
 			if @reportLevel = 'lea'
@@ -2865,7 +2866,8 @@ BEGIN
 				where df.FirearmTypeEdFactsCode <> ''MISSING''
 			) rules 
 				on stu.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState 
-				and fact.FirearmId = rules.DimFirearmId '
+				and fact.FirearmId = rules.DimFirearmId 
+				and fact.IncidentIdentifier = rules.IncidentIdentifier'
 		end
 		else if @reportCode in ('c089','edenvironmentdisabilitiesage3-5')
 		begin
@@ -5543,7 +5545,7 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 			end
-			else if(@reportCode in ('c005','c086','c144','disciplinaryremovals'))
+			else if(@reportCode in ('c005','c144','disciplinaryremovals'))
 			begin
 				set @sql = @sql + '
 
@@ -5598,6 +5600,64 @@ BEGIN
 								when @reportLevel = 'lea' then 'fact.LeaId,'
 								else 'fact.K12SchoolId,'
 								end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionGroupFields + '
+				' + @sqlHavingClause + '
+				'
+			end
+			else if(@reportCode in ('c086'))
+			begin
+				set @sql = @sql + '
+
+				----------------------------
+				-- Insert actual count data 
+				----------------------------
+
+				create table #categorySet (	' 
+				+ case when @reportLevel = 'sea' then 'DimSeaId int,'
+						when @reportLevel = 'lea' then 'DimLeaId int,' 
+						else 'DimK12SchoolId int,'
+				end + 'K12StudentStudentIdentifierState varchar(50)' + @sqlCategoryFieldDefs + ',
+				IncidentIdentifier varchar(40),
+				' + @factField + ' int
+			)
+		
+
+				' + case when @reportLevel = 'sea' then '
+				CREATE INDEX IDX_CategorySet ON #CategorySet (DimSeaId)
+				'    when @reportLevel = 'lea' then '
+				CREATE INDEX IDX_CategorySet ON #CategorySet (DimLeaId)
+				' 	 when @reportLevel = 'sch' then '
+				CREATE INDEX IDX_CategorySet ON #CategorySet (DimK12SchoolId)
+				'    else ''
+				end +
+				'
+
+				truncate table #categorySet
+
+				-- Actual Counts
+				insert into #categorySet
+				(' + case when @reportLevel = 'sea' then 'DimSeaId,'
+						when @reportLevel = 'lea' then 'DimLeaId,' 
+						else 'DimK12SchoolId,'
+				end + 'K12StudentStudentIdentifierState' + @sqlCategoryFields + ', IncidentIdentifier, ' + @factField + ')
+				select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
+					when @reportLevel = 'lea' then 'fact.LeaId,' 
+						    else 'fact.K12SchoolId,'
+				end + 'stu.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
+				fact.IncidentIdentifier,
+				sum(isnull(fact.' + @factField + ', 0))
+				from rds.' + @factTable + ' fact ' 
+				+ ' join rds.DimPeople stu on fact.K12StudentId = stu.DimPersonId '
+				+ @sqlCountJoins 
+				+ ' ' + @reportFilterJoin + '
+				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
+				and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
+				and ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
+							when @reportLevel = 'lea' then 'fact.LeaId <> -1'
+							else 'IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1'	 end  + '
+				group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
+								when @reportLevel = 'lea' then 'fact.LeaId,'
+								else 'fact.K12SchoolId,'
+								end + 'stu.K12StudentStudentIdentifierState, fact.IncidentIdentifier' + @sqlCategoryQualifiedDimensionGroupFields + '
 				' + @sqlHavingClause + '
 				'
 			end
