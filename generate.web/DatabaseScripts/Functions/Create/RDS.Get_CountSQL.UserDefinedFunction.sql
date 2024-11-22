@@ -7452,15 +7452,6 @@ BEGIN
 				where SpecialEducationExitReason = ''RC'''
 			end
 
-			if (@toggleCatchmentSea = 'Entire state (students moving out of state)')
-			begin
-				set @sql = @sql + '  delete a from @reportData a
-				left join #excludeStudents e
-				on a.K12StudentStudentIdentifierState = e.StudentIdentifierState
-				where e.StudentIdentifierState is not null
-				and SpecialEducationExitReason = ''MKC'''
-			end				
-
 			if(@istoggleAlternateDiploma = 0)
 			begin
 				set @sql = @sql + '  delete a from @reportData a
