@@ -1,15 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <Description>generate.core class library project</Description>
     <Authors>AEM Corporation</Authors>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>generate.core</AssemblyName>
     <DebugType>full</DebugType>
     <OutputType>Library</OutputType>
     <PackageId>generate.core</PackageId>
     <ServerGarbageCollection>true</ServerGarbageCollection>
-    <RuntimeIdentifiers>win7-x64;win8-x64;win10-x64;debian.8-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x64;win-x86;</RuntimeIdentifiers>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -19,27 +18,24 @@
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Hangfire.Core" Version="1.7.31" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="FastMember" Version="1.5.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\generate.shared\generate.shared.csproj" />
   </ItemGroup>
-
 </Project>

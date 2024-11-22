@@ -2,14 +2,14 @@ import { Component, Input, AfterViewInit, OnInit, OnChanges, SimpleChange, ViewC
 import { Router, ActivatedRoute } from '@angular/router';
 import { GenerateReportService } from '../../services/app/generateReport.service';
 import { GenerateReportDto } from '../../models/app/generateReportDto';
-import { GenerateReportDataDto } from '../../models/app/generateReportDataDto';;
+import { GenerateReportDataDto } from '../../models/app/generateReportDataDto';
 import { GenerateReportParametersDto } from '../../models/app/generateReportParametersDto';
 import { CategorySetDto } from '../../models/app/categorySetDto';
 import { forkJoin } from 'rxjs'
 
 import { CatToDisplay } from '../../models/app/categorySetDto';
 
-declare var componentHandler: any;
+declare let componentHandler: any;
 
 
 @Component({
@@ -327,9 +327,9 @@ export class YearToYearChildCountComponent implements AfterViewInit, OnChanges, 
     }
 
     formatItem(args) {
-        var a = args.row;
-        var b = args.col;
-        var cellVal = args.xlsxCell;
+        let a = args.row;
+        let b = args.col;
+        let cellVal = args.xlsxCell;
         if (parseInt(args.col) === 3) {
             if (a !== undefined) {
                 localStorage.setItem('col_1', cellVal.value);
@@ -512,17 +512,17 @@ export class YearToYearChildCountComponent implements AfterViewInit, OnChanges, 
 
     calculatePercentageDifference(s, e) {
         if (e.panel == s.cells) {
-            var row = s.rows[e.row];
-            var col = s.columns[e.col];
-            var tot = 0;
-            var group = null;
+            let row = s.rows[e.row];
+            let col = s.columns[e.col];
+            let tot = 0;
+            let group = null;
             if (group && col.binding == 'col_4') {
-                var tot2 = 0;
-                for (var i = 0; i < group.items.length; i++) {
+                let tot2 = 0;
+                for (let i = 0; i < group.items.length; i++) {
                     tot2 += group.items[i].col_1;
                 }
-                var tot3 = 0;
-                for (var i = 0; i < group.items.length; i++) {
+                let tot3 = 0;
+                for (let i = 0; i < group.items.length; i++) {
                     tot3 += group.items[i].col_2;
                 }
                 tot2 !== 0 ? tot = (tot3 - tot2) / tot2 : tot = 0;

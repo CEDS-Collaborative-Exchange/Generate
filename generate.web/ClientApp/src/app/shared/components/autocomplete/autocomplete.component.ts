@@ -57,7 +57,7 @@ export class AutocompleteComponent implements OnInit {
         let source = this.itemsSource;
         if (this.displayMemberPath && this.itemsSource) {
             let length = this.itemsSource.length;
-            for (var i = 0; i < length; i++) {
+            for (let i = 0; i < length; i++) {
                 this.options.push(source[i][this.displayMemberPath]);
             }
         }

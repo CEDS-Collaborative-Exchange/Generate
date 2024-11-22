@@ -11,7 +11,6 @@ namespace generate.core.Models.RDS
         public string StateANSICode { get; set; }
         public string StateAbbreviationCode { get; set; }
         public string StateAbbreviationDescription { get; set; }
-        //public int OrganizationId { get; set; }
         public string OrganizationIdentifierNces { get; set; }
         public string OrganizationIdentifierSea { get; set; }
         public string OrganizationName { get; set; }
@@ -83,13 +82,10 @@ namespace generate.core.Models.RDS
         public string TITLEISCHOOLSTATUS { get; set; }
         public string TITLEIPROGRAMTYPE { get; set; }
 
-        //public string AssessmentTypeAdministeredToEnglishLearners { get; set; }
-
         // File Submission properties
         public string ParentOrganizationIdentifierSea { get; set; }
         public string TableTypeAbbrv { get; set; }
         public string TotalIndicator { get; set; }
-        // Count
         public int AssessmentCount { get; set; }
 
 

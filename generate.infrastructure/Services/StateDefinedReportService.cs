@@ -25,35 +25,28 @@ namespace generate.infrastructure.Services
     public class StateDefinedReportService : IStateDefinedReportService
     {
 
-
-        private IRDSRepository _rdsRepository;
         private IIDSRepository _idsRepository;
         private IAppRepository _appRepository;
 
         private IFactStudentCountRepository _factStudentCountRepository;
         private IFactStudentDisciplineRepository _factStudentDisciplineRepository;
         private IFactStudentAssessmentRepository _factStudentAssessmentRepository;
-        private IFactStaffCountRepository _factStaffCountRepository;
         private IFactCustomCountRepository _customReportRepository;
         private string reportType = "statereport";
 
         public StateDefinedReportService(
-            IRDSRepository rdsRepository,
             IIDSRepository idsRepository,
             IAppRepository appRepository,
             IFactStudentCountRepository factStudentCountRepository,
             IFactStudentDisciplineRepository factStudentDisciplineRepository,
             IFactStudentAssessmentRepository factStudentAssessmentRepository,
-            IFactStaffCountRepository factStaffCountRepository,
             IFactCustomCountRepository customReportRepository
             )
         {
             _factStudentCountRepository = factStudentCountRepository;
             _factStudentDisciplineRepository = factStudentDisciplineRepository;
             _factStudentAssessmentRepository = factStudentAssessmentRepository;
-            _factStaffCountRepository = factStaffCountRepository;
             _customReportRepository = customReportRepository;
-            _rdsRepository = rdsRepository;
             _idsRepository = idsRepository;
             _appRepository = appRepository;
         }

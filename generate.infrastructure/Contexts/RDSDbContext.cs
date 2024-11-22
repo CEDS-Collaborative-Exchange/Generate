@@ -17,14 +17,11 @@ namespace generate.infrastructure.Contexts
     public class RDSDbContext : DbContext
     {
         private readonly ILogger _logger;
-        private readonly IOptions<AppSettings> _appSettings;
-
         private string _schemaName = "RDS";
 
-        public RDSDbContext(DbContextOptions<RDSDbContext> options, ILogger<RDSDbContext> logger, IOptions<AppSettings> appSettings) : base(options)
+        public RDSDbContext(DbContextOptions<RDSDbContext> options, ILogger<RDSDbContext> logger) : base(options)
         {
             _logger = logger;
-            _appSettings = appSettings;
 
         }
 

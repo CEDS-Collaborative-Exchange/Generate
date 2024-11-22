@@ -14,9 +14,9 @@ import { forkJoin } from 'rxjs';
 import { FlextableComponent } from '../components/flextable/flextable.component';
 
 
-declare var componentHandler: any;
-declare var saveAs: any;
-declare var alphanum: any;
+declare let componentHandler: any;
+declare let saveAs: any;
+declare let alphanum: any;
 
 @Component({
     selector: 'generate-app-206',
@@ -259,7 +259,7 @@ export class C206Component implements AfterViewInit, OnChanges, OnInit {
         let totalCaption = this.dataCountCaption() + " " + this.reportDataDto.dataCount;
 
         let reportCaptionCol = 2;
-        var reportCols = [];
+        let reportCols = [];
         if (this.reportParameters.reportLevel === 'sch') {
             reportCols.push({ wpx: 200 });
             reportCols.push({ wpx: 160 });
@@ -273,7 +273,7 @@ export class C206Component implements AfterViewInit, OnChanges, OnInit {
             reportCols.push({ wpx: 200 });
         }
 
-        var reportRows = [
+        let reportRows = [
             { hpx: 45 }, // row 1 sets to the height of 45 in points
             { hpx: 23 },
             { hpx: 20 },

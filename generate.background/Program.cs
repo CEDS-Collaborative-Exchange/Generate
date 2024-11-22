@@ -33,13 +33,18 @@ using generate.infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using generate.background.Filters;
 using Microsoft.Extensions.Hosting;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder();
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
+    .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
+    .AddEnvironmentVariables(e => e.Prefix = "Data__")
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables();
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
+    
+
+
 
 builder.Logging.AddSerilog(new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -149,31 +154,6 @@ app.UseHangfireDashboard("", new DashboardOptions
 try
 {
     Log.Information("Starting web host");
-
-    //#region FS Refresh
-
-    //    var _configuration = app.Services.GetService<IConfiguration>();
-    //    //var _fsMetaCHRLayoutFileName = someService2.GetSection("appSettings").GetValue<string>("fsMetaCHRLayoutFileName");
-
-    //    var _useWSforFSMetaUpd = _configuration.GetSection("appSettings").GetValue<bool>("useWSforFSMetaUpd");
-    //    var _fsWSURL = _configuration.GetSection("appSettings").GetValue<string>("fsWSURL");
-    //    var _fsMetaFileLoc = _configuration.GetSection("appSettings").GetValue<string>("fsMetaFileLoc");
-    //    var _fsMetaESSDetailFileName = _configuration.GetSection("appSettings").GetValue<string>("fsMetaESSDetailFileName");
-    //    var _fsMetaCHRDetailFileName = _configuration.GetSection("appSettings").GetValue<string>("fsMetaCHRDetailFileName");
-    //    var _fsMetaESSLayoutFileName = _configuration.GetSection("appSettings").GetValue<string>("fsMetaESSLayoutFileName");
-    //    var _fsMetaCHRLayoutFileName = _configuration.GetSection("appSettings").GetValue<string>("fsMetaCHRLayoutFileName");
-    //    var _bkfsMetaFileLoc = _configuration.GetSection("appSettings").GetValue<string>("bkfsMetaFileLoc");
-    //    var _reloadFromBackUp = _configuration.GetSection("appSettings").GetValue<bool>("reloadFromBackUp");
-    //    var _cronExp = _configuration.GetSection("appSettings").GetValue<string>("cronExp");
-
-    //    using (var serviceScope = app.Services.CreateScope())
-    //    {
-    //        var services = serviceScope.ServiceProvider;
-    //        var iHangfirehelper = services.GetRequiredService<IHangfireHelper>();
-    //        iHangfirehelper.StartFSRecurringJobs(_useWSforFSMetaUpd, _fsWSURL, _fsMetaFileLoc, _fsMetaESSDetailFileName, _fsMetaCHRDetailFileName, _fsMetaESSLayoutFileName, _fsMetaCHRLayoutFileName, _bkfsMetaFileLoc, _reloadFromBackUp, _cronExp);
-    //    }
-
-    //#endregion
 
     app.Run();
 

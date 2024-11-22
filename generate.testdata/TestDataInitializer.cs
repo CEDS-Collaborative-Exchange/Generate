@@ -105,10 +105,6 @@ namespace generate.testdata
             {
                 schoolYear = Convert.ToInt32(generateConfigurations.Where(c => c.GenerateConfigurationKey == "SchoolYear").Select(c => c.GenerateConfigurationValue).FirstOrDefault());
             }
-            if (!schoolYear.HasValue)
-            {
-                schoolYear = DateTime.Now.Year;
-            }
 
             int seed = 1000;
             int.TryParse(generateConfigurations.Where(c => c.GenerateConfigurationKey == "Seed").Select(c => c.GenerateConfigurationValue).FirstOrDefault(), out seed);
@@ -182,7 +178,6 @@ namespace generate.testdata
                 // Establish ods contexts
 
                 var stagingConnectionString = _dataSettings.Value.StagingDbContextConnection;
-                var stagingContextLogger = _loggerFactory.CreateLogger<StagingDbContext>();
 
                 DbContextOptions<StagingDbContext> stagingDbOptions = new DbContextOptionsBuilder<StagingDbContext>()
                     .UseSqlServer(stagingConnectionString)
@@ -190,7 +185,7 @@ namespace generate.testdata
 
                 for (int i = 0; i < numberOfParallelTasks; i++)
                 {
-                    stagingContexts[i] = new StagingDbContext(stagingDbOptions, stagingContextLogger, _appSettings);
+                    stagingContexts[i] = new StagingDbContext(stagingDbOptions);
                 }
 
 

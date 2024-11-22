@@ -1587,7 +1587,7 @@ namespace generate.testdata.DataGenerators
                 }
 
                 AppendDisciplineData(rnd, s, ideaIndicator);
-                AppendAssessmentResults(rnd, testData.Assessments, s);
+                AppendAssessmentResults(rnd, testData.Assessments, s, SchoolYear);
 
             });
 
@@ -1623,7 +1623,15 @@ namespace generate.testdata.DataGenerators
                     else if (s.GradeLevel == "PK") { s.EnrollmentExitDate = entryDate; }
 
                 }
-                s.EnrollmentExitDate = _testDataHelper.GetExitDate(rnd, entryDate, BaseProgramExitDate);
+                //s.EnrollmentExitDate = _testDataHelper.GetExitDate(rnd, entryDate, BaseProgramExitDate);
+
+                if (_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.EnrollmentExitDuringSchoolYearDistribution))
+                {
+                    if (entryDate < BaseProgramExitDate)
+                    {
+                        s.EnrollmentExitDate = _testDataHelper.GetExitDate(rnd, entryDate, BaseProgramExitDate);
+                    }
+                }
 
                 var races = new List<K12PersonRace>();
                 for (int raceCount = 0; raceCount < _testDataHelper.GetRandomIntInRange(rnd, 1, 2); raceCount++)
@@ -2051,7 +2059,7 @@ namespace generate.testdata.DataGenerators
                 }
 
                 AppendDisciplineData(rnd, s, ideaIndicator);
-                AppendAssessmentResults(rnd, testData.Assessments, s);
+                AppendAssessmentResults(rnd, testData.Assessments, s, SchoolYear);
 
             });
 
@@ -2414,7 +2422,7 @@ namespace generate.testdata.DataGenerators
             return grade;
         }
 
-        private void AppendAssessmentResults(Random rnd, List<core.Models.Staging.Assessment> assessments, K12Enrollment k12Enrollment)
+        private void AppendAssessmentResults(Random rnd, List<core.Models.Staging.Assessment> assessments, K12Enrollment k12Enrollment, int schoolYear)
         {
             int numberOfAssessmentAdministrations = 2;
 
@@ -2455,10 +2463,14 @@ namespace generate.testdata.DataGenerators
                         AssessmentTypeAdministered = assessmentAdministration.AssessmentTypeAdministered,
                         AssessmentTypeAdministeredToEnglishLearners = assessmentAdministration.AssessmentTypeAdministeredToEnglishLearners,
                         AssessmentRegistrationParticipationIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefAssessmentParticipationIndicatorDistribution) == "Participated" ? true : false,
+                        // - These are 2 new fields that are being added to staging.AssessmentResult
+                        AssessmentAccommodationCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.AssessmentAccommodationCategoryDistribution),
+                        AccommodationType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.AssessmentAccommodationTypeDistribution),
+
                         AssessmentTitle = assessmentAdministration.AssessmentTitle,
                         AssessmentType = assessmentAdministration.AssessmentType,
                         GradeLevelWhenAssessed = k12Enrollment.GradeLevel,
-                        SchoolYear = SchoolYear.ToString(),
+                        SchoolYear = schoolYear.ToString(),
                         StateFullAcademicYear = fullYearStatus ? true : false,
                         LEAFullAcademicYear = fullYearStatus ? true : false,
                         SchoolFullAcademicYear = fullYearStatus ? true : false
@@ -2673,7 +2685,6 @@ namespace generate.testdata.DataGenerators
             testData.K12Organizations.ForEach(o =>
             {
                 o.School_TitleISchoolStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIschoolStatusDistribution);
-                o.LEA_GunFreeSchoolsActReportingStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefGunFreeSchoolsActReportingStatusDistribution);
                 o.School_GunFreeSchoolsActReportingStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefGunFreeSchoolsActReportingStatusDistribution);
                 o.School_Type = this.IdsReferenceData.RefSchoolTypes.Single(x => x.RefSchoolTypeId == Convert.ToInt32(o.School_Type)).Code;
                 //FS129 columns
@@ -2692,7 +2703,6 @@ namespace generate.testdata.DataGenerators
                 }
 
             });
-
 
             //testData.OrganizationPhones.ForEach(p =>
             //{

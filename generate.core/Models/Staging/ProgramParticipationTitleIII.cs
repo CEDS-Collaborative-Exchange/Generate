@@ -31,12 +31,6 @@ namespace generate.core.Models.Staging
         public DateTime? TitleIIIImmigrantStatus_StartDate { get; set; }
         public DateTime? TitleIIIImmigrantStatus_EndDate { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? PersonID { get; set; }
-        //public int? OrganizationID_School { get; set; }
-        //public int? OrganizationPersonRoleID_TitleIIIProgram { get; set; }
-        //public int? OrganizationID_TitleIIIProgram { get; set; }
-        //public int? PersonProgramParticipationId { get; set; }
-        //public int? ImmigrationPersonStatusId { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
 }

@@ -10,9 +10,9 @@ import { forkJoin } from 'rxjs'
 import { Filter } from '../../models/app/categorySetDto'
 import { CatToDisplay } from '../../models/app/categorySetDto';
 
-declare var componentHandler: any;
-declare var saveAs: any;
-declare var alphanum: any;
+declare let componentHandler: any;
+declare let saveAs: any;
+declare let alphanum: any;
 
 @Component({
     selector: 'generate-app-yeartoyearremovalcount',
@@ -371,7 +371,7 @@ export class YearToYearRemovalCountComponent implements AfterViewInit, OnChanges
     formatItem(args) {
 
         {
-            var cellVal = args.xlsxCell;
+            let cellVal = args.xlsxCell;
             if (parseInt(args.col) === 4) {
                 localStorage.setItem('col_1', cellVal.value);
             }
@@ -390,7 +390,7 @@ export class YearToYearRemovalCountComponent implements AfterViewInit, OnChanges
 
     formatItem1(args) {
         {
-            var cellVal = args.xlsxCell;
+            let cellVal = args.xlsxCell;
             if (parseInt(args.col) === 3) {
                 localStorage.setItem('col_1', cellVal.value);
             }
@@ -546,17 +546,17 @@ export class YearToYearRemovalCountComponent implements AfterViewInit, OnChanges
 
     calculatePercentageDifference(s, e) {
         if (e.panel == s.cells) {
-            var row = s.rows[e.row];
-            var col = s.columns[e.col];
-            var tot = 0
-            var group =  row.dataItem;
+            let row = s.rows[e.row];
+            let col = s.columns[e.col];
+            let tot = 0
+            let group =  row.dataItem;
             if (group && col.binding == 'col_4') {
-                var tot2 = 0;
-                for (var i = 0; i < group.items.length; i++) {
+                let tot2 = 0;
+                for (let i = 0; i < group.items.length; i++) {
                     tot2 += group.items[i].col_1;
                 }
-                var tot3 = 0;
-                for (var i = 0; i < group.items.length; i++) {
+                let tot3 = 0;
+                for (let i = 0; i < group.items.length; i++) {
                     tot3 += group.items[i].col_2;
                 }
                 if (tot2 != 0) {

@@ -65,7 +65,7 @@ export class PivottableComponent {
         console.log('ngOnInit');
 
         this.populateReport();
-//        this.paginator.firstPage();
+        //        this.paginator.firstPage();
 
         $('.pvtAxisLabel').find('span').remove();
 
@@ -101,7 +101,7 @@ export class PivottableComponent {
             this.populateReport();
         });
 
-   
+
     }
 
     onSearch() {
@@ -146,7 +146,7 @@ export class PivottableComponent {
 
         let currentParams = changes['reportDataDto']['currentValue'];
         if (currentParams.reportTitle !== previousParams.reportTitle
-        //    || currentParams.categorySets[0].organizationLevelCode !== previousParams.categorySets[0].organizationLevelCode
+            //    || currentParams.categorySets[0].organizationLevelCode !== previousParams.categorySets[0].organizationLevelCode
             || currentParams.reportYear !== previousParams.reportYear
             || currentParams.reportCategorySetCode !== previousParams.reportCategorySetCode
         ) {
@@ -174,7 +174,7 @@ export class PivottableComponent {
 
     markSearchFields() {
         if ($('.pvtAxisLabel').length == 0) {
-            window.setTimeout(() => {this.markSearchFields()}, 100);
+            window.setTimeout(() => { this.markSearchFields() }, 100);
         }
         else {
             $('.pvtAxisLabel').each((index, element) => {
@@ -199,7 +199,7 @@ export class PivottableComponent {
                     this.renderer.appendChild(searchField, button);
                     this.renderer.appendChild(element, searchField);
 
-                //    this.renderer.setStyle(this.renderer.selectRootElement('.pvtAxisLabel .filter'), 'width', '8em');
+                    //    this.renderer.setStyle(this.renderer.selectRootElement('.pvtAxisLabel .filter'), 'width', '8em');
                 }
             });
         }
@@ -228,7 +228,7 @@ export class PivottableComponent {
             $('#resetFilter').hide();
             $('.search-container').hide();
         }
-}
+    }
 
     onToggleSearchFilter() {
         if ($('#searchTable').prop("checked")) {
@@ -288,35 +288,35 @@ export class PivottableComponent {
         if (uiData[0] !== undefined && uiData[0].parentOrganizationIdentifierSea !== undefined) {
             uiData = uiData
                 .sort((a, b) => {
+                    if (a.OrganizationName < b.OrganizationName) {
+                        return -1;
+                    }
+                    if (a.OrganizationName > b.OrganizationName) {
+                        return 1;
+                    }
+
+                    return 0;
+                });
+        }
+
+        uiData = uiData
+            .sort((a, b) => {
                 if (a.OrganizationName < b.OrganizationName) {
                     return -1;
                 }
                 if (a.OrganizationName > b.OrganizationName) {
                     return 1;
                 }
-                
-            return 0;
-            });
-        }
-
-        uiData = uiData
-            .sort((a, b) => {
-            if (a.OrganizationName < b.OrganizationName) {
-                return -1;
-            }
-            if (a.OrganizationName > b.OrganizationName) {
-                return 1;
-            }
-            return 0;
+                return 0;
             })
             .sort((a, b) => {
-            if (a.OrganizationIdentifierSea < b.OrganizationIdentifierSea) {
-                return -1;
-            }
-            if (a.OrganizationIdentifierSea > b.OrganizationIdentifierSea) {
-                return 1;
-            }
-            return 0;
+                if (a.OrganizationIdentifierSea < b.OrganizationIdentifierSea) {
+                    return -1;
+                }
+                if (a.OrganizationIdentifierSea > b.OrganizationIdentifierSea) {
+                    return 1;
+                }
+                return 0;
             })
             .filter(d => {
                 if (Object.keys(filterBy2).length === 0) { return true; }
@@ -378,7 +378,7 @@ export class PivottableComponent {
                     }
                 }
 
-                if(firstRecordIndex === -1) {
+                if (firstRecordIndex === -1) {
                     firstRecordIndex = 0;
                     this.currentPage = 0
                 }
@@ -482,25 +482,25 @@ export class PivottableComponent {
         aggregateColumn = viewDef.columnFields.items[len - 1];
 
         $("#container").pivotUI(uiData, {
-                showUI: false,
-                rows: viewDef.rowFields.items, cols: viewDef.columnFields.items,
-                aggregators: {
-                    aggregateColumn: gstudentCount
-                },
-                derivedAttributes: derivedAttributes,
-                rendererOptions: {
-                    table: {
-                        rowTotals: false,
-                        colTotals: false,
-                        rendererName: "Table",
-                        clickCallback: function (e, value, filters, pivotData) {
-                            var names = [];
-                            pivotData.forEachMatchingRecord(filters,
-                                function (record) { names.push(record.Name); });
-                        }
+            showUI: false,
+            rows: viewDef.rowFields.items, cols: viewDef.columnFields.items,
+            aggregators: {
+                aggregateColumn: gstudentCount
+            },
+            derivedAttributes: derivedAttributes,
+            rendererOptions: {
+                table: {
+                    rowTotals: false,
+                    colTotals: false,
+                    rendererName: "Table",
+                    clickCallback: function (e, value, filters, pivotData) {
+                        var names = [];
+                        pivotData.forEachMatchingRecord(filters,
+                            function (record) { names.push(record.Name); });
                     }
                 }
-            },
+            }
+        },
             true
         );
 
@@ -623,7 +623,7 @@ export class PivottableComponent {
                 var colLength = $('#containerExport .pvtTable thead').find('tr:nth-child(1)').children().length;
                 $('#containerExport .pvtTable thead').prepend('<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>');
 
-              //Add more rows above, have to change tr:nth-child(5)
+                //Add more rows above, have to change tr:nth-child(5)
                 let firstEmptyCellSpan = $('#containerExport .pvtTable thead tr:last th').length - 2;
                 // The colspan for the first empty cell in the header
                 $('#containerExport .pvtTable thead').find('tr:nth-child(5)').find('th:first').prop('colspan', firstEmptyCellSpan);
@@ -656,13 +656,13 @@ export class PivottableComponent {
 
                 //Column C
                 if (reportCode.toLowerCase() == "c002") {
-                    if (category.toLowerCase() == "category set a" ||category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c"
-                    || category.toLowerCase() == "category set d") {
+                    if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c"
+                        || category.toLowerCase() == "category set d") {
                         colWidth = 220;
                     }
                 }
                 else if (reportCode.toLowerCase() == "c005") {
-                    if (category.toLowerCase() == "category set a" ||category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d") {
+                    if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d") {
                         colWidth = 500;
                     }
                 }
@@ -748,7 +748,7 @@ export class PivottableComponent {
                             wscols.push({ wpx: 180 });// Column E
                     }
                     else if (reportCode.toLowerCase() == "c189") {
-                      //  wscols.push({ wpx: 200 }); //Column D
+                        //  wscols.push({ wpx: 200 }); //Column D
                         if (category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d" || category.toLowerCase() == "category set f")
                             wscols.push({ wpx: 150 });// Column D
                         //else if (category.toLowerCase() == "category set b")
@@ -757,7 +757,7 @@ export class PivottableComponent {
                     else {
                         wscols.push({ wpx: 300 });
                     }
-                } 
+                }
                 ws['!cols'] = wscols;
 
 
@@ -768,7 +768,7 @@ export class PivottableComponent {
                         ws['!cols'].push({ wpx: 200 })
                     }
                 }
-                else if ((reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178" || reportCode.toLowerCase() == "c179")&& category.toLowerCase() == "category set j") {
+                else if ((reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178" || reportCode.toLowerCase() == "c179") && category.toLowerCase() == "category set j") {
                     for (var i = 0; i <= dataColumnNumber; i++) {
                         ws['!cols'].push({ wpx: 200 })
                     }
@@ -778,8 +778,7 @@ export class PivottableComponent {
                         ws['!cols'].push({ wpx: 200 })
                     }
                 }
-                else if (reportCode.toLowerCase() == "c185")
-                {
+                else if (reportCode.toLowerCase() == "c185") {
                     let dataCol = 200;
                     if (category.toLowerCase() == "category set j" || category.toLowerCase() == "subtotal 1")
                         dataCol = 100;
@@ -836,9 +835,9 @@ export class PivottableComponent {
                 //Set row height
                 var wsrows = [
                     { hpx: 25 }, // row 1 sets to the height in pixels
-                    { hpx: 20 }, 
-                    { hpx: 20 }, 
-                    { hpx: 20 }, 
+                    { hpx: 20 },
+                    { hpx: 20 },
+                    { hpx: 20 },
                 ];
 
                 ws['!rows'] = wsrows; // ws - worksheet
@@ -850,7 +849,7 @@ export class PivottableComponent {
                 //Set all data row height
                 let dataRowLength = $('#containerExport .pvtTable tbody tr').length;
                 for (var i = 0; i <= dataRowLength; i++) {
-                    if (reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178" ) {
+                    if (reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178") {
                         ws['!rows'].push({ hpx: 45 });
                     } else if (reportCode.toLowerCase() == "c179") {
                         if (category.toLowerCase() == "subtotal 1")
@@ -944,7 +943,7 @@ export class PivottableComponent {
                 //lighter: #e6eeee
                 //      ws['A4'].s = { font: { italic: true }, fill: { fgColor: { rgb: 'ff0000' } }, alignment: { horizontal: 'center' } };
                 //{compression:true}
-                                //  var newCell = { t: 's', v: '' };
+                //  var newCell = { t: 's', v: '' };
                 // File in the blank cell on pvtAxisLabel
                 ws['A5'] = { t: 's', v: '' };
                 ws['A5'].t = 's';
@@ -966,7 +965,7 @@ export class PivottableComponent {
                     }
                 );
 
-                return longest? longest.length : 0;
+                return longest ? longest.length : 0;
             },
             columnToLetter: function (column) {
                 var temp, letter = '';
@@ -1166,7 +1165,7 @@ export class PivottableComponent {
                     //{ wch: 200 }
                 ];
 
-            //    ws['!cols'] = wscols;
+                //    ws['!cols'] = wscols;
                 ws['!cols'] = [{ width: 20 }, { width: 10 }, { width: 35 }];
 
                 var wsrows = [
@@ -1179,8 +1178,8 @@ export class PivottableComponent {
                     { hpx: 160 } // row 2 sets to the height of 16 in pixels
                 ];
 
-             //   ws['!rows'] = wsrows; // ws - worksheet
-             //   ws['!rows'] = [{ height: 200 }, { height: 200 }, { height: 150 }];
+                //   ws['!rows'] = wsrows; // ws - worksheet
+                //   ws['!rows'] = [{ height: 200 }, { height: 200 }, { height: 150 }];
 
                 //first row e.g. A1:AB12
                 var ref = ws["!fullref"];
@@ -1193,7 +1192,7 @@ export class PivottableComponent {
 
                 //pvtAxisLabel with darker
                 var pvtAxisLabels = [];
-                $('#containerExport .pvtAxisLabel').each(function (index,element) {
+                $('#containerExport .pvtAxisLabel').each(function (index, element) {
                     pvtAxisLabels.push(element.getInnerHTML());
                 });
 
@@ -1202,7 +1201,7 @@ export class PivottableComponent {
                     pvtRowLabels.push(element.getInnerHTML());
                 });
 
-                rowTotal = 3; 
+                rowTotal = 3;
                 var new_headers = ["S", "h", "e", "e", "t", "J", "S"];
                 XLSX.utils.sheet_add_aoa(ws, [new_headers],
                     { skipHeader: true, origin: "A1" });
@@ -1215,7 +1214,7 @@ export class PivottableComponent {
                 $("#containerExport").html('');
             },
             //Utility function
-            columnToLetter: function(column) {
+            columnToLetter: function (column) {
                 var temp, letter = '';
                 while (column > 0) {
                     temp = (column - 1) % 26;

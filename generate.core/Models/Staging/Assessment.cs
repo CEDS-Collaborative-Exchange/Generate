@@ -21,12 +21,6 @@ namespace generate.core.Models.Staging
         public string AssessmentPerformanceLevelIdentifier { get; set; }
         public string AssessmentPerformanceLevelLabel { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? DataCollectionId { get; set; }
-        //public int? AssessmentId { get; set; }
-        //public int? AssessmentAdministrationId { get; set; }
-        //public int? AssessmentSubtestId { get; set; }
-        //public int? AssessmentFormId { get; set; }
-        //public int? AssessmentPerformanceLevelId { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
 }

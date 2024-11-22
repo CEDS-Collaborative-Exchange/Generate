@@ -13,7 +13,6 @@ namespace generate.core.Models.Staging
         public DateTime? RecordStartDateTime { get; set; }
         public DateTime? RecordEndDateTime { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? CharterSchoolAuthorizingOrganizationOrganizationId { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
 }

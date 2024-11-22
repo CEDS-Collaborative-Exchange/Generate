@@ -51,13 +51,6 @@ namespace generate.core.Models.Staging
         public string RuralResidencyStatus { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? DataCollectionId { get; set; }
-        //public int? PersonId { get; set; }
-        //public int? OrganizationID_LEA { get; set; }
-        //public int? OrganizationPersonRoleId_LEA { get; set; }
-        //public int? OrganizationID_School { get; set; }
-        //public int? OrganizationPersonRoleId_School { get; set; }
-        //public int? OrganizationPersonRoleRelationshipId { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
 }

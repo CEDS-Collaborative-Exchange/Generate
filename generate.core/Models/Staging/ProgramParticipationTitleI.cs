@@ -22,16 +22,6 @@ namespace generate.core.Models.Staging
         public Boolean ResponsibleSchoolTypeIepServiceProvider { get; set; }
         public string TitleIIndicator { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? PersonID { get; set; }
-        //public int? RefTitleIIndicatorId { get; set; }
-        //public int? OrganizationID_LEA { get; set; }
-        //public int? OrganizationID_School { get; set; }
-        //public int? LEAOrganizationPersonRoleID_TitleIProgram { get; set; }
-        //public int? LEAOrganizationID_TitleIProgram { get; set; }
-        //public int? LEAPersonProgramParticipationId { get; set; }
-        //public int? SchoolOrganizationID_TitleIProgram { get; set; }
-        //public int? SchoolOrganizationPersonRoleID_TitleIProgram { get; set; }
-        //public int? SchoolPersonProgramParticipationId { get; set; }
         public DateTime? RunDateTime { get; set; }
         public DateTime? ProgramParticipationBeginDate { get; set; }
         public DateTime? ProgramParticipationEndDate { get; set; }

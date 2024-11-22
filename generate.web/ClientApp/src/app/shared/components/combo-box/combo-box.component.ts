@@ -47,7 +47,7 @@ export class ComboBoxComponent {
          let source = this.itemsSource;
         if (source !== undefined) {
             if (this.displayMemberPath) {
-                for (var i = 0; i < source.length; i++) {
+                for (let i = 0; i < source.length; i++) {
                     this.items.push(source[i][this.displayMemberPath]);
                 }
             }
@@ -57,7 +57,7 @@ export class ComboBoxComponent {
         }
 
         if (this.items !== undefined && this.items.length > 0) {
-            var selectedIdx = this.selectedIndex !== undefined ? this.selectedIndex : 0;
+            let selectedIdx = this.selectedIndex !== undefined ? this.selectedIndex : 0;
             this.selectedItem = source[selectedIdx];
             if (this.selectedValue !== undefined) {
                 this.selectedItem = this.itemsSource.find(f => f[this.selectedValuePath] === this.selectedValue);
@@ -69,7 +69,7 @@ export class ComboBoxComponent {
         for (let prop in changes) {
             if (changes.hasOwnProperty(prop)) {
                 if (this.itemsSource !== undefined) {
-                    var selectedIdx = this.selectedIndex !== undefined ? this.selectedIndex : 0;
+                    let selectedIdx = this.selectedIndex !== undefined ? this.selectedIndex : 0;
                     this.selectedItem = this.itemsSource[selectedIdx];
                 }
             }

@@ -101,6 +101,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<string>> RefMepProjectTypeDistribution { get; set; }
         List<DataDistribution<string>> LeaRefOperationalStatusDistribution { get; set; }
         List<DataDistribution<string>> RefCharterLeaStatusDistribution { get; set; }
+        List<DataDistribution<bool>> IsMcKinneyVentoDistribution { get; set; }
 
 
         #endregion
@@ -236,6 +237,8 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<string>> RefAssessmentParticipationIndicatorDistribution { get; set; }
         List<DataDistribution<string>> RefAssessmentRegistrationReasonNotCompleting { get; set; }
         List<DataDistribution<string>> RefAssessmentRegistrationReasonNotTested { get; set; }
+        List<DataDistribution<string>> AssessmentAccommodationTypeDistribution { get; set; }
+        List<DataDistribution<string>> AssessmentAccommodationCategoryDistribution { get; set; }
 
         List<DataDistribution<bool>> SpecialEdProgramParticipantNowDistribution { get; set; }
         List<DataDistribution<bool>> CteProgramParticipantNowDistribution { get; set; }

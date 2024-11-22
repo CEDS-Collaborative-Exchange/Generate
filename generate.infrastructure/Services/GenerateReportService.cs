@@ -95,15 +95,18 @@ namespace generate.infrastructure.Services
             IEnumerable<OrganizationLevel> organizationLevels = _appRepository.GetAll<OrganizationLevel>(0, 0);
 
             List<GenerateReportDto> results = new List<GenerateReportDto>();
+            List<CategorySet> categorySets = new List<CategorySet>();
 
             List<int> generateReportIds = new List<int>();
             if (reports != null && reports.Count > 0)
             {
                 generateReportIds = reports.Select(r => r.GenerateReportId).ToList();
 
-                IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(r => generateReportIds.Contains(r.GenerateReportId), 0, 0, c => c.OrganizationLevel, c => c.GenerateReport);
-
-               
+                foreach (var reportId in generateReportIds)
+                {
+                    var catsets = _appRepository.Find<CategorySet>(r => r.GenerateReportId == reportId, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport).ToList();
+                    categorySets.AddRange(catsets); 
+                }
 
                 foreach (var report in reports)
                 {

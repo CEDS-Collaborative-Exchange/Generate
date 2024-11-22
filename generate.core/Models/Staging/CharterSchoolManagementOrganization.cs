@@ -11,9 +11,6 @@ namespace generate.core.Models.Staging
         public string CharterSchoolManagementOrganization_Type { get; set; }
         public string OrganizationIdentifier { get; set; }
         public string DataCollectionName { get; set; }
-        //public int? DataCollectionId { get; set; }
-        //public int? CharterSchoolManagementOrganizationId { get; set; }
-        //public int? CharterSchoolId { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
 }

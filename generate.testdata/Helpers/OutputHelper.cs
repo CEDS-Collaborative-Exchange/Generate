@@ -492,6 +492,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("truncate table rds.BridgeK12StudentCourseSectionRaces");
                 output.AppendLine("truncate table rds.BridgeK12StudentEnrollmentRaces");
                 output.AppendLine("truncate table rds.BridgeK12StudentDisciplineRaces");
+                output.AppendLine("truncate table rds.BridgeK12StudentAssessmentAccommodations");
                 output.AppendLine("delete from rds.FactK12StaffCounts");
                 output.AppendLine("delete from rds.ReportEDFactsK12StudentAssessments");
                 output.AppendLine("delete from rds.FactK12StudentAssessments");
@@ -500,6 +501,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("delete from rds.FactK12StudentCounts");
                 output.AppendLine("delete from rds.FactK12StudentDisciplines");
                 output.AppendLine("delete from rds.FactK12AccessibleEducationMaterialAssignments");
+                output.AppendLine("delete from rds.FactK12StudentEnrollments");
                 //output.AppendLine("delete from rds.FactOrganizationCountReports");
                 //output.AppendLine("delete from rds.FactOrganizationCounts");
                 //output.AppendLine("delete from rds.FactOrganizationStatusCountReports");
@@ -521,6 +523,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12StudentCounts', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12StudentDisciplines', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12AccessibleEducationMaterialAssignments', RESEED, 1);");
+                output.AppendLine("DBCC CHECKIDENT('rds.FactK12StudentEnrollments', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationCountReports', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationCounts', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationStatusCountReports', RESEED, 1);");
@@ -846,6 +849,8 @@ namespace generate.testdata.Helpers
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ", 'RefAccessibleFormatIssuedIndicator', NULL, 'Yes', 'Yes'), (", schoolYear, ", 'RefAccessibleFormatIssuedIndicator', NULL, 'No', 'No')"));
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ", 'RefAccessibleFormatRequiredIndicator', NULL, 'Yes', 'Yes'), (", schoolYear, ", 'RefAccessibleFormatRequiredIndicator', NULL, 'No', 'No'), (", schoolYear, ", 'RefAccessibleFormatRequiredIndicator', NULL, 'Unknown', 'Unknown')"));
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'LEA', 'LEA'), (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'K12School', 'K12School'), (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'NationalOrStateService', 'NationalOrStateService'), (", schoolYear, ", 'RefAccessibleFormatType', NULL, 'NonProfitOrganization', 'NonProfitOrganization')"));
+
+            output.AppendLine();
 
             return output;
         }
