@@ -624,6 +624,8 @@ export class PivottableComponent {
                 }
             },
             onRefresh: function (config) {
+                console.log('load completed');
+                console.log(config);
                 var html = $("#containerExport").html();
                 const table = document.getElementsByClassName('pvtTable');
                 var colLength = $('#containerExport .pvtTable thead').find('tr:nth-child(1)').children().length;
@@ -882,14 +884,14 @@ export class PivottableComponent {
 
                 //pvtAxisLabel with darker
                 var pvtAxisLabels = [];
-                $('#containerExport .pvtAxisLabel').each(function (index, element) {
-                    pvtAxisLabels.push(element.getInnerHTML());
-                });
+                //$('#containerExport .pvtAxisLabel').each(function (index, element) {
+                //    pvtAxisLabels.push(element.getInnerHTML());
+                //});
 
                 var pvtRowLabels = [];
-                $('#containerExport .pvtRowLabel').each(function (index, element) {
-                    pvtRowLabels.push(element.getInnerHTML());
-                });
+                //$('#containerExport .pvtRowLabel').each(function (index, element) {
+                //    pvtRowLabels.push(element.getInnerHTML());
+                //});
 
                 start = Date.now();
                 colTotal = 3;
@@ -1198,14 +1200,14 @@ export class PivottableComponent {
 
                 //pvtAxisLabel with darker
                 var pvtAxisLabels = [];
-                $('#containerExport .pvtAxisLabel').each(function (index, element) {
-                    pvtAxisLabels.push(element.getInnerHTML());
-                });
+                //$('#containerExport .pvtAxisLabel').each(function (index, element) {
+                //    pvtAxisLabels.push(element.getInnerHTML());
+                //});
 
                 var pvtRowLabels = [];
-                $('#containerExport .pvtRowLabel').each(function (index, element) {
-                    pvtRowLabels.push(element.getInnerHTML());
-                });
+                //$('#containerExport .pvtRowLabel').each(function (index, element) {
+                //    pvtRowLabels.push(element.getInnerHTML());
+                //});
 
                 rowTotal = 3;
                 var new_headers = ["S", "h", "e", "e", "t", "J", "S"];
