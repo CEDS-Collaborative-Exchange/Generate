@@ -641,6 +641,7 @@ BEGIN
 			AND sko.SchoolYear = sssrd1.SchoolYear
 		where sko.SchoolYear = @SchoolYear and isnull(sko.School_IsReportedFederally,0) = 1
 		and ISNULL(sko.SchoolIdentifierSea, '') <> ''
+		and phone.OrganizationIdentifier IS NOT NULL
 
 		select distinct   
 			ParentOrganizationStateId

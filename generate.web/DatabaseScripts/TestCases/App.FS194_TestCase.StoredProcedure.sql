@@ -119,7 +119,10 @@ BEGIN
 		AgeEdFactsCode
 		, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 	INTO #S_CSA
-	FROM #C194staging 
+	FROM #C194staging s
+	LEFT JOIN #excludedLeas elea
+	ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
+	WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 	GROUP BY AgeEdFactsCode
 
 	INSERT INTO App.SqlUnitTestCaseResult (
