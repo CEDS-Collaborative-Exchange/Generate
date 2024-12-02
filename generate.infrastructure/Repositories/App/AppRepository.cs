@@ -338,7 +338,7 @@ namespace generate.infrastructure.Repositories.App
             return results;
         }
 
-        public IQueryable<CategorySet> GetCategorySets(string reportCode, string reportYear, string reportLevel = null)
+        public IQueryable<CategorySet> GetCategorySets(string reportCode, string reportYear, string reportLevel)
         {
             IQueryable<CategorySet> categorySets = _context.Set<CategorySet>()
             .Include(x => x.TableType)

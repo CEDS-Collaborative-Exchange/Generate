@@ -33,8 +33,6 @@ namespace generate.infrastructure.Services
 
 		private string reportType = "edfactsreport";
 
-        private int childCountDateMonth = 10;
-        private int childCountDateDay = 1;
 
         public EdFactsReportService(
             IAppRepository appRepository,
@@ -54,21 +52,7 @@ namespace generate.infrastructure.Services
             _factOrganizationCountRepository = factOrganizationCountRepository;
 			_factOrganizationStatusCountRepository = factOrganizationStatusCountRepository;
 
-			ToggleResponse childCountDate = _appRepository.Find<ToggleResponse>(r => r.ToggleQuestion.EmapsQuestionAbbrv == "CHDCTDTE").FirstOrDefault();
-            if (childCountDate != null)
-            {
-                if (childCountDate.ResponseValue.Contains("/"))
-                {
-                    string[] childCountDateArray = childCountDate.ResponseValue.Split('/');
-                    if (childCountDateArray.Length == 2)
-                    {
-                        int.TryParse(childCountDateArray[0], out childCountDateMonth);
-                        int.TryParse(childCountDateArray[1], out childCountDateDay);
-                    }
-                }
-
-            }
-
+			
         }
 
         public GenerateReportDataDto GetReportDto(string reportCode, string reportLevel, string reportYear, string categorySetCode, int reportSort = 1, int pageSize = 10, int page = 1)
