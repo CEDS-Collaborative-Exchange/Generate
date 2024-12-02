@@ -10,6 +10,7 @@ using generate.core.Interfaces.Repositories.RDS;
 namespace generate.web.Controllers.Api.ODS
 {
     [Route("api/ods/organizations")]
+    [ApiController]
     public class OrganizationController : Controller
     {
         private IIDSRepository _idsRepository;

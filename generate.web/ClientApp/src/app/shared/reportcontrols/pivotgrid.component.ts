@@ -21,9 +21,9 @@ import { IAppConfig } from '../../models/app-config.model';
 import { Subscription } from 'rxjs';
 
 
-declare let saveAs: any;
-declare let componentHandler: any;
-declare let alphanum: any;
+declare var saveAs: any;
+declare var componentHandler: any;
+declare var alphanum: any;
 
 @Component({
     selector: 'generate-app-pivotgrid',
@@ -76,8 +76,6 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
         this.appConfig.getConfig().subscribe((res: IAppConfig) => {
             this.pageSize = res.pageSize;
         });
-
-        //console.log('Construct');
 
         this.reportDataDto = <GenerateReportDataDto>{};
 
@@ -190,10 +188,6 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
 
     populateReport(ispageUpdated: boolean) {
 
-        console.log('populate');
-        console.log('Report Level is: ' + this.reportParameters.reportLevel + ' ' + this.reportParameters.reportYear + ' ' + this.reportParameters.reportCode + ' ' + this.reportParameters.reportCategorySetCode);
-        console.log('Page size is : ' + this.pageSize);
-
         this.isSubmissionFileAvailable = false;
 
 
@@ -263,7 +257,6 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
 
                                 this.setPageArray();
 
-                                //console.log(this.cvData.itemCount);
                                 if (this.cvData.length > 0) { this.hasRecords = true; }
                                 else if (this.reportDataDto.dataCount === -1) { this.hasRecords = true; }
                                 else { this.hasRecords = false; }
@@ -274,6 +267,7 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
 
                             //this.subscriptions.forEach(subscription => subscription.unsubscribe());
                         }
+                        
 
                     },
                     error => this.errorMessage = <any>error));
@@ -344,14 +338,12 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
     }
 
     moveCurrentToNext(s, e) {
-        console.log('Refresh the grid');
         let cv = this.cvData;
         cv.refresh();
 
     }
 
     export() {
-        console.log("ExportToExcel");
         let sheetName = this.reportParameters.reportCode.toUpperCase();
         let reportCategorySetCode = this.reportParameters.reportCategorySetCode !== undefined ? this.reportParameters.reportCategorySetCode : '';
         let fileName = this.reportParameters.reportCode.toUpperCase() + ' - ' + this.reportParameters.reportYear + ' - ' + this.reportParameters.reportLevel.toUpperCase() + ' - ' + reportCategorySetCode + '.xlsx';
@@ -486,7 +478,6 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
         let fileName = stateCode + reportLevel.toUpperCase() + version + '.' + format;
         if (this.generateFile !== undefined) {
             fileName = stateCode + reportLevel.toUpperCase() + this.generateFile.reportTypeAbbreviation.slice(0, 9) + version + '.' + format;
-            console.log(fileName);
         }
 
 
@@ -517,8 +508,6 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
     }
 
     setGridPage() {
-        console.log('Selected Page is: ' + this.gridPageNumber);
-        console.log('Page Count is: ' + this.gridPageCount);
         this.populateReport(true);
         return false;
     }

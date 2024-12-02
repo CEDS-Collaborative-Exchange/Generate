@@ -99,6 +99,7 @@ else if ("OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:User
                     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
     builder.Services.AddAuthorization();
 
+
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddUserStore<ApplicationUserStore<ApplicationUser>>()
     .AddRoleStore<ApplicationRoleStore>()

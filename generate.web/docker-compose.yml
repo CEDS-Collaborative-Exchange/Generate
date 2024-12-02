@@ -1,7 +1,7 @@
 version: '3'
 services:
   generate:
-    image: svuyuru/generate.web:V11.3
+    image: svuyuru/generate.web:V12.1
     ports:
             - 8080:80
     build: 

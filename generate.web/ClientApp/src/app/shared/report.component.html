@@ -39,19 +39,19 @@
             </div>
         </div>
 
-        <div *ngIf="currentReport !== undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
+        <div class="mdl-cell {{parameterColumnSpanCss()}}">
             <div class="generate-app-report-controls__sectiontitle">Year</div>
             <div>
                 <generate-app-combo-box #comboYear class="generate-app-report-controls__year" [itemsSource]="submissionYears" [isEditable]="false" (selectedIndexChanged)="setReportYear($event, comboYear)"></generate-app-combo-box>
             </div>
         </div>
 
-        <div *ngIf="currentReport === undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
+        <!--<div *ngIf="currentReport === undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
             <div class="generate-app-report-controls__sectiontitle">Year</div>
             <div>
                 <generate-app-combo-box #comboYear class="generate-app-report-controls__year" [isReadOnly]="true" [isEditable]="false" [itemsSource]="submissionYears"></generate-app-combo-box>
             </div>
-        </div>
+        </div>-->
 
         <div *ngIf="currentReport !== undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
             <div class="generate-app-report-controls__sectiontitle">Level</div>

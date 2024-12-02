@@ -10,6 +10,7 @@ using System.Linq;
 namespace generate.web.Controllers.Api.ODS
 {
     [Route("api/ods/k12Sea")]
+    [ApiController]
     public class k12SeaController : Controller
     {
         private IIDSRepository _idsRepository;

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/generatereporttypes")]
+    [ApiController]
     public class GenerateReportTypeController: Controller
     {
         private readonly IAppRepository _appRepository;

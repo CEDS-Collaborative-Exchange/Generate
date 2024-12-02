@@ -27,8 +27,6 @@ namespace generate.infrastructure.Services
         private IFactStudentCountRepository _factStudentCountRepository;
         private IFactStudentDisciplineRepository _factStudentDisciplineRepository;
 
-        private int childCountDateMonth = 10;
-        private int childCountDateDay = 1;
 
         public DataPopulationSummaryService(
             IAppRepository appRepository,
@@ -43,20 +41,6 @@ namespace generate.infrastructure.Services
             _factStudentCountRepository = factStudentCountRepository;
             _factStudentDisciplineRepository = factStudentDisciplineRepository;
 
-            ToggleResponse childCountDate = _appRepository.Find<ToggleResponse>(r => r.ToggleQuestion.EmapsQuestionAbbrv == "CHDCTDTE").FirstOrDefault();
-            if (childCountDate != null)
-            {
-                if (childCountDate.ResponseValue.Contains("/"))
-                {
-                    string[] childCountDateArray = childCountDate.ResponseValue.Split('/');
-                    if (childCountDateArray.Length == 2)
-                    {
-                        int.TryParse(childCountDateArray[0], out childCountDateMonth);
-                        int.TryParse(childCountDateArray[1], out childCountDateDay);
-                    }
-                }
-
-            }
 
         }
 
@@ -691,15 +675,15 @@ namespace generate.infrastructure.Services
                             StateName = g.Key.StateAbbreviationDescription,
                             //OrganizationId = g.Key.OrganizationId,
                             OrganizationName = g.Key.OrganizationName,
-                            d03086 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03086").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03087 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03087").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03100 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03100").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03154 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03154").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03155 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03155").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03101 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03101").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03102 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03102").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            Missing = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "MISSING").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            Total = g.Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
+                            d03086 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03086").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03087 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03087").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03100 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03100").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03154 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03154").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03155 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03155").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03101 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03101").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03102 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03102").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            Missing = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "MISSING").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            Total = g.Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
                         });
 
 
@@ -747,15 +731,15 @@ namespace generate.infrastructure.Services
                             StateName = g.Key.StateAbbreviationDescription,
                             //OrganizationId = g.Key.OrganizationId,
                             OrganizationName = g.Key.OrganizationName,
-                            d03086 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03086").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03087 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03087").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03100 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03100").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03154 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03154").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03155 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03155").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03101 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03101").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            d03102 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03102").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            Missing = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "MISSING").Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
-                            Total = g.Sum(c => ((int?)c.DisciplineCount ?? 0) > 0 ? 1 : 0),
+                            d03086 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03086").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03087 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03087").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03100 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03100").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03154 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03154").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03155 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03155").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03101 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03101").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            d03102 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03102").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            Missing = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "MISSING").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
+                            Total = g.Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
                         });
 
                     foreach (var queryItem in queryDim)

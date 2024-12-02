@@ -72,7 +72,7 @@ namespace generate.console
             string environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
 
 
-            if (environment == null)
+            if (environment == "")
             {
                 environment = "development";
             }
@@ -105,7 +105,7 @@ namespace generate.console
                 }
             }
 
-            if (commandLineArguments.Count > 0)
+            if (!commandLineArguments.Any())
             {
                 Console.WriteLine(GetHelpText());
                 return;
@@ -161,10 +161,11 @@ namespace generate.console
         {
             DateTime startTime = DateTime.UtcNow;
 
+            string[] validTasks = ["help", "update", "testdata"];
             string taskToRun = commandLineArguments[0].ToLower();
             const string invalidString = "Invalid Arguments";
 
-            if (taskToRun != "help" && taskToRun != "update" && taskToRun != "testdata")
+            if (!validTasks.Any(t => t == taskToRun))
             {
                 Console.WriteLine(invalidString);
                 Console.WriteLine("-----------------------");
@@ -183,21 +184,7 @@ namespace generate.console
                     break;
 
                 case "update":
-                    IDbUpdaterService dbUpdaterService = serviceProvider.GetService<IDbUpdaterService>();
-                    DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory());
-                    string rootDir = di.Parent.FullName;
-
-                    Console.WriteLine("Update Path = " + rootDir + "\\generate.web");
-
-                    if (environment == "test" || environment == "stage")
-                    {
-                        dbUpdaterService.Update(true, "D:\\apps\\generate.web." + environment);
-                    }
-                    else
-                    {
-                        dbUpdaterService.Update(true, rootDir + "\\generate.web");
-                    }
-
+                    Update(environment);
                     break;
 
                 case "testdata":
@@ -212,7 +199,7 @@ namespace generate.console
                     int numberOfYears = 1;
                     string dataStandardType = "ceds";
 
-                    if (commandLineArguments.Count < 8)
+                    if (commandLineArguments.Count < 9)
                     {
                         Console.WriteLine("Insufficient Arguments");
                         Console.WriteLine("-----------------------");
@@ -220,155 +207,86 @@ namespace generate.console
                         return;
                     }
 
-                    if (commandLineArguments.Count >= 2)
-                    {
-                        testDataType = commandLineArguments[1].ToLower();
+                    string[] validTypes = ["ids", "rds", "staging"];
+                    testDataType = commandLineArguments[1].ToLower();
 
-                        if (testDataType != "ids" && testDataType != "rds" && testDataType != "staging")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
+                    if (!validTypes.Any(t => t == testDataType))
+                    {
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
                     }
 
-                    if (commandLineArguments.Count >= 3)
+                    int.TryParse(commandLineArguments[2], out seed);
+                    int.TryParse(commandLineArguments[3], out quantityOfStudents);
+
+                    string[] validFormatTypes = ["json", "sql", "c#"];
+                    formatType = commandLineArguments[4].ToLower();
+
+                    if (!validFormatTypes.Any(t => t == formatType))
                     {
-                        int.TryParse(commandLineArguments[2], out seed);
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
                     }
-
-                    if (commandLineArguments.Count >= 4)
+                    
+                    try
                     {
-                        int.TryParse(commandLineArguments[3], out quantityOfStudents);
+                        schoolYear = Convert.ToInt32(commandLineArguments[5]);
                     }
-
-                    if (commandLineArguments.Count >= 5)
+                    catch (Exception)
                     {
-                        formatType = commandLineArguments[4].ToLower();
-
-                        if (formatType != "json" && formatType != "sql" && formatType != "c#")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-                    }
-
-                    if (commandLineArguments.Count >= 6)
-                    {
-                        try
-                        {
-                            schoolYear = Convert.ToInt32(commandLineArguments[5]);
-                        }
-                        catch (Exception)
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-
-                        if (outputType != "console" && outputType != "file" && outputType != "execute")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-
-                        if (outputType == "execute" && formatType != "sql")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-                    }
-
-                    if (commandLineArguments.Count >= 7)
-                    {
-                        numberOfYears = Convert.ToInt32(commandLineArguments[6]);
-                        if(numberOfYears > 4) { numberOfYears = 4; }
-
-                        if (numberOfYears < 1)
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-
-                    }
-
-                    if (commandLineArguments.Count >= 8)
-                    {
-                        dataStandardType = commandLineArguments[7].ToLower();
-
-                        if (dataStandardType != "ceds" && dataStandardType != "non-ceds")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-
-                    }
-
-                    if (commandLineArguments.Count >= 9)
-                    {
-                        outputType = commandLineArguments[8].ToLower();
-
-                        if (outputType != "console" && outputType != "file" && outputType != "execute")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
-
-                        if (outputType == "execute" && formatType != "sql")
-                        {
-                            Console.WriteLine(invalidString);
-                            Console.WriteLine("-----------------------");
-                            Console.WriteLine(GetHelpText());
-                            return;
-                        }
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
                     }
 
 
-                    var outputTypeToGenerate = outputType;
+                    numberOfYears = Convert.ToInt32(commandLineArguments[6]);
+                    if (numberOfYears > 4) { numberOfYears = 4; }
 
-                    if (outputType == "execute")
+                    if (numberOfYears < 1)
                     {
-                        outputTypeToGenerate = "file";
-                    }
-
-                    IOptions<AppSettings> appSettings = serviceProvider.GetService<IOptions<AppSettings>>();
-
-                    if (testDataType == "staging")
-                    {
-                        ITestDataInitializer testDataInitializer = serviceProvider.GetService<ITestDataInitializer>();
-                        IStagingTestDataGenerator stagingTestDataGenerator = serviceProvider.GetService<IStagingTestDataGenerator>();
-                        stagingTestDataGenerator.GenerateTestData(seed, quantityOfStudents, schoolYear, numberOfYears, formatType, outputTypeToGenerate, dataStandardType, Directory.GetCurrentDirectory(), testDataInitializer);
-                    }
-                    else if (testDataType == "ids")
-                    {
-                        IIdsTestDataGenerator idsTestDataGenerator = serviceProvider.GetService<IIdsTestDataGenerator>();
-                        idsTestDataGenerator.GenerateTestData(seed, quantityOfStudents, schoolYear, formatType, outputTypeToGenerate, Directory.GetCurrentDirectory());
-                    }
-                    else if (testDataType == "rds")
-                    {
-                        IRdsTestDataGenerator rdsTestDataGenerator = serviceProvider.GetService<IRdsTestDataGenerator>();
-                        rdsTestDataGenerator.GenerateTestData(seed, quantityOfStudents, formatType, outputTypeToGenerate, Directory.GetCurrentDirectory());
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
                     }
 
-                    if (outputType == "execute")
+                    dataStandardType = commandLineArguments[7].ToLower();
+
+                    if (dataStandardType != "ceds" && dataStandardType != "non-ceds")
                     {
-                        ITestDataInitializer testDataInitializer = serviceProvider.GetService<ITestDataInitializer>();
-                        testDataInitializer.ExecuteTestData(testDataType, JobCancellationToken.Null, Directory.GetCurrentDirectory());
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
                     }
+
+                    outputType = commandLineArguments[8].ToLower();
+                    string[] validOutputTypes = ["console", "file", "execute"];
+                    if (!validOutputTypes.Any(t => t == outputType))
+                    {
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
+                    }
+
+                    if (outputType == "execute" && formatType != "sql")
+                    {
+                        Console.WriteLine(invalidString);
+                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(GetHelpText());
+                        return;
+                    }
+
+                   
+
+                    GenerateTestData(testDataType, seed, quantityOfStudents, schoolYear, numberOfYears, formatType, outputType, dataStandardType);
 
                     break;
 
@@ -382,6 +300,55 @@ namespace generate.console
             Console.WriteLine("Duration = " + duration.ToString());
 
 
+        }
+
+        public static void GenerateTestData(string testDataType, int seed, int quantityOfStudents, int schoolYear, int numberOfYears, string formatType, string outputType, string dataStandardType)
+        {
+            string outputTypeToGenerate = outputType;
+
+            if (outputType == "execute")
+            {
+                outputTypeToGenerate = "file";
+            }
+
+            if (testDataType == "staging")
+            {
+                ITestDataInitializer testDataInitializer = serviceProvider.GetService<ITestDataInitializer>();
+                IStagingTestDataGenerator stagingTestDataGenerator = serviceProvider.GetService<IStagingTestDataGenerator>();
+                stagingTestDataGenerator.GenerateTestData(seed, quantityOfStudents, schoolYear, numberOfYears, formatType, outputTypeToGenerate, dataStandardType, Directory.GetCurrentDirectory(), testDataInitializer);
+            }
+            else if (testDataType == "ids")
+            {
+                IIdsTestDataGenerator idsTestDataGenerator = serviceProvider.GetService<IIdsTestDataGenerator>();
+                idsTestDataGenerator.GenerateTestData(seed, quantityOfStudents, schoolYear, formatType, outputTypeToGenerate, Directory.GetCurrentDirectory());
+            }
+            else if (testDataType == "rds")
+            {
+                IRdsTestDataGenerator rdsTestDataGenerator = serviceProvider.GetService<IRdsTestDataGenerator>();
+                rdsTestDataGenerator.GenerateTestData(seed, quantityOfStudents, formatType, outputTypeToGenerate, Directory.GetCurrentDirectory());
+            }
+
+            if (outputType == "execute")
+            {
+                ITestDataInitializer testDataInitializer = serviceProvider.GetService<ITestDataInitializer>();
+                testDataInitializer.ExecuteTestData(testDataType, JobCancellationToken.Null, Directory.GetCurrentDirectory());
+            }
+        }
+
+        public static void Update(string environment)
+        {
+            IDbUpdaterService dbUpdaterService = serviceProvider.GetService<IDbUpdaterService>();
+            DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory());
+            string rootDir = di.Parent.FullName;
+            string updatePath = rootDir + "\\generate.web";
+
+            if (environment == "test" || environment == "stage")
+            {
+                updatePath = "D:\\apps\\generate.web." + environment;
+            }
+
+            Console.WriteLine("Update Path = " + updatePath);
+            dbUpdaterService.Update(true, updatePath);
         }
 
 

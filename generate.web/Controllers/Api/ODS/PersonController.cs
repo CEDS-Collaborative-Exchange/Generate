@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace generate.web.Controllers.Api.ODS
 {
     [Route("api/ods/persons")]
+    [ApiController]
     public class PersonController: Controller
     {
         private IIDSRepository _idsRepository;

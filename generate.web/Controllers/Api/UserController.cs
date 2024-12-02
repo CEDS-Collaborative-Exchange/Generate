@@ -19,19 +19,22 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
+using System.Runtime.Versioning;
 
 namespace generate.web.Controllers.Api
 {
 
     [Route("api/users")]
     [Authorize]
+    [ApiController]
+    [SupportedOSPlatform("windows")]
     public class UserController : Controller
     {
         public UserManager<ApplicationUser> UserManager { get; private set; }
         public SignInManager<ApplicationUser> SignInManager { get; private set; }
 
         private readonly ILogger _logger;
-        private IConfiguration _configuration;
+        //private IConfiguration _configuration;
 
         public UserController(IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, ILogger<UserController> logger, ILogger<ApplicationClaimsPrincipleFactory> principleFactoryLogger, IConfiguration configuration)
         {

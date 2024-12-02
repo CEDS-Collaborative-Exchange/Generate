@@ -26,7 +26,7 @@ export class FSMetadataUpdate extends BaseService {
                         this.log(`callFSMetaServc`);
                     }),
                     catchError(err => {
-                        this.handleError
+                        this.handleError;
                         return of(err.error);
                     })  
               );
@@ -46,7 +46,7 @@ export class FSMetadataUpdate extends BaseService {
                     this.log(`getMetadataStatus`);
                 }),
                 catchError(err => {
-                    this.handleError
+                    this.handleError;
                     return of(err.error);
                 })
             );

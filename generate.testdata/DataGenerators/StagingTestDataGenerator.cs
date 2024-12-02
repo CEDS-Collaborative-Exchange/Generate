@@ -31,7 +31,6 @@ namespace generate.testdata.DataGenerators
         private readonly IStagingTestDataProfile _testDataProfile;
         private readonly ILoggerFactory _loggerFactory;
         private readonly IOptions<DataSettings> _dataSettings;
-        private readonly IOptions<AppSettings> _appSettings;
 
 
         public IdsReferenceData IdsReferenceData { get; private set; }
@@ -96,8 +95,7 @@ namespace generate.testdata.DataGenerators
             ITestDataHelper testDataHelper,
             IStagingTestDataProfile testDataProfile,
             ILoggerFactory loggerFactory,
-            IOptions<DataSettings> dataSettings,
-            IOptions<AppSettings> appSettings
+            IOptions<DataSettings> dataSettings
         )
         {
             _outputHelper = outputHelper ?? throw new ArgumentNullException(nameof(outputHelper));
@@ -105,7 +103,6 @@ namespace generate.testdata.DataGenerators
             _testDataProfile = testDataProfile ?? throw new ArgumentNullException(nameof(testDataProfile));
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
             _dataSettings = dataSettings ?? throw new ArgumentNullException(nameof(dataSettings));
-            _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         }
 
         public string NewStudentIdentifierState(Random rnd)
@@ -1587,7 +1584,7 @@ namespace generate.testdata.DataGenerators
                 }
 
                 AppendDisciplineData(rnd, s, ideaIndicator);
-                AppendAssessmentResults(rnd, testData.Assessments, s);
+                AppendAssessmentResults(rnd, testData.Assessments, s, SchoolYear);
 
             });
 
@@ -2059,7 +2056,7 @@ namespace generate.testdata.DataGenerators
                 }
 
                 AppendDisciplineData(rnd, s, ideaIndicator);
-                AppendAssessmentResults(rnd, testData.Assessments, s);
+                AppendAssessmentResults(rnd, testData.Assessments, s, SchoolYear);
 
             });
 
@@ -2422,7 +2419,7 @@ namespace generate.testdata.DataGenerators
             return grade;
         }
 
-        private void AppendAssessmentResults(Random rnd, List<core.Models.Staging.Assessment> assessments, K12Enrollment k12Enrollment)
+        private void AppendAssessmentResults(Random rnd, List<core.Models.Staging.Assessment> assessments, K12Enrollment k12Enrollment, int schoolYear)
         {
             int numberOfAssessmentAdministrations = 2;
 
@@ -2470,7 +2467,7 @@ namespace generate.testdata.DataGenerators
                         AssessmentTitle = assessmentAdministration.AssessmentTitle,
                         AssessmentType = assessmentAdministration.AssessmentType,
                         GradeLevelWhenAssessed = k12Enrollment.GradeLevel,
-                        SchoolYear = SchoolYear.ToString(),
+                        SchoolYear = schoolYear.ToString(),
                         StateFullAcademicYear = fullYearStatus ? true : false,
                         LEAFullAcademicYear = fullYearStatus ? true : false,
                         SchoolFullAcademicYear = fullYearStatus ? true : false
@@ -2686,6 +2683,7 @@ namespace generate.testdata.DataGenerators
             {
                 o.School_TitleISchoolStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIschoolStatusDistribution);
                 o.School_GunFreeSchoolsActReportingStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefGunFreeSchoolsActReportingStatusDistribution);
+                o.School_SchoolDangerousStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSchoolDangerousStatusDistribution);
                 o.School_Type = this.IdsReferenceData.RefSchoolTypes.Single(x => x.RefSchoolTypeId == Convert.ToInt32(o.School_Type)).Code;
                 //FS129 columns
                 o.School_SharedTimeIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.SharedTimeOrganizationIndicatorValueDistribution);

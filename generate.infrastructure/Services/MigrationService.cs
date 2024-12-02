@@ -18,21 +18,19 @@ namespace generate.infrastructure.Services
 {
     public class MigrationService : IMigrationService
     {
-        private readonly IOptions<AppSettings> _appSettings;
         private readonly IAppRepository _appRepository;
         private readonly IRDSRepository _rdsRepository;
         private readonly ITestDataInitializer _testDataInitializer;
         private readonly IHangfireHelper _hangfireHelper;
 
         public MigrationService(
-            IOptions<AppSettings> appSettings,
             IAppRepository appRepository,
             IRDSRepository rdsRepository,
             ITestDataInitializer testDataInitializer,
             IHangfireHelper hangfireHelper
             )
         {
-            _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
+
             _appRepository = appRepository ?? throw new ArgumentNullException(nameof(appRepository));
             _rdsRepository = rdsRepository ?? throw new ArgumentNullException(nameof(rdsRepository));
             _testDataInitializer = testDataInitializer ?? throw new ArgumentNullException(nameof(testDataInitializer));

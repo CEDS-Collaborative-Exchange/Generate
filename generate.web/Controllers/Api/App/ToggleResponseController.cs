@@ -15,6 +15,7 @@ namespace generate.web.Controllers.Api.App
     }
     [Route("api/app/toggleresponses")]
     [ResponseCache(Duration = 0)]
+    [ApiController]
     public class ToggleResponseController : Controller
     {
         private IAppRepository _toggleResponseRepository;

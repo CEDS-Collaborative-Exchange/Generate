@@ -52,27 +52,29 @@ namespace generate.infrastructure.Services
         string _fsMetaCHRLayoutFileName;
         string _bkfsMetaFileLoc;
 
-        readonly string initSubdir = "DataSetYearVersionByAllAbbrv";
-        readonly string detailSubdir = "DataSetYearVersionDetailsByAllAbbrv";
-        readonly string layoutSubdir = "DataSetYearVersionFSLayoutDetailsByAllAbbrv";
-        readonly string configurationCategory = "Metadata";
-        readonly string essKey = "ESSMetadata";
-        readonly string chrKey = "CHRTRMetadata";
-        readonly string splitKey = "||";
-        readonly string dataMigrationStatusName = "Processing";
-        readonly string dataMigrationTypeName = "Report Warehouse";
-        readonly string bkESSflname = "ESS.json";
-        readonly string bkCHRflname = "CHRTR.json";
-        readonly string bkESSflnameFLay = "ESSFLay.json";
-        readonly string bkCHRflnameFLay = "CHRTRFLay.json";
+        string initSubdir = "DataSetYearVersionByAllAbbrv";
+        string detailSubdir = "DataSetYearVersionDetailsByAllAbbrv";
+        string layoutSubdir = "DataSetYearVersionFSLayoutDetailsByAllAbbrv";
+        string configurationCategory = "Metadata";
+        string essKey = "ESSMetadata";
+        string chrKey = "CHRTRMetadata";
+        string splitKey = "||";
+        string dataMigrationStatusName = "Processing";
+        string dataMigrationTypeName = "Report Warehouse";
+        string bkESSflname = "ESS.json";
+        string bkCHRflname = "CHRTR.json";
+        string bkESSflnameFLay = "ESSFLay.json";
+        string bkCHRflnameFLay = "CHRTRFLay.json";
         string bkESSFLay = string.Empty;
         string bkCHRFLay = string.Empty;
         bool _reloadFromBackUp = false;
-        readonly string FSMetalogKey = "MetaLastRunLog";
-        readonly string FSMetasStaKey = "metaStatus";
-        readonly string FSMetastausok = "OK";
-        readonly string FSMetastausFail = "FAILED";
-        readonly string FSMetastausProcessing = "PROCESSING";
+        string FSMetalogKey = "MetaLastRunLog";
+        string FSMetasStaKey = "metaStatus";
+        string FSMetastausok = "OK";
+        string FSMetastausFail = "FAILED";
+        string FSMetastausProcessing = "PROCESSING";
+        const string pub = "Published";
+        const string strRep1 = "{\"DataSetYearVersionDetails\":";
 
         Dictionary<string, string> newCatInfo = new Dictionary<string, string>();
 
@@ -129,17 +131,13 @@ namespace generate.infrastructure.Services
                 UpdateKeyinGenConfig(FSMetalogKey, "The metadata is currently being processed.");
                 UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausProcessing);
 
-                if (_useWSforFSMetaUpd == true)
+                if (_useWSforFSMetaUpd)
                 {
 
-                    //string initCallUrl = "https://edfacts.ed.gov/generate/DataSetYearVersionByAllAbbrv";// this.GetUpdateUrl();            
                     string initCallUrl = _fsWSURL + initSubdir;
                     var client = new RestClient(new RestClientOptions(new Uri(initCallUrl)));
                     var request = new RestRequest("", Method.Get);
                     var response = client.Execute(request);
-
-                    // Check why not working.
-                    //DataSetYearVersions pendingUpdates1 = JsonConvert.DeserializeObject<DataSetYearVersions>(response.Content);
 
                     cont = response.Content;
                     cont = cont.Replace("{\"DataSetYearVersions\":", "").Replace("]}", "]");
@@ -175,12 +173,12 @@ namespace generate.infrastructure.Services
 
                 List<DataSetYearVersionDetailsByAllAbbrv> DSYVrdetail = null;
                 var edfacts = string.Empty;
-                if (_useWSforFSMetaUpd == true)
+                if (_useWSforFSMetaUpd)
                 {
                     UpdateKeyinGenConfig(FSMetalogKey, "The metadata is currently being processed.");
                     UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausProcessing);
-                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == "Published").Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
-                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == "Published" && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
+                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
+                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
                     nxtYear = maxSubmissionYear + 1;
                     fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
 
@@ -196,7 +194,7 @@ namespace generate.infrastructure.Services
                     var response1 = client1.Execute(request1);
 
                     edfacts = response1.Content;
-                    edfacts = edfacts.Replace("{\"DataSetYearVersionDetails\":", "").Replace("]}", "]");
+                    edfacts = edfacts.Replace(strRep1, "").Replace("]}", "]");
                     DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(edfacts);
                 }
                 else
@@ -206,7 +204,7 @@ namespace generate.infrastructure.Services
                     using (StreamReader r = new StreamReader(fileloc))
                     {
                         edfacts = r.ReadToEnd();
-                        edfacts = edfacts.Replace("{\"DataSetYearVersionDetails\":", "").Replace("]}", "]");
+                        edfacts = edfacts.Replace(strRep1, "").Replace("]}", "]");
                     }
 
                     DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(edfacts);
@@ -252,7 +250,7 @@ namespace generate.infrastructure.Services
                 int year = 0;
                 string maxVersNum = string.Empty;
 
-                if (_useWSforFSMetaUpd == true)
+                if (_useWSforFSMetaUpd)
                 {
 
                     var charterQuery1 = from n in initDSYVr
@@ -266,22 +264,22 @@ namespace generate.infrastructure.Services
                     var charterQuery3 = charterQuery2.FirstOrDefault();
 
                     var charterQuery4 = from n in initDSYVr
-                                        where n.DataSetName == charterDSName && n.VersionStatusDesc == "Published" && n.YearName.Contains("SY " + charterQuery3.Year)
+                                        where n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + charterQuery3.Year)
                                         orderby n.VersionNumber descending
                                         select new { Year = n.YearName.Replace("SY ", "").Substring(0, 4), versNum = n.VersionNumber.ToString() };
 
-                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == "Published").Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
-                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == "Published" && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
+                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
+                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
                     nxtYear = maxSubmissionYear + 1;
                     fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
-                    if (charterQuery4.FirstOrDefault() is not null){ 
-                        year = int.Parse(charterQuery4.FirstOrDefault().Year);
-                        maxVersNum = charterQuery4.FirstOrDefault().versNum;
-                    }
+                    year = charterQuery4 is null  ? 0 : int.Parse(charterQuery4.FirstOrDefault().Year);
+                    maxVersNum = charterQuery4 is null ? "" : charterQuery4.FirstOrDefault().versNum;
+
 
                     bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(false, maxSubmissionYear.ToString(), maxVersionNumber);
                     if (!checkPrevFSPop) { skipCHRPop = true; goto skipCHRPopulation; }
 
+                    
                     string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
                     detailUrl = string.Format(detailUrl, collectName, charterDSNameAbbrv, maxVersionNumber.ToString(), fqYrName);
 
@@ -290,7 +288,7 @@ namespace generate.infrastructure.Services
                     var response1 = client1.Execute(request1);
 
                     chrtr = response1.Content;
-                    chrtr = chrtr.Replace("{\"DataSetYearVersionDetails\":", "").Replace("]}", "]");
+                    chrtr = chrtr.Replace(strRep1, "").Replace("]}", "]");
                     DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(chrtr);
 
                 }
@@ -301,7 +299,7 @@ namespace generate.infrastructure.Services
                     using (StreamReader r = new StreamReader(fileloc))
                     {
                         chrtr = r.ReadToEnd();
-                        chrtr = chrtr.Replace("{\"DataSetYearVersionDetails\":", "").Replace("]}", "]");
+                        chrtr = chrtr.Replace(strRep1, "").Replace("]}", "]");
                     }
 
                     DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(chrtr);
@@ -337,7 +335,7 @@ namespace generate.infrastructure.Services
 
                 #endregion
 
-                if (newCatInfo.Count() > 0)
+                if (newCatInfo.Count > 0)
                 {
 
                     var logid = Guid.NewGuid().ToString();
@@ -396,14 +394,12 @@ namespace generate.infrastructure.Services
                 var time = DateTime.Now;
                 var logid = Guid.NewGuid().ToString();
 
-                string err = Environment.NewLine;
                 string err2 = "Log ID: " + logid;
                 string err3 = "----- Error in FS Metadata population-----";
                 string err4 = "Time : " + time.ToString();
                 string err5 = "Error Message : " + x;
                 string err6 = "InnerException : " + y;
                 string err7 = "----- END -----";
-                string err8 = Environment.NewLine;
 
                 _logger.LogCritical("");
                 _logger.LogCritical(err2);
@@ -492,7 +488,7 @@ namespace generate.infrastructure.Services
                           where distFSinDS.Contains(x.ReportCode.Replace("c", ""))
                           select new { x.GenerateReportId, x.ReportCode, x.ReportName, x.ReportSequence, x.ReportShortName };
 
-            var FSrepID = repInfo.Select(distFSinDS => distFSinDS.GenerateReportId).Distinct().ToList();
+            var FSrepID = repInfo.Select(xx => xx.GenerateReportId).Distinct().ToList();
 
             IQueryable<CategorySet> catsetbyYr = _appDbContext.CategorySets
                                                 .Where(cs => cs.SubmissionYear == yearAbbrv && FSrepID.Contains(cs.GenerateReportId))
@@ -2431,7 +2427,7 @@ namespace generate.infrastructure.Services
         {
 
             var edfacts1 = string.Empty;
-            if (_useWSforFSMetaUpd == true)
+            if (_useWSforFSMetaUpd)
             {
 
                 //_fsLayoutURL = "https://edfacts.ed.gov/generate/DataSetYearVersionFSLayoutDetailsByAllAbbrv"; // Remove later
@@ -2945,7 +2941,7 @@ namespace generate.infrastructure.Services
             IQueryable<GenerateConfiguration> gc = _appDbContext.GenerateConfigurations
                                                    .Where(q => q.GenerateConfigurationCategory == configurationCategory && q.GenerateConfigurationKey == (IsESSDS ? essKey : chrKey));
 
-            if (gc == null || !gc.Any())
+            if (gc is null || gc.Count() == 0)
             {
                 GenerateConfiguration _gc = new GenerateConfiguration();
                 _gc.GenerateConfigurationCategory = configurationCategory;
@@ -2957,9 +2953,12 @@ namespace generate.infrastructure.Services
             else
             {
                 GenerateConfiguration _gc = (GenerateConfiguration)gc.Where(a => a.GenerateConfigurationKey == (IsESSDS ? essKey : chrKey)).FirstOrDefault();
-                _gc.GenerateConfigurationValue = year + splitKey + vers;
-                _appDbContext.GenerateConfigurations.Update(_gc);
-                _appDbContext.SaveChanges();
+                if (_gc is not null)
+                {
+                    _gc.GenerateConfigurationValue = year + splitKey + vers;
+                    _appDbContext.GenerateConfigurations.Update(_gc);
+                    _appDbContext.SaveChanges(); 
+                }
             }
 
         }
@@ -2997,7 +2996,7 @@ namespace generate.infrastructure.Services
             IQueryable<GenerateConfiguration> gc = _appDbContext.GenerateConfigurations
                                                    .Where(q => q.GenerateConfigurationCategory == configurationCategory && q.GenerateConfigurationKey == key);
 
-            if (gc == null || !gc.Any())
+            if (gc is null || gc.Count() == 0)
             {
                 GenerateConfiguration _gc = new GenerateConfiguration();
                 _gc.GenerateConfigurationCategory = configurationCategory;
@@ -3009,9 +3008,12 @@ namespace generate.infrastructure.Services
             else
             {
                 GenerateConfiguration _gc = (GenerateConfiguration)gc.Where(a => a.GenerateConfigurationKey == key).FirstOrDefault();
-                _gc.GenerateConfigurationValue = log;
-                _appDbContext.GenerateConfigurations.Update(_gc);
-                _appDbContext.SaveChanges();
+                if (_gc is not null)
+                {
+                    _gc.GenerateConfigurationValue = log;
+                    _appDbContext.GenerateConfigurations.Update(_gc);
+                    _appDbContext.SaveChanges(); 
+                }
             }
 
         }

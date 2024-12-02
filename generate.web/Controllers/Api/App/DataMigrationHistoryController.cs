@@ -13,6 +13,7 @@ namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/datamigrationhistory")]
     [ResponseCache(Duration = 0)]
+    [ApiController]
     public class DataMigrationHistoryController: Controller
     {
         private IAppRepository _appRepository;

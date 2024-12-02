@@ -11,9 +11,9 @@ namespace generate.core.Interfaces.Services
         string GetFileDescription(string reportTypeCode, string reportCode, string reportLevel, string reportYear);
         FileSubmission GetFileSubmission(string reportTypeCode, string reportCode, string reportLevel, string reportYear);
         List<FileSubmissionColumnDto> GetFileSubmissionColumns(FileSubmission submission);
-        string GetSubmissionRow(List<string> rowData, string fileFormatType, List<FileSubmissionColumnDto> column);
+        string GetSubmissionRow(List<string> rowData, string fileFormatType, List<FileSubmissionColumnDto> columns);
         string GetFileHeader(string reportTypeCode, string reportCode, string reportLevel, string reportYear, string fileFormatType, string fileName, int totalCount);
         string GetContentType(string fileFormatType);
-        string GetFixedWidthRow(List<string> rowData, List<FileSubmissionColumnDto> column);
+        string GetFixedWidthRow(List<string> rowData, List<FileSubmissionColumnDto> columns);
     }
 }

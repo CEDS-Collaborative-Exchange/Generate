@@ -9,6 +9,7 @@ using generate.core.Interfaces.Repositories.IDS;
 namespace generate.web.Controllers.Api.ODS
 {
     [Route("api/ods/performancelevels")]
+    [ApiController]
     public class PerformanceLevelController : Controller
     {
 
