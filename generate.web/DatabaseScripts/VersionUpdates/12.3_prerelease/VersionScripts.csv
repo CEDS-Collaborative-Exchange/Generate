@@ -1,4 +1,6 @@
 VersionUpdates\\12.3_prerelease,Restore 12.2.sql,0
 VersionUpdates\\12.3_prerelease,App.Metadata.sql,0
+VersionUpdates\\12.3_prerelease\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
+VersionUpdates\\12.3_prerelease\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
 VersionUpdates\\12.3_prerelease,UpdateDbVersion.sql,0
 
