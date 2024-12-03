@@ -21,7 +21,7 @@ layout:
 
 # Release Notes 12.2
 
-### [https://youtu.be/IgzzCVS](https://youtu.be/IgzzCVSY9Nw)Required State Changes
+### Required State Changes
 
 * SQL Server: Minimum version requirement updated to 2017 or greater.
 * .NET Core Runtime: Version 8.0.10 is now required.
@@ -91,6 +91,4 @@ Generate was tested on the following operating systems and browsers:
 {% embed url="https://youtu.be/IgzzCVSY9Nw" %}
 
 
-
-{% embed url="https://youtu.be/IgzzCVSY9Nw" %}
 
