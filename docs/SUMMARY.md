@@ -102,3 +102,7 @@
 ## Hot Fixes
 
 * [Hot Fix - 4/13/2023](hot-fixes/hot-fix-4-13-2023.md)
+
+***
+
+* [Discord Guide](discord-guide.md)
