@@ -10,7 +10,7 @@ description: >-
 
 Once data has been loaded into the Generate Staging tables, the Staging Validation process can be executed within SQL Server Management Studio (SSMS). This process scans the data in corresponding staging tables and applies validation rules to determine if any data have issues.&#x20;
 
-A Staging Validation rule can apply to a particular column in a staging table or can be defined to apply validation logic across multiple columns/conditions. A rule can be associated to one or more ED_Facts_ reports. For example, Generate includes a rule that column `StudentIdentifierState` in table `Staging.K12Enrollment` is required. This rule is associated to all ED_Facts_ reports that produce student counts.&#x20;
+A Staging Validation rule can apply to a particular column in a staging table or can be defined to apply validation logic across multiple columns/conditions. A rule can be associated to one or more E&#x44;_&#x46;acts_ reports. For example, Generate includes a rule that column `StudentIdentifierState` in table `Staging.K12Enrollment` is required. This rule is associated to all E&#x44;_&#x46;acts_ reports that produce student counts.&#x20;
 
 Generate currently includes a library of over 50 pre-defined staging validation rules, located in table `Staging.StagingValidationRules`. These rules are used in over 1,000 instances across multiple Fact Types and Report Codes. The full list of rules and relationships can be viewed in `Staging.vwStagingValidationRules`.&#x20;
 
@@ -64,7 +64,7 @@ ETL developers can review the staging validation results and respond as needed t
 1. Changes to the source data.
 2. Changes to the ETL.
 3. Adjustments to mapped values in `Staging.SourceSystemReferenceData.`
-4. Review by data owners and/or ED_Facts_ coordinators to determine if any action is needed.
+4. Review by data owners and/or E&#x44;_&#x46;acts_ coordinators to determine if any action is needed.
 
 After making changes and refreshing staging data if needed, the Staging Validation process can be rerun to review the updated results.
 
@@ -78,7 +78,7 @@ The Staging Validation utility is comprised of the following components:
 
 * `StagingValidationResults` – contains the results of staging validation executions
 * `StagingvalidationRules` – contains the staging validation rules
-* `StagingValidationRules_ReportsXREF` – contains the cross-reference showing which staging validation rules apply to which ED_Facts_ reports.
+* `StagingValidationRules_ReportsXREF` – contains the cross-reference showing which staging validation rules apply to which E&#x44;_&#x46;acts_ reports.
 
 ### Staging Stored Procedures
 
@@ -89,7 +89,7 @@ The Staging Validation utility is comprised of the following components:
 
 ### Staging Views
 
-* `vwStagingValidationRules` – shows all staging validation rules and their relationship to ED_Facts_ reports
+* `vwStagingValidationRules` – shows all staging validation rules and their relationship to E&#x44;_&#x46;acts_ reports
 
 ### Viewing Existing Staging Validation Rules
 
@@ -118,7 +118,7 @@ The view shows all columns from `Staging.StagingValidationRules`, but also shows
 
 #### Understanding StagingValidationRuleId and StagingValidationRuleId\_XREF:
 
-View `vwStagingValidationRules` shows a left join on all possible combinations of Staging Tables, Staging Columns and ED_Facts_ Reports. Columns `StagingValidationRuleId` and `StagingValidationRuleId_XREF` shows if a rule exists and if/where that rule is being applied.
+View `vwStagingValidationRules` shows a left join on all possible combinations of Staging Tables, Staging Columns and E&#x44;_&#x46;acts_ Reports. Columns `StagingValidationRuleId` and `StagingValidationRuleId_XREF` shows if a rule exists and if/where that rule is being applied.
 
 | StagingValidationRuleId | StagingValidationRuleId\_XREF | Explanation                                                                                          |
 | ----------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -139,11 +139,11 @@ The Staging stored procedure named “`StagingValidation_InsertRule`” can be u
 Notice that the “Severity” for a rule is not a parameter for inserting a rule. Generate will automatically set the severity for a rule.
 {% endhint %}
 
-Also note that Generate automatically applies some validations that are not defined as a rule. For example, Generate knows which staging tables are required to contain data for certain ED_Facts_ reports. Generate also knows which staging columns must contain option set values mapped in the `SourceSystemReferenceData` table. Therefore, no rules exist in the `StagingValidationRules` table for these instances. Instead, Generate automatically applies these rules when executing the Staging Validation process, so rules do not need to be manually defined for these conditions. These automatic results will show a specific Rule Id in the results:
+Also note that Generate automatically applies some validations that are not defined as a rule. For example, Generate knows which staging tables are required to contain data for certain E&#x44;_&#x46;acts_ reports. Generate also knows which staging columns must contain option set values mapped in the `SourceSystemReferenceData` table. Therefore, no rules exist in the `StagingValidationRules` table for these instances. Instead, Generate automatically applies these rules when executing the Staging Validation process, so rules do not need to be manually defined for these conditions. These automatic results will show a specific Rule Id in the results:
 
-* \-1 This indicates that a staging table is required for the specific report and cannot be empty
-* \-2 This indicates that an option set value in a staging table is not mapped in the Generate `Staging.SourceSystemReferenceData` table.
-* \-9 This indicates that the defined rule has a syntax error and could not be executed. Any results having a -9 should be reviewed by the rule developer.
+* -1 This indicates that a staging table is required for the specific report and cannot be empty
+* -2 This indicates that an option set value in a staging table is not mapped in the Generate `Staging.SourceSystemReferenceData` table.
+* -9 This indicates that the defined rule has a syntax error and could not be executed. Any results having a -9 should be reviewed by the rule developer.
 
 ### Examples
 
@@ -208,7 +208,7 @@ having count(*) > 1',
 
 #### Adding a Conditional Rule For ALL Reports:
 
-This example shows how to add a conditional rule that applies to all ED_Facts_ reports for which the **@StagingTableName** is used. The **@FactTypeOrReportCode** value = “All”. This rule is saying that the RecordStartDateTime column in Staging.K12Enrollment must meet the condition in all ED_Facts_ reports that use the K12Enrollment table.
+This example shows how to add a conditional rule that applies to all E&#x44;_&#x46;acts_ reports for which the **@StagingTableName** is used. The **@FactTypeOrReportCode** value = “All”. This rule is saying that the RecordStartDateTime column in Staging.K12Enrollment must meet the condition in all E&#x44;_&#x46;acts_ reports that use the K12Enrollment table.
 
 ```sql
 exec Staging.StagingValidation_InsertRule

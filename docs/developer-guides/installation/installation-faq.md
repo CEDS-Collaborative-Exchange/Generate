@@ -104,7 +104,7 @@ Your SEA should make a plan to successfully move data into Generate. The [**CIID
 
 <summary>⚒️ Are there additional tools to assist an SEA in setting up the ETLs for Generate?</summary>
 
-Yes, because Generate is built on CEDS, the CEDS Align and Connect tools provide a location to map your source data systems to CEDS Elements, which will provide details about where data will be stored in Generate. Additionally, all ED_Facts_ reports in Generate have CEDS Connections. The CEDS _myConnect_ tool will show a gap analysis of your source systems against the ED_Facts_ Connection to identify any missing and/or duplicative elements. For more information, please visit [**https://ceds.ed.gov/**](https://ceds.ed.gov/).
+Yes, because Generate is built on CEDS, the CEDS Align and Connect tools provide a location to map your source data systems to CEDS Elements, which will provide details about where data will be stored in Generate. Additionally, all E&#x44;_&#x46;acts_ reports in Generate have CEDS Connections. The CEDS _myConnect_ tool will show a gap analysis of your source systems against the E&#x44;_&#x46;acts_ Connection to identify any missing and/or duplicative elements. For more information, please visit [**https://ceds.ed.gov/**](https://ceds.ed.gov/).
 
 </details>
 

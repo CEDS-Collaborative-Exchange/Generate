@@ -65,6 +65,7 @@
   * [Debug Views for Staging and the Fact tables](developer-guides/generate-utilities/debug-views-for-staging-and-the-fact-tables.md)
 * [Generate Architecture](developer-guides/generate-architecture.md)
 * [GitHub Guide](developer-guides/github-guide.md)
+* [Discord Guide](developer-guides/discord-guide.md)
 
 ## Release Notes
 
@@ -102,7 +103,3 @@
 ## Hot Fixes
 
 * [Hot Fix - 4/13/2023](hot-fixes/hot-fix-4-13-2023.md)
-
-***
-
-* [Discord Guide](discord-guide.md)

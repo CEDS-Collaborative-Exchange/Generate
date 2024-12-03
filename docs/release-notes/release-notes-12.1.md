@@ -65,7 +65,7 @@ In Generate 12.1, we have enhanced our testing processes by expanding unit and f
 
 ### Generate Enhancements
 
-The following ED_Facts_ reports were updated in this release.
+The following E&#x44;_&#x46;acts_ reports were updated in this release.
 
 #### Type of Impact:
 

@@ -103,7 +103,7 @@ Please use the following steps to create a user for the generate tool in ADSI Ed
 >
 > userPrincipalName : **svuyuru**
 >
-> msDS-UserDontExpirePassword: **True** 🚨_Set this property if you don’t want to expire user’s password._
+> msDS-UserDontExpirePassword: **True** �&#xDEA8;_&#x53;et this property if you don’t want to expire user’s password._
 
 5. Go back and set “`ms-DS-UserPasswordNotRequired`” to **False**.
 

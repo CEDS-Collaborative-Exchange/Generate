@@ -1,18 +1,18 @@
 ---
+icon: display
 description: >-
   The Center for the Integration of IDEA Data (CIID) developed the Generate
   application to improve data quality and simplify EDFacts reporting for state
   education agencies (SEAs).
-icon: display
 ---
 
 # Getting Started
 
 <figure><img src="../../.gitbook/assets/image (50).png" alt=""><figcaption><p>Screenshot of the Home page. All resources and pages within Generate can be accessed from the Home page.</p></figcaption></figure>
 
-The Center for the Integration of IDEA Data (CIID) developed the Generate application to improve data quality and simplify ED_Facts_ reporting for state education agencies (SEAs). Generate standardizes data, improves data use and reporting, and supports administrative and policy work to improve educational outcomes for all students and their families. The functionality for each of the reporting capabilities described in this guide is consistent across the various reporting options. Generate has the capability to produce reports for all ED_Facts_ files. It also includes a Data Population Summary report that provides a high-level summary of data within Generate, SPP/APR reports that provide the data needed to calculate selected indicators, and a Reports Library that includes student level data summary reports for exiting, graduation, participation in federal programs, proficiency rates, and educational environment.
+The Center for the Integration of IDEA Data (CIID) developed the Generate application to improve data quality and simplify E&#x44;_&#x46;acts_ reporting for state education agencies (SEAs). Generate standardizes data, improves data use and reporting, and supports administrative and policy work to improve educational outcomes for all students and their families. The functionality for each of the reporting capabilities described in this guide is consistent across the various reporting options. Generate has the capability to produce reports for all E&#x44;_&#x46;acts_ files. It also includes a Data Population Summary report that provides a high-level summary of data within Generate, SPP/APR reports that provide the data needed to calculate selected indicators, and a Reports Library that includes student level data summary reports for exiting, graduation, participation in federal programs, proficiency rates, and educational environment.
 
-Generate includes all ED_Facts_ reports, 4 State Performance Plan/Annual Performance (SPP/APR) reports, and 15 additional student level data summaries within the Reports Library.
+Generate includes all E&#x44;_&#x46;acts_ reports, 4 State Performance Plan/Annual Performance (SPP/APR) reports, and 15 additional student level data summaries within the Reports Library.
 
 #### SPP/APR reports:
 
@@ -42,18 +42,18 @@ Generate includes all ED_Facts_ reports, 4 State Performance Plan/Annual Perform
 
 ### Purpose <a href="#toc113439029" id="toc113439029"></a>
 
-This document provides end-user guidance for using Generate Versions 5.0+. Information or guidance pertaining to quality assurance activities for ED_Facts,_ or other reports is not included. However, the application does cite and provide links to resources where you can access information related to quality assurance or get additional support. If at any time you have an issue or question about Generate, please contact CIID at: [CIIDTA@aemcorp.com.](mailto:CIIDTA@aemcorp.com)
+This document provides end-user guidance for using Generate Versions 5.0+. Information or guidance pertaining to quality assurance activities for E&#x44;_&#x46;acts,_ or other reports is not included. However, the application does cite and provide links to resources where you can access information related to quality assurance or get additional support. If at any time you have an issue or question about Generate, please contact CIID at: [CIIDTA@aemcorp.com.](mailto:CIIDTA@aemcorp.com)
 
 Unless otherwise specified, screenshots will appear below descriptive or instructional text.
 
 ### Audience <a href="#toc113439030" id="toc113439030"></a>
 
-This User Guide contains information for ED_Facts_ coordinators, other Generate users, or anyone interested in the following questions regarding Generate:
+This User Guide contains information for E&#x44;_&#x46;acts_ coordinators, other Generate users, or anyone interested in the following questions regarding Generate:
 
 * How to request the Generate application and its tools
 * How to navigate the application
 * How to run reports
-* How to create ED_Facts_ submission files
+* How to create E&#x44;_&#x46;acts_ submission files
 * How to link to other resources for additional help with reports
 * How to use Settings
 * How to update Generate to the next version

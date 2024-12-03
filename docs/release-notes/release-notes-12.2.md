@@ -56,14 +56,14 @@ layout:
 #### Documentation Updates
 
 * Installation Requirements: Updated to reflect new system specifications.
-* [Discord User Guide:](https://applieden.sharepoint.com/:fl:/r/contentstorage/CSP_94c83c9a-ecf1-4685-ab87-bc5c25734e26/Document%20Library/LoopAppData/Discord%20User%20Guide.loop?d=wfbac682f4313444abe1bbae76e14f676\&csf=1\&web=1\&e=YLg61b\&nav=cz0lMkZjb250ZW50c3RvcmFnZSUyRkNTUF85NGM4M2M5YS1lY2YxLTQ2ODUtYWI4Ny1iYzVjMjU3MzRlMjYmZD1iJTIxbWp6SWxQSHNoVWFyaDd4Y0pYTk9KcXVsYUliV3BNVkl0VlRoMjBFVlBSbjNMc01meXpGSFJyQlZ1MVNKYnpIVSZmPTAxR0pNMjNCSlBOQ1dQV0UyREpKQ0w0RzUyNDVYQko1VFcmYz0lMkYmYT1Mb29wQXBwJnA9JTQwZmx1aWR4JTJGbG9vcC1wYWdlLWNvbnRhaW5lciZ4PSU3QiUyMnclMjIlM0ElMjJUMFJUVUh4aGNIQnNhV1ZrWlc0dWMyaGhjbVZ3YjJsdWRDNWpiMjE4WWlGdGFucEpiRkJJYzJoVllYSm9OM2hqU2xoT1QwcHhkV3hoU1dKWGNFMVdTWFJXVkdneU1FVldVRkp1TTB4elRXWjVla1pJVW5KQ1ZuVXhVMHBpZWtoVmZEQXhSMHBOTWpOQ1RFeEZUbHBNVUZJMVUwdFdSRm8yUzFOR1MwVkNXREpMVkZNJTNEJTIyJTJDJTIyaSUyMiUzQSUyMjBjZDQ3NzRmLWM2NDMtNDNhYS1hYzAzLWU5YWE2NGQ1YTRiYyUyMiU3RA%3D%3D) Added to facilitate community collaboration.
-* [Support Page:](https://applieden.sharepoint.com/:fl:/r/contentstorage/CSP_94c83c9a-ecf1-4685-ab87-bc5c25734e26/Document%20Library/LoopAppData/Support.loop?d=wcedd8a1b677c42159dfcade113ab374e\&csf=1\&web=1\&e=d3oEDg\&nav=cz0lMkZjb250ZW50c3RvcmFnZSUyRkNTUF85NGM4M2M5YS1lY2YxLTQ2ODUtYWI4Ny1iYzVjMjU3MzRlMjYmZD1iJTIxbWp6SWxQSHNoVWFyaDd4Y0pYTk9KcXVsYUliV3BNVkl0VlRoMjBFVlBSbjNMc01meXpGSFJyQlZ1MVNKYnpIVSZmPTAxR0pNMjNCSTNSTE80NDdESENWQkozN0ZONEVKMldOMk8mYz0lMkYmYT1Mb29wQXBwJnA9JTQwZmx1aWR4JTJGbG9vcC1wYWdlLWNvbnRhaW5lciZ4PSU3QiUyMnclMjIlM0ElMjJUMFJUVUh4aGNIQnNhV1ZrWlc0dWMyaGhjbVZ3YjJsdWRDNWpiMjE4WWlGdGFucEpiRkJJYzJoVllYSm9OM2hqU2xoT1QwcHhkV3hoU1dKWGNFMVdTWFJXVkdneU1FVldVRkp1TTB4elRXWjVla1pJVW5KQ1ZuVXhVMHBpZWtoVmZEQXhSMHBOTWpOQ1RFeEZUbHBNVUZJMVUwdFdSRm8yUzFOR1MwVkNXREpMVkZNJTNEJTIyJTJDJTIyaSUyMiUzQSUyMjBjZDQ3NzRmLWM2NDMtNDNhYS1hYzAzLWU5YWE2NGQ1YTRjYSUyMiU3RA%3D%3D) Consolidated resources available in the updated Generate documentation portal.
+* [Discord User Guide:](../developer-guides/discord-guide.md) Added to facilitate community collaboration.
+* [Support](../user-guide/support.md):  Consolidated resources available in the updated Generate documentation portal.
 
-#### Generate Enhancements
+### Generate Enhancements
 
-The following EDFacts reports were updated in this release.
+The following E&#x44;_&#x46;acts_ reports were updated in this release.
 
-### Type of Impact:
+#### Type of Impact:
 
 * Data – changes will improve data quality and completeness.
 * User Interface – changes impact the Generate User Interface and/or migration process.

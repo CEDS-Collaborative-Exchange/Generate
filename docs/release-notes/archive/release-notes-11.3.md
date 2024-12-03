@@ -73,7 +73,7 @@ The **Search** feature is currently case and text specific.&#x20;
 
 ### Generate Enhancements &#x20;
 
-The following ED_Facts_ reports were updated in this release.&#x20;
+The following E&#x44;_&#x46;acts_ reports were updated in this release.&#x20;
 
 #### Type of Impact:&#x20;
 

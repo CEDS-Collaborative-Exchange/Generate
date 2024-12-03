@@ -1,8 +1,8 @@
 # Toggle
 
-The Toggle settings collect supplementary metadata and information from the state education agency about data collection. This information determines what will display on reports. Note: if the toggles related to the IDEA ED_Facts_ files do not match the information you provided the Partner Support Center (PSC) when completing your IDEA State Supplemental Survey, it could result in unexpected format or validation errors in the ED_Facts_ Submission System (ESS) when you submit the Generate-produced IDEA ED_Facts_ files.
+The Toggle settings collect supplementary metadata and information from the state education agency about data collection. This information determines what will display on reports. Note: if the toggles related to the IDEA E&#x44;_&#x46;acts_ files do not match the information you provided the Partner Support Center (PSC) when completing your IDEA State Supplemental Survey, it could result in unexpected format or validation errors in the E&#x44;_&#x46;acts_ Submission System (ESS) when you submit the Generate-produced IDEA E&#x44;_&#x46;acts_ files.
 
-The “Assessments Toggle” works differently than the other Toggle options and is accessed from a link on the main Toggle page. For information about the Assessments toggle, see [Toggle | Assessments](toggle.md#\_toc113439071).
+The “Assessments Toggle” works differently than the other Toggle options and is accessed from a link on the main Toggle page. For information about the Assessments toggle, see [Toggle | Assessments](toggle.md#_toc113439071).
 
 The information below explains how to use the various options within Toggle. To ensure the accuracy of the reports:
 

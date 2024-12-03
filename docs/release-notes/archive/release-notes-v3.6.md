@@ -2,7 +2,7 @@
 description: Generate Release Notes v3.6
 ---
 
-# Release Notes v3.6
+# Release Notes 3.6
 
 ### Introduction <a href="#introduction" id="introduction"></a>
 
@@ -18,7 +18,7 @@ Generate Hotfix 3.6 includes defect resolution for reports, and updates to the E
 
 ### Updated Reports <a href="#updated-reports" id="updated-reports"></a>
 
-The following Standard ED_Facts_ reports were updated in this release.
+The following Standard E&#x44;_&#x46;acts_ reports were updated in this release.
 
 | Report | Resolved Defect                                                                                                        | Reference Number |
 | ------ | ---------------------------------------------------------------------------------------------------------------------- | ---------------- |

@@ -18,9 +18,9 @@ Please note, to take most of these steps you will need an up-to-date version of 
 * Migration: Building and Running ETLs
 * Validation: Verifying Data Results
 
-### What submitted ED_Facts_ Files are included in the <mark style="color:yellow;">Assessment Fact Type</mark>?
+### What submitted E&#x44;_&#x46;acts_ Files are included in the <mark style="color:yellow;">Assessment Fact Type</mark>?
 
-The following files have been created in Generate and submitted to ED_Facts_:
+The following files have been created in Generate and submitted to E&#x44;_&#x46;acts_:
 
 * [x] 175: Academic Achievement in Mathematics
 * [x] 178: Academic Achievement in Reading/Language Arts
@@ -29,7 +29,7 @@ The following files have been created in Generate and submitted to ED_Facts_:
 * [x] 188: Assessment Participation in Reading/Language Arts
 * [x] 189: Assessment Participation in Science
 
-### What ED_Facts_ Files in the <mark style="color:yellow;">Assessment Fact Type</mark> are available for pilot opportunity?
+### What E&#x44;_&#x46;acts_ Files in the <mark style="color:yellow;">Assessment Fact Type</mark> are available for pilot opportunity?
 
 The following files are in pilot status or are available for piloting in Generate:
 
@@ -97,7 +97,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 #### Toggle Settings
 
-The Generate Toggle tables store information from the ED_Facts_ Metadata and Process System (EMAPS) survey that impacts the business logic used to ETL the data for ED_Facts_ reporting. It is important to make sure these questions are completed before data is migrated and that they match what was entered in EMAPS. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually after you complete your EMAPS survey. Instructions for how to find and update the Toggle page are available in the [Toggle documentation](../../../user-guide/settings/toggle.md).
+The Generate Toggle tables store information from the E&#x44;_&#x46;acts_ Metadata and Process System (EMAPS) survey that impacts the business logic used to ETL the data for E&#x44;_&#x46;acts_ reporting. It is important to make sure these questions are completed before data is migrated and that they match what was entered in EMAPS. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually after you complete your EMAPS survey. Instructions for how to find and update the Toggle page are available in the [Toggle documentation](../../../user-guide/settings/toggle.md).
 
 Additionally, at the top left of the Toggle page, there is a link to an "Assessments" sub-page with information that should be reviewed and updated if needed.
 
@@ -195,7 +195,7 @@ Once data has been migrated to the Staging tables there are two Generate tools t
 
 #### Staging Validation Utility
 
-Generate has a [Staging Validation Process](../../generate-utilities/staging-validation/) which can be called at the Fact Type or ED_Facts_ file level.
+Generate has a [Staging Validation Process](../../generate-utilities/staging-validation/) which can be called at the Fact Type or E&#x44;_&#x46;acts_ file level.
 
 {% hint style="success" %}
 The following is an example code snippet of how to call these Stored Procedures by the Assessment Fact Type.
@@ -307,13 +307,13 @@ The process of migrating data to Report Tables creates a set of tables in the \[
  [generate].[debug].[c175_lea_CSA_2024_ASMTADMNMTHHS_GRADELVLHS_MAJORREG_PROFSTATUS]
 ```
 
-Over time these tables will accumulate and create clutter in the Generate database debug schema. You can easily remove unneeded debug tables using the [Clean Up Debug Tables](file:///C:/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/\~/changes/210/developer-guides/generate-utilities/cleanup-debug-tables) utility.
+Over time these tables will accumulate and create clutter in the Generate database debug schema. You can easily remove unneeded debug tables using the [Clean Up Debug Tables](file:///C:/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/~/changes/210/developer-guides/generate-utilities/cleanup-debug-tables) utility.
 
 ### Validating Report Table Data
 
 #### File Comparison Utility
 
-The [File Comparison Utility](../../generate-utilities/file-comparison/) allows you to compare ED_Facts_ submission files to data stored in the Report Tables in the Generate database. Instructions on how to use the `Utilities.Compare_ASSESSMENTS` Stored Procedure are available here. Typically, this step is performed in the first year of reporting a file through Generate to compare it to previous submission files produced by the legacy system.
+The [File Comparison Utility](../../generate-utilities/file-comparison/) allows you to compare E&#x44;_&#x46;acts_ submission files to data stored in the Report Tables in the Generate database. Instructions on how to use the `Utilities.Compare_ASSESSMENTS` Stored Procedure are available here. Typically, this step is performed in the first year of reporting a file through Generate to compare it to previous submission files produced by the legacy system.
 
 {% code overflow="wrap" %}
 ```sql
@@ -338,11 +338,11 @@ If you need further assistance validating your data or have data mismatches that
 
 ### IDEA Part B Data Review Checklist
 
-This [IDEA Part B Data Review](https://ciidta.communities.ed.gov/#communities/pdc/documents/21449) Checklist helps state teams review and validate IDEA ED_Facts_ files. It includes a tab for each IDEA ED_Facts_ file specification, and lists considerations and types of validations to ensure accurate and complete data file submissions. Please review the Instruction tab and look for the associated report codes for the Assessment Fact Type.
+This [IDEA Part B Data Review](https://ciidta.communities.ed.gov/#communities/pdc/documents/21449) Checklist helps state teams review and validate IDEA E&#x44;_&#x46;acts_ files. It includes a tab for each IDEA E&#x44;_&#x46;acts_ file specification, and lists considerations and types of validations to ensure accurate and complete data file submissions. Please review the Instruction tab and look for the associated report codes for the Assessment Fact Type.
 
 ### Staging Table Snapshot Utility
 
-Generate allows states to create a backup or “snapshot” of staging tables. This is an optional utility that can be executed as needed or embedded into the State’s ETL workflow logic. The [Staging Table Snapshot Utility](../../generate-utilities/staging-table-snapshot.md) provides a method to create a backup copy of staging tables for future use and reference after an ETL has populated Generate’s staging tables. This helps to ensure consistency across all ED_Facts_ reports for a given year and developers can preserve data in staging tables across ETL executions. This is best utilized after you have confirmed the Fact Type has successfully produced an accurate ED_Facts_ file.&#x20;
+Generate allows states to create a backup or “snapshot” of staging tables. This is an optional utility that can be executed as needed or embedded into the State’s ETL workflow logic. The [Staging Table Snapshot Utility](../../generate-utilities/staging-table-snapshot.md) provides a method to create a backup copy of staging tables for future use and reference after an ETL has populated Generate’s staging tables. This helps to ensure consistency across all E&#x44;_&#x46;acts_ reports for a given year and developers can preserve data in staging tables across ETL executions. This is best utilized after you have confirmed the Fact Type has successfully produced an accurate E&#x44;_&#x46;acts_ file.&#x20;
 
 ***
 

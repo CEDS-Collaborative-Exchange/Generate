@@ -1,3 +1,7 @@
+---
+icon: discord
+---
+
 # Discord Guide
 
 #### Joining the Server
