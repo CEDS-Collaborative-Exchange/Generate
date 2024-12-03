@@ -31,7 +31,7 @@ layout:
 
 #### IDEA Reports
 
-* Staff (009): Ensured that Certification Status is populated in the submission file.
+* Staff (099): Ensured that Certification Status is populated in the submission file.
 * Staff (112): Ensured that Qualification Status is populated in the submission file.
 * Staff (070, 099, 112): Fixed an issue with the UI displaying whole numbers while the submission file displays decimals.
 * Exiting (009): Handled an issue with LEA exits for the State catchment area.
