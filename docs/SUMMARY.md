@@ -25,6 +25,7 @@
   * [Metadata](user-guide/settings/metadata.md)
   * [Data Migration](user-guide/settings/data-migration.md)
 * [Quality Assurance](user-guide/quality-assurance.md)
+* [Support](user-guide/support.md)
 * [FAQ](user-guide/faq.md)
 
 ## Developer Guides
