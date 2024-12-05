@@ -8,7 +8,7 @@ A Generate Fact Type is a specific type of Fact Type that is used within the Gen
 
 * Generate ETL Stored Procedures are organized by Fact Types.
 * Many E&#x44;_&#x46;acts_ file specifications have shared timelines, reporting requirements, and/or a high degree of overlap in source system field mappings. When this happens, the data are organized into the same Fact Type to make data migration, testing, and file submission more efficient.
-* The Fact Type determines where the data is stored in the Curated Zone and the Generate Reporting Data Store (RDS). For example, the Directory data are stored in `RDS.FactOrganizationCounts`. Generate has a series of tables used by the application where more information about Fact Types can be found. See the queries below.
+* The Fact Type determines where the data is stored in the Generate Reporting Data Store (RDS). For example, the Directory data are stored in `RDS.FactOrganizationCounts`. Generate has a series of tables used by the application where more information about Fact Types can be found. See the queries below.
 
 ### How do you query Fact Types?
 
