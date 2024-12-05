@@ -6370,7 +6370,7 @@ BEGIN
 			end 
 			else 
 			begin
-				if @reportCode IN ('C059', 'C070', 'C099', 'C112') 
+				if @reportCode IN ('C059', 'C067', 'C070', 'C099', 'C112', 'C203') 
 				begin
 					set @debugTableCreate = '					select s.K12StaffStaffMemberIdentifierState '
 				end 
@@ -6405,7 +6405,7 @@ BEGIN
 				set @debugTableCreate += @sqlCategoryFields + char(10) 
 					+ '					into [debug].' + QUOTENAME(@debugTableName) + char(10)
 			
-				IF @reportCode IN ('C059', 'C070', 'C099', 'C112')
+				IF @reportCode IN ('C059', 'C067', 'C070', 'C099', 'C112', 'C203')
 				BEGIN
 					set @debugTableCreate += '					from #categorySet c ' + char(10) +
 					'					inner join rds.DimPeople s ' + char(10)
@@ -6438,7 +6438,7 @@ BEGIN
 						+ '						on c.DimK12SchoolId = sc.DimK12SchoolId ' + char(10)
 				end 
 
-				if @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') 
+				if @reportCode NOT IN ('C059', 'C067', 'C070', 'C099', 'C112', 'C203') 
 				begin
 					set @debugTableCreate += '					order by K12StudentStudentIdentifierState ' + char(10)
 				end
