@@ -4988,6 +4988,42 @@ BEGIN
 				and fact.TitleiiiStatusId = rules.DimTitleIIIStatusId'
 		end
 
+		else if @reportCode in ('c203')
+		begin
+
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join (
+					SELECT distinct fact.K12StaffId, s.DimK12StaffStatusId
+					from rds.' + @factTable + ' fact '
+
+			if @reportLevel = 'lea'
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+				inner join RDS.DimLeas org 
+					on fact.LeaId = org.DimLeaId
+					AND org.ReportedFederally = 1
+					AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+			end 
+			if @reportLevel = 'sch'
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+				inner join RDS.DimK12Schools org 
+					on fact.K12SchoolId = org.DimK12SchoolId
+					AND org.ReportedFederally = 1
+					AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+			end
+
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join rds.DimK12StaffStatuses s 
+					on fact.K12StaffStatusId = s.DimK12StaffStatusId				
+					and fact.SchoolYearId = @dimSchoolYearId
+					and fact.FactTypeId = @dimFactTypeId
+					and fact.LeaId <> -1
+			) rules
+				on fact.K12StaffId = rules.K12StaffId 
+				and fact.K12StaffStatusId = rules.DimK12StaffStatusId'
+		end
+
 		else if @reportCode in ('c059')
 		begin
 
@@ -5116,7 +5152,7 @@ BEGIN
 							 else 'IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1' end  + '
 				'
 			end
-			else if(@reportCode in ('c059', 'c067','c070','c112'))
+			else if(@reportCode in ('c059','c067','c070','c112','c203'))
 			begin
 				set @sql = @sql + '
 				----------------------------
