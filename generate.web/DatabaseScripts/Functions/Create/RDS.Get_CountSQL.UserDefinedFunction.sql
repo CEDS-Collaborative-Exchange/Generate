@@ -110,7 +110,6 @@ BEGIN
 	declare @istoggleExcludeCorrectionalAgeAll as bit
 	declare @istoggleRaceMap as bit
 
-
 	-- Get Custom Child Count Date (if available)
 	select @toggleChildCountDate = r.ResponseValue
 	from app.ToggleResponses r
@@ -4988,6 +4987,42 @@ BEGIN
 				and fact.TitleiiiStatusId = rules.DimTitleIIIStatusId'
 		end
 
+		else if @reportCode in ('c203')
+		begin
+
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join (
+					SELECT distinct fact.K12StaffId, s.DimK12StaffStatusId
+					from rds.' + @factTable + ' fact '
+
+			if @reportLevel = 'lea'
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+				inner join RDS.DimLeas org 
+					on fact.LeaId = org.DimLeaId
+					AND org.ReportedFederally = 1
+					AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+			end 
+			if @reportLevel = 'sch'
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+				inner join RDS.DimK12Schools org 
+					on fact.K12SchoolId = org.DimK12SchoolId
+					AND org.ReportedFederally = 1
+					AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+			end
+
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join rds.DimK12StaffStatuses s 
+					on fact.K12StaffStatusId = s.DimK12StaffStatusId				
+					and fact.SchoolYearId = @dimSchoolYearId
+					and fact.FactTypeId = @dimFactTypeId
+					and fact.LeaId <> -1
+			) rules
+				on fact.K12StaffId = rules.K12StaffId 
+				and fact.K12StaffStatusId = rules.DimK12StaffStatusId'
+		end
+
 		else if @reportCode in ('c059')
 		begin
 
@@ -5116,7 +5151,7 @@ BEGIN
 							 else 'IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1' end  + '
 				'
 			end
-			else if(@reportCode in ('c059', 'c067','c070','c112'))
+			else if(@reportCode in ('c059','c067','c070','c112','c203'))
 			begin
 				set @sql = @sql + '
 				----------------------------
@@ -6370,7 +6405,7 @@ BEGIN
 			end 
 			else 
 			begin
-				if @reportCode IN ('C059', 'C070', 'C099', 'C112') 
+				if @reportCode IN ('C059', 'C067', 'C070', 'C099', 'C112', 'C203') 
 				begin
 					set @debugTableCreate = '					select s.K12StaffStaffMemberIdentifierState '
 				end 
@@ -6405,7 +6440,7 @@ BEGIN
 				set @debugTableCreate += @sqlCategoryFields + char(10) 
 					+ '					into [debug].' + QUOTENAME(@debugTableName) + char(10)
 			
-				IF @reportCode IN ('C059', 'C070', 'C099', 'C112')
+				IF @reportCode IN ('C059', 'C067', 'C070', 'C099', 'C112', 'C203')
 				BEGIN
 					set @debugTableCreate += '					from #categorySet c ' + char(10) +
 					'					inner join rds.DimPeople s ' + char(10)
@@ -6438,7 +6473,7 @@ BEGIN
 						+ '						on c.DimK12SchoolId = sc.DimK12SchoolId ' + char(10)
 				end 
 
-				if @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') 
+				if @reportCode NOT IN ('C059', 'C067', 'C070', 'C099', 'C112', 'C203') 
 				begin
 					set @debugTableCreate += '					order by K12StudentStudentIdentifierState ' + char(10)
 				end
