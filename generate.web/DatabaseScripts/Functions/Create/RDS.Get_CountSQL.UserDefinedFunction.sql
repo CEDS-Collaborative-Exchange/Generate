@@ -110,7 +110,6 @@ BEGIN
 	declare @istoggleExcludeCorrectionalAgeAll as bit
 	declare @istoggleRaceMap as bit
 
-
 	-- Get Custom Child Count Date (if available)
 	select @toggleChildCountDate = r.ResponseValue
 	from app.ToggleResponses r
