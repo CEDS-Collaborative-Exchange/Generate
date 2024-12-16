@@ -39,7 +39,7 @@ After completing these steps, the login/password options should reappear, allowi
 
 #### 🚨 Important .NET update
 
-In Generate 12.1, we’re updating the .NET Core runtime from version 6.0 to 8.0, as support for 6.0 is ending. Use the link below to download the compatible [**ASP.NET Core Runtime 8.0.10**](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version for your environment.
+In Generate 12.1, we’re updating the .NET Core runtime from version 6.0 to 8.0, as support for 6.0 is ending. Use the link below to download the compatible [**ASP.NET Core Runtime 8.0.11**](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version for your environment.
 
 {% embed url="https://dotnet.microsoft.com/en-us/download/dotnet/8.0" %}
 Link to download .Net 8.0

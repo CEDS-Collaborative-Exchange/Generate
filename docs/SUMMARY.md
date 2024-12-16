@@ -46,6 +46,7 @@
   * [Data Migration](developer-guides/migration/data-migration.md)
   * [Fact Type Table](developer-guides/migration/fact-type-table/README.md)
     * [Assessment Fact Type](developer-guides/migration/fact-type-table/assessment-fact-type.md)
+    * [Child Count Fact Type](developer-guides/migration/fact-type-table/assessment-fact-type-1.md)
 * [Generate Utilities](developer-guides/generate-utilities/README.md)
   * [File Comparison](developer-guides/generate-utilities/file-comparison/README.md)
     * [Loading Files](developer-guides/generate-utilities/file-comparison/loading-files.md)
@@ -103,7 +104,3 @@
 ## Hot Fixes
 
 * [Hot Fix - 4/13/2023](hot-fixes/hot-fix-4-13-2023.md)
-
-***
-
-* [Page 1](page-1.md)
