@@ -1,6 +1,15 @@
 VersionUpdates\\12.3_prerelease,Restore 12.2.sql,0
 VersionUpdates\\12.3_prerelease,App.Metadata.sql,0
-VersionUpdates\\12.3_prerelease\\StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
-VersionUpdates\\12.3_prerelease\\StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
+Views\\Drop,RDS.vwDimTitleIStatuses.View.sql,0
+Views\\Create,RDS.vwDimTitleIStatuses.View.sql,0
+Views\\Drop,Debug.vwTitleI_FactTable.View.sql,0
+Views\\Create,Debug.vwTitleI_FactTable.View.sql,0
+Views\\Drop,RDS.vwTitleI_FactTable_222.View.sql,0
+Views\\Create,RDS.vwTitleI_FactTable_222.View.sql,0
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
 VersionUpdates\\12.3_prerelease,UpdateDbVersion.sql,0
-
