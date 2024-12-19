@@ -229,6 +229,7 @@ namespace generate.testdata.DataGenerators
                 stagingContextLogger.LogInformation("AccessibleEducationMaterialProvider Saved");
 
                 //stagingEnrollmentTestDataObject.K12Organizations = testData.K12Organizations;
+                stagingEnrollmentTestDataObject.K12PersonRaces = testData.PersonRaces;
                 stagingEnrollmentTestDataObject.Assessments = testData.Assessments;
                 stagingEnrollmentTestDataObject.AccessibleEducationMaterialProviders = testData.AccessibleEducationMaterialProviders;
 
@@ -1630,28 +1631,43 @@ namespace generate.testdata.DataGenerators
                     }
                 }
 
-                var races = new List<K12PersonRace>();
-                for (int raceCount = 0; raceCount < _testDataHelper.GetRandomIntInRange(rnd, 1, 2); raceCount++)
-                {
-                    string race = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefRaceDistribution);
-                    while (races.Exists(r => r.RaceType == race))
-                    {
-                        race = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefRaceDistribution);
-                    }
+                //var races = new List<K12PersonRace>();
+                //for (int raceCount = 0; raceCount < _testDataHelper.GetRandomIntInRange(rnd, 1, 2); raceCount++)
+                //{
+                //    string race = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefRaceDistribution);
+                //    while (races.Exists(r => r.RaceType == race))
+                //    {
+                //        race = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefRaceDistribution);
+                //    }
 
-                    races.Add(new K12PersonRace()
-                    {
-                        LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability,
-                        SchoolIdentifierSea = s.SchoolIdentifierSea,
-                        RaceType = race,
-                        StudentIdentifierState = s.StudentIdentifierState,
-                        RecordStartDateTime = s.EnrollmentEntryDate,
-                        RecordEndDateTime = s.EnrollmentExitDate,
-                        SchoolYear = SchoolYear.ToString()
-                    });
-                }
+                //    races.Add(new K12PersonRace()
+                //    {
+                //        LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability,
+                //        SchoolIdentifierSea = s.SchoolIdentifierSea,
+                //        RaceType = race,
+                //        StudentIdentifierState = s.StudentIdentifierState,
+                //        RecordStartDateTime = s.EnrollmentEntryDate,
+                //        RecordEndDateTime = s.EnrollmentExitDate,
+                //        SchoolYear = SchoolYear.ToString()
+                //    });
+                //}
 
-                races.ForEach(r => AllPersonRaces.Add(r));
+                //races.ForEach(r => AllPersonRaces.Add(r));
+
+                testData.K12PersonRaces.Where(r => r.StudentIdentifierState == s.StudentIdentifierState
+                                                && r.LeaIdentifierSeaAccountability == s.LeaIdentifierSeaAccountability
+                                                && r.SchoolIdentifierSea == s.SchoolIdentifierSea
+                                                )
+                                    .ToList()
+                                    .ForEach(r =>
+                                    {
+                                        r.SchoolYear = SchoolYear.ToString();
+                                        r.RecordStartDateTime = s.EnrollmentEntryDate;
+                                        r.RecordEndDateTime = s.EnrollmentExitDate;
+                                        AllPersonRaces.Add(r);
+                                    });
+
+
 
                 var personStatus = new core.Models.Staging.PersonStatus()
                 {
