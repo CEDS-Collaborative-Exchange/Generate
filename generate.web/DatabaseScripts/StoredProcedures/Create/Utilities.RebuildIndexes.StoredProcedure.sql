@@ -3,7 +3,8 @@ AS
 BEGIN
 
 	/*
-		This utility will rebuild the Indexes on all of the staging tables.  
+		This utility will rebuild the Indexes on all of the staging tables
+		and the RDS dimension and fact tables.  
 		The performance of indexes degrades over time making queries 
 		against these tables less efficient.  Rebuilding the index restores
 		it to optimal performance.  Occasionally rebuilding indexes is 
@@ -48,4 +49,43 @@ BEGIN
 	ALTER INDEX ALL ON Staging.StateDefinedCustomIndicator							  REBUILD;
 	ALTER INDEX ALL ON Staging.StateDetail											  REBUILD;
 	
+	ALTER INDEX ALL ON RDS.DimAssessmentAccommodations								  REBUILD;
+	ALTER INDEX ALL ON RDS.DimAssessmentAdministrations								  REBUILD;
+	ALTER INDEX ALL ON RDS.DimAssessmentPerformanceLevels							  REBUILD;
+	ALTER INDEX ALL ON RDS.DimAssessmentRegistrations								  REBUILD;
+	ALTER INDEX ALL ON RDS.DimAssessmentResults										  REBUILD;
+	ALTER INDEX ALL ON RDS.DimAssessments											  REBUILD;
+	ALTER INDEX ALL ON RDS.DimDisciplineStatuses									  REBUILD;
+	ALTER INDEX ALL ON RDS.DimEconomicallyDisadvantagedStatuses						  REBUILD;
+	ALTER INDEX ALL ON RDS.DimEnglishLearnerStatuses								  REBUILD;
+	ALTER INDEX ALL ON RDS.DimFirearms												  REBUILD;
+	ALTER INDEX ALL ON RDS.DimFosterCareStatuses									  REBUILD;
+	ALTER INDEX ALL ON RDS.DimGradeLevels											  REBUILD;
+	ALTER INDEX ALL ON RDS.DimHomelessnessStatuses									  REBUILD;
+	ALTER INDEX ALL ON RDS.DimIdeaDisabilityTypes									  REBUILD;
+	ALTER INDEX ALL ON RDS.DimIdeaStatuses											  REBUILD;
+	ALTER INDEX ALL ON RDS.DimK12Demographics										  REBUILD;
+	ALTER INDEX ALL ON RDS.DimK12Schools											  REBUILD;
+	ALTER INDEX ALL ON RDS.DimK12SchoolStatuses										  REBUILD;
+	ALTER INDEX ALL ON RDS.DimK12StaffCategories									  REBUILD;
+	ALTER INDEX ALL ON RDS.DimK12StaffStatuses										  REBUILD;
+	ALTER INDEX ALL ON RDS.DimLanguages												  REBUILD;
+	ALTER INDEX ALL ON RDS.DimLeas													  REBUILD;
+	ALTER INDEX ALL ON RDS.DimMigrantStatuses										  REBUILD;
+	ALTER INDEX ALL ON RDS.DimMilitaryStatuses										  REBUILD;
+	ALTER INDEX ALL ON RDS.DimNOrDStatuses											  REBUILD;
+	ALTER INDEX ALL ON RDS.DimPeople												  REBUILD;
+	ALTER INDEX ALL ON RDS.DimRaces													  REBUILD;
+	ALTER INDEX ALL ON RDS.DimSchoolYearDataMigrationTypes							  REBUILD;
+	ALTER INDEX ALL ON RDS.DimSchoolYears											  REBUILD;
+	ALTER INDEX ALL ON RDS.DimSeas													  REBUILD;
+	ALTER INDEX ALL ON RDS.DimTitleIIIStatuses										  REBUILD;
+	ALTER INDEX ALL ON RDS.DimTitleIStatuses										  REBUILD;
+	
+	ALTER INDEX ALL ON RDS.FactK12StaffCounts										  REBUILD;	
+	ALTER INDEX ALL ON RDS.FactK12StudentAssessments								  REBUILD;	
+	ALTER INDEX ALL ON RDS.FactK12StudentCounts										  REBUILD;	
+	ALTER INDEX ALL ON RDS.FactK12StudentDisciplines								  REBUILD;	
+	ALTER INDEX ALL ON RDS.FactOrganizationCounts									  REBUILD;	
+
 END 
