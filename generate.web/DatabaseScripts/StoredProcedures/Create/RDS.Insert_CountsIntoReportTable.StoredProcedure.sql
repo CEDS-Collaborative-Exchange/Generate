@@ -284,7 +284,7 @@ AS
 		LEFT JOIN RDS.' + @ReportTableName + ' rt
 			ON 
 			' + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE 'rt.CategorySetCode  = ''' + cs.CategorySetCode + ''' AND ' END + '
-			rt.TableTypeAbbrv = ''' + att.TableTypeAbbrv + ''' AND rt.ReportYear = 2023 and rt.ReportLevel = ''' + aol.LevelCode + ''' AND ' + 
+			rt.TableTypeAbbrv = ''' + att.TableTypeAbbrv + ''' AND rt.ReportYear = ' + @SubmissionYear + ' and rt.ReportLevel = ''' + aol.LevelCode + ''' AND ' + 
 			STRING_AGG('rt.' + d.DimensionFieldName + ' = pv.' + c.CategoryCode, ' AND ') +
 			CASE 
 				WHEN aol.LevelCode = 'LEA' THEN ' AND rt.OrganizationIdentifierSea = org.LeaIdentifierSea'
