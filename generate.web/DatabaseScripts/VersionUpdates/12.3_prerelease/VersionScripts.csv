@@ -149,6 +149,4 @@ StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.RebuildIndexes.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.RebuildIndexes.StoredProcedure.sql,0
-StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
-StoredProcedures\\Create,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
 VersionUpdates\\12.3_prerelease,UpdateDbVersion.sql,0
