@@ -1,5 +1,6 @@
 VersionUpdates\\12.3_prerelease,Restore 12.2.sql,0
 VersionUpdates\\12.3_prerelease,App.Metadata.sql,0
+VersionUpdates\\12.3_prerelease,RDS.TableChanges.sql,0
 Views\\Drop,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Create,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Drop,Debug.vwAssessment_FactTable.View.sql,0
