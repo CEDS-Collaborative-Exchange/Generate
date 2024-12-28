@@ -21,7 +21,7 @@ AS
 		  	, a.[SchoolOperationalStatus]
 		  	, a.[SchoolTypeCode]
 		  	, a.[ProgramParticipationFosterCareEdFactsCode]
-	FROM [generate].[debug].[vwTitleI_FactTable] a
+	FROM [debug].[vwTitleI_FactTable] a
 	WHERE ProgramParticipationFosterCareEdFactsCode = 'FOSTERCARE' 
 		AND SchoolOperationalStatus IN ('Open','New') 
 		AND SchoolTypeCode in ('CareerAndTechnical','Alternative','Special','Regular')

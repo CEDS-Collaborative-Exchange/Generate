@@ -21,7 +21,7 @@ AS
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
-			, Title1.TitleISchoolStatusEdFactsCode
+			, TitleI.TitleISchoolStatusEdFactsCode
 			, Grades.GradeLevelEdFactsCode
 			, Races.RaceEdFactsCode
 			--Homeless	
@@ -49,7 +49,7 @@ AS
 	LEFT JOIN	RDS.DimEnglishLearnerStatuses				EL			ON Fact.EnglishLearnerStatusId		= EL.DimEnglishLearnerStatusId
 	LEFT JOIN	RDS.DimHomelessnessStatuses					Home		ON Fact.HomelessnessStatusId		= Home.DimHomelessnessStatusId
 	LEFT JOIN	RDS.DimMigrantStatuses						Mig			ON Fact.MigrantStatusId				= Mig.DimMigrantStatusId
-	LEFT JOIN	RDS.DimTitleIStatuses						Title1		ON Fact.TitleIStatusId				= Title1.DimTitleIStatusId
+	LEFT JOIN	RDS.DimTitleIStatuses						TitleI		ON Fact.TitleIStatusId				= TitleI.DimTitleIStatusId
 	LEFT JOIN 	RDS.DimFosterCareStatuses					Foster		ON Fact.FosterCareStatusId			= Foster.DimFosterCareStatusId
 
 	WHERE 1 = 1

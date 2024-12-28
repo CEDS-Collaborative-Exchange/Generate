@@ -1,22 +1,25 @@
 CREATE VIEW [debug].[vwNeglectedOrDelinquent_FactTable] 
 AS
-	SELECT	Fact.K12StudentId
-			, SchoolYears.SchoolYear
+	SELECT	 Fact.FactK12StudentCountId
+			, SchoolYear
+			, Fact.K12StudentId
 			, Students.K12StudentStudentIdentifierState
 			, Students.BirthDate
 			, Students.FirstName
 			, Students.LastOrSurname
 			, Students.MiddleName
-			, SEAs.StateANSICode
-			, SEAs.StateAbbreviationCode
-			, SEAs.StateAbbreviationDescription
-			, SEAs.SeaOrganizationIdentifierSea
-			, SEAs.SeaOrganizationName
+			, SEA.StateANSICode
+			, SEA.StateAbbreviationCode
+			, SEA.StateAbbreviationDescription
+			, SEA.SeaOrganizationIdentifierSea
+			, SEA.SeaOrganizationName
 			, LEAs.LeaIdentifierSea
-			, LEAs.LeaIdentifierNces
 			, LEAs.LeaOrganizationName
 			, Schools.SchoolIdentifierSea
+			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
+			, Schools.SchoolOperationalStatus
+			, Schools.SchoolTypeCode
 
 			--Neglected or Delinquent 
 			, NorD.NeglectedOrDelinquentProgramTypeCode
@@ -35,7 +38,7 @@ AS
  	FROM		RDS.FactK12StudentCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid
-	JOIN		RDS.DimSeas							SEAs			on Fact.SeaId					= SEAs.DimSeaId
+	JOIN		RDS.DimSeas							SEA				ON Fact.SeaId					= SEA.DimSeaId
 	LEFT JOIN	RDS.DimPeople						Students		ON Fact.K12StudentId			= Students.DimPersonId	AND Students.IsActiveK12Student = 1
 	LEFT JOIN	RDS.DimLeas							LEAs			ON Fact.LeaId					= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools					Schools			ON Fact.K12SchoolId				= Schools.DimK12SchoolId
