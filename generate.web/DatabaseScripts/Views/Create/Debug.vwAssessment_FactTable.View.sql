@@ -1,25 +1,26 @@
 CREATE VIEW [Debug].[vwAssessment_FactTable] 
 AS
-	SELECT	Fact.K12StudentId
+	SELECT	Fact.FactK12StudentAssessmentId
 			, SchoolYears.SchoolYear
+			, Fact.K12StudentId
 			, Students.K12StudentStudentIdentifierState
 			, Students.BirthDate
 			, Students.FirstName
 			, Students.LastOrSurname
 			, Students.MiddleName
-			
 			, SEA.StateANSICode
 			, SEA.StateAbbreviationCode
 			, SEA.StateAbbreviationDescription
 			, SEA.SeaOrganizationIdentifierSea
 			, SEA.SeaOrganizationName
-
 			, LEAs.LeaIdentifierSea
-			, LEAs.LeaIdentifierNces
 			, LEAs.LeaOrganizationName
 			, LEAs.DimLeaId	
 			, Schools.SchoolIdentifierSea
+			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
+			, Schools.SchoolOperationalStatus
+			, Schools.SchoolTypeCode
 
 			, Assess.AssessmentTitle
 			, Assess.AssessmentIdentifierState
