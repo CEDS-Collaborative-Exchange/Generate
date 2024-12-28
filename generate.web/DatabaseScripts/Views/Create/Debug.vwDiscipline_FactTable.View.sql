@@ -1,67 +1,77 @@
 CREATE VIEW [Debug].[vwDiscipline_FactTable] 
 AS
-	SELECT		Fact.K12StudentId
-				, Students.K12StudentStudentIdentifierState
-				, Students.BirthDate
-				, Students.FirstName
-				, Students.LastOrSurname
-				, Students.MiddleName
-				, Demo.SexCode
-				, LEAs.LeaIdentifierSea
-				, LEAs.LeaIdentifierNces
-				, LEAs.LeaOrganizationName
-				, Schools.SchoolIdentifierSea
-				, Schools.NameOfInstitution
+	SELECT	 Fact.FactK12StudentDisciplineId
+			, SchoolYear
+			, Fact.K12StudentId
+			, Students.K12StudentStudentIdentifierState
+			, Students.BirthDate
+			, Students.FirstName
+			, Students.LastOrSurname
+			, Students.MiddleName
+			, SEA.StateANSICode
+			, SEA.StateAbbreviationCode
+			, SEA.StateAbbreviationDescription
+			, SEA.SeaOrganizationIdentifierSea
+			, SEA.SeaOrganizationName
+			, LEAs.LeaIdentifierSea
+			, LEAs.LeaOrganizationName
+			, Schools.SchoolIdentifierSea
+			, Schools.DimK12SchoolId
+			, Schools.NameOfInstitution
+			, Schools.SchoolOperationalStatus
+			, Schools.SchoolTypeCode
 				
-				, Ages.AgeEdFactsCode
-				, Races.RaceCode
-				, Grades.GradeLevelEdFactsCode
-				
-				--English Learner Status
-				, EL.EnglishLearnerStatusEdFactsCode
+			, Ages.AgeEdFactsCode
+			, Races.RaceCode
+			, Grades.GradeLevelEdFactsCode
 			
-				-- IDEA Indicator
-				, IDEAStatus.IdeaIndicatorEdFactsCode
-				
-				-- Primary Disability Type
-				, IDEADisability.IdeaDisabilityTypeEdFactsCode
-				
-				-- Discipline Method Of Children With Disabilities
-				, Disciplines.DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode
-				
-				-- Disciplinary Action Taken Code
-				, Disciplines.DisciplinaryActionTakenEdFactsCode
+			--English Learner Status
+			, EL.EnglishLearnerStatusEdFactsCode
+			-- IDEA Indicator
+			, IDEAStatus.IdeaIndicatorEdFactsCode
+			-- Education Env School Age
+			, IDEAStatus.IdeaEducationalEnvironmentForSchoolAgeEDFactsCode
+			-- Primary Disability Type
+			, IDEADisability.IdeaDisabilityTypeEdFactsCode
+			-- Discipline Method Of Children With Disabilities
+			, Disciplines.DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode
+			-- Disciplinary Action Taken Code
+			, Disciplines.DisciplinaryActionTakenEdFactsCode
+			-- IDEA Interim Removal
+			, Disciplines.IdeaInterimRemovalEdFactsCode
+			-- IDEA Interim Removal Reason
+			, Disciplines.IdeaInterimRemovalReasonEdFactsCode
+			-- Educational Services After Removal
+			, Disciplines.EducationalServicesAfterRemovalEdFactsCode
+			, Fact.DurationOfDisciplinaryAction
 
-				-- IDEA Interim Removal
-				, Disciplines.IdeaInterimRemovalEdFactsCode
-				
-				-- IDEA Interim Removal Reason
-				, Disciplines.IdeaInterimRemovalReasonEdFactsCode
-	
-				-- Educational Services After Removal
-				, Disciplines.EducationalServicesAfterRemovalEdFactsCode
+			, Firearms.FirearmTypeEdFactsCode
+			, FirearmDiscipline.DisciplineMethodForFirearmsIncidentsEdFactsCode
+			, FirearmDiscipline.IdeaDisciplineMethodForFirearmsIncidentsEdFactsCode
 
-				, Fact.DurationOfDisciplinaryAction
-				, Fact.DisciplineCount
-				, ActionStartDate.DateValue		AS DisciplinaryActionStartDate
-				, ActionEndDate.DateValue		AS DisciplinaryActionEndDate
+			, Fact.DisciplineCount
+			, ActionStartDate.DateValue		AS DisciplinaryActionStartDate
+			, ActionEndDate.DateValue		AS DisciplinaryActionEndDate
 
     FROM   		RDS.FactK12StudentDisciplines		Fact
-	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId					= SchoolYears.DimSchoolYearId	
-	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.dimschoolyearid			= DMT.dimschoolyearid		
-    LEFT JOIN   RDS.DimPeople		              	Students		ON Fact.K12StudentId					= Students.DimPersonId			AND Students.IsActiveK12Student = 1
-    LEFT JOIN   RDS.DimLeas                     	LEAs            ON Fact.LeaId               			= LEAs.DimLeaId
-    LEFT JOIN   RDS.DimK12Schools               	Schools         ON Fact.K12SchoolId         			= Schools.DimK12SchoolId
-    LEFT JOIN   RDS.DimIdeaStatuses             	IDEAStatus      ON Fact.IdeaStatusId        			= IDEAStatus.DimIdeaStatusId
-    LEFT JOIN   RDS.DimIdeaDisabilityTypes         	IDEADisability  ON Fact.PrimaryDisabilityTypeId			= IDEADisability.DimIdeaDisabilityTypeId
-    LEFT JOIN   RDS.DimK12Demographics          	Demo            ON Fact.K12DemographicId    			= Demo.DimK12DemographicId
-	LEFT JOIN	RDS.DimEnglishLearnerStatuses		EL				ON Fact.EnglishLearnerStatusId			= EL.DimEnglishLearnerStatusId
-    LEFT JOIN   RDS.DimAges                     	Ages            ON Fact.AgeId               			= Ages.DimAgeId      
-    LEFT JOIN   RDS.DimRaces                    	Races           ON Fact.RaceId              			= Races.DimRaceId
-    LEFT JOIN   RDS.DimGradeLevels              	Grades          ON Fact.GradeLevelId        			= Grades.DimGradeLevelId
-    LEFT JOIN   RDS.DimDisciplineStatuses          	Disciplines     ON Fact.DisciplineStatusId				= Disciplines.DimDisciplineStatusId
-    LEFT JOIN   RDS.DimDates			          	ActionStartDate ON Fact.DisciplinaryActionStartDateId  	= ActionStartDate.DimDateId
-    LEFT JOIN   RDS.DimDates			          	ActionEndDate 	ON Fact.DisciplinaryActionEndDateId		= ActionEndDate.DimDateId
+	JOIN		RDS.DimSchoolYears					SchoolYears			ON Fact.SchoolYearId					= SchoolYears.DimSchoolYearId	
+	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT					ON SchoolYears.dimschoolyearid			= DMT.dimschoolyearid		
+    LEFT JOIN   RDS.DimPeople		              	Students			ON Fact.K12StudentId					= Students.DimPersonId			AND Students.IsActiveK12Student = 1
+	LEFT JOIN	RDS.DimSeas                        	SEA         		ON Fact.SeaId    						= SEA.DimSeaId
+    LEFT JOIN   RDS.DimLeas                     	LEAs            	ON Fact.LeaId               			= LEAs.DimLeaId
+    LEFT JOIN   RDS.DimK12Schools               	Schools         	ON Fact.K12SchoolId         			= Schools.DimK12SchoolId
+    LEFT JOIN   RDS.DimIdeaStatuses             	IDEAStatus      	ON Fact.IdeaStatusId        			= IDEAStatus.DimIdeaStatusId
+    LEFT JOIN   RDS.DimIdeaDisabilityTypes         	IDEADisability  	ON Fact.PrimaryDisabilityTypeId			= IDEADisability.DimIdeaDisabilityTypeId
+    LEFT JOIN   RDS.DimK12Demographics          	Demo            	ON Fact.K12DemographicId    			= Demo.DimK12DemographicId
+	LEFT JOIN	RDS.DimEnglishLearnerStatuses		EL					ON Fact.EnglishLearnerStatusId			= EL.DimEnglishLearnerStatusId
+    LEFT JOIN   RDS.DimAges                     	Ages            	ON Fact.AgeId               			= Ages.DimAgeId      
+    LEFT JOIN   RDS.DimRaces                    	Races           	ON Fact.RaceId              			= Races.DimRaceId
+    LEFT JOIN   RDS.DimGradeLevels              	Grades          	ON Fact.GradeLevelId        			= Grades.DimGradeLevelId
+    LEFT JOIN   RDS.DimDisciplineStatuses          	Disciplines     	ON Fact.DisciplineStatusId				= Disciplines.DimDisciplineStatusId
+    LEFT JOIN   RDS.DimFirearmDisciplineStatuses    FirearmDiscipline	ON Fact.FirearmDisciplineStatusId		= FirearmDiscipline.DimFirearmDisciplineStatusId
+    LEFT JOIN   RDS.DimFirearms			          	Firearms 	     	ON Fact.FirearmId						= Firearms.DimFirearmId
+    LEFT JOIN   RDS.DimDates			          	ActionStartDate 	ON Fact.DisciplinaryActionStartDateId  	= ActionStartDate.DimDateId
+    LEFT JOIN   RDS.DimDates			          	ActionEndDate 		ON Fact.DisciplinaryActionEndDateId		= ActionEndDate.DimDateId
     --uncomment/modify the where clause conditions as necessary for validation
     WHERE 1 = 1
 	--2 ways to select by SchoolYear, use 1 or the other, not both

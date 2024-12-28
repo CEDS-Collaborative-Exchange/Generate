@@ -22,7 +22,7 @@ AS
 		DELETE FROM rds.' + @ReportTableName + ' WHERE ReportCode = ''' + @ReportCode + ''' AND ReportYear = ''' + @SubmissionYear + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE ''' AND CategorySetCode = ''' + CategorySetCode END + ''' AND ReportLevel = ''' + aol.LevelCode + '''
 
 		-- insert ' + aol.LevelCode + ' sql
-		' + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE '
+		' + CASE WHEN ISNULL(STRING_AGG(c.CategoryCode, ''),'') = '' THEN '' ELSE '
 		;WITH PermittedValues AS (
 			SELECT DISTINCT 
 			' + STRING_AGG('pv' + c.CategoryCode + '.CategoryOptionCode AS ' + c.CategoryCode, CHAR(10) + '		, ') + '
@@ -335,3 +335,4 @@ AS
 
 	CLOSE cursor_name;
 	DEALLOCATE cursor_name;
+GO
