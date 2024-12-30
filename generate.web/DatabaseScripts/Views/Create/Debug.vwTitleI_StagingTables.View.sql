@@ -1,6 +1,6 @@
 CREATE VIEW [debug].[vwTitleI_StagingTables] 
 AS
-	SELECT	DISTINCT 
+		SELECT	DISTINCT 
 		  enrollment.SchoolYear
 		, enrollment.StudentIdentifierState
 		, enrollment.LEAIdentifierSeaAccountability
@@ -9,6 +9,8 @@ AS
 		, enrollment.LastOrSurname
 		, enrollment.MiddleName
 		, enrollment.HispanicLatinoEthnicity
+		, enrollment.EnrollmentExitDate
+		, enrollment.EnrollmentEntryDate
 	
 		, sssrd.OutputCode as School_TitleISchoolStatus	
 		, sssrd2.OutputCode as TitleIIndicator	
@@ -36,7 +38,15 @@ AS
 		, race.RaceType
 		, race.RecordStartDateTime
 		, race.RecordEndDateTime
-
+		, sssrd1.OutputCode AS SchoolOperationalStatus
+		, Schools.School_Type --Do I need to use the sssrd3
+		, sssrd3.OutputCode AS SchoolTypeCode
+	
+		,titleI.ProgramParticipationBeginDate titleI_ProgramParticipationBeginDate
+		,titleI.ProgramParticipationEndDate titleI_ProgramParticipationEndDate
+		,sssrd.OutputCode AS RefTitleISchoolStatus
+		
+		
 	FROM Staging.K12Enrollment								enrollment
 	JOIN Staging.K12Organization							Schools
 		ON		enrollment.SchoolIdentifierSea							=	Schools.SchoolIdentifierSea
@@ -47,6 +57,9 @@ AS
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(titleI.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(titleI.SchoolIdentifierSea, '')
 		AND		ISNULL(titleI.ProgramParticipationEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		--AND (titleI.ProgramParticipationBeginDate <= enrollment.EnrollmentEntryDate 
+		--AND ISNULL(titleI.ProgramParticipationEndDate, GETDATE()) >= enrollment.EnrollmentEntryDate) 
+		--OR titleI.ProgramParticipationBeginDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 
 	LEFT JOIN Staging.Migrant								migrant
 		ON		enrollment.StudentIdentifierState						=	migrant.StudentIdentifierState
@@ -77,6 +90,10 @@ AS
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(foster.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(foster.SchoolIdentifierSea, '')
 		AND		ISNULL(foster.FosterCare_ProgramParticipationEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		--AND (foster.FosterCare_ProgramParticipationStartDate <= enrollment.EnrollmentEntryDate 
+		--AND ISNULL(foster.FosterCare_ProgramParticipationEndDate, GETDATE()) >= enrollment.EnrollmentEntryDate) 
+		--OR foster.FosterCare_ProgramParticipationStartDate BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+
 
 	LEFT JOIN Staging.K12PersonRace							race
 		ON		enrollment.SchoolYear									=	race.SchoolYear
@@ -95,6 +112,18 @@ AS
 		AND sssrd2.TableName = 'RefTitleIIndicator'
 		AND titleI.TitleIIndicator = sssrd2.InputCode
 
+	LEFT JOIN staging.SourceSystemReferenceData sssrd1
+		ON Schools.School_OperationalStatus = sssrd1.InputCode
+		AND sssrd1.TableName = 'RefOperationalStatus'
+		AND sssrd1.TableFilter = '000533'
+		AND Schools.SchoolYear = sssrd1.SchoolYear
+
+	LEFT JOIN staging.SourceSystemReferenceData sssrd3 
+		ON Schools.School_Type = sssrd3.InputCode
+		AND sssrd3.TableName = 'RefSchoolType'
+		AND Schools.SchoolYear = sssrd3.SchoolYear
+
 	WHERE 1 = 1
-	AND sssrd.OutputCode in ('TGELGBTGPROG', 'SWELIGTGPROG', 'SWELIGSWPROG')
+	
+GO
 	

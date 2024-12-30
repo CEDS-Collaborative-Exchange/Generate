@@ -44,7 +44,7 @@ AS
 									on grft.GenerateReportId = gr.GenerateReportId
 								inner join rds.DimFactTypes dft
 									on grft.FactTypeId = dft.DimFactTypeId
-							where gr.ReportCode = @reportCode)
+							where gr.ReportCode = (concat('c',@ReportCode))) --edit to add the c
 
 	SET @SQLStatement = 
 	'SELECT *
@@ -102,7 +102,7 @@ AS
 			,GETDATE()
 		FROM StagingData s
 		INNER JOIN RDS.' + @ReportTableName + ' rt
-			ON rt.ReportCode = ''' + @ReportCode + ''' 
+			ON rt.ReportCode = ''c' + @ReportCode + ''' 
 			AND rt.ReportYear = ' + @SchoolYear + '
 			AND rt.ReportLevel = ''' + aol.LevelCode + '''
 			AND rt.CategorySetCode = ''' + cs.CategorySetCode + '''
@@ -132,7 +132,7 @@ AS
 	LEFT JOIN app.Dimensions d
 		ON cd.DimensionId = d.DimensionId
 	WHERE cs.SubmissionYear = @SchoolYear
-		AND gr.ReportCode = @ReportCode
+		AND gr.ReportCode = (concat('c',@ReportCode))
 	GROUP BY 
 		  gr.ReportCode
 		, aol.LevelCode
