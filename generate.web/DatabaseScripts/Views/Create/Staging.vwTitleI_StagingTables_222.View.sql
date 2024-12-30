@@ -1,15 +1,25 @@
-CREATE VIEW [Staging].[vwTitleI_StagingTables_C222] 
+CREATE VIEW [Staging].[vwTitleI_StagingTables_222] 
 AS
 	SELECT	DISTINCT 
-		      Stage.StudentIdentifierState
+		     
+			
+			 Stage.StudentIdentifierState
 			, Stage.LEAIdentifierSeaAccountability
 			, Stage.SchoolIdentifierSea
 			
 			--Foster
 			, Stage.ProgramType_FosterCare
 
-	FROM	[debug].[vwTitleI_StagingTables]				Stage
+			-- School
+			, SchoolOperationalStatus
+			, SchoolTypeCode
+			
 
-	WHERE 	Stage.ProgramType_FosterCare = 1
-	AND		Stage.FosterCare_ProgramParticipationStartDate <= CAST('6/30/' + CAST(Stage.SchoolYear AS VARCHAR(4)) AS DATE)
-	AND		ISNULL(Stage.FosterCare_ProgramParticipationEndDate, '1/1/9999') >= CAST('7/1/' + CAST(Stage.SchoolYear AS VARCHAR(4)) AS DATE)
+
+	FROM [debug].[vwTitleI_StagingTables]				Stage
+	
+	WHERE 	Stage.ProgramType_FosterCare = 1 
+	AND		SchoolOperationalStatus IN ('Open','New') 
+	AND		SchoolTypeCode in ('CareerAndTechnical','Alternative','Special','Regular')
+	--AND		ISNULL(Stage.ProgramParticipationEndDate, Stage.EnrollmentExitDate) >= Stage.EnrollmentEntryDate
+	AND		RefTitleISchoolStatus in ('TGELGBTGPROG', 'SWELIGTGPROG', 'SWELIGSWPROG')
