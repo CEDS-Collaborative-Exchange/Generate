@@ -231,34 +231,34 @@ BEGIN
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState
 			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
 				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
-	----title I (RDS)
+	--title I (RDS)
 		LEFT JOIN #vwTitleIStatuses rdt1s 
 			ON ISNULL(sko.LEA_TitleIProgramType, 'MISSING') 				= ISNULL(rdt1s.TitleIProgramTypeMap, rdt1s.TitleIProgramTypeCode)
 			AND ISNULL(sko.LEA_TitleIinstructionalService, 'MISSING') 		= ISNULL(rdt1s.TitleIInstructionalServicesMap, rdt1s.TitleIInstructionalServicesCode)
 			AND ISNULL(sko.LEA_K12LeaTitleISupportService, 'MISSING') 		= ISNULL(rdt1s.TitleISupportServicesMap, rdt1s.TitleISupportServicesCode)
 			AND ISNULL(sko.School_TitleISchoolStatus, 'MISSING') 			= ISNULL(rdt1s.TitleISchoolStatusMap, rdt1s.TitleISchoolStatusCode)
-	----homelessness (RDS)
+	--homelessness (RDS)
 		LEFT JOIN #vwHomelessnessStatuses rdhs
 			ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)
 			AND rdhs.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
 			AND rdhs.HomelessUnaccompaniedYouthStatusCode = 'MISSING'
 			AND rdhs.HomelessServicedIndicatorCode = 'MISSING' 
-	----foster care (RDS)
+	--foster care (RDS)
 		LEFT JOIN RDS.vwDimFosterCareStatuses rdvfc
 			ON ISNULL(CAST(FosterCareStatus.ProgramType_FosterCare AS SMALLINT), -1) = ISNULL(CAST(rdvfc.ProgramParticipationFosterCareMap AS SMALLINT), -1)
-	----idea disability (RDS)
+	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON ske.SchoolYear = rdis.SchoolYear
 			AND ISNULL(CAST(idea.IDEAIndicator AS SMALLINT), -1) = ISNULL(rdis.IdeaIndicatorMap, -1)
 			AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
 			AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
 			AND rdis.SpecialEducationExitReasonCode = 'MISSING'
-	----english learner (RDS)
+	--english learner (RDS)
 		LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
 			ON rsy.SchoolYear = rdels.SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
-	----migrant (RDS)
+	--migrant (RDS)
 		LEFT JOIN #vwMigrantStatuses rdms
 			ON ISNULL(CAST(migrant.MigrantStatus AS SMALLINT), -1) = ISNULL(CAST(rdms.MigrantStatusMap AS SMALLINT), -1)
 			AND rdms.MigrantEducationProgramEnrollmentTypeCode = 'MISSING' 
@@ -271,7 +271,7 @@ BEGIN
 		LEFT JOIN #vwGradeLevels rgls
 			ON ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
-	----race (RDS)	
+	--race (RDS)	
 		LEFT JOIN #vwRaces rdr
 			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
 				CASE
