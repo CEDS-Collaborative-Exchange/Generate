@@ -4,3 +4,8 @@ begin
 	insert into app.GenerateReport_FactType
 	values (136, 12)
 end
+
+--Activate FS210 in the report list
+update app.generatereports
+set isactive = 1
+where reportcode = 'c210'
