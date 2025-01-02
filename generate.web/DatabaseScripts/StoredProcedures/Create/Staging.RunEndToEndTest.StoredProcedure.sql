@@ -44,7 +44,7 @@ AS
 									on grft.GenerateReportId = gr.GenerateReportId
 								inner join rds.DimFactTypes dft
 									on grft.FactTypeId = dft.DimFactTypeId
-							where gr.ReportCode = (concat('c',@ReportCode))) --edit to add the c
+							where gr.ReportCode = (concat('c',@ReportCode)))
 
 	SET @SQLStatement = 
 	'SELECT *
