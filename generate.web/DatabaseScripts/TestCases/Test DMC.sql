@@ -229,8 +229,8 @@ EXEC App.FS194_TestCase							@SchoolYear
 -- EXEC Staging.RunEndToEndTest	 'C224', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
 -- PRINT 'End-to-End Test for FS225'
 -- EXEC Staging.RunEndToEndTest	 'C225', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
-   PRINT 'End-to-End Test for FS226'
-   EXEC Staging.RunEndToEndTest	 '226', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
-  PRINT 'End-to-End Test for FS226'
+  PRINT 'End-to-End Test for FS222'
    EXEC Staging.RunEndToEndTest	 '222', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+  PRINT 'End-to-End Test for FS226'
+   EXEC Staging.RunEndToEndTest	 '226', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
 
