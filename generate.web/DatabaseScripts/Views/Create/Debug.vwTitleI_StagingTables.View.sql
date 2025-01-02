@@ -42,9 +42,9 @@ AS
 		, Schools.School_Type --Do I need to use the sssrd3
 		, sssrd3.OutputCode AS SchoolTypeCode
 	
-		,titleI.ProgramParticipationBeginDate titleI_ProgramParticipationBeginDate
-		,titleI.ProgramParticipationEndDate titleI_ProgramParticipationEndDate
-		,sssrd.OutputCode AS RefTitleISchoolStatus
+		, titleI.ProgramParticipationBeginDate titleI_ProgramParticipationBeginDate
+		, titleI.ProgramParticipationEndDate titleI_ProgramParticipationEndDate
+		, sssrd.OutputCode AS RefTitleISchoolStatus
 		
 		
 	FROM Staging.K12Enrollment								enrollment
