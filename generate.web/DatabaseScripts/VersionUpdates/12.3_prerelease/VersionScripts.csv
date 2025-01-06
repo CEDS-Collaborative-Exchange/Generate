@@ -38,8 +38,12 @@ Views\\Drop,Debug.vwTitleIIIELOct_FactTable.View.sql,0
 Views\\Create,Debug.vwTitleIIIELOct_FactTable.View.sql,0
 Views\\Drop,Debug.vwTitleIIIELSY_FactTable.View.sql,0
 Views\\Create,Debug.vwTitleIIIELSY_FactTable.View.sql,0
+Views\\Drop,Debug.vwTitleI_StagingTables.View.sql,0
+Views\\Create,Debug.vwTitleI_StagingTables.View.sql,0
 Views\\Drop,RDS.vwTitleI_FactTable_222.View.sql,0
 Views\\Create,RDS.vwTitleI_FactTable_222.View.sql,0
+Views\\Drop,RDS.vwTitleI_StagingTables_222.View.sql,0
+Views\\Create,RDS.vwTitleI_StagingTables_222.View.sql,0
 Views\\Drop,RDS.vwAssessment_FactTable_050.View.sql,0
 Views\\Create,RDS.vwAssessment_FactTable_050.View.sql,0
 Views\\Drop,RDS.vwAssessment_FactTable_113.View.sql,0

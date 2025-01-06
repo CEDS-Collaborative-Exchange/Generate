@@ -10,7 +10,7 @@ CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_TitleI]
 AS
 
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
+	--SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
 
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
@@ -166,7 +166,7 @@ BEGIN
 			, -1														MigrantStudentQualifyingArrivalDateId	
 			, -1														LastQualifyingMoveDateId						
 
-		FROM Staging.K12Enrollment ske
+		FROM Staging.K12Enrollment ske 
 		JOIN Staging.K12Organization sko
 			ON ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sko.LeaIdentifierSea, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sko.SchoolIdentifierSea, '')
@@ -187,7 +187,8 @@ BEGIN
 			ON ske.StudentIdentifierState = title1.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(title1.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(title1.SchoolIdentifierSea, '')
-			AND title1.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+			AND ISNULL(title1.ProgramParticipationEndDate, ske.EnrollmentExitDate) >= ske.EnrollmentEntryDate
+			-----AND title1.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
 			AND ske.EnrollmentEntryDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
@@ -231,7 +232,7 @@ BEGIN
 			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
 				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
 	--title I (RDS)
-		LEFT JOIN #vwTitleIStatuses rdt1s
+		LEFT JOIN #vwTitleIStatuses rdt1s 
 			ON ISNULL(sko.LEA_TitleIProgramType, 'MISSING') 				= ISNULL(rdt1s.TitleIProgramTypeMap, rdt1s.TitleIProgramTypeCode)
 			AND ISNULL(sko.LEA_TitleIinstructionalService, 'MISSING') 		= ISNULL(rdt1s.TitleIInstructionalServicesMap, rdt1s.TitleIInstructionalServicesCode)
 			AND ISNULL(sko.LEA_K12LeaTitleISupportService, 'MISSING') 		= ISNULL(rdt1s.TitleISupportServicesMap, rdt1s.TitleISupportServicesCode)
@@ -266,7 +267,7 @@ BEGIN
 			AND rdms.MigrantPrioritizedForServicesCode = 'MISSING'
 			AND MEPContinuationOfServicesStatusCode = 'MISSING'
 			AND ConsolidatedMEPFundsStatusCode = 'MISSING'
-	--grade (RDS)
+	----grade (RDS)
 		LEFT JOIN #vwGradeLevels rgls
 			ON ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
@@ -279,7 +280,7 @@ BEGIN
 					ELSE 'Missing'
 				END
 
-	--Clear the Fact table of the data about to be migrated  
+--	--Clear the Fact table of the data about to be migrated  
 		DELETE RDS.FactK12StudentCounts
 		WHERE SchoolYearId = @SchoolYearId 
 			AND FactTypeId = @FactTypeId
