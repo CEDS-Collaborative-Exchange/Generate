@@ -1,4 +1,4 @@
-CREATE VIEW [RDS].[vwMembesrship_FactTable_052] 
+CREATE VIEW [RDS].[vwMembership_FactTable_052] 
 AS
 	SELECT 	f.[FactK12StudentCountId]
 			, f.[SchoolYear]
