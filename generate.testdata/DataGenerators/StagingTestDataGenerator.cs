@@ -1584,7 +1584,8 @@ namespace generate.testdata.DataGenerators
                     AllProgramParticipationNorD.Add(nord);
                 }
 
-                AppendDisciplineData(rnd, s, ideaIndicator);
+                
+                AppendDisciplineData(rnd, s, ideaIndicator, races.FirstOrDefault().RaceType, SchoolYear);
                 AppendAssessmentResults(rnd, testData.Assessments, s, SchoolYear);
 
             });
@@ -1654,18 +1655,19 @@ namespace generate.testdata.DataGenerators
 
                 //races.ForEach(r => AllPersonRaces.Add(r));
 
-                testData.K12PersonRaces.Where(r => r.StudentIdentifierState == s.StudentIdentifierState
+                var races = testData.K12PersonRaces.Where(r => r.StudentIdentifierState == s.StudentIdentifierState
                                                 && r.LeaIdentifierSeaAccountability == s.LeaIdentifierSeaAccountability
                                                 && r.SchoolIdentifierSea == s.SchoolIdentifierSea
-                                                )
-                                    .ToList()
-                                    .ForEach(r =>
-                                    {
-                                        r.SchoolYear = SchoolYear.ToString();
-                                        r.RecordStartDateTime = s.EnrollmentEntryDate;
-                                        r.RecordEndDateTime = s.EnrollmentExitDate;
-                                        AllPersonRaces.Add(r);
-                                    });
+                                                ).ToList();
+                                    
+                
+                 races.ForEach(r =>
+                 {
+                     r.SchoolYear = SchoolYear.ToString();
+                     r.RecordStartDateTime = s.EnrollmentEntryDate;
+                     r.RecordEndDateTime = s.EnrollmentExitDate;
+                     AllPersonRaces.Add(r);
+                 });
 
 
 
@@ -2071,7 +2073,7 @@ namespace generate.testdata.DataGenerators
                     AllProgramParticipationNorD.Add(nord);
                 }
 
-                AppendDisciplineData(rnd, s, ideaIndicator);
+                AppendDisciplineData(rnd, s, ideaIndicator, races.FirstOrDefault().RaceType, SchoolYear);
                 AppendAssessmentResults(rnd, testData.Assessments, s, SchoolYear);
 
             });
@@ -2515,14 +2517,43 @@ namespace generate.testdata.DataGenerators
             }
         }
 
-        private void AppendDisciplineData(Random rnd, K12Enrollment k12Enrollment, bool ideaIndicator)
+        private void AppendDisciplineData(Random rnd, K12Enrollment k12Enrollment, bool ideaIndicator, string raceType, int SchoolYear)
         {
 
             // Discipline ----
             //////////////////////////////////////
+            int disciplineCount = 0;
+            
+            
+            disciplineCount = AllDisciplines.Where(r => r.StudentIdentifierState == k12Enrollment.StudentIdentifierState
+                                                && r.LeaIdentifierSeaAccountability == k12Enrollment.LeaIdentifierSeaAccountability
+                                                && r.SchoolIdentifierSea == k12Enrollment.SchoolIdentifierSea
+                                                && r.SchoolYear == SchoolYear + 1)
+                                            .Count();
+
+            if(disciplineCount > 0)
+            {
+                disciplineCount = disciplineCount > 5? disciplineCount - 5 : disciplineCount;
+            }
+            else
+            {
+                disciplineCount = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NumberOfDisciplinesDistribution);
+            }
+
+                //testData.K12PersonRaces.Where(r => r.StudentIdentifierState == s.StudentIdentifierState
+                //                                && r.LeaIdentifierSeaAccountability == s.LeaIdentifierSeaAccountability
+                //                                && r.SchoolIdentifierSea == s.SchoolIdentifierSea
+                //                                )
+                //                    .ToList()
+                //                    .ForEach(r =>
+                //                    {
+                //                        r.SchoolYear = SchoolYear.ToString();
+                //                        r.RecordStartDateTime = s.EnrollmentEntryDate;
+                //                        r.RecordEndDateTime = s.EnrollmentExitDate;
+                //                        AllPersonRaces.Add(r);
+                //                    });
 
 
-            int disciplineCount = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NumberOfDisciplinesDistribution);
 
             for (int disciplineNumber = 0; disciplineNumber < disciplineCount; disciplineNumber++)
             {
