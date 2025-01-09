@@ -1,6 +1,6 @@
 CREATE VIEW [RDS].[vwNeglectedOrDelinquent_FactTable_220] 
 AS
-	SELECT 	f.[FactK12StudentCountId]
+SELECT 	f.[FactK12StudentCountId]
 			, f.[SchoolYear]
 		  	, f.[K12StudentId]
 		  	, f.[K12StudentStudentIdentifierState]
@@ -23,6 +23,7 @@ AS
 			, f.[NeglectedOrDelinquentStatusCode]
 			, f.[NeglectedOrDelinquentProgramEnrollmentSubpartCode]
 			, f.[EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode]
+			, f.[EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode]
     FROM  [debug].[vwNeglectedOrDelinquent_FactTable] f
     WHERE f.NeglectedOrDelinquentStatusCode = 'Yes'
 	    AND f.NeglectedOrDelinquentProgramEnrollmentSubpartCode = '1'
