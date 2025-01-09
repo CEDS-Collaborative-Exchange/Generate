@@ -67,6 +67,7 @@ namespace generate.testdata.DataGenerators
         public ConcurrentBag<K12Enrollment> AllK12Enrollments { get; set; }
         public ConcurrentBag<K12Enrollment> BaseK12Enrollments { get; set; }
         public ConcurrentBag<Discipline> AllDisciplines { get; set; }
+        //public ConcurrentBag<> AllDisciplineCounts { get; set; }
         public ConcurrentBag<Disability> AllDisabilities { get; set; }
         public ConcurrentBag<core.Models.Staging.AssessmentResult> AllAssessmentResults { get; set; }
         public ConcurrentBag<K12PersonRace> AllPersonRaces { get; set; }
@@ -229,7 +230,7 @@ namespace generate.testdata.DataGenerators
                 stagingContextLogger.LogInformation("AccessibleEducationMaterialProvider Saved");
 
                 //stagingEnrollmentTestDataObject.K12Organizations = testData.K12Organizations;
-                stagingEnrollmentTestDataObject.K12PersonRaces = testData.PersonRaces;
+                
                 stagingEnrollmentTestDataObject.Assessments = testData.Assessments;
                 stagingEnrollmentTestDataObject.AccessibleEducationMaterialProviders = testData.AccessibleEducationMaterialProviders;
 
@@ -274,6 +275,7 @@ namespace generate.testdata.DataGenerators
                 testData.K12StudentCourseSections.ForEach(t => AllK12StudentCourseSection.Add(t));
 
                 stagingEnrollmentTestDataObject.K12Enrollments = AllK12Enrollments.ToList();
+                stagingEnrollmentTestDataObject.K12PersonRaces = AllPersonRaces.ToList();
 
                 SqlHelper.BulkInsertHelper(stagingConnectionString, "Staging.K12Enrollment", AllK12Enrollments.ToList());
                 SqlHelper.BulkInsertHelper(stagingConnectionString, "Staging.Discipline", AllDisciplines.ToList());
@@ -1632,29 +1634,6 @@ namespace generate.testdata.DataGenerators
                     }
                 }
 
-                //var races = new List<K12PersonRace>();
-                //for (int raceCount = 0; raceCount < _testDataHelper.GetRandomIntInRange(rnd, 1, 2); raceCount++)
-                //{
-                //    string race = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefRaceDistribution);
-                //    while (races.Exists(r => r.RaceType == race))
-                //    {
-                //        race = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefRaceDistribution);
-                //    }
-
-                //    races.Add(new K12PersonRace()
-                //    {
-                //        LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability,
-                //        SchoolIdentifierSea = s.SchoolIdentifierSea,
-                //        RaceType = race,
-                //        StudentIdentifierState = s.StudentIdentifierState,
-                //        RecordStartDateTime = s.EnrollmentEntryDate,
-                //        RecordEndDateTime = s.EnrollmentExitDate,
-                //        SchoolYear = SchoolYear.ToString()
-                //    });
-                //}
-
-                //races.ForEach(r => AllPersonRaces.Add(r));
-
                 var races = testData.K12PersonRaces.Where(r => r.StudentIdentifierState == s.StudentIdentifierState
                                                 && r.LeaIdentifierSeaAccountability == s.LeaIdentifierSeaAccountability
                                                 && r.SchoolIdentifierSea == s.SchoolIdentifierSea
@@ -2073,7 +2052,11 @@ namespace generate.testdata.DataGenerators
                     AllProgramParticipationNorD.Add(nord);
                 }
 
-                AppendDisciplineData(rnd, s, ideaIndicator, races.FirstOrDefault().RaceType, SchoolYear);
+                string raceType = "";
+                if (races.Count() > 0) { raceType = races.FirstOrDefault().RaceType; }
+                
+
+                AppendDisciplineData(rnd, s, ideaIndicator, raceType, SchoolYear);
                 AppendAssessmentResults(rnd, testData.Assessments, s, SchoolYear);
 
             });
@@ -2523,36 +2506,42 @@ namespace generate.testdata.DataGenerators
             // Discipline ----
             //////////////////////////////////////
             int disciplineCount = 0;
-            
-            
-            disciplineCount = AllDisciplines.Where(r => r.StudentIdentifierState == k12Enrollment.StudentIdentifierState
-                                                && r.LeaIdentifierSeaAccountability == k12Enrollment.LeaIdentifierSeaAccountability
-                                                && r.SchoolIdentifierSea == k12Enrollment.SchoolIdentifierSea
-                                                && r.SchoolYear == SchoolYear + 1)
-                                            .Count();
 
-            if(disciplineCount > 0)
+
+            //if (AllDisciplines.Count > 0)
+            //{
+            //    disciplineCount = AllDisciplines.Where(r => r.StudentIdentifierState == k12Enrollment.StudentIdentifierState
+            //                                        && r.LeaIdentifierSeaAccountability == k12Enrollment.LeaIdentifierSeaAccountability
+            //                                        && r.SchoolIdentifierSea == k12Enrollment.SchoolIdentifierSea)
+            //                                    .Count();
+
+            //}
+
+            //if(disciplineCount > 0)
+            //{
+            //    disciplineCount = disciplineCount - 1;
+            //}
+            //else
+            //{
+            //    if(raceType == "BlackorAfricanAmerican")
+            //    {
+            //        disciplineCount = _testDataHelper.GetMaxWeightedSelection(rnd, _testDataProfile.NumberOfDisciplinesDistribution);
+            //    }
+            //    else
+            //    {
+            //        disciplineCount = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NumberOfDisciplinesDistribution);
+            //    }
+                
+            //}
+
+            if (raceType == "BlackorAfricanAmerican")
             {
-                disciplineCount = disciplineCount > 5? disciplineCount - 5 : disciplineCount;
+                disciplineCount = _testDataHelper.GetMaxWeightedSelection(rnd, _testDataProfile.NumberOfDisciplinesDistribution);
             }
             else
             {
                 disciplineCount = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NumberOfDisciplinesDistribution);
             }
-
-                //testData.K12PersonRaces.Where(r => r.StudentIdentifierState == s.StudentIdentifierState
-                //                                && r.LeaIdentifierSeaAccountability == s.LeaIdentifierSeaAccountability
-                //                                && r.SchoolIdentifierSea == s.SchoolIdentifierSea
-                //                                )
-                //                    .ToList()
-                //                    .ForEach(r =>
-                //                    {
-                //                        r.SchoolYear = SchoolYear.ToString();
-                //                        r.RecordStartDateTime = s.EnrollmentEntryDate;
-                //                        r.RecordEndDateTime = s.EnrollmentExitDate;
-                //                        AllPersonRaces.Add(r);
-                //                    });
-
 
 
             for (int disciplineNumber = 0; disciplineNumber < disciplineCount; disciplineNumber++)
@@ -2563,7 +2552,7 @@ namespace generate.testdata.DataGenerators
                 var refDisciplineReason = _testDataHelper.GetRandomObject<RefDisciplineReason>(rnd, this.IdsReferenceData.RefDisciplineReasons).Code;
                 var refDisciplineLengthDifferenceReason = _testDataHelper.GetRandomObject<RefDisciplineLengthDifferenceReason>(rnd, this.IdsReferenceData.RefDisciplineLengthDifferenceReasons).Code;
                 string refIdeainterimRemoval = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIdeaInterimRemovalDistribution);
-                //                string refIdeainterimRemoval = _testDataHelper.GetRandomObject<RefIdeainterimRemoval>(rnd, this.IdsReferenceData.RefIdeainterimRemovals).Code;
+                //  string refIdeainterimRemoval = _testDataHelper.GetRandomObject<RefIdeainterimRemoval>(rnd, this.IdsReferenceData.RefIdeainterimRemovals).Code;
                 string refIdeainterimRemovalReason = _testDataHelper.GetRandomObject<RefIdeainterimRemovalReason>(rnd, this.IdsReferenceData.RefIdeainterimRemovalReasons).Code;
                 string refDisciplineMethodOfCwd = _testDataHelper.GetRandomObject<RefDisciplineMethodOfCwd>(rnd, this.IdsReferenceData.RefDisciplineMethodOfCwds).Code;
                 string refFirearmType = _testDataHelper.GetRandomObject<RefFirearmType>(rnd, this.IdsReferenceData.RefFirearmTypes).Code;

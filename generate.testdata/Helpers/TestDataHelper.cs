@@ -246,6 +246,14 @@ namespace generate.testdata.Helpers
             return selectedItem.Option;
         }
 
+        public int GetMaxWeightedSelection(Random rnd, List<DataDistribution<int>> items)
+        {
+            int totalWeight = items.Max(i => i.ExpectedDistribution);
+            int rndValue = rnd.Next(totalWeight - 10, totalWeight);
+            var selectedItem = items.First(item => rndValue <= item.ExpectedDistribution);
+            return selectedItem.Option;
+        }
+
         public string GetWeightedSelection(Random rnd, List<DataDistribution<string>> items)
         {
             int totalWeight = items.Max(i => i.ExpectedDistribution);
