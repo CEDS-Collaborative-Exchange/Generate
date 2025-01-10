@@ -233,11 +233,13 @@ namespace generate.testdata.DataGenerators
                 
                 stagingEnrollmentTestDataObject.Assessments = testData.Assessments;
                 stagingEnrollmentTestDataObject.AccessibleEducationMaterialProviders = testData.AccessibleEducationMaterialProviders;
+                int disciplineCountLowerLimit = 3;
+                int disciplineCountUpperLimit = 6;
 
                 if (isStartingSY)
                 {
                     stagingContextLogger.LogInformation("Creating K12Enrollment, Discipline, PersonRace, PersonStatus, Assessment Result, and all Program Participation data");
-                    this.CreateK12EnrollmentData(testData, QuantityOfStudents);
+                    this.CreateK12EnrollmentData(testData,QuantityOfStudents, disciplineCountLowerLimit, disciplineCountUpperLimit);
 
                     FS002TestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     FS089TestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
@@ -255,7 +257,9 @@ namespace generate.testdata.DataGenerators
                 }
                 else
                 {
-                    this.UpdateK12EnrollmentData(stagingEnrollmentTestDataObject, stagingEnrollmentTestDataObject.K12Enrollments.Count);
+                    disciplineCountLowerLimit = disciplineCountLowerLimit > 1 ? disciplineCountLowerLimit - 1 : 1;
+                    disciplineCountUpperLimit = disciplineCountUpperLimit - 1;
+                    this.UpdateK12EnrollmentData(stagingEnrollmentTestDataObject, stagingEnrollmentTestDataObject.K12Enrollments.Count, disciplineCountLowerLimit, disciplineCountUpperLimit);
                 }
 
                 testData.K12Enrollments.ForEach(t => AllK12Enrollments.Add(t));
@@ -1071,7 +1075,7 @@ namespace generate.testdata.DataGenerators
             return testData;
         }
 
-        public StagingTestDataObject CreateK12EnrollmentData(StagingTestDataObject testData, int recordCount)
+        public StagingTestDataObject CreateK12EnrollmentData(StagingTestDataObject testData, int recordCount, int disciplineCountLowerLimit, int disciplineCountUpperLimit)
         {
             DateTime startTime = DateTime.UtcNow;
             List<string> CohortDescriptions = new List<string>();
@@ -1586,8 +1590,18 @@ namespace generate.testdata.DataGenerators
                     AllProgramParticipationNorD.Add(nord);
                 }
 
+                int adjustedDisciplineCountLowerLimit = disciplineCountLowerLimit;
+                int adjustedDisciplineCountUpperLimit = disciplineCountUpperLimit;
+                if (races.FirstOrDefault() != null && races.FirstOrDefault().RaceType == "BlackorAfricanAmerican") {
+                    adjustedDisciplineCountLowerLimit = disciplineCountLowerLimit + 2;
+                }
+                else
+                {
+
+                    adjustedDisciplineCountUpperLimit = disciplineCountUpperLimit - 2;
+                }
                 
-                AppendDisciplineData(rnd, s, ideaIndicator, races.FirstOrDefault().RaceType, SchoolYear);
+                AppendDisciplineData(rnd, s, ideaIndicator, adjustedDisciplineCountLowerLimit, adjustedDisciplineCountUpperLimit);
                 AppendAssessmentResults(rnd, testData.Assessments, s, SchoolYear);
 
             });
@@ -1595,7 +1609,7 @@ namespace generate.testdata.DataGenerators
             return testData;
         }
 
-        public StagingEnrollmentTestDataObject UpdateK12EnrollmentData(StagingEnrollmentTestDataObject testData, int recordCount)
+        public StagingEnrollmentTestDataObject UpdateK12EnrollmentData(StagingEnrollmentTestDataObject testData, int recordCount, int disciplineCountLowerLimit, int disciplineCountUpperLimit)
         {
             //DateTime startTime = DateTime.UtcNow;
             List<string> CohortDescriptions = new List<string>();
@@ -2052,336 +2066,26 @@ namespace generate.testdata.DataGenerators
                     AllProgramParticipationNorD.Add(nord);
                 }
 
-                string raceType = "";
-                if (races.Count() > 0) { raceType = races.FirstOrDefault().RaceType; }
-                
+               
+                int adjustedDisciplineCountLowerLimit = disciplineCountLowerLimit;
+                int adjustedDisciplineCountUpperLimit = disciplineCountUpperLimit;
+                if (races.Count() > 0 && races.FirstOrDefault().RaceType == "BlackorAfricanAmerican")
+                {
+                    adjustedDisciplineCountLowerLimit = disciplineCountLowerLimit + 2;
+                }
+                else
+                {
 
-                AppendDisciplineData(rnd, s, ideaIndicator, raceType, SchoolYear);
+                    adjustedDisciplineCountUpperLimit = disciplineCountUpperLimit - 2;
+                }
+
+                AppendDisciplineData(rnd, s, ideaIndicator, adjustedDisciplineCountLowerLimit, adjustedDisciplineCountUpperLimit);
                 AppendAssessmentResults(rnd, testData.Assessments, s, SchoolYear);
 
             });
 
             return testData;
         }
-
-        //public StagingEnrollmentTestDataObject UpdateK12EnrollmentData(StagingEnrollmentTestDataObject testData, int recordCount)
-        //{
-        //    Parallel.ForEach(testData.K12Enrollments, t =>
-        //    {
-        //        var rnd = ThreadSafeRandom.NewRandom();
-        //        var entryDate = _testDataHelper.GetEntryDate(rnd, BaseProgramEntryDate);
-        //        var absences = _testDataHelper.GetRandomIntInRange(rnd, 1, 170);
-        //        t.SchoolYear = SchoolYear.ToString();
-        //        t.EnrollmentEntryDate = entryDate;
-        //        t.NumberOfDaysAbsent = absences;
-        //        t.AttendanceRate = Decimal.Divide(180 - absences, 180);
-        //        if (int.TryParse(t.GradeLevel, out var gradeLevel))
-        //        {
-        //            if(gradeLevel == 1) { t.GradeLevel = "KG"; }
-        //            else { t.GradeLevel = (gradeLevel - 1).ToString(); }
-        //        }
-        //        else
-        //        {
-        //            if (t.GradeLevel == "KG") { t.GradeLevel = "PK"; }
-        //            else if (t.GradeLevel == "PK") { t.EnrollmentExitDate = entryDate; }
-
-        //        }
-        //        t.EnrollmentExitDate = _testDataHelper.GetExitDate(rnd, entryDate, BaseProgramExitDate);
-          
-        //        testData.PersonRaces.Where(r => r.StudentIdentifierState == t.StudentIdentifierState
-        //                                        && r.LeaIdentifierSeaAccountability == t.LeaIdentifierSeaAccountability
-        //                                        && r.SchoolIdentifierSea == t.SchoolIdentifierSea
-        //                                        )
-        //                            .ToList()
-        //                            .ForEach(r => {
-        //                                r.SchoolYear = SchoolYear.ToString();
-        //                                r.RecordStartDateTime = t.EnrollmentEntryDate;
-        //                                r.RecordEndDateTime = t.EnrollmentExitDate;
-        //                                AllPersonRaces.Add(r);
-        //                            });
-
-        //        testData.PersonStatuses.Where(r => r.StudentIdentifierState == t.StudentIdentifierState
-        //                         && r.LeaIdentifierSeaAccountability == t.LeaIdentifierSeaAccountability
-        //                         && r.SchoolIdentifierSea == t.SchoolIdentifierSea)
-        //             .ToList()
-        //             .ForEach(r =>
-        //             {
-
-        //                 if (r.EnglishLearnerStatus == true)
-        //                 {
-        //                     r.EnglishLearner_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate.AddYears(-6), t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                     r.EnglishLearner_StatusEndDate = BaseProgramExitDate;
-        //                 }
-
-        //                 if (r.EconomicDisadvantageStatus == true)
-        //                 {
-        //                     r.EconomicDisadvantage_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, t.EnrollmentEntryDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                     r.EconomicDisadvantage_StatusEndDate = _testDataHelper.GetExitDate(rnd, r.EconomicDisadvantage_StatusStartDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                 }
-        //                 else
-        //                 {
-        //                     r.EconomicDisadvantage_StatusStartDate = BaseProgramExitDate;
-        //                     r.EconomicDisadvantage_StatusEndDate = BaseProgramExitDate;
-        //                 }
-        //                 if (r.ProgramType_FosterCare == true)
-        //                 {
-        //                     r.FosterCare_ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, t.EnrollmentEntryDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                     r.FosterCare_ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, r.FosterCare_ProgramParticipationStartDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                 }
-        //                 else
-        //                 {
-        //                     r.FosterCare_ProgramParticipationStartDate = BaseProgramExitDate;
-        //                     r.FosterCare_ProgramParticipationEndDate = BaseProgramExitDate;
-        //                 }
-        //                 if (r.HomelessnessStatus == true)
-        //                 {
-        //                     r.Homelessness_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, t.EnrollmentEntryDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                     r.Homelessness_StatusEndDate = _testDataHelper.GetExitDate(rnd, r.Homelessness_StatusStartDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                     r.HomelessNightTimeResidence_StartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
-        //                     r.HomelessNightTimeResidence_EndDate = _testDataHelper.GetExitDate(rnd, r.HomelessNightTimeResidence_StartDate.Value, BaseProgramExitDate);
-
-        //                 }
-        //                 else
-        //                 {
-        //                     r.Homelessness_StatusStartDate = BaseProgramExitDate;
-        //                     r.Homelessness_StatusEndDate = BaseProgramExitDate;
-        //                 }
-        //                 if (r.ProgramType_Immigrant == true)
-        //                 {
-        //                     r.Immigrant_ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, t.EnrollmentEntryDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                     r.Immigrant_ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, r.Immigrant_ProgramParticipationStartDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                 }
-        //                 else
-        //                 {
-        //                     r.Immigrant_ProgramParticipationStartDate = BaseProgramExitDate;
-        //                     r.Immigrant_ProgramParticipationEndDate = BaseProgramExitDate;
-        //                 }
-        //                 if (r.ProgramType_Section504 == true)
-        //                 {
-        //                     var section504Status = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.Section504ProgramParticipationDistribution);
-
-        //                     var section504_startDate = _testDataHelper.GetRandomDateInRange(rnd, t.EnrollmentEntryDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                     var section504_endDate = _testDataHelper.GetExitDate(rnd, section504_startDate, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-
-        //                     r.Section504_ProgramParticipationStartDate = section504_startDate;
-        //                     r.Section504_ProgramParticipationEndDate = section504_endDate;
-
-        //                     testData.Disabilities.Where(r => r.StudentIdentifierState == t.StudentIdentifierState
-        //                                                    && r.LeaIdentifierSeaAccountability == t.LeaIdentifierSeaAccountability
-        //                                                    && r.SchoolIdentifierSea == t.SchoolIdentifierSea
-        //                                                    && section504Status == true)
-        //                                            .ToList()
-        //                                            .ForEach(r => {
-        //                                                r.SchoolYear = (short)SchoolYear;
-        //                                                r.Disability_StatusStartDate = section504_startDate;
-        //                                                r.Disability_StatusEndDate = section504_endDate;
-        //                                                AllDisabilities.Add(r);
-        //                                            });
-
-        //                 }
-        //                 else
-        //                 {
-        //                     r.Section504_ProgramParticipationStartDate = BaseProgramExitDate;
-        //                     r.Section504_ProgramParticipationEndDate = BaseProgramExitDate;
-        //                 }
-        //                 if (r.MigrantStatus == true)
-        //                 {
-        //                     r.Migrant_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, t.EnrollmentEntryDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                     r.Migrant_StatusEndDate = _testDataHelper.GetExitDate(rnd, r.Migrant_StatusStartDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                 }
-        //                 else
-        //                 {
-        //                     r.Migrant_StatusStartDate = BaseProgramExitDate;
-        //                     r.Migrant_StatusEndDate = BaseProgramExitDate;
-        //                 }
-
-        //                 if (r.MilitaryConnectedStudentIndicator == "ActiveDuty" || r.MilitaryConnectedStudentIndicator == "NationalGuardOrReserve")
-        //                 {
-        //                     r.MilitaryConnected_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, t.EnrollmentEntryDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                     r.MilitaryConnected_StatusEndDate = _testDataHelper.GetExitDate(rnd, r.MilitaryConnected_StatusStartDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                 }
-        //                 else
-        //                 {
-        //                     r.MilitaryConnected_StatusStartDate = BaseProgramExitDate;
-        //                     r.MilitaryConnected_StatusEndDate = BaseProgramExitDate;
-        //                 }
-        //                 if (r.PerkinsEnglishLearnerStatus == "1")
-        //                 {
-        //                     r.PerkinsEnglishLearnerStatus_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, t.EnrollmentEntryDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                     r.PerkinsEnglishLearnerStatus_StatusEndDate = _testDataHelper.GetExitDate(rnd, r.PerkinsEnglishLearnerStatus_StatusStartDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //                 }
-        //                 else
-        //                 {
-        //                     r.PerkinsEnglishLearnerStatus_StatusStartDate = BaseProgramExitDate;
-        //                     r.PerkinsEnglishLearnerStatus_StatusEndDate = BaseProgramExitDate;
-        //                 }
-        //                 AllPersonStatuses.Add(r);
-        //             });
-
-        //        AllK12Enrollments.Add(t);
-
-        //        DateTime DisabilityType_RecordStartDateTime = _testDataHelper.GetRandomDateInRange(rnd, t.EnrollmentEntryDate.Value, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-        //        DateTime DisabilityType_RecordEndDateTime = _testDataHelper.GetExitDate(rnd, DisabilityType_RecordStartDateTime, t.EnrollmentExitDate.HasValue ? t.EnrollmentExitDate.Value : BaseProgramExitDate);
-
-        //        testData.IdeaDisabilityTypes.Where(r => r.StudentIdentifierState == t.StudentIdentifierState
-        //                                                && r.LeaIdentifierSeaAccountability == t.LeaIdentifierSeaAccountability
-        //                                                && r.SchoolIdentifierSea == t.SchoolIdentifierSea
-        //                                           )
-        //                                     .ToList()
-        //                                     .ForEach(r => {
-        //                                                     r.SchoolYear = (short)SchoolYear;
-        //                                                     r.RecordStartDateTime = DisabilityType_RecordStartDateTime;
-        //                                                     if (r.RecordEndDateTime.HasValue) { r.RecordEndDateTime = DisabilityType_RecordEndDateTime; }
-        //                                                     AllIdeaDisabilityTypes.Add(r);
-        //                                     });
-
-               
-        //        TimeSpan span = DateTime.Parse("6/1/" + SchoolYear.ToString()) - t.Birthdate.Value;
-        //        var days = span.TotalDays;
-        //        int age = (new DateTime(1, 1, 1) + span).Year - 1;
-        //        string IDEAEarlyChildhood = (age < 5 || (age == 5 && (t.GradeLevel == "MISSING" || t.GradeLevel == "PK"))) ? _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIDEAEducationalEnvironmentForEarlyChildhoodDistribution) : null;
-        //        string IDEASchoolAge = (age > 5 || (age == 5 && t.GradeLevel != "PK" && t.GradeLevel != "MISSING")) ? _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIDEAEducationalEnvironmentForSchoolAgeDistribution) : null;
-
-        //        // var sped = new core.Models.Staging.ProgramParticipationSpecialEducation();
-        //        bool ideaIndicator = false;
-
-        //        testData.ProgramParticipationSpecialEducations.Where(r => r.StudentIdentifierState == t.StudentIdentifierState
-        //                                                                  && r.LeaIdentifierSeaAccountability == t.LeaIdentifierSeaAccountability
-        //                                                                  && r.SchoolIdentifierSea == t.SchoolIdentifierSea
-        //                                                                  && r.IDEAIndicator == true
-        //                                                               )
-        //                                                       .ToList()
-        //                                                       .ForEach(r =>
-        //                                                       {
-        //                                                             r.IDEAEducationalEnvironmentForEarlyChildhood = IDEAEarlyChildhood;
-        //                                                             r.IDEAEducationalEnvironmentForSchoolAge = IDEASchoolAge;
-        //                                                             r.ProgramParticipationBeginDate = DisabilityType_RecordStartDateTime;
-        //                                                             if (r.ProgramParticipationEndDate.HasValue) { r.ProgramParticipationEndDate = DisabilityType_RecordEndDateTime; }
-        //                                                             AllProgramParticipationSpecialEducation.Add(r);
-        //                                                             ideaIndicator = true;
-        //                                                       });
-
-        //        var courseSectionStartDate = _testDataHelper.GetSessionStartDate(rnd, SchoolYear);
-        //        var courseSectionEndDate = _testDataHelper.GetSessionEndDate(rnd, SchoolYear);
-        //        var accessibleMaterial_orderedDate = _testDataHelper.GetRandomDateInRange(rnd, courseSectionStartDate, courseSectionStartDate.AddDays(90));
-        //        var accessibleMaterial_receivedDate = _testDataHelper.GetRandomDateAfter(rnd, accessibleMaterial_orderedDate, 60, courseSectionEndDate);
-        //        var accessibleMaterial_issuedDate = _testDataHelper.GetRandomDateAfter(rnd, accessibleMaterial_receivedDate, 60, courseSectionEndDate);
-
-        //        testData.AccessibleEducationMaterialAssignments.Where(r => r.K12StudentStudentIdentifierState == t.StudentIdentifierState
-        //                                                                 && r.LeaIdentifierSea == t.LeaIdentifierSeaAccountability
-        //                                                                 && r.SchoolIdentifierSea == t.SchoolIdentifierSea
-        //                                                              )
-        //                                                        .ToList()
-        //                                                        .ForEach(r =>
-        //                                                        {
-        //                                                            r.SchoolYear = SchoolYear;
-        //                                                            r.CountDate = DateTime.Now.Date;
-        //                                                            r.LearningResourceIssuedDate = accessibleMaterial_issuedDate;
-        //                                                            r.LearningResourceOrderedDate = accessibleMaterial_orderedDate;
-        //                                                            r.LearningResourceReceivedDate = accessibleMaterial_receivedDate;
-        //                                                            AllAccessibleEducationMaterialAssignment.Add(r);
-        //                                                        });
-
-        //        testData.K12StudentCourseSections.Where(r => r.StudentIdentifierState == t.StudentIdentifierState
-        //                                                      && r.LeaIdentifierSeaAccountability == t.LeaIdentifierSeaAccountability
-        //                                                      && r.SchoolIdentifierSea == t.SchoolIdentifierSea
-        //                                                      )
-        //                                                        .ToList()
-        //                                                        .ForEach(r =>
-        //                                                        {
-        //                                                            r.SchoolYear = SchoolYear;
-        //                                                            r.EntryDate = courseSectionStartDate;
-        //                                                            r.ExitDate = courseSectionEndDate;
-        //                                                            r.CourseRecordStartDateTime = courseSectionStartDate;
-        //                                                            AllK12StudentCourseSection.Add(r);
-        //                                                        });
-
-        //        testData.Disabilities.Where(r => r.StudentIdentifierState == t.StudentIdentifierState
-        //                                                       && r.LeaIdentifierSeaAccountability == t.LeaIdentifierSeaAccountability
-        //                                                       && r.SchoolIdentifierSea == t.SchoolIdentifierSea
-        //                                                       )
-        //                                                         .ToList()
-        //                                                         .ForEach(r =>
-        //                                                         {
-        //                                                             r.SchoolYear = (short)SchoolYear;
-        //                                                             AllDisabilities.Add(r);
-        //                                                         });
-
-        //        testData.ProgramParticipationTitleIIIs.Where(r => r.StudentIdentifierState == t.StudentIdentifierState
-        //                                                       && r.LeaIdentifierSeaAccountability == t.LeaIdentifierSeaAccountability
-        //                                                       && r.SchoolIdentifierSea == t.SchoolIdentifierSea
-        //                                                       && r.ProgramParticipationEndDate is not null)
-        //                                              .ToList()
-        //                                              .ForEach(r =>
-        //                                              {
-        //                                                r.ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
-        //                                                if (!_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
-        //                                                {
-        //                                                   r.ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, r.ProgramParticipationBeginDate.Value, BaseProgramExitDate);
-        //                                                   r.TitleIIIImmigrantStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIStatusDistribution);
-        //                                                   r.TitleIIIImmigrantStatus_StartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
-        //                                                   if (!_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
-        //                                                   {
-        //                                                     r.TitleIIIImmigrantStatus_EndDate = _testDataHelper.GetExitDate(rnd, r.TitleIIIImmigrantStatus_StartDate.Value, BaseProgramExitDate);
-        //                                                   }
-
-        //                                                }
-
-        //                                                AllProgramParticipationTitleIII.Add(r);
-        //                                              });
-
-        //        testData.ProgramParticipationCTEs.Where(r => r.StudentIdentifierState == t.StudentIdentifierState
-        //                                                       && r.LeaIdentifierSeaAccountability == t.LeaIdentifierSeaAccountability
-        //                                                       && r.SchoolIdentifierSea == t.SchoolIdentifierSea
-        //                                                       && r.ProgramParticipationEndDate is not null)
-        //                                              .ToList()
-        //                                              .ForEach(r =>
-        //                                              {
-        //                                                  r.ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
-        //                                                  if (!_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.CteProgramParticipantNowDistribution))
-        //                                                  {
-        //                                                      r.ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, r.ProgramParticipationBeginDate.Value, BaseProgramExitDate);
-        //                                                      r.DiplomaCredentialAwardDate = _testDataHelper.GetRandomDateInRange(rnd, r.ProgramParticipationBeginDate.Value, r.ProgramParticipationEndDate.Value);
-        //                                                      if (r.DisplacedHomeMakerIndicator.Value)
-        //                                                      {
-        //                                                          r.DisplacedHomeMaker_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
-        //                                                          r.DisplacedHomeMaker_StatusEndDate = _testDataHelper.GetExitDate(rnd, r.DisplacedHomeMaker_StatusStartDate.Value, BaseProgramExitDate);
-        //                                                      }
-        //                                                      if (r.SingleParentIndicator.Value)
-        //                                                      {
-        //                                                          r.SingleParent_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
-        //                                                          r.SingleParent_StatusEndDate = _testDataHelper.GetExitDate(rnd, r.SingleParent_StatusStartDate.Value, BaseProgramExitDate);
-        //                                                      }
-
-        //                                                  }
-
-        //                                                  AllProgramParticipationCte.Add(r);
-        //                                              });
-
-        //        testData.ProgramParticipationNorDs.Where(r => r.StudentIdentifierState == t.StudentIdentifierState
-        //                                                       && r.LeaIdentifierSeaAccountability == t.LeaIdentifierSeaAccountability
-        //                                                       && r.SchoolIdentifierSea == t.SchoolIdentifierSea
-        //                                                       && r.ProgramParticipationEndDate is not null)
-        //                                              .ToList()
-        //                                              .ForEach(r =>
-        //                                              {
-                                                          
-        //                                                  if (r.NeglectedOrDelinquentStatus.Value == true)
-        //                                                  {
-        //                                                      r.ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-90));
-        //                                                      r.ProgramParticipationEndDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDExitingDistribution) ? BaseProgramExitDate.AddDays(-10) : (DateTime?)null;
-        //                                                  }
-
-        //                                                  AllProgramParticipationNorD.Add(r);
-        //                                              });
-
-        //        AppendDisciplineData(rnd, t, ideaIndicator);
-        //        this.AppendAssessmentResults(rnd, testData.Assessments, t);
-
-        //    });
-
-        //    return testData;
-        //}
 
         private string GetGradeLevelForStudent(DateTime? birthdate, Random rnd)
         {
@@ -2500,49 +2204,13 @@ namespace generate.testdata.DataGenerators
             }
         }
 
-        private void AppendDisciplineData(Random rnd, K12Enrollment k12Enrollment, bool ideaIndicator, string raceType, int SchoolYear)
+        private void AppendDisciplineData(Random rnd, K12Enrollment k12Enrollment, bool ideaIndicator, int disciplineCountLowerLimit, int disciplineCountUpperLimit)
         {
 
             // Discipline ----
             //////////////////////////////////////
-            int disciplineCount = 0;
 
-
-            //if (AllDisciplines.Count > 0)
-            //{
-            //    disciplineCount = AllDisciplines.Where(r => r.StudentIdentifierState == k12Enrollment.StudentIdentifierState
-            //                                        && r.LeaIdentifierSeaAccountability == k12Enrollment.LeaIdentifierSeaAccountability
-            //                                        && r.SchoolIdentifierSea == k12Enrollment.SchoolIdentifierSea)
-            //                                    .Count();
-
-            //}
-
-            //if(disciplineCount > 0)
-            //{
-            //    disciplineCount = disciplineCount - 1;
-            //}
-            //else
-            //{
-            //    if(raceType == "BlackorAfricanAmerican")
-            //    {
-            //        disciplineCount = _testDataHelper.GetMaxWeightedSelection(rnd, _testDataProfile.NumberOfDisciplinesDistribution);
-            //    }
-            //    else
-            //    {
-            //        disciplineCount = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NumberOfDisciplinesDistribution);
-            //    }
-                
-            //}
-
-            if (raceType == "BlackorAfricanAmerican")
-            {
-                disciplineCount = _testDataHelper.GetMaxWeightedSelection(rnd, _testDataProfile.NumberOfDisciplinesDistribution);
-            }
-            else
-            {
-                disciplineCount = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NumberOfDisciplinesDistribution);
-            }
-
+            int disciplineCount = rnd.Next(disciplineCountLowerLimit, disciplineCountUpperLimit);
 
             for (int disciplineNumber = 0; disciplineNumber < disciplineCount; disciplineNumber++)
             {
