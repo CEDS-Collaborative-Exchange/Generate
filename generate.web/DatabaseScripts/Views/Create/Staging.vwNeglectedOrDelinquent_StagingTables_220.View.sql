@@ -1,4 +1,7 @@
-CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_C220] 
+CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_220] 
+
+
+Alter VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_220] 
 AS
 	WITH excludedLeas AS (
 		SELECT DISTINCT LEAIdentifierSea
@@ -21,7 +24,7 @@ SELECT  DISTINCT
 		,vw.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType EdFactsAcademicOrCareerAndTechnicalOutcomeExitType_Staging
 		,EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode as EdFactsAcademicOrCareerAndTechnicalOutcomeExitType	
 	FROM [Debug].[vwNeglectedOrDelinquent_StagingTables] vw
-	JOIN [RDS].[DimLeas] lea on lea.LeaIdentifierSea = vw.LEAIdentifierSeaAccountability
+	LEFT JOIN [RDS].[DimLeas] lea on lea.LeaIdentifierSea = vw.LEAIdentifierSeaAccountability
 	LEFT JOIN excludedLeas el
 		ON vw.LEAIdentifierSeaAccountability = el.LeaIdentifierSea
 	WHERE el.LeaIdentifierSea IS NULL
@@ -30,5 +33,4 @@ SELECT  DISTINCT
 		AND vw.ProgramParticipationBeginDate >= CAST(('7/1/' + CAST((vw.SchoolYear -1) as varchar))  AS Date)
 		AND CAST(ISNULL(vw.ProgramParticipationEndDate, '1900-01-01') AS DATE) <= CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date)
 		AND vw.ProgramParticipationBeginDate BETWEEN vw.EnrollmentEntryDate AND ISNULL(vw.EnrollmentExitDate, CAST(('6/30/' + CAST(vw.SchoolYear as varchar))  AS Date))
-
 
