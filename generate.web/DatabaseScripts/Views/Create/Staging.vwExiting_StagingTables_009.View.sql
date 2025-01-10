@@ -17,10 +17,10 @@ AS
 	--Get the data needed for the tests
 	SELECT  
 		vw.StudentIdentifierState,
-		LeaIdentifierSeaAccountability,
+		vw.LeaIdentifierSeaAccountability,
+		vw.SchoolYear,
+		vw.HispanicLatinoEthnicity,
 		CalculatedAge AS Age,
-		SchoolYear,
-
 		CASE SpecialEducationExitReason
 			WHEN 'HighSchoolDiploma' THEN 'GHS'
 			WHEN 'HighSchoolDiploma_1' THEN 'GHS'
@@ -40,8 +40,6 @@ AS
 			WHEN 'Died_1' THEN 'D'
 			ELSE SpecialEducationExitReason
 		END AS SpecialEducationExitReason,
-
-
 		CASE IdeaDisabilityTypeCode
 			WHEN 'Autism' THEN 'AUT'
 			WHEN 'Deafblindness' THEN 'DB'
@@ -74,7 +72,7 @@ AS
 			ELSE IdeaDisabilityTypeCode
 		END AS IdeaDisabilityType,
 		CASE 	
-			WHEN MAX(CAST(HispanicLatinoEthnicity AS INT)) = 1 THEN 'HI7' 
+			WHEN MAX(CAST(vw.HispanicLatinoEthnicity AS INT)) = 1 THEN 'HI7' 
 			WHEN MAX(RaceType) = 'AmericanIndianorAlaskaNative' THEN 'AM7'
 			WHEN MAX(RaceType) = 'Asian' THEN 'AS7'
 			WHEN MAX(RaceType) = 'BlackorAfricanAmerican' THEN 'BL7'
@@ -121,9 +119,9 @@ AND SpecialEducationExitReason IS NOT NULL
 
 GROUP BY
 	  vw.StudentIdentifierState
-	, LeaIdentifierSeaAccountability
+	, vw.LeaIdentifierSeaAccountability
 	, vw.SchoolIdentifierSea
-	, SchoolYear
+--	, vw.SchoolYear
 	, Sex
 	, CalculatedAge
 	, SpecialEducationExitReason
