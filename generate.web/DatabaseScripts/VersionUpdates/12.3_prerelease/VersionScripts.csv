@@ -150,6 +150,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProc
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_DataPopulation.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_DataPopulation.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.RebuildIndexes.StoredProcedure.sql,0
