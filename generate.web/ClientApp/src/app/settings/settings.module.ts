@@ -37,6 +37,7 @@ import { MetadataComponent } from './metadata/metadata.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
@@ -47,7 +48,8 @@ import { MatIconModule } from '@angular/material/icon';
         MatDialogModule,
         GuiGridModule,
         MatTabsModule,
-        MatIconModule
+        MatIconModule,
+        FormsModule
     ],
     declarations: [
         SettingsComponent,

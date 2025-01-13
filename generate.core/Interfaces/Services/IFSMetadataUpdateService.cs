@@ -19,6 +19,8 @@ namespace generate.core.Interfaces.Services
         string fsMetaCHRLayoutFileName { get; set; }
         string bkfsMetaFileLoc { get; set; }
         bool reloadFromBackUp { get; set; }
+
+        string selSchYr { get; set; }
         string callInitFSmetaServc();
 
         void populateCatInfoData(string collectionAbbrv, string dataSetAbbrv, string versionNum, string fqYrName, List<DataSetYearVersionDetailsByAllAbbrv> DSYVrdetail);
@@ -34,6 +36,8 @@ namespace generate.core.Interfaces.Services
         public bool checkBackupFilesExists();
 
         public void UpdateKeyinGenConfig(string key, string log);
+
+        string GetLatestSYs();
 
     }
 }
