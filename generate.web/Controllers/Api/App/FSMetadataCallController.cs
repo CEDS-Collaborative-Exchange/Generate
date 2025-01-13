@@ -69,8 +69,37 @@ namespace generate.web.Controllers.Api.App
             _backgroundUrl = configuration.GetSection("appSettings").GetValue<string>("BackgroundUrl");
         }
 
-        [HttpGet("fsservc")]
-        public async Task<IActionResult> callfsMetaServ()
+        [HttpGet("fsservc/{SelSchYear}")]
+        public async Task<IActionResult> callfsMetaServ(string SelSchYear)
+        {
+
+            this._FSMetadataUpdate.useWSforFSMetaUpd = _useWSforFSMetaUpd;
+            this._FSMetadataUpdate.fsWSURL = _fsWSURL;
+            this._FSMetadataUpdate.fsMetaFileLoc = _fsMetaFileLoc;
+            this._FSMetadataUpdate.fsMetaESSDetailFileName = _fsMetaESSDetailFileName;
+            this._FSMetadataUpdate.fsMetaCHRDetailFileName = _fsMetaCHRDetailFileName;
+            this._FSMetadataUpdate.fsMetaESSLayoutFileName = _fsMetaESSLayoutFileName;
+            this._FSMetadataUpdate.fsMetaCHRLayoutFileName = _fsMetaCHRLayoutFileName;
+            this._FSMetadataUpdate.bkfsMetaFileLoc = _bkfsMetaFileLoc;
+            this._FSMetadataUpdate.reloadFromBackUp = _reloadFromBackUp;
+            this._FSMetadataUpdate.selSchYr = (SelSchYear == "undefined" || _useWSforFSMetaUpd == false) ? string.Empty : SelSchYear;
+
+            var x = SelSchYear;
+            await Task.FromResult(this._FSMetadataUpdate.callInitFSmetaServc());
+
+            return Ok();
+
+        }
+
+        [HttpGet("getMetadataStatus")]
+        public JsonResult getMetadataStatus()
+        {
+           List<GenerateConfiguration> metadataConfig = _appRepository.GetAll<GenerateConfiguration>(0, 0).Where(t => t.GenerateConfigurationCategory == "Metadata").ToList();
+           return Json(metadataConfig);
+        }
+
+        [HttpGet("getlatestSYs")]
+        public async Task<string> getlatestSYs()
         {
 
             this._FSMetadataUpdate.useWSforFSMetaUpd = _useWSforFSMetaUpd;
@@ -83,17 +112,21 @@ namespace generate.web.Controllers.Api.App
             this._FSMetadataUpdate.bkfsMetaFileLoc = _bkfsMetaFileLoc;
             this._FSMetadataUpdate.reloadFromBackUp = _reloadFromBackUp;
 
-            await Task.FromResult(this._FSMetadataUpdate.callInitFSmetaServc());
+            if (_useWSforFSMetaUpd)
+            {
+                return await Task.FromResult(this._FSMetadataUpdate.GetLatestSYs());
+            }
+            else
+            {
+                return await Task.FromResult(string.Empty);
+            }            
 
-            return Ok();
-            
         }
 
-        [HttpGet("getMetadataStatus")]
-        public JsonResult getMetadataStatus()
+        [HttpGet("getMetaUplFlag")]
+        public async Task<string> getMetaUplFlag()
         {
-           List<GenerateConfiguration> metadataConfig = _appRepository.GetAll<GenerateConfiguration>(0, 0).Where(t => t.GenerateConfigurationCategory == "Metadata").ToList();
-           return Json(metadataConfig);
+            return await Task.FromResult("\""+(!_useWSforFSMetaUpd).ToString()+"\"");
         }
 
     }
