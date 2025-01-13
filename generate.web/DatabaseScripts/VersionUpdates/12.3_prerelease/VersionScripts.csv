@@ -46,6 +46,8 @@ Views\\Drop,RDS.vwTitleI_FactTable_222.View.sql,0
 Views\\Create,RDS.vwTitleI_FactTable_222.View.sql,0
 Views\\Drop,Staging.vwTitleI_StagingTables_222.View.sql,0
 Views\\Create,Staging.vwTitleI_StagingTables_222.View.sql,0
+Views\\Drop,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
+Views\\Create,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
 Views\\Drop,RDS.vwAssessment_FactTable_050.View.sql,0
 Views\\Create,RDS.vwAssessment_FactTable_050.View.sql,0
 Views\\Drop,RDS.vwAssessment_FactTable_113.View.sql,0
@@ -154,6 +156,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProc
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleI.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Membership.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_DataPopulation.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_DataPopulation.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.RebuildIndexes.StoredProcedure.sql,0

@@ -13,9 +13,11 @@ export class FSMetadataUpdate extends BaseService {
         super();
     }
 
-    callFSMetaServc() {
+    callFSMetaServc(SchYear) {
 
-        let url = this._apiUrl + '/fsservc';
+        console.log('SchYear -' + SchYear);
+
+        let url = this._apiUrl + '/fsservc/' + SchYear;
   
         return this.http.get(url, { observe: 'response' })
             .pipe(
@@ -46,6 +48,54 @@ export class FSMetadataUpdate extends BaseService {
                     this.log(`getMetadataStatus`);
                 }),
                 catchError(err => {
+                    this.handleError;
+                    return of(err.error);
+                })
+            );
+
+    }
+
+    getlatestSYs() {
+        console.log('##getLatestSYs##');
+        let url = this._apiUrl + '/getlatestSYs';
+
+        return this.http.get(url, { observe: 'response' })
+            .pipe(
+                map(resp => {
+                    console.log('--here a--');
+                    console.log(resp);
+                    console.log(resp.body);
+                    return resp.body;
+                }),
+                tap(resp => {
+                    this.log(`getlatestSYs`);
+                }),
+                catchError(err => {
+                    console.log('--here12--');
+                    this.handleError;
+                    return of(err.error);
+                })
+            );
+
+    }
+
+    getFlag() {
+        console.log('##getMetaUplFlag##');
+        let url = this._apiUrl + '/getMetaUplFlag';
+
+        return this.http.get(url, { observe: 'response' })
+            .pipe(
+                map(resp => {
+                    console.log('--here aa--');
+                    console.log(resp);
+                    console.log(resp.body);
+                    return resp.body;
+                }),
+                tap(resp => {
+                    this.log(`getMetaUplFlag`);
+                }),
+                catchError(err => {
+                    console.log('--here13--');
                     this.handleError;
                     return of(err.error);
                 })
