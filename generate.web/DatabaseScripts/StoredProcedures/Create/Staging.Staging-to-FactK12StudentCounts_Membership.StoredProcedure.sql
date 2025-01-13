@@ -37,7 +37,6 @@ BEGIN
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
- 
 		SELECT @MembershipDate = tr.ResponseValue
 		FROM App.ToggleQuestions tq
 		JOIN App.ToggleResponses tr
@@ -52,8 +51,6 @@ BEGIN
 		BEGIN
 			SELECT @MembershipDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@MembershipDate) AS VARCHAR(2)) + '-' + CAST(DAY(@MembershipDate) AS VARCHAR(2)) AS DATE)
 		END
-
-
 
 	--Check if Grade 13, Ungraded, and/or Adult Education should be included based on Toggle responses
 		DECLARE @toggleGrade13 AS BIT
@@ -172,10 +169,9 @@ BEGIN
 			, LastQualifyingMoveDateId				int null
 		)
 
-
 		INSERT INTO #Facts
 		SELECT DISTINCT
-			  @SchoolYearId 											SchoolYearId
+			@SchoolYearId 												SchoolYearId
 			, @FactTypeId												FactTypeId
 			, ISNULL(rgls.DimGradeLevelId, -1)							GradeLevelId
 			, rda.DimAgeId												AgeId
@@ -207,36 +203,9 @@ BEGIN
 			, -1														MigrantStudentQualifyingArrivalDateId
 			, -1														LastQualifyingMoveDateId
 
-		FROM 
-		
-		 Staging.K12Enrollment	ske		
-			
+		FROM Staging.K12Enrollment	ske		
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
-
-	--student info	
-		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND rdp.IsActiveK12Student = 1
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
---			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
-			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND @MembershipDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, '1/1/9999')
-		
-	--economically disadvantaged
-		LEFT JOIN Staging.PersonStatus							ecodis
-				ON		ecodis.StudentIdentifierState								    =	ske.StudentIdentifierState
-				AND		ISNULL(ecodis.LEAIdentifierSeaAccountability, '')			    =	ISNULL(ske.LEAIdentifierSeaAccountability, '')
-				AND		ISNULL(ecodis.SchoolIdentifierSea, '')						    =	ISNULL(ske.SchoolIdentifierSea, '')
-				AND		@MembershipDate BETWEEN ecodis.RecordStartDateTime AND ISNULL(ecodis.RecordEndDateTime, '1/1/9999')
-
-		LEFT JOIN #vwEconomicallyDisadvantagedStatuses rdeds
-			ON rdeds.SchoolYear = ske.SchoolYear
-			AND ISNULL(ecodis.EligibilityStatusForSchoolFoodServicePrograms, 'MISSING') = ISNULL(rdeds.EligibilityStatusForSchoolFoodServiceProgramsMap, 'MISSING')
-			AND ISNULL(CAST(ecodis.NationalSchoolLunchProgramDirectCertificationIndicator AS SMALLINT), -1)  = isnull(rdeds.NationalSchoolLunchProgramDirectCertificationIndicatorMap, -1)
-			AND ISNULL(CAST(ecodis.EconomicDisadvantageStatus as SMALLINT), -1) = ISNULL(rdeds.EconomicDisadvantageStatusMap, -1)
-
 	--sea
 		JOIN RDS.DimSeas rds
 			ON @MembershipDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, '1/1/9999')
@@ -247,6 +216,38 @@ BEGIN
 		JOIN RDS.vwDimK12Demographics rdkd
 			ON ske.SchoolYear = rdkd.SchoolYear
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)	
+	--student info	
+		JOIN RDS.DimPeople rdp
+			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
+			AND rdp.IsActiveK12Student = 1
+			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
+--			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
+			AND ISNULL(ske.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
+			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
+			AND @MembershipDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, '1/1/9999')
+	--lea
+		LEFT JOIN RDS.DimLeas rdl
+			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
+			AND @MembershipDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, '1/1/9999')
+	--school
+		LEFT JOIN RDS.DimK12Schools rdpch
+			ON ske.SchoolIdentifierSea = rdpch.SchoolIdentifierSea
+			AND @MembershipDate BETWEEN rdpch.RecordStartDateTime AND ISNULL(rdpch.RecordEndDateTime, '1/1/9999')
+	  	LEFT JOIN Staging.K12Organization						org
+			ON ske.SchoolYear 											=	org.Schoolyear
+			AND	ISNULL(ske.SchoolIdentifierSea, '')						= 	ISNULL(org.SchoolIdentifierSea, '')
+			AND @MembershipDate BETWEEN org.School_RecordStartDateTime AND ISNULL(org.School_RecordEndDateTime, '1/1/9999')
+	--economically disadvantaged
+		LEFT JOIN Staging.PersonStatus ecodis
+			ON ecodis.StudentIdentifierState								    =	ske.StudentIdentifierState
+			AND	ISNULL(ecodis.LEAIdentifierSeaAccountability, '')			    =	ISNULL(ske.LEAIdentifierSeaAccountability, '')
+			AND	ISNULL(ecodis.SchoolIdentifierSea, '')						    =	ISNULL(ske.SchoolIdentifierSea, '')
+			AND	@MembershipDate BETWEEN ecodis.EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusEndDate, '1/1/9999')
+		LEFT JOIN #vwEconomicallyDisadvantagedStatuses rdeds
+			ON rdeds.SchoolYear = ske.SchoolYear
+			AND ISNULL(ecodis.EligibilityStatusForSchoolFoodServicePrograms, 'MISSING') = ISNULL(rdeds.EligibilityStatusForSchoolFoodServiceProgramsMap, 'MISSING')
+			AND ISNULL(CAST(ecodis.NationalSchoolLunchProgramDirectCertificationIndicator AS SMALLINT), -1)  = isnull(rdeds.NationalSchoolLunchProgramDirectCertificationIndicatorMap, -1)
+			AND ISNULL(CAST(ecodis.EconomicDisadvantageStatus as SMALLINT), -1) = ISNULL(rdeds.EconomicDisadvantageStatusMap, -1)
 	--race	
 		LEFT JOIN #vwUnduplicatedRaceMap spr 
 			ON ske.StudentIdentifierState = spr.StudentIdentifierState
@@ -264,20 +265,6 @@ BEGIN
 			ON rgls.SchoolYear = ske.SchoolYear
 			AND ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
-	--lea
-		LEFT JOIN RDS.DimLeas rdl
-			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND @MembershipDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, '1/1/9999')
-	--school
-		LEFT JOIN RDS.DimK12Schools rdpch
-			ON ske.SchoolIdentifierSea = rdpch.SchoolIdentifierSea
-			AND @MembershipDate BETWEEN rdpch.RecordStartDateTime AND ISNULL(rdpch.RecordEndDateTime, '1/1/9999')
-      
-	  LEFT JOIN Staging.K12Organization						org
-				ON 		ske.SchoolYear 											=	org.Schoolyear
-				AND		ISNULL(ske.SchoolIdentifierSea, '')						= 	ISNULL(org.SchoolIdentifierSea, '')
-				AND 	@MembershipDate BETWEEN org.School_RecordStartDateTime AND ISNULL(org.School_RecordEndDateTime, '1/1/9999')
-
 	-- Title I Status
 		LEFT JOIN RDS.vwDimTitleIStatuses rdtis
 			ON ske.SchoolYear = rdtis.SchoolYear
