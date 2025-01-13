@@ -24,6 +24,8 @@ Views\\Drop,Debug.vwHomeless_FactTable.View.sql,0
 Views\\Create,Debug.vwHomeless_FactTable.View.sql,0
 Views\\Drop,Debug.vwHSGradPSEnroll_FactTable.View.sql,0
 Views\\Create,Debug.vwHSGradPSEnroll_FactTable.View.sql,0
+Views\\Drop,Debug.vwMembership_FactTable.View.sql,0
+Views\\Create,Debug.vwMembership_FactTable.View.sql,0
 Views\\Drop,Debug.vwMigrantEducationProgram_FactTable.View.sql,0
 Views\\Create,Debug.vwMigrantEducationProgram_FactTable.View.sql,0
 Views\\Drop,Debug.vwNeglectedOrDelinquent_FactTable.View.sql,0
@@ -104,6 +106,8 @@ Views\\Drop,RDS.vwMembership_FactTable_033.View.sql,0
 Views\\Create,RDS.vwMembership_FactTable_033.View.sql,0
 Views\\Drop,RDS.vwMembership_FactTable_052.View.sql,0
 Views\\Create,RDS.vwMembership_FactTable_052.View.sql,0
+Views\\Drop,RDS.vwMembership_FactTable_226.View.sql,0
+Views\\Create,RDS.vwMembership_FactTable_226.View.sql,0
 Views\\Drop,RDS.vwMigrantEducationProgram_FactTable_054.View.sql,0
 Views\\Create,RDS.vwMigrantEducationProgram_FactTable_054.View.sql,0
 Views\\Drop,RDS.vwMigrantEducationProgram_FactTable_121.View.sql,0

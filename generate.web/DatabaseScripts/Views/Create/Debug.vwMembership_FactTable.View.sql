@@ -30,8 +30,6 @@ AS
 			, Grades.GradeLevelEdFactsCode
 			, approvedGradeLevels.Grade
 
-			, Foster.ProgramParticipationFosterCareCode
-			, Foster.ProgramParticipationFosterCareEdFactsCode
 			, TitleI.TitleIProgramTypeEdFactsCode
 
 	FROM   		RDS.FactK12StudentCounts					Fact
@@ -45,7 +43,6 @@ AS
 	JOIN		RDS.DimRaces                            	Races           ON Fact.RaceId                  = Races.DimRaceId
 	JOIN		RDS.DimGradeLevels                      	Grades          ON Fact.GradeLevelId            = Grades.DimGradeLevelId
 	JOIN		RDS.DimEconomicallyDisadvantagedStatuses    EconDis         ON Fact.EconomicallyDisadvantagedStatusId = EconDis.DimEconomicallyDisadvantagedStatusId
-	JOIN		RDS.DimFosterCareStatuses					Foster			ON Fact.FosterCareStatusId		= Foster.DimFosterCareStatusId
 	JOIN		RDS.DimTitleIStatuses						TitleI			ON Fact.TitleIStatusId			= TitleI.DimTitleIStatusId
 	LEFT JOIN (
 
@@ -83,16 +80,6 @@ AS
 	--AND DMT.IsSelected = 1
 	--AND DMT.DataMigrationTypeId = 2
 	--or comment out the lines above and just set the SchoolYear
-		--AND SchoolYears.SchoolYear = 2023
+		--AND SchoolYears.SchoolYear = 2024
 
 	AND Fact.FactTypeId = 6
-	--AND Students.K12StudentStudentIdentifierState = '12345678'    
-	--AND LEAs.LeaIdentifierState = '123'
-	--AND LEAs.LeaOrganizationName = 'Casey County'
-	--AND Schools.SchoolIdentifierState = '456'
-	--AND Schools.NameOfInstitution = 'Casey County High School'
-	--AND Demo.SexCode = 'M'
-	--AND Grades.GradeLevelEdFactsCode = '07'
-	--AND Races.RaceEdFactsCode = 'AM7'                                    			--('AM7','AS7','BL7','PI7','WH7','MU7','HI7',NULL)
-	--AND EconDis.NationalSchoolLunchProgramDirectCertificationIndicatorCode  = ''  -- ('YES', 'NO', 'MISSING')
-	--AND EconDis.EligibilityStatusForSchoolFoodServiceProgramsCode = '' 			--('FREE', 'FULLPRICE', 'MISSING', 'OTHER', 'REDUCEDPRICE') 0
