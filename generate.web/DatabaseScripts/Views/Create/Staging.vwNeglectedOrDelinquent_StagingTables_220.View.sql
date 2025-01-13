@@ -1,7 +1,4 @@
 CREATE VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_220] 
-
-
-Alter VIEW [Staging].[vwNeglectedOrDelinquent_StagingTables_220] 
 AS
 	WITH excludedLeas AS (
 		SELECT DISTINCT LEAIdentifierSea
