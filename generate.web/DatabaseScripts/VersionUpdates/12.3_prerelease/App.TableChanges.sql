@@ -9,3 +9,8 @@ end
 update app.generatereports
 set isactive = 1
 where reportcode = 'c210'
+
+--Remove the Report Code from the Report Title
+update app.generatereports 
+set ReportName = substring(reportname, 7, len(reportname))
+where substring(reportname, 1, 5) like 'c%:'
