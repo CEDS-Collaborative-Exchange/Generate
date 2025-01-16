@@ -49,17 +49,20 @@ namespace generate.infrastructure.Repositories.App
                 processingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "processing");
             }
 
-            // Set Migration Status to pending, set last trigger date
-            if (setToProcessing && processingStatus != null)
+            if (dataMigration != null)
             {
-                dataMigration.DataMigrationStatusId = processingStatus.DataMigrationStatusId;
+                // Set Migration Status to pending, set last trigger date
+                if (setToProcessing && processingStatus != null)
+                {
+                    dataMigration.DataMigrationStatusId = processingStatus.DataMigrationStatusId;
+                }
+                else if (pendingStatus != null)
+                {
+                    dataMigration.DataMigrationStatusId = pendingStatus.DataMigrationStatusId;
+                }
+                dataMigration.LastTriggerDate = startDate;
+                Save();
             }
-            else if(pendingStatus != null)
-            {
-                dataMigration.DataMigrationStatusId = pendingStatus.DataMigrationStatusId;
-            }
-            dataMigration.LastTriggerDate = startDate;
-            Save();
 
             // Reset statuses of subsequent migrations if needed
             if (initialStatus != null)

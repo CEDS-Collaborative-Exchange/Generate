@@ -56,22 +56,17 @@ export class FSMetadataUpdate extends BaseService {
     }
 
     getlatestSYs() {
-        console.log('##getLatestSYs##');
         let url = this._apiUrl + '/getlatestSYs';
 
         return this.http.get(url, { observe: 'response' })
             .pipe(
                 map(resp => {
-                    console.log('--here a--');
-                    console.log(resp);
-                    console.log(resp.body);
                     return resp.body;
                 }),
                 tap(resp => {
                     this.log(`getlatestSYs`);
                 }),
                 catchError(err => {
-                    console.log('--here12--');
                     this.handleError;
                     return of(err.error);
                 })
@@ -80,22 +75,17 @@ export class FSMetadataUpdate extends BaseService {
     }
 
     getFlag() {
-        console.log('##getMetaUplFlag##');
         let url = this._apiUrl + '/getMetaUplFlag';
 
         return this.http.get(url, { observe: 'response' })
             .pipe(
                 map(resp => {
-                    console.log('--here aa--');
-                    console.log(resp);
-                    console.log(resp.body);
                     return resp.body;
                 }),
                 tap(resp => {
                     this.log(`getMetaUplFlag`);
                 }),
                 catchError(err => {
-                    console.log('--here13--');
                     this.handleError;
                     return of(err.error);
                 })

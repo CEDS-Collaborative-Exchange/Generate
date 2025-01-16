@@ -218,8 +218,15 @@ namespace generate.infrastructure.Services
                     DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(edfacts);
                     //DSYVrdetail = (List<DataSetYearVersionDetailsByAllAbbrv>)DSYVrdetail.Where(a => a.DSAbbrv == essDSNameAbbrv).Select(a => a);
 
-                    maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault();
-                    maxVersionNumber = (int)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault();
+                    if (DSYVrdetail.Select(A => A.YearValue).FirstOrDefault().HasValue)
+                    {
+                        maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault();
+                    }
+
+                    if (DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault().HasValue)
+                    {
+                        maxVersionNumber = (int)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault();
+                    }
                     nxtYear = maxSubmissionYear + 1;
                     fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
 
@@ -283,7 +290,10 @@ namespace generate.infrastructure.Services
                     fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
                     //year = charterQuery4 is null  ? 0 : int.Parse(charterQuery4.FirstOrDefault().Year);
                     year = maxSubmissionYear;
-                    maxVersNum = charterQuery4 is null ? "" : charterQuery4.FirstOrDefault().versNum;
+                    if (charterQuery4.FirstOrDefault() is not null)
+                    {
+                        maxVersNum = charterQuery4 is null ? "" : charterQuery4.FirstOrDefault().versNum;
+                    }
 
 
                     bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(false, maxSubmissionYear.ToString(), maxVersionNumber);
@@ -314,8 +324,16 @@ namespace generate.infrastructure.Services
 
                     DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(chrtr);
                     //DSYVrdetail = (List<DataSetYearVersionDetailsByAllAbbrv>)DSYVrdetail.Where(a => a.DSAbbrv == essDSNameAbbrv).Select(a => a);
-                    maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault();
-                    maxVersionNumber = (int)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault();
+                    if (DSYVrdetail.Select(A => A.YearValue).FirstOrDefault().HasValue)
+                    {
+                        maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault();
+                    }
+
+                    if (DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault().HasValue)
+                    {
+                        maxVersionNumber = (int)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault();
+                    }
+
                     nxtYear = maxSubmissionYear + 1;
                     fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
 

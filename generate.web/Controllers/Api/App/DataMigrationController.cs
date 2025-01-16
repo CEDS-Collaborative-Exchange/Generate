@@ -210,8 +210,11 @@ namespace generate.web.Controllers.Api.App
             IEnumerable<DataMigrationType> migrationList = _appRepository.GetAll<DataMigrationType>(0, 0);
             if (migrationList != null)
             {
-                int id = _appRepository.GetAll<DataMigrationType>(0, 0).Where(s => s.DataMigrationTypeCode == reportType).FirstOrDefault().DataMigrationTypeId;
-                dataMigrationTasks = _appRepository.Find<DataMigrationTask>(a => a.DataMigrationTypeId == id, 0, 0).ToList();
+                DataMigrationType dataMigrationType = _appRepository.GetAll<DataMigrationType>(0, 0).Where(s => s.DataMigrationTypeCode == reportType).FirstOrDefault();
+                if (dataMigrationType != null)
+                {
+                     dataMigrationTasks = _appRepository.Find<DataMigrationTask>(a => a.DataMigrationTypeId == dataMigrationType.DataMigrationTypeId, 0, 0).ToList();
+                }
             }
             return Json(dataMigrationTasks);
         }
