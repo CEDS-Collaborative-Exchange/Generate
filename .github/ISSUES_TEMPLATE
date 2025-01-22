@@ -1,0 +1,144 @@
+name: Bug Report
+description: Report an issue or bug in the system.
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Bug Report  
+        Please provide detailed information about the bug and related file specifications.
+
+  - type: dropdown
+    id: file-spec
+    attributes:
+      label: File Specification Number and Name
+      description: Select the File Specification Number and Name relevant to this bug.
+      options:
+        - "002 - Children with Disabilities (IDEA) School-Age"
+        - "005 - Children with Disabilities (IDEA) Removal to Interim Alternative Educational Setting"
+        - "006 - Children with Disabilities (IDEA) Suspensions/Expulsions"
+        - "007 - Children with Disabilities (IDEA) Reasons for Unilateral Removal"
+        - "009 - Children with Disabilities (IDEA) Exiting Special Education"
+        - "029 - Directory"
+        - "032 - Dropouts"
+        - "033 - Free and Reduced Price Lunch"
+        - "035 - Federal Programs"
+        - "037 - Title I Part A SWP/TAS Participation"
+        - "039 - Grades Offered"
+        - "040 - Graduates/Completers"
+        - "045 - Immigrant"
+        - "050 - Title III English Language Proficiency Results"
+        - "052 - Membership"
+        - "054 - MEP Students Served - 12 Months"
+        - "059 - Staff FTE"
+        - "067 - Title III Teachers"
+        - "070 - Special Education Teachers"
+        - "086 - Students Involved with Firearms"
+        - "088 - Children with Disabilities (IDEA) Disciplinary Removals"
+        - "089 - Children with Disabilities (IDEA) Early Childhood"
+        - "099 - Special Education Related Services Personnel"
+        - "103 - Accountability"
+        - "112 - Special Education Paraprofessionals"
+        - "113 - N or D Academic Achievement - State Agency"
+        - "116 - Title III Students Served"
+        - "118 - Homeless Students Enrolled"
+        - "119 - N or D Participation - State Agency"
+        - "121 - Migrant Students Eligible - 12 Months"
+        - "122 - MEP Students Eligible and Served - Summer/Intersession"
+        - "125 - N or D Academic Achievement - LEA"
+        - "126 - Title III Former EL Students"
+        - "127 - N or D Participation - LEA"
+        - "129 - CCD School"
+        - "130 - ESEA Status"
+        - "131 - LEA End of SY Status"
+        - "132 - Section 1003 Funds"
+        - "134 - Title I Part A Participation"
+        - "137 - English Language Proficiency Test"
+        - "138 - Title III English Language Proficiency Test"
+        - "139 - English Language Proficiency Results"
+        - "141 - EL Enrolled"
+        - "143 - Children with Disabilities (IDEA) Total Disciplinary Removals"
+        - "144 - Educational Services During Expulsion"
+        - "145 - MEP Services"
+        - "150 - Regulatory Adjusted-Cohort Graduation Rate"
+        - "151 - Cohorts for Regulatory Adjusted-Cohort Graduation Rate"
+        - "160 - High School Graduates Postsecondary Enrollment"
+        - "163 - Discipline Data"
+        - "165 - Migrant Data"
+        - "170 - LEA Subgrant Status"
+        - "175 - Academic Achievement in Mathematics"
+        - "178 - Academic Achievement in Reading/Language Arts"
+        - "179 - Academic Achievement in Science"
+        - "180 - N or D in Programs Outcomes"
+        - "181 - N or D Exited Programs Outcomes"
+        - "185 - Assessment Participation in Mathematics"
+        - "188 - Assessment Participation in Reading/Language Arts"
+        - "189 - Assessment Participation in Science"
+        - "190 - Charter School Authorizer Directory"
+        - "193 - Title I Allocations"
+        - "194 - Young Homeless Children Served (McKinney-Vento)"
+        - "195 - Chronic Absenteeism"
+        - "196 - Management Organizations Directory"
+        - "197 - Crosswalk of Charter Schools to Management Organizations"
+        - "198 - Charter Contracts"
+        - "199 - Graduation Rate Indicator Status"
+        - "200 - Academic Achievement Indicator Status"
+        - "201 - Other Academic Indicator Status"
+        - "202 - School Quality or Student Success Indicator Status"
+        - "203 - Teachers"
+        - "205 - Progress Achieving English Language Proficiency Indicator Status"
+        - "206 - School Support and Improvement"
+        - "207 - State Appropriations for Charter Schools"
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What Happened?
+      description: Describe the issue and what you expected to happen.
+      placeholder: Provide a clear and detailed description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Provide step-by-step instructions to reproduce the issue.
+      placeholder: |
+        1. Go to ...
+        2. Click on ...
+        3. See the error ...
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Specify the version or environment where the bug occurred.
+      placeholder: e.g., v1.0.0
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or Error Output
+      description: Include relevant logs, screenshots, or error messages.
+      render: shell
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How severe is the issue?
+      options:
+        - Low
+        - Medium
+        - High
+      default: 1
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow the Code of Conduct.
+          required: true
