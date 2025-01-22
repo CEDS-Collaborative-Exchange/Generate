@@ -22,7 +22,7 @@ export class MetadataComponent implements AfterViewInit {
     refreshInterval: any;
     lastTriggerTime: Date;
     latestPubSYlist: string[];
-    ddlDisabled: boolean = false;
+    ddlDisabled: boolean = true;
     selSY: string;
 
     constructor(
@@ -30,8 +30,8 @@ export class MetadataComponent implements AfterViewInit {
         ) {
         this._fsmetadatapdateService = _FSMetadatapdateService
         this.getStatus();
-        this.getLatestSYs();
-        this.getUplFlag();
+        //this.getLatestSYs();
+        //this.getUplFlag();
 
         this.refreshInterval = setInterval(
             () => {
@@ -55,6 +55,8 @@ export class MetadataComponent implements AfterViewInit {
     ngAfterViewInit() {
         //componentHandler.upgradeAllRegistered();
     }
+
+    ngOnInit() { this.getUplFlag(); this.getLatestSYs(); }
 
     callFSmetaAPI()
     {
@@ -96,17 +98,22 @@ export class MetadataComponent implements AfterViewInit {
 
     getLatestSYs() {
         console.log('--getLatestSYs--')
-        this._fsmetadatapdateService.getlatestSYs()
-            .subscribe(resp => {
-                console.log("aaaa");
-                console.log(resp);
-                this.latestPubSYlist = resp;
-                console.log("bbbb");
-                if (this.latestPubSYlist !=null && this.latestPubSYlist.length > 0) {
-                    this.selSY = this.latestPubSYlist[0];
-                }
-                console.log("cccc");
-            });
+
+        if (this.ddlDisabled == false) {
+            console.log('--cccccccc--')
+            this._fsmetadatapdateService.getlatestSYs()
+                .subscribe(resp => {
+                    console.log("aaaa");
+                    console.log(resp);
+                    this.latestPubSYlist = resp;
+                    console.log("bbbb");
+                    if (this.latestPubSYlist != null && this.latestPubSYlist.length > 0) {
+                        this.selSY = this.latestPubSYlist[0];
+                    }
+                    console.log("cccc");
+                });
+        }
+
     }
 
     getUplFlag() {
