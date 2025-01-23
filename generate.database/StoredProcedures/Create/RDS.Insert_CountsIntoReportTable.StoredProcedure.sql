@@ -1,11 +1,22 @@
 CREATE PROCEDURE [RDS].[Insert_CountsIntoReportTable]
 	@ReportCode varchar(10),
 	@SubmissionYear VARCHAR(10), 
-	@ReportTableName VARCHAR(50),
+	--@ReportTableName VARCHAR(50),
 	@IdentifierToCount VARCHAR(100),
-	@CountColumn VARCHAR(100),
-	@IsDistinctCount bit
+	--@CountColumn VARCHAR(100),
+	@IsDistinctCount bit,
+	@Debug bit = 1
 AS 
+
+	declare @CountColumn varchar(100), @ReportTableName varchar(100)
+
+	select
+		@CountColumn = aft.FactFieldName,
+		@ReportTableName = aft.FactReportTableName
+	from app.generatereports agr
+	inner join app.FactTables aft
+		on agr.FactTableId = aft.FactTableId
+	where agr.ReportCode = @ReportCode
 
 	DECLARE @FactTypeCode VARCHAR(50)
 	select @FactTypeCode = RDS.Get_FactTypeByReport(@ReportCode)
@@ -19,7 +30,7 @@ AS
 
 	DECLARE cursor_name CURSOR FOR
     SELECT N'
-		DELETE FROM rds.' + @ReportTableName + ' WHERE ReportCode = ''' + @ReportCode + ''' AND ReportYear = ''' + @SubmissionYear + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE ''' AND CategorySetCode = ''' + CategorySetCode END + ''' AND ReportLevel = ''' + aol.LevelCode + '''
+		DELETE FROM rds.' + @ReportTableName + ' WHERE ReportCode = ''' + @ReportCode + ''' AND ReportYear = ''' + @SubmissionYear + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE ''' AND CategorySetCode = ''' + CategorySetCode END + ''' AND ReportLevel = ''' + aol.LevelCode + ''' 
 
 		-- insert ' + aol.LevelCode + ' sql
 		' + CASE WHEN ISNULL(STRING_AGG(c.CategoryCode, ''),'') = '' THEN '' ELSE '
@@ -152,7 +163,16 @@ AS
 	BEGIN
 		SET @SQLStatement = REPLACE(REPLACE(@SQLStatement, ',NOCATS', ''), '_NOCATS', '')
 		--select @SQLStatement
-		EXEC sp_executesql @SQLStatement;
+		IF @Debug = 1 
+		BEGIN 
+			PRINT @SQLStatement
+			--SELECT @SQLStatement
+		END
+		ELSE
+		BEGIN
+			EXEC sp_executesql @SQLStatement;
+		END
+		
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END
 
@@ -201,8 +221,15 @@ AS
 	
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		SELECT @SQLStatement
-		EXEC sp_executesql @SQLStatement;
+		--SELECT @SQLStatement 
+		IF @Debug = 1 
+		BEGIN 
+			PRINT @SQLStatement
+		END
+		ELSE
+		BEGIN
+			EXEC sp_executesql @SQLStatement;
+		END
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END
 	
@@ -329,12 +356,17 @@ AS
 	BEGIN
 		SET @SQLStatement = REPLACE(REPLACE(@SQLStatement, ',NOCATS', ''), '_NOCATS', '')
 		--select @SQLStatement
-		EXEC sp_executesql @SQLStatement;
+		IF @Debug = 1 
+		BEGIN 
+			PRINT @SQLStatement
+		END
+		ELSE
+		BEGIN
+			EXEC sp_executesql @SQLStatement;
+		END
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END
 
 	CLOSE cursor_name;
 	DEALLOCATE cursor_name;
 GO
-
-
