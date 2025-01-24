@@ -27,8 +27,6 @@ namespace generate.infrastructure.Contexts
         {
             _logger.LogInformation("ODSDbContext - ExecuteInitializeScripts - " + scriptPath);
 
-            //DirectoryInfo di = new DirectoryInfo(scriptPath);
-
             List<string> scriptFiles = new List<string>();
 
             scriptFiles.Add("generate-ceds-nds-v6.sql");

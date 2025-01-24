@@ -30,7 +30,6 @@ namespace generate.infrastructure.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseLazyLoadingProxies().UseSqlServer(myConnectionString);
         }
 
         public void ExecuteEFMigration(string migrationName)

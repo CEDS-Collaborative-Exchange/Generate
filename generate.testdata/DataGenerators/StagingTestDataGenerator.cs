@@ -2069,7 +2069,7 @@ namespace generate.testdata.DataGenerators
                
                 int adjustedDisciplineCountLowerLimit = disciplineCountLowerLimit;
                 int adjustedDisciplineCountUpperLimit = disciplineCountUpperLimit;
-                if (races.Count() > 0 && races.FirstOrDefault().RaceType == "BlackorAfricanAmerican")
+                if (races.Count() > 0 && races.FirstOrDefault() is not null && races.FirstOrDefault().RaceType == "BlackorAfricanAmerican")
                 {
                     adjustedDisciplineCountLowerLimit = disciplineCountLowerLimit + 2;
                 }

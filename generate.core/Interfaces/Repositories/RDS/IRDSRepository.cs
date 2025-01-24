@@ -37,8 +37,7 @@ namespace generate.core.Interfaces.Repositories.RDS
         // Delete
         void Delete<T>(int id) where T : class;
         void DeleteRange<T>(IEnumerable<T> entities) where T : class;
-        void DeleteAll<T>() where T : class;
-        void Truncate<T>() where T : class;
+
 
         // Save
         int Save();
