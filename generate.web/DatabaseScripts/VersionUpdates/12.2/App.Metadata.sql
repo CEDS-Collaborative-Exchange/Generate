@@ -17,3 +17,5 @@ begin
 	Print 'here'
 	insert into app.generatereport_organizationlevels values (136,2)
 end
+
+Update app.GenerateReports set FactTableId = 1 where ReportCode = 'c222'
