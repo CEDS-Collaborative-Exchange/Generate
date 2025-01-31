@@ -892,6 +892,10 @@ namespace generate.infrastructure.Services
                                     field = "IDEAINDICATOR";
                                 }
                             }
+                            else if (column.ColumnName.Replace(" ","") == "StudentCount") 
+                            { 
+                                field = "StudentCount"; 
+                            }
 
                             PropertyInfo prop = dataRow.GetType().GetProperty(field);
                             if (prop != null)
