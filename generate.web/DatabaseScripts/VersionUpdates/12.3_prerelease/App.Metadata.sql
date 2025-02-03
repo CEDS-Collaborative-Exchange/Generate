@@ -14,3 +14,5 @@ where reportcode = 'c210'
 update app.generatereports 
 set ReportName = substring(reportname, 7, len(reportname))
 where substring(reportname, 1, 5) like 'c%:'
+
+Update app.GenerateReports set FactTableId = 1 where ReportCode = 'c222'
