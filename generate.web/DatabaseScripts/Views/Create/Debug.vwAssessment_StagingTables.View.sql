@@ -69,6 +69,10 @@ AS
 				, nord.ProgramParticipationBeginDate				AS 'NorDProgramParticipationBeginDate'
 				, nord.ProgramParticipationEndDate					AS 'NorDProgramParticipationEndDate'
 
+				, titleIII.TitleIIILanguageInstructionProgramType
+				, titleIII.ProgramParticipationBeginDate			AS 'TITLEIIIProgramParticipationBeginDate'
+				, titleIII.ProgramParticipationEndDate				AS 'TITLEIIIProgramParticipationEndDate'
+
 	FROM Staging.K12Enrollment								enrollment		
 
 	INNER JOIN Staging.AssessmentResult						results
@@ -142,6 +146,12 @@ AS
 		ON		enrollment.StudentIdentifierState						=	nord.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(nord.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(nord.SchoolIdentifierSea, '')
+
+	LEFT JOIN Staging.ProgramParticipationTitleIII			titleIII
+		ON		enrollment.StudentIdentifierState						=	titleIII.StudentIdentifierState
+		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(titleIII.LEAIdentifierSeaAccountability, '')
+		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(titleIII.SchoolIdentifierSea, '')
+		AND		ISNULL(titleIII.ProgramParticipationEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1

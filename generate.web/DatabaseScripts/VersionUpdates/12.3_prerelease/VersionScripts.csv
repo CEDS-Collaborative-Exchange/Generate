@@ -4,6 +4,8 @@ VersionUpdates\\12.3_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\12.3_prerelease,App.Metadata.sql,0
 Views\\Drop,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Create,RDS.vwDimTitleIStatuses.View.sql,0
+Views\\Drop,Debug.vwAssessment_StagingTables.View.sql,0
+Views\\Create,Debug.vwAssessment_StagingTables.View.sql,0
 Views\\Drop,Debug.vwAssessment_FactTable.View.sql,0
 Views\\Create,Debug.vwAssessment_FactTable.View.sql,0
 Views\\Drop,Debug.vwTitleI_FactTable.View.sql,0
@@ -48,6 +50,8 @@ Views\\Drop,Staging.vwTitleI_StagingTables_222.View.sql,0
 Views\\Create,Staging.vwTitleI_StagingTables_222.View.sql,0
 Views\\Drop,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
 Views\\Create,Staging.vwNeglectedOrDelinquent_StagingTables_220.View.sql,0
+Views\\Drop,Staging.vwAssessment_StagingTables_C210.View.sql,0
+Views\\Create,Staging.vwAssessment_StagingTables_C210.View.sql,0
 Views\\Drop,RDS.vwAssessment_FactTable_050.View.sql,0
 Views\\Create,RDS.vwAssessment_FactTable_050.View.sql,0
 Views\\Drop,RDS.vwAssessment_FactTable_113.View.sql,0
