@@ -1013,7 +1013,7 @@ begin try
 						@RunAsTest = @runAsTest
 			end
 
-			if exists (select 'c' from app.GenerateReports where ReportCode = 'c226' and IsLocked = 1 and UseLegacyReportMigration = 1)
+			if exists (select 'c' from app.GenerateReports where ReportCode = 'c225' and IsLocked = 1 and UseLegacyReportMigration = 1)
 			begin
 				-- Log history
 				insert into app.DataMigrationHistories
