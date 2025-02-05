@@ -56,6 +56,8 @@ AS
 			--N or D
 			, NorD.NeglectedOrDelinquentStatusCode
 			, NorD.NeglectedOrDelinquentProgramEnrollmentSubpartCode
+			--Title III
+			, TitleIII.TitleIIILanguageInstructionProgramTypeCode
 
  	FROM		RDS.FactK12StudentAssessments				Fact
 	JOIN		RDS.DimSchoolYears							SchoolYears	ON Fact.SchoolYearId						= SchoolYears.DimSchoolYearId	
@@ -78,6 +80,7 @@ AS
 	LEFT JOIN	RDS.DimFosterCareStatuses					Fstr		ON Fact.FosterCareStatusId					= Fstr.DimFosterCareStatusId
 	LEFT JOIN	RDS.DimMilitaryStatuses						Mil			ON Fact.MilitaryStatusId					= Mil.DimMilitaryStatusId
 	LEFT JOIN	RDS.DimNorDStatuses						    NorD		ON Fact.NorDStatusId						= NorD.DimNorDStatusId
+	LEFT JOIN   RDS.DimTitleIIIStatuses                     TitleIII	ON Fact.TitleIIIStatusId					= TitleIII.DimTitleIIIStatusId
 	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1
 	--2 ways to select by SchoolYear, use 1 or the other, not both
