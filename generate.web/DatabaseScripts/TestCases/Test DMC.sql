@@ -73,8 +73,8 @@ EXEC RDS.Create_ReportData 'C052', 'membership', 0
 PRINT 'RDS migration for Membership (C226)'
 UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c226')
 
---PRINT 'RDS migration for Membership (C210)'
---UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c210')
+PRINT 'RDS migration for Assessment (C210)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c210')
 
 -------------------------------------------------------------------- 
 --These are the report migrations using the new method
@@ -119,26 +119,23 @@ UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c226')
   		exec [RDS].[Insert_CountsIntoReportTable]
   				@ReportCode  = '226',
   				@SubmissionYear = @SchoolYear, 
-  				@ReportTableName =  'ReportEdFactsK12StudentCounts',
   				@IdentifierToCount = 'K12StudentStudentIdentifierState',
-  				@CountColumn = 'StudentCount',
-  				@IsDistinctCount  = 1
+  				@IsDistinctCount  = 1,
+                @RunAsTest = 0
 		
 		exec [RDS].[Insert_CountsIntoReportTable]
   				@ReportCode  = '222',
   				@SubmissionYear = @SchoolYear, 
-  				@ReportTableName =  'ReportEdFactsK12StudentCounts',
   				@IdentifierToCount = 'K12StudentStudentIdentifierState',
-  				@CountColumn = 'StudentCount',
-  				@IsDistinctCount  = 1
+  				@IsDistinctCount  = 1,
+                @RunAsTest = 0
 
-        -- 		exec [RDS].[Insert_CountsIntoReportTable]
--- 				@ReportCode  = 'C210',
--- 				@SubmissionYear = @SchoolYear, 
--- 				@ReportTableName =  'ReportEdFactsK12StudentCounts',
--- 				@IdentifierToCount = 'K12StudentStudentIdentifierState',
--- 				@CountColumn = 'StudentCount',
--- 				@IsDistinctCount  = 1
+         exec [RDS].[Insert_CountsIntoReportTable]
+ 				@ReportCode  = '210',
+ 				@SubmissionYear = @SchoolYear, 
+ 				@IdentifierToCount = 'K12StudentStudentIdentifierState',
+ 				@IsDistinctCount  = 1,
+                @RunAsTest = 0
 
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'dropout' -- No tests yet FS032
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'grad' -- No tests yet FS040
@@ -215,8 +212,8 @@ EXEC App.FS194_TestCase							@SchoolYear
 -------------------------------------------------------------------- 
 --These are the tests using the new method
 -------------------------------------------------------------------- 
-   --PRINT 'End-to-End Test for FS210'
-   --EXEC Staging.RunEndToEndTest	 'C210', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+   PRINT 'End-to-End Test for FS210'
+   EXEC Staging.RunEndToEndTest	 '210', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
 --PRINT 'End-to-End Test for FS218'
 -- EXEC Staging.RunEndToEndTest	 'C218', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
 -- PRINT 'End-to-End Test for FS219'
