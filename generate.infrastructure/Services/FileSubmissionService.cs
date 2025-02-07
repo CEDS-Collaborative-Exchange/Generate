@@ -37,10 +37,13 @@ namespace generate.infrastructure.Services
 
             OrganizationLevel level = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == reportLevel).FirstOrDefault();
 
-            return _appRepository.Find<FileSubmission>(f => f.GenerateReportId == report.GenerateReportId
+            FileSubmission fs = _appRepository.Find<FileSubmission>(f => f.GenerateReportId == report.GenerateReportId
                                                                 && f.OrganizationLevelId == level.OrganizationLevelId
-                                                                && f.SubmissionYear == reportYear, 0, 1).FirstOrDefault().FileSubmissionDescription;
+                                                                && f.SubmissionYear == reportYear, 0, 1).FirstOrDefault();
+            string FileDescription = "";
+            if (fs != null) { FileDescription = fs.FileSubmissionDescription; }
 
+            return FileDescription;
         }
 
        public FileSubmission GetFileSubmission(string reportTypeCode, string reportCode, string reportLevel, string reportYear)
@@ -75,31 +78,34 @@ namespace generate.infrastructure.Services
 
                 FileColumn column = _appRepository.Find<FileColumn>(c => c.FileColumnId == fileColumn.FileColumnId, 0, 1, c => c.Dimension).FirstOrDefault();
 
-                FileSubmissionColumnDto columnDto = new FileSubmissionColumnDto()
+                if (column != null)
                 {
-                    FileColumnId = fileColumn.FileColumnId,
-                    ColumnName = column.ColumnName,
-                    ColumnLength = column.ColumnLength,
-                    DataType = column.DataType,
-                    DisplayName = column.DisplayName,
-                    XMLElementName = column.XMLElementName,
-                    SequenceNumber = fileColumn.SequenceNumber,
-                    StartPosition = fileColumn.StartPosition,
-                    EndPosition = fileColumn.EndPosition,
-                    IsOptional = fileColumn.IsOptional
-
-                };
-                if (column.Dimension != null)
-                {
-                    if (column.Dimension.DimensionFieldName != null)
+                    FileSubmissionColumnDto columnDto = new FileSubmissionColumnDto()
                     {
-                        columnDto.ReportField = column.Dimension.DimensionFieldName.ToUpper();
-                    }
-                }
+                        FileColumnId = fileColumn.FileColumnId,
+                        ColumnName = column.ColumnName,
+                        ColumnLength = column.ColumnLength,
+                        DataType = column.DataType,
+                        DisplayName = column.DisplayName,
+                        XMLElementName = column.XMLElementName,
+                        SequenceNumber = fileColumn.SequenceNumber,
+                        StartPosition = fileColumn.StartPosition,
+                        EndPosition = fileColumn.EndPosition,
+                        IsOptional = fileColumn.IsOptional
 
-                if (column.DataType.ToLower() != "control character")
-                {
-                    results.Add(columnDto);
+                    };
+                    if (column.Dimension != null)
+                    {
+                        if (column.Dimension.DimensionFieldName != null)
+                        {
+                            columnDto.ReportField = column.Dimension.DimensionFieldName.ToUpper();
+                        }
+                    }
+
+                    if (column.DataType.ToLower() != "control character")
+                    {
+                        results.Add(columnDto);
+                    }
                 }
 
             }
