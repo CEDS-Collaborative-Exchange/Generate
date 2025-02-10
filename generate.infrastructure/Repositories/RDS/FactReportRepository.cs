@@ -37,17 +37,19 @@ namespace generate.infrastructure.Repositories.RDS
             if (logToDatabase)
             {
                 DataMigrationType dataMigrationType = _appDbContext.DataMigrationTypes.Where(s => s.DataMigrationTypeCode == dataMigrationTypeCode).FirstOrDefault();
-
-                DataMigrationHistory historyRecord = new DataMigrationHistory()
+                if (dataMigrationType != null)
                 {
-                    DataMigrationHistoryDate = DateTime.UtcNow,
-                    DataMigrationTypeId = dataMigrationType.DataMigrationTypeId,
-                    DataMigrationHistoryMessage = dataMigrationHistoryMessage
-                };
+                    DataMigrationHistory historyRecord = new DataMigrationHistory()
+                    {
+                        DataMigrationHistoryDate = DateTime.UtcNow,
+                        DataMigrationTypeId = dataMigrationType.DataMigrationTypeId,
+                        DataMigrationHistoryMessage = dataMigrationHistoryMessage
+                    };
 
-                _appDbContext.DataMigrationHistories.Add(historyRecord);
+                    _appDbContext.DataMigrationHistories.Add(historyRecord);
 
-                _appDbContext.SaveChanges();
+                    _appDbContext.SaveChanges();
+                }
             }
 
         }

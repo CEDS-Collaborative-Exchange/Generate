@@ -2,7 +2,7 @@
 <div class="container mdl-grid">
     <div id="search" class="mdl-cell mdl-cell--4-col">
         <label class="generate-app-pivotgrid-controls__sectionlabel" for="searchTable">Search:&nbsp;&nbsp;</label>
-        <input type="checkbox" id="searchTable" (click)="onToggleSearchFilter()" />
+        <input type="checkbox" id="searchTable" (click)="onToggleSearchFilter()" (keyup)="onToggleSearchFilter()" />
         <button id="resetFilter" (click)="onResetFilter()" style="display:none;">Reset Filter</button>
     </div>
     <!-- Angular Material Paginator -->

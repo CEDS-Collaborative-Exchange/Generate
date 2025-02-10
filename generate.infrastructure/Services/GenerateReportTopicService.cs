@@ -59,10 +59,13 @@ namespace generate.infrastructure.Services
             GenerateReportTopic topic = _appRepository.Find<GenerateReportTopic>(s => s.GenerateReportTopicId == topicId, skip, take, t => t.GenerateReportTopic_GenerateReports).FirstOrDefault();
             List<GenerateReport> reports = new List<GenerateReport>();
 
-            foreach (GenerateReportTopic_GenerateReport topicReports in topic.GenerateReportTopic_GenerateReports)
+            if (topic != null)
             {
-                GenerateReport report = _appRepository.Find<GenerateReport>(r => r.GenerateReportId == topicReports.GenerateReportId, 0 ,1, s => s.GenerateReport_OrganizationLevels).OrderBy(c => c.ReportName).FirstOrDefault();
-                reports.Add(report);
+                foreach (GenerateReportTopic_GenerateReport topicReports in topic.GenerateReportTopic_GenerateReports)
+                {
+                    GenerateReport report = _appRepository.Find<GenerateReport>(r => r.GenerateReportId == topicReports.GenerateReportId, 0, 1, s => s.GenerateReport_OrganizationLevels).OrderBy(c => c.ReportName).FirstOrDefault();
+                    reports.Add(report);
+                }
             }
             return reports;
         }
@@ -78,7 +81,7 @@ namespace generate.infrastructure.Services
 
             newTopic = _appRepository.Find<GenerateReportTopic>(r => r.GenerateReportTopicName == topic.GenerateReportTopicName && r.UserName == topic.UserName).FirstOrDefault();
 
-            if (topic.GenerateReports != null)
+            if (topic.GenerateReports != null && newTopic != null)
             {
                 List<GenerateReportTopic_GenerateReport> insertRecords = new List<GenerateReportTopic_GenerateReport>();
                 foreach (GenerateReportDto report in topic.GenerateReports)
@@ -97,31 +100,34 @@ namespace generate.infrastructure.Services
         public void UpdateTopic(GenerateReportTopicDto topic)
         {
             GenerateReportTopic updateTopic = _appRepository.Find<GenerateReportTopic>(r => r.GenerateReportTopicId == topic.GenerateReportTopicId, 0 ,1, t => t.GenerateReportTopic_GenerateReports).FirstOrDefault();
-            updateTopic.GenerateReportTopicName = topic.GenerateReportTopicName;
-          
-
-            if (topic.GenerateReports != null)
+            if (updateTopic != null)
             {
-               
-                List<int> removeReportList = updateTopic.GenerateReportTopic_GenerateReports.Select(a => a.GenerateReportId).Except(topic.GenerateReports.Select(c => c.GenerateReportId)).ToList();
-                List<int> insertReportList = topic.GenerateReports.Select(a => a.GenerateReportId).Except(updateTopic.GenerateReportTopic_GenerateReports.Select(c => c.GenerateReportId)).ToList();
+                updateTopic.GenerateReportTopicName = topic.GenerateReportTopicName;
 
-                foreach (int reportId in insertReportList)
-                {
-                    GenerateReportTopic_GenerateReport topicReport = new GenerateReportTopic_GenerateReport();
-                    topicReport.GenerateReportTopicId = topic.GenerateReportTopicId;
-                    topicReport.GenerateReportId = reportId;
-                    updateTopic.GenerateReportTopic_GenerateReports.Add(topicReport);
-                 }
 
-                foreach (int reportId in removeReportList)
+                if (topic.GenerateReports != null)
                 {
-                    updateTopic.GenerateReportTopic_GenerateReports.Remove(updateTopic.GenerateReportTopic_GenerateReports.Single(s => s.GenerateReportId == reportId));
+
+                    List<int> removeReportList = updateTopic.GenerateReportTopic_GenerateReports.Select(a => a.GenerateReportId).Except(topic.GenerateReports.Select(c => c.GenerateReportId)).ToList();
+                    List<int> insertReportList = topic.GenerateReports.Select(a => a.GenerateReportId).Except(updateTopic.GenerateReportTopic_GenerateReports.Select(c => c.GenerateReportId)).ToList();
+
+                    foreach (int reportId in insertReportList)
+                    {
+                        GenerateReportTopic_GenerateReport topicReport = new GenerateReportTopic_GenerateReport();
+                        topicReport.GenerateReportTopicId = topic.GenerateReportTopicId;
+                        topicReport.GenerateReportId = reportId;
+                        updateTopic.GenerateReportTopic_GenerateReports.Add(topicReport);
+                    }
+
+                    foreach (int reportId in removeReportList)
+                    {
+                        updateTopic.GenerateReportTopic_GenerateReports.Remove(updateTopic.GenerateReportTopic_GenerateReports.Single(s => s.GenerateReportId == reportId));
+                    }
+
+                    _appRepository.Update(updateTopic);
+                    _appRepository.Save();
+
                 }
-
-                _appRepository.Update(updateTopic);
-                _appRepository.Save();
-
             }
         }
 
@@ -152,9 +158,12 @@ namespace generate.infrastructure.Services
         {
             GenerateReportTopic deleteTopic = _appRepository.Find<GenerateReportTopic>(r => r.GenerateReportTopicId == topicId, 0, 1, t => t.GenerateReportTopic_GenerateReports).FirstOrDefault();
 
-            deleteTopic.GenerateReportTopic_GenerateReports.RemoveAll(t => t.GenerateReportId == t.GenerateReportId);
-            _appRepository.Delete<GenerateReportTopic>(topicId);
-            _appRepository.Save();
+            if (deleteTopic != null)
+            {
+                deleteTopic.GenerateReportTopic_GenerateReports.RemoveAll(t => t.GenerateReportId == t.GenerateReportId);
+                _appRepository.Delete<GenerateReportTopic>(topicId);
+                _appRepository.Save();
+            }
         }
     }
 }
