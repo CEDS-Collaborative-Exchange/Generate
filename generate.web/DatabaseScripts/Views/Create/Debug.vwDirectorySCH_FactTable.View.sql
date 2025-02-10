@@ -1,4 +1,17 @@
-CREATE VIEW [Debug].[vwDirectorySCH_FactTable] 
+USE [generate]
+GO
+
+/****** Object:  View [debug].[vwDirectorySCH_FactTable]    Script Date: 2/10/2025 12:22:15 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+CREATE VIEW [debug].[vwDirectorySCH_FactTable] 
 AS
 SELECT	
 			  Fact.SchoolYearId
@@ -38,13 +51,21 @@ SELECT
 			, Schools.CharterSchoolContractIdNumber
 			, PrimaryAuthorizers.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea AS CharterSchoolAuthorizerPrimary
 			, SecondaryAuthorizers.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea AS CharterSchoolAuthorizerSecondary
+			, OrgCounts.VIRTUALSCHSTATUS
+			--, OrgCounts.ReconstitutedStatus
+			, OrgCounts.NSLPSTATUS
+			--, OrgCounts.ReportCode
+			, Stucnts.TITLEISCHOOLSTATUS
+
+
  	FROM		RDS.FactOrganizationCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears					ON Fact.SchoolYearId										= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT							ON SchoolYears.DimSchoolYearId								= DMT.DimSchoolYearId		
 	LEFT JOIN	RDS.DimK12Schools					Schools						ON Fact.K12SchoolId											= Schools.DimK12SchoolId
 	LEFT JOIN	RDS.DimCharterSchoolAuthorizers		PrimaryAuthorizers			ON Fact.AuthorizingBodyCharterSchoolAuthorizerId			= PrimaryAuthorizers.DimCharterSchoolAuthorizerId
 	LEFT JOIN	RDS.DimCharterSchoolAuthorizers		SecondaryAuthorizers		ON Fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId	= SecondaryAuthorizers.DimCharterSchoolAuthorizerId
-
+	LEFT JOIN	RDS.ReportEdFactsOrganizationCounts OrgCounts					ON Fact.K12SchoolId = OrgCounts.ReportEDFactsOrganizationCountId
+	LEFT JOIN	RDS.ReportEDFactsK12StudentCounts   Stucnts						ON Schools.SchoolIdentifierSea = Stucnts.OrganizationIdentifierSea
 	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1
 	--2 ways to select by SchoolYear, use 1 or the other, not both
@@ -59,3 +80,6 @@ SELECT
 	--AND Schools.SchoolIdentifierSea = '010456'
 	--AND Schools.SchoolOperationalStatus = 'Open'      --'Open', 'Closed', 'New', 'FutureSchool'
 	--AND Schools.SchoolTypeCode = 'Regular' 			--'CareerAndTechnical', 'Alternative', 'Special', 'Reportable', 'Regular'
+GO
+
+
