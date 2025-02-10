@@ -31,7 +31,7 @@ export class MetadataComponent implements AfterViewInit {
         this._fsmetadatapdateService = _FSMetadatapdateService
         this.getStatus();
         //this.getLatestSYs();
-        //this.getUplFlag();
+        this.getUplFlag();
 
         this.refreshInterval = setInterval(
             () => {
@@ -56,7 +56,7 @@ export class MetadataComponent implements AfterViewInit {
         //componentHandler.upgradeAllRegistered();
     }
 
-    ngOnInit() { this.getUplFlag(); this.getLatestSYs(); }
+    ngOnInit() { /*this.getUplFlag(); this.getLatestSYs();*/ }
 
     callFSmetaAPI()
     {
@@ -81,9 +81,10 @@ export class MetadataComponent implements AfterViewInit {
                         this.isprocessing = true; this.ddlDisabled = true;
                     } else {
                         this.isprocessing = false;
-                        this.getUplFlag();
-                        this.getLatestSYs();
+                        //this.getUplFlag();
+                        //this.getLatestSYs();
                         //this.ddlDisabled = false;
+                        this.updYearDDL();
                     }
                 }
             });
@@ -131,6 +132,30 @@ export class MetadataComponent implements AfterViewInit {
                 }
                 else {
                     this.ddlDisabled = false;
+                    this.getLatestSYs();
+                }
+                
+            });
+    }
+
+    updYearDDL() {
+        // The function enables and disables the Year Drop down..
+        console.log('--updYearDDL--')
+        this._fsmetadatapdateService.getFlag()
+            .subscribe(resp => {
+                console.log('updYearDDL');
+                console.log(resp);
+                //this.latestPubSYlist = resp;
+
+                if (resp == "True") {
+                    this.ddlDisabled = true;
+                    //this.selSY = "";
+                    console.log('--True--');
+                }
+                else {
+                    this.ddlDisabled = false;
+                    //this.getLatestSYs();
+                    
                 }
 
             });
