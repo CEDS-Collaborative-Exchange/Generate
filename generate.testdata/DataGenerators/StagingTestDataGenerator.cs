@@ -1370,7 +1370,7 @@ namespace generate.testdata.DataGenerators
                     sped.LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability;
                     sped.ProgramParticipationBeginDate = disabilityType.RecordStartDateTime;
                     sped.StudentIdentifierState = s.StudentIdentifierState;
-                    ideaIndicator = true;
+                    ideaIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIdeaIndicatorDistribution);
                     sped.IDEAIndicator = ideaIndicator;
 
                     if (disabilityType.RecordEndDateTime.HasValue)
