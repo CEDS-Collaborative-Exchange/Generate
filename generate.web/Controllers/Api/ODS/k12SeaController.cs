@@ -32,7 +32,11 @@ namespace generate.web.Controllers.Api.ODS
         public JsonResult GetState()
         {
             K12sea sea = _idsRepository.GetAll<K12sea>(0,1).FirstOrDefault();
-            var state = _idsRepository.GetById<RefState>(Convert.ToInt32(sea.RefStateAnsicodeId));
+            var state = new RefState();
+            if (sea != null)
+            {
+                state = _idsRepository.GetById<RefState>(Convert.ToInt32(sea.RefStateAnsicodeId));
+            }
             return Json(state);
         }
     }
