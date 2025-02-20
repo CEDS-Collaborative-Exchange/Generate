@@ -220,12 +220,17 @@ namespace generate.infrastructure.Services
 
                     if (DSYVrdetail.Select(A => A.YearValue).FirstOrDefault().HasValue)
                     {
-                        maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault();
+                        if ((int?)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault() != null)
+                        {
+                            maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault();
+                        }
                     }
 
                     if (DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault().HasValue)
                     {
-                        maxVersionNumber = (int)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault();
+                        if ((int?)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault() != null) {
+                            maxVersionNumber = (int)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault();
+                        }
                     }
                     nxtYear = maxSubmissionYear + 1;
                     fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
@@ -324,12 +329,12 @@ namespace generate.infrastructure.Services
 
                     DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(chrtr);
                     //DSYVrdetail = (List<DataSetYearVersionDetailsByAllAbbrv>)DSYVrdetail.Where(a => a.DSAbbrv == essDSNameAbbrv).Select(a => a);
-                    if (DSYVrdetail.Select(A => A.YearValue).FirstOrDefault().HasValue)
+                    if ((int?)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault() != null)
                     {
                         maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault();
                     }
 
-                    if (DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault().HasValue)
+                    if ((int?)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault() != null)
                     {
                         maxVersionNumber = (int)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault();
                     }

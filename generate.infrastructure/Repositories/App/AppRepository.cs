@@ -118,7 +118,13 @@ namespace generate.infrastructure.Repositories.App
                 // Make sure we get latest from database in case data was updated by Hangfire
                 _context.Entry<DataMigration>(dataMigration).Reload();
 
-                var currentStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusId == dataMigration.DataMigrationStatusId).DataMigrationStatusCode;
+                var migrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusId == dataMigration.DataMigrationStatusId);
+                var currentStatus = "";
+
+                if (migrationStatus != null)
+                {
+                    currentStatus = migrationStatus.DataMigrationStatusCode;
+                }
 
                 if (dataMigration.DataMigrationStatus != null)
                 {
@@ -138,7 +144,11 @@ namespace generate.infrastructure.Repositories.App
                         dataMigration.LastDurationInSeconds = (int)duration.TotalSeconds;
                     }
 
-                    dataMigration.DataMigrationStatusId = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusCode == dataMigrationStatusCode).DataMigrationStatusId;
+                    var dataMigrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusCode == dataMigrationStatusCode);
+                    if (dataMigrationStatus != null)
+                    {
+                        dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
+                    }
                     var lockedReports = this.GetReports().Where(r => r.IsLocked == true);
                     var factTypeId = lockedReports.ToList()[0].GenerateReport_FactTypes[0].FactTypeId;
                     var dataMigrtionTasks = _context.Set<DataMigrationTask>().OrderBy(t => t.TaskSequence).Where(t => t.FactTypeId == factTypeId).Select(t => t.DataMigrationTaskId.ToString()).ToList();

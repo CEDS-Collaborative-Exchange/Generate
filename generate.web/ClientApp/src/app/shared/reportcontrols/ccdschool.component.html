@@ -37,9 +37,9 @@
                     Create Submission File <i class="fa fa-caret-down generate-app-report-controls__reporttype-button-icon" aria-hidden="true"></i>
                 </button>
                 <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="generate-app-ccdschool__createfile-button">
-                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'tab')" class="mdl-menu__item">Tab Delimited (.tab)</li>
-                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'csv')" class="mdl-menu__item">Comma Delimited (.csv)</li>
-                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'txt')" class="mdl-menu__item">Fixed (.txt)</li>
+                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'tab')" (keypress)="createSubmissionFile(fileSubmissionWarning, 'tab')" class="mdl-menu__item">Tab Delimited (.tab)</li>
+                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'csv')" (keypress)="createSubmissionFile(fileSubmissionWarning, 'csv')" class="mdl-menu__item">Comma Delimited (.csv)</li>
+                    <li (click)="createSubmissionFile(fileSubmissionWarning, 'txt')" (keypress)="createSubmissionFile(fileSubmissionWarning, 'txt')" class="mdl-menu__item">Fixed (.txt)</li>
                 </ul>
             </div>
             <div *ngIf="isPending" class="mdl-spinner mdl-js-spinner is-active"></div>

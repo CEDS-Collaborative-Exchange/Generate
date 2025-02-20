@@ -86,25 +86,25 @@ namespace generate.infrastructure.Services
             {
                 // Use new method of ETL when appropriate
 
-                List<string> tasksUsingNewETL = new List<string>();
+                //List<string> tasksUsingNewETL = new List<string>();
 
-                var tasksToRun = _appRepository.FindReadOnly<DataMigrationTask>(x => x.IsSelected.HasValue && x.IsSelected == true && x.DataMigrationType.DataMigrationTypeCode == "rds", 0, 0);
-                var yearsToRun = _rdsRepository.FindReadOnly<DimSchoolYearDataMigrationType>(x => x.IsSelected && x.DimDataMigrationType.DataMigrationTypeCode == "rds", 0, 0, y => y.DimSchoolYear);
+                //var tasksToRun = _appRepository.FindReadOnly<DataMigrationTask>(x => x.IsSelected.HasValue && x.IsSelected == true && x.DataMigrationType.DataMigrationTypeCode == "rds", 0, 0);
+                //var yearsToRun = _rdsRepository.FindReadOnly<DimSchoolYearDataMigrationType>(x => x.IsSelected && x.DimDataMigrationType.DataMigrationTypeCode == "rds", 0, 0, y => y.DimSchoolYear);
 
-                if (tasksToRun != null && yearsToRun != null)
-                {
-                    foreach (var datamigrationTask in tasksToRun)
-                    {
-                        if (datamigrationTask.TaskName != null && tasksUsingNewETL.Contains(datamigrationTask.TaskName))
-                        {
-                            foreach (var yearToRun in yearsToRun)
-                            {
-                                this.ExecuteRdsTaskByYear(datamigrationTask.StoredProcedureName, yearToRun.DimSchoolYear.SchoolYear.ToString());
-                            }
+                //if (tasksToRun != null && yearsToRun != null)
+                //{
+                //    foreach (var datamigrationTask in tasksToRun)
+                //    {
+                //        if (datamigrationTask.TaskName != null && tasksUsingNewETL.Contains(datamigrationTask.TaskName))
+                //        {
+                //            foreach (var yearToRun in yearsToRun)
+                //            {
+                //                this.ExecuteRdsTaskByYear(datamigrationTask.StoredProcedureName, yearToRun.DimSchoolYear.SchoolYear.ToString());
+                //            }
 
-                        }
-                    }
-                }
+                //        }
+                //    }
+                //}
 
                 // Execute legacy method of migrating data
                 _hangfireHelper.TriggerSqlBasedMigration(dataMigrationTypeCode, null);
