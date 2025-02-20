@@ -2375,6 +2375,17 @@ BEGIN
 			END
 			---End New Code
 
+			else if(@reportField = 'GRADELEVEL' and @reportCode in ('c134'))
+			BEGIN
+				set @sqlCountJoins = @sqlCountJoins + '		
+					left join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
+					left join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
+						on ' + 'CAT_' + @reportField + '.GradeLevelEdFactsCode = CAT_' + @reportField + '_temp.Code
+						and ' + 'CAT_' + @reportField + '.GradeLevelEdFactsCode NOT IN (''AE'')
+					left join RDS.DimAges da ON fact.AgeId = da.DimAgeId
+					'
+			END
+
 			else if(@reportField = 'GRADELEVEL' and @reportCode in ('c054'))
 			BEGIN
 				set @sqlCountJoins = @sqlCountJoins + '		
@@ -3271,11 +3282,10 @@ BEGIN
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
 				inner join rds.DimTitleIStatuses titleI 
 					on fact.TitleIStatusId = titleI.DimTitleIStatusId
-				where titleI.TitleISchoolStatusEdFactsCode <> ''MISSING'' 
-				and titleI.TitleISchoolStatusEdFactsCode <> ''NOTTITLE1ELIG''
+				where titleI.TitleIIndicatorCode in (''01'',''02'',''03'',''04'')
 			) rules 
-				on fact.K12SchoolId = rules.K12SchoolId 
-				and fact.TitleIStatusId = rules.DimTitleIStatusId'
+				on fact.K12StudentId = rules.K12StudentId 
+				and fact.TitleIStatusId = rules.DimTitleIStatusId'	
 		end
 
 		else if @reportCode in ('yeartoyearenvironmentcount')
