@@ -30,7 +30,7 @@ AS
 			, Grades.GradeLevelEdFactsCode
 			, approvedGradeLevels.Grade
 
-			, TitleI.TitleIProgramTypeEdFactsCode
+			, TitleI.TitleIIndicatorCode
 
 	FROM   		RDS.FactK12StudentCounts					Fact
 	JOIN        RDS.DimSchoolYears                      	SchoolYears		ON Fact.SchoolYearId            = SchoolYears.DimSchoolYearId 

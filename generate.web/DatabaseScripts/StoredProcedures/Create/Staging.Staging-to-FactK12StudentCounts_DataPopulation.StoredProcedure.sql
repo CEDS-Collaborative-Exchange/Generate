@@ -45,14 +45,14 @@ BEGIN
 			ON #vwRaces (RaceMap);
 
 		SELECT *
-		INTO #vwTitleIStatuses
-		FROM RDS.vwDimTitleIStatuses
+		INTO #vwOrganizationTitleIStatuses
+		FROM RDS.vwDimOrganizationTitleIStatuses
 		WHERE SchoolYear = @SchoolYear
 		AND TitleIProgramTypeCode in ('SchoolwideProgram','TargetedAssistanceProgram')
 		AND TitleISchoolStatusCode in ('SWELIGSWPROG', 'TGELGBTGPROG')
 
-		CREATE CLUSTERED INDEX ix_tempvwTitleIStatuses
-			ON #vwTitleIStatuses (TitleIInstructionalServicesCode, TitleIProgramTypeCode, TitleISchoolStatusCode, TitleISupportServicesCode);
+		CREATE CLUSTERED INDEX ix_tempvwOrganizationTitleIStatuses
+			ON #vwOrganizationTitleIStatuses (TitleIInstructionalServicesCode, TitleIProgramTypeCode, TitleISchoolStatusCode, TitleISupportServicesCode);
 
 		--Pull the IDEA Disability into a temp table
 		SELECT DISTINCT 
@@ -186,11 +186,11 @@ BEGIN
 			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
 				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
 	--idea disability type
-			LEFT JOIN #tempIdeaDisability sidt
-				ON sidt.StudentIdentifierState 						= ske.StudentIdentifierState
-				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
-				AND ISNULL(sidt.SchoolIdentifierSea, '') 			= ISNULL(ske.SchoolIdentifierSea, '')
-				AND ske.EnrollmentEntryDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @EndDate)
+		LEFT JOIN #tempIdeaDisability sidt
+			ON sidt.StudentIdentifierState 						= ske.StudentIdentifierState
+			AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(ske.LeaIdentifierSeaAccountability, '')
+			AND ISNULL(sidt.SchoolIdentifierSea, '') 			= ISNULL(ske.SchoolIdentifierSea, '')
+			AND ske.EnrollmentEntryDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @EndDate)
 	--title I
 		LEFT JOIN Staging.ProgramParticipationTitleI title1
 			ON ske.StudentIdentifierState = title1.StudentIdentifierState
@@ -210,7 +210,7 @@ BEGIN
 					ELSE 'Missing'
 				END
 		--title I (RDS)
-		LEFT JOIN #vwTitleIStatuses rdt1s
+		LEFT JOIN #vwOrganizationTitleIStatuses rdt1s
 			ON ISNULL(sko.LEA_TitleIProgramType, 'MISSING') = ISNULL(rdt1s.TitleIProgramTypeMap, 'MISSING')
 			AND ISNULL(sko.LEA_TitleIinstructionalService, 'MISSING') = ISNULL(rdt1s.TitleIInstructionalServicesMap, 'MISSING')
 			AND ISNULL(sko.LEA_K12LeaTitleISupportService, 'MISSING') = ISNULL(rdt1s.TitleISupportServicesMap, 'MISSING')

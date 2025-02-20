@@ -49,7 +49,7 @@ AS
 	LEFT JOIN	RDS.DimEnglishLearnerStatuses				EL			ON Fact.EnglishLearnerStatusId		= EL.DimEnglishLearnerStatusId
 	LEFT JOIN	RDS.DimHomelessnessStatuses					Home		ON Fact.HomelessnessStatusId		= Home.DimHomelessnessStatusId
 	LEFT JOIN	RDS.DimMigrantStatuses						Mig			ON Fact.MigrantStatusId				= Mig.DimMigrantStatusId
-	LEFT JOIN	RDS.DimTitleIStatuses						TitleI		ON Fact.TitleIStatusId				= TitleI.DimTitleIStatusId
+	LEFT JOIN	RDS.DimOrganizationTitleIStatuses			TitleI		ON Fact.TitleIStatusId				= TitleI.DimOrganizationTitleIStatusId
 	LEFT JOIN 	RDS.DimFosterCareStatuses					Foster		ON Fact.FosterCareStatusId			= Foster.DimFosterCareStatusId
 
 	WHERE 1 = 1
@@ -60,5 +60,3 @@ AS
 	--or comment out the lines above and just set the SchoolYear
 		--AND SchoolYears.SchoolYear = 2024
 	AND Fact.FactTypeId = 12
-	--AND Title1.TitleISchoolStatusEdFactsCode in ('TGELGBTGPROG', 'SWELIGTGPROG', 'SWELIGSWPROG')
-	--AND LEAs.LeaOperationalStatus NOT IN ('Closed', 'Inactive', 'FutureAgency')

@@ -1,9 +1,13 @@
 VersionUpdates\\12.3_prerelease,Restore 12.2.sql,0
+VersionUpdates\\12.3_prerelease,App.Metadata.sql,0
+VersionUpdates\\12.3_prerelease,TitleIChanges.sql,0
 VersionUpdates\\12.3_prerelease,App.TableChanges.sql,0
 VersionUpdates\\12.3_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\12.3_prerelease,App.Metadata.sql,0
 Views\\Drop,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Create,RDS.vwDimTitleIStatuses.View.sql,0
+Views\\Drop,RDS.vwDimOrganizationTitleIStatuses.View.sql,0
+Views\\Create,RDS.vwDimOrganizationTitleIStatuses.View.sql,0
 Views\\Drop,Debug.vwAssessment_StagingTables.View.sql,0
 Views\\Create,Debug.vwAssessment_StagingTables.View.sql,0
 Views\\Drop,Debug.vwAssessment_FactTable.View.sql,0
@@ -164,6 +168,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_DataPopulation.St
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_DataPopulation.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.RebuildIndexes.StoredProcedure.sql,0
