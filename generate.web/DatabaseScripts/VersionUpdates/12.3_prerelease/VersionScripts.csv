@@ -44,6 +44,10 @@ Views\\Drop,Debug.vwTitleIIIELSY_FactTable.View.sql,0
 Views\\Create,Debug.vwTitleIIIELSY_FactTable.View.sql,0
 Views\\Drop,Debug.vwTitleI_StagingTables.View.sql,0
 Views\\Create,Debug.vwTitleI_StagingTables.View.sql,0
+Views\\Drop,Debug.vwDirectoryLEA_StagingTables.View.sql,0
+Views\\Create,Debug.vwDirectoryLEA_StagingTables.View.sql,0
+Views\\Drop,Debug.vwDirectorySCH_StagingTables.View.sql,0
+Views\\Create,Debug.vwDirectorySCH_StagingTables.View.sql,0
 Views\\Drop,RDS.vwTitleI_FactTable_222.View.sql,0
 Views\\Create,RDS.vwTitleI_FactTable_222.View.sql,0
 Views\\Drop,Staging.vwTitleI_StagingTables_222.View.sql,0
