@@ -302,12 +302,11 @@ begin try
 				values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c226')
 
 				exec [RDS].[Insert_CountsIntoReportTable]
-						@ReportCode  = 'C226',
+						@ReportCode  = '226',
 						@SubmissionYear = @SchoolYear, 
-						@ReportTableName =  'ReportEdFactsK12StudentCounts',
 						@IdentifierToCount = 'K12StudentStudentIdentifierState',
-						@CountColumn = 'StudentCount',
-						@IsDistinctCount  = 1
+						@IsDistinctCount  = 1,
+						@RunAsTest = @runAsTest
 			end
 
 		end
@@ -457,12 +456,11 @@ begin try
 				values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c222')
 
 				exec [RDS].[Insert_CountsIntoReportTable]
-						@ReportCode  = 'C222',
+						@ReportCode  = '222',
 						@SubmissionYear = @SchoolYear, 
-						@ReportTableName =  'ReportEdFactsK12StudentCounts',
 						@IdentifierToCount = 'K12StudentStudentIdentifierState',
-						@CountColumn = 'StudentCount',
-						@IsDistinctCount  = 1
+						@IsDistinctCount  = 1,
+						@RunAsTest = @runAsTest
 			end
 
 			if exists (select 'c' from app.GenerateReports where ReportCode = 'studentswdtitle1' and IsLocked = 1 and UseLegacyReportMigration = 1)
@@ -560,12 +558,11 @@ begin try
 				values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c218')
 
 				exec [RDS].[Insert_CountsIntoReportTable]
-						@ReportCode  = 'C218',
+						@ReportCode  = '218',
 						@SubmissionYear = @SchoolYear, 
-						@ReportTableName =  'ReportEdFactsK12StudentCounts',
 						@IdentifierToCount = 'K12StudentStudentIdentifierState',
-						@CountColumn = 'StudentCount',
-						@IsDistinctCount  = 1
+						@IsDistinctCount  = 1,
+						@RunAsTest = @runAsTest
 			end
 
 			if exists (select 'c' from app.GenerateReports where ReportCode = 'c219' and IsLocked = 1 and UseLegacyReportMigration = 1)
@@ -576,12 +573,11 @@ begin try
 				values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c219')
 
 				exec [RDS].[Insert_CountsIntoReportTable]
-						@ReportCode  = 'C219',
+						@ReportCode  = '219',
 						@SubmissionYear = @SchoolYear, 
-						@ReportTableName =  'ReportEdFactsK12StudentCounts',
 						@IdentifierToCount = 'K12StudentStudentIdentifierState',
-						@CountColumn = 'StudentCount',
-						@IsDistinctCount  = 1
+						@IsDistinctCount  = 1,
+						@RunAsTest = @runAsTest
 			end
 
 			if exists (select 'c' from app.GenerateReports where ReportCode = 'c220' and IsLocked = 1 and UseLegacyReportMigration = 1)
@@ -592,12 +588,11 @@ begin try
 				values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c220')
 
 				exec [RDS].[Insert_CountsIntoReportTable]
-						@ReportCode  = 'C220',
+						@ReportCode  = '220',
 						@SubmissionYear = @SchoolYear, 
-						@ReportTableName =  'ReportEdFactsK12StudentCounts',
 						@IdentifierToCount = 'K12StudentStudentIdentifierState',
-						@CountColumn = 'StudentCount',
-						@IsDistinctCount  = 1
+						@IsDistinctCount  = 1,
+						@RunAsTest = @runAsTest
 			end
 
 			if exists (select 'c' from app.GenerateReports where ReportCode = 'c221' and IsLocked = 1 and UseLegacyReportMigration = 1)
@@ -608,12 +603,11 @@ begin try
 				values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c221')
 
 				exec [RDS].[Insert_CountsIntoReportTable]
-						@ReportCode  = 'C221',
+						@ReportCode  = '221',
 						@SubmissionYear = @SchoolYear, 
-						@ReportTableName =  'ReportEdFactsK12StudentCounts',
 						@IdentifierToCount = 'K12StudentStudentIdentifierState',
-						@CountColumn = 'StudentCount',
-						@IsDistinctCount  = 1
+						@IsDistinctCount  = 1,
+						@RunAsTest = @runAsTest
 			end
 
 		end
@@ -1012,15 +1006,14 @@ begin try
 				values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c224')
 
 				exec [RDS].[Insert_CountsIntoReportTable]
-						@ReportCode  = 'C224',
+						@ReportCode  = '224',
 						@SubmissionYear = @SchoolYear, 
-						@ReportTableName =  'ReportEdFactsK12StudentAssessments',
 						@IdentifierToCount = 'K12StudentStudentIdentifierState',
-						@CountColumn = 'AssessmentCount',
-						@IsDistinctCount  = 1
+						@IsDistinctCount  = 1,
+						@RunAsTest = @runAsTest
 			end
 
-			if exists (select 'c' from app.GenerateReports where ReportCode = 'c226' and IsLocked = 1 and UseLegacyReportMigration = 1)
+			if exists (select 'c' from app.GenerateReports where ReportCode = 'c225' and IsLocked = 1 and UseLegacyReportMigration = 1)
 			begin
 				-- Log history
 				insert into app.DataMigrationHistories
@@ -1028,12 +1021,11 @@ begin try
 				values	(getutcdate(), @dataMigrationTypeId, 'Submission Reports - c225')
 
 				exec [RDS].[Insert_CountsIntoReportTable]
-						@ReportCode  = 'C225',
+						@ReportCode  = '225',
 						@SubmissionYear = @SchoolYear, 
-						@ReportTableName =  'ReportEdFactsK12StudentAssessments',
 						@IdentifierToCount = 'K12StudentStudentIdentifierState',
-						@CountColumn = 'AssessmentCount',
-						@IsDistinctCount  = 1
+						@IsDistinctCount  = 1,
+						@RunAsTest = @runAsTest
 			end
 
 			if exists (select 'c' from app.GenerateReports where ReportCode = 'stateassessmentsperformance' and IsLocked = 1 and UseLegacyReportMigration = 1)

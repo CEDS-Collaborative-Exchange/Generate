@@ -1,0 +1,18 @@
+--Add FS222 to metadata table
+if not exists (select 1 from app.GenerateReport_FactType where GenerateReportId = 136)
+begin
+	insert into app.GenerateReport_FactType
+	values (136, 12)
+end
+
+--Activate FS210 in the report list
+update app.generatereports
+set isactive = 1
+where reportcode = 'c210'
+
+--Remove the Report Code from the Report Title
+update app.generatereports 
+set ReportName = substring(reportname, 7, len(reportname))
+where substring(reportname, 1, 5) like 'c%:'
+
+Update app.GenerateReports set FactTableId = 1 where ReportCode = 'c222'

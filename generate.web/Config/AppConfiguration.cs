@@ -96,7 +96,6 @@ namespace generate.web.Config
             services.AddScoped<IGenerateReportService, GenerateReportService>();
             services.AddScoped<IGenerateReportTopicService, GenerateReportTopicService>();
             services.AddScoped<IFileSubmissionService, FileSubmissionService>();
-            services.AddScoped<IXmlFileSubmissionService, XmlFileSubmissionService>();
             services.AddScoped<IDataPopulationSummaryService, DataPopulationSummaryService>();
             services.AddScoped<IEdFactsReportService, EdFactsReportService>();
             services.AddScoped<IEdfactsFileService, EdfactsFileService>();

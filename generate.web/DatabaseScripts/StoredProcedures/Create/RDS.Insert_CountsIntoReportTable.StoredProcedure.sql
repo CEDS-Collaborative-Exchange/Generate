@@ -1,20 +1,59 @@
 CREATE PROCEDURE [RDS].[Insert_CountsIntoReportTable]
 	@ReportCode varchar(10),
 	@SubmissionYear VARCHAR(10), 
-	@ReportTableName VARCHAR(50),
 	@IdentifierToCount VARCHAR(100),
-	@CountColumn VARCHAR(100),
-	@IsDistinctCount bit
+	@IsDistinctCount bit,
+	@RunAsTest bit
 AS 
 
+	--Error message variable
+	DECLARE @ErrorMessage nvarchar(4000)
+
+	--Get the Column to count and the Report table name from the metadata
+	DECLARE @CountColumn VARCHAR(100), @ReportTableName VARCHAR(100)
+
+	SELECT
+		@CountColumn = aft.FactFieldName,
+		@ReportTableName = aft.FactReportTableName
+	FROM app.generatereports agr
+	INNER JOIN app.FactTables aft
+		ON agr.FactTableId = aft.FactTableId
+	WHERE agr.ReportCode = concat('c', @ReportCode)
+
+		--handle invalid return
+		IF @CountColumn IS NULL OR @ReportTableName IS NULL
+		BEGIN
+			SET @ErrorMessage = concat(@reportCode, ' - Could not get Count Column or Report Table Name for selected Report Code, migration stopped.')
+			INSERT INTO app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 3, @ErrorMessage)
+
+			RAISERROR(@ErrorMessage, 16, 1)
+
+			RETURN
+		END		
+
+	--Get the Fact Type associated with the File Specification
 	DECLARE @FactTypeCode VARCHAR(50)
-	select @FactTypeCode = RDS.Get_FactTypeByReport(concat('c',@ReportCode))
+	SELECT @FactTypeCode = RDS.Get_FactTypeByReport(concat('c',@ReportCode))
+
+		--handle invalid return
+		IF @FactTypeCode IS NULL
+		BEGIN
+			SET @ErrorMessage = concat(@reportCode, ' - Could not get the associated Fact Type code for selected Report Code, migration stopped.')
+			INSERT INTO app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 3, @ErrorMessage)
+
+			RAISERROR(@ErrorMessage, 16, 1)
+
+			RETURN
+		END		
 
 	DECLARE @SchoolYearId INT
 	SELECT @SchoolYearId = DimSchoolYearId
 	FROM RDS.DimSchoolYears 
 	WHERE SchoolYear = @SubmissionYear
 	
+	--Remove the existing report rows and repopulate the report data 
 	DECLARE @SQLStatement NVARCHAR(MAX);
 
 	DECLARE cursor_name CURSOR FOR
@@ -150,15 +189,20 @@ AS
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @SQLStatement = REPLACE(REPLACE(@SQLStatement, ',NOCATS', ''), '_NOCATS', '')
-		--select @SQLStatement
-		EXEC sp_executesql @SQLStatement;
+
+		--Either execute the created SQL or output it for debugging
+		IF @RunAsTest = 1 
+			PRINT @SQLStatement;
+		ELSE
+			EXEC sp_executesql @SQLStatement;
+		
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END
 
 	CLOSE cursor_name;
 	DEALLOCATE cursor_name;
 
-
+	--Remove the rows with CategoryOption values = 'MISSING' and insert zero counts
 	DECLARE cursor_name CURSOR FOR
 	SELECT N'
 		-- delete rows with CategoryOption values = ''MISSING''
@@ -200,8 +244,12 @@ AS
 	
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		--SELECT @SQLStatement
-		EXEC sp_executesql @SQLStatement;
+		--Either execute the created SQL or output it for debugging
+		IF @RunAsTest = 1 
+			PRINT @SQLStatement;
+		ELSE
+			EXEC sp_executesql @SQLStatement;
+
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END
 	
@@ -326,7 +374,13 @@ AS
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @SQLStatement = REPLACE(REPLACE(@SQLStatement, ',NOCATS', ''), '_NOCATS', '')
-		EXEC sp_executesql @SQLStatement;
+
+		--Either execute the created SQL or output it for debugging
+		IF @RunAsTest = 1 
+			PRINT @SQLStatement;
+		ELSE
+			EXEC sp_executesql @SQLStatement;
+
 		FETCH NEXT FROM cursor_name INTO @SQLStatement;
 	END
 

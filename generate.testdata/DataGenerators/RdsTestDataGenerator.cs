@@ -581,7 +581,11 @@ namespace generate.testdata.DataGenerators
                 var state = _testDataHelper.GetRandomObject<RefState>(rnd, this.RdsReferenceData.RefStates);
                 var seaName = _testDataHelper.GetK12SeaName(state.Description);
                 var refStateAnsicode = this.RdsReferenceData.RefStateAnsicodes.FirstOrDefault(x => x.StateName == state.Description);
-                var seaOrganizationId = int.Parse(refStateAnsicode.Code);
+                var seaOrganizationId = -1;
+                if (refStateAnsicode != null)
+                {
+                    seaOrganizationId = int.Parse(refStateAnsicode.Code);
+                }
                 var streetNumberAndName = _testDataHelper.GetRandomIntInRange(rnd, 1, 20000) + " " + _testDataHelper.GetStreetName(rnd, this.PlaceNames, this.StreetTypes);
                 var postalCode = _testDataHelper.GetRandomIntInRange(rnd, 10000, 90000).ToString();
                 var city = _testDataHelper.GetCityName(rnd, this.PlaceNames);
