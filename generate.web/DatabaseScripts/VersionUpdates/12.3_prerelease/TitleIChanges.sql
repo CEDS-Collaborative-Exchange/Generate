@@ -245,6 +245,12 @@
 	----------------------------------------------------------------------
 	-- Create the new Organization Title I supporting view
 	----------------------------------------------------------------------
+
+	--Drop first, just in case
+	IF OBJECT_ID('RDS.vwDimOrganizationTitleIStatuses', 'V') IS NOT NULL
+		DROP VIEW RDS.vwDimOrganizationTitleIStatuses;
+	GO
+
 	CREATE VIEW [RDS].[vwDimOrganizationTitleIStatuses]
 	AS
 		SELECT
