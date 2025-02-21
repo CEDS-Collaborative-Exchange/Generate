@@ -1330,6 +1330,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimNOrDStatusId'
 		end
+		else if @dimensionTable = 'DimOrganizationTitleIStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimOrganizationTitleIStatusId'
+		end
 		else if @dimensionTable ='DimPeople'
 		begin
 			set @dimensionPrimaryKey = 'DimPersonId'
@@ -3111,7 +3115,7 @@ BEGIN
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				where titleI.TitleIProgramTypeCode <> ''MISSING''
+				where titleI.TitleIIndicatorCode in (''01'',''02'',''03'',''04'')
 			) rules 
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.TitleIStatusId = rules.DimTitleIStatusId'	

@@ -16,3 +16,51 @@ set ReportName = substring(reportname, 7, len(reportname))
 where substring(reportname, 1, 5) like 'c%:'
 
 Update app.GenerateReports set FactTableId = 1 where ReportCode = 'c222'
+
+--Add the new OrganizationTitleI dimension to the metadata
+if (select count(*)
+	from app.DimensionTables 
+	where DimensionTableName = 'DimOrganizationTitleIStatuses'
+	) = 0
+begin
+	insert into app.DimensionTables
+	values('DimOrganizationTitleIStatuses',1)
+end
+
+--Change the DimensionFieldName associated with DimTitleIStatuses
+update d	
+set DimensionFieldName = 'TitleIIndicator'
+from app.categories c
+	inner join app.Category_Dimensions cd
+		on c.CategoryId = cd.CategoryId
+	inner join app.Dimensions d
+		on cd.DimensionId = d.DimensionId
+where c.CategoryCode = 'TITLEIPROG'
+
+--roll back the 2025 metadata for 2024 for FS134
+if (select count(*)
+	from app.filesubmissions fs
+	left join app.filesubmission_filecolumns fsfc 
+		on fs.FileSubmissionId = fsfc.FileSubmissionId
+	left join app.filecolumns fc 
+		on fsfc.filecolumnid = fc.FileColumnId
+	where fs.generatereportid in (53) 
+	and submissionyear in (2024) 
+) = 0
+begin 
+	exec app.Rollover_Previous_Year_Metadata 'c134', '2025', '2024'
+end
+
+--roll back the 2025 metadata for 2024 for FS037
+if (select count(*)
+	from app.filesubmissions fs
+	left join app.filesubmission_filecolumns fsfc 
+		on fs.FileSubmissionId = fsfc.FileSubmissionId
+	left join app.filecolumns fc 
+		on fsfc.filecolumnid = fc.FileColumnId
+	where fs.generatereportid in (43) 
+	and submissionyear in (2024) 
+) = 0
+begin 
+	exec app.Rollover_Previous_Year_Metadata 'c037', '2025', '2024'
+end
