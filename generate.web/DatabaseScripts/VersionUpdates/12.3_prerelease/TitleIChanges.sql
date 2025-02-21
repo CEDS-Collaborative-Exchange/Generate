@@ -954,3 +954,15 @@
 	DROP TABLE #TitleISchoolStatus
 	DROP TABLE #TitleISupportServices
 
+-- Rename the column 'TitleIProgramType' to 'TitleIIndicator'
+IF EXISTS (
+    SELECT 1 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_NAME = 'ReportEdFactsK12StudentCounts' 
+    AND TABLE_SCHEMA = 'rds' 
+    AND COLUMN_NAME = 'TitleIProgramType'
+)
+BEGIN
+	EXEC sp_rename 'RDS.ReportEdFactsK12StudentCounts.TitleIProgramType', 'TitleIIndicator', 'COLUMN';
+END
+

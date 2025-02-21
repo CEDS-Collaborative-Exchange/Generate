@@ -3256,7 +3256,7 @@ BEGIN
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					select distinct fact.K12SchoolId, p.K12StudentStudentIdentifierState, titleI.DimTitleIStatusId
+					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, titleI.DimTitleIStatusId
 					from rds.' + @factTable + ' fact '
 
 			if @reportLevel = 'lea'
@@ -3290,6 +3290,7 @@ BEGIN
 			) rules 
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.TitleIStatusId = rules.DimTitleIStatusId'	
+
 		end
 
 		else if @reportCode in ('yeartoyearenvironmentcount')
