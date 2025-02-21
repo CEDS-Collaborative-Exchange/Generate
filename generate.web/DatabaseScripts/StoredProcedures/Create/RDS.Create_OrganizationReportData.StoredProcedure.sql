@@ -477,8 +477,8 @@ BEGIN
 							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
-						left outer join rds.DimTitleIStatuses titleIStatus 
-							on fact.TitleIStatusId = titleIStatus.DimTitleIStatusId
+						left outer join rds.DimOrganizationTitleIStatuses titleIStatus 
+							on fact.TitleIStatusId = titleIStatus.DimOrganizationTitleIStatusId
 						where d.SchoolYear = @reportYear 
 						and latestSchool.DimK12SchoolId <> -1 
 						and ISNULL(latestSchool.ReportedFederally, 1) = 1
@@ -1770,8 +1770,8 @@ BEGIN
 							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
-						left outer join rds.DimTitleIStatuses titleIStatus 
-							on fact.TitleIStatusId = titleIStatus.DimTitleIStatusId
+						left outer join rds.DimOrganizationTitleIStatuses titleIStatus 
+							on fact.TitleIStatusId = titleIStatus.DimOrganizationTitleIStatusId
 						where dates.SchoolYear = @reportYear
 						and latestSchool.DimK12SchoolId <> -1 
 						and ISNULL(latestSchool.ReportedFederally, 1) = 1
