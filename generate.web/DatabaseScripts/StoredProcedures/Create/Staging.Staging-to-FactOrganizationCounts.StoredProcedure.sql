@@ -380,7 +380,7 @@ BEGIN
 			, -1														AS LeaId
 			, -1														AS K12StaffId
 			, rk12s.DimK12SchoolId										AS K12SchoolId
-			, ISNULL(t.DimTitleIStatusId,-1)							AS TitleIStatusId
+			, ISNULL(t.DimOrganizationTitleIStatusId,-1)				AS TitleIStatusId
 			, -1														AS TitleIParentalInvolveRes
 			, -1														AS TitleIPartAAllocations
 			, isnull(CSAP.MinId,-1)										AS AuthorizingBodyCharterSchoolAuthorizerId
@@ -424,10 +424,10 @@ BEGIN
 			AND isnull(s.PersistentlyDangerousStatusMap, s.PersistentlyDangerousStatusCode) = isnull(sk12o.School_SchoolDangerousStatus, 'MISSING')
 			AND isnull(s.StatePovertyDesignationMap, s.StatePovertyDesignationCode) = isnull(sk12o.School_StatePovertyDesignation, 'MISSING')
 			AND isnull(s.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeMap, s.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode) = isnull(sk12o.School_ProgressAchievingEnglishLanguageProficiencyIndicatorType, 'MISSING')
-		LEFT JOIN rds.DimTitleIStatuses t 
+		LEFT JOIN rds.vwDimOrganizationTitleIStatuses t 
 			ON t.TitleIInstructionalServicesCode = NULL
 			AND t.TitleIProgramTypeCode = NULL 
-			AND t.TitleISchoolStatusCode = NULL 
+			AND isnull(t.TitleISchoolStatusMap, t.TitleISchoolStatusCode) = isnull(sk12o.School_TitleISchoolStatus, 'MISSING')    
 			AND t.TitleISupportServicesCode = NULL 
 		LEFT JOIN rds.vwDimK12OrganizationStatuses organizationStatus 
 			ON organizationStatus.SchoolYear = sk12o.SchoolYear
