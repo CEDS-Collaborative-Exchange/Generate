@@ -1979,9 +1979,9 @@ BEGIN
 				BEGIN
 					set @sqlCategoryReturnField = ' 
 					case 
-						when CAT_' + @reportField + '.ParticipationStatusCode = ''MISSING'' then ''MISSING''						
-						when CAT_' + @reportField + '.ParticipationStatusCode = ''NPART'' then ''NPART''
-						when CAT_' + @reportField + '.ParticipationStatusCode = ''MEDEXEMPT'' then ''MEDICAL''
+						when CAT_' + @reportField + '.AssessmentRegistrationParticipationIndicatorCode = ''MISSING'' then ''MISSING''						
+						when CAT_' + @reportField + '.AssessmentRegistrationParticipationIndicatorCode = ''NPART'' then ''NPART''
+						when CAT_' + @reportField + '.AssessmentRegistrationParticipationIndicatorCode = ''MEDEXEMPT'' then ''MEDICAL''
 						else ''PART''
 					end'
 				END
@@ -3122,7 +3122,7 @@ BEGIN
 		END
 		else if @reportCode in('c138' , 'C137', 'C139')
 		BEGIN
-			-- Assessment type = ELPASS
+			-- Assessment type = LanguageProficiency
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
 					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, assessment.DimAssessmentID	
@@ -3153,7 +3153,7 @@ BEGIN
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				where assessment.AssessmentTypeEdFactsCode = ''ELPASS''
+				where assessment.AssessmentTypeEdFactsCode = ''LanguageProficiency''
 			) rules 
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.AssessmentID = rules.DimAssessmentID'	
