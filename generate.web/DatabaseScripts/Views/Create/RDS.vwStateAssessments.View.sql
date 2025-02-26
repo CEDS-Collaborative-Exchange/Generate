@@ -35,7 +35,7 @@
 	left join (select distinct FactK12StudentAssessmentId, RaceId from rds.BridgeK12StudentAssessmentRaces) race on f.FactK12StudentAssessmentId = race.FactK12StudentAssessmentId
 	left join rds.BridgeK12StudentAssessmentAccommodations accomodations on f.FactK12StudentAssessmentAccommodationId = accomodations.FactK12StudentAssessmentAccommodationId
 	left join (
-			select distinct  fact.K12StudentId,  fact.SchoolYearId,
+			select distinct  fact.K12StudentId,  fact.SchoolYearId, fact.AssessmentPerformanceLevelId,
 			case 
 				WHEN assmntPerfLevl.AssessmentPerformanceLevelIdentifier ='MISSING' THEN 'MISSING'
 				when CAST(SUBSTRING( assmntPerfLevl.AssessmentPerformanceLevelIdentifier, 2,1) as int ) >= CAST( tgglAssmnt.ProficientOrAboveLevel as int) THEN  'PROFICIENT'		
@@ -49,4 +49,4 @@
 			inner join RDS.DimAssessmentPerformanceLevels assmntPerfLevl on fact.AssessmentPerformanceLevelId = assmntPerfLevl.DimAssessmentPerformanceLevelId
 			left join APP.ToggleAssessments tgglAssmnt ON tgglAssmnt.Grade = grades.GradeLevelCode and tgglAssmnt.Subject = assmnt.AssessmentAcademicSubjectEdFactsCode	
 														AND tgglAssmnt.AssessmentTypeCode = assmnt.AssessmentTypeAdministeredCode
-	) proficiency on f.K12StudentId = proficiency.K12StudentId and f.SchoolYearId = proficiency.SchoolYearId
+	) proficiency on f.K12StudentId = proficiency.K12StudentId and f.SchoolYearId = proficiency.SchoolYearId and f.AssessmentPerformanceLevelId = proficiency.AssessmentPerformanceLevelId
