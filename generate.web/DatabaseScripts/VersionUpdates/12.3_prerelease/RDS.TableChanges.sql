@@ -18,3 +18,8 @@ where FactTypeCode = 'migranteducationprogram'
 update rds.DimFactTypes
 set FactTypeDescription = 'IMMIGRANT - '
 where FactTypeCode = 'immigrant'
+
+IF COL_LENGTH('RDS.FactK12StudentAssessments', 'AssessmentStatusId') IS NULL
+BEGIN
+  ALTER TABLE RDS.FactK12StudentAssessments ADD AssessmentStatusId int not null default(-1)
+END
