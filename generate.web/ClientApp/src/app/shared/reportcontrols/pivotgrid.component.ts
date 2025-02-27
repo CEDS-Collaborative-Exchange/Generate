@@ -18,7 +18,7 @@ import { PivottableComponent } from '../components/pivottable/pivottable.compone
 import { AppConfig } from '../../app.config';
 import { IAppConfig } from '../../models/app-config.model';
 
-import { Subscription } from 'rxjs';
+import { Subscription, finalize } from 'rxjs';
 
 
 declare var saveAs: any;
@@ -88,6 +88,7 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
         let self = this;
 
         this.subscriptions.push(this._generateReportService.getSubmissionReport(this.reportParameters.reportType, this.reportParameters.reportCode)
+            .pipe(finalize(() => this.isLoading = false))
             .subscribe(
                 data => {
                     this.generateFile = data;
@@ -273,6 +274,7 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
                     error => this.errorMessage = <any>error));
 
             this.subscriptions.push(this._generateReportService.getSubmissionReport(this.reportParameters.reportType, this.reportParameters.reportCode)
+                .pipe(finalize(() => this.isLoading = false))
                 .subscribe(
                     data => {
                         this.generateFile = data;
