@@ -2772,7 +2772,7 @@ BEGIN
 			-- Ages 14-21, Has Disability
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					select fact.K12StudentId, p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId, MAX(d.DateValue) as SpecialEducationServiceExitDate
+					select p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId, MAX(d.DateValue) as SpecialEducationServiceExitDate
 					from rds.' + @factTable + ' fact '
 
 			if @reportLevel = 'lea'
@@ -2829,9 +2829,9 @@ BEGIN
 
 			set @sqlCountJoins = @sqlCountJoins + '
 				and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode <> ''PPPS''
-				group by fact.K12StudentId, p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId 
+				group by p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId 
 			) rules 
-				on fact.K12StudentId = rules.K12StudentId 
+				on p.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState
 				and fact.IdeaStatusId = rules.DimIdeaStatusId 
 				and fact.LeaId = rules.DimLeaId
 			inner join rds.DimDates exitDate 
@@ -3256,7 +3256,7 @@ BEGIN
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, titleI.DimTitleIStatusId
+					select distinct fact.K12SchoolId, p.K12StudentStudentIdentifierState, titleI.DimTitleIStatusId
 					from rds.' + @factTable + ' fact '
 
 			if @reportLevel = 'lea'
@@ -3290,7 +3290,6 @@ BEGIN
 			) rules 
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.TitleIStatusId = rules.DimTitleIStatusId'	
-
 		end
 
 		else if @reportCode in ('yeartoyearenvironmentcount')
@@ -5289,7 +5288,7 @@ BEGIN
 					+ case when @reportLevel = 'sea' then 'DimSeaId int,'
 							when @reportLevel = 'lea' then 'DimLeaId int,' 
 							else 'DimK12SchoolId int,'
-					end + 'DimStudentId int, K12StudentStudentIdentifierState varchar(60) '  + @sqlCategoryFieldDefs + ',
+					end + 'K12StudentStudentIdentifierState varchar(60) '  + @sqlCategoryFieldDefs + ',
 					SpecialEducationServicesExitDate datetime,
 					' + @factField + ' int,
 
@@ -5313,14 +5312,17 @@ BEGIN
 					(' + case when @reportLevel = 'sea' then 'DimSeaId,'
 								when @reportLevel = 'lea' then 'DimLeaId,' 
 								else 'DimK12SchoolId,'
-						end + 'DimStudentId, K12StudentStudentIdentifierState'  + @sqlCategoryFields + ', SpecialEducationServicesExitDate, ' + @factField + ')
+						end + 'K12StudentStudentIdentifierState'  + @sqlCategoryFields + ', SpecialEducationServicesExitDate, ' + @factField + ')
 					select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 										when @reportLevel = 'lea' then 'fact.LeaId,' 
 										else 'fact.K12SchoolId,'
-						end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
+						end + 'rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
 						exitDate.DateValue as SpecialEducationServicesExitDate,
 					sum(isnull(fact.' + @factField + ', 0))
-					from rds.' + @factTable + ' fact ' + @sqlCountJoins 
+					from rds.' + @factTable + ' fact  
+						inner join rds.DimPeople p
+							on fact.k12StudentId = p.DimPersonId '
+					+ @sqlCountJoins 
 					+ ' ' + @reportFilterJoin + '
 					where ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
 									when @reportLevel = 'lea' then 'fact.LeaId <> -1'
@@ -5330,7 +5332,7 @@ BEGIN
 					' group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 										when @reportLevel = 'lea' then 'fact.LeaId,'
 										else 'fact.K12SchoolId,'
-										end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState'  + @sqlCategoryQualifiedDimensionGroupFields + ',
+										end + 'rules.K12StudentStudentIdentifierState'  + @sqlCategoryQualifiedDimensionGroupFields + ',
 										exitDate.DateValue
 					' + @sqlHavingClause + '
 					'
@@ -6336,13 +6338,13 @@ BEGIN
 		declare @sumOperation as nvarchar(500)
 		set @sumOperation = 'sum(isnull(' + @factField + ', 0))'
 
-		if @reportCode in ('c141','c009','c175', 'c178', 'c179', 'c185', 'c188', 
+		if @reportCode in ('c141','c175', 'c178', 'c179', 'c185', 'c188', 
 			'c189', 'c121', 'c194', 'c082', 'c083', 'c154', 'c155', 'c156', 'c157', 'c158',
 			'C052') -- JW 6/30/2023 Added C052
 		begin
 			set @sumOperation = 'count(distinct cs.dimStudentId )'
 		end
-		else if @reportCode in ('c002', 'c089', 'c005','c006','c088','c144', 'c116', 'c118')
+		else if @reportCode in ('c002', 'c089', 'c009', 'c005','c006','c088','c144', 'c116', 'c118')
 		begin
 			set @sumOperation = 'count(distinct cs.K12StudentStudentIdentifierState )'
 		end
@@ -6420,11 +6422,11 @@ BEGIN
 			end 
 			else 
 			begin
-				if @reportCode IN ('C059', 'C067', 'C070', 'C099', 'C112', 'C203') 
+				if @reportCode IN ('c059', 'c067', 'c070', 'c099', 'c112', 'c203') 
 				begin
 					set @debugTableCreate = '					select s.K12StaffStaffMemberIdentifierState '
 				end 
-				else if @reportCode IN ('c005','c006','c007','c086','c088','c143','c144','c118') 
+				else if @reportCode IN ('c009','c005','c006','c007','c086','c088','c143','c144','c118') 
 				begin
 					set @debugTableCreate = '					select K12StudentStudentIdentifierState '   
 				end 
@@ -6455,7 +6457,7 @@ BEGIN
 				set @debugTableCreate += @sqlCategoryFields + char(10) 
 					+ '					into [debug].' + QUOTENAME(@debugTableName) + char(10)
 			
-				IF @reportCode IN ('C059', 'C067', 'C070', 'C099', 'C112', 'C203')
+				IF @reportCode IN ('c059', 'c067', 'c070', 'c099', 'c112', 'c203')
 				BEGIN
 					set @debugTableCreate += '					from #categorySet c ' + char(10) +
 					'					inner join rds.DimPeople s ' + char(10)
@@ -6463,7 +6465,7 @@ BEGIN
 				END 
 				--these reports have been converted to use K12StudentStudentIdentifierState instead of K12StudentId
 				--	in #Students and #categorySet so no need to join to DimPeople
-				ELSE IF @reportCode IN ('c005','c006','c007','c086','c088','c143','c144','c118') 
+				ELSE IF @reportCode IN ('c009','c005','c006','c007','c086','c088','c143','c144','c118') 
 				BEGIN
 					set @debugTableCreate += '					from #categorySet c ' + char(10)
 				END
@@ -6488,13 +6490,13 @@ BEGIN
 						+ '						on c.DimK12SchoolId = sc.DimK12SchoolId ' + char(10)
 				end 
 
-				if @reportCode NOT IN ('C059', 'C067', 'C070', 'C099', 'C112', 'C203') 
+				if @reportCode in ('c059', 'c067', 'c070', 'c099', 'c112', 'c203') 
 				begin
-					set @debugTableCreate += '					order by K12StudentStudentIdentifierState ' + char(10)
+					set @debugTableCreate += '					order by s.K12StaffStaffMemberIdentifierState ' + char(10)
 				end
 				else 
 				begin
-					set @debugTableCreate += '					order by s.K12StaffStaffMemberIdentifierState ' + char(10)
+					set @debugTableCreate += '					order by K12StudentStudentIdentifierState ' + char(10)
 				end
 			end
 			set @sql += @debugTableCreate 
@@ -6599,12 +6601,12 @@ BEGIN
 				if @categorySetCode = 'TOT' 
 				begin
 					set @sql = @sql + ' 
-					left join (select DimStudentId, ' 
+					left join (select K12StudentStudentIdentifierState, ' 
 				end
 				else
 				begin
 					set @sql = @sql + ' 
-					inner join (select DimStudentId, ' 
+					inner join (select K12StudentStudentIdentifierState, ' 
 				end
 
 				SELECT @sql = @sql + 
@@ -6615,19 +6617,9 @@ BEGIN
 							' MAX(SpecialEducationServicesExitDate) AS SpecialEducationServicesExitDate'
 					END
 
-				if @reportLevel = 'sea' 
-				begin
-					SELECT @sql = @sql + ' from #categorySet group by DimStudentId) fs009 
-											ON cs.DimStudentId = fs009.DimStudentId 
-											AND cs.SpecialEducationServicesExitDate = fs009.SpecialEducationServicesExitDate'
-				end
-				else
-				begin
-					SELECT @sql = @sql + ' from #categorySet group by DimStudentId, DimLeaId) fs009
-											ON cs.DimStudentId = fs009.DimStudentId 
-											AND cs.DimLeaId = fs009.DimLeaId 
-											AND cs.SpecialEducationServicesExitDate = fs009.SpecialEducationServicesExitDate'
-				end
+				SELECT @sql = @sql + ' from #categorySet group by K12StudentStudentIdentifierState) fs009 
+										ON cs.K12StudentStudentIdentifierState = fs009.K12StudentStudentIdentifierState 
+										AND cs.SpecialEducationServicesExitDate = fs009.SpecialEducationServicesExitDate'
 			end 
 				
 			SET @sql = @sql + '
@@ -6748,12 +6740,12 @@ BEGIN
 					if @categorySetCode = 'TOT' 
 					begin
 						set @sql = @sql + ' 
-						left join (select DimStudentId, ' 
+						left join (select K12StudentStudentIdentifierState, DimLeaId, ' 
 					end
 					else
 					begin
 						set @sql = @sql + ' 
-						inner join (select DimStudentId, ' 
+						inner join (select K12StudentStudentIdentifierState, DimLeaId, '
 					end
 									
 					SELECT @sql = @sql + 
@@ -6764,14 +6756,17 @@ BEGIN
 								' MAX(SpecialEducationServicesExitDate) AS SpecialEducationServicesExitDate'
 						END
 
-
-					SELECT @sql = @sql + ' from #categorySet group by DimStudentId) fs009
-						ON cs.DimStudentId = fs009.DimStudentId AND cs.SpecialEducationServicesExitDate = fs009.SpecialEducationServicesExitDate'
+					SELECT @sql = @sql + ' from #categorySet group by K12StudentStudentIdentifierState, DimLeaId) fs009
+											ON cs.K12StudentStudentIdentifierState = fs009.K12StudentStudentIdentifierState 
+											AND cs.DimLeaId = fs009.DimLeaId 
+											AND cs.SpecialEducationServicesExitDate = fs009.SpecialEducationServicesExitDate'
 				end 
 
 				set @sql = @sql + '
-					where lea.DimLeaId <> -1
-					and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
+					where lea.DimLeaId <> -1 ' + char(10)
+					set @sql = @sql + 'and lea.RecordStartDateTime >= ''' + @CalculatedSYStartDate + '''' + char(10)
+					set @sql = @sql + 'and isnull(lea.RecordEndDateTime, ''' + @CalculatedSYEndDate + ''') <= ''' + @CalculatedSYEndDate + '''' + char(10)
+					set @sql = @sql + 'and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
 					group by 
 						lea.StateANSICode,
 						lea.StateAbbreviationCode,
@@ -6870,8 +6865,10 @@ BEGIN
 				end
 
 				set @sql = @sql + '
-					where lea.DimLeaId <> -1
-					and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
+					where lea.DimLeaId <> -1 ' + char(10)
+					set @sql = @sql + 'and lea.RecordStartDateTime >= ''' + @CalculatedSYStartDate + '''' + char(10)
+					set @sql = @sql + 'and isnull(lea.RecordEndDateTime, ''' + @CalculatedSYEndDate + ''') <= ''' + @CalculatedSYEndDate + '''' + char(10)
+					set @sql = @sql + 'and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
 					group by 
 						lea.StateANSICode,
 						lea.StateAbbreviationCode,
