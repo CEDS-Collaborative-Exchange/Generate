@@ -1330,6 +1330,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimNOrDStatusId'
 		end
+		else if @dimensionTable = 'DimOrganizationTitleIStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimOrganizationTitleIStatusId'
+		end
 		else if @dimensionTable ='DimPeople'
 		begin
 			set @dimensionPrimaryKey = 'DimPersonId'
