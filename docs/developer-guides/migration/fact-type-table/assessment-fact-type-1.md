@@ -6,6 +6,8 @@ description: >-
 
 # Child Count Fact Type
 
+
+
 {% hint style="info" %}
 Please note, to take most of these steps you will need an up-to-date version of Generate installed. Please visit the [Installation](../../installation/) or [Upgrade](../../installation/upgrade/) pages for more information.
 {% endhint %}
@@ -56,7 +58,7 @@ ORDER BY        agrft.FactTypeId, agr.ReportCode
 The Generate ETL Documentation Templates give a detailed breakdown of all data elements needed for each Fact Type and show how data are transformed through each stage of the data migration. After completing the CEDS alignment process these templates can be used to document data transformation notes and option set mappings. They also contain a description of the CEDS data elements needed and what they are called throughout the Generate database. The ETL Templates documentation has a detailed instruction tab to help you know how to utilize this tool effectively. If you need clarification, please reach out to your CIID TA provider.
 
 {% hint style="info" %}
-You can find the Assessment ETL Documentation Template.xlsx on the [ETL Documentation Template](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074) page.
+You can find the Child Count ETL Documentation Template.xlsx on the [ETL Documentation Template](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074) page.
 {% endhint %}
 
 #### Generate Metadata
@@ -64,7 +66,7 @@ You can find the Assessment ETL Documentation Template.xlsx on the [ETL Document
 The Generate metadata tables can be queried to determine which Staging tables need to be populated for a Fact Type.
 
 {% hint style="success" %}
-The following script will return the needed staging table, and columns for **Assessment**:
+The following script will return the needed staging table, and columns for **Child Count**:
 {% endhint %}
 
 ```sql
@@ -103,7 +105,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 ```
 {% endcode %}
 
-#### Source System Reference Tables Assessment Filters&#x20;
+#### Source System Reference Tables Child Count Filters&#x20;
 
 In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields will need to be mapped using the value in the SSRD table using these filters. For further information please review [Source System Reference Data](../../generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data.md).
 
@@ -147,7 +149,7 @@ The tools from the Set Up phase (ETL Checklist and Generate metadata) are used t
 The Source to Staging code can be run from SQL Server Management Studio (SSMS) by passing in the current school year as a parameter. Generate uses the end school year. For example, 2023-24 would be specified as '2024'.
 
 ```sql
-exec [Staging].[Source-to-Staging_ChildCount] 2024
+exec [Source].[Source-to-Staging_ChildCount] 2024
 ```
 {% endtab %}
 
@@ -274,7 +276,7 @@ select * from [debug].[vwChildCount_FactTable]
 
 #### Database Settings
 
-To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you will need to update some settings in the database and call the \[rds].\[create\_reports] Stored Procedure.
+To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you will need to update some settings in the database and call the `[rds].[create_reports]` Stored Procedure.
 
 {% code overflow="wrap" %}
 ```sql
@@ -315,7 +317,7 @@ Over time these tables will accumulate and create clutter in the Generate databa
 
 #### File Comparison Utility
 
-The [File Comparison Utility](../../generate-utilities/file-comparison/) allows you to compare EDFacts submission files to data stored in the Report Tables in the Generate database. Instructions on how to use the `Utilities.Compare_CHILDCOUNT` Stored Procedure are available here. Typically, this step is performed in the first year of reporting a file through Generate to compare it to previous submission files produced by the legacy system.
+The [File Comparison Utility](../../generate-utilities/file-comparison/) allows you to compare E&#x44;_&#x46;acts_ submission files to data stored in the Report Tables in the Generate database. Instructions on how to use the `Utilities.Compare_CHILDCOUNT` Stored Procedure are available here. Typically, this step is performed in the first year of reporting a file through Generate to compare it to previous submission files produced by the legacy system.
 
 {% code overflow="wrap" %}
 ```sql
