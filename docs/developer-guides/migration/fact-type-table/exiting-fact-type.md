@@ -6,7 +6,9 @@ description: >-
 
 # Exiting Fact Type
 
-lease note, to take most of these steps you will need an up-to-date version of Generate installed. Please visit the [Installation](../../installation/) or [Upgrade](../../installation/upgrade/) pages for more information.
+{% hint style="info" %}
+Please note, to take most of these steps you will need an up-to-date version of Generate installed. Please visit the [Installation](../../installation/) or [Upgrade](../../installation/upgrade/) pages for more information.
+{% endhint %}
 
 ## Overview
 

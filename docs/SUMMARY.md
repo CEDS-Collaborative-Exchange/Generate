@@ -47,7 +47,7 @@
   * [Fact Type Table](developer-guides/migration/fact-type-table/README.md)
     * [Assessment Fact Type](developer-guides/migration/fact-type-table/assessment-fact-type.md)
     * [Child Count Fact Type](developer-guides/migration/fact-type-table/assessment-fact-type-1.md)
-    * [Exiting Fact Type](developer-guides/migration/fact-type-table/assessment-fact-type-1-1.md)
+    * [Exiting Fact Type](developer-guides/migration/fact-type-table/exiting-fact-type.md)
 * [Generate Utilities](developer-guides/generate-utilities/README.md)
   * [File Comparison](developer-guides/generate-utilities/file-comparison/README.md)
     * [Loading Files](developer-guides/generate-utilities/file-comparison/loading-files.md)
