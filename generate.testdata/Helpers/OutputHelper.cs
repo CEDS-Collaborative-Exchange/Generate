@@ -852,6 +852,22 @@ namespace generate.testdata.Helpers
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData SELECT DISTINCT ", schoolYear, ", 'RefAssessmentAccommodationCategory', NULL, CedsOptionSetCode, CedsOptionSetCode FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'AssessmentAccommodationCategory'"));
             output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData SELECT DISTINCT ", schoolYear, ", 'RefAccommodationType', NULL, CedsOptionSetCode, CedsOptionSetCode FROM CEDS.CedsOptionSetMapping WHERE CedsElementTechnicalName = 'AccommodationType'"));
 
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefNeglectedProgramType' ,NULL,'OTHER','OTHER')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefNeglectedProgramType' ,NULL,'CMNTYDAYPRG','CMNTYDAYPRG')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefNeglectedProgramType' ,NULL,'SHELTERS','SHELTERS')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefNeglectedProgramType' ,NULL,'GRPHOMES','GRPHOMES')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefNeglectedProgramType' ,NULL,'RSDNTLTRTMTHOME','RSDNTLTRTMTHOME')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefDelinquentProgramType' ,NULL,'ADLTCORR','ADLTCORR')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefDelinquentProgramType' ,NULL,'GRPHOMES','GRPHOMES')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefDelinquentProgramType' ,NULL,'CMNTYDAYPRG','CMNTYDAYPRG')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefDelinquentProgramType' ,NULL,'JUVDET','JUVDET')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefDelinquentProgramType' ,NULL,'JUVLNGTRMFAC','JUVLNGTRMFAC')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefDelinquentProgramType' ,NULL,'RNCHWLDRNSCMPS','RNCHWLDRNSCMPS')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefDelinquentProgramType' ,NULL,'RSDNTLTRTMTCTRS','RSDNTLTRTMTCTRS')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefDelinquentProgramType' ,NULL,'SHELTERS','SHELTERS')"));
+            output.AppendLine(string.Concat("INSERT INTO Staging.SourceSystemReferenceData VALUES (", schoolYear, ",'RefDelinquentProgramType' ,NULL,'OTHER','OTHER')"));
+
+
             output.AppendLine();
 
             return output;

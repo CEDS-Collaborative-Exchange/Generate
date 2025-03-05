@@ -1569,6 +1569,8 @@ namespace generate.testdata.DataGenerators
                         nord.ProgressLevel_Math = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefProgressLevelDistribution);
                         nord.ProgressLevel_Reading = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefProgressLevelDistribution);
                         nord.ProgramParticipationEndDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDExitingDistribution) ? BaseProgramExitDate.AddDays(-10) : (DateTime?)null;
+                        nord.NeglectedProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefNeglectedProgramTypeDistribution);
+                        nord.DelinquentProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefDelinquentProgramTypeDistribution);
                     }
 
                     if (nord.ProgramParticipationEndDate.HasValue)
