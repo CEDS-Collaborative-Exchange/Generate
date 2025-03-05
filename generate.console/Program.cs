@@ -215,7 +215,7 @@ namespace generate.console
                     string[] validTypes = ["ids", "rds", "staging"];
                     testDataType = commandLineArguments[1].ToLower();
 
-                    if (!validTypes.Any(t => t == testDataType))
+                    if (!validTypes.Contains(testDataType))
                     {
                         Console.WriteLine(invalidString);
                         Console.WriteLine(spacer);
@@ -229,7 +229,7 @@ namespace generate.console
                     string[] validFormatTypes = ["json", "sql", "c#"];
                     formatType = commandLineArguments[4].ToLower();
 
-                    if (!validFormatTypes.Any(t => t == formatType))
+                    if (!validFormatTypes.Contains(formatType))
                     {
                         Console.WriteLine(invalidString);
                         Console.WriteLine(spacer);
@@ -262,8 +262,9 @@ namespace generate.console
                     }
 
                     dataStandardType = commandLineArguments[7].ToLower();
+                    string[] validDataStandardTypes = ["ceds", "non-ceds"];
 
-                    if (dataStandardType != "ceds" && dataStandardType != "non-ceds")
+                    if (!validDataStandardTypes.Contains(dataStandardType))
                     {
                         Console.WriteLine(invalidString);
                         Console.WriteLine(spacer);
@@ -273,23 +274,13 @@ namespace generate.console
 
                     outputType = commandLineArguments[8].ToLower();
                     string[] validOutputTypes = ["console", "file", "execute"];
-                    if (!validOutputTypes.Any(t => t == outputType))
+                    if (!validOutputTypes.Contains(outputType))
                     {
                         Console.WriteLine(invalidString);
                         Console.WriteLine(spacer);
                         Console.WriteLine(GetHelpText());
                         return;
                     }
-
-                    if (outputType == "execute" && formatType != "sql")
-                    {
-                        Console.WriteLine(invalidString);
-                        Console.WriteLine(spacer);
-                        Console.WriteLine(GetHelpText());
-                        return;
-                    }
-
-                   
 
                     GenerateTestData(testDataType, seed, quantityOfStudents, schoolYear, numberOfYears, formatType, outputType, dataStandardType);
 
@@ -310,10 +301,19 @@ namespace generate.console
         public static void GenerateTestData(string testDataType, int seed, int quantityOfStudents, int schoolYear, int numberOfYears, string formatType, string outputType, string dataStandardType)
         {
             string outputTypeToGenerate = outputType;
+            const string invalidString = "Invalid Arguments";
+            const string spacer = "-----------------------";
 
             if (outputType == "execute")
             {
                 outputTypeToGenerate = "file";
+
+                if(formatType != "sql") {
+                    Console.WriteLine(invalidString);
+                    Console.WriteLine(spacer);
+                    Console.WriteLine(GetHelpText());
+                    return;
+                }
             }
 
             if (testDataType == "staging")
