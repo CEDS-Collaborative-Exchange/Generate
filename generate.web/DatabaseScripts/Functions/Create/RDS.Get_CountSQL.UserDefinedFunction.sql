@@ -1350,6 +1350,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimTitleIIIStatusId'
 		end
+		else if @dimensionTable = 'DimAssessmentAdministrations'
+		begin
+			set @dimensionPrimaryKey = 'DimAssessmentAdministrationId'
+		end
 			
 		set @factKey = REPLACE(@dimensionPrimaryKey, 'Dim', '')
 
@@ -1979,9 +1983,9 @@ BEGIN
 				BEGIN
 					set @sqlCategoryReturnField = ' 
 					case 
-						when CAT_' + @reportField + '.ParticipationStatusCode = ''MISSING'' then ''MISSING''						
-						when CAT_' + @reportField + '.ParticipationStatusCode = ''NPART'' then ''NPART''
-						when CAT_' + @reportField + '.ParticipationStatusCode = ''MEDEXEMPT'' then ''MEDICAL''
+						when CAT_' + @reportField + '.AssessmentRegistrationParticipationIndicatorCode = ''MISSING'' then ''MISSING''						
+						when CAT_' + @reportField + '.AssessmentRegistrationParticipationIndicatorCode = ''NPART'' then ''NPART''
+						when CAT_' + @reportField + '.AssessmentRegistrationParticipationIndicatorCode = ''MEDEXEMPT'' then ''MEDICAL''
 						else ''PART''
 					end'
 				END
@@ -3120,9 +3124,58 @@ BEGIN
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.TitleIStatusId = rules.DimTitleIStatusId'	
 		END
+		else if @reportCode in ('C137') and @categorySetCode = 'CSB'
+		BEGIN
+
+			-- Assessment type = LanguageProficiency
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join (
+					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, assessment.DimAssessmentID, 
+					min(adm.AssessmentAdministrationStartDate) as AssessedFirstTime	
+					from rds.' + @factTable + ' fact '
+
+			if @reportLevel = 'lea'
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+				inner join RDS.DimLeas org 
+					on fact.LeaId = org.DimLeaId
+					AND org.ReportedFederally = 1
+					AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+			end 
+			if @reportLevel = 'sch'
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+				inner join RDS.DimK12Schools org 
+					on fact.K12SchoolId = org.DimK12SchoolId
+					AND org.ReportedFederally = 1
+					AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+			end
+
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join rds.DimPeople p
+					on fact.K12StudentId = p.DimPersonId
+				inner join rds.DimAssessments assessment 
+					on fact.AssessmentID = assessment.DimAssessmentID
+					and fact.SchoolYearId = @dimSchoolYearId
+					and fact.FactTypeId = @dimFactTypeId
+					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+				inner join rds.DimAssessmentAdministrations adm on fact.AssessmentAdministrationId = adm.DimAssessmentAdministrationId
+								and adm.AssessmentIdentifier = assessment.AssessmentIdentifierState
+				where assessment.AssessmentTypeEdFactsCode = ''LanguageProficiency''
+				group by fact.K12StudentId, p.K12StudentStudentIdentifierState, assessment.DimAssessmentID
+
+			) rules 
+				on fact.K12StudentId = rules.K12StudentId 
+				and fact.AssessmentID = rules.DimAssessmentID
+				inner join RDS.DimAssessmentAdministrations CAT_ASSESSEDFIRSTTIME 
+					on fact.AssessmentAdministrationId = CAT_ASSESSEDFIRSTTIME.DimAssessmentAdministrationId
+					and rules.AssessedFirstTime = CAT_ASSESSEDFIRSTTIME.AssessmentAdministrationStartDate
+				'	
+			
+		END
 		else if @reportCode in('c138' , 'C137', 'C139')
 		BEGIN
-			-- Assessment type = ELPASS
+			-- Assessment type = LanguageProficiency
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
 					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, assessment.DimAssessmentID	
@@ -3153,7 +3206,7 @@ BEGIN
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				where assessment.AssessmentTypeEdFactsCode = ''ELPASS''
+				where assessment.AssessmentTypeEdFactsCode = ''LanguageProficiency''
 			) rules 
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.AssessmentID = rules.DimAssessmentID'	
@@ -5711,7 +5764,63 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 			end
-			else if(@reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189', 'c157', 'c139'))
+			else if(@reportCode in ('c137') and @categorySetCode = 'CSB')
+			begin
+				set @sql = @sql + '
+
+				----------------------------
+				-- Insert actual count data 
+				----------------------------
+
+				create table #categorySet (	' 
+				+ case when @reportLevel = 'sea' then 'DimSeaId int,'
+						when @reportLevel = 'lea' then 'DimLeaId int,' 
+						else 'DimK12SchoolId int,'
+				end + 'DimStudentId int, K12StudentStudentIdentifierState varchar(50)' + @sqlCategoryFieldDefs + ', FirstAssessed varchar(50) ,
+				' + @factField + ' int
+			)
+		
+
+				' + case when @reportLevel = 'sea' then '
+				CREATE INDEX IDX_CategorySet ON #CategorySet (DimSeaId)
+				'    when @reportLevel = 'lea' then '
+				CREATE INDEX IDX_CategorySet ON #CategorySet (DimLeaId)
+				' 	 when @reportLevel = 'sch' then '
+				CREATE INDEX IDX_CategorySet ON #CategorySet (DimK12SchoolId)
+				'    else ''
+				end +
+				'
+
+				truncate table #categorySet
+
+				-- Actual Counts
+				insert into #categorySet
+				(' + case when @reportLevel = 'sea' then 'DimSeaId,'
+						when @reportLevel = 'lea' then 'DimLeaId,' 
+						else 'DimK12SchoolId,'
+				end + 'DimStudentId, K12StudentStudentIdentifierState' + @sqlCategoryFields + ', FirstAssessed ,' + @factField + ')
+				select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
+					when @reportLevel = 'lea' then 'fact.LeaId,' 
+						    else 'fact.K12SchoolId,'
+				end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ', 
+				case when min(rules.AssessedFirstTime) is not null then ''FIRSTASSESS'' else ''MISSING'' end ,
+				sum(isnull(fact.' + @factField + ', 0))
+				from rds.' + @factTable + ' fact ' + @sqlCountJoins 
+				+ ' ' + @reportFilterJoin + '
+				inner join rds.DimPeople p on fact.K12StudentId = p.DimPersonId 
+				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
+				and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
+				and ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
+							when @reportLevel = 'lea' then 'fact.LeaId <> -1'
+							else 'IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1'	 end  + '
+				group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
+								when @reportLevel = 'lea' then 'fact.LeaId,'
+								else 'fact.K12SchoolId,'
+								end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionGroupFields + '
+				' + @sqlHavingClause + '
+				'
+			end
+			else if(@reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189', 'c157', 'c137', 'c139'))
 			begin
 				set @sql = @sql + '
 
@@ -6542,6 +6651,10 @@ BEGIN
 			begin
 				set @sql = @sql + ',ADJUSTEDCOHORTGRADUATIONRATE'
 			end
+			else if(@reportCode in ('c137') and @categorySetCode = 'CSB')
+			begin
+				set @sql = @sql + ',ASSESSEDFIRSTTIME'
+			end
 
 			set @sql = @sql + '
 				)
@@ -6639,7 +6752,12 @@ BEGIN
 					sea.SeaOrganizationIdentifierSea,
 					sea.SeaOrganizationName ' +
 					@sqlCategoryFields
-				
+			
+			if(@reportCode in ('c137') and @categorySetCode = 'CSB')
+			begin
+				set @sql = @sql + ',FirstAssessed'
+			end
+
 			if @reportCode in ('c086')
 			begin
 				set @sql = @sql + '
@@ -6813,6 +6931,10 @@ BEGIN
 				begin
 					set @sql = @sql + ',AssessmentAcademicSubject'
 				end
+				else if(@reportCode in ('c137') and @categorySetCode = 'CSB')
+				begin
+					set @sql = @sql + ',ASSESSEDFIRSTTIME'
+				end
 
 				set @sql = @sql + '
 					)
@@ -6882,6 +7004,11 @@ BEGIN
 						@sqlCategoryFields + '
 					'
 
+				if(@reportCode in ('c137') and @categorySetCode = 'CSB')
+				begin
+					set @sql = @sql + ',FirstAssessed'
+				end
+
 				if @reportCode in ('c086')
 				begin
 					set @sql = @sql + '
@@ -6926,6 +7053,10 @@ BEGIN
 			if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 			begin
 				set @sql = @sql + ',AssessmentAcademicSubject'
+			end
+			else if(@reportCode in ('c137') and @categorySetCode = 'CSB')
+			begin
+				set @sql = @sql + ',ASSESSEDFIRSTTIME'
 			end
 			
 			-- add StudentRate  field for c150
@@ -7035,8 +7166,15 @@ BEGIN
 						sch.SchoolIdentifierSea,
 						sch.NameOfInstitution ,
 						sch.LeaIdentifierSea ' +
-						@sqlCategoryFields + '
-					having sum(' + @factField + ') > 0'
+						@sqlCategoryFields 
+
+				if(@reportCode in ('c137') and @categorySetCode = 'CSB')
+				begin
+					set @sql = @sql + ',FirstAssessed'
+				end
+
+				set @sql = @sql + '
+						having sum(' + @factField + ') > 0'
 			end
 		end		-- END sch
 

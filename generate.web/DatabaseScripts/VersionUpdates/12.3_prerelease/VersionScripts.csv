@@ -3,7 +3,6 @@ VersionUpdates\\12.3_prerelease,App.Metadata.sql,0
 VersionUpdates\\12.3_prerelease,TitleIChanges.sql,0
 VersionUpdates\\12.3_prerelease,App.TableChanges.sql,0
 VersionUpdates\\12.3_prerelease,RDS.TableChanges.sql,0
-VersionUpdates\\12.3_prerelease,App.Metadata.sql,0
 Views\\Drop,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Create,RDS.vwDimTitleIStatuses.View.sql,0
 Views\\Drop,RDS.vwDimOrganizationTitleIStatuses.View.sql,0
