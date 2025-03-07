@@ -30,6 +30,7 @@ namespace generate.infrastructure.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            // Not configuring anything here
         }
 
         public void ExecuteEFMigration(string migrationName)

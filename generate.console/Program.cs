@@ -105,7 +105,7 @@ namespace generate.console
                 }
             }
 
-            if (!commandLineArguments.Any())
+            if (commandLineArguments.Count <= 0)
             {
                 Console.WriteLine(GetHelpText());
                 return;
@@ -164,18 +164,19 @@ namespace generate.console
             string[] validTasks = ["help", "update", "testdata"];
             string taskToRun = commandLineArguments[0].ToLower();
             const string invalidString = "Invalid Arguments";
+            const string spacer = "-----------------------";
 
-            if (!validTasks.Any(t => t == taskToRun))
+            if (validTasks.Length <= 0)
             {
                 Console.WriteLine(invalidString);
-                Console.WriteLine("-----------------------");
+                Console.WriteLine(spacer);
                 Console.WriteLine(GetHelpText());
                 return;
             }
 
-            Console.WriteLine("-----------------------");
+            Console.WriteLine(spacer);
             Console.WriteLine("-- Task = " + taskToRun);
-            Console.WriteLine("-----------------------");
+            Console.WriteLine(spacer);
 
             switch (taskToRun)
             {
@@ -189,20 +190,24 @@ namespace generate.console
 
                 case "testdata":
                     // Get additional arguments
-
+                    int seed;
+                    int quantityOfStudents;
+                    int schoolYear;
+                    int numberOfYears;
+                    string dataStandardType;
                     string testDataType = "staging";
-                    int seed = 1000;
-                    int quantityOfStudents = 10000;
+                    seed = 1000;
+                    quantityOfStudents = 10000;
                     string formatType = "sql";
                     string outputType = "execute";
-                    int schoolYear = 2023;
-                    int numberOfYears = 1;
-                    string dataStandardType = "ceds";
+                    schoolYear = 2023;
+                    numberOfYears = 1;
+                    dataStandardType = "ceds";
 
                     if (commandLineArguments.Count < 9)
                     {
                         Console.WriteLine("Insufficient Arguments");
-                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(spacer);
                         Console.WriteLine(GetHelpText());
                         return;
                     }
@@ -210,10 +215,10 @@ namespace generate.console
                     string[] validTypes = ["ids", "rds", "staging"];
                     testDataType = commandLineArguments[1].ToLower();
 
-                    if (!validTypes.Any(t => t == testDataType))
+                    if (!validTypes.Contains(testDataType))
                     {
                         Console.WriteLine(invalidString);
-                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(spacer);
                         Console.WriteLine(GetHelpText());
                         return;
                     }
@@ -224,10 +229,10 @@ namespace generate.console
                     string[] validFormatTypes = ["json", "sql", "c#"];
                     formatType = commandLineArguments[4].ToLower();
 
-                    if (!validFormatTypes.Any(t => t == formatType))
+                    if (!validFormatTypes.Contains(formatType))
                     {
                         Console.WriteLine(invalidString);
-                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(spacer);
                         Console.WriteLine(GetHelpText());
                         return;
                     }
@@ -239,7 +244,7 @@ namespace generate.console
                     catch (Exception)
                     {
                         Console.WriteLine(invalidString);
-                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(spacer);
                         Console.WriteLine(GetHelpText());
                         return;
                     }
@@ -251,40 +256,31 @@ namespace generate.console
                     if (numberOfYears < 1)
                     {
                         Console.WriteLine(invalidString);
-                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(spacer);
                         Console.WriteLine(GetHelpText());
                         return;
                     }
 
                     dataStandardType = commandLineArguments[7].ToLower();
+                    string[] validDataStandardTypes = ["ceds", "non-ceds"];
 
-                    if (dataStandardType != "ceds" && dataStandardType != "non-ceds")
+                    if (!validDataStandardTypes.Contains(dataStandardType))
                     {
                         Console.WriteLine(invalidString);
-                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(spacer);
                         Console.WriteLine(GetHelpText());
                         return;
                     }
 
                     outputType = commandLineArguments[8].ToLower();
                     string[] validOutputTypes = ["console", "file", "execute"];
-                    if (!validOutputTypes.Any(t => t == outputType))
+                    if (!validOutputTypes.Contains(outputType))
                     {
                         Console.WriteLine(invalidString);
-                        Console.WriteLine("-----------------------");
+                        Console.WriteLine(spacer);
                         Console.WriteLine(GetHelpText());
                         return;
                     }
-
-                    if (outputType == "execute" && formatType != "sql")
-                    {
-                        Console.WriteLine(invalidString);
-                        Console.WriteLine("-----------------------");
-                        Console.WriteLine(GetHelpText());
-                        return;
-                    }
-
-                   
 
                     GenerateTestData(testDataType, seed, quantityOfStudents, schoolYear, numberOfYears, formatType, outputType, dataStandardType);
 
@@ -305,10 +301,19 @@ namespace generate.console
         public static void GenerateTestData(string testDataType, int seed, int quantityOfStudents, int schoolYear, int numberOfYears, string formatType, string outputType, string dataStandardType)
         {
             string outputTypeToGenerate = outputType;
+            const string invalidString = "Invalid Arguments";
+            const string spacer = "-----------------------";
 
             if (outputType == "execute")
             {
                 outputTypeToGenerate = "file";
+
+                if(formatType != "sql") {
+                    Console.WriteLine(invalidString);
+                    Console.WriteLine(spacer);
+                    Console.WriteLine(GetHelpText());
+                    return;
+                }
             }
 
             if (testDataType == "staging")
