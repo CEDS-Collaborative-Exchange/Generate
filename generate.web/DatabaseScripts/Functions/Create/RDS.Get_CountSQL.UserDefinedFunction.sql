@@ -6687,6 +6687,11 @@ BEGIN
 					set @sql = @sql + ',sum(isnull(StaffCount, 0))'
 				end
 			end
+
+			if(@reportCode in ('c137') and @categorySetCode = 'CSB')
+			begin
+				set @sql = @sql + ',FirstAssessed'
+			end
 				
 			if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 			begin
@@ -6808,6 +6813,7 @@ BEGIN
 				begin
 					set @sql = @sql + ',ADJUSTEDCOHORTGRADUATIONRATE'
 				end
+
 			
 				set @sql = @sql + '
 					)
@@ -6967,6 +6973,11 @@ BEGIN
 						set @sql = @sql + ',sum(isnull(StaffCount, 0))'
 					end
 				end
+
+				if(@reportCode in ('c137') and @categorySetCode = 'CSB')
+				begin
+					set @sql = @sql + ',FirstAssessed'
+				end
 							
 				if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 				begin
@@ -7096,6 +7107,12 @@ BEGIN
 					set @sql = @sql + ',sum(isnull(StaffCount, 0))'
 				end
 			end
+
+			if(@reportCode in ('c137') and @categorySetCode = 'CSB')
+			begin
+				set @sql = @sql + ',FirstAssessed'
+			end
+
 			if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
 			begin
 				set @sql = @sql + ', case when ''' + @reportCode + ''' in (''c175'',''c185'') then ''MATH''
