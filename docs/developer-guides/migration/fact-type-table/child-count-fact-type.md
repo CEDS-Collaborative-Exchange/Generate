@@ -6,8 +6,6 @@ description: >-
 
 # Child Count Fact Type
 
-
-
 {% hint style="info" %}
 Please note, to take most of these steps you will need an up-to-date version of Generate installed. Please visit the [Installation](../../installation/) or [Upgrade](../../installation/upgrade/) pages for more information.
 {% endhint %}
@@ -136,9 +134,7 @@ The Generate database has a stored procedure for each Fact Type which is empty i
 
 The tools from the Set Up phase (ETL Checklist and Generate metadata) are used to guide writing the ETL Code in this Stored Procedure. Additionally, ETL code written previously to perform this work in the education agency's source system(s) can also be a useful resource at this step, particularly for ensuring critical data handling and business rules from the source system are retained in the Generate Source to Staging ETL.
 
-<figure><img src="../../../.gitbook/assets/ChildCountFactType_BuildingETLCode.png" alt="Alt text: A SQL Server Management Studio window displaying a stored procedure named &#x22;[Source].[Source-to-Staging_ChildCount]&#x22; in the Generate database. The Object Explorer panel on the left shows a list of stored procedures under the &#x22;Source&#x22; schema, while the query editor on the right contains a template for the stored procedure with a placeholder for ETL code. The procedure is designed to process data for the &#x22;ChildCount&#x22; Fact Type, with the @schoolYear parameter defined as a smallint."><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_ChildCount" Fact Type.</p></figcaption></figure>
-
-
+<figure><img src="../../../.gitbook/assets/Source-to-Staging_ChildCount.png" alt="A SQL Server Management Studio window displaying a stored procedure named &#x22;[Source].[Source-to-Staging_ChildCount]&#x22; in the Generate database. The Object Explorer panel on the left shows a list of stored procedures under the &#x22;Source&#x22; schema, while the query editor on the right contains a template for the stored procedure with a placeholder for ETL code. "><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_ChildCount" Fact Type.</p></figcaption></figure>
 
 #### Running the ETL
 
@@ -191,7 +187,7 @@ exec [Staging].[StagingValidation_GetResults] 2024,'childcount'
 
 To aid validation we developed Staging Table Debug views that join together the Staging data for a Fact Type in a standard format that can be used for Generate testing. You can utilize these views in researching specific subsets of data or specific student data. These views can be found in the debug schema and will automatically be filtered by the school year(s) selected in the Generate web application. Opening the view in SSMS will provide you with a variety of filtering options to modify the query as needed during testing. Detailed instructions on how to utilize this process to debug Staging table data can be found in the [Staging Table Validation Process](../../generate-utilities/staging-validation/staging-table-validation-process.md).
 
-The following is an example code snippet of how to select the Assessment Staging Table Debug view:
+The following is an example code snippet of how to select the Child Count Staging Table Debug view:
 
 ```sql
 select * from [debug].[vwChildCount_StagingTables]
@@ -341,7 +337,7 @@ If you need further assistance validating your data or have data mismatches that
 
 ### IDEA Part B Data Review Checklist
 
-This [IDEA Part B Data Review](https://ciidta.communities.ed.gov/#communities/pdc/documents/21449) Checklist helps state teams review and validate IDEA E&#x44;_&#x46;acts_ files. It includes a tab for each IDEA E&#x44;_&#x46;acts_ file specification, and lists considerations and types of validations to ensure accurate and complete data file submissions. Please review the Instruction tab and look for the associated report codes for the Assessment Fact Type.
+This [IDEA Part B Data Review](https://ciidta.communities.ed.gov/#communities/pdc/documents/21449) Checklist helps state teams review and validate IDEA E&#x44;_&#x46;acts_ files. It includes a tab for each IDEA E&#x44;_&#x46;acts_ file specification, and lists considerations and types of validations to ensure accurate and complete data file submissions. Please review the Instruction tab and look for the associated report codes for the Child Count Fact Type.
 
 ### Staging Table Snapshot Utility
 
