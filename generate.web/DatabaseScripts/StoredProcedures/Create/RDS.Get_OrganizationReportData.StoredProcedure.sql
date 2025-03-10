@@ -328,6 +328,8 @@ BEGIN
 				-- NOTE: the Fact table doesn't store Operational Status as words, but rather the number (as a varchar).
 				-- 2=closed   6=inactive   7=future
 				case 
+					when Len(isnull(GRADELEVEL,'')) > 0 and fact.OperationalStatus not in ('2','6', '7')  then GRADELEVEL
+					when @ReportLevel = 'LEA' and Len(isnull(GRADELEVEL,'')) = 0 AND fact.OperationalStatus not in ('2','6','7') then 'NOGRADES'
 					when @ReportLevel = 'SCH' and fact.OperationalStatus in ('2','6','7') then 'NOGRADES' -- File spec doesn't mention how to handle non-operational schools, so making this assumption
 					when @ReportLevel = 'LEA' and fact.OperationalStatus in ('2','6','7') then 'NOGRADES'
 					when @ReportLevel = 'LEA' and Fact.OrganizationStateId in (
