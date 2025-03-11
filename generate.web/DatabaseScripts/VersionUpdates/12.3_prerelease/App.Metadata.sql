@@ -1,9 +1,21 @@
+declare @dimensionId as int
+
 --Add FS222 to metadata table
 if not exists (select 1 from app.GenerateReport_FactType where GenerateReportId = 136)
 begin
 	insert into app.GenerateReport_FactType
 	values (136, 12)
 end
+
+
+--Set the dimension for Disability Status for 037
+select @dimensionId = DimensionId from app.Dimensions where DimensionFieldName = 'IdeaIndicator'
+
+update app.FileColumns
+set DimensionId = @dimensionId
+where ColumnName = 'DisabilityStatusID'
+and DisplayName = 'Disability Status (Only)'
+
 
 --Activate FS210 in the report list
 update app.generatereports
@@ -64,3 +76,24 @@ if (select count(*)
 begin 
 	exec app.Rollover_Previous_Year_Metadata 'c037', '2025', '2024'
 end
+
+--Update Rds.DimFactTypes to include missing files/correctly identify with the correct FactType
+update rds.DimFactTypes
+set FactTypeDescription = 'ASSESSMENT - 050,113,125,126,137,138,139,175,178,179,185,188,189,210,211,224,225'
+where FactTypeCode = 'assessment'
+
+update rds.DimFactTypes
+set FactTypeDescription = 'ORGANIZATIONSTATUS - 199,200,201,202'
+where FactTypeCode = 'organizationstatus'
+
+update rds.DimFactTypes
+set FactTypeDescription = 'TITLEI - 037,134,222'
+where FactTypeCode = 'titleI'
+
+update rds.DimFactTypes
+set FactTypeDescription = 'MIGRANTEDUCATIONPROGRAM - 054,121,145,165'
+where FactTypeCode = 'migranteducationprogram'
+
+update rds.DimFactTypes
+set FactTypeDescription = 'IMMIGRANT - '
+where FactTypeCode = 'immigrant'
