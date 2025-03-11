@@ -1,4 +1,4 @@
-CREATE VIEW [Debug].[vwDirectoryLEA_StagingTable] 
+CREATE VIEW [Debug].[vwDirectoryLEA_StagingTables] 
 AS
 
 	SELECT	DISTINCT	
