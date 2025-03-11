@@ -1,4 +1,4 @@
-declare @dimensionId as int
+declare @dimensionTableId as INT, @categoryId as INT, @dimensionId as INT, @factTableId as INT
 
 --Add FS222 to metadata table
 if not exists (select 1 from app.GenerateReport_FactType where GenerateReportId = 136)
@@ -77,6 +77,7 @@ begin
 	exec app.Rollover_Previous_Year_Metadata 'c037', '2025', '2024'
 end
 
+
 --Update Rds.DimFactTypes to include missing files/correctly identify with the correct FactType
 update rds.DimFactTypes
 set FactTypeDescription = 'ASSESSMENT - 050,113,125,126,137,138,139,175,178,179,185,188,189,210,211,224,225'
@@ -97,3 +98,34 @@ where FactTypeCode = 'migranteducationprogram'
 update rds.DimFactTypes
 set FactTypeDescription = 'IMMIGRANT - '
 where FactTypeCode = 'immigrant'
+
+
+--fs 137 metadata
+
+select @dimensionTableId = DimensionTableId from app.DimensionTables where DimensionTableName = 'DimAssessments'
+
+IF NOT EXISTS(SELECT 1 from app.Dimensions where DimensionFieldName = 'AssessmentTypeAdministeredToEnglishLearners')
+BEGIN
+	INSERT INTO [App].[Dimensions]
+			   ([DimensionFieldName]
+			   ,[DimensionTableId]
+			   ,[IsCalculated]
+			   ,[IsOrganizationLevelSpecific])
+	VALUES('AssessmentTypeAdministeredToEnglishLearners',@dimensionTableId,0,0)
+END
+
+SELECT @dimensionId = DimensionId FROM app.Dimensions WHERE DimensionFieldName = 'AssessmentTypeAdministeredToEnglishLearners'
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'ASMTADMNSTRDELP' order by CategoryId desc
+
+IF NOT EXISTS(SELECT 1 from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+BEGIN
+    INSERT INTO [App].[Category_Dimensions]([CategoryId],[DimensionId])
+    VALUES (@categoryId, @dimensionId)
+END
+
+
+SELECT TOP 1 @categoryId = CategoryId FROM app.Categories WHERE CategoryCode = 'FIRSTASSESS' order by CategoryId desc
+select @dimensionId = dimensionId from app.Dimensions where DimensionFieldName = 'AssessedFirstTime'
+
+delete from app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId
+
