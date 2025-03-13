@@ -346,8 +346,8 @@ namespace generate.testdata.Profiles
 
             this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "13373", ExpectedDistribution = 30 }); // Reading/Language Arts
             this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "01166", ExpectedDistribution = 60 }); // Mathematics
-            this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "00562", ExpectedDistribution = 70 }); // Science
-            this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "73065", ExpectedDistribution = 80 }); // Career and Technical Education
+            this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "00562", ExpectedDistribution = 90 }); // Science
+            this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "73065", ExpectedDistribution = 95 }); // Career and Technical Education
             this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "00256", ExpectedDistribution = 100 }); // English as a second language (ESL)
                                                                                                                                       //this.RefAcademicSubjectDistribution.Add(new DataDistribution<string>() { Option = "09999", ExpectedDistribution = 100 }); // Other
             this.RefAssessmentPurposeDistribution = new List<DataDistribution<string>>();
@@ -1295,9 +1295,9 @@ namespace generate.testdata.Profiles
             this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "Scheduling", ExpectedDistribution = 11 });
             this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "Setting", ExpectedDistribution = 22 });
             this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "EquipmentOrTechnology", ExpectedDistribution = 33 });
-            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "TestAdministration", ExpectedDistribution = 44 });
-            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "TestMaterial", ExpectedDistribution = 55 });
-            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "TestResponse", ExpectedDistribution = 66 });
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "TestAdministration", ExpectedDistribution = 60 });
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "TestMaterial", ExpectedDistribution = 65 });
+            this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "TestResponse", ExpectedDistribution = 70 });
             this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "EnglishLearner", ExpectedDistribution = 77 });
             this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "504", ExpectedDistribution = 88 });
             this.AssessmentAccommodationCategoryDistribution.Add(new DataDistribution<string>() { Option = "Other", ExpectedDistribution = 100 });
@@ -1543,7 +1543,7 @@ namespace generate.testdata.Profiles
             this.RefIdeaInterimRemovalDistribution.Add(new DataDistribution<string>() { Option = "REMHO", ExpectedDistribution = 100 });
 
             this.RefIdeaIndicatorDistribution = new List<DataDistribution<bool>>();
-            this.RefIdeaIndicatorDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 20 });
+            this.RefIdeaIndicatorDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 50 });
             this.RefIdeaIndicatorDistribution.Add(new DataDistribution<bool>() { Option = true, ExpectedDistribution = 100 });
 
             #endregion

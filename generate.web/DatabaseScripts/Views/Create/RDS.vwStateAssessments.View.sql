@@ -12,7 +12,7 @@
 	  , f.AssessmentId
 	  , f.AssessmentRegistrationId
 	  , f.AssessmentPerformanceLevelId
-	  , f.FactK12StudentAssessmentAccommodationId
+	  , accomodations.AssessmentAccommodationId
       , f.K12DemographicId
       , f.GradeLevelWhenAssessedId
       , f.IdeaStatusId
