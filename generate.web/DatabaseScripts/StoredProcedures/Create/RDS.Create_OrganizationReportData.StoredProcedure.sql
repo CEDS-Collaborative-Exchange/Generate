@@ -592,7 +592,8 @@ BEGIN
 						, [OrganizationCount]
 						, [OrganizationName]
 						, [OrganizationNcesId]
-						, [OrganizationStateId]							
+						, [OrganizationStateId]
+						, [ParentOrganizationStateId]
 						, [ReportCode]
 						, [ReportLevel]
 						, [ReportYear]
@@ -611,13 +612,14 @@ BEGIN
 						, sch.NameOfInstitution as OrganizationName 
 						, sch.SchoolIdentifierNces
 						, sch.SchoolIdentifierSea
+						, sch.LeaIdentifierSea
 						, @reportCode
 						, @reportLevel
 						, @reportYear
 						, schStatus.SharedTimeIndicatorEdFactsCode
-						, sch.StateANSICode
-						, sch.StateAbbreviationCode
-						, sch.StateAbbreviationDescription
+						, ISNULL(sch.StateANSICode, '')
+						, ISNULL(sch.StateAbbreviationCode, '')
+						, ISNULL(sch.StateAbbreviationDescription, '')
 						, 0 as TotalIndicator
 						, schStatus.VirtualSchoolStatusEdFactsCode
 					from rds.FactOrganizationCounts fact
