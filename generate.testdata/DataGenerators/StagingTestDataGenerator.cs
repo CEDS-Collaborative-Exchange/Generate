@@ -1632,7 +1632,12 @@ namespace generate.testdata.DataGenerators
                 if (int.TryParse(s.GradeLevel, out var gradeLevel))
                 {
                     if (gradeLevel == 1) { s.GradeLevel = "KG"; }
-                    else { s.GradeLevel = (gradeLevel - 1).ToString(); }
+                    else
+                    {
+                        string tempGrade = (gradeLevel - 1).ToString();
+                        if (tempGrade.Length == 1) { s.GradeLevel = "0" + tempGrade; }
+                        else { s.GradeLevel = tempGrade; }
+                    }
                 }
                 else
                 {
