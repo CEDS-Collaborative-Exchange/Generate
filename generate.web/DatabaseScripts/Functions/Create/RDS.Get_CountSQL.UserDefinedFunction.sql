@@ -5396,12 +5396,12 @@ BEGIN
 				if CHARINDEX('DisciplineMethodOfChildrenWithDisabilities', @categorySetReportFieldList) = 0 
 				begin
 					set @reportFilterJoin = @reportFilterJoin + 'inner join rds.DimDisciplineStatuses di on fact.DisciplineStatusId = di.DimDisciplineStatusId'
-					set @reportFilterCondition = @reportFilterCondition + ' and di.DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode <> ''MISSING'''
+					set @reportFilterCondition = @reportFilterCondition + ' and (di.DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode <> ''MISSING'' or di.DisciplinaryactionTakenEdFactsCode in (''03086'',''03087'')) '
 					set @reportFilterCondition = @reportFilterCondition + ' and di.IdeaInterimRemovalEDFactsCode NOT IN (''REMDW'', ''REMHO'') '
 				end
 				else
 				begin
-					set @reportFilterCondition = @reportFilterCondition + ' and CAT_DisciplineMethodOfChildrenWithDisabilities.DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode <> ''MISSING'''
+					set @reportFilterCondition = @reportFilterCondition + ' and (CAT_DisciplineMethodOfChildrenWithDisabilities.DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode <> ''MISSING''  or CAT_DisciplineMethodOfChildrenWithDisabilities.DisciplinaryactionTakenEdFactsCode in (''03086'',''03087'')) '
 					set @reportFilterCondition = @reportFilterCondition + ' and CAT_DisciplineMethodOfChildrenWithDisabilities.IdeaInterimRemovalEDFactsCode NOT IN (''REMDW'', ''REMHO'') '
 				end
 
@@ -5478,6 +5478,14 @@ BEGIN
 			else if(@reportCode in ('c088'))
 			begin
 							
+				-- Add the filter for half day or more removals to handle cases 
+				-- where a student doesn't meet the threshold at the LEA level. 
+				-- RL 2/5/2025 ------------------------------------------------------
+				if @reportLevel = 'lea' and @sqlHavingClause = ''
+				begin
+					set @sqlHavingClause = 'having SUM(fact.DurationOfDisciplinaryAction) >= 0.5 '
+				end 
+
 				set @sql = @sql + '
 
 				----------------------------
