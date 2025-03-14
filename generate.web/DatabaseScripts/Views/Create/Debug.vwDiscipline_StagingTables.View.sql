@@ -9,6 +9,8 @@ CREATE VIEW [Debug].[vwDiscipline_StagingTables] AS
 				,enrollment.MiddleName
 				,enrollment.Sex
 				,enrollment.BirthDate
+				,enrollment.SchoolYear				
+				,enrollment.HispanicLatinoEthnicity
 				,[RDS].[Get_Age] (enrollment.BirthDate, dates.ResponseValue) AS CalculatedAge 
 
 				,discipline.IncidentIdentifier
@@ -27,6 +29,9 @@ CREATE VIEW [Debug].[vwDiscipline_StagingTables] AS
 			
 				,ideaDisability.IdeaDisabilityTypeCode
 
+				,programparticipation.IDEAIndicator
+				,programparticipation.IDEAEducationalEnvironmentForEarlyChildhood
+				,programparticipation.IDEAEducationalEnvironmentForSchoolAge
 				,programparticipation.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
 				,programparticipation.ProgramParticipationEndDate		AS IDEAProgramParticipationEndDate
 				

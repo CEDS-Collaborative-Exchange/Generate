@@ -22,5 +22,9 @@ AS
 		  	, f.[SchoolTypeCode]
 			, f.[IdeaInterimRemovalEdFactsCode]
 	FROM [debug].[vwDiscipline_FactTable] f
-	WHERE IdeaInterimRemovalEdFactsCode in ('REMDW','REMHO') 
-		AND SchoolOperationalStatus IN ('Open','New') 
+	WHERE 	IdeaIndicatorEdFactsCode = 'IDEA'
+			AND AgeValue >= 3
+			AND AgeValue <= 21
+			AND IdeaInterimRemovalEdFactsCode in ('REMDW','REMHO')
+			AND IdeaEducationalEnvironmentForSchoolAgeEDFactsCode <> 'PPPS' 
+			AND SchoolOperationalStatus IN ('Open','New') 
