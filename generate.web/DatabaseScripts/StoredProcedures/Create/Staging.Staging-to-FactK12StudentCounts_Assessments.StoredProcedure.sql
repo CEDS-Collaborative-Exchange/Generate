@@ -83,7 +83,8 @@ declare @schoolyear int = 2023
 		FROM RDS.vwDimIdeaStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwIdeaStatuses ON #vwIdeaStatuses (IdeaIndicatorMap, IdeaEducationalEnvironmentForSchoolageMap);
+		CREATE CLUSTERED INDEX ix_tempvwIdeaStatuses 
+			ON #vwIdeaStatuses (IdeaIndicatorMap, IdeaEducationalEnvironmentForSchoolageMap);
 
 		SELECT *
 		INTO #vwMigrantStatuses
@@ -215,11 +216,6 @@ declare @schoolyear int = 2023
 
 		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
 			DROP TABLE #Facts
-
----------------------------------------------------------------------------------		
---NOTE: This was built using the Fact table as it existed for 5.x
---	It will need to be updated to the final v11 version
----------------------------------------------------------------------------------		
 
 	--Create and load #Facts temp table
 		CREATE TABLE #Facts (
@@ -358,7 +354,6 @@ declare @schoolyear int = 2023
 				AND rdis.SpecialEducationExitReasonCode = 'MISSING'
 				AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
 				AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
-
 		--english learner (staging)
 			LEFT JOIN #tempELStatus el 
 				ON sar.StudentIdentifierState = el.StudentIdentifierState
@@ -372,7 +367,6 @@ declare @schoolyear int = 2023
 				ON rsy.SchoolYear = rdels.SchoolYear
 				AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 				AND PerkinsEnglishLearnerStatusCode = 'MISSING'
-
 		--migratory status (staging)	
 			LEFT JOIN #tempMigrantStatus migrant
 				ON sar.StudentIdentifierState = migrant.StudentIdentifierState
@@ -390,7 +384,6 @@ declare @schoolyear int = 2023
 				AND rdms.ConsolidatedMEPFundsStatusCode = 'MISSING'
 				AND rdms.MigrantEducationProgramServicesTypeCode = 'MISSING'
 				AND rdms.MigrantPrioritizedForServicesCode = 'MISSING'
-
 		--homelessness status (staging)	
 			LEFT JOIN #tempHomelessnessStatus hmStatus
 				ON sar.StudentIdentifierState = hmStatus.StudentIdentifierState
@@ -405,7 +398,6 @@ declare @schoolyear int = 2023
 				AND rdhs.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
 				AND rdhs.HomelessUnaccompaniedYouthStatusCode = 'MISSING'
 				AND rdhs.HomelessServicedIndicatorCode = 'MISSING'
-
 		--foster care status (staging)	
 			LEFT JOIN #tempFosterCareStatus foster
 				ON sar.StudentIdentifierState = foster.StudentIdentifierState
@@ -417,7 +409,6 @@ declare @schoolyear int = 2023
 		--foster care (rds)
 			LEFT JOIN RDS.vwDimFosterCareStatuses rdfcs
 				ON ISNULL(CAST(foster.ProgramType_FosterCare AS SMALLINT), -1) = ISNULL(CAST(rdfcs.ProgramParticipationFosterCareMap AS SMALLINT), -1)
-
 		--economically disadvantaged status (staging)	
 			LEFT JOIN #tempEconomicallyDsadvantagedStatus ecoDisStatus
 				ON sar.StudentIdentifierState = ecoDisStatus.StudentIdentifierState
@@ -431,7 +422,6 @@ declare @schoolyear int = 2023
 				ON ISNULL(CAST(ecoDisStatus.EconomicDisadvantageStatus AS SMALLINT), -1) = ISNULL(CAST(rdeds.EconomicDisadvantageStatusMap AS SMALLINT), -1)
 				AND rdeds.EligibilityStatusForSchoolFoodServiceProgramsCode = 'MISSING'
 				AND rdeds.NationalSchoolLunchProgramDirectCertificationIndicatorCode = 'MISSING'
-
 		--military status (staging)	
 			LEFT JOIN #tempMilitaryStatus military
 				ON sar.StudentIdentifierState = military.StudentIdentifierState
@@ -446,7 +436,6 @@ declare @schoolyear int = 2023
 				AND rdmils.MilitaryActiveStudentIndicatorCode = 'MISSING'
 				AND rdmils.MilitaryBranchCode = 'MISSING'
 				AND rdmils.MilitaryVeteranStudentIndicatorCode = 'MISSING'
-
 		--race (staging + function)	
 			LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
 				ON ske.SchoolYear = spr.SchoolYear

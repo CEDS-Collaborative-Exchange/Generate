@@ -235,9 +235,9 @@ BEGIN
 		JOIN RDS.DimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND rdp.IsActiveK12Student = 1
-			--AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
+			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
 			--AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			--AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
+			AND ISNULL(ske.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, '')
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 		LEFT JOIN RDS.DimLeas rdl

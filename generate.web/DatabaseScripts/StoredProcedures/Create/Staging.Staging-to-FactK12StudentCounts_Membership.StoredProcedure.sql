@@ -186,7 +186,7 @@ BEGIN
 			, -1														IdeaStatusId
 			, -1														LanguageId
 			, -1														MigrantStatusId
-			, ISNULL(rdtis.DimTitleIStatusId, -1)						TitleIStatusId
+			, -1														TitleIStatusId
 			, -1														TitleIIIStatusId
 			, -1														AttendanceId
 			, -1														CohortStatusId
@@ -265,13 +265,6 @@ BEGIN
 			ON rgls.SchoolYear = ske.SchoolYear
 			AND ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
-	-- Title I Status
-		LEFT JOIN RDS.vwDimTitleIStatuses rdtis
-			ON ske.SchoolYear = rdtis.SchoolYear
-			AND ISNULL(org.LEA_TitleIProgramType, 'MISSING') = ISNULL(rdtis.TitleIProgramTypeMap, rdtis.TitleIProgramTypeCode)
-			AND rdtis.TitleISchoolStatusCode = 'MISSING'
-			AND rdtis.TitleIInstructionalServicesCode = 'MISSING'
-			AND rdtis.TitleISupportServicesCode = 'MISSING'
 
 	WHERE @MembershipDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, '1/1/9999')
 		AND rgls.GradeLevelCode IN (SELECT GradeLevel FROM @GradesList) AND ske.SchoolYear = @SchoolYear
