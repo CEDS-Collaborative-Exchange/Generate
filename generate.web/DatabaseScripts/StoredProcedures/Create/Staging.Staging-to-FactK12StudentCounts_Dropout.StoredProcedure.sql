@@ -89,7 +89,6 @@ BEGIN
 			AND HomelessUnaccompaniedYouthStatusCode = 'MISSING'
 			AND HomelessServicedIndicatorCode = 'MISSING'
 
-
 		SELECT *
 		INTO #vwEconomicallyDisadvantagedStatuses
 		FROM RDS.vwDimEconomicallyDisadvantagedStatuses
@@ -99,7 +98,6 @@ BEGIN
 
 		CREATE CLUSTERED INDEX ix_tempvwEconomicallyDisadvantagedStatuses
 			ON #vwEconomicallyDisadvantagedStatuses (EconomicDisadvantageStatusMap) --, EligibilityStatusForSchoolFoodServiceProgramsMap, NationalSchoolLunchProgramDirectCertificationIndicatorMap);
-
 
 		SELECT *
 		INTO #vwMigrantStatuses

@@ -152,13 +152,11 @@ BEGIN
 			, ISNULL(rdr.DimRaceId, -1)									RaceId
 			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId
 			, 1															StudentCount
-
 			, ISNULL(rds.DimSeaId, -1)									SEAId
 			, -1														IEUId
 			, ISNULL(rdl.DimLeaID, -1)									LEAId
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
 			, ISNULL(rdp.DimPersonId, -1)								K12StudentId
-
 			, -1														IdeaStatusId
 			, -1														LanguageId
 			, -1														MigrantStatusId

@@ -45,9 +45,7 @@ BEGIN
 
 		SELECT @ChildCountDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@ChildCountDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ChildCountDate) AS VARCHAR(2)) AS DATE)
 
-
 	--Create the temp tables (and any relevant indexes) needed for this domain
-
 		SELECT *
 		INTO #vwGradeLevels
 		FROM RDS.vwDimGradeLevels
@@ -105,13 +103,11 @@ BEGIN
 			, RaceId								int null
 			, K12DemographicId						int null
 			, StudentCount							int null
-
 			, SEAId									int null
 			, IEUId									int null
 			, LEAId									int null
 			, K12SchoolId							int null
 			, K12StudentId							int null
-
 			, IdeaStatusId							int null
 			, LanguageId							int null
 			, MigrantStatusId						int null
@@ -128,7 +124,6 @@ BEGIN
 			, FosterCareStatusId					int null
 			, ImmigrantStatusId						int null
 			, PrimaryDisabilityTypeId				int null
-
 			, SpecialEducationServicesExitDateId	int null
 			, MigrantStudentQualifyingArrivalDateId	int null
 			, LastQualifyingMoveDateId				int null

@@ -301,7 +301,6 @@ I believe Cohort is supposed to be in AcademicAwardStatuses but the dimension do
 					ELSE 'Missing'
 				END
 
-
 	--Final insert into RDS.FactK12StudentCounts table
 		INSERT INTO RDS.FactK12StudentCounts (
 			[SchoolYearId]
