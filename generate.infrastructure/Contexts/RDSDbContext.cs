@@ -3910,7 +3910,7 @@ namespace generate.infrastructure.Contexts
                  .HasMaxLength(50);
 
                 entity
-               .Property(x => x.TITLEIPROGRAMTYPE)
+               .Property(x => x.TITLEIINDICATOR)
                .HasMaxLength(50);
 
                 entity
