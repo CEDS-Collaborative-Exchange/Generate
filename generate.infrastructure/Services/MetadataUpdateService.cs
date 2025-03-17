@@ -44,57 +44,57 @@ namespace generate.infrastructure.Services
         private readonly IAppRepository _appRepository;
         private readonly ILogger<AppUpdateService> _logger;
 
-        bool _useWSforFSMetaUpd = true;
-        string _fsMetaFileLoc;
-        string _fsWSURL;
-        string _fsMetaESSDetailFileName;
-        string _fsMetaCHRDetailFileName;
-        string _fsMetaESSLayoutFileName;
-        string _fsMetaCHRLayoutFileName;
-        string _bkfsMetaFileLoc;
+        //bool _useWSforFSMetaUpd = true;
+        //string _fsMetaFileLoc;
+        //string _fsWSURL;
+        //string _fsMetaESSDetailFileName;
+        //string _fsMetaCHRDetailFileName;
+        //string _fsMetaESSLayoutFileName;
+        //string _fsMetaCHRLayoutFileName;
+        //string _bkfsMetaFileLoc;
 
-        string initSubdir = "DataSetYearVersionByAllAbbrv";
-        string detailSubdir = "DataSetYearVersionDetailsByAllAbbrv";
-        string layoutSubdir = "DataSetYearVersionFSLayoutDetailsByAllAbbrv";
-        string configurationCategory = "Metadata";
-        string essKey = "ESSMetadata";
-        string chrKey = "CHRTRMetadata";
-        string splitKey = "||";
-        string dataMigrationStatusName = "Processing";
-        string dataMigrationTypeName = "Report Warehouse";
-        string bkESSflname = "ESS.json";
-        string bkCHRflname = "CHRTR.json";
-        string bkESSflnameFLay = "ESSFLay.json";
-        string bkCHRflnameFLay = "CHRTRFLay.json";
+        readonly string initSubdir  = "DataSetYearVersionByAllAbbrv";
+        readonly string detailSubdir = "DataSetYearVersionDetailsByAllAbbrv";
+        readonly string layoutSubdir = "DataSetYearVersionFSLayoutDetailsByAllAbbrv";
+        readonly string configurationCategory = "Metadata";
+        readonly string essKey = "ESSMetadata";
+        readonly string chrKey = "CHRTRMetadata";
+        readonly string splitKey = "||";
+        readonly string dataMigrationStatusName = "Processing";
+        readonly string dataMigrationTypeName = "Report Warehouse";
+        readonly string bkESSflname = "ESS.json";
+        readonly string bkCHRflname = "CHRTR.json";
+        readonly string bkESSflnameFLay = "ESSFLay.json";
+        readonly string bkCHRflnameFLay = "CHRTRFLay.json";
         string bkESSFLay = string.Empty;
         string bkCHRFLay = string.Empty;
-        bool _reloadFromBackUp = false;
-        string FSMetalogKey = "MetaLastRunLog";
-        string FSMetasStaKey = "metaStatus";
-        string FSMetastausok = "OK";
-        string FSMetastausFail = "FAILED";
-        string FSMetastausProcessing = "PROCESSING";
+        //bool _reloadFromBackUp = false;
+        readonly string FSMetalogKey = "MetaLastRunLog";
+        readonly string FSMetasStaKey = "metaStatus";
+        readonly string FSMetastausok = "OK";
+        readonly string FSMetastausFail = "FAILED";
+        readonly string FSMetastausProcessing = "PROCESSING";
         const string pub = "Published";
         const string strRep1 = "{\"DataSetYearVersionDetails\":";
-        string collectName = "EDFACTS";
-        string charterDSName = "Charter Collections";
-        string essDSName = "EDFacts Submission System";
-        string charterDSNameAbbrv = "CHRTR";
-        string essDSNameAbbrv = "ESS";
-        string _selSYr = string.Empty;
+        readonly string collectName = "EDFACTS";
+        readonly string charterDSName = "Charter Collections";
+        readonly string essDSName = "EDFacts Submission System";
+        readonly string charterDSNameAbbrv = "CHRTR";
+        readonly string essDSNameAbbrv = "ESS";
+        //string _selSYr = string.Empty;
 
         Dictionary<string, string> newCatInfo = new Dictionary<string, string>();
 
-        bool IFSMetadataUpdateService.useWSforFSMetaUpd { get { return _useWSforFSMetaUpd; } set { _useWSforFSMetaUpd = value; } }
-        string IFSMetadataUpdateService.fsWSURL { get { return _fsWSURL; } set { _fsWSURL = value; } }
-        string IFSMetadataUpdateService.fsMetaFileLoc { get { return _fsMetaFileLoc; } set { _fsMetaFileLoc = value; } }
-        string IFSMetadataUpdateService.fsMetaESSDetailFileName { get { return _fsMetaESSDetailFileName; } set { _fsMetaESSDetailFileName = value; } }
-        string IFSMetadataUpdateService.fsMetaCHRDetailFileName { get { return _fsMetaCHRDetailFileName; } set { _fsMetaCHRDetailFileName = value; } }
-        string IFSMetadataUpdateService.fsMetaESSLayoutFileName { get { return _fsMetaESSLayoutFileName; } set { _fsMetaESSLayoutFileName = value; } }
-        string IFSMetadataUpdateService.fsMetaCHRLayoutFileName { get { return _fsMetaCHRLayoutFileName; } set { _fsMetaCHRLayoutFileName = value; } }
-        string IFSMetadataUpdateService.bkfsMetaFileLoc { get { return _bkfsMetaFileLoc; } set { _bkfsMetaFileLoc = value; } }
-        bool IFSMetadataUpdateService.reloadFromBackUp { get { return _reloadFromBackUp; } set { _reloadFromBackUp = value; } }
-        string IFSMetadataUpdateService.selSchYr { get { return _selSYr; } set { _selSYr = value; } }
+        public bool useWSforFSMetaUpd { get; set; } = true;
+        public string fsWSURL { get; set; }
+        public string fsMetaFileLoc { get; set; }
+        public string fsMetaESSDetailFileName { get; set; }
+        public string fsMetaCHRDetailFileName { get; set; }
+        public string fsMetaESSLayoutFileName { get; set; }
+        public string fsMetaCHRLayoutFileName { get; set; }
+        public string bkfsMetaFileLoc { get; set; }
+        public bool reloadFromBackUp { get; set; } = false;
+        public string selSchYr { get; set; } = "";
         public MetadataUpdateService(AppDbContext appDbContext, IAppRepository appRepository, ILogger<AppUpdateService> logger)
         {
             _appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
@@ -107,11 +107,6 @@ namespace generate.infrastructure.Services
 
         startFS_Processing:
 
-            //var collectName = "EDFACTS";
-            //var charterDSName = "Charter Collections";
-            //var essDSName = "EDFacts Submission System";
-            //var charterDSNameAbbrv = "CHRTR";
-            //var essDSNameAbbrv = "ESS";
             bool skipESSPop = false;
             bool skipCHRPop = false;
 
@@ -138,10 +133,10 @@ namespace generate.infrastructure.Services
                 UpdateKeyinGenConfig(FSMetalogKey, "The metadata is currently being processed.");
                 UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausProcessing);
 
-                if (_useWSforFSMetaUpd)
+                if (this.useWSforFSMetaUpd)
                 {
 
-                    string initCallUrl = _fsWSURL + initSubdir;
+                    string initCallUrl = this.fsWSURL + initSubdir;
                     var client = new RestClient(new RestClientOptions(new Uri(initCallUrl)));
                     var request = new RestRequest("", Method.Get);
                     var response = client.Execute(request);
@@ -152,27 +147,6 @@ namespace generate.infrastructure.Services
                     initDSYVr = JsonConvert.DeserializeObject<List<DataSetYearVersionByAllAbbrv>>(cont);
 
                 }
-                else
-                {
-                    /*
-                     *      Manual file load not needed here
-
-                    var fileloc = _fsMetaFileLoc + "\\" + _fsMetaParentFileName;
-                    using (StreamReader r = new StreamReader(fileloc))
-                    {
-                        cont = r.ReadToEnd();
-                        cont = cont.Replace("{\"DataSetYearVersions\":", "");
-                        cont = cont.Replace("]}", "]");
-                    }
-
-                    initDSYVr = JsonConvert.DeserializeObject<List<DataSetYearVersionByAllAbbrv>>(cont);
-                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == "Published").Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
-                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == "Published" && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
-                    nxtYear = maxSubmissionYear + 1;
-                    fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
-
-                    */
-                }
 
                 #endregion
 
@@ -180,12 +154,12 @@ namespace generate.infrastructure.Services
 
                 List<DataSetYearVersionDetailsByAllAbbrv> DSYVrdetail = null;
                 var edfacts = string.Empty;
-                if (_useWSforFSMetaUpd)
+                if (this.useWSforFSMetaUpd)
                 {
                     UpdateKeyinGenConfig(FSMetalogKey, "The metadata is currently being processed.");
                     UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausProcessing);
                     maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
-                    if (!string.IsNullOrEmpty(_selSYr)) { maxSubmissionYear = Convert.ToInt32(_selSYr); } 
+                    if (!string.IsNullOrEmpty(this.selSchYr)) { maxSubmissionYear = Convert.ToInt32(this.selSchYr); } 
                     maxVersionNumber = initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
                     nxtYear = maxSubmissionYear + 1;
                     fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
@@ -194,7 +168,7 @@ namespace generate.infrastructure.Services
                     if (!checkPrevFSPop) { skipESSPop = true; goto skipESSPopulation; }
 
                     //string detailUrl = "https://edfacts.ed.gov/generate/DataSetYearVersionDetailsByAllAbbrv?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
-                    string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
+                    string detailUrl = this.fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
                     detailUrl = string.Format(detailUrl, collectName, essDSNameAbbrv, maxVersionNumber.ToString(), fqYrName);
 
                     var client1 = new RestClient(new RestClientOptions(new Uri(detailUrl)));
@@ -208,7 +182,7 @@ namespace generate.infrastructure.Services
                 else
                 {
 
-                    var fileloc = _fsMetaFileLoc + "\\" + _fsMetaESSDetailFileName;
+                    var fileloc = this.fsMetaFileLoc + "\\" + this.fsMetaESSDetailFileName;
                     using (StreamReader r = new StreamReader(fileloc))
                     {
                         edfacts = r.ReadToEnd();
@@ -270,7 +244,7 @@ namespace generate.infrastructure.Services
                 int year = 0;
                 string maxVersNum = string.Empty;
 
-                if (_useWSforFSMetaUpd)
+                if (this.useWSforFSMetaUpd)
                 {
 
                     var charterQuery1 = from n in initDSYVr
@@ -289,7 +263,7 @@ namespace generate.infrastructure.Services
                                         select new { Year = n.YearName.Replace("SY ", "").Substring(0, 4), versNum = n.VersionNumber.ToString() };
 
                     maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
-                    if (!string.IsNullOrEmpty(_selSYr)) { maxSubmissionYear = Convert.ToInt32(_selSYr); }
+                    if (!string.IsNullOrEmpty(this.selSchYr)) { maxSubmissionYear = Convert.ToInt32(this.selSchYr); }
                     maxVersionNumber = initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
                     nxtYear = maxSubmissionYear + 1;
                     fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
@@ -305,7 +279,7 @@ namespace generate.infrastructure.Services
                     if (!checkPrevFSPop) { skipCHRPop = true; goto skipCHRPopulation; }
 
                     
-                    string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
+                    string detailUrl = this.fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
                     detailUrl = string.Format(detailUrl, collectName, charterDSNameAbbrv, maxVersionNumber.ToString(), fqYrName);
 
                     var client1 = new RestClient(new RestClientOptions(new Uri(detailUrl)));
@@ -320,7 +294,7 @@ namespace generate.infrastructure.Services
                 else
                 {
 
-                    var fileloc = _fsMetaFileLoc + "\\" + _fsMetaCHRDetailFileName;
+                    var fileloc = this.fsMetaFileLoc + "\\" + this.fsMetaCHRLayoutFileName;
                     using (StreamReader r = new StreamReader(fileloc))
                     {
                         chrtr = r.ReadToEnd();
@@ -400,14 +374,14 @@ namespace generate.infrastructure.Services
                 else
                 {
 
-                    if (!string.IsNullOrEmpty(_bkfsMetaFileLoc) && _reloadFromBackUp)
+                    if (!string.IsNullOrEmpty(this.bkfsMetaFileLoc) && this.reloadFromBackUp)
                     {
-                        if (!Directory.Exists(_bkfsMetaFileLoc)) Directory.CreateDirectory(_bkfsMetaFileLoc);
+                        if (!Directory.Exists(this.bkfsMetaFileLoc)) Directory.CreateDirectory(this.bkfsMetaFileLoc);
 
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflname, edfacts);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflname, chrtr);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflnameFLay, bkESSFLay);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflnameFLay, bkCHRFLay);
+                        File.WriteAllText(this.bkfsMetaFileLoc + @"\" + bkESSflname, edfacts);
+                        File.WriteAllText(this.bkfsMetaFileLoc + @"\" + bkCHRflname, chrtr);
+                        File.WriteAllText(this.bkfsMetaFileLoc + @"\" + bkESSflnameFLay, bkESSFLay);
+                        File.WriteAllText(this.bkfsMetaFileLoc + @"\" + bkCHRflnameFLay, bkCHRFLay);
                     }
 
                     var time = DateTime.Now;
@@ -447,17 +421,17 @@ namespace generate.infrastructure.Services
                 UpdateKeyinGenConfig(FSMetalogKey, status);
                 UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausFail);
 
-                if (checkBackupFilesExists() && _reloadFromBackUp)
+                if (checkBackupFilesExists() && this.reloadFromBackUp)
                 {
-                    _reloadFromBackUp = false; // setting back to false, so reload from back up occurs once.
-                    _useWSforFSMetaUpd = false;
+                    this.reloadFromBackUp = false; // setting back to false, so reload from back up occurs once.
+                    this.useWSforFSMetaUpd = false;
                     UpdateKeyinGenConfig(essKey, "");
                     UpdateKeyinGenConfig(chrKey, "");
-                    _fsMetaFileLoc = _bkfsMetaFileLoc;
-                    _fsMetaESSDetailFileName = bkESSflname;
-                    _fsMetaCHRDetailFileName = bkCHRflname;
-                    _fsMetaESSLayoutFileName = bkESSflnameFLay;
-                    _fsMetaCHRLayoutFileName = bkCHRflnameFLay;
+                    this.fsMetaFileLoc = this.bkfsMetaFileLoc;
+                    this.fsMetaESSDetailFileName = bkESSflname;
+                    this.fsMetaCHRDetailFileName = bkCHRflname;
+                    this.fsMetaESSLayoutFileName = bkESSflnameFLay;
+                    this.fsMetaCHRLayoutFileName = bkCHRflnameFLay;
 
                     _logger.LogCritical("");
                     _logger.LogCritical("----- Restarting FS processing using back up files -----");
@@ -2460,11 +2434,11 @@ namespace generate.infrastructure.Services
         {
 
             var edfacts1 = string.Empty;
-            if (_useWSforFSMetaUpd)
+            if (this.useWSforFSMetaUpd)
             {
 
                 //_fsLayoutURL = "https://edfacts.ed.gov/generate/DataSetYearVersionFSLayoutDetailsByAllAbbrv"; // Remove later
-                string fsLayoutURL = _fsWSURL + layoutSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
+                string fsLayoutURL = this.fsWSURL + layoutSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
                 fsLayoutURL = string.Format(fsLayoutURL, collectionAbbrv, dataSetAbbrv, versionNum.ToString(), fqYrName);
 
                 //fsLayoutURL = "https://edfacts.ed.gov/generate/DataSetYearVersionFSLayoutDetailsByAllAbbrv?collectionAbbrv=EDFACTS&dataSetAbbrv=ESS&versionNum=13&yearAbbrv=2022-2023";
@@ -2481,8 +2455,8 @@ namespace generate.infrastructure.Services
             else
             {
 
-                var filename = dataSetAbbrv == "ESS" ? _fsMetaESSLayoutFileName : dataSetAbbrv == "CHRTR" ? _fsMetaCHRLayoutFileName : "";
-                var fileloc = _fsMetaFileLoc + "\\" + filename; //_fsMetaCHRDetailFileName;
+                var filename = dataSetAbbrv == "ESS" ? this.fsMetaESSLayoutFileName : dataSetAbbrv == "CHRTR" ? this.fsMetaCHRLayoutFileName : "";
+                var fileloc = this.fsMetaFileLoc + "\\" + filename; //_fsMetaCHRDetailFileName;
 
                 using (StreamReader r = new StreamReader(fileloc))
                 {
@@ -3013,10 +2987,10 @@ namespace generate.infrastructure.Services
         {
             // All backup files must exist for back up to work
 
-            var file1 = File.Exists(_bkfsMetaFileLoc + @"\" + bkESSflname);
-            var file2 = File.Exists(_bkfsMetaFileLoc + @"\" + bkCHRflname);
-            var file3 = File.Exists(_bkfsMetaFileLoc + @"\" + bkESSflnameFLay);
-            var file4 = File.Exists(_bkfsMetaFileLoc + @"\" + bkCHRflnameFLay);
+            var file1 = File.Exists(this.bkfsMetaFileLoc + @"\" + bkESSflname);
+            var file2 = File.Exists(this.bkfsMetaFileLoc + @"\" + bkCHRflname);
+            var file3 = File.Exists(this.bkfsMetaFileLoc + @"\" + bkESSflnameFLay);
+            var file4 = File.Exists(this.bkfsMetaFileLoc + @"\" + bkCHRflnameFLay);
 
             if (file1 && file2 && file3 && file4) { return true; }
             else { return false; }
@@ -3059,7 +3033,7 @@ namespace generate.infrastructure.Services
             int maxESSSubmissionYear = 0;
             int maxCHRSubmissionYear = 0;
             int maxSubmissionYear = 0;
-            string initCallUrl = _fsWSURL + initSubdir;
+            string initCallUrl = this.fsWSURL + initSubdir;
             var client = new RestClient(new RestClientOptions(new Uri(initCallUrl)));
             var request = new RestRequest("", Method.Get);
             var response = client.Execute(request);

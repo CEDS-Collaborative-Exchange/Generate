@@ -195,14 +195,15 @@ namespace generate.console
                     int schoolYear;
                     int numberOfYears;
                     string dataStandardType;
-                    string testDataType = "staging";
-                    seed = 1000;
-                    quantityOfStudents = 10000;
+                    string testDataType;
+                    //seed = 1000;
+                    //quantityOfStudents = 10000;
                     string formatType = "sql";
                     string outputType = "execute";
-                    schoolYear = 2023;
-                    numberOfYears = 1;
-                    dataStandardType = "ceds";
+                    //schoolYear = 2023;
+                    //numberOfYears = 1;
+                    //dataStandardType = "ceds";
+                    //testDataType = "staging";
 
                     if (commandLineArguments.Count < 9)
                     {
