@@ -21,7 +21,7 @@ AS
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
 				
-			, Ages.AgeEdFactsCode
+			, Ages.AgeValue
 			, Races.RaceCode
 			, Grades.GradeLevelEdFactsCode
 			

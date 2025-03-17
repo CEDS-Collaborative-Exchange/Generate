@@ -23,6 +23,10 @@ AS
 			, f.[DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode]
 			, f.[DurationOfDisciplinaryAction]
 	FROM [debug].[vwDiscipline_FactTable] f
-	WHERE IdeaInterimRemovalEdFactsCode NOT IN ('REMDW','REMHO')
-		AND SchoolOperationalStatus IN ('Open','New') 
-		AND IdeaEducationalEnvironmentForSchoolAgeEDFactsCode <> 'PPPS'
+	WHERE IdeaIndicatorEdFactsCode = 'IDEA'
+			AND AgeValue >= 3
+			AND AgeValue <= 21
+			AND IdeaInterimRemovalEdFactsCode NOT IN ('REMDW','REMHO')
+			AND IdeaEducationalEnvironmentForSchoolAgeEDFactsCode <> 'PPPS'
+			AND SchoolOperationalStatus IN ('Open','New') 
+			

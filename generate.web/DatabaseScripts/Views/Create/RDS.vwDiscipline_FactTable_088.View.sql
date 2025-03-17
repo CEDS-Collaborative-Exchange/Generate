@@ -21,8 +21,20 @@ AS
 		  	, f.[SchoolOperationalStatus]
 		  	, f.[SchoolTypeCode]
 			, f.[DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode]
+			, f.[DisciplinaryActionTakenEdFactsCode]
+			, f.[IdeaInterimRemovalReasonEdFactsCode]
+			, f.[IdeaInterimRemovalEdFactsCode]
 			, f.[DurationOfDisciplinaryAction]
 	FROM [debug].[vwDiscipline_FactTable] f
-	WHERE IdeaInterimRemovalEdFactsCode NOT IN ('REMDW','REMHO')
-		AND SchoolOperationalStatus IN ('Open','New') 
-		AND IdeaEducationalEnvironmentForSchoolAgeEDFactsCode <> 'PPPS'
+	WHERE IdeaIndicatorEdFactsCode = 'IDEA'
+			AND AgeValue >= 3
+			AND AgeValue <= 21
+			AND 
+			(DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode <> 'MISSING'
+			OR DisciplinaryActionTakenEdFactsCode IN ('03086', '03087')
+			OR IdeaInterimRemovalReasonEdFactsCode <> 'MISSING'
+			OR IdeaInterimRemovalEdFactsCode <> 'MISSING'
+			)
+			AND IdeaEducationalEnvironmentForSchoolAgeEDFactsCode <> 'PPPS'
+			AND SchoolOperationalStatus IN ('Open','New') 
+			
