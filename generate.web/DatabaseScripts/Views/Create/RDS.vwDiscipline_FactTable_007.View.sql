@@ -22,8 +22,12 @@ AS
 		  	, f.[SchoolTypeCode]
 			, f.[IdeaInterimRemovalEdFactsCode]
 			, f.[IdeaInterimRemovalReasonEdFactsCode]
+			, f.[DisciplineCount]
 	FROM [debug].[vwDiscipline_FactTable] f
-	WHERE IdeaInterimRemovalEdFactsCode = 'REMDW'
-		AND IdeaInterimRemovalReasonEdFactsCode in ('D','W','SBI')
-		AND IdeaEducationalEnvironmentForSchoolAgeEDFactsCode <> 'PPPS'
-		AND SchoolOperationalStatus IN ('Open','New') 
+	WHERE IdeaIndicatorEdFactsCode = 'IDEA'
+			AND AgeValue >= 3
+			AND AgeValue <= 21
+			AND IdeaInterimRemovalEdFactsCode = ('REMDW')
+			AND IdeaInterimRemovalReasonEdFactsCode in ('D','W','SBI')
+			AND IdeaEducationalEnvironmentForSchoolAgeEDFactsCode <> 'PPPS' 
+			AND SchoolOperationalStatus IN ('Open','New')

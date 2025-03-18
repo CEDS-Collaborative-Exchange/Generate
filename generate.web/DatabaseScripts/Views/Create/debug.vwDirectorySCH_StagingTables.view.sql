@@ -1,16 +1,3 @@
-USE [generate]
-GO
-
-/****** Object:  View [debug].[vwDirectorySCH_StagingTables]    Script Date: 2/10/2025 12:25:38 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
 CREATE VIEW [debug].[vwDirectorySCH_StagingTables]
 AS
 SELECT
@@ -51,28 +38,20 @@ SELECT
 	--,[OutOfStateIndicator] -- NA
 	K12Org.School_TitleISchoolStatus
 FROM [Staging].[K12Organization] K12Org
-LEFT JOIN [Staging].[OrganizationAddress] OrgAdd1 ON  K12Org.[LeaIdentifierSea] = OrgAdd1.OrganizationIdentifier AND OrgAdd1.AddressTypeForOrganization = 'Physical_1' AND K12Org.[SchoolYear] = OrgAdd1.[SchoolYear]
-LEFT JOIN [Staging].[OrganizationAddress] OrgAdd2 ON  K12Org.[LeaIdentifierSea] = OrgAdd2.OrganizationIdentifier AND OrgAdd2.AddressTypeForOrganization = 'Mailing_1'AND  K12Org.[SchoolYear] = OrgAdd2.[SchoolYear]
-LEFT JOIN [Staging].[OrganizationPhone]  OrgPh ON K12Org.[LeaIdentifierSea] = OrgPh.OrganizationIdentifier AND  K12Org.[SchoolYear] = OrgPh.[SchoolYear]
+	LEFT JOIN [Staging].[OrganizationAddress] OrgAdd1 
+		ON  K12Org.[LeaIdentifierSea] = OrgAdd1.OrganizationIdentifier 
+		AND OrgAdd1.AddressTypeForOrganization = 'Physical_1' 
+		AND K12Org.[SchoolYear] = OrgAdd1.[SchoolYear]
+	LEFT JOIN [Staging].[OrganizationAddress] OrgAdd2 
+		ON  K12Org.[LeaIdentifierSea] = OrgAdd2.OrganizationIdentifier 
+		AND OrgAdd2.AddressTypeForOrganization = 'Mailing_1'
+		AND  K12Org.[SchoolYear] = OrgAdd2.[SchoolYear]
+	LEFT JOIN [Staging].[OrganizationPhone] OrgPh 
+		ON K12Org.[LeaIdentifierSea] = OrgPh.OrganizationIdentifier 
+		AND  K12Org.[SchoolYear] = OrgPh.[SchoolYear]
+WHERE 1 = 1
+AND SchoolIdentifierSea IS NOT NULL -- Remove records that are only LEAs by checking for populated school identifier
 
---SELECT 
---	ReportCode
---	,K12SchoolId	
---	,SchoolYearId	
---	,SchoolYear
---	,School_ReportedFederally	
---	,StateAnsiCode	
---	,LeaIdentifierSea	
---	,LeaIdentifierNces	
---	,LeaOrganizationName	
---	,SchoolIdentifierSea	
---	,NameOfInstitution	
---	,SchoolTypeCode
---	,ReconstitutedStatus
---	,VIRTUALSCHSTATUS	
---	,NSLPSTATUS
---FROM [debug].[vwDirectorySCH_FactTable]
---WHERE ReportCode = 'c129'
 
 GO
 
