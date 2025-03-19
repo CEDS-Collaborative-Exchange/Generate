@@ -50,6 +50,7 @@
     * [Discipline Fact Type](developer-guides/migration/fact-type-table/discipline-fact-type.md)
     * [Exiting Fact Type](developer-guides/migration/fact-type-table/exiting-fact-type.md)
     * [Directory Fact Type](developer-guides/migration/fact-type-table/directory-fact-type.md)
+    * [Membership](developer-guides/migration/fact-type-table/membership.md)
 * [Generate Utilities](developer-guides/generate-utilities/README.md)
   * [File Comparison](developer-guides/generate-utilities/file-comparison/README.md)
     * [Loading Files](developer-guides/generate-utilities/file-comparison/loading-files.md)
