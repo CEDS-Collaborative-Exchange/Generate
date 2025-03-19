@@ -47,6 +47,7 @@
   * [Fact Type Table](developer-guides/migration/fact-type-table/README.md)
     * [Assessment Fact Type](developer-guides/migration/fact-type-table/assessment-fact-type.md)
     * [Child Count Fact Type](developer-guides/migration/fact-type-table/child-count-fact-type.md)
+    * [Discipline Fact Type](developer-guides/migration/fact-type-table/discipline-fact-type.md)
     * [Exiting Fact Type](developer-guides/migration/fact-type-table/exiting-fact-type.md)
     * [Directory Fact Type](developer-guides/migration/fact-type-table/directory-fact-type.md)
 * [Generate Utilities](developer-guides/generate-utilities/README.md)
