@@ -1,3 +1,9 @@
+---
+description: >-
+  This page describes the steps needed to use Generate to produce EDFacts Files
+  for the Staff Fact Type.
+---
+
 # Fact Type Table
 
 Fact Type refers to a categorization or classification of data that is used to organize and manage information within a data warehouse or data management system. It essentially represents a specific type of factual data that is collected, stored, and processed within the system.
