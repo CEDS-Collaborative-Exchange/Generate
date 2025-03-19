@@ -1,5 +1,4 @@
 ---
-icon: memo
 description: >-
   This document describes the technical enhancements to Generate version 11.3
   released in February 2024. The purpose of this document is to communicate the
