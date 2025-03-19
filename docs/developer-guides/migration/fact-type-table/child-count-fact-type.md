@@ -18,7 +18,7 @@ Please note, to take most of these steps you will need an up-to-date version of 
 * Migration: Building and Running ETLs
 * Validation: Verifying Data Results
 
-### What submitted E&#x44;_&#x46;acts_ Files are included in the <mark style="color:yellow;">Child Count Fact Type</mark>?
+### What submitted E&#x44;_&#x46;acts_ Files are included in the <mark style="color:blue;">Child Count Fact Type</mark>?
 
 The following files have been created in Generate and submitted to E&#x44;_&#x46;acts_:
 

@@ -18,7 +18,7 @@ Please note, to take most of these steps you will need an up-to-date version of 
 * Migration: Building and Running ETLs
 * Validation: Verifying Data Results
 
-### What submitted E&#x44;_&#x46;acts_ Files are included in the <mark style="color:yellow;">Assessment Fact Type</mark>?
+### What submitted E&#x44;_&#x46;acts_ Files are included in the <mark style="color:blue;">Assessment Fact Type</mark>?
 
 The following files have been created in Generate and submitted to E&#x44;_&#x46;acts_:
 
@@ -28,17 +28,6 @@ The following files have been created in Generate and submitted to E&#x44;_&#x46
 * [x] 185: Assessment Participation in Mathematics
 * [x] 188: Assessment Participation in Reading/Language Arts
 * [x] 189: Assessment Participation in Science
-
-### What E&#x44;_&#x46;acts_ Files in the <mark style="color:yellow;">Assessment Fact Type</mark> are available for pilot opportunity?
-
-The following files are in pilot status or are available for piloting in Generate:
-
-* [ ] 113: N or D Academic Achievement - State Agency
-* [ ] 125: N or D Academic Achievement - LEA
-* [ ] 126: Title III Former EL Students
-* [ ] 137: English Language Proficiency Test
-* [ ] 138: Title III English Language Proficiency Test
-* [ ] 139: English Language Proficiency Results
 
 {% code overflow="wrap" %}
 ```sql
@@ -59,6 +48,17 @@ WHERE           rdft.FactTypeCode = 'assessment'
 ORDER BY        agrft.FactTypeId, agr.ReportCode
 ```
 {% endcode %}
+
+### What E&#x44;_&#x46;acts_ Files in the <mark style="color:blue;">Assessment Fact Type</mark> are available for pilot opportunity?
+
+The following files are in pilot status or are available for piloting in Generate:
+
+* [ ] 113: N or D Academic Achievement - State Agency
+* [ ] 125: N or D Academic Achievement - LEA
+* [ ] 126: Title III Former EL Students
+* [ ] 137: English Language Proficiency Test
+* [ ] 138: Title III English Language Proficiency Test
+* [ ] 139: English Language Proficiency Results
 
 ***
 

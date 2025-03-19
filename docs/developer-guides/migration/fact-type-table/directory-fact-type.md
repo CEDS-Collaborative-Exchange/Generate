@@ -18,7 +18,7 @@ ease note, to take most of these steps you will need an up-to-date version of Ge
 2. Migration: Building and Running ETLs
 3. Validation: Verifying Data Results
 
-### What submitted E&#x44;_&#x46;acts_ Files are included in the Directory Fact Type?
+### What submitted E&#x44;_&#x46;acts_ Files are included in the <mark style="color:blue;">Directory Fact Type</mark>?
 
 The following files have been created in Generate and submitted to E&#x44;_&#x46;acts_:
 
@@ -35,21 +35,6 @@ The following files have been created in Generate and submitted to E&#x44;_&#x46
 {% hint style="info" %}
 \*At least one state was previously able to successfully populate report data in generate for these files. However, incomplete metadata prevented the Generate UI from producing the submission files, so they were created directly from the report tables instead.
 {% endhint %}
-
-### What E&#x44;_&#x46;acts_ Files in the Directory Fact Type are available for pilot opportunity?
-
-The following files are in pilot status or are available for piloting in Generate:
-
-* [ ] 035: Federal Programs
-* [ ] 193: Title I Allocations
-* [ ] 196: Management Organization for Charter Schools Roster
-* [ ] 197: Crosswalk of Charter Schools to Management Organizations
-* [ ] 198: Charter Contracts
-* [ ] 205: Progress Achieving English Language Proficiency Indicator Status
-* [ ] 206: School Support and Improvement
-* [ ] 207: State Appropriations for Charter Schools
-
-***
 
 {% code overflow="wrap" %}
 ```sql
@@ -70,6 +55,21 @@ WHERE           rdft.FactTypeCode = 'directory'
 ORDER BY        agrft.FactTypeId, agr.ReportCode
 ```
 {% endcode %}
+
+### What E&#x44;_&#x46;acts_ Files in the <mark style="color:blue;">Directory Fact Type</mark> are available for pilot opportunity?
+
+The following files are in pilot status or are available for piloting in Generate:
+
+* [ ] 035: Federal Programs
+* [ ] 193: Title I Allocations
+* [ ] 196: Management Organization for Charter Schools Roster
+* [ ] 197: Crosswalk of Charter Schools to Management Organizations
+* [ ] 198: Charter Contracts
+* [ ] 205: Progress Achieving English Language Proficiency Indicator Status
+* [ ] 206: School Support and Improvement
+* [ ] 207: State Appropriations for Charter Schools
+
+***
 
 ## 1. Set Up: Data Mappings & Settings
 

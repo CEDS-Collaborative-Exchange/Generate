@@ -26,15 +26,6 @@ The following files have been created in Generate and submitted to E&#x44;_&#x46
 * [x] 099 - Special Education Related Services Personnel
 * [x] 112 - Special Education Paraprofessionals
 
-### What EDFacts Files in the <mark style="color:blue;">Staff Fact Type</mark> are available for pilot opportunity?
-
-The following files are in pilot status or are available for piloting in Generate:
-
-* [x] 059 - Staff FTE
-* [x] 065 - Federally Funded Staff
-* [x] 067 - Title III Teachers
-* [x] 203 - Teachers
-
 {% code overflow="wrap" %}
 ```sql
 --What EDFacts Files are included in the Staff Fact Type?
@@ -54,6 +45,15 @@ WHERE           rdft.FactTypeCode = 'staff'
 ORDER BY        agrft.FactTypeId, agr.ReportCode
 ```
 {% endcode %}
+
+### What EDFacts Files in the <mark style="color:blue;">Staff Fact Type</mark> are available for pilot opportunity?
+
+The following files are in pilot status or are available for piloting in Generate:
+
+* [x] 059 - Staff FTE
+* [x] 065 - Federally Funded Staff
+* [x] 067 - Title III Teachers
+* [x] 203 - Teachers
 
 ***
 
