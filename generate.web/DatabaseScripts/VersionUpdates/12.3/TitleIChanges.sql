@@ -242,46 +242,46 @@
 	EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=21289' , @level0type=N'SCHEMA',@level0name=N'RDS', @level1type=N'TABLE',@level1name=N'DimOrganizationTitleIStatuses', @level2type=N'COLUMN',@level2name=N'TitleISupportServicesEdFactsCode';
 	
 
-	----------------------------------------------------------------------
-	-- Create the new Organization Title I supporting view
-	----------------------------------------------------------------------
+	------------------------------------------------------------------------
+	---- Create the new Organization Title I supporting view
+	------------------------------------------------------------------------
 
-	--Drop first, just in case
-	IF OBJECT_ID('RDS.vwDimOrganizationTitleIStatuses', 'V') IS NOT NULL
-		DROP VIEW RDS.vwDimOrganizationTitleIStatuses;
+	----Drop first, just in case
+	--IF OBJECT_ID('RDS.vwDimOrganizationTitleIStatuses', 'V') IS NOT NULL
+	--	DROP VIEW RDS.vwDimOrganizationTitleIStatuses;
 	
 
-	CREATE VIEW [RDS].[vwDimOrganizationTitleIStatuses]
-	AS
-		SELECT
-			  rdot1s.DimOrganizationTitleIStatusId
-			, rsy.SchoolYear
-			, rdot1s.TitleIInstructionalServicesCode
-			, sssrd1.InputCode AS TitleIInstructionalServicesMap
-			, rdot1s.TitleIProgramTypeCode
-			, sssrd2.InputCode AS TitleIProgramTypeMap
-			, rdot1s.TitleISchoolStatusCode
-			, sssrd3.InputCode AS TitleISchoolStatusMap
-			, rdot1s.TitleISupportServicesCode
-			, sssrd4.InputCode AS TitleISupportServicesMap
-		FROM rds.DimOrganizationTitleIStatuses rdot1s
-		CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
-		LEFT JOIN staging.SourceSystemReferenceData sssrd1
-			ON rdot1s.TitleISupportServicesCode = sssrd1.OutputCode
-			AND sssrd1.TableName = 'RefTitleIInstructionServices'
-			AND rsy.SchoolYear = sssrd1.SchoolYear
-		LEFT JOIN staging.SourceSystemReferenceData sssrd2
-			ON rdot1s.TitleIProgramTypeCode = sssrd2.OutputCode
-			AND sssrd2.TableName = 'RefTitleIProgramType'
-			AND rsy.SchoolYear = sssrd2.SchoolYear
-		LEFT JOIN staging.SourceSystemReferenceData sssrd3
-			ON rdot1s.TitleISchoolStatusCode = sssrd2.OutputCode
-			AND sssrd3.TableName = 'RefTitleISchoolStatus'
-			AND rsy.SchoolYear = sssrd3.SchoolYear
-		LEFT JOIN staging.SourceSystemReferenceData sssrd4
-			ON rdot1s.TitleISupportServicesCode = sssrd4.OutputCode
-			AND sssrd4.TableName = 'RefK12LeaTitleISupportService'
-			AND rsy.SchoolYear = sssrd4.SchoolYear
+	--CREATE VIEW [RDS].[vwDimOrganizationTitleIStatuses]
+	--AS
+	--	SELECT
+	--		  rdot1s.DimOrganizationTitleIStatusId
+	--		, rsy.SchoolYear
+	--		, rdot1s.TitleIInstructionalServicesCode
+	--		, sssrd1.InputCode AS TitleIInstructionalServicesMap
+	--		, rdot1s.TitleIProgramTypeCode
+	--		, sssrd2.InputCode AS TitleIProgramTypeMap
+	--		, rdot1s.TitleISchoolStatusCode
+	--		, sssrd3.InputCode AS TitleISchoolStatusMap
+	--		, rdot1s.TitleISupportServicesCode
+	--		, sssrd4.InputCode AS TitleISupportServicesMap
+	--	FROM rds.DimOrganizationTitleIStatuses rdot1s
+	--	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
+	--	LEFT JOIN staging.SourceSystemReferenceData sssrd1
+	--		ON rdot1s.TitleISupportServicesCode = sssrd1.OutputCode
+	--		AND sssrd1.TableName = 'RefTitleIInstructionServices'
+	--		AND rsy.SchoolYear = sssrd1.SchoolYear
+	--	LEFT JOIN staging.SourceSystemReferenceData sssrd2
+	--		ON rdot1s.TitleIProgramTypeCode = sssrd2.OutputCode
+	--		AND sssrd2.TableName = 'RefTitleIProgramType'
+	--		AND rsy.SchoolYear = sssrd2.SchoolYear
+	--	LEFT JOIN staging.SourceSystemReferenceData sssrd3
+	--		ON rdot1s.TitleISchoolStatusCode = sssrd2.OutputCode
+	--		AND sssrd3.TableName = 'RefTitleISchoolStatus'
+	--		AND rsy.SchoolYear = sssrd3.SchoolYear
+	--	LEFT JOIN staging.SourceSystemReferenceData sssrd4
+	--		ON rdot1s.TitleISupportServicesCode = sssrd4.OutputCode
+	--		AND sssrd4.TableName = 'RefK12LeaTitleISupportService'
+	--		AND rsy.SchoolYear = sssrd4.SchoolYear
 	
 
 	----------------------------------------------------------------------
@@ -515,72 +515,72 @@
 	-- Re-create the Title I Statuses supporting view 
 	----------------------------------------------------------------------
 	-- Drop the view if it exists
-	IF OBJECT_ID('RDS.vwDimTitleIStatuses', 'V') IS NOT NULL
-		DROP VIEW RDS.vwDimTitleIStatuses;
+	--IF OBJECT_ID('RDS.vwDimTitleIStatuses', 'V') IS NOT NULL
+	--	DROP VIEW RDS.vwDimTitleIStatuses;
 	
 
-	CREATE VIEW [RDS].[vwDimTitleIStatuses]
-	AS
-		SELECT
-			rdt1s.DimTitleIStatusId
-			, rsy.SchoolYear
-			, rdt1s.TitleIIndicatorCode
-			, sssrd1.InputCode AS TitleIIndicatorMap
-			, rdt1s.SchoolChoiceAppliedforTransferStatusCode
-			, CASE rdt1s.SchoolChoiceAppliedforTransferStatusCode 
-				WHEN 'Yes' THEN 1 
-				WHEN 'No' THEN 0
-				ELSE -1
-			  END AS SchoolChoiceAppliedforTransferStatusMap
-			, rdt1s.SchoolChoiceEligibleforTransferStatusCode
-			, CASE rdt1s.SchoolChoiceEligibleforTransferStatusCode 
-				WHEN 'Yes' THEN 1 
-				WHEN 'No' THEN 0
-				ELSE -1
-			  END AS SchoolChoiceEligibleforTransferStatusMap
-			, rdt1s.SchoolChoiceTransferStatusCode
-			, CASE rdt1s.SchoolChoiceTransferStatusCode 
-				WHEN 'Yes' THEN 1 
-				WHEN 'No' THEN 0
-				ELSE -1
-			  END AS SchoolChoiceTransferStatusMap
-			, rdt1s.TitleISchoolSupplementalServicesAppliedStatusCode
-			, CASE rdt1s.TitleISchoolSupplementalServicesAppliedStatusCode 
-				WHEN 'Yes' THEN 1 
-				WHEN 'No' THEN 0
-				ELSE -1
-			  END AS TitleISchoolSupplementalServicesAppliedStatusMap
-			, rdt1s.TitleISchoolSupplementalServicesEligibleStatusCode
-			, CASE rdt1s.TitleISchoolSupplementalServicesEligibleStatusCode 
-				WHEN 'Yes' THEN 1 
-				WHEN 'No' THEN 0
-				ELSE -1
-			  END AS TitleISchoolSupplementalServicesEligibleStatusMap
-			, rdt1s.TitleISchoolSupplementalServicesReceivedStatusCode
-			, CASE rdt1s.TitleISchoolSupplementalServicesReceivedStatusCode 
-				WHEN 'Yes' THEN 1 
-				WHEN 'No' THEN 0
-				ELSE -1
-			  END AS TitleISchoolSupplementalServicesReceivedStatusMap
-			, rdt1s.TitleISchoolwideProgramParticipationCode
-			, CASE rdt1s.TitleISchoolwideProgramParticipationCode 
-				WHEN 'Yes' THEN 1 
-				WHEN 'No' THEN 0
-				ELSE -1
-			  END AS TitleISchoolwideProgramParticipationMap
-			, rdt1s.TitleITargetedAssistanceParticipationCode
-			, CASE rdt1s.TitleITargetedAssistanceParticipationCode 
-				WHEN 'Yes' THEN 1 
-				WHEN 'No' THEN 0
-				ELSE -1
-			  END AS TitleITargetedAssistanceParticipationMap
+	--CREATE VIEW [RDS].[vwDimTitleIStatuses]
+	--AS
+	--	SELECT
+	--		rdt1s.DimTitleIStatusId
+	--		, rsy.SchoolYear
+	--		, rdt1s.TitleIIndicatorCode
+	--		, sssrd1.InputCode AS TitleIIndicatorMap
+	--		, rdt1s.SchoolChoiceAppliedforTransferStatusCode
+	--		, CASE rdt1s.SchoolChoiceAppliedforTransferStatusCode 
+	--			WHEN 'Yes' THEN 1 
+	--			WHEN 'No' THEN 0
+	--			ELSE -1
+	--		  END AS SchoolChoiceAppliedforTransferStatusMap
+	--		, rdt1s.SchoolChoiceEligibleforTransferStatusCode
+	--		, CASE rdt1s.SchoolChoiceEligibleforTransferStatusCode 
+	--			WHEN 'Yes' THEN 1 
+	--			WHEN 'No' THEN 0
+	--			ELSE -1
+	--		  END AS SchoolChoiceEligibleforTransferStatusMap
+	--		, rdt1s.SchoolChoiceTransferStatusCode
+	--		, CASE rdt1s.SchoolChoiceTransferStatusCode 
+	--			WHEN 'Yes' THEN 1 
+	--			WHEN 'No' THEN 0
+	--			ELSE -1
+	--		  END AS SchoolChoiceTransferStatusMap
+	--		, rdt1s.TitleISchoolSupplementalServicesAppliedStatusCode
+	--		, CASE rdt1s.TitleISchoolSupplementalServicesAppliedStatusCode 
+	--			WHEN 'Yes' THEN 1 
+	--			WHEN 'No' THEN 0
+	--			ELSE -1
+	--		  END AS TitleISchoolSupplementalServicesAppliedStatusMap
+	--		, rdt1s.TitleISchoolSupplementalServicesEligibleStatusCode
+	--		, CASE rdt1s.TitleISchoolSupplementalServicesEligibleStatusCode 
+	--			WHEN 'Yes' THEN 1 
+	--			WHEN 'No' THEN 0
+	--			ELSE -1
+	--		  END AS TitleISchoolSupplementalServicesEligibleStatusMap
+	--		, rdt1s.TitleISchoolSupplementalServicesReceivedStatusCode
+	--		, CASE rdt1s.TitleISchoolSupplementalServicesReceivedStatusCode 
+	--			WHEN 'Yes' THEN 1 
+	--			WHEN 'No' THEN 0
+	--			ELSE -1
+	--		  END AS TitleISchoolSupplementalServicesReceivedStatusMap
+	--		, rdt1s.TitleISchoolwideProgramParticipationCode
+	--		, CASE rdt1s.TitleISchoolwideProgramParticipationCode 
+	--			WHEN 'Yes' THEN 1 
+	--			WHEN 'No' THEN 0
+	--			ELSE -1
+	--		  END AS TitleISchoolwideProgramParticipationMap
+	--		, rdt1s.TitleITargetedAssistanceParticipationCode
+	--		, CASE rdt1s.TitleITargetedAssistanceParticipationCode 
+	--			WHEN 'Yes' THEN 1 
+	--			WHEN 'No' THEN 0
+	--			ELSE -1
+	--		  END AS TitleITargetedAssistanceParticipationMap
 
-		FROM rds.DimTitleIStatuses rdt1s
-		CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
-		LEFT JOIN staging.SourceSystemReferenceData sssrd1
-			ON rdt1s.TitleIIndicatorCode = sssrd1.OutputCode
-			AND sssrd1.TableName = 'RefTitleIIndicator'
-			AND rsy.SchoolYear = sssrd1.SchoolYear
+	--	FROM rds.DimTitleIStatuses rdt1s
+	--	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
+	--	LEFT JOIN staging.SourceSystemReferenceData sssrd1
+	--		ON rdt1s.TitleIIndicatorCode = sssrd1.OutputCode
+	--		AND sssrd1.TableName = 'RefTitleIIndicator'
+	--		AND rsy.SchoolYear = sssrd1.SchoolYear
 	
 
 	-----------------------------------------------------
