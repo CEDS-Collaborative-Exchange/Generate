@@ -3,6 +3,7 @@ VersionUpdates\\12.3,App.TableChanges.sql,0
 VersionUpdates\\12.3,RDS.TableChanges.sql,0
 VersionUpdates\\12.3,TitleIChanges.sql,0
 VersionUpdates\\12.3,App.Metadata.sql,0
+VersionUpdates\\12.3,Insert_TitleIChanges.sql,0
 VersionUpdates\\12.3\\Views\\Drop,RDS.vwDimTitleIStatuses.View.sql,0
 VersionUpdates\\12.3\\Views\\Create,RDS.vwDimTitleIStatuses.View.sql,0
 VersionUpdates\\12.3\\Views\\Drop,RDS.vwDimOrganizationTitleIStatuses.View.sql,0
