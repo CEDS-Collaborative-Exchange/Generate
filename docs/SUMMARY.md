@@ -25,6 +25,7 @@
   * [Metadata](user-guide/settings/metadata.md)
   * [Data Migration](user-guide/settings/data-migration.md)
 * [Quality Assurance](user-guide/quality-assurance.md)
+* [Support](user-guide/support.md)
 * [FAQ](user-guide/faq.md)
 
 ## Developer Guides
@@ -45,6 +46,12 @@
   * [Data Migration](developer-guides/migration/data-migration.md)
   * [Fact Type Table](developer-guides/migration/fact-type-table/README.md)
     * [Assessment Fact Type](developer-guides/migration/fact-type-table/assessment-fact-type.md)
+    * [Child Count Fact Type](developer-guides/migration/fact-type-table/child-count-fact-type.md)
+    * [Directory Fact Type](developer-guides/migration/fact-type-table/directory-fact-type.md)
+    * [Discipline Fact Type](developer-guides/migration/fact-type-table/discipline-fact-type.md)
+    * [Exiting Fact Type](developer-guides/migration/fact-type-table/exiting-fact-type.md)
+    * [Membership](developer-guides/migration/fact-type-table/membership.md)
+    * [Staff](developer-guides/migration/fact-type-table/staff.md)
 * [Generate Utilities](developer-guides/generate-utilities/README.md)
   * [File Comparison](developer-guides/generate-utilities/file-comparison/README.md)
     * [Loading Files](developer-guides/generate-utilities/file-comparison/loading-files.md)
@@ -64,6 +71,7 @@
   * [Debug Views for Staging and the Fact tables](developer-guides/generate-utilities/debug-views-for-staging-and-the-fact-tables.md)
 * [Generate Architecture](developer-guides/generate-architecture.md)
 * [GitHub Guide](developer-guides/github-guide.md)
+* [Discord Guide](developer-guides/discord-guide.md)
 
 ## Release Notes
 

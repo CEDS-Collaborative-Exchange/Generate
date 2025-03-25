@@ -18,9 +18,9 @@ Please note, to take most of these steps you will need an up-to-date version of 
 * Migration: Building and Running ETLs
 * Validation: Verifying Data Results
 
-### What submitted ED_Facts_ Files are included in the <mark style="color:yellow;">Assessment Fact Type</mark>?
+### What submitted E&#x44;_&#x46;acts_ Files are included in the <mark style="color:blue;">Assessment Fact Type</mark>?
 
-The following files have been created in Generate and submitted to ED_Facts_:
+The following files have been created in Generate and submitted to E&#x44;_&#x46;acts_:
 
 * [x] 175: Academic Achievement in Mathematics
 * [x] 178: Academic Achievement in Reading/Language Arts
@@ -28,17 +28,6 @@ The following files have been created in Generate and submitted to ED_Facts_:
 * [x] 185: Assessment Participation in Mathematics
 * [x] 188: Assessment Participation in Reading/Language Arts
 * [x] 189: Assessment Participation in Science
-
-### What ED_Facts_ Files in the <mark style="color:yellow;">Assessment Fact Type</mark> are available for pilot opportunity?
-
-The following files are in pilot status or are available for piloting in Generate:
-
-* [ ] 113: N or D Academic Achievement - State Agency
-* [ ] 125: N or D Academic Achievement - LEA
-* [ ] 126: Title III Former EL Students
-* [ ] 137: English Language Proficiency Test
-* [ ] 138: Title III English Language Proficiency Test
-* [ ] 139: English Language Proficiency Results
 
 {% code overflow="wrap" %}
 ```sql
@@ -59,6 +48,17 @@ WHERE           rdft.FactTypeCode = 'assessment'
 ORDER BY        agrft.FactTypeId, agr.ReportCode
 ```
 {% endcode %}
+
+### What E&#x44;_&#x46;acts_ Files in the <mark style="color:blue;">Assessment Fact Type</mark> are available for pilot opportunity?
+
+The following files are in pilot status or are available for piloting in Generate:
+
+* [ ] 113: N or D Academic Achievement - State Agency
+* [ ] 125: N or D Academic Achievement - LEA
+* [ ] 126: Title III Former EL Students
+* [ ] 137: English Language Proficiency Test
+* [ ] 138: Title III English Language Proficiency Test
+* [ ] 139: English Language Proficiency Results
 
 ***
 
@@ -97,7 +97,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 #### Toggle Settings
 
-The Generate Toggle tables store information from the ED_Facts_ Metadata and Process System (EMAPS) survey that impacts the business logic used to ETL the data for ED_Facts_ reporting. It is important to make sure these questions are completed before data is migrated and that they match what was entered in EMAPS. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually after you complete your EMAPS survey. Instructions for how to find and update the Toggle page are available in the [Toggle documentation](../../../user-guide/settings/toggle.md).
+The Generate Toggle tables store information from the E&#x44;_&#x46;acts_ Metadata and Process System (EMAPS) survey that impacts the business logic used to ETL the data for E&#x44;_&#x46;acts_ reporting. It is important to make sure these questions are completed before data is migrated and that they match what was entered in EMAPS. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually after you complete your EMAPS survey. Instructions for how to find and update the Toggle page are available in the [Toggle documentation](../../../user-guide/settings/toggle.md).
 
 Additionally, at the top left of the Toggle page, there is a link to an "Assessments" sub-page with information that should be reviewed and updated if needed.
 
@@ -143,11 +143,11 @@ exec [Utilities].[Check_SourceSystemReferenceData_Mapping] 'assessment', '2024',
 
 ***
 
-## 2. Migration: Building & Running ETLs
+## 2. Staging
 
-### Building the ETL Code:
+### Migration: Building & Running ETLs
 
-#### Source-to-Staging ETL&#x20;
+#### Building the ETL Code:
 
 The Generate database has a stored procedure for each Fact Type which is empty in the default load of the Generate database and serves as a placeholder. Since this Stored Procedure ETLs data from the education agency's source system(s) into the Generate Staging environment, the ETL code will be customized to your education agency's context.
 
@@ -155,9 +155,9 @@ For Assessments, this Stored Procedure is called **\[Source].\[Source-to-Staging
 
 The tools from the Set Up phase (ETL Checklist and Generate metadata) are used to guide writing the ETL Code in this Stored Procedure. Additionally, ETL code written previously to perform this work in the education agency's source system(s) can also be a useful resource at this step, particularly for ensuring critical data handling and business rules from the source system are retained in the Generate Source to Staging ETL.
 
-<figure><img src="../../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1).png" alt="A SQL Server Management Studio window displaying a stored procedure named &#x22;[Source].[Source-to-Staging_Assessment]&#x22; in the Generate database. "><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_Assessments" Fact Type.</p></figcaption></figure>
 
-### Running the ETL
+#### Running the ETL
 
 {% tabs %}
 {% tab title="Manually" %}
@@ -166,7 +166,7 @@ The tools from the Set Up phase (ETL Checklist and Generate metadata) are used t
 The Source to Staging code can be run from SQL Server Management Studio (SSMS) by passing in the current school year as a parameter. Generate uses the end school year. For example, 2023-24 would be specified as '2024'.
 
 ```sql
-exec [Staging].[Source-to-Staging_Assessments] 2024
+exec [Source].[Source-to-Staging_Assessments] 2024
 ```
 {% endtab %}
 
@@ -184,9 +184,9 @@ This ETL can also be run from the Generate user interface.\
 
 ***
 
-## 3. Validation: Verifying Data Results
+### Validation: Verifying Data Results
 
-### Staging Validation
+#### Staging Validation
 
 Once data has been migrated to the Staging tables there are two Generate tools that can be used to validate the data.
 
@@ -195,7 +195,7 @@ Once data has been migrated to the Staging tables there are two Generate tools t
 
 #### Staging Validation Utility
 
-Generate has a [Staging Validation Process](../../generate-utilities/staging-validation/) which can be called at the Fact Type or ED_Facts_ file level.
+Generate has a [Staging Validation Process](../../generate-utilities/staging-validation/) which can be called at the Fact Type or E&#x44;_&#x46;acts_ file level.
 
 {% hint style="success" %}
 The following is an example code snippet of how to call these Stored Procedures by the Assessment Fact Type.
@@ -213,27 +213,51 @@ To aid validation we developed Staging Table Debug views that join together the 
 The following is an example code snippet of how to select the Assessment Staging Table Debug view:
 
 ```sql
-/select * from [debug].[vwAssessment_StagingTables]
+select * from [debug].[vwAssessment_StagingTables]
 ```
 
 ***
 
-## CEDS Data Warehouse Migration & Validation
+## 3. CEDS Data Warehouse
 
-### Migrating Staging to CEDS Data Warehouse
+### Migrating: Running ETLs
 
 {% tabs %}
 {% tab title="Manually" %}
 #### Migrating Staging to CEDS Data Warehouse in the Reporting Data Store (RDS) (Manually)
 
-To migrate data from Staging to the CEDS Data Warehouse you will need to call the \[App].\[Wrapper\_Migrate\_Assessments\_to\_RDS] Stored Procedure. This wrapper will call several Stored Procedures to migrate data to the dimension and fact tables in the CEDS Data Warehouse as well as log this activity in the App.DataMigrationHistories table. This process will also create debug tables that contain the information that is utilized in the counts and can be used in the validation process.
+To migrate data from Staging to the CEDS Data Warehouse you will need to call the `[App].[Wrapper_Migrate_Assessments_to_RDS]`Stored Procedure. This wrapper will call several Stored Procedures to migrate data to the dimension and fact tables in the CEDS Data Warehouse as well as log this activity in the `App.DataMigrationHistories` table. This process will also create debug tables that contain the information that is utilized in the counts and can be used in the validation process.
 
+{% code overflow="wrap" %}
 ```sql
--- Note: add code to manually set school year?
--- code to set year
--- call the wrapper script
-exec [app].[Wrapper_Migrate_Assessments_to_RDS]
+-- You will need to make sure the year is set to the school year you are migrating data. this script lets you check and then update if needed.
+
+--Set school year for the RDS migrations (if necessary)    
+    --check if the correct SY is already selected
+     SELECT sy.SchoolYear, dm.* 
+     FROM rds.DimSchoolYearDataMigrationTypes dm
+     INNER join rds.dimschoolyears sy
+     ON dm.dimschoolyearid = sy.dimschoolyearid
+     WHERE IsSelected = 1
+ 
+--IF THE ABOVE QUERY DOESN'T RETURN THE SY YOU NEED, RUN THE NEXT 2 QUERIES
+ 
+  --reset, then set the appropriate year for this migration
+     UPDATE rds.DimSchoolYearDataMigrationTypes
+     SET IsSelected = 0
+ -- Update to the year you are migrating
+     UPDATE rds.DimSchoolYearDataMigrationTypes
+     SET IsSelected = 1
+     FROM rds.DimSchoolYearDataMigrationTypes sydmt
+     JOIN rds.DimSchoolYears sy
+     ON sydmt.DimSchoolYearId = sy.DimSchoolYearId
+     WHERE SchoolYear = 2024
+     
+-- call the wrapper script to migrate the Fact Type data
+
+exec [app].[Wrapper_Migrate_Assessment_to_RDS]
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Generate UI" %}
@@ -247,7 +271,7 @@ This Migration process can also be run from the Generate user interface.
 {% endtab %}
 {% endtabs %}
 
-### Validating CEDS Data Warehouse Data
+### Validation: Verifying Data Results
 
 Once data has been migrated to the Staging tables the Fact Table Debug View can be used to validate the data.
 
@@ -265,13 +289,13 @@ select * from [debug].[vwAssessment_FactTable]
 
 ***
 
-## Report Tables Migration & Validation
+## 4. Report Tables
 
-### Migrating Data to Report Tables
+### Migrating: Running ETLs
 
 #### Database Settings
 
-To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you will need to update some settings in the database and call the \[rds].\[create\_reports] Stored Procedure.
+To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you will need to update some settings in the database and call the `[rds].[create_reports]` Stored Procedure.
 
 {% code overflow="wrap" %}
 ```sql
@@ -300,20 +324,20 @@ To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you wi
 
 The process of migrating data to Report Tables creates a set of tables in the \[debug] schema that provide the student IDs that make up the aggregated counts. These tables are especially useful when doing file comparisons and matching work. The sample below would return the list of students making up the counts&#x20;
 
-```
+```sql
  -- simply query a corresponding table 
  -- (using the table name to identify the category set contents)
  SELECT * FROM 
  [generate].[debug].[c175_lea_CSA_2024_ASMTADMNMTHHS_GRADELVLHS_MAJORREG_PROFSTATUS]
 ```
 
-Over time these tables will accumulate and create clutter in the Generate database debug schema. You can easily remove unneeded debug tables using the [Clean Up Debug Tables](file:///C:/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/\~/changes/210/developer-guides/generate-utilities/cleanup-debug-tables) utility.
+Over time these tables will accumulate and create clutter in the Generate database debug schema. You can easily remove unneeded debug tables using the [Clean Up Debug Tables](file:///C:/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/~/changes/210/developer-guides/generate-utilities/cleanup-debug-tables) utility.
 
-### Validating Report Table Data
+### Validation: Verifying Data Results
 
 #### File Comparison Utility
 
-The [File Comparison Utility](../../generate-utilities/file-comparison/) allows you to compare ED_Facts_ submission files to data stored in the Report Tables in the Generate database. Instructions on how to use the `Utilities.Compare_ASSESSMENTS` Stored Procedure are available here. Typically, this step is performed in the first year of reporting a file through Generate to compare it to previous submission files produced by the legacy system.
+The [File Comparison Utility](../../generate-utilities/file-comparison/) allows you to compare E&#x44;_&#x46;acts_ submission files to data stored in the Report Tables in the Generate database. Instructions on how to use the `Utilities.Compare_ASSESSMENTS` Stored Procedure are available here. Typically, this step is performed in the first year of reporting a file through Generate to compare it to previous submission files produced by the legacy system.
 
 {% code overflow="wrap" %}
 ```sql
@@ -338,14 +362,8 @@ If you need further assistance validating your data or have data mismatches that
 
 ### IDEA Part B Data Review Checklist
 
-This [IDEA Part B Data Review](https://ciidta.communities.ed.gov/#communities/pdc/documents/21449) Checklist helps state teams review and validate IDEA ED_Facts_ files. It includes a tab for each IDEA ED_Facts_ file specification, and lists considerations and types of validations to ensure accurate and complete data file submissions. Please review the Instruction tab and look for the associated report codes for the Assessment Fact Type.
+This [IDEA Part B Data Review](https://ciidta.communities.ed.gov/#communities/pdc/documents/21449) Checklist helps state teams review and validate IDEA E&#x44;_&#x46;acts_ files. It includes a tab for each IDEA E&#x44;_&#x46;acts_ file specification, and lists considerations and types of validations to ensure accurate and complete data file submissions. Please review the Instruction tab and look for the associated report codes for the Assessment Fact Type.
 
 ### Staging Table Snapshot Utility
 
-Generate allows states to create a backup or “snapshot” of staging tables. This is an optional utility that can be executed as needed or embedded into the State’s ETL workflow logic. The [Staging Table Snapshot Utility](../../generate-utilities/staging-table-snapshot.md) provides a method to create a backup copy of staging tables for future use and reference after an ETL has populated Generate’s staging tables. This helps to ensure consistency across all ED_Facts_ reports for a given year and developers can preserve data in staging tables across ETL executions. This is best utilized after you have confirmed the Fact Type has successfully produced an accurate ED_Facts_ file.&#x20;
-
-***
-
-## Feedback
-
-{% embed url="https://forms.office.com/Pages/ResponsePage.aspx?id=XpJBepf2fE--wwRwiHrHUkp56z0ajrNDsq-PB2iY2TZUMkxXT0JTT0xTUUgxRlRTV1RTS0dTQ0ZIVi4u" %}
+Generate allows states to create a backup or “snapshot” of staging tables. This is an optional utility that can be executed as needed or embedded into the State’s ETL workflow logic. The [Staging Table Snapshot Utility](../../generate-utilities/staging-table-snapshot.md) provides a method to create a backup copy of staging tables for future use and reference after an ETL has populated Generate’s staging tables. This helps to ensure consistency across all E&#x44;_&#x46;acts_ reports for a given year and developers can preserve data in staging tables across ETL executions. This is best utilized after you have confirmed the Fact Type has successfully produced an accurate E&#x44;_&#x46;acts_ file.

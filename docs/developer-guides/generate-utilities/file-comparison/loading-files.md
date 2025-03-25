@@ -33,7 +33,7 @@ exec Utilities.CreateSubmissionFileTable
 
 ### Loading a Legacy File When BCP is Enabled
 
-If BCP is enabled on your server, you can execute the following SQL command to load the ED_Facts_ file into the table created in the previous step:
+If BCP is enabled on your server, you can execute the following SQL command to load the E&#x44;_&#x46;acts_ file into the table created in the previous step:
 
 ```sql
 exec Utilities.LoadSubmissionFileTable 

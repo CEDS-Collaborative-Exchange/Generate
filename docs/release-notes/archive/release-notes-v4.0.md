@@ -2,7 +2,7 @@
 description: Generate Release Notes Version 4.0
 ---
 
-# Release Notes v4.0
+# Release Notes 4.0
 
 ### Introduction <a href="#toc_250007" id="toc_250007"></a>
 
@@ -14,7 +14,7 @@ Generate Release version 4.0 includes updates to reports, the ETL (Data Store), 
 
 ### Updated Reports <a href="#toc_250005" id="toc_250005"></a>
 
-The following ED_Facts_ reports were updated in this release.
+The following E&#x44;_&#x46;acts_ reports were updated in this release.
 
 | Report                                   | Approved Change                                                                                                                | Reference Number |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------- |

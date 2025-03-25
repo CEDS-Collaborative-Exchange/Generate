@@ -13,11 +13,11 @@ icon: arrow-down-to-bracket
 
 #### Database Server:
 
-* [x] Windows 2012 R2 (or newer) with SQL Server 2012 (or newer)
-* [x] At least 16 GB of RAM (32 GB RAM recommended)
+* [x] Windows 2012 R2 (or newer) with SQL Server 2017 (or newer)
+* [x] At least 32 GB of RAM (64 GB RAM recommended)
 * [x] At least 50 GB of free storage
 * [x] Web Server and Database Server may be on the same machine, if desired.
-* [x] .NET Core Runtime and Hosting Bundle (version 6.0) installed on Web Server.
+* [x] .NET Core Runtime: Version 8.0.10 installed on Web Server.
 * [x] Active Directory (AD) accessible from the Web Server. If no AD installation exists, AD LDS may be installed.
 * [x] Application Initialization Module for IIS installed on the Web Server.
 
@@ -227,7 +227,7 @@ For the Auto-Update functionality of Generate to work properly, you must ensure 
 
 ### Active Directory (AD)
 
-Generate makes use of Active Directory (AD) for authentication and authorization. If an existing installation of AD is not available, Active Directory Lightweight Directory Services (AD LDS) may be installed. For those instructions, please see the AD LDS instructions in the [Optional Installations](optional-installations.md#active\_directory\_lightweight\_directory\_s) section.
+Generate makes use of Active Directory (AD) for authentication and authorization. If an existing installation of AD is not available, Active Directory Lightweight Directory Services (AD LDS) may be installed. For those instructions, please see the AD LDS instructions in the [Optional Installations](optional-installations.md#active_directory_lightweight_directory_s) section.
 
 The AD settings for Generate are configured in the “**appsettings.json**” file located in the “**Config**” folder of the web application directory. Please see the following for the configuration settings.
 

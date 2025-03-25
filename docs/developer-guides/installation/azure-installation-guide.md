@@ -13,13 +13,13 @@ description: >-
 * [x] OS: Windows Server 2012 R2 or newer with IIS 8.5+
 * [x] RAM: At least 8 GB
 * [x] Software:
-  * [x] .NET Core Runtime and Hosting Bundle (version 8.0)
+  * [x] .NET Core Runtime and Hosting Bundle (version 8.0.10)
   * [x] Application Initialization Module for IIS
   * [x] Access to Active Directory (AD); if unavailable, install AD LDS
 
 #### Database Server:
 
-* [x] OS: Windows Server 2012 R2 or newer with SQL Server 2016+
+* [x] OS: Windows Server 2012 R2 or newer with SQL Server 2017+
 * [x] RAM: 32 GB
 * [x] Storage: At least 50 GB of free storage
 

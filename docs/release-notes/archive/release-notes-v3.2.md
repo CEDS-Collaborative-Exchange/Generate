@@ -2,7 +2,7 @@
 description: Generate Release Notes Version 3.2
 ---
 
-# Release Notes v3.2
+# Release Notes 3.2
 
 ### Introduction <a href="#bookmark0" id="bookmark0"></a>
 
@@ -47,7 +47,7 @@ The following issues related to the migration process were resolved:
 1. Improve the RDS migration process by only migrating the dimensions needed for a particular fact type and reviewing the following dimensions: Title III Dimension; Discipline Firearms; Assessment; Assessment Status; and Student Status.
 2. Organization data doesn’t load into RDS if data is already present in DIM tables.
 3. Migrate\_DimDemographics does not join on report type dates properly.
-4. FS029 Charter LEA Status migrations do not translate to ED_Facts_ option set.
+4. FS029 Charter LEA Status migrations do not translate to E&#x44;_&#x46;acts_ option set.
 5. Three reports are selected by default on the Reports Migration page – they should be deselected.
 6. Add "Reportable Program" to RefSchoolType, DimDirectories.SchoolType\*, and all migrations related to FS029.
 7. Submit "MISSING" for a category set at all levels if a particular dimension value is MISSING.

@@ -2,7 +2,7 @@
 description: Generate Release Notes Version 3.7
 ---
 
-# Release Notes v3.7
+# Release Notes 3.7
 
 Introduction
 
@@ -10,7 +10,7 @@ The purpose of this document is to communicate the technical and general updates
 
 ### Technical Release Summary <a href="#technical-release-summary" id="technical-release-summary"></a>
 
-Several changes were made to the database tables. Refer to the _3U_D_2T_ atabase Updates_U32T_section for details.
+Several changes were made to the database tables. Refer to the _3&#x55;_&#x44;_2T_ atabase Update&#x73;_&#x55;32&#x54;_&#x73;ection for details.
 
 ### General Release Summary <a href="#general-release-summary" id="general-release-summary"></a>
 
@@ -18,17 +18,17 @@ Generate Release 3.7 includes updates to reports, the database, and configuratio
 
 ### Updated Reports <a href="#updated-reports" id="updated-reports"></a>
 
-The following Standard ED_Facts_ reports were updated in this release.
+The following Standard E&#x44;_&#x46;acts_ reports were updated in this release.
 
-| Report                                        | Approved Change                                                                                       | Reference Number |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ---------------- |
-| 039                                           | Added permitted values for “Grades Offered” to online report.                                         | CIID-3921        |
-| 039                                           | Added permitted values for “Grades Offered” to submission file                                        | CIID-3849        |
-| 144                                           | Added permitted values for “Educational Services During Expulsion” to submission file                 | CIID-3934        |
-| <p>002 &#x26;</p><p>089</p>                   | Changed abbreviation for the permitted values “Intellectual disability” to “ID”                       | CIID-3947        |
-| <p>002 &#x26;</p><p>089</p>                   | Removed permitted value “AGE05 Age 5” and reference to transition of age 5 in kindergarten into FS002 | CIID-3948        |
-| 113                                           | Added permitted values for “Progress Level” to report                                                 | CIID-2277        |
-| <p>082, 083,</p><p>155, 157</p><p>and 204</p> | Discontinued in Generate to align with ED_Facts_ updates (files were discontinued for SY 2019-20)     | CIID-2806        |
+| Report                                        | Approved Change                                                                                             | Reference Number |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------- |
+| 039                                           | Added permitted values for “Grades Offered” to online report.                                               | CIID-3921        |
+| 039                                           | Added permitted values for “Grades Offered” to submission file                                              | CIID-3849        |
+| 144                                           | Added permitted values for “Educational Services During Expulsion” to submission file                       | CIID-3934        |
+| <p>002 &#x26;</p><p>089</p>                   | Changed abbreviation for the permitted values “Intellectual disability” to “ID”                             | CIID-3947        |
+| <p>002 &#x26;</p><p>089</p>                   | Removed permitted value “AGE05 Age 5” and reference to transition of age 5 in kindergarten into FS002       | CIID-3948        |
+| 113                                           | Added permitted values for “Progress Level” to report                                                       | CIID-2277        |
+| <p>082, 083,</p><p>155, 157</p><p>and 204</p> | Discontinued in Generate to align with E&#x44;_&#x46;acts_ updates (files were discontinued for SY 2019-20) | CIID-2806        |
 
 ### Database Updates <a href="#database-updates" id="database-updates"></a>
 

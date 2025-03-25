@@ -22,13 +22,13 @@
 <figure><img src="../../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
 
 * The list of available reports will filter based on the selected fact type.
-  * For example, if Child Count is selected, the available ED_Facts_ reports might include 002 and 089, along with state-defined reports.
+  * For example, if Child Count is selected, the available E&#x44;_&#x46;acts_ reports might include 002 and 089, along with state-defined reports.
 
 <figure><img src="../../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
 
 #### Filtering Reports:
 
-* You can filter the report list to show only ED_Facts_ reports or only state-defined reports, depending on your preference.
+* You can filter the report list to show only E&#x44;_&#x46;acts_ reports or only state-defined reports, depending on your preference.
 
 <figure><img src="../../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
 
