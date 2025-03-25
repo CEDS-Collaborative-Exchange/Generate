@@ -77,4 +77,4 @@ SELECT * FROM [debug].[vwChildCount_FactTable] WHERE K12StudentStudentIdentifier
 Generate uses two types of dimension tables:
 
 * **Slowly Changing Dimensions (SCDs):** These tables store data that may change over time, such as `DimPeople`, `DimLeas`, and `DimK12Schools`. When querying related Fact table data, use the values directly from the staging table.
-* **Junk Dimension Tables:** These tables consolidate related data into one table to reduce the number of Dimension tables and minimize bloat in the Fact table. Junk dimension tables in Generate store both CEDS and ED_Facts_ values. For example, the ED_Facts_ value is used for IDEA Disability Type.
+* **Junk Dimension Tables:** These tables consolidate related data into one table to reduce the number of Dimension tables and minimize bloat in the Fact table. Junk dimension tables in Generate store both CEDS and E&#x44;_&#x46;acts_ values. For example, the E&#x44;_&#x46;acts_ value is used for IDEA Disability Type.

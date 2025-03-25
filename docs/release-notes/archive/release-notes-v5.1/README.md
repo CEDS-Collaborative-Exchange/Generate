@@ -4,7 +4,7 @@ description: >-
   version 5.1 released in October 2022.
 ---
 
-# Release Notes v5.1
+# Release Notes 5.1
 
 ## RELEASE OVERVIEW
 
@@ -24,7 +24,7 @@ There was a stored procedure named `Staging.Migrate_Data_Validation` that was us
 
 ### GENERATE ENHANCEMENTS&#x20;
 
-The following ED_Facts_ reports were updated in this release.
+The following E&#x44;_&#x46;acts_ reports were updated in this release.
 
 #### Type of Impact:&#x20;
 

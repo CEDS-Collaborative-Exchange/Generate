@@ -54,7 +54,7 @@ To run the new process manually from SSMS, execute the following SQL statement, 
 exec \[Staging].\[ValidateStagingData] @SchoolYear = 2022, @ReportGroupOrCodeParm = 'ChildCount'
 
 **@SchoolYear** = School Year that matches the data loaded into the staging tables\
-**@ReportGroupOrCodeParm** = The EDFacts report number or GroupName, i.e. ‘C002’ or ‘ChildCount’ which will execute the specific set of rules associated with the report or group.
+&#xNAN;**@ReportGroupOrCodeParm** = The EDFacts report number or GroupName, i.e. ‘C002’ or ‘ChildCount’ which will execute the specific set of rules associated with the report or group.
 
 This will populate the Staging Validation Results table.
 
@@ -71,7 +71,7 @@ exec [Staging].[ValidateStagingData_GetResults] @SchoolYear = 2022, @ReportGroup
 {% endcode %}
 
 **@SchoolYear** = School Year that matches the data loaded into the staging tables\
-**@ReportGroupOrCodeParm** = The ED_Facts_ report number or GroupName, i.e. ‘C002’ or ‘ChildCount’ which will execute the specific set of rules associated with the report or group.
+&#xNAN;**@ReportGroupOrCodeParm** = The E&#x44;_&#x46;acts_ report number or GroupName, i.e. ‘C002’ or ‘ChildCount’ which will execute the specific set of rules associated with the report or group.
 
 {% hint style="info" %}
 There is in an optional parameter, @IncludeHistory=1, which will include results from all previous Validations for the school year and report group.

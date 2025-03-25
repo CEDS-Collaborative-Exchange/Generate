@@ -2,7 +2,7 @@
 
 ## Overview
 
-The process of migrating ED_Facts_ data to the Reports tables automatically creates a set of tables in the debug schema that provide the student IDs that make up the aggregated counts. They are especially useful when doing file comparison and matching work. Those tables can build up over time. This utility provides a means of keeping those tables in check.
+The process of migrating E&#x44;_&#x46;acts_ data to the Reports tables automatically creates a set of tables in the debug schema that provide the student IDs that make up the aggregated counts. They are especially useful when doing file comparison and matching work. Those tables can build up over time. This utility provides a means of keeping those tables in check.
 
 ### Sample Execution
 

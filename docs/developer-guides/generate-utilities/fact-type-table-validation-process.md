@@ -23,9 +23,9 @@ NOTE: At this point in the migration process the data has been successfully migr
 
 The other type of dimension table is called a junk dimension table. It is basically a way to group related data into a single table to reduce the number of dimension tables that need to be maintained and reduce bloat in the Fact table.&#x20;
 
-The junk dimension tables in Generate store both the translated CEDS value and the ED_Facts_ value.
+The junk dimension tables in Generate store both the translated CEDS value and the E&#x44;_&#x46;acts_ value.
 
-If the data element you want to use comes from one of those the view uses the ED_Facts_ value as shown below for IDEA Disability Type.&#x20;
+If the data element you want to use comes from one of those the view uses the E&#x44;_&#x46;acts_ value as shown below for IDEA Disability Type.&#x20;
 {% endhint %}
 
 ```sql

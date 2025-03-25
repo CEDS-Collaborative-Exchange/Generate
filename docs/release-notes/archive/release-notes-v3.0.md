@@ -2,7 +2,7 @@
 description: Generate Release Notes Version 3.2
 ---
 
-# Release Notes v3.0
+# Release Notes 3.0
 
 ### Introduction <a href="#introduction" id="introduction"></a>
 
@@ -10,7 +10,7 @@ The purpose of this document is to communicate the major new features and change
 
 ### About this Release <a href="#about-this-release" id="about-this-release"></a>
 
-Release v3.0 contains all the ED_Facts_ Submission Reports and five data quality reports. Improvement were also made to the data migration user interface, providing users more control over the execution of ETL processes.
+Release v3.0 contains all the E&#x44;_&#x46;acts_ Submission Reports and five data quality reports. Improvement were also made to the data migration user interface, providing users more control over the execution of ETL processes.
 
 ### Compatible Systems <a href="#compatible-systems" id="compatible-systems"></a>
 
@@ -23,7 +23,7 @@ Generate was tested on the following operating systems and browsers:
 
 #### The following reports are available in this release: <a href="#the-following-reports-are-available-in-t" id="the-following-reports-are-available-in-t"></a>
 
-ED_Facts_ Submission Reports
+E&#x44;_&#x46;acts_ Submission Reports
 
 *
   * FS002 — Children with Disabilities (IDEA) School Age v14.0
@@ -132,7 +132,7 @@ The following pages in Generate were updated in this Release:
 
 1. SPP/APR Report pages:
    1. the link to the SPP/APR Collection tool was updated for all SPP/APR report pages. It now goes to the [OSEP SPP/APR Resources](https://osep.grads360.org/%23program/spp-apr-resources) page.
-2. The CEDS Connection links were corrected on the following ED_Facts_ report pages:
+2. The CEDS Connection links were corrected on the following E&#x44;_&#x46;acts_ report pages:
 
 * FS032
 * FS040
@@ -177,8 +177,8 @@ The following pages in Generate were updated in this Release:
          * When Migrant is selected form the Subpopulation dropdown, add a status of “Not Migrant” to the report
          * Remove “enrolled” from the results and replace with “Homeless Status”
    3. When reports are exported to Excel, the URL to the CEDS Connection should be a link.
-5. Link to ED_Facts_ File Specifications goes to SY 2015-16 File Specifications instead of the main File Specification page. The correct link is: [https://www2.ed.gov/about/inits/ed/edfacts/file-](https://www2.ed.gov/about/inits/ed/edfacts/file-specifications.html) [specifications.html](https://www2.ed.gov/about/inits/ed/edfacts/file-specifications.html)
-   1. The Connection links for the following ED_Facts_ reports are not working properly.
+5. Link to E&#x44;_&#x46;acts_ File Specifications goes to SY 2015-16 File Specifications instead of the main File Specification page. The correct link is: [https://www2.ed.gov/about/inits/ed/edfacts/file-](https://www2.ed.gov/about/inits/ed/edfacts/file-specifications.html) [specifications.html](https://www2.ed.gov/about/inits/ed/edfacts/file-specifications.html)
+   1. The Connection links for the following E&#x44;_&#x46;acts_ reports are not working properly.
 
 a. C032, C050, C103, C125, C127, C130, C142, C154, C155, C156, C157, C158, C169, C170, C179, C180, C181, C189, C194, C196, C197, C198, C200, C201, C202, C203, C204, C205, C206
 

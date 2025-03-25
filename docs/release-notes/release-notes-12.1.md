@@ -13,9 +13,33 @@ Generate version 12.1 focuses on EDPass submissions due **January 8, 2025**, spe
 
 ### Required State Changes
 
+{% hint style="info" %}
+**OAuth Login Support**\
+Starting with Generate v12.1, login support using Open Authorization (OAuth) has been added for states that prefer not to use Active Directory (AD). This feature includes configuration options to support OAuth functionality.
+
+**Important Note for AD Users**\
+Due to a configuration oversight, settings used in the development environment were mistakenly included in the default configuration file. If your state uses AD and you no longer see the login/password option after upgrading to v12.1, follow these steps to restore AD functionality:
+
+1. Navigate to the location of the Generate files on the web server.
+2. Go to `/wwwroot/assets/config` and open `CONFIG.PROD.JSON`.
+3.  Update the following variables to be blank:
+
+    ```json
+    jsonCopy code"authType": "",
+    "clientId": "",
+    "authority": "",
+    "redirectUri": ""
+    ```
+4. Save the file.
+5. Connect to IIS and refresh both the application pool and site for the Generate application.
+6. Clear your browser cache and reload the Generate application.
+
+After completing these steps, the login/password options should reappear, allowing AD to be used for authentication.
+{% endhint %}
+
 #### 🚨 Important .NET update
 
-In Generate 12.1, we’re updating the .NET Core runtime from version 6.0 to 8.0, as support for 6.0 is ending. Use the link below to download the compatible [**ASP.NET Core Runtime 8.0.10**](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version for your environment.
+In Generate 12.1, we’re updating the .NET Core runtime from version 6.0 to 8.0, as support for 6.0 is ending. Use the link below to download the compatible [**ASP.NET Core Runtime 8.0.11**](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version for your environment.
 
 {% embed url="https://dotnet.microsoft.com/en-us/download/dotnet/8.0" %}
 Link to download .Net 8.0
@@ -65,7 +89,7 @@ In Generate 12.1, we have enhanced our testing processes by expanding unit and f
 
 ### Generate Enhancements
 
-The following ED_Facts_ reports were updated in this release.
+The following E&#x44;_&#x46;acts_ reports were updated in this release.
 
 #### Type of Impact:
 

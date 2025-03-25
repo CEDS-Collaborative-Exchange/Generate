@@ -23,11 +23,11 @@ It is strongly recommended that this document be read in full before attempting 
 
 #### Database Server:
 
-* [x] **Windows 2012 R2** (or newer) with **SQL Server 2012** (or newer)
-* [x] At least **16 GB** of RAM (**32 GB** RAM recommended)
+* [x] **Windows 2012 R2** (or newer) with **SQL Server 2017** (or newer)
+* [x] At least **32 GB** of RAM (**64 GB** RAM recommended)
 * [x] At least **50 GB** of free storage
 * [x] Web Server and Database Server may be on the same machine, if desired.
-* [x] .NET Core Runtime and Hosting Bundle (version 2.2) installed on Web Server.
+* [x] .NET Core Runtime: Version 8.0.10 installed on Web Server.
 * [x] Active Directory (AD) accessible from the Web Server. If no AD installation exists, AD LDS may be installed.
 * [x] Application Initialization Module for IIS installed on the Web Server.
 
@@ -35,7 +35,7 @@ It is strongly recommended that this document be read in full before attempting 
 
 If the current version of Generate is 3.1 or higher, updates should be performed using the Automatic Update functionality of Generate. This can be found in the Settings menu under the menu item named “Update”. This feature is available to users with the Admin role.
 
-![](<../../../.gitbook/assets/Developer Guide\_Upgrade\_image1.png>)
+![](<../../../.gitbook/assets/Developer Guide_Upgrade_image1.png>)
 
 ## Update Steps (Manual Steps) <a href="#toc113461785" id="toc113461785"></a>
 

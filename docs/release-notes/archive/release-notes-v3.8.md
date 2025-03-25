@@ -2,7 +2,7 @@
 description: Generate Release Notes Version 3.8
 ---
 
-# Release Notes v3.8
+# Release Notes 3.8
 
 ### Introduction <a href="#introduction" id="introduction"></a>
 
@@ -18,7 +18,7 @@ Generate Release version 3.8 includes updates to reports, defect resolution, and
 
 ### Updated Reports <a href="#updated-reports" id="updated-reports"></a>
 
-The following Standard ED_Facts_ reports were updated in this release.
+The following Standard E&#x44;_&#x46;acts_ reports were updated in this release.
 
 | Report                                                                                                                      | Approved Change                                                                                                                                                                                | Reference Number |
 | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
@@ -154,7 +154,7 @@ security risk and was not a good practice. Modified the code to move it into a c
 1. CIID-4332: End to End Data Migrations.
    * Verified CEDS changes are running from staging to reports for file specifications submitted via Generate output in the past. Each data migration should run and populate data into the Reports table. Migrations affected: Assessments, Discipline, Exiting and Directory Lite.
 2. CIID-3989: Removed the calls to the Data Population Summary from the new wrapper scripts.
-   * The wrapper scripts call each of the stored procedures needed to move the data to the RDS. Included in that set of stored procedures are the ones that populate the Data Population Summary. Those are not necessary for ED_Facts,_ and they have not been vetted fully with this release, so they were commented out for now.
+   * The wrapper scripts call each of the stored procedures needed to move the data to the RDS. Included in that set of stored procedures are the ones that populate the Data Population Summary. Those are not necessary for E&#x44;_&#x46;acts,_ and they have not been vetted fully with this release, so they were commented out for now.
 3. CIID-4322: FS005, FS006, FS007, FS009, FS088, FS143 – The Disability Category (IDEA) permitted value “MR-Intellectual disability,” was replaced with “ID–Intellectual disability.”
 4. CIID-4336: The metadata for the EDFacts 17.2 file specifications SY 2020-21 was rolled over for Generate. Files rolled over:
    * FS054, FS070, FS086, FS099, FS112, FS118, FS121, FS122, FS144, FS145, FS163, FS165, FS170, FS194, FS195, FS203.

@@ -50,11 +50,11 @@ Excel version of the Generate 11.0 staging field map
 
 to identify the student as Special Education.
 
-4. There is a new staging table and a new dimension table named _**IDEADisabilityTypes**_. In v5.3 there was a single field named <mark style="color:blue;">`PrimaryDisabilityType`</mark> in <mark style="color:blue;">`Staging.PersonStatus`</mark> . That field has been dropped. This new table allows the state to load every disability that applies to the student so all of them can be captured. So, if a student is identified with four disabilities, you should load four rows into the new table. There are two flags in the table, _**IsPrimaryDisability**_ and _**IsSecondaryDisability**_. For the purposes of ED_Facts_ reporting set the _**IsPrimaryDisability**_ flag for the row that should be reported for that student.&#x20;
+4. There is a new staging table and a new dimension table named _**IDEADisabilityTypes**_. In v5.3 there was a single field named <mark style="color:blue;">`PrimaryDisabilityType`</mark> in <mark style="color:blue;">`Staging.PersonStatus`</mark> . That field has been dropped. This new table allows the state to load every disability that applies to the student so all of them can be captured. So, if a student is identified with four disabilities, you should load four rows into the new table. There are two flags in the table, _**IsPrimaryDisability**_ and _**IsSecondaryDisability**_. For the purposes of E&#x44;_&#x46;acts_ reporting set the _**IsPrimaryDisability**_ flag for the row that should be reported for that student.&#x20;
 
 ### Generate Enhancements &#x20;
 
-The following ED_Facts_ reports were updated in this release.&#x20;
+The following E&#x44;_&#x46;acts_ reports were updated in this release.&#x20;
 
 #### Type of Impact:&#x20;
 

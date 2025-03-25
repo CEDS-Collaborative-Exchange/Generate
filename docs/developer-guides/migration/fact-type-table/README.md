@@ -1,3 +1,9 @@
+---
+description: >-
+  This page describes the steps needed to use Generate to produce EDFacts Files
+  for the Staff Fact Type.
+---
+
 # Fact Type Table
 
 Fact Type refers to a categorization or classification of data that is used to organize and manage information within a data warehouse or data management system. It essentially represents a specific type of factual data that is collected, stored, and processed within the system.
@@ -7,8 +13,8 @@ Fact Type refers to a categorization or classification of data that is used to o
 A Generate Fact Type is a specific type of Fact Type that is used within the Generate ETL (Extract, Transform, Load) Stored Procedures. These procedures are organized based on different types of factual data, each representing a distinct aspect or category of information.
 
 * Generate ETL Stored Procedures are organized by Fact Types.
-* Many ED_Facts_ file specifications have shared timelines, reporting requirements, and/or a high degree of overlap in source system field mappings. When this happens, the data are organized into the same Fact Type to make data migration, testing, and file submission more efficient.
-* The Fact Type determines where the data is stored in the Curated Zone and the Generate Reporting Data Store (RDS). For example, the Directory data are stored in `RDS.FactOrganizationCounts`. Generate has a series of tables used by the application where more information about Fact Types can be found. See the queries below.
+* Many E&#x44;_&#x46;acts_ file specifications have shared timelines, reporting requirements, and/or a high degree of overlap in source system field mappings. When this happens, the data are organized into the same Fact Type to make data migration, testing, and file submission more efficient.
+* The Fact Type determines where the data is stored in the Generate Reporting Data Store (RDS). For example, the Directory data are stored in `RDS.FactOrganizationCounts`. Generate has a series of tables used by the application where more information about Fact Types can be found. See the queries below.
 
 ### How do you query Fact Types?
 
@@ -69,5 +75,5 @@ App.DataMigrationTasks
   * `For example RDS.`Wrapper\_Migrate\_\[FactTypeLable]\_to\_RDS  (RDS`.vwDimAssessments)`
 * Names used for views contain fact type labels
   * `For example` Source.Source-to-Staging\_\[FactTypeLable]  (Source.Source-to-Staging\_v`wDimAssessments)`
-* Descriptions of Staging to CEDS Data Warehouse Wrapper scripts contain ED_Facts_ file specification numbers for the Fact Type
+* Descriptions of Staging to CEDS Data Warehouse Wrapper scripts contain E&#x44;_&#x46;acts_ file specification numbers for the Fact Type
   * `For example RDS.`Wrapper\_Migrate\_\[FactTypeLable]\_to\_RDS  (`RDS.`Wrapper\_Migrate\_`vwDimAssessments`\_to\_RDS`)`
