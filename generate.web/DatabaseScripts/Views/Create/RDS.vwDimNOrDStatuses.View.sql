@@ -74,6 +74,6 @@ AS
 		ON rdnods.NeglectedOrDelinquentProgramEnrollmentSubpartCode = sssrd7.OutputCode
 		AND sssrd7.TableName = 'RefNeglectedOrDelinquentProgramEnrollmentSubpart'
 		AND rsy.SchoolYear = sssrd7.SchoolYear
-GO
+
 
 
