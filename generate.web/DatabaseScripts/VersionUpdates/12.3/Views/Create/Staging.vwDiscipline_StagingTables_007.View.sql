@@ -113,5 +113,3 @@ GROUP BY
 	, vw.IDEAEducationalEnvironmentForSchoolAge
 	, vw.EnglishLearnerStatus
 
-GO
-

@@ -98,5 +98,4 @@ AS
 	WHERE 1 = 1
 	AND sssrd.OutputCode in ('TGELGBTGPROG', 'SWELIGTGPROG', 'SWELIGSWPROG')
 	
-GO
 	

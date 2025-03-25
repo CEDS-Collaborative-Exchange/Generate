@@ -1,15 +1,3 @@
-USE [generate]
-GO
-
-/****** Object:  View [debug].[vwDirectorySCH_FactTable]    Script Date: 2/10/2025 12:22:15 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
 
 CREATE VIEW [debug].[vwDirectorySCH_FactTable] 
 AS
@@ -80,6 +68,6 @@ SELECT
 	--AND Schools.SchoolIdentifierSea = '010456'
 	--AND Schools.SchoolOperationalStatus = 'Open'      --'Open', 'Closed', 'New', 'FutureSchool'
 	--AND Schools.SchoolTypeCode = 'Regular' 			--'CareerAndTechnical', 'Alternative', 'Special', 'Reportable', 'Regular'
-GO
+
 
 

@@ -26,8 +26,6 @@ AS
 	WHERE cs.OrganizationLevelId = 1
 		AND cs.TableTypeId IS NOT NULL
 	
-GO
-
 
 CREATE UNIQUE CLUSTERED INDEX iux_CateogryCodeOptionsByReportAndYear
 ON app.CateogryCodeOptionsByReportAndYear (ReportCode, SubmissionYear, CategorySetCode, TableTypeId, CategoryCode, CategoryOptionCode);
