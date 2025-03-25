@@ -10,6 +10,7 @@ using generate.core.Interfaces.Repositories.RDS;
 namespace generate.web.Controllers.Api.ODS
 {
     [Route("api/ods/assessmenttypes")]
+    [ApiController]
     public class AssessmentTypeController : Controller
     {
         private IDimensionRepository _dimensionRepository;

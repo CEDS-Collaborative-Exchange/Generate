@@ -27,6 +27,8 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 			, race.RecordEndDateTime					AS RaceEndDate
 
 			, org.LEA_TitleIProgramType									
+			, org.School_OperationalStatus
+			, org.School_Type
 
 		FROM 
 			(
@@ -63,3 +65,6 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 				
 
 		WHERE 1 = 1
+GO
+
+

@@ -1,9 +1,45 @@
 version: '3'
 services:
   generate:
-    image: svuyuru/generate.web:V11.3
+    image: svuyuru/generate.web:V12.2
     ports:
             - 8080:80
+    environment:
+      - AppSettings__UserStoreType=Embedded
+      - AppSettings__EmbeddedAdminUserName=Admin
+      - AppSettings__EmbeddedAdminPassword=Password123!
+      - AppSettings__EmbeddedReviewerUserName=Reviewer
+      - AppSettings__EmbeddedReviewerPassword=Password123!
+      - AppSettings__Environment=development
+      - AppSettings__ProvisionJobs=false
+      - AppSettings__ADDomain=localhost
+      - AppSettings__ADLoginDomain=""
+      - AppSettings__ADPort=389
+      - AppSettings__IsSSLEnabled=false
+      - AppSettings__ADContainer="CN=Generate,DC=CIID,DC=COM"
+      - AppSettings__UserContainer="CN=Generate,DC=CIID,DC=COM"
+      - AppSettings__ReviewerGroupName="CN=Reviewers,CN=Roles,CN=Generate,DC=CIID,DC=COM"
+      - AppSettings__AdminGroupName="CN=Administrators,CN=Roles,CN=Generate,DC=CIID,DC=COM"
+      - AppSettings__BackgroundUrl="http://localhost:9000"
+      - AppSettings__BackgroundAppPath=""
+      - AppSettings__FileIterationSize=100000
+      - AppSettings__useWSforFSMetaUpd=true
+      - AppSettings__fsWSURL="https://edfacts.ed.gov/generate/"
+      - AppSettings__bkfsMetaFileLoc="C:\\Generate\\Metadata_Backup"
+      - AppSettings__fsMetaFileLoc="C:\\Generate\\Metadata"
+      - AppSettings__fsMetaESSDetailFileName="ESS_Metadata.json"
+      - AppSettings__fsMetaCHRDetailFileName="CHRTR_Metadata.json"
+      - AppSettings__fsMetaESSLayoutFileName="ESS_Layout.json"
+      - AppSettings__fsMetaCHRLayoutFileName="CHRTR_Layout.json"
+      - AppSettings__reloadFromBackUp=true 
+      - Data__AppDbContextConnection=""
+      - Data__ODSDbContextConnection=""  
+      - Data__StagingDbContextConnection="" 
+      - Data__RDSDbContextConnection=""
+      - AzureAd__Instance=""
+      - AzureAd__Domain=""
+      - AzureAd__TenantId=""
+      - AzureAd__ClientId=""
     build: 
         context: .
 

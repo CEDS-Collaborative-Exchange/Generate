@@ -9,6 +9,7 @@ using System.Linq;
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/togglesections")]
+    [ApiController]
     public class ToggleSectionController : Controller
     {
         private IAppRepository _toggleSectionRepository;

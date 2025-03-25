@@ -108,9 +108,14 @@ namespace generate.infrastructure.Services
             {
 
 
-                if (report.ReportCode == "c130" || report.ReportCode == "c205")
+                if (report.ReportCode == "c205")
                 {
                     var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
+                    dataRows = query.ToList();
+                }
+                else if(report.ReportCode == "c130")
+                {
+                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
                     dataRows = query.ToList();
                 }
                 else if(report.ReportCode == "c039")
@@ -887,6 +892,7 @@ namespace generate.infrastructure.Services
                                     field = "IDEAINDICATOR";
                                 }
                             }
+                            else if(column.ColumnName.Replace(" ","") == "StudentCount") { field = "StudentCount"; }
 
                             PropertyInfo prop = dataRow.GetType().GetProperty(field);
                             if (prop != null)

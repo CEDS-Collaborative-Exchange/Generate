@@ -13,7 +13,7 @@ services:
       networks:
             - network
   generate-background:
-      image: svuyuru/generate.background:V11.3
+      image: svuyuru/generate.background:V12.1
       ports:
             - 5000:80
       build: 

@@ -273,11 +273,18 @@ namespace generate.infrastructure.Services
             GenerateReportDataDto reportDto = new GenerateReportDataDto();
 
             GenerateReport report = _appRepository.Find<GenerateReport>(r => r.GenerateReportType.ReportTypeCode == reportType
-                && r.ReportCode == reportCode
-                && r.GenerateReport_OrganizationLevels.Count(l => l.OrganizationLevel.LevelCode == reportLevel) == 1, 0, 1)
-                .FirstOrDefault();
+               && r.ReportCode == reportCode, 0, 1, c => c.GenerateReport_OrganizationLevels)
+               .FirstOrDefault();
 
-           
+            IEnumerable<OrganizationLevel> organizationLevels = _appRepository.GetAll<OrganizationLevel>(0, 0);
+
+            List<OrganizationLevel> reportOrganizationLevels = organizationLevels.Where(l => report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == l.OrganizationLevelId)).ToList();
+
+            if (!reportOrganizationLevels.Any(l => l.LevelCode == reportLevel))
+            {
+                reportLevel = reportOrganizationLevels[0].LevelCode;
+
+            }
 
             if (report == null)
             {

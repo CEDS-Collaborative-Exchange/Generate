@@ -25,6 +25,7 @@ namespace generate.web.Controllers.Api
 
     [Route("api/users")]
     [Authorize]
+    [ApiController]
     public class UserController : Controller
     {
         public UserManager<ApplicationUser> UserManager { get; private set; }

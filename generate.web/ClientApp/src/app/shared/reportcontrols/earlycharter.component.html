@@ -50,8 +50,8 @@
 
 <div *ngIf="!isLoading || !hasRecords">
     <generate-app-table #reportGrid [itemsSource]="reportDataDto"
-                        [headers]="['State Code','State Agency Number','School Name','LEA Identifier (State)','State School Identifier','Persistently Dangerous Status','Charter Contract Renewal Date']"
-                        [bindings]="['stateCode','stateAgencyNumber','organizationName','parentOrganizationStateId','organizationStateId','persistentlydangerousstatus','Improvement Status']"
+                        [headers]="['State Code','State Agency Number','School Name','LEA Identifier (State)','State School Identifier','Persistently Dangerous Status']"
+                        [bindings]="['stateCode','stateAgencyNumber','organizationName','parentOrganizationStateId','organizationStateId','persistentlydangerousstatus']"
                         class="generate-app-earlycharter_grid">
     </generate-app-table>
 </div>

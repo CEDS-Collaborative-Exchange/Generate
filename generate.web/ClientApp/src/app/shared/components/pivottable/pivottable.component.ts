@@ -145,19 +145,27 @@ export class PivottableComponent {
             return true;
 
         let currentParams = changes['reportDataDto']['currentValue'];
-        if (currentParams.reportTitle !== previousParams.reportTitle
-            //    || currentParams.categorySets[0].organizationLevelCode !== previousParams.categorySets[0].organizationLevelCode
-            || currentParams.reportYear !== previousParams.reportYear
-            || currentParams.reportCategorySetCode !== previousParams.reportCategorySetCode
-        ) {
-            ret = true;
-        }
 
-        if (currentParams.reportTitle !== previousParams.reportTitle) {
-            if ($('#searchTable').is(':checked'))
-                $('#searchTable').click();
+        if (!this.isNullOrUndefined(currentParams)) {
+            if (currentParams.reportTitle !== previousParams.reportTitle
+                //    || currentParams.categorySets[0].organizationLevelCode !== previousParams.categorySets[0].organizationLevelCode
+                || currentParams.reportYear !== previousParams.reportYear
+                || currentParams.reportCategorySetCode !== previousParams.reportCategorySetCode
+            ) {
+                ret = true;
+            }
+
+
+            if (currentParams.reportTitle !== previousParams.reportTitle) {
+                if ($('#searchTable').is(':checked'))
+                    $('#searchTable').click();
+            }
         }
         return ret;
+    }
+
+    isNullOrUndefined(value: any): boolean {
+        return value === null || value === undefined;
     }
 
     ngAfterViewInit() {
@@ -251,7 +259,7 @@ export class PivottableComponent {
                     return this[studentCountColumn] = record[studentCountColumn];
                 },
                 value: function () {
-                    return Math.round(this[studentCountColumn]);
+                    return this[studentCountColumn];
                 },
                 format: function (x) {
                     //format with thousands separators
@@ -274,7 +282,7 @@ export class PivottableComponent {
     }
 
     populateReport() {
-        if (Object.keys(reportData).length === 0)
+        if (this.isNullOrUndefined(reportData) || Object.keys(reportData).length === 0)
             return;
         var derivers = $.pivotUtilities.derivers;
         let viewDef: any = JSON.parse(reportData.categorySets[0].viewDefinition);
@@ -876,14 +884,14 @@ export class PivottableComponent {
 
                 //pvtAxisLabel with darker
                 var pvtAxisLabels = [];
-                $('#containerExport .pvtAxisLabel').each(function (index, element) {
-                    pvtAxisLabels.push(element.getInnerHTML());
-                });
+                //$('#containerExport .pvtAxisLabel').each(function (index, element) {
+                //    pvtAxisLabels.push(element.getInnerHTML());
+                //});
 
                 var pvtRowLabels = [];
-                $('#containerExport .pvtRowLabel').each(function (index, element) {
-                    pvtRowLabels.push(element.getInnerHTML());
-                });
+                //$('#containerExport .pvtRowLabel').each(function (index, element) {
+                //    pvtRowLabels.push(element.getInnerHTML());
+                //});
 
                 start = Date.now();
                 colTotal = 3;
@@ -1192,14 +1200,14 @@ export class PivottableComponent {
 
                 //pvtAxisLabel with darker
                 var pvtAxisLabels = [];
-                $('#containerExport .pvtAxisLabel').each(function (index, element) {
-                    pvtAxisLabels.push(element.getInnerHTML());
-                });
+                //$('#containerExport .pvtAxisLabel').each(function (index, element) {
+                //    pvtAxisLabels.push(element.getInnerHTML());
+                //});
 
                 var pvtRowLabels = [];
-                $('#containerExport .pvtRowLabel').each(function (index, element) {
-                    pvtRowLabels.push(element.getInnerHTML());
-                });
+                //$('#containerExport .pvtRowLabel').each(function (index, element) {
+                //    pvtRowLabels.push(element.getInnerHTML());
+                //});
 
                 rowTotal = 3;
                 var new_headers = ["S", "h", "e", "e", "t", "J", "S"];

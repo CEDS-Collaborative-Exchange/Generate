@@ -24,6 +24,7 @@ using System.Configuration;
 namespace generate.web.Controllers.Api.App
 {
     [Route("api/app/filesubmissions")]
+    [ApiController]
     public class FileSubmissionController : Controller
     {
 

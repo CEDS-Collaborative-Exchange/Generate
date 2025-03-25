@@ -112,7 +112,8 @@ BEGIN
 			AND sssrd1.TableName = 'RefOperationalStatus'
 			AND sssrd1.TableFilter = '000174'
 			AND sko.SchoolYear = sssrd1.SchoolYear
-		where sko.SchoolYear = @SchoolYear and isnull(sko.LEA_IsReportedFederally,0) = 1	
+		where sko.SchoolYear = @SchoolYear and isnull(sko.LEA_IsReportedFederally,0) = 1 
+		and phone.OrganizationIdentifier IS NOT NULL	
 
 		select	 distinct
 		   	OrganizationStateId
@@ -640,6 +641,7 @@ BEGIN
 			AND sko.SchoolYear = sssrd1.SchoolYear
 		where sko.SchoolYear = @SchoolYear and isnull(sko.School_IsReportedFederally,0) = 1
 		and ISNULL(sko.SchoolIdentifierSea, '') <> ''
+		and phone.OrganizationIdentifier IS NOT NULL
 
 		select distinct   
 			ParentOrganizationStateId

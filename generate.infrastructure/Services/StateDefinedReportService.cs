@@ -138,7 +138,7 @@ namespace generate.infrastructure.Services
                         if (organizationId != 0 && organizationId != -1)
                         {
                             OrganizationDetail OD = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
-                            if (OD.Name != null)
+                            if (OD != null)
                                 od.Add(OD.Name);
                         }
                     }
@@ -189,7 +189,7 @@ namespace generate.infrastructure.Services
                             if (organizationId != 0 && organizationId != -1)
                             {
                                 OrganizationDetail OD = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
-                                if (OD.Name != null)
+                                if (OD != null)
                                     od.Add(OD.Name);
                             }
                         }
@@ -225,7 +225,7 @@ namespace generate.infrastructure.Services
                             if (organizationId != 0 && organizationId != -1)
                             {
                                 OrganizationDetail OD = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
-                                if (OD.Name != null)
+                                if (OD != null)
                                     od.Add(OD.Name);
                             }
                         }
@@ -302,7 +302,7 @@ namespace generate.infrastructure.Services
                             if (organizationId != 0 && organizationId != -1)
                             {
                                 OrganizationDetail OD = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
-                                if (OD.Name != null)
+                                if (OD != null)
                                     od.Add(OD.Name);
                             }
                         }

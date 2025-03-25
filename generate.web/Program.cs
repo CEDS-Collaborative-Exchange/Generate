@@ -117,13 +117,13 @@ else // AD Auth
 
 builder.Services
    .AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetValue<string>("Data:AppDbContextConnection"), o => o.UseCompatibilityLevel(110)))
+        options.UseSqlServer(builder.Configuration.GetValue<string>("Data:AppDbContextConnection")))
    .AddDbContext<IDSDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetValue<string>("Data:ODSDbContextConnection"), o => o.UseCompatibilityLevel(110)))
+        options.UseSqlServer(builder.Configuration.GetValue<string>("Data:ODSDbContextConnection")))
    .AddDbContext<RDSDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetValue<string>("Data:RDSDbContextConnection"), o => o.UseCompatibilityLevel(110)))
+        options.UseSqlServer(builder.Configuration.GetValue<string>("Data:RDSDbContextConnection")))
    .AddDbContext<StagingDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetValue<string>("Data:StagingDbContextConnection"), o => o.UseCompatibilityLevel(110)));
+        options.UseSqlServer(builder.Configuration.GetValue<string>("Data:StagingDbContextConnection")));
 
 var app = builder.Build();
 

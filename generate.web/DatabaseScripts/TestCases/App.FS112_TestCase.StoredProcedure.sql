@@ -66,13 +66,33 @@ BEGIN
 		DECLARE @SPEDProgram varchar(5)
 		SELECT @SPEDProgram = [code] from dbo.RefProgramType where [Definition] = 'Special Education Services'
 
-		--Create SY Start / SY End variables
-		declare @SYStart varchar(10) = CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE)
-		declare @SYEnd varchar(10) = CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)
+		--Get School Year End Date
+		DECLARE @SYStartDate datetime = staging.GetFiscalYearStartDate(@schoolYear)
 
 		-- Get Custom Child Count Date
 		DECLARE @ChildCountDate DATETIME
 		select @ChildCountDate = CAST('10/01/' + cast(@SchoolYear - 1 AS Varchar(4)) AS DATETIME)
+
+			--Get the LEAs that should not be reported against
+		IF OBJECT_ID('tempdb..#excludedLeas') IS NOT NULL DROP TABLE #excludedLeas
+
+		CREATE TABLE #excludedLeas (
+			LeaIdentifierSeaAccountability		VARCHAR(20)
+		)
+
+		INSERT INTO #excludedLeas 
+		SELECT DISTINCT LEAIdentifierSea
+		FROM Staging.K12Organization sko
+		LEFT JOIN Staging.OrganizationPhone sop
+				ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
+				AND sop.OrganizationType in (	SELECT InputCode
+											FROM Staging.SourceSystemReferenceData 
+											WHERE TableName = 'RefOrganizationType' 
+												AND TableFilter = '001156'
+												AND OutputCode = 'LEA' AND SchoolYear = @SchoolYear)
+		WHERE LEA_IsReportedFederally = 0
+			OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
+			OR sop.OrganizationIdentifier IS NULL
 
 		SELECT DISTINCT 
 			StaffMemberIdentifierState
@@ -114,8 +134,8 @@ BEGIN
 		FROM Staging.K12StaffAssignment sksa
 		JOIN Staging.K12Organization sko
 			ON sksa.LeaIdentifierSea = sko.LeaIdentifierSea
-			AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, @SYEnd)
-		WHERE @ChildCountDate BETWEEN sksa.AssignmentStartDate AND ISNULL(sksa.AssignmentEndDate, @SYEnd)
+			AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, GETDATE())
+		WHERE @ChildCountDate BETWEEN sksa.AssignmentStartDate AND ISNULL(sksa.AssignmentEndDate, GETDATE())
 			AND ParaprofessionalQualificationStatus IS NOT NULL
 			AND sksa.SpecialEducationAgeGroupTaught IS NOT NULL
 --		AND ProgramTypeCode = @SPEDProgram
@@ -307,9 +327,11 @@ BEGIN
 			, ParaprofessionalQualificationStatusEdFactsCode
 			, sum(FullTimeEquivalency) as FullTimeEquivalency
 		INTO #TC5
-		FROM #staging 
-		WHERE --EdFactsCertificationStatus in ('Certification','Licensure')
-			IsLeaReportedFederally = 1
+		FROM #staging s
+		LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSea = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND IsLeaReportedFederally = 1 
 		GROUP BY LeaIdentifierSea
 			, ParaprofessionalQualificationStatusEdFactsCode
 			, SpecialEducationAgeGroupTaughtEdFactsCode
@@ -360,9 +382,11 @@ BEGIN
 			, ParaprofessionalQualificationStatusEdFactsCode
 			, sum(FullTimeEquivalency) as FullTimeEquivalency
 		INTO #TC6
-		FROM #staging 
-		WHERE --EdFactsCertificationStatus in ('Certification','Licensure')
-			IsLeaReportedFederally = 1
+		FROM #staging s
+		LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSea = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND IsLeaReportedFederally = 1 
 		GROUP BY LeaIdentifierSea
 				, ParaprofessionalQualificationStatusEdFactsCode
 
@@ -409,8 +433,11 @@ BEGIN
 			, SpecialEducationAgeGroupTaughtEdFactsCode
 			, sum(FullTimeEquivalency) as FullTimeEquivalency
 		INTO #TC7
-		FROM #staging 
-		WHERE IsLeaReportedFederally = 1
+		FROM #staging s
+		LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSea = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND IsLeaReportedFederally = 1 
 		GROUP BY LeaIdentifierSea
 				, SpecialEducationAgeGroupTaughtEdFactsCode
 
@@ -453,8 +480,11 @@ BEGIN
 			COUNT(DISTINCT StaffMemberIdentifierState) AS StaffCount
 			, LeaIdentifierSea
 		INTO #TC8
-		FROM #staging 
-		WHERE IsLeaReportedFederally = 1
+		FROM #staging s
+		LEFT JOIN #excludedLeas elea
+		ON s.LeaIdentifierSea = elea.LeaIdentifierSeaAccountability
+		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
+		AND IsLeaReportedFederally = 1 
 		GROUP BY LeaIdentifierSea
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
@@ -493,31 +523,6 @@ BEGIN
 		--WHERE TestCaseName = 'TOT LEA Match All' 
 		--AND t.TestScope = 'FS112'
 		--AND Passed = 0
--- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS -------------------------
-if not exists(select top 1 * from app.sqlunittest t
-	inner join app.SqlUnitTestCaseResult r
-		on t.SqlUnitTestId = r.SqlUnitTestId
-		and t.SqlUnitTestId = @SqlUnitTestId)
-begin
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT DISTINCT
-				 @SqlUnitTestId
-				,'NO TEST RESULTS'
-				,'NO TEST RESULTS'
-				,-1
-				,-1
-				,NULL
-				,GETDATE()
-end
-----------------------------------------------------------------------------------
+
 END
 

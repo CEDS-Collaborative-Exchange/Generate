@@ -94,9 +94,17 @@ BEGIN
 
 	INSERT INTO #excludedLeas 
 	SELECT DISTINCT LEAIdentifierSea
-	FROM Staging.K12Organization
+	FROM Staging.K12Organization sko
+	LEFT JOIN Staging.OrganizationPhone sop
+			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
+			AND sop.OrganizationType in (	SELECT InputCode
+										FROM Staging.SourceSystemReferenceData 
+										WHERE TableName = 'RefOrganizationType' 
+											AND TableFilter = '001156'
+											AND OutputCode = 'LEA' AND SchoolYear = @SchoolYear)
 	WHERE LEA_IsReportedFederally = 0
 		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
+		OR sop.OrganizationIdentifier IS NULL
 
 	--create the race view to handle the conversion to Multiple Races
 	IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
