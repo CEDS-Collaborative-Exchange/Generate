@@ -76,10 +76,11 @@
 ## Release Notes
 
 * [Introduction](release-notes/introduction.md)
+* [Release Notes 12.3](release-notes/release-notes-12.3.md)
 * [Release Notes 12.2](release-notes/release-notes-12.2.md)
 * [Release Notes 12.1](release-notes/release-notes-12.1.md)
-* [Release Notes 12.0](release-notes/release-notes-12.0.md)
 * [Archive](release-notes/archive/README.md)
+  * [Release Notes 12.0](release-notes/archive/release-notes-12.0.md)
   * [Release Notes 11.4](release-notes/archive/release-notes-11.4.md)
   * [Release Notes 11.3](release-notes/archive/release-notes-11.3.md)
   * [Release Notes 11.2](release-notes/archive/release-notes-11.2.md)
