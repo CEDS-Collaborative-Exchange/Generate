@@ -4,7 +4,7 @@ description: >-
   version 5.3 released in February 2023.
 ---
 
-# Release Notes v5.3&#x20;
+# Release Notes 5.3
 
 ### RELEASE OVERVIEW <a href="#id-3.1.1__impact" id="id-3.1.1__impact"></a>
 
@@ -19,7 +19,7 @@ Generate version 5.3 is a minor release that contains fixes/enhancements primari
 
 ### GENERATE ENHANCEMENTS
 
-The following ED_Facts_ reports were updated in this release.
+The following E&#x44;_&#x46;acts_ reports were updated in this release.
 
 **Type of Impact:**
 

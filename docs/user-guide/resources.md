@@ -22,9 +22,9 @@ The CEDS Data Model, Align, and Connect tools are resources used by Generate. If
 
 <figure><img src="../.gitbook/assets/image (191).png" alt=""><figcaption><p>CEDS Support page</p></figcaption></figure>
 
-### **ED**_**Facts**_** Support**
+### **ED**_**Facts**_**&#x20;Support**
 
-If you have questions or need assistance with ED_Facts,_ click on “**ED**_**Facts**_** Support**” from the Resource submenu. This will open the U.S. Department of Education’s Partner Support Center (PSC) webpage.
+If you have questions or need assistance with E&#x44;_&#x46;acts,_ click on “**ED**_**Facts**_**&#x20;Support**” from the Resource submenu. This will open the U.S. Department of Education’s Partner Support Center (PSC) webpage.
 
 ### **IDEA SPP/APR Indicators Support**
 

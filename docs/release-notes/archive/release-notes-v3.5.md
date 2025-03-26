@@ -2,7 +2,7 @@
 description: Generate Release Notes Version 3.5
 ---
 
-# Release Notes v3.5
+# Release Notes 3.5
 
 ### Introduction <a href="#bookmark1" id="bookmark1"></a>
 
@@ -20,7 +20,7 @@ Generate Version 3.5 includes updates to reports, the ETL (Data Store), and defe
 
 ### Updated Reports <a href="#bookmark4" id="bookmark4"></a>
 
-The following Standard ED_Facts_ reports were updated in this release.
+The following Standard E&#x44;_&#x46;acts_ reports were updated in this release.
 
 | Report | Resolved Defect                                                                                                                                                                                                                         |
 | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

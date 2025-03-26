@@ -12,7 +12,7 @@ To accommodate user preferences, the pages and resources within Generate can be 
 
 The following pages are accessible from the menu at the top of the page:
 
-* [Home button](navigating-generate.md#home\_page)
+* [Home button](navigating-generate.md#home_page)
 * [Resources](../resources.md)
 * [Data Population Summary](../data-population-summary/)
 * [Standard Reports](../standard-reports/)
@@ -33,7 +33,7 @@ The graphics in the center of the Home page are shortcuts to:
 
 ![](<../../.gitbook/assets/image (162).png>)
 
-* View ED_Facts_ Submission Reports
+* View E&#x44;_&#x46;acts_ Submission Reports
 * View SPP/APR Submission Reports
 * View Reports Library
 

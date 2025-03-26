@@ -17,7 +17,7 @@ The SQL database component of Generate includes the most current [**Common Educa
 {% hint style="success" %}
 **Web Application**
 
-The Generate web application is specifically designed to support ED_Facts_ and related reports.
+The Generate web application is specifically designed to support E&#x44;_&#x46;acts_ and related reports.
 {% endhint %}
 
 This guide contains material relevant to the installation and implementation of the Generate SQL Server database and is specifically intended to provide:

@@ -2,7 +2,7 @@
 description: GENERATE RELEASE NOTES VERSION 5.0
 ---
 
-# Release Notes v5.0
+# Release Notes 5.0
 
 ## Purpose <a href="#purpose" id="purpose"></a>
 
@@ -58,7 +58,7 @@ delete the following files from your Generate instances to prevent any configura
 
 ## Generate Enhancements <a href="#generate-enhancements" id="generate-enhancements"></a>
 
-The following ED_Facts_ reports were updated in this release.
+The following E&#x44;_&#x46;acts_ reports were updated in this release.
 
 | **Category**                     | **Report**                                                                                                                                                 | **Approved Change**                                                                                                                                        | **Reference Number**        | **Type of Impact** |
 | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------------------ |

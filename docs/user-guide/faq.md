@@ -46,9 +46,9 @@ There are two types of users in Generate: _Reviewer_ and _Administrator_. Check 
 
 <summary>❓ <strong>What is the difference between a Generate Reviewer and a Generate Administrator?</strong></summary>
 
-**Generate **_**Reviewers**_ are typically program personnel such as ED_Facts_ Coordinators, Data Managers, Data Stewards, or other staff responsible for the data and for running and reviewing reports or confirming record counts.&#x20;
+**Generate&#x20;**_**Reviewers**_ are typically program personnel such as E&#x44;_&#x46;acts_ Coordinators, Data Managers, Data Stewards, or other staff responsible for the data and for running and reviewing reports or confirming record counts.&#x20;
 
-**Generate **_**Administrators**_ have access to the Generate Data Store which is not accessible by Reviewers. This role is typically assigned to technical staff with a knowledge of the state’s source systems and Extract, Transform, and Load (ETL) processes. For example, the Administrator role might be assigned to a Database Administrator, or to someone responsible for processing and submitting the ED_Facts_ files through the ED_Facts_ Submission System (ESS). Anyone with the applicable knowledge and skills can be assigned to this role.
+**Generate&#x20;**_**Administrators**_ have access to the Generate Data Store which is not accessible by Reviewers. This role is typically assigned to technical staff with a knowledge of the state’s source systems and Extract, Transform, and Load (ETL) processes. For example, the Administrator role might be assigned to a Database Administrator, or to someone responsible for processing and submitting the E&#x44;_&#x46;acts_ files through the E&#x44;_&#x46;acts_ Submission System (ESS). Anyone with the applicable knowledge and skills can be assigned to this role.
 
 </details>
 
@@ -108,7 +108,7 @@ The _Data Population Summary Report_ is a high level, comprehensive count of dat
 
 <summary>🆘 <strong>What should I do if the counts are wrong in the Data Population Summary Report?</strong></summary>
 
-First, contact the _Generate Administrator_. They can verify whether the ETL process is working as expected. Then, check with the person responsible for the data (e.g., the ED_Facts_ Coordinator, Data Manager, Data Steward, etc.). If the ETL is working, it is possible the data in the SLDS or in the source system itself is the cause. In that case, follow the normal procedure at your agency for troubleshooting student data. You can also contact [ciidta@aemcorp.com](mailto:ciidta@aemcorp.com) for assistance.
+First, contact the _Generate Administrator_. They can verify whether the ETL process is working as expected. Then, check with the person responsible for the data (e.g., the E&#x44;_&#x46;acts_ Coordinator, Data Manager, Data Steward, etc.). If the ETL is working, it is possible the data in the SLDS or in the source system itself is the cause. In that case, follow the normal procedure at your agency for troubleshooting student data. You can also contact [ciidta@aemcorp.com](mailto:ciidta@aemcorp.com) for assistance.
 
 </details>
 
@@ -132,7 +132,7 @@ If you think the counts are wrong, first check the [Toggle](settings/toggle.md) 
 
 <summary>🤔 <strong>What is the difference between the State Designed Reports and the ED</strong><em><strong>Facts</strong></em><strong> and SPP/APR Reports?</strong></summary>
 
-To avoid confusion, these are maintained separately in Generate. State Defined Reports were designed by state education agency stakeholders and are not reportable to ED, while ED_Facts_ reports, and SPP/APR reports are reportable to ED. The State Designed Reports are available in the Reports Library.
+To avoid confusion, these are maintained separately in Generate. State Defined Reports were designed by state education agency stakeholders and are not reportable to ED, while E&#x44;_&#x46;acts_ reports, and SPP/APR reports are reportable to ED. The State Designed Reports are available in the Reports Library.
 
 </details>
 
@@ -148,7 +148,7 @@ The Reports Library view is customized for the individual user. The layout selec
 
 <summary>❓ <strong>Why don’t I see the </strong><em><strong>EDFacts</strong></em><strong> or SPP/APR reports in the Reports Library?</strong></summary>
 
-ED_Facts_ reports, SPP/APR reports, and the reports in the Reports Library (also called State Designed Reports) are different types of reports. To avoid confusion, they are maintained separately in Generate.
+E&#x44;_&#x46;acts_ reports, SPP/APR reports, and the reports in the Reports Library (also called State Designed Reports) are different types of reports. To avoid confusion, they are maintained separately in Generate.
 
 </details>
 
@@ -174,7 +174,7 @@ If the _Generate Reviewer_ and _Administrator_ cannot answer the question, submi
 
 <summary>❓ <strong>Can I access the ED</strong><em><strong>Facts</strong></em><strong> File Specification page from Generate?</strong></summary>
 
-**Yes**. At the bottom left side of the page for every ED_Facts_ report there is a link to ED_Facts_ File Specification website.
+**Yes**. At the bottom left side of the page for every E&#x44;_&#x46;acts_ report there is a link to E&#x44;_&#x46;acts_ File Specification website.
 
 </details>
 

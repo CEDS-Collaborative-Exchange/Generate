@@ -32,7 +32,7 @@ Generate version 12.0 is focused on the Assessment files, file specifications FS
 * **Single Button Migration** - We’ve simplified the migration process in Generate! With a new single-button interface. The migration screen consolidates everything into one place, integrating both the migration log and staging validation results, so you can keep tabs on the entire process with minimal effort. For more details, view the [Data Migration](../user-guide/settings/data-migration.md) guide.
 * **OAuth Support** - Generate 12.0 now supports OAuth for both authentication and authorization, giving users an added layer of security and seamless access across systems. Learn how to set up OAuth in your environment by checking out our [OAuth Configuration](../developer-guides/installation/oauth-configuration.md) guide.
 * **Installation Updates** - We’ve added the ability to run Generate from a subfolder on your web server, increasing flexibility in deployment configurations. This update simplifies hosting Generate alongside other applications and services. See the [Subfolder Configuration](../developer-guides/installation/subfolder-configuration.md) guide for detailed steps.
-* **API Metadata Feature** - The new API Metadata feature lets you retrieve the ED_Facts_ file specification metadata directly from EDPass via an API call. This automation saves time and ensures you’re always working with the most up-to-date specs. Find out how to integrate this feature in the [Configuring Metadata](../developer-guides/installation/configuring-metadata-updates.md) guide and how to run the refresh from the [Metadata](../user-guide/settings/metadata.md) guide.
+* **API Metadata Feature** - The new API Metadata feature lets you retrieve the E&#x44;_&#x46;acts_ file specification metadata directly from EDPass via an API call. This automation saves time and ensures you’re always working with the most up-to-date specs. Find out how to integrate this feature in the [Configuring Metadata](../developer-guides/installation/configuring-metadata-updates.md) guide and how to run the refresh from the [Metadata](../user-guide/settings/metadata.md) guide.
 
 ### Important Updates
 
@@ -50,7 +50,7 @@ Generate version 12.0 is focused on the Assessment files, file specifications FS
 
 ### Generate Enhancements
 
-The following ED_Facts_ reports were updated in this release.
+The following E&#x44;_&#x46;acts_ reports were updated in this release.
 
 #### Type of Impact:
 

@@ -3,10 +3,11 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 
 WORKDIR /app
-COPY ./bin/Release/net8.0 ./
+COPY ./bin/production/net8.0 ./
 
 # Expose ports
 EXPOSE 80
+ENV ASPNETCORE_URLS=http://+:80
 
 RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
 # Start IIS
