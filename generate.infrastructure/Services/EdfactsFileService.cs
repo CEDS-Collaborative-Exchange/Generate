@@ -891,6 +891,7 @@ namespace generate.infrastructure.Services
                             else if (column.ColumnName == "SteAprptnMthdsID") { field = "AppropriationMethodCode"; }
                             else if (column.ColumnName == "LanguageInstrTypeID") { field = "TITLEIIILANGUAGEINSTRUCTION"; }
                             else if (column.ColumnName == "AgeGroupID") { field = "SPECIALEDUCATIONAGEGROUPTAUGHT"; }
+                            else if (column.ColumnName == "TitleISchoolStatus") { field = "TITLE1SCHOOLSTATUS"; }
                             else if (column.ColumnName == "DisabilityStatusID")
                             {
                                 if (reportCode == "c118" || reportCode == "c144" || reportCode == "c141" || reportCode == "c175" || reportCode == "c178" || reportCode == "c179"
