@@ -97,7 +97,6 @@ namespace generate.infrastructure.Services
 
             // Data
 
-            List<String> organizations = null;
             IEnumerable<ReportEDFactsOrganizationStatusCount> queryOrganizationStatusdto = null;
             dynamic dataRows = new List<ExpandoObject>();
 

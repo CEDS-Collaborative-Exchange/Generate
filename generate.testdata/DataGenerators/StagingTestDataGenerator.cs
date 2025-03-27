@@ -2112,7 +2112,7 @@ namespace generate.testdata.DataGenerators
                 {
                     grade = _testDataHelper.GetRandomString(rnd, new List<string>() { "KG", "01" });
                 }
-                if(age >= 7 & age < 17)
+                if(age >= 7 && age < 17)
                 {
                     grade = (age - 5 + _testDataHelper.GetRandomIntInRange(rnd, -1, 1)).ToString().PadLeft(2, '0');
                 }

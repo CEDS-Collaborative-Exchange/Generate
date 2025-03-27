@@ -42,7 +42,7 @@ namespace generate.infrastructure.Repositories.App
             DataMigrationStatus initialStatus = null;
             DataMigrationStatus processingStatus = null;
 
-            if (dataMigrationStatuses != null && dataMigrationStatuses.Count > 0)
+            if (dataMigrationStatuses != null)
             {
                 pendingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "pending");
                 initialStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "initial");
@@ -65,31 +65,31 @@ namespace generate.infrastructure.Repositories.App
             }
 
             // Reset statuses of subsequent migrations if needed
-            if (initialStatus != null)
-            {
-                if (dataMigrationTypeCode == "ods")
-                {
-                    // If ODS, set RDS and Report migrations to initial (since they will need to be re-run)
+            //if (initialStatus != null)
+            //{
+            //    if (dataMigrationTypeCode == "ods")
+            //    {
+            //        // If ODS, set RDS and Report migrations to initial (since they will need to be re-run)
 
-                    List<DataMigration> migrations = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == "rds" || m.DataMigrationType.DataMigrationTypeCode == "report").ToList();
-                    foreach (var i in migrations)
-                    {
-                        i.DataMigrationStatusId = initialStatus.DataMigrationStatusId;
-                    }
-                    Save();
-                }
-                else if (dataMigrationTypeCode == "rds")
-                {
-                    // If RDS, set Report migration to initial (since it will need to be re-run)
+            //        List<DataMigration> migrations = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == "rds" || m.DataMigrationType.DataMigrationTypeCode == "report").ToList();
+            //        foreach (var i in migrations)
+            //        {
+            //            i.DataMigrationStatusId = initialStatus.DataMigrationStatusId;
+            //        }
+            //        Save();
+            //    }
+            //    else if (dataMigrationTypeCode == "rds")
+            //    {
+            //        // If RDS, set Report migration to initial (since it will need to be re-run)
 
-                    DataMigration migrations = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == "report").FirstOrDefault();
-                    if (migrations != null)
-                    {
-                        migrations.DataMigrationStatusId = initialStatus.DataMigrationStatusId;
-                        Save();
-                    }
-                }
-            }
+            //        DataMigration migrations = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == "report").FirstOrDefault();
+            //        if (migrations != null)
+            //        {
+            //            migrations.DataMigrationStatusId = initialStatus.DataMigrationStatusId;
+            //            Save();
+            //        }
+            //    }
+            //}
 
             // Log migration started message
 
@@ -145,10 +145,8 @@ namespace generate.infrastructure.Repositories.App
                     }
 
                     var dataMigrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusCode == dataMigrationStatusCode);
-                    if (dataMigrationStatus != null)
-                    {
-                        dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
-                    }
+                    dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
+
                     var lockedReports = this.GetReports().Where(r => r.IsLocked == true);
                     var factTypeId = lockedReports.ToList()[0].GenerateReport_FactTypes[0].FactTypeId;
                     var dataMigrtionTasks = _context.Set<DataMigrationTask>().OrderBy(t => t.TaskSequence).Where(t => t.FactTypeId == factTypeId).Select(t => t.DataMigrationTaskId.ToString()).ToList();
@@ -160,10 +158,7 @@ namespace generate.infrastructure.Repositories.App
                     if (dataMigrationStatusCode == "error")
                     {
                         LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Complete - either due to error or cancellation", true);
-                        foreach (var report in lockedReports)
-                        {
-                            this.MarkReportAsComplete(report.ReportCode);
-                        }
+                        this.MarkReportsAsComplete();
                     }
                     else
                     {
@@ -174,11 +169,17 @@ namespace generate.infrastructure.Repositories.App
                 else
                 {
                     LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Completed after Cancel/Error", true);
-                    var lockedReports = this.GetReports().Where(r => r.IsLocked == true);
-                    foreach (var report in lockedReports) {
-                        this.MarkReportAsComplete(report.ReportCode);
-                    }
+                    this.MarkReportsAsComplete();
                 }
+            }
+        }
+
+        public void MarkReportsAsComplete()
+        {
+            var lockedReports = this.GetReports().Where(r => r.IsLocked == true);
+            foreach (var report in lockedReports)
+            {
+                this.MarkReportAsComplete(report.ReportCode);
             }
         }
 
