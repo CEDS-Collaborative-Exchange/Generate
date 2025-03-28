@@ -20,12 +20,18 @@ using System.IO;
 namespace generate.infrastructure.Repositories.App
 {
 
-    public class AppRepository : RepositoryBase, IAppRepository
+    public class AppRepository : RepositoryBase, IAppRepository, IDisposable
     {
+        private CancellationTokenSource source;
         public AppRepository(AppDbContext context)
             : base(context)
         {
+            this.source = new CancellationTokenSource();
+        }
 
+        public void Dispose()
+        {
+            this.source.Dispose();
         }
         
         public void StartMigration(string dataMigrationTypeCode, bool setToProcessing = false)
@@ -260,7 +266,7 @@ namespace generate.infrastructure.Repositories.App
                 // Workaround for the fact that ShutdownCancellationToken is not called when the job is deleted
                 // https://github.com/HangfireIO/Hangfire/issues/211
 
-                var source = new CancellationTokenSource();
+                //var source = new CancellationTokenSource();
 
                 if (jobCancellationToken != null)
                 {
@@ -276,12 +282,12 @@ namespace generate.infrastructure.Repositories.App
                         }
                         catch (Exception)
                         {
-                            source.Cancel();
+                            this.source.Cancel();
                         }
-                    }, source.Token);
+                    }, this.source.Token);
                 }
 
-                var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", source.Token);
+                var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
                 dbTask.Wait();
 
                 _context.Database.SetCommandTimeout(oldTimeOut);
@@ -290,7 +296,6 @@ namespace generate.infrastructure.Repositories.App
             {
                 this.LogException(dataMigrationTypeCode, ex);
                 this.CompleteMigration(dataMigrationTypeCode, "error");
-
                 throw;
             }
 
