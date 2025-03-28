@@ -63,6 +63,7 @@ namespace generate.core.Interfaces.Repositories.App
         IEnumerable<GenerateReport> GetReports(int skip = 0, int take = 50);
         IQueryable<CategorySet> GetCategorySets(string reportCode, string reportYear, string reportLevel);
         void MarkReportAsComplete(string reportCode);
+        void MarkReportsAsComplete();
         void UpdateViewDefinitions();
 
         void CompleteReportMigrationIfReady();

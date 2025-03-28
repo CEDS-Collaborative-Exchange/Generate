@@ -251,15 +251,7 @@ namespace generate.console
 
 
                     numberOfYears = Convert.ToInt32(commandLineArguments[6]);
-                    if (numberOfYears > 4) { numberOfYears = 4; }
-
-                    if (numberOfYears < 1)
-                    {
-                        Console.WriteLine(invalidString);
-                        Console.WriteLine(spacer);
-                        Console.WriteLine(GetHelpText());
-                        return;
-                    }
+                    
 
                     dataStandardType = commandLineArguments[7].ToLower();
                     string[] validDataStandardTypes = ["ceds", "non-ceds"];
@@ -303,6 +295,16 @@ namespace generate.console
             string outputTypeToGenerate = outputType;
             const string invalidString = "Invalid Arguments";
             const string spacer = "-----------------------";
+
+            if (numberOfYears > 4) { numberOfYears = 4; }
+
+            if (numberOfYears < 1)
+            {
+                Console.WriteLine(invalidString);
+                Console.WriteLine(spacer);
+                Console.WriteLine(GetHelpText());
+                return;
+            }
 
             if (outputType == "execute")
             {
