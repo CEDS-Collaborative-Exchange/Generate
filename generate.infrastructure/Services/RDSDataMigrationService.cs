@@ -22,15 +22,9 @@ namespace generate.infrastructure.Services
     public class RDSDataMigrationService : IRDSDataMigrationService
     {
 
-        private IAppRepository _appRepository;
-
-
         public RDSDataMigrationService(
-            IAppRepository appRepository
             )
         {
-            _appRepository = appRepository;
-
            
         }
         
