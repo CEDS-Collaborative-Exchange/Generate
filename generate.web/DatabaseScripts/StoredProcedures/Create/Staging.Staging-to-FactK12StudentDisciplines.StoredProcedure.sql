@@ -58,14 +58,14 @@ BEGIN
 
 		SELECT @ChildCountDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@ChildCountDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ChildCountDate) AS VARCHAR(2)) AS DATE)
 	
-	
 	-- Creating temp tables to be used in the select statement joins 
 		SELECT *
 		INTO #vwGradeLevels
 		FROM RDS.vwDimGradeLevels
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwGradeLevels ON #vwGradeLevels (GradeLevelTypeDescription, GradeLevelMap);
+		CREATE CLUSTERED INDEX ix_tempvwGradeLevels 
+			ON #vwGradeLevels (GradeLevelTypeDescription, GradeLevelMap);
 		
 		SELECT *
 		INTO #vwIdeaStatuses
@@ -73,28 +73,32 @@ BEGIN
 		WHERE SchoolYear = @SchoolYear
 
 		--1/12/2024
-		CREATE CLUSTERED INDEX ix_tempvwIdeaStatuses ON #vwIdeaStatuses (IdeaIndicatorMap, SpecialEducationExitReasonCode, IdeaEducationalEnvironmentForEarlyChildhoodMap, IdeaEducationalEnvironmentForSchoolageMap);
+		CREATE CLUSTERED INDEX ix_tempvwIdeaStatuses 
+			ON #vwIdeaStatuses (IdeaIndicatorMap, SpecialEducationExitReasonCode, IdeaEducationalEnvironmentForEarlyChildhoodMap, IdeaEducationalEnvironmentForSchoolageMap);
 
 		SELECT * 
 		INTO #vwRaces 
 		FROM RDS.vwDimRaces
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwRaces ON #vwRaces (RaceMap);
+		CREATE CLUSTERED INDEX ix_tempvwRaces 
+			ON #vwRaces (RaceMap);
 
 		SELECT * 
 		INTO #vwEnglishLearnerStatuses 
 		FROM RDS.vwDimEnglishLearnerStatuses
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwEnglishLearnerStatuses ON #vwEnglishLearnerStatuses (EnglishLearnerStatusMap)
+		CREATE CLUSTERED INDEX ix_tempvwEnglishLearnerStatuses 
+			ON #vwEnglishLearnerStatuses (EnglishLearnerStatusMap)
 
 		SELECT * 
 		INTO #vwUnduplicatedRaceMap 
 		FROM RDS.vwUnduplicatedRaceMap
 		WHERE SchoolYear = @SchoolYear
 
-		CREATE CLUSTERED INDEX ix_tempvwUnduplicatedRaceMap ON #vwUnduplicatedRaceMap (StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, RaceMap);
+		CREATE CLUSTERED INDEX ix_tempvwUnduplicatedRaceMap 
+			ON #vwUnduplicatedRaceMap (StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, RaceMap);
 
 		SELECT * 
 		INTO #vwDisciplineStatuses 
@@ -102,9 +106,10 @@ BEGIN
 		WHERE SchoolYear = @SchoolYear
 		
 		-- 1/12/2024
-		CREATE INDEX IX_vwDimDisciplines ON #vwDisciplineStatuses(SchoolYear, DisciplinaryActionTakenMap, DisciplineMethodOfChildrenWithDisabilitiesMap, EducationalServicesAfterRemovalMap, IdeaInterimRemovalMap, IdeaInterimRemovalReasonMap) --INCLUDE (IdeaInterimRemovalCode, IdeaInterimRemovalReasonCode)
+		CREATE INDEX IX_vwDimDisciplines 
+			ON #vwDisciplineStatuses(SchoolYear, DisciplinaryActionTakenMap, DisciplineMethodOfChildrenWithDisabilitiesMap, EducationalServicesAfterRemovalMap, IdeaInterimRemovalMap, IdeaInterimRemovalReasonMap) --INCLUDE (IdeaInterimRemovalCode, IdeaInterimRemovalReasonCode)
 
-			
+		
 	--Pull the EL Status into a temp table
 		SELECT DISTINCT 
 			StudentIdentifierState
@@ -117,7 +122,8 @@ BEGIN
 		FROM Staging.PersonStatus
 
 	-- Create Index for #tempELStatus 
-		CREATE INDEX IX_tempELStatus ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusEndDate)
+		CREATE INDEX IX_tempELStatus 
+			ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusEndDate)
 			-- INCLUDE (IdeaInterimRemovalCode, IdeaInterimRemovalReasonCode, DisciplineELStatusCode)
 
 	--Pull the IDEA Disability into a temp table
@@ -135,10 +141,12 @@ BEGIN
 				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sidt.SchoolIdentifierSea, '') 			= ISNULL(sppse.SchoolIdentifierSea, '')
 				AND sidt.IsPrimaryDisability = 1
-				AND sppse.ProgramParticipationBeginDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
+				AND ((sidt.RecordStartDateTime <= sppse.ProgramParticipationBeginDate and isnull(sidt.RecordEndDateTime, @SYEndDate) > sppse.ProgramParticipationBeginDate)
+					or (sidt.RecordStartDateTime > sppse.ProgramParticipationBeginDate and sidt.RecordStartDateTime < isnull(sppse.ProgramParticipationEndDate, @SYEndDate)))
 
 	-- Create Index for #tempIdeaDisability
-		CREATE INDEX IX_ideaDisability ON #tempIdeaDisability(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, RecordStartDateTime, RecordEndDateTime, IdeaDisabilityTypeCode)
+		CREATE INDEX IX_ideaDisability 
+			ON #tempIdeaDisability(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, RecordStartDateTime, RecordEndDateTime, IdeaDisabilityTypeCode)
 
 	--Pull the IDEA Status into a temp table
 		SELECT DISTINCT 
@@ -156,8 +164,10 @@ BEGIN
 		
 	-- Create Index for #tempIdeaStatus 
 	-- 1/1/2024
-		CREATE INDEX IX_ideaStatus ON #tempIdeaStatus (StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, ProgramParticipationBeginDate, ProgramParticipationEndDate)
-		CREATE INDEX IX_ideaStatus1 ON #tempIdeaStatus (IDEAIndicator, IDEAEducationalEnvironmentForEarlyChildhood, IDEAEducationalEnvironmentForSchoolAge)
+		CREATE INDEX IX_ideaStatus 
+			ON #tempIdeaStatus (StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, ProgramParticipationBeginDate, ProgramParticipationEndDate)
+		CREATE INDEX IX_ideaStatus1 
+			ON #tempIdeaStatus (IDEAIndicator, IDEAEducationalEnvironmentForEarlyChildhood, IDEAEducationalEnvironmentForSchoolAge)
 
 	--Set the Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
@@ -215,7 +225,6 @@ BEGIN
 			sd.Id                                         			StagingId
 			, rda.DimAgeId                                     	 	AgeId
 			, @SchoolYearId											SchoolYearId
-			--, rsy.DimSchoolYearId                                   SchoolYearId
 			, ISNULL(rdkd.DimK12DemographicId, -1)                  K12DemographicId
 			, ISNULL(rddisc.DimDisciplineStatusId, -1)              DisciplineId
 			, @FactTypeId                                           FactTypeId
