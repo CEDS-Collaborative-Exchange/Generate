@@ -86,12 +86,12 @@ BEGIN
 		INTO #vwNorDStatuses
 		FROM RDS.vwDimNOrDStatuses
 		WHERE SchoolYear = @SchoolYear
-			AND NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
-			AND NeglectedOrDelinquentProgramTypeCode = 'MISSING'
-			AND NeglectedProgramTypeCode = 'MISSING'
-			AND DelinquentProgramTypeCode = 'MISSING'
-			AND NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'MISSING'
-			and NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
+			--AND NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
+			--AND NeglectedOrDelinquentProgramTypeCode = 'MISSING'
+			--AND NeglectedProgramTypeCode = 'MISSING'
+			--AND DelinquentProgramTypeCode = 'MISSING'
+			--AND NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'MISSING'
+			--AND NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
 
 		CREATE CLUSTERED INDEX ix_tempvwNorDStatuses 
 			ON #vwNorDStatuses (
