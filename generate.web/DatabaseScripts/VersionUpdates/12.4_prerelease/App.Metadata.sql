@@ -16,3 +16,12 @@ Update r set ReportShortName =
     END 
 FROM app.GenerateReports r
 where CHARINDEX('c', ReportShortName) = 1 and ReportCode not in ('cohortgraduationrate')
+
+ Update r set ControlTypeName = 
+    CASE 
+        WHEN CHARINDEX('c', ControlTypeName) = 1 
+        THEN STUFF(ControlTypeName, CHARINDEX('c', ControlTypeName), 1, '')
+        ELSE ControlTypeName
+    END 
+FROM app.GenerateReportControlType r
+where CHARINDEX('c', ControlTypeName) = 1 and ControlTypeName not in ('CCDSchool', 'CharterSchool', 'CohortGradRate')
