@@ -1,4 +1,4 @@
-CREATE VIEW [debug].[vwChronic_FactTable] 
+CREATE VIEW [debug].[vwChronicAbsenteeism_FactTable] 
 AS
 	SELECT	 Fact.FactK12StudentCountId
 			, SchoolYear

@@ -5,7 +5,7 @@ Description: Migrates Chronic Absenteeism Data from Staging to RDS.FactK12Studen
 
 NOTE: This Stored Procedure processes files: 195
 ************************************************************************/
-CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_Chronic]
+CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_ChronicAbsenteeism]
 	@SchoolYear SMALLINT
 AS
 
@@ -141,7 +141,7 @@ BEGIN
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
-		WHERE FactTypeCode = 'chronic' --DimFactTypeId = 17
+		WHERE FactTypeCode = 'chronicabsenteeism' --DimFactTypeId = 17
 
 		--Clear the Fact table of the data about to be migrated  
 		DELETE RDS.FactK12StudentCounts

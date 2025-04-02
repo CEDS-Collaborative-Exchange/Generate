@@ -1,52 +1,51 @@
-﻿CREATE PROCEDURE [App].[Wrapper_Migrate_Personnel_to_RDS]
+﻿CREATE PROCEDURE [App].[Wrapper_Migrate_ChronicAbsenteeism_to_RDS]
 AS
 BEGIN
 
     SET NOCOUNT ON;
 
 	BEGIN TRY
-		EXEC Staging.Rollover_SourceSystemReferenceData -- This only happens when it is needed
 
-	--Populate the RDS tables from ODS data
+	--Populate the RDS tables from Staging data
 		--Populate DimPeople
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Personnel - Start Staging-to-DimPeople_K112staff')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS ChronicAbsenteeism 1 of 6 - Staging-to-DimPeople_K12Students')
 
-			exec Staging.[Staging-To-DimPeople_K12Staff] NULL
+			exec Staging.[Staging-To-DimPeople_K12Students] NULL
 
 		--Populate DimSeas
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Personnel - Start Staging-to-DimSeas')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS ChronicAbsenteeism 2 of 6 - Staging-to-DimSeas')
 
 			exec [Staging].[Staging-to-DimSeas] 'directory', NULL, 0
 
 		--Populate DimLeas
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Personnel - Start Staging-to-DimLeas')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS ChronicAbsenteeism 3 of 6 - Staging-to-DimLeas')
 
 			exec [Staging].[Staging-to-DimLeas] 'directory', NULL, 0
 
 		--Populate DimK12Schools
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Personnel - Start Staging-to-DimK12Schools')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS ChronicAbsenteeism 4 of 6 - Staging-to-DimK12Schools')
 
 			exec [Staging].[Staging-to-DimK12Schools] NULL, 0
 
 		--clear the data from the fact table
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Personnel - Start Empty for Personnel')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS ChronicAbsenteeism 5 of 6 - Empty RDS')
 
-			exec [rds].[Empty_RDS] 'submission', 'personnelcounts'
+			exec [rds].[Empty_RDS] 'Chronic'
 
-		--Populate the fact table
+		--populate the Fact table
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Personnel - Start Migrate_PersonnelCounts for Submission reports')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS ChronicAbsenteeism 6 of 6 - Staging-to-FactK12StudentCounts_Chronic')
 
 			--remove the cursor if a previous migraton stopped/failed
 			if cursor_status('global','selectedYears_cursor') >= -1
@@ -54,7 +53,7 @@ BEGIN
 				deallocate selectedYears_cursor
 			end
 			
-			--populate the fact table for the submission report
+			--populate the Fact table
 			DECLARE @submissionYear AS VARCHAR(50)
 			DECLARE selectedYears_cursor CURSOR FOR 
 			SELECT d.SchoolYear
@@ -71,7 +70,7 @@ BEGIN
 			FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
 			WHILE @@FETCH_STATUS = 0
 			BEGIN
-				EXEC Staging.[Staging-to-FactK12StaffCounts] @submissionYear
+				EXEC Staging.[Staging-to-FactK12StudentCounts_ChronicAbsenteeism] @submissionYear
 
 				FETCH NEXT FROM selectedYears_cursor INTO @submissionYear
 			END
@@ -82,12 +81,12 @@ BEGIN
 		--RDS migration complete
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Complete - Personnel')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS ChronicAbsenteeism Complete')
 
 	END TRY
 	BEGIN CATCH
 		insert into app.DataMigrationHistories
-		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Personnel failed to run - ' + ERROR_MESSAGE())
+		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS ChronicAbsenteeism failed to run - ' + ERROR_MESSAGE())
 	END CATCH
 
 	SET NOCOUNT OFF;

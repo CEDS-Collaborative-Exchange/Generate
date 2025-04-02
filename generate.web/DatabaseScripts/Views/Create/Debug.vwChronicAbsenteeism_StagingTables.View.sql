@@ -1,4 +1,4 @@
-CREATE VIEW [debug].[vwChronic_StagingTables] 
+CREATE VIEW [debug].[vwChronicAbsenteeism_StagingTables] 
 AS
 	SELECT DISTINCT	
 		enrollment.SchoolYear
