@@ -1,6 +1,10 @@
 VersionUpdates\\12.4_prerelease,Restore 12.3.sql,0
 VersionUpdates\\12.4_prerelease,App.TableChanges.sql,0
 VersionUpdates\\12.4_prerelease,App.Metadata.sql,0
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+StoredProcedures\\Drop,RDS.Empty_Reports.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Empty_Reports.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql,0
 VersionUpdates\\12.4_prerelease,UpdateDbVersion.sql,0
