@@ -53,6 +53,4 @@ WHERE 1 = 1
 AND SchoolIdentifierSea IS NOT NULL -- Remove records that are only LEAs by checking for populated school identifier
 
 
-GO
-
 

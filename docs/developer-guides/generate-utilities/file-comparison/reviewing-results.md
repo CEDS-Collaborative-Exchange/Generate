@@ -4,7 +4,7 @@
 
 After performing a file comparison, the resulting comparison table can be queried to view the results.
 
-Most ED_Facts_ files contain records with an “**amount**” column – a count of students or personnel. This is the column that is compared between the Legacy and the Generate files.&#x20;
+Most E&#x44;_&#x46;acts_ files contain records with an “**amount**” column – a count of students or personnel. This is the column that is compared between the Legacy and the Generate files.&#x20;
 
 {% hint style="info" %}
 Directory (FS029 and FS039) are different, and in those cases nearly every column in the files is compared.
@@ -28,11 +28,7 @@ The table below compares records from the Legacy and Generate files, joined by *
 
 If a row has an Errors value = -1, this indicates the record exists in one of the files but not the other.  The Mismatch column will then indicate if the record is not in the Legacy file or not in the Generate file.
 
-<div data-full-width="false">
-
-<figure><img src="../../../.gitbook/assets/File Comparison C029 SCH (1).PNG" alt="A table comparing records from Legacy and Generate files in the C029 report, including columns for SubmissionYear, ReportCode, ReportLevel, StateSchoolIDNumber, Errors, Mismatch, and various Legacy and Generate file columns. Errors marked as -1 indicate records present in only one file, with the Mismatch column specifying whether the record is missing from the Legacy or Generate file."><figcaption><p>This table compares records from Legacy and Generate files in the C029 report, matched by SubmissionYear, ReportCode, ReportLevel, and StateSchoolIDNumber. It shows error counts and mismatch descriptions, with each remaining column pairing data from both files. Errors with a value of -1 indicate records present in only one file, with details provided in the Mismatch column.</p></figcaption></figure>
-
-</div>
+<div data-full-width="false"><figure><img src="../../../.gitbook/assets/File Comparison C029 SCH (1).PNG" alt="A table comparing records from Legacy and Generate files in the C029 report, including columns for SubmissionYear, ReportCode, ReportLevel, StateSchoolIDNumber, Errors, Mismatch, and various Legacy and Generate file columns. Errors marked as -1 indicate records present in only one file, with the Mismatch column specifying whether the record is missing from the Legacy or Generate file."><figcaption><p>This table compares records from Legacy and Generate files in the C029 report, matched by SubmissionYear, ReportCode, ReportLevel, and StateSchoolIDNumber. It shows error counts and mismatch descriptions, with each remaining column pairing data from both files. Errors with a value of -1 indicate records present in only one file, with details provided in the Mismatch column.</p></figcaption></figure></div>
 
 The C039 Comparison table is similar to the C029 Comparison table but with fewer columns.  In most cases all results for the C039 that don’t match will show “-1” for the Errors because a Grade Level ID may not exist in one of the files.
 
@@ -50,7 +46,7 @@ select Errors, count(*) Records from TESTING.[NH].[C029_SCH_2022_COMPARISON] gro
 
 ### Reviewing Comparison Results of Other File Types
 
-Nearly all other ED_Facts_ files only need to compare the Amount value between the Legacy and the Generate files.  Running the query to return results from the Comparison table will show various columns corresponding to the Category Sets in the ED_Facts_ report.  The “LegacyAmount” and “GenerateAmount” columns show the counts of students (or personnel, depending on the report) for each combination of Category Set groups.
+Nearly all other E&#x44;_&#x46;acts_ files only need to compare the Amount value between the Legacy and the Generate files.  Running the query to return results from the Comparison table will show various columns corresponding to the Category Sets in the E&#x44;_&#x46;acts_ report.  The “LegacyAmount” and “GenerateAmount” columns show the counts of students (or personnel, depending on the report) for each combination of Category Set groups.
 
 &#x20;If the LegacyAmount and GenerateAmount do not match, then additional research can be done to determine the reason for the difference.  If a LegacyAmount is NULL, then that record is missing from the Legacy file.  If a GenerateAmount is NULL, then that record is missing from the Generate file.
 
@@ -66,7 +62,7 @@ where isnull(LegacyAmount,0) <> isnull(GenerateAmount,0)
 {% hint style="info" %}
 #### A Note About Zero Counts
 
-When no students (or personnel) exist for a combination of attributes, a zero count is included in the ED_Facts_ submission file.  Generate does not currently store zero counts in the Generate report tables. Instead, any zero counts are added to the actual submission file when it is created from Generate. The File Submission Comparison Utility accounts for this as follows:
+When no students (or personnel) exist for a combination of attributes, a zero count is included in the E&#x44;_&#x46;acts_ submission file.  Generate does not currently store zero counts in the Generate report tables. Instead, any zero counts are added to the actual submission file when it is created from Generate. The File Submission Comparison Utility accounts for this as follows:
 
 If the Generate file table is missing a row (zero count row), but the corresponding row in the Legacy table contains a zero, then the utility treats this as a zero for the Generate value in the Comparison table.  This helps reduce the number of mismatched records and simply the review of the comparison results.
 

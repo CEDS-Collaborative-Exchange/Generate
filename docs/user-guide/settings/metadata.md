@@ -5,7 +5,7 @@ The new Metadata feature in Generate 12.0 provides an option to refresh the meta
 ### Overview:
 
 * By selecting this option, Generate will use an API to pull the latest file specification metadata from EDPass.
-* This metadata includes changes such as file layouts, category sets, and permitted values that affect the structure and validation of ED_Facts_ submissions.
+* This metadata includes changes such as file layouts, category sets, and permitted values that affect the structure and validation of E&#x44;_&#x46;acts_ submissions.
 
 ### Process:
 
@@ -29,11 +29,11 @@ The new Metadata feature in Generate 12.0 provides an option to refresh the meta
 
 * You can refresh metadata on demand at any point, ensuring you are working with the most up-to-date file specifications.
 * This allows greater flexibility, especially during periods when file specification updates are critical to your work.
-* File Specification Metadata Only: This process applies solely to the metadata related to ED_Facts_ file specifications provided by the Department of Education. It does not apply to state-specific metadata, such as state supplemental survey responses.
+* File Specification Metadata Only: This process applies solely to the metadata related to E&#x44;_&#x46;acts_ file specifications provided by the Department of Education. It does not apply to state-specific metadata, such as state supplemental survey responses.
 
 ### Frequency of Metadata Updates:
 
-* Metadata from EDPass: EDPass updates metadata in chunks based on the upcoming ED_Facts_ reporting windows. It is not updated daily, so there’s no need to run the refresh daily.
+* Metadata from EDPass: EDPass updates metadata in chunks based on the upcoming E&#x44;_&#x46;acts_ reporting windows. It is not updated daily, so there’s no need to run the refresh daily.
 * Expected Timelines: Metadata changes are typically rolled out well in advance of submission deadlines, giving you ample time to refresh and validate your data with the latest specifications.
 
 ### Limitations During Metadata Refresh:

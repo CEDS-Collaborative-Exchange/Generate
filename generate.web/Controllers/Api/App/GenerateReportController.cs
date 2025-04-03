@@ -111,7 +111,7 @@ namespace generate.web.Controllers.Api.App
         }
 
         [HttpGet("{reportTypeCode}/{reportCode}/{reportLevel}/{reportYear}/{categorySetCode}")]
-        public ContentResult Get(string reportTypeCode, string reportCode, string reportLevel, string reportYear, string categorySetCode, [FromQuery]int sort = 1, [FromQuery]int skip = 0, [FromQuery]int take = 50)
+        public ContentResult Get(string reportTypeCode, string reportCode, string reportLevel, string reportYear, string categorySetCode, [FromQuery] int sort = 1, [FromQuery] int skip = 0, [FromQuery] int take = 50)
         {
 
             if (reportTypeCode == null || reportCode == null || reportLevel == null || reportYear == null || categorySetCode == null)
@@ -124,7 +124,7 @@ namespace generate.web.Controllers.Api.App
         }
 
         [HttpGet("pages/{reportTypeCode}/{reportCode}/{reportLevel}/{reportYear}/{categorySetCode}")]
-        public ContentResult Get(string reportTypeCode, string reportCode, string reportLevel, string reportYear, string categorySetCode, [FromQuery]int sort = 1, [FromQuery]int skip = 0, [FromQuery]int take = 50, [FromQuery]int pageSize = 10, [FromQuery]int page = 1)
+        public ContentResult GetPagedReport(string reportTypeCode, string reportCode, string reportLevel, string reportYear, string categorySetCode, [FromQuery] int sort = 1, [FromQuery] int skip = 0, [FromQuery] int take = 50, [FromQuery] int pageSize = 10, [FromQuery] int page = 1)
         {
 
             if (reportTypeCode == null || reportCode == null || reportLevel == null || reportYear == null || categorySetCode == null)

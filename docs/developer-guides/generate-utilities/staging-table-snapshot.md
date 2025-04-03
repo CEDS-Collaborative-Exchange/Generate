@@ -13,7 +13,7 @@ The Generate Staging Table Snapshot Utility (“Snapshot Utility”) provides a 
 
 ### Use Cases
 
-1. To ensure consistency across all ED_Facts_ reports for a given year, it's recommended to retain and reuse the Directory data collected for each submission year. This approach prevents the introduction of errors or inconsistencies that might arise from reloading and updating the Directory data with new organizations or changes to existing ones that were not part of the initial report.
+1. To ensure consistency across all E&#x44;_&#x46;acts_ reports for a given year, it's recommended to retain and reuse the Directory data collected for each submission year. This approach prevents the introduction of errors or inconsistencies that might arise from reloading and updating the Directory data with new organizations or changes to existing ones that were not part of the initial report.
 2. Developers can preserve data in staging tables across ETL executions. This practice facilitates the comparison of changes and the validation of ETL logic.
 
 ***

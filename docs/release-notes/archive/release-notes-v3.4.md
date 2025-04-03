@@ -2,7 +2,7 @@
 description: Generate Release Notes Version 3.4
 ---
 
-# Release Notes v3.4
+# Release Notes 3.4
 
 ### Introduction <a href="#introduction" id="introduction"></a>
 
@@ -40,7 +40,7 @@ Generate Version 3.4 introduces several new features that affect Toggle, the Dat
 
 ### Updated Reports <a href="#updated-reports" id="updated-reports"></a>
 
-The following Standard ED_Facts_ reports were updated in this release.
+The following Standard E&#x44;_&#x46;acts_ reports were updated in this release.
 
 | Report | Resolved Defect                                                                                                                                             |
 | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |

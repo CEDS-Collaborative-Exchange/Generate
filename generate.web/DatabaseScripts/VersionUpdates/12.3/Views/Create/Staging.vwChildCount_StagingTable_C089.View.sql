@@ -95,4 +95,3 @@ GROUP BY
 	, IDEAEducationalEnvironmentForEarlyChildhood
 	, GradeLevel
 	, EnglishLearnerStatus
-GO

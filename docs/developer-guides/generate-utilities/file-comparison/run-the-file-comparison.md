@@ -4,7 +4,7 @@
 
 The file comparison utility is a stored procedure executed within SSMS. When the file comparison utility is executed, a new table is created containing the results of the comparison. The new “comparison” table contains a row for every record in the Legacy and Generate files. Depending on the file specification, the table may include more details for any mismatched records.
 
-A different procedure will be executed depending on the ED_Facts_ file specification to be compared.
+A different procedure will be executed depending on the E&#x44;_&#x46;acts_ file specification to be compared.
 
 ### Comparing Directory Files
 
@@ -68,7 +68,7 @@ exec Utilities.Compare_EXITING
 
 ### Comparing All Other Files
 
-To compare other ED_Facts_ files, execute the following:
+To compare other E&#x44;_&#x46;acts_ files, execute the following:
 
 ```sql
 exec Utilities.CompareSubmissionFiles 
