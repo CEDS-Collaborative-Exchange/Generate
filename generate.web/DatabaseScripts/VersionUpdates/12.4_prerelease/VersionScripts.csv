@@ -1,6 +1,8 @@
 VersionUpdates\\12.4_prerelease,Restore 12.3.sql,0
 VersionUpdates\\12.4_prerelease,App.TableChanges.sql,0
 VersionUpdates\\12.4_prerelease,App.Metadata.sql,0
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
