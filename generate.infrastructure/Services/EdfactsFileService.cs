@@ -172,7 +172,6 @@ namespace generate.infrastructure.Services
                     {
                         DynamicClassObject.AddProperty(column.ColumnName, fileRecordNumber.ToString(), fileDataRow);
                     }
-                   
 
                     PropertyInfo prop = dataRow.GetType().GetProperty(field);
                     if (prop != null)
