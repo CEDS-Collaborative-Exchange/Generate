@@ -18,6 +18,7 @@ using generate.core.Interfaces.Repositories.RDS;
 using generate.core.Models.RDS;
 using generate.core.Interfaces.Repositories.App;
 using generate.core.Dtos.RDS;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace generate.infrastructure.Services
 {
@@ -51,7 +52,7 @@ namespace generate.infrastructure.Services
             _factOrganizationCountRepository = factOrganizationCountRepository;
             _factOrganizationStatusCountRepository = factOrganizationStatusCountRepository;
         }
-        public List<ExpandoObject> GetStudentCountData(string reportCode, string reportTypeCode, string reportLevel, string reportYear, List<FileSubmissionColumnDto> fileSubmissioncolumns)
+        public List<ExpandoObject> GetStudentCountData(string reportCode, string reportTypeCode, string reportLevel, string reportYear)
         {
 
             GenerateReport report = _appRepository.Find<GenerateReport>(r => r.GenerateReportType.ReportTypeCode == reportTypeCode
@@ -69,9 +70,7 @@ namespace generate.infrastructure.Services
                 factFieldName = report.FactTable.FactFieldName;
                 factReportDtoIdName = report.FactTable.FactReportDtoIdName;
             }
-            //int fileRecordNumber = 0;
 
-            //dynamic dynamicRows = new List<ExpandoObject>();
             dynamic dataRows = new List<ExpandoObject>();
 
             bool includeZeroCounts = false;
@@ -140,6 +139,63 @@ namespace generate.infrastructure.Services
             return dataRows;
         }
 
+        public List<ExpandoObject> GetSubmissionData(List<ExpandoObject> dataRows, List<FileSubmissionColumnDto> fileSubmissioncolumns)
+        {
+            int fileRecordNumber = 0;
+            dynamic dynamicRows = new List<ExpandoObject>();
+
+            foreach (var dataRow in dataRows)
+            {
+                ++fileRecordNumber;
+                var fileDataRow = new ExpandoObject();
+                fileSubmissioncolumns.ForEach(column =>
+                {
+                    string field = column.ColumnName;
+                    if (column.ReportField != null)
+                    {
+                        field = column.ReportField;
+                    }
+
+                    if (column.ColumnName.ToLower().StartsWith("filler"))
+                    {
+                        DynamicClassObject.AddProperty(column.ColumnName, "", fileDataRow);
+                    }
+                    else if (column.ColumnName == "StateAgencyNumber")
+                    {
+                        DynamicClassObject.AddProperty(column.ColumnName, "01", fileDataRow);
+                    }
+                    else if (column.ColumnName == "Explanation")
+                    {
+                        DynamicClassObject.AddProperty(column.ColumnName, "", fileDataRow);
+                    }
+                    else if (column.ColumnName == "FileRecordNumber")
+                    {
+                        DynamicClassObject.AddProperty(column.ColumnName, fileRecordNumber.ToString(), fileDataRow);
+                    }
+                   
+
+                    PropertyInfo prop = dataRow.GetType().GetProperty(field);
+                    if (prop != null)
+                    {
+                        var val = prop.GetValue(dataRow, null);
+                        if (val == null)
+                        {
+                            val = "";
+                        }
+                        DynamicClassObject.AddProperty(column.ColumnName, val, fileDataRow);
+                    }
+                    else
+                    {
+                        throw new Exception("File Submission Column not found for : " + column.ColumnName);
+                    }
+                });
+
+                dynamicRows.Add(fileDataRow);
+
+            }
+            return dynamicRows;
+
+        }
 
         public (IEnumerable<MembershipReportDto>, int) GetMembershipStudentCountData(string reportCode, string reportTypeCode, string reportLevel, string reportYear, List<FileSubmissionColumnDto> fileSubmissioncolumns, int startRecord, int numberOfRecords)
         {
