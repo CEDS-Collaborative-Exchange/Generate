@@ -52,8 +52,9 @@ namespace generate.infrastructure.Services
             _factOrganizationCountRepository = factOrganizationCountRepository;
             _factOrganizationStatusCountRepository = factOrganizationStatusCountRepository;
         }
-        public List<ExpandoObject> GetStudentCountData(string reportCode, string reportTypeCode, string reportLevel, string reportYear)
+        public List<ExpandoObject> GetStudentCountData(string reportCode, string reportTypeCode, string reportLevel, string reportYear, List<FileSubmissionColumnDto> fileSubmissioncolumns)
         {
+            dynamic dynamicRows = new List<ExpandoObject>();
 
             GenerateReport report = _appRepository.Find<GenerateReport>(r => r.GenerateReportType.ReportTypeCode == reportTypeCode
                 && r.ReportCode == reportCode
@@ -136,7 +137,8 @@ namespace generate.infrastructure.Services
                 }
             }
 
-            return dataRows;
+            dynamicRows = GetSubmissionData(dataRows, fileSubmissioncolumns);
+            return dynamicRows;
         }
 
         public List<ExpandoObject> GetSubmissionData(List<ExpandoObject> dataRows, List<FileSubmissionColumnDto> fileSubmissioncolumns)
@@ -151,9 +153,9 @@ namespace generate.infrastructure.Services
                 fileSubmissioncolumns.ForEach(column =>
                 {
                     string field = column.ColumnName;
-                    if (column.ReportField != null)
+                    if (column.ReportColumn != null)
                     {
-                        field = column.ReportField;
+                        field = column.ReportColumn;
                     }
 
                     if (column.ColumnName.ToLower().StartsWith("filler"))

@@ -991,7 +991,12 @@ namespace generate.infrastructure.Contexts
                    .Property(x => x.ColumnName)
                    .IsRequired()
                    .HasMaxLength(50);
-                
+
+                entity
+                   .Property(x => x.ReportColumn)
+                   .IsRequired(false)
+                   .HasMaxLength(50);
+
 
                 entity
                    .Property(x => x.XMLElementName)
