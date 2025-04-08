@@ -53,7 +53,6 @@
     * [Membership](developer-guides/migration/fact-type-table/membership.md)
     * [Staff](developer-guides/migration/fact-type-table/staff.md)
   * [Process Documentation](developer-guides/migration/process-documentation/README.md)
-    * [Stored Procedure Analysis Report](developer-guides/migration/process-documentation/stored-procedure-analysis-report.md)
     * [Staging-to-FactK12StudentCounts\_SpecEdExit](developer-guides/migration/process-documentation/staging-to-factk12studentcounts_specedexit.md)
 * [Generate Utilities](developer-guides/generate-utilities/README.md)
   * [File Comparison](developer-guides/generate-utilities/file-comparison/README.md)
