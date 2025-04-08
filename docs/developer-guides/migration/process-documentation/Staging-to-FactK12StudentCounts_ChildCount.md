@@ -1,4 +1,4 @@
-# Staging.Staging-to-FactK12StudentCounts_ChildCount
+# Staging-to-FactK12StudentCounts_ChildCount
 
 ## Staging.Staging-to-FactK12StudentCounts\_ChildCount
 
