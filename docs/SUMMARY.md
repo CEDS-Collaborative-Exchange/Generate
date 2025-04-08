@@ -52,6 +52,7 @@
     * [Exiting Fact Type](developer-guides/migration/fact-type-table/exiting-fact-type.md)
     * [Membership](developer-guides/migration/fact-type-table/membership.md)
     * [Staff](developer-guides/migration/fact-type-table/staff.md)
+  * [Process Documentation](developer-guides/migration/process-documentation.md)
 * [Generate Utilities](developer-guides/generate-utilities/README.md)
   * [File Comparison](developer-guides/generate-utilities/file-comparison/README.md)
     * [Loading Files](developer-guides/generate-utilities/file-comparison/loading-files.md)
