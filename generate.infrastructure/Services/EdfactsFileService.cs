@@ -141,7 +141,7 @@ namespace generate.infrastructure.Services
             return dynamicRows;
         }
 
-        public List<ExpandoObject> GetSubmissionData(List<ExpandoObject> dataRows, List<FileSubmissionColumnDto> fileSubmissioncolumns)
+        public List<ExpandoObject> GetSubmissionData(dynamic dataRows, List<FileSubmissionColumnDto> fileSubmissioncolumns)
         {
             int fileRecordNumber = 0;
             dynamic dynamicRows = new List<ExpandoObject>();
@@ -175,7 +175,7 @@ namespace generate.infrastructure.Services
                         DynamicClassObject.AddProperty(column.ColumnName, fileRecordNumber.ToString(), fileDataRow);
                     }
 
-                    PropertyInfo prop = dataRow.GetType().GetProperty(field);
+                    PropertyInfo prop = dataRow.GetType().GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
                     if (prop != null)
                     {
                         var val = prop.GetValue(dataRow, null);
@@ -185,10 +185,7 @@ namespace generate.infrastructure.Services
                         }
                         DynamicClassObject.AddProperty(column.ColumnName, val, fileDataRow);
                     }
-                    else
-                    {
-                        throw new Exception("File Submission Column not found for : " + column.ColumnName);
-                    }
+
                 });
 
                 dynamicRows.Add(fileDataRow);
