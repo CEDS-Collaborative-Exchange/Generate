@@ -48,9 +48,8 @@ AS
 
 	SET @SQLStatement = 
 	'SELECT *
-	INTO ##' + @ReportCode + 'Staging
-	FROM Staging.vw' + @factTypeCode + '_StagingTables_' + @ReportCode 
-
+	INTO ##' + (concat('c',@ReportCode)) + 'Staging
+	FROM Staging.vw' + @factTypeCode + '_StagingTables_' + (concat('c',@ReportCode)) 
 
 	EXEC sp_executesql @SQLStatement;
 
@@ -59,15 +58,17 @@ AS
 		;WITH StagingData AS (
 			SELECT
 				COUNT(' + CASE WHEN @IsDistinctCount = 1 THEN 'DISTINCT' ELSE '' END + ' ' + @IdentifierToCount + ') AS ' + @CountColumn + char(10) +
-				ISNULL(STRING_AGG(',' + d.DimensionFieldName, CHAR(10) + '				'), '') + 
+				ISNULL(STRING_AGG('				,' + d.DimensionFieldName, CHAR(10) + '				'), '') + 
 				CASE aol.LevelCode 
 					WHEN 'LEA' THEN ', LEAIdentifierSeaAccountability AS LeaIdentifierSea'
 					WHEN 'SCH' THEN ', SchoolIdentifierSea'
 					ELSE ''
 				END + '
-			FROM ##' + @ReportCode + 'Staging
+			FROM ##' + (concat('c',@ReportCode)) + 'Staging'
+			+ CASE WHEN ISNULL(STRING_AGG(d.DimensionFieldName, ',' + CHAR(10) + '				'), '') = '' THEN '' ELSE
+			'
 			GROUP BY 
-			' 			
+			' END 			
 				+ ISNULL(STRING_AGG(d.DimensionFieldName, ',' + CHAR(10) + '				'), '') +  
 				CASE WHEN COUNT(d.DimensionFieldName) > 0 AND aol.LevelCode <> 'SEA' THEN ', ' ELSE '' END +
 				CASE aol.LevelCode 
@@ -102,11 +103,18 @@ AS
 			,GETDATE()
 		FROM StagingData s
 		INNER JOIN RDS.' + @ReportTableName + ' rt
-			ON rt.ReportCode = ''c' + @ReportCode + ''' 
+			ON rt.ReportCode = ''' + (concat('c',@ReportCode)) + ''' 
 			AND rt.ReportYear = ' + @SchoolYear + '
 			AND rt.ReportLevel = ''' + aol.LevelCode + '''
 			AND rt.CategorySetCode = ''' + cs.CategorySetCode + '''
 			' + 
+			CASE 
+				WHEN (concat('c',@ReportCode)) = 'C119' THEN 
+				'AND rt.TableTypeAbbrv = '''+ att.TableTypeAbbrv + '''
+				'
+				ELSE ''
+			END
+			+
 			CASE aol.LevelCode 
 				WHEN 'LEA' THEN 'AND rt.OrganizationIdentifierSea = s.LeaIdentifierSea'
 				WHEN 'SCH' THEN 'AND rt.OrganizationIdentifierSea = s.SchoolIdentifierSea'
@@ -133,6 +141,12 @@ AS
 		ON cd.DimensionId = d.DimensionId
 	WHERE cs.SubmissionYear = @SchoolYear
 		AND gr.ReportCode = (concat('c',@ReportCode))
+		--AND  att.TableTypeId <> 353
+		AND  1 =  
+				CASE WHEN (concat('c',@ReportCode)) = 'C119' THEN 
+					CASE WHEN att.TableTypeId <> 353 THEN 1 ELSE 0 END
+				ELSE 1
+				END
 	GROUP BY 
 		  gr.ReportCode
 		, aol.LevelCode
@@ -154,5 +168,8 @@ AS
 	CLOSE cursor_name;
 	DEALLOCATE cursor_name;
 
-	SET @SQLStatement =	'DROP TABLE ##' + @ReportCode + 'Staging'
+	SET @SQLStatement =	'DROP TABLE ##' + (concat('c',@ReportCode)) + 'Staging'
 	EXEC sp_executesql @SQLStatement
+
+GO
+
