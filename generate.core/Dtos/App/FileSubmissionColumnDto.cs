@@ -18,5 +18,6 @@ namespace generate.core.Dtos.App
         public int StartPosition { get; set; }
         public int EndPosition { get; set; }
         public bool IsOptional { get; set; }
+        public string ReportColumn { get; set; }
     }
 }
