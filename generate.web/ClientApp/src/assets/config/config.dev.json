@@ -6,8 +6,8 @@
     "pageSize": 5,
     "timeoutInSeconds": 1200,
     "callService": true,
-    "authType": "OAUTH",
-    "clientId": "5ace7c36-6029-404f-aff2-8f67e119995f",
-    "authority": "https://login.microsoftonline.com/7a41925e-f697-4f7c-bec3-0470887ac752",
-    "redirectUri": "https://localhost:44312"
+    "authType": "",
+    "clientId": "",
+    "authority": "",
+    "redirectUri": ""
 }
