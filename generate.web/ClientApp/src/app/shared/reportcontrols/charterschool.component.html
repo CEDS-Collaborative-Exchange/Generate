@@ -57,7 +57,7 @@
 
 </div>
 
-<div *ngIf="repCode==='c190'">
+<div *ngIf="repCode==='190'">
     <div *ngIf="!isLoading || !hasRecords">
         <generate-app-table #reportGrid [itemsSource]="reportDataDto"
                             [headers]="['Charter  Authorizer Name','Charter Authorizer Identifier (state)','State Agency Number','Charter Authorizer Type','Mailing Address','Physical Address']"
@@ -67,7 +67,7 @@
     </div>
 
 </div>
-<div *ngIf="repCode==='c196'">
+<div *ngIf="repCode==='196'">
     <div *ngIf="!isLoading || !hasRecords">
         <generate-app-table #reportGrid [itemsSource]="reportDataDto"
                             [headers]="['Management Organization Name','Employer Identification Number (EIN)','State Agency Number','Management Organization Type','Mailing Address','Physical Address']"

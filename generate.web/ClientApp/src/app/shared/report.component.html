@@ -66,7 +66,7 @@
                     Schools
                 </button>
                 <button *ngIf="showReportLevelButton('CMO')" class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-cmo mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('CMO')}} {{CMOLevelLabelCss('c196')}}" (click)="setReportLevel($event, 'CMO')">
-                    {{getCMOLevelLabel('c196')}}
+                    {{getCMOLevelLabel('196')}}
                 </button>
                 <button *ngIf="showReportLevelButton('CAO')" class="generate-app-report-controls__reportlevel-button mdl-button generate-app-report-controls__reportlevel-button-cao mdl-js-button mdl-js-ripple-effect mdl-button--raised {{activeReportLevelCss('CAO')}}" (click)="setReportLevel($event, 'CAO')">
                     CAOs
@@ -144,7 +144,7 @@
         <div *ngIf="currentReport.reportControlType.controlTypeName === 'Indicator4B'" class="mdl-cell mdl-cell--12-col">
             <generate-app-indicator4b [reportParameters]="reportParameters"></generate-app-indicator4b>
         </div>
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'C029'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '029'" class="mdl-cell mdl-cell--12-col">
             <generate-app-c029 [reportParameters]="reportParameters"></generate-app-c029>
         </div>
         <div *ngIf="currentReport.reportControlType.controlTypeName === 'GradesOffered'" class="mdl-cell mdl-cell--12-col">
@@ -167,45 +167,45 @@
         <div *ngIf="currentReport.reportControlType.controlTypeName === 'EarlyCharter'" class="mdl-cell mdl-cell--12-col">
             <generate-app-earlycharter [reportParameters]="reportParameters"></generate-app-earlycharter>
         </div>
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c198'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '198'" class="mdl-cell mdl-cell--12-col">
             <generate-app-c198 [reportParameters]="reportParameters"></generate-app-c198>
         </div>
 
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c197'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '197'" class="mdl-cell mdl-cell--12-col">
             <generate-app-c197 [reportParameters]="reportParameters"></generate-app-c197>
         </div>
 
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c132'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '132'" class="mdl-cell mdl-cell--12-col">
             <generate-app-c132 [reportParameters]="reportParameters"></generate-app-c132>
         </div>
 
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c199'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '199'" class="mdl-cell mdl-cell--12-col">
             <generate-app-c199 [reportParameters]="reportParameters"></generate-app-c199>
         </div>
 
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c170'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '170'" class="mdl-cell mdl-cell--12-col">
             <generate-app-c170 [reportParameters]="reportParameters"></generate-app-c170>
         </div>
 
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c205'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '205'" class="mdl-cell mdl-cell--12-col">
             <generate-app-205 [reportParameters]="reportParameters"></generate-app-205>
         </div>
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c206'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '206'" class="mdl-cell mdl-cell--12-col">
             <generate-app-206 [reportParameters]="reportParameters"></generate-app-206>
         </div>
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c131'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '131'" class="mdl-cell mdl-cell--12-col">
             <generate-app-c131 [reportParameters]="reportParameters"></generate-app-c131>
         </div>
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c163'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '163'" class="mdl-cell mdl-cell--12-col">
             <generate-app-c163 [reportParameters]="reportParameters"></generate-app-c163>
         </div>
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c035'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '035'" class="mdl-cell mdl-cell--12-col">
             <generate-app-c035 [reportParameters]="reportParameters"></generate-app-c035>
         </div>
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c207'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '207'" class="mdl-cell mdl-cell--12-col">
             <generate-app-c207 [reportParameters]="reportParameters"></generate-app-c207>
         </div>
-        <div *ngIf="currentReport.reportControlType.controlTypeName === 'c223'" class="mdl-cell mdl-cell--12-col">
+        <div *ngIf="currentReport.reportControlType.controlTypeName === '223'" class="mdl-cell mdl-cell--12-col">
             <generate-app-c223 [reportParameters]="reportParameters"></generate-app-c223>
         </div>
     </div>

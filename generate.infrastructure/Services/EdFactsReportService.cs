@@ -76,13 +76,13 @@ namespace generate.infrastructure.Services
             }
             else
             {
-                if (report.ReportCode.ToLower() == "c059" && reportLevel == "sch")
+                if (report.ReportCode.ToLower() == "059" && reportLevel == "sch")
                 {                    
-                    report.ReportName = "C059: Classroom Teacher FTE";
+                    report.ReportName = "059: Classroom Teacher FTE";
                 }
-                if (report.ReportCode.ToLower() == "c050" && reportYear == "2017-18")
+                if (report.ReportCode.ToLower() == "050" && reportYear == "2017-18")
                 {
-                    report.ReportName = "C050: Title III English Language Proficiency Results";
+                    report.ReportName = "050: Title III English Language Proficiency Results";
                 }
 
 
@@ -104,7 +104,7 @@ namespace generate.infrastructure.Services
 
             if(page > 1) { skip = (page - 1) * pageSize;  }
 
-            if (report.ReportCode == "c052")
+            if (report.ReportCode == "052")
             {
                 bool isOnlineReport = false;
 
@@ -115,7 +115,7 @@ namespace generate.infrastructure.Services
             else if (report.FactTable.FactTableName == "FactK12StudentCounts")
             {
                 bool isOnlineReport = false;
-                if (reportCode == "c204" || reportCode == "c151" || reportCode == "c150")
+                if (reportCode == "204" || reportCode == "151" || reportCode == "150")
                 {
                     isOnlineReport = true;
                 }
@@ -143,14 +143,14 @@ namespace generate.infrastructure.Services
             }
             else if (report.FactTable.FactTableName == "FactOrganizationCounts")
             {
-                if(reportCode == "c039")
+                if(reportCode == "039")
                 {
                     var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
                     dataRows = query.ToList();
                     reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
 
                 }
-                else if (reportCode == "c130")
+                else if (reportCode == "130")
                 {
                     var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
                     dataRows = query.ToList();
@@ -186,7 +186,7 @@ namespace generate.infrastructure.Services
             queryOrganizationStatusdto = _factOrganizationStatusCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
             reportDto.dataCount = queryOrganizationStatusdto.Select(q => q.OrganizationStateId).Distinct().Count();
 
-            if (reportCode == "c199" || reportCode == "c201" || reportCode == "c200" || reportCode == "c202")
+            if (reportCode == "199" || reportCode == "201" || reportCode == "200" || reportCode == "202")
             {
                 Dictionary<string, string> columns = new Dictionary<string, string>();
 
@@ -195,7 +195,7 @@ namespace generate.infrastructure.Services
                 if (categorySetCode == "CSC" || categorySetCode == "CSC1") { columns.Add("LepStatus", "English Learner Status"); }
                 if (categorySetCode == "CSD" || categorySetCode == "CSD1") { columns.Add("EcoDisStatus", "Economic Disadvantage Status"); }
                 
-                if (reportCode == "c202")
+                if (reportCode == "202")
                 {
                     columns.Add("STATEDEFINEDCUSTOMINDICATORCODE", "Indicator Type");
                 }

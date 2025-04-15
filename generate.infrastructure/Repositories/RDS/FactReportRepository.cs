@@ -60,7 +60,7 @@ namespace generate.infrastructure.Repositories.RDS
 
         private IQueryable<FactK12StudentCount> FilterFactStudentCount(IQueryable<FactK12StudentCount> facts, string reportCode, List<string> excludeFilters)
         {
-            if (reportCode == "c045")
+            if (reportCode == "045")
             {
                 if (excludeFilters == null || !excludeFilters.Contains("age"))
                 {
@@ -124,7 +124,7 @@ namespace generate.infrastructure.Repositories.RDS
 
         private IQueryable<FactK12StudentDiscipline> FilterFactStudentDiscipline(IQueryable<FactK12StudentDiscipline> facts, string reportCode, string categories, List<string> excludeFilters)
         {
-            if (reportCode == "c005" || reportCode == "c007")
+            if (reportCode == "005" || reportCode == "007")
             {
                 if (excludeFilters == null || !excludeFilters.Contains("disability"))
                 {
@@ -176,7 +176,7 @@ namespace generate.infrastructure.Repositories.RDS
 
         private IQueryable<FactK12StudentDiscipline> ToggleFactStudentDiscipline(IQueryable<FactK12StudentDiscipline> facts, string reportCode, IEnumerable<string> toggleDisabilityCodes, List<string> excludeToggles)
         {
-            if (reportCode == "c005" || reportCode == "c007")
+            if (reportCode == "005" || reportCode == "007")
             {
                 if (excludeToggles == null || !excludeToggles.Contains("CHDCTDISCAT"))
                 {

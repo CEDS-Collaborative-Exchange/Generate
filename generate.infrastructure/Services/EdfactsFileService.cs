@@ -75,12 +75,12 @@ namespace generate.infrastructure.Services
             dynamic dataRows = new List<ExpandoObject>();
 
             bool includeZeroCounts = false;
-            if (reportLevel == "sea" || reportCode.ToLower() == "c052" || reportCode.ToLower() == "c032" || reportCode.ToLower() == "c040" || reportCode.ToLower() == "c033")
+            if (reportLevel == "sea" || reportCode.ToLower() == "052" || reportCode.ToLower() == "032" || reportCode.ToLower() == "040" || reportCode.ToLower() == "033")
             {
                 includeZeroCounts = true;
             }
 
-            if (reportCode.ToLower() == "c045")
+            if (reportCode.ToLower() == "045")
             {
                 includeZeroCounts = false;
             }
@@ -115,17 +115,17 @@ namespace generate.infrastructure.Services
             {
 
 
-                if (report.ReportCode == "c205")
+                if (report.ReportCode == "205")
                 {
                     var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
                     dataRows = query.ToList();
                 }
-                else if(report.ReportCode == "c130")
+                else if(report.ReportCode == "130")
                 {
                     var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
                     dataRows = query.ToList();
                 }
-                else if(report.ReportCode == "c039")
+                else if(report.ReportCode == "039")
                 {
                     var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, null);
                     dataRows = query.ToList();
@@ -137,7 +137,7 @@ namespace generate.infrastructure.Services
                 }
             }
 
-            if (report.ReportCode == "c193")
+            if (report.ReportCode == "193")
             {
                 foreach (var dataRow in dataRows)
                 {
@@ -243,7 +243,7 @@ namespace generate.infrastructure.Services
                     }
                 }
             }
-            else if (report.ReportCode == "c197" || report.ReportCode == "c198")
+            else if (report.ReportCode == "197" || report.ReportCode == "198")
             {
                 foreach (var dataRow in dataRows)
                 {
@@ -347,7 +347,7 @@ namespace generate.infrastructure.Services
                     dynamicRows.Add(fileDataRow);
                 }
             }
-            else if (report.ReportCode == "c190" || report.ReportCode == "c196")
+            else if (report.ReportCode == "190" || report.ReportCode == "196")
             {
                 foreach (var dataRow in dataRows)
                 {
@@ -501,7 +501,7 @@ namespace generate.infrastructure.Services
                     dynamicRows.Add(fileDataRow);
                 }
             }
-            else if (report.ReportCode == "c205")
+            else if (report.ReportCode == "205")
             {
                 foreach (var dataRow in dataRows)
                 {
@@ -591,7 +591,7 @@ namespace generate.infrastructure.Services
                 }
             }
 
-            else if (report.ReportCode == "c131")
+            else if (report.ReportCode == "131")
             {
                 foreach (var dataRow in dataRows)
                 {
@@ -824,9 +824,9 @@ namespace generate.infrastructure.Services
                             else if (column.ColumnName == "Amount" || column.ColumnName == "MigrantStuEligibleRSY")
                             {
                                 field = factFieldName;
-                                if (reportCode == "c150") { field = "StudentRate"; }
-                                if (reportCode == "c199" || reportCode == "c200" || reportCode == "c201" || reportCode == "c202" || reportCode == "c206") { field = "INDICATORSTATUS"; }
-                                if (reportCode == "c035") { field = "FederalFundAllocated"; }
+                                if (reportCode == "150") { field = "StudentRate"; }
+                                if (reportCode == "199" || reportCode == "200" || reportCode == "201" || reportCode == "202" || reportCode == "206") { field = "INDICATORSTATUS"; }
+                                if (reportCode == "035") { field = "FederalFundAllocated"; }
                             }
 
                             else if (column.ColumnName == "ImprovementStatus")
@@ -843,7 +843,7 @@ namespace generate.infrastructure.Services
                             {
                                 field = "HOMELESSPRIMARYNIGHTTIMERESIDENCE";
                             }
-                            else if (column.ColumnName == "HomelessStatusID" && reportCode == "c037")
+                            else if (column.ColumnName == "HomelessStatusID" && reportCode == "037")
                             {
                                 field = "HOMELESSNESSSTATUS";
                             }
@@ -894,8 +894,8 @@ namespace generate.infrastructure.Services
                             else if (column.ColumnName == "TitleISchoolStatus") { field = "TITLE1SCHOOLSTATUS"; }
                             else if (column.ColumnName == "DisabilityStatusID")
                             {
-                                if (reportCode == "c118" || reportCode == "c144" || reportCode == "c141" || reportCode == "c175" || reportCode == "c178" || reportCode == "c179"
-                                || reportCode == "c185" || reportCode == "c188" || reportCode == "c189" || reportCode == "c040")
+                                if (reportCode == "118" || reportCode == "144" || reportCode == "141" || reportCode == "175" || reportCode == "178" || reportCode == "179"
+                                || reportCode == "185" || reportCode == "188" || reportCode == "189" || reportCode == "040")
                                 {
                                     field = "IDEAINDICATOR";
                                 }
