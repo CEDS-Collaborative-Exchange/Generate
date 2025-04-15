@@ -15,8 +15,8 @@ namespace generate.testdata.Interfaces
     public interface IStagingTestDataGenerator
     {
         StagingTestDataObject CreateAssessments(Random rnd, StagingTestDataObject testData, int numberOfAssessments, int SchoolYear);
-        StagingTestDataObject CreateK12EnrollmentData(StagingTestDataObject testData, int recordCount);
-        StagingEnrollmentTestDataObject UpdateK12EnrollmentData(StagingEnrollmentTestDataObject testData, int recordCount);
+        StagingTestDataObject CreateK12EnrollmentData(StagingTestDataObject testData, int recordCount, int disciplineCountLowerLimit, int disciplineCountUpperLimit);
+        StagingEnrollmentTestDataObject UpdateK12EnrollmentData(StagingEnrollmentTestDataObject testData, int recordCount, int disciplineCountLowerLimit, int disciplineCountUpperLimit);
         void GenerateTestData(int seed, int quantityOfStudents, int schoolYear, int numberOfYears, string formatType, string outputType,string dataStandardType, string filePath, ITestDataInitializer testDataInitializer);
     }
 }

@@ -79,7 +79,7 @@ namespace generate.core.Models.RDS
         public string TITLEIINSTRUCTIONALSERVICES { get; set; }
         public string TITLEISUPPORTSERVICES { get; set; }
         public string TITLEISCHOOLSTATUS { get; set; }
-        public string TITLEIPROGRAMTYPE { get; set; }
+        public string TITLEIINDICATOR { get; set; }
 
         public string MIGRANTPRIORITIZEDFORSERVICES { get; set; }
         public string CONTINUATIONOFSERVICESREASON { get; set; }

@@ -60,7 +60,7 @@ BEGIN
 	declare @tableTypeAbbrv as nvarchar(150)
 	declare @totalIndicator as nvarchar(1)
 
-	if (@reportCode in ('c204', 'c150', 'c151','c033','c116', 'c175', 'c178', 'c179', 'c185', 'c188', 'c189'))
+	if (@reportCode in ('204', '150', '151','033','116', '175', '178', '179', '185', '188', '189'))
 	begin
 		set @tableTypeAbbrv=@tableTypeAbbrvs
 		set @totalIndicator=@totalIndicators
@@ -109,7 +109,6 @@ BEGIN
 	declare @istoggleExcludeCorrectionalAge18to21 as bit
 	declare @istoggleExcludeCorrectionalAgeAll as bit
 	declare @istoggleRaceMap as bit
-
 
 	-- Get Custom Child Count Date (if available)
 	select @toggleChildCountDate = r.ResponseValue
@@ -413,7 +412,7 @@ BEGIN
 			' on ' +  case when @reportLevel = 'lea' then 'f.LeaId = l.DimLeaId '  else 'f.K12SchoolId = l.DimK12SchoolId ' end  +
 
 			--exclude 'NSLP No' Schools from the c033 School level	
-			case when @reportCode = 'c033' and @reportLevel = 'sch' 
+			case when @reportCode = '033' and @reportLevel = 'sch' 
 				then ' inner join rds.DimK12SchoolStatuses rdkss on f.K12SchoolStatusId = rdkss.DimK12SchoolStatusId ' 
 				else ''
 			end +
@@ -421,13 +420,13 @@ BEGIN
 			' where f.SchoolYearId = ' + CAST(@dimSchoolYearId as varchar(10)) +
 
 			--exclude Reportable Programs from c033/c052 School level	
-			case when @reportCode in ('c033','c052') and @reportLevel = 'sch' 
+			case when @reportCode in ('033','052') and @reportLevel = 'sch' 
 				then 'and l.SchoolTypeCode <> ''Reportable'' '
 				else ''
 			end +
 
 			--exclude 'NSLP No' Schools from the c033 School level	
-			case when @reportCode in ('c033') and @reportLevel = 'sch' 
+			case when @reportCode in ('033') and @reportLevel = 'sch' 
 				then ' and rdkss.NslpStatusEdFactsCode <> ''NSLPNO'' ' 
 				else ''
 			end +
@@ -441,14 +440,14 @@ BEGIN
 			and s.SchoolOperationalStatus	not in (''Closed'', ''FutureSchool'', ''Inactive'', ''MISSING'')
 			' end  
 
-			IF(@reportCode in ('c052'))
+			IF(@reportCode in ('052'))
 			begin
 				set @sql  = @sql + case when @reportLevel = 'lea' then ' AND CONVERT(date,s.OperationalStatusEffectiveDate,101)'
 										else ' AND CONVERT(date,s.SchoolOperationalStatusEffectiveDate,101)' 
 									end  
 									+  ' between CONVERT(date, ''' + @calculatedSYStartDate + ''',101) AND CONVERT(date, ''' + @calculatedMemberDate + ''',101)'
 			end
-			else if(@reportCode in ('c002','c089'))
+			else if(@reportCode in ('002','089'))
 			begin
 				set @sql  = @sql + case when @reportLevel = 'lea' then ' AND CONVERT(date,s.OperationalStatusEffectiveDate,101)'
 										else ' AND CONVERT(date,s.SchoolOperationalStatusEffectiveDate,101)' 
@@ -464,7 +463,7 @@ BEGIN
 			end
 			
 			--remove the schools that do not have student counts in 052
-			if @reportCode in ('c033')
+			if @reportCode in ('033')
 			begin
 				select @sql = @sql + char(10) + char(10)
 
@@ -478,7 +477,7 @@ BEGIN
 						select distinct OrganizationIdentifierSea
 						into #Membership
 						from rds.ReportEDFactsK12StudentCounts c52 
-						where c52.ReportCode = ''c052''
+						where c52.ReportCode = ''052''
 						and c52.reportLevel = ''sch'' 
 						and c52.reportyear = ''' + @reportYear + '''
 						and c52.CategorySetCode = ''TOT'' 
@@ -521,7 +520,7 @@ BEGIN
 		begin
 			-- JW 6/28/2023 Fixed Membership performance issues by using #temp table rather than "In subselect"
 			-- JW 6/30/2023 Fixed GRADE join performance by using #temp table rather than "In subselect"
-			if @reportCode in ('C052')
+			if @reportCode in ('052')
 			begin
 				select @sql = @sql + char(10) + char(10)
 
@@ -532,7 +531,7 @@ BEGIN
 					select @sql = @sql + 
 					'SELECT distinct OrganizationStateId, GRADELEVEL 
 					into #Grades
-					From rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''C039''
+					From rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''039''
 					and c39.reportLevel = ''' + @reportLevel + ''' and c39.reportyear = ''' + @reportYear + '''' + char(10)
 
 					select @sql = @sql + 
@@ -628,7 +627,7 @@ BEGIN
 
 			end
 
-			if @reportCode in ('C009')
+			if @reportCode in ('009')
 			begin
 
 				if @toggleCatchmentSea = 'Entire state (students moving out of state)'
@@ -654,7 +653,7 @@ BEGIN
 
 			end	
 
-			if @reportCode in ('C040')
+			if @reportCode in ('040')
 			begin
 				select @sql = @sql + char(10) + char(10)
 
@@ -670,7 +669,7 @@ BEGIN
 						'
 						SELECT distinct OrganizationStateId 
 						into #Grades
-						From rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''C039''
+						From rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''039''
 						and c39.reportLevel = ''' + @reportLevel + ''' and c39.reportyear = ''' + @reportYear + '''
 						and c39.gradelevel = ''12''' + char(10)
 
@@ -678,7 +677,7 @@ BEGIN
 						'
 						SELECT distinct OrganizationIdentifierSea
 						into #Membership
-						From rds.ReportEDFactsK12StudentCounts c52 where c52.ReportCode = ''C052''
+						From rds.ReportEDFactsK12StudentCounts c52 where c52.ReportCode = ''052''
 						and c52.reportLevel = ''' + @reportLevel + ''' and c52.reportyear = ''' + @reportYear + '''
 						and c52.CategorySetCode = ''TOT'' and c52.studentCount > 0
 						' + char(10)
@@ -691,7 +690,7 @@ BEGIN
 				end
 			end
 
-			if @reportCode in ('c033')
+			if @reportCode in ('033')
 			begin
 				select @sql = @sql + char(10) + char(10)
 
@@ -704,7 +703,7 @@ BEGIN
 						'
 						select distinct OrganizationIdentifierSea
 						into #Membership
-						From rds.ReportEDFactsK12StudentCounts c52 where c52.ReportCode = ''c052''
+						From rds.ReportEDFactsK12StudentCounts c52 where c52.ReportCode = ''052''
 						and c52.reportLevel = ''sch'' and c52.reportyear = ''' + @reportYear + '''
 						and c52.CategorySetCode = ''TOT'' and c52.studentCount > 0
 						' + char(10)
@@ -714,7 +713,7 @@ BEGIN
 				end
 			end
 
-			if @ReportCode in ('C002', 'C089')
+			if @ReportCode in ('002', '089')
 			begin -- C002/C089
 				-- JW 11/10/2023 Fixed C002 Performance by using #temp table rather than join to subselect
 				select @sql = @sql + char(10) + char(9) + char(9) + char(9)
@@ -723,7 +722,7 @@ BEGIN
 				select @sql = @sql + '
 	
 				select distinct fact.K12StudentId, rdidt.DimIdeaDisabilityTypeId, rdp.K12StudentStudentIdentifierState' 
-				+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN ' ,rdgl.DimGradeLevelId' ELSE '' END + char(10) +
+				+ CASE WHEN (@year > 2019 AND @reportCode = '002') THEN ' ,rdgl.DimGradeLevelId' ELSE '' END + char(10) +
 				'into #RULES
 				from rds.' + @factTable + ' fact '
 	
@@ -747,7 +746,7 @@ BEGIN
 				set @sql = @sql + '
 				inner join rds.DimAges rda 
 					on fact.AgeId = rda.DimAgeId
-					and rda.AgeValue >= ' + CAST(IIF(@year > 2019 AND @reportCode = 'c002',5,6) as varchar(10)) + ' and rda.AgeValue <= 21
+					and rda.AgeValue >= ' + CAST(IIF(@year > 2019 AND @reportCode = '002',5,6) as varchar(10)) + ' and rda.AgeValue <= 21
 				inner join rds.DimK12Schools rds
 					on fact.K12SchoolId = rds.DimK12SchoolId
 					and fact.SchoolYearId = @dimSchoolYearId
@@ -764,7 +763,7 @@ BEGIN
 					on fact.IdeaStatusId = rdis.DimIdeaStatusId
 				inner join rds.DimIdeaDisabilityTypes rdidt 
 					on fact.PrimaryDisabilityTypeId = rdidt.DimIdeaDisabilityTypeId'
-				+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN  '
+				+ CASE WHEN (@year > 2019 AND @reportCode = '002') THEN  '
 				inner join rds.DimGradeLevels rdgl
 					on fact.GradeLevelId = rdgl.DimGradeLevelId
 					and (CASE WHEN rda.AgeValue = 5 and rdgl.GradeLevelEdFactsCode in (''MISSING'',''PK'')
@@ -804,7 +803,7 @@ BEGIN
 			end -- C002/C089
 
 			-- JW 7/20/2023 Fixed FS141 performance issues by using #temp table rather than "In subselect"
-			if @reportCode in ('C141')
+			if @reportCode in ('141')
 			begin
 				select @sql = @sql + char(10) + char(10)
 
@@ -859,7 +858,7 @@ BEGIN
 			end
 
 			-- JW 7/20/2022 Fixed Discipline performance issues by using #temp table for #Students rather than "In subselect"
-			if @reportCode in ('c088','c143')
+			if @reportCode in ('088','143')
 			begin
 				select @sql = @sql + char(10)
 				select @sql = @sql + 
@@ -984,7 +983,7 @@ BEGIN
 				-- END CIID-6435 -----------------------------------------------
 
 			end
-			else if @reportCode in ('c007')
+			else if @reportCode in ('007')
 			begin
 				select @sql = @sql + char(10)
 				select @sql = @sql + 
@@ -1009,7 +1008,7 @@ BEGIN
 				select @sql = @sql + char(10) + 
 				'CREATE INDEX IDX_Students ON #Students (K12StudentStudentIdentifierState)' + char(10) + char(10)
 			end
-			else if @reportCode = 'c005'
+			else if @reportCode = '005'
 			begin
 				select @sql = @sql + char(10)
 				select @sql = @sql + 
@@ -1331,6 +1330,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimNOrDStatusId'
 		end
+		else if @dimensionTable = 'DimOrganizationTitleIStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimOrganizationTitleIStatusId'
+		end
 		else if @dimensionTable ='DimPeople'
 		begin
 			set @dimensionPrimaryKey = 'DimPersonId'
@@ -1347,6 +1350,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimTitleIIIStatusId'
 		end
+		else if @dimensionTable = 'DimAssessmentAdministrations'
+		begin
+			set @dimensionPrimaryKey = 'DimAssessmentAdministrationId'
+		end
 			
 		set @factKey = REPLACE(@dimensionPrimaryKey, 'Dim', '')
 
@@ -1355,7 +1362,7 @@ BEGIN
 			set @factKey = 'PrimaryDisabilityTypeId'
 		end
 
-		if @dimensionTable = 'DimGradeLevels' and @reportCode in ('c175','c178','c179','c185','c188','c189')
+		if @dimensionTable = 'DimGradeLevels' and @reportCode in ('175','178','179','185','188','189')
 		begin
 			set @factKey = 'GradeLevelWhenAssessedId'
 		end
@@ -1691,7 +1698,7 @@ BEGIN
 		end
 
 		-- Remove options based on report
-		if @reportCode in ('c002')
+		if @reportCode in ('002')
 		begin
 			if @categoryCode = 'EDUCENV' and @reportLevel = 'sch'
 			begin 
@@ -1699,7 +1706,7 @@ BEGIN
 				and o.CategoryOptionCode NOT IN (''PPPS'', ''HH'') '
 			end
 		end
-		else if @reportCode in ('c005')
+		else if @reportCode in ('005')
 		begin
 			if @categoryCode = 'EDUCENV'
 			begin
@@ -1708,7 +1715,7 @@ BEGIN
 			end
 							
 		end
-		else if @reportCode in ('c007')
+		else if @reportCode in ('007')
 		begin
 			if @categoryCode = 'EDUCENV'
 			begin
@@ -1726,7 +1733,7 @@ BEGIN
 				and o.CategoryOptionCode NOT IN (''MISSING'') '
 			end
 		end
-		else if @reportCode in ('c006', 'c088', 'c143')
+		else if @reportCode in ('006', '088', '143')
 		begin
 			if @categoryCode = 'EDUCENV'
 			begin
@@ -1734,7 +1741,7 @@ BEGIN
 				and o.CategoryOptionCode NOT IN (''PPPS'') '
 			end
 		end 
-		else if @reportCode in ('c137')
+		else if @reportCode in ('137')
 		begin
 			if @categoryCode = 'PARTSTATUS' AND @toggleEnglishLearnerProf = 0
 			begin
@@ -1742,7 +1749,7 @@ BEGIN
 				and o.CategoryOptionCode NOT IN (''MEDICAL'') '
 			end
 		end 
-		else if @reportCode in ('c138')
+		else if @reportCode in ('138')
 		begin
 			if @categoryCode = 'PARTSTATUS' AND @toggleEnglishLearnerTitleIII = 0
 			begin
@@ -1752,7 +1759,7 @@ BEGIN
 				and o.CategoryOptionCode NOT IN (''MEDEXEMPT'') '
 			end
 		end 
-		else if @reportCode in ('c144')
+		else if @reportCode in ('144')
 		begin
 			if @categoryCode = 'EDUCENV'
 			begin
@@ -1774,7 +1781,7 @@ BEGIN
 			-- Remove Exiting counts for MKC students still in SPED at SY End					
 			if @generateReportTypeCode = 'edfactsreport'
 			begin
-				if @reportCode = 'c009' 
+				if @reportCode = '009' 
 					and @toggleCatchmentSea = 'Entire state (students moving out of state)'
 					and @reportField = 'SpecialEducationExitReason'
 				begin
@@ -1838,7 +1845,7 @@ BEGIN
 					end
 				'
 
-				if @reportCode = 'c141' and @categorySetCode = 'csb'
+				if @reportCode = '141' and @categorySetCode = 'csb'
 				begin
 					set @sqlRemoveMissing = @sqlRemoveMissing + '
 						if exists (select 1 from @reportData where ' + @factField + ' > 0)
@@ -1926,7 +1933,7 @@ BEGIN
 			end
 			else if @categoryCode in ('DISABSTATIDEA', 'DISABSTATUS', 'DISABIDEASTATUS')
 			begin
-				if @reportCode = 'c175'
+				if @reportCode = '175'
 				begin
 					set @sqlCategoryReturnField = ' 
 					case 
@@ -1934,7 +1941,7 @@ BEGIN
 						else ''WDIS''
 					end'
 				end
-				else if @reportCode = 'c118'
+				else if @reportCode = '118'
 				begin
 					set @sqlCategoryReturnField = ' 
 					case 
@@ -1972,13 +1979,13 @@ BEGIN
 						else ''PART''
 					end'
 				END
-				ELSE If @reportCode in ( 'C138', 'C137')
+				ELSE If @reportCode in ( '138', '137')
 				BEGIN
 					set @sqlCategoryReturnField = ' 
 					case 
-						when CAT_' + @reportField + '.ParticipationStatusCode = ''MISSING'' then ''MISSING''						
-						when CAT_' + @reportField + '.ParticipationStatusCode = ''NPART'' then ''NPART''
-						when CAT_' + @reportField + '.ParticipationStatusCode = ''MEDEXEMPT'' then ''MEDICAL''
+						when CAT_' + @reportField + '.AssessmentRegistrationParticipationIndicatorCode = ''MISSING'' then ''MISSING''						
+						when CAT_' + @reportField + '.AssessmentRegistrationParticipationIndicatorCode = ''NPART'' then ''NPART''
+						when CAT_' + @reportField + '.AssessmentRegistrationParticipationIndicatorCode = ''MEDEXEMPT'' then ''MEDICAL''
 						else ''PART''
 					end'
 				END
@@ -2017,7 +2024,7 @@ BEGIN
 						else CAT_' + @reportField + '.' + @dimensionField + '
 					end'
 			end
-			else if @categoryCode = 'GRADELVLHS' and @reportCode in ('c175', 'c178', 'c185', 'c188')
+			else if @categoryCode = 'GRADELVLHS' and @reportCode in ('175', '178', '185', '188')
 			begin
 				set @sqlCategoryReturnField = ' 
 					case when tgglAssmnt.Grade = ''HS''
@@ -2028,7 +2035,7 @@ BEGIN
 					end'	
 			end
 
-			else if @categoryCode = 'GRADELVLHSSCI' and @reportCode in ('c179', 'c189')
+			else if @categoryCode = 'GRADELVLHSSCI' and @reportCode in ('179', '189')
 			begin
 				set @sqlCategoryReturnField = ' 
 					case when tgglAssmnt.Grade = ''HS''
@@ -2072,7 +2079,7 @@ BEGIN
 			end
 			else if (@categoryCode like 'PARTSTATUS%LG')
 			begin
-				IF (@reportCode  IN ('c188'))
+				IF (@reportCode  IN ('188'))
 				BEGIN
 					set @sqlCategoryReturnField = ' 
 						case 
@@ -2108,7 +2115,7 @@ BEGIN
 			end
 			else if (@categoryCode like 'PARTSTATUS%HS')
 			begin
-				IF (@reportCode  IN ('c188'))
+				IF (@reportCode  IN ('188'))
 				BEGIN
 					set @sqlCategoryReturnField = ' 
 						case 
@@ -2154,7 +2161,7 @@ BEGIN
 						end'
 				END
 			end
-			else if (@categoryCode = 'PROFSTATUS' and @reportCode  IN ('yeartoyearprogress','c175','c178','c179'))
+			else if (@categoryCode = 'PROFSTATUS' and @reportCode  IN ('yeartoyearprogress','175','178','179'))
 			begin
 						
 				set @sqlCategoryReturnField = ' 
@@ -2165,7 +2172,7 @@ BEGIN
 						else ''MISSING''
 					end'
 			end
-			else if @categoryCode = 'PROFSTATUS' and @reportCode='c142'
+			else if @categoryCode = 'PROFSTATUS' and @reportCode='142'
 			begin
 				set @sqlCategoryReturnField = ' 
 					case 
@@ -2175,7 +2182,7 @@ BEGIN
 						else ''MISSING''
 					end'
 			end
-			else if @categoryCode = 'TESRES' and @reportCode='c157'
+			else if @categoryCode = 'TESRES' and @reportCode='157'
 			begin
 				set @sqlCategoryReturnField = ' 
 								case 
@@ -2213,7 +2220,7 @@ BEGIN
 						else CAT_' + @reportField + '.' + @dimensionField + '
 					end'
 			end
-			else if @categoryCode IN ('AGESA','AGEEC') and @reportCode in ('c002', 'c089') and @year > 2018
+			else if @categoryCode IN ('AGESA','AGEEC') and @reportCode in ('002', '089') and @year > 2018
 			begin
 				set @sqlCategoryReturnField = 'CAT_' + @reportField + '_temp.Code'
 			end
@@ -2224,7 +2231,7 @@ BEGIN
 			end
 
 			-- Add return value for this category to the list of fields
-			IF(@reportCode = 'c006')
+			IF(@reportCode = '006')
 			begin
 				set @sqlCategoryQualifiedSubSelectDimensionFields = @sqlCategoryQualifiedSubSelectDimensionFields + ', ' + REPLACE(@sqlCategoryReturnField,'CAT_' + @reportField,'fact')
 			end
@@ -2245,7 +2252,7 @@ BEGIN
 			begin
 				set @sqlCategoryQualifiedDimensionFields = @sqlCategoryQualifiedDimensionFields + ', ' + @sqlCategoryReturnField		
 			end
-			if(@reportCode = 'c006' AND @dimensionField <> 'RemovalLengthEdFactsCode')
+			if(@reportCode = '006' AND @dimensionField <> 'RemovalLengthEdFactsCode')
 			begin
 				if @categoryCode = 'RACEETHNIC'
 				begin
@@ -2260,7 +2267,7 @@ BEGIN
 			end
 
 			----Begin New Code for c118
-			if(@reportCode in ('c118', 'c054'))
+			if(@reportCode in ('118', '054'))
 			begin
 				if @categoryCode in ('AGE3TOGRADE13','AGEGRDWO13')
 				begin
@@ -2307,7 +2314,7 @@ BEGIN
 				inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
 					on CAT_RACE.RaceEdFactsCode = CAT_' + @reportField + '_temp.Code'
 			end
-			else if @reportField = 'RACE' and @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+			else if @reportField = 'RACE' and @reportCode in ('175', '178', '179', '185', '188', '189')
 			begin
 				set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.BridgeK12StudentAssessmentRaces b 
@@ -2325,7 +2332,7 @@ BEGIN
 				inner join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
 					on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code'
 			end
-			else if (@reportField = 'PROFICIENCYSTATUS' and @reportCode in ('yeartoyearprogress','c175','c178','c179'))
+			else if (@reportField = 'PROFICIENCYSTATUS' and @reportCode in ('yeartoyearprogress','175','178','179'))
 			BEGIN
 				set @sqlCountJoins = @sqlCountJoins + '		
 					inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' 
@@ -2344,7 +2351,7 @@ BEGIN
 						on ' + @sqlCategoryReturnField + ' = CAT_' + @reportField + '_temp.Code
 					'
 			END	
-			else if (@reportField = 'GRADELEVEL' and @reportCode in ('c185', 'c188', 'c189'))
+			else if (@reportField = 'GRADELEVEL' and @reportCode in ('185', '188', '189'))
 			BEGIN
 				set @sqlCountJoins = @sqlCountJoins + '		
 					inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' 
@@ -2363,7 +2370,7 @@ BEGIN
 			END	
 			---Begin New Code for c118
 
-			else if(@reportField = 'GRADELEVEL' and @reportCode in ('c118'))
+			else if(@reportField = 'GRADELEVEL' and @reportCode in ('118'))
 			BEGIN
 				set @sqlCountJoins = @sqlCountJoins + '		
 					left join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
@@ -2376,7 +2383,18 @@ BEGIN
 			END
 			---End New Code
 
-			else if(@reportField = 'GRADELEVEL' and @reportCode in ('c054'))
+			else if(@reportField = 'GRADELEVEL' and @reportCode in ('134'))
+			BEGIN
+				set @sqlCountJoins = @sqlCountJoins + '		
+					left join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
+					left join #cat_' + @reportField + ' CAT_' + @reportField + '_temp
+						on ' + 'CAT_' + @reportField + '.GradeLevelEdFactsCode = CAT_' + @reportField + '_temp.Code
+						and ' + 'CAT_' + @reportField + '.GradeLevelEdFactsCode NOT IN (''AE'')
+					left join RDS.DimAges da ON fact.AgeId = da.DimAgeId
+					'
+			END
+
+			else if(@reportField = 'GRADELEVEL' and @reportCode in ('054'))
 			BEGIN
 				set @sqlCountJoins = @sqlCountJoins + '		
 					left join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
@@ -2387,7 +2405,7 @@ BEGIN
 						and da.AgeCode IN (''0'', ''1'', ''2'', ''3'', ''4'', ''5'')
 					'
 			END
-			else if(@reportField = 'PROFICIENCYSTATUS' and @reportCode in ('C142'))
+			else if(@reportField = 'PROFICIENCYSTATUS' and @reportCode in ('142'))
 			BEGIN
 				set @sqlCountJoins = @sqlCountJoins + '		
 					inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
@@ -2399,7 +2417,7 @@ BEGIN
 					inner join rds.DimCteStatuses cteStatus on fact.CteStatusId = cteStatus.DimCteStatusId			
 							and cteStatus.CteProgramCode =''CTECONC'''
 			END				
-			else if(@reportField = 'TESTRESULT' and  @reportCode in ('C157'))
+			else if(@reportField = 'TESTRESULT' and  @reportCode in ('157'))
 			BEGIN
 				set @sqlCountJoins = @sqlCountJoins + '		
 					inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '	
@@ -2411,7 +2429,7 @@ BEGIN
 					inner join rds.DimCteStatuses cteStatus on fact.CteStatusId = cteStatus.DimCteStatusId			
 							and cteStatus.CteProgramCode =''CTECONC'''
 			END	
-			else if(@reportCode in ('c002','c089') and @year > 2018 and @reportField IN ('AGE'))
+			else if(@reportCode in ('002','089') and @year > 2018 and @reportField IN ('AGE'))
 			begin
 				set @sqlCountJoins = @sqlCountJoins + '
 					inner join RDS.' + @dimensionTable + ' CAT_' + @reportField + ' on fact.' + @factKey + ' = CAT_' + @reportField + '.' + @dimensionPrimaryKey + '
@@ -2495,7 +2513,7 @@ BEGIN
 		set @reportFilterCondition = ''
 
 			
-		if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+		if @reportCode in ('175', '178', '179', '185', '188', '189')
 		begin
 			IF CHARINDEX('IdeaIndicator', @categorySetReportFieldList) > 0  
 			begin
@@ -2504,31 +2522,31 @@ BEGIN
 			end				
 
 		end						
-		if @reportCode in ('c002','edenvironmentdisabilitiesage6-21','c089','disciplinaryremovals','c006','c005')
+		if @reportCode in ('002','edenvironmentdisabilitiesage6-21','089','disciplinaryremovals','006','005')
 		begin
 
 			IF CHARINDEX('IdeaDisabilityType', @categorySetReportFieldList) = 0 
 			begin
 				set @reportFilterJoin = 'inner join rds.DimIdeaDisabilityTypes idea on fact.PrimaryDisabilityTypeId = idea.DimIdeaDisabilityTypeId'
 
-				if @reportCode not in ('c002','c089')
+				if @reportCode not in ('002','089')
 				begin
 					set @reportFilterCondition = 'and idea.IdeaDisabilityTypeEdFactsCode <> ''MISSING'''
 				end
 
-				IF @reportLevel = 'sch' and @reportCode = 'c002'
+				IF @reportLevel = 'sch' and @reportCode = '002'
 				begin
 					set @reportFilterJoin = 'inner join rds.DimIdeaStatuses idea on fact.IdeaStatusId = idea.DimIdeaStatusId'
 					set @reportFilterCondition = ' and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode not in (''HH'', ''PPPS'')'
 				end
 			end
-			ELSE IF @reportLevel = 'sch' AND CHARINDEX('IdeaDisabilityType', @categorySetReportFieldList) > 0 and @reportCode = 'c002'
+			ELSE IF @reportLevel = 'sch' AND CHARINDEX('IdeaDisabilityType', @categorySetReportFieldList) > 0 and @reportCode = '002'
 			begin
 				set @reportFilterJoin = 'inner join rds.DimIdeaStatuses IdeaEducationalEnvironment on fact.IdeaStatusId = IdeaEducationalEnvironment.DimIdeaStatusId'
 				set @reportFilterCondition = 'and IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode not in (''HH'', ''PPPS'')'
 			end
 
-			IF @year > 2018 AND @reportCode = 'c002' AND EXISTS (SELECT 1 FROM App.Split(@categorySetReportFieldList, ',') WHERE item = 'AGE')
+			IF @year > 2018 AND @reportCode = '002' AND EXISTS (SELECT 1 FROM App.Split(@categorySetReportFieldList, ',') WHERE item = 'AGE')
 			begin
 				set @reportFilterJoin = @reportFilterJoin + '
 				inner join rds.DimGradeLevels g on fact.GradeLevelId = g.DimGradeLevelId 
@@ -2537,7 +2555,7 @@ BEGIN
                     ELSE g.GradeLevelEdFactsCode
                     END) = g.GradeLevelEdFactsCode' 
 			end
-			ELSE IF @year > 2018 AND @reportCode = 'c089' AND EXISTS (SELECT 1 FROM App.Split(@categorySetReportFieldList, ',') WHERE item = 'AGE') 
+			ELSE IF @year > 2018 AND @reportCode = '089' AND EXISTS (SELECT 1 FROM App.Split(@categorySetReportFieldList, ',') WHERE item = 'AGE') 
 			begin
 				set @reportFilterJoin = @reportFilterJoin + '
 				inner join rds.DimGradeLevels g on fact.GradeLevelId = g.DimGradeLevelId 
@@ -2547,21 +2565,21 @@ BEGIN
 					END) = g.GradeLevelEdFactsCode'			
 			end
 		end
-		else if @reportCode in ('c116')
+		else if @reportCode in ('116')
 		begin
 			set @reportFilterJoin = 'inner join RDS.DimPeople rules
 										on rules.DimPersonId = fact.K12StudentId
 									inner join rds.DimTitleIIIStatuses titleIII on fact.TitleIIIStatusId = titleIII.DimTitleIIIStatusId'
 			set @reportFilterCondition = 'and titleIII.TitleIIILanguageInstructionProgramTypeCode <> ''MISSING'''
 		end
-		else if @reportCode in ('c157')
+		else if @reportCode in ('157')
 		begin
 			set @reportFilterJoin = '
 							inner join RDS.DimAssessments assmntSubject on fact.AssessmentId = assmntSubject.DimAssessmentId'
 			set @reportFilterCondition = '
 			and assmntSubject.AssessmentAcademicSubjectCode = ''73065'''
 		end
-		else if @reportCode in ('c143')
+		else if @reportCode in ('143')
 		begin
 			set @reportFilterJoin = 'inner join RDS.DimDisciplineStatuses CAT_DisciplinaryActionTaken 
 			on fact.DisciplineStatusId = CAT_DisciplinaryActionTaken.DimDisciplineStatusId
@@ -2572,7 +2590,7 @@ BEGIN
 			and CAT_IdeaEducationalEnvironment.IdeaEducationalEnvironmentForSchoolAgeCode <> ''PPPS''
 			and CAT_IdeaEducationalEnvironment.IdeaIndicatorEdFactsCode = ''IDEA'''
 		end
-		else if @reportCode in ('c144')
+		else if @reportCode in ('144')
 		begin
 			set @reportFilterJoin = 'inner join RDS.DimDisciplineStatuses CAT_DisciplinaryActionTaken 
 			on fact.DisciplineStatusId = CAT_DisciplinaryActionTaken.DimDisciplineStatusId
@@ -2588,13 +2606,13 @@ BEGIN
 		declare @queryFactFilter as nvarchar(max)
 		set @queryFactFilter = ''
 								
-		if @reportCode in ('c002','edenvironmentdisabilitiesage6-21')
+		if @reportCode in ('002','edenvironmentdisabilitiesage6-21')
 		begin
 			-- Ages 6-21, Has Disability
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join #RULES rules ' + char(10) + 
 				'on fact.K12StudentId = rules.K12StudentId and fact.PrimaryDisabilityTypeId = rules.DimIdeaDisabilityTypeId'
-				+ CASE WHEN (@year > 2019 AND @reportCode = 'c002') THEN char(10) + ' and fact.GradeLevelId = rules.DimGradeLevelId' ELSE '' END + '
+				+ CASE WHEN (@year > 2019 AND @reportCode = '002') THEN char(10) + ' and fact.GradeLevelId = rules.DimGradeLevelId' ELSE '' END + '
 				' + char(10)
 
 			if not @toggleDevDelayAges is null
@@ -2629,7 +2647,7 @@ BEGIN
 				end
 			end
 		end
-		else if @reportCode in ('c005')
+		else if @reportCode in ('005')
 		begin
 			-- Ages 3-21, Has Disability
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2686,7 +2704,7 @@ BEGIN
 				and fact.IdeaStatusId = rules.DimIdeaStatusId '
 				
 		end
-		else if @reportCode in ('c007')
+		else if @reportCode in ('007')
 		begin
 			-- Ages 3-21, Has Disability
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -2753,12 +2771,12 @@ BEGIN
 										GROUP BY K12StudentId, rdis.IdeaInterimRemovalCode, rdis.IdeaInterimRemovalReasonCode  HAVING SUM(rfksd.DurationOfDisciplinaryAction) > 45)'
 			*/
 		end
-		else if @reportCode = 'c009'
+		else if @reportCode = '009'
 		begin
 			-- Ages 14-21, Has Disability
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					select fact.K12StudentId, p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId, MAX(d.DateValue) as SpecialEducationServiceExitDate
+					select p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId, MAX(d.DateValue) as SpecialEducationServiceExitDate
 					from rds.' + @factTable + ' fact '
 
 			if @reportLevel = 'lea'
@@ -2815,16 +2833,16 @@ BEGIN
 
 			set @sqlCountJoins = @sqlCountJoins + '
 				and idea.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode <> ''PPPS''
-				group by fact.K12StudentId, p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId 
+				group by p.K12StudentStudentIdentifierState, idea.DimIdeaStatusId, lea.DimLeaId 
 			) rules 
-				on fact.K12StudentId = rules.K12StudentId 
+				on p.K12StudentStudentIdentifierState = rules.K12StudentStudentIdentifierState
 				and fact.IdeaStatusId = rules.DimIdeaStatusId 
 				and fact.LeaId = rules.DimLeaId
 			inner join rds.DimDates exitDate 
 				on rules.SpecialEducationServiceExitDate = exitDate.DateValue 
 				and fact.SpecialEducationServicesExitDateId = exitDate.DimDateId '
 		end
-		else if @reportCode = 'c086'
+		else if @reportCode = '086'
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -2869,7 +2887,7 @@ BEGIN
 				and fact.FirearmId = rules.DimFirearmId 
 				and fact.IncidentIdentifier = rules.IncidentIdentifier'
 		end
-		else if @reportCode in ('c089','edenvironmentdisabilitiesage3-5')
+		else if @reportCode in ('089','edenvironmentdisabilitiesage3-5')
 		begin
 			if @year > 2019
 			begin				
@@ -2998,7 +3016,7 @@ BEGIN
 				end
 			end
 		end
-		else if @reportCode in ('c006')
+		else if @reportCode in ('006')
 		begin
 			-- Ages 3-21, Has Disability, Duration >= 0.5 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3052,7 +3070,7 @@ BEGIN
 				and fact.IdeaStatusId = rules.DimIdeaStatusId '
 
 		end
-		else if @reportCode in ('c088', 'c143')
+		else if @reportCode in ('088', '143')
 		begin
 			-- Ages 3-21, Has Disability, Duration >= 0.5 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3069,7 +3087,7 @@ BEGIN
 			end
 
 		end
-		else if @reportCode in ('c134')
+		else if @reportCode in ('134')
 		BEGIN
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -3101,14 +3119,63 @@ BEGIN
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				where titleI.TitleIProgramTypeCode <> ''MISSING''
+				where titleI.TitleIIndicatorCode in (''01'',''02'',''03'',''04'')
 			) rules 
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.TitleIStatusId = rules.DimTitleIStatusId'	
 		END
-		else if @reportCode in('c138' , 'C137', 'C139')
+		else if @reportCode in ('137') and @categorySetCode = 'CSB'
 		BEGIN
-			-- Assessment type = ELPASS
+
+			-- Assessment type = LanguageProficiency
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join (
+					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, assessment.DimAssessmentID, 
+					min(adm.AssessmentAdministrationStartDate) as AssessedFirstTime	
+					from rds.' + @factTable + ' fact '
+
+			if @reportLevel = 'lea'
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+				inner join RDS.DimLeas org 
+					on fact.LeaId = org.DimLeaId
+					AND org.ReportedFederally = 1
+					AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+			end 
+			if @reportLevel = 'sch'
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+				inner join RDS.DimK12Schools org 
+					on fact.K12SchoolId = org.DimK12SchoolId
+					AND org.ReportedFederally = 1
+					AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+			end
+
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join rds.DimPeople p
+					on fact.K12StudentId = p.DimPersonId
+				inner join rds.DimAssessments assessment 
+					on fact.AssessmentID = assessment.DimAssessmentID
+					and fact.SchoolYearId = @dimSchoolYearId
+					and fact.FactTypeId = @dimFactTypeId
+					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+				inner join rds.DimAssessmentAdministrations adm on fact.AssessmentAdministrationId = adm.DimAssessmentAdministrationId
+								and adm.AssessmentIdentifier = assessment.AssessmentIdentifierState
+				where assessment.AssessmentTypeEdFactsCode = ''LanguageProficiency''
+				group by fact.K12StudentId, p.K12StudentStudentIdentifierState, assessment.DimAssessmentID
+
+			) rules 
+				on fact.K12StudentId = rules.K12StudentId 
+				and fact.AssessmentID = rules.DimAssessmentID
+				inner join RDS.DimAssessmentAdministrations CAT_ASSESSEDFIRSTTIME 
+					on fact.AssessmentAdministrationId = CAT_ASSESSEDFIRSTTIME.DimAssessmentAdministrationId
+					and rules.AssessedFirstTime = CAT_ASSESSEDFIRSTTIME.AssessmentAdministrationStartDate
+				'	
+			
+		END
+		else if @reportCode in('138' , '137', '139')
+		BEGIN
+			-- Assessment type = LanguageProficiency
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
 					select distinct fact.K12StudentId, p.K12StudentStudentIdentifierState, assessment.DimAssessmentID	
@@ -3139,18 +3206,18 @@ BEGIN
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				where assessment.AssessmentTypeEdFactsCode = ''ELPASS''
+				where assessment.AssessmentTypeEdFactsCode = ''LanguageProficiency''
 			) rules 
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.AssessmentID = rules.DimAssessmentID'	
 			
-			if(@reportCode = 'C138')
+			if(@reportCode = '138')
 			BEGIN
 				set @sqlCountJoins = @sqlCountJoins +  '
 										and fact.TitleIIIStatusId <> -1'
 			END
 		END
-		else if @reportCode in ('c144')
+		else if @reportCode in ('144')
         begin
             -- Ages 3-21 (if has disability), Grads K-12 (if no disability)
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3206,39 +3273,39 @@ BEGIN
 				and fact.K12SchoolId = rules.K12SchoolId
             '
 		end
-		else if @reportCode in ('c175', 'c178', 'c179')
+		else if @reportCode in ('175', '178', '179')
 		begin
 			set @queryFactFilter = 'and CAT_ASSESSMENTTYPEADMINISTERED.AssessmentAcademicSubjectEdFactsCode = '
-			if(@reportCode = 'c175')
+			if(@reportCode = '175')
 			begin
 				set @queryFactFilter = @queryFactFilter + '''MATH'''
 			end
-			else if(@reportCode = 'c178')
+			else if(@reportCode = '178')
 			begin
 				set @queryFactFilter = @queryFactFilter + '''RLA'''
 			end
-			else if(@reportCode = 'c179')
+			else if(@reportCode = '179')
 			begin
 				set @queryFactFilter = @queryFactFilter + '''SCIENCE'''
 			end
 		end
-		else if @reportCode in ('c185', 'c188', 'c189')
+		else if @reportCode in ('185', '188', '189')
 		begin
 			set @queryFactFilter = 'and assmnt.AssessmentAcademicSubjectEdFactsCode = '
-			if(@reportCode = 'c185')
+			if(@reportCode = '185')
 			begin
 				set @queryFactFilter = @queryFactFilter + '''MATH'''
 			end
-			else if(@reportCode = 'c188')
+			else if(@reportCode = '188')
 			begin
 				set @queryFactFilter = @queryFactFilter + '''RLA'''
 			end
-			else if(@reportCode = 'c189')
+			else if(@reportCode = '189')
 			begin
 				set @queryFactFilter = @queryFactFilter + '''SCIENCE'''
 			end
 		end
-		else if @reportCode in ('studentswdtitle1','c037')
+		else if @reportCode in ('studentswdtitle1','037')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -3272,11 +3339,10 @@ BEGIN
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
 				inner join rds.DimTitleIStatuses titleI 
 					on fact.TitleIStatusId = titleI.DimTitleIStatusId
-				where titleI.TitleISchoolStatusEdFactsCode <> ''MISSING'' 
-				and titleI.TitleISchoolStatusEdFactsCode <> ''NOTTITLE1ELIG''
+				where titleI.TitleIIndicatorCode in (''01'',''02'',''03'',''04'')
 			) rules 
-				on fact.K12SchoolId = rules.K12SchoolId 
-				and fact.TitleIStatusId = rules.DimTitleIStatusId'
+				on fact.K12StudentId = rules.K12StudentId 
+				and fact.TitleIStatusId = rules.DimTitleIStatusId'	
 		end
 
 		else if @reportCode in ('yeartoyearenvironmentcount')
@@ -3704,7 +3770,7 @@ BEGIN
 			) rules		
 				on fact.K12StudentId = rules.K12StudentId'
 		end
-		else if @reportCode in ('c045')
+		else if @reportCode in ('045')
 		begin
 			-- Ages 3-21
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -3826,7 +3892,7 @@ BEGIN
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.IdeaStatusId = rules.DimIdeaStatusId'
 		end
-		else if @reportCode in ('c121')
+		else if @reportCode in ('121')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -3865,7 +3931,7 @@ BEGIN
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.K12StudentStatusId = rules.DimK12StudentStatusId'
 		end
-		else if @reportCode in ('c122')
+		else if @reportCode in ('122')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -3908,7 +3974,7 @@ BEGIN
 				and fact.MigrantStatusId = rules.DimMigrantStatusId 
 				and fact.K12StudentStatusId = rules.DimK12StudentStatusId'
 		end
-		else if @reportCode in ('c127', 'c119')
+		else if @reportCode in ('127', '119')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -3947,7 +4013,7 @@ BEGIN
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.NorDStatusId = rules.DimNorDStatusId'
 		end
-		else if @reportCode in ('c054')
+		else if @reportCode in ('054')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -3989,7 +4055,7 @@ BEGIN
 				and fact.MigrantStatusId = rules.DimMigrantStatusId 
 				and fact.GradeLevelId = rules.DimGradeLevelId'
 		end
-		else if @reportCode in ('c165')
+		else if @reportCode in ('165')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -4028,7 +4094,7 @@ BEGIN
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.MigrantStatusId = rules.DimMigrantStatusId'
 		end
-		else if @reportCode in ('c082')
+		else if @reportCode in ('082')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -4072,7 +4138,7 @@ BEGIN
 				and fact.CteStatusId = rules.DimCteStatusId 
 				and fact.EnrollmentStatusId = rules.DimEnrollmentStatusId'
 		end
-		else if @reportCode in ('c118')
+		else if @reportCode in ('118')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 					inner join rds.DimPeople p
@@ -4092,7 +4158,7 @@ BEGIN
 						on homeless.DimHomelessnessStatusId = fact.HomelessnessStatusId
 				'	
 		end	
-		else if @reportCode in ('c160')
+		else if @reportCode in ('160')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -4131,7 +4197,7 @@ BEGIN
 				on fact.K12StudentId = rules.K12StudentId  
 				and fact.K12EnrollmentStatusId = rules.DimK12EnrollmentStatusId'
 		end
-		else if @reportCode in ('c204')
+		else if @reportCode in ('204')
 		begin
 			if(@tableTypeAbbrv='T3ELNOTPROF')
 			begin
@@ -4213,7 +4279,7 @@ BEGIN
 					and fact.TitleiiiStatusId = rules.DimTitleIIIStatusId'
 			end
 		end
-		else if @reportCode in ('c150')
+		else if @reportCode in ('150')
 		begin
 			-- calculated cohort length
 			-- (Convert(int,SUBSTRING(Cohort,6,4)) - Convert(int,SUBSTRING(Cohort,1,4))) as CohortLength
@@ -4330,7 +4396,7 @@ BEGIN
 		'
 			
 		end
-		else if @reportCode in ('c151')
+		else if @reportCode in ('151')
 		begin
 			-- calculated cohort length
 			-- (Convert(int,SUBSTRING(Cohort,6,4)) - Convert(int,SUBSTRING(Cohort,1,4))) as CohortLength
@@ -4401,7 +4467,7 @@ BEGIN
 				on fact.K12StudentId = rules.K12StudentId
 		'
 		end
-		else if @reportCode in ('c083')
+		else if @reportCode in ('083')
 		begin
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -4446,7 +4512,7 @@ BEGIN
 				and fact.EnrollmentStatusId = rules.DimEnrollmentStatusId'
 
 		end
-		else if @reportCode in ('c154')
+		else if @reportCode in ('154')
 		begin
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -4491,14 +4557,14 @@ BEGIN
 				and fact.CteStatusId = rules.DimCteStatusId 
 				and fact.K12EnrollmentStatusId = rules.DimK12EnrollmentStatusId'
 		end
-		else if @reportCode in ('C155')
+		else if @reportCode in ('155')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 					inner join rds.DimCteStatuses dps on dps.DimCteStatusId=fact.CteStatusId
 															and dps.CteParticipantCode <> ''MISSING''
 			'
 		end
-		else if @reportCode in ('c156')
+		else if @reportCode in ('156')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -4538,7 +4604,7 @@ BEGIN
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.CteStatusId = rules.DimCteStatusId'
 		end
-		else if @reportCode in ('c158')
+		else if @reportCode in ('158')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -4582,7 +4648,7 @@ BEGIN
 				and fact.K12EnrollmentStatusId = rules.DimK12EnrollmentStatusId'	
 
 		end
-		else if @reportCode in ('c169')
+		else if @reportCode in ('169')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -4626,7 +4692,7 @@ BEGIN
 				and fact.K12EnrollmentStatusId = rules.DimK12EnrollmentStatusId'
 
 		end
-	    else if @reportCode in ('c032')
+	    else if @reportCode in ('032')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -4665,7 +4731,7 @@ BEGIN
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.K12EnrollmentStatusId = rules.DimK12EnrollmentStatusId'
 		end
-		else if @reportCode in ('c040')
+		else if @reportCode in ('040')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -4708,7 +4774,7 @@ BEGIN
 				AND awardStatus.HighSchoolDiplomaTypeEDFactsCode IN (''REGDIP'',''OTHCOM'')
 			'
 		end
-		else if @reportCode in ('c033')
+		else if @reportCode in ('033')
 		begin
 			if @tableTypeAbbrv in ('LUNCHFREERED')
 			begin
@@ -4789,7 +4855,7 @@ BEGIN
 						and fact.EconomicallyDisadvantagedStatusId = rules.EconomicallyDisadvantagedStatusId'
 			end
 		end
-		else if @reportCode in ('c141')
+		else if @reportCode in ('141')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join #Students rules
@@ -4797,7 +4863,7 @@ BEGIN
 					and fact.EnglishLearnerStatusId =  rules.DimEnglishLearnerStatusId 
 					and fact.GradelevelId =  rules.DimGradelevelId'
 		end
-		else if @reportCode in ('c194')
+		else if @reportCode in ('194')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -4838,7 +4904,7 @@ BEGIN
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.HomelessnessStatusId =  rules.DimHomelessnessStatusId'
 		end
-		else if @reportCode in ('c195')
+		else if @reportCode in ('195')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
@@ -4875,11 +4941,11 @@ BEGIN
 				on fact.K12StudentId = rules.K12StudentId 
 				and fact.AttendanceId = rules.DimAttendanceId'
 		end
-		else if @reportCode ='c052'
+		else if @reportCode ='052'
 		begin
 				set @queryFactFilter = ''	
 		end
-		else if @reportCode in ('c070')
+		else if @reportCode in ('070')
 		begin
 		
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -4915,7 +4981,7 @@ BEGIN
 				and fact.K12StaffCategoryId = rules.DimK12StaffCategoryId'
 
 		end
-		else if @reportCode in ('c112')
+		else if @reportCode in ('112')
 		begin
 		
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -4951,7 +5017,7 @@ BEGIN
 				and fact.K12StaffCategoryId = rules.DimK12StaffCategoryId'
 
 		end
-		else if @reportCode in ('c067')
+		else if @reportCode in ('067')
 		begin
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -4988,7 +5054,43 @@ BEGIN
 				and fact.TitleiiiStatusId = rules.DimTitleIIIStatusId'
 		end
 
-		else if @reportCode in ('c059')
+		else if @reportCode in ('203')
+		begin
+
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join (
+					SELECT distinct fact.K12StaffId, s.DimK12StaffStatusId
+					from rds.' + @factTable + ' fact '
+
+			if @reportLevel = 'lea'
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+				inner join RDS.DimLeas org 
+					on fact.LeaId = org.DimLeaId
+					AND org.ReportedFederally = 1
+					AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+			end 
+			if @reportLevel = 'sch'
+			begin
+				set @sqlCountJoins = @sqlCountJoins + '
+				inner join RDS.DimK12Schools org 
+					on fact.K12SchoolId = org.DimK12SchoolId
+					AND org.ReportedFederally = 1
+					AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+			end
+
+			set @sqlCountJoins = @sqlCountJoins + '
+				inner join rds.DimK12StaffStatuses s 
+					on fact.K12StaffStatusId = s.DimK12StaffStatusId				
+					and fact.SchoolYearId = @dimSchoolYearId
+					and fact.FactTypeId = @dimFactTypeId
+					and fact.LeaId <> -1
+			) rules
+				on fact.K12StaffId = rules.K12StaffId 
+				and fact.K12StaffStatusId = rules.DimK12StaffStatusId'
+		end
+
+		else if @reportCode in ('059')
 		begin
 
 			set @sqlCountJoins = @sqlCountJoins + '
@@ -5037,7 +5139,7 @@ BEGIN
 		-- Insert actual count data
 		if(@factReportTable = 'ReportEDFactsK12StaffCounts')
 		begin
-			if(@reportCode = 'c099')
+			if(@reportCode = '099')
 			begin
 
 				if @reportLevel = 'sea' 
@@ -5116,7 +5218,7 @@ BEGIN
 							 else 'IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1' end  + '
 				'
 			end
-			else if(@reportCode in ('c059', 'c067','c070','c112'))
+			else if(@reportCode in ('059','067','070','112','203'))
 			begin
 				set @sql = @sql + '
 				----------------------------
@@ -5227,7 +5329,7 @@ BEGIN
 		end		-- END @factReportTable = 'ReportEDFactsK12StaffCounts'
 		else
 		begin
-			if(@reportCode = 'C009')
+			if(@reportCode = '009')
 			begin
 				set @sql = @sql + '
 					----------------------------
@@ -5239,7 +5341,7 @@ BEGIN
 					+ case when @reportLevel = 'sea' then 'DimSeaId int,'
 							when @reportLevel = 'lea' then 'DimLeaId int,' 
 							else 'DimK12SchoolId int,'
-					end + 'DimStudentId int, K12StudentStudentIdentifierState varchar(60) '  + @sqlCategoryFieldDefs + ',
+					end + 'K12StudentStudentIdentifierState varchar(60) '  + @sqlCategoryFieldDefs + ',
 					SpecialEducationServicesExitDate datetime,
 					' + @factField + ' int,
 
@@ -5263,14 +5365,17 @@ BEGIN
 					(' + case when @reportLevel = 'sea' then 'DimSeaId,'
 								when @reportLevel = 'lea' then 'DimLeaId,' 
 								else 'DimK12SchoolId,'
-						end + 'DimStudentId, K12StudentStudentIdentifierState'  + @sqlCategoryFields + ', SpecialEducationServicesExitDate, ' + @factField + ')
+						end + 'K12StudentStudentIdentifierState'  + @sqlCategoryFields + ', SpecialEducationServicesExitDate, ' + @factField + ')
 					select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
 										when @reportLevel = 'lea' then 'fact.LeaId,' 
 										else 'fact.K12SchoolId,'
-						end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
+						end + 'rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ',
 						exitDate.DateValue as SpecialEducationServicesExitDate,
 					sum(isnull(fact.' + @factField + ', 0))
-					from rds.' + @factTable + ' fact ' + @sqlCountJoins 
+					from rds.' + @factTable + ' fact  
+						inner join rds.DimPeople p
+							on fact.k12StudentId = p.DimPersonId '
+					+ @sqlCountJoins 
 					+ ' ' + @reportFilterJoin + '
 					where ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
 									when @reportLevel = 'lea' then 'fact.LeaId <> -1'
@@ -5280,23 +5385,23 @@ BEGIN
 					' group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
 										when @reportLevel = 'lea' then 'fact.LeaId,'
 										else 'fact.K12SchoolId,'
-										end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState'  + @sqlCategoryQualifiedDimensionGroupFields + ',
+										end + 'rules.K12StudentStudentIdentifierState'  + @sqlCategoryQualifiedDimensionGroupFields + ',
 										exitDate.DateValue
 					' + @sqlHavingClause + '
 					'
 			end		-- END @factReportTable = 'ReportEDFactsK12StudentCounts'
-			else if(@reportCode = 'c006')
+			else if(@reportCode = '006')
 			begin
 
 				if CHARINDEX('DisciplineMethodOfChildrenWithDisabilities', @categorySetReportFieldList) = 0 
 				begin
 					set @reportFilterJoin = @reportFilterJoin + 'inner join rds.DimDisciplineStatuses di on fact.DisciplineStatusId = di.DimDisciplineStatusId'
-					set @reportFilterCondition = @reportFilterCondition + ' and di.DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode <> ''MISSING'''
+					set @reportFilterCondition = @reportFilterCondition + ' and (di.DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode <> ''MISSING'' or di.DisciplinaryactionTakenEdFactsCode in (''03086'',''03087'')) '
 					set @reportFilterCondition = @reportFilterCondition + ' and di.IdeaInterimRemovalEDFactsCode NOT IN (''REMDW'', ''REMHO'') '
 				end
 				else
 				begin
-					set @reportFilterCondition = @reportFilterCondition + ' and CAT_DisciplineMethodOfChildrenWithDisabilities.DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode <> ''MISSING'''
+					set @reportFilterCondition = @reportFilterCondition + ' and (CAT_DisciplineMethodOfChildrenWithDisabilities.DisciplineMethodOfChildrenWithDisabilitiesEdFactsCode <> ''MISSING''  or CAT_DisciplineMethodOfChildrenWithDisabilities.DisciplinaryactionTakenEdFactsCode in (''03086'',''03087'')) '
 					set @reportFilterCondition = @reportFilterCondition + ' and CAT_DisciplineMethodOfChildrenWithDisabilities.IdeaInterimRemovalEDFactsCode NOT IN (''REMDW'', ''REMHO'') '
 				end
 
@@ -5370,9 +5475,17 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 			end
-			else if(@reportCode in ('c088'))
+			else if(@reportCode in ('088'))
 			begin
 							
+				-- Add the filter for half day or more removals to handle cases 
+				-- where a student doesn't meet the threshold at the LEA level. 
+				-- RL 2/5/2025 ------------------------------------------------------
+				if @reportLevel = 'lea' and @sqlHavingClause = ''
+				begin
+					set @sqlHavingClause = 'having SUM(fact.DurationOfDisciplinaryAction) >= 0.5 '
+				end 
+
 				set @sql = @sql + '
 
 				----------------------------
@@ -5427,7 +5540,7 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 			end
-			else if(@reportCode in ('c143'))
+			else if(@reportCode in ('143'))
 			begin
 							
 				set @sql = @sql + '
@@ -5487,7 +5600,7 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 			end
-			else if(@reportCode in ('c007'))
+			else if(@reportCode in ('007'))
 			begin
 				set @sql = @sql + '
 
@@ -5545,7 +5658,7 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 			end
-			else if(@reportCode in ('c005','c144','disciplinaryremovals'))
+			else if(@reportCode in ('005','144','disciplinaryremovals'))
 			begin
 				set @sql = @sql + '
 
@@ -5603,7 +5716,7 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 			end
-			else if(@reportCode in ('c086'))
+			else if(@reportCode in ('086'))
 			begin
 				set @sql = @sql + '
 
@@ -5661,7 +5774,63 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 			end
-			else if(@reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189', 'c157', 'c139'))
+			else if(@reportCode in ('137') and @categorySetCode = 'CSB')
+			begin
+				set @sql = @sql + '
+
+				----------------------------
+				-- Insert actual count data 
+				----------------------------
+
+				create table #categorySet (	' 
+				+ case when @reportLevel = 'sea' then 'DimSeaId int,'
+						when @reportLevel = 'lea' then 'DimLeaId int,' 
+						else 'DimK12SchoolId int,'
+				end + 'DimStudentId int, K12StudentStudentIdentifierState varchar(50)' + @sqlCategoryFieldDefs + ', FirstAssessed varchar(50) ,
+				' + @factField + ' int
+			)
+		
+
+				' + case when @reportLevel = 'sea' then '
+				CREATE INDEX IDX_CategorySet ON #CategorySet (DimSeaId)
+				'    when @reportLevel = 'lea' then '
+				CREATE INDEX IDX_CategorySet ON #CategorySet (DimLeaId)
+				' 	 when @reportLevel = 'sch' then '
+				CREATE INDEX IDX_CategorySet ON #CategorySet (DimK12SchoolId)
+				'    else ''
+				end +
+				'
+
+				truncate table #categorySet
+
+				-- Actual Counts
+				insert into #categorySet
+				(' + case when @reportLevel = 'sea' then 'DimSeaId,'
+						when @reportLevel = 'lea' then 'DimLeaId,' 
+						else 'DimK12SchoolId,'
+				end + 'DimStudentId, K12StudentStudentIdentifierState' + @sqlCategoryFields + ', FirstAssessed ,' + @factField + ')
+				select  ' + case when @reportLevel = 'sea' then 'fact.SeaId,'
+					when @reportLevel = 'lea' then 'fact.LeaId,' 
+						    else 'fact.K12SchoolId,'
+				end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields + ', 
+				case when min(rules.AssessedFirstTime) is not null then ''FIRSTASSESS'' else ''MISSING'' end ,
+				sum(isnull(fact.' + @factField + ', 0))
+				from rds.' + @factTable + ' fact ' + @sqlCountJoins 
+				+ ' ' + @reportFilterJoin + '
+				inner join rds.DimPeople p on fact.K12StudentId = p.DimPersonId 
+				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
+				and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
+				and ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
+							when @reportLevel = 'lea' then 'fact.LeaId <> -1'
+							else 'IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1'	 end  + '
+				group by ' + case  when @reportLevel = 'sea' then 'fact.SeaId,'
+								when @reportLevel = 'lea' then 'fact.LeaId,'
+								else 'fact.K12SchoolId,'
+								end + 'fact.K12StudentId, p.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionGroupFields + '
+				' + @sqlHavingClause + '
+				'
+			end
+			else if(@reportCode in ('175', '178', '179', '185', '188', '189', '157', '137', '139'))
 			begin
 				set @sql = @sql + '
 
@@ -5824,7 +5993,7 @@ BEGIN
 				' + @sqlHavingClause + '
 				'
 			end
-			else if(@reportCode in ('c150'))
+			else if(@reportCode in ('150'))
 			begin
 				set @sql = @sql + '
 					----------------------------
@@ -5960,7 +6129,7 @@ BEGIN
 				end
 					
 			end
-			else if(@reportCode in ('c033') AND @categorySetCode = 'TOT')
+			else if(@reportCode in ('033') AND @categorySetCode = 'TOT')
 			begin
 				set @sql = @sql + '
 					----------------------------
@@ -6018,7 +6187,7 @@ BEGIN
 					' + @sqlHavingClause + '
 					'
 			end			
-			else if(@reportCode in ('c118'))
+			else if(@reportCode in ('118'))
 			begin
 				--set the variables for Grades 13 and UG to be used in the exclusions
 				declare @gradesExclude varchar(25)
@@ -6179,13 +6348,13 @@ BEGIN
 									when @reportLevel = 'lea' then 'fact.LeaId,' 
 									else 'fact.K12SchoolId,'
 					end + 'fact.K12StudentId, rules.K12StudentStudentIdentifierState' + @sqlCategoryQualifiedDimensionFields +
-					case when @ReportCode = 'C116' then
+					case when @ReportCode = '116' then
 					',	count(distinct K12StudentId) '
 					else
 					',	sum(isnull(fact.' + @factField + ', 0)) '
 					end +
 				'from rds.' + @factTable + ' fact ' + char(10)
-					if @reportCode = 'C052'
+					if @reportCode = '052'
 						begin
 							select @sql = @sql + char(10) +
 							char(9) + char(9) + char(9) + char(9) + char(9) + char(9) +
@@ -6286,21 +6455,21 @@ BEGIN
 		declare @sumOperation as nvarchar(500)
 		set @sumOperation = 'sum(isnull(' + @factField + ', 0))'
 
-		if @reportCode in ('c141','c009','c175', 'c178', 'c179', 'c185', 'c188', 
-			'c189', 'c121', 'c194', 'c082', 'c083', 'c154', 'c155', 'c156', 'c157', 'c158',
-			'C052') -- JW 6/30/2023 Added C052
+		if @reportCode in ('141','175', '178', '179', '185', '188', 
+			'189', '121', '194', '082', '083', '154', '155', '156', '157', '158',
+			'052') -- JW 6/30/2023 Added C052
 		begin
 			set @sumOperation = 'count(distinct cs.dimStudentId )'
 		end
-		else if @reportCode in ('c002', 'c089', 'c005','c006','c088','c144', 'c116', 'c118')
+		else if @reportCode in ('002', '089', '009', '005','006','088','144', '116', '118')
 		begin
 			set @sumOperation = 'count(distinct cs.K12StudentStudentIdentifierState )'
 		end
-		else if @reportCode in ('c086')
+		else if @reportCode in ('086')
 		begin
 			set @sumOperation = 'count(distinct cs.IncidentIdentifier)'
 		end
-		else if @reportCode in ('c059', 'c070', 'c099', 'c112', 'c203')
+		else if @reportCode in ('059', '070', '099', '112', '203')
 		begin
 			set @sumOperation = 'sum(round(isnull(' + @factField + ', 0), 2))'
 		end
@@ -6333,11 +6502,11 @@ BEGIN
 			declare @dropTableSQL nvarchar(max)
 
 			-- c033 creates the debug table, then adds to it so we have to conditionally drop that table
-			if @reportCode in ('c033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'DIRECTCERT'
+			if @reportCode in ('033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'DIRECTCERT'
 			begin
 				set @dropTableSQL = '       IF OBJECT_ID(N''[debug].' + QUOTENAME(@debugTableName) + ''',N''U'') IS NOT NULL DROP TABLE [debug].' + QUOTENAME(@debugTableName) + char(10) + char(10)
 			end
-			else if @reportCode in ('c033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'LUNCHFREERED' -- if @dropdebugtable = 1 don't drop the table
+			else if @reportCode in ('033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'LUNCHFREERED' -- if @dropdebugtable = 1 don't drop the table
 			begin
 				set @dropTableSQL = ' ' + char(10)
 			end
@@ -6352,7 +6521,7 @@ BEGIN
 			declare @debugTableCreate nvarchar(max)
 
 			-- the debug c033 TOT table already exists, write the additional records into it
-			if @reportCode IN ('C033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'LUNCHFREERED'
+			if @reportCode IN ('033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'LUNCHFREERED'
 			begin
 				set @debugTableCreate = '		insert into '  + '[debug].' + QUOTENAME(@debugTableName) + char(10)	+	
 				'(
@@ -6370,11 +6539,11 @@ BEGIN
 			end 
 			else 
 			begin
-				if @reportCode IN ('C059', 'C070', 'C099', 'C112') 
+				if @reportCode IN ('059', '067', '070', '099', '112', '203') 
 				begin
 					set @debugTableCreate = '					select s.K12StaffStaffMemberIdentifierState '
 				end 
-				else if @reportCode IN ('c005','c006','c007','c086','c088','c143','c144','c118') 
+				else if @reportCode IN ('009','005','006','007','086','088','143','144','118') 
 				begin
 					set @debugTableCreate = '					select K12StudentStudentIdentifierState '   
 				end 
@@ -6396,7 +6565,7 @@ BEGIN
 				end
 
 				--c033 - special condition to add TableTypeAbbrv to the select criteria 
-				if @reportCode IN ('C033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'DIRECTCERT'
+				if @reportCode IN ('033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'DIRECTCERT'
 				begin
 					set @debugTableCreate += ', TableTypeAbbrv '  
 				end
@@ -6405,7 +6574,7 @@ BEGIN
 				set @debugTableCreate += @sqlCategoryFields + char(10) 
 					+ '					into [debug].' + QUOTENAME(@debugTableName) + char(10)
 			
-				IF @reportCode IN ('C059', 'C070', 'C099', 'C112')
+				IF @reportCode IN ('059', '067', '070', '099', '112', '203')
 				BEGIN
 					set @debugTableCreate += '					from #categorySet c ' + char(10) +
 					'					inner join rds.DimPeople s ' + char(10)
@@ -6413,7 +6582,7 @@ BEGIN
 				END 
 				--these reports have been converted to use K12StudentStudentIdentifierState instead of K12StudentId
 				--	in #Students and #categorySet so no need to join to DimPeople
-				ELSE IF @reportCode IN ('c005','c006','c007','c086','c088','c143','c144','c118') 
+				ELSE IF @reportCode IN ('009','005','006','007','086','088','143','144','118') 
 				BEGIN
 					set @debugTableCreate += '					from #categorySet c ' + char(10)
 				END
@@ -6438,13 +6607,13 @@ BEGIN
 						+ '						on c.DimK12SchoolId = sc.DimK12SchoolId ' + char(10)
 				end 
 
-				if @reportCode NOT IN ('C059', 'C070', 'C099', 'C112') 
+				if @reportCode in ('059', '067', '070', '099', '112', '203') 
 				begin
-					set @debugTableCreate += '					order by K12StudentStudentIdentifierState ' + char(10)
+					set @debugTableCreate += '					order by s.K12StaffStaffMemberIdentifierState ' + char(10)
 				end
 				else 
 				begin
-					set @debugTableCreate += '					order by s.K12StaffStaffMemberIdentifierState ' + char(10)
+					set @debugTableCreate += '					order by K12StudentStudentIdentifierState ' + char(10)
 				end
 			end
 			set @sql += @debugTableCreate 
@@ -6484,13 +6653,17 @@ BEGIN
 				set @sql = @sql + ',StaffCount'
 			end
 				
-			if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+			if @reportCode in ('175', '178', '179', '185', '188', '189')
 			begin
 				set @sql = @sql + ',AssessmentAcademicSubject'
 			end
-			else if(@reportCode in ('c150'))
+			else if(@reportCode in ('150'))
 			begin
 				set @sql = @sql + ',ADJUSTEDCOHORTGRADUATIONRATE'
+			end
+			else if(@reportCode in ('137') and @categorySetCode = 'CSB')
+			begin
+				set @sql = @sql + ',ASSESSEDFIRSTTIME'
 			end
 
 			set @sql = @sql + '
@@ -6515,7 +6688,7 @@ BEGIN
 
 			if(@factReportTable = 'ReportEDFactsK12StaffCounts')
 			begin
-				if @reportCode in ('c067', 'c070', 'c112')
+				if @reportCode in ('067', '070', '112')
 				begin
 					set @sql = @sql + ',count(distinct dimK12StaffId )'
 				end
@@ -6524,18 +6697,23 @@ BEGIN
 					set @sql = @sql + ',sum(isnull(StaffCount, 0))'
 				end
 			end
-				
-			if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+
+			if(@reportCode in ('137') and @categorySetCode = 'CSB')
 			begin
-				set @sql = @sql + ', case when ''' + @reportCode + ''' in (''c175'',''c185'') then ''MATH''
-									when ''' + @reportCode + ''' in (''c178'',''c188'') then ''RLA''
-									when ''' + @reportCode + ''' in (''c179'',''c189'') then ''SCIENCE''
+				set @sql = @sql + ',FirstAssessed'
+			end
+				
+			if @reportCode in ('175', '178', '179', '185', '188', '189')
+			begin
+				set @sql = @sql + ', case when ''' + @reportCode + ''' in (''175'',''185'') then ''MATH''
+									when ''' + @reportCode + ''' in (''178'',''188'') then ''RLA''
+									when ''' + @reportCode + ''' in (''179'',''189'') then ''SCIENCE''
 									ELSE ''MISSING''
 							end
 					'
 			end
 
-			if(@reportCode in ('c150'))
+			if(@reportCode in ('150'))
 			begin
 				set @sql = @sql + ', cast(' + @sumOperation + ' / @CohortTotal * 100 as Decimal(9,2)) as ADJUSTEDCOHORTGRADUATIONRATE '
 			end
@@ -6544,17 +6722,17 @@ BEGIN
 				from #categorySet cs
 				inner join rds.DimSeas sea on cs.DimSeaId = sea.DimSeaId'
 
-			if(@reportCode in ('C009')) 
+			if(@reportCode in ('009')) 
 			begin
 				if @categorySetCode = 'TOT' 
 				begin
 					set @sql = @sql + ' 
-					left join (select DimStudentId, ' 
+					left join (select K12StudentStudentIdentifierState, ' 
 				end
 				else
 				begin
 					set @sql = @sql + ' 
-					inner join (select DimStudentId, ' 
+					inner join (select K12StudentStudentIdentifierState, ' 
 				end
 
 				SELECT @sql = @sql + 
@@ -6565,19 +6743,9 @@ BEGIN
 							' MAX(SpecialEducationServicesExitDate) AS SpecialEducationServicesExitDate'
 					END
 
-				if @reportLevel = 'sea' 
-				begin
-					SELECT @sql = @sql + ' from #categorySet group by DimStudentId) fs009 
-											ON cs.DimStudentId = fs009.DimStudentId 
-											AND cs.SpecialEducationServicesExitDate = fs009.SpecialEducationServicesExitDate'
-				end
-				else
-				begin
-					SELECT @sql = @sql + ' from #categorySet group by DimStudentId, DimLeaId) fs009
-											ON cs.DimStudentId = fs009.DimStudentId 
-											AND cs.DimLeaId = fs009.DimLeaId 
-											AND cs.SpecialEducationServicesExitDate = fs009.SpecialEducationServicesExitDate'
-				end
+				SELECT @sql = @sql + ' from #categorySet group by K12StudentStudentIdentifierState) fs009 
+										ON cs.K12StudentStudentIdentifierState = fs009.K12StudentStudentIdentifierState 
+										AND cs.SpecialEducationServicesExitDate = fs009.SpecialEducationServicesExitDate'
 			end 
 				
 			SET @sql = @sql + '
@@ -6589,8 +6757,13 @@ BEGIN
 					sea.SeaOrganizationIdentifierSea,
 					sea.SeaOrganizationName ' +
 					@sqlCategoryFields
-				
-			if @reportCode in ('c086')
+			
+			if(@reportCode in ('137') and @categorySetCode = 'CSB')
+			begin
+				set @sql = @sql + ',FirstAssessed'
+			end
+
+			if @reportCode in ('086')
 			begin
 				set @sql = @sql + '
 					having count(distinct cs.IncidentIdentifier) > 0'
@@ -6608,7 +6781,7 @@ BEGIN
 			set @sql = @sql + '
 				-- insert lea sql '
 			if(@factReportTable = 'ReportEDFactsK12StudentCounts' 
-				OR @reportCode in ('c088', 'c143', 'c006'))
+				OR @reportCode in ('088', '143', '006'))
 			begin
 				set @sql = @sql + '
 					insert into rds.' + @factReportTable + '
@@ -6636,10 +6809,11 @@ BEGIN
 				end
 							
 				-- add StudentRate  field for c150
-				if(@reportCode in ('c150'))
+				if(@reportCode in ('150'))
 				begin
 					set @sql = @sql + ',ADJUSTEDCOHORTGRADUATIONRATE'
 				end
+
 			
 				set @sql = @sql + '
 					)
@@ -6663,7 +6837,7 @@ BEGIN
 
 				if(@factReportTable = 'ReportEDFactsK12StaffCounts')
 				begin
-					if @reportCode in ('c067', 'c070', 'c112')
+					if @reportCode in ('067', '070', '112')
 					begin
 						set @sql = @sql + ',count(distinct dimK12StaffId )'
 					end
@@ -6674,7 +6848,7 @@ BEGIN
 				end
 
 				-- add calculation for StudentRate for c150
-				if(@reportCode in ('c150'))
+				if(@reportCode in ('150'))
 				begin
 					set @sql = @sql + ', cast(' + @sumOperation + ' / @CohortTotal * 100 as Decimal(9,2)) as ADJUSTEDCOHORTGRADUATIONRATE '
 				end
@@ -6693,17 +6867,17 @@ BEGIN
 
 				end
 
-				if(@reportCode in ('C009')) 
+				if(@reportCode in ('009')) 
 				begin
 					if @categorySetCode = 'TOT' 
 					begin
 						set @sql = @sql + ' 
-						left join (select DimStudentId, ' 
+						left join (select K12StudentStudentIdentifierState, DimLeaId, ' 
 					end
 					else
 					begin
 						set @sql = @sql + ' 
-						inner join (select DimStudentId, ' 
+						inner join (select K12StudentStudentIdentifierState, DimLeaId, '
 					end
 									
 					SELECT @sql = @sql + 
@@ -6714,14 +6888,17 @@ BEGIN
 								' MAX(SpecialEducationServicesExitDate) AS SpecialEducationServicesExitDate'
 						END
 
-
-					SELECT @sql = @sql + ' from #categorySet group by DimStudentId) fs009
-						ON cs.DimStudentId = fs009.DimStudentId AND cs.SpecialEducationServicesExitDate = fs009.SpecialEducationServicesExitDate'
+					SELECT @sql = @sql + ' from #categorySet group by K12StudentStudentIdentifierState, DimLeaId) fs009
+											ON cs.K12StudentStudentIdentifierState = fs009.K12StudentStudentIdentifierState 
+											AND cs.DimLeaId = fs009.DimLeaId 
+											AND cs.SpecialEducationServicesExitDate = fs009.SpecialEducationServicesExitDate'
 				end 
 
 				set @sql = @sql + '
-					where lea.DimLeaId <> -1
-					and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
+					where lea.DimLeaId <> -1 ' + char(10)
+					set @sql = @sql + 'and lea.RecordStartDateTime >= ''' + @CalculatedSYStartDate + '''' + char(10)
+					set @sql = @sql + 'and isnull(lea.RecordEndDateTime, ''' + @CalculatedSYEndDate + ''') <= ''' + @CalculatedSYEndDate + '''' + char(10)
+					set @sql = @sql + 'and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
 					group by 
 						lea.StateANSICode,
 						lea.StateAbbreviationCode,
@@ -6759,9 +6936,13 @@ BEGIN
 					set @sql = @sql + ',StaffCount'
 				end
 							
-				if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+				if @reportCode in ('175', '178', '179', '185', '188', '189')
 				begin
 					set @sql = @sql + ',AssessmentAcademicSubject'
+				end
+				else if(@reportCode in ('137') and @categorySetCode = 'CSB')
+				begin
+					set @sql = @sql + ',ASSESSEDFIRSTTIME'
 				end
 
 				set @sql = @sql + '
@@ -6786,7 +6967,7 @@ BEGIN
 
 				if(@factReportTable = 'ReportEDFactsK12StaffCounts')
 				begin
-					if @reportCode in ('c067', 'c070', 'c112')
+					if @reportCode in ('067', '070', '112')
 					begin
 						set @sql = @sql + ',count(distinct dimK12StaffId )'
 					end
@@ -6795,12 +6976,17 @@ BEGIN
 						set @sql = @sql + ',sum(isnull(StaffCount, 0))'
 					end
 				end
-							
-				if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+
+				if(@reportCode in ('137') and @categorySetCode = 'CSB')
 				begin
-					set @sql = @sql + ', case when ''' + @reportCode + ''' in (''c175'',''c185'') then ''MATH''
-								when ''' + @reportCode + ''' in (''c178'',''c188'') then ''RLA''
-								when ''' + @reportCode + ''' in (''c179'',''c189'') then ''SCIENCE''
+					set @sql = @sql + ',FirstAssessed'
+				end
+							
+				if @reportCode in ('175', '178', '179', '185', '188', '189')
+				begin
+					set @sql = @sql + ', case when ''' + @reportCode + ''' in (''175'',''185'') then ''MATH''
+								when ''' + @reportCode + ''' in (''178'',''188'') then ''RLA''
+								when ''' + @reportCode + ''' in (''179'',''189'') then ''SCIENCE''
 								ELSE ''MISSING''
 						end
 					'
@@ -6820,8 +7006,10 @@ BEGIN
 				end
 
 				set @sql = @sql + '
-					where lea.DimLeaId <> -1
-					and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
+					where lea.DimLeaId <> -1 ' + char(10)
+					set @sql = @sql + 'and lea.RecordStartDateTime >= ''' + @CalculatedSYStartDate + '''' + char(10)
+					set @sql = @sql + 'and isnull(lea.RecordEndDateTime, ''' + @CalculatedSYEndDate + ''') <= ''' + @CalculatedSYEndDate + '''' + char(10)
+					set @sql = @sql + 'and ISNULL(lea.ReportedFederally, 1) = 1 -- CIID-1963
 					group by 
 						lea.StateANSICode,
 						lea.StateAbbreviationCode,
@@ -6832,7 +7020,12 @@ BEGIN
 						@sqlCategoryFields + '
 					'
 
-				if @reportCode in ('c086')
+				if(@reportCode in ('137') and @categorySetCode = 'CSB')
+				begin
+					set @sql = @sql + ',FirstAssessed'
+				end
+
+				if @reportCode in ('086')
 				begin
 					set @sql = @sql + '
 						having count(distinct cs.IncidentIdentifier) > 0'
@@ -6873,13 +7066,17 @@ BEGIN
 			begin
 				set @sql = @sql + ', StaffCount'
 			end
-			if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+			if @reportCode in ('175', '178', '179', '185', '188', '189')
 			begin
 				set @sql = @sql + ',AssessmentAcademicSubject'
 			end
+			else if(@reportCode in ('137') and @categorySetCode = 'CSB')
+			begin
+				set @sql = @sql + ',ASSESSEDFIRSTTIME'
+			end
 			
 			-- add StudentRate  field for c150
-			if(@reportCode in ('c150'))
+			if(@reportCode in ('150'))
 			begin
 				set @sql = @sql + ', ADJUSTEDCOHORTGRADUATIONRATE'
 			end
@@ -6906,7 +7103,7 @@ BEGIN
 
 			if(@factReportTable = 'ReportEDFactsK12StaffCounts')
 			begin
-				if @reportCode in ('c067', 'c070', 'c112')
+				if @reportCode in ('067', '070', '112')
 				begin
 					set @sql = @sql + ',count(distinct dimK12StaffId )'
 				end
@@ -6915,17 +7112,23 @@ BEGIN
 					set @sql = @sql + ',sum(isnull(StaffCount, 0))'
 				end
 			end
-			if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+
+			if(@reportCode in ('137') and @categorySetCode = 'CSB')
 			begin
-				set @sql = @sql + ', case when ''' + @reportCode + ''' in (''c175'',''c185'') then ''MATH''
-									when ''' + @reportCode + ''' in (''c178'',''c188'') then ''RLA''
-									when ''' + @reportCode + ''' in (''c179'',''c189'') then ''SCIENCE''
+				set @sql = @sql + ',FirstAssessed'
+			end
+
+			if @reportCode in ('175', '178', '179', '185', '188', '189')
+			begin
+				set @sql = @sql + ', case when ''' + @reportCode + ''' in (''175'',''185'') then ''MATH''
+									when ''' + @reportCode + ''' in (''178'',''188'') then ''RLA''
+									when ''' + @reportCode + ''' in (''179'',''189'') then ''SCIENCE''
 									ELSE ''MISSING''
 							end
 				'
 			end
 			-- add calculation for StudentRate for c150
-			if(@reportCode in ('c150'))
+			if(@reportCode in ('150'))
 			begin
 				set @sql = @sql + ', cast(' + @sumOperation + ' / @CohortTotal * 100 as Decimal(9,2)) as ADJUSTEDCOHORTGRADUATIONRATE '
 			end
@@ -6985,13 +7188,20 @@ BEGIN
 						sch.SchoolIdentifierSea,
 						sch.NameOfInstitution ,
 						sch.LeaIdentifierSea ' +
-						@sqlCategoryFields + '
-					having sum(' + @factField + ') > 0'
+						@sqlCategoryFields 
+
+				if(@reportCode in ('137') and @categorySetCode = 'CSB')
+				begin
+					set @sql = @sql + ',FirstAssessed'
+				end
+
+				set @sql = @sql + '
+						having sum(' + @factField + ') > 0'
 			end
 		end		-- END sch
 
 		-- delete #categoryCohortSet used to calculate cohort total
-		if(@reportCode in ('c150'))
+		if(@reportCode in ('150'))
 		begin
 			set @sql = @sql + '
 			drop table #categoryCohortSet'
@@ -7001,7 +7211,7 @@ BEGIN
 	-----------------Contiguous Performance levels------------------------------------------------------------
 	if @sqlType = 'performanceLevels'
 	begin
-		if @reportCode in ('c175','c178','c179') and @reportLevel <> 'sea' and @year <= 2018
+		if @reportCode in ('175','178','179') and @reportLevel <> 'sea' and @year <= 2018
 		begin
 
 			declare @sqlSelectCategoryFields varchar(max)
@@ -7207,7 +7417,7 @@ BEGIN
 			set @sql = @sql + ', StaffCount'
 		end
 		
-		if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+		if @reportCode in ('175', '178', '179', '185', '188', '189')
 		begin
 			set @sql = @sql + ',AssessmentAcademicSubject'
 		end
@@ -7239,25 +7449,25 @@ BEGIN
 			set @sql = @sql + ' 0 as ' + @factField
 		end
 		
-		if @reportCode in ('c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+		if @reportCode in ('175', '178', '179', '185', '188', '189')
 		begin
-			set @sql = @sql + ', case when ''' + @reportCode + ''' in (''c175'',''c185'') then ''MATH''
-										 when ''' + @reportCode + ''' in (''c178'',''c188'') then ''RLA''
-										 when ''' + @reportCode + ''' in (''c179'',''c189'') then ''SCIENCE''
+			set @sql = @sql + ', case when ''' + @reportCode + ''' in (''175'',''185'') then ''MATH''
+										 when ''' + @reportCode + ''' in (''178'',''188'') then ''RLA''
+										 when ''' + @reportCode + ''' in (''179'',''189'') then ''SCIENCE''
 										 ELSE ''MISSING''
 									end
 				 '
 		end
 
 		/* JW 6/28/2023 Not sure this is even used
-		if @reportCode in ('c052') and @categorySetCode not in ('ST3','TOT') AND @reportLevel in ('lea', 'sch')
+		if @reportCode in ('052') and @categorySetCode not in ('ST3','TOT') AND @reportLevel in ('lea', 'sch')
 			begin
 				set @sqlCategoryOptionJoins = @sqlCategoryOptionJoins + ' inner join (select distinct GRADELEVEL,OrganizationStateId
-				from rds.ReportEDFactsOrganizationCounts where reportCode =''C039'' AND reportLevel = ''' + @reportLevel +''' AND reportyear = ''' + @reportyear +''') b
+				from rds.ReportEDFactsOrganizationCounts where reportCode =''039'' AND reportLevel = ''' + @reportLevel +''' AND reportyear = ''' + @reportyear +''') b
 				on CAT_GRADELEVEL.Code = b.GRADELEVEL and CAT_Organizations.OrganizationIdentifierSea = b.OrganizationStateId'
 			end	
 		*/
-		if @reportCode in ('c033')
+		if @reportCode in ('033')
 		begin
 			set @sqlZeroCountConditions = @sqlZeroCountConditions + ' AND TableTypeAbbrv = ''' + @tableTypeAbbrv + ''' '
 		end
@@ -7274,20 +7484,20 @@ BEGIN
 		'
 		set @sqlZeroCountConditions = REPLACE(@sqlZeroCountConditions, 'and rd.', 'and ')
 
-		if @reportCode in ('c002','c089')
+		if @reportCode in ('002','089')
 		BEGIN
 		
 		----------------Needed Just for SY 2019-20 -------------------------------------------------------------------------------------------------------------
 			IF @reportYear = '2019-20'
 			BEGIN
 				set @sql = @sql + ' 
-					IF NOT EXISTS(Select 1 from rds.ReportEDFactsK12StudentCounts a WHERE a.ReportCode in (''c002'',''c089'') 
+					IF NOT EXISTS(Select 1 from rds.ReportEDFactsK12StudentCounts a WHERE a.ReportCode in (''002'',''089'') 
 					AND a.ReportYear = ''2019-20'' AND a.AGE IN (''AGE05K'', ''AGE05NOTK''))
 					BEGIN
 						delete from @reportData WHERE AGE IN (''AGE05K'', ''AGE05NOTK'')
 					END
 
-					IF EXISTS(Select 1 from rds.ReportEDFactsK12StudentCounts a WHERE a.ReportCode in (''c002'',''c089'') 
+					IF EXISTS(Select 1 from rds.ReportEDFactsK12StudentCounts a WHERE a.ReportCode in (''002'',''089'') 
 					AND a.ReportYear = ''2019-20'' AND a.AGE IN (''AGE05K'', ''AGE05NOTK''))
 					BEGIN
 						delete from @reportData WHERE AGE IN (''5'')
@@ -7295,7 +7505,7 @@ BEGIN
 					'
 			END
 
-			IF @year < 2023 AND @reportCode = 'c089' and @reportLevel ='LEA'
+			IF @year < 2023 AND @reportCode = '089' and @reportLevel ='LEA'
 			BEGIN 
 				SET @sql = @sql + ' 
 
@@ -7313,7 +7523,7 @@ BEGIN
                 )
 				'
 			END
-			ELSE IF @year >= 2023 AND @reportCode = 'c089' and @reportLevel ='LEA'
+			ELSE IF @year >= 2023 AND @reportCode = '089' and @reportLevel ='LEA'
 			BEGIN
 				SET @sql = @sql + ' 
 					
@@ -7331,7 +7541,7 @@ BEGIN
                 )
 				'
 			END 
-			ELSE IF @year >= 2023 AND @reportCode = 'C002' and @reportLevel = 'SCH'
+			ELSE IF @year >= 2023 AND @reportCode = '002' and @reportLevel = 'SCH'
 			BEGIN
 				SET @sql = @sql + ' 
 
@@ -7354,7 +7564,7 @@ BEGIN
 			IF @toggleDevDelayAges is not null
 			BEGIN
 
-				if @reportCode = 'c002' 
+				if @reportCode = '002' 
 				begin
 					if @toggleDevDelay6to9 is null
 					begin
@@ -7371,7 +7581,7 @@ BEGIN
 					end
 				end
 
-				if @reportCode = 'c089' 
+				if @reportCode = '089' 
 				begin
 					if @toggleDevDelay3to5 is null
 					begin
@@ -7390,14 +7600,14 @@ BEGIN
 			END
 			ELSE
 			BEGIN
-				if @reportCode in ('c002', 'c089')
+				if @reportCode in ('002', '089')
 				begin
 					set @sql = @sql + '  delete a from @reportData a where IdeaDisabilityType = ''DD'' '
 				end
 			END
 
 			DECLARE @IdeaEducationalEnvironmentField VARCHAR(100) = ''
-			IF(@reportCode = 'c002') 
+			IF(@reportCode = '002') 
 			BEGIN
 				SET @IdeaEducationalEnvironmentField = 'IDEAEducationalEnvironmentForSchoolAge'
 			END 
@@ -7443,7 +7653,7 @@ BEGIN
 			END
 		END
 
-		if(@reportCode = 'c009')
+		if(@reportCode = '009')
 		BEGIN
 
 			if(@toggleBasisOfExit = 0)
@@ -7485,7 +7695,7 @@ BEGIN
 			end
 		END
 
-		if @reportCode = 'C040'
+		if @reportCode = '040'
 		BEGIN
 			IF @reportLevel <> 'sea'
 			BEGIN
@@ -7502,7 +7712,7 @@ BEGIN
 			END
 		END
 
-		if @reportCode in ('c175','c178','c179','c185','c188','c189')
+		if @reportCode in ('175','178','179','185','188','189')
 		begin
 			if @istoggleRaceMap = 1
 			begin
@@ -7520,7 +7730,7 @@ BEGIN
 			end
 		end	
 
-		if @reportCode in ('c175','c178','c179')
+		if @reportCode in ('175','178','179')
 		begin
 
 			set @sql = @sql + ' delete a from @reportData a
@@ -7531,7 +7741,7 @@ BEGIN
 									and a.AssessmentAcademicSubject = b.Subject)'
 
 		end
-		else if @reportCode in ('c185', 'c188', 'c189')
+		else if @reportCode in ('185', '188', '189')
         begin
 			set @sql = @sql + ' 
 				delete a from @reportData a
@@ -7576,13 +7786,13 @@ BEGIN
 									and a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = (''P'' + replace(b.AssessmentTypeCode, ''ASMT'', ''ASM'')))'
 		end
 		/*Student count for displaced homemakers ?  If the state does not have displaced homemakers at the secondary level, leave that category set out of the file */
-		else if @reportCode in ('c082','c083','c142','c154','c155','c156','c157','c158') and @toggleDisplacedHomemakers = '0'
+		else if @reportCode in ('082','083','142','154','155','156','157','158') and @toggleDisplacedHomemakers = '0'
 		BEGIN
 			set @sql = @sql + ' delete a from @reportData a
 				where a.' +  @factField + ' = 0 and a.CategorySetCode =''CSG''
 			'   
 		END
-		else if @reportCode in ('c083')
+		else if @reportCode in ('083')
 		BEGIN
 			set @sql = @sql + '  delete a from @reportData a
 				where a.' +  @factField + ' = 0   

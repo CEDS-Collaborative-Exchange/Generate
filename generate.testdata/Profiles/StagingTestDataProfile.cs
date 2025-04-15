@@ -257,6 +257,7 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<string>> AccessibleFormatTypeDistribution { get; set; }
         public List<DataDistribution<string>> ERSRuralUrbanContinuumCodeDistribution { get; set; }
         public List<DataDistribution<string>> RuralResidencyStatusDistribution { get; set; }
+        public List<DataDistribution<bool>> RefIdeaIndicatorDistribution { get; set; }
 
         #endregion
 
@@ -1540,6 +1541,10 @@ namespace generate.testdata.Profiles
             this.RefIdeaInterimRemovalDistribution.Add(new DataDistribution<string>() { Option = null, ExpectedDistribution = 60 });
             this.RefIdeaInterimRemovalDistribution.Add(new DataDistribution<string>() { Option = "REMDW", ExpectedDistribution = 85 });
             this.RefIdeaInterimRemovalDistribution.Add(new DataDistribution<string>() { Option = "REMHO", ExpectedDistribution = 100 });
+
+            this.RefIdeaIndicatorDistribution = new List<DataDistribution<bool>>();
+            this.RefIdeaIndicatorDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 20 });
+            this.RefIdeaIndicatorDistribution.Add(new DataDistribution<bool>() { Option = true, ExpectedDistribution = 100 });
 
             #endregion
 

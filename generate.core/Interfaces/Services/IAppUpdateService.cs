@@ -36,7 +36,7 @@ namespace generate.core.Interfaces.Services
 
         void ExecuteDatabaseUpdate(string databasePath);
         void ExecuteDatabaseScript(string scriptPath, string scriptFile);
-        void DeleteObsoleteFiles(string packagePath, string listFileName, string updatePath);
+        void DeleteObsoleteFiles(string packagePath, string listFileName, string destinationPath);
 
     }
 }

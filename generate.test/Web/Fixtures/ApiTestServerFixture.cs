@@ -44,7 +44,6 @@ namespace generate.test.Web.Fixtures
 
             this.AppDbContext = appDbContext;
 
-            ReferenceDataHelper.SetupReferenceData(appDbContext, odsDbContext);
             
             TestDataHelper.SetupTestDataForInMemoryStore(appDbContext, odsDbContext);
 

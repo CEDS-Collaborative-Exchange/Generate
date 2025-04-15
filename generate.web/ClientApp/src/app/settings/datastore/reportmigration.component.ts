@@ -579,7 +579,7 @@ export class ReportMigationComponent implements OnDestroy {
 
         this.selectedReports.forEach(t => {
 
-            if (t.reportCode === 'c029') { t.isLocked = true }
+            if (t.reportCode === '029') { t.isLocked = true }
             else { t.isLocked = false }
         });
 

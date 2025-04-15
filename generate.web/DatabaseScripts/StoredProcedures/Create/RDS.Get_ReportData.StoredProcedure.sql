@@ -12,7 +12,7 @@ AS
 BEGIN
 
 	--declare
-	--@reportCode as varchar(50) = 'C002',
+	--@reportCode as varchar(50) = '002',
 	--@reportLevel as varchar(50) = 'SCH',
 	--@reportYear as varchar(50) = '2024',
 	--@categorySetCode as varchar(50) = NULL,
@@ -57,7 +57,7 @@ BEGIN
 	where r.ReportCode = @reportCode
 
 	--Manually exclude the 0 counts from the Reports that are using the new dynamic logic
-	if @reportCode in ('c218','c219','c220','c221','c222','c224','c225','c226')
+	if @reportCode in ('218','219','220','221','222','224','225','226')
 	begin
 		set @includeZeroCounts = 0
 	end
@@ -194,7 +194,7 @@ BEGIN
 
 	declare @isPerformanceSql as bit
 	set @isPerformanceSql = 0
-	if @reportCode in ('c175','c178','c179') and @reportLevel <> 'sea' and @year <= 2018 and LEN(ISNULL(@categorySetCode,'')) < 1
+	if @reportCode in ('175','178','179') and @reportLevel <> 'sea' and @year <= 2018 and LEN(ISNULL(@categorySetCode,'')) < 1
 		begin
 			set @isPerformanceSql = 1
 		end
@@ -507,14 +507,14 @@ BEGIN
 			'
 		end			-- END @isPerformanceSql = 1
 
-	if @reportCode in ('c002', 'c089')
+	if @reportCode in ('002', '089')
 		begin
 			set @includeZeroCounts = 0
 			if @reportLevel = 'SEA' set @includeZeroCounts = 1
 			if @reportLevel <> 'SEA' and @categorySetCode = 'TOT' set @includeZeroCounts = 1
 		end
 
-	if @reportLevel = 'sea' AND @reportCode in ('c005','c006','c007','c088','c143','c144')
+	if @reportLevel = 'sea' AND @reportCode in ('005','006','007','088','143','144')
 	begin
 		set @includeZeroCounts = 1
 	end
@@ -562,7 +562,7 @@ BEGIN
 					CLOSE categoryset_cursor
 					DEALLOCATE categoryset_cursor
 
-					if @reportCode in ('c032')
+					if @reportCode in ('032')
 						begin
 							set @sql = @sql + '
 								delete a from @reportData a '
@@ -586,7 +586,7 @@ BEGIN
 							'
 						end
 
-					if @reportCode = 'c033'
+					if @reportCode = '033'
 					BEGIN
 						-- Exclude the Category Set A for Schools if there are no students
 						set @sql = @sql + 'delete a from @reportData a
@@ -598,7 +598,7 @@ BEGIN
 													
 					END
 
-					if @reportCode = 'c052'
+					if @reportCode = '052'
 					BEGIN
 						-- Exclude the Category Set A and SubTotals for the LEA or Schools if there are no students
 						set @sql = @sql + 'delete a from @reportData a

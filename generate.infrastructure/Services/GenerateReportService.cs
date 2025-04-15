@@ -147,8 +147,8 @@ namespace generate.infrastructure.Services
 
                     List<CategorySet> reportCategorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == report.ReportCode, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType).ToList();
 
-                    if (report.ReportCode == "c150") { reportCategorySets = categorySets.Where(c => c.GenerateReport.ReportCode == report.ReportCode && report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId) && c.TableType.TableTypeAbbrv == "GRADRT4YRADJ").ToList(); }
-                    else if (report.ReportCode == "c151") { reportCategorySets = categorySets.Where(c => c.GenerateReport.ReportCode == report.ReportCode && report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId) && c.TableType.TableTypeAbbrv == "GRADCOHORT4YR").ToList(); }
+                    if (report.ReportCode == "150") { reportCategorySets = categorySets.Where(c => c.GenerateReport.ReportCode == report.ReportCode && report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId) && c.TableType.TableTypeAbbrv == "GRADRT4YRADJ").ToList(); }
+                    else if (report.ReportCode == "151") { reportCategorySets = categorySets.Where(c => c.GenerateReport.ReportCode == report.ReportCode && report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId) && c.TableType.TableTypeAbbrv == "GRADCOHORT4YR").ToList(); }
                     else { reportCategorySets = categorySets.Where(c => c.GenerateReport.ReportCode == report.ReportCode && report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId)).ToList(); }
 
 
@@ -356,8 +356,8 @@ namespace generate.infrastructure.Services
                 IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode 
                         && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel , 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
 
-                if (reportCode == "c150") { categorySets = categorySets.Where(c => c.TableType.TableTypeAbbrv == "GRADRT4YRADJ"); }
-                else if (reportCode == "c151") { categorySets = categorySets.Where(c =>  c.TableType.TableTypeAbbrv == "GRADCOHORT4YR"); }
+                if (reportCode == "150") { categorySets = categorySets.Where(c => c.TableType.TableTypeAbbrv == "GRADRT4YRADJ"); }
+                else if (reportCode == "151") { categorySets = categorySets.Where(c =>  c.TableType.TableTypeAbbrv == "GRADCOHORT4YR"); }
 
                 List<string> categories = new List<string>();
                 List<CategorySetCategoryOptionDto> categoryOptions = new List<CategorySetCategoryOptionDto>();

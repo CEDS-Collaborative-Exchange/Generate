@@ -23,8 +23,8 @@ namespace generate.web.Infrastructure.Helpers
             var cedsConnection = new CedsConnection()
             {
                 CedsConnectionId = 1,
-                CedsConnectionName = "C002",
-                CedsConnectionDescription = "C002 File Spec",
+                CedsConnectionName = "002",
+                CedsConnectionDescription = "002 File Spec",
                 CedsConnectionSource = "EDFacts"
             };
 

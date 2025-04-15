@@ -13,6 +13,14 @@
             Clicking this button will initiate a metadata update process that will disable the system for the next hour. Please ensure that all data migrations are complete and you are prepared for this downtime before proceeding.
         </div>
         <div class="generate-metadata-actions">
+            <label for="metayear" class="generate-metadata__message"><b>Select a School Year:</b></label>
+            <select name="metayear" id="metayear" [(ngModel)]="selSY" [disabled]="ddlDisabled" class="generate-metadata__DD">
+                <option *ngFor="let SY of latestPubSYlist;let i = index" [value]="SY">
+                    {{SY}}
+                </option>
+            </select>
+            <br><br><label for="metayear" class="generate-metadata__message">**Dropdown selection is disabled if the metadata was loaded using a file.</label>
+            <br><br>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" [disabled]="isprocessing" (click)="callFSmetaAPI()">
                 Refresh Metadata from EDPass
             </button>

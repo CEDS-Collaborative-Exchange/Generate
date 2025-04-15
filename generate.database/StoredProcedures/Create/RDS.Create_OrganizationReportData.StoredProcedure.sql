@@ -592,7 +592,9 @@ BEGIN
 						, [OrganizationCount]
 						, [OrganizationName]
 						, [OrganizationNcesId]
-						, [OrganizationStateId]							
+						, [OrganizationStateId]		
+						, [ParentOrganizationStateId]
+						, [ParentOrganizationNcesId]
 						, [ReportCode]
 						, [ReportLevel]
 						, [ReportYear]
@@ -611,6 +613,8 @@ BEGIN
 						, sch.NameOfInstitution as OrganizationName 
 						, sch.SchoolIdentifierNces
 						, sch.SchoolIdentifierSea
+						, sch.LeaIdentifierSea
+						, sch.LeaIdentifierNces
 						, @reportCode
 						, @reportLevel
 						, @reportYear
@@ -631,7 +635,7 @@ BEGIN
 							on fact.SecondaryAuthorizingBodyCharterSchoolAuthorizerId = secondaryAuthorizer.DimCharterSchoolAuthorizerId
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
-					where d.SchoolYear = @reportYear 
+					where d.SchoolYear = @reportYear
 					and sch.DimK12SchoolId <> -1
 					and ISNULL(sch.ReportedFederally, 1) = 1 
 					and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')

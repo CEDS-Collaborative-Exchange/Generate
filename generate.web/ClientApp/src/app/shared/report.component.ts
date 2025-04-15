@@ -443,7 +443,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
             newParameters.connectionLink = this.currentReport.connectionLink;
             this.getOrganizationLevelByCode(newParameters);
 
-            if (newParameters.reportCode === 'c029') {
+            if (newParameters.reportCode === '029') {
 
                 this._organizationService.getLEAs(newParameters.reportYear)
                     .subscribe(
@@ -1307,10 +1307,10 @@ export class ReportComponent implements AfterViewInit, OnInit {
     //Remove Category Set from the School Level report title. Per file spec: "For the school level file, there are no required categories and totals.
     showCategorySet() {
         let isDisplayed: boolean = true;
-        if ((this.reportParameters.reportCode === 'c059') && this.reportParameters.reportLevel == 'sch') {
+        if ((this.reportParameters.reportCode === '059') && this.reportParameters.reportLevel == 'sch') {
             isDisplayed = false;
         }
-        if (this.reportParameters.reportCode === 'c190' || this.reportParameters.reportCode === 'c196' || this.reportParameters.reportCode === 'c197' || this.reportParameters.reportCode === 'c198') {
+        if (this.reportParameters.reportCode === '190' || this.reportParameters.reportCode === '196' || this.reportParameters.reportCode === '197' || this.reportParameters.reportCode === '198') {
             isDisplayed = false;
         }
         return isDisplayed;

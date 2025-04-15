@@ -25,15 +25,15 @@ namespace generate.test.Web.Tests.Controllers.Api.App
             data.Add(new CedsConnection()
             {
                  CedsConnectionId = 1,
-                 CedsConnectionName = "C002",
-                 CedsConnectionDescription = "C002 File Spec",
+                 CedsConnectionName = "002",
+                 CedsConnectionDescription = "002 File Spec",
                  CedsConnectionSource = "EDFacts"
             });
             data.Add(new CedsConnection()
             {
                 CedsConnectionId = 2,
-                CedsConnectionName = "C029",
-                CedsConnectionDescription = "C029 File Spec",
+                CedsConnectionName = "029",
+                CedsConnectionDescription = "029 File Spec",
                 CedsConnectionSource = "EDFacts"
             });
             return data;

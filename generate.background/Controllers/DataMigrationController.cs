@@ -11,7 +11,7 @@ namespace generate.background.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DataMigrationController : Controller
+    public class DataMigrationController : ControllerBase
     {
 
         private readonly IMigrationService _migrationService;

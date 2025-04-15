@@ -1,6 +1,5 @@
 ﻿using generate.core.Config;
 using generate.core.Helpers.ReferenceData;
-using generate.core.Helpers.TestDataHelper.App;
 using generate.infrastructure.Contexts;
 using generate.infrastructure.Repositories.RDS;
 using Microsoft.EntityFrameworkCore;
@@ -55,11 +54,7 @@ namespace generate.test.Infrastructure.Repositories
 
         private void SetupTestData(AppDbContext appDbContext)
         {
-            appDbContext.ToggleQuestions.AddRange(ToggleQuestionHelper.GetData());
-            appDbContext.ToggleQuestionOptions.AddRange(ToggleQuestionOptionHelper.GetData());
-            appDbContext.ToggleResponses.AddRange(ToggleResponseHelper.GetData());
 
-            appDbContext.SaveChanges();
         }
 
         [Fact]

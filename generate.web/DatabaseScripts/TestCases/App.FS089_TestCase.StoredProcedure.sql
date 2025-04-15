@@ -254,6 +254,7 @@ BEGIN
 			ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue
 
 		WHERE @ChildCountDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, GETDATE())
+		and sppse.IdeaIndicator = 1
 		and (rda.AgeValue in (3,4)
 			OR (rda.AgeValue = 5
 				AND (ske.GradeLevel IS NULL 

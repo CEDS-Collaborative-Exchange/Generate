@@ -20,14 +20,10 @@ namespace generate.infrastructure.Services
         private IAppRepository _appRepository;
         private IRDSRepository _dimFactTypeRepository;
         private IFactStudentCountRepository _factStudentCountRepository;
-        private IFactStudentDisciplineRepository _factStudentDisciplineRepository;
         private IFactCustomCountRepository _customReportRepository;
 
 
         private string reportType = "sppaprreport";
-
-        private int childCountDateMonth = 10;
-        private int childCountDateDay = 1;
 
         public SppAprReportService(
             IAppRepository appRepository,
@@ -40,24 +36,7 @@ namespace generate.infrastructure.Services
             _appRepository = appRepository;
             _dimFactTypeRepository = dimFactTypeRepository;
             _factStudentCountRepository = factStudentCountRepository;
-            _factStudentDisciplineRepository = factStudentDisciplineRepository;
             _customReportRepository = customReportRepository;
-
-
-            ToggleResponse childCountDate = _appRepository.Find<ToggleResponse>(r => r.ToggleQuestion.EmapsQuestionAbbrv == "CHDCTDTE").FirstOrDefault();
-            if (childCountDate != null)
-            {
-                if (childCountDate.ResponseValue.Contains("/"))
-                {
-                    string[] childCountDateArray = childCountDate.ResponseValue.Split('/');
-                    if (childCountDateArray.Length == 2)
-                    {
-                        int.TryParse(childCountDateArray[0], out childCountDateMonth);
-                        int.TryParse(childCountDateArray[1], out childCountDateDay);
-                    }
-                }
-
-            }
 
         }
 

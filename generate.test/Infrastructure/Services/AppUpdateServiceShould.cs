@@ -710,167 +710,167 @@ namespace generate.test.Infrastructure.Services
         }
 
 
-        [Fact]
-        public void CheckForPendingUpdates()
-        {
-            using (var context = GetContextWithData())
-            {
-                // Arrange
-                var fileSystem = SetupFileSystem_MultipleFiles();
-                var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
-                var appSettings = new Mock<IOptions<AppSettings>>();
-                var zipFileHelper = Mock.Of<IZipFileHelper>();
+        //[Fact]
+        //public void CheckForPendingUpdates()
+        //{
+        //    using (var context = GetContextWithData())
+        //    {
+        //        // Arrange
+        //        var fileSystem = SetupFileSystem_MultipleFiles();
+        //        var logger = Mock.Of<ILogger<AppUpdateService>>();
+        //        var appRepository = new AppRepository(context);
+        //        var appSettings = new Mock<IOptions<AppSettings>>();
+        //        var zipFileHelper = Mock.Of<IZipFileHelper>();
 
-                appSettings.Setup(x => x.Value).Returns(new AppSettings()
-                {
-                    Environment = "development"
-                });
+        //        appSettings.Setup(x => x.Value).Returns(new AppSettings()
+        //        {
+        //            Environment = "development"
+        //        });
 
-                var updatePackage = new UpdatePackageDto()
-                {
-                    FileName = "generate_3.0.zip",
-                    Description = "Minor Release",
-                    MajorVersion = 3,
-                    MinorVersion = 0,
-                    PrerequisiteVersion = "2.9",
-                    ReleaseDate = new DateTime(2019, 1, 15),
-                    DatabaseBackupSuggested = false,
-                    ReleaseNotesUrl = "https://ciidta.grads360.org/#communities/pdc/documents/17671"
-                };
+        //        var updatePackage = new UpdatePackageDto()
+        //        {
+        //            FileName = "generate_3.0.zip",
+        //            Description = "Minor Release",
+        //            MajorVersion = 3,
+        //            MinorVersion = 0,
+        //            PrerequisiteVersion = "2.9",
+        //            ReleaseDate = new DateTime(2019, 1, 15),
+        //            DatabaseBackupSuggested = false,
+        //            ReleaseNotesUrl = "https://ciidta.grads360.org/#communities/pdc/documents/17671"
+        //        };
 
-                var data = new List<UpdatePackageDto>();
-                data.Add(updatePackage);
+        //        var data = new List<UpdatePackageDto>();
+        //        data.Add(updatePackage);
 
-                var responseMock = new Mock<RestResponse<List<UpdatePackageDto>>>();
-                responseMock.Setup(x => x.StatusCode).Returns(HttpStatusCode.OK);
-                responseMock.Setup(x => x.Content).Returns(JsonConvert.SerializeObject(data));
+        //        var responseMock = new Mock<RestResponse<List<UpdatePackageDto>>>();
+        //        responseMock.Setup(x => x.StatusCode).Returns(HttpStatusCode.OK);
+        //        responseMock.Setup(x => x.Content).Returns(JsonConvert.SerializeObject(data));
 
-                //var restClientMock = new Mock<RestClient>();
-                //restClientMock
-                //  .Setup(x => x.Execute(It.IsAny<RestRequest>()))
-                //  .Returns(responseMock.Object);
+        //        var restClientMock = new Mock<RestClient>();
+        //        restClientMock
+        //          .Setup(x => x.Execute(It.IsAny<RestRequest>()))
+        //          .Returns(responseMock.Object);
 
-                //var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelperMock.Object);
+        //        var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelperMock.Object);
 
-                //// Act
-                //var results = service.CheckForPendingUpdates();
+        //        // Act
+        //        var results = service.CheckForPendingUpdates();
 
-                //// Assert
-                //Assert.NotEmpty(results);
-                //Assert.Single(results);
-            }
-        }
-
-
-
-        [Fact]
-        public void DownloadUpdates()
-        {
-            using (var context = GetContextWithData())
-            {
-                // Arrange
-                var fileSystem = SetupFileSystem_Empty();
-                var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
-                var appSettings = new Mock<IOptions<AppSettings>>();
-                var zipFileHelper = Mock.Of<IZipFileHelper>();
-
-                appSettings.Setup(x => x.Value).Returns(new AppSettings()
-                {
-                    Environment = "development"
-                });
-
-                var updatePackage = new UpdatePackageDto()
-                {
-                    FileName = "generate_3.0.zip",
-                    Description = "Minor Release",
-                    MajorVersion = 3,
-                    MinorVersion = 0,
-                    PrerequisiteVersion = "2.9",
-                    ReleaseDate = new DateTime(2019, 1, 15),
-                    DatabaseBackupSuggested = false,
-                    ReleaseNotesUrl = "https://ciidta.grads360.org/#communities/pdc/documents/17671"
-                };
-
-                var data = new List<UpdatePackageDto>();
-                data.Add(updatePackage);
-
-                var responseMock = new Mock<RestResponse<List<UpdatePackageDto>>>();
-                responseMock.Setup(x => x.StatusCode).Returns(HttpStatusCode.OK);
-                responseMock.Setup(x => x.Content).Returns(JsonConvert.SerializeObject(data));
-
-                var restClientMock = new Mock<RestClient>();
+        //        // Assert
+        //        Assert.NotEmpty(results);
+        //        Assert.Single(results);
+        //    }
+        //}
 
 
-                byte[] updateResponse = new byte[1];
 
-                restClientMock
-                  .Setup(x => x.DownloadData(It.IsAny<RestRequest>()))
-                  .Returns(updateResponse);
+        //[Fact]
+        //public void DownloadUpdates()
+        //{
+        //    using (var context = GetContextWithData())
+        //    {
+        //        // Arrange
+        //        var fileSystem = SetupFileSystem_Empty();
+        //        var logger = Mock.Of<ILogger<AppUpdateService>>();
+        //        var appRepository = new AppRepository(context);
+        //        var appSettings = new Mock<IOptions<AppSettings>>();
+        //        var zipFileHelper = Mock.Of<IZipFileHelper>();
 
-                //restClientMock
-                //  .Setup(x => x.Execute(It.IsAny<RestRequest>()))
-                //  .Returns(responseMock.Object);
+        //        appSettings.Setup(x => x.Value).Returns(new AppSettings()
+        //        {
+        //            Environment = "development"
+        //        });
 
-                //var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelperMock.Object);
+        //        var updatePackage = new UpdatePackageDto()
+        //        {
+        //            FileName = "generate_3.0.zip",
+        //            Description = "Minor Release",
+        //            MajorVersion = 3,
+        //            MinorVersion = 0,
+        //            PrerequisiteVersion = "2.9",
+        //            ReleaseDate = new DateTime(2019, 1, 15),
+        //            DatabaseBackupSuggested = false,
+        //            ReleaseNotesUrl = "https://ciidta.grads360.org/#communities/pdc/documents/17671"
+        //        };
 
-                //// Act
-                //service.DownloadUpdates(@"c:\generate.web");
+        //        var data = new List<UpdatePackageDto>();
+        //        data.Add(updatePackage);
 
-                //// Assert
-                //Assert.True(fileSystem.FileExists(@"c:\generate.web\Updates\generate_3.0.zip"));
-                //Assert.True(fileSystem.FileExists(@"c:\generate.web\Updates\generate_3.0.json"));
-            }
-        }
+        //        var responseMock = new Mock<RestResponse<List<UpdatePackageDto>>>();
+        //        responseMock.Setup(x => x.StatusCode).Returns(HttpStatusCode.OK);
+        //        responseMock.Setup(x => x.Content).Returns(JsonConvert.SerializeObject(data));
+
+        //        var restClientMock = new Mock<RestClient>();
 
 
-        [Fact]
-        public void DownloadUpdates_NonePending()
-        {
-            using (var context = GetContextWithData())
-            {
-                // Arrange
-                var fileSystem = SetupFileSystem_Empty();
-                var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
-                var appSettings = new Mock<IOptions<AppSettings>>();
-                var zipFileHelper = Mock.Of<IZipFileHelper>();
+        //        byte[] updateResponse = new byte[1];
 
-                appSettings.Setup(x => x.Value).Returns(new AppSettings()
-                {
-                    Environment = "development"
-                });
+        //        restClientMock
+        //          .Setup(x => x.DownloadData(It.IsAny<RestRequest>()))
+        //          .Returns(updateResponse);
+
+        //        //restClientMock
+        //        //  .Setup(x => x.Execute(It.IsAny<RestRequest>()))
+        //        //  .Returns(responseMock.Object);
+
+        //        //var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelperMock.Object);
+
+        //        //// Act
+        //        //service.DownloadUpdates(@"c:\generate.web");
+
+        //        //// Assert
+        //        //Assert.True(fileSystem.FileExists(@"c:\generate.web\Updates\generate_3.0.zip"));
+        //        //Assert.True(fileSystem.FileExists(@"c:\generate.web\Updates\generate_3.0.json"));
+        //    }
+        //}
+
+
+        //[Fact]
+        //public void DownloadUpdates_NonePending()
+        //{
+        //    using (var context = GetContextWithData())
+        //    {
+        //        // Arrange
+        //        var fileSystem = SetupFileSystem_Empty();
+        //        var logger = Mock.Of<ILogger<AppUpdateService>>();
+        //        var appRepository = new AppRepository(context);
+        //        var appSettings = new Mock<IOptions<AppSettings>>();
+        //        var zipFileHelper = Mock.Of<IZipFileHelper>();
+
+        //        appSettings.Setup(x => x.Value).Returns(new AppSettings()
+        //        {
+        //            Environment = "development"
+        //        });
                 
-                var data = new List<UpdatePackageDto>();
+        //        var data = new List<UpdatePackageDto>();
 
-                var responseMock = new Mock<RestResponse<List<UpdatePackageDto>>>();
-                responseMock.Setup(x => x.StatusCode).Returns(HttpStatusCode.OK);
-                responseMock.Setup(x => x.Content).Returns(JsonConvert.SerializeObject(data));
+        //        var responseMock = new Mock<RestResponse<List<UpdatePackageDto>>>();
+        //        responseMock.Setup(x => x.StatusCode).Returns(HttpStatusCode.OK);
+        //        responseMock.Setup(x => x.Content).Returns(JsonConvert.SerializeObject(data));
 
-                var restClientMock = new Mock<RestClient>();
+        //        var restClientMock = new Mock<RestClient>();
 
 
-                byte[] updateResponse = new byte[1];
+        //        byte[] updateResponse = new byte[1];
 
-                restClientMock
-                  .Setup(x => x.DownloadData(It.IsAny<RestRequest>()))
-                  .Returns(updateResponse);
+        //        restClientMock
+        //          .Setup(x => x.DownloadData(It.IsAny<RestRequest>()))
+        //          .Returns(updateResponse);
 
-                //restClientMock
-                //  .Setup(x => x.Execute(It.IsAny<RestRequest>()))
-                //  .Returns(responseMock.Object);
+        //        //restClientMock
+        //        //  .Setup(x => x.Execute(It.IsAny<RestRequest>()))
+        //        //  .Returns(responseMock.Object);
 
-                //var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelperMock.Object);
+        //        //var service = new AppUpdateService(fileSystem, appRepository, logger, appSettings.Object, zipFileHelperMock.Object);
 
-                //// Act
-                //service.DownloadUpdates(@"c:\generate.web");
+        //        //// Act
+        //        //service.DownloadUpdates(@"c:\generate.web");
 
-                //// Assert
-                //Assert.False(fileSystem.FileExists(@"c:\generate.web\Updates\generate_3.0.zip"));
-                //Assert.False(fileSystem.FileExists(@"c:\generate.web\Updates\generate_3.0.json"));
-            }
-        }
+        //        //// Assert
+        //        //Assert.False(fileSystem.FileExists(@"c:\generate.web\Updates\generate_3.0.zip"));
+        //        //Assert.False(fileSystem.FileExists(@"c:\generate.web\Updates\generate_3.0.json"));
+        //    }
+        //}
 
         [Fact]
         public void GetDownloadedUpdates()

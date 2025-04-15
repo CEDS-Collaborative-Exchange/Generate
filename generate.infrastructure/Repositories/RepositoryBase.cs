@@ -291,54 +291,7 @@ namespace generate.infrastructure.Repositories
             _context.Database.SetCommandTimeout(oldTimeout);
         }
 
-        [SuppressMessage("Microsoft.Design", "EF1000")]
-        public virtual void DeleteAll<T>()
-            where T : class
-        {
-            Type entityType = typeof(T);
-
-            var schemaName = _context.Model.FindEntityType(entityType).GetSchema();
-            var tableName = _context.Model.FindEntityType(entityType).GetTableName();
-            
-            int? oldTimeout = _context.Database.GetCommandTimeout();
-            _context.Database.SetCommandTimeout(11000);
-
-            string sql = "delete from " + schemaName + "." + tableName;
-            _context.Database.ExecuteSqlRaw(sql);
-
-            try
-            {
-                sql = "DBCC CHECKIDENT ('" + schemaName + "." + tableName + "', RESEED, 0)";
-                _context.Database.ExecuteSqlRaw(sql);
-            }
-            catch (Exception)
-            {
-                // Ignore cases where this does not work -- could be because table has no identity column
-            }
-
-            _context.Database.SetCommandTimeout(oldTimeout);
-        }
-
-
-        [SuppressMessage("Microsoft.Design", "EF1000")]
-        public virtual void Truncate<T>()
-            where T : class
-        {
-            Type entityType = typeof(T);
-
-            var schemaName = _context.Model.FindEntityType(entityType).GetSchema();
-            var tableName = _context.Model.FindEntityType(entityType).GetTableName();
-
-            int? oldTimeout = _context.Database.GetCommandTimeout();
-            _context.Database.SetCommandTimeout(11000);
-
-            string sql = "truncate table " + schemaName + "." + tableName;
-            _context.Database.ExecuteSqlRaw(sql);
-
-            _context.Database.SetCommandTimeout(oldTimeout);
-        }
-
-        // Save
+       // Save
 
 
         public virtual int Save()

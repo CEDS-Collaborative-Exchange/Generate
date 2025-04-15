@@ -16,7 +16,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using generate.core.Helpers.TestDataHelper.Rds;
-using generate.core.Helpers.TestDataHelper.App;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Data.Sqlite;
 
@@ -102,9 +101,6 @@ namespace generate.test.Infrastructure.Fixtures
             appDbContext.Categories.AddRange(CategoryHelper.GetData());
             appDbContext.TableTypes.AddRange(TableTypeHelper.GetData());
             appDbContext.CategorySets.AddRange(CategorySetHelper.GetData());
-            appDbContext.ToggleQuestions.AddRange(ToggleQuestionHelper.GetData());
-            appDbContext.ToggleQuestionOptions.AddRange(ToggleQuestionOptionHelper.GetData());
-            appDbContext.ToggleAssessments.AddRange(ToggleAssessmentHelper.GetData());
 
             appDbContext.SaveChanges();
 

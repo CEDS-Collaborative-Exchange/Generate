@@ -30,6 +30,7 @@ namespace generate.testdata.Interfaces
         int GetRandomIntWeighted(Random rnd, int min, int max, int typicalMin, int typicalMax, double typicalProbability);
         string GetRandomString(Random rnd, List<string> strings);
         int GetWeightedSelection(Random rnd, List<DataDistribution<int>> items);
+        int GetMaxWeightedSelection(Random rnd, List<DataDistribution<int>> items);
         bool GetWeightedSelection(Random rnd, List<DataDistribution<bool>> items);
         bool? GetWeightedSelection(Random rnd, List<DataDistribution<bool?>> items);
         string GetWeightedSelection(Random rnd, List<DataDistribution<string>> items);
@@ -48,7 +49,7 @@ namespace generate.testdata.Interfaces
         List<string> ListofSchoolNameTypes();
         List<string> ListofStreetTypes();
         List<string> ListofUnitTypes();
-        string GetK12SeaName(string StateName);
+        string GetK12SeaName(string stateName);
         string GetK12LeaName(Random rnd, List<string> placeNames);
         string GetK12SchoolName(Random rnd, List<string> placeNames, List<string> schoolTypes);
         string GetK12SchoolName(Random rnd, List<string> placeNames, string schoolType);

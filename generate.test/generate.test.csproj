@@ -46,4 +46,7 @@
       <DependentUpon>OdsModelShould.tt</DependentUpon>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\Helpers\TestDataHelper\" />
+  </ItemGroup>
 </Project>

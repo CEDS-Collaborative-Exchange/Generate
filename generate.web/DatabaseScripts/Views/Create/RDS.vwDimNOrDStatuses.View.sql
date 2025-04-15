@@ -22,7 +22,7 @@ AS
 		, sssrd.InputCode AS NeglectedOrDelinquentProgramTypeMap
 		
 		, rdnods.NeglectedProgramTypeCode
-		, sssrd.InputCode AS NeglectedProgramTypeMap
+		, sssrd1.InputCode AS NeglectedProgramTypeMap
 		
 		, rdnods.DelinquentProgramTypeCode
 		, sssrd2.InputCode AS DelinquentProgramTypeMap
@@ -74,3 +74,6 @@ AS
 		ON rdnods.NeglectedOrDelinquentProgramEnrollmentSubpartCode = sssrd7.OutputCode
 		AND sssrd7.TableName = 'RefNeglectedOrDelinquentProgramEnrollmentSubpart'
 		AND rsy.SchoolYear = sssrd7.SchoolYear
+
+
+

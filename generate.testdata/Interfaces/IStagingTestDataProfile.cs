@@ -267,7 +267,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<string>> ERSRuralUrbanContinuumCodeDistribution { get; set; }
         List<DataDistribution<string>> RuralResidencyStatusDistribution { get; set; }
 
-
+        List<DataDistribution<bool>> RefIdeaIndicatorDistribution { get; set; }
 
         #endregion
 

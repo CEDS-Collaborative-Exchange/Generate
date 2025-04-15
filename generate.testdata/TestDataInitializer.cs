@@ -22,7 +22,7 @@ using System.IO;
 
 namespace generate.testdata
 {
-    public class TestDataInitializer : ITestDataInitializer
+    public class TestDataInitializer : ITestDataInitializer, IDisposable
     {
 
         private IIdsTestDataGenerator _odsTestDataGenerator;
@@ -32,6 +32,7 @@ namespace generate.testdata
         private ILoggerFactory _loggerFactory;
         private IOptions<DataSettings> _dataSettings;
         private IOptions<AppSettings> _appSettings;
+        private CancellationTokenSource source;
 
         public TestDataInitializer(
             IIdsTestDataGenerator odsTestDataGenerator,
@@ -50,6 +51,7 @@ namespace generate.testdata
             _loggerFactory = loggerFactory;
             _dataSettings = dataSettings;
             _appSettings = appSettings;
+            this.source = new CancellationTokenSource();
 
         }
 
@@ -355,7 +357,7 @@ namespace generate.testdata
             // Workaround for the fact that ShutdownCancellationToken is not called when the job is deleted
             // https://github.com/HangfireIO/Hangfire/issues/211
 
-            var source = new CancellationTokenSource();
+            //var source = new CancellationTokenSource();
             if (jobCancellationToken != null)
             {
                 Task.Run(() =>
@@ -370,12 +372,12 @@ namespace generate.testdata
                     }
                     catch (Exception)
                     {
-                        source.Cancel();
+                        this.source.Cancel();
                     }
-                }, source.Token);
+                }, this.source.Token);
             }
 
-            var dbTask = odsContext.Database.ExecuteSqlRawAsync(testDataScript, source.Token);
+            var dbTask = odsContext.Database.ExecuteSqlRawAsync(testDataScript, this.source.Token);
             dbTask.Wait();
 
             odsContext.Database.SetCommandTimeout(oldTimeOut);
@@ -403,7 +405,7 @@ namespace generate.testdata
             // Workaround for the fact that ShutdownCancellationToken is not called when the job is deleted
             // https://github.com/HangfireIO/Hangfire/issues/211
 
-            var source = new CancellationTokenSource();
+            //var source = new CancellationTokenSource();
             if (jobCancellationToken != null)
             {
                 Task.Run(() =>
@@ -418,12 +420,12 @@ namespace generate.testdata
                     }
                     catch (Exception)
                     {
-                        source.Cancel();
+                        this.source.Cancel();
                     }
-                }, source.Token);
+                }, this.source.Token);
             }
 
-            var dbTask = odsContext.Database.ExecuteSqlRawAsync(testDataScript, source.Token);
+            var dbTask = odsContext.Database.ExecuteSqlRawAsync(testDataScript, this.source.Token);
             dbTask.Wait();
 
             odsContext.Database.SetCommandTimeout(oldTimeOut);
@@ -496,6 +498,11 @@ namespace generate.testdata
 
             context.DataMigrationHistories.Add(historyRecord);
             context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            this.source.Dispose();
         }
 
 

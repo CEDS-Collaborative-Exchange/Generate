@@ -40,8 +40,7 @@ namespace generate.core.Interfaces.Repositories.App
         // Delete
         void Delete<T>(int id) where T : class;
         void DeleteRange<T>(IEnumerable<T> entities) where T : class;
-        void DeleteAll<T>() where T : class;
-        void Truncate<T>() where T : class;
+
 
         // Save
         int Save();
@@ -64,6 +63,7 @@ namespace generate.core.Interfaces.Repositories.App
         IEnumerable<GenerateReport> GetReports(int skip = 0, int take = 50);
         IQueryable<CategorySet> GetCategorySets(string reportCode, string reportYear, string reportLevel);
         void MarkReportAsComplete(string reportCode);
+        void MarkReportsAsComplete();
         void UpdateViewDefinitions();
 
         void CompleteReportMigrationIfReady();

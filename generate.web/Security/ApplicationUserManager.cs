@@ -12,9 +12,11 @@ using Microsoft.Extensions.Logging;
 using System.DirectoryServices.AccountManagement;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
+using System.Runtime.Versioning;
 
 namespace generate.web.Security
 {
+    [SupportedOSPlatform("windows")]
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {
 

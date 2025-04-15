@@ -16,7 +16,7 @@ namespace generate.core.Models.App
 
     }
 
-    public class ToggleResponseDTO {
+    public class ToggleResponseDto {
         public int ToggleResponseId { get; set; }
         public int ToggleQuestionId { get; set; }
         public int? ToggleQuestionOptionId { get; set; }

@@ -13,9 +13,11 @@ export class FSMetadataUpdate extends BaseService {
         super();
     }
 
-    callFSMetaServc() {
+    callFSMetaServc(SchYear) {
 
-        let url = this._apiUrl + '/fsservc';
+        console.log('SchYear -' + SchYear);
+
+        let url = this._apiUrl + '/fsservc/' + SchYear;
   
         return this.http.get(url, { observe: 'response' })
             .pipe(
@@ -44,6 +46,44 @@ export class FSMetadataUpdate extends BaseService {
                 }),
                 tap(resp => {
                     this.log(`getMetadataStatus`);
+                }),
+                catchError(err => {
+                    this.handleError;
+                    return of(err.error);
+                })
+            );
+
+    }
+
+    getlatestSYs() {
+        let url = this._apiUrl + '/getlatestSYs';
+
+        return this.http.get(url, { observe: 'response' })
+            .pipe(
+                map(resp => {
+                    return resp.body;
+                }),
+                tap(resp => {
+                    this.log(`getlatestSYs`);
+                }),
+                catchError(err => {
+                    this.handleError;
+                    return of(err.error);
+                })
+            );
+
+    }
+
+    getFlag() {
+        let url = this._apiUrl + '/getMetaUplFlag';
+
+        return this.http.get(url, { observe: 'response' })
+            .pipe(
+                map(resp => {
+                    return resp.body;
+                }),
+                tap(resp => {
+                    this.log(`getMetaUplFlag`);
                 }),
                 catchError(err => {
                     this.handleError;

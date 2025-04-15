@@ -27,8 +27,6 @@ namespace generate.infrastructure.Services
         private IFactStudentCountRepository _factStudentCountRepository;
         private IFactStudentDisciplineRepository _factStudentDisciplineRepository;
 
-        private int childCountDateMonth = 10;
-        private int childCountDateDay = 1;
 
         public DataPopulationSummaryService(
             IAppRepository appRepository,
@@ -43,20 +41,6 @@ namespace generate.infrastructure.Services
             _factStudentCountRepository = factStudentCountRepository;
             _factStudentDisciplineRepository = factStudentDisciplineRepository;
 
-            ToggleResponse childCountDate = _appRepository.Find<ToggleResponse>(r => r.ToggleQuestion.EmapsQuestionAbbrv == "CHDCTDTE").FirstOrDefault();
-            if (childCountDate != null)
-            {
-                if (childCountDate.ResponseValue.Contains("/"))
-                {
-                    string[] childCountDateArray = childCountDate.ResponseValue.Split('/');
-                    if (childCountDateArray.Length == 2)
-                    {
-                        int.TryParse(childCountDateArray[0], out childCountDateMonth);
-                        int.TryParse(childCountDateArray[1], out childCountDateDay);
-                    }
-                }
-
-            }
 
         }
 

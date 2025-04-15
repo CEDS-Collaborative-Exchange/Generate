@@ -257,7 +257,7 @@ export class CharterSchoolComponent implements AfterViewInit, OnChanges, OnInit 
         let reportCaptionCol = 2;
         let reportCols = [];
 
-        if (this.repCode === 'c190') {
+        if (this.repCode === '190') {
             reportCols.push({ wpx: 170 });
             reportCols.push({ wpx: 250 });
             reportCols.push({ wpx: 150 });
@@ -265,7 +265,7 @@ export class CharterSchoolComponent implements AfterViewInit, OnChanges, OnInit 
             reportCols.push({ wpx: 250 });
             reportCols.push({ wpx: 250 });
         }
-        else if (this.repCode === 'c196') {
+        else if (this.repCode === '196') {
             reportCols.push({ wpx: 220 });
             reportCols.push({ wpx: 250 });
             reportCols.push({ wpx: 150 });

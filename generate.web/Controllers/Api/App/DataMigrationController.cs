@@ -210,8 +210,11 @@ namespace generate.web.Controllers.Api.App
             IEnumerable<DataMigrationType> migrationList = _appRepository.GetAll<DataMigrationType>(0, 0);
             if (migrationList != null)
             {
-                int id = _appRepository.GetAll<DataMigrationType>(0, 0).Where(s => s.DataMigrationTypeCode == reportType).FirstOrDefault().DataMigrationTypeId;
-                dataMigrationTasks = _appRepository.Find<DataMigrationTask>(a => a.DataMigrationTypeId == id, 0, 0).ToList();
+                DataMigrationType dataMigrationType = _appRepository.GetAll<DataMigrationType>(0, 0).Where(s => s.DataMigrationTypeCode == reportType).FirstOrDefault();
+                if (dataMigrationType != null)
+                {
+                     dataMigrationTasks = _appRepository.Find<DataMigrationTask>(a => a.DataMigrationTypeId == dataMigrationType.DataMigrationTypeId, 0, 0).ToList();
+                }
             }
             return Json(dataMigrationTasks);
         }
@@ -247,14 +250,17 @@ namespace generate.web.Controllers.Api.App
             IEnumerable<DataMigrationType> migrationList = _appRepository.GetAll<DataMigrationType>(0, 0);
             if (migrationList != null)
             {
-                int id = migrationList.Where(s => s.DataMigrationTypeCode == "report").FirstOrDefault().DataMigrationTypeId;
-                string taskList = _appRepository.Find<DataMigration>(a => a.DataMigrationTypeId == id, 0, 0).ToList()[0].DataMigrationTaskList;
-                if (taskList != null && taskList.Length > 0)
+                DataMigrationType migrationType = migrationList.Where(s => s.DataMigrationTypeCode == "report").FirstOrDefault();
+                if (migrationType != null)
                 {
-                    int taskId = Convert.ToInt32(taskList.Split(",")[0]);
-                    DataMigrationTask task = _appRepository.GetById<DataMigrationTask>(taskId);
-                    factType = _rdsRepository.GetById<DimFactType>(task.FactTypeId);
+                    string taskList = _appRepository.Find<DataMigration>(a => a.DataMigrationTypeId == migrationType.DataMigrationTypeId, 0, 0).ToList()[0].DataMigrationTaskList;
+                    if (taskList != null && taskList.Length > 0)
+                    {
+                        int taskId = Convert.ToInt32(taskList.Split(",")[0]);
+                        DataMigrationTask task = _appRepository.GetById<DataMigrationTask>(taskId);
+                        factType = _rdsRepository.GetById<DimFactType>(task.FactTypeId);
 
+                    }
                 }
             }
 

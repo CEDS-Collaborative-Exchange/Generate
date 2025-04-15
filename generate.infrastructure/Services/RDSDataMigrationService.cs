@@ -22,33 +22,10 @@ namespace generate.infrastructure.Services
     public class RDSDataMigrationService : IRDSDataMigrationService
     {
 
-        private IAppRepository _appRepository;
-
-        private int childCountDateMonth = 11;
-        private int childCountDateDay = 1;
-
-
         public RDSDataMigrationService(
-            IAppRepository appRepository
             )
         {
-            _appRepository = appRepository;
-
-            ToggleResponse childCountDate = _appRepository.Find<ToggleResponse>(r => r.ToggleQuestion.EmapsQuestionAbbrv == "CHDCTDTE").FirstOrDefault();
-            if (childCountDate != null)
-            {
-                if (childCountDate.ResponseValue.Contains("/"))
-                {
-                    string[] childCountDateArray = childCountDate.ResponseValue.Split('/');
-                    if (childCountDateArray.Length == 2)
-                    {
-                        int.TryParse(childCountDateArray[0], out childCountDateMonth);
-                        int.TryParse(childCountDateArray[1], out childCountDateDay);
-                    }
-                }
-
-            }
-
+           
         }
         
 
