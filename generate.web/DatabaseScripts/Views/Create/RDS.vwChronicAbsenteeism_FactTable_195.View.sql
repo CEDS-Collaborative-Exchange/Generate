@@ -1,4 +1,4 @@
-CREATE VIEW [RDS].[vwChronic_FactTable_195] 
+CREATE VIEW [RDS].[vwChronicAbsenteeism_FactTable_195] 
 AS
     SELECT  f.[FactK12StudentCountId]
 			, f.[SchoolYear]
@@ -20,5 +20,5 @@ AS
 		  	, f.[NameOfInstitution]
 		  	, f.[SchoolOperationalStatus]
 		  	, f.[SchoolTypeCode]
-	FROM [debug].[vwChronic_FactTable] f
+	FROM [debug].[vwChronicAbsenteeism_FactTable] f
 	WHERE SchoolOperationalStatus IN ('Open','New') 
