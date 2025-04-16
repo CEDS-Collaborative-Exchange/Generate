@@ -91,8 +91,8 @@ namespace generate.infrastructure.Services
                         SequenceNumber = fileColumn.SequenceNumber,
                         StartPosition = fileColumn.StartPosition,
                         EndPosition = fileColumn.EndPosition,
-                        IsOptional = fileColumn.IsOptional
-
+                        IsOptional = fileColumn.IsOptional,
+                        ReportColumn = column.ReportColumn
                     };
                     if (column.Dimension != null)
                     {
