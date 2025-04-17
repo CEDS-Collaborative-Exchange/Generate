@@ -27,6 +27,7 @@ namespace generate.core.Models.Staging
         public string IDEAEducationalEnvironmentForEarlyChildhood { get; set; }
         public string IDEAEducationalEnvironmentForSchoolAge { get; set; }
         public decimal? SpecialEducationFTE { get; set; }
+        public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
         public DateTime? RunDateTime { get; set; }
     }

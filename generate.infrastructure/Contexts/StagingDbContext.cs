@@ -1497,8 +1497,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-
-
                 entity.Property(e => e.PerkinsEnglishLearnerStatus)
                     .HasColumnName("PerkinsLEPStatus")
                     .HasMaxLength(100)
@@ -1532,6 +1530,10 @@ namespace generate.infrastructure.Contexts
                 entity.Property(e => e.Section504_ProgramParticipationStartDate)
                     .HasColumnName("Section504_ProgramParticipationStartDate")
                     .HasColumnType("date");
+
+                entity.Property(e => e.SchoolYear)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.StudentIdentifierState)
                     .HasColumnName("StudentIdentifierState")
@@ -1647,6 +1649,10 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 
+                entity.Property(e => e.SchoolYear)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.SchoolIdentifierSea)
                     .HasColumnName("SchoolIdentifierSea")
                     .HasMaxLength(100)
@@ -1686,6 +1692,10 @@ namespace generate.infrastructure.Contexts
                 entity.Property(e => e.ProgramParticipationEndDate).HasColumnType("date");
 
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.SchoolYear)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.SchoolIdentifierSea)
                     .HasColumnName("SchoolIdentifierSea")
@@ -1746,6 +1756,10 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
+                entity.Property(e => e.SchoolYear)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.TitleIIndicator)
                     .HasColumnName("TitleIIndicator")
                     .HasMaxLength(100)
@@ -1790,6 +1804,10 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.StudentIdentifierState)
                     .HasColumnName("StudentIdentifierState")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SchoolYear)
                     .HasMaxLength(100)
                     .IsUnicode(false);
 

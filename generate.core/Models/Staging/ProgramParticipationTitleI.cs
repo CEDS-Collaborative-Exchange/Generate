@@ -21,6 +21,7 @@ namespace generate.core.Models.Staging
         public Boolean ResponsibleSchoolTypeTransportation { get; set; }
         public Boolean ResponsibleSchoolTypeIepServiceProvider { get; set; }
         public string TitleIIndicator { get; set; }
+        public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
         public DateTime? RunDateTime { get; set; }
         public DateTime? ProgramParticipationBeginDate { get; set; }
