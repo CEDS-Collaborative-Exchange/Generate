@@ -63,6 +63,8 @@ StoredProcedures\\Drop,App.Wrapper_Migrate_Assessment_to_RDS.StoredProcedure.sql
 StoredProcedures\\Create,App.Wrapper_Migrate_Assessment_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Wrapper_Migrate_ChronicAbsenteeism_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_ChronicAbsenteeism_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Empty_Reports.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Empty_Reports.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.RunEndToEndTest.StoredProcedure.sql,0

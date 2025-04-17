@@ -80,19 +80,19 @@
 -- 	END
 
 -------------------------------------------
--- Source-to-Staging_MigrantEdProgram
--------------------------------------------
-	IF OBJECT_ID('Source.Source-to-Staging_MigrantEdProgram', 'P') IS NOT NULL
-	BEGIN
-		EXEC sp_rename 'Source.Source-to-Staging_MigrantEdProgram', 'Source-to-Staging_MigrantEducationProgram';
-	END	
-
--------------------------------------------
 -- DimFactTypes
 -------------------------------------------
 	-- Check if the column already exists before adding it
 	IF COL_LENGTH('RDS.DimFactTypes', 'FactTypeLabel') IS NULL
 		ALTER TABLE RDS.DimFactTypes ADD FactTypeLabel NVARCHAR(100) NULL;
+
+	update rds.DimFactTypes
+	set FactTypeDescription = 'ASSESSMENT - 050,113,125,126,137,138,139,175,178,179,185,188,189,224,225'
+	where FactTypeCode = 'assessment'
+
+	update rds.DimFactTypes
+	set FactTypeDescription = 'TITLEIIIELSY - 045,116,210,211'
+	where FactTypeCode = 'titleiiiELSY'
 
 -------------------------------------------
 -- Populate Rds.DimNorDStatuses

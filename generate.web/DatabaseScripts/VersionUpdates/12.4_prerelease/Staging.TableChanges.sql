@@ -1,3 +1,11 @@
+-------------------------------------------
+-- Source-to-Staging_MigrantEdProgram
+-------------------------------------------
+	IF OBJECT_ID('Source.Source-to-Staging_MigrantEdProgram', 'P') IS NOT NULL
+	BEGIN
+		EXEC sp_rename 'Source.Source-to-Staging_MigrantEdProgram', 'Source-to-Staging_MigrantEducationProgram';
+	END	
+
 ------------------------------------------------
 --ProgramParticipationSpecialEducation
 
