@@ -196,7 +196,8 @@ BEGIN
 			AND @ReportingDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 	--english learner
 		JOIN Staging.PersonStatus el 
-			ON ske.StudentIdentifierState = el.StudentIdentifierState
+			ON ske.SchoolYear = el.SchoolYear		
+			AND ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND @ReportingDate between el.EnglishLearner_StatusStartDate and ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
@@ -211,7 +212,8 @@ BEGIN
 			AND @ReportingDate between rdksch.RecordStartDateTime and ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 	--idea disability	
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation sppse
-			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
+			ON ske.SchoolYear = sppse.SchoolYear		
+			AND ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND @ReportingDate between sppse.ProgramParticipationBeginDate and ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)

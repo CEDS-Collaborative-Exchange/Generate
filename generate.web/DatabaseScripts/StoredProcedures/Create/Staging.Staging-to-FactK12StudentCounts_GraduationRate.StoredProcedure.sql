@@ -258,7 +258,6 @@ BEGIN
 Mapping above needs research
 I believe Cohort is supposed to be in AcademicAwardStatuses but the dimension doesn't exist yet so I have to find that and then finish this mapping
 */
-
 	--homelessness (RDS)
 		LEFT JOIN #vwHomelessnessStatuses rdhs
 			ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)

@@ -251,7 +251,8 @@ BEGIN
 		)
 
 		INSERT INTO #uniqueLEAs
-		SELECT DISTINCT LeaIdentifierSea, LEA_RecordStartDateTime, LEA_RecordEndDateTime, LEA_TitleIProgramType, LEA_TitleIinstructionalService, LEA_K12LeaTitleISupportService
+		SELECT DISTINCT LeaIdentifierSea, LEA_RecordStartDateTime, LEA_RecordEndDateTime
+			, LEA_TitleIProgramType, LEA_TitleIinstructionalService, LEA_K12LeaTitleISupportService
 		FROM Staging.K12Organization
 		WHERE LEA_IsReportedFederally = 1
 		
@@ -262,6 +263,7 @@ BEGIN
 		FROM #Facts fact
 		JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON fact.StagingId = sppse.Id
+			AND sppse.SchoolYear = @SchoolYear
 		JOIN Staging.IdeaDisabilityType sidt	
 			ON sppse.SchoolYear = sidt.SchoolYear		
 			AND sidt.StudentIdentifierState = sppse.StudentIdentifierState
@@ -285,6 +287,7 @@ BEGIN
 		FROM #Facts fact
 		JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON fact.StagingId = sppse.Id
+			AND sppse.SchoolYear = @SchoolYear
 		JOIN Staging.PersonStatus el 
 			ON sppse.SchoolYear = el.SchoolYear		
 			AND sppse.StudentIdentifierState = el.StudentIdentifierState

@@ -81,7 +81,6 @@ BEGIN
 			AND HomelessUnaccompaniedYouthStatusCode = 'MISSING'
 			AND HomelessServicedIndicatorCode = 'MISSING'
 
-
 		SELECT *
 		INTO #vwEconomicallyDisadvantagedStatuses
 		FROM RDS.vwDimEconomicallyDisadvantagedStatuses

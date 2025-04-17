@@ -118,8 +118,10 @@ BEGIN
 			, EnglishLearnerStatus
 			, EnglishLearner_StatusStartDate
 			, EnglishLearner_StatusEndDate
+			, SchoolYear
 		INTO #tempELStatus
 		FROM Staging.PersonStatus
+		WHERE SchoolYear = @SchoolYear
 
 	-- Create Index for #tempELStatus 
 		CREATE INDEX IX_tempELStatus 
@@ -134,10 +136,12 @@ BEGIN
 			, sidt.IdeaDisabilityTypeCode
 			, sidt.RecordStartDateTime
 			, sidt.RecordEndDateTime
+			, sidt.SchoolYear
 		INTO #tempIdeaDisability
 		FROM Staging.IdeaDisabilityType sidt         
 			INNER JOIN Staging.ProgramParticipationSpecialEducation sppse
-				ON sidt.StudentIdentifierState 						= sppse.StudentIdentifierState
+				ON sidt.SchoolYear 									= sppse.SchoolYear
+				AND sidt.StudentIdentifierState 					= sppse.StudentIdentifierState
 				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sidt.SchoolIdentifierSea, '') 			= ISNULL(sppse.SchoolIdentifierSea, '')
 				AND sidt.IsPrimaryDisability = 1
@@ -158,10 +162,12 @@ BEGIN
 			, IdeaIndicator
 			, IDEAEducationalEnvironmentForEarlyChildhood
 			, IDEAEducationalEnvironmentForSchoolAge
+			, SchoolYear
 		INTO #tempIdeaStatus
 		FROM Staging.ProgramParticipationSpecialEducation
 		WHERE IDEAIndicator = 1
-		
+		AND SchoolYear = @SchoolYear
+
 	-- Create Index for #tempIdeaStatus 
 	-- 1/1/2024
 		CREATE INDEX IX_ideaStatus 
@@ -263,7 +269,8 @@ BEGIN
 			, ISNULL(sd.DurationOfDisciplinaryAction, 0)            DurationOfDisciplinaryAction
 		FROM Staging.Discipline sd 
 			JOIN Staging.K12Enrollment ske
-				ON sd.StudentIdentifierState 						= ske.StudentIdentifierState
+				ON sd.SchoolYear 									= ske.SchoolYear
+				AND sd.StudentIdentifierState 						= ske.StudentIdentifierState
 				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') 	= ISNULL(ske.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sd.SchoolIdentifierSea, '') 				= ISNULL(ske.SchoolIdentifierSea, '')
 				AND sd.DisciplinaryActionStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
@@ -290,21 +297,24 @@ BEGIN
 				AND sd.DisciplinaryActionStartDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 		--program participation special education              
 			LEFT JOIN #tempIdeaStatus sppse
-				ON sd.StudentIdentifierState 						= sppse.StudentIdentifierState
+				ON sd.SchoolYear 									= sppse.SchoolYear
+				AND sd.StudentIdentifierState 						= sppse.StudentIdentifierState
 				AND ISNULL(sd.LEAIdentifierSeaAccountability,'') 	= ISNULL(sppse.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(sd.SchoolIdentifierSea,'') 				= ISNULL(sppse.SchoolIdentifierSea,'')
 				AND sd.DisciplinaryActionStartDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
 		--idea disability type
 			LEFT JOIN #tempIdeaDisability sidt
-				ON sidt.StudentIdentifierState 						= sd.StudentIdentifierState
+				ON sidt.SchoolYear 									= sd.SchoolYear
+				AND sidt.StudentIdentifierState 					= sd.StudentIdentifierState
 				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sd.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sidt.SchoolIdentifierSea, '') 			= ISNULL(sd.SchoolIdentifierSea, '')
 				AND sd.DisciplinaryActionStartDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
 		--english learner                 
 			LEFT JOIN #tempELStatus el
-				ON sd.StudentIdentifierState = el.StudentIdentifierState
-				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
-				AND ISNULL(sd.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
+				ON sd.SchoolYear 									= el.SchoolYear
+				AND sd.StudentIdentifierState 						= el.StudentIdentifierState
+				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') 	= ISNULL(el.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sd.SchoolIdentifierSea, '') 				= ISNULL(el.SchoolIdentifierSea, '')
 				AND sd.DisciplinaryActionStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
 		--leas (rds)
 			LEFT JOIN RDS.DimLeas rdl

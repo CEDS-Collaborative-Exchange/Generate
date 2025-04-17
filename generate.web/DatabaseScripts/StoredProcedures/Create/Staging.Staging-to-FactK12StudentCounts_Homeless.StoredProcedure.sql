@@ -78,8 +78,10 @@ BEGIN
 			, EnglishLearnerStatus
 			, EnglishLearner_StatusStartDate
 			, EnglishLearner_StatusEndDate
+			, SchoolYear
 		INTO #tempELStatus
 		FROM Staging.PersonStatus
+		WHERE SchoolYear = @SchoolYear
 
 	-- Create Index for #tempELStatus 
 		CREATE INDEX IX_tempELStatus 
@@ -93,8 +95,10 @@ BEGIN
 			, MigrantStatus
 			, Migrant_StatusStartDate
 			, Migrant_StatusEndDate
+			, SchoolYear
 		INTO #tempMigrantStatus
 		FROM Staging.PersonStatus
+		WHERE SchoolYear = @SchoolYear
 
 	-- Create Index for #tempMigrantStatus 
 		CREATE INDEX IX_tempMigrantStatus 
@@ -254,13 +258,15 @@ BEGIN
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
 	--english learner
 		LEFT JOIN #tempELStatus el 
-			ON hmStatus.StudentIdentifierState = el.StudentIdentifierState
+			ON hmStatus.SchoolYear = el.SchoolYear
+			AND hmStatus.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(hmStatus.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(hmStatus.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
 	--migratory status	
 		LEFT JOIN #tempMigrantStatus migrant
-			ON hmStatus.StudentIdentifierState = migrant.StudentIdentifierState
+			ON hmStatus.SchoolYear = migrant.SchoolYear
+			AND hmStatus.StudentIdentifierState = migrant.StudentIdentifierState
 			AND ISNULL(hmStatus.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(hmStatus.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN migrant.Migrant_StatusStartDate AND ISNULL(migrant.Migrant_StatusEndDate, @SYEndDate)

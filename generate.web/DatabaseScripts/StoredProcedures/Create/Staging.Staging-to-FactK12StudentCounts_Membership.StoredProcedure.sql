@@ -239,9 +239,10 @@ BEGIN
 			AND @MembershipDate BETWEEN org.School_RecordStartDateTime AND ISNULL(org.School_RecordEndDateTime, '1/1/9999')
 	--economically disadvantaged
 		LEFT JOIN Staging.PersonStatus ecodis
-			ON ecodis.StudentIdentifierState								    =	ske.StudentIdentifierState
-			AND	ISNULL(ecodis.LEAIdentifierSeaAccountability, '')			    =	ISNULL(ske.LEAIdentifierSeaAccountability, '')
-			AND	ISNULL(ecodis.SchoolIdentifierSea, '')						    =	ISNULL(ske.SchoolIdentifierSea, '')
+			ON ske.SchoolYear 											= ecoDis.SchoolYear
+			AND ecodis.StudentIdentifierState							= ske.StudentIdentifierState
+			AND	ISNULL(ecodis.LEAIdentifierSeaAccountability, '')		= ISNULL(ske.LEAIdentifierSeaAccountability, '')
+			AND	ISNULL(ecodis.SchoolIdentifierSea, '')					= ISNULL(ske.SchoolIdentifierSea, '')
 			AND	@MembershipDate BETWEEN ecodis.EconomicDisadvantage_StatusStartDate AND ISNULL(ecodis.EconomicDisadvantage_StatusEndDate, '1/1/9999')
 		LEFT JOIN #vwEconomicallyDisadvantagedStatuses rdeds
 			ON rdeds.SchoolYear = ske.SchoolYear
