@@ -78,8 +78,10 @@ BEGIN
 			, EnglishLearnerStatus
 			, EnglishLearner_StatusStartDate
 			, EnglishLearner_StatusEndDate
+			, SchoolYear
 		INTO #tempELStatus
 		FROM Staging.PersonStatus
+		WHERE SchoolYear = @SchoolYear
 
 	-- Create Index for #tempELStatus 
 		CREATE INDEX IX_tempELStatus 
@@ -93,8 +95,10 @@ BEGIN
 			, MigrantStatus
 			, Migrant_StatusStartDate
 			, Migrant_StatusEndDate
+			, SchoolYear
 		INTO #tempMigrantStatus
 		FROM Staging.PersonStatus
+		WHERE SchoolYear = @SchoolYear
 
 	-- Create Index for #tempMigrantStatus 
 		CREATE INDEX IX_tempMigrantStatus 
@@ -197,7 +201,8 @@ BEGIN
 			ON ske.EnrollmentEntryDate = enrollExit.DateValue
 	--homeless
 		JOIN Staging.PersonStatus hmStatus
-			ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
+			ON ske.SchoolYear = hmStatus.SchoolYear
+			AND ske.StudentIdentifierState = hmStatus.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
@@ -230,13 +235,15 @@ BEGIN
 				OR hmStatus.Homelessness_StatusStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate))
 	--homeless nighttime residence
 		LEFT JOIN Staging.PersonStatus hmNight
-			ON ske.StudentIdentifierState = hmNight.StudentIdentifierState
+			ON ske.SchoolYear = hmNight.SchoolYear
+			AND ske.StudentIdentifierState = hmNight.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmNight.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmNight.SchoolIdentifierSea, '')
 			AND hmNight.HomelessNightTimeResidence_StartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 	--disability status
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation sppse
-			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
+			ON ske.SchoolYear = sppse.SchoolYear
+			AND ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
@@ -251,13 +258,15 @@ BEGIN
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
 	--english learner
 		LEFT JOIN #tempELStatus el 
-			ON hmStatus.StudentIdentifierState = el.StudentIdentifierState
+			ON hmStatus.SchoolYear = el.SchoolYear
+			AND hmStatus.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(hmStatus.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(hmStatus.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
 	--migratory status	
 		LEFT JOIN #tempMigrantStatus migrant
-			ON hmStatus.StudentIdentifierState = migrant.StudentIdentifierState
+			ON hmStatus.SchoolYear = migrant.SchoolYear
+			AND hmStatus.StudentIdentifierState = migrant.StudentIdentifierState
 			AND ISNULL(hmStatus.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(hmStatus.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN migrant.Migrant_StatusStartDate AND ISNULL(migrant.Migrant_StatusEndDate, @SYEndDate)

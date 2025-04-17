@@ -1,4 +1,3 @@
-	PRINT 'Populate DimNOrDStatuses'
 	------------------------------------------------
 	-- Populate DimNOrDStatuses			 ---
 	------------------------------------------------
@@ -93,5 +92,3 @@
 	DROP TABLE #DelinquentProgramType
 	DROP TABLE #NeglectedOrDelinquentLongTermStatus
 
-
-	PRINT 'Populate DimTitleIIIStatuses'

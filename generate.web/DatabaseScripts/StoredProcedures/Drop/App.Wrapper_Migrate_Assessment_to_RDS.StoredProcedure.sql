@@ -2,3 +2,8 @@
 BEGIN
 	DROP PROCEDURE [App].[Wrapper_Migrate_Assessments_to_RDS]
 END
+
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'APP' AND ROUTINE_NAME = 'Wrapper_Migrate_Assessment_to_RDS') 
+BEGIN
+	DROP PROCEDURE [App].[Wrapper_Migrate_Assessment_to_RDS]
+END

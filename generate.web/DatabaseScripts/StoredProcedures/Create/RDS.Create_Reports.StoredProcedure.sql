@@ -636,7 +636,7 @@ begin try
 			end
 		
 		end
-		if @factTypeCode = 'chronic'
+		if @factTypeCode = 'chronicabsenteeism'
 		begin
 				if exists (select 'c' from app.GenerateReports where ReportCode = 'c195' and IsLocked = 1 and UseLegacyReportMigration = 1)
 			begin

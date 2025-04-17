@@ -318,4 +318,13 @@ Update app.FileColumns set ReportColumn = 'CharterSchoolContractIdNumber' Where 
 		set FactTypeLabel = 'Comprehensive Support and Targeted Support Identification'
 		where FactTypeCode = 'compsupport';
 
+		update rds.DimFactTypes
+		set FactTypeCode = 'chronicabsenteeism'
+			, FactTypeLabel = 'Chronic Absenteeism'
+		where DimFactTypeId = 17;
+
+		update rds.DimFactTypes
+		set FactTypeLabel = 'Homeless'
+		where DimFactTypeId = 16;
+
 	END
