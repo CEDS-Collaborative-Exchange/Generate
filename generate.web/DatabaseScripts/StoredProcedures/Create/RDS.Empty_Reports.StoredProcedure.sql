@@ -169,7 +169,7 @@ begin try
 				from app.GenerateReports r
 				where r.ReportCode in ('118','194') and r.IsLocked=1) and ReportYear = @selectedReportYear
 		end
-		else if @factTypeCode = 'chronic'
+		else if @factTypeCode = 'chronicabsenteeism'
 		begin	
 				
 			delete from rds.ReportEDFactsK12StudentCounts where ReportCode in (

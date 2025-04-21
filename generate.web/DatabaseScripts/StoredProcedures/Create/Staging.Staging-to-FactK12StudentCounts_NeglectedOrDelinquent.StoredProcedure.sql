@@ -86,12 +86,12 @@ BEGIN
 		INTO #vwNorDStatuses
 		FROM RDS.vwDimNOrDStatuses
 		WHERE SchoolYear = @SchoolYear
-			AND NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
-			AND NeglectedOrDelinquentProgramTypeCode = 'MISSING'
-			AND NeglectedProgramTypeCode = 'MISSING'
-			AND DelinquentProgramTypeCode = 'MISSING'
-			AND NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'MISSING'
-			and NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
+			--AND NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
+			--AND NeglectedOrDelinquentProgramTypeCode = 'MISSING'
+			--AND NeglectedProgramTypeCode = 'MISSING'
+			--AND DelinquentProgramTypeCode = 'MISSING'
+			--AND NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'MISSING'
+			--AND NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
 
 		CREATE CLUSTERED INDEX ix_tempvwNorDStatuses 
 			ON #vwNorDStatuses (
@@ -190,19 +190,15 @@ BEGIN
 			, ISNULL(BeginDate.DimDateId, -1)							StatusStartDateNeglectedOrDelinquentId
 			, ISNULL(EndDate.DimDateId, -1)								StatusEndDateNeglectedOrDelinquentId
 		FROM Staging.K12Enrollment ske
-
 		JOIN Staging.K12Organization sko
 			on isnull(ske.LeaIdentifierSeaAccountability,'') = isnull(sko.LeaIdentifierSea,'')
 			and isnull(ske.SchoolIdentifierSea,'') = isnull(sko.SchoolIdentifierSea,'')
 			and LEA_IsReportedFederally = 1
-
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 			and ske.SchoolYear = @SchoolYear
-
 		JOIN RDS.DimSeas rds
 			ON ske.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
-
 		JOIN RDS.DimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND rdp.IsActiveK12Student = 1
@@ -211,43 +207,39 @@ BEGIN
 			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
-
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
 			AND ske.EnrollmentEntryDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
-
-
 	--negelected or delinquent
 		LEFT JOIN Staging.ProgramParticipationNOrD sppnord
-			ON ske.StudentIdentifierState = sppnord.StudentIdentifierState
+			ON ske.SchoolYear = sppnord.SchoolYear		
+			AND ske.StudentIdentifierState = sppnord.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppnord.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppnord.SchoolIdentifierSea, '')
 			AND sppnord.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
-
 	--idea disability status
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
-			ON ske.StudentIdentifierState = idea.StudentIdentifierState
+			ON ske.SchoolYear = idea.SchoolYear		
+			AND ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
 			AND sppnord.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
-
 	--english learner
 		LEFT JOIN Staging.PersonStatus el 
-			ON ske.StudentIdentifierState = el.StudentIdentifierState
+			ON ske.SchoolYear = el.SchoolYear		
+			AND ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND el.EnglishLearner_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
-
 	--race	
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
 			ON spr.SchoolYear = @SchoolYear
 			AND ske.StudentIdentifierState = spr.StudentIdentifierState
 			AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
 				OR ske.LEAIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability)
-
 	--neglected or delinquent (RDS)
 		LEFT JOIN #vwNorDStatuses rdnds
 			ON rdnds.SchoolYear = @SchoolYear
@@ -267,7 +259,6 @@ BEGIN
 	
 			AND rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartMap = sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart
 			AND rdnds.NeglectedOrDelinquentStatusMap = sppnord.NeglectedOrDelinquentStatus
-		
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON rdis.SchoolYear = @SchoolYear
@@ -275,18 +266,15 @@ BEGIN
 			AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
 			AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
 			AND rdis.SpecialEducationExitReasonCode = 'MISSING'
-
 	--english learner (RDS)
 		LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
 			ON rdels.SchoolYear = @SchoolYear
 			AND ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
-
 	--grade (RDS)
 		LEFT JOIN #vwGradeLevels rgls
 			ON ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
-
 	--race (RDS)	
 		LEFT JOIN #vwRaces rdr
 			ON ISNULL(rdr.RaceMap, rdr.RaceCode) =
@@ -295,22 +283,18 @@ BEGIN
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
-
 	-- ProgramParticipationEndDate
 		LEFT JOIN RDS.DimDates BeginDate 
 			ON sppnord.ProgramParticipationEndDate = BeginDate.DateValue
-
 	-- ProgramParticipationEndDate
 		LEFT JOIN RDS.DimDates EndDate 
 			ON sppnord.ProgramParticipationEndDate = EndDate.DateValue
-
 	--Lea Operational Status	
 		LEFT JOIN Staging.SourceSystemReferenceData sssrd
 			ON sko.SchoolYear = sssrd.SchoolYear
 			AND sko.LEA_OperationalStatus = sssrd.InputCode
 			AND sssrd.Tablename = 'RefOperationalStatus'
 			AND sssrd.TableFilter = '000174'
-
 		WHERE sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart is not NULL
 			AND sppnord.NeglectedOrDelinquentStatus = 1 -- Only get NorD students
 			AND sssrd.OutputCode not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')

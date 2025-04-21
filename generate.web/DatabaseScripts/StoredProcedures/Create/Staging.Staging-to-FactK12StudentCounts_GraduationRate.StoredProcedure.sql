@@ -190,7 +190,8 @@ BEGIN
 			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 	--homeless
 		JOIN Staging.PersonStatus hmStatus
-			ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
+			ON ske.SchoolYear = hmStatus.SchoolYear		
+			AND ske.StudentIdentifierState = hmStatus.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
 			AND hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
@@ -210,31 +211,36 @@ BEGIN
 			ON ske.CohortGraduationYear = cohortGrad.SchoolYear
 	--idea disability status
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
-			ON ske.StudentIdentifierState = idea.StudentIdentifierState
+			ON ske.SchoolYear = idea.SchoolYear		
+			AND ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
 			AND idea.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 	--504 disability status
 		LEFT JOIN Staging.Disability disab
-			ON ske.StudentIdentifierState = disab.StudentIdentifierState
+			ON ske.SchoolYear = disab.SchoolYear		
+			AND ske.StudentIdentifierState = disab.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(disab.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(disab.SchoolIdentifierSea, '')
 			AND disab.Disability_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 	--economic disadvantage
 		LEFT JOIN Staging.PersonStatus ecoDis
-			ON ske.StudentIdentifierState = ecoDis.StudentIdentifierState
+			ON ske.SchoolYear = ecoDis.SchoolYear		
+			AND ske.StudentIdentifierState = ecoDis.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(ecoDis.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(ecoDis.SchoolIdentifierSea, '')
 			AND ecoDis.EconomicDisadvantage_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 	--english learner
 		LEFT JOIN Staging.PersonStatus el 
-			ON ske.StudentIdentifierState = el.StudentIdentifierState
+			ON ske.SchoolYear = el.SchoolYear		
+			AND ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND el.EnglishLearner_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 	--foster care status	
 		LEFT JOIN Staging.PersonStatus foster
-			ON ske.StudentIdentifierState = foster.StudentIdentifierState
+			ON ske.SchoolYear = foster.SchoolYear		
+			AND ske.StudentIdentifierState = foster.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(foster.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(foster.SchoolIdentifierSea, '')
 			AND foster.FosterCare_ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
@@ -252,7 +258,6 @@ BEGIN
 Mapping above needs research
 I believe Cohort is supposed to be in AcademicAwardStatuses but the dimension doesn't exist yet so I have to find that and then finish this mapping
 */
-
 	--homelessness (RDS)
 		LEFT JOIN #vwHomelessnessStatuses rdhs
 			ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)

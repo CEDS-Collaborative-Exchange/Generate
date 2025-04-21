@@ -214,14 +214,16 @@ BEGIN
 			and ISNULL(CONVERT(DATE, ske.EnrollmentExitDate), @SYEndDate) = ISNULL(CONVERT(DATE, rdp.RecordEndDateTime), @SYEndDate)
 	-- TitleIII Status
 		LEFT JOIN Staging.ProgramParticipationTitleIII sppt3
-			ON ske.StudentIdentifierState = sppt3.StudentIdentifierState
+			ON ske.SchoolYear = sppt3.SchoolYear		
+			AND ske.StudentIdentifierState = sppt3.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppt3.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppt3.SchoolIdentifierSea, '')
 			AND ISNULL(sppt3.ProgramParticipationBeginDate, @SYStartDate) <= @SYEndDate
 			AND ISNULL(sppt3.ProgramParticipationEndDate, @SYEndDate) >= @SYStartDate
 	--english learner
 		JOIN Staging.PersonStatus el 
-			ON ske.StudentIdentifierState = el.StudentIdentifierState
+			ON ske.SchoolYear = el.SchoolYear		
+			AND ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND ISNULL(el.EnglishLearner_StatusStartDate, @SYStartDate) <= @SYEndDate

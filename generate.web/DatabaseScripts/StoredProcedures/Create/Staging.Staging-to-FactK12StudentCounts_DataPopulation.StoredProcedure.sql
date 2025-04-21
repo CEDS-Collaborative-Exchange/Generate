@@ -193,7 +193,8 @@ BEGIN
 			AND ske.EnrollmentEntryDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @EndDate)
 	--title I
 		LEFT JOIN Staging.ProgramParticipationTitleI title1
-			ON ske.StudentIdentifierState = title1.StudentIdentifierState
+			ON ske.SchoolYear = title1.SchoolYear
+			AND ske.StudentIdentifierState = title1.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(title1.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(title1.SchoolIdentifierSea, '')
 			AND title1.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @EndDate)
@@ -209,17 +210,17 @@ BEGIN
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
-		--title I (RDS)
+	--title I (RDS)
 		LEFT JOIN #vwOrganizationTitleIStatuses rdt1s
 			ON ISNULL(sko.LEA_TitleIProgramType, 'MISSING') = ISNULL(rdt1s.TitleIProgramTypeMap, 'MISSING')
 			AND ISNULL(sko.LEA_TitleIinstructionalService, 'MISSING') = ISNULL(rdt1s.TitleIInstructionalServicesMap, 'MISSING')
 			AND ISNULL(sko.LEA_K12LeaTitleISupportService, 'MISSING') = ISNULL(rdt1s.TitleISupportServicesMap, 'MISSING')
 			AND ISNULL(sko.School_TitleISchoolStatus, 'MISSING') = ISNULL(rdt1s.TitleISchoolStatusMap, 'MISSING')
 
-		--idea disability type (rds)
-			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt                
-				ON rdidt.SchoolYear = @SchoolYear
-                AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
+	--idea disability type (rds)
+		LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt                
+			ON rdidt.SchoolYear = @SchoolYear
+			AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
 
 		JOIN RDS.DimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState

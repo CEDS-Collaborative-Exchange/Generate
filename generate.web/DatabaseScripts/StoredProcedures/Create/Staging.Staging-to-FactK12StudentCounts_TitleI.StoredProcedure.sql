@@ -196,7 +196,8 @@ BEGIN
 			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 	--title I
 		JOIN Staging.ProgramParticipationTitleI title1
-			ON ske.StudentIdentifierState = title1.StudentIdentifierState
+			ON ske.SchoolYear = title1.SchoolYear		
+			AND ske.StudentIdentifierState = title1.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(title1.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(title1.SchoolIdentifierSea, '')
 			AND ((title1.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
@@ -212,6 +213,9 @@ BEGIN
 			AND rdt1s.TitleISchoolSupplementalServicesReceivedStatusCode = 'MISSING'
 			AND rdt1s.TitleISchoolwideProgramParticipationCode = 'MISSING'
 			AND rdt1s.TitleITargetedAssistanceParticipationCode = 'MISSING'
+	--age			
+		JOIN RDS.DimAges rda
+			ON RDS.Get_Age(ske.Birthdate, @TitleIDate) = rda.AgeValue
 	--LEAs
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
@@ -224,12 +228,10 @@ BEGIN
 		LEFT JOIN #vwGradeLevels rgls
 			ON ske.GradeLevel = rgls.GradeLevelMap
 			AND rgls.GradeLevelTypeDescription = 'Entry Grade Level'
-	--age			
-			JOIN RDS.DimAges rda
-				ON RDS.Get_Age(ske.Birthdate, @TitleIDate) = rda.AgeValue
 	--homeless
 		LEFT JOIN Staging.PersonStatus hmStatus
-			ON ske.StudentIdentifierState = hmStatus.StudentIdentifierState
+			ON ske.SchoolYear = hmStatus.SchoolYear		
+			AND ske.StudentIdentifierState = hmStatus.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
 			AND ((hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
@@ -242,7 +244,8 @@ BEGIN
 			AND rdhs.HomelessServicedIndicatorCode = 'MISSING' 
 	--foster care
 		LEFT JOIN Staging.PersonStatus foster
-			ON ske.StudentIdentifierState = foster.StudentIdentifierState
+			ON ske.SchoolYear = foster.SchoolYear		
+			AND ske.StudentIdentifierState = foster.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(foster.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(foster.SchoolIdentifierSea, '')
 			AND ((foster.FosterCare_ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
@@ -252,7 +255,8 @@ BEGIN
 			ON ISNULL(CAST(foster.ProgramType_FosterCare AS SMALLINT), -1) = ISNULL(CAST(rdvfc.ProgramParticipationFosterCareMap AS SMALLINT), -1)
 	--idea disability status
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
-			ON ske.StudentIdentifierState = idea.StudentIdentifierState
+			ON ske.SchoolYear = idea.SchoolYear		
+			AND ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
 			AND ((idea.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
@@ -266,7 +270,8 @@ BEGIN
 			AND rdis.SpecialEducationExitReasonCode = 'MISSING'
 	--english learner
 		LEFT JOIN Staging.PersonStatus el 
-			ON ske.StudentIdentifierState = el.StudentIdentifierState
+			ON ske.SchoolYear = el.SchoolYear		
+			AND ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND ((el.EnglishLearner_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
@@ -278,7 +283,8 @@ BEGIN
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
 	--migratory status	
 		LEFT JOIN Staging.PersonStatus migrant
-			ON ske.StudentIdentifierState = migrant.StudentIdentifierState
+			ON ske.SchoolYear = migrant.SchoolYear		
+			AND ske.StudentIdentifierState = migrant.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
 			AND ((migrant.Migrant_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))

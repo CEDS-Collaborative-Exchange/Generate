@@ -34,6 +34,7 @@ namespace generate.core.Models.Staging
         public string EdFactsAcademicOrCareerAndTechnicalOutcomeType { get; set; }
         public string EdFactsAcademicOrCareerAndTechnicalOutcomeExitType { get; set; }
         public DateTime? DiplomaCredentialAwardDate { get; set; }
+        public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
         public DateTime? RunDateTime { get; set; }
     }
