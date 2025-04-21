@@ -67,6 +67,8 @@ StoredProcedures\\Drop,RDS.Empty_Reports.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Empty_Reports.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_Reports.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_Reports.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.RunEndToEndTest.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.RunEndToEndTest.StoredProcedure.sql,0
 VersionUpdates\\12.4_prerelease,UpdateDbVersion.sql,0

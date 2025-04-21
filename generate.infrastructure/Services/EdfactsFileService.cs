@@ -75,12 +75,12 @@ namespace generate.infrastructure.Services
             dynamic dataRows = new List<ExpandoObject>();
 
             bool includeZeroCounts = false;
-            if (reportLevel == "sea" || reportCode.ToLower() == "c052" || reportCode.ToLower() == "c032" || reportCode.ToLower() == "c040" || reportCode.ToLower() == "c033")
+            if (reportLevel == "sea" || reportCode.ToLower() == "052" || reportCode.ToLower() == "032" || reportCode.ToLower() == "040" || reportCode.ToLower() == "033")
             {
                 includeZeroCounts = true;
             }
 
-            if (reportCode.ToLower() == "c045")
+            if (reportCode.ToLower() == "045")
             {
                 includeZeroCounts = false;
             }
@@ -115,17 +115,17 @@ namespace generate.infrastructure.Services
             {
 
 
-                if (report.ReportCode == "c205")
+                if (report.ReportCode == "205")
                 {
                     var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
                     dataRows = query.ToList();
                 }
-                else if(report.ReportCode == "c130")
+                else if(report.ReportCode == "130")
                 {
                     var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
                     dataRows = query.ToList();
                 }
-                else if(report.ReportCode == "c039")
+                else if(report.ReportCode == "039")
                 {
                     var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, null);
                     dataRows = query.ToList();

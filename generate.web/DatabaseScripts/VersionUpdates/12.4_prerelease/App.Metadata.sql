@@ -1,3 +1,30 @@
+Update r set ReportCode = 
+    CASE 
+        WHEN CHARINDEX('c', ReportCode) = 1 
+        THEN STUFF(ReportCode, CHARINDEX('c', ReportCode), 1, '')
+        ELSE ReportCode
+    END 
+FROM app.GenerateReports r
+where CHARINDEX('c', ReportCode) = 1 and ReportCode not in ('cohortgraduationrate')
+
+Update r set ReportShortName = 
+    CASE 
+        WHEN CHARINDEX('c', ReportShortName) = 1 
+        THEN STUFF(ReportShortName, CHARINDEX('c', ReportShortName), 1, '')
+        ELSE ReportShortName
+    END 
+FROM app.GenerateReports r
+where CHARINDEX('c', ReportShortName) = 1 and ReportCode not in ('cohortgraduationrate')
+
+ Update r set ControlTypeName = 
+    CASE 
+        WHEN CHARINDEX('c', ControlTypeName) = 1 
+        THEN STUFF(ControlTypeName, CHARINDEX('c', ControlTypeName), 1, '')
+        ELSE ControlTypeName
+    END 
+FROM app.GenerateReportControlType r
+where CHARINDEX('c', ControlTypeName) = 1 and ControlTypeName not in ('CCDSchool', 'CharterSchool', 'CohortGradRate')
+
 Update f set f.ReportColumn = d.DimensionFieldName
 from app.FileColumns f
 inner join app.Dimensions d on f.DimensionId = d.DimensionId
@@ -143,7 +170,7 @@ inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.Fil
 inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
 inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
 inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY') and ReportCode IN ('c150')
+where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY') and ReportCode IN ('150')
 
 Update fc set fc.ReportColumn = 'INDICATORSTATUS'
 from app.FileSubmissions fs
@@ -151,7 +178,7 @@ inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.Fil
 inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
 inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
 inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY') and ReportCode IN ('c199','c200','c201','c202','c206')
+where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY') and ReportCode IN ('199','200','201','202','206')
 
 Update fc set fc.ReportColumn = 'FederalFundAllocated'
 from app.FileSubmissions fs
@@ -159,7 +186,7 @@ inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.Fil
 inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
 inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
 inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY') and ReportCode IN ('c035')
+where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY') and ReportCode IN ('035')
 
 Update app.FileColumns set ReportColumn = 'IMPROVEMENTSTATUS' Where ColumnName = 'ImprovementStatus'
 Update app.FileColumns set ReportColumn = 'POSTSECONDARYENROLLMENTSTATUS' Where ColumnName = 'PSEnrollActionID'
@@ -172,7 +199,7 @@ inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.Fil
 inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
 inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
 inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('HomelessStatusID') and ReportCode IN ('c037')
+where fc.ColumnName IN ('HomelessStatusID') and ReportCode IN ('037')
 
 Update fc set fc.ReportColumn = 'HOMELESSUNACCOMPANIEDYOUTHSTATUS'
 from app.FileSubmissions fs
@@ -180,7 +207,7 @@ inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.Fil
 inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
 inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
 inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('HomelessStatusID') and ReportCode NOT IN ('c037')
+where fc.ColumnName IN ('HomelessStatusID') and ReportCode NOT IN ('037')
 
 Update app.FileColumns set ReportColumn = 'PERSISTENTLYDANGEROUSSTATUS' Where ColumnName = 'PersistDangerStatus'
 Update app.FileColumns set ReportColumn = 'DISCIPLINEMETHODFORFIREARMSINCIDENTS' Where ColumnName = 'FireArmIncResultID'
@@ -213,7 +240,7 @@ inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.Fil
 inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
 inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
 inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('DisabilityStatusID') and ReportCode IN ('c118','c144','c141','c175','c178','c179','c185','c188','c189','c040')
+where fc.ColumnName IN ('DisabilityStatusID') and ReportCode IN ('118','144','141','175','178','179','185','188','189','040')
 
 
 Update app.FileColumns set ReportColumn = 'REAPAlternativeFundingStatus' Where ColumnName = 'REAPAltFundInd'
@@ -224,7 +251,7 @@ inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.Fil
 inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
 inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
 inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('Amount') and ReportCode IN ('c205')
+where fc.ColumnName IN ('Amount') and ReportCode IN ('205')
 
 Update app.FileColumns set ReportColumn = 'OrganizationName' Where ColumnName = 'CharterAuthorizerName'
 Update app.FileColumns set ReportColumn = 'OrganizationName' Where ColumnName = 'CharterMngmtOrgName'

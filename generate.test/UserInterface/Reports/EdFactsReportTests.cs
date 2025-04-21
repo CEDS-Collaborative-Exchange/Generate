@@ -39,7 +39,7 @@ namespace generate.test.UserInterface.Reports
             string currentSubmissionYear = "2021";
             string priorSubmissionYear = "2020";
 
-            if (reportCode == "C035")
+            if (reportCode == "035")
             {
                 currentSubmissionYear = "2019";
                 priorSubmissionYear = "2018";
@@ -47,59 +47,59 @@ namespace generate.test.UserInterface.Reports
 
             List<string> activeFileSpecs = new List<string>();
 
-            activeFileSpecs.Add("C002");
-            activeFileSpecs.Add("C005");
-            activeFileSpecs.Add("C006");
-            activeFileSpecs.Add("C007");
-            activeFileSpecs.Add("C009");
-            activeFileSpecs.Add("C029");
-            activeFileSpecs.Add("C033");
-            activeFileSpecs.Add("C035");
-            activeFileSpecs.Add("C039");
-            activeFileSpecs.Add("C045");
-            activeFileSpecs.Add("C050");
-            activeFileSpecs.Add("C052");
-            activeFileSpecs.Add("C054");
-            activeFileSpecs.Add("C059");
-            activeFileSpecs.Add("C067");
-            activeFileSpecs.Add("C070");
-            activeFileSpecs.Add("C086");
-            activeFileSpecs.Add("C088");
-            activeFileSpecs.Add("C089");
-            activeFileSpecs.Add("C099");
-            activeFileSpecs.Add("C103");
-            activeFileSpecs.Add("C112");
-            activeFileSpecs.Add("C116");
-            activeFileSpecs.Add("C118");
-            activeFileSpecs.Add("C121");
-            activeFileSpecs.Add("C122");
-            activeFileSpecs.Add("C126");
-            activeFileSpecs.Add("C129");
-            activeFileSpecs.Add("C130");
-            activeFileSpecs.Add("C131");
-            activeFileSpecs.Add("C137");
-            activeFileSpecs.Add("C138");
-            activeFileSpecs.Add("C139");
-            activeFileSpecs.Add("C141");
-            activeFileSpecs.Add("C143");
-            activeFileSpecs.Add("C144");
-            activeFileSpecs.Add("C145");
-            activeFileSpecs.Add("C165");
-            activeFileSpecs.Add("C170");
-            activeFileSpecs.Add("C175");
-            activeFileSpecs.Add("C178");
-            activeFileSpecs.Add("C179");
-            activeFileSpecs.Add("C185");
-            activeFileSpecs.Add("C188");
-            activeFileSpecs.Add("C189");
-            activeFileSpecs.Add("C190");
-            activeFileSpecs.Add("C194");
-            activeFileSpecs.Add("C195");
-            activeFileSpecs.Add("C196");
-            activeFileSpecs.Add("C197");
-            activeFileSpecs.Add("C198");
-            activeFileSpecs.Add("C207");
-            activeFileSpecs.Add("C212");
+            activeFileSpecs.Add("002");
+            activeFileSpecs.Add("005");
+            activeFileSpecs.Add("006");
+            activeFileSpecs.Add("007");
+            activeFileSpecs.Add("009");
+            activeFileSpecs.Add("029");
+            activeFileSpecs.Add("033");
+            activeFileSpecs.Add("035");
+            activeFileSpecs.Add("039");
+            activeFileSpecs.Add("045");
+            activeFileSpecs.Add("050");
+            activeFileSpecs.Add("052");
+            activeFileSpecs.Add("054");
+            activeFileSpecs.Add("059");
+            activeFileSpecs.Add("067");
+            activeFileSpecs.Add("070");
+            activeFileSpecs.Add("086");
+            activeFileSpecs.Add("088");
+            activeFileSpecs.Add("089");
+            activeFileSpecs.Add("099");
+            activeFileSpecs.Add("103");
+            activeFileSpecs.Add("112");
+            activeFileSpecs.Add("116");
+            activeFileSpecs.Add("118");
+            activeFileSpecs.Add("121");
+            activeFileSpecs.Add("122");
+            activeFileSpecs.Add("126");
+            activeFileSpecs.Add("129");
+            activeFileSpecs.Add("130");
+            activeFileSpecs.Add("131");
+            activeFileSpecs.Add("137");
+            activeFileSpecs.Add("138");
+            activeFileSpecs.Add("139");
+            activeFileSpecs.Add("141");
+            activeFileSpecs.Add("143");
+            activeFileSpecs.Add("144");
+            activeFileSpecs.Add("145");
+            activeFileSpecs.Add("165");
+            activeFileSpecs.Add("170");
+            activeFileSpecs.Add("175");
+            activeFileSpecs.Add("178");
+            activeFileSpecs.Add("179");
+            activeFileSpecs.Add("185");
+            activeFileSpecs.Add("188");
+            activeFileSpecs.Add("189");
+            activeFileSpecs.Add("190");
+            activeFileSpecs.Add("194");
+            activeFileSpecs.Add("195");
+            activeFileSpecs.Add("196");
+            activeFileSpecs.Add("197");
+            activeFileSpecs.Add("198");
+            activeFileSpecs.Add("207");
+            activeFileSpecs.Add("212");
 
 
             var reportYear = currentSubmissionYear;
@@ -270,153 +270,153 @@ namespace generate.test.UserInterface.Reports
         [Fact]
         public void EdFactReports_C002()
         {
-            TestReport("C002", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("002", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C005()
         {
-            TestReport("C005", new List<string>() { "SEA", "LEA" });
+            TestReport("005", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C006()
         {
-            TestReport("C006", new List<string>() { "SEA", "LEA" });
+            TestReport("006", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C007()
         {
-            TestReport("C007", new List<string>() { "SEA", "LEA" });
+            TestReport("007", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C009()
         {
-            TestReport("C009", new List<string>() { "SEA", "LEA" });
+            TestReport("009", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C029()
         {
-            TestReport("C029", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("029", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C032()
         {
-            TestReport("C032", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("032", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C033()
         {
-            TestReport("C033", new List<string>() { "SCHOOL" });
+            TestReport("033", new List<string>() { "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C037()
         {
-            TestReport("C037", new List<string>() { "SEA", "LEA" });
+            TestReport("037", new List<string>() { "SEA", "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C039()
         {
-            TestReport("C039", new List<string>() { "LEA", "SCHOOL" });
+            TestReport("039", new List<string>() { "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C040()
         {
-            TestReport("C040", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("040", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
 
         [Fact]
         public void EdFactReports_C045()
         {
-            TestReport("C045", new List<string>() { "SEA", "LEA" });
+            TestReport("045", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C050()
         {
-            TestReport("C050", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("050", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C052()
         {
-            TestReport("C052", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("052", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C054()
         {
-            TestReport("C054", new List<string>() { "SEA" });
+            TestReport("054", new List<string>() { "SEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C059()
         {
-            TestReport("C059", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("059", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
 
         [Fact]
         public void EdFactReports_C067()
         {
-            TestReport("C067", new List<string>() { "SEA", "LEA" });
+            TestReport("067", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C070()
         {
-            TestReport("C070", new List<string>() { "SEA", "LEA" });
+            TestReport("070", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C082()
         {
-            TestReport("C082", new List<string>() { "SEA" });
+            TestReport("082", new List<string>() { "SEA" });
         }
 
         [Fact]
         public void EdFactReports_C083()
         {
-            TestReport("C083", new List<string>() { "SEA" });
+            TestReport("083", new List<string>() { "SEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C088()
         {
-            TestReport("C088", new List<string>() { "SEA", "LEA" });
+            TestReport("088", new List<string>() { "SEA", "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C089()
         {
-            TestReport("C089", new List<string>() { "SEA", "LEA" });
+            TestReport("089", new List<string>() { "SEA", "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C099()
         {
-            TestReport("C099", new List<string>() { "SEA", "LEA" });
+            TestReport("099", new List<string>() { "SEA", "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C103()
         {
-            TestReport("C103", new List<string>() { "SCHOOL" });
+            TestReport("103", new List<string>() { "SCHOOL" });
         }
 
 
@@ -424,150 +424,150 @@ namespace generate.test.UserInterface.Reports
         [Fact]
         public void EdFactReports_C112()
         {
-            TestReport("C112", new List<string>() { "SEA", "LEA" });
+            TestReport("112", new List<string>() { "SEA", "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C116()
         {
-            TestReport("C116", new List<string>() { "SEA", "LEA" });
+            TestReport("116", new List<string>() { "SEA", "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C118()
         {
-            TestReport("C118", new List<string>() { "SEA", "LEA" });
+            TestReport("118", new List<string>() { "SEA", "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C121()
         {
-            TestReport("C121", new List<string>() { "SEA" });
+            TestReport("121", new List<string>() { "SEA" });
         }
 
         [Fact]
         public void EdFactReports_C122()
         {
-            TestReport("C122", new List<string>() { "SEA" });
+            TestReport("122", new List<string>() { "SEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C126()
         {
-            TestReport("C126", new List<string>() { "SEA", "LEA" });
+            TestReport("126", new List<string>() { "SEA", "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C129()
         {
-            TestReport("C129", new List<string>() { "SCHOOL" });
+            TestReport("129", new List<string>() { "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C130()
         {
-            TestReport("C130", new List<string>() { "SCHOOL" });
+            TestReport("130", new List<string>() { "SCHOOL" });
         }
 
 
         [Fact]
         public void EdFactReports_C132()
         {
-            TestReport("C132", new List<string>() { "SCHOOL" });
+            TestReport("132", new List<string>() { "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C134()
         {
-            TestReport("C134", new List<string>() { "SEA", "LEA" });
+            TestReport("134", new List<string>() { "SEA", "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C137()
         {
-            TestReport("C137", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("137", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
 
         [Fact]
         public void EdFactReports_C138()
         {
-            TestReport("C138", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("138", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C139()
         {
-            TestReport("C139", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("139", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C141()
         {
-            TestReport("C141", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("141", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
 
         [Fact]
         public void EdFactReports_C142()
         {
-            TestReport("C142", new List<string>() { "SEA" });
+            TestReport("142", new List<string>() { "SEA" });
         }
 
         [Fact]
         public void EdFactReports_C143()
         {
-            TestReport("C143", new List<string>() { "SEA", "LEA" });
+            TestReport("143", new List<string>() { "SEA", "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C144()
         {
-            TestReport("C144", new List<string>() { "SEA", "LEA" });
+            TestReport("144", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C145()
         {
-            TestReport("C145", new List<string>() { "SEA" });
+            TestReport("145", new List<string>() { "SEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C154()
         {
-            TestReport("C154", new List<string>() { "SEA" });
+            TestReport("154", new List<string>() { "SEA" });
         }
 
         [Fact]
         public void EdFactReports_C155()
         {
-            TestReport("C155", new List<string>() { "SEA" });
+            TestReport("155", new List<string>() { "SEA" });
         }
 
         [Fact]
         public void EdFactReports_C156()
         {
-            TestReport("C156", new List<string>() { "SEA" });
+            TestReport("156", new List<string>() { "SEA" });
         }
 
         [Fact]
         public void EdFactReports_C157()
         {
-            TestReport("C157", new List<string>() { "SEA" });
+            TestReport("157", new List<string>() { "SEA" });
         }
 
         [Fact]
         public void EdFactReports_C158()
         {
-            TestReport("C158", new List<string>() { "SEA" });
+            TestReport("158", new List<string>() { "SEA" });
         }
 
 
@@ -576,7 +576,7 @@ namespace generate.test.UserInterface.Reports
         [Fact]
         public void EdFactReports_C165()
         {
-            TestReport("C165", new List<string>() { "SCHOOL" });
+            TestReport("165", new List<string>() { "SCHOOL" });
         }
 
 
@@ -584,165 +584,165 @@ namespace generate.test.UserInterface.Reports
         [Fact]
         public void EdFactReports_C169()
         {
-            TestReport("C169", new List<string>() { "SEA" });
+            TestReport("169", new List<string>() { "SEA" });
         }
 
         [Fact]
         public void EdFactReports_C170()
         {
-            TestReport("C170", new List<string>() { "LEA" });
+            TestReport("170", new List<string>() { "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C175()
         {
-            TestReport("C175", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("175", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C178()
         {
-            TestReport("C178", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("178", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
 
         [Fact]
         public void EdFactReports_C179()
         {
-            TestReport("C179", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("179", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C185()
         {
-            TestReport("C185", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("185", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C188()
         {
-            TestReport("C188", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("188", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C189()
         {
-            TestReport("C189", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("189", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C190()
         {
-            TestReport("C190", new List<string>() { "CAO" });
+            TestReport("190", new List<string>() { "CAO" });
         }
 
 
         [Fact]
         public void EdFactReports_C193()
         {
-            TestReport("C193", new List<string>() { "LEA" });
+            TestReport("193", new List<string>() { "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C194()
         {
-            TestReport("C194", new List<string>() { "SEA", "LEA" });
+            TestReport("194", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C195()
         {
-            TestReport("C195", new List<string>() { "SCHOOL" });
+            TestReport("195", new List<string>() { "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C196()
         {
-            TestReport("C196", new List<string>() { "CMO" });
+            TestReport("196", new List<string>() { "CMO" });
         }
 
         [Fact]
         public void EdFactReports_C197()
         {
-            TestReport("C197", new List<string>() { "SCHOOL" });
+            TestReport("197", new List<string>() { "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C198()
         {
-            TestReport("C198", new List<string>() { "SCHOOL" });
+            TestReport("198", new List<string>() { "SCHOOL" });
         }
 
 
         [Fact]
         public void EdFactReports_C204()
         {
-            TestReport("C204", new List<string>() { "SEA", "LEA" });
+            TestReport("204", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C205()
         {
-            TestReport("C205", new List<string>() { "SCHOOL" });
+            TestReport("205", new List<string>() { "SCHOOL" });
         }
 
 
         [Fact]
         public void EdFactReports_C086()
         {
-            TestReport("C086", new List<string>() { "SEA", "LEA" });
+            TestReport("086", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C131()
         {
-            TestReport("C131", new List<string>() { "LEA" });
+            TestReport("131", new List<string>() { "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C150()
         {
-            TestReport("C150", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("150", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C151()
         {
-            TestReport("C151", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("151", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C160()
         {
-            TestReport("C160", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("160", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C163()
         {
-            TestReport("C163", new List<string>() { "LEA", "SCHOOL" });
+            TestReport("163", new List<string>() { "LEA", "SCHOOL" });
         }
 
 
         [Fact]
         public void EdFactReports_C113()
         {
-            TestReport("C113", new List<string>() { "SEA" });
+            TestReport("113", new List<string>() { "SEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C119()
         {
-            TestReport("C119", new List<string>() { "SEA" });
+            TestReport("119", new List<string>() { "SEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C125()
         {
-            TestReport("C125", new List<string>() { "LEA" });
+            TestReport("125", new List<string>() { "LEA" });
         }
 
 
@@ -756,64 +756,64 @@ namespace generate.test.UserInterface.Reports
         [Fact]
         public void EdFactReports_C180()
         {
-            TestReport("C180", new List<string>() { "SEA", "LEA" });
+            TestReport("180", new List<string>() { "SEA", "LEA" });
         }
 
         [Fact]
         public void EdFactReports_C181()
         {
-            TestReport("C181", new List<string>() { "SEA", "LEA" });
+            TestReport("181", new List<string>() { "SEA", "LEA" });
         }
 
 
         [Fact]
         public void EdFactReports_C200()
         {
-            TestReport("C200", new List<string>() { "SCHOOL" });
+            TestReport("200", new List<string>() { "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C201()
         {
-            TestReport("C201", new List<string>() { "SCHOOL" });
+            TestReport("201", new List<string>() { "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C202()
         {
-            TestReport("C202", new List<string>() { "SCHOOL" });
+            TestReport("202", new List<string>() { "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C203()
         {
-            TestReport("C203", new List<string>() { "SEA", "LEA", "SCHOOL" });
+            TestReport("203", new List<string>() { "SEA", "LEA", "SCHOOL" });
         }
 
 
         [Fact]
         public void EdFactReports_C206()
         {
-            TestReport("C206", new List<string>() { "SCHOOL" });
+            TestReport("206", new List<string>() { "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C207()
         {
-            TestReport("C207", new List<string>() { "SCHOOL" });
+            TestReport("207", new List<string>() { "SCHOOL" });
         }
 
 
         [Fact]
         public void EdFactReports_C199()
         {
-            TestReport("C199", new List<string>() { "SCHOOL" });
+            TestReport("199", new List<string>() { "SCHOOL" });
         }
 
         [Fact]
         public void EdFactReports_C035()
         {
-            TestReport("C035", new List<string>() { "SEA", "LEA" });
+            TestReport("035", new List<string>() { "SEA", "LEA" });
         }
 
         #endregion
