@@ -10,7 +10,7 @@ and facttypeId = 17
 and StoredProcedureName = 'rds.Empty_Reports ''chronic'''
 
 update app.DataMigrationTasks
-set StoredProcedureName = 'rds.create_Reports ''chronicabsenteeism'''
+set StoredProcedureName = 'rds.create_Reports ''chronicabsenteeism'',0'
 where datamigrationtypeid = 3
 and facttypeId = 17
 and StoredProcedureName = 'rds.create_Reports ''chronic'',0'
