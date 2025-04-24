@@ -44,12 +44,12 @@ AS
 									on grft.GenerateReportId = gr.GenerateReportId
 								inner join rds.DimFactTypes dft
 									on grft.FactTypeId = dft.DimFactTypeId
-							where gr.ReportCode = (concat('c',@ReportCode)))
+							where gr.ReportCode = @ReportCode)
 
 	SET @SQLStatement = 
 	'SELECT *
-	INTO ##' + (concat('c',@ReportCode)) + 'Staging
-	FROM Staging.vw' + @factTypeCode + '_StagingTables_' + (concat('c',@ReportCode)) 
+	INTO ##' + (@ReportCode) + 'Staging
+	FROM Staging.vw' + @factTypeCode + '_StagingTables_' + (@ReportCode)
 
 	EXEC sp_executesql @SQLStatement;
 
@@ -64,7 +64,7 @@ AS
 					WHEN 'SCH' THEN ', SchoolIdentifierSea'
 					ELSE ''
 				END + '
-			FROM ##' + (concat('c',@ReportCode)) + 'Staging'
+			FROM ##' + (@ReportCode) + 'Staging'
 			+ CASE WHEN ISNULL(STRING_AGG(d.DimensionFieldName, ',' + CHAR(10) + '				'), '') = '' THEN '' ELSE
 			'
 			GROUP BY 
@@ -103,13 +103,13 @@ AS
 			,GETDATE()
 		FROM StagingData s
 		INNER JOIN RDS.' + @ReportTableName + ' rt
-			ON rt.ReportCode = ''' + (concat('c',@ReportCode)) + ''' 
+			ON rt.ReportCode = ''' + (@ReportCode) + ''' 
 			AND rt.ReportYear = ' + @SchoolYear + '
 			AND rt.ReportLevel = ''' + aol.LevelCode + '''
 			AND rt.CategorySetCode = ''' + cs.CategorySetCode + '''
 			' + 
 			CASE 
-				WHEN (concat('c',@ReportCode)) = 'C119' THEN 
+				WHEN (@ReportCode) = '119' THEN 
 				'AND rt.TableTypeAbbrv = '''+ att.TableTypeAbbrv + '''
 				'
 				ELSE ''
@@ -140,10 +140,10 @@ AS
 	LEFT JOIN app.Dimensions d
 		ON cd.DimensionId = d.DimensionId
 	WHERE cs.SubmissionYear = @SchoolYear
-		AND gr.ReportCode = (concat('c',@ReportCode))
+		AND gr.ReportCode = (@ReportCode)
 		--AND  att.TableTypeId <> 353
 		AND  1 =  
-				CASE WHEN (concat('c',@ReportCode)) = 'C119' THEN 
+				CASE WHEN (@ReportCode) = '119' THEN 
 					CASE WHEN att.TableTypeId <> 353 THEN 1 ELSE 0 END
 				ELSE 1
 				END
@@ -168,7 +168,7 @@ AS
 	CLOSE cursor_name;
 	DEALLOCATE cursor_name;
 
-	SET @SQLStatement =	'DROP TABLE ##' + (concat('c',@ReportCode)) + 'Staging'
+	SET @SQLStatement =	'DROP TABLE ##' + (@ReportCode) + 'Staging'
 	EXEC sp_executesql @SQLStatement
 
 GO
