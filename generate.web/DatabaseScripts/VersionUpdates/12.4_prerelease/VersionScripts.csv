@@ -71,6 +71,8 @@ StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.RunEndToEndTest.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.RunEndToEndTest.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Insert_CountsIntoReportTable.StoredProcedure.sql,0
 VersionUpdates\\12.4_prerelease,UpdateDbVersion.sql,0
 
 
