@@ -74,20 +74,8 @@ namespace generate.infrastructure.Services
                 reportDto.dataCount = -1;
                 return reportDto;
             }
-            else
-            {
-                if (report.ReportCode.ToLower() == "059" && reportLevel == "sch")
-                {                    
-                    report.ReportName = "059: Classroom Teacher FTE";
-                }
-                if (report.ReportCode.ToLower() == "050" && reportYear == "2017-18")
-                {
-                    report.ReportName = "050: Title III English Language Proficiency Results";
-                }
 
-
-                reportDto.ReportTitle = report.ReportName;                
-            }
+            reportDto.ReportTitle = SetReportTitle(report, reportLevel, reportYear);               
 
             bool includeZeroCounts = false;
             if (reportLevel == "sea")
@@ -96,8 +84,13 @@ namespace generate.infrastructure.Services
             }
 
             // Data
+            bool isOnlineReport = false;
+            if (reportCode == "204" || reportCode == "151" || reportCode == "150")
+            {
+                isOnlineReport = true;
+            }
 
-            
+
             dynamic dataRows = new List<ExpandoObject>();
 
             int skip = 0;
@@ -106,19 +99,13 @@ namespace generate.infrastructure.Services
 
             if (report.ReportCode == "052")
             {
-                bool isOnlineReport = false;
-
                 var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts, false, isOnlineReport);
                 dataRows = query.Item1.ToList();
                 reportDto.dataCount = query.Item1.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
             }
             else if (report.FactTable.FactTableName == "FactK12StudentCounts")
             {
-                bool isOnlineReport = false;
-                if (reportCode == "204" || reportCode == "151" || reportCode == "150")
-                {
-                    isOnlineReport = true;
-                }
+                
                 var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts, false, false, isOnlineReport);
                 dataRows = query.ToList();
                 reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
@@ -141,31 +128,13 @@ namespace generate.infrastructure.Services
                 dataRows = query.ToList();
                 reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
             }
-            else if (report.FactTable.FactTableName == "FactOrganizationCounts")
-            {
-                if(reportCode == "039")
-                {
-                    var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
-                    dataRows = query.ToList();
-                    reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
 
-                }
-                else if (reportCode == "130")
-                {
-                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
-                    dataRows = query.ToList();
-                    reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
-                }
-                else {
-                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
-                    dataRows = query.ToList();
-                    reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
-                }
-                
-                
-            }
             reportDto.data = dataRows;
 
+            if (report.FactTable.FactTableName == "FactOrganizationCounts")
+            {
+                reportDto = GetOrganizationReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
+            }
             if (report.FactTable.FactTableName == "FactOrganizationStatusCounts")
 			{
                 reportDto = GetOrganizationStatusReportData(reportCode, reportLevel, reportYear, categorySetCode);
@@ -254,6 +223,52 @@ namespace generate.infrastructure.Services
             }
 
             return reportDto;
+        }
+
+        public GenerateReportDataDto GetOrganizationReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts)
+        {
+            GenerateReportDataDto reportDto = new GenerateReportDataDto();
+            reportDto.structure = new GenerateReportStructureDto();
+            reportDto.data = new List<ExpandoObject>();
+
+            dynamic dataRows = new List<ExpandoObject>();
+            if (reportCode == "039")
+            {
+                var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
+                dataRows = query.ToList();
+                reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
+
+            }
+            else if (reportCode == "130")
+            {
+                var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
+                dataRows = query.ToList();
+                reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
+            }
+            else
+            {
+                var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
+                dataRows = query.ToList();
+                reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
+            }
+
+            reportDto.data = dataRows;
+            return reportDto;
+        }
+
+        private string SetReportTitle(GenerateReport report, string reportLevel, string reportYear)
+        {
+            if (report.ReportCode.ToLower() == "059" && reportLevel == "sch")
+            {
+                report.ReportName = "059: Classroom Teacher FTE";
+            }
+            if (report.ReportCode.ToLower() == "050" && reportYear == "2017-18")
+            {
+                report.ReportName = "050: Title III English Language Proficiency Results";
+            }
+
+
+            return report.ReportName;
         }
 
     }

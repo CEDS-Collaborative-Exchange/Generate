@@ -185,7 +185,8 @@ try
 {
     Log.Information("Starting web host");
 
-    app.Run();
+    //app.Run();
+    await app.RunAsync();
 
 }
 catch (Exception ex)

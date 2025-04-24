@@ -29,6 +29,7 @@ namespace generate.console
     {
         private static IServiceProvider serviceProvider;
         private static IConfigurationRoot Configuration;
+        const string executeString = "execute";
 
         public Program()
         {
@@ -165,6 +166,7 @@ namespace generate.console
             string taskToRun = commandLineArguments[0].ToLower();
             const string invalidString = "Invalid Arguments";
             const string spacer = "-----------------------";
+            
 
             if (validTasks.Length <= 0)
             {
@@ -195,14 +197,9 @@ namespace generate.console
                     int schoolYear;
                     int numberOfYears;
                     string dataStandardType;
-                    string testDataType = "staging";
-                    seed = 1000;
-                    quantityOfStudents = 10000;
-                    string formatType = "sql";
-                    string outputType = "execute";
-                    schoolYear = 2023;
-                    numberOfYears = 1;
-                    dataStandardType = "ceds";
+                    string testDataType;
+                    string formatType;
+                    string outputType;
 
                     if (commandLineArguments.Count < 9)
                     {
@@ -265,7 +262,7 @@ namespace generate.console
                     }
 
                     outputType = commandLineArguments[8].ToLower();
-                    string[] validOutputTypes = ["console", "file", "execute"];
+                    string[] validOutputTypes = ["console", "file", executeString];
                     if (!validOutputTypes.Contains(outputType))
                     {
                         Console.WriteLine(invalidString);
@@ -306,7 +303,7 @@ namespace generate.console
                 return;
             }
 
-            if (outputType == "execute")
+            if (outputType == executeString)
             {
                 outputTypeToGenerate = "file";
 
@@ -335,7 +332,7 @@ namespace generate.console
                 rdsTestDataGenerator.GenerateTestData(seed, quantityOfStudents, formatType, outputTypeToGenerate, Directory.GetCurrentDirectory());
             }
 
-            if (outputType == "execute")
+            if (outputType == executeString)
             {
                 ITestDataInitializer testDataInitializer = serviceProvider.GetService<ITestDataInitializer>();
                 testDataInitializer.ExecuteTestData(testDataType, JobCancellationToken.Null, Directory.GetCurrentDirectory());

@@ -12,15 +12,6 @@ namespace generate.core.Helpers.ReferenceData
 
         public static List<RefInstitutionTelephoneType> GetData()
         {
-            /*
-            select 'data.Add(new RefInstitutionTelephoneType() { 
-            RefInstitutionTelephoneTypeId = ' + convert(varchar(20), RefInstitutionTelephoneTypeId) + ',
-            Code = "' + Code + '",
-            Description = "' + [Description] + '"
-            });'
-            from dbo.RefInstitutionTelephoneType
-            */
-
             var data = new List<RefInstitutionTelephoneType>();
 
             data.Add(new RefInstitutionTelephoneType()
