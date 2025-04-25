@@ -118,7 +118,7 @@ BEGIN
 							,[OrganizationStateId]
 							,[ParentOrganizationStateId]
 							'
-							IF (@reportCode = 'c202')
+							IF (@reportCode = '202')
 							BEGIN
 								if @categorySetCode IN ('csa','csa1')
 									select @sql=@sql+' ,[RACE]'
@@ -163,7 +163,7 @@ BEGIN
 							sch.SchoolIdentifierState,
 							sch.LeaIdentifierState,'
 
-							IF (@reportCode = 'c202')
+							IF (@reportCode = '202')
 							BEGIN
 								if @categorySetCode IN ('csa','csa1')
 									select @sql=@sql+' race.RaceEdFactsCode,'
@@ -197,7 +197,7 @@ BEGIN
 						inner join rds.DimSchoolYears dates on fact.SchoolYearId = dates.DimSchoolYearId
 						inner join rds.DimK12Schools sch on fact.K12SchoolId = sch.DimK12SchoolId
 						'
-						IF (@reportCode = 'c202')
+						IF (@reportCode = '202')
 						BEGIN
 								if @categorySetCode IN ('csa','csa1')
 									select @sql=@sql+'
@@ -243,7 +243,7 @@ BEGIN
 						inner join rds.DimIndicatorStatusTypes indicatorstatustype on indicatorstatustype.DimIndicatorStatusTypeId=fact.IndicatorStatusTypeId
 						Where dates.SchoolYear = @reportYear and sch.DimK12SchoolId <> -1 and indicatorstatustype.IndicatorStatusTypeEdFactsCode=@ReportTypeAbbreviation
 						'
-						IF (@reportCode = 'c202')
+						IF (@reportCode = '202')
 						BEGIN
 							if @categorySetCode IN ('csa','csa1')
 								select @sql=@sql+' and fact.RaceId <> -1 '
@@ -298,7 +298,7 @@ BEGIN
 						sch.SchoolIdentifierState,
 						sch.LeaIdentifierState,'
 						
-						IF(@reportCode = 'c202')
+						IF(@reportCode = '202')
 						BEGIN
 							if @categorySetCode IN ('csa','csa1')
 								select @sql=@sql+' race.RaceEdFactsCode,'
@@ -337,7 +337,7 @@ BEGIN
 					inner join rds.DimSchoolYears dates on fact.SchoolYearId = dates.DimSchoolYearId
 					inner join rds.DimK12Schools sch on fact.K12SchoolId = sch.DimK12SchoolId
 					'
-					IF(@reportCode = 'c202')
+					IF(@reportCode = '202')
 					BEGIN
 						if @categorySetCode IN ('csa','csa1')
 							select @sql=@sql+'
@@ -384,7 +384,7 @@ BEGIN
 					inner join rds.DimIndicatorStatusTypes indicatorstatustype on indicatorstatustype.DimIndicatorStatusTypeId=fact.IndicatorStatusTypeId
 					Where dates.SchoolYear = @reportYear and sch.DimK12SchoolId <> -1 and indicatorstatustype.IndicatorStatusTypeEdFactsCode=@ReportTypeAbbreviation
 					'
-					IF (@reportCode = 'c202')
+					IF (@reportCode = '202')
 					BEGIN
 						if @categorySetCode IN ('csa','csa1')
 							select @sql=@sql+' and fact.RaceId <> -1 '
