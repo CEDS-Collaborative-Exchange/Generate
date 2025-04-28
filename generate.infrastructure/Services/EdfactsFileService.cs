@@ -19,6 +19,7 @@ using generate.core.Models.RDS;
 using generate.core.Interfaces.Repositories.App;
 using generate.core.Dtos.RDS;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Data;
 
 namespace generate.infrastructure.Services
 {
@@ -113,28 +114,7 @@ namespace generate.infrastructure.Services
             }
             else if (report.FactTable.FactTableName == "FactOrganizationCounts")
             {
-
-
-                if (report.ReportCode == "205")
-                {
-                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
-                    dataRows = query.ToList();
-                }
-                else if(report.ReportCode == "130")
-                {
-                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
-                    dataRows = query.ToList();
-                }
-                else if(report.ReportCode == "039")
-                {
-                    var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, null);
-                    dataRows = query.ToList();
-                }
-                else
-                {
-                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null);
-                    dataRows = query.ToList();
-                }
+                dataRows = GetOrganizationStudentCountData(reportCode, reportLevel, reportYear);
             }
 
             dynamicRows = GetSubmissionData(dataRows, fileSubmissioncolumns);
@@ -206,6 +186,34 @@ namespace generate.infrastructure.Services
 
             return (dataRows, query.Item2);
             
+        }
+
+        public dynamic GetOrganizationStudentCountData(string reportCode, string reportLevel, string reportYear)
+        {
+            dynamic dataRows = new List<ExpandoObject>();
+            
+            if (reportCode == "205")
+            {
+                var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
+                dataRows = query.ToList();
+            }
+            else if (reportCode == "130")
+            {
+                var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
+                dataRows = query.ToList();
+            }
+            else if (reportCode == "039")
+            {
+                var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, null);
+                dataRows = query.ToList();
+            }
+            else
+            {
+                var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null);
+                dataRows = query.ToList();
+            }
+
+            return dataRows;
         }
     }
 }
