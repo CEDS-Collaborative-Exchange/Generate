@@ -264,6 +264,16 @@ Update app.FileColumns set ReportColumn = 'CHARTERSCHOOLMANAGERORGANIZATION' Whe
 Update app.FileColumns set ReportColumn = 'CHARTERSCHOOLUPDATEDMANAGERORGANIZATION' Where ColumnName = 'ManagementOrgEINUpdated'
 Update app.FileColumns set ReportColumn = 'CharterSchoolContractIdNumber' Where ColumnName = 'CharterContractIDNumber'
 
+Update fc set fc.ReportColumn = f.FactFieldName
+from app.FileSubmissions fs
+inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
+inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
+inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
+inner join app.FactTables f on r.FactTableId = f.FactTableId
+where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY') and r.ReportCode = '052'
+
+Update app.ToggleQuestions set QuestionText = 'What date should be used to fill the EFFECTIVE DATE field in 029 - Directory?' where EmapsQuestionAbbrv = 'EFFECTIVEDTE'
+
 
 --set the new DimFactTypes FactTypeLabel column value
 	IF COL_LENGTH('RDS.DimFactTypes', 'FactTypeLabel') IS NOT NULL
