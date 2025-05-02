@@ -111,7 +111,7 @@ namespace generate.infrastructure.Services
                 var query = _factOrganizationStatusCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null);
                 dataRows = query.ToList();
             }
-            else if (report.FactTable.FactTableName == "FactOrganizationCounts")
+            else if (factTableName == "FactOrganizationCounts")
             {
 
 
@@ -137,11 +137,11 @@ namespace generate.infrastructure.Services
                 }
             }
 
-            dynamicRows = GetSubmissionData(dataRows, fileSubmissioncolumns);
+            dynamicRows = GetSubmissionData(dataRows, fileSubmissioncolumns, factTableName, reportCode, reportLevel);
             return dynamicRows;
         }
 
-        public List<ExpandoObject> GetSubmissionData(dynamic dataRows, List<FileSubmissionColumnDto> fileSubmissioncolumns)
+        public List<ExpandoObject> GetSubmissionData(dynamic dataRows, List<FileSubmissionColumnDto> fileSubmissioncolumns, string factTableName,string reportCode, string reportLevel)
         {
             int fileRecordNumber = 0;
             dynamic dynamicRows = new List<ExpandoObject>();
@@ -173,6 +173,59 @@ namespace generate.infrastructure.Services
                     else if (column.ColumnName == "FileRecordNumber")
                     {
                         DynamicClassObject.AddProperty(column.ColumnName, fileRecordNumber.ToString(), fileDataRow);
+                    }
+                    else if (column.ColumnName == "StateLEAIDNumber")
+                    {
+                        if(factTableName == "FactOrganizationCounts")
+                        {
+                            if (reportLevel == "lea") { field = "OrganizationStateId"; }
+                            else if (reportLevel == "sch") { field = "ParentOrganizationStateId"; }
+                        }
+                        else
+                        {
+                            if (reportLevel == "lea") { field = "OrganizationIdentifierSea"; }
+                            else if (reportLevel == "sch") { field = "ParentOrganizationIdentifierSea"; }
+                        }
+                        
+                    }
+                    else if (column.ColumnName == "NCESLEAIDNumber")
+                    {
+                        if (factTableName == "FactOrganizationCounts")
+                        {
+                            if (reportLevel == "lea") { field = "OrganizationNcesId"; }
+                            else if (reportLevel == "sch") { field = "ParentOrganizationNcesId"; }
+                        }
+                        else
+                        {
+                            if (reportLevel == "lea") { field = "OrganizationIdentifierNces"; }
+                            else if (reportLevel == "sch") { field = "ParentOrganizationIdentifierNces"; }
+                        }
+
+                    }
+                    else if (column.ColumnName == "StateSchoolIDNumber")
+                    {
+                        if (factTableName == "FactOrganizationCounts")
+                        {
+                            field = "OrganizationStateId";
+                        }
+                        else
+                        {
+                            field = "OrganizationIdentifierSea";
+                        }
+
+                    }
+                    else if (column.ColumnName == "Amount")
+                    {
+                        string reportCodes = "199,200,201,202,206";
+                        if (reportCode == "150") { field = "StudentRate"; }
+                        else if (reportCode == "035") { field = "FederalFundAllocated";  }
+                        else if(reportCodes.Contains(reportCode)) { field = "INDICATORSTATUS"; }
+                        else if (reportCode == "205") { field = "PROGRESSACHIEVINGENGLISHLANGUAGE"; }
+                    }
+                    else if (column.ColumnName == "HomelessStatusID")
+                    {
+                        if (reportCode == "037") { field = "HOMELESSNESSSTATUS"; }
+                        else { field = "HOMELESSUNACCOMPANIEDYOUTHSTATUS"; }
                     }
 
                     PropertyInfo prop = dataRow.GetType().GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
