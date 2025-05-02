@@ -48,87 +48,6 @@ Update app.FileColumns set ReportColumn = 'PhysicalAddressState' Where ColumnNam
 Update app.FileColumns set ReportColumn = 'PhysicalAddressPostalCode' Where ColumnName = 'LocationZipcode'
 Update app.FileColumns set ReportColumn = 'PhysicalAddressPostalCode2' Where ColumnName = 'LocationZipcodePlus4'
 
-Update fc set fc.ReportColumn = 'ParentOrganizationStateId'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where Organizationlevelid = 3 and fc.ColumnName = 'StateLEAIDNumber' and f.FactReportTableName like '%Organization%'
-
-Update fc set fc.ReportColumn = 'ParentOrganizationIdentifierSea'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where Organizationlevelid = 3 and fc.ColumnName = 'StateLEAIDNumber' and f.FactReportTableName not like '%Organization%'
-
-Update fc set fc.ReportColumn = 'OrganizationStateId'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where Organizationlevelid <> 3 and fc.ColumnName = 'StateLEAIDNumber' and f.FactReportTableName like '%Organization%'
-
-Update fc set fc.ReportColumn = 'OrganizationIdentifierSea'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where Organizationlevelid <> 3 and fc.ColumnName = 'StateLEAIDNumber' and f.FactReportTableName not like '%Organization%'
-
-Update fc set fc.ReportColumn = 'ParentOrganizationNcesId'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where Organizationlevelid = 3 and fc.ColumnName = 'NCESLEAIDNumber' and f.FactReportTableName like '%Organization%'
-
-Update fc set fc.ReportColumn = 'ParentOrganizationIdentifierNces'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where Organizationlevelid = 3 and fc.ColumnName = 'NCESLEAIDNumber' and f.FactReportTableName not like '%Organization%'
-
-
-Update fc set fc.ReportColumn = 'OrganizationNcesId'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where Organizationlevelid <> 3 and fc.ColumnName = 'NCESLEAIDNumber' and f.FactReportTableName like '%Organization%'
-
-Update fc set fc.ReportColumn = 'OrganizationIdentifierNces'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where Organizationlevelid <> 3 and fc.ColumnName = 'NCESLEAIDNumber' and f.FactReportTableName not like '%Organization%'
-
-Update fc set fc.ReportColumn = 'OrganizationNcesId'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName = 'NCESSchoolIDNumber' and f.FactReportTableName like '%Organization%'
-
-Update fc set fc.ReportColumn = 'OrganizationIdentifierNces'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName = 'NCESSchoolIDNumber' and f.FactReportTableName not like '%Organization%'
-
 Update app.FileColumns set ReportColumn = 'OutOfStateIndicator' Where ColumnName = 'OutOfStateInd'
 Update app.FileColumns set ReportColumn = 'SupervisoryUnionIdentificationNumber' Where ColumnName = 'SupervisoryUnion'
 Update app.FileColumns set ReportColumn = 'OperationalStatusId' Where ColumnName IN ('LEASysOpStatus', 'SchoolSysOpStatus')
@@ -139,75 +58,9 @@ Update app.FileColumns set ReportColumn = 'CharterSchoolAuthorizerIdSecondary' W
 Update app.FileColumns set ReportColumn = 'PriorStateLEAID' Where ColumnName = 'PriorLeaStateIdentifier'
 Update app.FileColumns set ReportColumn = 'PriorStateSchoolID' Where ColumnName = 'PriorSchoolStateIdentifier'
 Update app.FileColumns set ReportColumn = 'StatusEffectiveDate' Where ColumnName = 'EffectiveDate'
-
-Update fc set fc.ReportColumn = 'OrganizationStateId'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName = 'StateSchoolIDNumber' and f.FactReportTableName like '%Organization%'
-
-Update fc set fc.ReportColumn = 'OrganizationIdentifierSea'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName = 'StateSchoolIDNumber' and f.FactReportTableName not like '%Organization%'
-
-Update fc set fc.ReportColumn = f.FactFieldName
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY')
-
-Update fc set fc.ReportColumn = 'StudentRate'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY') and ReportCode IN ('150')
-
-Update fc set fc.ReportColumn = 'INDICATORSTATUS'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY') and ReportCode IN ('199','200','201','202','206')
-
-Update fc set fc.ReportColumn = 'FederalFundAllocated'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY') and ReportCode IN ('035')
-
 Update app.FileColumns set ReportColumn = 'IMPROVEMENTSTATUS' Where ColumnName = 'ImprovementStatus'
 Update app.FileColumns set ReportColumn = 'POSTSECONDARYENROLLMENTSTATUS' Where ColumnName = 'PSEnrollActionID'
 Update app.FileColumns set ReportColumn = 'HOMELESSPRIMARYNIGHTTIMERESIDENCE' Where ColumnName = 'PrimeNightResidenceID'
-
-
-Update fc set fc.ReportColumn = 'HOMELESSNESSSTATUS'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('HomelessStatusID') and ReportCode IN ('037')
-
-Update fc set fc.ReportColumn = 'HOMELESSUNACCOMPANIEDYOUTHSTATUS'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('HomelessStatusID') and ReportCode NOT IN ('037')
 
 Update app.FileColumns set ReportColumn = 'PERSISTENTLYDANGEROUSSTATUS' Where ColumnName = 'PersistDangerStatus'
 Update app.FileColumns set ReportColumn = 'DISCIPLINEMETHODFORFIREARMSINCIDENTS' Where ColumnName = 'FireArmIncResultID'
@@ -234,6 +87,14 @@ Update app.FileColumns set ReportColumn = 'TITLEIIILANGUAGEINSTRUCTION' Where Co
 Update app.FileColumns set ReportColumn = 'SPECIALEDUCATIONAGEGROUPTAUGHT' Where ColumnName = 'AgeGroupID'
 Update app.FileColumns set ReportColumn = 'TITLE1SCHOOLSTATUS' Where ColumnName = 'TitleISchoolStatus'
 
+Update fc set fc.ReportColumn = f.FactFieldName
+from app.FileSubmissions fs
+inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
+inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
+inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
+inner join app.FactTables f on r.FactTableId = f.FactTableId
+where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY')
+
 Update fc set fc.ReportColumn = 'IDEAINDICATOR'
 from app.FileSubmissions fs
 inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
@@ -244,15 +105,6 @@ where fc.ColumnName IN ('DisabilityStatusID') and ReportCode IN ('118','144','14
 
 
 Update app.FileColumns set ReportColumn = 'REAPAlternativeFundingStatus' Where ColumnName = 'REAPAltFundInd'
-
-Update fc set fc.ReportColumn = 'PROGRESSACHIEVINGENGLISHLANGUAGE'
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('Amount') and ReportCode IN ('205')
-
 Update app.FileColumns set ReportColumn = 'OrganizationName' Where ColumnName = 'CharterAuthorizerName'
 Update app.FileColumns set ReportColumn = 'OrganizationName' Where ColumnName = 'CharterMngmtOrgName'
 Update app.FileColumns set ReportColumn = 'ManagementOrganizationType' Where ColumnName = 'CharterMngmtOrgType'
@@ -263,14 +115,6 @@ Update app.FileColumns set ReportColumn = 'CharterSchoolAuthorizerType' Where Co
 Update app.FileColumns set ReportColumn = 'CHARTERSCHOOLMANAGERORGANIZATION' Where ColumnName = 'ManagementOrganizationEIN'
 Update app.FileColumns set ReportColumn = 'CHARTERSCHOOLUPDATEDMANAGERORGANIZATION' Where ColumnName = 'ManagementOrgEINUpdated'
 Update app.FileColumns set ReportColumn = 'CharterSchoolContractIdNumber' Where ColumnName = 'CharterContractIDNumber'
-
-Update fc set fc.ReportColumn = f.FactFieldName
-from app.FileSubmissions fs
-inner join app.FileSubmission_FileColumns fsfc on fs.FileSubmissionId = fsfc.FileSubmissionId
-inner join app.FileColumns fc on fc.FileColumnId = fsfc.FileColumnId
-inner join app.GenerateReports r on r.GenerateReportId = fs.GenerateReportId
-inner join app.FactTables f on r.FactTableId = f.FactTableId
-where fc.ColumnName IN ('Amount', 'MigrantStuEligibleRSY') and r.ReportCode = '052'
 
 Update app.ToggleQuestions set QuestionText = 'What date should be used to fill the EFFECTIVE DATE field in 029 - Directory?' where EmapsQuestionAbbrv = 'EFFECTIVEDTE'
 
