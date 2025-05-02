@@ -527,9 +527,8 @@ BEGIN
 			JOIN RDS.DimSeas rds
 				ON sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)		
 		--dimpeople	(rds)
-			JOIN RDS.DimPeople rdp
+			JOIN #dimPeople rdp
 				ON ske.StudentIdentifierState 			= rdp.K12StudentStudentIdentifierState
-				AND IsActiveK12Student 					= 1
 				AND ISNULL(ske.Birthdate, '1/1/1900') 	= ISNULL(rdp.BirthDate, '1/1/1900')
 				AND ISNULL(sar.AssessmentAdministrationStartDate, '1/1/1900') BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 		--assessments (rds)
@@ -861,9 +860,12 @@ BEGIN
 	FROM RDS.FactK12StudentAssessments rfsa
 			JOIN RDS.DimAssessments rda
 				ON rfsa.AssessmentId = rda.DimAssessmentId
-			JOIN RDS.DimLeas lea on rfsa.LeaId = lea.DimLeaID
-			JOIN RDS.DimK12Schools sch on rfsa.K12SchoolId = sch.DimK12SchoolId
-			JOIN RDS.DimPeople students on rfsa.K12StudentId = students.DimPersonId
+			JOIN RDS.DimLeas lea 
+				ON rfsa.LeaId = lea.DimLeaID
+			JOIN RDS.DimK12Schools sch 
+				ON rfsa.K12SchoolId = sch.DimK12SchoolId
+			JOIN RDS.DimPeople students 
+				ON rfsa.K12StudentId = students.DimPersonId
 			JOIN #tempAccomodations acc
 				ON lea.LeaIdentifierSea = acc.LeaIdentifierSeaAccountability
 				AND sch.SchoolIdentifierSea = acc.SchoolIdentifierSea
