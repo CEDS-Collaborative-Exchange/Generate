@@ -137,11 +137,11 @@ namespace generate.infrastructure.Services
                 }
             }
 
-            dynamicRows = GetSubmissionData(dataRows, fileSubmissioncolumns, factTableName, reportCode, reportLevel);
+            dynamicRows = GetSubmissionData(dataRows, fileSubmissioncolumns, factTableName, reportCode, reportLevel, factFieldName);
             return dynamicRows;
         }
 
-        public List<ExpandoObject> GetSubmissionData(dynamic dataRows, List<FileSubmissionColumnDto> fileSubmissioncolumns, string factTableName,string reportCode, string reportLevel)
+        public List<ExpandoObject> GetSubmissionData(dynamic dataRows, List<FileSubmissionColumnDto> fileSubmissioncolumns, string factTableName,string reportCode, string reportLevel, string factFieldName)
         {
             int fileRecordNumber = 0;
             dynamic dynamicRows = new List<ExpandoObject>();
@@ -217,10 +217,12 @@ namespace generate.infrastructure.Services
                     else if (column.ColumnName == "Amount")
                     {
                         string reportCodes = "199,200,201,202,206";
+                        field = factFieldName;
                         if (reportCode == "150") { field = "StudentRate"; }
-                        else if (reportCode == "035") { field = "FederalFundAllocated";  }
-                        else if(reportCodes.Contains(reportCode)) { field = "INDICATORSTATUS"; }
+                        else if (reportCode == "035") { field = "FederalFundAllocated"; }
+                        else if (reportCodes.Contains(reportCode)) { field = "INDICATORSTATUS"; }
                         else if (reportCode == "205") { field = "PROGRESSACHIEVINGENGLISHLANGUAGE"; }
+
                     }
                     else if (column.ColumnName == "HomelessStatusID")
                     {
