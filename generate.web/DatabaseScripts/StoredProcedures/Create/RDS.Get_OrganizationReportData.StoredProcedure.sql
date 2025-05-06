@@ -20,7 +20,7 @@ BEGIN
 		SELECT @EndDate = CAST('6/30/' + CAST(@reportyear  AS VARCHAR(4)) AS DATE)
 	end 
 		
-	IF(@reportCode = 'c029')
+	IF(@reportCode = '029')
 	BEGIN
 		SELECT CAST(ROW_NUMBER() OVER(ORDER BY organizationInfo.OrganizationStateId ASC) AS INT) as ReportEDFactsOrganizationCountId,                     
             organizationInfo.* 
@@ -130,7 +130,7 @@ BEGIN
 			and ReportYear = @reportYear and [CategorySetCode] = isnull(@categorySetCode,'CSA')
 		) organizationInfo
 	END
-	else if (@reportCode = 'c130')
+	else if (@reportCode = '130')
 	BEGIN
 		SELECT
             CAST(ROW_NUMBER() OVER(ORDER BY organizationInfo.OrganizationStateId ASC) AS INT) as ReportEDFactsPersistentlyDangerousId,                     
@@ -162,7 +162,7 @@ BEGIN
 		and [CategorySetCode] = isnull(@categorySetCode,'CSA')
         ) organizationInfo       
 	END
-	ELSE if (@reportCode = 'c132')
+	ELSE if (@reportCode = '132')
 	BEGIN
 		SELECT CAST(ROW_NUMBER() OVER(ORDER BY organizationInfo.OrganizationStateId ASC) AS INT) as ReportEDFactsOrganizationCountId,                     
 			organizationInfo.*, gradesOffered.GRADELEVEL 
@@ -283,7 +283,7 @@ BEGIN
 			and organizationInfo.reportYear = gradesOffered.ReportYear
 			and organizationInfo.ReportLevel = gradesOffered.ReportLevel
 	END
-	ELSE if (@reportCode = 'c039' AND @categorySetCode is NULL)
+	ELSE if (@reportCode = '039' AND @categorySetCode is NULL)
 	BEGIN
 
 		--Get the reportable schools that will have no grades offered
@@ -344,7 +344,7 @@ BEGIN
 								and isnull(LEA.ReportLevel,'LEA') = 'LEA'
 							left join #reportableSchools rs 	
 								on SCH.OrganizationStateId = rs.SchoolIdentifierSea
-							where LEA.ReportCode = 'c039' 
+							where LEA.ReportCode = '039' 
 								and LEA.ReportYear = @ReportYear
 								and LEA.ReportLevel = 'LEA'
 								and SCH.ParentOrganizationStateId is null	
@@ -361,7 +361,7 @@ BEGIN
 			) organizationInfo     
 
 	END
-	ELSE if (@reportCode = 'c039')
+	ELSE if (@reportCode = '039')
 	BEGIN
 		SELECT
             CAST(ROW_NUMBER() OVER(ORDER BY organizationInfo.OrganizationStateId ASC) AS INT) as ReportEDFactsGradesOfferedId,                     
@@ -406,7 +406,7 @@ BEGIN
 								GRADELEVEL =     Cast(STUFF((SELECT DISTINCT ', ' + GRADELEVEL
 								FROM rds.ReportEDFactsOrganizationCounts b 
 								WHERE b.OrganizationStateId = a.OrganizationStateId
-								and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='c205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+								and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
 								and b.reportYear = a.reportYear and a.ReportLevel = b.ReportLevel
 								FOR XML PATH('')), 1, 2, '') as varchar(100))
 				FROM rds.ReportEDFactsOrganizationCounts a
@@ -418,7 +418,7 @@ BEGIN
 
       
 	END
-	ELSE if (@reportCode = 'c196')
+	ELSE if (@reportCode = '196')
 	BEGIN
 		SELECT
             CAST(ROW_NUMBER() OVER(ORDER BY organizationInfo.OrganizationStateId ASC) AS INT) as ReportEDFactsOrganizationCountId,                     
@@ -540,7 +540,7 @@ BEGIN
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'Charter', @StartDate, @EndDate) dcsaa on fact.OrganizationStateId = dcsaa.OrganizationIdentifierState
 		where reportcode = @reportCode and ReportLevel = @reportLevel 
-		and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='c205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+		and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
 		AND LEN (
 			CASE 
 				WHEN (fact.ReportYear = '2018-19' AND fact.ManagementOrganizationType IN ('CMO','EMO','Other')) THEN fact.ManagementOrganizationType
@@ -552,7 +552,7 @@ BEGIN
                             GRADELEVEL =     Cast(STUFF((SELECT DISTINCT ', ' + GRADELEVEL
                             FROM rds.ReportEDFactsOrganizationCounts b 
                             WHERE b.OrganizationStateId = a.OrganizationStateId
-                            and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='c205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+                            and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
                             and b.reportYear = a.reportYear and a.ReportLevel = b.ReportLevel
                             FOR XML PATH('')), 1, 2, '') as varchar(50))
                 FROM rds.ReportEDFactsOrganizationCounts a
@@ -562,7 +562,7 @@ BEGIN
             and organizationInfo.reportYear = gradesOffered.ReportYear
             and organizationInfo.ReportLevel = gradesOffered.ReportLevel
 	END
-	ELSE if (@reportCode = 'c035')
+	ELSE if (@reportCode = '035')
 	BEGIN
 		SELECT
             CAST(ROW_NUMBER() OVER(ORDER BY fact.OrganizationStateId ASC) AS INT) as ReportEDFactsOrganizationCountId,                     
@@ -797,16 +797,16 @@ BEGIN
         from rds.ReportEDFactsOrganizationCounts fact
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'LEA', @StartDate, @EndDate) leaDir on  fact.OrganizationStateId = leaDir.OrganizationIdentifierState
 			left outer join [RDS].[MaxRecordStartDateTime](@reportYear,'K12School', @StartDate, @EndDate) schDir on fact.OrganizationStateId = schDir.OrganizationIdentifierState
-		where reportcode = case when @reportCode = 'C039' then 'C029' else @ReportCode end
+		where reportcode = case when @reportCode = '039' then '029' else @ReportCode end
 		and ReportLevel = @reportLevel 
-		and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='c205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+		and ReportYear = @reportYear and [CategorySetCode] = (case when @reportCode='205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
 		) organizationInfo     
         inner join (SELECT OrganizationStateId,[ReportYear], reportLevel, 
                             GRADELEVEL =     Cast(STUFF((SELECT DISTINCT ', ' + GRADELEVEL
                             FROM rds.ReportEDFactsOrganizationCounts b 
                             WHERE b.OrganizationStateId = a.OrganizationStateId
                             and reportcode = @reportCode and ReportLevel =@reportLevel and ReportYear = @reportYear 
-							and [CategorySetCode] = (case when @reportCode='c205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
+							and [CategorySetCode] = (case when @reportCode='205' THEN 'TOT' ELSE isnull(@categorySetCode,'CSA') END)
                             and b.reportYear = a.reportYear and a.ReportLevel = b.ReportLevel
                             FOR XML PATH('')), 1, 2, '') as varchar(100))
                 FROM rds.ReportEDFactsOrganizationCounts a

@@ -12,26 +12,73 @@
     --Drop the extended properties for SchoolYear,	DataCollectionName,	RecordStartDateTime, RecordEndDateTime
     --  they are added back after the new column to keep the structure of the table clean    
 
-        EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
-        EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
-        EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+         IF EXISTS(SELECT 1
+         FROM 
+             sys.extended_properties AS ep
+             INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+             INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+             INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+         WHERE 
+         ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+         AND t.name = 'K12StaffAssignment' AND c.name = 'RecordEndDateTime' )
+         BEGIN
+            EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+        END
+
+        IF EXISTS(SELECT 1
+         FROM 
+             sys.extended_properties AS ep
+             INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+             INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+             INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+         WHERE 
+         ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+         AND t.name = 'K12StaffAssignment' AND c.name = 'RecordStartDateTime' )
+         BEGIN
+            EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+        END
+
+        IF EXISTS(SELECT 1
+         FROM 
+             sys.extended_properties AS ep
+             INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+             INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+             INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+         WHERE 
+         ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+         AND t.name = 'K12StaffAssignment' AND c.name = 'DataCollectionName' )
+         BEGIN
+            EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+        END
+
+        IF EXISTS(SELECT 1
+         FROM 
+             sys.extended_properties AS ep
+             INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+             INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+             INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+         WHERE 
+         ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+         AND t.name = 'K12StaffAssignment' AND c.name = 'SchoolYear' )
+         BEGIN
+            EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+        END
 
     --Drop the columns at the bottom of the table temporarily
         IF COL_LENGTH('Staging.K12StaffAssignment', 'SchoolYear') IS NOT NULL

@@ -132,7 +132,7 @@ BEGIN
 				) 
 				values	(getutcdate(), @dataMigrationTypeId, 'Submission Report - ' + @reportYear + ' - ' + convert(varchar(20), @categorySetCntr) + ' of ' + convert(varchar(20), @categorySetCnt) + ' / ' + @reportCode + '-' + @reportLevel + '-' + @categorySetCode)
 
-				if (@reportCode = 'c029')
+				if (@reportCode = '029')
 				begin
 
 					declare @effectiveDate varchar(10)
@@ -485,7 +485,7 @@ BEGIN
 						and latestSchool.SchoolOperationalStatus <> 'MISSING'
 					end
 				end
-				else if (@reportCode = 'c039')
+				else if (@reportCode = '039')
 				begin
 					if (@reportLevel = 'lea')
 					begin
@@ -579,7 +579,7 @@ BEGIN
 						and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 					end
 				end
-				else if (@reportCode = 'c129')
+				else if (@reportCode = '129')
 				BEGIN		
 					--Schools opened after 10/01 should not be included
 					set @compareDate = concat(@ReportYear -1, '-10-01')
@@ -640,7 +640,7 @@ BEGIN
 					and sch.SchoolOperationalStatusEffectiveDate <= @compareDate
 					and sch.SchoolTypeCode <> 'Reportable'
 				END
-				else if (@reportCode = 'c130')
+				else if (@reportCode = '130')
 				BEGIN		
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[CategorySetCode]
@@ -698,7 +698,7 @@ BEGIN
 					and ISNULL(sch.ReportedFederally, 1) = 1 
 					and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 				END
-				else if (@reportCode = 'c193')
+				else if (@reportCode = '193')
 				BEGIN		
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[CategorySetCode]
@@ -738,7 +738,7 @@ BEGIN
 					and ISNULL(lea.ReportedFederally, 1) = 1
 					and lea.LeaOperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
 				END
-				else if (@reportCode = 'c198')
+				else if (@reportCode = '198')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
@@ -784,7 +784,7 @@ BEGIN
 					and ISNULL(schools.ReportedFederally, 1) = 1 
 					and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 				END
-				ELSE IF (@reportCode = 'c197')
+				ELSE IF (@reportCode = '197')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
@@ -832,7 +832,7 @@ BEGIN
 					and ISNULL(schools.ReportedFederally, 1) = 1
 					and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 				END
-				ELSE IF (@reportCode = 'c196')
+				ELSE IF (@reportCode = '196')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
@@ -922,7 +922,7 @@ BEGIN
 					-- and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					)
 			END
-				ELSE IF (@reportCode = 'c190')
+				ELSE IF (@reportCode = '190')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
@@ -1012,7 +1012,7 @@ BEGIN
 					-- and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING') 
 					)
 				END
-				ELSE IF (@reportCode = 'c103')
+				ELSE IF (@reportCode = '103')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
@@ -1052,7 +1052,7 @@ BEGIN
 					and ISNULL(sch.ReportedFederally, 1) = 1 
 					and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 				END
-				ELSE IF (@reportCode = 'c132')
+				ELSE IF (@reportCode = '132')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
@@ -1092,7 +1092,7 @@ BEGIN
 					and ISNULL(sch.ReportedFederally, 1) = 1
 					and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')			
 				END
-				ELSE IF (@reportCode = 'c170')
+				ELSE IF (@reportCode = '170')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
@@ -1134,7 +1134,7 @@ BEGIN
 					and ISNULL(lea.ReportedFederally, 1) = 1 
 					and lea.LeaOperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
 				END
-				ELSE IF (@reportCode = 'c163')
+				ELSE IF (@reportCode = '163')
 				BEGIN
 					if (@reportLevel = 'lea')
 					begin
@@ -1219,7 +1219,7 @@ BEGIN
 						and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 					end
 				END
-				ELSE IF (@reportCode = 'c205')
+				ELSE IF (@reportCode = '205')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
@@ -1268,7 +1268,7 @@ BEGIN
 					and ISNULL(sch.ReportedFederally, 1) = 1
 					and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 				END
-				ELSE IF (@reportCode = 'c206')
+				ELSE IF (@reportCode = '206')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
@@ -1322,7 +1322,7 @@ BEGIN
 					and ISNULL(sch.ReportedFederally, 1) = 1
 					and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 				END
-				else if (@reportCode = 'c207')
+				else if (@reportCode = '207')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
@@ -1362,7 +1362,7 @@ BEGIN
 					and ISNULL(schools.ReportedFederally, 1) = 1
 					and schools.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 				END
-				else if (@reportCode = 'c131')
+				else if (@reportCode = '131')
 				BEGIN	
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[CategorySetCode]
@@ -1406,7 +1406,7 @@ BEGIN
 					and ISNULL(lea.ReportedFederally, 1) = 1
 					and lea.LeaOperationalStatus not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
 				END
-				else if (@reportCode = 'c035')
+				else if (@reportCode = '035')
 				begin
 					if (@reportLevel = 'lea')
 					begin
@@ -1514,7 +1514,7 @@ BEGIN
 							, StateName
 					end						
 				end
-				else if (@reportCode = 'c223')
+				else if (@reportCode = '223')
 				BEGIN
 					INSERT INTO [RDS].[ReportEDFactsOrganizationCounts] (
 						[OrganizationCount]
@@ -1560,7 +1560,7 @@ BEGIN
 			end			-- @runAsTest = 1
 			else
 			begin
-				if (@reportCode = 'c029')
+				if (@reportCode = '029')
 				begin
 					if (@reportLevel = 'sea')
 					begin
@@ -1781,7 +1781,7 @@ BEGIN
 
 					end
 				end
-				else if(@reportCode = 'c039')
+				else if(@reportCode = '039')
 				begin
 						if(@reportLevel = 'lea')
 						begin
@@ -1845,7 +1845,7 @@ BEGIN
 							and sch.SchoolOperationalStatus not in ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 						end
 					end
-					else if (@reportCode ='c129')
+					else if (@reportCode ='129')
 					BEGIN	
 						--Schools opened after 10/01 should not be included
 						set @compareDate = concat(@ReportYear -1, '-10-01')
