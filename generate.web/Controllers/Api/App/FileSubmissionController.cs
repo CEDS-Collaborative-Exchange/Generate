@@ -65,7 +65,7 @@ namespace generate.web.Controllers.Api.App
             {
                 return;
             }
-            else if (reportCode.ToLower() == "c052" && reportLevel.ToLower() == "sch")
+            else if (reportCode.ToLower() == "052" && reportLevel.ToLower() == "sch")
             {
                 
 
