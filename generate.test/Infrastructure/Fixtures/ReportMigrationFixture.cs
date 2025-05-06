@@ -98,9 +98,7 @@ namespace generate.test.Infrastructure.Fixtures
             appDbContext.DataMigrationTypes.AddRange(DataMigrationTypeHelper.GetData());
             appDbContext.OrganizationLevels.AddRange(OrganizationLevelHelper.GetData());
             appDbContext.GenerateReports.AddRange(GenerateReportHelper.GetData());
-            appDbContext.Categories.AddRange(CategoryHelper.GetData());
             appDbContext.TableTypes.AddRange(TableTypeHelper.GetData());
-            appDbContext.CategorySets.AddRange(CategorySetHelper.GetData());
 
             appDbContext.SaveChanges();
 
@@ -110,8 +108,6 @@ namespace generate.test.Infrastructure.Fixtures
         public void SetupRdsReferenceData(RDSDbContext rdsDbContext)
         {
             rdsDbContext.DimDates.AddRange(DimDateHelper.GetData());
-            rdsDbContext.DimAges.AddRange(DimAgeHelper.GetData());
-
             rdsDbContext.DimDemographics.AddRange(DimDemographicHelper.GetData());
             rdsDbContext.DimIdeaStatuses.AddRange(DimIdeaStatusHelper.GetData());
             rdsDbContext.DimDisciplines.AddRange(DimDisciplineHelper_1.GetData());
@@ -132,16 +128,6 @@ namespace generate.test.Infrastructure.Fixtures
             rdsDbContext.DimAssessmentStatuses.AddRange(DimAssessmentStatusHelper.GetData());
             rdsDbContext.DimTitleIIIStatuses.AddRange(DimTitleIIIStatusHelper.GetData());
             rdsDbContext.DimStudentStatuses.AddRange(DimStudentStatusHelper.GetData());
-            rdsDbContext.DimAssessments.AddRange(DimAssessmentHelper_01.GetData());
-            rdsDbContext.DimAssessments.AddRange(DimAssessmentHelper_02.GetData());
-            rdsDbContext.DimAssessments.AddRange(DimAssessmentHelper_03.GetData());
-            rdsDbContext.DimAssessments.AddRange(DimAssessmentHelper_04.GetData());
-            rdsDbContext.DimAssessments.AddRange(DimAssessmentHelper_05.GetData());
-            rdsDbContext.DimAssessments.AddRange(DimAssessmentHelper_06.GetData());
-            rdsDbContext.DimAssessments.AddRange(DimAssessmentHelper_07.GetData());
-            rdsDbContext.DimAssessments.AddRange(DimAssessmentHelper_08.GetData());
-            rdsDbContext.DimAssessments.AddRange(DimAssessmentHelper_09.GetData());
-            rdsDbContext.DimAssessments.AddRange(DimAssessmentHelper_10.GetData());
             rdsDbContext.DimNorDProgramStatuses.AddRange(DimNorDProgramStatusHelper.GetData());
             rdsDbContext.DimEnrollmentStatuses.AddRange(DimEnrollmentStatusHelper.GetData());
             rdsDbContext.DimCteStatuses.AddRange(DimCteStatusHelper.GetData());

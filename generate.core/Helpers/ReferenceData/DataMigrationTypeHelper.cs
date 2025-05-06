@@ -11,17 +11,6 @@ namespace generate.core.Helpers.ReferenceData
     {
         public static List<DataMigrationType> GetData()
         {
-            /*
-            
-            select 'data.Add(new DataMigrationType() { 
-            DataMigrationTypeId = ' + convert(varchar(20), DataMigrationTypeId) + ',
-            DataMigrationTypeName = "' + DataMigrationTypeName + '",
-            DataMigrationTypeCode = "' + DataMigrationTypeCode + '"
-            });'
-            from App.DataMigrationTypes
-
-            */
-
 
             var data = new List<DataMigrationType>();
 

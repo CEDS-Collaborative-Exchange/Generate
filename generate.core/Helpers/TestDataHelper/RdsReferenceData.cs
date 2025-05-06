@@ -66,7 +66,6 @@ namespace generate.core.Helpers.TestDataHelper
 
             this.DimFactTypes = DimFactTypeHelper.GetData();
             this.DimDates = DimDateHelper.GetData();
-            this.DimAges = DimAgeHelper.GetData();
             this.DimDemographics = DimDemographicHelper.GetData();
             this.DimLanguages = DimLanguageHelper.GetData();
             this.DimProgramStatuses = DimProgramStatusHelper.GetData();

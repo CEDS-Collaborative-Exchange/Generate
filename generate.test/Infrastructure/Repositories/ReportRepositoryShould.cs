@@ -67,14 +67,11 @@ namespace generate.test.Infrastructure.Repositories
             appDbContext.DataMigrationTypes.AddRange(DataMigrationTypeHelper.GetData());
             appDbContext.OrganizationLevels.AddRange(OrganizationLevelHelper.GetData());
             appDbContext.GenerateReports.AddRange(GenerateReportHelper.GetData());
-            appDbContext.Categories.AddRange(CategoryHelper.GetData());
             appDbContext.TableTypes.AddRange(TableTypeHelper.GetData());
-            appDbContext.CategorySets.AddRange(CategorySetHelper.GetData(generateReportId));
 
             appDbContext.SaveChanges();
 
             rdsDbContext.DimDates.AddRange(DimDateHelper.GetData());
-            rdsDbContext.DimAges.AddRange(DimAgeHelper.GetData());
             rdsDbContext.DimDemographics.AddRange(DimDemographicHelper.GetData());
             rdsDbContext.DimFactTypes.AddRange(DimFactTypeHelper.GetData());
             rdsDbContext.DimLanguages.AddRange(DimLanguageHelper.GetData());

@@ -11,12 +11,13 @@ using Microsoft.Extensions.Hosting;
 using generate.core.Dtos.App;
 using generate.core.Interfaces.Services;
 using generate.core.Interfaces.Helpers;
+using Serilog.Core;
 
 namespace generate.background.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BackgroundUpdateController : Controller
+    public class BackgroundUpdateController : ControllerBase
     {
         private readonly IOptions<AppSettings> _appSettings;
         private readonly IHostEnvironment _hostingEnvironment;
@@ -45,8 +46,8 @@ namespace generate.background.Controllers
         public ActionResult<IEnumerable<UpdatePackageDto>> DownloadedUpdates()
         {
 
-            _logger.LogInformation("DownloadedUpdates - Initiated - " + _hostingEnvironment.ContentRootPath);
-
+            _logger.LogInformation("DownloadedUpdates - Initiated - {path}", _hostingEnvironment.ContentRootPath);
+ 
             return _appUpdateService.GetDownloadedUpdates(_hostingEnvironment.ContentRootPath);
         }
 

@@ -77,7 +77,6 @@ namespace generate.test.Infrastructure.Repositories
         {
 
             rdsDbContext.DimDates.AddRange(DimDateHelper.GetData());
-            rdsDbContext.DimAges.AddRange(DimAgeHelper.GetData());
             rdsDbContext.DimDemographics.AddRange(DimDemographicHelper.GetData());
             rdsDbContext.DimFactTypes.AddRange(DimFactTypeHelper.GetData());
             rdsDbContext.DimLanguages.AddRange(DimLanguageHelper.GetData());

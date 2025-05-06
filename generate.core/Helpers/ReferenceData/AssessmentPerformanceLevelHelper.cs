@@ -12,15 +12,6 @@ namespace generate.core.Helpers.ReferenceData
 
         public static List<AssessmentPerformanceLevel> GetData()
         {
-            /*
-            select 'data.Add(new AssessmentPerformanceLevelHelper() { 
-            AssessmentPerformanceLevelHelperId = ' + convert(varchar(20), AssessmentPerformanceLevelHelperId) + ',
-            Code = "' + Code + '",
-            Description = "' + [Description] + '"
-            });'
-            from dbo.AssessmentPerformanceLevelHelper
-            */
-
             var data = new List<AssessmentPerformanceLevel>();
 
             data.Add(new AssessmentPerformanceLevel() { Label = "Level 1", Identifier = "L1" });

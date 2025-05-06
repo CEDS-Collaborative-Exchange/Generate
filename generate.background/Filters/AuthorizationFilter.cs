@@ -14,10 +14,6 @@ namespace generate.background.Filters
             // Allow full access (only for non-production systems)
             return true;
 
-            //var httpContext = context.GetHttpContext();
-
-            //// Allow all authenticated users to see the Dashboard (potentially dangerous).
-            //return httpContext.User.Identity.IsAuthenticated;
         }
     }
 }
