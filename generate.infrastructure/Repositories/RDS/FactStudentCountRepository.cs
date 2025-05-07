@@ -153,24 +153,24 @@ namespace generate.infrastructure.Repositories.RDS
                             // Check if the reader has rows
                             if (reader.HasRows)
                             {
-                                int fileRecordNUmber = 0;
+                                int fileRecordNumber = 0;
                                 // Read the data
                                 while (reader.Read())
                                 {
-                                    ++fileRecordNUmber;
+                                    ++fileRecordNumber;
 
                                     MembershipReportDto membershipReport = new MembershipReportDto();
 
                                     membershipReport.StateANSICode = reader.GetString(reader.GetOrdinal("StateANSICode"));
                                     membershipReport.StateAbbreviationCode = reader.GetString(reader.GetOrdinal("StateAbbreviationCode"));
-                                    membershipReport.OrganizationIdentifierSea = reader.GetString(reader.GetOrdinal("OrganizationIdentifierSea"));
-                                    membershipReport.ParentOrganizationIdentifierSea= reader.GetString(reader.GetOrdinal("ParentOrganizationIdentifierSea"));
+                                    membershipReport.OrganizationIdentifierSea = reader.IsDBNull(reader.GetOrdinal("OrganizationIdentifierSea")) ? "" : reader.GetString(reader.GetOrdinal("OrganizationIdentifierSea"));
+                                    membershipReport.ParentOrganizationIdentifierSea = reader.IsDBNull(reader.GetOrdinal("ParentOrganizationIdentifierSea")) ? "" : reader.GetString(reader.GetOrdinal("ParentOrganizationIdentifierSea"));
                                     membershipReport.OrganizationName = reader.GetString(reader.GetOrdinal("OrganizationName"));
-                                    membershipReport.GRADELEVEL = reader.GetString(reader.GetOrdinal("GRADELEVEL"));
-                                    membershipReport.RACE = reader.GetString(reader.GetOrdinal("RACE"));
-                                    membershipReport.SEX = reader.GetString(reader.GetOrdinal("SEX"));
-                                    membershipReport.TotalIndicator= reader.GetString(reader.GetOrdinal("TotalIndicator"));
-                                    membershipReport.StudentCount= reader.GetInt32(reader.GetOrdinal("StudentCount"));
+                                    membershipReport.GRADELEVEL = reader.IsDBNull(reader.GetOrdinal("GRADELEVEL")) ? "" : reader.GetString(reader.GetOrdinal("GRADELEVEL"));
+                                    membershipReport.RACE = reader.IsDBNull(reader.GetOrdinal("RACE")) ? "" : reader.GetString(reader.GetOrdinal("RACE"));
+                                    membershipReport.SEX = reader.IsDBNull(reader.GetOrdinal("SEX")) ? "" : reader.GetString(reader.GetOrdinal("SEX"));
+                                    membershipReport.TotalIndicator = reader.GetString(reader.GetOrdinal("TotalIndicator"));
+                                    membershipReport.StudentCount = reader.GetInt32(reader.GetOrdinal("StudentCount"));
 
                                     returnObject.Add(membershipReport);
                                 }
