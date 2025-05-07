@@ -50,6 +50,8 @@ BEGIN
 		group by K12StudentStudentIdentifierState
 		order by K12StudentStudentIdentifierState
 
+		create index IDX_dimPeople ON #dimPeople (K12StudentStudentIdentifierState, DimPersonId, RecordStartDateTime, RecordEndDateTime, Birthdate)
+
 	--reset the RecordStartDateTime if the date is prior to the default start date of 7/1
 		update #dimPeople
 		set RecordStartDateTime = @SYStartDate

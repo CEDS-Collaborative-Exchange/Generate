@@ -31,7 +31,8 @@ BEGIN
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
-		DECLARE @SYEndDate DATE
+		DECLARE @SYEndDate DATE, @SYStartDate DATE
+		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 
 		--Reporting Date is the closest school day to Oct 1 according to the file spec
@@ -58,6 +59,8 @@ BEGIN
 		and IsActiveK12Student = 1
 		group by K12StudentStudentIdentifierState
 		order by K12StudentStudentIdentifierState
+
+		create index IDX_dimPeople ON #dimPeople (K12StudentStudentIdentifierState, DimPersonId, RecordStartDateTime, RecordEndDateTime, Birthdate)
 
 	--reset the RecordStartDateTime if the date is prior to the default start date of 7/1
 		update #dimPeople
