@@ -63,3 +63,18 @@ from App.DataMigrationTasks a
 		and b.DataMigrationTypeId = 2
 		and a.FactTypeId = b.FactTypeId
 where a.DataMigrationTypeId = 1
+
+--add toggle question for 033 reporting
+if not exists (SELECT * FROM app.ToggleQuestions WHERE EmapsQuestionAbbrv = 'LUNCHCOUNTS')
+begin
+	insert into app.ToggleQuestions
+	values ('LUNCHCOUNTS',NULL,1402,'How do you report your Free and Reduced Lunch counts?',10,35)
+end
+
+declare @ToggleQuestionId int
+select @ToggleQuestionId = ToggleQuestionId from app.ToggleQuestions where EmapsQuestionAbbrv = 'LUNCHCOUNTS'
+
+insert into app.ToggleQuestionOptions
+values (1, 'Free and Reduced Only', @ToggleQuestionId),
+	(2, 'Direct Certification Only', @ToggleQuestionId),
+	(3, 'Both', @ToggleQuestionId)
