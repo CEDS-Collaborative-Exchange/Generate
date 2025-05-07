@@ -58,7 +58,7 @@ AS
 
 	DECLARE cursor_name CURSOR FOR
     SELECT N'
-		DELETE FROM rds.' + @ReportTableName + ' WHERE ReportCode = ' + @ReportCode + ' AND ReportYear = ''' + @SubmissionYear + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE ''' AND CategorySetCode = ''' + CategorySetCode END + ''' AND ReportLevel = ''' + aol.LevelCode + '''
+		DELETE FROM rds.' + @ReportTableName + ' WHERE ReportCode = ''' + @ReportCode + ''' AND ReportYear = ''' + @SubmissionYear + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE ''' AND CategorySetCode = ''' + CategorySetCode END + ''' AND ReportLevel = ''' + aol.LevelCode + '''
 
 		-- insert ' + aol.LevelCode + ' sql
 		' + CASE WHEN ISNULL(STRING_AGG(c.CategoryCode, ''),'') = '' THEN '' ELSE '
@@ -154,18 +154,18 @@ AS
 			'
 	FROM app.GenerateReports gr
 	LEFT JOIN app.CategorySets cs
-		on cs.GenerateReportId = gr.GenerateReportId
+		ON cs.GenerateReportId = gr.GenerateReportId
 	LEFT JOIN app.CategorySet_Categories csc
-		on csc.CategorySetId = cs.CategorySetId
+		ON csc.CategorySetId = cs.CategorySetId
 	LEFT JOIN app.Categories c 
-		on c.CategoryId = csc.CategoryId
+		ON c.CategoryId = csc.CategoryId
 	LEFT JOIN app.GenerateReport_OrganizationLevels grol
 		ON grol.GenerateReportId = gr.GenerateReportId
 	JOIN app.OrganizationLevels aol
 		ON cs.OrganizationLevelId = aol.OrganizationLevelId
 			OR grol.OrganizationLevelId = aol.OrganizationLevelId
 	LEFT JOIN app.GenerateReport_TableType grtt
-		on gr.GenerateReportId = grtt.GenerateReportId
+		ON gr.GenerateReportId = grtt.GenerateReportId
 	JOIN app.TableTypes att
 		ON cs.TableTypeId = att.TableTypeId
 			OR grtt.TableTypeId = att.TableTypeId
@@ -340,18 +340,18 @@ AS
 
 	FROM app.GenerateReports gr
 	LEFT JOIN app.CategorySets cs
-		on cs.GenerateReportId = gr.GenerateReportId
+		ON cs.GenerateReportId = gr.GenerateReportId
 	LEFT JOIN app.CategorySet_Categories csc
-		on csc.CategorySetId = cs.CategorySetId
+		ON csc.CategorySetId = cs.CategorySetId
 	LEFT JOIN app.Categories c 
-		on c.CategoryId = csc.CategoryId
+		ON c.CategoryId = csc.CategoryId
 	LEFT JOIN app.GenerateReport_OrganizationLevels grol
 		ON grol.GenerateReportId = gr.GenerateReportId
 	JOIN app.OrganizationLevels aol
 		ON cs.OrganizationLevelId = aol.OrganizationLevelId
 			OR grol.OrganizationLevelId = aol.OrganizationLevelId
 	LEFT JOIN app.GenerateReport_TableType grtt
-		on gr.GenerateReportId = grtt.GenerateReportId
+		ON gr.GenerateReportId = grtt.GenerateReportId
 	JOIN app.TableTypes att
 		ON cs.TableTypeId = att.TableTypeId
 			OR grtt.TableTypeId = att.TableTypeId
