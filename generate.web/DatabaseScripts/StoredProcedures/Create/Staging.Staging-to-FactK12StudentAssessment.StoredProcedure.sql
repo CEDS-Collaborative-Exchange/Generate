@@ -60,6 +60,27 @@ BEGIN
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
+	--Get the set of students from DimPeople to be used for the migrated SY
+		select K12StudentStudentIdentifierState
+			, max(DimPersonId)								DimPersonId
+			, min(RecordStartDateTime)						RecordStartDateTime
+			, max(isnull(RecordEndDateTime, @SYEndDate))	RecordEndDateTime
+			, max(isnull(birthdate, '1900-01-01'))			BirthDate
+		into #dimPeople
+		from rds.DimPeople
+		where ((RecordStartDateTime <= @SYStartDate and RecordEndDateTime > @SYStartDate)
+			or (RecordStartDateTime > @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) <= @SYEndDate))
+		and IsActiveK12Student = 1
+		group by K12StudentStudentIdentifierState
+		order by K12StudentStudentIdentifierState
+
+		create index IDX_dimPeople ON #dimPeople (K12StudentStudentIdentifierState, DimPersonId, RecordStartDateTime, RecordEndDateTime, Birthdate)
+
+	--reset the RecordStartDateTime if the date is prior to the default start date of 7/1
+		update #dimPeople
+		set RecordStartDateTime = @SYStartDate
+		where RecordStartDateTime < @SYStartDate
+
 	--Create the temp views (and any relevant indexes) needed for this domain
 	-- #vwNOrDStatuses
 		SELECT *
@@ -508,9 +529,8 @@ BEGIN
 			JOIN RDS.DimSeas rds
 				ON sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)		
 		--dimpeople	(rds)
-			JOIN RDS.DimPeople rdp
+			JOIN #dimPeople rdp
 				ON ske.StudentIdentifierState 			= rdp.K12StudentStudentIdentifierState
-				AND IsActiveK12Student 					= 1
 				AND ISNULL(ske.Birthdate, '1/1/1900') 	= ISNULL(rdp.BirthDate, '1/1/1900')
 				AND ISNULL(sar.AssessmentAdministrationStartDate, '1/1/1900') BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 		--assessments (rds)
@@ -842,9 +862,12 @@ BEGIN
 	FROM RDS.FactK12StudentAssessments rfsa
 			JOIN RDS.DimAssessments rda
 				ON rfsa.AssessmentId = rda.DimAssessmentId
-			JOIN RDS.DimLeas lea on rfsa.LeaId = lea.DimLeaID
-			JOIN RDS.DimK12Schools sch on rfsa.K12SchoolId = sch.DimK12SchoolId
-			JOIN RDS.DimPeople students on rfsa.K12StudentId = students.DimPersonId
+			JOIN RDS.DimLeas lea 
+				ON rfsa.LeaId = lea.DimLeaID
+			JOIN RDS.DimK12Schools sch 
+				ON rfsa.K12SchoolId = sch.DimK12SchoolId
+			JOIN RDS.DimPeople students 
+				ON rfsa.K12StudentId = students.DimPersonId
 			JOIN #tempAccomodations acc
 				ON lea.LeaIdentifierSea = acc.LeaIdentifierSeaAccountability
 				AND sch.SchoolIdentifierSea = acc.SchoolIdentifierSea
