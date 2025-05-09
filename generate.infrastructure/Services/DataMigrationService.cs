@@ -12,7 +12,6 @@ using generate.core.ViewModels.App;
 using System.Threading;
 using Microsoft.Extensions.Options;
 using generate.core.Config;
-//using Microsoft.Extensions..Hosting;
 using generate.core.Interfaces.Repositories.App;
 
 namespace generate.infrastructure.Services

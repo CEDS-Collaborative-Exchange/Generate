@@ -267,13 +267,6 @@ namespace generate.web.Controllers.Api.App
             return Json(factType);
         }
 
-        [HttpGet("checkIfDirectoryDataExists/{schoolYearId}")]
-        public JsonResult CheckIfDirectoryDataExists(int schoolYearId)
-        {
-            bool dataExists = _rdsRepository.CheckIfDirectoryDataExists(schoolYearId);
-            return Json(dataExists);
-        }
-
 
     }
 

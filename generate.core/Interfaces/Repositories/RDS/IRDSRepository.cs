@@ -46,8 +46,6 @@ namespace generate.core.Interfaces.Repositories.RDS
         // Execute
         void ExecuteSql(string sql, params object[] parameters);
 
-        bool CheckIfDirectoryDataExists(int schoolYearId);
-
 
     }
 }

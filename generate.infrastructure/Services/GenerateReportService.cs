@@ -97,7 +97,7 @@ namespace generate.infrastructure.Services
             List<GenerateReportDto> results = new List<GenerateReportDto>();
             List<CategorySet> categorySets = new List<CategorySet>();
 
-            List<int> generateReportIds = new List<int>();
+            List<int> generateReportIds;
             if (reports != null && reports.Count > 0)
             {
                 generateReportIds = reports.Select(r => r.GenerateReportId).ToList();
@@ -374,7 +374,7 @@ namespace generate.infrastructure.Services
 
                         foreach (var option in options)
                         {
-                            if (categoryOptions.Where(t => t.CategoryOptionCode == option.CategoryOptionCode).Count() == 0)
+                            if (!categoryOptions.Any(t => t.CategoryOptionCode == option.CategoryOptionCode))
                             {
                                 categoryOptions.Add(new CategorySetCategoryOptionDto
                                 {

@@ -26,15 +26,6 @@ namespace generate.infrastructure.Repositories.RDS
 
         }
 
-        public bool CheckIfDirectoryDataExists(int schoolYearId)
-        {
-            int recordCount = _context.Set<FactOrganizationCount>()
-                                      .Where(t => t.SchoolYearId == schoolYearId && t.SeaId > 0)
-                                      .Count();
-            return recordCount > 0 ? true : false;
-        }
-
-
 
     }
 

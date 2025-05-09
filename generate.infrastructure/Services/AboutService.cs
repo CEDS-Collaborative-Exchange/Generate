@@ -14,8 +14,8 @@ namespace generate.infrastructure.Services
     public class AboutService : IAboutService
     {
         private readonly AppDbContext _appDbContext;
-        string GenerateConfigurationCategory = "Database";
-        string GenerateConfigurationKey = "DatabaseVersion";
+        readonly string GenerateConfigurationCategory = "Database";
+        readonly string GenerateConfigurationKey = "DatabaseVersion";
 
         public AboutService(AppDbContext appDbContext)
         {
@@ -24,8 +24,6 @@ namespace generate.infrastructure.Services
 
         public string GetDBVersion()
         {
-            //throw new NotImplementedException();
-
             string DBVersion =string.Empty;
 
             IQueryable<GenerateConfiguration> gc = _appDbContext.GenerateConfigurations
@@ -35,7 +33,6 @@ namespace generate.infrastructure.Services
 
             if (gc == null || !gc.Any())
             {
-                // string genConfigVal = gc.Where(a => a.GenerateConfigurationKey == essKey).Select(a => a.GenerateConfigurationValue).FirstOrDefault();
                 return DBVersion; 
             }
 
