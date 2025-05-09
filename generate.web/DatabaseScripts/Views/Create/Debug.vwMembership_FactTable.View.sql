@@ -34,6 +34,7 @@ AS
 
 	FROM   		RDS.FactK12StudentCounts					Fact
 	JOIN        RDS.DimSchoolYears                      	SchoolYears		ON Fact.SchoolYearId            = SchoolYears.DimSchoolYearId 
+	JOIN		RDS.DimSchoolYearDataMigrationTypes 		DMT				ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid		
 	JOIN		RDS.DimPeople								Students		ON Fact.K12StudentId			= Students.DimPersonId			AND Students.IsActiveK12Student = 1
 	JOIN		RDS.DimSeas                             	SEA             ON Fact.SeaId    				= SEA.DimSeaId
 	JOIN		RDS.DimLeas                             	LEAs            ON Fact.LeaId    				= LEAs.DimLeaId
