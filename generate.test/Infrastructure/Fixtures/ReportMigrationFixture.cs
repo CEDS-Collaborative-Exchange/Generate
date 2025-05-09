@@ -110,9 +110,6 @@ namespace generate.test.Infrastructure.Fixtures
             rdsDbContext.DimDates.AddRange(DimDateHelper.GetData());
             rdsDbContext.DimDemographics.AddRange(DimDemographicHelper.GetData());
             rdsDbContext.DimIdeaStatuses.AddRange(DimIdeaStatusHelper.GetData());
-            rdsDbContext.DimDisciplines.AddRange(DimDisciplineHelper_1.GetData());
-            rdsDbContext.DimDisciplines.AddRange(DimDisciplineHelper_2.GetData());
-            rdsDbContext.DimDisciplines.AddRange(DimDisciplineHelper_3.GetData());
             rdsDbContext.DimFactTypes.AddRange(DimFactTypeHelper.GetData());
             rdsDbContext.DimLanguages.AddRange(DimLanguageHelper.GetData());
             rdsDbContext.DimProgramStatuses.AddRange(DimProgramStatusHelper.GetData());
