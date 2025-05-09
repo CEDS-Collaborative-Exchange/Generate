@@ -63,3 +63,8 @@ from App.DataMigrationTasks a
 		and b.DataMigrationTypeId = 2
 		and a.FactTypeId = b.FactTypeId
 where a.DataMigrationTypeId = 1
+
+--fix the metadata for 070
+UPDATE app.FileColumns
+SET DimensionId = 4
+WHERE DisplayName = 'Qualification Status (Special Education Teacher)'
