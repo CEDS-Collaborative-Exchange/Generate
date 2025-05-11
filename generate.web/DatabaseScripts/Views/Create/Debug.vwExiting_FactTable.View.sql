@@ -56,21 +56,7 @@ CREATE VIEW [Debug].[vwExiting_FactTable] AS
 	--2 ways to select by SchoolYear, use 1 or the other, not both
 	--the next 2 conditions set the SchoolYear selected to the one from the most recent RDS migration
 		AND DMT.IsSelected = 1
-		AND DMT.DataMigrationTypeId = 2
+		AND DMT.DataMigrationTypeId = 3
 	--or comment out the lines above and just set the SchoolYear
 		--AND SchoolYears.SchoolYear = 2023
-
 	AND Fact.FactTypeId = 4 
-	--AND Students.StudentIdentifierState = '12345678'	
-	--AND LEAs.LeaIdentifierSea = '123'
-	--AND Schools.SchoolIdentifierSea = '456'
-	--AND Ages.AgeEdFactsCode = '12'
-	--AND Grades.GradeLevelEdFactsCode = '07'
-	--AND Demo.SexCode = 'M'										--('Male','Female','NotSelected','MISSING')
-	--AND Races.RaceEdFactsCode = 'AM7'								--('AM7','AS7','BL7','PI7','WH7','MU7','HI7',NULL)
-	--AND ELStatus.EnglishLearnerStatusEdFactsCode = 'LEP'			--('LEP', 'NLEP', 'MISSING')
-	--AND IDEAStatus.IdeaIndicatorEdFactsCode = 'IDEA'				--('IDEA', 'MISSING')
-	--AND IDEAStatus.SpecialEducationExitReasonEdFactsCode = 'MKN'  --('GHS','GRADALTDPL','RC','RMA','MKC','TRAN','DROPOUT','D','MISSING')
-	--AND IDEADisability.IdeaDisabilityTypeEdFactsCode = 'EMN'		--('AUT','DB','DD','EMN','HI','ID','MD','OHI','OI','SLD','SLI','TBI','VI','MISSING')
-
-

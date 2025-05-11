@@ -26,11 +26,7 @@ SELECT DISTINCT
 	--2 ways to select by SchoolYear, use 1 or the other, not both
 	--the next 2 conditions set the SchoolYear selected to the one from the most recent RDS migration
 		AND DMT.IsSelected = 1
-		AND DMT.DataMigrationTypeId = 2
+		AND DMT.DataMigrationTypeId = 3
 	--or comment out the lines above and just set the SchoolYear
 		--AND SchoolYears.SchoolYear = 2023
-
 	AND Fact.FactTypeId = 21
-	--AND Schools.SchoolIdentifierSea = '010456'
-	--AND Schools.SchoolOperationalStatus = 'Open'      --'Open', 'Closed', 'New', 'FutureSchool'
-	--AND Schools.SchoolTypeCode = 'Regular' 			--'CareerAndTechnical', 'Alternative', 'Special', 'Reportable', 'Regular'

@@ -64,6 +64,7 @@ from App.DataMigrationTasks a
 		and a.FactTypeId = b.FactTypeId
 where a.DataMigrationTypeId = 1
 
+<<<<<<< HEAD
 --add toggle question for 033 reporting
 if not exists (SELECT * FROM app.ToggleQuestions WHERE EmapsQuestionAbbrv = 'LUNCHCOUNTS')
 begin
@@ -78,3 +79,9 @@ insert into app.ToggleQuestionOptions
 values (1, 'Free and Reduced Only', @ToggleQuestionId),
 	(2, 'Direct Certification Only', @ToggleQuestionId),
 	(3, 'Both', @ToggleQuestionId)
+=======
+--fix the metadata for 070
+UPDATE app.FileColumns
+SET DimensionId = 4
+WHERE DisplayName = 'Qualification Status (Special Education Teacher)'
+>>>>>>> d7e86322e586a06506d30a92479d8b2950c8cce6

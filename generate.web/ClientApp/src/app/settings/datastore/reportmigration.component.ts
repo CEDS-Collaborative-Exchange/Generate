@@ -203,7 +203,7 @@ export class ReportMigationComponent implements OnDestroy {
                 });
             });
 
-            this.directoryCheck();
+            //this.directoryCheck();
 
             if (this.selectedFactTypeCode !== undefined && this.selectedFactTypeCode !== null && this.selectedFactTypeCode.length > 0) {
                 let selectedFactTypeId = this.factTypes.filter(t => t.factTypeCode === this.selectedFactTypeCode)[0].dimFactTypeId;
@@ -386,7 +386,7 @@ export class ReportMigationComponent implements OnDestroy {
                         this.showReportMigrateStatus = false;
                         this.showReportMigrateTimeRemaining = false;
 
-                        this.directoryCheck();
+                        //this.directoryCheck();
 
 
                     } else if (data.reportMigrationStatusCode === 'success') {
@@ -409,7 +409,7 @@ export class ReportMigationComponent implements OnDestroy {
                         }
 
                         this.flag = false;
-                        this.directoryCheck();
+                        //this.directoryCheck();
 
                     } else if (data.reportMigrationStatusCode === 'error') {
 

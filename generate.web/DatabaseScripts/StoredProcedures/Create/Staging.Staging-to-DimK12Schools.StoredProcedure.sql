@@ -10,7 +10,7 @@ BEGIN
 								inner join rds.dimschoolyears sy
 									on dm.dimschoolyearid = sy.dimschoolyearid
 							where IsSelected = 1
-							and dm.DataMigrationTypeId = 2
+							and dm.DataMigrationTypeId = 3
 						)
     SELECT @StateCode = StateAbbreviationCode from Staging.StateDetail where SchoolYear = @schoolyear
 	SELECT @StateName = (	select CedsOptionSetDescription 

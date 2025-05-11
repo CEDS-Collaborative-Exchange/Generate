@@ -1149,5 +1149,26 @@ VALUES
 		AND tmp.NeglectedOrDelinquentLongTermStatusCode = main.NeglectedOrDelinquentLongTermStatusCode
 	WHERE main.DimNOrDStatusId IS NULL
 
+--remove the 'c' from the report code in the report tables
+	update rds.ReportEDFactsK12StaffCounts
+	set ReportCode = substring(ReportCode, 2, 3)
+	where len(ReportCode) = 4
+	and substring(ReportCode, 1,1) = 'c'
 
+	update rds.ReportEDFactsK12StudentCounts
+	set ReportCode = substring(ReportCode, 2, 3)
+	where len(ReportCode) = 4
+	and substring(ReportCode, 1,1) = 'c'
 
+<<<<<<< HEAD
+=======
+	update rds.ReportEDFactsK12StudentDisciplines
+	set ReportCode = substring(ReportCode, 2, 3)
+	where len(ReportCode) = 4
+	and substring(ReportCode, 1,1) = 'c'
+
+	update rds.ReportEDFactsK12StudentAssessments
+	set ReportCode = substring(ReportCode, 2, 3)
+	where len(ReportCode) = 4
+	and substring(ReportCode, 1,1) = 'c'
+>>>>>>> d7e86322e586a06506d30a92479d8b2950c8cce6

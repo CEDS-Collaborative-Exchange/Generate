@@ -17,7 +17,7 @@
 			WHEN 'NeglectedPrograms' THEN 'NEGLECT'
 			WHEN 'OtherPrograms' THEN 'OTHER'
 		END
-	FROM [CEDS-Elements-V12.0.0.0].[CEDS].CedsOptionSetMapping
+	FROM [CEDS].CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'NeglectedOrDelinquentProgramType'
 
 
@@ -29,7 +29,7 @@
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
 		, CedsOptionSetCode
-	FROM [CEDS-Elements-V12.0.0.0].[CEDS].CedsOptionSetMapping
+	FROM [CEDS].CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'NeglectedProgramType'
 
 	CREATE TABLE #DelinquentProgramType (DelinquentProgramTypeCode VARCHAR(50), DelinquentProgramTypeDescription VARCHAR(200), DelinquentProgramTypeEdFactsCode VARCHAR(50))
@@ -40,7 +40,7 @@
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
 		, CedsOptionSetCode
-	FROM [CEDS-Elements-V12.0.0.0].[CEDS].CedsOptionSetMapping
+	FROM [CEDS].CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'DelinquentProgramType'
 
 	CREATE TABLE #NeglectedOrDelinquentLongTermStatus (NeglectedOrDelinquentLongTermStatusCode VARCHAR(50), 
