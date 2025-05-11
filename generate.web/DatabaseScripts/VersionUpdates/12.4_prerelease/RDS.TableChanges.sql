@@ -94,6 +94,27 @@
 	set FactTypeDescription = 'TITLEIIIELSY - 045,116,210,211'
 	where FactTypeCode = 'titleiiiELSY'
 
+--update the existing report table records to remove the 'c'
+	update rds.ReportEDFactsK12StaffCounts
+	set ReportCode = substring(ReportCode,2,3)
+	where len(ReportCode) = 4
+	and substring(ReportCode,1,1) = 'c'
+
+	update rds.ReportEDFactsK12StudentCounts
+	set ReportCode = substring(ReportCode,2,3)
+	where len(ReportCode) = 4
+	and substring(ReportCode,1,1) = 'c'
+
+	update rds.ReportEdFactsK12StudentAssessments
+	set ReportCode = substring(ReportCode,2,3)
+	where len(ReportCode) = 4
+	and substring(ReportCode,1,1) = 'c'
+
+	update rds.ReportEDFactsK12StudentDisciplines
+	set ReportCode = substring(ReportCode,2,3)
+	where len(ReportCode) = 4
+	and substring(ReportCode,1,1) = 'c'
+
 -------------------------------------------
 -- Populate Rds.DimNorDStatuses
 -------------------------------------------

@@ -109,6 +109,7 @@ BEGIN
 	declare @istoggleExcludeCorrectionalAge18to21 as bit
 	declare @istoggleExcludeCorrectionalAgeAll as bit
 	declare @istoggleRaceMap as bit
+	declare @toggleFreeLunch as varchar(30)
 
 	-- Get Custom Child Count Date (if available)
 	select @toggleChildCountDate = r.ResponseValue
@@ -219,6 +220,12 @@ BEGIN
 	left outer join app.ToggleResponses r
 		on r.ToggleQuestionId = q.ToggleQuestionId
 	WHERE q.EmapsQuestionAbbrv = 'DEFEXMOVCONLEA'
+
+	select @toggleFreeLunch = r.ResponseValue
+	from app.ToggleQuestions q
+	left outer join app.ToggleResponses r
+		on r.ToggleQuestionId = q.ToggleQuestionId
+	WHERE q.EmapsQuestionAbbrv = 'LUNCHCOUNTS'
 
 	-- Get Toggle Values
 	---------------------------------------------
@@ -1853,6 +1860,23 @@ BEGIN
 							delete from @reportData where ' + @reportField + ' <> ''MISSING'' AND ' + @factField + ' = 0
 						end
 					'
+				end
+
+				--Based on toggle, remove the unreported counts from the submission file
+				if @reportCode = '033'
+				begin
+					if @toggleFreeLunch = 'Free and Reduced Only'
+					begin
+						set @sqlRemoveMissing = @sqlRemoveMissing + '
+							delete from @reportData where TableTypeAbbrv = ''DIRECTCERT''
+						'
+					end
+					else if @toggleFreeLunch = 'Direct Certification Only'
+					begin
+						set @sqlRemoveMissing = @sqlRemoveMissing + '
+							delete from @reportData where TableTypeAbbrv = ''LUNCHFREERED''
+						'
+					end
 				end
 			end
 		end
@@ -4812,6 +4836,14 @@ BEGIN
 						and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
 					) rules
 						on fact.K12StudentId = rules.K12StudentId'
+
+				--Check toggle to add a condition to exclude counts not used by the state
+				if @toggleFreeLunch = 'Direct Certification Only'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+						and fact.SeaId = 999
+						'
+				end
 			end
 			else if @tableTypeAbbrv in ('DIRECTCERT')
 			begin
@@ -4853,6 +4885,14 @@ BEGIN
 					) rules
 						on fact.K12StudentId = rules.K12StudentId 
 						and fact.EconomicallyDisadvantagedStatusId = rules.EconomicallyDisadvantagedStatusId'
+
+				--Check toggle to add a condition to exclude counts not used by the state
+				if @toggleFreeLunch = 'Free and Reduced Only'
+				begin
+					set @sqlCountJoins = @sqlCountJoins + '
+						and fact.SeaId = 999
+						'
+				end
 			end
 		end
 		else if @reportCode in ('141')
