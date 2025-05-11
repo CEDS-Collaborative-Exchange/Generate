@@ -109,6 +109,7 @@ BEGIN
 	declare @istoggleExcludeCorrectionalAge18to21 as bit
 	declare @istoggleExcludeCorrectionalAgeAll as bit
 	declare @istoggleRaceMap as bit
+	declare @toggleFreeLunch as varchar(30)
 
 	-- Get Custom Child Count Date (if available)
 	select @toggleChildCountDate = r.ResponseValue
@@ -219,6 +220,12 @@ BEGIN
 	left outer join app.ToggleResponses r
 		on r.ToggleQuestionId = q.ToggleQuestionId
 	WHERE q.EmapsQuestionAbbrv = 'DEFEXMOVCONLEA'
+
+	select @toggleFreeLunch = r.ResponseValue
+	from app.ToggleQuestions q
+	left outer join app.ToggleResponses r
+		on r.ToggleQuestionId = q.ToggleQuestionId
+	WHERE q.EmapsQuestionAbbrv = 'LUNCHCOUNTS'
 
 	-- Get Toggle Values
 	---------------------------------------------
