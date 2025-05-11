@@ -1160,8 +1160,6 @@ VALUES
 	where len(ReportCode) = 4
 	and substring(ReportCode, 1,1) = 'c'
 
-<<<<<<< HEAD
-=======
 	update rds.ReportEDFactsK12StudentDisciplines
 	set ReportCode = substring(ReportCode, 2, 3)
 	where len(ReportCode) = 4
@@ -1171,4 +1169,3 @@ VALUES
 	set ReportCode = substring(ReportCode, 2, 3)
 	where len(ReportCode) = 4
 	and substring(ReportCode, 1,1) = 'c'
->>>>>>> d7e86322e586a06506d30a92479d8b2950c8cce6
