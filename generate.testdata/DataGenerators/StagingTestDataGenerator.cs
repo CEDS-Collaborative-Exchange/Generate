@@ -1856,6 +1856,7 @@ namespace generate.testdata.DataGenerators
                     sped.StudentIdentifierState = s.StudentIdentifierState;
                     ideaIndicator = true;
                     sped.IDEAIndicator = ideaIndicator;
+                    sped.SchoolYear = SchoolYear.ToString();
 
                     if (disabilityType.RecordEndDateTime.HasValue)
                     {
