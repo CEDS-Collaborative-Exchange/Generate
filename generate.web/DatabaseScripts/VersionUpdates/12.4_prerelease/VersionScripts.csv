@@ -80,6 +80,11 @@ StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_OrganizationStatusReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_OrganizationStatusReportData.StoredProcedure.sql,0
 VersionUpdates\\12.4_prerelease,UpdateDbVersion.sql,0
+VersionUpdates\\12.4_prerelease,CIID-7134 - FS119.sql,0
+Views\\Drop,RDS.vWDimTitleIIIStatuses.View.sql,0
+Views\\Create,RDS.vWDimTitleIIIStatuses.View.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
 
 
 
