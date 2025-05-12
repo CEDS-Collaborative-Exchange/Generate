@@ -50,7 +50,7 @@ BEGIN
 		--agr.ReportCode, 
 		agst.StagingTableName 
 	from app.GenerateReports agr
-	inner join app.GenerateReport_GenerateStagingTablesXREF x
+	inner join app.GenerateReport_GenerateStagingXREF x
 		on agr.GenerateReportId = x.GenerateReportId
 	inner join app.GenerateStagingTables agst
 		on agst.StagingTableId = x.StagingTableId

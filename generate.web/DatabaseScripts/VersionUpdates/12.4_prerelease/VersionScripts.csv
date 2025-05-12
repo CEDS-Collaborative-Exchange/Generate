@@ -6,6 +6,10 @@ VersionUpdates\\12.4_prerelease,RDS.Metadata.sql,0
 VersionUpdates\\12.4_prerelease,Staging.TableChanges.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+Views\\Drop,App.vwStagingRelationships.View.sql,0
+Views\\Create,App.vwStagingRelationships.View.sql,0
+Views\\Drop,App.vwReportCode_StagingTables.View.sql,0
+Views\\Create,App.vwReportCode_StagingTables.View.sql,0
 Views\\Drop,Debug.vwChronicAbsenteeism_FactTable.View.sql,0
 Views\\Create,Debug.vwChronicAbsenteeism_FactTable.View.sql,0
 Views\\Drop,Debug.vwChronicAbsenteeism_StagingTables.View.sql,0
@@ -127,6 +131,8 @@ StoredProcedures\\Drop,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_OrganizationStatusReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_OrganizationStatusReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.UpdateViewDefinitions.StoredProcedure.sql,0
 StoredProcedures\\Create,App.UpdateViewDefinitions.StoredProcedure.sql,0
 VersionUpdates\\12.4_prerelease,UpdateDbVersion.sql,0

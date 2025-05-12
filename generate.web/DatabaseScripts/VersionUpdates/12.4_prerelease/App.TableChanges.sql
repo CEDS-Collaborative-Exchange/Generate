@@ -74,12 +74,35 @@ end
 declare @ToggleQuestionId int
 select @ToggleQuestionId = ToggleQuestionId from app.ToggleQuestions where EmapsQuestionAbbrv = 'LUNCHCOUNTS'
 
-insert into app.ToggleQuestionOptions
-values (1, 'Free and Reduced Only', @ToggleQuestionId),
-	(2, 'Direct Certification Only', @ToggleQuestionId),
-	(3, 'Both Data Groups', @ToggleQuestionId)
+if not exists (SELECT * FROM app.ToggleQuestionOptions WHERE OptionText = 'Free and Reduced Only' and ToggleQuestionId = @ToggleQuestionId)
+begin
+	insert into app.ToggleQuestionOptions
+	values (1, 'Free and Reduced Only', @ToggleQuestionId),
+		(2, 'Direct Certification Only', @ToggleQuestionId),
+		(3, 'Both Data Groups', @ToggleQuestionId)
+end
 
 --fix the metadata for 070
 UPDATE app.FileColumns
 SET DimensionId = 4
 WHERE DisplayName = 'Qualification Status (Special Education Teacher)'
+
+--Add the new metadata table for Report, Staging Table, Staging Column
+	create table [App].[GenerateReport_GenerateStagingXREF] (
+		[GenerateReportId] [smallint] NOT NULL,
+		[StagingTableId] [smallint] NOT NULL,
+		[StagingColumnId] [smallint] NULL
+	)
+
+	insert into [App].[GenerateReport_GenerateStagingXREF] (
+		[GenerateReportId],
+		[StagingTableId]
+	)
+	select 
+		[GenerateReportId],
+		[StagingTableId]
+	from App.GenerateReport_GenerateStagingTablesXREF
+
+	drop table [App].[GenerateReport_GenerateStagingTablesXREF] 
+
+

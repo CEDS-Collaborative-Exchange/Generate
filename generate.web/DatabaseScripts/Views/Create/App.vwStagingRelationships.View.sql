@@ -12,7 +12,7 @@ left join App.GenerateReport_FactType frx
 	on r.GenerateReportId = frx.GenerateReportId
 left join rds.DimFactTypes rft
 	on frx.FactTypeId = rft.DimFactTypeId
-left join App.GenerateReport_GenerateStagingTablesXREF rgsx
+left join App.GenerateReport_GenerateStagingXREF rgsx
 	on rgsx.GenerateReportId = r.GenerateReportId
 left join App.GenerateStagingTables gst
 	on gst.StagingTableId = rgsx.StagingTableId
