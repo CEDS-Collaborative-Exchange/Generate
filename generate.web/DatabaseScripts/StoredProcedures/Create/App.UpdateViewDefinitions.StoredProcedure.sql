@@ -103,11 +103,11 @@ BEGIN
 								SELECT TOP(1) @factFieldName=E.FactFieldName  from app.GenerateReports D LEFT JOIN App.FactTables E ON E.FactTableId=D.FactTableId WHERE D.GenerateReportId=@generateReportId
 								IF(@factFieldName IS NOT NULL)
 								BEGIN
-									IF (@reportCode='c067')
+									IF (@reportCode='067')
 									BEGIN
 										SET @factFieldName='personnelCount'
 									END
-									ELSE IF (@reportCode='c150')
+									ELSE IF (@reportCode='150')
 									BEGIN
 										SET @factFieldName='studentRate'
 									END
@@ -125,7 +125,7 @@ BEGIN
 								BEGIN
 								IF(@reportTypeId=@generateReportTypeId)
 									BEGIN
-										IF @reportCode in ('c151','c150','c116','c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+										IF @reportCode in ('151','150','116','175', '178', '179', '185', '188', '189')
 										BEGIN
 											SET @rowFields='"rowFields":{"items":["SEA","SEA ID","Table Type"'
 										END	
@@ -149,7 +149,7 @@ BEGIN
 									IF(@reportTypeId = @generateReportTypeId)
 										BEGIN
 								
-										IF @reportCode in ('c151','c150','c116','c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+										IF @reportCode in ('151','150','116','175', '178', '179', '185', '188', '189')
 										BEGIN
 											SET @rowFields='"rowFields":{"items":["LEA","LEA ID","Table Type"'
 										END	
@@ -170,11 +170,11 @@ BEGIN
 								BEGIN
 									IF(@reportTypeId=@generateReportTypeId)
 									BEGIN
-										IF @reportCode in ('c151','c150','c116','c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+										IF @reportCode in ('151','150','116','175', '178', '179', '185', '188', '189')
 										BEGIN
 											SET @rowFields='"rowFields":{"items":["School","School ID","Table Type"'
 										END	
-										ELSE IF (@reportCode='c202')
+										ELSE IF (@reportCode='202')
 										BEGIN
 											SET @rowFields='"rowFields":{"items":["School","School ID","LEA ID","LEA Name"'
 										END
@@ -191,13 +191,13 @@ BEGIN
 								SET @fields=@fields+'{"binding":"organizationIdentifierSea","header":"School ID","dataType":1,"aggregate":2,"showAs":0,"descending":false,"format":"D","isContentHtml":false},'
 								SET @fields=@fields+'{"binding":"organizationName","header":"School","dataType":1,"aggregate":0,"showAs":0,"descending":false,"format":"","width":250,"wordWrap":true,"isContentHtml":false},'
 
-								IF (@reportCode='c202')
+								IF (@reportCode='202')
 								BEGIN
 									SET @fields=@fields+'{"binding":"parentOrganizationIdentifierSea","header":"LEA ID","dataType":1,"aggregate":2,"showAs":0,"descending":false,"format":"D","isContentHtml":false},'
 									SET @fields=@fields+'{"binding":"parentOrganizationName","header":"LEA Name","dataType":1,"aggregate":0,"showAs":0,"descending":false,"format":"","width":250,"wordWrap":true,"isContentHtml":false},'
 								END
 							END
-							IF @reportCode in ('c151','c150','c116','c175', 'c178', 'c179', 'c185', 'c188', 'c189')
+							IF @reportCode in ('151','150','116','175', '178', '179', '185', '188', '189')
 							BEGIN
 								SET @fields=@fields+'{"binding":"tableTypeAbbrv","header":"Table Type","dataType":1,"aggregate":0,"showAs":0,"descending":false,"format":"","width":250,"wordWrap":true,"isContentHtml":false},'
 							END	
@@ -341,7 +341,7 @@ BEGIN
 							CLOSE Categories_cursor
 							DEALLOCATE Categories_cursor
 
-							IF (@reportCode='c204')
+							IF (@reportCode='204')
 							begin
 							set @reportFileds='tableTypeAbbrv'
 							set @categoryName='Title III English Learners'
@@ -361,21 +361,22 @@ BEGIN
 							end
 							else
 							begin				
-							SET @fields=@fields+ '{"binding":"' + @updatedFactFieldName + '","header":"Count","dataType":2,"aggregate":1,"showAs":0,"descending":false,"format":"n0","isContentHtml":false}'	
-							set @valueFields=',"valueFields":{"items":["Count"]}'
+								SET @fields=@fields+ '{"binding":"' + @updatedFactFieldName + '","header":"Count","dataType":2,"aggregate":1,"showAs":0,"descending":false,"format":"n0","isContentHtml":false}'	
+								set @valueFields=',"valueFields":{"items":["Count"]}'
 							end
 
-							IF(@reportCode = 'c033')
+							IF(@reportCode = '033')
 							BEGIN
 								SET @viewDefinitiationStart='{"showColumnTotals":0,"showRowTotals":1,"defaultFilterType":3,'
 								IF (@categorySets = 'TOT')
 								BEGIN
 									SET @fields=@fields+ ',{"binding":"tableTypeAbbrv","header":"Lunch Program Total","dataType":2,"aggregate":0,"showAs":0,"descending":false,"format":"n0","wordWrap":true,"isContentHtml":false}'
 									SET @colFields = @colFields + '"Lunch Program Total"'
+									set @valueFields=',"valueFields":{"items":["Lunch Program Total"]}'
 								END
 							END
 
-							IF(@reportCode = 'c116')
+							IF(@reportCode = '116')
 							BEGIN
 								IF EXISTS (SELECT 1 FROM app.CategorySets cs 
 										   INNER JOIN app.TableTypes tt ON cs.TableTypeId = tt.TableTypeId
