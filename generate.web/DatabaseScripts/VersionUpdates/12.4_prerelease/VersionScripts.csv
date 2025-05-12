@@ -133,4 +133,6 @@ StoredProcedures\\Drop,RDS.Create_OrganizationStatusReportData.StoredProcedure.s
 StoredProcedures\\Create,RDS.Create_OrganizationStatusReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
 StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.UpdateViewDefinitions.StoredProcedure.sql,0
+StoredProcedures\\Create,App.UpdateViewDefinitions.StoredProcedure.sql,0
 VersionUpdates\\12.4_prerelease,UpdateDbVersion.sql,0
