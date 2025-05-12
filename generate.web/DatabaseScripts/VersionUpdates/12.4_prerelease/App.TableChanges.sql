@@ -74,10 +74,13 @@ end
 declare @ToggleQuestionId int
 select @ToggleQuestionId = ToggleQuestionId from app.ToggleQuestions where EmapsQuestionAbbrv = 'LUNCHCOUNTS'
 
-insert into app.ToggleQuestionOptions
-values (1, 'Free and Reduced Only', @ToggleQuestionId),
-	(2, 'Direct Certification Only', @ToggleQuestionId),
-	(3, 'Both Data Groups', @ToggleQuestionId)
+if not exists (SELECT * FROM app.ToggleQuestionOptions WHERE OptionText = 'Free and Reduced Only' and ToggleQuestionId = @ToggleQuestionId)
+begin
+	insert into app.ToggleQuestionOptions
+	values (1, 'Free and Reduced Only', @ToggleQuestionId),
+		(2, 'Direct Certification Only', @ToggleQuestionId),
+		(3, 'Both Data Groups', @ToggleQuestionId)
+end
 
 --fix the metadata for 070
 UPDATE app.FileColumns
