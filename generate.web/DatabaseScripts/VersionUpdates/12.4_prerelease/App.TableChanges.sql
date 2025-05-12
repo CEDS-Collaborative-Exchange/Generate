@@ -83,3 +83,23 @@ values (1, 'Free and Reduced Only', @ToggleQuestionId),
 UPDATE app.FileColumns
 SET DimensionId = 4
 WHERE DisplayName = 'Qualification Status (Special Education Teacher)'
+
+--Add the new metadata table for Report, Staging Table, Staging Column
+	create table [App].[GenerateReport_GenerateStagingXREF] (
+		[GenerateReportId] [smallint] NOT NULL,
+		[StagingTableId] [smallint] NOT NULL,
+		[StagingColumnId] [smallint] NULL
+	)
+
+	insert into [App].[GenerateReport_GenerateStagingXREF] (
+		[GenerateReportId],
+		[StagingTableId]
+	)
+	select 
+		[GenerateReportId],
+		[StagingTableId]
+	from App.GenerateReport_GenerateStagingTablesXREF
+
+	drop table [App].[GenerateReport_GenerateStagingTablesXREF] 
+
+

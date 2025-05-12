@@ -2,7 +2,7 @@ CREATE VIEW [App].[vwReportCode_StagingTables]
 AS
 
 SELECT DISTINCT r.GenerateReportId, r.ReportCode, st.StagingTableId, st.StagingTableName, rft.DimFactTypeId, rft.FactTypeCode
-FROM App.GenerateReport_GenerateStagingTablesXREF rgstx
+FROM App.GenerateReport_GenerateStagingXREF rgstx
 inner join App.GenerateReports r
 	on rgstx.GenerateReportId = r.GenerateReportId
 inner JOIN App.GenerateReport_FactType AS ftrx 
