@@ -18,21 +18,19 @@ namespace generate.infrastructure.Services
 {
     public class MigrationService : IMigrationService
     {
-        private readonly IOptions<AppSettings> _appSettings;
         private readonly IAppRepository _appRepository;
         private readonly IRDSRepository _rdsRepository;
         private readonly ITestDataInitializer _testDataInitializer;
         private readonly IHangfireHelper _hangfireHelper;
 
         public MigrationService(
-            IOptions<AppSettings> appSettings,
             IAppRepository appRepository,
             IRDSRepository rdsRepository,
             ITestDataInitializer testDataInitializer,
             IHangfireHelper hangfireHelper
             )
         {
-            _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
+
             _appRepository = appRepository ?? throw new ArgumentNullException(nameof(appRepository));
             _rdsRepository = rdsRepository ?? throw new ArgumentNullException(nameof(rdsRepository));
             _testDataInitializer = testDataInitializer ?? throw new ArgumentNullException(nameof(testDataInitializer));
@@ -88,25 +86,25 @@ namespace generate.infrastructure.Services
             {
                 // Use new method of ETL when appropriate
 
-                List<string> tasksUsingNewETL = new List<string>();
+                //List<string> tasksUsingNewETL = new List<string>();
 
-                var tasksToRun = _appRepository.FindReadOnly<DataMigrationTask>(x => x.IsSelected.HasValue && x.IsSelected == true && x.DataMigrationType.DataMigrationTypeCode == "rds", 0, 0);
-                var yearsToRun = _rdsRepository.FindReadOnly<DimSchoolYearDataMigrationType>(x => x.IsSelected && x.DimDataMigrationType.DataMigrationTypeCode == "rds", 0, 0, y => y.DimSchoolYear);
+                //var tasksToRun = _appRepository.FindReadOnly<DataMigrationTask>(x => x.IsSelected.HasValue && x.IsSelected == true && x.DataMigrationType.DataMigrationTypeCode == "rds", 0, 0);
+                //var yearsToRun = _rdsRepository.FindReadOnly<DimSchoolYearDataMigrationType>(x => x.IsSelected && x.DimDataMigrationType.DataMigrationTypeCode == "rds", 0, 0, y => y.DimSchoolYear);
 
-                if (tasksToRun != null && yearsToRun != null)
-                {
-                    foreach (var datamigrationTask in tasksToRun)
-                    {
-                        if (datamigrationTask.TaskName != null && tasksUsingNewETL.Contains(datamigrationTask.TaskName))
-                        {
-                            foreach (var yearToRun in yearsToRun)
-                            {
-                                this.ExecuteRdsTaskByYear(datamigrationTask.StoredProcedureName, yearToRun.DimSchoolYear.SchoolYear.ToString());
-                            }
+                //if (tasksToRun != null && yearsToRun != null)
+                //{
+                //    foreach (var datamigrationTask in tasksToRun)
+                //    {
+                //        if (datamigrationTask.TaskName != null && tasksUsingNewETL.Contains(datamigrationTask.TaskName))
+                //        {
+                //            foreach (var yearToRun in yearsToRun)
+                //            {
+                //                this.ExecuteRdsTaskByYear(datamigrationTask.StoredProcedureName, yearToRun.DimSchoolYear.SchoolYear.ToString());
+                //            }
 
-                        }
-                    }
-                }
+                //        }
+                //    }
+                //}
 
                 // Execute legacy method of migrating data
                 _hangfireHelper.TriggerSqlBasedMigration(dataMigrationTypeCode, null);

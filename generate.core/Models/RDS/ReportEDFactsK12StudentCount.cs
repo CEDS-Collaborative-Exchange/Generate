@@ -62,7 +62,7 @@ namespace generate.core.Models.RDS
         public string MOBILITYSTATUS12MO { get; set; }
         public string MOBILITYSTATUSSY { get; set; }
         public string REFERRALSTATUS { get; set; }
-        public string TITLEIPROGRAMTYPE { get; set; }
+        public string TITLEIINDICATOR { get; set; }
         public string MIGRANTEDUCATIONPROGRAMSERVICESTYPE { get; set; }
         public string CONSOLIDATEDMEPFUNDSSTATUS { get; set; }
         public string MIGRANTEDUCATIONPROGRAMENROLLMENTTYPE { get; set; }

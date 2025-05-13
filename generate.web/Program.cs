@@ -22,18 +22,14 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
-using System.Reflection;
-using Microsoft.AspNetCore.Http;
-using System.Web.Services.Description;
 
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory() + "/Config/")
-    .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
-    .AddEnvironmentVariables(e => e.Prefix = "Data__")
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
 
 
@@ -70,13 +66,6 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "generate", Version = "v1" });
 });
 
-builder.Services.AddHsts(options =>
-{
-    options.MaxAge = TimeSpan.FromDays(30); // Set max age
-    options.IncludeSubDomains = true;       // Include subdomains
-    options.Preload = true;                  // Enable preloading
-});
-
 // In production, the Angular files will be served from this directory
 //app.UseStatic(configuration =>
 //{
@@ -98,6 +87,7 @@ else if ("OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:User
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
     builder.Services.AddAuthorization();
+
 
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddUserStore<ApplicationUserStore<ApplicationUser>>()
@@ -142,13 +132,6 @@ app.UseSpa(spa => {
     }
 });
 
-// Add CSP header
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://trusted.cdn.com; style-src 'self' 'unsafe-inline' https://trusted.cdn.com; img-src 'self' data: https://trusted.cdn.com; font-src 'self' https://trusted.cdn.com; connect-src 'self' https://api.example.com; frame-ancestors 'none';");
-    context.Response.Headers.Append("Cache-Control", "public, max-age=3600"); // 1 hour
-    await next();
-});
 
 if (app.Environment.IsDevelopment())
 {

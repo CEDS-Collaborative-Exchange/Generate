@@ -58,10 +58,17 @@ namespace generate.infrastructure.Services
                 && r.ReportCode == reportCode
                 && r.GenerateReport_OrganizationLevels.Count(l => l.OrganizationLevel.LevelCode == reportLevel) == 1, 0, 1, r => r.FactTable)
                 .FirstOrDefault();
+            
+            string factTableName = "";
+            string factFieldName = "";
+            string factReportDtoIdName = "";
 
-            string factTableName = report.FactTable.FactTableName;
-            string factFieldName = report.FactTable.FactFieldName;
-            string factReportDtoIdName = report.FactTable.FactReportDtoIdName;
+            if (report != null)
+            {
+                factTableName = report.FactTable.FactTableName;
+                factFieldName = report.FactTable.FactFieldName;
+                factReportDtoIdName = report.FactTable.FactReportDtoIdName;
+            }
             int fileRecordNumber = 0;
 
             dynamic dynamicRows = new List<ExpandoObject>();
@@ -892,8 +899,11 @@ namespace generate.infrastructure.Services
                                     field = "IDEAINDICATOR";
                                 }
                             }
-                            else if(column.ColumnName.Replace(" ","") == "StudentCount") { field = "StudentCount"; }
-
+                            else if (column.ColumnName.Replace(" ","") == "StudentCount") 
+                            { 
+                                field = "StudentCount"; 
+                            }
+                            
                             PropertyInfo prop = dataRow.GetType().GetProperty(field);
                             if (prop != null)
                             {
