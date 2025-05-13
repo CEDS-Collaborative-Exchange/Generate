@@ -128,12 +128,23 @@
             ALTER TABLE Staging.K12StaffAssignment ADD RecordEndDateTime DATETIME NULL;
         END
 
-    --Add the extended proprties for the new column and the re-added columns
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'Indicates whether the staff member provides language instruction to students who are English learners.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'TitleIIILanguageInstructionIndicator'
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Title III Language Instruction Indicator' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'TitleIIILanguageInstructionIndicator'
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'TitleIIILanguageInstructionIndicator'
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=00000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'TitleIIILanguageInstructionIndicator'
-        EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'TitleIIILanguageInstructionIndicator'
+        --Add the extended proprties for the new column and the re-added columns
+         IF EXISTS(SELECT 1
+         FROM 
+             sys.extended_properties AS ep
+             INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+             INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+             INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+         WHERE 
+         ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+         AND t.name = 'K12StaffAssignment' AND c.name = 'TitleIIILanguageInstructionIndicator' )
+         BEGIN
+            EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'Indicates whether the staff member provides language instruction to students who are English learners.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'TitleIIILanguageInstructionIndicator'
+            EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Title III Language Instruction Indicator' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'TitleIIILanguageInstructionIndicator'
+            EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'TitleIIILanguageInstructionIndicator'
+            EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=00000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'TitleIIILanguageInstructionIndicator'
+            EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'TitleIIILanguageInstructionIndicator'
+        END
         EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The year for a reported school session.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
         EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'School Year' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
         EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000243' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12StaffAssignment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
