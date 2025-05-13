@@ -3,7 +3,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 
 WORKDIR /app
-COPY ./bin/Debug/net8.0 ./
+COPY ./bin/production/net8.0/publish ./
 
 # Expose ports
 EXPOSE 80
