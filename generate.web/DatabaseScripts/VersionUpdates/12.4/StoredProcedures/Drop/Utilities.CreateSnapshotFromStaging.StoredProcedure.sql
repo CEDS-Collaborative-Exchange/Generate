@@ -1,0 +1,13 @@
+﻿
+IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'Utilities' AND ROUTINE_NAME = 'CreateSnapshotFromStaging') 
+BEGIN
+	DROP PROCEDURE [Utilities].[CreateSnapshotFromStaging]
+END
+
+
+
+
+
+
+
+
