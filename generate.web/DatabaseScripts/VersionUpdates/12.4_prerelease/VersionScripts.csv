@@ -104,8 +104,6 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIII.StoredPr
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIII.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELOct.StoredProcedure.sql,0
-StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
-StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
@@ -136,3 +134,8 @@ StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql
 StoredProcedures\\Drop,App.UpdateViewDefinitions.StoredProcedure.sql,0
 StoredProcedures\\Create,App.UpdateViewDefinitions.StoredProcedure.sql,0
 VersionUpdates\\12.4_prerelease,UpdateDbVersion.sql,0
+VersionUpdates\\12.4_prerelease,CIID-4766 - FS119.sql,0
+Views\\Drop,RDS.vWDimTitleIIIStatuses.View.sql,0
+Views\\Create,RDS.vWDimTitleIIIStatuses.View.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
