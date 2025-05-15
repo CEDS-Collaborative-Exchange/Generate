@@ -219,8 +219,7 @@ Update the database connection strings in the `docker-compose.yml` file:
 9. Configure CPU and memory requirements (suggested: 1 vCPU, 2GB memory)
 10. Create a new ECS Service using your task definition
 11. Configure networking (VPC, subnets, security groups)
-12. Add a load balancer if needed for public access
-13. Review and create the service
+12. Review and create the service
 
 ## Step 5: Verify the Deployment
 
