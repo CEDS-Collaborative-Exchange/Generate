@@ -6,6 +6,10 @@ import { GenerateReportParametersDto } from '../../../models/app/generateReportP
 import { CategoryOptionDto } from '../../../models/app/categoryOptionDto';
 import 'node_modules/pivottable/dist/pivot.js';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+//import ReportDebugInformationComponent
+
+import { ReportDebugInformationComponent } from '../../reportcontrols/reportdebuginformation.component'; 
 
 //import * as XLSX from '../../../../lib/xlsx-js-style/dist/xlsx.bundle.js'
 import * as XLSX from '../../../../lib/xlsx-js-style/xlsx.js'
@@ -40,13 +44,23 @@ export class PivottableComponent {
     itemsPerPage: number = 10;
     totalItems: number;
     self: any;
-    constructor(private renderer: Renderer2) {
+    constructor(private renderer: Renderer2, private dialog: MatDialog) {
         console.log('constructor');
         this.populateReport = this.populateReport.bind(this);
         this.markSearchFields = this.markSearchFields.bind(this);
         this.restoreSearchFields = this.restoreSearchFields.bind(this);
     }
 
+    openDialog(data: any) {
+        this.dialog.open(ReportDebugInformationComponent, {
+            width: '1000px',
+            height: '650px',
+            data: data
+        });
+    }
+    closeDialog() {
+        this.dialog.closeAll();
+    }
     ngOnInit() {
 
         filterBy = {};
@@ -282,6 +296,8 @@ export class PivottableComponent {
     }
 
     populateReport() {
+        const self = this;
+
         if (this.isNullOrUndefined(reportData) || Object.keys(reportData).length === 0)
             return;
         var derivers = $.pivotUtilities.derivers;
@@ -489,6 +505,40 @@ export class PivottableComponent {
 
         aggregateColumn = viewDef.columnFields.items[len - 1];
 
+        function displayDebugInfo(value, filters) {
+            //let categorySetCode = reportData.categorySets[0].categorySetCode;
+            let reportYear = reportData.reportYear;
+            let reportLevel = reportData.data[0].reportLevel;
+            let categorySetCode = reportData.data[0].categorySetCode;
+            let reportCode = reportData.data[0].reportCode;
+
+            let data = {
+                reportData: reportData,
+                recordCount: value,
+                reportFiilers: filters
+
+            };
+            self.openDialog(data);
+
+            for (const key in filters) {
+                if (filters.hasOwnProperty(key)) {
+                    //console.log(key, filters[key]);
+                    //const column = viewDef.columnFields.items.find(item => item === key);
+                    //if (column)
+                    //    alert(column);
+                    //else {
+                    //    viewDef.fields.find(item => item === key);
+                    //}
+                    let binding = viewDef.fields.find(item => item === key);
+                    for (const k in binding) {
+                        if (binding.hasOwnProperty(k)) {
+
+                        }
+                    }
+                }
+            }
+        }
+
         $("#container").pivotUI(uiData, {
             showUI: false,
             rows: viewDef.rowFields.items, cols: viewDef.columnFields.items,
@@ -503,6 +553,7 @@ export class PivottableComponent {
                     rendererName: "Table",
                     clickCallback: function (e, value, filters, pivotData) {
                         var names = [];
+                        displayDebugInfo(value, filters);
                         pivotData.forEachMatchingRecord(filters,
                             function (record) { names.push(record.Name); });
                     }

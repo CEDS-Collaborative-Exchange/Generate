@@ -1,0 +1,21 @@
+<div>
+    <div style="margin-top:30px;">
+        <h3 class="generate-app-report__title">{{data.reportData.reportTitle}}</h3>
+        <div class="mdl-typography--text-center generate-app-pivotgrid__categoryset-definition">
+            <span>{{data.reportData.categorySets[0].categorySetName}}</span><span> - </span><span *ngFor="let cat of data.reportData.categorySets[0].categories; let i=index;"><span *ngIf="i > 0">, </span>{{cat}}</span>
+        </div>
+        <div class="generate-app-pivotgrid__total mdl-typography--text-center">
+            Count: {{data.recordCount}}
+        </div>
+    </div>
+    <div style="margin:10px 30px">
+        <generate-app-table>
+        </generate-app-table>
+        <hr>
+        <div style="display: flex; justify-content: flex-end;">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="closeDialog()">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
