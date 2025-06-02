@@ -267,13 +267,13 @@ BEGIN
 			AND sko.SchoolYear = soff.SchoolYear
 			AND soff.OrganizationType in (select LEAOrganizationType from #leaOrganizationTypes)
 			--AND soff.REAPAlternativeFundingStatusCode IS NOT NULL
-
 		LEFT JOIN RDS.vwDimK12OrganizationStatuses organizationStatus
 			ON organizationStatus.SchoolYear = sko.SchoolYear
+			AND ISNULL(sko.LEA_GunFreeSchoolsActReportingStatus, 'MISSING') = ISNULL(organizationStatus.GunFreeSchoolsActReportingStatusMap, organizationStatus.GunFreeSchoolsActReportingStatusCode)
+			AND ISNULL(CAST(sko.LEA_McKinneyVentoSubgrantRecipient AS SMALLINT), -1) = ISNULL(organizationStatus.McKinneyVentoSubgrantRecipientMap, -1)
 			AND organizationStatus.GunFreeSchoolsActReportingStatusCode = 'Missing'
 			AND organizationStatus.HighSchoolGraduationRateIndicatorStatusCode = 'Missing'
 			AND organizationStatus.REAPAlternativeFundingStatusCode = 'Missing'
-			AND ISNULL(CAST(sko.LEA_McKinneyVentoSubgrantRecipient AS SMALLINT), -1) = isnull(organizationStatus.McKinneyVentoSubgrantRecipientMap, -1)
 			
 
 		-------------------------------
