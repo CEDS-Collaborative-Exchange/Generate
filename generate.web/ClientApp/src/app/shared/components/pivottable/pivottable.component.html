@@ -4,15 +4,18 @@
         <label class="generate-app-pivotgrid-controls__sectionlabel" for="searchTable">Search:&nbsp;&nbsp;</label>
         <input type="checkbox" id="searchTable" (click)="onToggleSearchFilter()" (keyup)="onToggleSearchFilter()" />
         <button id="resetFilter" (click)="onResetFilter()" style="display:none;">Reset Filter</button>
+        <div>
+            <span>* Click a number to see the details</span>
+        </div>
     </div>
     <!-- Angular Material Paginator -->
     <div class="mdl-cell mdl-cell--8-col">
         <mat-paginator #paginator [length]="totalItems"
-                                 [pageSize]="itemsPerPage"
-                                 [pageIndex]="currentPage"
-                                 [pageSizeOptions]="[5, 10, 25, 50]"
-                                 showFirstLastButtons
-                                 (page)="pageChange($event)">
+                       [pageSize]="itemsPerPage"
+                       [pageIndex]="currentPage"
+                       [pageSizeOptions]="[5, 10, 25, 50]"
+                       showFirstLastButtons
+                       (page)="pageChange($event)">
         </mat-paginator>
     </div>
 </div>

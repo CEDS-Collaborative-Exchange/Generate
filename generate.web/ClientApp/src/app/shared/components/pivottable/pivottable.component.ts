@@ -54,7 +54,8 @@ export class PivottableComponent {
     openDialog(data: any) {
         this.dialog.open(ReportDebugInformationComponent, {
             width: '1000px',
-            height: '650px',
+            minHeight: '700px',
+            maxHeight: '1200px',
             data: data
         });
     }
@@ -433,7 +434,6 @@ export class PivottableComponent {
         // Update totalItems based on the total count of data
         this.paginator.length = new Set(this.reportDataDto.data.filter(d => {
             if (Object.keys(filterBy2).length === 0) { return true; }
-
             var matchFound = true;
             for (var i = 0; i < Object.keys(filterBy2).length; i++) {
                 if (filterBy2[Object.keys(filterBy2)[i]] != "") {
@@ -505,30 +505,33 @@ export class PivottableComponent {
 
         aggregateColumn = viewDef.columnFields.items[len - 1];
 
-        function displayDebugInfo(value, filters) {
+        function displayDebugInfo(e, value, filters, pivotData) {
             //let categorySetCode = reportData.categorySets[0].categorySetCode;
             let reportYear = reportData.reportYear;
             let reportLevel = reportData.data[0].reportLevel;
             let categorySetCode = reportData.data[0].categorySetCode;
             let reportCode = reportData.data[0].reportCode;
+          //  let headers = reportData.categorySets[0].categories;
 
-            let data = {
-                reportData: reportData,
-                recordCount: value,
-                reportFiilers: filters
+            var bindings = ["k12StudentStudentIdentifierState"];
+            var headers = ["Student Id"];
 
-            };
-            self.openDialog(data);
-
+            var selectedFilter = {}
             for (const key in filters) {
                 if (filters.hasOwnProperty(key)) {
-                    //console.log(key, filters[key]);
-                    //const column = viewDef.columnFields.items.find(item => item === key);
-                    //if (column)
-                    //    alert(column);
-                    //else {
-                    //    viewDef.fields.find(item => item === key);
-                    //}
+                    console.log(key, filters[key]);
+                    const column = viewDef.fields.find(f => f.header === key).binding;
+                    if (column) {
+                        let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionName === filters[key]);
+                        if (categoryOption) {
+                            selectedFilter[column] = categoryOption.categoryOptionCode;
+
+                            // for displaying
+                            bindings.push(column);
+                            headers.push(categoryOption.categoryName);
+                        }                        
+                    }
+
                     let binding = viewDef.fields.find(item => item === key);
                     for (const k in binding) {
                         if (binding.hasOwnProperty(k)) {
@@ -537,6 +540,24 @@ export class PivottableComponent {
                     }
                 }
             }
+
+            const selectedFilterJson = JSON.stringify(selectedFilter);
+
+            for (const key in selectedFilter) {
+
+            }
+            let data = {
+                reportData: reportData,
+                recordCount: value,
+                filters: selectedFilterJson,
+                reportYear: reportData.reportYear,
+                reportLevel: reportData.data[0].reportLevel,
+                categorySetCode: reportData.data[0].categorySetCode,
+                reportCode: reportData.data[0].reportCode,
+                bindings: bindings,
+                headers: headers
+            };
+            self.openDialog(data);
         }
 
         $("#container").pivotUI(uiData, {
@@ -553,7 +574,7 @@ export class PivottableComponent {
                     rendererName: "Table",
                     clickCallback: function (e, value, filters, pivotData) {
                         var names = [];
-                        displayDebugInfo(value, filters);
+                        displayDebugInfo(e, value, filters, pivotData);
                         pivotData.forEachMatchingRecord(filters,
                             function (record) { names.push(record.Name); });
                     }

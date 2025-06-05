@@ -11,12 +11,16 @@ using Microsoft.Extensions.PlatformAbstractions;
 using generate.core.ViewModels.App;
 using generate.core.Dtos.App;
 using generate.core.Interfaces.Repositories.App;
+using generate.core.Models.RDS;
+using generate.infrastructure.Repositories.App;
+using generate.core.Interfaces.Repositories.RDS;
 
 namespace generate.infrastructure.Services
 {
     public class GenerateReportService : IGenerateReportService
     {
         private readonly IAppRepository _appRepository;
+        private readonly IReportDebugRepository _reportDebugRepository;
 
         private IDataPopulationSummaryService _dataPopulationSummaryService;
         private IEdFactsReportService _edFactsReportService;
@@ -25,6 +29,7 @@ namespace generate.infrastructure.Services
 
         public GenerateReportService(
             IAppRepository appRepository,
+            IReportDebugRepository reportDebugRepository,
             IDataPopulationSummaryService dataPopulationSummaryService,
             IEdFactsReportService edFactsReportService,
             ISppAprReportService sppAprReportService,
@@ -32,6 +37,7 @@ namespace generate.infrastructure.Services
             )
         {
             _appRepository = appRepository;
+            _reportDebugRepository = reportDebugRepository;
             _dataPopulationSummaryService = dataPopulationSummaryService;
             _edFactsReportService = edFactsReportService;
             _sppAprReportService = sppAprReportService;
@@ -76,7 +82,7 @@ namespace generate.infrastructure.Services
 
         public GenerateReport GetReport(string reportTypeCode, string reportCode)
         {
-            IEnumerable<GenerateReport> reports = _appRepository.Find<GenerateReport>(r => 
+            IEnumerable<GenerateReport> reports = _appRepository.Find<GenerateReport>(r =>
                 r.GenerateReportType.ReportTypeCode == reportTypeCode && r.IsActive && r.ReportCode == reportCode, 0, 0, r => r.GenerateReport_OrganizationLevels, s => s.GenerateReportControlType, t => t.GenerateReportFilterOptions, g => g.CedsConnection);
 
             if (reports != null)
@@ -105,7 +111,7 @@ namespace generate.infrastructure.Services
                 foreach (var reportId in generateReportIds)
                 {
                     var catsets = _appRepository.Find<CategorySet>(r => r.GenerateReportId == reportId, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport).ToList();
-                    categorySets.AddRange(catsets); 
+                    categorySets.AddRange(catsets);
                 }
 
                 foreach (var report in reports)
@@ -299,10 +305,10 @@ namespace generate.infrastructure.Services
             {
                 reportDto = _dataPopulationSummaryService.GetReportDto(reportCode, reportLevel, reportYear, categorySetCode, reportSort, skip, take);
 
-                if(reportCode == "studentswdtitle1")
+                if (reportCode == "studentswdtitle1")
                 {
-                   IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
-                       && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel);
+                    IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
+                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel);
 
 
                     List<CategorySetDto> reportCategorySetDtos = new List<CategorySetDto>();
@@ -353,11 +359,11 @@ namespace generate.infrastructure.Services
             {
                 reportDto = _edFactsReportService.GetReportDto(reportCode, reportLevel, reportYear, categorySetCode, reportSort, pageSize, page);
 
-                IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode 
-                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel , 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
+                IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
+                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
 
                 if (reportCode == "c150") { categorySets = categorySets.Where(c => c.TableType.TableTypeAbbrv == "GRADRT4YRADJ"); }
-                else if (reportCode == "c151") { categorySets = categorySets.Where(c =>  c.TableType.TableTypeAbbrv == "GRADCOHORT4YR"); }
+                else if (reportCode == "c151") { categorySets = categorySets.Where(c => c.TableType.TableTypeAbbrv == "GRADCOHORT4YR"); }
 
                 List<string> categories = new List<string>();
                 List<CategorySetCategoryOptionDto> categoryOptions = new List<CategorySetCategoryOptionDto>();
@@ -367,7 +373,7 @@ namespace generate.infrastructure.Services
                     List<CategorySet_Category> cats = _appRepository.Find<CategorySet_Category>(c => c.CategorySetId == item.CategorySetId, 0, 0, c => c.Category).ToList();
                     foreach (var cat in cats)
                     {
-                        if(!categories.Contains(cat.Category.CategoryName))
+                        if (!categories.Contains(cat.Category.CategoryName))
                             categories.Add(cat.Category.CategoryName);
 
                         List<CategoryOption> options = _appRepository.Find<CategoryOption>(o => o.CategoryId == cat.CategoryId && o.CategorySetId == cat.CategorySetId, 0, 0).ToList();
@@ -411,7 +417,7 @@ namespace generate.infrastructure.Services
                 reportDto.CategorySets = reportCategorySetDtos;
 
             }
-            else if ( reportType == "sppaprreport")
+            else if (reportType == "sppaprreport")
             {
 
                 reportDto = _sppAprReportService.GetReportDto(reportCode, reportLevel, reportYear, categorySetCode, reportSort, skip, take);
@@ -491,7 +497,7 @@ namespace generate.infrastructure.Services
                     List<CategorySet_Category> cats = _appRepository.Find<CategorySet_Category>(c => c.CategorySetId == item.CategorySetId, 0, 0, c => c.Category).ToList();
                     foreach (var cat in cats)
                     {
-                        if(cat.Category.CategoryName== "English Learner Status (Both)")
+                        if (cat.Category.CategoryName == "English Learner Status (Both)")
                         {
                             cat.Category.CategoryName = "English Learner Status";
                         }
@@ -525,6 +531,10 @@ namespace generate.infrastructure.Services
             reportDto.ReportYear = reportYear;
             return reportDto;
         }
-        
+
+        public List<ReportDebug> GetReportDebugData(string reportCode, string reportLevel, string reportYear, string categorySetCode, string parameters, int sort = 1, int skip = 0, int take = 50, int pageSize = 10, int page = 1)
+        {
+            return _reportDebugRepository.Get_ReportDebugData(reportCode, reportLevel, reportYear, categorySetCode, parameters, sort, skip, take, pageSize, page).ToList();
+        }
     }
 }

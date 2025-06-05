@@ -171,6 +171,20 @@ namespace generate.web.Controllers.Api.App
             }
         }
 
+        [HttpGet("debuginfo/{reportCode}/{reportLevel}/{reportYear}/{categorySetCode}/{selectedList}")]
+        //   public ContentResult Get(string reportTypeCode, string reportCode, string reportLevel, string reportYear, string categorySetCode, string selectedList, [FromQuery] int sort = 1, [FromQuery] int skip = 0, [FromQuery] int take = 50)
+        public ContentResult Get(string reportCode, string reportLevel, string reportYear, string categorySetCode, string selectedList)
+        {
+
+            if (reportCode == null || reportLevel == null || reportYear == null || categorySetCode == null)
+            {
+                return null;
+            }
+
+            List<ReportDebug> reportDebugs = _generateReportService.GetReportDebugData(reportCode, reportLevel, reportYear, categorySetCode, selectedList);
+
+            return this.JsonWithoutEmptyProperties(reportDebugs);
+        }
 
         [HttpGet("submissionyears/{reportCode}")]
         public JsonResult GetSubmissionYears(string reportCode)

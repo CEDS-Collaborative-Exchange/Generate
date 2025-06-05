@@ -8,8 +8,10 @@
             Count: {{data.recordCount}}
         </div>
     </div>
-    <div style="margin:10px 30px">
-        <generate-app-table>
+    <div style="margin:20px 30px">
+        <generate-app-table [itemsSource]="repotDebugData"
+                            [headers]="headers"
+                            [bindings]="bindings">
         </generate-app-table>
         <hr>
         <div style="display: flex; justify-content: flex-end;">
