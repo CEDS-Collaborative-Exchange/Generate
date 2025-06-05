@@ -42,7 +42,7 @@ namespace generate.infrastructure.Repositories.RDS
                 {
                     connection.Open();
 
-                    using (SqlCommand command = new SqlCommand("rds.Get_ReportBebugData", connection))
+                    using (SqlCommand command = new SqlCommand("rds.Get_ReportDebugData", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.CommandTimeout = 11000;
