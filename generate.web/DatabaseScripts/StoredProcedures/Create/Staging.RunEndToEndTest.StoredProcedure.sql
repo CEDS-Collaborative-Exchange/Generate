@@ -170,6 +170,3 @@ AS
 
 	SET @SQLStatement =	'DROP TABLE ##' + (@ReportCode) + 'Staging'
 	EXEC sp_executesql @SQLStatement
-
-GO
-
