@@ -1,0 +1,4 @@
+VersionUpdates\\12.5_prerelease,Restore 12.4.sql,0
+VersionUpdates\\12.5_prerelease,App.TableChanges.sql,0
+VersionUpdates\\12.5_prerelease,App.Metadata.sql,0
+VersionUpdates\\12.5_prerelease,UpdateDbVersion.sql,0
