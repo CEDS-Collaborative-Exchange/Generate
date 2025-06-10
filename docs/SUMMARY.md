@@ -109,6 +109,7 @@
 ## Release Notes
 
 * [Introduction](release-notes/introduction.md)
+* [Release Notes 12.4](release-notes/release-notes-12.4.md)
 * [Release Notes 12.3](release-notes/release-notes-12.3.md)
 * [Release Notes 12.2](release-notes/release-notes-12.2.md)
 * [Release Notes 12.1](release-notes/release-notes-12.1.md)
@@ -139,6 +140,7 @@
   * [Release Notes 3.1](release-notes/archive/release-notes-v3.1.md)
   * [Release Notes 3.0](release-notes/archive/release-notes-v3.0.md)
   * [Release Notes 2.4](release-notes/archive/release-notes-v2.4.md)
+* [Release Notes 12.3](release-notes/release-notes-12.3-1.md)
 
 ## Hot Fixes
 

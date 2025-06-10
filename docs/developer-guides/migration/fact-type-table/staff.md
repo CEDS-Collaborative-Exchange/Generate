@@ -99,7 +99,7 @@ The Generate Toggle tables store information from the E&#x44;_&#x46;acts_ Metada
 [Source System Reference Data](../../generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data.md) is used in the Staging to RDS Migration to determine how source system option set values map to CEDS option set values. This table needs to be updated with the complete set of values for all categorical fields by school year.
 
 {% hint style="success" %}
-To find the Source System Reference Data needed for each Fact Type, you can query the system by running the following script by `FactTypeCode` and `ReportCode`.&#x20;
+To find the Source System Reference Data needed for each Fact Type, you can query the system by running the following script by `FactTypeCode` and `ReportCode`.
 
 You can also filter the Source System Reference Data table by `FactTypeCode` and `ReportCode` as shown below.
 {% endhint %}
@@ -108,16 +108,16 @@ You can also filter the Source System Reference Data table by `FactTypeCode` and
 ```sql
 SELECT DISTINCT FactTypeCode, ReportCode, StagingTableName, StagingcolumnName, SSRDRefTableName, SSRDTableFilter 
 FROM app.vwStagingRelationships
-WHERE FactTypeCode = 'staff' and ReportCode = 'c070'
+WHERE FactTypeCode = 'staff' and ReportCode = '070'
 ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 ```
 {% endcode %}
 
-#### Source System Reference Tables Staff Filters&#x20;
+#### Source System Reference Tables Staff Filters
 
 In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields will need to be mapped using the value in the SSRD table using these filters. For further information please review [Source System Reference Data](../../generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data.md).
 
-Staff Reports ('C059', 'C065', 'C067', 'C070', 'C099', 'C112', 'C203') does not have filters.
+Staff Reports ('059', '065', '067', '070', '099', '112', '203') does not have filters.
 
 [Source System Reference Data Mapping Utility](../../generate-utilities/source-system-reference-data-mapping-utility/) can be used to determine which option-set value mappings are needed for a Fact Type and which have been mapped. Note that new installations of Generate will come with both the InputCode and OutputCode fields loaded and you will need to review and update any values in the InputCode field to match your source data.
 
@@ -135,19 +135,19 @@ exec [Utilities].[Check_SourceSystemReferenceData_Mapping] 'staff', '2024', 0 --
 
 #### Building the ETL Code:
 
-The Generate database has a stored procedure for each Fact Type which is empty in the default load of the Generate database and serves as a placeholder. Since this Stored Procedure ETLs data from the education agency's source system(s) into the Generate Staging environment, the ETL code will be customized to your education agency's context.&#x20;
+The Generate database has a stored procedure for each Fact Type which is empty in the default load of the Generate database and serves as a placeholder. Since this Stored Procedure ETLs data from the education agency's source system(s) into the Generate Staging environment, the ETL code will be customized to your education agency's context.
 
 For Staff, this Stored Procedure is called `[Source].[Source-to-Staging_Staff]`.
 
 The tools from the Set Up phase (ETL Checklist and Generate metadata) are used to guide writing the ETL Code in this Stored Procedure. Additionally, ETL code written previously to perform this work in the education agency's source system(s) can also be a useful resource at this step, particularly for ensuring critical data handling and business rules from the source system are retained in the Generate Source to Staging ETL.
 
-<figure><img src="../../../.gitbook/assets/Source-to-Staging_Staff.png" alt="A SQL Server Management Studio window displaying a stored procedure named &#x22;[Source].[Source-to-Staging_Staff]&#x22; in the Generate database. The Object Explorer panel on the left shows a list of stored procedures under the &#x22;Source&#x22; schema, while the query editor on the right contains a template for the stored procedure with a placeholder for ETL code. "><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_Staff" Fact Type.</p></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Source-to-Staging_Staff.png" alt="A SQL Server Management Studio window displaying a stored procedure named &#x22;[Source].[Source-to-Staging_Staff]&#x22; in the Generate database. The Object Explorer panel on the left shows a list of stored procedures under the &#x22;Source&#x22; schema, while the query editor on the right contains a template for the stored procedure with a placeholder for ETL code."><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_Staff" Fact Type.</p></figcaption></figure>
 
 #### Running the ETL
 
 {% tabs %}
 {% tab title="Manually" %}
-#### Migrating Source to Staging
+**Migrating Source to Staging**
 
 The Source to Staging code can be run from SQL Server Management Studio (SSMS) by passing in the current school year as a parameter. Generate uses the end school year. For example, 2023-24 would be specified as '2024'.
 
@@ -157,10 +157,9 @@ exec [Source].[Source-to-Staging_Staff] 2024
 {% endtab %}
 
 {% tab title="Generate UI" %}
-#### Migrating Source to Staging (Generate User Interface)
+**Migrating Source to Staging (Generate User Interface)**
 
-This ETL can also be run from the Generate user interface.\
-
+This ETL can also be run from the Generate user interface.\\
 
 {% content-ref url="../../../user-guide/settings/data-migration.md" %}
 [data-migration.md](../../../user-guide/settings/data-migration.md)
@@ -190,7 +189,7 @@ exec [Staging].[StagingValidation_Execute] 2024,'staff'
 exec [Staging].[StagingValidation_GetResults] 2024,'staff'
 ```
 
-#### Staging Table Debug View Process&#x20;
+#### Staging Table Debug View Process
 
 To aid validation we developed Staging Table Debug views that join together the Staging data for a Fact Type in a standard format that can be used for Generate testing. You can utilize these views in researching specific subsets of data or specific student data. These views can be found in the debug schema and will automatically be filtered by the school year(s) selected in the Generate web application. Opening the view in SSMS will provide you with a variety of filtering options to modify the query as needed during testing. Detailed instructions on how to utilize this process to debug Staging table data can be found in the [Staging Table Validation Process](../../generate-utilities/staging-validation/staging-table-validation-process.md).
 
@@ -208,7 +207,7 @@ select * from [debug].[vwStaff_StagingTables]
 
 {% tabs %}
 {% tab title="Manually" %}
-#### Migrating Staging to CEDS Data Warehouse in the Reporting Data Store (RDS) (Manually)
+**Migrating Staging to CEDS Data Warehouse in the Reporting Data Store (RDS) (Manually)**
 
 To migrate data from Staging to the CEDS Data Warehouse you will need to call the \[App].\[Wrapper\_Migrate\_Staff\_to\_RDS] Stored Procedure. This wrapper will call several Stored Procedures to migrate data to the dimension and fact tables in the CEDS Data Warehouse as well as log this activity in the App.DataMigrationHistories table. This process will also create debug tables that contain the information that is utilized in the counts and can be used in the validation process.
 
@@ -245,7 +244,7 @@ exec [app].[Wrapper_Migrate_Staff_to_RDS]
 {% endtab %}
 
 {% tab title="Generate UI" %}
-#### Migrating Staging to CEDS Data Warehouse in the Reporting Data Store (RDS) (Generate User Interface)
+**Migrating Staging to CEDS Data Warehouse in the Reporting Data Store (RDS) (Generate User Interface)**
 
 This Migration process can also be run from the Generate user interface.
 
@@ -294,7 +293,7 @@ To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you wi
     UPDATE App.GenerateReports set IsLocked = 0
     UPDATE App.GenerateReports
     SET IsLocked = 1
-    WHERE ReportCode IN ('C059', 'C065', 'C067', 'C070', 'C099', 'C112', 'C203')
+    WHERE ReportCode IN ('059', '065', '067', '070', '099', '112', '203')
 
 -- C. Empty the reports table for the specific reports    
     EXEC [rds].[Empty_Reports] @FactTypeCode = 'staff'
@@ -311,7 +310,7 @@ The process of migrating data to Report Tables creates a set of tables in the \[
 -- simply query a corresponding table 
 -- (using the table name to identify the category set contents)
 -- This example will only work if the above code has been executed. 
-SELECT * FROM [debug].[c070_lea_CSA_2023_AGEGROUP_QUALSTATSPEDTCH]
+SELECT * FROM [debug].[070_lea_CSA_2023_AGEGROUP_QUALSTATSPEDTCH]
 ```
 
 Over time these tables will accumulate and create clutter in the Generate database debug schema. You can easily remove unneeded debug tables using the [Clean Up Debug Tables](file:///C:/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/~/changes/210/developer-guides/generate-utilities/cleanup-debug-tables) utility.
@@ -327,15 +326,15 @@ The [File Comparison Utility](../../generate-utilities/file-comparison/) allows 
 </strong>@DatabaseName = 'Generate', -- Your database name 
 @SchemaName = 'XX', -- Your schema name 
 @SubmissionYear = 2023, -- The report year
-@ReportCode = 'C070', -- EdFacts File Number – c059, c065, c067, c070, c099, c112, c203
+@ReportCode = '070', -- EdFacts File Number – 059, 065, 067, 070, 099, 112, 203
 <strong>@ReportLevel = 'LEA', -- 'SEA', 'LEA', 'SCH'
-</strong>@LegacyTableName = 'Generate.XX.C070_LEA_2023_Legacy', -- Legacy table
-@GenerateTableName = 'Generate.XX.C070_LEA_2023_Generate', -- Generate table
+</strong>@LegacyTableName = 'Generate.XX.070_LEA_2023_Legacy', -- Legacy table
+@GenerateTableName = 'Generate.XX.070_LEA_2023_Generate', -- Generate table
 @ShowSQL = 0,
-@ComparisonResultsTableName = 'generate.XX.C070_LEA_2023_COMPARISON' -- Comparison table name
+@ComparisonResultsTableName = 'generate.XX.070_LEA_2023_COMPARISON' -- Comparison table name
 </code></pre>
 
-If you need further assistance validating your data or have data mismatches that you cannot resolve, please reach out to your TA provider for assistance.&#x20;
+If you need further assistance validating your data or have data mismatches that you cannot resolve, please reach out to your TA provider for assistance.
 
 ***
 
@@ -347,4 +346,4 @@ This [IDEA Part B Data Review](https://ciidta.communities.ed.gov/#communities/pd
 
 ### Staging Table Snapshot Utility
 
-Generate allows states to create a backup or “snapshot” of staging tables. This is an optional utility that can be executed as needed or embedded into the State’s ETL workflow logic. The [Staging Table Snapshot Utility](../../generate-utilities/staging-table-snapshot.md) provides a method to create a backup copy of staging tables for future use and reference after an ETL has populated Generate’s staging tables. This helps to ensure consistency across all E&#x44;_&#x46;acts_ reports for a given year and developers can preserve data in staging tables across ETL executions. This is best utilized after you have confirmed the Fact Type has successfully produced an accurate E&#x44;_&#x46;acts_ file.&#x20; Test
+Generate allows states to create a backup or “snapshot” of staging tables. This is an optional utility that can be executed as needed or embedded into the State’s ETL workflow logic. The [Staging Table Snapshot Utility](../../generate-utilities/staging-table-snapshot.md) provides a method to create a backup copy of staging tables for future use and reference after an ETL has populated Generate’s staging tables. This helps to ensure consistency across all E&#x44;_&#x46;acts_ reports for a given year and developers can preserve data in staging tables across ETL executions. This is best utilized after you have confirmed the Fact Type has successfully produced an accurate E&#x44;_&#x46;acts_ file. Test

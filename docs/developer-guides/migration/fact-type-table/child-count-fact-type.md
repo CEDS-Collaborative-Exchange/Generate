@@ -67,16 +67,15 @@ The Generate metadata tables can be queried to determine which Staging tables ne
 The following script will return the needed staging table, and columns for **Child Count**:
 {% endhint %}
 
-```sql
--- How do I know what data needs to be mapped for this Fact Type?
-
+<pre class="language-sql"><code class="lang-sql"><strong>-- How do I know what data needs to be mapped for this Fact Type?
+</strong>
 -- Get table list of report codes, tables, and fields by fact type.
 
 SELECT DISTINCT FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 FROM app.vwStagingRelationships
 WHERE FactTypeCode = 'childcount'
 ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
-```
+</code></pre>
 
 ### Settings
 
@@ -98,7 +97,7 @@ You can also filter the Source System Reference Data table by `FactTypeCode` and
 ```sql
 SELECT DISTINCT FactTypeCode, ReportCode, StagingTableName, StagingcolumnName, SSRDRefTableName, SSRDTableFilter 
 FROM app.vwStagingRelationships
-WHERE FactTypeCode = 'childcount' and ReportCode = 'c002'
+WHERE FactTypeCode = 'childcount' and ReportCode = '002'
 ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 ```
 {% endcode %}
@@ -107,7 +106,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields will need to be mapped using the value in the SSRD table using these filters. For further information please review [Source System Reference Data](../../generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data.md).
 
-Child Count Reports ('C002', 'C089') have filters
+Child Count Reports ('002', '089') have filters
 
 * 000100 Used for Grade Level
 * 000126 Used for Grade Level When Assessed
@@ -287,7 +286,7 @@ To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you wi
     UPDATE App.GenerateReports set IsLocked = 0
     UPDATE App.GenerateReports
     SET IsLocked = 1
-    WHERE ReportCode IN ('C002', 'C089')
+    WHERE ReportCode IN ('002', '089')
 
 -- C. Empty the reports table for the specific reports    
     EXEC [rds].[Empty_Reports] @FactTypeCode = 'childCount'
@@ -322,7 +321,7 @@ exec Utilities.Compare_CHILDCOUNT
 @DatabaseName = 'Generate', -- Your database name 
 @SchemaName = 'XX', -- Your schema name 
 @SubmissionYear = 2023, -- The report year
-@ReportCode = 'C002', -- EdFacts File Number – c002 , c089
+@ReportCode = '002', -- EdFacts File Number – 002 , 089
 @ReportLevel = 'LEA', -- 'SEA', 'LEA'
 @LegacyTableName = 'Generate.XX.C002_LEA_2023_Legacy', -- Legacy table
 @ShowSQL = 0

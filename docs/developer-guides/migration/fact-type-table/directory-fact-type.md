@@ -114,7 +114,7 @@ Source System Reference Data is used in the Staging to RDS Migration to determin
 ```sql
 SELECT DISTINCT FactTypeCode, ReportCode, StagingTableName, StagingcolumnName, SSRDRefTableName, SSRDTableFilter 
 FROM app.vwStagingRelationships
-WHERE FactTypeCode = 'directory' and ReportCode = 'c029'
+WHERE FactTypeCode = 'directory' and ReportCode = '029'
 ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 ```
 {% endcode %}
@@ -124,7 +124,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields will need to be mapped using the value in the SSRD table using these filters. For further information please review [Source System Reference Data](https://app.gitbook.com/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/developer-guides/generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data).
 
 \
-Directory Reports ('C029', 'C035', 'C039', 'C129', 'C130', 'C131', 'C163', 'C170', 'C190', 'C193', 'C196', 'C197', 'C198', 'C205', 'C206', 'C207', 'C223') have filters:
+Directory Reports ('029', '035', '039', '129', '130', '131', '163', '170', '190', '193', '196', '197', '198', '205', '206', '207', '223') have filters:
 
 * 000100 Used for Grade Level
 * 000174 Used for LEA Operational Status
@@ -314,7 +314,7 @@ To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you wi
     UPDATE App.GenerateReports set IsLocked = 0
     UPDATE App.GenerateReports
     SET IsLocked = 1
-    WHERE ReportCode IN ('C029','C035','C039','C129','C130','C131','C163','C170','C190','C193','C196','C197','C198','C205','C206','C207','C223')
+    WHERE ReportCode IN ('029','035','039','129','130','131','163','170','190','193','196','197','198','205','206','207','223')
 
 -- C. Empty the reports table for the specific reports    
     EXEC [rds].[Empty_Reports] @FactTypeCode = 'directory'
@@ -341,7 +341,7 @@ exec Utilities.Compare_DIRECTORY
 @DatabaseName = 'Generate', -- Your database name 
 @SchemaName = 'XX', -- Your schema name 
 @SubmissionYear = 2023, -- The report year
-@ReportCode = 'C029', -- EdFacts File Number – c029, c035, c039, c129, c130, c131, c163, c170, c190, c193, c196, c197, c198, c205, c206, c207, c223
+@ReportCode = '029', -- EdFacts File Number – 029, 035, 039, 129, 130, 131, 163, 170, 190, 193, 196, 197, 198, 205, 206, 207, 223
 @ReportLevel = 'LEA', -- 'SEA', 'LEA'
 @LegacyTableName = 'Generate.XX.C029_LEA_2023_Legacy', -- Legacy table
 @ShowSQL = 0

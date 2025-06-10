@@ -103,7 +103,7 @@ You can also filter the Source System Reference Data table by `FactTypeCode` and
 ```sql
 SELECT DISTINCT FactTypeCode, ReportCode, StagingTableName, StagingcolumnName, SSRDRefTableName, SSRDTableFilter 
 FROM app.vwStagingRelationships
-WHERE FactTypeCode = 'discipline' and ReportCode = 'c005'
+WHERE FactTypeCode = 'discipline' and ReportCode = '005'
 ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 ```
 {% endcode %}
@@ -112,7 +112,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields will need to be mapped using the value in the SSRD table using these filters. For further information please review [Source System Reference Data](../../generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data.md).
 
-Discipline Reports ('C005', 'C006' , 'C007' , 'C086' , 'C088' , 'C143' , 'C144') have filters
+Discipline Reports ('005', '006' , '007' , '086' , '088' , '143' , '144') have filters
 
 * 000100 Used for Grade Level
 * 000174 Used for LEA Operational Status
@@ -295,7 +295,7 @@ To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you wi
     UPDATE App.GenerateReports set IsLocked = 0
     UPDATE App.GenerateReports
     SET IsLocked = 1
-    WHERE ReportCode IN ('C005', 'C006' , 'C007' , 'C086' , 'C088' , 'C143' , 'C144')
+    WHERE ReportCode IN ('005', '006' , '007' , '086' , '088' , '143' , '144')
 
 -- C. Empty the reports table for the specific reports    
     EXEC [rds].[Empty_Reports] @FactTypeCode = 'discipline'
@@ -330,9 +330,9 @@ exec Utilities.Compare_DISCIPLINE
 @DatabaseName = 'Generate', -- Your database name 
 @SchemaName = 'XX', -- Your schema name 
 @SubmissionYear = 2023, -- The report year
-@ReportCode = 'C005', -- EdFacts File Number – c005 , c006 , c007 , c086 , c088 , c143 , c144
+@ReportCode = '005', -- EdFacts File Number – 005 , 006 , 007 , 086 , 088 , 143 , 144
 @ReportLevel = 'LEA', -- 'SEA', 'LEA'
-@LegacyTableName = 'Generate.XX.C005_LEA_2023_Legacy', -- Legacy table
+@LegacyTableName = 'Generate.XX.005_LEA_2023_Legacy', -- Legacy table
 @ShowSQL = 0
 ```
 {% endcode %}

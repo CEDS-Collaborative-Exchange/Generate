@@ -117,7 +117,7 @@ You can also filter the Source System Reference Data table by `FactTypeCode` and
 ```sql
 SELECT DISTINCT FactTypeCode, ReportCode, StagingTableName, StagingcolumnName, SSRDRefTableName, SSRDTableFilter 
 FROM app.vwStagingRelationships
-WHERE FactTypeCode = 'Assessment' and ReportCode = 'c188'
+WHERE FactTypeCode = 'Assessment' and ReportCode = '188'
 ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 ```
 {% endcode %}
@@ -126,7 +126,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields will need to be mapped using the value in the SSRD table using these filters. For further information please review [Source System Reference Data](../../generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data.md).
 
-Assessment Reports ('C175', 'C178', 'C179', 'C185', 'C188', 'C189') have filters
+Assessment Reports ('175', '178', '179', '185', '188', '189') have filters
 
 * 000100 Used for Grade Level
 * 000126 Used for Grade Level When Assessed
@@ -311,7 +311,7 @@ To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you wi
     UPDATE App.GenerateReports set IsLocked = 0
     UPDATE App.GenerateReports
     SET IsLocked = 1
-    WHERE ReportCode IN ('C175', 'C178', 'C179', 'C185', 'C188', 'C189')
+    WHERE ReportCode IN ('175', '178', '179', '185', '188', '189')
 
 -- C. Empty the reports table for the specific reports    
     EXEC [rds].[Empty_Reports] @FactTypeCode = 'assessment'
@@ -328,7 +328,7 @@ The process of migrating data to Report Tables creates a set of tables in the \[
  -- simply query a corresponding table 
  -- (using the table name to identify the category set contents)
  SELECT * FROM 
- [generate].[debug].[c175_lea_CSA_2024_ASMTADMNMTHHS_GRADELVLHS_MAJORREG_PROFSTATUS]
+ [generate].[debug].[175_lea_CSA_2024_ASMTADMNMTHHS_GRADELVLHS_MAJORREG_PROFSTATUS]
 ```
 
 Over time these tables will accumulate and create clutter in the Generate database debug schema. You can easily remove unneeded debug tables using the [Clean Up Debug Tables](file:///C:/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/~/changes/210/developer-guides/generate-utilities/cleanup-debug-tables) utility.
@@ -347,9 +347,9 @@ exec Utilities.Compare_ASSESSMENT
 @DatabaseName = 'Generate', -- Your database name 
 @SchemaName = 'XX', -- Your schema name 
 @SubmissionYear = 2023, -- The report year
-@ReportCode = 'C175', -- EdFacts File Number – C175, C178, C179, C185, C188, C189
+@ReportCode = '175', -- EdFacts File Number – 175, 178, 179, 185, 188, 189
 @ReportLevel = 'LEA', -- 'SEA', 'LEA'
-@LegacyTableName = 'Generate.XX.C175_LEA_2022_Legacy', -- Legacy table
+@LegacyTableName = 'Generate.XX.175_LEA_2022_Legacy', -- Legacy table
 @ShowSQL = 0
 ```
 {% endcode %}
