@@ -256,8 +256,17 @@ BEGIN
 					set @sql = ''
 
 					select @sql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @categorySetCode, 'actual', 1, 0, @tableTypeAbbrvs, @totalIndicators, @dimFactTypeCode)
-		
-				
+
+					--PRINT '' 
+					--PRINT '@reportCode : '+@reportCode
+					--PRINT '@reportLevel : '+@reportLevel
+					--PRINT '@reportYear : '+@reportYear
+					--PRINT '@categorySetCode : '+@categorySetCode
+					--PRINT '@tableTypeAbbrvs : '+@tableTypeAbbrvs
+					--PRINT '@totalIndicators : '+@totalIndicators
+					--PRINT '@dimFactTypeCode : '+@dimFactTypeCode
+					--PRINT ''
+					
 					if @runAsTest = 1
 					begin
 						-- Print @sql
@@ -284,6 +293,13 @@ BEGIN
 							PRINT SUBSTRING(@printString, 1, @CurrentEnd) 
 							set @printString = SUBSTRING(@printString, @CurrentEnd+@offset, LEN(@printString))   
 						END
+
+						PRINT '-------------ZeroCounts SQL------------------'
+
+						EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode ,	1,0,1,0,1
+
+						PRINT '-------------ZeroCounts SQL END------------------'
+
 					end
 					else
 					begin
@@ -293,6 +309,9 @@ BEGIN
 						declare @ParmDefinition as nvarchar(max)
 						SET @ParmDefinition = N'@dimFactTypeId int, @dimSchoolYearId int, @reportLevel varchar(50)';  
 						EXECUTE sp_executesql @sql, @ParmDefinition, @dimFactTypeId = @dimFactTypeId, @dimSchoolYearId = @dimSchoolYearId, @reportLevel = @reportLevel;
+
+						EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode ,	1,0,1,0,0
+
 					end
 
 
@@ -336,3 +355,6 @@ BEGIN
 	SET NOCOUNT OFF;
 
 END
+GO
+
+
