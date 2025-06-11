@@ -210,7 +210,6 @@ AS
 			AND sppnord.NeglectedOrDelinquentStatus = 1 -- Only get NorD students
 			AND sssrd.OutputCode not in ('Closed', 'FutureAgency', 'Inactive', 'MISSING')
 
-GO
 
 
 /*

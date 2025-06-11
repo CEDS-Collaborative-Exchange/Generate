@@ -36,6 +36,5 @@ BEGIN
 	GROUP BY s.DimSchoolId, org.DimCountDateId, k12.RecordStartDateTime, cs.Code, csra.Code
 	HAVING (k12.RecordStartDateTime = MAX(k12.RecordStartDateTime))
 END
-GO
 
 

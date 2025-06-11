@@ -386,4 +386,3 @@ AS
 
 	CLOSE cursor_name;
 	DEALLOCATE cursor_name;
-GO
