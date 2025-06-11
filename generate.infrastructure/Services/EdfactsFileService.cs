@@ -19,6 +19,8 @@ using generate.core.Models.RDS;
 using generate.core.Interfaces.Repositories.App;
 using generate.core.Dtos.RDS;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Data;
+using generate.infrastructure.Utilities;
 
 namespace generate.infrastructure.Services
 {
@@ -113,32 +115,44 @@ namespace generate.infrastructure.Services
             }
             else if (factTableName == "FactOrganizationCounts")
             {
-
-
-                if (report.ReportCode == "205")
-                {
-                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
-                    dataRows = query.ToList();
-                }
-                else if(report.ReportCode == "130")
-                {
-                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
-                    dataRows = query.ToList();
-                }
-                else if(report.ReportCode == "039")
-                {
-                    var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, null);
-                    dataRows = query.ToList();
-                }
-                else
-                {
-                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null);
-                    dataRows = query.ToList();
-                }
+                dataRows = GetOrganizationStudentCountData(reportCode, reportTypeCode, reportLevel, reportYear);
             }
 
             dynamicRows = GetSubmissionData(dataRows, fileSubmissioncolumns, factTableName, reportCode, reportLevel, factFieldName);
             return dynamicRows;
+        }
+
+        public List<ExpandoObject> GetOrganizationStudentCountData(string reportCode, string reportTypeCode, string reportLevel, string reportYear)
+        {
+            dynamic dataRows = new List<ExpandoObject>();
+
+            GenerateReport report = _appRepository.Find<GenerateReport>(r => r.GenerateReportType.ReportTypeCode == reportTypeCode
+                && r.ReportCode == reportCode
+                && r.GenerateReport_OrganizationLevels.Count(l => l.OrganizationLevel.LevelCode == reportLevel) == 1, 0, 1, r => r.FactTable)
+                .FirstOrDefault();
+
+            if (report.ReportCode == "205")
+            {
+                var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
+                dataRows = query.ToList();
+            }
+            else if (report.ReportCode == "130")
+            {
+                var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
+                dataRows = query.ToList();
+            }
+            else if (report.ReportCode == "039")
+            {
+                var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, null);
+                dataRows = query.ToList();
+            }
+            else
+            {
+                var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null);
+                dataRows = query.ToList();
+            }
+
+            return dataRows;
         }
 
         public List<ExpandoObject> GetSubmissionData(dynamic dataRows, List<FileSubmissionColumnDto> fileSubmissioncolumns, string factTableName,string reportCode, string reportLevel, string factFieldName)
