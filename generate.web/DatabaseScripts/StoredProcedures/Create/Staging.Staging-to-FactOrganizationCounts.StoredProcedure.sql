@@ -95,7 +95,6 @@ BEGIN
 			AND (ssd.RecordStartDateTime >= Staging.GetFiscalYearStartDate(@SchoolYear)
 				AND ISNULL(ssd.RecordEndDateTime, Staging.GetFiscalYearEndDate(@SchoolYear)) <= Staging.GetFiscalYearEndDate(@SchoolYear))
 
-
 		-------------------------------
 		--SEA
 		-------------------------------
@@ -163,7 +162,6 @@ BEGIN
 			AND soff.OrganizationType in (select SeaOrganizationType from #seaOrganizationTypes)
 			--AND soff.REAPAlternativeFundingStatusCode IS NOT NULL -- Not sure if we need this
 
-
 		-------------------------------
 		--LEA
 		-------------------------------
@@ -177,11 +175,8 @@ BEGIN
 				PARTITION BY LeaIdentifierSea
 				ORDER BY RecordStartDateTime desc) row_num
 		INTO #SortLEAs
-		FROM 
-			RDS.DimLeas
-		-- CIID-5731 Begin --
+		FROM RDS.DimLeas
 		WHERE RecordStartDateTime BETWEEN Staging.GetFiscalYearStartDate(@SchoolYear) AND Staging.GetFiscalYearEndDate(@SchoolYear) 
-		-- CIID-5731 End --
 
 		SELECT * 
 		INTO #DistinctLEAs
@@ -275,7 +270,6 @@ BEGIN
 			AND organizationStatus.HighSchoolGraduationRateIndicatorStatusCode = 'Missing'
 			AND organizationStatus.REAPAlternativeFundingStatusCode = 'Missing'
 			
-
 		-------------------------------
 		--School
 		-------------------------------
@@ -294,10 +288,7 @@ BEGIN
 				ORDER BY RecordStartDateTime desc) row_num
 		INTO #SortSchools
 		FROM RDS.DimK12Schools
-		-- CIID-5731 Begin --
 		WHERE RecordStartDateTime BETWEEN Staging.GetFiscalYearStartDate(@SchoolYear) AND Staging.GetFiscalYearEndDate(@SchoolYear) 
-		-- CIID-5731 End --
-
 
 		SELECT * 
 		INTO #DistinctSchools
@@ -342,9 +333,7 @@ BEGIN
 			, sko.SchoolIdentifierSea
 		ORDER BY sko.SchoolIdentifierSea
 
-
 		----INSERT INTO FactOrganizationCounts
-
 		INSERT INTO 
 		[RDS].[FactOrganizationCounts] (
 			[SchoolYearId]
@@ -402,13 +391,13 @@ BEGIN
 
 		FROM Staging.K12Organization sk12o
 		JOIN #DistinctSchools dschools
-			on sk12o.SchoolIdentifierSea = dschools.SchoolIdentifierSea
-			and sk12o.School_RecordStartDateTime = dschools.RecordStartDateTime
+			ON sk12o.SchoolIdentifierSea = dschools.SchoolIdentifierSea
+			AND sk12o.School_RecordStartDateTime = dschools.RecordStartDateTime
 
 		JOIN RDS.DimK12Schools rk12s 
 			ON sk12o.SchoolIdentifierSea = rk12s.SchoolIdentifierSea
-			and dschools.DimK12SchoolID = rk12s.DimK12SchoolId
-			and rk12s.DimK12SchoolId <> -1 and ReportedFederally = 1
+			AND dschools.DimK12SchoolID = rk12s.DimK12SchoolId
+			AND rk12s.DimK12SchoolId <> -1 and ReportedFederally = 1
 			AND (
 				(rk12s.RecordStartDateTime < staging.GetFiscalYearStartDate(@SchoolYear) and rk12s.RecordEndDateTime IS NULL)
 				OR 
