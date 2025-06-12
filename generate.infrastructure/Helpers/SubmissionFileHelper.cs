@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace generate.infrastructure.Utilities
 {
-    public class SubmissionFileHelper
+    public static class SubmissionFileHelper
     {
-        public string GetLeaIdentifier(string factTableName, string reportLevel)
+        public static string GetLeaIdentifier(string factTableName, string reportLevel)
         {
             string field = "";
             if (factTableName == "FactOrganizationCounts")
@@ -26,7 +26,7 @@ namespace generate.infrastructure.Utilities
             return field;
         }
 
-        public string GetNCESIdentifier(string factTableName, string reportLevel)
+        public static string GetNCESIdentifier(string factTableName, string reportLevel)
         {
             string field = "";
             if (factTableName == "FactOrganizationCounts")
@@ -42,7 +42,7 @@ namespace generate.infrastructure.Utilities
             return field;
         }
 
-        public string GetStateSchoolIdentifier(string factTableName)
+        public static string GetStateSchoolIdentifier(string factTableName)
         {
             string field = "";
             if (factTableName == "FactOrganizationCounts")
@@ -56,7 +56,7 @@ namespace generate.infrastructure.Utilities
             return field;
         }
 
-        public string GetAmount(string factFieldName, string reportCode)
+        public static string GetAmount(string factFieldName, string reportCode)
         {
             string field = factFieldName;
             string reportCodes = "199,200,201,202,206";

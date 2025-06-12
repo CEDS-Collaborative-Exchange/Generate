@@ -190,53 +190,19 @@ namespace generate.infrastructure.Services
                     }
                     else if (column.ColumnName == "StateLEAIDNumber")
                     {
-                        if(factTableName == "FactOrganizationCounts")
-                        {
-                            if (reportLevel == "lea") { field = "OrganizationStateId"; }
-                            else if (reportLevel == "sch") { field = "ParentOrganizationStateId"; }
-                        }
-                        else
-                        {
-                            if (reportLevel == "lea") { field = "OrganizationIdentifierSea"; }
-                            else if (reportLevel == "sch") { field = "ParentOrganizationIdentifierSea"; }
-                        }
-                        
+                        field = SubmissionFileHelper.GetLeaIdentifier(factTableName, reportLevel);
                     }
                     else if (column.ColumnName == "NCESLEAIDNumber")
                     {
-                        if (factTableName == "FactOrganizationCounts")
-                        {
-                            if (reportLevel == "lea") { field = "OrganizationNcesId"; }
-                            else if (reportLevel == "sch") { field = "ParentOrganizationNcesId"; }
-                        }
-                        else
-                        {
-                            if (reportLevel == "lea") { field = "OrganizationIdentifierNces"; }
-                            else if (reportLevel == "sch") { field = "ParentOrganizationIdentifierNces"; }
-                        }
-
+                        field = SubmissionFileHelper.GetNCESIdentifier(factTableName, reportLevel);
                     }
                     else if (column.ColumnName == "StateSchoolIDNumber")
                     {
-                        if (factTableName == "FactOrganizationCounts")
-                        {
-                            field = "OrganizationStateId";
-                        }
-                        else
-                        {
-                            field = "OrganizationIdentifierSea";
-                        }
-
+                        field = SubmissionFileHelper.GetStateSchoolIdentifier(factTableName);
                     }
                     else if (column.ColumnName == "Amount")
                     {
-                        string reportCodes = "199,200,201,202,206";
-                        field = factFieldName;
-                        if (reportCode == "150") { field = "StudentRate"; }
-                        else if (reportCode == "035") { field = "FederalFundAllocated"; }
-                        else if (reportCodes.Contains(reportCode)) { field = "INDICATORSTATUS"; }
-                        else if (reportCode == "205") { field = "PROGRESSACHIEVINGENGLISHLANGUAGE"; }
-
+                        field = SubmissionFileHelper.GetAmount(factFieldName, reportCode);
                     }
                     else if (column.ColumnName == "HomelessStatusID")
                     {
