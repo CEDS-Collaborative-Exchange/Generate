@@ -69,26 +69,19 @@ namespace generate.infrastructure.Services
                 .FirstOrDefault();
 
 
-            if (report == null)
+
+            if (report.ReportCode.ToLower() == "059" && reportLevel == "sch")
             {
-                reportDto.dataCount = -1;
-                return reportDto;
+                report.ReportName = "059: Classroom Teacher FTE";
             }
-            else
+            if (report.ReportCode.ToLower() == "050" && reportYear == "2017-18")
             {
-                if (report.ReportCode.ToLower() == "059" && reportLevel == "sch")
-                {                    
-                    report.ReportName = "059: Classroom Teacher FTE";
-                }
-                if (report.ReportCode.ToLower() == "050" && reportYear == "2017-18")
-                {
-                    report.ReportName = "050: Title III English Language Proficiency Results";
-                }
-
-
-                reportDto.ReportTitle = report.ReportName;                
+                report.ReportName = "050: Title III English Language Proficiency Results";
             }
 
+
+            reportDto.ReportTitle = report.ReportName;                
+            
             bool includeZeroCounts = false;
             if (reportLevel == "sea")
             {
@@ -188,73 +181,78 @@ namespace generate.infrastructure.Services
 
             if (reportCode == "199" || reportCode == "201" || reportCode == "200" || reportCode == "202")
             {
-                Dictionary<string, string> columns = new Dictionary<string, string>();
-
-                if (categorySetCode == "CSA" || categorySetCode == "CSA1") { columns.Add("Race", "Race"); }
-                if (categorySetCode == "CSB" || categorySetCode == "CSB1") { columns.Add("Disability", "Disability"); }
-                if (categorySetCode == "CSC" || categorySetCode == "CSC1") { columns.Add("LepStatus", "English Learner Status"); }
-                if (categorySetCode == "CSD" || categorySetCode == "CSD1") { columns.Add("EcoDisStatus", "Economic Disadvantage Status"); }
-                
-                if (reportCode == "202")
-                {
-                    columns.Add("STATEDEFINEDCUSTOMINDICATORCODE", "Indicator Type");
-                }
-
-
-                columns.Add("IndicatorStatus", "Indicator Status");
-                columns.Add("StatedefinedStatusCode", "State Defined Status");
-
-
-                reportDto.structure.rowHeader = "School Name";
-                reportDto.structure.columnHeaders = new List<string>();
-                foreach (var item in columns)
-                {
-                    reportDto.structure.columnHeaders.Add(item.Value);
-                }
-
-
-                if (queryOrganizationStatusdto is not null)
-                {
-                    foreach (var queryItem in queryOrganizationStatusdto)
-                    {
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-                        dataRow.organizationStateId = queryItem.OrganizationNcesId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-                        dataRow.parentOrganizationStateId = queryItem.ParentOrganizationStateId;
-
-
-                        if (categorySetCode == "CSA" || categorySetCode == "CSA1") { dataRow.col_1 = queryItem.RACE; }
-                        if (categorySetCode == "CSB" || categorySetCode == "CSB1") { dataRow.col_1 = queryItem.DISABILITY; }
-                        if (categorySetCode == "CSC" || categorySetCode == "CSC1") { dataRow.col_1 = queryItem.LEPSTATUS; }
-                        if (categorySetCode == "CSD" || categorySetCode == "CSD1") { dataRow.col_1 = queryItem.ECODISSTATUS; }
-
-                        if (categorySetCode == "TOT" || categorySetCode == "TOT1")
-                        {
-                            dataRow.col_1 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
-                            dataRow.col_2 = queryItem.INDICATORSTATUS;
-                            dataRow.col_3 = queryItem.STATEDEFINEDSTATUSCODE;
-                        }
-                        else
-                        {
-                            dataRow.col_2 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
-                            dataRow.col_3 = queryItem.INDICATORSTATUS;
-                            dataRow.col_4 = queryItem.STATEDEFINEDSTATUSCODE;
-                        }
-
-                        dataRows.Add(dataRow);
-
-                    }
-                }
-
-                reportDto.data.AddRange(dataRows);
-
+                reportDto = GetUpdatedOrganizationStatusReportData(reportCode, categorySetCode, reportDto, queryOrganizationStatusdto);
             }
 
             return reportDto;
         }
 
+        public GenerateReportDataDto GetUpdatedOrganizationStatusReportData(string reportCode, string categorySetCode, GenerateReportDataDto reportDto, IEnumerable<ReportEDFactsOrganizationStatusCount> queryOrganizationStatusdto)
+        {
+            Dictionary<string, string> columns = new Dictionary<string, string>();
+            dynamic dataRows = new List<ExpandoObject>();
+
+            if (categorySetCode == "CSA" || categorySetCode == "CSA1") { columns.Add("Race", "Race"); }
+            if (categorySetCode == "CSB" || categorySetCode == "CSB1") { columns.Add("Disability", "Disability"); }
+            if (categorySetCode == "CSC" || categorySetCode == "CSC1") { columns.Add("LepStatus", "English Learner Status"); }
+            if (categorySetCode == "CSD" || categorySetCode == "CSD1") { columns.Add("EcoDisStatus", "Economic Disadvantage Status"); }
+
+            if (reportCode == "202")
+            {
+                columns.Add("STATEDEFINEDCUSTOMINDICATORCODE", "Indicator Type");
+            }
+
+
+            columns.Add("IndicatorStatus", "Indicator Status");
+            columns.Add("StatedefinedStatusCode", "State Defined Status");
+
+
+            reportDto.structure.rowHeader = "School Name";
+            reportDto.structure.columnHeaders = new List<string>();
+            foreach (var item in columns)
+            {
+                reportDto.structure.columnHeaders.Add(item.Value);
+            }
+
+
+            if (queryOrganizationStatusdto is not null)
+            {
+                foreach (var queryItem in queryOrganizationStatusdto)
+                {
+                    dynamic dataRow = new ExpandoObject();
+
+                    dataRow.stateCode = queryItem.StateCode;
+                    dataRow.stateName = queryItem.StateName;
+                    dataRow.organizationStateId = queryItem.OrganizationNcesId;
+                    dataRow.rowKey = queryItem.OrganizationName;
+                    dataRow.parentOrganizationStateId = queryItem.ParentOrganizationStateId;
+
+
+                    if (categorySetCode == "CSA" || categorySetCode == "CSA1") { dataRow.col_1 = queryItem.RACE; }
+                    if (categorySetCode == "CSB" || categorySetCode == "CSB1") { dataRow.col_1 = queryItem.DISABILITY; }
+                    if (categorySetCode == "CSC" || categorySetCode == "CSC1") { dataRow.col_1 = queryItem.LEPSTATUS; }
+                    if (categorySetCode == "CSD" || categorySetCode == "CSD1") { dataRow.col_1 = queryItem.ECODISSTATUS; }
+
+                    if (categorySetCode == "TOT" || categorySetCode == "TOT1")
+                    {
+                        dataRow.col_1 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
+                        dataRow.col_2 = queryItem.INDICATORSTATUS;
+                        dataRow.col_3 = queryItem.STATEDEFINEDSTATUSCODE;
+                    }
+                    else
+                    {
+                        dataRow.col_2 = queryItem.STATEDEFINEDCUSTOMINDICATORCODE;
+                        dataRow.col_3 = queryItem.INDICATORSTATUS;
+                        dataRow.col_4 = queryItem.STATEDEFINEDSTATUSCODE;
+                    }
+
+                    dataRows.Add(dataRow);
+
+                }
+            }
+
+            reportDto.data.AddRange(dataRows);
+            return reportDto;
+        }
     }
 }
