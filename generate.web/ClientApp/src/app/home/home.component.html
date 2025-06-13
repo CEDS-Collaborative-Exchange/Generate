@@ -30,7 +30,7 @@
                             <div class="generate-home__reports-pill-icon">
                                 <img class="generate-home__reports-files" src="./assets/images/icon-files.png" alt="EDFacts Submission Reports" />
                             </div>
-                            <a href="#" (click)="gotoReportsEdFacts()">
+                            <a href="#" tabindex="14" (click)="gotoReportsEdFacts()">
                                 <div id="link_ReportsEdFacts" class="generate-home__reports-pill-label">
                                     <span class="generate-home__reports-pill-label-caption">View <span class="generate-text--bold">ED<span class="generate-text--italic">Facts</span></span> Submission Reports</span>
                                 </div>
@@ -41,7 +41,7 @@
                             <div class="generate-home__reports-pill-icon">
                                 <img class="generate-home__reports-files" src="./assets/images/icon-files.png" alt="SPP/APR Submission Reports" />
                             </div>
-                            <a href="#" (click)="gotoReportsSppApr()">
+                            <a href="#" tabindex="15" (click)="gotoReportsSppApr()">
                                 <div id="link_ReportsSppApr" class="generate-home__reports-pill-label">
                                     <span class="generate-home__reports-pill-label-caption">View <span class="generate-text--bold">SPP/APR</span> Submission Reports</span>
                                 </div>
@@ -52,7 +52,7 @@
                             <div class="generate-home__reports-pill-icon">
                                 <img class="generate-home__reports-files" src="./assets/images/icon-files.png" alt="Reports Library" />
                             </div>
-                            <a  href="#" (click)="gotoReportsLibrary()">
+                            <a  href="#" tabindex="16" (click)="gotoReportsLibrary()">
                                 <div id="link_ReportsLibrary" class="generate-home__reports-pill-label">
                                     <span class="generate-home__reports-pill-label-caption">View Reports Library</span>
                                 </div>
@@ -70,30 +70,29 @@
     </div>
     <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-phone mdl-cell--hide-tablet">
 
-        <div id="generate-home__button--resources" class="generate-home__button">
-            <div class="generate-home__button-caption generate-home__button--resources mdl-typography--subhead mdl-typography--text-center">
+        <div id="generate-home__button--resources1" class="generate-home__button" tabindex="17">
+            <div class="generate-home__button-caption generate-home__button--resources mdl-typography--subhead mdl-typography--text-center" (click)="onClickMenuItem()">
                 Resources
             </div>
         </div>
 
-        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect generate-home__button-dropdown" for="generate-home__button--resources">
-            <li class="mdl-menu__item mdl-color-text--primary generate-home__button-dropdown-item"><a class="generate-home__button-link mdl-color-text--primary" rel="noopener noreferrer" href="https://ciidta.communities.ed.gov/#communities/pdc/documents/17667" target="_blank">User Guide</a></li>
-            <li class="mdl-menu__item generate-home__button-dropdown-item"><a class="generate-home__button-link mdl-color-text--primary" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation" target="_blank">Documentation</a></li>
-            <li class="mdl-menu__item generate-home__button-dropdown-item"><a class="generate-home__button-link mdl-color-text--primary" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support" target="_blank">Support</a></li>
-            <li class="mdl-menu__item mdl-color-text--primary generate-home__button-dropdown-item"><a class="generate-home__button-link mdl-color-text--primary" href="#" (click)="gotoAboutPage()">About Generate</a></li>
+        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect generate-home__button-dropdown" for="generate-home__button--resources1">
+            <li class="mdl-menu__item mdl-color-text--primary generate-home__button-dropdown-item" tabindex="18"><a class="generate-home__button-link mdl-color-text--primary"  rel="noopener noreferrer" href="https://ciidta.communities.ed.gov/#communities/pdc/documents/17667" target="_blank">User Guide</a></li>
+            <li class="mdl-menu__item generate-home__button-dropdown-item" tabindex="19"><a class="generate-home__button-link mdl-color-text--primary" rel="noopener noreferrer"  href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation" target="_blank">Documentation</a></li>
+            <li class="mdl-menu__item generate-home__button-dropdown-item" tabindex="20"><a class="generate-home__button-link mdl-color-text--primary" rel="noopener noreferrer"  href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support" target="_blank">Support</a></li>
+            <li class="mdl-menu__item mdl-color-text--primary generate-home__button-dropdown-item" tabindex="21"><a class="generate-home__button-link mdl-color-text--primary" href="#"  (click)="gotoAboutPage()">About Generate</a></li>
         </ul>
 
-
         <div class="generate-home__button">
-            <a href="#" (click)="gotoSummary()">
+            <a href="#" (click)="gotoSummary()" tabindex="22">
                 <div class="generate-home__button-caption generate-home__button--summary mdl-typography--subhead mdl-typography--text-center">
                     Data Population Summary
                 </div>
             </a>
         </div>
-
+                            
         <div class="generate-home__button">
-            <a target="_blank" rel="noopener noreferrer" href="https://ciidta.communities.ed.gov/#program">
+            <a target="_blank" rel="noopener noreferrer" href="https://ciidta.communities.ed.gov/#program" tabindex="23">
                 <div class="generate-home__button-caption generate-home__button--ciid mdl-typography--subhead mdl-typography--text-center">
                     <img src="./assets/images/logo-ciid.png" alt="CIID" />
                 </div>
