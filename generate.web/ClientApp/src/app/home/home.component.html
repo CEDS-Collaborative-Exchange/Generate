@@ -70,17 +70,35 @@
     </div>
     <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-phone mdl-cell--hide-tablet">
 
-        <div id="generate-home__button--resources1" class="generate-home__button" tabindex="17">
-            <div class="generate-home__button-caption generate-home__button--resources mdl-typography--subhead mdl-typography--text-center" (click)="onClickMenuItem()">
+        <button id="generate-home__button--resources1" tabindex="17"
+                class="generate-home__button mdl-button mdl-js-button">
+            <span class="generate-home__button-caption mdl-typography--subhead mdl-typography--text-center">
                 Resources
-            </div>
-        </div>
+            </span>
+        </button>
 
-        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect generate-home__button-dropdown" for="generate-home__button--resources1">
-            <li class="mdl-menu__item mdl-color-text--primary generate-home__button-dropdown-item" tabindex="18"><a class="generate-home__button-link mdl-color-text--primary"  rel="noopener noreferrer" href="https://ciidta.communities.ed.gov/#communities/pdc/documents/17667" target="_blank">User Guide</a></li>
-            <li class="mdl-menu__item generate-home__button-dropdown-item" tabindex="19"><a class="generate-home__button-link mdl-color-text--primary" rel="noopener noreferrer"  href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation" target="_blank">Documentation</a></li>
-            <li class="mdl-menu__item generate-home__button-dropdown-item" tabindex="20"><a class="generate-home__button-link mdl-color-text--primary" rel="noopener noreferrer"  href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support" target="_blank">Support</a></li>
-            <li class="mdl-menu__item mdl-color-text--primary generate-home__button-dropdown-item" tabindex="21"><a class="generate-home__button-link mdl-color-text--primary" href="#"  (click)="gotoAboutPage()">About Generate</a></li>
+        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect generate-home__button-dropdown"
+            for="generate-home__button--resources1">
+            <li class="mdl-menu__item">
+                <a class="generate-home__button-link mdl-color-text--primary"
+                   href="https://ciidta.communities.ed.gov/#communities/pdc/documents/17667"
+                   target="_blank" rel="noopener noreferrer">User Guide</a>
+            </li>
+            <li class="mdl-menu__item">
+                <a class="generate-home__button-link mdl-color-text--primary"
+                   href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation"
+                   target="_blank" rel="noopener noreferrer">Documentation</a>
+            </li>
+            <li class="mdl-menu__item">
+                <a class="generate-home__button-link mdl-color-text--primary"
+                   href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support"
+                   target="_blank" rel="noopener noreferrer">Support</a>
+            </li>
+            <li class="mdl-menu__item">
+                <a class="generate-home__button-link mdl-color-text--primary"
+                   href="#"
+                   onclick="gotoAboutPage()">About Generate</a>
+            </li>
         </ul>
 
         <div class="generate-home__button">
@@ -90,7 +108,7 @@
                 </div>
             </a>
         </div>
-                            
+
         <div class="generate-home__button">
             <a target="_blank" rel="noopener noreferrer" href="https://ciidta.communities.ed.gov/#program" tabindex="23">
                 <div class="generate-home__button-caption generate-home__button--ciid mdl-typography--subhead mdl-typography--text-center">
