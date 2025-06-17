@@ -20,13 +20,13 @@
 
             <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-left generate-app-menu__item--border-right" tabindex="4" [routerLink]="['/']"><i class="fa fa-home fa-3x generate-app-menu__item--icon" alt="Home"><span class="generate-text--screen-reader-only">Home</span></i></a>
 
-            <a id="generate-app-menu__item--resources" class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" href="#" tabindex="5" (click)="onClickMenuItem()">Resources</a>
+            <a id="generate-app-menu__item--resources" class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" href="#" tabindex="5" (click)="onClickMenuItem()" >Resources</a>
 
             <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect generate-app-menu__dropdown" for="generate-app-menu__item--resources">
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a class="generate-app-menu__link" tabindex="6" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/" target="_blank">User Guide</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a class="generate-app-menu__link" tabindex="7" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation" target="_blank">Documentation</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a class="generate-app-menu__link" tabindex="8" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support" target="_blank">Support</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a class="generate-app-menu__link" tabindex="9" href="#" [routerLink]="['/about']">About Generate</a></li>
+                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link"  rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/" target="_blank">User Guide</a></li>
+                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation" target="_blank">Documentation</a></li>
+                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support" target="_blank">Support</a></li>
+                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link"  href="#" [routerLink]="['/about']">About Generate</a></li>
             </ul>
 
             <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" (click)="gotoSummary()" tabindex="10" href="#">Data Population Summary</a>
@@ -54,7 +54,7 @@
         </nav>
     </div>
 </header>
-<div class="mdl-layout__drawer mdl-color--primary">
+<!--<div class="mdl-layout__drawer mdl-color--primary">
     <span class="mdl-layout__title mdl-typography--display-1 mdl-color-text--white">GENERATE</span>
 
     <nav class="mdl-navigation">
@@ -93,4 +93,4 @@
             <li *ngIf="userService.isAdmin()" class="mdl-menu__item mdl-color-text--primary"><a href="#" [routerLink]="['/settings/update']">Update</a></li>
         </ul>
     </nav>
-</div>
+</div>-->
