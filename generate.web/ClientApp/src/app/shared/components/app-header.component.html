@@ -34,9 +34,9 @@
             <a id="generate-app-menu__item--reports" class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" tabindex="11" href="#" (click)="onClickMenuItem()">Standard Reports</a>
 
             <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect generate-app-menu__dropdown" for="generate-app-menu__item--reports">
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" class="generate-app-menu__link" (click)="gotoReportsEdFacts()">ED<span class="generate-text--italic">Facts</span> Reports</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" class="generate-app-menu__link" (click)="gotoReportsSppApr()">SPP/APR Reports</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" class="generate-app-menu__link" (click)="gotoReportsLibrary()">Reports Library</a></li>
+                <li class="generate-app-menu__dropdown-item"><a href="#" class="mdl-menu__item generate-app-menu__link" (click)="gotoReportsEdFacts()">ED<span class="generate-text--italic">Facts</span> Reports</a></li>
+                <li class="generate-app-menu__dropdown-item"><a href="#" class="mdl-menu__item generate-app-menu__link" (click)="gotoReportsSppApr()">SPP/APR Reports</a></li>
+                <li class="generate-app-menu__dropdown-item"><a href="#" class="mdl-menu__item generate-app-menu__link" (click)="gotoReportsLibrary()">Reports Library</a></li>
             </ul>
 
             <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-left generate-app-menu__item--border-right" target="_blank" rel="noopener noreferrer" tabindex="12" href="https://ciidta.communities.ed.gov/#program">CIID</a>
@@ -46,15 +46,15 @@
             <a id="generate-app-menu__item--settings" tabindex="13" class="mdl-navigation__link generate-app-menu__item" href="#" (click)="onClickMenuItem()"><i class="fa fa-cog fa-3x generate-app-menu__item--icon" alt="Settings"><span class="generate-text--screen-reader-only-alt">Settings</span></i></a>
 
             <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect generate-app-menu__dropdown" for="generate-app-menu__item--settings">
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/toggle']" class="generate-app-menu__link">Toggle</a></li>
-                <li *ngIf="userService.isAdmin()" class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/datamigration']" class="generate-app-menu__link">Data Migration</a></li>
-                <li *ngIf="userService.isAdmin()" class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/update']" class="generate-app-menu__link">Update</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/metadata']" class="generate-app-menu__link">Metadata</a></li>
+                <li class="generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/toggle']" class="mdl-menu__item generate-app-menu__link">Toggle</a></li>
+                <li *ngIf="userService.isAdmin()" class="generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/datamigration']" class="mdl-menu__item generate-app-menu__link">Data Migration</a></li>
+                <li *ngIf="userService.isAdmin()" class="generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/update']" class="mdl-menu__item generate-app-menu__link">Update</a></li>
+                <li class="generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/metadata']" class="mdl-menu__item generate-app-menu__link">Metadata</a></li>
             </ul>
         </nav>
     </div>
 </header>
-<!--<div class="mdl-layout__drawer mdl-color--primary">
+<div class="mdl-layout__drawer mdl-color--primary">
     <span class="mdl-layout__title mdl-typography--display-1 mdl-color-text--white">GENERATE</span>
 
     <nav class="mdl-navigation">
@@ -93,4 +93,4 @@
             <li *ngIf="userService.isAdmin()" class="mdl-menu__item mdl-color-text--primary"><a href="#" [routerLink]="['/settings/update']">Update</a></li>
         </ul>
     </nav>
-</div>-->
+</div>
