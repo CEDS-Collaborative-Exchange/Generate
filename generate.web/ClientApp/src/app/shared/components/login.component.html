@@ -9,11 +9,11 @@
     <div *ngIf="!isAuthenticating && !userService.isLoggedIn()">
         <div *ngIf="isOAuth" class="generate-app-shared-login__button-container">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
-                    (click)="loginAzure()" id="loginButton-lg" tabindex="1">
+                    (click)="loginAzure()" autofocus id="loginButton-lg" tabindex="1">
                 Log in
             </button>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
-                    (click)="loginAzure()" id="loginButton-sm" tabindex="1">
+                    (click)="loginAzure()" autofocus id="loginButton-sm" tabindex="1">
                 <i class="fa fa-sign-in"></i><span class="generate-text--screen-reader-only">Log in</span>
             </button>
         </div>
@@ -21,7 +21,7 @@
 
         <div>
             <div class="mdl-textfield mdl-js-textfield generate-app-shared-login__textfield">
-                <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__username" tabindex="1" type="text" #username id="username" />
+                <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__username" autofocus tabindex="1" type="text" #username id="username" />
                 <label class="mdl-textfield__label" for="username">UserName</label>
             </div>
 
@@ -44,18 +44,18 @@
 
     </form>
     </div>
-    <div *ngIf="!isAuthenticating && userService.isLoggedIn()">
+    <div *ngIf="!isAuthenticating && userService.isLoggedIn()">             
         <form (submit)="logout($event)">
 
             <div class="generate-app-shared-loggedin__text">
                 {{ userService.getUserDisplayName() }} ({{userService.getRole()}})
             </div>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
-                    (click)="logout($event)" tabindex="16" id="logoutButton-lg">
+                    (click)="logout($event)" id="logoutButton-lg">
                 Log out
             </button>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
-                    (click)="logout($event)" tabindex="16" id="logoutButton-sm">
+                    (click)="logout($event)" id="logoutButton-sm">
                 <i class="fa fa-sign-out"></i><span class="generate-text--screen-reader-only">Log out</span>
             </button>
         </form>
