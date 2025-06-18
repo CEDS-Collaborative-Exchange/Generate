@@ -61,6 +61,7 @@ namespace generate.core.Models.Staging
         public string PerkinsEnglishLearnerStatus { get; set; }
         public DateTime? PerkinsEnglishLearnerStatus_StatusStartDate { get; set; }
         public DateTime? PerkinsEnglishLearnerStatus_StatusEndDate { get; set; }
+        public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
         public DateTime? RecordStartDatetime { get; set; }
         public DateTime? RecordEndDateTime { get; set; }

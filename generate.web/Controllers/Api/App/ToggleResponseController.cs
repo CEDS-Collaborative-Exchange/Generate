@@ -91,7 +91,7 @@ namespace generate.web.Controllers.Api.App
             // DTO was necessary to avoid circular reference exceptions (ToggleQuestion, ToggleQuestionOption) from deserialization
             List<ToggleResponse> retval = new List<ToggleResponse>();
             foreach (var item in responses) {
-                var dto = JsonConvert.DeserializeObject<ToggleResponseDTO>(item.ToString());
+                var dto = JsonConvert.DeserializeObject<ToggleResponseDto>(item.ToString());
                 retval.Add(dto.MapToToggleResponse());
             }
 

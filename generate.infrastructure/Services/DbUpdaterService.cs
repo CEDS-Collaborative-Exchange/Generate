@@ -25,7 +25,6 @@ namespace generate.infrastructure.Services
     public class DbUpdaterService : IDbUpdaterService
     {
         private readonly AppDbContext _context;
-        private readonly IOptions<AppSettings> _appSettings;
         private readonly ILogger<DbUpdaterService> _logger;
         private readonly IAppRepository _appRepository;
 
@@ -37,13 +36,11 @@ namespace generate.infrastructure.Services
         /// <param name="logger"></param>
         /// <param name="appRepository"></param>
         public DbUpdaterService(
-            IOptions<AppSettings> appSettings, 
             AppDbContext context, 
             ILogger<DbUpdaterService> logger,
             IAppRepository appRepository
             )
         {
-            _appSettings = appSettings;
             _context = context;
             _logger = logger;
             _appRepository = appRepository;
@@ -80,55 +77,55 @@ namespace generate.infrastructure.Services
                 throw new InvalidOperationException("ERROR - Generate database does not exist or is too old.  Please restore using the RestoreDatabase.sql script.");
             }
 
-            if (performUpdate)
-            {
-                _logger.LogInformation("Database update check / environment = " + _appSettings.Value.Environment);
-                Console.WriteLine("Database update check / environment = " + _appSettings.Value.Environment);
+            //if (performUpdate)
+            //{
+            //    _logger.LogInformation("Database update check / environment = " + _appSettings.Value.Environment);
+            //    Console.WriteLine("Database update check / environment = " + _appSettings.Value.Environment);
 
-                // Get available versions
-                List<string> versionsAvailable = new List<string>();
-                DirectoryInfo dirInfo = new DirectoryInfo(basePath + "\\DatabaseScripts\\VersionUpdates");
-                foreach (var d in dirInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
-                {
-                    var releaseName = d.Name;
+            //    // Get available versions
+            //    List<string> versionsAvailable = new List<string>();
+            //    DirectoryInfo dirInfo = new DirectoryInfo(basePath + "\\DatabaseScripts\\VersionUpdates");
+            //    foreach (var d in dirInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
+            //    {
+            //        var releaseName = d.Name;
 
-                    if (releaseName.ToLower().Contains("_prerelease"))
-                    {
-                        if (_appSettings.Value.Environment != "production")
-                        {
-                            versionsAvailable.Add(releaseName);
-                        }
-                    }
-                    else
-                    {
-                        versionsAvailable.Add(releaseName);
-                    }
-                }
+            //        if (releaseName.ToLower().Contains("_prerelease"))
+            //        {
+            //            if (_appSettings.Value.Environment != "production")
+            //            {
+            //                versionsAvailable.Add(releaseName);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            versionsAvailable.Add(releaseName);
+            //        }
+            //    }
 
-                foreach (var version in versionsAvailable)
-                {
-                    _logger.LogInformation("Checking version " + version);
-                    Console.WriteLine("Checking version " + version);
+            //    foreach (var version in versionsAvailable)
+            //    {
+            //        _logger.LogInformation("Checking version " + version);
+            //        Console.WriteLine("Checking version " + version);
 
-                    bool isVersionUpdateSuccessful = false;
-                    isVersionUpdateSuccessful = UpdateVersion(basePath, version, currentDatabaseVersion);
+            //        bool isVersionUpdateSuccessful = false;
+            //        isVersionUpdateSuccessful = UpdateVersion(basePath, version, currentDatabaseVersion);
 
-                    if (isVersionUpdateSuccessful)
-                    {
-                        _logger.LogInformation("- version " + version + " check successful");
-                        Console.WriteLine("- version " + version + " check successful");
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("ERROR - version " + version + " update was unsuccessful");
-                    }
+            //        if (isVersionUpdateSuccessful)
+            //        {
+            //            _logger.LogInformation("- version " + version + " check successful");
+            //            Console.WriteLine("- version " + version + " check successful");
+            //        }
+            //        else
+            //        {
+            //            throw new InvalidOperationException("ERROR - version " + version + " update was unsuccessful");
+            //        }
 
-                }
+            //    }
 
-                _logger.LogInformation("Database update check - complete");
-                Console.WriteLine("Database update check - complete");
+            //    _logger.LogInformation("Database update check - complete");
+            //    Console.WriteLine("Database update check - complete");
 
-            }
+            //}
         }
 
         [SuppressMessage("Microsoft.Design", "EF1000")]

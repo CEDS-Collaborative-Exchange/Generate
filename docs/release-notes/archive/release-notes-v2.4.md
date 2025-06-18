@@ -2,7 +2,7 @@
 description: Generate Release Notes Version 2.4
 ---
 
-# Release Notes v2.4
+# Release Notes 2.4
 
 ### Introduction <a href="#introduction" id="introduction"></a>
 
@@ -10,7 +10,7 @@ The purpose of this document is to communicate the major new features and change
 
 ### About this Release <a href="#about-this-release" id="about-this-release"></a>
 
-Release v2.4 contains the ED_Facts_ Submission Reports and files for the Charter Organizations.
+Release v2.4 contains the E&#x44;_&#x46;acts_ Submission Reports and files for the Charter Organizations.
 
 ### Compatible Systems <a href="#compatible-systems" id="compatible-systems"></a>
 
@@ -50,7 +50,7 @@ Web Server
 
 **The following reports were added in this Release:**
 
-ED_Facts_ Submission Reports
+E&#x44;_&#x46;acts_ Submission Reports
 
 1. FS130 – ESEA Status
 2. FS190 – Charter Authorizer Directory
@@ -62,7 +62,7 @@ ED_Facts_ Submission Reports
 
 The following reports were updated in this Release:
 
-ED_Facts_ Submission Reports
+E&#x44;_&#x46;acts_ Submission Reports
 
 NOTE: changes to these reports reflect updates to the File Specifications for [SY 2017-18](https://www2.ed.gov/about/inits/ed/edfacts/sy-17-18-nonxml.html)
 
@@ -88,7 +88,7 @@ NOTE: changes to these reports reflect updates to the File Specifications for [S
 
 ### Issues/Limitations <a href="#issues-limitations" id="issues-limitations"></a>
 
-1. Reports – ED_Facts_ Submission Reports
+1. Reports – E&#x44;_&#x46;acts_ Submission Reports
    1. Report titles for SY 2017-18 (all reports):
    2. Reports begin with “C” not “FS” for SEA, LEA and Schools, and all category sets. For example, C045 should display FS045.
    3. Format Error (all reports)
@@ -104,4 +104,4 @@ NOTE: changes to these reports reflect updates to the File Specifications for [S
 3. Settings - Data Store
    1. There isn’t a kill switch to cancel the Migration process. Kill switch is needed.
 4. General:
-   1. Link to ED_Facts_ File Specifications goes to SY 2015-16 File Specifications instead of the main File Specification page. The correct link is: [https://www2.ed.gov/about/inits/ed/edfacts/file-](https://www2.ed.gov/about/inits/ed/edfacts/file-specifications.html) [specifications.html](https://www2.ed.gov/about/inits/ed/edfacts/file-specifications.html)
+   1. Link to E&#x44;_&#x46;acts_ File Specifications goes to SY 2015-16 File Specifications instead of the main File Specification page. The correct link is: [https://www2.ed.gov/about/inits/ed/edfacts/file-](https://www2.ed.gov/about/inits/ed/edfacts/file-specifications.html) [specifications.html](https://www2.ed.gov/about/inits/ed/edfacts/file-specifications.html)

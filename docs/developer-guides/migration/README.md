@@ -6,7 +6,7 @@ icon: person-to-portal
 
 ## Generate Data Migration Overview <a href="#toc108711244" id="toc108711244"></a>
 
-The Generate SQL Server database contains a set of stored procedures and data layers for transforming data into the final “Reports Tables” layer used by the web-based application to create ED_Facts_ reports.
+The Generate SQL Server database contains a set of stored procedures and data layers for transforming data into the final “Reports Tables” layer used by the web-based application to create E&#x44;_&#x46;acts_ reports.
 
 <figure><img src="../../.gitbook/assets/image (199).png" alt=""><figcaption></figcaption></figure>
 
@@ -81,7 +81,7 @@ Exec [App].[Wrapper_Migrate_Directory_to_RDS]
 
 * The RDS.CreateReports Stored Procedure migrates data from the **Staging** to the **Report Tables.**
 * These stored procedures can be run from the Generate Web Application using the Report Migration option.
-* The _RDS.CreateReports_ Stored Procedure kicks off the _Create\_ReportData_ Stored Procedure for each ED_Facts_ Report based on the fact type for that report. Fact types can be found in the _App.FactTables_ table and information for which fact types are used is stored in the _FactTableId_ field of the _`App.GenerateReports`_.
+* The _RDS.CreateReports_ Stored Procedure kicks off the _Create\_ReportData_ Stored Procedure for each E&#x44;_&#x46;acts_ Report based on the fact type for that report. Fact types can be found in the _App.FactTables_ table and information for which fact types are used is stored in the _FactTableId_ field of the _`App.GenerateReports`_.
 * The _`RDS.Create_ReportData`_ Stored Procedure uses Dynamic SQL to migrate data into the reporting tables.
 * The Stored Procedures at this migration stage do not take a School Year parameter. They loop through school years based on the selections in the web application front end which are stored in `RDS.DimSchoolYearDataMigrationTypes`. These can be updated manually by setting the IsSelect field to 1 for all years you wish to run from SQL Server Management Studio. For example, when running Directory data migrations from SQL Server Management Studio the code would look like this:
 
@@ -185,7 +185,7 @@ The `Staging.SourceSystemReferenceData` tables are noted below:
 | RefVirtualSchoolStatus                                        |
 | RefNSLPStatus                                                 |
 
-Generate contains validation tools to assist ETL developers in verifying that data has successfully migrated across the Generate data layers. Errors and issues captured in the first stage of data migration (_**SEA Source to Staging Migration**_) are logged to the _Staging._StagingValidationResults table. The logs can be explored from the SQL Server database.
+Generate contains validation tools to assist ETL developers in verifying that data has successfully migrated across the Generate data layers. Errors and issues captured in the first stage of data migration (_**SEA Source to Staging Migration**_) are logged to the _Staging._&#x53;tagingValidationResults table. The logs can be explored from the SQL Server database.
 
 ### Staging.StagingValidationResults Table <a href="#toc108711249" id="toc108711249"></a>
 

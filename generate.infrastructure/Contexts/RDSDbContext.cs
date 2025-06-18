@@ -33,9 +33,7 @@ namespace generate.infrastructure.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // Do not allow implicit client-side query execution - can lead to poor performance
-            //optionsBuilder
-            //    .ConfigureWarnings(w => w.Throw(RelationalEventId.QueryClientEvaluationWarning));
+            // Not Configuring anything
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -2152,14 +2150,6 @@ namespace generate.infrastructure.Contexts
 						.WithMany(c => c.FactK12StudentCounts)
 						.OnDelete(DeleteBehavior.Restrict);
 
-     //           entity
-					//.Property(x => x.K12EnrollmentId)
-					//.IsRequired();
-					//entity
-					//	.HasOne(x => x.DimEnrollment)
-					//	.WithMany(c => c.FactStudentCounts)
-					//	.OnDelete(DeleteBehavior.Restrict);
-
                 entity
                  .Property(x => x.RaceId)
                  .IsRequired();
@@ -2260,13 +2250,6 @@ namespace generate.infrastructure.Contexts
 				   .HasForeignKey(p => p.K12DemographicId)
 				   .OnDelete(DeleteBehavior.Restrict)
 				   .HasConstraintName("FK_FactOrganizationStatusCounts_DimDemographics");
-
-				//entity
-				//   .HasOne(x => x.DimEcoDisStatusId)
-				//   .WithMany(c => c.FactOrganizationStatusCount1)
-				//   .HasForeignKey(p => p.DimDemographicId)
-				//   .OnDelete(DeleteBehavior.Restrict)
-				//   .HasConstraintName("FK_FactOrganizationStatusCounts_DimEcoDis");
 
 				entity
 				   .HasOne(x => x.DimIndicatorStatus)
@@ -2946,10 +2929,6 @@ namespace generate.infrastructure.Contexts
 				   .HasMaxLength(500)
 				   .IsRequired();
 
-				//entity
-				//   .Property(x => x.OrganizationId)
-				//   .IsRequired();
-
 				entity
 				   .Property(x => x.OrganizationName)
 				   .HasMaxLength(1000)
@@ -2984,10 +2963,6 @@ namespace generate.infrastructure.Contexts
 				   .Property(x => x.ECODISSTATUS)
 				   .HasMaxLength(50);
 
-				//entity
-				//   .Property(x => x.SEX)
-				//   .HasMaxLength(50);
-
 				entity
 				   .Property(x => x.INDICATORSTATUS)
 				   .HasMaxLength(50);
@@ -3008,21 +2983,6 @@ namespace generate.infrastructure.Contexts
 				entity
 				   .HasIndex(p => new { p.ReportCode, p.ReportYear, p.ReportLevel, p.CategorySetCode });
 			});
-
-            // FactOrganizationStatusCountReportDto
-   //         modelBuilder.Entity<FactOrganizationStatusCountReportDto>(entity =>
-			//{
-			//	entity
-			//	   .Property(x => x.FactOrganizationStatusCountReportDtoId)
-			//	   .IsRequired();
-
-
-			//	entity
-			//		.HasKey(u => new
-			//		{
-			//			u.FactOrganizationStatusCountReportDtoId
-			//		});
-			//});
 
 			// FactCustomCount
 			modelBuilder.Entity<FactCustomCount>(entity =>
@@ -3252,10 +3212,6 @@ namespace generate.infrastructure.Contexts
                 entity
                 .Property(x => x.StateANSICode);
 
-                //entity
-                //.Property(x => x.OrganizationType)
-                //.HasMaxLength(10);
-
             });
 
             // FactStudentCountReport
@@ -3315,10 +3271,6 @@ namespace generate.infrastructure.Contexts
                    .Property(x => x.StateAbbreviationDescription)
                    .HasMaxLength(500)
                    .IsRequired();
-
-                //entity
-                //   .Property(x => x.OrganizationId)
-                //   .IsRequired();
 
                 entity
                    .Property(x => x.OrganizationIdentifierNces)
@@ -3486,14 +3438,6 @@ namespace generate.infrastructure.Contexts
                .Property(x => x.FORMERENGLISHLEARNERYEARSTATUS)
                .HasMaxLength(50);
 
-               // entity
-               //.Property(x => x.PLACEMENTSTATUS)
-               //.HasMaxLength(50);
-
-               // entity
-               //.Property(x => x.PLACEMENTTYPE)
-               //.HasMaxLength(50);
-
                 entity
                .Property(x => x.REPRESENTATIONSTATUS)
                .HasMaxLength(50);
@@ -3541,10 +3485,6 @@ namespace generate.infrastructure.Contexts
                 entity
                   .Property(x => x.ADJUSTEDCOHORTGRADUATIONRATE);
 
-                //entity
-                //    .Property(x => x.YEAR)
-                //    .HasMaxLength(50);
-
                 // Indices
 
                 entity
@@ -3552,27 +3492,6 @@ namespace generate.infrastructure.Contexts
 
             });
 
-            // FactStudentCountReportDto
-            //modelBuilder.Entity<FactStudentCountReportDto>(entity =>
-            //{
-            //    entity
-            //       .Property(x => x.FactStudentCountReportDtoId)
-            //       .IsRequired();
-
-
-            //    //entity
-            //    //   .Property(x => x.StudentRate)
-            //    //   .HasColumnType("decimal(9,2)");
-
-
-
-            //    entity
-            //        .HasKey(u => new
-            //        {
-            //            u.FactStudentCountReportDtoId
-            //        });
-
-            //});
 
             // FactStudentDisciplineReport
             modelBuilder.Entity<ReportEDFactsK12StudentDiscipline>(entity =>
@@ -3758,31 +3677,12 @@ namespace generate.infrastructure.Contexts
                    .Property(x => x.DisciplineCount)
                    .IsRequired();
 
-                //entity
-                //  .Property(x => x.YEAR)
-                //  .HasMaxLength(50);
-
                 // Indices
 
                 entity
                    .HasIndex(p => new { p.ReportCode, p.ReportYear, p.ReportLevel, p.CategorySetCode });
 
             });
-
-            // FactStudentDisciplineReportDto
-            //modelBuilder.Entity<FactStudentDisciplineReportDto>(entity =>
-            //{
-            //    entity
-            //       .Property(x => x.FactStudentDisciplineReportDtoId)
-            //       .IsRequired();
-
-            //    entity
-            //        .HasKey(u => new
-            //        {
-            //            u.FactStudentDisciplineReportDtoId
-            //        });
-
-            //});
 
             // FactStudentAssessmentReport
             modelBuilder.Entity<ReportEDFactsK12StudentAssessment>(entity =>
@@ -3891,9 +3791,7 @@ namespace generate.infrastructure.Contexts
                 entity
                    .Property(x => x.GRADELEVEL)
                    .HasMaxLength(50);
-                //entity
-                //   .Property(x => x.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR)
-                //   .HasMaxLength(50);
+
                 entity
                    .Property(x => x.ASSESSMENTPERFORMANCELEVELIDENTIFIER)
                    .HasMaxLength(50);
@@ -3901,9 +3799,7 @@ namespace generate.infrastructure.Contexts
                 entity
                    .Property(x => x.SPECIALEDUCATIONEXITREASON)
                    .HasMaxLength(50);
-                //entity
-                //   .Property(x => x.IDEADISABILITYTYPE)
-                //   .HasMaxLength(50);
+
                 entity
                  .Property(x => x.IDEAINDICATOR)
                  .HasMaxLength(50);
@@ -3915,18 +3811,13 @@ namespace generate.infrastructure.Contexts
                    .Property(x => x.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE)
                    .HasMaxLength(50);
 
-                //entity
-                //   .Property(x => x.SECTION504STATUS)
-                //   .HasMaxLength(50);
+
                 entity
                    .Property(x => x.CTEPARTICIPANT)
                    .HasMaxLength(50);
                 entity
                    .Property(x => x.ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS)
                    .HasMaxLength(50);
-                //entity
-                //  .Property(x => x.TITLEIIIIMMIGRANTPARTICIPATIONSTATUS)
-                //  .HasMaxLength(50);
 
                 entity
                .Property(x => x.HOMELESSSERVICEDINDICATOR)
@@ -3939,10 +3830,6 @@ namespace generate.infrastructure.Contexts
                 entity
                    .Property(x => x.RACE)
                    .HasMaxLength(50);
-
-                //entity
-                //  .Property(x => x.TITLEIIIIMMIGRANTPARTICIPATIONSTATUS)
-                //  .HasMaxLength(50);
 
                 entity
                 .Property(x => x.TITLEIIIACCOUNTABILITYPROGRESSSTATUS)
@@ -4023,7 +3910,7 @@ namespace generate.infrastructure.Contexts
                  .HasMaxLength(50);
 
                 entity
-               .Property(x => x.TITLEIPROGRAMTYPE)
+               .Property(x => x.TITLEIINDICATOR)
                .HasMaxLength(50);
 
                 entity
@@ -4107,9 +3994,6 @@ namespace generate.infrastructure.Contexts
                    .HasMaxLength(1000)
                    .IsRequired();
 
-                //entity
-                //   .Property(x => x.OrganizationId)
-                //   .IsRequired();
 
                 entity
                    .Property(x => x.OrganizationIdentifierNces)
@@ -4145,10 +4029,6 @@ namespace generate.infrastructure.Contexts
                   .Property(x => x.TITLEIPROGRAMSTAFFCATEGORY)
                  .HasMaxLength(50);
 
-                //entity
-                // .Property(x => x.STAFFCATEGORYCCD)
-                //  .HasMaxLength(50);
-
                 entity
               .Property(x => x.TITLEIIIACCOUNTABILITYPROGRESSSTATUS)
               .HasMaxLength(50);
@@ -4179,25 +4059,6 @@ namespace generate.infrastructure.Contexts
                    .HasIndex(p => new { p.ReportCode, p.ReportYear, p.ReportLevel, p.CategorySetCode });
             });
 
-            // FactPersonnelCountReportDto
-            //modelBuilder.Entity<FactPersonnelCountReportDto>(entity =>
-            //{
-            //    entity
-            //       .Property(x => x.FactPersonnelCountReportDtoId)
-            //       .IsRequired();
-
-            //    entity
-            //       .Property(x => x.StaffFTE)
-            //       .HasColumnType("decimal(18,2)")
-            //       .IsRequired();
-
-            //    entity
-            //        .HasKey(u => new
-            //        {
-            //            u.FactPersonnelCountReportDtoId
-            //        });
-            //});
-
             // FactOrganizationCountReport
             modelBuilder.Entity<ReportEDFactsOrganizationCount>(entity =>
             {
@@ -4225,10 +4086,6 @@ namespace generate.infrastructure.Contexts
                    .HasMaxLength(40)
                    .IsRequired();
 
-                //entity
-                //   .Property(x => x.Categories)
-                //   .HasMaxLength(300);
-
                 entity
                 .Property(x => x.TableTypeAbbrv)
                 .HasMaxLength(100);
@@ -4251,10 +4108,6 @@ namespace generate.infrastructure.Contexts
                    .Property(x => x.StateName)
                    .HasMaxLength(1000)
                    .IsRequired();
-
-                //entity
-                //   .Property(x => x.OrganizationId)
-                //   .IsRequired();
 
                 entity
                    .Property(x => x.OrganizationNcesId)
@@ -4488,20 +4341,6 @@ namespace generate.infrastructure.Contexts
                     .Property(x => x.AppropriationMethodCode);
 
             });
-
-            // FactOrganizationCountReportDto
-            //modelBuilder.Entity<FactOrganizationCountReportDto>(entity =>
-            //{
-            //    entity
-            //       .Property(x => x.FactOrganizationCountReportDtoId)
-            //       .IsRequired();
-
-            //    entity
-            //        .HasKey(u => new
-            //        {
-            //            u.FactOrganizationCountReportDtoId
-            //        });
-            //});
 
             // FactK12StudentAttendanceReport
             modelBuilder.Entity<FactK12StudentAttendanceReport>(entity =>

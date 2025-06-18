@@ -2,7 +2,7 @@
 description: Generate Release Notes Version 4.1
 ---
 
-# Release Notes v4.1
+# Release Notes 4.1
 
 ## Purpose <a href="#introduction" id="introduction"></a>
 
@@ -14,7 +14,7 @@ Generate Release version 4.1 includes updates to reports, the ETL (Data Store), 
 
 ### Updated Reports <a href="#updated-reports" id="updated-reports"></a>
 
-The following ED_Facts_ reports were updated in this release.
+The following E&#x44;_&#x46;acts_ reports were updated in this release.
 
 | Report                                                                                                          | Approved Change                                                                                  | Reference Number |
 | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ---------------- |

@@ -662,7 +662,7 @@ namespace generate.infrastructure.Services
             var repInfo = (from x in genRep
                            select new { x.GenerateReportId, x.ReportCode, x.ReportName, x.ReportSequence, x.ReportShortName }).ToList();
 
-            var newGenerateReports = DSYVrdetail.Where(d => repInfo.Count(r => r.ReportCode.ToLower() == "c" + d.FileSpecNum) == 0).Distinct().ToList();
+            var newGenerateReports = DSYVrdetail.Where(d => repInfo.Count(r => r.ReportCode.ToLower() == d.FileSpecNum) == 0).Distinct().ToList();
             var newGenerateReportsFinal = new List<GenerateReport>();
 
             foreach (var newGenerateReport in newGenerateReports.Select(gr => new {
@@ -677,9 +677,9 @@ namespace generate.infrastructure.Services
                     GenerateReportControlTypeId = 2,
                     GenerateReportTypeId = 3,
                     IsActive = true,
-                    ReportCode = string.Concat("c", newGenerateReport.FileSpecNum),
-                    ReportName = string.Concat("C", newGenerateReport.FileSpecNum, ": ", newGenerateReport.FileSpecName),
-                    ReportShortName = string.Concat("C", newGenerateReport.FileSpecNum),
+                    ReportCode = newGenerateReport.FileSpecNum,
+                    ReportName = string.Concat(newGenerateReport.FileSpecNum, ": ", newGenerateReport.FileSpecName),
+                    ReportShortName = newGenerateReport.FileSpecNum,
                     ReportTypeAbbreviation = newGenerateReport.ElectronicFileDesc,
                     ShowCategorySetControl = true,
                     ShowData = true,
@@ -827,8 +827,8 @@ namespace generate.infrastructure.Services
                 //cscode = cscode.Length > 50 ? csi.DEName.Substring(0, 50-(csi.DEAbbr.Length+2)) + "-" + csi.DEAbbr : cscode;
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "- NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 114 : genReportId;
-                var genReport = generateReports.Where(a => a.ReportCode.ToLower() == 'c' + csi.FileSpecNum).FirstOrDefault();
-
+                var genReport = generateReports.Where(a => a.ReportCode.ToLower() == csi.FileSpecNum).FirstOrDefault();
+                    
 
                 if (genReport == null)
                 {
@@ -837,9 +837,9 @@ namespace generate.infrastructure.Services
                         GenerateReportControlTypeId = 2,
                         GenerateReportTypeId = 3,
                         IsActive = true,
-                        ReportCode = string.Concat("c", csi.FileSpecNum),
-                        ReportName = string.Concat("C", csi.FileSpecNum, ": ", csi.FileSpecName),
-                        ReportShortName = string.Concat("C", csi.FileSpecNum),
+                        ReportCode = csi.FileSpecNum,
+                        ReportName = string.Concat(csi.FileSpecNum, ": ", csi.FileSpecName),
+                        ReportShortName = csi.FileSpecNum,
                         ReportTypeAbbreviation = csi.ElectronicFileDesc,
                         ShowCategorySetControl = true,
                         ShowData = true,
@@ -1021,7 +1021,7 @@ namespace generate.infrastructure.Services
                 var cscode = "CSA";
                 var deName = "Category Set A";
                 //cscode = cscode.Length > 50 ? csi.DEName.Substring(0, 50-(csi.DEAbbr.Length+2)) + "-" + csi.DEAbbr : cscode;
-                var genReportId = repInfo.Where(a => a.ReportCode == 'c' + csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
+                var genReportId = repInfo.Where(a => a.ReportCode == csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
                 //deName = genReportId == 0 ? deName+" - "+csi.FileSpecNum : deName;
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
@@ -1036,9 +1036,9 @@ namespace generate.infrastructure.Services
                         GenerateReportControlTypeId = 2,
                         GenerateReportTypeId = 3,
                         IsActive = true,
-                        ReportCode = string.Concat("c", csi.FileSpecNum),
-                        ReportName = string.Concat("C", csi.FileSpecNum, ": ", csi.FileSpecName),
-                        ReportShortName = string.Concat("C", csi.FileSpecNum),
+                        ReportCode = csi.FileSpecNum,
+                        ReportName = string.Concat(csi.FileSpecNum, ": ", csi.FileSpecName),
+                        ReportShortName = csi.FileSpecNum,
                         ReportTypeAbbreviation = csi.ElectronicFileDesc,
                         ShowCategorySetControl = true,
                         ShowData = true,
@@ -1208,7 +1208,7 @@ namespace generate.infrastructure.Services
                 var cscode = "CSA";
                 var deName = "Category Set A";
                 //cscode = cscode.Length > 50 ? csi.DEName.Substring(0, 50-(csi.DEAbbr.Length+2)) + "-" + csi.DEAbbr : cscode;
-                var genReportId = repInfo.Where(a => a.ReportCode == 'c' + csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
+                var genReportId = repInfo.Where(a => a.ReportCode == csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
                 //deName = genReportId == 0 ? deName+" - "+csi.FileSpecNum : deName;
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
@@ -1223,9 +1223,9 @@ namespace generate.infrastructure.Services
                         GenerateReportControlTypeId = 2,
                         GenerateReportTypeId = 3,
                         IsActive = true,
-                        ReportCode = string.Concat("C", csi.FileSpecNum),
-                        ReportName = string.Concat("C", csi.FileSpecNum, ": ", csi.FileSpecName),
-                        ReportShortName = string.Concat("C", csi.FileSpecNum),
+                        ReportCode = csi.FileSpecNum,
+                        ReportName = string.Concat(csi.FileSpecNum, ": ", csi.FileSpecName),
+                        ReportShortName = csi.FileSpecNum,
                         ReportTypeAbbreviation = csi.ElectronicFileDesc,
                         ShowCategorySetControl = true,
                         ShowData = true,
@@ -1390,7 +1390,7 @@ namespace generate.infrastructure.Services
                 var cscode = "TOT";
                 var deName = "Total of the Education Unit";
                 //cscode = cscode.Length > 50 ? csi.DEName.Substring(0, 50-(csi.DEAbbr.Length+2)) + "-" + csi.DEAbbr : cscode;
-                var genReportId = repInfo.Where(a => a.ReportCode == 'c' + csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
+                var genReportId = repInfo.Where(a => a.ReportCode == csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
                 //deName = genReportId == 0 ? deName+" - "+csi.FileSpecNum : deName;
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
@@ -1405,9 +1405,9 @@ namespace generate.infrastructure.Services
                         GenerateReportControlTypeId = 2,
                         GenerateReportTypeId = 3,
                         IsActive = true,
-                        ReportCode = string.Concat("C", csi.FileSpecNum),
-                        ReportName = string.Concat("C", csi.FileSpecNum, ": ", csi.FileSpecName),
-                        ReportShortName = string.Concat("C", csi.FileSpecNum),
+                        ReportCode = csi.FileSpecNum,
+                        ReportName = string.Concat(csi.FileSpecNum, ": ", csi.FileSpecName),
+                        ReportShortName = csi.FileSpecNum,
                         ReportTypeAbbreviation = csi.ElectronicFileDesc,
                         ShowCategorySetControl = true,
                         ShowData = true,
@@ -1677,7 +1677,7 @@ namespace generate.infrastructure.Services
                 }
                 //var cscode = csi.DEName + " - " + csi.DEAbbr;
                 //cscode = cscode.Length > 50 ? csi.DEName.Substring(0, 50-(csi.DEAbbr.Length+2)) + "-" + csi.DEAbbr : cscode;
-                var genReportId = repInfo.Where(a => a.ReportCode == 'c' + csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
+                var genReportId = repInfo.Where(a => a.ReportCode == csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "- NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 114 : genReportId;
 
@@ -1688,9 +1688,9 @@ namespace generate.infrastructure.Services
                         GenerateReportControlTypeId = 2,
                         GenerateReportTypeId = 3,
                         IsActive = true,
-                        ReportCode = string.Concat("C", csi.FileSpecNum),
-                        ReportName = string.Concat("C", csi.FileSpecNum, ": ", csi.FileSpecName),
-                        ReportShortName = string.Concat("C", csi.FileSpecNum),
+                        ReportCode = csi.FileSpecNum,
+                        ReportName = string.Concat(csi.FileSpecNum, ": ", csi.FileSpecName),
+                        ReportShortName = csi.FileSpecNum,
                         ReportTypeAbbreviation = csi.ElectronicFileDesc,
                         ShowCategorySetControl = true,
                         ShowData = true,
@@ -1925,7 +1925,7 @@ namespace generate.infrastructure.Services
                 var cscode = "CSA";
                 var deName = "Category Set A";
                 //cscode = cscode.Length > 50 ? csi.DEName.Substring(0, 50-(csi.DEAbbr.Length+2)) + "-" + csi.DEAbbr : cscode;
-                var genReportId = repInfo.Where(a => a.ReportCode == 'c' + csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
+                var genReportId = repInfo.Where(a => a.ReportCode == csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
                 //deName = genReportId == 0 ? deName+" - "+csi.FileSpecNum : deName;
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
@@ -1940,9 +1940,9 @@ namespace generate.infrastructure.Services
                         GenerateReportControlTypeId = 2,
                         GenerateReportTypeId = 3,
                         IsActive = true,
-                        ReportCode = string.Concat("C", csi.FileSpecNum),
-                        ReportName = string.Concat("C", csi.FileSpecNum, ": ", csi.FileSpecName),
-                        ReportShortName = string.Concat("C", csi.FileSpecNum),
+                        ReportCode = csi.FileSpecNum,
+                        ReportName = string.Concat(csi.FileSpecNum, ": ", csi.FileSpecName),
+                        ReportShortName = csi.FileSpecNum,
                         ReportTypeAbbreviation = csi.ElectronicFileDesc,
                         ShowCategorySetControl = true,
                         ShowData = true,
@@ -2118,7 +2118,7 @@ namespace generate.infrastructure.Services
                 var cscode = "CSA";
                 var deName = "Category Set A";
                 //cscode = cscode.Length > 50 ? csi.DEName.Substring(0, 50-(csi.DEAbbr.Length+2)) + "-" + csi.DEAbbr : cscode;
-                var genReportId = repInfo.Where(a => a.ReportCode == 'c' + csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
+                var genReportId = repInfo.Where(a => a.ReportCode == csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
                 //deName = genReportId == 0 ? deName+" - "+csi.FileSpecNum : deName;
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
@@ -2133,9 +2133,9 @@ namespace generate.infrastructure.Services
                         GenerateReportControlTypeId = 2,
                         GenerateReportTypeId = 3,
                         IsActive = true,
-                        ReportCode = string.Concat("C", csi.FileSpecNum),
-                        ReportName = string.Concat("C", csi.FileSpecNum, ": ", csi.FileSpecName),
-                        ReportShortName = string.Concat("C", csi.FileSpecNum),
+                        ReportCode = csi.FileSpecNum,
+                        ReportName = string.Concat(csi.FileSpecNum, ": ", csi.FileSpecName),
+                        ReportShortName = csi.FileSpecNum,
                         ReportTypeAbbreviation = csi.ElectronicFileDesc,
                         ShowCategorySetControl = true,
                         ShowData = true,
@@ -2309,7 +2309,7 @@ namespace generate.infrastructure.Services
                 var cscode = "TOT";
                 var deName = "Total of the Education Unit";
                 //cscode = cscode.Length > 50 ? csi.DEName.Substring(0, 50-(csi.DEAbbr.Length+2)) + "-" + csi.DEAbbr : cscode;
-                var genReportId = repInfo.Where(a => a.ReportCode == 'c' + csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
+                var genReportId = repInfo.Where(a => a.ReportCode == csi.FileSpecNum).Select(a => a.GenerateReportId).FirstOrDefault();
                 //deName = genReportId == 0 ? deName+" - "+csi.FileSpecNum : deName;
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
@@ -2324,9 +2324,9 @@ namespace generate.infrastructure.Services
                         GenerateReportControlTypeId = 2,
                         GenerateReportTypeId = 3,
                         IsActive = true,
-                        ReportCode = string.Concat("C", csi.FileSpecNum),
-                        ReportName = string.Concat("C", csi.FileSpecNum, ": ", csi.FileSpecName),
-                        ReportShortName = string.Concat("C", csi.FileSpecNum),
+                        ReportCode = csi.FileSpecNum,
+                        ReportName = string.Concat(csi.FileSpecNum, ": ", csi.FileSpecName),
+                        ReportShortName = csi.FileSpecNum,
                         ReportTypeAbbreviation = csi.ElectronicFileDesc,
                         ShowCategorySetControl = true,
                         ShowData = true,
@@ -2677,7 +2677,7 @@ namespace generate.infrastructure.Services
             foreach (var fs in distFS)
             {
 
-                var genid = genRep.Where(a => a.ReportCode == "c" + fs).Select(a => a.GenerateReportId).FirstOrDefault();
+                var genid = genRep.Where(a => a.ReportCode == fs).Select(a => a.GenerateReportId).FirstOrDefault();
                 var euLevel = fsLay.Where(a => a.FileSpecNum == fs).Select(a => new { a.IsDatacollEnabledLEA, a.IsDatacollEnabledSEA, a.IsDatacollEnabledSCH, a.FileType }).FirstOrDefault();
 
                 FileSubmission _fs;

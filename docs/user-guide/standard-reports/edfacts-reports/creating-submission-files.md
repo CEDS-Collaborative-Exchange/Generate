@@ -1,6 +1,6 @@
 # Creating Submission Files
 
-Generate creates the submission files for ED_Facts_ reports in the file types accepted by the ED_Facts_ Submission System (ESS). Only file types accepted by ESS will appear for selection.
+Generate creates the submission files for E&#x44;_&#x46;acts_ reports in the file types accepted by the E&#x44;_&#x46;acts_ Submission System (ESS). Only file types accepted by ESS will appear for selection.
 
 Currently, accepted file types are:
 

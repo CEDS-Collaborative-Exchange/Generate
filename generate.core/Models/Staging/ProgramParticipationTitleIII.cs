@@ -30,6 +30,7 @@ namespace generate.core.Models.Staging
         public string TitleIIILanguageInstructionProgramType { get; set; }
         public DateTime? TitleIIIImmigrantStatus_StartDate { get; set; }
         public DateTime? TitleIIIImmigrantStatus_EndDate { get; set; }
+        public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
         public DateTime? RunDateTime { get; set; }
     }

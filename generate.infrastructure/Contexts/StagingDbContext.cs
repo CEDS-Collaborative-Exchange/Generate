@@ -17,9 +17,7 @@ namespace generate.infrastructure.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // Do not allow implicit client-side query execution - can lead to poor performance
-            //optionsBuilder
-            //    .ConfigureWarnings(w => w.Throw(RelationalEventId.QueryClientEvaluationWarning));
+            // Not Configuring anything
         }
 
         public virtual DbSet<Assessment> Assessment { get; set; }
@@ -377,10 +375,6 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.IncidentDate).HasColumnType("date");
 
-                //entity.Property(e => e.IncidentId_LEA).HasColumnName("IncidentId_LEA");
-
-                //entity.Property(e => e.IncidentId_School).HasColumnName("IncidentId_School");
-
                 entity.Property(e => e.IncidentIdentifier)
                     .HasMaxLength(40)
                     .IsUnicode(false);
@@ -389,14 +383,6 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("LeaIdentifierSeaAccountability")
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                //entity.Property(e => e.OrganizationID_LEA).HasColumnName("OrganizationID_LEA");
-
-                //entity.Property(e => e.OrganizationID_School).HasColumnName("OrganizationID_School");
-
-                //entity.Property(e => e.OrganizationPersonRoleId_LEA).HasColumnName("OrganizationPersonRoleId_LEA");
-
-                //entity.Property(e => e.OrganizationPersonRoleId_School).HasColumnName("OrganizationPersonRoleId_School");
 
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 
@@ -498,14 +484,6 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.NumberOfSchoolDays).HasColumnType("decimal(9, 2)");
 
-                //entity.Property(e => e.OrganizationID_LEA).HasColumnName("OrganizationID_LEA");
-
-                //entity.Property(e => e.OrganizationID_School).HasColumnName("OrganizationID_School");
-
-                //entity.Property(e => e.OrganizationPersonRoleId_LEA).HasColumnName("OrganizationPersonRoleId_LEA");
-
-                //entity.Property(e => e.OrganizationPersonRoleId_School).HasColumnName("OrganizationPersonRoleId_School");
-
                 entity.Property(e => e.ProjectedGraduationDate)
                     .HasMaxLength(8)
                     .IsUnicode(false);
@@ -543,13 +521,6 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("IeuIdentifierSea")
                     .HasMaxLength(100);
 
-                //entity.Property(e => e.IEU_Identifier_State_ChangedIdentifier).HasColumnName("IEU_Identifier_State_ChangedIdentifier");
-
-                //entity.Property(e => e.IEU_Identifier_State_Identifier_Old)
-                //    .HasColumnName("IEU_Identifier_State_Identifier_Old")
-                //    .HasMaxLength(100)
-                //    .IsUnicode(false);
-
                 entity.Property(e => e.IEU_OrganizationName)
                     .HasColumnName("IEU_Name")
                     .HasMaxLength(256);
@@ -576,12 +547,6 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("IEU_WebSiteAddress")
                     .HasMaxLength(300);
 
-                //entity.Property(e => e.K12LeaTitleISupportServiceId).HasColumnName("K12LeaTitleISupportServiceId");
-
-                //entity.Property(e => e.K12ProgramOrServiceId_LEA).HasColumnName("K12ProgramOrServiceId_LEA");
-
-                //entity.Property(e => e.K12ProgramOrServiceId_School).HasColumnName("K12ProgramOrServiceId_School");
-
                 entity.Property(e => e.LEA_CharterLeaStatus)
                     .HasColumnName("LEA_CharterLeaStatus")
                     .HasMaxLength(100)
@@ -603,13 +568,6 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("LEA_Identifier_State")
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                //entity.Property(e => e.LEA_Identifier_State_ChangedIdentifier).HasColumnName("LEA_Identifier_State_ChangedIdentifier");
-
-                //entity.Property(e => e.LEA_Identifier_State_Identifier_Old)
-                //    .HasColumnName("LEA_Identifier_State_Identifier_Old")
-                //    .HasMaxLength(100)
-                //    .IsUnicode(false);
 
                 entity.Property(e => e.LEA_IsReportedFederally).HasColumnName("LEA_IsReportedFederally");
 
@@ -676,32 +634,6 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.NewLEA).HasColumnName("NewLEA");
 
-                //entity.Property(e => e.OrganizationId_IEU).HasColumnName("OrganizationId_IEU");
-
-                //entity.Property(e => e.OrganizationId_LEA).HasColumnName("OrganizationId_LEA");
-
-                //entity.Property(e => e.OrganizationId_School).HasColumnName("OrganizationId_School");
-
-                //entity.Property(e => e.OrganizationId_SEA).HasColumnName("OrganizationId_SEA");
-
-                //entity.Property(e => e.OrganizationOperationalStatusId_IEU).HasColumnName("OrganizationOperationalStatusId_IEU");
-
-                //entity.Property(e => e.OrganizationOperationalStatusId_LEA).HasColumnName("OrganizationOperationalStatusId_LEA");
-
-                //entity.Property(e => e.OrganizationOperationalStatusId_School).HasColumnName("OrganizationOperationalStatusId_School");
-
-                //entity.Property(e => e.OrganizationRelationshipId_IEUToLEA).HasColumnName("OrganizationRelationshipId_IEUToLEA");
-
-                //entity.Property(e => e.OrganizationRelationshipId_LEAToSchool).HasColumnName("OrganizationRelationshipId_LEAToSchool");
-
-                //entity.Property(e => e.OrganizationRelationshipId_SEAToIEU).HasColumnName("OrganizationRelationshipId_SEAToIEU");
-
-                //entity.Property(e => e.OrganizationRelationshipId_SEAToLEA).HasColumnName("OrganizationRelationshipId_SEAToLEA");
-
-                //entity.Property(e => e.OrganizationWebsiteId_LEA).HasColumnName("OrganizationWebsiteId_LEA");
-
-                //entity.Property(e => e.OrganizationWebsiteId_School).HasColumnName("OrganizationWebsiteId_School");
-
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.School_CharterContractApprovalDate)
@@ -766,13 +698,6 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("School_Identifier_State")
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                //entity.Property(e => e.School_Identifier_State_ChangedIdentifier).HasColumnName("School_Identifier_State_ChangedIdentifier");
-
-                //entity.Property(e => e.School_Identifier_State_Identifier_Old)
-                //    .HasColumnName("School_Identifier_State_Identifier_Old")
-                //    .HasMaxLength(100)
-                //    .IsUnicode(false);
 
                 entity.Property(e => e.School_SchoolImprovementAllocation).HasColumnType("money");
 
@@ -894,8 +819,6 @@ namespace generate.infrastructure.Contexts
                     .IsRequired()
                     .HasMaxLength(60);
 
-                //entity.Property(e => e.OrganizationPersonRoleId).HasMaxLength(10);
-
                 entity.Property(e => e.OrganizationType).HasMaxLength(100);
 
                 entity.Property(e => e.ProgramType).HasMaxLength(100);
@@ -923,8 +846,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
-                //entity.Property(e => e.K12SchoolId).HasColumnName("K12SchoolId");
-
                 entity.Property(e => e.LEAIdentifierSea)
                     .HasMaxLength(100)
                     .IsUnicode(false);
@@ -951,8 +872,6 @@ namespace generate.infrastructure.Contexts
                 entity.Property(e => e.ComprehensiveSupportReasonApplicability)
                     .HasMaxLength(20)
                     .IsUnicode(false);
-
-                //entity.Property(e => e.K12SchoolId).HasColumnName("K12SchoolId");
 
                 entity.Property(e => e.LEAIdentifierState)
                     .HasColumnName("LEA_Identifier_State")
@@ -1074,20 +993,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                //entity.Property(e => e.OrganizationIdCourse).HasColumnName("OrganizationID_Course");
-
-                //entity.Property(e => e.OrganizationIdCourseSection).HasColumnName("OrganizationID_CourseSection");
-
-                //entity.Property(e => e.OrganizationIdLea).HasColumnName("OrganizationID_LEA");
-
-                //entity.Property(e => e.OrganizationIdSchool).HasColumnName("OrganizationID_School");
-
-                //entity.Property(e => e.OrganizationPersonRoleIdCourseSection).HasColumnName("OrganizationPersonRoleId_CourseSection");
-
-                //entity.Property(e => e.OrganizationPersonRoleIdLea).HasColumnName("OrganizationPersonRoleId_LEA");
-
-                //entity.Property(e => e.OrganizationPersonRoleIdSchool).HasColumnName("OrganizationPersonRoleId_School");
-
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.ScedCourseCode).HasMaxLength(50);
@@ -1120,10 +1025,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                //entity.Property(e => e.LEAOrganizationID_MigrantProgram).HasColumnName("LEAOrganizationID_MigrantProgram");
-
-                //entity.Property(e => e.LEAOrganizationPersonRoleID_MigrantProgram).HasColumnName("LEAOrganizationPersonRoleID_MigrantProgram");
-
                 entity.Property(e => e.MigrantEducationProgramEnrollmentType)
                     .HasMaxLength(100)
                     .IsUnicode(false);
@@ -1138,12 +1039,6 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.MigrantStudentQualifyingArrivalDate).HasColumnType("date");
 
-                //entity.Property(e => e.OrganizationID_LEA).HasColumnName("OrganizationID_LEA");
-
-                //entity.Property(e => e.OrganizationID_School).HasColumnName("OrganizationID_School");
-
-                //entity.Property(e => e.PersonID).HasColumnName("PersonID");
-
                 entity.Property(e => e.ProgramParticipationExitDate).HasColumnType("date");
 
                 entity.Property(e => e.ProgramParticipationStartDate).HasColumnType("date");
@@ -1154,10 +1049,6 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("SchoolIdentifierSea")
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                //entity.Property(e => e.SchoolOrganizationID_MigrantProgram).HasColumnName("SchoolOrganizationID_MigrantProgram");
-
-                //entity.Property(e => e.SchoolOrganizationPersonRoleID_MigrantProgram).HasColumnName("SchoolOrganizationPersonRoleID_MigrantProgram");
 
                 entity.Property(e => e.SchoolYear)
                     .HasMaxLength(100)
@@ -1199,15 +1090,7 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.Latitude).HasMaxLength(100);
 
-                //entity.Property(e => e.LocationId)
-                //    .HasMaxLength(100)
-                //    .IsUnicode(false);
-
                 entity.Property(e => e.Longitude).HasMaxLength(100);
-
-                //entity.Property(e => e.OrganizationId)
-                //    .HasMaxLength(100)
-                //    .IsUnicode(false);
 
                 entity.Property(e => e.OrganizationIdentifier)
                     .HasMaxLength(60)
@@ -1348,12 +1231,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                //entity.Property(e => e.K12SchoolGradeOfferedId).HasColumnName("K12SchoolGradeOfferedId");
-
-                //entity.Property(e => e.OrganizationId)
-                //    .HasMaxLength(100)
-                //    .IsUnicode(false);
-
                 entity.Property(e => e.OrganizationIdentifier)
                     .HasMaxLength(100)
                     .IsUnicode(false);
@@ -1378,10 +1255,6 @@ namespace generate.infrastructure.Contexts
                 entity.Property(e => e.InstitutionTelephoneNumberType)
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                //entity.Property(e => e.OrganizationId)
-                //    .HasMaxLength(100)
-                //    .IsUnicode(false);
 
                 entity.Property(e => e.OrganizationIdentifier)
                     .HasMaxLength(100)
@@ -1624,8 +1497,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-
-
                 entity.Property(e => e.PerkinsEnglishLearnerStatus)
                     .HasColumnName("PerkinsLEPStatus")
                     .HasMaxLength(100)
@@ -1660,6 +1531,10 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("Section504_ProgramParticipationStartDate")
                     .HasColumnType("date");
 
+                entity.Property(e => e.SchoolYear)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.StudentIdentifierState)
                     .HasColumnName("StudentIdentifierState")
                     .HasMaxLength(100)
@@ -1692,18 +1567,6 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("LeaIdentifierSeaAccountability")
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                //entity.Property(e => e.OrganizationID_CTEProgram).HasColumnName("OrganizationID_CTEProgram");
-
-                //entity.Property(e => e.OrganizationID_School).HasColumnName("OrganizationID_School");
-
-                //entity.Property(e => e.OrganizationPersonRoleID_CTEProgram).HasColumnName("OrganizationPersonRoleID_CTEProgram");
-
-                //entity.Property(e => e.OrganizationPersonRoleID_School).HasColumnName("OrganizationPersonRoleID_School");
-
-                //entity.Property(e => e.PersonID).HasColumnName("PersonID");
-
-                //entity.Property(e => e.PersonProgramParticipationId).HasColumnName("PersonProgramParticipationId");
 
                 entity.Property(e => e.PlacementType)
                     .HasMaxLength(100)
@@ -1751,25 +1614,9 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                //entity.Property(e => e.OrganizationID_LEA).HasColumnName("OrganizationID_LEA");
-
-                //entity.Property(e => e.LEAOrganizationID_Program).HasColumnName("LEAOrganizationID_Program");
-
-                //entity.Property(e => e.SchoolOrganizationID_Program).HasColumnName("SchoolOrganizationID_Program");
-
-                //entity.Property(e => e.OrganizationID_School).HasColumnName("OrganizationID_School");
-
-                //entity.Property(e => e.LEAOrganizationPersonRoleId_Program).HasColumnName("LEAOrganizationPersonRoleId_Program");
-
-                //entity.Property(e => e.SchoolOrganizationPersonRoleId_Program).HasColumnName("SchoolOrganizationPersonRoleId_Program");
-
                 entity.Property(e => e.NeglectedOrDelinquentAcademicOutcomeIndicator)
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                //entity.Property(e => e.PersonID).HasColumnName("PersonID");
-
-                //entity.Property(e => e.PersonProgramParticipationID).HasColumnName("PersonProgramParticipationID");
 
                 entity.Property(e => e.ProgramParticipationBeginDate).HasColumnType("date");
 
@@ -1801,6 +1648,10 @@ namespace generate.infrastructure.Contexts
                     .IsUnicode(false);
 
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.SchoolYear)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.SchoolIdentifierSea)
                     .HasColumnName("SchoolIdentifierSea")
@@ -1836,29 +1687,15 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                //entity.Property(e => e.OrganizationID_LEA).HasColumnName("OrganizationID_LEA");
-
-                //entity.Property(e => e.LEAOrganizationID_Program).HasColumnName("OrganizationID_Program_LEA");
-
-                //entity.Property(e => e.SchoolOrganizationID_Program).HasColumnName("OrganizationID_Program_School");
-
-                //entity.Property(e => e.OrganizationID_School).HasColumnName("OrganizationID_School");
-
-                //entity.Property(e => e.LEAOrganizationPersonRoleId_Program).HasColumnName("OrganizationPersonRoleId_Program_LEA");
-
-                //entity.Property(e => e.SchoolOrganizationPersonRoleId_Program).HasColumnName("OrganizationPersonRoleId_Program_School");
-
-                //entity.Property(e => e.PersonID).HasColumnName("PersonID");
-
-                //entity.Property(e => e.PersonProgramParticipationID_LEA).HasColumnName("PersonProgramParticipationID_LEA");
-
-                //entity.Property(e => e.PersonProgramParticipationID_School).HasColumnName("PersonProgramParticipationID_School");
-
                 entity.Property(e => e.ProgramParticipationBeginDate).HasColumnType("date");
 
                 entity.Property(e => e.ProgramParticipationEndDate).HasColumnType("date");
 
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.SchoolYear)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.SchoolIdentifierSea)
                     .HasColumnName("SchoolIdentifierSea")
@@ -1903,26 +1740,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                //entity.Property(e => e.OrganizationID_LEA).HasColumnName("OrganizationID_LEA");
-
-                //entity.Property(e => e.OrganizationID_School).HasColumnName("OrganizationID_School");
-
-                //entity.Property(e => e.LEAOrganizationID_TitleIProgram).HasColumnName("LEAOrganizationID_TitleIProgram");
-
-                //entity.Property(e => e.SchoolOrganizationID_TitleIProgram).HasColumnName("SchoolOrganizationID_TitleIProgram");
-
-                //entity.Property(e => e.LEAOrganizationPersonRoleID_TitleIProgram).HasColumnName("LEAOrganizationPersonRoleID_TitleIProgram");
-
-                //entity.Property(e => e.SchoolOrganizationPersonRoleID_TitleIProgram).HasColumnName("SchoolOrganizationPersonRoleID_TitleIProgram");
-
-                //entity.Property(e => e.PersonID).HasColumnName("PersonID");
-
-                //entity.Property(e => e.LEAPersonProgramParticipationId).HasColumnName("LEAPersonProgramParticipationId");
-
-                //entity.Property(e => e.SchoolPersonProgramParticipationId).HasColumnName("SchoolPersonProgramParticipationId");
-
-                //entity.Property(e => e.RefTitleIIndicatorId).HasColumnName("RefTitleIIndicatorId");
-
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.ProgramParticipationBeginDate).HasColumnType("date");
@@ -1936,6 +1753,10 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.StudentIdentifierState)
                     .HasColumnName("StudentIdentifierState")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SchoolYear)
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
@@ -1960,18 +1781,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                //entity.Property(e => e.OrganizationID_School).HasColumnName("OrganizationID_School");
-
-                //entity.Property(e => e.OrganizationID_TitleIIIProgram).HasColumnName("OrganizationID_TitleIIIProgram");
-
-                //entity.Property(e => e.OrganizationPersonRoleID_TitleIIIProgram).HasColumnName("OrganizationPersonRoleID_TitleIIIProgram");
-
-                //entity.Property(e => e.PersonID).HasColumnName("PersonID");
-
-                //entity.Property(e => e.PersonProgramParticipationId).HasColumnName("PersonProgramParticipationId");
-
-                //entity.Property(e => e.ImmigrationPersonStatusId).HasColumnName("ImmigrationPersonStatusId");
-
                 entity.Property(e => e.Proficiency_TitleIII)
                     .HasColumnName("Proficiency_TitleIII")
                     .HasMaxLength(100)
@@ -1995,6 +1804,10 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.StudentIdentifierState)
                     .HasColumnName("StudentIdentifierState")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SchoolYear)
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
@@ -2145,8 +1958,6 @@ namespace generate.infrastructure.Contexts
                 entity.Property(e => e.MiddleName)
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                //entity.Property(e => e.OrganizationIdPsInstitution).HasColumnName("OrganizationId_PsInstitution");
 
                 entity.Property(e => e.PostsecondaryExitOrWithdrawalType).HasMaxLength(100);
 

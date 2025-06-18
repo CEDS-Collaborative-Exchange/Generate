@@ -21,7 +21,7 @@ The Data Population Report displays data based on a combination of Level, Year a
 {% tab title="Sex" %}
 ### **Student Count by Sex**
 
-This report generates a total count of students by sex, as per the ED_Facts_ values for sex. Student count data is displayed in the following columns:
+This report generates a total count of students by sex, as per the E&#x44;_&#x46;acts_ values for sex. Student count data is displayed in the following columns:
 
 * SEA, LEA, or School Name (depends on the Level selected)
 * Female
@@ -33,7 +33,7 @@ This report generates a total count of students by sex, as per the ED_Facts_ val
 {% tab title="Race/Ethnicity" %}
 ### **Student Count by Race/Ethnicity**
 
-This report generates a total count of students by race/ethnicity, as per the ED_Facts_ permitted values for race/ethnicity. The following data are included in the report:
+This report generates a total count of students by race/ethnicity, as per the E&#x44;_&#x46;acts_ permitted values for race/ethnicity. The following data are included in the report:
 
 * SEA, LEA, or School Name (depending on the Level selected)
 * American Indian or Alaska Native
@@ -50,7 +50,7 @@ This report generates a total count of students by race/ethnicity, as per the ED
 {% tab title="Subpopulation" %}
 ### **Student Count by Subpopulation**
 
-This report generates a total count of students by subpopulation, as per the ED_Facts_ permitted values for subpopulation. The following data are included in the report:
+This report generates a total count of students by subpopulation, as per the E&#x44;_&#x46;acts_ permitted values for subpopulation. The following data are included in the report:
 
 * SEA, LEA, or School Name (depending on the Level selected)
 * Economic Disadvantage Status
@@ -63,7 +63,7 @@ This report generates a total count of students by subpopulation, as per the ED_
 {% tab title="Primary Disability Type" %}
 ### **Student Count by Primary Disability Type**
 
-This report generates a total count of students by primary disability type, as per the ED_Facts_ permitted values for primary disability type.
+This report generates a total count of students by primary disability type, as per the E&#x44;_&#x46;acts_ permitted values for primary disability type.
 
 The following data are included in the report:
 
@@ -88,7 +88,7 @@ The following data are included in the report:
 {% tab title="Disciplinary Action" %}
 ### **Student Count by Disciplinary Action**
 
-This report generates a total count of students by disciplinary action as per the ED_Facts_ permitted values for disciplinary action taken. The following data are included in the report:
+This report generates a total count of students by disciplinary action as per the E&#x44;_&#x46;acts_ permitted values for disciplinary action taken. The following data are included in the report:
 
 * SEA, LEA, or School Name (depending on the Level selected)
 * Expulsion with services
@@ -112,4 +112,4 @@ This report produces a total count of students in Generate. The following data a
 {% endtab %}
 {% endtabs %}
 
-[^1]: (SWD) is Students with Disabilities. This report requires additional data beyond what is needed to produce ED_Facts_ reports.
+[^1]: (SWD) is Students with Disabilities. This report requires additional data beyond what is needed to produce E&#x44;_&#x46;acts_ reports.
