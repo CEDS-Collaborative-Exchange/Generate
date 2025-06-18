@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ClientApp\src\app\settings\testService\" />
+    <Folder Include="DatabaseScripts\VersionUpdates\13.0_prerelease\StoredProcedures\Create\" />
     <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
