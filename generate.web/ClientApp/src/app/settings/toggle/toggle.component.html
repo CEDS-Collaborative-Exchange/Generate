@@ -184,20 +184,15 @@
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
-                                    <div *ngFor="let toggleQuestionOption of toggleQuestionOptions | generateToggleQuestionOptionFilter:toggleQuestion.toggleQuestionId">
-                                        <label [attr.for]="'q_'+ toggleQuestion.toggleQuestionId + '_' + toggleQuestionOption.toggleQuestionOptionId"
-                                               class="generate-app-toggle__radio-labeltext mdl-radio mdl-js-radio mdl-js-ripple-effect">
-                                            <input type="radio"
-                                                   [checked]="checkRadioButton(toggleQuestion.toggleQuestionId,toggleQuestionOption.toggleQuestionOptionId)"
-                                                   [attr.name]="toggleQuestion.toggleQuestionId"
-                                                   [attr.id]="'q_'+ toggleQuestion.toggleQuestionId + '_' + toggleQuestionOption.toggleQuestionOptionId"
-                                                   [value]="toggleQuestionOption.toggleQuestionOptionId" (change)="setResponse($event)" class="mdl-radio__button"
-                                                   [attr.formControlName]="toggleForm.controls['ctrl_q_'+ toggleQuestion.toggleQuestionId + '_' + toggleQuestionOption.toggleQuestionOptionId]" />
-                                            <span class="mdl-radio__label">
-                                                {{toggleQuestionOption.optionText}}
-                                            </span>
-                                        </label>
-                                    </div>
+                                    <mat-radio-group class="example-radio-group" aria-labelledby="group-radio" [(ngModel)]="toggleResponses[toggleQuestion.toggleQuestionId]"
+                                                    (change)="setResponse($event)">
+                                        <mat-radio-button *ngFor="let toggleQuestionOption of toggleQuestionOptions | generateToggleQuestionOptionFilter:toggleQuestion.toggleQuestionId"
+                                                          [value]="toggleQuestionOption.toggleQuestionOptionId"
+                                                          class="example-radio-button"
+                                                          >
+                                            {{ toggleQuestionOption.optionText }}
+                                        </mat-radio-button>
+                                    </mat-radio-group>
                                 </div>
 
 

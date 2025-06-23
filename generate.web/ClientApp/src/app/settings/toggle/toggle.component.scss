@@ -1,4 +1,4 @@
-﻿@import '../../variables.scss';
+@import '../../variables.scss';
 @import '../../../../node_modules/material-design-lite/src/_variables.scss';
 @import '../../../../node_modules/material-design-lite/src/_mixins.scss';
 
@@ -108,4 +108,15 @@ select::-ms-expand {
 
 .generate-app-toggle__radio-labeltext{
     display: table;
+}
+
+.example-radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+}
+
+.example-radio-button {
+    margin: 5px;
 }
