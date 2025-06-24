@@ -184,12 +184,13 @@
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
-                                    <mat-radio-group class="example-radio-group" aria-labelledby="group-radio" [(ngModel)]="toggleResponses[toggleQuestion.toggleQuestionId]"
-                                                    (change)="setResponse($event)">
+                                    <mat-radio-group class="generate-app-toggle__question-radio-group" aria-labelledby="option-radio-group"
+                                                    (change)="setRadioResponse(toggleQuestion.toggleQuestionId, $event)">
                                         <mat-radio-button *ngFor="let toggleQuestionOption of toggleQuestionOptions | generateToggleQuestionOptionFilter:toggleQuestion.toggleQuestionId"
                                                           [value]="toggleQuestionOption.toggleQuestionOptionId"
-                                                          class="example-radio-button"
-                                                          >
+                                                          class="generate-app-toggle__question-radio-button"
+                                                          [checked]="checkRadioButton(toggleQuestion.toggleQuestionId,toggleQuestionOption.toggleQuestionOptionId)"
+                                                          [attr.formControlName]="toggleForm.controls['ctrl_q_'+ toggleQuestion.toggleQuestionId + '_' + toggleQuestionOption.toggleQuestionOptionId]">
                                             {{ toggleQuestionOption.optionText }}
                                         </mat-radio-button>
                                     </mat-radio-group>
