@@ -73,49 +73,68 @@ namespace generate.infrastructure.Repositories.RDS
 
         private IQueryable<ReportEDFactsK12StudentCount> AggregateFactStudentCount(IQueryable<FactK12StudentCount> facts, string reportCode, string reportLevel, string reportYear, string categorySetCode, string categories, string tableTypeAbbrv)
         {
+            // Define grouping key parts based on report level
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            // Precompute fields for readability
+            Func<dynamic, string> getOrgNcesId = x => isSEA ? x.DimSchool.StateAnsiCode :
+                                                       isLEA ? x.DimSchool.LeaIdentifierNces :
+                                                               x.DimSchool.SchoolIdentifierNces;
+
+            Func<dynamic, string> getOrgStateId = x => isSEA ? x.DimSchool.SeaIdentifierState :
+                                                            isLEA ? x.DimSchool.LeaIdentifierState :
+                                                                    x.DimSchool.SchoolIdentifierState;
+
+            Func<dynamic, string> getOrgName = x => isSEA ? x.DimSchool.SeaName :
+                                                      isLEA ? x.DimSchool.LeaName :
+                                                              x.DimSchool.NameOfInstitution;
+
+            Func<dynamic, string?> getParentStateId = x => isSEA ? null :
+                                                         isLEA ? x.DimSchool.SeaIdentifierState :
+                                                                 x.DimSchool.LeaIdentifierState;
+
             var groupedFacts = facts
-            .GroupBy(x => new
-            {
-                x.DimSchool.StateAbbreviationCode,
-                x.DimSchool.StateAnsiCode,
-                x.DimSchool.StateAbbreviationDescription,
-                //OrganizationId = reportLevel == "sea" ? x.DimSchool.SeaOrganizationId : reportLevel == "lea" ? x.DimSchool.LeaOrganizationId : x.DimSchool.SchoolOrganizationId,
-                OrganizationNcesId = reportLevel == "sea" ? x.DimSchool.StateAnsiCode : reportLevel == "lea" ? x.DimSchool.LeaIdentifierNces : x.DimSchool.SchoolIdentifierNces,
-                OrganizationStateId = reportLevel == "sea" ? x.DimSchool.SeaIdentifierState : reportLevel == "lea" ? x.DimSchool.LeaIdentifierState : x.DimSchool.SchoolIdentifierState,
-                OrganizationName = reportLevel == "sea" ? x.DimSchool.SeaName : reportLevel == "lea" ? x.DimSchool.LeaName : x.DimSchool.NameOfInstitution,
-                ParentOrganizationStateId = reportLevel == "sea" ? null : reportLevel == "lea" ? x.DimSchool.SeaIdentifierState : x.DimSchool.LeaIdentifierState,
-                AGE = categories.Contains("|AGE|") ? x.DimAge.AgeEdFactsCode : null,
-                LEPSTATUS = categories.Contains("|LEPBOTH|") ? x.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
-                LANGUAGE = categories.Contains("|LANGHOME|") ? x.DimLanguage.Iso6392LanguageEdFactsCode : null,
-                TITLEIIIPROGRAMPARTICIPATION = categories.Contains("|IMGRNTPROGPART|") ? x.DimProgramStatus.TitleiiiProgramParticipationEdFactsCode : null
-            })
-            .Select(x => new ReportEDFactsK12StudentCount()
-            {
-                ReportEDFactsK12StudentCountId = 0,
-                ReportCode = reportCode,
-                ReportLevel = reportLevel,
-                ReportYear = reportYear,
-                TableTypeAbbrv = tableTypeAbbrv,
-                Categories = categories,
-                CategorySetCode = categorySetCode,
-                StateAbbreviationCode = x.Key.StateAbbreviationCode,
-                StateANSICode = x.Key.StateAnsiCode,
-                StateAbbreviationDescription = x.Key.StateAbbreviationDescription,
-                //OrganizationId = x.Key.OrganizationId,
-                OrganizationName = x.Key.OrganizationName,
-                OrganizationIdentifierNces = x.Key.OrganizationNcesId,
-                OrganizationIdentifierSea = x.Key.OrganizationStateId,
-                ParentOrganizationIdentifierSea = x.Key.ParentOrganizationStateId,
-                AGE = x.Key.AGE,
-                ENGLISHLEARNERSTATUS = x.Key.LEPSTATUS,
-                ISO6392LANGUAGECODE = x.Key.LANGUAGE,
-                TITLEIIIIMMIGRANTPARTICIPATIONSTATUS = x.Key.TITLEIIIPROGRAMPARTICIPATION,
-                TotalIndicator = (categorySetCode.StartsWith("CS")) ? "N" : "Y",
-                StudentCount = x.Sum(y => y.StudentCount)
-            }
-            );
+                .GroupBy(x => new
+                {
+                    x.DimSchool.StateAbbreviationCode,
+                    x.DimSchool.StateAnsiCode,
+                    x.DimSchool.StateAbbreviationDescription,
+                    OrganizationNcesId = getOrgNcesId(x),
+                    OrganizationStateId = getOrgStateId(x),
+                    OrganizationName = getOrgName(x),
+                    ParentOrganizationStateId = getParentStateId(x),
+                    AGE = categories.Contains("|AGE|") ? x.DimAge.AgeEdFactsCode : null,
+                    LEPSTATUS = categories.Contains("|LEPBOTH|") ? x.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
+                    LANGUAGE = categories.Contains("|LANGHOME|") ? x.DimLanguage.Iso6392LanguageEdFactsCode : null,
+                    TITLEIIIPROGRAMPARTICIPATION = categories.Contains("|IMGRNTPROGPART|") ? x.DimProgramStatus.TitleiiiProgramParticipationEdFactsCode : null
+                })
+                .Select(g => new ReportEDFactsK12StudentCount
+                {
+                    ReportEDFactsK12StudentCountId = 0,
+                    ReportCode = reportCode,
+                    ReportLevel = reportLevel,
+                    ReportYear = reportYear,
+                    TableTypeAbbrv = tableTypeAbbrv,
+                    Categories = categories,
+                    CategorySetCode = categorySetCode,
+                    StateAbbreviationCode = g.Key.StateAbbreviationCode,
+                    StateANSICode = g.Key.StateAnsiCode,
+                    StateAbbreviationDescription = g.Key.StateAbbreviationDescription,
+                    OrganizationName = g.Key.OrganizationName,
+                    OrganizationIdentifierNces = g.Key.OrganizationNcesId,
+                    OrganizationIdentifierSea = g.Key.OrganizationStateId,
+                    ParentOrganizationIdentifierSea = g.Key.ParentOrganizationStateId,
+                    AGE = g.Key.AGE,
+                    ENGLISHLEARNERSTATUS = g.Key.LEPSTATUS,
+                    ISO6392LANGUAGECODE = g.Key.LANGUAGE,
+                    TITLEIIIIMMIGRANTPARTICIPATIONSTATUS = g.Key.TITLEIIIPROGRAMPARTICIPATION,
+                    TotalIndicator = categorySetCode.StartsWith("CS") ? "N" : "Y",
+                    StudentCount = g.Sum(y => y.StudentCount)
+                });
 
             return groupedFacts;
+
         }
 
         #endregion
@@ -193,6 +212,7 @@ namespace generate.infrastructure.Repositories.RDS
 
         private IQueryable<ReportEDFactsK12StudentDiscipline> AggregateFactStudentDiscipline(IQueryable<FactK12StudentDiscipline> facts, string reportCode, string reportLevel, string reportYear, string categorySetCode, string categories, string tableTypeAbbrv)
         {
+            // Category flags
             bool includeAGE = categories.Contains("|AGE|");
             bool includeDISABILITY = categories.Contains("|DISABCATIDEA|");
             bool includeLEPSTATUS = categories.Contains("|LEPBOTH|");
@@ -203,28 +223,45 @@ namespace generate.infrastructure.Repositories.RDS
 
             string totalIndicator = categorySetCode.StartsWith("CS") ? "N" : "Y";
 
+            // Apply filtering by report level
             if (reportLevel == "sea" || reportLevel == "lea")
-            {
                 facts = facts.Where(x => x.LeaId != -1);
-            }
 
             if (reportLevel == "sch")
-            {
                 facts = facts.Where(x => x.K12SchoolId != -1);
-            }
+
+            // Predefine grouping field selectors
+            Func<dynamic, string> getOrgNcesId = x =>
+                reportLevel == "sea" ? x.DimLea.StateAnsiCode :
+                reportLevel == "lea" ? (x.DimLea.LeaIdentifierNces ?? "") :
+                                       (x.DimSchool.SchoolIdentifierNces ?? "");
+
+            Func<dynamic, string> getOrgStateId = x =>
+                reportLevel == "sea" ? x.DimLea.SeaIdentifierState :
+                reportLevel == "lea" ? x.DimLea.LeaIdentifierState :
+                                       x.DimSchool.SchoolIdentifierState;
+
+            Func<dynamic, string> getOrgName = x =>
+                reportLevel == "sea" ? x.DimLea.SeaName :
+                reportLevel == "lea" ? x.DimLea.LeaName :
+                                       x.DimSchool.NameOfInstitution;
+
+            Func<dynamic, string?> getParentOrgStateId = x =>
+                reportLevel == "sea" ? null :
+                reportLevel == "lea" ? x.DimLea.SeaIdentifierState :
+                                       x.DimSchool.LeaIdentifierState;
 
             var groupedFacts = facts
                 .GroupBy(x => new
                 {
-                    K12StudentId = x.K12StudentId,
-                    StateCode = x.DimLea.StateAbbreviationCode,
-                    StateANSICode = x.DimLea.StateAnsiCode,
-                    StateName = x.DimLea.StateAbbreviationDescription,
-                    //OrganizationId = reportLevel == "sea" ? (int)x.DimLea.SeaOrganizationId : reportLevel == "lea" ? (int)x.DimLea.LeaOrganizationId : (int)x.DimSchool.SchoolOrganizationId,
-                    OrganizationNcesId = reportLevel == "sea" ? x.DimLea.StateAnsiCode : reportLevel == "lea" ? (x.DimLea.LeaIdentifierNces != null ? x.DimLea.LeaIdentifierNces : "") : (x.DimSchool.SchoolIdentifierNces != null ? x.DimSchool.SchoolIdentifierNces : ""),
-                    OrganizationStateId = reportLevel == "sea" ? x.DimLea.SeaIdentifierState : reportLevel == "lea" ? x.DimLea.LeaIdentifierState : x.DimSchool.SchoolIdentifierState,
-                    OrganizationName = reportLevel == "sea" ? x.DimLea.SeaName : reportLevel == "lea" ? x.DimLea.LeaName : x.DimSchool.NameOfInstitution,
-                    ParentOrganizationStateId = reportLevel == "sea" ? null : reportLevel == "lea" ? x.DimLea.SeaIdentifierState : x.DimSchool.LeaIdentifierState,
+                    x.K12StudentId,
+                    x.DimLea.StateAbbreviationCode,
+                    x.DimLea.StateAnsiCode,
+                    x.DimLea.StateAbbreviationDescription,
+                    OrganizationNcesId = getOrgNcesId(x),
+                    OrganizationStateId = getOrgStateId(x),
+                    OrganizationName = getOrgName(x),
+                    ParentOrganizationStateId = getParentOrgStateId(x),
                     AGE = includeAGE ? x.DimAge.AgeEdFactsCode : null,
                     DISABILITY = includeDISABILITY ? x.DimIdeaStatus.PrimaryDisabilityTypeEdFactsCode : null,
                     LEPSTATUS = includeLEPSTATUS ? x.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
@@ -233,45 +270,41 @@ namespace generate.infrastructure.Repositories.RDS
                     SEX = includeSEX ? x.DimStudent.SexEdFactsCode : null,
                     TITLEIIIPROGRAMPARTICIPATION = includeTITLEIIIPROGRAMPARTICIPATION ? x.DimProgramStatus.TitleiiiProgramParticipationEdFactsCode : null
                 })
-                .Select(x => new
+                .Select(g => new
                 {
-                    DimStudentId = x.Key.K12StudentId,
-                    StateCode = x.Key.StateCode,
-                    StateANSICode = x.Key.StateANSICode,
-                    StateName = x.Key.StateName,
-                    //OrganizationId = x.Key.OrganizationId,
-                    OrganizationName = x.Key.OrganizationName,
-                    OrganizationNcesId = x.Key.OrganizationNcesId,
-                    OrganizationStateId = x.Key.OrganizationStateId,
-                    ParentOrganizationStateId = x.Key.ParentOrganizationStateId,
-                    AGE = x.Key.AGE,
-                    DISABILITY = x.Key.DISABILITY,
-                    LEPSTATUS = x.Key.LEPSTATUS,
-                    REMOVALTYPE = x.Key.REMOVALTYPE,
-                    RACE = x.Key.RACE,
-                    SEX = x.Key.SEX,
-                    TITLEIIIPROGRAMPARTICIPATION = x.Key.TITLEIIIPROGRAMPARTICIPATION,
+                    g.Key.StateAbbreviationCode,
+                    g.Key.StateAnsiCode,
+                    g.Key.StateAbbreviationDescription,
+                    g.Key.OrganizationName,
+                    g.Key.OrganizationNcesId,
+                    g.Key.OrganizationStateId,
+                    g.Key.ParentOrganizationStateId,
+                    g.Key.AGE,
+                    g.Key.DISABILITY,
+                    g.Key.LEPSTATUS,
+                    g.Key.REMOVALTYPE,
+                    g.Key.RACE,
+                    g.Key.SEX,
+                    g.Key.TITLEIIIPROGRAMPARTICIPATION
                 })
-                .GroupBy(x => new 
+                .GroupBy(x => new
                 {
-                    StateCode = x.StateCode,
-                    StateANSICode = x.StateANSICode,
-                    StateName = x.StateName,
-                    //OrganizationId = x.OrganizationId,
-                    OrganizationName = x.OrganizationName,
-                    OrganizationNcesId = x.OrganizationNcesId,
-                    OrganizationStateId = x.OrganizationStateId,
-                    ParentOrganizationStateId = x.ParentOrganizationStateId,
-                    AGE = x.AGE,
-                    DISABILITY = x.DISABILITY,
-                    LEPSTATUS = x.LEPSTATUS,
-                    REMOVALTYPE = x.REMOVALTYPE,
-                    RACE = x.RACE,
-                    SEX = x.SEX,
-                    TITLEIIIPROGRAMPARTICIPATION = x.TITLEIIIPROGRAMPARTICIPATION
-                }
-                )
-                .Select(x => new ReportEDFactsK12StudentDiscipline()
+                    x.StateAbbreviationCode,
+                    x.StateAnsiCode,
+                    x.StateAbbreviationDescription,
+                    x.OrganizationName,
+                    x.OrganizationNcesId,
+                    x.OrganizationStateId,
+                    x.ParentOrganizationStateId,
+                    x.AGE,
+                    x.DISABILITY,
+                    x.LEPSTATUS,
+                    x.REMOVALTYPE,
+                    x.RACE,
+                    x.SEX,
+                    x.TITLEIIIPROGRAMPARTICIPATION
+                })
+                .Select(g => new ReportEDFactsK12StudentDiscipline
                 {
                     ReportCode = reportCode,
                     ReportLevel = reportLevel,
@@ -279,27 +312,26 @@ namespace generate.infrastructure.Repositories.RDS
                     TableTypeAbbrv = tableTypeAbbrv,
                     Categories = categories,
                     CategorySetCode = categorySetCode,
-                    StateAbbreviationCode = x.Key.StateCode,
-                    StateANSICode = x.Key.StateANSICode,
-                    StateAbbreviationDescription = x.Key.StateName,
-                    //OrganizationId = x.Key.OrganizationId,
-                    OrganizationName = x.Key.OrganizationName,
-                    OrganizationIdentifierNces = x.Key.OrganizationNcesId,
-                    OrganizationIdentifierSea = x.Key.OrganizationStateId,
-                    ParentOrganizationIdentifierSea = x.Key.ParentOrganizationStateId,
-                    AGE = x.Key.AGE,
-                    IDEADISABILITYTYPE = x.Key.DISABILITY,
-                    ENGLISHLEARNERSTATUS = x.Key.LEPSTATUS,
-                    IDEAINTERIMREMOVAL = x.Key.REMOVALTYPE,
-                    RACE = x.Key.RACE,
-                    SEX = x.Key.SEX,
-                    TITLEIIIIMMIGRANTPARTICIPATIONSTATUS = x.Key.TITLEIIIPROGRAMPARTICIPATION,
+                    StateAbbreviationCode = g.Key.StateAbbreviationCode,
+                    StateANSICode = g.Key.StateAnsiCode,
+                    StateAbbreviationDescription = g.Key.StateAbbreviationDescription,
+                    OrganizationName = g.Key.OrganizationName,
+                    OrganizationIdentifierNces = g.Key.OrganizationNcesId,
+                    OrganizationIdentifierSea = g.Key.OrganizationStateId,
+                    ParentOrganizationIdentifierSea = g.Key.ParentOrganizationStateId,
+                    AGE = g.Key.AGE,
+                    IDEADISABILITYTYPE = g.Key.DISABILITY,
+                    ENGLISHLEARNERSTATUS = g.Key.LEPSTATUS,
+                    IDEAINTERIMREMOVAL = g.Key.REMOVALTYPE,
+                    RACE = g.Key.RACE,
+                    SEX = g.Key.SEX,
+                    TITLEIIIIMMIGRANTPARTICIPATIONSTATUS = g.Key.TITLEIIIPROGRAMPARTICIPATION,
                     TotalIndicator = totalIndicator,
-                    DisciplineCount = x.Count()
-                }
-            );
+                    DisciplineCount = g.Count()
+                });
 
             return groupedFacts;
+
         }
 
         private IQueryable<ReportEDFactsK12StudentDiscipline> RemoveMissingFactStudentDisciplines(IQueryable<ReportEDFactsK12StudentDiscipline> reports)
@@ -347,140 +379,144 @@ namespace generate.infrastructure.Repositories.RDS
         private IQueryable<FactK12StudentAssessmentReport> AggregateFactAssessmentCount(IQueryable<FactK12StudentAssessment> facts, List<ToggleAssessment> toggleAssessments, string reportCode, string reportLevel, string reportYear, string categorySetCode, string categories, string tableTypeAbbrv)
         {
 
+            // Category flags
             bool includeSubject = categories.Contains("|ASSESSMENTSUBJECT|");
             bool includeGradeLevel = categories.Contains("|GRADELVLASS|");
             bool includeEcoDis = categories.Contains("|ECODIS|");
             bool includeLepStatus = categories.Contains("|LEPBOTH|");
             bool includeMigrant = categories.Contains("|MIGRNTSTATUS|");
             bool includeRace = categories.Contains("|RACEETHNIC|");
-            bool includeSEX = categories.Contains("|SEX|");
+            bool includeSEX = categories.Contains("|SEX|"); // Currently unused
             bool includeTITLEI = categories.Contains("|TITLEISCHSTATUS|");
             bool includeIdea = categories.Contains("|DISABSTATIDEA|");
             bool includeProficiency = categories.Contains("|PROFSTATUS|");
 
-
+            // Report-level filtering
             if (reportLevel == "sea" || reportLevel == "lea")
-            {
                 facts = facts.Where(x => x.LeaId != -1);
-            }
-
             if (reportLevel == "sch")
-            {
                 facts = facts.Where(x => x.K12SchoolId != -1);
-            }
-
             if (includeRace)
-            {
                 facts = facts.Where(x => x.DimRace.DimFactType.FactTypeCode == "submission");
-            }
 
+            // Precomputed selectors
+            Func<dynamic, string> getOrgNcesId = x =>
+                reportLevel == "sea" ? x.DimLea.StateAnsiCode :
+                reportLevel == "lea" ? (x.DimLea.LeaIdentifierNces ?? "") :
+                                       (x.DimSchool.SchoolIdentifierNces ?? "");
 
-            var groupedFacts = facts
-              .ToList()
-              .Join(toggleAssessments,
-              t1 => new { Grade = t1.DimGradeLevel.GradeLevelEdFactsCode, Subject = t1.DimAssessment.AssessmentSubjectEdFactsCode, AssessmentTypeCode = t1.DimAssessment.AssessmentTypeEdFactsCode },
-              t2 => new { Grade = t2.Grade, Subject = t2.Subject, AssessmentTypeCode = t2.AssessmentTypeCode },
-             (t1, t2) => new { t1, t2 })
-            .ToList()
-            .GroupBy(x => new
-            {
-                DimStudentId = x.t1.K12StudentId,
-                StateCode = x.t1.DimLea.StateAbbreviationCode,
-                StateANSICode = x.t1.DimLea.StateAnsiCode,
-                StateName = x.t1.DimLea.StateAbbreviationDescription,
-                //OrganizationId = reportLevel == "sea" ? (int)x.t1.DimLea.SeaOrganizationId : reportLevel == "lea" ? (int)x.t1.DimLea.LeaOrganizationId : (int)x.t1.DimSchool.SchoolOrganizationId,
-                OrganizationNcesId = reportLevel == "sea" ? x.t1.DimLea.StateAnsiCode : reportLevel == "lea" ? (x.t1.DimLea.LeaIdentifierNces != null ? x.t1.DimLea.LeaIdentifierNces : "") : (x.t1.DimSchool.SchoolIdentifierNces != null ? x.t1.DimSchool.SchoolIdentifierNces : ""),
-                OrganizationStateId = reportLevel == "sea" ? x.t1.DimLea.SeaIdentifierState : reportLevel == "lea" ? x.t1.DimLea.LeaIdentifierState : x.t1.DimSchool.SchoolIdentifierState,
-                OrganizationName = reportLevel == "sea" ? x.t1.DimLea.SeaName : reportLevel == "lea" ? x.t1.DimLea.LeaName : x.t1.DimSchool.NameOfInstitution,
-                ParentOrganizationStateId = reportLevel == "sea" ? null : reportLevel == "lea" ? x.t1.DimLea.SeaIdentifierState : x.t1.DimSchool.LeaIdentifierState,
-                ASSESSMENTSUBJECT = includeSubject ? x.t1.DimAssessment.AssessmentSubjectEdFactsCode : null,
-                GRADELEVEL = includeGradeLevel ? x.t1.DimGradeLevel.GradeLevelEdFactsCode : null,
-                IDEAINDICATOR = includeIdea ? x.t1.DimIdeaStatus.IdeaIndicatorEdFactsCode : null,
-                ECODISSTATUS = includeEcoDis ? x.t1.DimDemographic.EconomicDisadvantageStatusEdFactsCode : null,
-                LEPSTATUS = includeLepStatus ? x.t1.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
-                MIGRANTSTATUS = includeMigrant ? x.t1.DimDemographic.MigrantStatusEdFactsCode : null,
-                RACE = includeRace ? x.t1.DimRace.RaceCode : null,
-                //SEX = includeSEX ? x.t1.DimDemographic.SexEdFactsCode : null,
-                TITLE1SCHOOLSTATUS = includeTITLEI ? x.t1.DimTitle1Status.TitleISchoolStatusEdFactsCode : null,
-                ProficiencyStatus = includeProficiency ? Convert.ToInt32(x.t1.DimAssessment.PerformanceLevelEdFactsCode.Last()) >= Convert.ToInt32(x.t2.ProficientOrAboveLevel) ? "PROFICIENT" : "BELOWPROFICIENT" : null
+            Func<dynamic, string> getOrgStateId = x =>
+                reportLevel == "sea" ? x.DimLea.SeaIdentifierState :
+                reportLevel == "lea" ? x.DimLea.LeaIdentifierState :
+                                       x.DimSchool.SchoolIdentifierState;
 
-            })
-            .Select(x => new
-            {
-                DimStudentId = x.Key.DimStudentId,
-                StateCode = x.Key.StateCode,
-                StateANSICode = x.Key.StateANSICode,
-                StateName = x.Key.StateName,
-                //OrganizationId = x.Key.OrganizationId,
-                OrganizationName = x.Key.OrganizationName,
-                OrganizationNcesId = x.Key.OrganizationNcesId,
-                OrganizationStateId = x.Key.OrganizationStateId,
-                ParentOrganizationStateId = x.Key.ParentOrganizationStateId,
-                ASSESSMENTSUBJECT = x.Key.ASSESSMENTSUBJECT,
-                GRADELEVEL = x.Key.GRADELEVEL,
-                IDEAINDICATOR = x.Key.IDEAINDICATOR,
-                ECODISSTATUS = x.Key.ECODISSTATUS,
-                LEPSTATUS = x.Key.LEPSTATUS,
-                MIGRANTSTATUS = x.Key.MIGRANTSTATUS,
-                RACE = x.Key.RACE,
-                //SEX = x.Key.SEX,
-                TITLE1SCHOOLSTATUS = x.Key.TITLE1SCHOOLSTATUS,
-                ProficiencyStatus = x.Key.ProficiencyStatus
-            })
-            .GroupBy(x => new
-            {
-                StateCode = x.StateCode,
-                StateANSICode = x.StateANSICode,
-                StateName = x.StateName,
-                //OrganizationId = x.OrganizationId,
-                OrganizationName = x.OrganizationName,
-                OrganizationNcesId = x.OrganizationNcesId,
-                OrganizationStateId = x.OrganizationStateId,
-                ParentOrganizationStateId = x.ParentOrganizationStateId,
-                ASSESSMENTSUBJECT = x.ASSESSMENTSUBJECT,
-                GRADELEVEL = x.GRADELEVEL,
-                IDEAINDICATOR = x.IDEAINDICATOR,
-                ECODISSTATUS = x.ECODISSTATUS,
-                LEPSTATUS = x.LEPSTATUS,
-                MIGRANTSTATUS = x.MIGRANTSTATUS,
-                RACE = x.RACE,
-                //SEX = x.SEX,
-                TITLE1SCHOOLSTATUS = x.TITLE1SCHOOLSTATUS,
-                ProficiencyStatus = x.ProficiencyStatus
-            }
-            )
-            .Select(x => new FactK12StudentAssessmentReport()
-            {
-                ReportCode = reportCode,
-                ReportLevel = reportLevel,
-                ReportYear = reportYear,
-                TableTypeAbbrv = tableTypeAbbrv,
-                Categories = categories,
-                CategorySetCode = categorySetCode,
-                StateCode = x.Key.StateCode,
-                StateANSICode = x.Key.StateANSICode,
-                StateName = x.Key.StateName,
-                //OrganizationId = x.Key.OrganizationId,
-                OrganizationName = x.Key.OrganizationName,
-                OrganizationNcesId = x.Key.OrganizationNcesId,
-                OrganizationStateId = x.Key.OrganizationStateId,
-                ParentOrganizationStateId = x.Key.ParentOrganizationStateId,
-                ASSESSMENTSUBJECT = x.Key.ASSESSMENTSUBJECT,
-                GRADELEVEL = x.Key.GRADELEVEL,
-                IDEAINDICATOR = x.Key.IDEAINDICATOR,
-                ECODISSTATUS = x.Key.ECODISSTATUS,
-                LEPSTATUS = x.Key.LEPSTATUS,
-                MIGRANTSTATUS = x.Key.MIGRANTSTATUS,
-                RACE = x.Key.RACE,
-                //SEX = x.Key.SEX,
-                TITLEISCHOOLSTATUS = x.Key.TITLE1SCHOOLSTATUS,
-                PROFICIENCYSTATUS = x.Key.ProficiencyStatus,
-                TotalIndicator = "N",
-                AssessmentCount = x.Count()
-            }
-            ).AsQueryable();
+            Func<dynamic, string> getOrgName = x =>
+                reportLevel == "sea" ? x.DimLea.SeaName :
+                reportLevel == "lea" ? x.DimLea.LeaName :
+                                       x.DimSchool.NameOfInstitution;
+
+            Func<dynamic, string?> getParentStateId = x =>
+                reportLevel == "sea" ? null :
+                reportLevel == "lea" ? x.DimLea.SeaIdentifierState :
+                                       x.DimSchool.LeaIdentifierState;
+
+            var joinedFacts = facts
+                .ToList()
+                .Join(toggleAssessments,
+                    t1 => new
+                    {
+                        Grade = t1.DimGradeLevel.GradeLevelEdFactsCode,
+                        Subject = t1.DimAssessment.AssessmentSubjectEdFactsCode,
+                        AssessmentTypeCode = t1.DimAssessment.AssessmentTypeEdFactsCode
+                    },
+                    t2 => new
+                    {
+                        t2.Grade,
+                        t2.Subject,
+                        t2.AssessmentTypeCode
+                    },
+                    (t1, t2) => new { t1, t2 }
+                )
+                .ToList();
+
+            var groupedFacts = joinedFacts
+                .GroupBy(x => new
+                {
+                    x.t1.K12StudentId,
+                    StateCode = x.t1.DimLea.StateAbbreviationCode,
+                    StateANSICode = x.t1.DimLea.StateAnsiCode,
+                    StateName = x.t1.DimLea.StateAbbreviationDescription,
+                    OrganizationNcesId = getOrgNcesId(x.t1),
+                    OrganizationStateId = getOrgStateId(x.t1),
+                    OrganizationName = getOrgName(x.t1),
+                    ParentOrganizationStateId = getParentStateId(x.t1),
+                    ASSESSMENTSUBJECT = includeSubject ? x.t1.DimAssessment.AssessmentSubjectEdFactsCode : null,
+                    GRADELEVEL = includeGradeLevel ? x.t1.DimGradeLevel.GradeLevelEdFactsCode : null,
+                    IDEAINDICATOR = includeIdea ? x.t1.DimIdeaStatus.IdeaIndicatorEdFactsCode : null,
+                    ECODISSTATUS = includeEcoDis ? x.t1.DimDemographic.EconomicDisadvantageStatusEdFactsCode : null,
+                    LEPSTATUS = includeLepStatus ? x.t1.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
+                    MIGRANTSTATUS = includeMigrant ? x.t1.DimDemographic.MigrantStatusEdFactsCode : null,
+                    RACE = includeRace ? x.t1.DimRace.RaceCode : null,
+                    TITLE1SCHOOLSTATUS = includeTITLEI ? x.t1.DimTitle1Status.TitleISchoolStatusEdFactsCode : null,
+                    PROFICIENCYSTATUS = includeProficiency
+                        ? (
+                            int.TryParse(x.t1.DimAssessment.PerformanceLevelEdFactsCode?.LastOrDefault().ToString(), out var perf)
+                            && int.TryParse(x.t2.ProficientOrAboveLevel, out var cutoff)
+                                ? (perf >= cutoff ? "PROFICIENT" : "BELOWPROFICIENT")
+                                : null
+                        )
+                        : null
+                })
+                .GroupBy(x => new
+                {
+                    x.Key.StateCode,
+                    x.Key.StateANSICode,
+                    x.Key.StateName,
+                    x.Key.OrganizationName,
+                    x.Key.OrganizationNcesId,
+                    x.Key.OrganizationStateId,
+                    x.Key.ParentOrganizationStateId,
+                    x.Key.ASSESSMENTSUBJECT,
+                    x.Key.GRADELEVEL,
+                    x.Key.IDEAINDICATOR,
+                    x.Key.ECODISSTATUS,
+                    x.Key.LEPSTATUS,
+                    x.Key.MIGRANTSTATUS,
+                    x.Key.RACE,
+                    x.Key.TITLE1SCHOOLSTATUS,
+                    x.Key.PROFICIENCYSTATUS
+                })
+                .Select(g => new FactK12StudentAssessmentReport
+                {
+                    ReportCode = reportCode,
+                    ReportLevel = reportLevel,
+                    ReportYear = reportYear,
+                    TableTypeAbbrv = tableTypeAbbrv,
+                    Categories = categories,
+                    CategorySetCode = categorySetCode,
+                    StateCode = g.Key.StateCode,
+                    StateANSICode = g.Key.StateANSICode,
+                    StateName = g.Key.StateName,
+                    OrganizationName = g.Key.OrganizationName,
+                    OrganizationNcesId = g.Key.OrganizationNcesId,
+                    OrganizationStateId = g.Key.OrganizationStateId,
+                    ParentOrganizationStateId = g.Key.ParentOrganizationStateId,
+                    ASSESSMENTSUBJECT = g.Key.ASSESSMENTSUBJECT,
+                    GRADELEVEL = g.Key.GRADELEVEL,
+                    IDEAINDICATOR = g.Key.IDEAINDICATOR,
+                    ECODISSTATUS = g.Key.ECODISSTATUS,
+                    LEPSTATUS = g.Key.LEPSTATUS,
+                    MIGRANTSTATUS = g.Key.MIGRANTSTATUS,
+                    RACE = g.Key.RACE,
+                    TITLEISCHOOLSTATUS = g.Key.TITLE1SCHOOLSTATUS,
+                    PROFICIENCYSTATUS = g.Key.PROFICIENCYSTATUS,
+                    TotalIndicator = "N",
+                    AssessmentCount = g.Count()
+                })
+                .AsQueryable();
 
             return groupedFacts;
+
         }
 
         #endregion
