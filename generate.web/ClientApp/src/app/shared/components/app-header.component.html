@@ -3,8 +3,8 @@
     <button class="mdl-snackbar__action" type="button"><span class="generate-text--screen-reader-only">Activate Toast Notification</span></button>
 </div>
 <header class="mdl-layout__header">
-    <h1 class="generate-text--screen-reader-only">GENERATE</h1>
-    <div class="mdl-layout__header-row mdl-color--white">
+    <h1 class="generate-text--screen-reader-only" aria-hidden="true">GENERATE</h1>
+    <div class="mdl-layout__header-row mdl-color--white" aria-hidden="true">
         <div class="mdl-layout--large-screen-only">
             <span class="mdl-layout-title">
                 <img src="./assets/images/icon-generate-xs.png" alt="Generate Logo" />
@@ -41,8 +41,8 @@
 
             <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-left generate-app-menu__item--border-right" target="_blank" rel="noopener noreferrer" tabindex="12" href="https://ciidta.communities.ed.gov/#program">CIID</a>
         </nav>
-        <div class="mdl-layout-spacer"></div>
-        <nav *ngIf="userService.isLoggedIn()" class="mdl-navigation">
+        <div class="mdl-layout-spacer" aria-hidden="true"></div>
+        <nav *ngIf="userService.isLoggedIn()" class="mdl-navigation" aria-hidden="true">
             <a id="generate-app-menu__item--settings" tabindex="13" class="mdl-navigation__link generate-app-menu__item" href="#" (click)="onClickMenuItem()"><i class="fa fa-cog fa-3x generate-app-menu__item--icon" alt="Settings"><span class="generate-text--screen-reader-only-alt">Settings</span></i></a>
 
             <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect generate-app-menu__dropdown" for="generate-app-menu__item--settings">
@@ -54,7 +54,7 @@
         </nav>
     </div>
 </header>
-<div class="mdl-layout__drawer mdl-color--primary">
+<!--<div class="mdl-layout__drawer mdl-color--primary" aria-hidden="true">
     <span class="mdl-layout__title mdl-typography--display-1 mdl-color-text--white">GENERATE</span>
 
     <nav class="mdl-navigation">
@@ -93,4 +93,4 @@
             <li *ngIf="userService.isAdmin()" class="mdl-menu__item mdl-color-text--primary"><a href="#" [routerLink]="['/settings/update']">Update</a></li>
         </ul>
     </nav>
-</div>
+</div>-->
