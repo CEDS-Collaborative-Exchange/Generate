@@ -54,6 +54,33 @@ namespace generate.infrastructure.Repositories.RDS
 
         }
 
+        private List<string> GetToggleDisabilityCodes()
+        {
+            var mapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Austim"] = "AUT",
+                ["Deaf-Blindness"] = "DB",
+                ["Developmental Delay"] = "DD",
+                ["Emotional Disturbance"] = "EMN",
+                ["Hearing Impairment"] = "HI",
+                ["Intellectual Disability"] = "MR",
+                ["Multiple Disabilities"] = "MD",
+                ["Orthopedic Impairment"] = "OI",
+                ["Specific Learning Disability"] = "SLD",
+                ["Speech or Language Impairment"] = "SLI",
+                ["Traumatic Brain Injury"] = "TBI",
+                ["Visual Impairment"] = "VI",
+                ["Other Health Impairment"] = "OHI"
+            };
+
+            return _appDbContext.ToggleResponses
+                .Where(x => x.ToggleQuestion.EmapsQuestionAbbrv == "CHDCTDISCAT")
+                .Select(x => mapping.GetValueOrDefault(x.ResponseValue))
+                .Where(val => val != null)
+                .ToList();
+        }
+
+
         #endregion
 
         #region FactStudentCountReport
@@ -523,214 +550,132 @@ namespace generate.infrastructure.Repositories.RDS
 
         #region Report Methods
 
-        public void ExecuteReportMigrationByYearLevelAndCategorySet(string reportCode, string reportYear, string reportLevel, string categorySetCode, List<string> excludeFilters, List<string> excludeToggles)
+        public void ExecuteReportMigrationByYearLevelAndCategorySet(
+                string reportCode, string reportYear, string reportLevel,
+                string categorySetCode, List<string> excludeFilters, List<string> excludeToggles)
         {
-            // Determine fact report table
             GenerateReport generateReport = _appDbContext.GenerateReports.Single(x => x.ReportCode == reportCode);
             FactTable factTable = _appDbContext.FactTables.Single(x => x.FactTableId == generateReport.FactTableId);
 
-            // Determine toggle responses
+            var toggleDisabilityCodes = GetToggleDisabilityCodes();
 
-            var toggleResponses = _appDbContext.ToggleResponses.Where(x => x.ToggleQuestion.EmapsQuestionAbbrv == "CHDCTDISCAT").Select(x => x.ResponseValue);
+            LogDataMigrationHistory("report", $"Report Started ({reportCode}/{reportYear}/{reportLevel}/{categorySetCode})", true);
 
-            var toggleDisabilityCodes = new List<string>();
+            RemoveExistingData(factTable.FactTableName, reportCode, reportYear, reportLevel, categorySetCode);
 
-            foreach (var item in toggleResponses)
+            var (categories, tableTypeAbbrv) = GetCategoriesAndTableType(reportCode, reportYear, reportLevel, categorySetCode);
+
+            ProcessFacts(factTable.FactTableName, reportCode, reportYear, reportLevel, categorySetCode, categories, tableTypeAbbrv, excludeFilters, excludeToggles, toggleDisabilityCodes);
+
+            LogDataMigrationHistory("report", $"Report Complete ({reportCode}/{reportYear}/{reportLevel}/{categorySetCode})", true);
+        }
+
+        private void RemoveExistingData(string tableName, string reportCode, string reportYear, string reportLevel, string categorySetCode)
+        {
+            if (tableName == "FactStudentCountReports")
             {
-                //TODO: Would be better to make Toggle Response values match EDFacts values (so that this is not hard-coded here)
-
-                switch (item)
-                {
-                    case "Austim":
-                        toggleDisabilityCodes.Add("AUT");
-                        break;
-                    case "Deaf-Blindness":
-                        toggleDisabilityCodes.Add("DB");
-                        break;
-                    case "Developmental Delay":
-                        toggleDisabilityCodes.Add("DD");
-                        break;
-                    case "Emotional Disturbance":
-                        toggleDisabilityCodes.Add("EMN");
-                        break;
-                    case "Hearing Impairment":
-                        toggleDisabilityCodes.Add("HI");
-                        break;
-                    case "Intellectual Disability":
-                        toggleDisabilityCodes.Add("MR");
-                        break;
-                    case "Multiple Disabilities":
-                        toggleDisabilityCodes.Add("MD");
-                        break;
-                    case "Orthopedic Impairment":
-                        toggleDisabilityCodes.Add("OI");
-                        break;
-                    case "Specific Learning Disability":
-                        toggleDisabilityCodes.Add("SLD");
-                        break;
-                    case "Speech or Language Impairment":
-                        toggleDisabilityCodes.Add("SLI");
-                        break;
-                    case "Traumatic Brain Injury":
-                        toggleDisabilityCodes.Add("TBI");
-                        break;
-                    case "Visual Impairment":
-                        toggleDisabilityCodes.Add("VI");
-                        break;
-                    case "Other Health Impairment":
-                        toggleDisabilityCodes.Add("OHI");
-                        break;
-
-                    default:
-                        break;
-                }
-
+                var existing = _rdsDbContext.FactStudentCountReports
+                    .Where(x => x.ReportCode == reportCode &&
+                                x.ReportYear == reportYear &&
+                                x.ReportLevel == reportLevel &&
+                                x.CategorySetCode == categorySetCode);
+                _rdsDbContext.RemoveRange(existing);
             }
-
-
-            // Remove existing data
-
-            LogDataMigrationHistory("report", "Report Started (" + reportCode + "/" + reportYear + "/" + reportLevel + "/" + categorySetCode + ")", true);
-
-            if (factTable.FactReportTableName == "FactStudentCountReports")
+            else if (tableName == "FactStudentDisciplineReports")
             {
-                IQueryable<ReportEDFactsK12StudentCount> existingData = _rdsDbContext.FactStudentCountReports
-                .Where(
-                    x => x.ReportCode == reportCode &&
-                    x.ReportYear == reportYear &&
-                    x.ReportLevel == reportLevel &&
-                    x.CategorySetCode == categorySetCode
-                );
-
-                _rdsDbContext.RemoveRange(existingData);
+                var existing = _rdsDbContext.FactStudentDisciplineReports
+                    .Where(x => x.ReportCode == reportCode &&
+                                x.ReportYear == reportYear &&
+                                x.ReportLevel == reportLevel &&
+                                x.CategorySetCode == categorySetCode);
+                _rdsDbContext.RemoveRange(existing);
             }
-            else if (factTable.FactReportTableName == "FactStudentDisciplineReports")
+            else if (tableName == "FactStudentAssessmentReports")
             {
-                IQueryable<ReportEDFactsK12StudentDiscipline> existingData = _rdsDbContext.FactStudentDisciplineReports
-                .Where(
-                    x => x.ReportCode == reportCode &&
-                    x.ReportYear == reportYear &&
-                    x.ReportLevel == reportLevel &&
-                    x.CategorySetCode == categorySetCode
-                );
-
-                _rdsDbContext.RemoveRange(existingData);
+                var existing = _rdsDbContext.FactStudentAssessmentReports
+                    .Where(x => x.ReportCode == reportCode &&
+                                x.ReportYear == reportYear &&
+                                x.ReportLevel == reportLevel &&
+                                x.CategorySetCode == categorySetCode);
+                _rdsDbContext.RemoveRange(existing);
             }
-            else if (factTable.FactReportTableName == "FactStudentAssessmentReports")
-            {
-                IQueryable<FactK12StudentAssessmentReport> existingData = _rdsDbContext.FactStudentAssessmentReports
-                .Where(
-                    x => x.ReportCode == reportCode &&
-                    x.ReportYear == reportYear &&
-                    x.ReportLevel == reportLevel &&
-                    x.CategorySetCode == categorySetCode
-                );
-
-                _rdsDbContext.RemoveRange(existingData);
-            }
-
 
             _rdsDbContext.SaveChanges();
-            
-            // Get category set and categories
+        }
 
-            CategorySet categorySet = _appDbContext.CategorySets
+        private (string categories, string tableTypeAbbrv) GetCategoriesAndTableType(
+            string reportCode, string reportYear, string reportLevel, string categorySetCode)
+        {
+            var categorySet = _appDbContext.CategorySets
                 .Include("TableType")
                 .Include("CategorySet_Categories.Category")
-                .Where(x =>
+                .Single(x =>
                     x.CategorySetCode == categorySetCode &&
                     x.GenerateReport.ReportCode == reportCode &&
                     x.SubmissionYear == reportYear &&
-                    x.OrganizationLevel.LevelCode == reportLevel
-                ).Single();
+                    x.OrganizationLevel.LevelCode == reportLevel);
 
-            StringBuilder categoriesSb = new StringBuilder();
-            foreach (var item in categorySet.CategorySet_Categories)
-            {
-                categoriesSb.Append("|" + item.Category.CategoryCode + "|");
-            }
-            var categories = categoriesSb.ToString();
-            var tableTypeAbbrv = "";
+            var categories = string.Join("|", categorySet.CategorySet_Categories
+                .Select(c => c.Category.CategoryCode)
+                .Distinct()
+                .Prepend("") // to match original "|value|" format
+                .Append(""));
 
-            if (categorySet.TableType != null) {
-                tableTypeAbbrv = categorySet.TableType.TableTypeAbbrv;
-            }
+            var tableType = categorySet.TableType?.TableTypeAbbrv ?? "";
 
-            // Get facts, aggregate, filter, save
-
-            if (factTable.FactReportTableName == "FactStudentCountReports")
-            {
-
-                IQueryable<FactK12StudentCount> facts = _rdsDbContext.FactStudentCounts
-                .Where(x =>
-                    x.K12SchoolId != -1 &&
-                    x.DimFactType.FactTypeCode == "submission" &&
-                    x.DimCountDate.SubmissionYear == reportYear
-                );
-
-                facts = FilterFactStudentCount(facts, reportCode, excludeFilters);
-
-                var results = AggregateFactStudentCount(facts, reportCode, reportLevel, reportYear, categorySetCode, categories, tableTypeAbbrv);
-
-                if (results.Any())
-                {
-                    _rdsDbContext.AddRange(results);
-                    _rdsDbContext.SaveChanges();
-                }
-
-            }
-            else if (factTable.FactReportTableName == "FactStudentDisciplineReports")
-            {
-
-                IQueryable<FactK12StudentDiscipline> facts = _rdsDbContext.FactStudentDisciplines
-                    .Where(x =>
-                        x.DimFactType.FactTypeCode == "submission" &&
-                        x.DimCountDate.SubmissionYear == reportYear
-                    );
-
-
-                facts = FilterFactStudentDiscipline(facts, reportCode, categories, excludeFilters);
-
-                facts = ToggleFactStudentDiscipline(facts, reportCode, toggleDisabilityCodes, excludeToggles);
-
-                var results = AggregateFactStudentDiscipline(facts, reportCode, reportLevel, reportYear, categorySetCode, categories, tableTypeAbbrv);
-
-                results = RemoveMissingFactStudentDisciplines(results);
-
-                if (results.Any())
-                {
-                    _rdsDbContext.AddRange(results);
-                    _rdsDbContext.SaveChanges();
-                }
-
-            }
-            else if (factTable.FactReportTableName == "FactStudentAssessmentReports")
-            {
-
-                IQueryable<FactK12StudentAssessment> facts = _rdsDbContext.FactStudentAssessments
-                .Where(x =>
-                     x.DimFactType.FactTypeCode == "submission" &&
-                    x.DimCountDate.SubmissionYear == reportYear
-                );
-
-               
-
-                var results = AggregateFactAssessmentCount(facts, _appDbContext.ToggleAssessments.ToList(), reportCode, reportLevel, reportYear, categorySetCode, categories, tableTypeAbbrv);
-
-                if (results.Any())
-                {
-                    _rdsDbContext.AddRange(results);
-                    _rdsDbContext.SaveChanges();
-                }
-
-            }
-
-
-            LogDataMigrationHistory("report", "Report Complete (" + reportCode + "/" + reportYear + "/" + reportLevel + "/" + categorySetCode + ")", true);
-
+            return ($"|{categories}|", tableType);
         }
 
+        private void ProcessFacts(string tableName, string reportCode, string reportYear, string reportLevel,
+                          string categorySetCode, string categories, string tableTypeAbbrv,
+                          List<string> excludeFilters, List<string> excludeToggles, List<string> toggleDisabilityCodes)
+        {
+            switch (tableName)
+            {
+                case "FactStudentCountReports":
+                    var countFacts = FilterFactStudentCount(
+                        _rdsDbContext.FactStudentCounts
+                            .Where(x => x.K12SchoolId != -1 &&
+                                        x.DimFactType.FactTypeCode == "submission" &&
+                                        x.DimCountDate.SubmissionYear == reportYear),
+                        reportCode, excludeFilters);
 
+                    var countResults = AggregateFactStudentCount(countFacts, reportCode, reportLevel, reportYear, categorySetCode, categories, tableTypeAbbrv);
+                    SaveResults(countResults);
+                    break;
+
+                case "FactStudentDisciplineReports":
+                    var discFacts = _rdsDbContext.FactStudentDisciplines
+                        .Where(x => x.DimFactType.FactTypeCode == "submission" &&
+                                    x.DimCountDate.SubmissionYear == reportYear);
+
+                    discFacts = FilterFactStudentDiscipline(discFacts, reportCode, categories, excludeFilters);
+                    discFacts = ToggleFactStudentDiscipline(discFacts, reportCode, toggleDisabilityCodes, excludeToggles);
+                    var discResults = RemoveMissingFactStudentDisciplines(
+                        AggregateFactStudentDiscipline(discFacts, reportCode, reportLevel, reportYear, categorySetCode, categories, tableTypeAbbrv));
+                    SaveResults(discResults);
+                    break;
+
+                case "FactStudentAssessmentReports":
+                    var assessFacts = _rdsDbContext.FactStudentAssessments
+                        .Where(x => x.DimFactType.FactTypeCode == "submission" &&
+                                    x.DimCountDate.SubmissionYear == reportYear);
+
+                    var assessResults = AggregateFactAssessmentCount(
+                        assessFacts, _appDbContext.ToggleAssessments.ToList(), reportCode, reportLevel, reportYear, categorySetCode, categories, tableTypeAbbrv);
+                    SaveResults(assessResults);
+                    break;
+            }
+        }
+
+        private void SaveResults<T>(IEnumerable<T> results)
+        {
+            if (results != null && results.Any())
+            {
+                _rdsDbContext.AddRange(results);
+                _rdsDbContext.SaveChanges();
+            }
+        }
 
         #endregion
 
