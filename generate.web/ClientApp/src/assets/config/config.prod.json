@@ -7,8 +7,8 @@
     "pageSize": 10,
     "timeoutInSeconds": 1200,
     "callService": true,
-    "authType": "",
-    "clientId": "",
-    "authority": "",
-    "redirectUri": ""
+    "authType": "OAUTH",
+    "clientId": "2a0049af-13cf-4f0c-80e0-a1de576f3ca3",
+    "authority": "https://login.microsoftonline.com/7a41925e-f697-4f7c-bec3-0470887ac752",
+    "redirectUri": "https://generate-test.aem-tx.com/"
 }

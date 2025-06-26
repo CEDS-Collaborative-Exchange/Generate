@@ -11,8 +11,14 @@
     margin-bottom: 10px;
 }
 
-// generate-home__button
+.generate-home-color-text--primary {
+    background-color: $color-primary-dark !important;
+}
+.mdl-color-text--primary {
+    color: $color-primary-dark !important; // Or use a hex value like #1a237e
+}
 
+// generate-home__button
 .generate-home__button {
     border: 2px solid $color-primary;
     background-color: $color-primary-light;
@@ -20,7 +26,7 @@
     width: 120px;
     height: 120px;
     margin-bottom: 10px;
-    color: $color-primary;
+    color: $color-primary-dark;
 }
 
 .generate-home__button:hover {
@@ -30,7 +36,7 @@
 }
 
 .generate-home__button a {
-    color: $color-primary !important;
+    color: $color-primary-dark !important;
 }
 
 .generate-home__button-caption {

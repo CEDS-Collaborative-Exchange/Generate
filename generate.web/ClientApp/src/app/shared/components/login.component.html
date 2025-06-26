@@ -50,7 +50,7 @@
             <div class="generate-app-shared-loggedin__text" aria-hidden="true">
                 {{ userService.getUserDisplayName() }} ({{userService.getRole()}})
             </div>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only generate-app-button--colored"
                     (click)="logout($event)" id="logoutButton-lg">
                 Log out
             </button>
