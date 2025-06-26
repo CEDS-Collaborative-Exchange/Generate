@@ -3,8 +3,8 @@
     <button class="mdl-snackbar__action" type="button"><span class="generate-text--screen-reader-only">Activate Toast Notification</span></button>
 </div>
 <header class="mdl-layout__header">
-    <h1 class="generate-text--screen-reader-only">GENERATE</h1>
-    <div class="mdl-layout__header-row mdl-color--white">
+    <h1 class="generate-text--screen-reader-only" aria-hidden="true">GENERATE</h1>
+    <div class="mdl-layout__header-row mdl-color--white" aria-hidden="true">
         <div class="mdl-layout--large-screen-only">
             <span class="mdl-layout-title">
                 <img src="./assets/images/icon-generate-xs.png" alt="Generate Logo" />
@@ -13,55 +13,54 @@
         </div>
         <div class="mdl-layout-spacer"></div>
         <generate-app-login></generate-app-login>
-    </div>
+    </div>  
     <div class="mdl-layout__header-row mdl-layout--large-screen-only generate-app__header">
-
         <nav class="mdl-navigation">
 
-            <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-left generate-app-menu__item--border-right" [routerLink]="['/']"><i class="fa fa-home fa-3x generate-app-menu__item--icon" alt="Home"><span class="generate-text--screen-reader-only">Home</span></i></a>
+            <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-left generate-app-menu__item--border-right" tabindex="4" [routerLink]="['/']"><i class="fa fa-home fa-3x generate-app-menu__item--icon" alt="Home"><span class="generate-text--screen-reader-only">Home</span></i></a>
 
-            <a id="generate-app-menu__item--resources" class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" href="#" (click)="onClickMenuItem()">Resources</a>
+            <a id="generate-app-menu__item--resources" class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" href="#" tabindex="5" (click)="onClickMenuItem()" >Resources</a>
 
             <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect generate-app-menu__dropdown" for="generate-app-menu__item--resources">
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a class="generate-app-menu__link" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/" target="_blank">User Guide</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a class="generate-app-menu__link" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation" target="_blank">Documentation</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a class="generate-app-menu__link" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support" target="_blank">Support</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a class="generate-app-menu__link" href="#" [routerLink]="['/about']">About Generate</a></li>
+                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link"  rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/" target="_blank">User Guide</a></li>
+                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation" target="_blank">Documentation</a></li>
+                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support" target="_blank">Support</a></li>
+                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link"  href="#" [routerLink]="['/about']">About Generate</a></li>
             </ul>
 
-            <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" (click)="gotoSummary()" href="#">Data Population Summary</a>
+            <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" (click)="gotoSummary()" tabindex="10" href="#">Data Population Summary</a>
 
-            <a id="generate-app-menu__item--reports" class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" href="#" (click)="onClickMenuItem()">Standard Reports</a>
+            <a id="generate-app-menu__item--reports" class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" tabindex="11" href="#" (click)="onClickMenuItem()">Standard Reports</a>
 
             <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect generate-app-menu__dropdown" for="generate-app-menu__item--reports">
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" class="generate-app-menu__link" (click)="gotoReportsEdFacts()">ED<span class="generate-text--italic">Facts</span> Reports</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" class="generate-app-menu__link" (click)="gotoReportsSppApr()">SPP/APR Reports</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" class="generate-app-menu__link" (click)="gotoReportsLibrary()">Reports Library</a></li>
+                <li class="generate-app-menu__dropdown-item"><a href="#" class="mdl-menu__item generate-app-menu__link" (click)="gotoReportsEdFacts()">ED<span class="generate-text--italic">Facts</span> Reports</a></li>
+                <li class="generate-app-menu__dropdown-item"><a href="#" class="mdl-menu__item generate-app-menu__link" (click)="gotoReportsSppApr()">SPP/APR Reports</a></li>
+                <li class="generate-app-menu__dropdown-item"><a href="#" class="mdl-menu__item generate-app-menu__link" (click)="gotoReportsLibrary()">Reports Library</a></li>
             </ul>
 
-            <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-left generate-app-menu__item--border-right" target="_blank" rel="noopener noreferrer" href="https://ciidta.communities.ed.gov/#program">CIID</a>
+            <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-left generate-app-menu__item--border-right" target="_blank" rel="noopener noreferrer" tabindex="12" href="https://ciidta.communities.ed.gov/#program">CIID</a>
         </nav>
-        <div class="mdl-layout-spacer"></div>
-        <nav *ngIf="userService.isLoggedIn()" class="mdl-navigation">
-            <a id="generate-app-menu__item--settings" class="mdl-navigation__link generate-app-menu__item" href="#" (click)="onClickMenuItem()"><i class="fa fa-cog fa-3x generate-app-menu__item--icon" alt="Settings"><span class="generate-text--screen-reader-only-alt">Settings</span></i></a>
+        <div class="mdl-layout-spacer" aria-hidden="true"></div>
+        <nav *ngIf="userService.isLoggedIn()" class="mdl-navigation" aria-hidden="true">
+            <a id="generate-app-menu__item--settings" tabindex="13" class="mdl-navigation__link generate-app-menu__item" href="#" (click)="onClickMenuItem()"><i class="fa fa-cog fa-3x generate-app-menu__item--icon" alt="Settings"><span class="generate-text--screen-reader-only-alt">Settings</span></i></a>
 
             <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect generate-app-menu__dropdown" for="generate-app-menu__item--settings">
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/toggle']" class="generate-app-menu__link">Toggle</a></li>
-                <li *ngIf="userService.isAdmin()" class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/datamigration']" class="generate-app-menu__link">Data Migration</a></li>
-                <li *ngIf="userService.isAdmin()" class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/update']" class="generate-app-menu__link">Update</a></li>
-                <li class="mdl-menu__item generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/metadata']" class="generate-app-menu__link">Metadata</a></li>
+                <li class="generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/toggle']" class="mdl-menu__item generate-app-menu__link">Toggle</a></li>
+                <li *ngIf="userService.isAdmin()" class="generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/datamigration']" class="mdl-menu__item generate-app-menu__link">Data Migration</a></li>
+                <li *ngIf="userService.isAdmin()" class="generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/update']" class="mdl-menu__item generate-app-menu__link">Update</a></li>
+                <li class="generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/metadata']" class="mdl-menu__item generate-app-menu__link">Metadata</a></li>
             </ul>
         </nav>
     </div>
 </header>
-<div class="mdl-layout__drawer mdl-color--primary">
+<!--<div class="mdl-layout__drawer mdl-color--primary" aria-hidden="true">
     <span class="mdl-layout__title mdl-typography--display-1 mdl-color-text--white">GENERATE</span>
 
     <nav class="mdl-navigation">
 
-        <a class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item" [routerLink]="['/']" href="#"><i class="fa fa-home fa-3x" alt="Home"><span class="generate-text--screen-reader-only">Home</span></i></a>
+        <a class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item"  [routerLink]="['/']" href="#"><i class="fa fa-home fa-3x" alt="Home"><span class="generate-text--screen-reader-only">Home</span></i></a>
 
-        <a id="generate-app-drawer__item--resources" class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item" href="#" (click)="onClickMenuItem()">Resources</a>
+        <a id="generate-app-drawer__item--resources" class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item" href="#"  (click)="onClickMenuItem()">Resources</a>
 
         <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="generate-app-drawer__item--resources">
             <li class="mdl-menu__item mdl-color-text--primary"><a class="generate-app-menu__link mdl-color-text--primary" rel="noopener noreferrer" href="https://ciidta.grads360.org/#communities/pdc/documents/17667" target="_blank">User Guide</a></li>
@@ -73,9 +72,9 @@
             <li class="mdl-menu__item generate-app-menu__dropdown-item"><a class="generate-app-menu__link" href="#" [routerLink]="['/about']">About Generate</a></li>
         </ul>
 
-        <a class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item" (click)="gotoSummary()" href="#">Summary</a>
+        <a class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item" (click)="gotoSummary()"  href="#">Summary</a>
 
-        <a id="generate-drawer__item--reports" class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item" href="#" (click)="onClickMenuItem()">Standard Reports</a>
+        <a id="generate-drawer__item--reports" class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item" href="#"  (click)="onClickMenuItem()">Standard Reports</a>
 
         <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="generate-drawer__item--reports">
             <li class="mdl-menu__item mdl-color-text--primary"><a href="#" class="generate-app-menu__link mdl-color-text--primary" (click)="gotoReportsEdFacts()">ED<span class="generate-text--italic">Facts</span> Reports</a></li>
@@ -83,9 +82,9 @@
             <li class="mdl-menu__item mdl-color-text--primary"><a href="#" class="generate-app-menu__link mdl-color-text--primary" (click)="gotoReportsLibrary()">Reports Library</a></li>
         </ul>
 
-        <a class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item" target="_blank" rel="noopener noreferrer" href="https://ciidta.grads360.org/">CIID</a>
+        <a class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item" target="_blank" rel="noopener noreferrer"  href="https://ciidta.grads360.org/">CIID</a>
 
-        <a id="generate-drawer__item--settings" class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item" href="#" (click)="onClickMenuItem()"><i class="fa fa-cog fa-3x" alt="Settings"><span class="generate-text--screen-reader-only">Settings</span></i></a>
+        <a id="generate-drawer__item--settings" class="mdl-navigation__link mdl-color-text--white generate-app-drawer__item" href="#"  (click)="onClickMenuItem()"><i class="fa fa-cog fa-3x" alt="Settings"><span class="generate-text--screen-reader-only">Settings</span></i></a>
 
         <ul *ngIf="userService.isLoggedIn()" class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="generate-drawer__item--settings">
             <li class="mdl-menu__item mdl-color-text--primary"><a href="#" [routerLink]="['/settings/toggle']">Toggle</a></li>
@@ -93,4 +92,4 @@
             <li *ngIf="userService.isAdmin()" class="mdl-menu__item mdl-color-text--primary"><a href="#" [routerLink]="['/settings/update']">Update</a></li>
         </ul>
     </nav>
-</div>
+</div>-->
