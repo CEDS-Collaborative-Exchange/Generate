@@ -484,9 +484,15 @@ namespace generate.infrastructure.Services
             else if (report.ReportCode == "151") { reportCategorySets = reportCategorySets.Where(c => report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId) && c.TableType.TableTypeAbbrv == "GRADCOHORT4YR").ToList(); }
             else { reportCategorySets = reportCategorySets.Where(c => report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId)).ToList(); }
 
+            List<CategorySetDto> reportCategorySetDtos = ConvertCategorySetToDto(reportCategorySets);
 
+            return reportCategorySetDtos;
+        }
+
+        public List<CategorySetDto> ConvertCategorySetToDto(List<CategorySet> categorySets)
+        {
             List<CategorySetDto> reportCategorySetDtos = new List<CategorySetDto>();
-            foreach (var item in reportCategorySets)
+            foreach (var item in categorySets)
             {
                 if (!reportCategorySetDtos.Any(a => a.CategorySetName == item.CategorySetName && a.SubmissionYear == item.SubmissionYear && a.OrganizationLevelCode == item.OrganizationLevel.LevelCode))
                 {
