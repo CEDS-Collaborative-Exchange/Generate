@@ -67,19 +67,24 @@ namespace generate.infrastructure.Repositories.RDS
             }
 
             var returnObject = new List<ReportEDFactsK12StudentCount>();
+            int? oldTimeout = null;
 
             try
             {
-                int? oldTimeout = _rdsDbContext.Database.GetCommandTimeout();
+                oldTimeout = _rdsDbContext.Database.GetCommandTimeout();
                 _rdsDbContext.Database.SetCommandTimeout(11000);
                 returnObject = _rdsDbContext.Set<ReportEDFactsK12StudentCount>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeZeroCounts = {4}, @includeFriendlyCaptions = {5}, @obscureMissingCategoryCounts = {6}, @isOnlineReport={7}", reportCode, reportLevel, reportYear, categorySetCode, zeroCounts, friendlyCaptions, missingCategoryCounts, onlineReport).ToList();
-                _rdsDbContext.Database.SetCommandTimeout(oldTimeout);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;  
             }
+            finally
+            {
+                _rdsDbContext.Database.SetCommandTimeout(oldTimeout);
+            }
+
             return returnObject;
 
         }
@@ -118,10 +123,6 @@ namespace generate.infrastructure.Repositories.RDS
 
             try
             {
-                //int? oldTimeout = _rdsDbContext.Database.GetCommandTimeout();
-                //_rdsDbContext.Database.SetCommandTimeout(11000);
-                //returnObject = _rdsDbContext.Set<ReportEDFactsK12StudentCount>().FromSqlRaw("rds.Get_MembershipReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeZeroCounts = {4}, @includeFriendlyCaptions = {5}, @obscureMissingCategoryCounts = {6}, @isOnlineReport={7}, @startRecord={8}, @numberOfRecords={9}", reportCode, reportLevel, reportYear, categorySetCode, zeroCounts, friendlyCaptions, missingCategoryCounts, onlineReport, startRecord, numberOfRecords).ToList();
-                //_rdsDbContext.Database.SetCommandTimeout(oldTimeout);
 
                 string connectionString = _rdsDbContext.Database.GetDbConnection().ConnectionString;
 
