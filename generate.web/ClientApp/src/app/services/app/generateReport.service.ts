@@ -87,6 +87,21 @@ export class GenerateReportService extends BaseService {
 
     }
 
+    getReportDebugData(reportCode: string, reportLevel: string, reportYear: string, reportCategorySetCode: string, parameters: string): Observable<OrganizationLevelDto[]> {
+        let url = this._apiUrl + '/debuginfo/' + reportCode + '/' + reportLevel + '/' + reportYear + '/' + reportCategorySetCode + '/' + parameters;
+    
+        return this.http.get<OrganizationLevelDto[]>(url, { observe: 'response' })
+            .pipe(
+                map(resp => {
+                    return resp.body;
+                }),
+                tap(resp => {
+                    this.log(`getReportDebugData`);
+                }),
+                catchError(this.handleError)
+            );
+
+    }
 
     getReportList(reportType: string): Observable<GenerateReportDto[]> {
         let url = this._apiUrl + '/' + reportType;

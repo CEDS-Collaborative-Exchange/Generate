@@ -1,4 +1,4 @@
-﻿@import '../variables.scss';
+@import '../variables.scss';
 
 // generate-home__section
 
@@ -11,8 +11,14 @@
     margin-bottom: 10px;
 }
 
-// generate-home__button
+.generate-home-color-text--primary {
+    background-color: $color-primary-dark !important;
+}
+.mdl-color-text--primary {
+    color: $color-primary-dark !important; // Or use a hex value like #1a237e
+}
 
+// generate-home__button
 .generate-home__button {
     border: 2px solid $color-primary;
     background-color: $color-primary-light;
@@ -20,7 +26,7 @@
     width: 120px;
     height: 120px;
     margin-bottom: 10px;
-    color: $color-primary;
+    color: $color-primary-dark;
 }
 
 .generate-home__button:hover {
@@ -30,7 +36,7 @@
 }
 
 .generate-home__button a {
-    color: $color-primary !important;
+    color: $color-primary-dark !important;
 }
 
 .generate-home__button-caption {
@@ -53,11 +59,22 @@
 }
 
 .generate-home__button-link {
-    text-decoration:none;
+    text-decoration: none;
+    color: #ffffff;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 .generate-home__button-dropdown-item {
-    color: $color-primary;
+    color: #ffffff !important;
+}
+
+.generate-home__button-dropdown-item:hover, .generate-home__button-dropdown-item:hover .generate-home__button-link {
+    background-color: $color-accent-light !important;
+    color: $color-primary !important;
 }
 
 .generate-home__button-dropdown-item:hover {
@@ -65,8 +82,7 @@
 }
 
 .generate-home__button-dropdown {
-    background-color: $color-primary-light;
-    border: 1px solid $color-primary;
+    background-color: $color-primary;
 }
 
 
@@ -143,3 +159,63 @@
 .generate-home__message{
   background-color: $color-primary !important;
  }
+
+.generate-app-menu__dropdown {
+    background-color: $color-primary;
+}
+
+.mdl-menu__item {
+    padding: 0;
+}
+
+.generate-app-menu__link {
+    text-decoration: none;
+    color: #ffffff;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.generate-app-menu__dropdown-item {
+    color: #ffffff !important;
+}
+
+.generate-app-menu__dropdown-item:hover, .generate-app-menu__dropdown-item:hover .generate-app-menu__link {
+    background-color: $color-accent-light !important;
+    color: $color-primary !important;
+}
+
+
+.generate-app-menu__item {
+    color: #ffffff;
+    vertical-align: middle;
+    font-size: 18px;
+}
+
+.generate-app-menu__item--border-left {
+    border-left: 1px solid $color-accent-light;
+}
+
+.generate-app-menu__item--border-right {
+    border-right: 1px solid $color-accent-light;
+}
+
+.generate-app-menu__item--icon {
+    vertical-align: middle;
+}
+
+.generate-app-menu__item:hover {
+    background-color: $color-accent-light !important;
+    color: $color-primary !important;
+}
+
+.generate-app-drawer__item:hover {
+    background-color: $color-accent-light !important;
+    color: $color-primary !important;
+}
+
+.generate-app-drawer__item {
+    font-size: 16px;
+}

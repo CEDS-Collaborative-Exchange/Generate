@@ -1,4 +1,4 @@
-<div *ngIf="reportType !== 'statereport' && currentMigrationStatus == null" class="mdl-typography--text-center">
+<div *ngIf="reportType !== 'statereport' && currentMigrationStatus == null" class="mdl-typography--text-center" aria-hidden="true">
     <div class="mdl-grid">
         <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
             <div class="mdl-spinner mdl-js-spinner is-active"></div>
@@ -6,7 +6,7 @@
     </div>
 </div>
 
-<div *ngIf="reportType === 'statereport' && currentReport === undefined" class="mdl-typography--text-center">
+<div *ngIf="reportType === 'statereport' && currentReport === undefined" class="mdl-typography--text-center" aria-hidden="true">
     <div class="mdl-grid">
         <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
             <div class="mdl-spinner mdl-js-spinner is-active"></div>
@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center" aria-hidden="true">
     <div class="mdl-grid">
         <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-report-data__error">
             {{errorMessage}}
@@ -27,7 +27,7 @@
     <div class="mdl-grid generate-app-report-controls">
 
 
-        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center {{metadataStatusCss}}">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center {{metadataStatusCss}}" aria-hidden="true">
             {{metadataStatusMessage}}
         </div>
 

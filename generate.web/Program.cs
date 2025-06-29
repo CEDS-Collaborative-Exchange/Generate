@@ -127,7 +127,7 @@ app.UseSpa(spa => {
     if (builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("CI"))
     {
         spa.Options.SourcePath = "ClientApp";
-        spa.Options.StartupTimeout = new TimeSpan(0, 0, 120);
+        spa.Options.StartupTimeout = new TimeSpan(0, 2, 120);
         spa.UseAngularCliServer(npmScript: "start");
     }
 });

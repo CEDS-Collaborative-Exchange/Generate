@@ -56,18 +56,21 @@ namespace generate.infrastructure.Repositories.RDS
             }
 
             var returnObject = new List<ReportEDFactsK12StudentAssessment>();
+            int? oldTimeout = null;
 
             try
             {
-                int? oldTimeout = _context.Database.GetCommandTimeout();
+                oldTimeout = _context.Database.GetCommandTimeout();
                 _context.Database.SetCommandTimeout(11000);
-                returnObject = _context.Set<ReportEDFactsK12StudentAssessment>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeZeroCounts = {4}, @includeFriendlyCaptions = {5}, @obscureMissingCategoryCounts = {6}", reportCode, reportLevel, reportYear, categorySetCode, zeroCounts, friendlyCaptions, missingCategoryCounts).ToList();
-                _context.Database.SetCommandTimeout(oldTimeout);
-            }
+                returnObject = _context.Set<ReportEDFactsK12StudentAssessment>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeZeroCounts = {4}, @includeFriendlyCaptions = {5}, @obscureMissingCategoryCounts = {6}", reportCode, reportLevel, reportYear, categorySetCode, zeroCounts, friendlyCaptions, missingCategoryCounts).ToList();            }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;
+            }
+            finally
+            {
+                _context.Database.SetCommandTimeout(oldTimeout);
             }
             return returnObject;
 

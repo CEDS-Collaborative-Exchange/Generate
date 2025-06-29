@@ -164,8 +164,11 @@
             </div>
         </div>
         <div class="generate-reports-section-title">
-            <gui-grid #migrationGrid [source]="migrationHistoryList" [paging]="paging"
-                      [rowStyle]="rowStyle" [columns]="gridColumns"></gui-grid>
+            <generate-app-table #migrationLogGrid [itemsSource]="migrationHistoryList"
+                                [headers]="['Migration Date','Message']"
+                                [bindings]="['dataMigrationHistoryDate','dataMigrationHistoryMessage']"
+                                class="generate-app-gradesoffered__grid">
+            </generate-app-table>
         </div>
     </mat-tab>
     <mat-tab>

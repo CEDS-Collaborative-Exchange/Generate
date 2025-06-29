@@ -36,7 +36,7 @@
   * [Configuring Metadata Updates](developer-guides/installation/configuring-metadata-updates.md)
   * [Subfolder configuration](developer-guides/installation/subfolder-configuration.md)
   * [Optional Installations](developer-guides/installation/optional-installations.md)
-  * [Azure Installation Guide](developer-guides/installation/azure-installation-guide.md)
+  * [Docker (Azure/AWS) Installation Guide](developer-guides/installation/docker-installation-guide.md)
   * [Installation FAQ](developer-guides/installation/installation-faq.md)
   * [Upgrade](developer-guides/installation/upgrade/README.md)
     * [Generate Update](developer-guides/installation/upgrade/generate-update.md)

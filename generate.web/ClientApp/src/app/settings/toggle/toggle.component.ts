@@ -17,6 +17,8 @@ import { ToggleResponse } from '../../models/app/toggleResponse';
 import { UserService } from '../../services/app/user.service';
 
 import { MatDialog } from '@angular/material/dialog';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio'
+
 import { YesNoDialogComponent } from 'src/app/shared/components/yes-no-dialog.component';
 
 declare let componentHandler: any;
@@ -457,18 +459,13 @@ export class SettingsToggleComponent implements AfterViewInit, OnInit, AfterView
 
         this.modifiedResponse = null;
         let questionId = parseInt($event.target.id.slice(2));
-        console.log("question",questionId);
         let controlType = $event.target.tagName;
-        console.log("control",controlType);
-        //console.log('Mark dirty in setResponse');
         this.markDirty(true);
         let optionText = '';
         let optionVal;
-        //console.log($event.target);
         if ((controlType === 'TEXTAREA') || (controlType === 'INPUT')) {
             if ($event.target.type === 'textarea') {
                 this.modifiedResponse = this.toggleResponses.filter(resp => { return resp.toggleQuestionId === questionId; })[0];
-                console.log($event.target.value, optionVal, questionId);
                 this.setSingleResponse($event.target.value, optionVal, questionId);                
             } else if ($event.target.type === 'checkbox') {
                 if ($event.target.name) {
@@ -488,27 +485,6 @@ export class SettingsToggleComponent implements AfterViewInit, OnInit, AfterView
                     this.setSingleResponse(optionText, optionVal, questionId);
                 }
             }
-            else if ($event.target.type === 'radio') {
-
-                //console.log(optionText);
-                //if (optionText !== 'Other (specify)') {
-                questionId = parseInt($event.target.name);
-               
-                let optionId: number = parseInt($event.target.id.split('_').slice(2));
-                let optionValue = this.toggleQuestionOptions.filter(option => { return option.toggleQuestionOptionId === optionId; })[0];
-                    
-                if (optionValue !== undefined) {
-                   // console.log(optionValue.optionText);
-                    optionText = optionValue.optionText;
-
-                    this.modifiedResponse = this.toggleResponses.filter(resp => { return resp.toggleQuestionId === questionId; })[0];
-                    this.setSingleResponse(optionText, optionId, questionId);
-                    this.responseValues['ctrl_q_' + questionId] = '';
-                    this.responseValues['ctrl_q_o_' + questionId] = optionId.toString();
-                    this.checkRadioButton(questionId, optionId);
-                }
-                //}
-            }
         } else if (controlType === 'SELECT') {
             if ($event.target.multiple === true) {
                 for (let i = 0; i < $event.target.selectedOptions.length; i++) {
@@ -519,9 +495,25 @@ export class SettingsToggleComponent implements AfterViewInit, OnInit, AfterView
                 optionText = $event.target.selectedOptions[0].text;
                 optionVal = $event.target.value;
                 this.modifiedResponse = this.toggleResponses.filter(resp => { return resp.toggleQuestionId === questionId; })[0];
-                //console.log(this.modifiedResponse);
                 this.setSingleResponse(optionText, optionVal, questionId);
             }
+        }
+    }
+
+    setRadioResponse(questionId, $event) {
+
+        this.modifiedResponse = null;
+        let optionId: number = parseInt($event.source.value);
+        let optionValue = this.toggleQuestionOptions.filter(option => { return option.toggleQuestionOptionId === optionId; })[0];
+        let optionText = '';
+
+        if (optionValue !== undefined) {
+            optionText = optionValue.optionText;
+            this.modifiedResponse = this.toggleResponses.filter(resp => { return resp.toggleQuestionId === questionId; })[0];
+            this.setSingleResponse(optionText, optionId, questionId);
+            this.responseValues['ctrl_q_' + questionId] = '';
+            this.responseValues['ctrl_q_o_' + questionId] = optionId.toString();
+            this.checkRadioButton(questionId, optionId);
         }
     }
 
