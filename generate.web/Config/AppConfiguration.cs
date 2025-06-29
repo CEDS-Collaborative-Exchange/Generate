@@ -84,7 +84,7 @@ namespace generate.web.Config
 
             services.AddScoped<IDimensionRepository, DimensionRepository>();
 
-
+            services.AddScoped<IReportDebugRepository, ReportDebugRepository>();
             // Services
             //////////////////////
 

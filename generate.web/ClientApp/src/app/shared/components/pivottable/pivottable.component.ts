@@ -6,6 +6,10 @@ import { GenerateReportParametersDto } from '../../../models/app/generateReportP
 import { CategoryOptionDto } from '../../../models/app/categoryOptionDto';
 import 'node_modules/pivottable/dist/pivot.js';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+//import ReportDebugInformationComponent
+
+import { ReportDebugInformationComponent } from '../../reportcontrols/reportdebuginformation.component'; 
 
 //import * as XLSX from '../../../../lib/xlsx-js-style/dist/xlsx.bundle.js'
 import * as XLSX from '../../../../lib/xlsx-js-style/xlsx.js'
@@ -40,13 +44,24 @@ export class PivottableComponent {
     itemsPerPage: number = 10;
     totalItems: number;
     self: any;
-    constructor(private renderer: Renderer2) {
+    constructor(private renderer: Renderer2, private dialog: MatDialog) {
         console.log('constructor');
         this.populateReport = this.populateReport.bind(this);
         this.markSearchFields = this.markSearchFields.bind(this);
         this.restoreSearchFields = this.restoreSearchFields.bind(this);
     }
 
+    openDialog(data: any) {
+        this.dialog.open(ReportDebugInformationComponent, {
+            width: '1000px',
+            minHeight: '700px',
+            maxHeight: '1200px',
+            data: data
+        });
+    }
+    closeDialog() {
+        this.dialog.closeAll();
+    }
     ngOnInit() {
 
         filterBy = {};
@@ -282,6 +297,8 @@ export class PivottableComponent {
     }
 
     populateReport() {
+        const self = this;
+
         if (this.isNullOrUndefined(reportData) || Object.keys(reportData).length === 0)
             return;
         var derivers = $.pivotUtilities.derivers;
@@ -417,7 +434,6 @@ export class PivottableComponent {
         // Update totalItems based on the total count of data
         this.paginator.length = new Set(this.reportDataDto.data.filter(d => {
             if (Object.keys(filterBy2).length === 0) { return true; }
-
             var matchFound = true;
             for (var i = 0; i < Object.keys(filterBy2).length; i++) {
                 if (filterBy2[Object.keys(filterBy2)[i]] != "") {
@@ -489,6 +505,61 @@ export class PivottableComponent {
 
         aggregateColumn = viewDef.columnFields.items[len - 1];
 
+        function displayDebugInfo(e, value, filters, pivotData) {
+            //let categorySetCode = reportData.categorySets[0].categorySetCode;
+            let reportYear = reportData.reportYear;
+            let reportLevel = reportData.data[0].reportLevel;
+            let categorySetCode = reportData.data[0].categorySetCode;
+            let reportCode = reportData.data[0].reportCode;
+          //  let headers = reportData.categorySets[0].categories;
+
+            var bindings = ["k12StudentStudentIdentifierState"];
+            var headers = ["Student Id"];
+
+            var selectedFilter = {}
+            for (const key in filters) {
+                if (filters.hasOwnProperty(key)) {
+                    console.log(key, filters[key]);
+                    const column = viewDef.fields.find(f => f.header === key).binding;
+                    if (column) {
+                        let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionName === filters[key]);
+                        if (categoryOption) {
+                            selectedFilter[column] = categoryOption.categoryOptionCode;
+
+                            // for displaying
+                            bindings.push(column);
+                            headers.push(categoryOption.categoryName);
+                        }                        
+                    }
+
+                    let binding = viewDef.fields.find(item => item === key);
+                    for (const k in binding) {
+                        if (binding.hasOwnProperty(k)) {
+
+                        }
+                    }
+                }
+            }
+
+            const selectedFilterJson = JSON.stringify(selectedFilter);
+
+            for (const key in selectedFilter) {
+
+            }
+            let data = {
+                reportData: reportData,
+                recordCount: value,
+                filters: selectedFilterJson,
+                reportYear: reportData.reportYear,
+                reportLevel: reportData.data[0].reportLevel,
+                categorySetCode: reportData.data[0].categorySetCode,
+                reportCode: reportData.data[0].reportCode,
+                bindings: bindings,
+                headers: headers
+            };
+            self.openDialog(data);
+        }
+
         $("#container").pivotUI(uiData, {
             showUI: false,
             rows: viewDef.rowFields.items, cols: viewDef.columnFields.items,
@@ -503,6 +574,7 @@ export class PivottableComponent {
                     rendererName: "Table",
                     clickCallback: function (e, value, filters, pivotData) {
                         var names = [];
+                        displayDebugInfo(e, value, filters, pivotData);
                         pivotData.forEachMatchingRecord(filters,
                             function (record) { names.push(record.Name); });
                     }

@@ -58,6 +58,7 @@ import { C035Component } from '../shared/reportcontrols/c035.component';
 import { ReportsLibraryReportComponent } from './library/reports-library-report.component';
 import { YeartoYearProgressComponent } from '../shared/reportcontrols/yeartoyearprogress.component';
 import { YeartoYearAttendanceComponent } from '../shared/reportcontrols/yeartoyearattendance.component';
+import { ReportDebugInformationComponent } from '../shared/reportcontrols/reportdebuginformation.component';
 
 @NgModule({
     imports: [
@@ -111,7 +112,8 @@ import { YeartoYearAttendanceComponent } from '../shared/reportcontrols/yeartoye
         C035Component,
         ReportsLibraryReportComponent,
         YeartoYearProgressComponent,
-        YeartoYearAttendanceComponent
+        YeartoYearAttendanceComponent,
+        ReportDebugInformationComponent
     ],
     exports: [
         ReportComponent,
@@ -152,7 +154,8 @@ import { YeartoYearAttendanceComponent } from '../shared/reportcontrols/yeartoye
         YearToYearRemovalCountComponent,
         C035Component,
         YeartoYearProgressComponent,
-        YeartoYearAttendanceComponent
+        YeartoYearAttendanceComponent,
+        ReportDebugInformationComponent
 
     ]
 })
