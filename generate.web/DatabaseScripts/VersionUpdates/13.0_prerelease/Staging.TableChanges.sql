@@ -38,6 +38,12 @@
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationTitleIII', @level2type=N'COLUMN',@level2name=N'SchoolYear'
         END
 
+    --Drop the indexes that exist
+        IF EXISTS(SELECT 1 FROM sys.indexes WHERE name = 'IX_Staging_ProgramParticipationTitleIII_DataCollectionName_WithIdentifiers')
+        BEGIN
+            DROP INDEX IX_Staging_ProgramParticipationTitleIII_DataCollectionName_WithIdentifiers ON Staging.ProgramParticipationTitleIII;
+        END
+
     --Drop the columns at the bottom of the table temporarily
         IF COL_LENGTH('Staging.ProgramParticipationTitleIII', 'SchoolYear') IS NOT NULL
         BEGIN
@@ -64,6 +70,18 @@
         IF COL_LENGTH('Staging.ProgramParticipationTitleIII', 'DataCollectionName') IS NULL
         BEGIN
             ALTER TABLE Staging.ProgramParticipationTitleIII ADD DataCollectionName NVARCHAR(100);
+        END
+
+        --Add the index back
+        IF NOT EXISTS (
+            SELECT 1 
+            FROM sys.indexes 
+            WHERE name = 'IX_Staging_ProgramParticipationTitleIII_DataCollectionName'
+            AND object_id = OBJECT_ID('Staging.ProgramParticipationTitleIII')
+        )
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_Staging_ProgramParticipationTitleIII_DataCollectionName
+            ON Staging.ProgramParticipationTitleIII (DataCollectionName);
         END
 
         --Add the extended proprties for the new column and the re-added columns
