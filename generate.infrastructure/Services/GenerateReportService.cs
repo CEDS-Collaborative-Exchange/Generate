@@ -11,12 +11,16 @@ using Microsoft.Extensions.PlatformAbstractions;
 using generate.core.ViewModels.App;
 using generate.core.Dtos.App;
 using generate.core.Interfaces.Repositories.App;
+using generate.core.Models.RDS;
+using generate.core.Interfaces.Repositories.RDS;
+using generate.infrastructure.Repositories.RDS;
 
 namespace generate.infrastructure.Services
 {
     public class GenerateReportService : IGenerateReportService
     {
         private readonly IAppRepository _appRepository;
+        private readonly IReportDebugRepository _reportDebugRepository;
 
         private IDataPopulationSummaryService _dataPopulationSummaryService;
         private IEdFactsReportService _edFactsReportService;
@@ -25,6 +29,7 @@ namespace generate.infrastructure.Services
 
         public GenerateReportService(
             IAppRepository appRepository,
+            IReportDebugRepository reportDebugRepository,
             IDataPopulationSummaryService dataPopulationSummaryService,
             IEdFactsReportService edFactsReportService,
             ISppAprReportService sppAprReportService,
@@ -32,6 +37,7 @@ namespace generate.infrastructure.Services
             )
         {
             _appRepository = appRepository;
+            _reportDebugRepository = reportDebugRepository;
             _dataPopulationSummaryService = dataPopulationSummaryService;
             _edFactsReportService = edFactsReportService;
             _sppAprReportService = sppAprReportService;
@@ -357,6 +363,11 @@ namespace generate.infrastructure.Services
             }
 
             return reportCategorySetDtos;
+        }
+
+        public List<ReportDebug> GetReportDebugData(string reportCode, string reportLevel, string reportYear, string categorySetCode, string parameters, int sort = 1, int skip = 0, int take = 50, int pageSize = 10, int page = 1)
+        {
+            return _reportDebugRepository.Get_ReportDebugData(reportCode, reportLevel, reportYear, categorySetCode, parameters, sort, skip, take, pageSize, page).ToList();
         }
     }
 }
