@@ -7,7 +7,9 @@ Views\\Drop,RDS.vWDimTitleIIIStatuses.View.sql,0
 Views\\Create,RDS.vWDimTitleIIIStatuses.View.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
-VersionUpdates\\13.0_prerelease,UpdateDbVersion.sql,0
-
 VersionUpdates\\13.0_prerelease\\StoredProcedures\\Drop,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 VersionUpdates\\13.0_prerelease\\StoredProcedures\\Create,RDS.Get_ReportDebugData.StoredProcedure.sql,0
+
+VersionUpdates\\13.0_prerelease,UpdateDbVersion.sql,0
+
+
