@@ -83,10 +83,10 @@ namespace generate.infrastructure.Services
             reportDto.ReportTitle = report.ReportName;                
             
             bool includeZeroCounts = false;
-            if (reportLevel == "sea")
-            {
-                includeZeroCounts = true;
-            }
+            //if (reportLevel == "sea")
+            //{
+            //    includeZeroCounts = true;
+            //}
 
             // Data
 
@@ -112,25 +112,25 @@ namespace generate.infrastructure.Services
                 {
                     isOnlineReport = true;
                 }
-                var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts, false, false, isOnlineReport);
+                var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, false, false, isOnlineReport);
                 dataRows = query.ToList();
                 reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
              }
             else if (report.FactTable.FactTableName == "FactK12StudentDisciplines")
             {
-                var query = _factStudentDisciplineRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
+                var query = _factStudentDisciplineRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
                 dataRows = query.ToList();
                 reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
             }
             else if (report.FactTable.FactTableName == "FactK12StudentAssessments")
             {
-                var query = _factStudentAssessmentRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
+                var query = _factStudentAssessmentRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
                 dataRows = query.ToList();
                 reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
             }
             else if (report.FactTable.FactTableName == "FactK12StaffCounts")
             {
-                var query = _factStaffCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
+                var query = _factStaffCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
                 dataRows = query.ToList();
                 reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
             }
@@ -138,19 +138,19 @@ namespace generate.infrastructure.Services
             {
                 if(reportCode == "039")
                 {
-                    var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
+                    var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, categorySetCode);
                     dataRows = query.ToList();
                     reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
 
                 }
                 else if (reportCode == "130")
                 {
-                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
+                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, categorySetCode);
                     dataRows = query.ToList();
                     reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
                 }
                 else {
-                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts);
+                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
                     dataRows = query.ToList();
                     reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
                 }

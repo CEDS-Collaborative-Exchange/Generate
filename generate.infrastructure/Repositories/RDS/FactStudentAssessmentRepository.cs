@@ -34,18 +34,13 @@ namespace generate.infrastructure.Repositories.RDS
         }
 
 
-        public IEnumerable<ReportEDFactsK12StudentAssessment> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false)
+        public IEnumerable<ReportEDFactsK12StudentAssessment> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false)
         {
             // Convert bool parameters to bit values
 
-            int zeroCounts = 0;
             int friendlyCaptions = 0;
             int missingCategoryCounts = 0;
 
-            if (includeZeroCounts)
-            {
-                zeroCounts = 1;
-            }
             if (includeFriendlyCaptions)
             {
                 friendlyCaptions = 1;
@@ -61,7 +56,7 @@ namespace generate.infrastructure.Repositories.RDS
             {
                 int? oldTimeout = _context.Database.GetCommandTimeout();
                 _context.Database.SetCommandTimeout(11000);
-                returnObject = _context.Set<ReportEDFactsK12StudentAssessment>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeZeroCounts = {4}, @includeFriendlyCaptions = {5}, @obscureMissingCategoryCounts = {6}", reportCode, reportLevel, reportYear, categorySetCode, zeroCounts, friendlyCaptions, missingCategoryCounts).ToList();
+                returnObject = _context.Set<ReportEDFactsK12StudentAssessment>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeFriendlyCaptions = {4}, @obscureMissingCategoryCounts = {5}", reportCode, reportLevel, reportYear, categorySetCode, friendlyCaptions, missingCategoryCounts).ToList();
                 _context.Database.SetCommandTimeout(oldTimeout);
             }
             catch (Exception ex)
