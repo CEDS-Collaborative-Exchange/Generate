@@ -6897,7 +6897,8 @@ BEGIN
 				begin
 					set @sql = @sql + '
 						from rds.DimLeas lea
-						left outer join #categorySet cs on cs.DimLeaId = lea.DimLeaId'
+						left outer join #categorySet cs on cs.DimLeaId = lea.DimLeaId
+						and lea.LEAOperationalStatus not in (''Closed'', ''FutureAgency'', ''Inactive'', ''MISSING'')'
 				end
 				else
 				begin
@@ -7519,7 +7520,6 @@ BEGIN
 			LEFT JOIN @reportdata rd
 				ON rd.OrganizationIdentifierSea = CAT_Organizations.OrganizationIdentifierSea
 				' + @sqlZeroCountConditions + '
-				and rd.' + @FactField + ' > 0
 		' + 'WHERE rd.OrganizationIdentifierSea IS NULL
 		'
 		set @sqlZeroCountConditions = REPLACE(@sqlZeroCountConditions, 'and rd.', 'and ')

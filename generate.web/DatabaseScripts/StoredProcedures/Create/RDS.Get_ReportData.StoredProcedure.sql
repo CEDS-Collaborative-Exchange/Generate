@@ -38,6 +38,7 @@ BEGIN
 	declare @factTypeCode as varchar(50)
 	declare @year as int
 	declare @toggleLunchCounts varchar(30)
+	declare @skipZeroCounts as bit
 
 	select @factTypeCode = (select dft.FactTypeCode
 							from app.GenerateReport_FactType grft
@@ -524,12 +525,14 @@ BEGIN
 		'
 	end			-- END @isPerformanceSql = 1
 
+	set @skipZeroCounts = 0
+
 	if @reportCode in ('002', '089')
-	begin
-		set @includeZeroCounts = 0
-		if @reportLevel = 'SEA' set @includeZeroCounts = 1
-		if @reportLevel <> 'SEA' and @categorySetCode = 'TOT' set @includeZeroCounts = 1
-	end
+		begin
+			set @includeZeroCounts = 0
+			if @reportLevel = 'SEA' set @includeZeroCounts = 1
+			if @reportLevel <> 'SEA' and (@categorySetCode = 'TOT' OR ISNULL(@categorySetCode, '') = '') set @includeZeroCounts = 1
+		end
 
 	if @reportLevel = 'sea' AND @reportCode in ('005','006','007','088','143','144')
 	begin
@@ -573,12 +576,30 @@ BEGIN
 					set @includeOrganizationSQL = 0
 				end
 
-				SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @catSetCode, 'zero',@includeOrganizationSQL, 1,@tableTypeAbbrvs, @totalIndicators, @factTypeCode)
-				
-				IF(@zeroCountSql IS NOT NULL)
+				if @reportCode in ('002', '089') and @reportLevel <> 'SEA'
 				begin
-					set @sql = @sql + '
-						' + @zeroCountSql
+					if @catSetCode <> 'TOT' 
+					begin
+						set @skipZeroCounts = 1
+					end
+					else
+					begin
+						set @skipZeroCounts = 0
+						set @includeOrganizationSQL = 1
+					end
+				end
+
+				if @skipZeroCounts = 0
+				begin
+					print @catSetCode
+					SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @catSetCode, 'zero',@includeOrganizationSQL, 1,@tableTypeAbbrvs, @totalIndicators, @factTypeCode)
+				
+					IF(@zeroCountSql IS NOT NULL)
+					begin
+						set @sql = @sql + '
+							' + @zeroCountSql
+					end
+
 				end
 				FETCH NEXT FROM categoryset_cursor INTO @catSetCode,@tableTypeAbbrvs, @totalIndicators
 			END
