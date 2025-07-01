@@ -14,6 +14,11 @@
                             [bindings]="bindings">
         </generate-app-table>
         <hr>
+        <div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                Export to Excel
+            </button>
+        </div>
         <div style="display: flex; justify-content: flex-end;">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="closeDialog()">
                 Close
