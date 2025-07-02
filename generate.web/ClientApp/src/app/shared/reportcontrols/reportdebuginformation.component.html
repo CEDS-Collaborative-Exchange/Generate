@@ -9,14 +9,14 @@
         </div>
     </div>
     <div style="margin:20px 30px">
-        <generate-app-table [itemsSource]="repotDebugData"
+        <generate-app-table #reportGrid [itemsSource]="repotDebugData"
                             [headers]="headers"
                             [bindings]="bindings">
         </generate-app-table>
         <hr>
         <div>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
-                Export to Excel
+                Export
             </button>
         </div>
         <div style="display: flex; justify-content: flex-end;">
