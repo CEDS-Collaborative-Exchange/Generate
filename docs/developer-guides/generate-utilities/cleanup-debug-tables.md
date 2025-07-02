@@ -14,10 +14,10 @@ There are four options for managing the debug tables. Execute the stored procedu
 exec [Utilities].[Cleanup_Debug_Tables]
 ```
 
-2. Pass a reportcode, ex, 'c002', for @reportCode and delete all the tables in the debug schema for that report (all school years)
+2. Pass a reportcode, ex, '002', for @reportCode and delete all the tables in the debug schema for that report (all school years)
 
 ```sql
-exec [Utilities].[Cleanup_Debug_Tables] 'c002'
+exec [Utilities].[Cleanup_Debug_Tables] '002'
 ```
 
 3. Pass a 4 digit School Year for @reportYear and delete all the tables in the debug schema for that School Year (all reports)
@@ -29,7 +29,7 @@ exec [Utilities].[Cleanup_Debug_Tables] null, '2022'
 4. Pass in values for both parameters and delete all the tables for only the specified report for only the specified school year
 
 ```sql
-exec [Utilities].[Cleanup_Debug_Tables] 'c002', '2022'
+exec [Utilities].[Cleanup_Debug_Tables] '002', '2022'
 ```
 
 ### Demonstration

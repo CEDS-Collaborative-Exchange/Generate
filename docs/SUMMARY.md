@@ -69,6 +69,8 @@
   * [Staging Table Snapshot](developer-guides/generate-utilities/staging-table-snapshot.md)
   * [Fact Type Table Validation Process](developer-guides/generate-utilities/fact-type-table-validation-process.md)
   * [Debug Views for Staging and the Fact tables](developer-guides/generate-utilities/debug-views-for-staging-and-the-fact-tables.md)
+  * [Staging ETL Mapping Assistance](developer-guides/generate-utilities/staging-etl-mapping-assistance.md)
+  * [Troubleshooting Report Migration Results](developer-guides/generate-utilities/troubleshooting-report-migration-results.md)
 * [Generate Architecture](developer-guides/generate-architecture.md)
 * [GitHub Guide](developer-guides/github-guide.md)
 * [Discord Guide](developer-guides/discord-guide.md)

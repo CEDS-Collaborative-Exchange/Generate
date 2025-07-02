@@ -7,7 +7,7 @@ description: >-
 # Assessment Fact Type
 
 {% hint style="info" %}
-Please note, to take most of these steps you will need an up-to-date version of Generate installed. Please visit the [Installation](../../installation/) or [Upgrade](../../installation/upgrade/) pages for more information.
+Please note, to take most of these steps you will need an up-to-date version of Generate installed. Please visit the [Installation](../../installation/) or [Upgrade](../../installation/upgrade/) pages for more information. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://app.gitbook.com/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/~/changes/286/developer-guides/generate-utilities/staging-etl-mapping-assistance).&#x20;
 {% endhint %}
 
 ## Overview

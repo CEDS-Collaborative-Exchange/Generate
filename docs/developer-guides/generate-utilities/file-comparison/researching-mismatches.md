@@ -8,7 +8,7 @@ Depending on the file specification, there are multiple ways to research discrep
 
 ### Directory Mismatches
 
-When a column in the C029 comparison table does not match, follow these suggested steps:
+When a column in the 029 comparison table does not match, follow these suggested steps:
 
 #### Record is missing from the Generate file:
 
@@ -141,11 +141,11 @@ You can query the appropriate table to see the list of students that make up the
 For example, let us say the SEA C002 Comparison results table shows a mismatch on a record where the `AgeID` = 10 and the `EdEnvironmentID` = RC39. The `LegacyAmount` might show 35, but the `GenerateAmount` might show 19.
 {% endhint %}
 
-The debug tables are named according to the Report Level, Category Set, and the subtotal columns.  Look for the table name that starts with “`debug.c002_SEA_`” and includes the description for “Age” and “Education Environment” in the table name. Then query that table with the appropriate filters to see the list of students that made up the count produced by Generate.
+The debug tables are named according to the Report Level, Category Set, and the subtotal columns.  Look for the table name that starts with “`debug.002_SEA_`” and includes the description for “Age” and “Education Environment” in the table name. Then query that table with the appropriate filters to see the list of students that made up the count produced by Generate.
 
 {% code overflow="wrap" %}
 ```sql
-select * from [debug].[c002_Sea_ST7_2022_AGESA_EDENVIRIDEASA] where Age = '10' and IDEAEDUCATIONALENVIRONMENT = 'RC39'
+select * from [debug].[002_Sea_ST7_2022_AGESA_EDENVIRIDEASA] where Age = '10' and IDEAEDUCATIONALENVIRONMENT = 'RC39'
 ```
 {% endcode %}
 
