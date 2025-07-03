@@ -9,20 +9,22 @@
         </div>
     </div>
     <div style="margin:20px 30px">
-        <generate-app-table #reportGrid [itemsSource]="repotDebugData"
+        <generate-app-table [itemsSource]="repotDebugData"
                             [headers]="headers"
                             [bindings]="bindings">
         </generate-app-table>
         <hr>
-        <div>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
-                Export
-            </button>
-        </div>
-        <div style="display: flex; justify-content: flex-end;">
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="closeDialog()">
-                Close
-            </button>
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--8-col">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--accent" (click)="export()">
+                    Export
+                </button>
+            </div>
+            <div class="mdl-cell mdl-cell--2-col">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" (click)="closeDialog()">
+                    Close
+                </button>
+            </div>
         </div>
     </div>
 </div>

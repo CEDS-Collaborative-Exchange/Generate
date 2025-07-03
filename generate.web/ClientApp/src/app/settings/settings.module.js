@@ -65,6 +65,7 @@ var reportmigration_component_1 = require("./datastore/reportmigration.component
 var update_component_1 = require("./update/update.component");
 var metadata_component_1 = require("./metadata/metadata.component");
 var dialog_1 = require("@angular/material/dialog");
+var radio_1 = require("@angular/material/radio");
 var tabs_1 = require("@angular/material/tabs");
 var icon_1 = require("@angular/material/icon");
 var forms_2 = require("@angular/forms");
@@ -79,6 +80,7 @@ var SettingsModule = function () {
                 ngx_grid_1.GuiGridModule,
                 tabs_1.MatTabsModule,
                 icon_1.MatIconModule,
+                radio_1.MatRadioModule,
                 forms_2.FormsModule
             ],
             declarations: [

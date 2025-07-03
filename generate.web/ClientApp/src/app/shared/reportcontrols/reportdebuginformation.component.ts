@@ -93,18 +93,9 @@ export class ReportDebugInformationComponent {
 
         let reportCaptionCol = 2;
         let reportCols = [];
-        //if (this.reportParameters.reportLevel === 'sch') {
-        //    reportCols.push({ wpx: 100 });
-        //    reportCols.push({ wpx: 150 });
-        //    reportCols.push({ wpx: 250 });
-        //    reportCols.push({ wpx: 200 });
-        //    reportCols.push({ wpx: 200 });
-        //    reportCols.push({ wpx: 200 });
-        //    reportCols.push({ wpx: 250 });
-        //}
 
         let reportRows = [
-            { hpx: 25 }, // row 1 sets to the height of 12 in points
+            { hpx: 30 }, // row 1 sets to the height of 12 in points
             { hpx: 23 }, // row 2 sets to the height of 16 in pixels
             { hpx: 20 }, // row 2 sets to the height of 16 in pixels
             { hpx: 20 }, // row 2 sets to the height of 16 in pixels
