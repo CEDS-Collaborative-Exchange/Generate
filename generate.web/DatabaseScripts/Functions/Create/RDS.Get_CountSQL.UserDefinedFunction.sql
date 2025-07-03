@@ -7517,7 +7517,7 @@ BEGIN
 		set @sqlZeroCountConditions = REPLACE(@sqlZeroCountConditions, 'and ', 'and rd.')
 		set @sql = @sql + '
 			from #CAT_Organizations CAT_Organizations' + @sqlCategoryOptionJoins + '
-			LEFT JOIN @reportdata rd
+			LEFT JOIN (select * from @reportdata where CategorySetCode = ''' + @categorySetCode  + ''') rd
 				ON rd.OrganizationIdentifierSea = CAT_Organizations.OrganizationIdentifierSea
 				' + @sqlZeroCountConditions + '
 		' + 'WHERE rd.OrganizationIdentifierSea IS NULL
