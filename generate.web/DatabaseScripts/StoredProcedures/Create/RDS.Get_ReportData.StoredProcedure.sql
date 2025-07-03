@@ -530,11 +530,11 @@ BEGIN
 	if @reportCode in ('002', '089')
 		begin
 			set @includeZeroCounts = 0
-			if @reportLevel = 'SEA' set @includeZeroCounts = 1
-			if @reportLevel <> 'SEA' and (@categorySetCode = 'TOT' OR ISNULL(@categorySetCode, '') = '') set @includeZeroCounts = 1
+			if UPPER(@reportLevel) = 'SEA' set @includeZeroCounts = 1
+			if UPPER(@reportLevel) <> 'SEA' and (@categorySetCode = 'TOT' OR ISNULL(@categorySetCode, '') = '') set @includeZeroCounts = 1
 		end
 
-	if @reportLevel = 'sea' AND @reportCode in ('005','006','007','088','143','144')
+	if UPPER(@reportLevel) = 'SEA' AND @reportCode in ('005','006','007','088','143','144')
 	begin
 		set @includeZeroCounts = 1
 	end
@@ -576,29 +576,36 @@ BEGIN
 					set @includeOrganizationSQL = 0
 				end
 
-				if @reportCode in ('002', '089') and @reportLevel <> 'SEA'
+				if @reportCode in ('002', '089') and UPPER(@reportLevel) <> 'SEA'
 				begin
-					if @catSetCode <> 'TOT' 
-					begin
-						set @skipZeroCounts = 1
-					end
-					else
-					begin
-						set @skipZeroCounts = 0
-						set @includeOrganizationSQL = 1
-					end
+						if @catSetCode <> 'TOT' 
+						begin
+							set @skipZeroCounts = 1
+						end
+						else
+						begin
+							set @skipZeroCounts = 0
+							set @includeOrganizationSQL = 1
+						end
 				end
+
+				if UPPER(@reportLevel) = 'SEA'
+				begin
+					set @skipZeroCounts = 0
+				end
+
 
 				if @skipZeroCounts = 0
 				begin
-					print @catSetCode
-					SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @catSetCode, 'zero',@includeOrganizationSQL, 1,@tableTypeAbbrvs, @totalIndicators, @factTypeCode)
-				
-					IF(@zeroCountSql IS NOT NULL)
-					begin
-						set @sql = @sql + '
-							' + @zeroCountSql
-					end
+						
+						--set @includeOrganizationSQL = 1
+						SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @catSetCode, 'zero',@includeOrganizationSQL, 1,@tableTypeAbbrvs, @totalIndicators, @factTypeCode)
+
+						IF(@zeroCountSql IS NOT NULL)
+						begin
+							set @sql = @sql + '
+								' + @zeroCountSql
+						end
 
 				end
 				FETCH NEXT FROM categoryset_cursor INTO @catSetCode,@tableTypeAbbrvs, @totalIndicators
