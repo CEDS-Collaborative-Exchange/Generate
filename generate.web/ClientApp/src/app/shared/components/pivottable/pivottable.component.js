@@ -473,9 +473,11 @@ var PivottableComponent = function () {
                 var selectedFilter = {};
                 var _loop_1 = function (key) {
                     if (filters.hasOwnProperty(key)) {
-                        console.log(key, filters[key]);
                         var column = viewDef.fields.find(function (f) { return f.header === key; }).binding;
                         if (column) {
+                            if (column === 'organizationIdentifierSea') {
+                                selectedFilter[column] = filters[key];
+                            }
                             var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (f) { return f.categoryOptionName === filters[key]; });
                             if (categoryOption) {
                                 selectedFilter[column] = categoryOption.categoryOptionCode;
@@ -495,8 +497,6 @@ var PivottableComponent = function () {
                     _loop_1(key);
                 }
                 var selectedFilterJson = JSON.stringify(selectedFilter);
-                for (var key in selectedFilter) {
-                }
                 var data = {
                     reportData: exports.reportData,
                     recordCount: value,
@@ -658,23 +658,23 @@ var PivottableComponent = function () {
                     var colWidth = 150;
                     var category = $('.generate-app-pivotgrid__categoryset-definition span').html();
                     //Column C
-                    if (reportCode.toLowerCase() == "c002") {
+                    if (reportCode.toLowerCase() == "002") {
                         if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c"
                             || category.toLowerCase() == "category set d") {
                             colWidth = 220;
                         }
                     }
-                    else if (reportCode.toLowerCase() == "c005") {
+                    else if (reportCode.toLowerCase() == "005") {
                         if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d") {
                             colWidth = 500;
                         }
                     }
-                    else if (reportCode.toLowerCase() == "c009") {
+                    else if (reportCode.toLowerCase() == "009") {
                         if (category.toLowerCase() == "category set a") {
                             colWidth = 220;
                         }
                     }
-                    else if (reportCode.toLowerCase() == "c089") {
+                    else if (reportCode.toLowerCase() == "089") {
                         if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b") {
                             colWidth = 220;
                         }
@@ -684,7 +684,7 @@ var PivottableComponent = function () {
                     }
                     wscols.push({ wpx: colWidth });
                     if (firstEmptyCellSpan > 2) {
-                        if (reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178") {
+                        if (reportCode.toLowerCase() == "175" || reportCode.toLowerCase() == "178") {
                             //Starting from Column A
                             wscols = [
                                 { wpx: 120 },
@@ -709,7 +709,7 @@ var PivottableComponent = function () {
                                 wscols.push({ wpx: 180 }); //Column D
                             }
                         }
-                        else if (reportCode.toLowerCase() == "c179") {
+                        else if (reportCode.toLowerCase() == "179") {
                             //Starting from Column A
                             wscols = [
                                 { wpx: 120 },
@@ -742,12 +742,12 @@ var PivottableComponent = function () {
                                 wscols.push({ wpx: 180 }); //Column D
                             }
                         }
-                        else if (reportCode.toLowerCase() == "c185") {
+                        else if (reportCode.toLowerCase() == "185") {
                             wscols.push({ wpx: 200 }); //Column D
                             if (category.toLowerCase() == "category set j")
                                 wscols.push({ wpx: 180 }); // Column E
                         }
-                        else if (reportCode.toLowerCase() == "c188") {
+                        else if (reportCode.toLowerCase() == "188") {
                             if (category.toLowerCase() == "subtotal 1")
                                 wscols.push({ wpx: 325 }); //Column D
                             else
@@ -755,7 +755,7 @@ var PivottableComponent = function () {
                             if (category.toLowerCase() == "category set j")
                                 wscols.push({ wpx: 180 }); // Column E
                         }
-                        else if (reportCode.toLowerCase() == "c189") {
+                        else if (reportCode.toLowerCase() == "189") {
                             //  wscols.push({ wpx: 200 }); //Column D
                             if (category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d" || category.toLowerCase() == "category set f")
                                 wscols.push({ wpx: 150 }); // Column D
@@ -769,22 +769,22 @@ var PivottableComponent = function () {
                     ws['!cols'] = wscols;
                     //Set data columns
                     var dataColumnNumber = $('#containerExport .pvtTable thead tr:last').prev().find('.pvtColLabel').length;
-                    if (reportCode.toLowerCase() == "c005" && category.toLowerCase() == "subtotal 1") {
+                    if (reportCode.toLowerCase() == "005" && category.toLowerCase() == "subtotal 1") {
                         for (var i = 0; i <= dataColumnNumber; i++) {
                             ws['!cols'].push({ wpx: 200 });
                         }
                     }
-                    else if ((reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178" || reportCode.toLowerCase() == "c179") && category.toLowerCase() == "category set j") {
+                    else if ((reportCode.toLowerCase() == "175" || reportCode.toLowerCase() == "178" || reportCode.toLowerCase() == "179") && category.toLowerCase() == "category set j") {
                         for (var i = 0; i <= dataColumnNumber; i++) {
                             ws['!cols'].push({ wpx: 200 });
                         }
                     }
-                    else if (reportCode.toLowerCase() == "c178" && category.toLowerCase() == "category set j") {
+                    else if (reportCode.toLowerCase() == "178" && category.toLowerCase() == "category set j") {
                         for (var i = 0; i <= dataColumnNumber; i++) {
                             ws['!cols'].push({ wpx: 200 });
                         }
                     }
-                    else if (reportCode.toLowerCase() == "c185") {
+                    else if (reportCode.toLowerCase() == "185") {
                         var dataCol = 200;
                         if (category.toLowerCase() == "category set j" || category.toLowerCase() == "subtotal 1")
                             dataCol = 100;
@@ -792,7 +792,7 @@ var PivottableComponent = function () {
                             ws['!cols'].push({ wpx: dataCol });
                         }
                     }
-                    else if (reportCode.toLowerCase() == "c188") {
+                    else if (reportCode.toLowerCase() == "188") {
                         var dataCol = 200;
                         if (category.toLowerCase() == "category set j" || category.toLowerCase() == "subtotal 1")
                             dataCol = 100;
@@ -800,7 +800,7 @@ var PivottableComponent = function () {
                             ws['!cols'].push({ wpx: dataCol });
                         }
                     }
-                    else if (reportCode.toLowerCase() == "c189") {
+                    else if (reportCode.toLowerCase() == "189") {
                         var dataCol = 200;
                         if (category.toLowerCase() == "subtotal 1")
                             dataCol = 150;
@@ -848,10 +848,10 @@ var PivottableComponent = function () {
                     //Set all data row height
                     var dataRowLength = $('#containerExport .pvtTable tbody tr').length;
                     for (var i = 0; i <= dataRowLength; i++) {
-                        if (reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178") {
+                        if (reportCode.toLowerCase() == "175" || reportCode.toLowerCase() == "178") {
                             ws['!rows'].push({ hpx: 45 });
                         }
-                        else if (reportCode.toLowerCase() == "c179") {
+                        else if (reportCode.toLowerCase() == "179") {
                             if (category.toLowerCase() == "subtotal 1")
                                 ws['!rows'].push({ hpx: 45 });
                         }

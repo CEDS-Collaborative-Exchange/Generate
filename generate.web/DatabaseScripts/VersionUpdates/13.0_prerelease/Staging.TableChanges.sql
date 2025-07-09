@@ -44,6 +44,15 @@
             DROP INDEX IX_Staging_ProgramParticipationTitleIII_DataCollectionName_WithIdentifiers ON Staging.ProgramParticipationTitleIII;
         END
 
+         IF EXISTS (
+            SELECT 1 
+            FROM sys.indexes 
+            WHERE name = 'IX_Staging_ProgramParticipationTitleIII_DataCollectionName'
+        )
+        BEGIN
+            DROP INDEX IX_Staging_ProgramParticipationTitleIII_DataCollectionName ON Staging.ProgramParticipationTitleIII;
+        END
+
     --Drop the columns at the bottom of the table temporarily
         IF COL_LENGTH('Staging.ProgramParticipationTitleIII', 'SchoolYear') IS NOT NULL
         BEGIN

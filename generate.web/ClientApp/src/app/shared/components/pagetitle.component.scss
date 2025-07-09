@@ -1,4 +1,4 @@
-﻿@import '../../variables.scss';
+@import '../../variables.scss';
 
 .generate-app-pagetitle
 {
@@ -7,7 +7,7 @@
     margin-top: 0;
     margin-bottom: 0;
     font-size: 20px;
-    border-bottom: 1px solid $color-primary;
+    border-bottom: 1px solid $color-primary-dark;
 }
 
 .generate-app-pagesubtitle
