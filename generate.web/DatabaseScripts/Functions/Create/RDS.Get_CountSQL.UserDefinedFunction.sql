@@ -6518,7 +6518,7 @@ BEGIN
 		Create Debugging Tables
 	***************************************/
 		--only create debug tables for the EDFacts reports
-		if (len(@reportCode) = 4 and charindex('C', @reportCode COLLATE Latin1_General_CI_AS) = 1)
+		if (len(@reportCode) = 3 and @reportCode not like '%[^0-9]%')
 		begin
 
 			set @sql += '
