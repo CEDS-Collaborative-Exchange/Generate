@@ -13,8 +13,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.Stor
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportDebugData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_MembershipReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_MembershipReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
 VersionUpdates\\13.0_prerelease,UpdateDbVersion.sql,0
-
-
