@@ -11,12 +11,16 @@ using Microsoft.Extensions.PlatformAbstractions;
 using generate.core.ViewModels.App;
 using generate.core.Dtos.App;
 using generate.core.Interfaces.Repositories.App;
+using generate.core.Models.RDS;
+using generate.core.Interfaces.Repositories.RDS;
+using generate.infrastructure.Repositories.RDS;
 
 namespace generate.infrastructure.Services
 {
     public class GenerateReportService : IGenerateReportService
     {
         private readonly IAppRepository _appRepository;
+        private readonly IReportDebugRepository _reportDebugRepository;
 
         private IDataPopulationSummaryService _dataPopulationSummaryService;
         private IEdFactsReportService _edFactsReportService;
@@ -25,6 +29,7 @@ namespace generate.infrastructure.Services
 
         public GenerateReportService(
             IAppRepository appRepository,
+            IReportDebugRepository reportDebugRepository,
             IDataPopulationSummaryService dataPopulationSummaryService,
             IEdFactsReportService edFactsReportService,
             ISppAprReportService sppAprReportService,
@@ -32,6 +37,7 @@ namespace generate.infrastructure.Services
             )
         {
             _appRepository = appRepository;
+            _reportDebugRepository = reportDebugRepository;
             _dataPopulationSummaryService = dataPopulationSummaryService;
             _edFactsReportService = edFactsReportService;
             _sppAprReportService = sppAprReportService;
@@ -253,222 +259,35 @@ namespace generate.infrastructure.Services
                 {
                    IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel);
-
-
-                    List<CategorySetDto> reportCategorySetDtos = new List<CategorySetDto>();
-                    foreach (var item in categorySets)
-                    {
-                        CategorySetDto categorySetDto = new CategorySetDto();
-                        categorySetDto.CategorySetId = item.CategorySetId;
-                        categorySetDto.OrganizationLevelCode = item.OrganizationLevel.LevelCode;
-                        categorySetDto.SubmissionYear = item.SubmissionYear;
-                        categorySetDto.CategorySetCode = item.CategorySetCode;
-                        categorySetDto.CategorySetName = item.CategorySetName;
-                        categorySetDto.ViewDefinition = item.ViewDefinition;
-                        categorySetDto.IncludeOnFilter = item.IncludeOnFilter;
-                        categorySetDto.ExcludeOnFilter = item.ExcludeOnFilter;
-
-                        List<string> categories = new List<string>();
-                        List<CategorySetCategoryOptionDto> categoryOptions = new List<CategorySetCategoryOptionDto>();
-
-                        List<CategorySet_Category> cats = _appRepository.Find<CategorySet_Category>(c => c.CategorySetId == item.CategorySetId, 0, 0, c => c.Category).ToList();
-                        foreach (var cat in cats)
-                        {
-                            categories.Add(cat.Category.CategoryName);
-
-                            List<CategoryOption> options = _appRepository.Find<CategoryOption>(o => o.CategoryId == cat.CategoryId && o.CategorySetId == cat.CategorySetId, 0, 0).ToList();
-
-                            foreach (var option in options)
-                            {
-                                categoryOptions.Add(new CategorySetCategoryOptionDto
-                                {
-                                    CategoryName = cat.Category.CategoryName,
-                                    CategoryOptionCode = option.CategoryOptionCode,
-                                    CategoryOptionName = option.CategoryOptionName
-                                });
-                            }
-                        }
-
-                        categorySetDto.Categories = categories;
-                        categorySetDto.CategoryOptions = categoryOptions;
-
-
-                        reportCategorySetDtos.Add(categorySetDto);
-                    }
-
-                    reportDto.CategorySets = reportCategorySetDtos;
+                    reportDto.CategorySets = ConvertCategorySetToDto(categorySets.ToList());
                 }
             }
             else if (reportType == "edfactsreport")
             {
                 reportDto = _edFactsReportService.GetReportDto(reportCode, reportLevel, reportYear, categorySetCode, reportSort, pageSize, page);
-
                 IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode 
                         && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel , 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
-
                 if (reportCode == "150") { categorySets = categorySets.Where(c => c.TableType.TableTypeAbbrv == "GRADRT4YRADJ"); }
                 else if (reportCode == "151") { categorySets = categorySets.Where(c =>  c.TableType.TableTypeAbbrv == "GRADCOHORT4YR"); }
-
-                List<string> categories = new List<string>();
-                List<CategorySetCategoryOptionDto> categoryOptions = new List<CategorySetCategoryOptionDto>();
-
-                foreach (var item in categorySets)
-                {
-                    List<CategorySet_Category> cats = _appRepository.Find<CategorySet_Category>(c => c.CategorySetId == item.CategorySetId, 0, 0, c => c.Category).ToList();
-                    foreach (var cat in cats)
-                    {
-                        if(!categories.Contains(cat.Category.CategoryName))
-                            categories.Add(cat.Category.CategoryName);
-
-                        List<CategoryOption> options = _appRepository.Find<CategoryOption>(o => o.CategoryId == cat.CategoryId && o.CategorySetId == cat.CategorySetId, 0, 0).ToList();
-
-                        foreach (var option in options)
-                        {
-                            if (categoryOptions.Where(t => t.CategoryOptionCode == option.CategoryOptionCode).Count() == 0)
-                            {
-                                categoryOptions.Add(new CategorySetCategoryOptionDto
-                                {
-                                    CategoryName = cat.Category.CategoryName,
-                                    CategoryOptionCode = option.CategoryOptionCode,
-                                    CategoryOptionName = option.CategoryOptionName
-                                });
-                            }
-                        }
-                    }
-
-                }
-
-
-                List<CategorySetDto> reportCategorySetDtos = new List<CategorySetDto>();
-
-                foreach (var item in categorySets)
-                {
-                    CategorySetDto categorySetDto = new CategorySetDto();
-                    categorySetDto.CategorySetId = item.CategorySetId;
-                    categorySetDto.OrganizationLevelCode = item.OrganizationLevel.LevelCode;
-                    categorySetDto.SubmissionYear = item.SubmissionYear;
-                    categorySetDto.CategorySetCode = item.CategorySetCode;
-                    categorySetDto.CategorySetName = item.CategorySetName;
-                    categorySetDto.ViewDefinition = item.ViewDefinition;
-                    categorySetDto.IncludeOnFilter = item.IncludeOnFilter;
-                    categorySetDto.ExcludeOnFilter = item.ExcludeOnFilter;
-
-                    categorySetDto.Categories = categories;
-                    categorySetDto.CategoryOptions = categoryOptions;
-                    reportCategorySetDtos.Add(categorySetDto);
-                }
-
-                reportDto.CategorySets = reportCategorySetDtos;
+                reportDto.CategorySets = ConvertCategorySetToDto(categorySets.ToList());
 
             }
             else if ( reportType == "sppaprreport")
             {
 
                 reportDto = _sppAprReportService.GetReportDto(reportCode, reportLevel, reportYear, categorySetCode, reportSort, skip, take);
-
                 IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport);
-
-                List<CategorySetDto> reportCategorySetDtos = new List<CategorySetDto>();
-                foreach (var item in categorySets)
-                {
-                    CategorySetDto categorySetDto = new CategorySetDto();
-                    categorySetDto.CategorySetId = item.CategorySetId;
-                    categorySetDto.OrganizationLevelCode = item.OrganizationLevel.LevelCode;
-                    categorySetDto.SubmissionYear = item.SubmissionYear;
-                    categorySetDto.CategorySetCode = item.CategorySetCode;
-                    categorySetDto.CategorySetName = item.CategorySetName;
-                    categorySetDto.ViewDefinition = item.ViewDefinition;
-                    categorySetDto.IncludeOnFilter = item.IncludeOnFilter;
-                    categorySetDto.ExcludeOnFilter = item.ExcludeOnFilter;
-
-                    List<string> categories = new List<string>();
-                    List<CategorySetCategoryOptionDto> categoryOptions = new List<CategorySetCategoryOptionDto>();
-
-                    List<CategorySet_Category> cats = _appRepository.Find<CategorySet_Category>(c => c.CategorySetId == item.CategorySetId, 0, 0, c => c.Category).ToList();
-                    foreach (var cat in cats)
-                    {
-                        categories.Add(cat.Category.CategoryName);
-
-                        List<CategoryOption> options = _appRepository.Find<CategoryOption>(o => o.CategoryId == cat.CategoryId && o.CategorySetId == cat.CategorySetId, 0, 0).ToList();
-
-                        foreach (var option in options)
-                        {
-                            categoryOptions.Add(new CategorySetCategoryOptionDto
-                            {
-                                CategoryName = cat.Category.CategoryName,
-                                CategoryOptionCode = option.CategoryOptionCode,
-                                CategoryOptionName = option.CategoryOptionName
-                            });
-                        }
-                    }
-
-                    categorySetDto.Categories = categories;
-                    categorySetDto.CategoryOptions = categoryOptions;
-
-
-                    reportCategorySetDtos.Add(categorySetDto);
-                }
-
-
-                reportDto.CategorySets = reportCategorySetDtos;
+                reportDto.CategorySets = ConvertCategorySetToDto(categorySets.ToList());
 
             }
             else if (reportType == "statereport")
             {
 
                 reportDto = _stateDefinedReportService.GetReportDto(reportCode, reportLevel, reportYear, categorySetCode, reportLea, reportSchool, reportFilter, reportSubFilter, reportGrade, organizationalIdList, reportSort, skip, take);
-
                 IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport);
-
-                List<CategorySetDto> reportCategorySetDtos = new List<CategorySetDto>();
-                foreach (var item in categorySets)
-                {
-                    CategorySetDto categorySetDto = new CategorySetDto();
-                    categorySetDto.CategorySetId = item.CategorySetId;
-                    categorySetDto.OrganizationLevelCode = item.OrganizationLevel.LevelCode;
-                    categorySetDto.SubmissionYear = item.SubmissionYear;
-                    categorySetDto.CategorySetCode = item.CategorySetCode;
-                    categorySetDto.CategorySetName = item.CategorySetName;
-                    categorySetDto.ViewDefinition = item.ViewDefinition;
-                    categorySetDto.IncludeOnFilter = item.IncludeOnFilter;
-                    categorySetDto.ExcludeOnFilter = item.ExcludeOnFilter;
-
-                    List<string> categories = new List<string>();
-                    List<CategorySetCategoryOptionDto> categoryOptions = new List<CategorySetCategoryOptionDto>();
-
-                    List<CategorySet_Category> cats = _appRepository.Find<CategorySet_Category>(c => c.CategorySetId == item.CategorySetId, 0, 0, c => c.Category).ToList();
-                    foreach (var cat in cats)
-                    {
-                        if(cat.Category.CategoryName== "English Learner Status (Both)")
-                        {
-                            cat.Category.CategoryName = "English Learner Status";
-                        }
-                        categories.Add(cat.Category.CategoryName);
-
-                        List<CategoryOption> options = _appRepository.Find<CategoryOption>(o => o.CategoryId == cat.CategoryId && o.CategorySetId == cat.CategorySetId, 0, 0).ToList();
-
-                        foreach (var option in options)
-                        {
-                            categoryOptions.Add(new CategorySetCategoryOptionDto
-                            {
-                                CategoryName = cat.Category.CategoryName,
-                                CategoryOptionCode = option.CategoryOptionCode,
-                                CategoryOptionName = option.CategoryOptionName
-                            });
-                        }
-                    }
-
-                    categorySetDto.Categories = categories;
-                    categorySetDto.CategoryOptions = categoryOptions;
-
-
-                    reportCategorySetDtos.Add(categorySetDto);
-                }
-
-
-                reportDto.CategorySets = reportCategorySetDtos;
+                reportDto.CategorySets = ConvertCategorySetToDto(categorySets.ToList());
 
             }
             reportDto.ReportControlTypeName = reportControlType.ControlTypeName;
@@ -484,9 +303,15 @@ namespace generate.infrastructure.Services
             else if (report.ReportCode == "151") { reportCategorySets = reportCategorySets.Where(c => report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId) && c.TableType.TableTypeAbbrv == "GRADCOHORT4YR").ToList(); }
             else { reportCategorySets = reportCategorySets.Where(c => report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId)).ToList(); }
 
+            List<CategorySetDto> reportCategorySetDtos = ConvertCategorySetToDto(reportCategorySets);
 
+            return reportCategorySetDtos;
+        }
+
+        public List<CategorySetDto> ConvertCategorySetToDto(List<CategorySet> categorySets)
+        {
             List<CategorySetDto> reportCategorySetDtos = new List<CategorySetDto>();
-            foreach (var item in reportCategorySets)
+            foreach (var item in categorySets)
             {
                 if (!reportCategorySetDtos.Any(a => a.CategorySetName == item.CategorySetName && a.SubmissionYear == item.SubmissionYear && a.OrganizationLevelCode == item.OrganizationLevel.LevelCode))
                 {
@@ -505,8 +330,14 @@ namespace generate.infrastructure.Services
 
                     List<CategorySet_Category> cats = _appRepository.Find<CategorySet_Category>(c => c.CategorySetId == item.CategorySetId, 0, 0, c => c.Category).ToList();
                     foreach (var cat in cats)
-                    {
-                        categories.Add(cat.Category.CategoryName);
+                    { 
+                        if (cat.Category.CategoryName == "English Learner Status (Both)")
+                        {
+                            cat.Category.CategoryName = "English Learner Status";
+                        }
+
+                        if (!categories.Contains(cat.Category.CategoryName))
+                            categories.Add(cat.Category.CategoryName);
 
                         List<CategoryOption> options = _appRepository.Find<CategoryOption>(o => o.CategoryId == cat.CategoryId && o.CategorySetId == cat.CategorySetId, 0, 0).ToList();
 
@@ -532,6 +363,11 @@ namespace generate.infrastructure.Services
             }
 
             return reportCategorySetDtos;
+        }
+
+        public List<ReportDebug> GetReportDebugData(string reportCode, string reportLevel, string reportYear, string categorySetCode, string parameters, int sort = 1, int skip = 0, int take = 50, int pageSize = 10, int page = 1)
+        {
+            return _reportDebugRepository.Get_ReportDebugData(reportCode, reportLevel, reportYear, categorySetCode, parameters, sort, skip, take, pageSize, page).ToList();
         }
     }
 }

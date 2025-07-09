@@ -91,785 +91,150 @@ namespace generate.infrastructure.Services
             }
 
 
-            if (reportCode == "studentsex")
+            if (reportCode == "studentsex" && queryStudentCountReportDto != null)
             {
-                Dictionary<string, string> columns = new Dictionary<string, string>();
-                columns.Add("Female", "Female");
-                columns.Add("Male", "Male");
-                columns.Add("NotSelected", "Not Selected");
-                columns.Add("Missing", "Missing");
-                columns.Add("Total", "Total");
+                var sexColumns = new Dictionary<string, string>
+                                    {
+                                        { "Female", "Female" },
+                                        { "Male", "Male" },
+                                        { "NotSelected", "Not Selected" },
+                                        { "MISSING", "Missing" },
+                                        { "Total", "Total" }
+                                    };
 
-                reportDto.structure.columnHeaders = new List<string>();
-                foreach (var item in columns)
-                {
-                    reportDto.structure.columnHeaders.Add(item.Value);
-                }
+                reportDto.structure.columnHeaders = sexColumns.Values.ToList();
 
+                var groupedData = GroupStudentSexData(queryStudentCountReportDto);
+                dataRows = BuildDataRows(groupedData, sexColumns);
 
-                if (reportLevel == "lea")
-                {
-                    var queryDim = queryStudentCountReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                            //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            Female = g.Where(c => c.SEX == "Female").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Male = g.Where(c => c.SEX == "Male").Sum(c => (int?)c.StudentCount) ?? 0,
-                            NotSelected = g.Where(c => c.SEX == "NotSelected").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Missing = g.Where(c => c.SEX == "MISSING").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Total = g.Sum(c => c.StudentCount)
-                        });
-
-
-                    foreach (var queryItem in queryDim)
-                    {
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.Female;
-                        dataRow.col_2 = queryItem.Male;
-                        dataRow.col_3 = queryItem.NotSelected;
-                        dataRow.col_4 = queryItem.Missing;
-                        dataRow.col_5 = queryItem.Total;
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-
-                }
-                else if (reportLevel == "sch")
-                {
-
-                    var queryDim = queryStudentCountReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                            //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            Female = g.Where(c => c.SEX == "Female").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Male = g.Where(c => c.SEX == "Male").Sum(c => (int?)c.StudentCount) ?? 0,
-                            NotSelected = g.Where(c => c.SEX == "NotSelected").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Missing = g.Where(c => c.SEX == "MISSING").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Total = g.Sum(c => c.StudentCount)
-                        });
-
-                    foreach (var queryItem in queryDim)
-                    {
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.Female;
-                        dataRow.col_2 = queryItem.Male;
-                        dataRow.col_3 = queryItem.NotSelected;
-                        dataRow.col_4 = queryItem.Missing;
-                        dataRow.col_5 = queryItem.Total;
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-
-
-                }
-
-
-
-
+                reportDto.data.AddRange(dataRows);
             }
-            else if (reportCode == "studentrace")
+            else if (reportCode == "studentrace" && queryStudentCountReportDto != null)
             {
+                var raceColumns = new Dictionary<string, string>
+                                        {
+                                            { "AM", "American Indian or Alaska Native" },
+                                            { "AS", "Asian" },
+                                            { "BL", "Black or African American" },
+                                            { "HI", "Hispanic" },
+                                            { "PI", "Native Hawaiian or Other Pacific Islander" },
+                                            { "WH", "White" },
+                                            { "MU", "Demographic Race Two or More Races" },
+                                            { "MISSING", "Missing" },
+                                            { "Total", "Total" }
+                                        };
 
+                reportDto.structure.columnHeaders = raceColumns.Values.ToList();
 
-                Dictionary<string, string> columns = new Dictionary<string, string>();
-                columns.Add("AM", "American Indian or Alaska Native");
-                columns.Add("AS", "Asian");
-                columns.Add("BL", "Black or African American");
-                columns.Add("HI", "Hispanic");
-                columns.Add("PI", "Native Hawaiian or Other Pacific Islander");
-                columns.Add("WH", "White");
-                columns.Add("MU", "Demographic Race Two or More Races");
-                columns.Add("Missing", "Missing");
-                columns.Add("Total", "Total");
+                var groupedData = GroupStudentRaceData(queryStudentCountReportDto);
+                dataRows = BuildDataRows(groupedData, raceColumns);
 
-                reportDto.structure.columnHeaders = new List<string>();
-                foreach (var item in columns)
-                {
-                    reportDto.structure.columnHeaders.Add(item.Value);
-                }
-
-
-
-                if (reportLevel == "lea")
-                {
-
-                    var queryDim = queryStudentCountReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                            //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            AM = g.Where(c => c.RACE == "AmericanIndianorAlaskaNative").Sum(c => (int?)c.StudentCount) ?? 0,
-                            AS = g.Where(c => c.RACE == "Asian").Sum(c => (int?)c.StudentCount) ?? 0,
-                            BL = g.Where(c => c.RACE == "BlackorAfricanAmerican").Sum(c => (int?)c.StudentCount) ?? 0,
-                            HI = g.Where(c => c.RACE == "HI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            PI = g.Where(c => c.RACE == "NativeHawaiianorOtherPacificIslander").Sum(c => (int?)c.StudentCount) ?? 0,
-                            WH = g.Where(c => c.RACE == "White").Sum(c => (int?)c.StudentCount) ?? 0,
-                            MU = g.Where(c => c.RACE == "TwoorMoreRaces").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Missing = g.Where(c => c.RACE == "MISSING").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Total = g.Sum(c => c.StudentCount)
-                        });
-
-                    foreach (var queryItem in queryDim)
-                    {
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.AM;
-                        dataRow.col_2 = queryItem.AS;
-                        dataRow.col_3 = queryItem.BL;
-                        dataRow.col_4 = queryItem.HI;
-                        dataRow.col_5 = queryItem.PI;
-                        dataRow.col_6 = queryItem.WH;
-                        dataRow.col_7 = queryItem.MU;
-                        dataRow.col_8 = queryItem.Missing;
-                        dataRow.col_9 = queryItem.Total;
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-
-
-                }
-                else if (reportLevel == "sch")
-                {
-
-                    var queryDim = queryStudentCountReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                            //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            AM = g.Where(c => c.RACE == "AmericanIndianorAlaskaNative").Sum(c => (int?)c.StudentCount) ?? 0,
-                            AS = g.Where(c => c.RACE == "Asian").Sum(c => (int?)c.StudentCount) ?? 0,
-                            BL = g.Where(c => c.RACE == "BlackorAfricanAmerican").Sum(c => (int?)c.StudentCount) ?? 0,
-                            HI = g.Where(c => c.RACE == "HI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            PI = g.Where(c => c.RACE == "NativeHawaiianorOtherPacificIslander").Sum(c => (int?)c.StudentCount) ?? 0,
-                            WH = g.Where(c => c.RACE == "White").Sum(c => (int?)c.StudentCount) ?? 0,
-                            MU = g.Where(c => c.RACE == "TwoorMoreRaces").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Missing = g.Where(c => c.RACE == "MISSING").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Total = g.Sum(c => c.StudentCount)
-                        });
-
-
-                    foreach (var queryItem in queryDim)
-                    {
-
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.AM;
-                        dataRow.col_2 = queryItem.AS;
-                        dataRow.col_3 = queryItem.BL;
-                        dataRow.col_4 = queryItem.HI;
-                        dataRow.col_5 = queryItem.PI;
-                        dataRow.col_6 = queryItem.WH;
-                        dataRow.col_7 = queryItem.MU;
-                        dataRow.col_8 = queryItem.Missing;
-                        dataRow.col_9 = queryItem.Total;
-
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-
-
-                }
-
-
+                reportDto.data.AddRange(dataRows);
             }
-            else if (reportCode == "studentsubpopulation")
+            else if (reportCode == "studentsubpopulation" && queryStudentCountReportDto != null)
             {
-                Dictionary<string, string> columns = new Dictionary<string, string>();
-                columns.Add("ECODIS", "Economic Disadvantage Status");
-                columns.Add("HOMELSSTATUS", "Homeless Status");
-                if (Convert.ToInt32(reportYear.Substring(0, 4)) >= 2017)
-                {
-                    columns.Add("LEP", "English Learner Status");
-                }
-                else
-                {
-                    columns.Add("LEP", "Limited English Proficiency Status");
-                }
-                columns.Add("MIGRNTSTATUS", "Migrant Status");
-                columns.Add("Total", "Total");
+                var columns = new Dictionary<string, string>
+                                    {
+                                        { "ECODIS", "Economic Disadvantage Status" },
+                                        { "HOMELSSTATUS", "Homeless Status" },
+                                        { "LEP", Convert.ToInt32(reportYear[..4]) >= 2017 ? "English Learner Status" : "Limited English Proficiency Status" },
+                                        { "MIGRNTSTATUS", "Migrant Status" },
+                                        { "Total", "Total" }
+                                    };
 
-                reportDto.structure.columnHeaders = new List<string>();
-                foreach (var item in columns)
-                {
-                    reportDto.structure.columnHeaders.Add(item.Value);
-                }
+                reportDto.structure.columnHeaders = columns.Values.ToList();
 
-                if (reportLevel == "lea")
-                {
+                var groupedData = GroupStudentSubpopData(queryStudentCountReportDto);
+                dataRows = BuildDataRows(groupedData, columns);
 
-
-                    var queryDim = queryStudentCountReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                           //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            ECODIS = g.Where(c => c.ECONOMICDISADVANTAGESTATUS == "EconomicDisadvantage").Sum(c => (int?)c.StudentCount) ?? 0,
-                            HOMELSSTATUS = g.Where(c => c.HOMELESSNESSSTATUS == "HomelessUnaccompaniedYouth").Sum(c => (int?)c.StudentCount) ?? 0,
-                            LEP = g.Where(c => c.ENGLISHLEARNERSTATUS == "LEP").Sum(c => (int?)c.StudentCount) ?? 0,
-                            MIGRNTSTATUS = g.Where(c => c.MIGRANTSTATUS == "Migrant").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Total = g.Sum(c => c.StudentCount)
-                        });
-
-                    foreach (var queryItem in queryDim)
-                    {
-
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.ECODIS;
-                        dataRow.col_2 = queryItem.HOMELSSTATUS;
-                        dataRow.col_3 = queryItem.LEP;
-                        dataRow.col_4 = queryItem.MIGRNTSTATUS;
-                        dataRow.col_5 = queryItem.Total;
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-
-                }
-                else if (reportLevel == "sch")
-                {
-                    var queryDim = queryStudentCountReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                            //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            ECODIS = g.Where(c => c.ECONOMICDISADVANTAGESTATUS == "EconomicDisadvantage").Sum(c => (int?)c.StudentCount) ?? 0,
-                            HOMELSSTATUS = g.Where(c => c.HOMELESSNESSSTATUS == "HomelessUnaccompaniedYouth").Sum(c => (int?)c.StudentCount) ?? 0,
-                            LEP = g.Where(c => c.ENGLISHLEARNERSTATUS == "LEP").Sum(c => (int?)c.StudentCount) ?? 0,
-                            MIGRNTSTATUS = g.Where(c => c.MIGRANTSTATUS == "Migrant").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Total = g.Sum(c => (int?)c.StudentCount) ?? 0
-                        });
-
-                    foreach (var queryItem in queryDim)
-                    {
-
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.ECODIS;
-                        dataRow.col_2 = queryItem.HOMELSSTATUS;
-                        dataRow.col_3 = queryItem.LEP;
-                        dataRow.col_4 = queryItem.MIGRNTSTATUS;
-                        dataRow.col_5 = queryItem.Total;
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-                }
+                reportDto.data.AddRange(dataRows);
             }
-            else if (reportCode == "studentdisability")
+            else if (reportCode == "studentdisability" && queryStudentCountReportDto != null)
             {
+                var columns = new Dictionary<string, string>
+                                    {
+                                        { "AUT", "AUT" },
+                                        { "DB", "DB" },
+                                        { "DD", "DD" },
+                                        { "EMN", "EMN" },
+                                        { "HI", "HI" },
+                                        { "ID", "ID" },
+                                        { "MD", "MD" },
+                                        { "OHI", "OHI" },
+                                        { "OI", "OI" },
+                                        { "SLD", "SLD" },
+                                        { "SLI", "SLI" },
+                                        { "TBI", "TBI" },
+                                        { "VI", "VI" },
+                                        { "Missing", "Missing" },
+                                        { "Total", "Total" }
+                                    };
 
-                Dictionary<string, string> columns = new Dictionary<string, string>();
-                columns.Add("AUT", "AUT");
-                columns.Add("DB", "DB");
-                columns.Add("DD", "DD");
-                columns.Add("EMN", "EMN");
-                columns.Add("HI", "HI");
-                columns.Add("ID", "ID");
-                columns.Add("MD", "MD");
-                columns.Add("OHI", "OHI");
-                columns.Add("OI", "OI");
-                columns.Add("SLD", "SLD");
-                columns.Add("SLI", "SLI");
-                columns.Add("TBI", "TBI");
-                columns.Add("VI", "VI");
-                columns.Add("Missing", "Missing");
-                columns.Add("Total", "Total");
+                reportDto.structure.columnHeaders = columns.Values.ToList();
 
-                reportDto.structure.columnHeaders = new List<string>();
-                foreach (var item in columns)
-                {
-                    reportDto.structure.columnHeaders.Add(item.Value);
-                }
+                var groupedData = GroupStudentDisabilityData(queryStudentCountReportDto);
+                dataRows = BuildDataRows(groupedData, columns);
 
-
-                if (reportLevel == "lea")
-                {
-
-
-                    var queryDim = queryStudentCountReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                            //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            AUT = g.Where(c => c.IDEADISABILITYTYPE == "AUT").Sum(c => (int?)c.StudentCount) ?? 0,
-                            DB = g.Where(c => c.IDEADISABILITYTYPE == "DB").Sum(c => (int?)c.StudentCount) ?? 0,
-                            DD = g.Where(c => c.IDEADISABILITYTYPE == "DD").Sum(c => (int?)c.StudentCount) ?? 0,
-                            EMN = g.Where(c => c.IDEADISABILITYTYPE == "EMN").Sum(c => (int?)c.StudentCount) ?? 0,
-                            HI = g.Where(c => c.IDEADISABILITYTYPE == "HI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            ID = g.Where(c => c.IDEADISABILITYTYPE == "ID").Sum(c => (int?)c.StudentCount) ?? 0,
-                            MD = g.Where(c => c.IDEADISABILITYTYPE == "MD").Sum(c => (int?)c.StudentCount) ?? 0,
-                            OHI = g.Where(c => c.IDEADISABILITYTYPE == "OHI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            OI = g.Where(c => c.IDEADISABILITYTYPE == "OI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            SLD = g.Where(c => c.IDEADISABILITYTYPE == "SLD").Sum(c => (int?)c.StudentCount) ?? 0,
-                            SLI = g.Where(c => c.IDEADISABILITYTYPE == "SLI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            TBI = g.Where(c => c.IDEADISABILITYTYPE == "TBI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            VI = g.Where(c => c.IDEADISABILITYTYPE == "VI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Missing = g.Where(c => c.IDEADISABILITYTYPE == "MISSING").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Total = g.Sum(c => c.StudentCount)
-                        });
-
-                    foreach (var queryItem in queryDim)
-                    {
-
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.AUT;
-                        dataRow.col_2 = queryItem.DB;
-                        dataRow.col_3 = queryItem.DD;
-                        dataRow.col_4 = queryItem.EMN;
-                        dataRow.col_5 = queryItem.HI;
-                        dataRow.col_6 = queryItem.ID;
-                        dataRow.col_7 = queryItem.MD;
-                        dataRow.col_8 = queryItem.OHI;
-                        dataRow.col_9 = queryItem.OI;
-                        dataRow.col_10 = queryItem.SLD;
-                        dataRow.col_11 = queryItem.SLI;
-                        dataRow.col_12 = queryItem.TBI;
-                        dataRow.col_13 = queryItem.VI;
-                        dataRow.col_14 = queryItem.Missing;
-                        dataRow.col_15 = queryItem.Total;
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-
-
-                }
-                else if (reportLevel == "sch")
-                {
-
-                    var queryDim = queryStudentCountReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                            //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            AUT = g.Where(c => c.IDEADISABILITYTYPE == "AUT").Sum(c => (int?)c.StudentCount) ?? 0,
-                            DB = g.Where(c => c.IDEADISABILITYTYPE == "DB").Sum(c => (int?)c.StudentCount) ?? 0,
-                            DD = g.Where(c => c.IDEADISABILITYTYPE == "DD").Sum(c => (int?)c.StudentCount) ?? 0,
-                            EMN = g.Where(c => c.IDEADISABILITYTYPE == "EMN").Sum(c => (int?)c.StudentCount) ?? 0,
-                            HI = g.Where(c => c.IDEADISABILITYTYPE == "HI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            ID = g.Where(c => c.IDEADISABILITYTYPE == "ID").Sum(c => (int?)c.StudentCount) ?? 0,
-                            MD = g.Where(c => c.IDEADISABILITYTYPE == "MD").Sum(c => (int?)c.StudentCount) ?? 0,
-                            OHI = g.Where(c => c.IDEADISABILITYTYPE == "OHI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            OI = g.Where(c => c.IDEADISABILITYTYPE == "OI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            SLD = g.Where(c => c.IDEADISABILITYTYPE == "SLD").Sum(c => (int?)c.StudentCount) ?? 0,
-                            SLI = g.Where(c => c.IDEADISABILITYTYPE == "SLI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            TBI = g.Where(c => c.IDEADISABILITYTYPE == "TBI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            VI = g.Where(c => c.IDEADISABILITYTYPE == "VI").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Missing = g.Where(c => c.IDEADISABILITYTYPE == "MISSING").Sum(c => (int?)c.StudentCount) ?? 0,
-                            Total = g.Sum(c => c.StudentCount)
-                        });
-
-                    foreach (var queryItem in queryDim)
-                    {
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.AUT;
-                        dataRow.col_2 = queryItem.DB;
-                        dataRow.col_3 = queryItem.DD;
-                        dataRow.col_4 = queryItem.EMN;
-                        dataRow.col_5 = queryItem.HI;
-                        dataRow.col_6 = queryItem.ID;
-                        dataRow.col_7 = queryItem.MD;
-                        dataRow.col_8 = queryItem.OHI;
-                        dataRow.col_9 = queryItem.OI;
-                        dataRow.col_10 = queryItem.SLD;
-                        dataRow.col_11 = queryItem.SLI;
-                        dataRow.col_12 = queryItem.TBI;
-                        dataRow.col_13 = queryItem.VI;
-                        dataRow.col_14 = queryItem.Missing;
-                        dataRow.col_15 = queryItem.Total;
-
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-
-
-                }
-
-
+                reportDto.data.AddRange(dataRows);
             }
-            else if (reportCode == "studentdiscipline")
+            else if (reportCode == "studentdiscipline" && queryStudentDisciplineReportDto != null)
             {
+                var columns = new Dictionary<string, string>
+                                    {
+                                        { "03086", "Expulsion with services" },
+                                        { "03087", "Expulsion without services" },
+                                        { "03100", "Suspension, in-school" },
+                                        { "03154", "Suspension, out-of-school, greater than 10 consecutive school days" },
+                                        { "03155", "Suspension, out-of-school, separate days cumulating to more than 10 school days" },
+                                        { "03101", "Suspension, out-of-school, with services" },
+                                        { "03102", "Suspension, out-of-school, without services" },
+                                        { "Missing", "Missing" },
+                                        { "Total", "Total" }
+                                    };
 
+                reportDto.structure.columnHeaders = columns.Values.ToList();
 
-                Dictionary<string, string> columns = new Dictionary<string, string>();
+                var groupedData = GroupStudentDisciplineData(queryStudentDisciplineReportDto, columns.Keys.ToList());
+                dataRows = BuildDataRows(groupedData, columns);
 
-                columns.Add("03086", "Expulsion with services");
-                columns.Add("03087", "Expulsion without services");
-                columns.Add("03100", "Suspension, in-school");
-                columns.Add("03154", "Suspension, out-of-school, greater than 10 consecutive school days");
-                columns.Add("03155", "Suspension, out-of-school, separate days cumulating to more than 10 school days");
-                columns.Add("03101", "Suspension, out-of-school, with services");
-                columns.Add("03102", "Suspension, out-of-school, without services");
-                columns.Add("Missing", "Missing");
-                columns.Add("Total", "Total");
-
-                reportDto.structure.columnHeaders = new List<string>();
-                foreach (var item in columns)
-                {
-                    reportDto.structure.columnHeaders.Add(item.Value);
-                }
-
-
-                if (reportLevel == "lea")
-                {
-                    var queryDim = queryStudentDisciplineReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                            //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            d03086 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03086").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03087 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03087").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03100 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03100").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03154 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03154").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03155 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03155").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03101 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03101").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03102 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03102").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            Missing = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "MISSING").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            Total = g.Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                        });
-
-
-                    foreach (var queryItem in queryDim)
-                    {
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.d03086;
-                        dataRow.col_2 = queryItem.d03087;
-                        dataRow.col_3 = queryItem.d03100;
-                        dataRow.col_4 = queryItem.d03154;
-                        dataRow.col_5 = queryItem.d03155;
-                        dataRow.col_6 = queryItem.d03101;
-                        dataRow.col_7 = queryItem.d03102;
-                        dataRow.col_8 = queryItem.Missing;
-                        dataRow.col_9 = queryItem.Total;
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-
-                }
-                else if (reportLevel == "sch")
-                {
-
-                    var queryDim = queryStudentDisciplineReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                            //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            d03086 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03086").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03087 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03087").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03100 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03100").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03154 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03154").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03155 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03155").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03101 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03101").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            d03102 = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "03102").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            Missing = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "MISSING").Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                            Total = g.Sum(c => (c.DisciplineCount > 0) ? 1 : 0),
-                        });
-
-                    foreach (var queryItem in queryDim)
-                    {
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.d03086;
-                        dataRow.col_2 = queryItem.d03087;
-                        dataRow.col_3 = queryItem.d03100;
-                        dataRow.col_4 = queryItem.d03154;
-                        dataRow.col_5 = queryItem.d03155;
-                        dataRow.col_6 = queryItem.d03101;
-                        dataRow.col_7 = queryItem.d03102;
-                        dataRow.col_8 = queryItem.Missing;
-                        dataRow.col_9 = queryItem.Total;
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-
-
-                }
-
-
+                reportDto.data.AddRange(dataRows);
             }
             else if (reportCode == "studentcount")
             {
+                var columns = new Dictionary<string, string>
+                                        {
+                                            { "StudentCount", "Student Count" }
+                                        };
 
-                Dictionary<string, string> columns = new Dictionary<string, string>();
-                columns.Add("StudentCount", "Student Count");
+                reportDto.structure.columnHeaders = columns.Values.ToList();
 
-
-                reportDto.structure.columnHeaders = new List<string>();
-                foreach (var item in columns)
-                {
-                    reportDto.structure.columnHeaders.Add(item.Value);
-                }
-
-
-
-                if (reportLevel == "lea")
-                {
-
-
-                    var queryDim = queryStudentCountReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                           //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            StudentCount = g.Sum(c => c.StudentCount)
-                        });
-
-                    foreach (var queryItem in queryDim)
+                var groupedData = queryStudentCountReportDto
+                    .GroupBy(c => new
                     {
-                        dynamic dataRow = new ExpandoObject();
-
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
-
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.StudentCount;
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-
-                }
-                else if (reportLevel == "sch")
-                {
-
-                    var queryDim = queryStudentCountReportDto
-                        .GroupBy(c => new
-                        {
-                            c.StateAbbreviationCode,
-                            c.StateAbbreviationDescription,
-                            //c.OrganizationId,
-                            c.OrganizationName
-                        })
-                        .Select(g => new
-                        {
-                            StateCode = g.Key.StateAbbreviationCode,
-                            StateName = g.Key.StateAbbreviationDescription,
-                            //OrganizationId = g.Key.OrganizationId,
-                            OrganizationName = g.Key.OrganizationName,
-                            StudentCount = g.Sum(c => c.StudentCount)
-                        });
-
-
-                    foreach (var queryItem in queryDim)
+                        c.StateAbbreviationCode,
+                        c.StateAbbreviationDescription,
+                        c.OrganizationName
+                    })
+                    .Select(g => new
                     {
-                        dynamic dataRow = new ExpandoObject();
+                        StateCode = g.Key.StateAbbreviationCode,
+                        StateName = g.Key.StateAbbreviationDescription,
+                        OrganizationName = g.Key.OrganizationName,
+                        StudentCount = g.Sum(c => c.StudentCount)
+                    });
 
-                        dataRow.stateCode = queryItem.StateCode;
-                        dataRow.stateName = queryItem.StateName;
+                foreach (var item in groupedData)
+                {
+                    dynamic row = new ExpandoObject();
+                    row.stateCode = item.StateCode;
+                    row.stateName = item.StateName;
+                    row.rowKey = item.OrganizationName;
+                    row.col_1 = item.StudentCount;
 
-                        //dataRow.rowId = queryItem.OrganizationId;
-                        dataRow.rowKey = queryItem.OrganizationName;
-
-                        dataRow.col_1 = queryItem.StudentCount;
-
-                        dataRows.Add(dataRow);
-
-                    }
-
-                    reportDto.data.AddRange(dataRows);
-
-
+                    dataRows.Add(row);
                 }
 
+                reportDto.data.AddRange(dataRows);
             }
             else if (reportCode == "studentswdtitle1")
             {
@@ -884,6 +249,179 @@ namespace generate.infrastructure.Services
 
             return reportDto;
         }
+
+        private IEnumerable<dynamic> GroupStudentSexData(IEnumerable<ReportEDFactsK12StudentCount> data)
+        {
+            return data
+                .GroupBy(c => new
+                {
+                    c.StateAbbreviationCode,
+                    c.StateAbbreviationDescription,
+                    c.OrganizationName
+                })
+                .Select(g => new
+                {
+                    StateCode = g.Key.StateAbbreviationCode,
+                    StateName = g.Key.StateAbbreviationDescription,
+                    OrganizationName = g.Key.OrganizationName,
+                    Female = g.Where(c => c.SEX == "Female").Sum(c => (int?)c.StudentCount) ?? 0,
+                    Male = g.Where(c => c.SEX == "Male").Sum(c => (int?)c.StudentCount) ?? 0,
+                    NotSelected = g.Where(c => c.SEX == "NotSelected").Sum(c => (int?)c.StudentCount) ?? 0,
+                    MISSING = g.Where(c => c.SEX == "MISSING").Sum(c => (int?)c.StudentCount) ?? 0,
+                    Total = g.Sum(c => c.StudentCount)
+                });
+        }
+
+        private IEnumerable<dynamic> GroupStudentRaceData(IEnumerable<ReportEDFactsK12StudentCount> data)
+        {
+            return data
+                .GroupBy(c => new
+                {
+                    c.StateAbbreviationCode,
+                    c.StateAbbreviationDescription,
+                    c.OrganizationName
+                })
+                .Select(g => new
+                {
+                    StateCode = g.Key.StateAbbreviationCode,
+                    StateName = g.Key.StateAbbreviationDescription,
+                    OrganizationName = g.Key.OrganizationName,
+                    AM = g.Where(c => c.RACE == "AmericanIndianorAlaskaNative").Sum(c => (int?)c.StudentCount) ?? 0,
+                    AS = g.Where(c => c.RACE == "Asian").Sum(c => (int?)c.StudentCount) ?? 0,
+                    BL = g.Where(c => c.RACE == "BlackorAfricanAmerican").Sum(c => (int?)c.StudentCount) ?? 0,
+                    HI = g.Where(c => c.RACE == "HI").Sum(c => (int?)c.StudentCount) ?? 0,
+                    PI = g.Where(c => c.RACE == "NativeHawaiianorOtherPacificIslander").Sum(c => (int?)c.StudentCount) ?? 0,
+                    WH = g.Where(c => c.RACE == "White").Sum(c => (int?)c.StudentCount) ?? 0,
+                    MU = g.Where(c => c.RACE == "TwoorMoreRaces").Sum(c => (int?)c.StudentCount) ?? 0,
+                    MISSING = g.Where(c => c.RACE == "MISSING").Sum(c => (int?)c.StudentCount) ?? 0,
+                    Total = g.Sum(c => c.StudentCount)
+                });
+        }
+
+        private IEnumerable<dynamic> GroupStudentSubpopData(IEnumerable<ReportEDFactsK12StudentCount> data)
+        {
+            return data
+                .GroupBy(c => new
+                {
+                    c.StateAbbreviationCode,
+                    c.StateAbbreviationDescription,
+                    c.OrganizationName
+                })
+                .Select(g => new
+                {
+                    StateCode = g.Key.StateAbbreviationCode,
+                    StateName = g.Key.StateAbbreviationDescription,
+                    OrganizationName = g.Key.OrganizationName,
+                    ECODIS = g.Where(c => c.ECONOMICDISADVANTAGESTATUS == "EconomicDisadvantage").Sum(c => (int?)c.StudentCount) ?? 0,
+                    HOMELSSTATUS = g.Where(c => c.HOMELESSNESSSTATUS == "HomelessUnaccompaniedYouth").Sum(c => (int?)c.StudentCount) ?? 0,
+                    LEP = g.Where(c => c.ENGLISHLEARNERSTATUS == "LEP").Sum(c => (int?)c.StudentCount) ?? 0,
+                    MIGRNTSTATUS = g.Where(c => c.MIGRANTSTATUS == "Migrant").Sum(c => (int?)c.StudentCount) ?? 0,
+                    Total = g.Sum(c => (int?)c.StudentCount) ?? 0
+                });
+        }
+
+        private IEnumerable<dynamic> GroupStudentDisabilityData(IEnumerable<ReportEDFactsK12StudentCount> data)
+        {
+            return data
+                .GroupBy(c => new
+                {
+                    c.StateAbbreviationCode,
+                    c.StateAbbreviationDescription,
+                    c.OrganizationName
+                })
+                .Select(g => new
+                {
+                    StateCode = g.Key.StateAbbreviationCode,
+                    StateName = g.Key.StateAbbreviationDescription,
+                    OrganizationName = g.Key.OrganizationName,
+                    AUT = g.Where(c => c.IDEADISABILITYTYPE == "AUT").Sum(c => (int?)c.StudentCount) ?? 0,
+                    DB = g.Where(c => c.IDEADISABILITYTYPE == "DB").Sum(c => (int?)c.StudentCount) ?? 0,
+                    DD = g.Where(c => c.IDEADISABILITYTYPE == "DD").Sum(c => (int?)c.StudentCount) ?? 0,
+                    EMN = g.Where(c => c.IDEADISABILITYTYPE == "EMN").Sum(c => (int?)c.StudentCount) ?? 0,
+                    HI = g.Where(c => c.IDEADISABILITYTYPE == "HI").Sum(c => (int?)c.StudentCount) ?? 0,
+                    ID = g.Where(c => c.IDEADISABILITYTYPE == "ID").Sum(c => (int?)c.StudentCount) ?? 0,
+                    MD = g.Where(c => c.IDEADISABILITYTYPE == "MD").Sum(c => (int?)c.StudentCount) ?? 0,
+                    OHI = g.Where(c => c.IDEADISABILITYTYPE == "OHI").Sum(c => (int?)c.StudentCount) ?? 0,
+                    OI = g.Where(c => c.IDEADISABILITYTYPE == "OI").Sum(c => (int?)c.StudentCount) ?? 0,
+                    SLD = g.Where(c => c.IDEADISABILITYTYPE == "SLD").Sum(c => (int?)c.StudentCount) ?? 0,
+                    SLI = g.Where(c => c.IDEADISABILITYTYPE == "SLI").Sum(c => (int?)c.StudentCount) ?? 0,
+                    TBI = g.Where(c => c.IDEADISABILITYTYPE == "TBI").Sum(c => (int?)c.StudentCount) ?? 0,
+                    VI = g.Where(c => c.IDEADISABILITYTYPE == "VI").Sum(c => (int?)c.StudentCount) ?? 0,
+                    Missing = g.Where(c => c.IDEADISABILITYTYPE == "MISSING").Sum(c => (int?)c.StudentCount) ?? 0,
+                    Total = g.Sum(c => (int?)c.StudentCount) ?? 0
+                });
+        }
+
+        private IEnumerable<dynamic> GroupStudentDisciplineData(IEnumerable<ReportEDFactsK12StudentDiscipline> data, List<string> disciplineCodes)
+        {
+            return data
+                .GroupBy(c => new
+                {
+                    c.StateAbbreviationCode,
+                    c.StateAbbreviationDescription,
+                    c.OrganizationName
+                })
+                .Select(g =>
+                {
+                    dynamic result = new ExpandoObject();
+                    var dict = (IDictionary<string, object>)result;
+
+                    dict["StateCode"] = g.Key.StateAbbreviationCode;
+                    dict["StateName"] = g.Key.StateAbbreviationDescription;
+                    dict["OrganizationName"] = g.Key.OrganizationName;
+
+                    foreach (var code in disciplineCodes)
+                    {
+                        if (code == "Missing")
+                        {
+                            dict[code] = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "MISSING")
+                                          .Sum(c => (c.DisciplineCount > 0) ? 1 : 0);
+                        }
+                        else if (code == "Total")
+                        {
+                            dict[code] = g.Sum(c => (c.DisciplineCount > 0) ? 1 : 0);
+                        }
+                        else
+                        {
+                            dict[$"d{code}"] = g.Where(c => c.DISCIPLINARYACTIONTAKEN == code)
+                                                .Sum(c => (c.DisciplineCount > 0) ? 1 : 0);
+                        }
+                    }
+
+                    return result;
+                });
+        }
+
+
+        private IEnumerable<ExpandoObject> BuildDataRows(IEnumerable<dynamic> groupedData, Dictionary<string, string> columnMappings)
+        {
+            foreach (var item in groupedData)
+            {
+                dynamic row = new ExpandoObject();
+                var dict = (IDictionary<string, object>)row;
+
+                dict["stateCode"] = item.StateCode;
+                dict["stateName"] = item.StateName;
+                dict["rowKey"] = item.OrganizationName;
+
+                int colIndex = 1;
+                foreach (var key in columnMappings.Keys)
+                {
+                    object value;
+
+                    if (key == "Total" || key == "Missing")
+                        value = ((IDictionary<string, object>)item)[key];
+                    else
+                        value = ((IDictionary<string, object>)item)[$"d{key}"];
+
+                    dict[$"col_{colIndex++}"] = value ?? 0;
+                }
+
+                yield return row;
+            }
+        }
+
+
 
 
         private List<ExpandoObject> GeneratePlaceHolderData(string reportLevel, int columnCount, IEnumerable<DimK12School> organizations, int skip, int take)

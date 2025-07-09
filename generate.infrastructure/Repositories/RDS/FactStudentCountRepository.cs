@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using generate.core.Dtos.RDS;
+using generate.infrastructure.Helpers;
 
 namespace generate.infrastructure.Repositories.RDS 
 {
@@ -61,20 +62,24 @@ namespace generate.infrastructure.Repositories.RDS
             }
 
             var returnObject = new List<ReportEDFactsK12StudentCount>();
+            int? oldTimeout = null;
 
             try
             {
-                int? oldTimeout = _rdsDbContext.Database.GetCommandTimeout();
+                oldTimeout = _rdsDbContext.Database.GetCommandTimeout();
                 _rdsDbContext.Database.SetCommandTimeout(11000);
-                //returnObject = _rdsDbContext.Set<ReportEDFactsK12StudentCount>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeZeroCounts = {4}, @includeFriendlyCaptions = {5}, @obscureMissingCategoryCounts = {6}, @isOnlineReport={7}", reportCode, reportLevel, reportYear, categorySetCode, zeroCounts, friendlyCaptions, missingCategoryCounts, onlineReport).ToList();
-                returnObject = _rdsDbContext.Set<ReportEDFactsK12StudentCount>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeFriendlyCaptions = {4}, @obscureMissingCategoryCounts = {5}, @isOnlineReport={6}", reportCode, reportLevel, reportYear, categorySetCode, friendlyCaptions, missingCategoryCounts, onlineReport).ToList();
-                _rdsDbContext.Database.SetCommandTimeout(oldTimeout);
+                returnObject = _rdsDbContext.Set<ReportEDFactsK12StudentCount>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeFriendlyCaptions = {5}, @obscureMissingCategoryCounts = {6}, @isOnlineReport={7}", reportCode, reportLevel, reportYear, categorySetCode, friendlyCaptions, missingCategoryCounts, onlineReport).ToList();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;  
             }
+            finally
+            {
+                _rdsDbContext.Database.SetCommandTimeout(oldTimeout);
+            }
+
             return returnObject;
 
         }
@@ -113,10 +118,6 @@ namespace generate.infrastructure.Repositories.RDS
 
             try
             {
-                //int? oldTimeout = _rdsDbContext.Database.GetCommandTimeout();
-                //_rdsDbContext.Database.SetCommandTimeout(11000);
-                //returnObject = _rdsDbContext.Set<ReportEDFactsK12StudentCount>().FromSqlRaw("rds.Get_MembershipReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeZeroCounts = {4}, @includeFriendlyCaptions = {5}, @obscureMissingCategoryCounts = {6}, @isOnlineReport={7}, @startRecord={8}, @numberOfRecords={9}", reportCode, reportLevel, reportYear, categorySetCode, zeroCounts, friendlyCaptions, missingCategoryCounts, onlineReport, startRecord, numberOfRecords).ToList();
-                //_rdsDbContext.Database.SetCommandTimeout(oldTimeout);
 
                 string connectionString = _rdsDbContext.Database.GetDbConnection().ConnectionString;
 
@@ -159,12 +160,12 @@ namespace generate.infrastructure.Repositories.RDS
 
                                     membershipReport.StateANSICode = reader.GetString(reader.GetOrdinal("StateANSICode"));
                                     membershipReport.StateAbbreviationCode = reader.GetString(reader.GetOrdinal("StateAbbreviationCode"));
-                                    membershipReport.OrganizationIdentifierSea = reader.IsDBNull(reader.GetOrdinal("OrganizationIdentifierSea")) ? "" : reader.GetString(reader.GetOrdinal("OrganizationIdentifierSea"));
-                                    membershipReport.ParentOrganizationIdentifierSea = reader.IsDBNull(reader.GetOrdinal("ParentOrganizationIdentifierSea")) ? "" : reader.GetString(reader.GetOrdinal("ParentOrganizationIdentifierSea"));
+                                    membershipReport.OrganizationIdentifierSea = reader.SafeGetString("OrganizationIdentifierSea");
+                                    membershipReport.ParentOrganizationIdentifierSea = reader.SafeGetString("ParentOrganizationIdentifierSea");
                                     membershipReport.OrganizationName = reader.GetString(reader.GetOrdinal("OrganizationName"));
-                                    membershipReport.GRADELEVEL = reader.IsDBNull(reader.GetOrdinal("GRADELEVEL")) ? "" : reader.GetString(reader.GetOrdinal("GRADELEVEL"));
-                                    membershipReport.RACE = reader.IsDBNull(reader.GetOrdinal("RACE")) ? "" : reader.GetString(reader.GetOrdinal("RACE"));
-                                    membershipReport.SEX = reader.IsDBNull(reader.GetOrdinal("SEX")) ? "" : reader.GetString(reader.GetOrdinal("SEX"));
+                                    membershipReport.GRADELEVEL = reader.SafeGetString("GRADELEVEL");
+                                    membershipReport.RACE = reader.SafeGetString("RACE");
+                                    membershipReport.SEX = reader.SafeGetString("SEX");
                                     membershipReport.TotalIndicator = reader.GetString(reader.GetOrdinal("TotalIndicator"));
                                     membershipReport.StudentCount = reader.GetInt32(reader.GetOrdinal("StudentCount"));
 
@@ -172,12 +173,9 @@ namespace generate.infrastructure.Repositories.RDS
                                 }
                             }
 
-                            if (reader.NextResult())
+                            if (reader.NextResult() && reader.Read())
                             {
-                                if (reader.Read())
-                                {
                                     totalRecordCount = reader.GetInt32(0);
-                                }
                             }
                             
                         }

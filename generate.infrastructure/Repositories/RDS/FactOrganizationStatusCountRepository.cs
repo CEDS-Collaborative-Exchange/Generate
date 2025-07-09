@@ -37,19 +37,25 @@ namespace generate.infrastructure.Repositories.RDS
 		public IEnumerable<ReportEDFactsOrganizationStatusCount> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool flag = false)
 		{
 			var returnObject = new List<ReportEDFactsOrganizationStatusCount>();
-			try
+            int? oldTimeout = null;
+
+            try
 			{
-				int? oldTimeout = _context.Database.GetCommandTimeout();
+				oldTimeout = _context.Database.GetCommandTimeout();
 				_context.Database.SetCommandTimeout(11000);
 				returnObject = _context.Set<ReportEDFactsOrganizationStatusCount>().FromSqlRaw("rds.Get_OrganizationStatusReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @flag={4}", reportCode, reportLevel, reportYear, categorySetCode, flag).ToList();
-				_context.Database.SetCommandTimeout(oldTimeout);
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex.Message);
 				throw;
 			}
-			return returnObject;
+            finally
+            {
+                _context.Database.SetCommandTimeout(oldTimeout);
+            }
+
+            return returnObject;
 
 		}
 	}

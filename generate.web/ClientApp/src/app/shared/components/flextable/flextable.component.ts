@@ -73,6 +73,7 @@ export class FlextableComponent {
     populateReport() {
         if (this.itemsSource == null)
             return;
+
         let reportData = null;
         if (!Array.isArray(this.itemsSource)) {
             reportData = this.itemsSource.data;

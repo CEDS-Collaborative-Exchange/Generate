@@ -6,6 +6,10 @@ import { GenerateReportParametersDto } from '../../../models/app/generateReportP
 import { CategoryOptionDto } from '../../../models/app/categoryOptionDto';
 import 'node_modules/pivottable/dist/pivot.js';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+//import ReportDebugInformationComponent
+
+import { ReportDebugInformationComponent } from '../../reportcontrols/reportdebuginformation.component'; 
 
 //import * as XLSX from '../../../../lib/xlsx-js-style/dist/xlsx.bundle.js'
 import * as XLSX from '../../../../lib/xlsx-js-style/xlsx.js'
@@ -40,13 +44,24 @@ export class PivottableComponent {
     itemsPerPage: number = 10;
     totalItems: number;
     self: any;
-    constructor(private renderer: Renderer2) {
+    constructor(private renderer: Renderer2, private dialog: MatDialog) {
         console.log('constructor');
         this.populateReport = this.populateReport.bind(this);
         this.markSearchFields = this.markSearchFields.bind(this);
         this.restoreSearchFields = this.restoreSearchFields.bind(this);
     }
 
+    openDialog(data: any) {
+        this.dialog.open(ReportDebugInformationComponent, {
+            width: '1000px',
+            minHeight: '700px',
+            maxHeight: '1200px',
+            data: data
+        });
+    }
+    closeDialog() {
+        this.dialog.closeAll();
+    }
     ngOnInit() {
 
         filterBy = {};
@@ -282,6 +297,8 @@ export class PivottableComponent {
     }
 
     populateReport() {
+        const self = this;
+
         if (this.isNullOrUndefined(reportData) || Object.keys(reportData).length === 0)
             return;
         var derivers = $.pivotUtilities.derivers;
@@ -417,7 +434,6 @@ export class PivottableComponent {
         // Update totalItems based on the total count of data
         this.paginator.length = new Set(this.reportDataDto.data.filter(d => {
             if (Object.keys(filterBy2).length === 0) { return true; }
-
             var matchFound = true;
             for (var i = 0; i < Object.keys(filterBy2).length; i++) {
                 if (filterBy2[Object.keys(filterBy2)[i]] != "") {
@@ -489,6 +505,62 @@ export class PivottableComponent {
 
         aggregateColumn = viewDef.columnFields.items[len - 1];
 
+        function displayDebugInfo(e, value, filters, pivotData) {
+            //let categorySetCode = reportData.categorySets[0].categorySetCode;
+            let reportYear = reportData.reportYear;
+            let reportLevel = reportData.data[0].reportLevel;
+            let categorySetCode = reportData.data[0].categorySetCode;
+            let reportCode = reportData.data[0].reportCode;
+          //  let headers = reportData.categorySets[0].categories;
+
+            var bindings = ["k12StudentStudentIdentifierState"];
+            var headers = ["Student Id"];
+
+            var selectedFilter = {}
+            for (const key in filters) {
+                if (filters.hasOwnProperty(key)) {
+                    const column = viewDef.fields.find(f => f.header === key).binding;
+                    if (column) {
+
+                        if (column === 'organizationIdentifierSea') {
+
+                            selectedFilter[column] = filters[key];
+                        }
+                        let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionName === filters[key]);
+                        if (categoryOption) {
+                            selectedFilter[column] = categoryOption.categoryOptionCode;
+
+                            // for displaying
+                            bindings.push(column);
+                            headers.push(categoryOption.categoryName);
+                        }                        
+                    }
+
+                    let binding = viewDef.fields.find(item => item === key);
+                    for (const k in binding) {
+                        if (binding.hasOwnProperty(k)) {
+
+                        }
+                    }
+                }
+            }
+
+            const selectedFilterJson = JSON.stringify(selectedFilter);
+
+            let data = {
+                reportData: reportData,
+                recordCount: value,
+                filters: selectedFilterJson,
+                reportYear: reportData.reportYear,
+                reportLevel: reportData.data[0].reportLevel,
+                categorySetCode: reportData.data[0].categorySetCode,
+                reportCode: reportData.data[0].reportCode,
+                bindings: bindings,
+                headers: headers
+            };
+            self.openDialog(data);
+        }
+
         $("#container").pivotUI(uiData, {
             showUI: false,
             rows: viewDef.rowFields.items, cols: viewDef.columnFields.items,
@@ -503,6 +575,7 @@ export class PivottableComponent {
                     rendererName: "Table",
                     clickCallback: function (e, value, filters, pivotData) {
                         var names = [];
+                        displayDebugInfo(e, value, filters, pivotData);
                         pivotData.forEachMatchingRecord(filters,
                             function (record) { names.push(record.Name); });
                     }
@@ -663,23 +736,23 @@ export class PivottableComponent {
 
 
                 //Column C
-                if (reportCode.toLowerCase() == "c002") {
+                if (reportCode.toLowerCase() == "002") {
                     if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c"
                         || category.toLowerCase() == "category set d") {
                         colWidth = 220;
                     }
                 }
-                else if (reportCode.toLowerCase() == "c005") {
+                else if (reportCode.toLowerCase() == "005") {
                     if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d") {
                         colWidth = 500;
                     }
                 }
-                else if (reportCode.toLowerCase() == "c009") {
+                else if (reportCode.toLowerCase() == "009") {
                     if (category.toLowerCase() == "category set a") {
                         colWidth = 220;
                     }
                 }
-                else if (reportCode.toLowerCase() == "c089") {
+                else if (reportCode.toLowerCase() == "089") {
                     if (category.toLowerCase() == "category set a" || category.toLowerCase() == "category set b") {
                         colWidth = 220;
                     } else if (category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d") {
@@ -690,7 +763,7 @@ export class PivottableComponent {
 
 
                 if (firstEmptyCellSpan > 2) {
-                    if (reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178") {
+                    if (reportCode.toLowerCase() == "175" || reportCode.toLowerCase() == "178") {
                         //Starting from Column A
                         wscols = [
                             { wpx: 120 },
@@ -712,7 +785,7 @@ export class PivottableComponent {
                             wscols.push({ wpx: 180 }); //Column D
                         }
                     }
-                    else if (reportCode.toLowerCase() == "c179") {
+                    else if (reportCode.toLowerCase() == "179") {
                         //Starting from Column A
                         wscols = [
                             { wpx: 120 },
@@ -741,12 +814,12 @@ export class PivottableComponent {
                             wscols.push({ wpx: 180 }); //Column D
                         }
                     }
-                    else if (reportCode.toLowerCase() == "c185") {
+                    else if (reportCode.toLowerCase() == "185") {
                         wscols.push({ wpx: 200 }); //Column D
                         if (category.toLowerCase() == "category set j")
                             wscols.push({ wpx: 180 });// Column E
                     }
-                    else if (reportCode.toLowerCase() == "c188") {
+                    else if (reportCode.toLowerCase() == "188") {
                         if (category.toLowerCase() == "subtotal 1")
                             wscols.push({ wpx: 325 }); //Column D
                         else
@@ -755,7 +828,7 @@ export class PivottableComponent {
                         if (category.toLowerCase() == "category set j")
                             wscols.push({ wpx: 180 });// Column E
                     }
-                    else if (reportCode.toLowerCase() == "c189") {
+                    else if (reportCode.toLowerCase() == "189") {
                         //  wscols.push({ wpx: 200 }); //Column D
                         if (category.toLowerCase() == "category set b" || category.toLowerCase() == "category set c" || category.toLowerCase() == "category set d" || category.toLowerCase() == "category set f")
                             wscols.push({ wpx: 150 });// Column D
@@ -771,22 +844,22 @@ export class PivottableComponent {
 
                 //Set data columns
                 var dataColumnNumber = $('#containerExport .pvtTable thead tr:last').prev().find('.pvtColLabel').length;
-                if (reportCode.toLowerCase() == "c005" && category.toLowerCase() == "subtotal 1") {
+                if (reportCode.toLowerCase() == "005" && category.toLowerCase() == "subtotal 1") {
                     for (var i = 0; i <= dataColumnNumber; i++) {
                         ws['!cols'].push({ wpx: 200 })
                     }
                 }
-                else if ((reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178" || reportCode.toLowerCase() == "c179") && category.toLowerCase() == "category set j") {
+                else if ((reportCode.toLowerCase() == "175" || reportCode.toLowerCase() == "178" || reportCode.toLowerCase() == "179") && category.toLowerCase() == "category set j") {
                     for (var i = 0; i <= dataColumnNumber; i++) {
                         ws['!cols'].push({ wpx: 200 })
                     }
                 }
-                else if (reportCode.toLowerCase() == "c178" && category.toLowerCase() == "category set j") {
+                else if (reportCode.toLowerCase() == "178" && category.toLowerCase() == "category set j") {
                     for (var i = 0; i <= dataColumnNumber; i++) {
                         ws['!cols'].push({ wpx: 200 })
                     }
                 }
-                else if (reportCode.toLowerCase() == "c185") {
+                else if (reportCode.toLowerCase() == "185") {
                     let dataCol = 200;
                     if (category.toLowerCase() == "category set j" || category.toLowerCase() == "subtotal 1")
                         dataCol = 100;
@@ -795,7 +868,7 @@ export class PivottableComponent {
                         ws['!cols'].push({ wpx: dataCol })
                     }
                 }
-                else if (reportCode.toLowerCase() == "c188") {
+                else if (reportCode.toLowerCase() == "188") {
                     let dataCol = 200;
                     if (category.toLowerCase() == "category set j" || category.toLowerCase() == "subtotal 1")
                         dataCol = 100;
@@ -804,7 +877,7 @@ export class PivottableComponent {
                         ws['!cols'].push({ wpx: dataCol })
                     }
                 }
-                else if (reportCode.toLowerCase() == "c189") {
+                else if (reportCode.toLowerCase() == "189") {
                     let dataCol = 200;
                     if (category.toLowerCase() == "subtotal 1")
                         dataCol = 150;
@@ -857,9 +930,9 @@ export class PivottableComponent {
                 //Set all data row height
                 let dataRowLength = $('#containerExport .pvtTable tbody tr').length;
                 for (var i = 0; i <= dataRowLength; i++) {
-                    if (reportCode.toLowerCase() == "c175" || reportCode.toLowerCase() == "c178") {
+                    if (reportCode.toLowerCase() == "175" || reportCode.toLowerCase() == "178") {
                         ws['!rows'].push({ hpx: 45 });
-                    } else if (reportCode.toLowerCase() == "c179") {
+                    } else if (reportCode.toLowerCase() == "179") {
                         if (category.toLowerCase() == "subtotal 1")
                             ws['!rows'].push({ hpx: 45 });
                     }

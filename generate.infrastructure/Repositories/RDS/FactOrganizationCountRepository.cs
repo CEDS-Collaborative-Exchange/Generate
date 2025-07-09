@@ -41,19 +41,24 @@ namespace generate.infrastructure.Repositories.RDS
 
 
             var returnObject = new List<ReportEDFactsOrganizationCount>();
+            int? oldTimeout = null;
 
             try
             {
-                int? oldTimeout = _context.Database.GetCommandTimeout();
+                oldTimeout = _context.Database.GetCommandTimeout();
                 _context.Database.SetCommandTimeout(11000);
                 returnObject = _context.Set<ReportEDFactsOrganizationCount>().FromSqlRaw("rds.Get_OrganizationReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @flag={4}", reportCode, reportLevel, reportYear, categorySetCode, flag).ToList();
-                _context.Database.SetCommandTimeout(oldTimeout);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;
             }
+            finally
+            {
+                _context.Database.SetCommandTimeout(oldTimeout);
+            }
+
             return returnObject;
 
         }
@@ -62,21 +67,25 @@ namespace generate.infrastructure.Repositories.RDS
         {
             // Convert bool parameters to bit values
 
-
             var returnObject = new List<ReportEDFactsGradesOffered>();
+            int? oldTimeout = null;
 
             try
             {
-                int? oldTimeout = _context.Database.GetCommandTimeout();
+                oldTimeout = _context.Database.GetCommandTimeout();
                 _context.Database.SetCommandTimeout(11000);
                 returnObject = _context.Set<ReportEDFactsGradesOffered>().FromSqlRaw("rds.Get_OrganizationReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @flag={4}", reportCode, reportLevel, reportYear, categorySetCode, flag).ToList();
-                _context.Database.SetCommandTimeout(oldTimeout);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;
             }
+            finally
+            {
+                _context.Database.SetCommandTimeout(oldTimeout);
+            }
+
             return returnObject;
 
         }
@@ -87,19 +96,24 @@ namespace generate.infrastructure.Repositories.RDS
 
 
             var returnObject = new List<ReportEDFactsPersistentlyDangerous>();
+            int? oldTimeout = null;
 
             try
             {
-                int? oldTimeout = _context.Database.GetCommandTimeout();
+                oldTimeout = _context.Database.GetCommandTimeout();
                 _context.Database.SetCommandTimeout(11000);
                 returnObject = _context.Set<ReportEDFactsPersistentlyDangerous>().FromSqlRaw("rds.Get_OrganizationReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @flag={4}", reportCode, reportLevel, reportYear, categorySetCode, flag).ToList();
-                _context.Database.SetCommandTimeout(oldTimeout);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;
             }
+            finally
+            {
+                _context.Database.SetCommandTimeout(oldTimeout);
+            }
+
             return returnObject;
 
         }

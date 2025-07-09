@@ -3,6 +3,7 @@
 	@reportLevel as varchar(50),
 	@reportYear as varchar(50),
 	@categorySetCode as varchar(50),
+	@includeZeroCounts as bit,
 	@includeFriendlyCaptions as bit,
 	@obscureMissingCategoryCounts as bit,
 	@isOnlineReport as bit=0,
@@ -177,7 +178,7 @@ BEGIN
 
 	declare @isPerformanceSql as bit
 	set @isPerformanceSql = 0
-	if @reportCode in ('c175','c178','c179') and @reportLevel <> 'sea' and @year <= 2018 and LEN(ISNULL(@categorySetCode,'')) < 1
+	if @reportCode in ('175','178','179') and @reportLevel <> 'sea' and @year <= 2018 and LEN(ISNULL(@categorySetCode,'')) < 1
 		begin
 			set @isPerformanceSql = 1
 		end
@@ -490,6 +491,130 @@ BEGIN
 			'
 		end			-- END @isPerformanceSql = 1
 
+	if @reportCode in ('002', '089')
+		begin
+			set @includeZeroCounts = 0
+			if @reportLevel = 'SEA' set @includeZeroCounts = 1
+			if @reportLevel <> 'SEA' and @categorySetCode = 'TOT' set @includeZeroCounts = 1
+		end
+
+
+	if @reportLevel = 'sea' AND @reportCode in ('005','006','007','088','143','144')
+	begin
+		set @includeZeroCounts = 1
+	end
+
+	-- Zero Counts
+	if @includeZeroCounts = 1
+		begin		
+			if(LEN(ISNULL(@categorySetCode,'')) < 1)
+				begin
+					DECLARE categoryset_cursor CURSOR FOR 
+					select cs.CategorySetCode, tt.TableTypeAbbrv,
+					CASE WHEN CHARINDEX('total', cs.CategorySetName) > 0 Then 'Y'
+						 ELSE 'N'
+					END as TotalIndicator from app.CategorySets cs
+					inner join app.GenerateReports r on cs.GenerateReportId = r.GenerateReportId
+					inner join app.OrganizationLevels levels on cs.OrganizationLevelId =levels.OrganizationLevelId
+					left outer join app.TableTypes tt on cs.TableTypeId = tt.TableTypeId
+					where r.ReportCode = @reportCode and levels.LevelCode = @reportLevel and cs.SubmissionYear = @reportYear
+					order by cs.CategorySetSequence
+
+					OPEN categoryset_cursor
+					FETCH NEXT FROM categoryset_cursor INTO @catSetCode,@tableTypeAbbrvs, @totalIndicators
+
+					WHILE @@FETCH_STATUS = 0
+						BEGIN
+							set @catSetCount = @catSetCount + 1
+							IF(@catSetCount = 1)
+								begin
+									set @includeOrganizationSQL = 1
+								end
+							else 
+								begin
+									set @includeOrganizationSQL = 0
+								end
+
+						SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @catSetCode, 'zero',@includeOrganizationSQL, 1,@tableTypeAbbrvs, @totalIndicators, @factTypeCode)
+				
+						IF(@zeroCountSql IS NOT NULL)
+							begin
+								set @sql = @sql + '
+									' + @zeroCountSql
+							end
+							FETCH NEXT FROM categoryset_cursor INTO @catSetCode,@tableTypeAbbrvs, @totalIndicators
+						END
+					CLOSE categoryset_cursor
+					DEALLOCATE categoryset_cursor
+
+					if @reportCode in ('032')
+						begin
+							set @sql = @sql + '
+								delete a from @reportData a '
+				
+							set @sql = @sql + '
+								inner join (select OrganizationName, CategorySetCode from @reportData group by OrganizationName, 
+								CategorySetCode having sum(' + @factField + ') = 0 and CategorySetCode <> ''TOT'') b'
+				
+							set @sql = @sql + '
+								on a.CategorySetCode = b.CategorySetCode and a.OrganizationName = b.OrganizationName
+							'
+
+							set @sql = @sql + '
+								delete a from @reportData a '
+
+							set @sql = @sql + '
+								inner join (select OrganizationName, GRADELEVEL, CategorySetCode  from @reportData group by OrganizationName, Gradelevel, 
+								CategorySetCode having sum(' + @factField + ') = 0 and CategorySetCode like ''CS%'') b'
+							set @sql = @sql + '
+							on a.CategorySetCode = b.CategorySetCode and a.OrganizationName = b.OrganizationName and a.GRADELEVEL = b.GRADELEVEL
+							'
+						end
+
+					if @reportCode = '033'
+					BEGIN
+						-- Exclude the Category Set A for Schools if there are no students
+						set @sql = @sql + 'delete a from @reportData a
+							inner join 
+							(select OrganizationIdentifierSea, TableTypeAbbrv, CategorySetCode, sum(StudentCount) as totalStudentCount 
+							from @reportData group by OrganizationIdentifierSea, CategorySetCode, TableTypeAbbrv 
+							having sum(StudentCount) < 1 and CategorySetCode <> ''TOT'' and TableTypeAbbrv = ''LUNCHFREERED''	) b
+							on a.CategorySetCode = b.CategorySetCode and a.OrganizationIdentifierSea = b.OrganizationIdentifierSea and a.TableTypeAbbrv = b.TableTypeAbbrv'
+													
+					END
+
+					if @reportCode = '052'
+					BEGIN
+						-- Exclude the Category Set A and SubTotals for the LEA or Schools if there are no students
+						set @sql = @sql + 'delete a from @reportData a
+							inner join 
+							(select OrganizationIdentifierSea, CategorySetCode, sum(StudentCount) as totalStudentCount from @reportData group by OrganizationIdentifierSea, CategorySetCode having sum(StudentCount) < 1 and CategorySetCode <> ''TOT''	) b
+							on a.CategorySetCode = b.CategorySetCode and a.OrganizationIdentifierSea = b.OrganizationIdentifierSea'
+
+						set @sql = @sql + ' delete a from @reportData a 
+							inner join 
+							(select OrganizationIdentifierSea, GRADELEVEL, CategorySetCode, sum(StudentCount) as totalStudentCount from @reportData group by OrganizationIdentifierSea, GRADELEVEL, CategorySetCode having sum(StudentCount) < 1 and 
+							CategorySetCode in (''CSA'', ''ST1'', ''ST2'' )) b
+							on a.CategorySetCode = b.CategorySetCode and a.OrganizationIdentifierSea = b.OrganizationIdentifierSea  and a.GRADELEVEL = b.GRADELEVEL
+						'
+					END
+				end
+			else
+				begin
+					set @includeOrganizationSQL = 1
+					SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @categorySetCode, 'zero',@includeOrganizationSQL, 0,@tableTypeAbbrvs, @totalIndicators, @factTypeCode)
+
+					IF(@zeroCountSql IS NOT NULL)
+						begin
+							set @sql = @sql + '
+								' + @zeroCountSql
+						end
+				end
+		end		-- END @includeZeroCounts = 1
+
+	--print '@reportCode='+@reportCode
+	--print '@zeroCountSql='+@zeroCountSql
+
 	-- Obscure missing category counts with -1 values
 	if @obscureMissingCategoryCounts = 1
 		begin
@@ -618,6 +743,3 @@ BEGIN
 
 	SET NOCOUNT OFF;
 END
-GO
-
-
