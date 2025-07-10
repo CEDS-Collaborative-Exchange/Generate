@@ -34,7 +34,7 @@ namespace generate.infrastructure.Repositories.RDS
 		}
 
 
-		public IEnumerable<ReportEDFactsOrganizationStatusCount> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool flag = false)
+		public IEnumerable<ReportEDFactsOrganizationStatusCount> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool flag = false)
 		{
 			var returnObject = new List<ReportEDFactsOrganizationStatusCount>();
             int? oldTimeout = null;

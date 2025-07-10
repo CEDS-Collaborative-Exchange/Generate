@@ -76,36 +76,36 @@ namespace generate.infrastructure.Services
 
             dynamic dataRows = new List<ExpandoObject>();
 
-            bool includeZeroCounts = false;
-            if (reportLevel == "sea" || reportCode.ToLower() == "052" || reportCode.ToLower() == "032" || reportCode.ToLower() == "040" || reportCode.ToLower() == "033")
-            {
-                includeZeroCounts = true;
-            }
+            //bool includeZeroCounts = false;
+            //if (reportLevel == "sea" || reportCode.ToLower() == "052" || reportCode.ToLower() == "032" || reportCode.ToLower() == "040" || reportCode.ToLower() == "033")
+            //{
+            //    includeZeroCounts = true;
+            //}
 
-            if (reportCode.ToLower() == "045")
-            {
-                includeZeroCounts = false;
-            }
+            //if (reportCode.ToLower() == "045")
+            //{
+            //    includeZeroCounts = false;
+            //}
 
 
             if (factTableName == "FactK12StudentCounts")
             {
-                var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, includeZeroCounts, false, true);
+                var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, true);
                 dataRows = query.ToList();
             }
             else if (factTableName == "FactK12StudentDisciplines")
             {
-                var query = _factStudentDisciplineRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, includeZeroCounts, false, true);
+                var query = _factStudentDisciplineRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, true);
                 dataRows = query.ToList();
             }
             else if (factTableName == "FactK12StudentAssessments")
             {
-                var query = _factStudentAssessmentRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, includeZeroCounts, false, true);
+                var query = _factStudentAssessmentRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, true);
                 dataRows = query.ToList();
             }
             else if (factTableName == "FactK12StaffCounts")
             {
-                var query = _factStaffCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, includeZeroCounts, false, true);
+                var query = _factStaffCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, true);
                 dataRows = query.ToList();
             }
             else if (factTableName == "FactOrganizationStatusCounts")
@@ -133,7 +133,7 @@ namespace generate.infrastructure.Services
 
             if (report.ReportCode == "205")
             {
-                var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
+                var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null,  false, false, true);
                 dataRows = query.ToList();
             }
             else if (report.ReportCode == "130")

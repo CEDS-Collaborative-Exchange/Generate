@@ -9,6 +9,6 @@ namespace generate.core.Interfaces.Repositories.RDS
     public interface IFactStudentAssessmentRepository : IRDSRepository
     {
         void Migrate_StudentAssessments(string factTypeCode);
-        IEnumerable<ReportEDFactsK12StudentAssessment> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false);
+        IEnumerable<ReportEDFactsK12StudentAssessment> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false);
     }
 }

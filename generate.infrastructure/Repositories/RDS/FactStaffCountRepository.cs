@@ -34,18 +34,13 @@ namespace generate.infrastructure.Repositories.RDS
         }
 
 
-        public IEnumerable<ReportEDFactsK12StaffCount> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false)
+        public IEnumerable<ReportEDFactsK12StaffCount> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false)
         {
             // Convert bool parameters to bit values
 
-            int zeroCounts = 0;
             int friendlyCaptions = 0;
             int missingCategoryCounts = 0;
 
-            if (includeZeroCounts)
-            {
-                zeroCounts = 1;
-            }
             if (includeFriendlyCaptions)
             {
                 friendlyCaptions = 1;
