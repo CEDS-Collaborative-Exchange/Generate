@@ -123,7 +123,7 @@ namespace generate.infrastructure.Repositories.App
                     var dataMigrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusCode == dataMigrationStatusCode);
                     dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
 
-                    var lockedReports = this.GetReports().Where(r => r.IsLocked == true);
+                    var lockedReports = this.GetReports().Where(r => r.IsLocked);
                     var factTypeId = lockedReports.ToList()[0].GenerateReport_FactTypes[0].FactTypeId;
                     var dataMigrtionTasks = _context.Set<DataMigrationTask>().OrderBy(t => t.TaskSequence).Where(t => t.FactTypeId == factTypeId).Select(t => t.DataMigrationTaskId.ToString()).ToList();
                     dataMigration.DataMigrationTaskList = string.Join(",", dataMigrtionTasks);
