@@ -3181,3 +3181,34 @@ VALUES
 
 SET IDENTITY_INSERT [App].[EtlMetadata] OFF
 GO
+
+--The most recent metadata for file 033 has the wrong header information for the submission file
+update fs
+set FileSubmissionDescription = 'SCHOOL FREE AND REDUCED PRICE LUNCH'
+from app.FileSubmissions fs
+	inner join app.GenerateReports gr
+		on fs.GenerateReportId = gr.GenerateReportId
+where gr.ReportCode = '033'
+
+--Add value for CharterSchoolAuthorizer to the metadata for 029
+insert into app.GenerateReport_GenerateStagingXREF
+values (39,3,NULL)
+
+--Remove the invalid metadata values from 190
+delete x
+from app.GenerateReport_GenerateStagingXREF x
+	inner join app.GenerateStagingTables gt
+		on x.StagingTableId = gt.StagingTableId
+	inner join app.generatereports gr
+		on x.GenerateReportId = gr.GenerateReportId
+where gr.ReportCode = '190'
+and gt.StagingTableName in ('CharterSchoolManagementOrganization','K12Organization','OrganizationFederalFunding','OrganizationProgramType')
+
+--Remove any reference in the metadata to OrganizationProgramType
+delete x
+from app.GenerateReport_GenerateStagingXREF x
+	inner join app.GenerateStagingTables gt
+		on x.StagingTableId = gt.StagingTableId
+where gt.StagingTableName = 'OrganizationProgramType'
+
+
