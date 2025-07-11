@@ -78,7 +78,7 @@ namespace generate.infrastructure.Repositories.RDS
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, ex.Message);
                 throw;
             }
             finally
