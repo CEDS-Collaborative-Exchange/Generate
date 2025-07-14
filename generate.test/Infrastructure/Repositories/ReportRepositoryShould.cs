@@ -67,9 +67,7 @@ namespace generate.test.Infrastructure.Repositories
             appDbContext.DataMigrationTypes.AddRange(DataMigrationTypeHelper.GetData());
             appDbContext.OrganizationLevels.AddRange(OrganizationLevelHelper.GetData());
             appDbContext.GenerateReports.AddRange(GenerateReportHelper.GetData());
-            appDbContext.Categories.AddRange(CategoryHelper.GetData());
             appDbContext.TableTypes.AddRange(TableTypeHelper.GetData());
-            appDbContext.CategorySets.AddRange(CategorySetHelper.GetData(generateReportId));
 
             appDbContext.SaveChanges();
 
