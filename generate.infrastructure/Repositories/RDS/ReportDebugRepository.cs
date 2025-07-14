@@ -17,7 +17,6 @@ namespace generate.infrastructure.Repositories.RDS
     public class ReportDebugRepository : RDSRepository, IReportDebugRepository
     {
         private readonly ILogger _logger;
-        private readonly RDSDbContext _rdsDbContext;
 
         public ReportDebugRepository(
             ILogger<FactStaffCountRepository> logger,
@@ -26,7 +25,6 @@ namespace generate.infrastructure.Repositories.RDS
             : base(rdsDbContext)
         {
             _logger = logger;
-            _rdsDbContext = rdsDbContext;
         }
 
         public IEnumerable<ReportDebug> Get_ReportDebugData(string reportCode, string reportLevel, string reportYear, string categorySetCode, string parameters, int sort, int skip, int take, int pageSize, int page)
