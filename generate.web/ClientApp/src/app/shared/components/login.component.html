@@ -1,5 +1,5 @@
 <div class="generate-app-login">
-    <div [hidden]="!isAuthenticating" class="mdl-spinner mdl-js-spinner is-active"></div>
+    <div [hidden]="!isAuthenticating" class="mdl-spinner mdl-js-spinner is-active" aria-hidden="true"></div>
 
     <div *ngIf="!userService.isLoggedIn()" id="generate-app-shared-login__error" class="generate-app-shared-login__error mdl-js-snackbar mdl-snackbar" aria-live="assertive" aria-atomic="true" aria-relevant="text">
         <div class="mdl-snackbar__text generate-app-shared-login__error-text"></div>
@@ -9,11 +9,11 @@
     <div *ngIf="!isAuthenticating && !userService.isLoggedIn()">
         <div *ngIf="isOAuth" class="generate-app-shared-login__button-container">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
-                    (click)="loginAzure()" id="loginButton-lg">
+                    (click)="loginAzure()" autofocus id="loginButton-lg" tabindex="1">
                 Log in
             </button>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
-                    (click)="loginAzure()" id="loginButton-sm">
+                    (click)="loginAzure()" autofocus id="loginButton-sm" tabindex="1">
                 <i class="fa fa-sign-in"></i><span class="generate-text--screen-reader-only">Log in</span>
             </button>
         </div>
@@ -21,22 +21,22 @@
 
         <div>
             <div class="mdl-textfield mdl-js-textfield generate-app-shared-login__textfield">
-                <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__username" type="text" #username id="username" />
+                <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__username" autofocus tabindex="1" type="text" #username id="username" />
                 <label class="mdl-textfield__label" for="username">UserName</label>
             </div>
 
             <div class="mdl-textfield mdl-js-textfield generate-app-shared-login__textfield">
-                <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__password" type="password" #userpassword id="userpassword" />
+                <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__password" tabindex="2" type="password" #userpassword id="userpassword" />
                 <label class="mdl-textfield__label" for="userpassword">Password</label>
             </div>
 
             <div class="generate-app-shared-login__button-container">
                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
-                        (click)="login($event, username.value, userpassword.value)" id="loginButton-lg">
+                        (click)="login($event, username.value, userpassword.value)" id="loginButton-lg" tabindex="3">
                     Log in
                 </button>
                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
-                        (click)="login($event, username.value, userpassword.value)" id="loginButton-sm">
+                        (click)="login($event, username.value, userpassword.value)" id="loginButton-sm" tabindex="3">
                     <i class="fa fa-sign-in"></i><span class="generate-text--screen-reader-only">Log in</span>
                 </button>
             </div>
@@ -44,13 +44,13 @@
 
     </form>
     </div>
-    <div *ngIf="!isAuthenticating && userService.isLoggedIn()">
+    <div *ngIf="!isAuthenticating && userService.isLoggedIn()">             
         <form (submit)="logout($event)">
 
-            <div class="generate-app-shared-loggedin__text">
+            <div class="generate-app-shared-loggedin__text" aria-hidden="true">
                 {{ userService.getUserDisplayName() }} ({{userService.getRole()}})
             </div>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only generate-app-button--colored"
                     (click)="logout($event)" id="logoutButton-lg">
                 Log out
             </button>

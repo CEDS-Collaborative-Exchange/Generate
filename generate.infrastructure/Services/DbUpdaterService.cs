@@ -25,7 +25,6 @@ namespace generate.infrastructure.Services
     public class DbUpdaterService : IDbUpdaterService
     {
         private readonly AppDbContext _context;
-        private readonly IOptions<AppSettings> _appSettings;
         private readonly ILogger<DbUpdaterService> _logger;
         private readonly IAppRepository _appRepository;
 
@@ -37,13 +36,11 @@ namespace generate.infrastructure.Services
         /// <param name="logger"></param>
         /// <param name="appRepository"></param>
         public DbUpdaterService(
-            IOptions<AppSettings> appSettings, 
             AppDbContext context, 
             ILogger<DbUpdaterService> logger,
             IAppRepository appRepository
             )
         {
-            _appSettings = appSettings;
             _context = context;
             _logger = logger;
             _appRepository = appRepository;

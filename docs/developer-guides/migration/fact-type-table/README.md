@@ -8,6 +8,8 @@ description: >-
 
 Fact Type refers to a categorization or classification of data that is used to organize and manage information within a data warehouse or data management system. It essentially represents a specific type of factual data that is collected, stored, and processed within the system.
 
+<figure><img src="../../../.gitbook/assets/Generate_FactType_Migration_Process2.png" alt="Diagram showing a four-step process for generating EDFacts submission files. Step 1 (Setup) involves completing ETL documentation, developing ETL, configuring source system reference data, and setting school year toggles. Step 2 (Staging) extracts state source data to staging tables and includes validation using a staging validation utility. Step 3 (CEDS Data Warehouse) moves staging data to fact tables with debug view validation. Step 4 (Report Generation) creates EDFacts report tables, includes file comparison validation, and generates user submission files. A utility also allows snapshot creation from staging tables."><figcaption><p>ETL and Data Migration Process for Generating ED<em>Facts</em> Submission Files: This diagram outlines the four key stages—Setup, Staging, CEDS Data Warehouse, and Report Generation—in the process of transforming state source data into ED<em>Facts</em> submission files using ETL tools and validation utilities.</p></figcaption></figure>
+
 ### What is a Generate Fact Type?
 
 A Generate Fact Type is a specific type of Fact Type that is used within the Generate ETL (Extract, Transform, Load) Stored Procedures. These procedures are organized based on different types of factual data, each representing a distinct aspect or category of information.

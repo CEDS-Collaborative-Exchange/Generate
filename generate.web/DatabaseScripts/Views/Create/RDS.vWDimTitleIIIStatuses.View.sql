@@ -20,7 +20,12 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 		, sssrd2.InputCode as TitleIIIAccountabilityProgressStatusMap
 		, rdt3s.TitleIIILanguageInstructionProgramTypeCode
 		, sssrd3.InputCode as TitleIIILanguageInstructionProgramTypeMap
-		, rdt3s.EnglishLearnersExitedStatus
+		, rdt3s.EnglishLearnersExitedStatusCode
+		, CASE rdt3s.EnglishLearnersExitedStatusCode
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
+			ELSE -1
+		  END AS EnglishLearnersExitedStatusMap
   	FROM rds.DimTitleIIIStatuses rdt3s
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	--ProficiencyStatusCode
@@ -38,5 +43,4 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 		ON rdt3s.TitleIIILanguageInstructionProgramTypeCode = sssrd3.OutputCode
 		AND sssrd3.TableName = 'RefTitleIIILanguageInstructionProgramType'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
-		
-GO
+

@@ -14,13 +14,13 @@ BEGIN
 	SET NOCOUNT ON;
 
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
-		IF OBJECT_ID(N'tempdb..#vwTitleIIIStatuses') IS NOT NULL DROP TABLE #vwTitleIIIStatuses
-		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
-		IF OBJECT_ID(N'tempdb..#vwUnduplicatedRaceMap') IS NOT NULL DROP TABLE #vwUnduplicatedRaceMap
-		IF OBJECT_ID(N'tempdb..#vwEnglishLearnerStatuses') IS NOT NULL DROP TABLE #vwEnglishLearnerStatuses
-		IF OBJECT_ID(N'tempdb..#vwLanguages') IS NOT NULL DROP TABLE #vwLanguages
-		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
-		IF OBJECT_ID(N'tempdb..#vwIdeaStatuses') IS NOT NULL DROP TABLE #vwIdeaStatuses
+	IF OBJECT_ID(N'tempdb..#vwTitleIIIStatuses') IS NOT NULL DROP TABLE #vwTitleIIIStatuses
+	IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
+	IF OBJECT_ID(N'tempdb..#vwUnduplicatedRaceMap') IS NOT NULL DROP TABLE #vwUnduplicatedRaceMap
+	IF OBJECT_ID(N'tempdb..#vwEnglishLearnerStatuses') IS NOT NULL DROP TABLE #vwEnglishLearnerStatuses
+	IF OBJECT_ID(N'tempdb..#vwLanguages') IS NOT NULL DROP TABLE #vwLanguages
+	IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
+	IF OBJECT_ID(N'tempdb..#vwIdeaStatuses') IS NOT NULL DROP TABLE #vwIdeaStatuses
 
 	BEGIN TRY
 
@@ -56,6 +56,8 @@ BEGIN
 		END
 
 	--Get the set of students from DimPeople to be used for the migrated SY
+		if object_id(N'tempdb..#dimPeople') is not null drop table #dimPeople
+
 		select K12StudentStudentIdentifierState
 			, max(DimPersonId)								DimPersonId
 			, min(RecordStartDateTime)						RecordStartDateTime
@@ -260,6 +262,7 @@ BEGIN
 			AND ISNULL(sppt3.TitleIIILanguageInstructionProgramType, 'MISSING') = ISNULL(rdt3s.TitleIIILanguageInstructionProgramTypeMap, rdt3s.TitleIIILanguageInstructionProgramTypeCode)
 			AND ISNULL(sppt3.Proficiency_TitleIII, 'MISSING') 					= ISNULL(rdt3s.ProficiencyStatusMap, rdt3s.ProficiencyStatusCode) 
 			AND ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING') 	= ISNULL(rdt3s.TitleIIIAccountabilityProgressStatusMap, rdt3s.TitleIIIAccountabilityProgressStatusCode)
+			AND ISNULL(sppt3.EnglishLearnersExitedStatus, -1)   				= ISNULL(CAST(rdt3s.EnglishLearnersExitedStatusMap AS SMALLINT), -1)
 			AND rdt3s.ProgramParticipationTitleIIILiepCode 						= 'MISSING'
 			AND rdt3s.EnglishLearnersExitedStatus = sppt3.EnglishLearnersExitedStatus			
 	--english learner (rds)
