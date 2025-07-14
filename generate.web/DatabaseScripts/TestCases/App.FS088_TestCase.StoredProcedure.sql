@@ -385,7 +385,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
 		ON s.RemovalLength = rreksd.RemovalLength
 		AND s.IDEADISABILITYTYPE = rreksd.IDEADISABILITYTYPE
-		AND rreksd.ReportCode = 'C088' 
+		AND rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSA'
@@ -448,7 +448,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.RemovalLength = rreksd.RemovalLength
 		AND s.RaceEdFactsCode = rreksd.Race
-		AND rreksd.ReportCode = 'C088' 
+		AND rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSB'
@@ -493,7 +493,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.RemovalLength = rreksd.RemovalLength
 		AND s.SexEdFactsCode = rreksd.Sex
-		AND rreksd.ReportCode = 'C088' 
+		AND rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSC'
@@ -538,7 +538,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.LEPRemovalLength = rreksd.RemovalLength
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.EnglishLearnerStatus
-		AND rreksd.ReportCode = 'C088' 
+		AND rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSD'
@@ -578,7 +578,7 @@ BEGIN
 	FROM #S_ST1 s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.RemovalLength = rreksd.RemovalLength
-		AND rreksd.ReportCode = 'C088' 
+		AND rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'ST1'
@@ -616,7 +616,7 @@ BEGIN
 		,GETDATE()
 	FROM #S_TOT s
 	LEFT  JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
-		ON rreksd.ReportCode = 'C088' 
+		ON rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'TOT'
@@ -671,7 +671,7 @@ BEGIN
 		ON s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.IDEADISABILITYTYPE = rreksd.IDEADISABILITYTYPE
-		AND rreksd.ReportCode = 'C088' 
+		AND rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSA'
@@ -742,7 +742,7 @@ BEGIN
 		ON s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.RaceEdFactsCode = rreksd.Race
-		AND rreksd.ReportCode = 'C088' 
+		AND rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSB'
@@ -794,7 +794,7 @@ BEGIN
 		ON s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.SexEdFactsCode = rreksd.Sex
-		AND rreksd.ReportCode = 'C088' 
+		AND rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSC'
@@ -845,7 +845,7 @@ BEGIN
 		ON s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND s.LEPRemovalLength = rreksd.RemovalLength
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.EnglishLearnerStatus
-		AND rreksd.ReportCode = 'C088' 
+		AND rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSD'
@@ -892,7 +892,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND s.RemovalLength = rreksd.RemovalLength
-		AND rreksd.ReportCode = 'C088' 
+		AND rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'ST1'
@@ -936,7 +936,7 @@ BEGIN
 	FROM #L_TOT s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
-		AND rreksd.ReportCode = 'C088' 
+		AND rreksd.ReportCode = '088' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'TOT'

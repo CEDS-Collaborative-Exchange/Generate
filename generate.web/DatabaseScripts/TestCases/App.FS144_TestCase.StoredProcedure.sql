@@ -185,7 +185,7 @@ BEGIN
 			WHEN 1 THEN 'WDIS' 
 			ELSE 'WODIS' 
 		END = rreksd.IDEAIndicator
-		AND rreksd.ReportCode = 'C144' 
+		AND rreksd.ReportCode = '144' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSA'
@@ -252,7 +252,7 @@ BEGIN
 			WHEN 1 THEN 'WDIS' 
 			ELSE 'WODIS' 
 		END = rreksd.IDEAIndicator
-		AND rreksd.ReportCode = 'C144' 
+		AND rreksd.ReportCode = '144' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSA'

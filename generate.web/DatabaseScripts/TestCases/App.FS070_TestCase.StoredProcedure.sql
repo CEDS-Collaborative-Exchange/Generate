@@ -189,7 +189,7 @@ Teachers (FTE) by Qualification Status (Special Education Teacher) and Age Group
 	LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
 		ON replace(s.SpecialEducationTeacherQualificationStatus, '_1','') = rreksc.SPECIALEDUCATIONTEACHERQUALIFICATIONSTATUS
 		AND s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
-		AND rreksc.ReportCode = 'C070' 
+		AND rreksc.ReportCode = '070' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'CSA'
@@ -241,7 +241,7 @@ Subtotal by Qualification Status (Special Education Teacher)
 	FROM #TC2 s
 	LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
 		ON replace(s.SpecialEducationTeacherQualificationStatus, '_1','') = rreksc.SPECIALEDUCATIONTEACHERQUALIFICATIONSTATUS
-		AND rreksc.ReportCode = 'C070' 
+		AND rreksc.ReportCode = '070' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'ST1'
@@ -293,7 +293,7 @@ Subtotal by Age Group Taught (Special Education Teacher)
 	FROM #TC3 s
 	LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
 		ON s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
-		AND rreksc.ReportCode = 'C070' 
+		AND rreksc.ReportCode = '070' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'ST2'
@@ -337,7 +337,7 @@ TOT at the SEA level
 		,GETDATE()
 	FROM #TC4 s
 	LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc
-		ON rreksc.ReportCode = 'C070' 
+		ON rreksc.ReportCode = '070' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'TOT'
@@ -406,7 +406,7 @@ Teachers (FTE) by Qualification Status (Special Education Teacher) and Age Group
 		ON replace(s.SpecialEducationTeacherQualificationStatus, '_1','') = rreksc.SPECIALEDUCATIONTEACHERQUALIFICATIONSTATUS
 		AND s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
 		AND s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
-		AND rreksc.ReportCode = 'C070' 
+		AND rreksc.ReportCode = '070' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'CSA'
@@ -465,7 +465,7 @@ Subtotal by Qualification Status (Special Education Teacher)
 	LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
 		ON replace(s.SpecialEducationTeacherQualificationStatus, '_1','') = rreksc.SPECIALEDUCATIONTEACHERQUALIFICATIONSTATUS
 		AND s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
-		AND rreksc.ReportCode = 'C070' 
+		AND rreksc.ReportCode = '070' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'ST1'
@@ -525,7 +525,7 @@ Subtotal by Age Group Taught (Special Education Teacher)
 	LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
 		ON s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
 		AND s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
-		AND rreksc.ReportCode = 'C070' 
+		AND rreksc.ReportCode = '070' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'ST2'
@@ -576,7 +576,7 @@ TOT at the LEA level
 	FROM #TC8 s
 	LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc
 		ON s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
-		AND rreksc.ReportCode = 'C070' 
+		AND rreksc.ReportCode = '070' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'TOT'

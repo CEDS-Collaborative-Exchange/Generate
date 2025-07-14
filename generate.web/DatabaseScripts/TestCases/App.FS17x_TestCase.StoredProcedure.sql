@@ -41,7 +41,7 @@ Use the @FileSpec parameter to pass in one of the
 	DECLARE @AssessmentAcademicSubject VARCHAR(10) = '01166' 
 	DECLARE @StoredProcedureName VARCHAR(100) = 'FS175_TestCase'
 	DECLARE @TestScope VARCHAR(1000) = 'FS175'
-	DECLARE @ReportCode VARCHAR(20) = 'C175' 
+	DECLARE @ReportCode VARCHAR(20) = '175' 
 	DECLARE @SubjectAbbrv VARCHAR(20) = 'MATH'
 */
 	--DECLARE @AssessmentPurpose VARCHAR(10) = '03458'

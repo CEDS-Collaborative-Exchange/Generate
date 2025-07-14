@@ -316,7 +316,7 @@ BEGIN
 	FROM #S_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.IdeaDisabilityType = rreksd.IDEADISABILITYTYPE
-		AND rreksd.ReportCode = 'C143' 
+		AND rreksd.ReportCode = '143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSA'
@@ -354,7 +354,7 @@ BEGIN
 	FROM #S_CSB s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.RaceEdFactsCode = rreksd.RACE
-		AND rreksd.ReportCode = 'C143' 
+		AND rreksd.ReportCode = '143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSB'
@@ -393,7 +393,7 @@ BEGIN
 	FROM #S_CSC s
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.SexEdFactsCode = rreksd.SEX
-		AND rreksd.ReportCode = 'C143' 
+		AND rreksd.ReportCode = '143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSC'
@@ -432,7 +432,7 @@ BEGIN
 	FROM #S_CSD s
 	LEFT  JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
-		AND rreksd.ReportCode = 'C143' 
+		AND rreksd.ReportCode = '143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSD'
@@ -467,7 +467,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_ST1 s
 	LEFT  JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
-		ON rreksd.ReportCode = 'C143' 
+		ON rreksd.ReportCode = '143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'TOT'
@@ -515,7 +515,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 		AND s.IdeaDisabilityType = rreksd.IdeaDisabilityType
-		AND rreksd.ReportCode = 'C143' 
+		AND rreksd.ReportCode = '143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSA'
@@ -560,7 +560,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
 		ON s.RaceEdFactsCode = rreksd.RACE
 		AND s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-		AND rreksd.ReportCode = 'C143' 
+		AND rreksd.ReportCode = '143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSB'
@@ -606,7 +606,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
 		ON s.SexEdFactsCode = rreksd.SEX
 		AND s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-		AND rreksd.ReportCode = 'C143' 
+		AND rreksd.ReportCode = '143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSC'
@@ -652,7 +652,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
 		ON s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 		AND s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-		AND rreksd.ReportCode = 'C143' 
+		AND rreksd.ReportCode = '143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSD'
@@ -693,7 +693,7 @@ BEGIN
 	FROM #L_ST1 s
 	LEFT  JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
 		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-		AND rreksd.ReportCode = 'C143' 
+		AND rreksd.ReportCode = '143' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'TOT'
