@@ -43,4 +43,4 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 		ON rdt3s.TitleIIILanguageInstructionProgramTypeCode = sssrd3.OutputCode
 		AND sssrd3.TableName = 'RefTitleIIILanguageInstructionProgramType'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
-		
+
