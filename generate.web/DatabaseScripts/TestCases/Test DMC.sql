@@ -1,7 +1,7 @@
 PRINT 'Install test scripts'
 
 PRINT 'Update Toggle'
-DECLARE @SchoolYear SMALLINT = 2024
+DECLARE @SchoolYear SMALLINT = 2025
 update App.ToggleResponses set ResponseValue = '10/01/' + CAST(@SchoolYear - 1 AS VARCHAR) where ToggleResponseId = 1
 
 DECLARE  @DimSchoolYearId INT
