@@ -139,7 +139,7 @@ BEGIN
 		  	, PhysicalAddressPostalCode
 		INTO #leas_reporting
 		from RDS.ReportEDFactsOrganizationCounts
-		where reportcode = 'c029' 
+		where reportcode = '029' 
 		and ReportLevel = 'LEA' 
 		and ReportYear = @SchoolYear
 
@@ -669,7 +669,7 @@ BEGIN
 			, PriorLeaStateIdentifier
 		INTO #schools_reporting
 		from RDS.ReportEDFactsOrganizationCounts
-		where reportcode = 'c029' and ReportLevel = 'SCH' and ReportYear = @SchoolYear
+		where reportcode = '029' and ReportLevel = 'SCH' and ReportYear = @SchoolYear
 
 		INSERT INTO App.SqlUnitTestCASEResult (
 				[SqlUnitTestId]
