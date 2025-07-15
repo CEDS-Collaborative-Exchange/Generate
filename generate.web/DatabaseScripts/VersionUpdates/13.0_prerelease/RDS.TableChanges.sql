@@ -17,3 +17,9 @@
 		ALTER TABLE RDS.DimTitleIIIStatuses ADD EnglishLearnersExitedStatusEdFactsCode nvarchar(50);
 	END
 
+--update the existing report table records to remove the 'c'
+	update rds.ReportEDFactsOrganizationCounts
+	set ReportCode = substring(ReportCode,2,3)
+	where len(ReportCode) = 4
+	and substring(ReportCode,1,1) = 'c'
+
