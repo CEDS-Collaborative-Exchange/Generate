@@ -295,7 +295,7 @@ BEGIN
 	FROM #S_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON replace(s.GradeLevelEdFactsCode, '_1', '') = rreksc.GRADELEVEL
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'CSA'
@@ -339,7 +339,7 @@ BEGIN
 	FROM #S_CSB s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.HomelessPrimaryNighttimeResidenceEdFactsCode = rreksc.HOMELESSPRIMARYNIGHTTIMERESIDENCE
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'CSB'
@@ -383,7 +383,7 @@ BEGIN
 	FROM #S_CSC s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.DisabilityStatusEdFactsCode = rreksc.IDEAINDICATOR
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'CSC'
@@ -428,7 +428,7 @@ BEGIN
 	FROM #S_CSD s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.EnglishLearnerStatusEdFactsCode  = rreksc.ENGLISHLEARNERSTATUS
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'CSD'
@@ -473,7 +473,7 @@ BEGIN
 	FROM #S_CSE s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.MigrantStatusEdFactsCode = rreksc.MIGRANTSTATUS
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'CSE'
@@ -517,7 +517,7 @@ BEGIN
 	FROM #S_CSF s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.HomelessUnaccompaniedYouthEdFactsCode = rreksc.HOMELESSUNACCOMPANIEDYOUTHSTATUS
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'CSF'
@@ -565,7 +565,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.HomelessUnaccompaniedYouthEdFactsCode = rreksc.HOMELESSUNACCOMPANIEDYOUTHSTATUS
 		AND s.HomelessPrimaryNighttimeResidenceEdFactsCode = rreksc.HOMELESSPRIMARYNIGHTTIMERESIDENCE
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'CSG'
@@ -609,7 +609,7 @@ BEGIN
 	FROM #S_CSH s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON replace(s.RaceEdFactsCode, '_1', '') = rreksc.RACE
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'CSH'
@@ -649,7 +649,7 @@ BEGIN
 		, GETDATE()
 	FROM #S_TOT s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
-		ON rreksc.ReportCode = 'C118' 
+		ON rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'TOT'
@@ -704,7 +704,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 		AND replace(s.GradeLevelEdFactsCode, '_1', '') = rreksc.GRADELEVEL
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'CSA'
@@ -756,7 +756,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 		AND s.HomelessPrimaryNighttimeResidenceEdFactsCode = rreksc.HOMELESSPRIMARYNIGHTTIMERESIDENCE
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'CSB'
@@ -808,7 +808,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 		AND s.DisabilityStatusEdFactsCode = rreksc.IDEAINDICATOR
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'CSC'
@@ -860,7 +860,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 		AND s.EnglishLearnerStatusEdFactsCode  = rreksc.ENGLISHLEARNERSTATUS
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'CSD'
@@ -911,7 +911,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 		AND s.MigrantStatusEdFactsCode = rreksc.MIGRANTSTATUS
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'CSE'
@@ -962,7 +962,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 		AND s.HomelessUnaccompaniedYouthEdFactsCode = rreksc.HOMELESSUNACCOMPANIEDYOUTHSTATUS
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'CSF'
@@ -1017,7 +1017,7 @@ BEGIN
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 		AND s.HomelessUnaccompaniedYouthEdFactsCode = rreksc.HOMELESSUNACCOMPANIEDYOUTHSTATUS
 		AND s.HomelessPrimaryNighttimeResidenceEdFactsCode = rreksc.HOMELESSPRIMARYNIGHTTIMERESIDENCE
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'CSG'
@@ -1068,7 +1068,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 		AND replace(s.RaceEdFactsCode, '_1', '') = rreksc.RACE
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'CSH'
@@ -1114,7 +1114,7 @@ BEGIN
 	FROM #L_TOT s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-		AND rreksc.ReportCode = 'C118' 
+		AND rreksc.ReportCode = '118' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'TOT'

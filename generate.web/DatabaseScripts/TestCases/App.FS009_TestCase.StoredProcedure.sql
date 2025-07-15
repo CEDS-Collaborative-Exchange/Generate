@@ -140,7 +140,7 @@ BEGIN TRY
 		WHILE @@FETCH_STATUS = 0  
 		BEGIN  
 
-			DELETE FROM RDS.ReportEDFactsK12StudentCounts WHERE ReportCode = 'C009' and ReportYear = @schoolYear
+			DELETE FROM RDS.ReportEDFactsK12StudentCounts WHERE ReportCode = '009' and ReportYear = @schoolYear
 			IF OBJECT_ID('tempdb..#stuLeaTemp') IS NOT NULL	DROP TABLE #stuLeaTemp
 			IF OBJECT_ID('tempdb..#stuLea') IS NOT NULL	DROP TABLE #stuLea
 
@@ -178,8 +178,8 @@ BEGIN TRY
 			WHERE atq.EmapsQuestionAbbrv IN ('DEFEXMOVCONSEA', 'DEFEXMOVCONLEA')
 				AND atqo.OptionText = @catchmentArea
 
-			UPDATE app.GenerateReports SET IsLocked = 1 WHERE ReportCode = 'C009'
-			EXEC RDS.Create_ReportData 'C009', 'exiting', 0
+			UPDATE app.GenerateReports SET IsLocked = 1 WHERE ReportCode = '009'
+			EXEC RDS.Create_ReportData '009', 'exiting', 0
 	
 			IF OBJECT_ID('tempdb..#staging') IS NOT NULL DROP TABLE #staging
 
@@ -523,7 +523,7 @@ BEGIN CREATING TEST RESULTS
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.Age = rreksc.Age
 				AND s.IdeaDisabilityTypeEdFactsCode = rreksc.IDEADISABILITYTYPE
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'CSA'
@@ -567,7 +567,7 @@ BEGIN CREATING TEST RESULTS
 			LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.RaceEdFactsCode = rreksc.RACE
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'CSB'
@@ -611,7 +611,7 @@ BEGIN CREATING TEST RESULTS
 			LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.SexEdFactsCode = rreksc.SEX
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'CSC'
@@ -656,7 +656,7 @@ BEGIN CREATING TEST RESULTS
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.EnglishLearnerStatusEdFactsCode = rreksc.ENGLISHLEARNERSTATUS
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'CSD'
@@ -697,7 +697,7 @@ BEGIN CREATING TEST RESULTS
 			FROM #TC5 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST1'
@@ -739,7 +739,7 @@ BEGIN CREATING TEST RESULTS
 			FROM #TC6 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.Age = rreksc.AGE
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST2'
@@ -781,7 +781,7 @@ BEGIN CREATING TEST RESULTS
 			FROM #TC7 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.RaceEdFactsCode = rreksc.Race
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST3'
@@ -824,7 +824,7 @@ BEGIN CREATING TEST RESULTS
 			FROM #TC8 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SexEdFactsCode = rreksc.Sex
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST4'
@@ -868,7 +868,7 @@ BEGIN CREATING TEST RESULTS
 			FROM #TC9 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.EnglishLearnerStatusEdFactsCode = rreksc.ENGLISHLEARNERSTATUS
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST5'
@@ -911,7 +911,7 @@ BEGIN CREATING TEST RESULTS
 			FROM #TC10 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.IdeaDisabilityTypeEdFactsCode = rreksc.IDEADISABILITYTYPE
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST6'
@@ -949,7 +949,7 @@ BEGIN CREATING TEST RESULTS
 				,GETDATE()
 			FROM #TC11 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
-				ON rreksc.ReportCode = 'C009' 
+				ON rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'TOT'
@@ -1012,7 +1012,7 @@ BEGIN CREATING TEST RESULTS
 				AND s.Age = rreksc.Age
 				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 				AND s.IdeaDisabilityTypeEdFactsCode = rreksc.IDEADISABILITYTYPE
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'CSA'
@@ -1067,7 +1067,7 @@ BEGIN CREATING TEST RESULTS
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.RaceEdFactsCode = rreksc.RACE
 				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'CSB'
@@ -1121,7 +1121,7 @@ BEGIN CREATING TEST RESULTS
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.SexEdFactsCode = rreksc.SEX
 				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'CSC'
@@ -1175,7 +1175,7 @@ BEGIN CREATING TEST RESULTS
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.EnglishLearnerStatusEdFactsCode = rreksc.ENGLISHLEARNERSTATUS
 				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'CSD'
@@ -1227,7 +1227,7 @@ BEGIN CREATING TEST RESULTS
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SpecialEducationExitReasonEdFactsCode = rreksc.SpecialEducationExitReason
 				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST1'
@@ -1277,7 +1277,7 @@ BEGIN CREATING TEST RESULTS
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.Age = rreksc.AGE
 				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST2'
@@ -1327,7 +1327,7 @@ BEGIN CREATING TEST RESULTS
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.RaceEdFactsCode = rreksc.Race
 				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST3'
@@ -1379,7 +1379,7 @@ BEGIN CREATING TEST RESULTS
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.SexEdFactsCode = rreksc.Sex
 				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST4'
@@ -1431,7 +1431,7 @@ BEGIN CREATING TEST RESULTS
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.EnglishLearnerStatusEdFactsCode = rreksc.ENGLISHLEARNERSTATUS
 				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST5'
@@ -1484,7 +1484,7 @@ BEGIN CREATING TEST RESULTS
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.IdeaDisabilityTypeEdFactsCode = rreksc.IDEADISABILITYTYPE
 				AND s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST6'
@@ -1530,7 +1530,7 @@ BEGIN CREATING TEST RESULTS
 			FROM #TC22 s
 			LEFT  JOIN RDS.ReportEDFactsK12StudentCounts rreksc
 				ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
-				AND rreksc.ReportCode = 'C009' 
+				AND rreksc.ReportCode = '009' 
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'TOT'

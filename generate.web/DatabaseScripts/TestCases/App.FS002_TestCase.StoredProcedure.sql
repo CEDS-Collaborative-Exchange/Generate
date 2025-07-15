@@ -368,7 +368,7 @@ BEGIN
 			ON s.RaceEdFactsCode = rreksd.RACE			
 			AND s.SexEdFactsCode = rreksd.SEX
 			AND s.IdeaDisabilityTypeCode = rreksd.IDEADISABILITYTYPE
-			AND rreksd.ReportCode = 'C002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'CSA'
@@ -428,7 +428,7 @@ BEGIN
 			and S.RaceEdFactsCode = rreksd.RACE
 			and S.SexEdFactsCode = rreksd.SEX
 			and s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
-			AND rreksd.ReportCode = 'C002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'CSA'
@@ -489,7 +489,7 @@ BEGIN
 			and S.RaceEdFactsCode = rreksd.RACE
 			and S.SexEdFactsCode = rreksd.SEX
 			and s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
-			AND rreksd.ReportCode = 'C002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'CSA'
@@ -541,7 +541,7 @@ BEGIN
 			ON s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
 			and S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
-			AND rreksd.ReportCode = 'C002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'CSB'
@@ -600,7 +600,7 @@ BEGIN
 			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
 			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
-			AND rreksd.ReportCode = 'C002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'CSB'
@@ -661,7 +661,7 @@ BEGIN
 			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
 			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
-			AND rreksd.ReportCode = 'C002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'CSB'
@@ -709,7 +709,7 @@ BEGIN
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.RaceEdFactsCode = rreksd.RACE
-			AND rreksd.ReportCode = 'C002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'CSC'
@@ -763,7 +763,7 @@ BEGIN
 			ON S.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.RaceEdFactsCode = rreksd.RACE
-			AND rreksd.ReportCode = 'C002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'CSC'
@@ -817,7 +817,7 @@ BEGIN
 			ON S.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND S.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.RaceEdFactsCode = rreksd.RACE
-			AND rreksd.ReportCode = 'C002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'CSC'
@@ -869,7 +869,7 @@ BEGIN
 			ON s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.SexEdFactsCode = rreksd.SEX
 			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'CSD'
@@ -929,7 +929,7 @@ BEGIN
 			AND s.SexEdFactsCode = rreksd.SEX
 			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'CSD'
@@ -989,7 +989,7 @@ BEGIN
 			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.SexEdFactsCode = rreksd.SEX
 			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'CSD'
@@ -1046,7 +1046,7 @@ BEGIN
 			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'CSE'
@@ -1110,7 +1110,7 @@ BEGIN
 			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'CSE'
@@ -1174,7 +1174,7 @@ BEGIN
 			AND s.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
 			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
 			AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'CSE'
@@ -1215,7 +1215,7 @@ BEGIN
 		FROM #S_TOT1 s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST1'
@@ -1265,7 +1265,7 @@ BEGIN
 			ON 
 			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST1'
@@ -1315,7 +1315,7 @@ BEGIN
 			ON 
 			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST1'
@@ -1356,7 +1356,7 @@ BEGIN
 		FROM #S_TOT2 s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST2'
@@ -1406,7 +1406,7 @@ BEGIN
 			ON 
 			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST2'
@@ -1456,7 +1456,7 @@ BEGIN
 			ON 
 			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST2'
@@ -1496,7 +1496,7 @@ BEGIN
 		FROM #S_TOT3 s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON S.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST3'
@@ -1543,7 +1543,7 @@ BEGIN
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON S.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND S.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST3'
@@ -1591,7 +1591,7 @@ BEGIN
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON S.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND S.IdeaDisabilityTypeCode = rreksd.IdeaDisabilityType
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST3'
@@ -1632,7 +1632,7 @@ BEGIN
 		FROM #S_TOT4 s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON S.RaceEdFactsCode = rreksd.RACE
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST4'
@@ -1682,7 +1682,7 @@ BEGIN
 			ON 
 			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND S.RaceEdFactsCode = rreksd.RACE
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST4'
@@ -1733,7 +1733,7 @@ BEGIN
 			ON 
 			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND S.RaceEdFactsCode = rreksd.RACE
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST4'
@@ -1774,7 +1774,7 @@ BEGIN
 		FROM #S_TOT5 s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON S.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST5'
@@ -1824,7 +1824,7 @@ BEGIN
 			ON 
 			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND S.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST5'
@@ -1875,7 +1875,7 @@ BEGIN
 			ON 
 			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND S.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST5'
@@ -1916,7 +1916,7 @@ BEGIN
 		FROM #S_TOT6 s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST6'
@@ -1966,7 +1966,7 @@ BEGIN
 			ON 
 			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST6'
@@ -2017,7 +2017,7 @@ BEGIN
 			ON 
 			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST6'
@@ -2064,7 +2064,7 @@ BEGIN
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
 			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST7'
@@ -2119,7 +2119,7 @@ BEGIN
 			s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
 			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST7'
@@ -2175,7 +2175,7 @@ BEGIN
 			s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
 			AND convert(varchar, S.AgeValue) = case when rreksd.AGE = 'AGE05K' then '5' else rreksd.AGE end
 			AND s.IDEAEducationalEnvironmentForSchoolAge = rreksd.IDEAEDUCATIONALENVIRONMENTFORSCHOOLAGE
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST7'
@@ -2210,7 +2210,7 @@ BEGIN
 			,GETDATE()
 		FROM #S_TOT s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON rreksd.ReportCode = 'c002' 
+			ON rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'TOT'
@@ -2253,7 +2253,7 @@ BEGIN
 		FROM #L_TOT s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'TOT'
@@ -2297,7 +2297,7 @@ BEGIN
 		FROM #SCH_TOT s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
-			AND rreksd.ReportCode = 'c002' 
+			AND rreksd.ReportCode = '002' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'TOT'

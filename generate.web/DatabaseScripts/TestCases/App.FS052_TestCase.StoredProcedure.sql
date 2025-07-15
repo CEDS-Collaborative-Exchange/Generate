@@ -315,7 +315,7 @@ BEGIN
 			ON s.GradeLevel = rreksd.GRADELEVEL
 			AND s.RaceEdFactsCode = rreksd.RACE			
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'CSA'
@@ -372,7 +372,7 @@ BEGIN
 			AND s.GradeLevel = rreksd.GRADELEVEL
 			AND s.RaceEdFactsCode = rreksd.RACE
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'CSA'
@@ -428,7 +428,7 @@ BEGIN
 			AND s.GradeLevel = rreksd.GRADELEVEL
 			AND s.RaceEdFactsCode = rreksd.RACE
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'CSA'
@@ -485,7 +485,7 @@ BEGIN
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.GradeLevel = rreksd.GRADELEVEL
 			AND s.RaceEdFactsCode = rreksd.RACE			
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST1'
@@ -536,7 +536,7 @@ BEGIN
 			ON s.LEAIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea			
 			AND s.GradeLevel = rreksd.GRADELEVEL
 			AND s.RaceEdFactsCode = rreksd.RACE
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST1'
@@ -587,7 +587,7 @@ BEGIN
 			ON s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea			
 			AND s.GradeLevel = rreksd.GRADELEVEL
 			AND s.RaceEdFactsCode = rreksd.RACE
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST1'
@@ -634,7 +634,7 @@ BEGIN
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.GradeLevel = rreksd.GRADELEVEL
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST2'
@@ -685,7 +685,7 @@ BEGIN
 			ON s.LEAIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea			
 			AND s.GradeLevel = rreksd.GRADELEVEL
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST2'
@@ -736,7 +736,7 @@ BEGIN
 			ON s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea			
 			AND s.GradeLevel = rreksd.GRADELEVEL
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST2'
@@ -793,7 +793,7 @@ BEGIN
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.RaceEdFactsCode = rreksd.RACE			
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST3'
@@ -845,7 +845,7 @@ BEGIN
 			s.LEAIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea			
 			AND s.RaceEdFactsCode = rreksd.RACE
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST3'
@@ -896,7 +896,7 @@ BEGIN
 			ON s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea			
 			AND s.RaceEdFactsCode = rreksd.RACE
 			AND s.SexEdFactsCode = rreksd.SEX
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST3'
@@ -938,7 +938,7 @@ BEGIN
 		FROM #SEA_ST4 s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.GradeLevel = rreksd.GRADELEVEL
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'ST4'
@@ -984,7 +984,7 @@ BEGIN
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.LEAIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea			
 			AND s.GradeLevel = rreksd.GRADELEVEL
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'ST4'
@@ -1030,7 +1030,7 @@ BEGIN
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea			
 			AND s.GradeLevel = rreksd.GRADELEVEL
-			AND rreksd.ReportCode = 'C052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'ST4'
@@ -1067,7 +1067,7 @@ BEGIN
 			,GETDATE()
 		FROM #SEA_TOT s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON rreksd.ReportCode = 'c052' 
+			ON rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'TOT'
@@ -1110,7 +1110,7 @@ BEGIN
 		FROM #LEA_TOT s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.LEAIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-			AND rreksd.ReportCode = 'c052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'TOT'
@@ -1149,7 +1149,7 @@ BEGIN
 		FROM #SCH_TOT s
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea
-			AND rreksd.ReportCode = 'c052' 
+			AND rreksd.ReportCode = '052' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'TOT'

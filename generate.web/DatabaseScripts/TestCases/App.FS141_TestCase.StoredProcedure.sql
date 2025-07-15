@@ -25,7 +25,7 @@ BEGIN
 		@UnitTestName VARCHAR(100) = 'FS141_UnitTestCase',
 		@StoredProcedureName VARCHAR(100) = 'FS141_TestCase',
 		@TestScope VARCHAR(1000) = 'FS141',
-		@ReportCode VARCHAR(20) = 'C141',
+		@ReportCode VARCHAR(20) = '141',
 		
 		@CategorySet varchar(5) = '',
 		@ReportLevel varchar(5) = ''

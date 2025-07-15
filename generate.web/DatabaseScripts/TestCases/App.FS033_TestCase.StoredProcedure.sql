@@ -183,7 +183,7 @@ BEGIN
 			ON s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea	
 			AND s.FRLEdFactsCode = rreksd.ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS
 			--AND s.DirectCertEdFactsCode = rreksd.TableTypeAbbrv
-			AND rreksd.ReportCode = 'C033' 
+			AND rreksd.ReportCode = '033' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'CSA'
@@ -241,7 +241,7 @@ BEGIN
 		INNER JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.SchoolIdentifierSea = rreksd.OrganizationIdentifierSea	
 			AND s.DirectCertEdFactsCode = rreksd.TableTypeAbbrv
-			AND rreksd.ReportCode = 'C033' 
+			AND rreksd.ReportCode = '033' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SCH'
 			AND rreksd.CategorySetCode = 'TOT'

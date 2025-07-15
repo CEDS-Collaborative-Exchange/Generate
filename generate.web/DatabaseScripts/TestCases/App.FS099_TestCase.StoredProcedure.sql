@@ -170,7 +170,7 @@ Teachers (FTE) by Credential Status and SPED Support Services Category
 	LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
 		ON s.SpecialEducationSupportServicesCategoryEdFactsCode = rreksc.SpecialEducationSupportServicesCategory
 		AND replace(s.EdFactsCertificationStatus, '_1', '') = rreksc.EDFACTSCERTIFICATIONSTATUS
-		AND rreksc.ReportCode = 'C099' 
+		AND rreksc.ReportCode = '099' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'CSA'
@@ -212,7 +212,7 @@ Subtotal by SPED Support Services Category
 	FROM #TC2 s
 	LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
 		ON s.SpecialEducationSupportServicesCategoryEdFactsCode = rreksc.SpecialEducationSupportServicesCategory
-		AND rreksc.ReportCode = 'C099' 
+		AND rreksc.ReportCode = '099' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'ST1'
@@ -270,7 +270,7 @@ Teachers (FTE) by Credential Status and SPED Support Services Category
 		ON s.SpecialEducationSupportServicesCategoryEdFactsCode = rreksc.SpecialEducationSupportServicesCategory
 		AND replace(s.EdFactsCertificationStatus, '_1', '') = rreksc.EDFACTSCERTIFICATIONSTATUS
 		AND s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
-		AND rreksc.ReportCode = 'C099' 
+		AND rreksc.ReportCode = '099' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'CSA'
@@ -320,7 +320,7 @@ Subtotal by SPED Support Services Category
 	LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
 		ON s.SpecialEducationSupportServicesCategoryEdFactsCode = rreksc.SpecialEducationSupportServicesCategory
 		AND s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
-		AND rreksc.ReportCode = 'C099' 
+		AND rreksc.ReportCode = '099' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'ST1'
@@ -361,4 +361,3 @@ begin
 end
 ----------------------------------------------------------------------------------
 END
-

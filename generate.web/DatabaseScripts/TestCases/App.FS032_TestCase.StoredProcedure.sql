@@ -47,7 +47,7 @@ BEGIN
 		@UnitTestName VARCHAR(100) = 'FS032_UnitTestCase',
 		@StoredProcedureName VARCHAR(100) = 'FS032_TestCase',
 		@TestScope VARCHAR(1000) = 'FS032',
-		@ReportCode VARCHAR(20) = 'C032',
+		@ReportCode VARCHAR(20) = '032',
 		
 		@CategorySet varchar(5) = '',
 		@ReportLevel varchar(5) = ''

@@ -1,7 +1,7 @@
 PRINT 'Install test scripts'
 
 PRINT 'Update Toggle'
-DECLARE @SchoolYear SMALLINT = 2024
+DECLARE @SchoolYear SMALLINT = 2025
 update App.ToggleResponses set ResponseValue = '10/01/' + CAST(@SchoolYear - 1 AS VARCHAR) where ToggleResponseId = 1
 
 DECLARE  @DimSchoolYearId INT
@@ -21,71 +21,71 @@ EXEC [Staging].[RUN_DMC] @SchoolYear
 
 -- Leave out FS009 because the test will run it for you
 
-PRINT 'RDS migration for Child Count (C002, C089)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C002','C089')
+PRINT 'RDS migration for Child Count (002, 089)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('002','089')
 EXEC RDS.Create_Reports 'childcount', 0 -- FS002, FS089 
 -- Execution time: 2 minutes
 
-PRINT 'RDS migration for EL Enrolled (C141)' -- 
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C141')
+PRINT 'RDS migration for EL Enrolled (141)' -- 
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('141')
 EXEC RDS.Create_Reports 'titleIIIELOct', 0 -- FS141
 -- Execution time: 35 seconds
 
--- PRINT 'RDS migration for Child Count (C116)' -- No WORKING test for FS116
--- UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C116')
+-- PRINT 'RDS migration for Child Count (116)' -- No WORKING test for FS116
+-- UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('116')
 -- EXEC RDS.Create_Reports 'titleIIIELSY', 0 -- FS116
 -- Execution time: 
 
-PRINT 'RDS migration for Homeless (C118, C194)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C118','C194')
+PRINT 'RDS migration for Homeless (118, 194)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('118','194')
 EXEC RDS.Create_Reports 'homeless', 0 -- FS194
 -- Execution time: 2 minutes
 
-PRINT 'RDS migration for Discipline (C005,C006,C007,C086,C088,C143,C144)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C005','C006','C007','C086','C088','C143','C144')
+PRINT 'RDS migration for Discipline (005,006,007,086,088,143,144)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('005','006','007','086','088','143','144')
 EXEC RDS.Create_Reports 'discipline', 0 -- FS005, FS006, FS007, FS086, FS088, FS143, FS144
 -- Execution time: 12:22
 
-PRINT 'RDS migration for Assessments (C175,C178,C179,C185,C188,C189, C224, C225)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C175','C178','C179','C185','C188','C189')
+PRINT 'RDS migration for Assessments (175,178,179,185,188,189, 224, 225)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('175','178','179','185','188','189')
 EXEC RDS.Create_Reports 'assessment', 0 -- FS175, FS178, FS179, FS185, FS188, FS189, No tests yet for FS113, FS125, FS126, FS139, FS137, FS050, FS142, FS157
 -- Execution time: 17:39
 
-PRINT 'RDS migration for Staff (C070,C099,C112)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C070','C099','C112')
+PRINT 'RDS migration for Staff (070,099,112)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('070','099','112')
 EXEC RDS.Create_Reports 'staff', 0 -- FS070, FS099, FS112, no tests yet for FS059, FS067, FS203
 -- Execution time: :19
 
-PRINT 'RDS migration for Directory (C029, C039)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C029', 'C039')
-EXEC RDS.Create_OrganizationReportData 'C029', 0 -- FS029, no tests yet for FS039, FS129, FS130, FS193, FS190, FS196, FS197, FS198, FS103, FS131, FS205, FS206, FS170, FS035, FS207
-EXEC RDS.Create_OrganizationReportData 'C039', 0 -- There is no test for 039 but it is needed for other migrations
+PRINT 'RDS migration for Directory (029, 039)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('029', '039')
+EXEC RDS.Create_OrganizationReportData '029', 0 -- FS029, no tests yet for FS039, FS129, FS130, FS193, FS190, FS196, FS197, FS198, FS103, FS131, FS205, FS206, FS170, FS035, FS207
+EXEC RDS.Create_OrganizationReportData '039', 0 -- There is no test for 039 but it is needed for other migrations
 -- Execution time: Instant
 
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'specedexit' -- FS009 - The test runs this code for you
 --EXEC RDS.Create_Reports 'studentcounts', 0, 'cte' -- No tests yet 
-PRINT 'RDS migration for Personnel (C033,C052)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c033','c052')
-EXEC RDS.Create_ReportData 'C033', 'membership', 0
-EXEC RDS.Create_ReportData 'C052', 'membership', 0
+PRINT 'RDS migration for Personnel (033,052)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('033','052')
+EXEC RDS.Create_ReportData '033', 'membership', 0
+EXEC RDS.Create_ReportData '052', 'membership', 0
 -- Execution time: 8:16
 
-PRINT 'RDS migration for Membership (C226)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c226')
+PRINT 'RDS migration for Membership (226)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('226')
 
-PRINT 'RDS migration for Assessment (C210)'
-UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c210')
+PRINT 'RDS migration for Assessment (210)'
+UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('210')
 
 -------------------------------------------------------------------- 
 --These are the report migrations using the new method
 -------------------------------------------------------------------- 
--- PRINT 'Report migration for NeglectedOrDelinquent (C218, C219, C220, C221)'
--- UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('C218', 'C219', 'C220', 'C221')
+-- PRINT 'Report migration for NeglectedOrDelinquent (218, 219, 220, 221)'
+-- UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('218', '219', '220', '221')
 
 
 
 -- 		exec [RDS].[Insert_CountsIntoReportTable]
--- 				@ReportCode  = 'C218',
+-- 				@ReportCode  = '218',
 -- 				@SubmissionYear = @SchoolYear, 
 -- 				@ReportTableName =  'ReportEdFactsK12StudentCounts',
 -- 				@IdentifierToCount = 'K12StudentStudentIdentifierState',
@@ -93,7 +93,7 @@ UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c210')
 -- 				@IsDistinctCount  = 1
 
 -- 		exec [RDS].[Insert_CountsIntoReportTable]
--- 				@ReportCode  = 'C219',
+-- 				@ReportCode  = '219',
 -- 				@SubmissionYear = @SchoolYear, 
 -- 				@ReportTableName =  'ReportEdFactsK12StudentCounts',
 -- 				@IdentifierToCount = 'K12StudentStudentIdentifierState',
@@ -101,7 +101,7 @@ UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c210')
 -- 				@IsDistinctCount  = 1
 
 -- 		exec [RDS].[Insert_CountsIntoReportTable]
--- 				@ReportCode  = 'C220',
+-- 				@ReportCode  = '220',
 -- 				@SubmissionYear = @SchoolYear, 
 -- 				@ReportTableName =  'ReportEdFactsK12StudentCounts',
 -- 				@IdentifierToCount = 'K12StudentStudentIdentifierState',
@@ -109,7 +109,7 @@ UPDATE App.GenerateReports SET IsLocked = 1 WHERE ReportCode IN ('c210')
 -- 				@IsDistinctCount  = 1
 
 -- 		exec [RDS].[Insert_CountsIntoReportTable]
--- 				@ReportCode  = 'C221',
+-- 				@ReportCode  = '221',
 -- 				@SubmissionYear = @SchoolYear, 
 -- 				@ReportTableName =  'ReportEdFactsK12StudentCounts',
 -- 				@IdentifierToCount = 'K12StudentStudentIdentifierState',
@@ -215,17 +215,17 @@ EXEC App.FS194_TestCase							@SchoolYear
    PRINT 'End-to-End Test for FS210'
    EXEC Staging.RunEndToEndTest	 '210', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
 --PRINT 'End-to-End Test for FS218'
--- EXEC Staging.RunEndToEndTest	 'C218', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+-- EXEC Staging.RunEndToEndTest	 '218', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
 -- PRINT 'End-to-End Test for FS219'
--- EXEC Staging.RunEndToEndTest	 'C219', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+-- EXEC Staging.RunEndToEndTest	 '219', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
 -- PRINT 'End-to-End Test for FS220'
--- EXEC Staging.RunEndToEndTest	 'C220', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+-- EXEC Staging.RunEndToEndTest	 '220', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
 -- PRINT 'End-to-End Test for FS221'
--- EXEC Staging.RunEndToEndTest	 'C221', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
+-- EXEC Staging.RunEndToEndTest	 '221', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
 -- PRINT 'End-to-End Test for FS224'
--- EXEC Staging.RunEndToEndTest	 'C224', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
+-- EXEC Staging.RunEndToEndTest	 '224', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
 -- PRINT 'End-to-End Test for FS225'
--- EXEC Staging.RunEndToEndTest	 'C225', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
+-- EXEC Staging.RunEndToEndTest	 '225', @SchoolYear, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1
   PRINT 'End-to-End Test for FS222'
    EXEC Staging.RunEndToEndTest	 '222', @SchoolYear, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1
   PRINT 'End-to-End Test for FS226'

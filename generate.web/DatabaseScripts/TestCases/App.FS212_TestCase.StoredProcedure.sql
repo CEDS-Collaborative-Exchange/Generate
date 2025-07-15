@@ -78,7 +78,7 @@ BEGIN TRY
 		*/
 		SELECT @actualResult = OrganizationCount 
 		FROM rds.FactOrganizationCountReports 
-		WHERE ReportCode = 'C212' 
+		WHERE ReportCode = '212' 
 		AND ReportYear='2021'
 		AND ComprehensiveSupportCode = 'CSILOWPERF'
 
@@ -112,7 +112,7 @@ BEGIN TRY
 		*/
 		SELECT @actualResult = OrganizationCount 
 		FROM rds.FactOrganizationCountReports 
-		WHERE ReportCode = 'C212' 
+		WHERE ReportCode = '212' 
 		AND ReportYear='2021'
 		AND SubgroupCode = 'LEP'
 
@@ -146,7 +146,7 @@ BEGIN TRY
 		*/
 		SELECT COUNT(SubgroupCode)
 		FROM [RDS].[FactOrganizationCountReports]
-		WHERE ReportCode = 'C212' 
+		WHERE ReportCode = '212' 
 		AND ReportYear='2020-21'		
 		AND CategorySetCode='CSA'	
 		AND SubgroupCode = 'ECODIS'
@@ -185,7 +185,7 @@ BEGIN TRY
 		*/
 		SELECT COUNT(SubgroupCode)
 		FROM [RDS].[FactOrganizationCountReports]
-		WHERE ReportCode = 'C212' 
+		WHERE ReportCode = '212' 
 		AND ReportYear='2020-21'		
 		AND CategorySetCode='CSA'	
 		AND SubgroupCode = 'WDIS'
@@ -223,7 +223,7 @@ BEGIN TRY
 		*/
 		SELECT COUNT(SubgroupCode)
 		FROM [RDS].[FactOrganizationCountReports]
-		WHERE ReportCode = 'C212' 
+		WHERE ReportCode = '212' 
 		AND ReportYear='2020-21'		
 		AND CategorySetCode='CSA'	
 		AND SubgroupCode = 'LEP'
@@ -262,7 +262,7 @@ BEGIN TRY
 		*/
 		SELECT COUNT(SubgroupCode)
 		FROM [RDS].[FactOrganizationCountReports]
-		WHERE ReportCode = 'C212' 
+		WHERE ReportCode = '212' 
 		AND ReportYear='2020-21'		
 		AND CategorySetCode='CSA'	
 		AND SubgroupCode = 'MNP'
