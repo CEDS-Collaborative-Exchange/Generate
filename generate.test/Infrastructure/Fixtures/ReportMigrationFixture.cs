@@ -98,9 +98,7 @@ namespace generate.test.Infrastructure.Fixtures
             appDbContext.DataMigrationTypes.AddRange(DataMigrationTypeHelper.GetData());
             appDbContext.OrganizationLevels.AddRange(OrganizationLevelHelper.GetData());
             appDbContext.GenerateReports.AddRange(GenerateReportHelper.GetData());
-            appDbContext.Categories.AddRange(CategoryHelper.GetData());
             appDbContext.TableTypes.AddRange(TableTypeHelper.GetData());
-            appDbContext.CategorySets.AddRange(CategorySetHelper.GetData());
 
             appDbContext.SaveChanges();
 

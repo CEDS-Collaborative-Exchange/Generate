@@ -30,7 +30,7 @@ namespace generate.console
         private static IServiceProvider serviceProvider;
         private static IConfigurationRoot Configuration;
 
-        public Program()
+        protected Program()
         {
         }
 
@@ -68,7 +68,6 @@ namespace generate.console
                 .AddUserSecrets(Assembly.GetExecutingAssembly(), true);
                 
 
-            var config = builder.Build();
             string environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
 
 

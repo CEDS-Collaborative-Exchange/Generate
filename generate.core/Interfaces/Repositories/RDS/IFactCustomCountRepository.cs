@@ -8,7 +8,7 @@ namespace generate.core.Interfaces.Repositories.RDS
 {
     public interface IFactCustomCountRepository : IRDSRepository
     {
-        IEnumerable<FactCustomCount> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false);
+        IEnumerable<FactCustomCount> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false);
         IEnumerable<FactCustomCount> Get_FederalProgramReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, string reportFilter);
         IEnumerable<FactCustomCount> Get_DisciplinaryRemovalsReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode);
         IEnumerable<FactCustomCount> Get_AssessmentPerformanceReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, string reportFilter, string reportSubFilter, string reportGrade);
