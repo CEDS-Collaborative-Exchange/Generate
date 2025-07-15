@@ -4,6 +4,7 @@ VersionUpdates\\13.0_prerelease,App.Metadata.sql,0
 VersionUpdates\\13.0_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.0_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\13.0_prerelease,JunkTablePopulation.sql,0
+VersionUpdates\\13.0_prerelease,CIID-4766 - FS119.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Views\\Drop,RDS.vWDimTitleIIIStatuses.View.sql,0

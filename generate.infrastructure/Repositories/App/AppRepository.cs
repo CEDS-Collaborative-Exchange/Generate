@@ -31,7 +31,7 @@ namespace generate.infrastructure.Repositories.App
 
         public void Dispose()
         {
-            this.source.Dispose();
+            GC.SuppressFinalize(this);
         }
         
         public void StartMigration(string dataMigrationTypeCode, bool setToProcessing = false)
@@ -45,13 +45,11 @@ namespace generate.infrastructure.Repositories.App
             // Get statuses
             List<DataMigrationStatus> dataMigrationStatuses = GetAllReadOnly<DataMigrationStatus>(0, 0).ToList();
             DataMigrationStatus pendingStatus = null;
-            DataMigrationStatus initialStatus = null;
             DataMigrationStatus processingStatus = null;
 
             if (dataMigrationStatuses != null)
             {
                 pendingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "pending");
-                initialStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "initial");
                 processingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "processing");
             }
 
@@ -70,35 +68,7 @@ namespace generate.infrastructure.Repositories.App
                 Save();
             }
 
-            // Reset statuses of subsequent migrations if needed
-            //if (initialStatus != null)
-            //{
-            //    if (dataMigrationTypeCode == "ods")
-            //    {
-            //        // If ODS, set RDS and Report migrations to initial (since they will need to be re-run)
-
-            //        List<DataMigration> migrations = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == "rds" || m.DataMigrationType.DataMigrationTypeCode == "report").ToList();
-            //        foreach (var i in migrations)
-            //        {
-            //            i.DataMigrationStatusId = initialStatus.DataMigrationStatusId;
-            //        }
-            //        Save();
-            //    }
-            //    else if (dataMigrationTypeCode == "rds")
-            //    {
-            //        // If RDS, set Report migration to initial (since it will need to be re-run)
-
-            //        DataMigration migrations = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == "report").FirstOrDefault();
-            //        if (migrations != null)
-            //        {
-            //            migrations.DataMigrationStatusId = initialStatus.DataMigrationStatusId;
-            //            Save();
-            //        }
-            //    }
-            //}
-
-            // Log migration started message
-
+           
             LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Started", true);
 
         }
@@ -153,7 +123,7 @@ namespace generate.infrastructure.Repositories.App
                     var dataMigrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusCode == dataMigrationStatusCode);
                     dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
 
-                    var lockedReports = this.GetReports().Where(r => r.IsLocked == true);
+                    var lockedReports = this.GetReports().Where(r => r.IsLocked);
                     var factTypeId = lockedReports.ToList()[0].GenerateReport_FactTypes[0].FactTypeId;
                     var dataMigrtionTasks = _context.Set<DataMigrationTask>().OrderBy(t => t.TaskSequence).Where(t => t.FactTypeId == factTypeId).Select(t => t.DataMigrationTaskId.ToString()).ToList();
                     dataMigration.DataMigrationTaskList = string.Join(",", dataMigrtionTasks);
@@ -182,7 +152,7 @@ namespace generate.infrastructure.Repositories.App
 
         public void MarkReportsAsComplete()
         {
-            var lockedReports = this.GetReports().Where(r => r.IsLocked == true);
+            var lockedReports = this.GetReports().Where(r => r.IsLocked);
             foreach (var report in lockedReports)
             {
                 this.MarkReportAsComplete(report.ReportCode);
@@ -349,7 +319,7 @@ namespace generate.infrastructure.Repositories.App
 
             results = results.Include(r => r.GenerateReport_FactTypes);
 
-            results = results.Where(r => r.IsActive == true);
+            results = results.Where(r => r.IsActive);
             results = results.OrderBy(r => r.ReportCode);
 
             if (skip != 0)

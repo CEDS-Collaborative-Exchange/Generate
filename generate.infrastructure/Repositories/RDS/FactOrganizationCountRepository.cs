@@ -35,7 +35,7 @@ namespace generate.infrastructure.Repositories.RDS
         }
 
 
-        public IEnumerable<ReportEDFactsOrganizationCount> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool flag = false)
+        public IEnumerable<ReportEDFactsOrganizationCount> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool flag = false)
         {
             // Convert bool parameters to bit values
 
@@ -78,7 +78,7 @@ namespace generate.infrastructure.Repositories.RDS
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, ex.Message);
                 throw;
             }
             finally

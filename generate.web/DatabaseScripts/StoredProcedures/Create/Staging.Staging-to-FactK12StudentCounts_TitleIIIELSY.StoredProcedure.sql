@@ -264,6 +264,7 @@ BEGIN
 			AND ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING') 	= ISNULL(rdt3s.TitleIIIAccountabilityProgressStatusMap, rdt3s.TitleIIIAccountabilityProgressStatusCode)
 			AND ISNULL(sppt3.EnglishLearnersExitedStatus, -1)   				= ISNULL(CAST(rdt3s.EnglishLearnersExitedStatusMap AS SMALLINT), -1)
 			AND rdt3s.ProgramParticipationTitleIIILiepCode 						= 'MISSING'
+			AND rdt3s.EnglishLearnersExitedStatus = sppt3.EnglishLearnersExitedStatus			
 	--english learner (rds)
 		LEFT JOIN #vwEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdels.EnglishLearnerStatusMap AS SMALLINT), -1)
