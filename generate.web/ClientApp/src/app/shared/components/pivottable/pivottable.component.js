@@ -303,23 +303,28 @@ var PivottableComponent = function () {
             }
             uiData = uiData
                 .sort(function (a, b) {
-                if (a.OrganizationName < b.OrganizationName) {
+                var nameA = String(a.organizationName).toUpperCase(); // ignore upper and lowercase
+                var nameB = String(b.organizationName).toUpperCase(); // ignore upper and lowercase
+                if (nameA < nameB) {
+                    //console.log('-1 : ' + nameA + ' , ' + nameB);
                     return -1;
                 }
-                if (a.OrganizationName > b.OrganizationName) {
+                if (nameA > nameB) {
+                    //console.log('1 : ' + nameA + ' , ' + nameB);
                     return 1;
                 }
+                //console.log('0 : ' + nameA + ' , ' + nameB);
                 return 0;
             })
-                .sort(function (a, b) {
-                if (a.OrganizationIdentifierSea < b.OrganizationIdentifierSea) {
-                    return -1;
-                }
-                if (a.OrganizationIdentifierSea > b.OrganizationIdentifierSea) {
-                    return 1;
-                }
-                return 0;
-            })
+                //.sort((a, b) => {
+                //    if (a.OrganizationIdentifierSea < b.OrganizationIdentifierSea) {
+                //        return -1;
+                //    }
+                //    if (a.OrganizationIdentifierSea > b.OrganizationIdentifierSea) {
+                //        return 1;
+                //    }
+                //    return 0;
+                //})
                 .filter(function (d) {
                 if (Object.keys(exports.filterBy2).length === 0) {
                     return true;
