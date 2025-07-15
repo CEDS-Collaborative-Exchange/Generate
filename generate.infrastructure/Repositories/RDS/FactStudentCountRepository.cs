@@ -68,7 +68,7 @@ namespace generate.infrastructure.Repositories.RDS
             {
                 oldTimeout = _rdsDbContext.Database.GetCommandTimeout();
                 _rdsDbContext.Database.SetCommandTimeout(11000);
-                returnObject = _rdsDbContext.Set<ReportEDFactsK12StudentCount>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeFriendlyCaptions = {5}, @obscureMissingCategoryCounts = {6}, @isOnlineReport={7}", reportCode, reportLevel, reportYear, categorySetCode, friendlyCaptions, missingCategoryCounts, onlineReport).ToList();
+                returnObject = _rdsDbContext.Set<ReportEDFactsK12StudentCount>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeFriendlyCaptions = {4}, @obscureMissingCategoryCounts = {5}, @isOnlineReport={6}", reportCode, reportLevel, reportYear, categorySetCode, friendlyCaptions, missingCategoryCounts, onlineReport).ToList();
             }
             catch (Exception ex)
             {
