@@ -5,6 +5,7 @@ import { Subscription, finalize } from 'rxjs';
 import { GenerateReportService } from '../../services/app/generateReport.service';
 import { FlextableComponent } from '../components/flextable/flextable.component';
 
+
 declare let componentHandler: any;
 
 @Component({
@@ -83,7 +84,10 @@ export class ReportDebugInformationComponent {
             fileName += ' - ' + this.data.categorySetCode;
         }
 
-        let reportTitle = fileName;
+        let reportTitle = this.data.reportData.reportTitle + '-';
+        reportTitle += this.data.reportData.categorySets[0].categorySetName + '-';
+
+        reportTitle += this.data.reportData.categorySets[0].categories.join(',');
 
         fileName += ".xlsx";
 
@@ -91,11 +95,11 @@ export class ReportDebugInformationComponent {
         let reportYearCaption = this.data.reportYear;
         let totalCaption = "";
 
-        let reportCaptionCol = 2;
+        let reportCaptionCol = 3;
         let reportCols = [];
 
         let reportRows = [
-            { hpx: 30 }, // row 1 sets to the height of 12 in points
+            { hpx: 100 }, // row 1 sets to the height of 12 in points
             { hpx: 23 }, // row 2 sets to the height of 16 in pixels
             { hpx: 20 }, // row 2 sets to the height of 16 in pixels
             { hpx: 20 }, // row 2 sets to the height of 16 in pixels
