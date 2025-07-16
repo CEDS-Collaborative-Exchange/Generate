@@ -160,7 +160,7 @@ namespace generate.testdata.DataGenerators
                 LEAGradePKOnlyTestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                 LEAGradeKGOnlyTestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                 OrganizationsNotReportedFederallyTestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
-                ReservedK12OrganizationStaticData.AppendStaticK12OrganizationData(testData, globalRandom, _testDataHelper, SchoolYear);
+                //ReservedK12OrganizationStaticData.AppendStaticK12OrganizationData(testData, globalRandom, _testDataHelper, SchoolYear);
                 FS029_CIID4827_TestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                 //FS002_CIID4780_TestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                 AccessibleEducationMaterialProviderStaticDataUtility.AppendAccessibleEducationMaterialProviderData(testData, globalRandom, _testDataHelper, SchoolYear);
