@@ -40,19 +40,14 @@ namespace generate.infrastructure.Repositories.RDS
 
         }
         
-        public  IEnumerable<ReportEDFactsK12StudentCount> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool isOnlineReport = false)
+        public  IEnumerable<ReportEDFactsK12StudentCount> Get_ReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool isOnlineReport = false)
         {
             // Convert bool parameters to bit values
 
-            int zeroCounts = 0;
             int friendlyCaptions = 0;
             int missingCategoryCounts = 0;
             int onlineReport = 0;
 
-            if (includeZeroCounts)
-            {
-                zeroCounts = 1;
-            }
             if (includeFriendlyCaptions)
             {
                 friendlyCaptions = 1;
@@ -73,7 +68,7 @@ namespace generate.infrastructure.Repositories.RDS
             {
                 oldTimeout = _rdsDbContext.Database.GetCommandTimeout();
                 _rdsDbContext.Database.SetCommandTimeout(11000);
-                returnObject = _rdsDbContext.Set<ReportEDFactsK12StudentCount>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeZeroCounts = {4}, @includeFriendlyCaptions = {5}, @obscureMissingCategoryCounts = {6}, @isOnlineReport={7}", reportCode, reportLevel, reportYear, categorySetCode, zeroCounts, friendlyCaptions, missingCategoryCounts, onlineReport).ToList();
+                returnObject = _rdsDbContext.Set<ReportEDFactsK12StudentCount>().FromSqlRaw("rds.Get_ReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeFriendlyCaptions = {4}, @obscureMissingCategoryCounts = {5}, @isOnlineReport={6}", reportCode, reportLevel, reportYear, categorySetCode, friendlyCaptions, missingCategoryCounts, onlineReport).ToList();
             }
             catch (Exception ex)
             {
@@ -95,15 +90,15 @@ namespace generate.infrastructure.Repositories.RDS
         {
             // Convert bool parameters to bit values
 
-            int zeroCounts = 0;
+            //int zeroCounts = 0;
             int friendlyCaptions = 0;
             int missingCategoryCounts = 0;
             int onlineReport = 0;
 
-            if (includeZeroCounts)
-            {
-                zeroCounts = 1;
-            }
+            //if (includeZeroCounts)
+            //{
+            //    zeroCounts = 1;
+            //}
             if (includeFriendlyCaptions)
             {
                 friendlyCaptions = 1;
@@ -142,7 +137,7 @@ namespace generate.infrastructure.Repositories.RDS
                         command.Parameters.AddWithValue("@reportLevel", reportLevel);
                         command.Parameters.AddWithValue("@reportYear", reportYear);
                         command.Parameters.AddWithValue("@categorySetCode", categorySetCode != null ? categorySetCode : DBNull.Value);
-                        command.Parameters.AddWithValue("@includeZeroCounts", zeroCounts);
+                        //command.Parameters.AddWithValue("@includeZeroCounts", zeroCounts);
                         command.Parameters.AddWithValue("@includeFriendlyCaptions", friendlyCaptions);
                         command.Parameters.AddWithValue("@obscureMissingCategoryCounts", missingCategoryCounts);
                         command.Parameters.AddWithValue("@isOnlineReport", onlineReport);

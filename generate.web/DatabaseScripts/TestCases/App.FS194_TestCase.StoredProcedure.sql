@@ -145,7 +145,7 @@ BEGIN
 	FROM #S_CSA s
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.AgeEdFactsCode = rreksc.AGE
-		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportCode = '194' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'SEA'
 		AND rreksc.CategorySetCode = 'CSA'
@@ -194,7 +194,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentCounts rreksc 
 		ON s.LeaIdentifierSeaAccountability = rreksc.OrganizationIdentifierSea
 		AND s.AgeEdFactsCode = rreksc.Age
-		AND rreksc.ReportCode = 'C194' 
+		AND rreksc.ReportCode = '194' 
 		AND rreksc.ReportYear = @SchoolYear
 		AND rreksc.ReportLevel = 'LEA'
 		AND rreksc.CategorySetCode = 'CSA'

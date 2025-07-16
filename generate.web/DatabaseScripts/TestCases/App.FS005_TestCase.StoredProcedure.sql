@@ -299,7 +299,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.IDEADISABILITYTYPE = rreksd.[IDEADISABILITYTYPE]
-		AND rreksd.ReportCode = 'C005' 
+		AND rreksd.ReportCode = '005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSA'
@@ -344,7 +344,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IDEAINTERIMREMOVAL
 		AND s.RaceEdFactsCode = rreksd.RACE
-		AND rreksd.ReportCode = 'C005' 
+		AND rreksd.ReportCode = '005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSB'
@@ -390,7 +390,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.SexEdFactsCode = rreksd.SEX
-		AND rreksd.ReportCode = 'C005' 
+		AND rreksd.ReportCode = '005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSC'
@@ -435,7 +435,7 @@ BEGIN
 	LEFT  JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
-		AND rreksd.ReportCode = 'C005' 
+		AND rreksd.ReportCode = '005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSD'
@@ -475,7 +475,7 @@ BEGIN
 	FROM #S_ST1 s
 	LEFT  JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
-		AND rreksd.ReportCode = 'C005' 
+		AND rreksd.ReportCode = '005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'ST1'
@@ -531,7 +531,7 @@ BEGIN
 		ON replace(s.IdeaInterimRemoval, '_1', '') = rreksd.IDEAINTERIMREMOVAL
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
 		AND s.IDEADISABILITYTYPE = rreksd.IDEADISABILITYTYPE
-		AND rreksd.ReportCode = 'C005' 
+		AND rreksd.ReportCode = '005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSA'
@@ -582,7 +582,7 @@ BEGIN
 		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.RaceEdFactsCode = rreksd.RACE
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
-		AND rreksd.ReportCode = 'C005' 
+		AND rreksd.ReportCode = '005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSB'
@@ -634,7 +634,7 @@ BEGIN
 		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.SexEdFactsCode = rreksd.SEX
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
-		AND rreksd.ReportCode = 'C005' 
+		AND rreksd.ReportCode = '005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSC'
@@ -685,7 +685,7 @@ BEGIN
 		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.ENGLISHLEARNERSTATUS
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
-		AND rreksd.ReportCode = 'C005' 
+		AND rreksd.ReportCode = '005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSD'
@@ -732,7 +732,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd
 		ON replace(s.IdeaInterimRemoval, '_1', '')  = rreksd.IdeaInterimRemoval
 		AND s.LeaIdentifierSeaAccountability = rreksd.[OrganizationIdentifierSea]
-		AND rreksd.ReportCode = 'C005' 
+		AND rreksd.ReportCode = '005' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'ST1'

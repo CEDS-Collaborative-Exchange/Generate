@@ -201,7 +201,7 @@ BEGIN
 		FROM #S_CSA s
 		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.GradeLevelEdFactsCode = rreksd.GRADELEVEL			
-			AND rreksd.ReportCode = 'C116' 
+			AND rreksd.ReportCode = '116' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'CSA'
@@ -253,7 +253,7 @@ BEGIN
 		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND s.GradeLevelEdFactsCode = rreksd.GRADELEVEL			
-			AND rreksd.ReportCode = 'C116' 
+			AND rreksd.ReportCode = '116' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'CSA'
@@ -298,7 +298,7 @@ BEGIN
 		FROM #S_CSB s
 		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.RaceEdFactsCode = rreksd.RACE			
-			AND rreksd.ReportCode = 'C116' 
+			AND rreksd.ReportCode = '116' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'CSB'
@@ -345,7 +345,7 @@ BEGIN
 		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND s.RaceEdFactsCode = rreksd.RACE			
-			AND rreksd.ReportCode = 'C116' 
+			AND rreksd.ReportCode = '116' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'CSA'
@@ -381,7 +381,7 @@ BEGIN
 			,GETDATE()
 		FROM #S_TOT s
 		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
-			ON rreksd.ReportCode = 'C116' 
+			ON rreksd.ReportCode = '116' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'TOT'
@@ -424,7 +424,7 @@ BEGIN
 		FROM #L_TOT s
 		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
-			AND rreksd.ReportCode = 'C116' 
+			AND rreksd.ReportCode = '116' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'TOT'
@@ -472,7 +472,7 @@ BEGIN
 		inner JOIN RDS.ReportEDFactsK12StudentCounts rreksd 
 			ON s.GradeLevelEdFactsCode = rreksd.GRADELEVEL			
 			AND s.TitleIIILanguageInstructionProgramTypeEdFactsCode = rreksd.TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE
-			AND rreksd.ReportCode = 'C116' 
+			AND rreksd.ReportCode = '116' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'SEA'
 			AND rreksd.CategorySetCode = 'CSA'
@@ -526,7 +526,7 @@ BEGIN
 			ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 			AND s.GradeLevelEdFactsCode = rreksd.GRADELEVEL	
 			AND s.TitleIIILanguageInstructionProgramTypeEdFactsCode = rreksd.TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE
-			AND rreksd.ReportCode = 'C116' 
+			AND rreksd.ReportCode = '116' 
 			AND rreksd.ReportYear = @SchoolYear
 			AND rreksd.ReportLevel = 'LEA'
 			AND rreksd.CategorySetCode = 'CSA'

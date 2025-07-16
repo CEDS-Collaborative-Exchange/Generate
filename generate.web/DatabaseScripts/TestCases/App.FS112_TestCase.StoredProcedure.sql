@@ -181,7 +181,7 @@ BEGIN
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
 			ON s.ParaprofessionalQualificationStatusEdFactsCode = rreksc.PARAPROFESSIONALQUALIFICATIONSTATUS
 			AND s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
-			AND rreksc.ReportCode = 'C112' 
+			AND rreksc.ReportCode = '112' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'SEA'
 			AND rreksc.CategorySetCode = 'CSA'
@@ -225,7 +225,7 @@ BEGIN
 		FROM #TC2 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
 			ON s.ParaprofessionalQualificationStatusEdFactsCode = rreksc.PARAPROFESSIONALQUALIFICATIONSTATUS
-			AND rreksc.ReportCode = 'C112' 
+			AND rreksc.ReportCode = '112' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'SEA'
 			AND rreksc.CategorySetCode = 'ST1'
@@ -268,7 +268,7 @@ BEGIN
 		FROM #TC3 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
 			ON s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
-			AND rreksc.ReportCode = 'C112' 
+			AND rreksc.ReportCode = '112' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'SEA'
 			AND rreksc.CategorySetCode = 'ST2'
@@ -303,7 +303,7 @@ BEGIN
 			,GETDATE()
 		FROM #TC4 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
-			ON rreksc.ReportCode = 'C112' 
+			ON rreksc.ReportCode = '112' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'SEA'
 			AND rreksc.CategorySetCode = 'TOT'
@@ -362,7 +362,7 @@ BEGIN
 			ON s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
 			AND s.ParaprofessionalQualificationStatusEdFactsCode = rreksc.PARAPROFESSIONALQUALIFICATIONSTATUS
 			AND s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
-			AND rreksc.ReportCode = 'C112' 
+			AND rreksc.ReportCode = '112' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'LEA'
 			AND rreksc.CategorySetCode = 'CSA'
@@ -413,7 +413,7 @@ BEGIN
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
 			ON s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
 			AND s.ParaprofessionalQualificationStatusEdFactsCode = rreksc.PARAPROFESSIONALQUALIFICATIONSTATUS
-			AND rreksc.ReportCode = 'C112' 
+			AND rreksc.ReportCode = '112' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'LEA'
 			AND rreksc.CategorySetCode = 'ST1'
@@ -465,7 +465,7 @@ BEGIN
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc  
 			ON s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
 			AND s.SpecialEducationAgeGroupTaughtEdFactsCode = rreksc.SpecialEducationAgeGroupTaught
-			AND rreksc.ReportCode = 'C112' 
+			AND rreksc.ReportCode = '112' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'LEA'
 			AND rreksc.CategorySetCode = 'ST2'
@@ -507,7 +507,7 @@ BEGIN
 		FROM #TC8 s
 		LEFT JOIN RDS.ReportEDFactsK12StaffCounts rreksc 
 			ON s.LeaIdentifierSea = rreksc.OrganizationIdentifierSea
-			AND rreksc.ReportCode = 'C112' 
+			AND rreksc.ReportCode = '112' 
 			AND rreksc.ReportYear = @SchoolYear
 			AND rreksc.ReportLevel = 'LEA'
 			AND rreksc.CategorySetCode = 'TOT'
@@ -525,4 +525,3 @@ BEGIN
 		--AND Passed = 0
 
 END
-

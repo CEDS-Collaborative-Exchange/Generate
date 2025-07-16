@@ -4602,13 +4602,6 @@ namespace generate.infrastructure.Contexts
         public DbSet<ReportEDFactsPersistentlyDangerous> PersistentlyDangerousReports { get; set; }
         public DbSet<ReportEDFactsOrganizationStatusCount> FactOrganizationStatusCountReports { get; set; }
 
-        // Stored Procedure Entities (not real entities - should be removed from all migrations)
-        //public DbSet<FactPersonnelCountReportDto> FactPersonnelCountReportDtos { get; set; }
-        //public DbSet<FactStudentAssessmentReportDto> FactStudentAssessmentReportDtos { get; set; }
-        //public DbSet<FactStudentCountReportDto> FactStudentCountReportDtos { get; set; }
-        //public DbSet<FactStudentDisciplineReportDto> FactStudentDisciplineReportDtos { get; set; }
-        //public DbSet<FactOrganizationCountReportDto> FactOrganizationCountReportDtos { get; set; }
-        //public DbSet<FactOrganizationStatusCountReportDto> FactOrganizationStatusCountReportDtos { get; set; }
         public DbSet<OrganizationDto> Organizations { get; set; }
 
         #endregion

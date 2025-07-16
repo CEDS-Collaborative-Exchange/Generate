@@ -16,7 +16,7 @@ namespace generate.background.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BackgroundUpdateController : Controller
+    public class BackgroundUpdateController : ControllerBase
     {
         private readonly IOptions<AppSettings> _appSettings;
         private readonly IHostEnvironment _hostingEnvironment;

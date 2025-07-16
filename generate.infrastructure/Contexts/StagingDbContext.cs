@@ -159,8 +159,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                //entity.Property(e => e.AssessmentResult_PerformanceLevelId).HasColumnName("AssessmentResult_PerformanceLevelId");
-
                 entity.Property(e => e.AssessmentScoreMetricType)
                     .HasMaxLength(100)
                     .IsUnicode(false);
@@ -181,10 +179,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                //entity.Property(e => e.AssessmentTypeAdministeredToEnglishLearners)
-                //    .HasMaxLength(100)
-                //    .IsUnicode(false);
-
                 entity.Property(e => e.DataCollectionName).HasMaxLength(100);
 
                 entity.Property(e => e.GradeLevelWhenAssessed)
@@ -200,14 +194,6 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("LEAFullAcademicYear")
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                //entity.Property(e => e.OrganizationID_LEA).HasColumnName("OrganizationID_LEA");
-
-                //entity.Property(e => e.OrganizationID_School).HasColumnName("OrganizationID_School");
-
-                //entity.Property(e => e.OrganizationPersonRoleId_LEA).HasColumnName("OrganizationPersonRoleId_LEA");
-
-                //entity.Property(e => e.OrganizationPersonRoleId_School).HasColumnName("OrganizationPersonRoleId_School");
 
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 

@@ -329,7 +329,7 @@ BEGIN
 		ON replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.IdeaDisabilityType = rreksd.IdeaDisabilityType
-		AND rreksd.ReportCode = 'C006' 
+		AND rreksd.ReportCode = '006' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSA'
@@ -376,7 +376,7 @@ BEGIN
 		ON replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.RaceEdFactsCode = rreksd.Race
-		AND rreksd.ReportCode = 'C006' 
+		AND rreksd.ReportCode = '006' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSB'
@@ -425,7 +425,7 @@ BEGIN
 		ON replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.SexEdFactsCode = rreksd.Sex
-		AND rreksd.ReportCode = 'C006' 
+		AND rreksd.ReportCode = '006' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSC'
@@ -473,7 +473,7 @@ BEGIN
 		ON replace(s.DisciplineMethod, '_1', '') = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.LEPRemovalLength = rreksd.RemovalLength
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.EnglishLearnerStatus
-		AND rreksd.ReportCode = 'C006' 
+		AND rreksd.ReportCode = '006' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'CSD'
@@ -517,7 +517,7 @@ BEGIN
 	LEFT JOIN RDS.ReportEDFactsK12StudentDisciplines rreksd 
 		ON replace(s.DisciplineMethod, '_1', '') = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
-		AND rreksd.ReportCode = 'C006' 
+		AND rreksd.ReportCode = '006' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'SEA'
 		AND rreksd.CategorySetCode = 'ST1'
@@ -575,7 +575,7 @@ BEGIN
 		AND replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.IdeaDisabilityType = rreksd.IdeaDisabilityType
-		AND rreksd.ReportCode = 'C006' 
+		AND rreksd.ReportCode = '006' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSA'
@@ -630,7 +630,7 @@ BEGIN
 		AND replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND s.RaceEdFactsCode = rreksd.Race
-		AND rreksd.ReportCode = 'C006' 
+		AND rreksd.ReportCode = '006' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSB'
@@ -686,7 +686,7 @@ BEGIN
 		AND replace(s.DisciplineMethod, '_1', '') = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
 		AND replace(s.SexEdFactsCode, '_1', '') = rreksd.Sex
-		AND rreksd.ReportCode = 'C006' 
+		AND rreksd.ReportCode = '006' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSC'
@@ -741,7 +741,7 @@ BEGIN
 		AND replace(s.DisciplineMethod, '_1', '')  = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.LEPRemovalLength = rreksd.RemovalLength
 		AND s.EnglishLearnerStatusEdFactsCode = rreksd.EnglishLearnerStatus
-		AND rreksd.ReportCode = 'C006' 
+		AND rreksd.ReportCode = '006' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'CSD'
@@ -792,7 +792,7 @@ BEGIN
 		ON s.LeaIdentifierSeaAccountability = rreksd.OrganizationIdentifierSea
 		AND replace(s.DisciplineMethod, '_1', '') = rreksd.DISCIPLINEMETHODOFCHILDRENWITHDISABILITIES
 		AND s.RemovalLength = rreksd.RemovalLength
-		AND rreksd.ReportCode = 'C006' 
+		AND rreksd.ReportCode = '006' 
 		AND rreksd.ReportYear = @SchoolYear
 		AND rreksd.ReportLevel = 'LEA'
 		AND rreksd.CategorySetCode = 'ST1'

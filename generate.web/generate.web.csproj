@@ -141,12 +141,6 @@
     <None Update="DatabaseScripts\TestCases\App.FS144_TestCase.StoredProcedure.sql">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
-    <None Update="DatabaseScripts\TestCases\App.FS175_TestCase.StoredProcedure.sql">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
-    <None Update="DatabaseScripts\TestCases\App.FS178_TestCase.StoredProcedure.sql">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
     <None Update="DatabaseScripts\TestCases\App.FS212_TestCase.StoredProcedure.sql">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
