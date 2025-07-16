@@ -1,6 +1,11 @@
 ﻿
-ALTER TABLE [generate].[Staging].[ProgramParticipationTitleIII] ADD EnglishLearnersExitedStatus bit;
-ALTER TABLE [generate].[RDS].[DimTitleIIIStatuses] ADD EnglishLearnersExitedStatus bit;
+	IF COL_LENGTH('Staging.ProgramParticipationTitleIII', 'EnglishLearnersExitedStatus') IS NULL
+	BEGIN
+		ALTER TABLE Staging.ProgramParticipationTitleIII ADD EnglishLearnersExitedStatus bit;
+	END
 
---UPDATE [generate].[Staging].[ProgramParticipationTitleIII] SET EnglishLearnersExitedStatus = 1;
---UPDATE [generate].[RDS].[DimTitleIIIStatuses] SET EnglishLearnersExitedStatus = 1;
+	IF COL_LENGTH('RDS.DimTitleIIIStatuses', 'EnglishLearnersExitedStatus') IS NULL
+	BEGIN
+		ALTER TABLE RDS.DimTitleIIIStatuses ADD EnglishLearnersExitedStatus bit;
+	END
+
