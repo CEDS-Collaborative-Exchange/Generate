@@ -117,12 +117,12 @@ namespace generate.infrastructure.Services
             {
                 if (report.ReportCode == "205")
                 {
-                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
+                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, true);
                     dataRows = query.ToList();
                 }
                 else if (report.ReportCode == "130")
                 {
-                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
+                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, true);
                     dataRows = query.ToList();
                 }
                 else if (report.ReportCode == "039")
