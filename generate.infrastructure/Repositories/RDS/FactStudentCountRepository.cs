@@ -86,7 +86,7 @@ namespace generate.infrastructure.Repositories.RDS
 
 
 
-        public (IEnumerable<MembershipReportDto>,int)  Get_MembershipReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool isOnlineReport = false, int startRecord = 1, int numberOfRecords = 1000000)
+        public (IEnumerable<MembershipReportDto>,int)  Get_MembershipReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool isOnlineReport = false, int startRecord = 1, int numberOfRecords = 1000000)
         {
             // Convert bool parameters to bit values
 
