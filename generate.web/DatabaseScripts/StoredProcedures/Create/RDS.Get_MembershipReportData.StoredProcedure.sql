@@ -3,7 +3,7 @@
 	@reportLevel as varchar(50),
 	@reportYear as varchar(50),
 	@categorySetCode as varchar(50),
-	@includeZeroCounts as bit,
+	--@includeZeroCounts as bit,
 	@includeFriendlyCaptions as bit,
 	@obscureMissingCategoryCounts as bit,
 	@isOnlineReport as bit=0,
@@ -491,19 +491,20 @@ BEGIN
 			'
 		end			-- END @isPerformanceSql = 1
 
-	if @reportCode in ('002', '089')
-		begin
-			set @includeZeroCounts = 0
-			if @reportLevel = 'SEA' set @includeZeroCounts = 1
-			if @reportLevel <> 'SEA' and @categorySetCode = 'TOT' set @includeZeroCounts = 1
-		end
+	--if @reportCode in ('c002', 'c089')
+	--	begin
+	--		set @includeZeroCounts = 0
+	--		if @reportLevel = 'SEA' set @includeZeroCounts = 1
+	--		if @reportLevel <> 'SEA' and @categorySetCode = 'TOT' set @includeZeroCounts = 1
+	--	end
 
 
-	if @reportLevel = 'sea' AND @reportCode in ('005','006','007','088','143','144')
-	begin
-		set @includeZeroCounts = 1
-	end
+	--if @reportLevel = 'sea' AND @reportCode in ('c005','c006','c007','c088','c143','c144')
+	--begin
+	--	set @includeZeroCounts = 1
+	--end
 
+/*
 	-- Zero Counts
 	if @includeZeroCounts = 1
 		begin		
@@ -614,7 +615,7 @@ BEGIN
 
 	--print '@reportCode='+@reportCode
 	--print '@zeroCountSql='+@zeroCountSql
-
+*/
 	-- Obscure missing category counts with -1 values
 	if @obscureMissingCategoryCounts = 1
 		begin
@@ -743,3 +744,6 @@ BEGIN
 
 	SET NOCOUNT OFF;
 END
+GO
+
+

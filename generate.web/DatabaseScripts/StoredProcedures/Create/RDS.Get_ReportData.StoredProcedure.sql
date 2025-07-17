@@ -3,7 +3,7 @@ CREATE PROCEDURE [RDS].[Get_ReportData]
 	@reportLevel as varchar(50),
 	@reportYear as varchar(50),
 	@categorySetCode as varchar(50),
-	@includeZeroCounts as bit,
+	--@includeZeroCounts as bit,
 	@includeFriendlyCaptions as bit,
 	@obscureMissingCategoryCounts as bit,
 	@isOnlineReport as bit=0
@@ -64,11 +64,11 @@ BEGIN
 		on r.ToggleQuestionId = q.ToggleQuestionId
 	WHERE q.EmapsQuestionAbbrv = 'LUNCHCOUNTS'
 
-	--Manually exclude the 0 counts from the Reports that are using the new dynamic logic
-	if @reportCode in ('218','219','220','221','222','224','225','226')
-	begin
-		set @includeZeroCounts = 0
-	end
+	----Manually exclude the 0 counts from the Reports that are using the new dynamic logic
+	--if @reportCode in ('218','219','220','221','222','224','225','226')
+	--begin
+	--	set @includeZeroCounts = 0
+	--end
 
 	if @factTable = 'FactCustomCounts'
 	begin
@@ -148,8 +148,10 @@ BEGIN
 		(ReportField)
 		select distinct upper(d.DimensionFieldName) as ReportField
 		from App.Dimensions d 
-		inner join App.FactTable_DimensionTables fd on d.DimensionTableId = fd.DimensionTableId
-		inner join App.FactTables ft on fd.FactTableId = ft.FactTableId
+		inner join App.FactTable_DimensionTables fd 
+			on d.DimensionTableId = fd.DimensionTableId
+		inner join App.FactTables ft 
+			on fd.FactTableId = ft.FactTableId
 		where ft.FactTableName = @factTable and upper(d.DimensionFieldName) <> 'YEAR'
 
 	end
@@ -159,8 +161,10 @@ BEGIN
 		(ReportField)
 		select distinct upper(d.DimensionFieldName) as ReportField
 		from App.Dimensions d 
-		inner join App.FactTable_DimensionTables fd on d.DimensionTableId = fd.DimensionTableId
-		inner join App.FactTables ft on fd.FactTableId = ft.FactTableId
+		inner join App.FactTable_DimensionTables fd 
+			on d.DimensionTableId = fd.DimensionTableId
+		inner join App.FactTables ft 
+			on fd.FactTableId = ft.FactTableId
 		where ft.FactTableName = @factTable 
 	end
 	
@@ -174,13 +178,20 @@ BEGIN
 	(ReportField)
 	select upper(d.DimensionFieldName) as ReportField
 	from app.Dimensions d 
-	inner join app.Category_Dimensions cd on d.DimensionId = cd.DimensionId
-	inner join app.Categories c on cd.CategoryId = c.CategoryId
-	inner join app.CategorySet_Categories csc on c.CategoryId = csc.CategoryId
-	inner join app.CategorySets cs on csc.CategorySetId = cs.CategorySetId
-	inner join app.GenerateReports r on cs.GenerateReportId = r.GenerateReportId
-	inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
-	inner join app.OrganizationLevels o on cs.OrganizationLevelId = o.OrganizationLevelId
+	inner join app.Category_Dimensions cd 
+		on d.DimensionId = cd.DimensionId
+	inner join app.Categories c 
+		on cd.CategoryId = c.CategoryId
+	inner join app.CategorySet_Categories csc 
+		on c.CategoryId = csc.CategoryId
+	inner join app.CategorySets cs 
+		on csc.CategorySetId = cs.CategorySetId
+	inner join app.GenerateReports r 
+		on cs.GenerateReportId = r.GenerateReportId
+	inner join app.GenerateReportTypes t 
+		on r.GenerateReportTypeId = t.GenerateReportTypeId
+	inner join app.OrganizationLevels o 
+		on cs.OrganizationLevelId = o.OrganizationLevelId
 	where r.ReportCode = @reportCode
 	and cs.SubmissionYear = @reportYear
 	and o.LevelCode = @reportLevel
@@ -526,7 +537,7 @@ BEGIN
 	end			-- END @isPerformanceSql = 1
 
 	set @skipZeroCounts = 0
-
+/*
 	if @reportCode in ('002', '089')
 		begin
 			set @includeZeroCounts = 0
@@ -578,15 +589,15 @@ BEGIN
 
 				if @reportCode in ('002', '089') and UPPER(@reportLevel) <> 'SEA'
 				begin
-						if @catSetCode <> 'TOT' 
-						begin
-							set @skipZeroCounts = 1
-						end
-						else
-						begin
-							set @skipZeroCounts = 0
-							set @includeOrganizationSQL = 1
-						end
+					if @catSetCode <> 'TOT' 
+					begin
+						set @skipZeroCounts = 1
+					end
+					else
+					begin
+						set @skipZeroCounts = 0
+						set @includeOrganizationSQL = 1
+					end
 				end
 
 				if UPPER(@reportLevel) = 'SEA'
@@ -594,16 +605,17 @@ BEGIN
 					set @skipZeroCounts = 0
 				end
 
+
 				if @skipZeroCounts = 0
 				begin
+					--set @includeOrganizationSQL = 1
 					SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @catSetCode, 'zero',@includeOrganizationSQL, 1,@tableTypeAbbrvs, @totalIndicators, @factTypeCode)
-				
+
 					IF(@zeroCountSql IS NOT NULL)
 					begin
 						set @sql = @sql + '
 							' + @zeroCountSql
 					end
-
 				end
 				FETCH NEXT FROM categoryset_cursor INTO @catSetCode,@tableTypeAbbrvs, @totalIndicators
 			END
@@ -672,7 +684,6 @@ BEGIN
 				set @sql = @sql + '
 					' + @zeroCountSql
 			end
-
 		end
 
 		-- Exclude Free/Reduced counts if toggle requires it
@@ -685,7 +696,7 @@ BEGIN
 
 	--print '@reportCode='+@reportCode
 	--print '@zeroCountSql='+@zeroCountSql
-
+*/
 	-- Obscure missing category counts with -1 values
 	if @obscureMissingCategoryCounts = 1
 	begin

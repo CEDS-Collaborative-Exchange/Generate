@@ -101,7 +101,7 @@ namespace generate.infrastructure.Services
             {
                 bool isOnlineReport = false;
 
-                var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, categorySetCode, includeZeroCounts, false, isOnlineReport);
+                var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, categorySetCode, false, isOnlineReport);
                 dataRows = query.Item1.ToList();
                 reportDto.dataCount = query.Item1.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
             }
