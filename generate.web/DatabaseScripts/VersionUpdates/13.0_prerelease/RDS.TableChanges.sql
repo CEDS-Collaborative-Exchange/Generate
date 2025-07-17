@@ -93,7 +93,6 @@
 	FROM [CEDS].CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'NeglectedOrDelinquentProgramType'
 
-
 	CREATE TABLE #NeglectedProgramType (NeglectedProgramTypeCode VARCHAR(50), NeglectedProgramTypeDescription VARCHAR(200), NeglectedProgramTypeEdFactsCode VARCHAR(50))
 
 	INSERT INTO #NeglectedProgramType VALUES ('MISSING', 'MISSING', 'MISSING')
@@ -238,4 +237,3 @@
 	set ReportCode = substring(ReportCode,2,3)
 	where len(ReportCode) = 4
 	and substring(ReportCode,1,1) = 'c'
-

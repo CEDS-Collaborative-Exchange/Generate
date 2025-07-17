@@ -36,7 +36,6 @@ FS221
 		who attained academic and career and technical outcomes up to 90 calendar days after exiting the program.
 
 ************************************************************************/
-
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentCounts_NeglectedOrDelinquent]
 	@SchoolYear SMALLINT
 AS
@@ -260,22 +259,14 @@ BEGIN
 	--neglected or delinquent (RDS)
 		LEFT JOIN #vwNorDStatuses rdnds
 			ON rdnds.SchoolYear = @SchoolYear
-
-			/* THESE WILL BE NEEDED FOR FS119 and FS127 but for now we are defaulting to 'MISSING' for FS218, FS219, FS220, FS221
-				*** Uncomment below lines for FS 119 & comment other JOINS
-			--AND ISNULL(sppnord.NeglectedProgramType, 'MISSING') = ISNULL(rdnds.NeglectedProgramTypeMap, rdnds.NeglectedProgramTypeCode)
-			--AND ISNULL(sppnord.DelinquentProgramType, 'MISSING') = ISNULL(rdnds.DelinquentProgramTypeMap, rdnds.DelinquentProgramTypeCode)
-			*/
-			
-			/*
-			--AND ISNULL(sppnord.NeglectedOrDelinquentProgramType, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentProgramTypeMap, rdnds.NeglectedOrDelinquentProgramTypeCode)
-			*/
-
-			AND ISNULL(sppnord.EdFactsAcademicOrCareerAndTechnicalOutcomeType, 'MISSING') = ISNULL(rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap, rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode)
-			AND ISNULL(sppnord.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType, 'MISSING') = ISNULL(rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap, rdnds.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode)
-	
-			AND rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartMap = sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart
-			AND rdnds.NeglectedOrDelinquentStatusMap = sppnord.NeglectedOrDelinquentStatus
+			AND ISNULL(CAST(sppnord.NeglectedOrDelinquentStatus AS SMALLINT), -1) = ISNULL(rdnds.NeglectedOrDelinquentStatusMap, -1)
+			AND ISNULL(CAST(sppnord.NeglectedOrDelinquentLongTermStatus AS SMALLINT), -1) = ISNULL(rdnds.NeglectedOrDelinquentLongTermStatusMap, -1)
+			AND ISNULL(sppnord.NeglectedOrDelinquentProgramType, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentProgramTypeMap, rdnds.NeglectedOrDelinquentProgramTypeCode)
+			AND ISNULL(sppnord.NeglectedProgramType, 'MISSING') = ISNULL(rdnds.NeglectedProgramTypeMap, rdnds.NeglectedProgramTypeCode)
+			AND ISNULL(sppnord.DelinquentProgramType, 'MISSING') = ISNULL(rdnds.DelinquentProgramTypeMap, rdnds.DelinquentProgramTypeCode)
+			AND ISNULL(sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartMap, rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartCode)
+			AND ISNULL(sppnord.NeglectedOrDelinquentAcademicAchievementIndicator, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorMap, rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorCode)
+			AND ISNULL(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorMap, rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorCode)
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON rdis.SchoolYear = @SchoolYear
