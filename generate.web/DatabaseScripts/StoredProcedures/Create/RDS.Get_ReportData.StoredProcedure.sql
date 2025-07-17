@@ -3,7 +3,7 @@ CREATE PROCEDURE [RDS].[Get_ReportData]
 	@reportLevel as varchar(50),
 	@reportYear as varchar(50),
 	@categorySetCode as varchar(50),
-	@includeZeroCounts as bit,
+	--@includeZeroCounts as bit,
 	@includeFriendlyCaptions as bit,
 	@obscureMissingCategoryCounts as bit,
 	@isOnlineReport as bit=0
@@ -64,11 +64,11 @@ BEGIN
 		on r.ToggleQuestionId = q.ToggleQuestionId
 	WHERE q.EmapsQuestionAbbrv = 'LUNCHCOUNTS'
 
-	--Manually exclude the 0 counts from the Reports that are using the new dynamic logic
-	if @reportCode in ('218','219','220','221','222','224','225','226')
-	begin
-		set @includeZeroCounts = 0
-	end
+	----Manually exclude the 0 counts from the Reports that are using the new dynamic logic
+	--if @reportCode in ('218','219','220','221','222','224','225','226')
+	--begin
+	--	set @includeZeroCounts = 0
+	--end
 
 	if @factTable = 'FactCustomCounts'
 	begin
@@ -537,7 +537,7 @@ BEGIN
 	end			-- END @isPerformanceSql = 1
 
 	set @skipZeroCounts = 0
-
+/*
 	if @reportCode in ('002', '089')
 		begin
 			set @includeZeroCounts = 0
@@ -696,7 +696,7 @@ BEGIN
 
 	--print '@reportCode='+@reportCode
 	--print '@zeroCountSql='+@zeroCountSql
-
+*/
 	-- Obscure missing category counts with -1 values
 	if @obscureMissingCategoryCounts = 1
 	begin

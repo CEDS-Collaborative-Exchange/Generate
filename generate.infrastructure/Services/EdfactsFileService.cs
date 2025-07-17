@@ -220,9 +220,7 @@ namespace generate.infrastructure.Services
         {
             List<MembershipReportDto> dataRows = new List<MembershipReportDto>();
 
-            bool includeZeroCounts = true;
-
-            var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, null, includeZeroCounts, false, true, false, startRecord, numberOfRecords);
+            var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, null, false, true, false, startRecord, numberOfRecords);
             dataRows = query.Item1.ToList();
 
             return (dataRows, query.Item2);

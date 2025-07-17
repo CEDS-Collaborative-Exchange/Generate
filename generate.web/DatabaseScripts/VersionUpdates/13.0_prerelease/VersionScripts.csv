@@ -52,4 +52,8 @@ StoredProcedures\\Drop,RDS.Get_MembershipReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_MembershipReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Get_ReportData_ZeroCounts.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_ReportData_ZeroCounts.StoredProcedure.sql,0
 VersionUpdates\\13.0_prerelease,UpdateDbVersion.sql,0
