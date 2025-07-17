@@ -17,7 +17,7 @@ BEGIN
 --For debugging
 
 --declare
---	@reportCode as nvarchar(150) = 'C002',
+--	@reportCode as nvarchar(150) = '002',
 --	@reportLevel as nvarchar(10) = 'SCH',
 --	@reportYear as nvarchar(10) = '2024',
 --	@categorySetCode as nvarchar(150)  = 'TOT',	
@@ -780,7 +780,7 @@ BEGIN
 					ELSE '' END + '
 				where rdis.IdeaIndicatorEdFactsCode = ''IDEA'''
 	
-				-- JW 10/20/2023 Fixed C002 SCH Performance by using a #temp table rather than "In subselect"
+				-- JW 10/20/2023 Fixed 002 SCH Performance by using a #temp table rather than "In subselect"
 				if not @toggleDevDelayAges is null
 				begin
 					select @sql = @sql + char(10) + char(10)
@@ -807,7 +807,7 @@ BEGIN
 					 + char(10) + char(10)
 	
 				end
-			end -- C002/C089
+			end -- 002/089
 
 			-- JW 7/20/2023 Fixed FS141 performance issues by using #temp table rather than "In subselect"
 			if @reportCode in ('141')
@@ -6895,18 +6895,42 @@ BEGIN
 
 				if @categorySetCode = 'TOT'
 				begin
-					set @sql = @sql + '
-						from rds.DimLeas lea
-						left outer join #categorySet cs on cs.DimLeaId = lea.DimLeaId
-						and lea.LEAOperationalStatus not in (''Closed'', ''FutureAgency'', ''Inactive'', ''MISSING'')'
+					if(@reportCode in ('002','089','052','033')) 
+					begin	
+ 
+						set @sql = @sql + '
+							from #categorySet cs
+							inner join rds.DimLeas lea on cs.DimLeaId = lea.DimLeaId
+							and lea.LEAOperationalStatus not in (''Closed'', ''FutureAgency'', ''Inactive'', ''MISSING'')'
+					end
+					else
+					begin
+						set @sql = @sql + '
+							from rds.DimLeas lea
+							left outer join #categorySet cs on cs.DimLeaId = lea.DimLeaId'
+					end
 				end
 				else
 				begin
-						set @sql = @sql + '
-							from #categorySet cs
-							inner join rds.DimLeas lea on cs.DimLeaId = lea.DimLeaId'
-
+					set @sql = @sql + '
+						from #categorySet cs
+						inner join rds.DimLeas lea on cs.DimLeaId = lea.DimLeaId
+						and lea.LEAOperationalStatus not in (''Closed'', ''FutureAgency'', ''Inactive'', ''MISSING'')'
 				end
+
+				-- if @categorySetCode = 'TOT'
+				-- begin
+				-- 	set @sql = @sql + '
+				-- 		from rds.DimLeas lea
+				-- 		left outer join #categorySet cs on cs.DimLeaId = lea.DimLeaId
+				-- 		and lea.LEAOperationalStatus not in (''Closed'', ''FutureAgency'', ''Inactive'', ''MISSING'')'
+				-- end
+				-- else
+				-- begin
+				-- 	set @sql = @sql + '
+				-- 		from #categorySet cs
+				-- 		inner join rds.DimLeas lea on cs.DimLeaId = lea.DimLeaId'
+				-- end
 
 				if(@reportCode in ('009')) 
 				begin
@@ -7575,6 +7599,10 @@ BEGIN
 					FROM RDS.BridgeLeaGradeLevels blgl
 					JOIN RDS.DimLeas dl
 						ON blgl.LeaId = dl.DimLeaID
+					JOIN RDS.FactK12StudentCounts rfsc
+						ON dl.DimLeaId = rfsc.LeaId
+						AND rfsc.FactTypeId = 3
+						AND rfsc.SchoolYearId = @dimSchoolYearId
 					JOIN RDS.DimGradeLevels dgl
 						ON blgl.GradeLevelId = dgl.DimGradeLevelId
 					WHERE GradeLevelCode IN (''PK'')
