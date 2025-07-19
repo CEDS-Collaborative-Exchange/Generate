@@ -167,12 +167,6 @@
             DROP INDEX IX_Staging_ProgramParticipationNorD_DataCollectionName ON Staging.ProgramParticipationNorD;
         END
 
-         IF EXISTS (
-            SELECT 1 
-            FROM sys.indexes 
-            WHERE name = 'IX_Staging_ProgramParticipationNorD_DataCollectionName'
-        )
-
     --Drop the columns at the bottom of the table temporarily
         IF COL_LENGTH('Staging.ProgramParticipationNorD', 'SchoolYear') IS NOT NULL
         BEGIN
