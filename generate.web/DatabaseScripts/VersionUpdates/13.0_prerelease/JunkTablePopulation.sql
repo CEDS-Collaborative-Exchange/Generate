@@ -25,23 +25,27 @@
 
 	INSERT INTO #NeglectedProgramType VALUES ('MISSING', 'MISSING', 'MISSING')
 	INSERT INTO #NeglectedProgramType
-	SELECT
-		  CedsOptionSetCode
-		, CedsOptionSetDescription
-		, CedsOptionSetCode
-	FROM [CEDS].CedsOptionSetMapping
-	WHERE CedsElementTechnicalName = 'NeglectedProgramType'
+	VALUES
+		('CMNTYDAYPRG', 'Community Day Programs', 'CMNTYDAYPRG'),
+		('GRPHOMES', 'Group Homes', 'GRPHOMES'),
+		('RSDNTLTRTMTHOME', 'Residential Treatment Home', 'RSDNTLTRTMTHOME'),
+		('SHELTERS', 'Shelters', 'SHELTERS'),
+		('OTHER', 'Other Programs', 'OTHER')
 
 	CREATE TABLE #DelinquentProgramType (DelinquentProgramTypeCode VARCHAR(50), DelinquentProgramTypeDescription VARCHAR(200), DelinquentProgramTypeEdFactsCode VARCHAR(50))
 
 	INSERT INTO #DelinquentProgramType VALUES ('MISSING', 'MISSING', 'MISSING')
 	INSERT INTO #DelinquentProgramType
-	SELECT
-		  CedsOptionSetCode
-		, CedsOptionSetDescription
-		, CedsOptionSetCode
-	FROM [CEDS].CedsOptionSetMapping
-	WHERE CedsElementTechnicalName = 'DelinquentProgramType'
+	VALUES
+		('ADLTCORR', 'Adult correctional institutions', 'ADLTCORR'),
+		('CMNTYDAYPRG', 'Community day programs', 'CMNTYDAYPRG'),
+		('JUVDET', 'Juvenile detention centers', 'JUVDET'),
+		('SHELTERS', 'Shelters', 'SHELTERS'),
+		('GRPHOMES', 'Group homes', 'GRPHOMES'),
+		('RNCHWLDRNSCMPS', 'Ranch/wilderness camps', 'RNCHWLDRNSCMPS'),
+		('RSDNTLTRTMTCTRS', 'Residential treatment centers', 'RSDNTLTRTMTCTRS'),
+		('JUVLNGTRMFAC', 'Long-term secure juvenile facilities', 'JUVLNGTRMFAC'),
+		('OTHER', 'Other programs', 'OTHER')
 
 	--Insert the default row for N or D Status = NO
 	INSERT INTO RDS.DimNOrDStatuses (
