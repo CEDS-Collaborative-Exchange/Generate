@@ -220,7 +220,8 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<string>> NorDOutcomeExitDistribution { get; set; }
         public List<DataDistribution<bool>> NorDOutcomeIndicatorDistribution { get; set; }
         public List<DataDistribution<bool>> NorDAchievementIndicatorDistribution { get; set; }
-
+        public List<DataDistribution<bool>> NorDLongTermStatusDistribution { get; set; }
+        
         public List<DataDistribution<bool>> HomelessServicedProgramParticipationDistribution { get; set; }
         public List<DataDistribution<bool>> NationalSchoolLunchProgramDirectCertificationIndicatorDistribution { get; set; }
 
@@ -1218,6 +1219,10 @@ namespace generate.testdata.Profiles
             this.NorDSubpartDistribution = new List<DataDistribution<string>>();
             this.NorDSubpartDistribution.Add(new DataDistribution<string>() { Option = "Subpart1", ExpectedDistribution = 50 });
             this.NorDSubpartDistribution.Add(new DataDistribution<string>() { Option = "Subpart2", ExpectedDistribution = 100 });
+
+            this.NorDLongTermStatusDistribution = new List<DataDistribution<bool>>();
+            this.NorDLongTermStatusDistribution.Add(new DataDistribution<bool>() { Option = true, ExpectedDistribution = 50 });
+            this.NorDLongTermStatusDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 100 });
 
             this.NorDOutcomeDistribution = new List<DataDistribution<string>>();
             this.NorDOutcomeDistribution.Add(new DataDistribution<string>() { Option = "EARNGED", ExpectedDistribution = 14 });

@@ -31,6 +31,7 @@ namespace generate.core.Models.Staging
         public string ProgressLevel_Math { get; set; }
         public bool? NeglectedOrDelinquentAcademicOutcomeIndicator { get; set; }
         public bool? NeglectedOrDelinquentAcademicAchievementIndicator { get; set; }
+        public bool? NeglectedOrDelinquentLongTermStatus { get; set; }
         public string EdFactsAcademicOrCareerAndTechnicalOutcomeType { get; set; }
         public string EdFactsAcademicOrCareerAndTechnicalOutcomeExitType { get; set; }
         public DateTime? DiplomaCredentialAwardDate { get; set; }
