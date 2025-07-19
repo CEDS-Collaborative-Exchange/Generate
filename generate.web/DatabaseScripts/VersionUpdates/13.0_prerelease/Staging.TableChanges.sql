@@ -161,6 +161,23 @@
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'SchoolYear'
         END
 
+        IF EXISTS(SELECT 1
+         FROM 
+             sys.extended_properties AS ep
+             INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+             INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+             INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+         WHERE 
+         ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+         AND t.name = 'ProgramParticipationNorD' AND c.name = 'RunDateTime' )
+         BEGIN
+            EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'RunDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'RunDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'RunDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'RunDateTime'
+            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'ProgramParticipationNorD', @level2type=N'COLUMN',@level2name=N'RunDateTime'
+        END
+
     --Drop the indexes that exist
         IF EXISTS(SELECT 1 FROM sys.indexes WHERE name = 'IX_Staging_ProgramParticipationNorD_DataCollectionName')
         BEGIN
@@ -176,6 +193,11 @@
         IF COL_LENGTH('Staging.ProgramParticipationNorD', 'DataCollectionName') IS NOT NULL
         BEGIN
             ALTER TABLE Staging.ProgramParticipationNorD DROP COLUMN DataCollectionName;
+        END
+
+        IF COL_LENGTH('Staging.ProgramParticipationNorD', 'RunDateTime') IS NOT NULL
+        BEGIN
+            ALTER TABLE Staging.ProgramParticipationNorD DROP COLUMN RunDateTime;
         END
 
     --Add the new column
