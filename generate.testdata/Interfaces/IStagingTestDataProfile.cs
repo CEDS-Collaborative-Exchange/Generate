@@ -217,7 +217,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<bool>> NorDStatusDistribution { get; set; }
         List<DataDistribution<bool>> NorDExitingDistribution { get; set; }
         List<DataDistribution<string>> NorDSubpartDistribution { get; set; }
-        List<DataDistribution<bool>> NorDLongTermStatusDistribution { get; set; }
+//        List<DataDistribution<bool>> NorDLongTermStatusDistribution { get; set; }
         List<DataDistribution<bool>> NorDOutcomeYesNoDistribution { get; set; }
         List<DataDistribution<bool>> NorDOutcomeExitYesNoDistribution { get; set; }
         List<DataDistribution<string>> NorDOutcomeDistribution { get; set; }
