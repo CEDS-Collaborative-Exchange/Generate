@@ -3211,4 +3211,32 @@ from app.GenerateReport_GenerateStagingXREF x
 		on x.StagingTableId = gt.StagingTableId
 where gt.StagingTableName = 'OrganizationProgramType'
 
+--Update the Fact Type assigned to the following reports
+update app.GenerateReport_FactType
+set FactTypeId = 25				--Assessment
+where GenerateReportId = 59		--050
+
+update app.GenerateReport_FactType
+set FactTypeId = 22				--Organization Status
+where GenerateReportId = 103	--200
+
+update app.GenerateReport_FactType
+set FactTypeId = 22				--Organization Status
+where GenerateReportId = 104	--201
+
+update app.GenerateReport_FactType
+set FactTypeId = 22				--Organization Status
+where GenerateReportId = 105	--202
+
+update app.GenerateReport_FactType
+set FactTypeId = 10				--TitleIIIELSY
+where GenerateReportId = 126	--210
+
+update app.GenerateReport_FactType
+set FactTypeId = 21				--Directory
+where GenerateReportId = 71		--132
+
+--add a row for report 211
+insert into app.GenerateReport_FactType
+values (135, 10)		--211, TitleIIIELSY
 
