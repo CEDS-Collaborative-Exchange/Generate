@@ -86,31 +86,26 @@ BEGIN
 	--Create the temp views (and any relevant indexes) needed for this domain
 	-- #vwNOrDStatuses
 		SELECT *
-		INTO #vwNOrDStatuses
+		INTO #vwNorDStatuses
 		FROM RDS.vwDimNOrDStatuses
 		WHERE SchoolYear = @SchoolYear
-			AND NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
-			AND NeglectedOrDelinquentProgramTypeCode = 'MISSING'
-			AND NeglectedProgramTypeCode = 'MISSING'
-			AND DelinquentProgramTypeCode = 'MISSING'
-			AND NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'MISSING'
-			and NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
-			AND EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
-			AND EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
---			AND NeglectedOrDelinquentStatusCode = 'MISSING'
+			--AND NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
+			--AND NeglectedOrDelinquentProgramTypeCode = 'MISSING'
+			--AND NeglectedProgramTypeCode = 'MISSING'
+			--AND DelinquentProgramTypeCode = 'MISSING'
+			--AND NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'MISSING'
+			--AND NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
 
-		--CREATE CLUSTERED INDEX ix_tempvwNOrDStatuses 
-		--	ON #vwNOrDStatuses (
-		--		NeglectedOrDelinquentProgramEnrollmentSubpartCode,
-		--		NeglectedOrDelinquentLongTermStatusCode,
-		--		NeglectedProgramTypeCode,
-		--		DelinquentProgramTypeCode,
-		--		NeglectedOrDelinquentProgramTypeCode,
-		--		NeglectedOrDelinquentAcademicAchievementIndicatorMap,
-		--		NeglectedOrDelinquentAcademicOutcomeIndicatorMap,
-		--		EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap,
-		--		EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap
-		--	);
+		CREATE CLUSTERED INDEX ix_tempvwNorDStatuses 
+			ON #vwNorDStatuses (
+				NeglectedOrDelinquentLongTermStatusCode,
+				NeglectedProgramTypeCode,
+				DelinquentProgramTypeCode,
+				NeglectedOrDelinquentProgramTypeCode,
+				NeglectedOrDelinquentAcademicAchievementIndicatorMap,
+				NeglectedOrDelinquentAcademicOutcomeIndicatorMap
+			);
+
 
 	-- #tempNorDStudents
 		SELECT DISTINCT sppnord.StudentIdentifierState, sppnord.LeaIdentifierSeaAccountability, vw.DimNOrDStatusId
