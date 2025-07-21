@@ -468,6 +468,7 @@ var PivottableComponent = function () {
             exports.aggregateColumn = viewDef.columnFields.items[len - 1];
             function displayDebugInfo(e, value, filters, pivotData) {
                 //let categorySetCode = reportData.categorySets[0].categorySetCode;
+                /*console.log(reportData);*/
                 var reportYear = exports.reportData.reportYear;
                 var reportLevel = exports.reportData.data[0].reportLevel;
                 var categorySetCode = exports.reportData.data[0].categorySetCode;
@@ -514,6 +515,9 @@ var PivottableComponent = function () {
                     headers: headers
                 };
                 self.openDialog(data);
+                console.log('Dialog Data');
+                console.log(data);
+                console.log(exports.reportData);
             }
             $("#container").pivotUI(uiData, {
                 showUI: false,

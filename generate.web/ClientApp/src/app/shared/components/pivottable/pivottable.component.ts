@@ -512,6 +512,7 @@ export class PivottableComponent {
 
         function displayDebugInfo(e, value, filters, pivotData) {
             //let categorySetCode = reportData.categorySets[0].categorySetCode;
+            /*console.log(reportData);*/
             let reportYear = reportData.reportYear;
             let reportLevel = reportData.data[0].reportLevel;
             let categorySetCode = reportData.data[0].categorySetCode;
@@ -564,6 +565,10 @@ export class PivottableComponent {
                 headers: headers
             };
             self.openDialog(data);
+            console.log('Dialog Data');
+            console.log(data);
+            console.log(reportData);
+
         }
 
         $("#container").pivotUI(uiData, {
