@@ -3237,6 +3237,7 @@ set FactTypeId = 21				--Directory
 where GenerateReportId = 71		--132
 
 --add a row for report 211
+if not exists(select 1 from app.GenerateReport_FactType where GenerateReportId = 135 and FactTypeId = 10)
 insert into app.GenerateReport_FactType
 values (135, 10)		--211, TitleIIIELSY
 
