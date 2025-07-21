@@ -45,9 +45,9 @@ BEGIN
 	SET NOCOUNT ON;
 
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
-		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
-		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
-		IF OBJECT_ID(N'tempdb..#vwNorDStatuses') IS NOT NULL DROP TABLE #vwNorDStatuses
+	IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
+	IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
+	IF OBJECT_ID(N'tempdb..#vwNorDStatuses') IS NOT NULL DROP TABLE #vwNorDStatuses
 
 	BEGIN TRY
 
@@ -122,9 +122,7 @@ BEGIN
 				DelinquentProgramTypeCode,
 				NeglectedOrDelinquentProgramTypeCode,
 				NeglectedOrDelinquentAcademicAchievementIndicatorMap,
-				NeglectedOrDelinquentAcademicOutcomeIndicatorMap,
-				EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap,
-				EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap
+				NeglectedOrDelinquentAcademicOutcomeIndicatorMap
 			);
 
 		--Set the correct Fact Type
@@ -211,6 +209,7 @@ BEGIN
 			, -1														LastQualifyingMoveDateId	
 			, ISNULL(BeginDate.DimDateId, -1)							StatusStartDateNeglectedOrDelinquentId
 			, ISNULL(EndDate.DimDateId, -1)								StatusEndDateNeglectedOrDelinquentId
+
 		FROM Staging.K12Enrollment ske
 		JOIN Staging.K12Organization sko
 			on isnull(ske.LeaIdentifierSeaAccountability,'') = isnull(sko.LeaIdentifierSea,'')
@@ -267,8 +266,8 @@ BEGIN
 			AND ISNULL(sppnord.NeglectedProgramType, 'MISSING') = ISNULL(rdnds.NeglectedProgramTypeMap, rdnds.NeglectedProgramTypeCode)
 			AND ISNULL(sppnord.DelinquentProgramType, 'MISSING') = ISNULL(rdnds.DelinquentProgramTypeMap, rdnds.DelinquentProgramTypeCode)
 			AND ISNULL(sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartMap, rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartCode)
-			AND ISNULL(sppnord.NeglectedOrDelinquentAcademicAchievementIndicator, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorMap, rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorCode)
-			AND ISNULL(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorMap, rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorCode)
+			AND ISNULL(CAST(sppnord.NeglectedOrDelinquentAcademicAchievementIndicator AS SMALLINT), -1) = ISNULL(rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorMap, -1)
+			AND ISNULL(CAST(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator AS SMALLINT), -1) = ISNULL(rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorMap, -1)
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON rdis.SchoolYear = @SchoolYear

@@ -223,6 +223,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<string>> NorDOutcomeExitDistribution { get; set; }
         List<DataDistribution<bool>> NorDOutcomeIndicatorDistribution { get; set; }
         List<DataDistribution<bool>> NorDAchievementIndicatorDistribution { get; set; }
+        List<DataDistribution<bool>> NorDLongTermStatusDistribution { get; set; }
 
         List<DataDistribution<bool>> HomelessServicedProgramParticipationDistribution { get; set; }
         List<DataDistribution<bool>> NationalSchoolLunchProgramDirectCertificationIndicatorDistribution { get; set; }
