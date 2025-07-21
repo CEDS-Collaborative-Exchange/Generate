@@ -23,20 +23,20 @@ namespace generate.core.Models.Staging
         public DateTime? ProgramParticipationBeginDate { get; set; }
         public DateTime? ProgramParticipationEndDate { get; set; }
         public string NeglectedOrDelinquentProgramType { get; set; }
-        public string NeglectedOrDelinquentProgramEnrollmentSubpart { get; set; }
-        public bool? NeglectedOrDelinquentStatus { get; set; }
-        public string NeglectedProgramType { get; set; }
-        public string DelinquentProgramType { get; set; }
         public string ProgressLevel_Reading { get; set; }
         public string ProgressLevel_Math { get; set; }
         public bool? NeglectedOrDelinquentAcademicOutcomeIndicator { get; set; }
+        public DateTime? DiplomaCredentialAwardDate { get; set; }
+        public bool? NeglectedOrDelinquentStatus { get; set; }
+        public string NeglectedOrDelinquentProgramEnrollmentSubpart { get; set; }
         public bool? NeglectedOrDelinquentAcademicAchievementIndicator { get; set; }
         public string EdFactsAcademicOrCareerAndTechnicalOutcomeType { get; set; }
         public string EdFactsAcademicOrCareerAndTechnicalOutcomeExitType { get; set; }
-        public DateTime? DiplomaCredentialAwardDate { get; set; }
+        public string NeglectedProgramType { get; set; }
+        public string DelinquentProgramType { get; set; }
+           
         public bool? NeglectedOrDelinquentLongTermStatus { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
-        public DateTime? RunDateTime { get; set; }
     }
 }
