@@ -266,7 +266,6 @@ BEGIN
 			ON organizationStatus.SchoolYear = sko.SchoolYear
 			AND ISNULL(sko.LEA_GunFreeSchoolsActReportingStatus, 'MISSING') = ISNULL(organizationStatus.GunFreeSchoolsActReportingStatusMap, organizationStatus.GunFreeSchoolsActReportingStatusCode)
 			AND ISNULL(CAST(sko.LEA_McKinneyVentoSubgrantRecipient AS SMALLINT), -1) = ISNULL(organizationStatus.McKinneyVentoSubgrantRecipientMap, -1)
-			AND organizationStatus.GunFreeSchoolsActReportingStatusCode = 'Missing'
 			AND organizationStatus.HighSchoolGraduationRateIndicatorStatusCode = 'Missing'
 			AND organizationStatus.REAPAlternativeFundingStatusCode = 'Missing'
 			
