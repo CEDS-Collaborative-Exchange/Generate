@@ -110,3 +110,16 @@
     }
   }
 }
+
+#loginButton-lg:focus {
+    cursor: pointer !important;
+    border-color: #161718 !important;
+    border-style: solid !important;
+}
+
+#logoutButton-lg:focus {
+    cursor: pointer !important;
+    border-color: #161718 !important;
+    color: #e5ebf0 !important;
+    border-style: solid !important;
+}

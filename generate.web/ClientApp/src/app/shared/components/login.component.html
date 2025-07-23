@@ -19,30 +19,30 @@
         </div>
         <form *ngIf="!isOAuth" (submit)="login($event, username.value, userpassword.value)">
 
-        <div>
-            <div class="mdl-textfield mdl-js-textfield generate-app-shared-login__textfield">
-                <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__username" autofocus tabindex="1" type="text" #username id="username" />
-                <label class="mdl-textfield__label" for="username">UserName</label>
+            <div>
+                <div class="mdl-textfield mdl-js-textfield generate-app-shared-login__textfield">
+                    <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__username" autofocus tabindex="1" type="text" #username id="username" />
+                    <label class="mdl-textfield__label" for="username">UserName</label>
+                </div>
+
+                <div class="mdl-textfield mdl-js-textfield generate-app-shared-login__textfield">
+                    <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__password" tabindex="2" type="password" #userpassword id="userpassword" />
+                    <label class="mdl-textfield__label" for="userpassword">Password</label>
+                </div>
+
+                <div class="generate-app-shared-login__button-container">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
+                            (click)="login($event, username.value, userpassword.value)" id="loginButton-lg" tabindex="3">
+                        Log in
+                    </button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
+                            (click)="login($event, username.value, userpassword.value)" id="loginButton-sm" tabindex="3">
+                        <i class="fa fa-sign-in"></i><span class="generate-text--screen-reader-only">Log in</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="mdl-textfield mdl-js-textfield generate-app-shared-login__textfield">
-                <input class="mdl-textfield__input generate-app-shared-login__textfield-input generate-app-shared-login__password" tabindex="2" type="password" #userpassword id="userpassword" />
-                <label class="mdl-textfield__label" for="userpassword">Password</label>
-            </div>
-
-            <div class="generate-app-shared-login__button-container">
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
-                        (click)="login($event, username.value, userpassword.value)" id="loginButton-lg" tabindex="3">
-                    Log in
-                </button>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
-                        (click)="login($event, username.value, userpassword.value)" id="loginButton-sm" tabindex="3">
-                    <i class="fa fa-sign-in"></i><span class="generate-text--screen-reader-only">Log in</span>
-                </button>
-            </div>
-        </div>
-
-    </form>
+        </form>
     </div>
     <div *ngIf="!isAuthenticating && userService.isLoggedIn()">             
         <form (submit)="logout($event)">
