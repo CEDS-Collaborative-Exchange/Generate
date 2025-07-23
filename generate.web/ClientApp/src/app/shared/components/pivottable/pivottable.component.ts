@@ -523,6 +523,8 @@ export class PivottableComponent {
             var headers = ["Student Id"];
 
             var selectedFilter = {}
+            console.log('filters: ');
+            console.log(filters);
             for (const key in filters) {
                 if (filters.hasOwnProperty(key)) {
                     const column = viewDef.fields.find(f => f.header === key).binding;
@@ -532,6 +534,9 @@ export class PivottableComponent {
 
                             selectedFilter[column] = filters[key];
                         }
+                        //if (column === 'tableTypeAbbrv') {
+                        //    selectedFilter[key] = ;
+                        //}
                         let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionName === filters[key]);
                         if (categoryOption) {
                             selectedFilter[column] = categoryOption.categoryOptionCode;
