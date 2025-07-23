@@ -44,7 +44,7 @@ BEGIN
 	FETCH NEXT FROM tblcur INTO @ColumnName;
 
 	SET @SortedColumnName = @ColumnName
-	SET @sql = 'SELECT * FROM ' + '[debug].[' + @debugTable + ']' + ' WHERE '
+	SET @sql = 'SELECT DISTINCT * FROM ' + '[debug].[' + @debugTable + ']' + ' WHERE '
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
