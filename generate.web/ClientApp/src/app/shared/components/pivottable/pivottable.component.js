@@ -468,6 +468,7 @@ var PivottableComponent = function () {
             exports.aggregateColumn = viewDef.columnFields.items[len - 1];
             function displayDebugInfo(e, value, filters, pivotData) {
                 //let categorySetCode = reportData.categorySets[0].categorySetCode;
+                /*console.log(reportData);*/
                 var reportYear = exports.reportData.reportYear;
                 var reportLevel = exports.reportData.data[0].reportLevel;
                 var categorySetCode = exports.reportData.data[0].categorySetCode;
@@ -482,6 +483,9 @@ var PivottableComponent = function () {
                         if (column) {
                             if (column === 'organizationIdentifierSea') {
                                 selectedFilter[column] = filters[key];
+                            }
+                            if (column === 'tableTypeAbbrv') {
+                                selectedFilter[column] = exports.reportData.data[0].tableTypeAbbrv;
                             }
                             var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (f) { return f.categoryOptionName === filters[key]; });
                             if (categoryOption) {

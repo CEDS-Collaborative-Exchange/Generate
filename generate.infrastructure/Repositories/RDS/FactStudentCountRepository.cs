@@ -168,6 +168,9 @@ namespace generate.infrastructure.Repositories.RDS
                                     membershipReport.SEX = reader.SafeGetString("SEX");
                                     membershipReport.TotalIndicator = reader.GetString(reader.GetOrdinal("TotalIndicator"));
                                     membershipReport.StudentCount = reader.GetInt32(reader.GetOrdinal("StudentCount"));
+                                    membershipReport.ReportCode = reportCode;
+                                    membershipReport.ReportLevel = reportLevel;
+                                    membershipReport.CategorySetCode = categorySetCode;
 
                                     returnObject.Add(membershipReport);
                                 }

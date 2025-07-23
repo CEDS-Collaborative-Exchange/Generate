@@ -512,6 +512,7 @@ export class PivottableComponent {
 
         function displayDebugInfo(e, value, filters, pivotData) {
             //let categorySetCode = reportData.categorySets[0].categorySetCode;
+            /*console.log(reportData);*/
             let reportYear = reportData.reportYear;
             let reportLevel = reportData.data[0].reportLevel;
             let categorySetCode = reportData.data[0].categorySetCode;
@@ -522,6 +523,7 @@ export class PivottableComponent {
             var headers = ["Student Id"];
 
             var selectedFilter = {}
+
             for (const key in filters) {
                 if (filters.hasOwnProperty(key)) {
                     const column = viewDef.fields.find(f => f.header === key).binding;
@@ -530,6 +532,9 @@ export class PivottableComponent {
                         if (column === 'organizationIdentifierSea') {
 
                             selectedFilter[column] = filters[key];
+                        }
+                        if (column === 'tableTypeAbbrv') {
+                            selectedFilter[column] = reportData.data[0].tableTypeAbbrv;
                         }
                         let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionName === filters[key]);
                         if (categoryOption) {
@@ -564,6 +569,7 @@ export class PivottableComponent {
                 headers: headers
             };
             self.openDialog(data);
+
         }
 
         $("#container").pivotUI(uiData, {

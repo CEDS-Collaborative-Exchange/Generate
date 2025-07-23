@@ -19,6 +19,9 @@ namespace generate.core.Dtos.RDS
         public string SEX { get; set; }
         public string TotalIndicator { get; set; }
         public int StudentCount { get; set; }
+        public string ReportCode { get; set; }
+        public string CategorySetCode { get; set; }
+        public string ReportLevel { get; set; }
 
     }
 }
