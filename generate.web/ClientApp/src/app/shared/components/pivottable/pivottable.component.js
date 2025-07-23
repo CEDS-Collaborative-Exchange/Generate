@@ -477,8 +477,6 @@ var PivottableComponent = function () {
                 var bindings = ["k12StudentStudentIdentifierState"];
                 var headers = ["Student Id"];
                 var selectedFilter = {};
-                console.log('filters: ');
-                console.log(filters);
                 var _loop_1 = function (key) {
                     if (filters.hasOwnProperty(key)) {
                         var column = viewDef.fields.find(function (f) { return f.header === key; }).binding;
@@ -488,8 +486,6 @@ var PivottableComponent = function () {
                             }
                             if (column === 'tableTypeAbbrv') {
                                 selectedFilter[column] = exports.reportData.data[0].tableTypeAbbrv;
-                                console.log(selectedFilter[column]);
-                                console.log(filters[key]);
                             }
                             var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (f) { return f.categoryOptionName === filters[key]; });
                             if (categoryOption) {
@@ -522,9 +518,6 @@ var PivottableComponent = function () {
                     headers: headers
                 };
                 self.openDialog(data);
-                console.log('Dialog Data');
-                console.log(data);
-                console.log(exports.reportData);
             }
             $("#container").pivotUI(uiData, {
                 showUI: false,
