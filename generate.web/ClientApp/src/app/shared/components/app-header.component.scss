@@ -29,17 +29,18 @@
     text-decoration: none;
     color: #ffffff;
     display: block;
-    width: 100%;
+    /*width: 100%;*/
     height: 100%;
     padding-left: 16px;
     padding-right: 16px;
 }
 
+   
 .generate-app-menu__dropdown-item {
     color: #ffffff !important;
 }
 
-.generate-app-menu__dropdown-item:hover, .generate-app-menu__dropdown-item:hover .generate-app-menu__link {
+.generate-app-menu__dropdown-item:hover, .generate-app-menu__dropdown-item:hover {
     background-color: $color-accent-light !important;
     color: $color-primary !important;
 }
@@ -78,3 +79,16 @@
 .generate-app__message{
   background-color: $color-primary !important;
  }
+
+.generate-app-menu__link:focus {
+    cursor: pointer !important;
+    border-color: #161718 !important;
+    border-style: solid !important;
+    color: #000000 !important;
+}
+
+.generate-app-menu__link:hover {
+    background-color: $color-accent-light !important;
+    color: #000000 !important;
+}
+

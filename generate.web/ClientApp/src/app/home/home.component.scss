@@ -220,3 +220,15 @@
 .generate-app-drawer__item {
     font-size: 16px;
 }
+
+.generate-home__button-link:focus {
+    cursor: pointer !important;
+    border-color: #161718 !important;
+    border-style: solid !important;
+    color: #000000 !important;
+}
+
+.generate-home__button-link:hover {
+    background-color: $color-accent-light !important;
+    color: #000000 !important;
+}
