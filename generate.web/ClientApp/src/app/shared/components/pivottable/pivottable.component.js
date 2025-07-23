@@ -486,9 +486,11 @@ var PivottableComponent = function () {
                             if (column === 'organizationIdentifierSea') {
                                 selectedFilter[column] = filters[key];
                             }
-                            //if (column === 'tableTypeAbbrv') {
-                            //    selectedFilter[key] = ;
-                            //}
+                            if (column === 'tableTypeAbbrv') {
+                                selectedFilter[column] = exports.reportData.data[0].tableTypeAbbrv;
+                                console.log(selectedFilter[column]);
+                                console.log(filters[key]);
+                            }
                             var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (f) { return f.categoryOptionName === filters[key]; });
                             if (categoryOption) {
                                 selectedFilter[column] = categoryOption.categoryOptionCode;

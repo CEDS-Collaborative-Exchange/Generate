@@ -534,9 +534,11 @@ export class PivottableComponent {
 
                             selectedFilter[column] = filters[key];
                         }
-                        //if (column === 'tableTypeAbbrv') {
-                        //    selectedFilter[key] = ;
-                        //}
+                        if (column === 'tableTypeAbbrv') {
+                            selectedFilter[column] = reportData.data[0].tableTypeAbbrv;
+                            console.log(selectedFilter[column]);
+                            console.log(filters[key]);
+                        }
                         let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionName === filters[key]);
                         if (categoryOption) {
                             selectedFilter[column] = categoryOption.categoryOptionCode;
