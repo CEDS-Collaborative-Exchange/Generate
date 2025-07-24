@@ -212,3 +212,12 @@
 	set ReportCode = substring(ReportCode,2,3)
 	where len(ReportCode) = 4
 	and substring(ReportCode,1,1) = 'c'
+
+--update the FactTypeDescription column in rds.DimFactTypes with the latest changes
+	update rds.DimFactTypes
+	set FactTypeDescription = 'CTE - 082,083,154,155,156,158,169'
+	where FactTypeCode = 'cte'
+
+	update rds.DimFactTypes
+	set FactTypeDescription = 'Directory related reports - 029,035,039,129,130,131,132,163,170,190,193,196,197,198,205,206,207,223'
+	where FactTypeCode = 'directory'
