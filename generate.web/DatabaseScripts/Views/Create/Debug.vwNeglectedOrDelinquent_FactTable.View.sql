@@ -22,18 +22,26 @@ AS
 			, Schools.SchoolTypeCode
 
 			--Neglected or Delinquent 
-			, NorD.NeglectedOrDelinquentProgramTypeCode
-			, NorD.NeglectedOrDelinquentProgramTypeEdFactsCode
 			, NorD.NeglectedOrDelinquentStatusCode
 			, NorD.NeglectedOrDelinquentStatusDescription
+			, NorD.NeglectedOrDelinquentProgramTypeCode
+			, NorD.NeglectedOrDelinquentProgramTypeDescription
+			, NorD.NeglectedOrDelinquentProgramTypeEdFactsCode
+			, NorD.NeglectedOrDelinquentLongTermStatusCode
+			, NorD.NeglectedOrDelinquentLongTermStatusDescription
+			, NorD.NeglectedOrDelinquentLongTermStatusEdFactsCode
 			, NorD.NeglectedOrDelinquentProgramEnrollmentSubpartCode
 			, NorD.NeglectedOrDelinquentProgramEnrollmentSubpartDescription
-			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
-			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeDescription
-			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode
-			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
-			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeDescription
-			, NorD.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode
+			, NorD.NeglectedProgramTypeCode
+			, NorD.NeglectedProgramTypeDescription
+			, NorD.NeglectedProgramTypeEdFactsCode
+			, NorD.DelinquentProgramTypeCode
+			, NorD.DelinquentProgramTypeDescription
+			, NorD.DelinquentProgramTypeEdFactsCode
+			, NorD.NeglectedOrDelinquentAcademicAchievementIndicatorCode
+			, NorD.NeglectedOrDelinquentAcademicAchievementIndicatorDescription
+			, NorD.NeglectedOrDelinquentAcademicOutcomeIndicatorCode
+			, NorD.NeglectedOrDelinquentAcademicOutcomeIndicatorDescription
 
  	FROM		RDS.FactK12StudentCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	

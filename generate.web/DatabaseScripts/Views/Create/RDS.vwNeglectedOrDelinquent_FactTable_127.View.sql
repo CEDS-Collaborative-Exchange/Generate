@@ -22,6 +22,5 @@ AS
 		  	, f.[SchoolTypeCode]
 			, f.[NeglectedOrDelinquentStatusCode]
 			, f.[NeglectedOrDelinquentProgramEnrollmentSubpartCode]
-			, f.[EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode]
     FROM  [debug].[vwNeglectedOrDelinquent_FactTable] f
     WHERE f.NeglectedOrDelinquentStatusCode = 'Yes'

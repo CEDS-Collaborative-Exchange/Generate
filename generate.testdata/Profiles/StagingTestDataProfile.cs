@@ -1221,8 +1221,8 @@ namespace generate.testdata.Profiles
             this.NorDStatusDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 100 });
 
             this.NorDSubpartDistribution = new List<DataDistribution<string>>();
-            this.NorDSubpartDistribution.Add(new DataDistribution<string>() { Option = "1", ExpectedDistribution = 50 });
-            this.NorDSubpartDistribution.Add(new DataDistribution<string>() { Option = "2", ExpectedDistribution = 100 });
+            this.NorDSubpartDistribution.Add(new DataDistribution<string>() { Option = "Subpart1", ExpectedDistribution = 50 });
+            this.NorDSubpartDistribution.Add(new DataDistribution<string>() { Option = "Subpart2", ExpectedDistribution = 100 });
 
             this.NorDOutcomeDistribution = new List<DataDistribution<string>>();
             this.NorDOutcomeDistribution.Add(new DataDistribution<string>() { Option = "EARNGED", ExpectedDistribution = 14 });
