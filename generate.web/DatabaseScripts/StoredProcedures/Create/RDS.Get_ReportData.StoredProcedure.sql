@@ -697,6 +697,26 @@ BEGIN
 	--print '@reportCode='+@reportCode
 	--print '@zeroCountSql='+@zeroCountSql
 */
+
+	if @reportCode = '033'
+	BEGIN
+				-- Exclude the Category Set A for Schools if there are no students
+		set @sql = @sql + 'delete a from @reportData a
+					inner join 
+					(select OrganizationIdentifierSea, TableTypeAbbrv, CategorySetCode, sum(StudentCount) as totalStudentCount 
+					from @reportData group by OrganizationIdentifierSea, CategorySetCode, TableTypeAbbrv 
+					having sum(StudentCount) < 1 and CategorySetCode <> ''TOT'' and TableTypeAbbrv = ''LUNCHFREERED''	) b
+					on a.CategorySetCode = b.CategorySetCode and a.OrganizationIdentifierSea = b.OrganizationIdentifierSea and a.TableTypeAbbrv = b.TableTypeAbbrv '
+		
+		if @categorySetCode = 'CSA'
+			set @sql = @sql + '
+							delete a from @reportData a where a.ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS IS NULL'
+
+		if @categorySetCode = 'TOT'
+			set @sql = @sql + '
+							delete a from @reportData a where LEN(a.TableTypeAbbrv) < 1'
+	END
+
 	-- Obscure missing category counts with -1 values
 	if @obscureMissingCategoryCounts = 1
 	begin
