@@ -517,7 +517,8 @@ export class PivottableComponent {
             let reportLevel = reportData.data[0].reportLevel;
             let categorySetCode = reportData.data[0].categorySetCode;
             let reportCode = reportData.data[0].reportCode;
-          //  let headers = reportData.categorySets[0].categories;
+            //  let headers = reportData.categorySets[0].categories;
+
 
             var bindings = ["k12StudentStudentIdentifierState"];
             var headers = ["Student Id"];
@@ -534,7 +535,9 @@ export class PivottableComponent {
                             selectedFilter[column] = filters[key];
                         }
                         if (column === 'tableTypeAbbrv') {
-                            selectedFilter[column] = reportData.data[0].tableTypeAbbrv;
+                            var col = e.srcElement.classList[2];
+                            if (col === 'col0') { selectedFilter[column] = pivotData.colKeys[0][0]; }
+                            else if (col === 'col1') { selectedFilter[column] = pivotData.colKeys[0][1]; }
                         }
                         let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionName === filters[key]);
                         if (categoryOption) {

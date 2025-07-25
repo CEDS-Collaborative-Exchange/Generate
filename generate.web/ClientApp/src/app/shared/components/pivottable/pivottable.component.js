@@ -485,7 +485,13 @@ var PivottableComponent = function () {
                                 selectedFilter[column] = filters[key];
                             }
                             if (column === 'tableTypeAbbrv') {
-                                selectedFilter[column] = exports.reportData.data[0].tableTypeAbbrv;
+                                col = e.srcElement.classList[2];
+                                if (col === 'col0') {
+                                    selectedFilter[column] = pivotData.colKeys[0][0];
+                                }
+                                else if (col === 'col1') {
+                                    selectedFilter[column] = pivotData.colKeys[0][1];
+                                }
                             }
                             var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (f) { return f.categoryOptionName === filters[key]; });
                             if (categoryOption) {
@@ -502,6 +508,7 @@ var PivottableComponent = function () {
                         }
                     }
                 };
+                var col;
                 for (var key in filters) {
                     _loop_1(key);
                 }
