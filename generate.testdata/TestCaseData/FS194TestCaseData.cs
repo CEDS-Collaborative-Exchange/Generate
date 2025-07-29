@@ -49,6 +49,7 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "CIID396600",
                 LeaIdentifierSeaAccountability = testLEA.LeaIdentifierSea,
                 SchoolIdentifierSea = testLEA.SchoolIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 HomelessnessStatus = true,
                 Homelessness_StatusStartDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString()),
                 Homelessness_StatusEndDate = DateTime.Parse("6/30/" + (schoolYear).ToString()),

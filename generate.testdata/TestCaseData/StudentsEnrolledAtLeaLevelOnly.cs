@@ -39,6 +39,7 @@ namespace generate.testdata.TestCaseData
             {
                 StudentIdentifierState = "9990000002",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
                 ProgramParticipationBeginDate = DateTime.Parse("7/30/" + (schoolYear - 1).ToString()),
                 ProgramParticipationEndDate = DateTime.Parse("3/1/" + schoolYear.ToString()),
@@ -50,6 +51,7 @@ namespace generate.testdata.TestCaseData
             {
                 StudentIdentifierState = "9990000002",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 EconomicDisadvantageStatus = true,
                 EconomicDisadvantage_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
                 EnglishLearnerStatus = false,
