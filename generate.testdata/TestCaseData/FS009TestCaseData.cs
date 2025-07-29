@@ -81,6 +81,7 @@ namespace generate.testdata.TestCaseData
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
                 EnglishLearner_StatusEndDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
+                SchoolYear = (schoolYear).ToString(),
             };
 
             var secondPersonStatus = new PersonStatus()
@@ -91,6 +92,7 @@ namespace generate.testdata.TestCaseData
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
                 EnglishLearner_StatusEndDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
+                SchoolYear = (schoolYear).ToString(),
             };
 
             var thirdPersonStatus = new PersonStatus()
@@ -101,6 +103,7 @@ namespace generate.testdata.TestCaseData
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
                 EnglishLearner_StatusEndDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
+                SchoolYear = (schoolYear).ToString(),
             };
 
             var idsReferenceData = new IdsReferenceData();
@@ -115,7 +118,8 @@ namespace generate.testdata.TestCaseData
                 ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
                 ProgramParticipationEndDate = DateTime.Parse("9/15/" + (schoolYear - 1).ToString()),
                 SpecialEducationExitReason = "Transferred",
-                IDEAIndicator = true
+                IDEAIndicator = true,
+                SchoolYear = (schoolYear).ToString(),
             };
 
             var secondPpse = new ProgramParticipationSpecialEducation()
@@ -127,7 +131,8 @@ namespace generate.testdata.TestCaseData
                 ProgramParticipationBeginDate = DateTime.Parse("11/1/" + (schoolYear - 1).ToString()),
                 ProgramParticipationEndDate = DateTime.Parse("1/13/" + schoolYear.ToString()),
                 SpecialEducationExitReason = "MovedAndContinuing",
-                IDEAIndicator = true
+                IDEAIndicator = true,
+                SchoolYear = (schoolYear).ToString(),
             };
 
             var thirdPpse = new ProgramParticipationSpecialEducation()
@@ -139,7 +144,8 @@ namespace generate.testdata.TestCaseData
                 ProgramParticipationBeginDate = DateTime.Parse("1/14/" + schoolYear.ToString()),
                 ProgramParticipationEndDate = DateTime.Parse("4/30/" + schoolYear.ToString()),
                 SpecialEducationExitReason = "HighSchoolDiploma",
-                IDEAIndicator = true
+                IDEAIndicator = true,
+                SchoolYear = (schoolYear).ToString(),
             };
 
             testData.K12Enrollments.Add(firstK12Enrollment);
@@ -201,7 +207,8 @@ namespace generate.testdata.TestCaseData
                 ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
                 ProgramParticipationEndDate = DateTime.Parse("9/15/" + (schoolYear - 1).ToString()),
                 SpecialEducationExitReason = "Transferred",
-                IDEAIndicator = true
+                IDEAIndicator = true,
+                SchoolYear = (schoolYear).ToString(),
             };
 
             testData.K12Enrollments.Add(leaOnlyK12Enrollment);
@@ -263,6 +270,7 @@ namespace generate.testdata.TestCaseData
             {
                 StudentIdentifierState = "0090000003",
                 LeaIdentifierSeaAccountability = firstOrg.LeaIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = MKCK12Enrollment1.EnrollmentEntryDate,
                 EnglishLearner_StatusEndDate = MKCK12Enrollment1.EnrollmentExitDate
@@ -272,6 +280,7 @@ namespace generate.testdata.TestCaseData
             {
                 StudentIdentifierState = "0090000003",
                 LeaIdentifierSeaAccountability = secondOrg.LeaIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = MKCK12Enrollment2.EnrollmentEntryDate,
                 EnglishLearner_StatusEndDate = MKCK12Enrollment2.EnrollmentExitDate
@@ -281,6 +290,7 @@ namespace generate.testdata.TestCaseData
             {
                 StudentIdentifierState = "0090000003",
                 LeaIdentifierSeaAccountability = firstOrg.LeaIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = "RC80",
                 ProgramParticipationBeginDate = MKCK12Enrollment1.EnrollmentEntryDate,
                 ProgramParticipationEndDate = MKCK12Enrollment1.EnrollmentExitDate,
@@ -292,6 +302,7 @@ namespace generate.testdata.TestCaseData
             {
                 StudentIdentifierState = "0090000003",
                 LeaIdentifierSeaAccountability = secondOrg.LeaIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = "RC80",
                 ProgramParticipationBeginDate = MKCK12Enrollment2.EnrollmentEntryDate,
                 ProgramParticipationEndDate = MKCK12Enrollment2.EnrollmentExitDate,
