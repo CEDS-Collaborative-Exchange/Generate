@@ -6604,6 +6604,24 @@ BEGIN
 					set @debugTableCreate += ', sc.schoolIdentifierSea '  
 				end
 
+				--add the appropriate count column to the debug table
+				if @reportCode IN ('005','006','007','086','088','143','144') 
+				begin
+					set @debugTableCreate += ', DisciplineCount '
+				end
+				else if @reportCode IN ('059', '067', '070', '099', '112', '203') 
+				begin
+					set @debugTableCreate += ', StaffCount '
+				end 
+				else if @reportCode IN ('050','113','125','126','137','138','139','175','178','179','185','188','189','224','225') 
+				begin
+					set @debugTableCreate += ', AssessmentCount '
+				end 
+				else
+				begin
+					set @debugTableCreate += ', StudentCount '
+				end 
+
 				--c033 - special condition to add TableTypeAbbrv to the select criteria 
 				if @reportCode IN ('033') and @categorySetCode = 'TOT' and @tableTypeAbbrvs = 'DIRECTCERT'
 				begin
