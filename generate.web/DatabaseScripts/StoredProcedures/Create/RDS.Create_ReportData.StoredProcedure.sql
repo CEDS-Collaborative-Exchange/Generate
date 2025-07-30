@@ -294,11 +294,27 @@ BEGIN
 							set @printString = SUBSTRING(@printString, @CurrentEnd+@offset, LEN(@printString))   
 						END
 
-						PRINT '-------------ZeroCounts SQL------------------'
+						declare @countToZeroCountPrint nvarchar(max)
+
+						set @countToZeroCountPrint = char(13) + char(10)
+						set @countToZeroCountPrint += '-------------------------------------------------------------------------------------------------'
+						set @countToZeroCountPrint += char(13) + char(10)
+						set @countToZeroCountPrint += '-- This is the beginning of the ZeroCounts logic that inserts these rows into the Report Table --'
+						set @countToZeroCountPrint += char(13) + char(10)
+						set @countToZeroCountPrint += '-------------------------------------------------------------------------------------------------'
+
+						PRINT @countToZeroCountPrint
 
 						EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode ,	1,0,1,0,1
 
-						PRINT '-------------ZeroCounts SQL END------------------'
+						set @countToZeroCountPrint = char(13) + char(10)
+						set @countToZeroCountPrint += '------------------------------------------------------------------------------------------------'
+						set @countToZeroCountPrint += char(13) + char(10)
+						set @countToZeroCountPrint += '-- End of ZeroCounts logic --'
+						set @countToZeroCountPrint += char(13) + char(10)
+						set @countToZeroCountPrint += '------------------------------------------------------------------------------------------------'
+
+						PRINT @countToZeroCountPrint
 
 					end
 					else
