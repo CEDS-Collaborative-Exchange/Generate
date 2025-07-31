@@ -536,8 +536,17 @@ export class PivottableComponent {
                         }
                         if (column === 'tableTypeAbbrv') {
                             var col = e.srcElement.classList[2];
-                            if (col === 'col0') { selectedFilter[column] = pivotData.colKeys[0][0]; }
-                            else if (col === 'col1') { selectedFilter[column] = pivotData.colKeys[0][1]; }
+                            var keys = String(pivotData.colKeys);
+                            var split_keys = keys.split(",");
+                            if (col === 'col0') {
+                                selectedFilter[column] = split_keys[0];  
+                            }
+                            else if (col === 'col1') {
+                                selectedFilter[column] = split_keys[1];
+                            }
+
+                            bindings.push(column);
+                            headers.push('TableTypeAbbrv');
                         }
                         let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionName === filters[key]);
                         if (categoryOption) {
@@ -556,6 +565,12 @@ export class PivottableComponent {
                         }
                     }
                 }
+            }
+
+            const countColumn = viewDef.fields.find(f => f.header === 'Count').binding;
+            if (countColumn) {
+                bindings.push(countColumn);
+                headers.push('Count');
             }
 
             const selectedFilterJson = JSON.stringify(selectedFilter);
