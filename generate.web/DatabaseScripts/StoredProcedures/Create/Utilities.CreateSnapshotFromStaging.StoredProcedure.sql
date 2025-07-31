@@ -1,6 +1,6 @@
-create PROCEDURE Utilities.CreateSnapshotFromStaging
+CREATE PROCEDURE [Utilities].[CreateSnapshotFromStaging]
 	@SchoolYear smallint,
-	@ReportCode varchar(10),
+	@ReportCode varchar(3),
 	@ShowSQL bit = 0
 AS
 BEGIN
@@ -36,7 +36,17 @@ BEGIN
 		@TableName varchar(50) = '', 
 		@SnapshotDate varchar(100) = (select convert(varchar, getdate(), 23))
 
+	--check that the @ReportCode value is valid
+	if len(@ReportCode) <> 3 or @ReportCode like '%[^0-9]%'
+	begin
+		print 'Invalid ReportCode value passed in, use only the 3 digit file specification number';
 
+		insert into app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
+			values	(getutcdate(), 4, 'Invalid ReportCode value passed in, only use the 3 digit file specification number')
+
+		return
+	end
 
 	-- SET TABLES TO BE INCLUDED IN THE SNAPSHOT IN THIS SECTION -----------------------
 	IF OBJECT_ID(N'tempdb..#StagingTables') IS NOT NULL DROP TABLE #StagingTables
@@ -44,96 +54,75 @@ BEGIN
 		TableName varchar(50)
 		)
 
-
 	insert into #StagingTables (TableName)
 	select 
-		--agr.ReportCode, 
 		agst.StagingTableName 
 	from app.GenerateReports agr
 	inner join app.GenerateReport_GenerateStagingXREF x
 		on agr.GenerateReportId = x.GenerateReportId
 	inner join app.GenerateStagingTables agst
 		on agst.StagingTableId = x.StagingTableId
-	where right(agr.ReportCode,3) = right(@ReportCode,3) -- To handle @ReportCode that start with 'FS' or 'C'
-
-			/*
-				if @ReportCode like '%029'
-					begin
-						insert into #StagingTables (TableName)
-							values 
-								('StateDetail'), 
-								('K12Organization'), 
-								('OrganizationAddress'), 
-								('OrganizationPhone')
-					end
-				if @ReportCode like '%039'
-					begin
-						insert into #StagingTables (TableName)
-							values 
-								('OrganizationGradeOffered') 
-					end
-			*/
+	where agr.ReportCode = @ReportCode
 	--------------------------------------------------------------------------------------
 
 	-- Loop through list of tables and create a snapshot for each one	
 	select @TableName = (select top 1 TableName from #StagingTables)
 	while @TableName is not null 
-		BEGIN
-			select @SQL = 'IF OBJECT_ID(''Source.' + @TableName +''') is null' + char(10)
-			select @SQL += 'BEGIN' + char(10)
-			select @SQL += char(9) + 'SELECT ' + char(10)
-			select @SQL += char(9) + char(9) + '''' + @ReportCode + ''' as SnapshotReportCode, ' + char(10)
-			select @SQL += char(9) + char(9) + convert(varchar, @SchoolYear) + ' as SnapshotSchoolYear, ' + char(10)
-			select @SQL += char(9) + char(9) + '''' + @SnapshotDate + ''' as SnapshotDate,' + char(10)
-			select @SQL += char(9) + char(9) + '*' + char(10)
-			select @SQL += char(9) + 'INTO Source.' + @TableName + char(10)
-			select @SQL += char(9) + 'FROM Staging.' + @TableName + char(10)
-			select @SQL += char(9) + 'UNION ALL -- This little UNION trick removes the Identify from the ID column in the new table so future inserts will work' + char(10)
-			select @SQL += char(9) + 'SELECT ' + char(10)
-			select @SQL += char(9) + char(9) + '''' + @ReportCode + ''' as SnapshotReportCode, ' + char(10)
-			select @SQL += char(9) + char(9) + convert(varchar, @SchoolYear) + ' as SnapshotSchoolYear, ' + char(10)
-			select @SQL += char(9) + char(9) + '''' + @SnapshotDate + ''' as SnapshotDate,' + char(10)
-			select @SQL += char(9) + char(9) + '*' + char(10)
-			select @SQL += char(9) + 'FROM Staging.' + @TableName + char(10)
-			select @SQL += char(9) + 'WHERE 1 = 0' + char(10)
-			select @SQL += 'END' + char(10)
-			select @SQL += 'ELSE' + char(10)
-			select @SQL += 'BEGIN' + char(10)
-			select @SQL += char(9) + 'DELETE FROM Source.' + @TableName + char(10)
-			select @SQL += char(9) + 'WHERE SnapshotReportCode = ''' + @ReportCode + '''' + char(10) + char(10)
-			select @SQL += char(9) + 'AND SnapshotSchoolYear = ' + convert(varchar, @SchoolYear) + char(10) + char(10)
+	begin
+		select @SQL = 'IF OBJECT_ID(''Source.' + @TableName +''') is null' + char(10)
+		select @SQL += 'BEGIN' + char(10)
+		select @SQL += char(9) + 'SELECT ' + char(10)
+		select @SQL += char(9) + char(9) + '''' + @ReportCode + ''' as SnapshotReportCode, ' + char(10)
+		select @SQL += char(9) + char(9) + convert(varchar, @SchoolYear) + ' as SnapshotSchoolYear, ' + char(10)
+		select @SQL += char(9) + char(9) + '''' + @SnapshotDate + ''' as SnapshotDate,' + char(10)
+		select @SQL += char(9) + char(9) + '*' + char(10)
+		select @SQL += char(9) + 'INTO Source.' + @TableName + char(10)
+		select @SQL += char(9) + 'FROM Staging.' + @TableName + char(10)
+		select @SQL += char(9) + 'UNION ALL -- This little UNION trick removes the Identify from the ID column in the new table so future inserts will work' + char(10)
+		select @SQL += char(9) + 'SELECT ' + char(10)
+		select @SQL += char(9) + char(9) + '''' + @ReportCode + ''' as SnapshotReportCode, ' + char(10)
+		select @SQL += char(9) + char(9) + convert(varchar, @SchoolYear) + ' as SnapshotSchoolYear, ' + char(10)
+		select @SQL += char(9) + char(9) + '''' + @SnapshotDate + ''' as SnapshotDate,' + char(10)
+		select @SQL += char(9) + char(9) + '*' + char(10)
+		select @SQL += char(9) + 'FROM Staging.' + @TableName + char(10)
+		select @SQL += char(9) + 'WHERE 1 = 0' + char(10)
+		select @SQL += 'END' + char(10)
+		select @SQL += 'ELSE' + char(10)
+		select @SQL += 'BEGIN' + char(10)
+		select @SQL += char(9) + 'DELETE FROM Source.' + @TableName + char(10)
+		select @SQL += char(9) + 'WHERE SnapshotReportCode = ''' + @ReportCode + '''' + char(10) + char(10)
+		select @SQL += char(9) + 'AND SnapshotSchoolYear = ' + convert(varchar, @SchoolYear) + char(10) + char(10)
 
-			select @SQL += char(9) + 'INSERT INTO Source.' + @TableName + char(10)
-			select @SQL += char(9) + 'SELECT ' + char(10)
-			select @SQL += char(9) + char(9) + '''' + @ReportCode + ''' as SnapshotReportCode, ' + char(10)
-			select @SQL += char(9) + char(9) + convert(varchar, @SchoolYear) + ' as SnapshotSchoolYear, ' + char(10)
-			select @SQL += char(9) + char(9) + '''' + @SnapshotDate + ''' as SnapshotDate,' + char(10)
-			select @SQL += char(9) + char(9) + '*' + char(10)
-			select @SQL += char(9) + 'FROM Staging.' + @TableName + char(10)
-			select @SQL += 'END' + char(10)
+		select @SQL += char(9) + 'INSERT INTO Source.' + @TableName + char(10)
+		select @SQL += char(9) + 'SELECT ' + char(10)
+		select @SQL += char(9) + char(9) + '''' + @ReportCode + ''' as SnapshotReportCode, ' + char(10)
+		select @SQL += char(9) + char(9) + convert(varchar, @SchoolYear) + ' as SnapshotSchoolYear, ' + char(10)
+		select @SQL += char(9) + char(9) + '''' + @SnapshotDate + ''' as SnapshotDate,' + char(10)
+		select @SQL += char(9) + char(9) + '*' + char(10)
+		select @SQL += char(9) + 'FROM Staging.' + @TableName + char(10)
+		select @SQL += 'END' + char(10)
 
-			if @ShowSQL = 1
-			begin
-				select @sql
-				return
-			end
+		--print out the dynamic sql rather then executing it
+		if @ShowSQL = 1
+		begin
+			select @sql
+			return
+		end
+
+		--execute the sql that will create the snapshot tables
+		begin try
+			exec(@SQL)
+		end try
+		begin catch
+			select @Error = ERROR_MESSAGE()
 			insert into app.DataMigrationHistories
 				(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
-				values	(getutcdate(), 4, '   Creating snapshot for table Staging.' + @TableName)
+				values	(getutcdate(), 4, '   ERROR creating snapshot for table Staging.' + @TableName + '.  ' + @Error)
+		end catch
 
-			begin try
-				exec(@SQL)
-			end try
-			begin catch
-				select @Error = ERROR_MESSAGE()
-				insert into app.DataMigrationHistories
-					(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
-					values	(getutcdate(), 4, '   ERROR creating snapshot for table Staging.' + @TableName + '.  ' + @Error)
-			end catch
-
-			delete from #StagingTables where TableName = @TableName
-			select @TableName = (select top 1 TableName from #StagingTables)
-		end
+		delete from #StagingTables where TableName = @TableName
+		select @TableName = (select top 1 TableName from #StagingTables)
+	end
 	
 	insert into app.DataMigrationHistories
 		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 

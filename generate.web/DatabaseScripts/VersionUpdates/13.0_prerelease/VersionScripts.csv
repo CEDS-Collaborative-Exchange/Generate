@@ -4,8 +4,7 @@ VersionUpdates\\13.0_prerelease,App.Metadata.sql,0
 VersionUpdates\\13.0_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.0_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\13.0_prerelease,JunkTablePopulation.sql,0
-Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
-Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+VersionUpdates\\13.0_prerelease,CreateSnapshotUpdates.sql,0
 Views\\Drop,RDS.vWDimNorDStatuses.View.sql,0
 Views\\Create,RDS.vWDimNorDStatuses.View.sql,0
 Views\\Drop,RDS.vWDimTitleIIIStatuses.View.sql,0
@@ -58,4 +57,6 @@ StoredProcedures\\Drop,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.CreateSnapshotFromStaging.StoredProcedure.sql,0
 VersionUpdates\\13.0_prerelease,UpdateDbVersion.sql,0
