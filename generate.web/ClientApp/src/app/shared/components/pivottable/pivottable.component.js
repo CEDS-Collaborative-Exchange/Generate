@@ -516,6 +516,11 @@ var PivottableComponent = function () {
                 for (var key in filters) {
                     _loop_1(key);
                 }
+                var countColumn = viewDef.fields.find(function (f) { return f.header === 'Count'; }).binding;
+                if (countColumn) {
+                    bindings.push(countColumn);
+                    headers.push('Count');
+                }
                 var selectedFilterJson = JSON.stringify(selectedFilter);
                 var data = {
                     reportData: exports.reportData,

@@ -567,6 +567,12 @@ export class PivottableComponent {
                 }
             }
 
+            const countColumn = viewDef.fields.find(f => f.header === 'Count').binding;
+            if (countColumn) {
+                bindings.push(countColumn);
+                headers.push('Count');
+            }
+
             const selectedFilterJson = JSON.stringify(selectedFilter);
 
             let data = {
