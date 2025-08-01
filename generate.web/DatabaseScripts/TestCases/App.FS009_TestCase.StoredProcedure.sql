@@ -22,8 +22,7 @@ BEGIN TRY
 		IF NOT EXISTS (SELECT 1 FROM App.SqlUnitTest WHERE UnitTestName = 'FS009_UnitTestCase') 
 		BEGIN
 			SET @expectedResult = 1
-			INSERT INTO App.SqlUnitTest 
-			(
+			INSERT INTO App.SqlUnitTest (
 				  [UnitTestName]
 				, [StoredProcedureName]
 				, [TestScope]
@@ -52,8 +51,6 @@ BEGIN TRY
 
 		-- Create base data set
 		-- Get Custom Child Count Date
-
-		
 		UPDATE rds.DimSchoolYearDataMigrationTypes
 		SET IsSelected = 0
 
@@ -65,7 +62,6 @@ BEGIN TRY
 		WHERE sy.SchoolYear = @SchoolYear
 
 		--DROP TABLE #staging 
-
 		IF OBJECT_ID('tempdb..#staging') IS NOT NULL
 		DROP TABLE #staging
 
@@ -120,7 +116,29 @@ BEGIN TRY
 		where q.EmapsQuestionAbbrv = 'CHDCTDISCAT'
 			AND SubmissionYear = @SchoolYear
 
+		--Get the toggle responses for Certificate and Alternate Diploma validity
+		DECLARE @RCValid BIT
+		DECLARE @GRADALTDPLValid BIT
 
+		SELECT @RCValid = case tr.ResponseValue
+							when 'true' then 1
+							else 0
+							end
+		FROM App.ToggleQuestions tq
+		JOIN App.ToggleResponses tr
+			ON tq.ToggleQuestionId = tr.ToggleQuestionId
+		WHERE tq.EmapsQuestionAbbrv = 'DEFEXCERT'
+
+		SELECT @GRADALTDPLValid = case tr.ResponseValue
+									when 'true' then 1
+									else 0
+									end
+		FROM App.ToggleQuestions tq
+		JOIN App.ToggleResponses tr
+			ON tq.ToggleQuestionId = tr.ToggleQuestionId
+		WHERE tq.EmapsQuestionAbbrv = 'DEFEXDLPDIS'
+
+		--Handle the catchment areas		
 		IF OBJECT_ID('tempdb..#catchmentType') IS NOT NULL
 		DROP TABLE #catchmentType
 
@@ -256,7 +274,6 @@ BEGIN TRY
 				END
 			
 			CREATE NONCLUSTERED INDEX [IX_stuLeaTemp] ON #stuLeaTemp(LeaIdentifierSeaAccountability, StudentIdentifierState)
-
 			
 			CREATE TABLE #stuLea (
 				  StudentIdentifierState					VARCHAR(20)
@@ -277,7 +294,6 @@ BEGIN TRY
 				, sppse.LeaIdentifierSeaAccountability
 
 			CREATE NONCLUSTERED INDEX [IX_stuLea] ON #stuLea(LeaIdentifierSeaAccountability, StudentIdentifierState)
-
 
 			CREATE TABLE #staging (
 				  StudentIdentifierState					VARCHAR(100)
@@ -437,10 +453,8 @@ BEGIN TRY
 				AND sppse.LeaIdentifierSeaAccountability = latest.LeaIdentifierSeaAccountability
 				AND sppse.ProgramParticipationEndDate = latest.SpecialEducationServicesExitDate
 				AND sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd) -- JW 4/4/2024
-		-- JW 4/4/2024 --------------------------------------------------------------------------------------------------------
-		JOIN RDS.DimSeas rds
-			ON sppse.ProgramParticipationEndDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEnd)
-		-----------------------------------------------------------------------------------------------------------------------
+			JOIN RDS.DimSeas rds
+				ON sppse.ProgramParticipationEndDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEnd)
 			JOIN Staging.IdeaDisabilityType sidt
 				ON sidt.StudentIdentifierState = ske.StudentIdentifierState
 				AND sidt.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
@@ -451,11 +465,6 @@ BEGIN TRY
 				ON ske.StudentIdentifierState = spr.StudentIdentifierState
 				AND ske.LeaIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability
 				AND (ske.SchoolIdentifierSea = spr.SchoolIdentifierSea or spr.SchoolYear = ske.SchoolYear) -- JW 4/4/2024
-
-				--AND ske.SchoolIdentifierSea = spr.SchoolIdentifierSea
-				--AND spr.SchoolYear = ske.SchoolYear
-				-- JW CHECK THIS NEXT LINE...IT'S NOT IN STAGING TO FACT
-				--AND sppse.ProgramParticipationEndDate BETWEEN spr.RecordStartDateTime AND ISNULL(spr.RecordEndDateTime, @SYEnd)
 			LEFT JOIN RDS.DimRaces rdr
 				ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
 					OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceCode)
@@ -472,12 +481,19 @@ BEGIN TRY
 --NOTE: The application of this rule is being discussed and will be addressed in a future release.  For now, the rule is being commented out. CIID-4693
 --				AND sppse.ProgramParticipationBeginDate <= @ExitingSpedStartDate
 
-
+			--Remove invalid Ages
 			DELETE FROM #staging
 			WHERE Age NOT BETWEEN 14 AND 21
 
---select * from #staging where LeaIdentifierSeaAccountability = '997'
---return
+			--Remove exit reasons that are invalid based on Toggle
+			DELETE FROM #Staging
+			WHERE SpecialEducationExitReasonEdFactsCode = 'RC'
+			AND @RCValid = 0
+		
+			DELETE FROM #Staging
+			WHERE SpecialEducationExitReasonEdFactsCode = 'GRADALTDPL'
+			AND @GRADALTDPLValid = 0
+
 /**************************************************************************************************************************
 BEGIN CREATING TEST RESULTS
 ***************************************************************************************************************************/
@@ -498,8 +514,6 @@ BEGIN CREATING TEST RESULTS
 				, Age
 				, IdeaDisabilityTypeEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -527,8 +541,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'CSA'
-	
-
 
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 2:
@@ -543,8 +555,6 @@ BEGIN CREATING TEST RESULTS
 			GROUP BY SpecialEducationExitReasonEdFactsCode
 				, RaceEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -572,7 +582,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'CSB'
 
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------	
 			/* Test Case 3:
 				CSC at the SEA level
@@ -587,8 +596,6 @@ BEGIN CREATING TEST RESULTS
 			GROUP BY SpecialEducationExitReasonEdFactsCode
 				, SexEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -616,8 +623,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'CSC'
 
-
-		
 	-- Gather, evaluate & record the results ----------------------------------------------------------		
 			/* Test Case 4:
 				CSD at the SEA level
@@ -632,8 +637,6 @@ BEGIN CREATING TEST RESULTS
 			GROUP BY SpecialEducationExitReasonEdFactsCode
 				, EnglishLearnerStatusEdFactsCode
 				
-			
-		
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -661,8 +664,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'CSD'
 			
-
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 5:
 				ST1 at the SEA level
@@ -674,8 +675,6 @@ BEGIN CREATING TEST RESULTS
 			FROM #staging 
 			GROUP BY SpecialEducationExitReasonEdFactsCode
 			
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -702,9 +701,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST1'
 			
-		
-		
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 6:
 				ST2 at the SEA level
@@ -716,8 +712,6 @@ BEGIN CREATING TEST RESULTS
 			FROM #staging 
 			GROUP BY Age
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -744,9 +738,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST2'
 			
-
-		
-
 		-- Gather, evaluate & record the results ----------------------------------------------------------
 		/* Test Case 7:
 				ST3 at the SEA level
@@ -758,8 +749,6 @@ BEGIN CREATING TEST RESULTS
 			FROM #staging 
 			GROUP BY RaceEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -786,9 +775,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST3'
 			
-
-		
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 8:
 				ST4 at the SEA level
@@ -801,8 +787,6 @@ BEGIN CREATING TEST RESULTS
 			WHERE SexEdFactsCode <> 'MISSING'
 			GROUP BY SexEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -829,10 +813,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST4'
 
-
-		
-
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 9:
 				ST5 at the SEA level
@@ -845,8 +825,6 @@ BEGIN CREATING TEST RESULTS
 			WHERE EnglishLearnerStatusEdFactsCode <> 'MISSING'
 			GROUP BY EnglishLearnerStatusEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -873,8 +851,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST5'
 
-		
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 10:
 				ST6 at the SEA level
@@ -888,8 +864,6 @@ BEGIN CREATING TEST RESULTS
 				ON s.IdeaDisabilityTypeEdFactsCode = d.CategoryOptionCode
 			GROUP BY IdeaDisabilityTypeEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -916,10 +890,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'ST6'
 			
-
-
-		
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 11:
 				TOT at the SEA level
@@ -954,12 +924,9 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'SEA'
 				AND rreksc.CategorySetCode = 'TOT'
 			
-	
-
-
-			----------------------------------------
-			--- LEA level tests					 ---
-			----------------------------------------
+	----------------------------------------
+	--- LEA level tests					 ---
+	----------------------------------------
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 1:
 				CSA at the LEA level
@@ -985,9 +952,6 @@ BEGIN CREATING TEST RESULTS
 				, Age
 				, IdeaDisabilityTypeEdFactsCode
 				
-			
-
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -1017,9 +981,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'CSA'
 
-
-	
-		
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 2:
 				CSB at the LEA level
@@ -1041,9 +1002,6 @@ BEGIN CREATING TEST RESULTS
 				, SpecialEducationExitReasonEdFactsCode
 				, RaceEdFactsCode
 				
-			
-
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -1072,8 +1030,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'CSB'
 
-		
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 3:
 				CSC at the LEA level
@@ -1096,8 +1052,6 @@ BEGIN CREATING TEST RESULTS
 				, SpecialEducationExitReasonEdFactsCode
 				, SexEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -1126,8 +1080,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'CSC'
 
-		
-		
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 4:
 				CSD at the LEA level
@@ -1150,8 +1102,6 @@ BEGIN CREATING TEST RESULTS
 				, SpecialEducationExitReasonEdFactsCode
 				, EnglishLearnerStatusEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -1179,10 +1129,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportYear = @SchoolYear
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'CSD'
-			
-		
-		
-
 
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 5:
@@ -1203,8 +1149,6 @@ BEGIN CREATING TEST RESULTS
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, SpecialEducationExitReasonEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -1232,8 +1176,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST1'
 			
-		
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 6:
 				ST2 at the LEA level
@@ -1253,8 +1195,6 @@ BEGIN CREATING TEST RESULTS
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, Age
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -1282,8 +1222,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST2'
 		
-
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 7:
 				ST3 at the LEA level
@@ -1303,8 +1241,6 @@ BEGIN CREATING TEST RESULTS
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, RaceEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -1332,9 +1268,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST3'
 			
-		
-
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 8:
 				ST4 at the LEA level
@@ -1355,8 +1288,6 @@ BEGIN CREATING TEST RESULTS
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, SexEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -1384,9 +1315,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST4'
 			
-		
-
-
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 9:
 				ST5 at the LEA level
@@ -1407,8 +1335,6 @@ BEGIN CREATING TEST RESULTS
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, EnglishLearnerStatusEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -1436,9 +1362,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST5'
 
-		
-
-		
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 10:
 				ST6 at the LEA level
@@ -1460,8 +1383,6 @@ BEGIN CREATING TEST RESULTS
 			GROUP BY s.LeaIdentifierSeaAccountability
 				, IdeaDisabilityTypeEdFactsCode
 				
-			
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -1489,7 +1410,6 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'ST6'
 			
-		
 	-- Gather, evaluate & record the results ----------------------------------------------------------
 			/* Test Case 11:
 				TOT at the LEA level
@@ -1507,8 +1427,6 @@ BEGIN CREATING TEST RESULTS
 				AND org.LeaIdentifierState IS NOT NULL -- exclude closed LEAs
 			GROUP BY s.LeaIdentifierSeaAccountability
 			
-------------------------------------------------------------------------
-
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
 				[SqlUnitTestId]
@@ -1535,13 +1453,19 @@ BEGIN CREATING TEST RESULTS
 				AND rreksc.ReportLevel = 'LEA'
 				AND rreksc.CategorySetCode = 'TOT'
 			
-
-
 		FETCH NEXT FROM db_cursor INTO @catchmentArea 
 	END 
 
 	CLOSE db_cursor  
 	DEALLOCATE db_cursor
+
+	 --select *
+	 --from App.SqlUnitTestCaseResult sr
+	 --	inner join App.SqlUnitTest s
+	 --		on s.SqlUnitTestId = sr.SqlUnitTestId
+	 --where s.UnitTestName like '%009%'
+	 --and passed = 0
+	 --and convert(date, TestDateTime) = convert(date, GETDATE())
 
 	--COMMIT TRANSACTION
 
@@ -1563,30 +1487,31 @@ BEGIN CREATING TEST RESULTS
 
 	END CATCH; 
 
--- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS -------------------------
-if not exists(select top 1 * from app.sqlunittest t
-	inner join app.SqlUnitTestCaseResult r
-		on t.SqlUnitTestId = r.SqlUnitTestId
-		and t.SqlUnitTestId = @SqlUnitTestId)
-begin
-			INSERT INTO App.SqlUnitTestCaseResult 
-			(
-				[SqlUnitTestId]
-				,[TestCaseName]
-				,[TestCaseDetails]
-				,[ExpectedResult]
-				,[ActualResult]
-				,[Passed]
-				,[TestDateTime]
-			)
-			SELECT DISTINCT
-				 @SqlUnitTestId
-				,'NO TEST RESULTS'
-				,'NO TEST RESULTS'
-				,-1
-				,-1
-				,NULL
-				,GETDATE()
-end
-----------------------------------------------------------------------------------
+	-- IF THE TEST PRODUCES NO RESULTS INSERT A RECORD TO INDICATE THIS
+	if not exists	(select top 1 * 
+					from app.sqlunittest t
+					inner join app.SqlUnitTestCaseResult r
+						on t.SqlUnitTestId = r.SqlUnitTestId
+						and t.SqlUnitTestId = @SqlUnitTestId
+					)
+	begin
+		INSERT INTO App.SqlUnitTestCaseResult (
+			[SqlUnitTestId]
+			,[TestCaseName]
+			,[TestCaseDetails]
+			,[ExpectedResult]
+			,[ActualResult]
+			,[Passed]
+			,[TestDateTime]
+		)
+		SELECT DISTINCT
+			@SqlUnitTestId
+			,'NO TEST RESULTS'
+			,'NO TEST RESULTS'
+			,-1
+			,-1
+			,NULL
+			,GETDATE()
+	end
+
 END
