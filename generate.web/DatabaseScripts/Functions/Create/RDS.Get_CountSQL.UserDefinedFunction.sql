@@ -6567,9 +6567,10 @@ BEGIN
 				'(
 					K12StudentStudentIdentifierState,
 					schoolIdentifierSea,
+					StudentCount,
 					TableTypeAbbrv
 				)
-				select s.K12StudentStudentIdentifierState , sc.schoolIdentifierSea, c.TableTypeAbbrv				
+				select s.K12StudentStudentIdentifierState , sc.schoolIdentifierSea, c.StudentCount, c.TableTypeAbbrv				
 				from #categorySet c 
 				inner join rds.DimPeople s 
 					on c.DimStudentId = s.DimPersonId 
@@ -7223,17 +7224,37 @@ BEGIN
 					set @sql = @sql + '
 						from rds.DimK12Schools sch
 						left outer join #categorySet cs on cs.DimK12SchoolId = sch.DimK12SchoolId'
+
+					if @reportCode = '033'
+					begin
+						set @sql = @sql + '
+							where sch.DimK12SchoolId <> -1
+							and ISNULL(sch.ReportedFederally, 1) = 1 -- CIID-1963
+							and cs.TableTypeAbbrv = ''' + @tableTypeAbbrv + ''''
+					end
+					else
+					begin
+						set @sql = @sql + '
+							where sch.DimK12SchoolId <> -1
+							and ISNULL(sch.ReportedFederally, 1) = 1 -- CIID-1963
+							'
+					end
 				end
 				else
 				begin
 					set @sql = @sql + '
 						from #categorySet cs
 						inner join rds.DimK12Schools sch on cs.DimK12SchoolId = sch.DimK12SchoolId'
+
+					set @sql = @sql + '
+							where sch.DimK12SchoolId <> -1
+							and ISNULL(sch.ReportedFederally, 1) = 1 -- CIID-1963
+							'
 				end
 
+				
+
 				set @sql = @sql + '
-					where sch.DimK12SchoolId <> -1
-					and ISNULL(sch.ReportedFederally, 1) = 1 -- CIID-1963
 					group by 
 						sch.StateANSICode,
 						sch.StateAbbreviationCode,
