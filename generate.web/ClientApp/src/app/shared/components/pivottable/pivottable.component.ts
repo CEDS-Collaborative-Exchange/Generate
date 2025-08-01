@@ -354,18 +354,21 @@ export class PivottableComponent {
                 var matchFound = true;
                 for (var i = 0; i < Object.keys(filterBy2).length; i++) {
                     if (filterBy2[Object.keys(filterBy2)[i]] != "") {
-                        var dataValue = d[viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding];
-                        var searchValue = filterBy2[Object.keys(filterBy2)[i]];
+ 
+                        if (viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]) !== undefined) {
+                            var dataValue = d[viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding];
+                            var searchValue = filterBy2[Object.keys(filterBy2)[i]];
 
-                        var categoryOption = reportData.categorySets[0].categoryOptions.find(o => o.categoryOptionCode.toLowerCase() == dataValue.toLowerCase());
-                        var categoryOptionName = "";
-                        if (categoryOption != undefined) {
-                            categoryOptionName = categoryOption.categoryOptionName;
-                        }
+                            var categoryOption = reportData.categorySets[0].categoryOptions.find(o => o.categoryOptionCode.toLowerCase() == dataValue.toLowerCase());
+                            var categoryOptionName = "";
+                            if (categoryOption != undefined) {
+                                categoryOptionName = categoryOption.categoryOptionName;
+                            }
 
-                        if (dataValue.toLowerCase().indexOf(searchValue.toLowerCase()) == -1 && categoryOptionName.toLowerCase().indexOf(searchValue.toLowerCase()) == -1) {
-                            matchFound = false;
-                            break;
+                            if (dataValue.toLowerCase().indexOf(searchValue.toLowerCase()) == -1 && categoryOptionName.toLowerCase().indexOf(searchValue.toLowerCase()) == -1) {
+                                matchFound = false;
+                                break;
+                            }
                         }
                     }
                 }
@@ -442,18 +445,20 @@ export class PivottableComponent {
             var matchFound = true;
             for (var i = 0; i < Object.keys(filterBy2).length; i++) {
                 if (filterBy2[Object.keys(filterBy2)[i]] != "") {
-                    var dataValue = d[viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding];
-                    var searchValue = filterBy2[Object.keys(filterBy2)[i]];
+                    if (viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]) !== undefined) {
+                        var dataValue = d[viewDef.fields.find(f => f.header === Object.keys(filterBy2)[i]).binding];
+                        var searchValue = filterBy2[Object.keys(filterBy2)[i]];
 
-                    var categoryOption = reportData.categorySets[0].categoryOptions.find(o => o.categoryOptionName.toLowerCase() === searchValue.toLowerCase());
-                    var categoryOptionCode = "";
-                    if (categoryOption != undefined) {
-                        categoryOptionCode = categoryOption.categoryOptionCode;
-                    }
+                        var categoryOption = reportData.categorySets[0].categoryOptions.find(o => o.categoryOptionName.toLowerCase() === searchValue.toLowerCase());
+                        var categoryOptionCode = "";
+                        if (categoryOption != undefined) {
+                            categoryOptionCode = categoryOption.categoryOptionCode;
+                        }
 
-                    if (dataValue.toLowerCase().indexOf(searchValue.toLowerCase()) === -1 && dataValue.toLowerCase() !== categoryOptionCode.toLowerCase()) {
-                        matchFound = false;
-                        break;
+                        if (dataValue.toLowerCase().indexOf(searchValue.toLowerCase()) === -1 && dataValue.toLowerCase() !== categoryOptionCode.toLowerCase()) {
+                            matchFound = false;
+                            break;
+                        }
                     }
                 }
             }

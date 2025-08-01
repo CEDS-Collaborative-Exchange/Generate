@@ -332,16 +332,18 @@ var PivottableComponent = function () {
                 var matchFound = true;
                 for (var i = 0; i < Object.keys(exports.filterBy2).length; i++) {
                     if (exports.filterBy2[Object.keys(exports.filterBy2)[i]] != "") {
-                        var dataValue = d[viewDef.fields.find(function (f) { return f.header === Object.keys(exports.filterBy2)[i]; }).binding];
-                        var searchValue = exports.filterBy2[Object.keys(exports.filterBy2)[i]];
-                        var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (o) { return o.categoryOptionCode.toLowerCase() == dataValue.toLowerCase(); });
-                        var categoryOptionName = "";
-                        if (categoryOption != undefined) {
-                            categoryOptionName = categoryOption.categoryOptionName;
-                        }
-                        if (dataValue.toLowerCase().indexOf(searchValue.toLowerCase()) == -1 && categoryOptionName.toLowerCase().indexOf(searchValue.toLowerCase()) == -1) {
-                            matchFound = false;
-                            break;
+                        if (viewDef.fields.find(function (f) { return f.header === Object.keys(exports.filterBy2)[i]; }) !== undefined) {
+                            var dataValue = d[viewDef.fields.find(function (f) { return f.header === Object.keys(exports.filterBy2)[i]; }).binding];
+                            var searchValue = exports.filterBy2[Object.keys(exports.filterBy2)[i]];
+                            var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (o) { return o.categoryOptionCode.toLowerCase() == dataValue.toLowerCase(); });
+                            var categoryOptionName = "";
+                            if (categoryOption != undefined) {
+                                categoryOptionName = categoryOption.categoryOptionName;
+                            }
+                            if (dataValue.toLowerCase().indexOf(searchValue.toLowerCase()) == -1 && categoryOptionName.toLowerCase().indexOf(searchValue.toLowerCase()) == -1) {
+                                matchFound = false;
+                                break;
+                            }
                         }
                     }
                 }
@@ -408,16 +410,18 @@ var PivottableComponent = function () {
                 var matchFound = true;
                 for (var i = 0; i < Object.keys(exports.filterBy2).length; i++) {
                     if (exports.filterBy2[Object.keys(exports.filterBy2)[i]] != "") {
-                        var dataValue = d[viewDef.fields.find(function (f) { return f.header === Object.keys(exports.filterBy2)[i]; }).binding];
-                        var searchValue = exports.filterBy2[Object.keys(exports.filterBy2)[i]];
-                        var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (o) { return o.categoryOptionName.toLowerCase() === searchValue.toLowerCase(); });
-                        var categoryOptionCode = "";
-                        if (categoryOption != undefined) {
-                            categoryOptionCode = categoryOption.categoryOptionCode;
-                        }
-                        if (dataValue.toLowerCase().indexOf(searchValue.toLowerCase()) === -1 && dataValue.toLowerCase() !== categoryOptionCode.toLowerCase()) {
-                            matchFound = false;
-                            break;
+                        if (viewDef.fields.find(function (f) { return f.header === Object.keys(exports.filterBy2)[i]; }) !== undefined) {
+                            var dataValue = d[viewDef.fields.find(function (f) { return f.header === Object.keys(exports.filterBy2)[i]; }).binding];
+                            var searchValue = exports.filterBy2[Object.keys(exports.filterBy2)[i]];
+                            var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (o) { return o.categoryOptionName.toLowerCase() === searchValue.toLowerCase(); });
+                            var categoryOptionCode = "";
+                            if (categoryOption != undefined) {
+                                categoryOptionCode = categoryOption.categoryOptionCode;
+                            }
+                            if (dataValue.toLowerCase().indexOf(searchValue.toLowerCase()) === -1 && dataValue.toLowerCase() !== categoryOptionCode.toLowerCase()) {
+                                matchFound = false;
+                                break;
+                            }
                         }
                     }
                 }
