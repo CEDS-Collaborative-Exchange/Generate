@@ -3,7 +3,6 @@ VersionUpdates\\13.0_prerelease,App.TableChanges.sql,0
 VersionUpdates\\13.0_prerelease,App.Metadata.sql,0
 VersionUpdates\\13.0_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.0_prerelease,RDS.TableChanges.sql,0
-VersionUpdates\\13.0_prerelease,JunkTablePopulation.sql,0
 VersionUpdates\\13.0_prerelease,CreateSnapshotUpdates.sql,0
 Views\\Drop,RDS.vWDimNorDStatuses.View.sql,0
 Views\\Create,RDS.vWDimNorDStatuses.View.sql,0
