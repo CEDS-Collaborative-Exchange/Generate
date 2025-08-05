@@ -108,7 +108,13 @@ BEGIN
 
 
 	-- #tempNorDStudents
-		SELECT DISTINCT sppnord.StudentIdentifierState, sppnord.LeaIdentifierSeaAccountability, vw.DimNOrDStatusId
+		SELECT DISTINCT 
+			sppnord.StudentIdentifierState
+			, sppnord.LeaIdentifierSeaAccountability
+			, sppnord.SchoolIdentifierSea
+			, sppnord.ProgramParticipationBeginDate
+			, sppnord.ProgramParticipationEndDate
+			, vw.DimNOrDStatusId
 		INTO #tempNorDStudents
 		FROM Staging.ProgramParticipationNorD sppnord
 		INNER JOIN Staging.AssessmentResult sar
@@ -120,13 +126,19 @@ BEGIN
 			AND isnull(sppnord.ProgramParticipationEndDate, '1/1/9999') >= CAST('7/1/' + CAST(sar.SchoolYear - 1 AS VARCHAR(10))  AS Date) -- Only students who were in the program during the school year
 		LEFT JOIN #vwNOrDStatuses vw
 			ON vw.SchoolYear = @SchoolYear
-			AND vw.NeglectedOrDelinquentProgramEnrollmentSubpartMap = sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart
 			AND vw.NeglectedOrDelinquentStatusMap = sppnord.NeglectedOrDelinquentStatus
+			AND isnull(vw.NeglectedOrDelinquentProgramEnrollmentSubpartMap, 'MISSING') = isnull(sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart, 'MISSING')
+			AND isnull(vw.NeglectedOrDelinquentProgramTypeMap, 'MISSING') = isnull(sppnord.NeglectedOrDelinquentProgramType, 'MISSING')
+			AND isnull(cast(vw.NeglectedOrDelinquentLongTermStatusMap AS SMALLINT), -1) = isnull(cast(sppnord.NeglectedOrDelinquentLongTermStatus AS SMALLINT), -1)
+			AND isnull(vw.NeglectedProgramTypeMap, 'MISSING') = isnull(sppnord.NeglectedProgramType, 'MISSING')
+			AND isnull(vw.DelinquentProgramTypeMap, 'MISSING') = isnull(sppnord.DelinquentProgramType, 'MISSING')
+			AND isnull(cast(vw.NeglectedOrDelinquentAcademicAchievementIndicatorMap AS SMALLINT), -1) = isnull(cast(sppnord.NeglectedOrDelinquentAcademicAchievementIndicator AS SMALLINT), -1)
+			AND isnull(cast(vw.NeglectedOrDelinquentAcademicOutcomeIndicatorMap AS SMALLINT), -1) = isnull(cast(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator AS SMALLINT), -1)
 		WHERE sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart IS NOT NULL
 			AND sppnord.NeglectedOrDelinquentStatus = 1 -- Only get NorD students
 
 		CREATE INDEX IX_NorD 
-			ON #tempNorDStudents(StudentIdentifierState, LeaIdentifierSeaAccountability)
+			ON #tempNorDStudents(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea)
 
 	-- #vwAssessments
 		SELECT *
@@ -672,7 +684,11 @@ BEGIN
 		-- NorD 
 			LEFT JOIN #tempNorDStudents NorD
 				ON NorD.StudentIdentifierState = sar.StudentIdentifierState
-				AND NorD.LeaIdentifierSeaAccountability = sar.LeaIdentifierSeaAccountability
+				AND ISNULL(sar.LeaIdentifierSeaAccountability, '') 	= ISNULL(NorD.LeaIdentifierSeaAccountability, '')
+				AND ISNULL(sar.SchoolIdentifierSea, '') 			= ISNULL(NorD.SchoolIdentifierSea, '')
+				AND ((NorD.ProgramParticipationBeginDate BETWEEN @SYStartDate and @SYEndDate 
+						AND NorD.ProgramParticipationBeginDate <= sar.AssessmentAdministrationStartDate) 
+					AND ISNULL(NorD.ProgramParticipationEndDate, @SYEndDate) >= sar.AssessmentAdministrationStartDate)
 		--idea disability type (rds)
 			LEFT JOIN RDS.vwDimIdeaDisabilityTypes rdidt
 				ON sidt.SchoolYear = rdidt.SchoolYear
