@@ -115,7 +115,7 @@
 	FROM [CEDS].CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'DelinquentProgramType'
 
-		--Insert the default row for N or D Status = NO
+	--Insert the default row for N or D Status = NO
 	SET IDENTITY_INSERT rds.DimNOrDStatuses ON;
 
 	INSERT INTO RDS.DimNOrDStatuses (
