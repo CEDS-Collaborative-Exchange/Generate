@@ -115,6 +115,36 @@
 	FROM [CEDS].CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'DelinquentProgramType'
 
+		--Insert the default row for N or D Status = NO
+	SET IDENTITY_INSERT rds.DimNOrDStatuses ON;
+
+	INSERT INTO RDS.DimNOrDStatuses (
+		[DimNOrDStatusId]
+		, [NeglectedOrDelinquentStatusCode]
+		, [NeglectedOrDelinquentStatusDescription]
+		, [NeglectedOrDelinquentProgramTypeCode]
+		, [NeglectedOrDelinquentProgramTypeDescription]
+		, [NeglectedOrDelinquentProgramTypeEdFactsCode]
+		, [NeglectedOrDelinquentLongTermStatusCode]
+		, [NeglectedOrDelinquentLongTermStatusDescription]
+		, [NeglectedOrDelinquentLongTermStatusEdFactsCode]
+		, [NeglectedOrDelinquentProgramEnrollmentSubpartCode]
+		, [NeglectedOrDelinquentProgramEnrollmentSubpartDescription]
+		, [NeglectedProgramTypeCode]
+		, [NeglectedProgramTypeDescription]
+		, [NeglectedProgramTypeEdFactsCode]
+		, [DelinquentProgramTypeCode]
+		, [DelinquentProgramTypeDescription]
+		, [DelinquentProgramTypeEdFactsCode]
+		, [NeglectedOrDelinquentAcademicAchievementIndicatorCode]
+		, [NeglectedOrDelinquentAcademicAchievementIndicatorDescription]
+		, [NeglectedOrDelinquentAcademicOutcomeIndicatorCode]
+		, [NeglectedOrDelinquentAcademicOutcomeIndicatorDescription]
+	)
+	VALUES(-1, 'No', 'No', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+
+	SET IDENTITY_INSERT rds.DimNOrDStatuses OFF;
+
 	INSERT INTO RDS.DimNOrDStatuses (
 		[NeglectedOrDelinquentStatusCode]
 		, [NeglectedOrDelinquentStatusDescription]
