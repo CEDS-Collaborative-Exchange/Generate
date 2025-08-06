@@ -18,3 +18,7 @@ $app-theme: mat.define-light-theme(
 .mdc-text-field {
     background-color: white !important;
 }
+
+.mdl-switch__thumb {
+    background: #ff4081;
+}
