@@ -93,27 +93,43 @@
 	FROM [CEDS].CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'NeglectedOrDelinquentProgramType'
 
+	INSERT INTO #NeglectedOrDelinquentProgramType VALUES ('DelinquentPrograms', 'Delinquent Programs', 'DELNQNT')
+
 	CREATE TABLE #NeglectedProgramType (NeglectedProgramTypeCode VARCHAR(50), NeglectedProgramTypeDescription VARCHAR(200), NeglectedProgramTypeEdFactsCode VARCHAR(50))
 
 	INSERT INTO #NeglectedProgramType VALUES ('MISSING', 'MISSING', 'MISSING')
 	INSERT INTO #NeglectedProgramType
-	SELECT
-		  CedsOptionSetCode
-		, CedsOptionSetDescription
-		, CedsOptionSetCode
-	FROM [CEDS].CedsOptionSetMapping
-	WHERE CedsElementTechnicalName = 'NeglectedProgramType'
+	VALUES ('CMNTYDAYPRG','Community Day Programs','CMNTYDAYPRG'),
+		('GRPHOMES','Group Homes','GRPHOMES'),
+		('RSDNTLTRTMTHOME','Residential Treatment Home','RSDNTLTRTMTHOME'),
+		('SHELTERS','Shelters','SHELTERS'),
+		('OTHER','Other Programs','OTHER')
+	-- SELECT
+	-- 	  CedsOptionSetCode
+	-- 	, CedsOptionSetDescription
+	-- 	, CedsOptionSetCode
+	-- FROM [CEDS].CedsOptionSetMapping
+	-- WHERE CedsElementTechnicalName = 'NeglectedProgramType'
 
 	CREATE TABLE #DelinquentProgramType (DelinquentProgramTypeCode VARCHAR(50), DelinquentProgramTypeDescription VARCHAR(200), DelinquentProgramTypeEdFactsCode VARCHAR(50))
 
 	INSERT INTO #DelinquentProgramType VALUES ('MISSING', 'MISSING', 'MISSING')
 	INSERT INTO #DelinquentProgramType
-	SELECT
-		  CedsOptionSetCode
-		, CedsOptionSetDescription
-		, CedsOptionSetCode
-	FROM [CEDS].CedsOptionSetMapping
-	WHERE CedsElementTechnicalName = 'DelinquentProgramType'
+	-- SELECT
+	-- 	  CedsOptionSetCode
+	-- 	, CedsOptionSetDescription
+	-- 	, CedsOptionSetCode
+	-- FROM [CEDS].CedsOptionSetMapping
+	-- WHERE CedsElementTechnicalName = 'DelinquentProgramType'
+	VALUES ('ADLTCORR','Adult Correction','ADLTCORR'),
+		('CMNTYDAYPRG','Community day programs','CMNTYDAYPRG'),
+		('GRPHOMES','Group Homes','GRPHOMES'),
+		('JUVDET','Juvenile detention centers','JUVDET'),
+		('JUVLNGTRMFAC','Long-term secure juvenile facility','JUVLNGTRMFAC'),
+		('RNCHWLDRNSCMPS','Ranch/wilderness camps','RNCHWLDRNSCMPS'),
+		('RSDNTLTRTMTCTRS','Residential treatment centers','RSDNTLTRTMTCTRS'),
+		('SHELTERS','Shelters','SHELTERS'),
+		('OTHER','Other programs','OTHER')
 
 	--Insert the default row for N or D Status = NO
 	SET IDENTITY_INSERT rds.DimNOrDStatuses ON;
