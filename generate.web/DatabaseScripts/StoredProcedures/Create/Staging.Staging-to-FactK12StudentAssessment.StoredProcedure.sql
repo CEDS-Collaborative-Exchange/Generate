@@ -35,7 +35,6 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#tempAssessmentAdministrations') IS NOT NULL DROP TABLE #tempAssessmentAdministrations
 		IF OBJECT_ID(N'tempdb..#tempLeas') IS NOT NULL DROP TABLE #tempLeas
 		IF OBJECT_ID(N'tempdb..#tempK12Schools') IS NOT NULL DROP TABLE #tempK12Schools
-		IF OBJECT_ID(N'tempdb..#vwNOrDStatuses') IS NOT NULL DROP TABLE #vwNOrDStatuses
 		IF OBJECT_ID(N'tempdb..#tempNorDStudents') IS NOT NULL DROP TABLE #tempNorDStudents
 		IF OBJECT_ID(N'tempdb..#tempAccomodations') IS NOT NULL DROP TABLE #tempAccomodations
 
@@ -84,62 +83,6 @@ BEGIN
 		where RecordStartDateTime < @SYStartDate
 
 	--Create the temp views (and any relevant indexes) needed for this domain
-	-- #vwNOrDStatuses
-		SELECT *
-		INTO #vwNorDStatuses
-		FROM RDS.vwDimNOrDStatuses
-		WHERE SchoolYear = @SchoolYear
-			--AND NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
-			--AND NeglectedOrDelinquentProgramTypeCode = 'MISSING'
-			--AND NeglectedProgramTypeCode = 'MISSING'
-			--AND DelinquentProgramTypeCode = 'MISSING'
-			--AND NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'MISSING'
-			--AND NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
-
-		CREATE CLUSTERED INDEX ix_tempvwNorDStatuses 
-			ON #vwNorDStatuses (
-				NeglectedOrDelinquentLongTermStatusCode,
-				NeglectedProgramTypeCode,
-				DelinquentProgramTypeCode,
-				NeglectedOrDelinquentProgramTypeCode,
-				NeglectedOrDelinquentAcademicAchievementIndicatorMap,
-				NeglectedOrDelinquentAcademicOutcomeIndicatorMap
-			);
-
-
-	-- #tempNorDStudents
-		SELECT DISTINCT 
-			sppnord.StudentIdentifierState
-			, sppnord.LeaIdentifierSeaAccountability
-			, sppnord.SchoolIdentifierSea
-			, sppnord.ProgramParticipationBeginDate
-			, sppnord.ProgramParticipationEndDate
-			, vw.DimNOrDStatusId
-		INTO #tempNorDStudents
-		FROM Staging.ProgramParticipationNorD sppnord
-		INNER JOIN Staging.AssessmentResult sar
-			ON sppnord.SchoolYear = sar.SchoolYear
-			AND sppnord.StudentIdentifierState = sar.StudentIdentifierState
-			AND sar.LeaIdentifierSeaAccountability = isnull(sppnord.LeaIdentifierSeaAccountability,'')
-			AND sar.SchoolIdentifierSea = isnull(sppnord.SchoolIdentifierSea, '')
-			AND sppnord.ProgramParticipationBeginDate <= CAST('6/30/' + CAST(sar.SchoolYear AS VARCHAR(4)) AS Date) -- Only students who were in the program during the school year
-			AND isnull(sppnord.ProgramParticipationEndDate, '1/1/9999') >= CAST('7/1/' + CAST(sar.SchoolYear - 1 AS VARCHAR(10))  AS Date) -- Only students who were in the program during the school year
-		LEFT JOIN #vwNOrDStatuses vw
-			ON vw.SchoolYear = @SchoolYear
-			AND vw.NeglectedOrDelinquentStatusMap = sppnord.NeglectedOrDelinquentStatus
-			AND isnull(vw.NeglectedOrDelinquentProgramEnrollmentSubpartMap, 'MISSING') = isnull(sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart, 'MISSING')
-			AND isnull(vw.NeglectedOrDelinquentProgramTypeMap, 'MISSING') = isnull(sppnord.NeglectedOrDelinquentProgramType, 'MISSING')
-			AND isnull(cast(vw.NeglectedOrDelinquentLongTermStatusMap AS SMALLINT), -1) = isnull(cast(sppnord.NeglectedOrDelinquentLongTermStatus AS SMALLINT), -1)
-			AND isnull(vw.NeglectedProgramTypeMap, 'MISSING') = isnull(sppnord.NeglectedProgramType, 'MISSING')
-			AND isnull(vw.DelinquentProgramTypeMap, 'MISSING') = isnull(sppnord.DelinquentProgramType, 'MISSING')
-			AND isnull(cast(vw.NeglectedOrDelinquentAcademicAchievementIndicatorMap AS SMALLINT), -1) = isnull(cast(sppnord.NeglectedOrDelinquentAcademicAchievementIndicator AS SMALLINT), -1)
-			AND isnull(cast(vw.NeglectedOrDelinquentAcademicOutcomeIndicatorMap AS SMALLINT), -1) = isnull(cast(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator AS SMALLINT), -1)
-		WHERE sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart IS NOT NULL
-			AND sppnord.NeglectedOrDelinquentStatus = 1 -- Only get NorD students
-
-		CREATE INDEX IX_NorD 
-			ON #tempNorDStudents(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea)
-
 	-- #vwAssessments
 		SELECT *
 		INTO #vwAssessments
@@ -148,7 +91,6 @@ BEGIN
 
 		CREATE NONCLUSTERED INDEX ix_tempvwAssessments -- JW
 			ON #vwAssessments (AssessmentTitle, AssessmentTypeMap, AssessmentTypeAdministeredMap, AssessmentTypeAdministeredToEnglishLearnersMap);
-
 
 	-- #vwAssessmentResults
 		SELECT *
@@ -424,6 +366,32 @@ BEGIN
 
 		CREATE INDEX IX_tempTitleIIIStatus 
 			ON #tempTitleIIIStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, ProgramParticipationBeginDate, ProgramParticipationEndDate)
+
+	-- #tempNorDStudents
+		SELECT DISTINCT 
+			sppnord.StudentIdentifierState
+			, sppnord.LeaIdentifierSeaAccountability
+			, sppnord.SchoolIdentifierSea
+			, sppnord.ProgramParticipationBeginDate
+			, sppnord.ProgramParticipationEndDate
+			, vwdnds.DimNOrDStatusId
+		INTO #tempNorDStudents
+		FROM Staging.ProgramParticipationNorD sppnord
+		INNER JOIN rds.vwDimNOrDStatuses vwdnds
+			ON vwdnds.SchoolYear = @SchoolYear
+			AND vwdnds.NeglectedOrDelinquentStatusMap = sppnord.NeglectedOrDelinquentStatus
+			AND isnull(vwdnds.NeglectedOrDelinquentProgramEnrollmentSubpartMap, 'MISSING') = isnull(sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart, 'MISSING')
+			AND isnull(vwdnds.NeglectedOrDelinquentProgramTypeMap, 'MISSING') = isnull(sppnord.NeglectedOrDelinquentProgramType, 'MISSING')
+			AND isnull(cast(vwdnds.NeglectedOrDelinquentLongTermStatusMap AS SMALLINT), -1) = isnull(cast(sppnord.NeglectedOrDelinquentLongTermStatus AS SMALLINT), -1)
+			AND isnull(vwdnds.NeglectedProgramTypeMap, 'MISSING') = isnull(sppnord.NeglectedProgramType, 'MISSING')
+			AND isnull(vwdnds.DelinquentProgramTypeMap, 'MISSING') = isnull(sppnord.DelinquentProgramType, 'MISSING')
+			AND isnull(cast(vwdnds.NeglectedOrDelinquentAcademicAchievementIndicatorMap AS SMALLINT), -1) = isnull(cast(sppnord.NeglectedOrDelinquentAcademicAchievementIndicator AS SMALLINT), -1)
+			AND isnull(cast(vwdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorMap AS SMALLINT), -1) = isnull(cast(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator AS SMALLINT), -1)
+		WHERE sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart IS NOT NULL
+			AND sppnord.NeglectedOrDelinquentStatus = 1 -- Only get NorD students
+
+		CREATE INDEX IX_NorD 
+			ON #tempNorDStudents(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea)
 
 	--Set the Fact Type	
 		SELECT @FactTypeId = DimFactTypeId 
