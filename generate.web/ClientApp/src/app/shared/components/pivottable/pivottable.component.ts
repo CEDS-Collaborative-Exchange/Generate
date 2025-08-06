@@ -981,7 +981,6 @@ export class PivottableComponent {
                 }
                 //first row e.g. A1:AB12
                 var ref = ws["!fullref"];
-                console.log(ref);
 
                 var range = XLSX.utils.decode_range(ws['!ref']);
                 //0 index based
@@ -1010,8 +1009,13 @@ export class PivottableComponent {
                     new_headers.push('');
                 }
 
+
+
                 new_headers.push($('.generate-app-report__title').text());
-                ws["!merges"].push({ s: { r: 0, c: 3 }, e: { r: 0, c: titleColSpan } });
+
+                if (ws["!merges"] !== undefined) {
+                    ws["!merges"].push({ s: { r: 0, c: 3 }, e: { r: 0, c: titleColSpan } });
+                }
 
                 XLSX.utils.sheet_add_aoa(ws, [new_headers],
                     { skipHeader: true, origin: "A1" });
@@ -1029,12 +1033,14 @@ export class PivottableComponent {
                         caption2 += $(this).text();
                 });
                 new_headers.push(caption2);
-                ws["!merges"].push({ s: { r: 1, c: 3 }, e: { r: 1, c: titleColSpan } });
+
+                if (ws["!merges"] !== undefined) {
+                    ws["!merges"].push({ s: { r: 1, c: 3 }, e: { r: 1, c: titleColSpan } });
+                }
 
                 XLSX.utils.sheet_add_aoa(ws, [new_headers],
                     { skipHeader: true, origin: "A2" });
                 ws['D2'].s = { font: { bold: false }, alignment: { horizontal: 'center', vertical: 'center' } };
-
 
                 ////generate-app-pivotgrid__total
                 new_headers = [];
@@ -1044,7 +1050,9 @@ export class PivottableComponent {
                 }
 
                 new_headers.push($('.generate-app-pivotgrid__total').text());
-                ws["!merges"].push({ s: { r: 2, c: 3 }, e: { r: 2, c: titleColSpan } });
+                if (ws["!merges"] !== undefined) {
+                    ws["!merges"].push({ s: { r: 2, c: 3 }, e: { r: 2, c: titleColSpan } });
+                }
 
                 XLSX.utils.sheet_add_aoa(ws, [new_headers],
                     { skipHeader: true, origin: "A3" });

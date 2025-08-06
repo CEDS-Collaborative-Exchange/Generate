@@ -893,7 +893,6 @@ var PivottableComponent = function () {
                     }
                     //first row e.g. A1:AB12
                     var ref = ws["!fullref"];
-                    console.log(ref);
                     var range = XLSX.utils.decode_range(ws['!ref']);
                     //0 index based
                     var colTotal = range.e.c;
@@ -916,7 +915,9 @@ var PivottableComponent = function () {
                         new_headers.push('');
                     }
                     new_headers.push($('.generate-app-report__title').text());
-                    ws["!merges"].push({ s: { r: 0, c: 3 }, e: { r: 0, c: titleColSpan } });
+                    if (ws["!merges"] !== undefined) {
+                        ws["!merges"].push({ s: { r: 0, c: 3 }, e: { r: 0, c: titleColSpan } });
+                    }
                     XLSX.utils.sheet_add_aoa(ws, [new_headers], { skipHeader: true, origin: "A1" });
                     ws['D1'].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'center', vertical: 'center' } };
                     new_headers = [];
@@ -930,7 +931,9 @@ var PivottableComponent = function () {
                             caption2 += $(this).text();
                     });
                     new_headers.push(caption2);
-                    ws["!merges"].push({ s: { r: 1, c: 3 }, e: { r: 1, c: titleColSpan } });
+                    if (ws["!merges"] !== undefined) {
+                        ws["!merges"].push({ s: { r: 1, c: 3 }, e: { r: 1, c: titleColSpan } });
+                    }
                     XLSX.utils.sheet_add_aoa(ws, [new_headers], { skipHeader: true, origin: "A2" });
                     ws['D2'].s = { font: { bold: false }, alignment: { horizontal: 'center', vertical: 'center' } };
                     ////generate-app-pivotgrid__total
@@ -940,7 +943,9 @@ var PivottableComponent = function () {
                         new_headers.push('');
                     }
                     new_headers.push($('.generate-app-pivotgrid__total').text());
-                    ws["!merges"].push({ s: { r: 2, c: 3 }, e: { r: 2, c: titleColSpan } });
+                    if (ws["!merges"] !== undefined) {
+                        ws["!merges"].push({ s: { r: 2, c: 3 }, e: { r: 2, c: titleColSpan } });
+                    }
                     XLSX.utils.sheet_add_aoa(ws, [new_headers], { skipHeader: true, origin: "A3" });
                     ws['D3'].s = { font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } };
                     //ws['C4'].s = {
