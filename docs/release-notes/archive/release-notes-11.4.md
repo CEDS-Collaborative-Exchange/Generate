@@ -5,20 +5,6 @@ description: >-
   technical updates made to Generate in version 11.4.
 cover: ../../.gitbook/assets/Picture1 (2).png
 coverY: 0
-layout:
-  cover:
-    visible: true
-    size: hero
-  title:
-    visible: true
-  description:
-    visible: true
-  tableOfContents:
-    visible: true
-  outline:
-    visible: true
-  pagination:
-    visible: true
 ---
 
 # Release Notes 11.4

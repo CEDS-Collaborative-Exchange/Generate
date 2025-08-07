@@ -41,6 +41,8 @@
   * [Upgrade](developer-guides/installation/upgrade/README.md)
     * [Generate Update](developer-guides/installation/upgrade/generate-update.md)
     * [Optional Installations](developer-guides/installation/upgrade/optional-installations.md)
+    * [Troubleshooting the Generate Update Process](developer-guides/installation/upgrade/troubleshooting-the-generate-update-process.md)
+    * [Generate File Storage](developer-guides/installation/upgrade/generate-file-storage.md)
 * [Migration](developer-guides/migration/README.md)
   * [Implementation FAQ](developer-guides/migration/implementation-faq.md)
   * [Data Migration](developer-guides/migration/data-migration.md)
