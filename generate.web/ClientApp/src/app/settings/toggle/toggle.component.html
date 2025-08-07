@@ -10,7 +10,7 @@
 <form [formGroup]="toggleForm" class="generate-app-toggle__form" (submit)="onSubmit()">
 
     <div class="generate-app-toggle__button-container">
-        <a class="clickable" (click)="gotoAssessments()" tabindex="0">
+        <a class="clickable mdl-button--colored" (click)="gotoAssessments()" tabindex="0" title="Assessments" >
             Assessments
         </a>
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-toggle__button" type="submit">
@@ -42,7 +42,7 @@
                             <ng-template ngSwitchCase="text">
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                    <div class="generate-app-toggle__question-text questiontext">{{toggleQuestion.questionText}}</div>
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
@@ -57,7 +57,7 @@
                             <ng-template ngSwitchCase="integer">
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                    <div class="generate-app-toggle__question-text questiontext">{{toggleQuestion.questionText}}</div>
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
@@ -74,7 +74,7 @@
                             <ng-template ngSwitchCase="decimal">
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                    <div class="generate-app-toggle__question-text questiontext">{{toggleQuestion.questionText}}</div>
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
@@ -90,7 +90,7 @@
                             <ng-template ngSwitchCase="percent">
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                    <div class="generate-app-toggle__question-text questiontext">{{toggleQuestion.questionText}}</div>
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
@@ -106,7 +106,7 @@
                             <ng-template ngSwitchCase="singleselect">
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}} (single)</div>
+                                    <div class="generate-app-toggle__question-text questiontext">{{toggleQuestion.questionText}} (single)</div>
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
@@ -122,7 +122,7 @@
                             <ng-template ngSwitchCase="multipleselect">
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}} (multi-select)</div>
+                                    <div class="generate-app-toggle__question-text questiontext">{{toggleQuestion.questionText}} (multi-select)</div>
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
@@ -138,7 +138,7 @@
                             <ng-template ngSwitchCase="toggle">
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                    <div class="generate-app-toggle__question-text questiontext">{{toggleQuestion.questionText}}</div>
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
@@ -152,7 +152,7 @@
                             <ng-template ngSwitchCase="multitoggle">
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                    <div class="generate-app-toggle__question-text questiontext">{{toggleQuestion.questionText}}</div>
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
@@ -180,7 +180,7 @@
                             <ng-template ngSwitchCase="radio">
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                    <div class="generate-app-toggle__question-text questiontext">{{toggleQuestion.questionText}}</div>
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
@@ -199,7 +199,7 @@
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
                                     <div *ngFor="let toggleQuestionOption of toggleQuestionOptions | generateToggleQuestionOtherOptionFilter:toggleQuestion.toggleQuestionId">
-                                        <div class="generate-app-toggle__question-text">If Other, then please specify</div>
+                                        <div class="generate-app-toggle__question-text questiontext">If Other, then please specify</div>
                                     </div>
                                 </div>
 
@@ -209,7 +209,7 @@
                                         <textarea [formControl]="toggleForm.controls['ctrl_q_' + toggleQuestion.toggleQuestionId]"
                                                   (change)="setOtherRadioResponse($event,toggleQuestionOption.toggleQuestionOptionId)" class="mdl-textfield__input"
                                                   type="text" rows="1" [attr.id]="'q_' + toggleQuestion.toggleQuestionId"></textarea>
-                                        <label [attr.for]="'q_' + toggleQuestion.toggleQuestionId" class="mdl-textfield__label">Comment...</label>
+                                        <label [attr.for]="'q_' + toggleQuestion.toggleQuestionId" class="mdl-textfield__label questiontext">Comment...</label>
                                     </div>
                                 </div>
 
@@ -217,7 +217,7 @@
                             <ng-template ngSwitchCase="date">
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                    <div class="generate-app-toggle__question-text questiontext">{{toggleQuestion.questionText}}</div>
                                 </div>
 
                                 <div *ngIf="toggleQuestion.emapsQuestionAbbrv == 'CHDCTDTE'" class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
@@ -242,7 +242,7 @@
                             <ng-template *ngSwitchDefault>
 
                                 <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-                                    <div class="generate-app-toggle__question-text">{{toggleQuestion.questionText}}</div>
+                                    <div class="generate-app-toggle__question-text questiontext">{{toggleQuestion.questionText}}</div>
                                 </div>
 
                                 <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">

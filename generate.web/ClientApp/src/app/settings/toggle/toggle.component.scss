@@ -38,6 +38,10 @@
     width: 100%;
 }
 
+.mdl-button--raised.mdl-button--colored {
+    background: #546d78 !important;
+    color: #fff
+}
 
 
 .generate-app-toggle__question-text{
@@ -76,6 +80,8 @@ select::-ms-expand {
 
 .clickable {
     cursor: pointer;
+    color: #a86500 !important;
+    text-decoration: underline !important;
 }
 
 .generate-app-toggle__button{
@@ -120,4 +126,8 @@ select::-ms-expand {
 
 .generate-app-toggle__question-radio-button {
     margin: 5px;
+}
+
+.questiontext {
+    color: #546d78 !important;
 }
