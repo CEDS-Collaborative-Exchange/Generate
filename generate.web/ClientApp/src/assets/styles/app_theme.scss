@@ -20,5 +20,13 @@ $app-theme: mat.define-light-theme(
 }
 
 .mdl-switch__thumb {
-    background: #ff4081;
+    background: #D28004;
+}
+
+.mdc-radio__outer-circle {
+    border-color: #D28004 !important;
+}
+
+.mdc-radio__inner-circle {
+    border-color: #D28004 !important;
 }
