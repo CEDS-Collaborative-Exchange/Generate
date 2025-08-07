@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		bitbucket-pipelines.yml = bitbucket-pipelines.yml
 		global.json = global.json
+		generate.filestorage\Metadata\metadata.txt = generate.filestorage\Metadata\metadata.txt
 		README.md = README.md
 		generate.database\README.md = generate.database\README.md
 		VisualStudioHelper.ttinclude = VisualStudioHelper.ttinclude
