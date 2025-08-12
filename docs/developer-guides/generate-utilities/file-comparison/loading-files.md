@@ -20,7 +20,7 @@ exec Utilities.CreateSubmissionFileTable
 @DatabaseName = 'Generate', 	-- Your database name 
 @SchemaName = 'XX', 		-- Your schema name 
 @SubmissionYear = 2022, 		-- The report year
-@ReportCode = 'C002', 		-- EdFacts File Number 
+@ReportCode = '002', 		-- EdFacts File Number 
 @ReportLevel = 'LEA', 		-- 'SEA', 'LEA', 'SCH' 
 @Label = 'Legacy', 
 @ShowSQL = 0, 
@@ -37,8 +37,8 @@ If BCP is enabled on your server, you can execute the following SQL command to l
 
 ```sql
 exec Utilities.LoadSubmissionFileTable 
-@TargetTableName = 'Generate.XX.C002_LEA_2022_Legacy', -- Existing table 
-@SourceFilePathAndName = 'D:\EdFactsFiles\C002LEA2022.tab', -- Your file 
+@TargetTableName = 'Generate.XX.002_LEA_2022_Legacy', -- Existing table 
+@SourceFilePathAndName = 'D:\EdFactsFiles\002LEA2022.tab', -- Your file 
 @FileType = 'Tab', -- 'Tab', 'CSV' 
 @ShowSQL = 0
 ```

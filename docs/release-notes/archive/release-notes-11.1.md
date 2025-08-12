@@ -4,20 +4,6 @@ description: >-
   version 11.1 released in September 2023.
 cover: ../../.gitbook/assets/Generate Release v5.3_Gitbook thumbnail (1).jpg
 coverY: 0
-layout:
-  cover:
-    visible: true
-    size: hero
-  title:
-    visible: true
-  description:
-    visible: true
-  tableOfContents:
-    visible: true
-  outline:
-    visible: true
-  pagination:
-    visible: true
 ---
 
 # Release Notes 11.1

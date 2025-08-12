@@ -88,7 +88,7 @@ Exec [App].[Wrapper_Migrate_Directory_to_RDS]
 ```sql
 UPDATE app.GenerateReports
 SET IsLocked = 1
-WHERE ReportCode IN ('c029', 'c039')
+WHERE ReportCode IN ('029', '039')
 EXEC RDS.Create_Reports 'directory', 0, 'organizationcounts'
 ```
 

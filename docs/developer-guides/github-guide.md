@@ -1,17 +1,6 @@
 ---
 description: Learn how to navigate and contribute to the Generate repository on GitHub.
 icon: github
-layout:
-  title:
-    visible: true
-  description:
-    visible: true
-  tableOfContents:
-    visible: true
-  outline:
-    visible: true
-  pagination:
-    visible: true
 ---
 
 # GitHub Guide

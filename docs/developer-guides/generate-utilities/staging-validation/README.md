@@ -34,7 +34,7 @@ exec staging.StagingValidation_Execute
 @PrintSQL = 0
 ```
 
-<table><thead><tr><th width="246">Parameter</th><th>Description</th></tr></thead><tbody><tr><td><strong>@SchoolYear</strong></td><td>The school year that corresponds to the data in staging.</td></tr><tr><td><strong>@FactTypeOrReportCode</strong></td><td>Either an ED<em>Facts</em> Report Code (i.e., C029, C002, C005) or a Generate Fact Type (i.e., Directory, ChildCount, Exiting). If an incorrect value is provided, the query will return a list of valid values.</td></tr><tr><td><strong>@RemoveHistory</strong></td><td>Determines if the validation results will replace historical validation results for the same school year and fact type/report code or will append to the existing results. This is an optional parameter, and if not supplied will default to 0 (<mark style="background-color:yellow;">do not remove history</mark>).</td></tr><tr><td><strong>@PrintSQL</strong></td><td>A debugging capability that will display the dynamic SQL that will run to perform the staging validation. This is an optional parameter and if not supplied will default to 0 (<mark style="background-color:yellow;">do not show the SQL</mark>).</td></tr></tbody></table>
+<table><thead><tr><th width="246">Parameter</th><th>Description</th></tr></thead><tbody><tr><td><strong>@SchoolYear</strong></td><td>The school year that corresponds to the data in staging.</td></tr><tr><td><strong>@FactTypeOrReportCode</strong></td><td>Either an ED<em>Facts</em> Report Code (i.e., 029, 002, 005) or a Generate Fact Type (i.e., Directory, ChildCount, Exiting). If an incorrect value is provided, the query will return a list of valid values.</td></tr><tr><td><strong>@RemoveHistory</strong></td><td>Determines if the validation results will replace historical validation results for the same school year and fact type/report code or will append to the existing results. This is an optional parameter, and if not supplied will default to 0 (<mark style="background-color:yellow;">do not remove history</mark>).</td></tr><tr><td><strong>@PrintSQL</strong></td><td>A debugging capability that will display the dynamic SQL that will run to perform the staging validation. This is an optional parameter and if not supplied will default to 0 (<mark style="background-color:yellow;">do not show the SQL</mark>).</td></tr></tbody></table>
 
 ### View Staging Validation Process Results
 
@@ -153,7 +153,7 @@ This example shows how to add a REQUIRED rule to a specific column in a specific
 
 ```sql
 exec Staging.StagingValidation_InsertRule
-@FactTypeOrReportCode = 'C141',
+@FactTypeOrReportCode = '141',
 @StagingTableName = 'ProgramParticipationSpecialEducation',
 @StagingColumnName = 'IdeaIndicator',
 @RuleDscr = 'Cannot be NULL',
@@ -191,7 +191,7 @@ This example shows how to add a conditional rule with expanded logic that may sp
 
 ```sql
 exec Staging.StagingValidation_InsertRule
-@FactTypeOrReportCode= 'C052, C032, C086, C141',
+@FactTypeOrReportCode= '052, 032, 086, 141',
 @StagingTableName = 'K12Enrollment',
 @StagingColumnName = 'GradeLevel',
 @RuleDscr = 'A student can only be enrolled in a single grade',
@@ -243,12 +243,12 @@ exec Staging.StagingValidation_AssignRuleToReports
 ```
 
 \
-This example assigns rule 19 to reports C188 and C189.
+This example assigns rule 19 to reports 188 and 189.
 
 ```sql
 exec Staging.StagingValidation_AssignRuleToReports
 @StagingValidationRuleId = 19,
-@FactTypeOrReportCode = 'C188, C189',
+@FactTypeOrReportCode = '188, 189',
 @CreatedBy = 'Generate',
 @Enabled = 1
 ```

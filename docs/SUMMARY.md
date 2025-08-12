@@ -41,6 +41,8 @@
   * [Upgrade](developer-guides/installation/upgrade/README.md)
     * [Generate Update](developer-guides/installation/upgrade/generate-update.md)
     * [Optional Installations](developer-guides/installation/upgrade/optional-installations.md)
+    * [Troubleshooting the Generate Update Process](developer-guides/installation/upgrade/troubleshooting-the-generate-update-process.md)
+    * [Generate File Storage](developer-guides/installation/upgrade/generate-file-storage.md)
 * [Migration](developer-guides/migration/README.md)
   * [Implementation FAQ](developer-guides/migration/implementation-faq.md)
   * [Data Migration](developer-guides/migration/data-migration.md)
@@ -69,6 +71,8 @@
   * [Staging Table Snapshot](developer-guides/generate-utilities/staging-table-snapshot.md)
   * [Fact Type Table Validation Process](developer-guides/generate-utilities/fact-type-table-validation-process.md)
   * [Debug Views for Staging and the Fact tables](developer-guides/generate-utilities/debug-views-for-staging-and-the-fact-tables.md)
+  * [Staging ETL Mapping Assistance](developer-guides/generate-utilities/staging-etl-mapping-assistance.md)
+  * [Troubleshooting Report Migration Results](developer-guides/generate-utilities/troubleshooting-report-migration-results.md)
 * [Generate Architecture](developer-guides/generate-architecture.md)
 * [GitHub Guide](developer-guides/github-guide.md)
 * [Discord Guide](developer-guides/discord-guide.md)
@@ -109,6 +113,7 @@
 ## Release Notes
 
 * [Introduction](release-notes/introduction.md)
+* [Release Notes 12.4](release-notes/release-notes-12.4.md)
 * [Release Notes 12.3](release-notes/release-notes-12.3.md)
 * [Release Notes 12.2](release-notes/release-notes-12.2.md)
 * [Release Notes 12.1](release-notes/release-notes-12.1.md)
@@ -139,6 +144,7 @@
   * [Release Notes 3.1](release-notes/archive/release-notes-v3.1.md)
   * [Release Notes 3.0](release-notes/archive/release-notes-v3.0.md)
   * [Release Notes 2.4](release-notes/archive/release-notes-v2.4.md)
+* [Release Notes 12.3](release-notes/release-notes-12.3-1.md)
 
 ## Hot Fixes
 
