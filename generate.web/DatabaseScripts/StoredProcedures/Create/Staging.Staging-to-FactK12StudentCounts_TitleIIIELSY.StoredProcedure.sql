@@ -55,8 +55,30 @@ BEGIN
 			SELECT @SYStartDate = @ReportingDate, @SYEndDate = @ReportingDate
 		END
 
-	--Create the temp tables (and any relevant indexes) needed for this domain
+	--Get the set of students from DimPeople to be used for the migrated SY
+		if object_id(N'tempdb..#dimPeople') is not null drop table #dimPeople
 
+		select K12StudentStudentIdentifierState
+			, max(DimPersonId)								DimPersonId
+			, min(RecordStartDateTime)						RecordStartDateTime
+			, max(isnull(RecordEndDateTime, @SYEndDate))	RecordEndDateTime
+			, max(isnull(birthdate, '1900-01-01'))			BirthDate
+		into #dimPeople
+		from rds.DimPeople
+		where ((RecordStartDateTime < @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) > @SYStartDate)
+			or (RecordStartDateTime >= @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) <= @SYEndDate))
+		and IsActiveK12Student = 1
+		group by K12StudentStudentIdentifierState
+		order by K12StudentStudentIdentifierState
+
+		create index IDX_dimPeople ON #dimPeople (K12StudentStudentIdentifierState, DimPersonId, RecordStartDateTime, RecordEndDateTime, Birthdate)
+
+	--reset the RecordStartDateTime if the date is prior to the default start date of 7/1
+		update #dimPeople
+		set RecordStartDateTime = @SYStartDate
+		where RecordStartDateTime < @SYStartDate
+
+	--Create the temp tables (and any relevant indexes) needed for this domain
 		SELECT *
 		INTO #vwIdeaStatuses
 		FROM RDS.vwDimIdeaStatuses
@@ -201,12 +223,8 @@ BEGIN
 			ON convert(date, rds.RecordStartDateTime)  <= @SYEndDate
 			AND ISNULL(convert(date, rds.RecordEndDateTime), @SYEndDate) >= @SYStartDate
 	-- dimpeople (rds)
-		JOIN RDS.DimPeople rdp
+		JOIN #dimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND rdp.IsActiveK12Student = 1
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
---			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND rdp.RecordStartDateTime  <= @SYEndDate
 			AND ISNULL(rdp.RecordEndDateTime, @SYEndDate) >= @SYStartDate
@@ -214,14 +232,16 @@ BEGIN
 			and ISNULL(CONVERT(DATE, ske.EnrollmentExitDate), @SYEndDate) = ISNULL(CONVERT(DATE, rdp.RecordEndDateTime), @SYEndDate)
 	-- TitleIII Status
 		LEFT JOIN Staging.ProgramParticipationTitleIII sppt3
-			ON ske.StudentIdentifierState = sppt3.StudentIdentifierState
+			ON ske.SchoolYear = sppt3.SchoolYear		
+			AND ske.StudentIdentifierState = sppt3.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppt3.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppt3.SchoolIdentifierSea, '')
 			AND ISNULL(sppt3.ProgramParticipationBeginDate, @SYStartDate) <= @SYEndDate
 			AND ISNULL(sppt3.ProgramParticipationEndDate, @SYEndDate) >= @SYStartDate
 	--english learner
 		JOIN Staging.PersonStatus el 
-			ON ske.StudentIdentifierState = el.StudentIdentifierState
+			ON ske.SchoolYear = el.SchoolYear		
+			AND ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND ISNULL(el.EnglishLearner_StatusStartDate, @SYStartDate) <= @SYEndDate

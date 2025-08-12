@@ -1181,6 +1181,7 @@ namespace generate.testdata.DataGenerators
                     LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability,
                     SchoolIdentifierSea = s.SchoolIdentifierSea,
                     StudentIdentifierState = s.StudentIdentifierState,
+                    SchoolYear = s.SchoolYear,
                     EconomicDisadvantageStatus = Convert.ToBoolean(_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.EcoDisStatusDistribution)),
                     EligibilityStatusForSchoolFoodServicePrograms = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.EligibilityStatusForSchoolFoodServiceProgramsDistribution),
                     EnglishLearnerStatus = Convert.ToBoolean(_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LepStatusDistribution)),
@@ -1194,7 +1195,7 @@ namespace generate.testdata.DataGenerators
                     ProgramType_FosterCare = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.FosterCareProgramParticipantNowDistribution),
                     ProgramType_Immigrant = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution),
                     ProgramType_Section504 = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.Section504ProgramParticipantNowDistribution),
-                    NationalSchoolLunchProgramDirectCertificationIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NationalSchoolLunchProgramDirectCertificationIndicatorDistribution)
+                    NationalSchoolLunchProgramDirectCertificationIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NationalSchoolLunchProgramDirectCertificationIndicatorDistribution),
                 };
 
                 if (personStatus.EconomicDisadvantageStatus.Value == true)
@@ -1371,6 +1372,7 @@ namespace generate.testdata.DataGenerators
                     sped.ProgramParticipationBeginDate = disabilityType.RecordStartDateTime;
                     sped.StudentIdentifierState = s.StudentIdentifierState;
                     ideaIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIdeaIndicatorDistribution);
+                    sped.SchoolYear = s.SchoolYear;
                     sped.IDEAIndicator = ideaIndicator;
 
                     if (disabilityType.RecordEndDateTime.HasValue)
@@ -1448,6 +1450,7 @@ namespace generate.testdata.DataGenerators
                         StudentIdentifierState = s.StudentIdentifierState,
                         ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5)),
                         TitleIIIAccountabilityProgressStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIiiAccountability),
+                        SchoolYear = s.SchoolYear,
                     };
 
                     if (!_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
@@ -1473,7 +1476,8 @@ namespace generate.testdata.DataGenerators
                     LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability,
                     SchoolIdentifierSea = s.SchoolIdentifierSea,
                     StudentIdentifierState = s.StudentIdentifierState,
-                    TitleIIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIIndicator)
+                    TitleIIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIIndicator),
+                    SchoolYear = s.SchoolYear
                 };
 
                 if (titleI.TitleIIndicator != "05") // Anything but "Was Not Served"
@@ -1559,6 +1563,7 @@ namespace generate.testdata.DataGenerators
                         SchoolIdentifierSea = s.SchoolIdentifierSea,
                         StudentIdentifierState = s.StudentIdentifierState,
                         NeglectedOrDelinquentStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDStatusDistribution),
+                        SchoolYear = s.SchoolYear,
                     };
 
                     if (nord.NeglectedOrDelinquentStatus.Value == true)
@@ -1684,7 +1689,8 @@ namespace generate.testdata.DataGenerators
                     ProgramType_FosterCare = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.FosterCareProgramParticipantNowDistribution),
                     ProgramType_Immigrant = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution),
                     ProgramType_Section504 = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.Section504ProgramParticipantNowDistribution),
-                    NationalSchoolLunchProgramDirectCertificationIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NationalSchoolLunchProgramDirectCertificationIndicatorDistribution)
+                    NationalSchoolLunchProgramDirectCertificationIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NationalSchoolLunchProgramDirectCertificationIndicatorDistribution),
+                    SchoolYear = s.SchoolYear,
                 };
 
                 if (personStatus.EconomicDisadvantageStatus.Value == true)
@@ -1850,6 +1856,7 @@ namespace generate.testdata.DataGenerators
                     sped.StudentIdentifierState = s.StudentIdentifierState;
                     ideaIndicator = true;
                     sped.IDEAIndicator = ideaIndicator;
+                    sped.SchoolYear = SchoolYear.ToString();
 
                     if (disabilityType.RecordEndDateTime.HasValue)
                     {
@@ -2112,7 +2119,7 @@ namespace generate.testdata.DataGenerators
                 {
                     grade = _testDataHelper.GetRandomString(rnd, new List<string>() { "KG", "01" });
                 }
-                if(age >= 7 & age < 17)
+                if(age >= 7 && age < 17)
                 {
                     grade = (age - 5 + _testDataHelper.GetRandomIntInRange(rnd, -1, 1)).ToString().PadLeft(2, '0');
                 }

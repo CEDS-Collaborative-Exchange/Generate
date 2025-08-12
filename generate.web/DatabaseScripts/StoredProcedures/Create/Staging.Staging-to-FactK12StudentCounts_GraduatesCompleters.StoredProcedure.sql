@@ -44,6 +44,29 @@ BEGIN
 		SELECT @ReportingStartDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-10-01'AS DATE)
 		SELECT @ReportingEndDate = CAST(CAST(@SchoolYear AS CHAR(4)) + '-09-30'AS DATE)
 
+	--Get the set of students from DimPeople to be used for the migrated SY
+		if object_id(N'tempdb..#dimPeople') is not null drop table #dimPeople
+
+		select K12StudentStudentIdentifierState
+			, max(DimPersonId)								DimPersonId
+			, min(RecordStartDateTime)						RecordStartDateTime
+			, max(isnull(RecordEndDateTime, @SYEndDate))	RecordEndDateTime
+			, max(isnull(birthdate, '1900-01-01'))			BirthDate
+		into #dimPeople
+		from rds.DimPeople
+		where ((RecordStartDateTime < @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) > @SYStartDate)
+			or (RecordStartDateTime >= @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) <= @SYEndDate))
+		and IsActiveK12Student = 1
+		group by K12StudentStudentIdentifierState
+		order by K12StudentStudentIdentifierState
+
+		create index IDX_dimPeople ON #dimPeople (K12StudentStudentIdentifierState, DimPersonId, RecordStartDateTime, RecordEndDateTime, Birthdate)
+
+	--reset the RecordStartDateTime if the date is prior to the default start date of 7/1
+		update #dimPeople
+		set RecordStartDateTime = @SYStartDate
+		where RecordStartDateTime < @SYStartDate
+
 	--Create the temp views (and any relevant indexes) needed for this domain
 		SELECT *
 		INTO #vwK12AcademicAwardStatuses
@@ -80,7 +103,6 @@ BEGIN
 			AND HomelessPrimaryNighttimeResidenceCode =  'MISSING'
 			AND HomelessUnaccompaniedYouthStatusCode = 'MISSING'
 			AND HomelessServicedIndicatorCode = 'MISSING'
-
 
 		SELECT *
 		INTO #vwEconomicallyDisadvantagedStatuses
@@ -194,18 +216,14 @@ BEGIN
 		FROM Staging.K12Enrollment ske
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
-		JOIN RDS.DimPeople rdp
+		JOIN #dimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND rdp.IsActiveK12Student = 1
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
-			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND ((rdp.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (rdp.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdp.RecordEndDateTime, @SYEndDate) > @ReportingStartDate))
 		JOIN RDS.DimSeas rds
 			ON ((rds.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (rds.RecordStartDateTime < @ReportingStartDate AND ISNULL(rds.RecordEndDateTime, @SYEndDate) > @ReportingStartDate))
-
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LEAIdentifierSeaAccountability = rdl.LeaIdentifierSea
 			AND ((rdl.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
@@ -221,7 +239,8 @@ BEGIN
 			ON ISNULL(ske.HighSchoolDiplomaType, 'MISSING') = ISNULL(rdkaas.HighSchoolDiplomaTypeCode, rdkaas.HighSchoolDiplomaTypeMap)
 	--disability
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation sppse
-			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
+			ON ske.SchoolYear = sppse.SchoolYear
+			AND ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(sppse.LEAIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND ((sppse.ProgramParticipationBeginDate BETWEEN @ReportingStartDate and @ReportingEndDate)
@@ -234,7 +253,8 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(spr.SchoolIdentifierSea, '')
 	--english learner
 		LEFT JOIN Staging.PersonStatus el 
-			ON ske.StudentIdentifierState = el.StudentIdentifierState
+			ON ske.SchoolYear = el.SchoolYear
+			AND ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(el.LEAIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND el.EnglishLearnerStatus = 1
@@ -242,7 +262,8 @@ BEGIN
 				OR (el.EnglishLearner_StatusStartDate < @ReportingStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) > @ReportingStartDate))
 	--homelessness
 		LEFT JOIN Staging.PersonStatus homeless 
-			ON ske.StudentIdentifierState = homeless.StudentIdentifierState
+			ON ske.SchoolYear = homeless.SchoolYear
+			AND ske.StudentIdentifierState = homeless.StudentIdentifierState
 			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(homeless.LEAIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(homeless.SchoolIdentifierSea, '')
 			AND homeless.HomelessnessStatus = 1
@@ -250,7 +271,8 @@ BEGIN
 				OR (homeless.Homelessness_StatusStartDate < @ReportingStartDate AND ISNULL(homeless.Homelessness_StatusEndDate, @SYEndDate) > @ReportingStartDate))
 	--economically disadvantaged
 		LEFT JOIN Staging.PersonStatus ecoDis
-			ON ske.StudentIdentifierState = ecoDis.StudentIdentifierState
+			ON ske.SchoolYear = ecoDis.SchoolYear
+			AND ske.StudentIdentifierState = ecoDis.StudentIdentifierState
 			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(ecoDis.LEAIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(ecoDis.SchoolIdentifierSea, '')
 			AND ecoDis.EconomicDisadvantageStatus = 1
@@ -258,7 +280,8 @@ BEGIN
 				OR (ecoDis.EconomicDisadvantage_StatusStartDate < @ReportingStartDate AND ISNULL(ecoDis.EconomicDisadvantage_StatusEndDate, @SYEndDate) > @ReportingStartDate))
 	--migrant
 		LEFT JOIN Staging.PersonStatus migrant
-			ON ske.StudentIdentifierState = migrant.StudentIdentifierState
+			ON ske.SchoolYear = migrant.SchoolYear
+			AND ske.StudentIdentifierState = migrant.StudentIdentifierState
 			AND ISNULL(ske.LEAIdentifierSeaAccountability, '') = ISNULL(migrant.LEAIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
 			AND migrant.MigrantStatus = 1

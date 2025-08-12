@@ -85,50 +85,6 @@ namespace generate.infrastructure.Repositories.RDS
 
 
 
-        //public IEnumerable<ReportEDFactsK12StudentCount> Get_MembershipReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, int startRecord, int numberOfRecords, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool isOnlineReport = false)
-        //{
-        //    // Convert bool parameters to bit values
-
-        //    int zeroCounts = 0;
-        //    int friendlyCaptions = 0;
-        //    int missingCategoryCounts = 0;
-        //    int onlineReport = 0;
-
-        //    if (includeZeroCounts)
-        //    {
-        //        zeroCounts = 1;
-        //    }
-        //    if (includeFriendlyCaptions)
-        //    {
-        //        friendlyCaptions = 1;
-        //    }
-        //    if (obscureMissingCategoryCounts)
-        //    {
-        //        missingCategoryCounts = 1;
-        //    }
-        //    if (isOnlineReport)
-        //    {
-        //        onlineReport = 1;
-        //    }
-
-        //    var returnObject = new List<ReportEDFactsK12StudentCount>();
-
-        //    try
-        //    {
-        //        int? oldTimeout = _rdsDbContext.Database.GetCommandTimeout();
-        //        _rdsDbContext.Database.SetCommandTimeout(11000);
-        //        returnObject = _rdsDbContext.Set<ReportEDFactsK12StudentCount>().FromSqlRaw("rds.Get_MembershipReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @includeZeroCounts = {4}, @includeFriendlyCaptions = {5}, @obscureMissingCategoryCounts = {6}, @isOnlineReport={7}, @startRecord={8}, @numberOfRecords={9}", reportCode, reportLevel, reportYear, categorySetCode, zeroCounts, friendlyCaptions, missingCategoryCounts, onlineReport, startRecord, numberOfRecords).ToList();
-        //        _rdsDbContext.Database.SetCommandTimeout(oldTimeout);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex.Message);
-        //        throw;
-        //    }
-        //    return returnObject;
-
-        //}
-
         public (IEnumerable<MembershipReportDto>,int)  Get_MembershipReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool isOnlineReport = false, int startRecord = 1, int numberOfRecords = 1000000)
         {
             // Convert bool parameters to bit values
@@ -197,24 +153,24 @@ namespace generate.infrastructure.Repositories.RDS
                             // Check if the reader has rows
                             if (reader.HasRows)
                             {
-                                int fileRecordNUmber = 0;
+                                int fileRecordNumber = 0;
                                 // Read the data
                                 while (reader.Read())
                                 {
-                                    ++fileRecordNUmber;
+                                    ++fileRecordNumber;
 
                                     MembershipReportDto membershipReport = new MembershipReportDto();
 
                                     membershipReport.StateANSICode = reader.GetString(reader.GetOrdinal("StateANSICode"));
                                     membershipReport.StateAbbreviationCode = reader.GetString(reader.GetOrdinal("StateAbbreviationCode"));
                                     membershipReport.OrganizationIdentifierSea = reader.IsDBNull(reader.GetOrdinal("OrganizationIdentifierSea")) ? "" : reader.GetString(reader.GetOrdinal("OrganizationIdentifierSea"));
-                                    membershipReport.ParentOrganizationIdentifierSea= reader.IsDBNull(reader.GetOrdinal("ParentOrganizationIdentifierSea")) ? "" : reader.GetString(reader.GetOrdinal("ParentOrganizationIdentifierSea"));
+                                    membershipReport.ParentOrganizationIdentifierSea = reader.IsDBNull(reader.GetOrdinal("ParentOrganizationIdentifierSea")) ? "" : reader.GetString(reader.GetOrdinal("ParentOrganizationIdentifierSea"));
                                     membershipReport.OrganizationName = reader.GetString(reader.GetOrdinal("OrganizationName"));
                                     membershipReport.GRADELEVEL = reader.IsDBNull(reader.GetOrdinal("GRADELEVEL")) ? "" : reader.GetString(reader.GetOrdinal("GRADELEVEL"));
                                     membershipReport.RACE = reader.IsDBNull(reader.GetOrdinal("RACE")) ? "" : reader.GetString(reader.GetOrdinal("RACE"));
                                     membershipReport.SEX = reader.IsDBNull(reader.GetOrdinal("SEX")) ? "" : reader.GetString(reader.GetOrdinal("SEX"));
-                                    membershipReport.TotalIndicator= reader.GetString(reader.GetOrdinal("TotalIndicator"));
-                                    membershipReport.StudentCount= reader.GetInt32(reader.GetOrdinal("StudentCount"));
+                                    membershipReport.TotalIndicator = reader.GetString(reader.GetOrdinal("TotalIndicator"));
+                                    membershipReport.StudentCount = reader.GetInt32(reader.GetOrdinal("StudentCount"));
 
                                     returnObject.Add(membershipReport);
                                 }

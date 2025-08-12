@@ -56,7 +56,7 @@
 <div *ngIf="!isLoading && reportDataDto.dataCount >= 0 && (reportParameters.reportType !== 'datapopulation')">
 
 </div>
-<div *ngIf="reportCode==='c197'">
+<div *ngIf="reportCode==='197'">
     <div *ngIf="!isLoading || !hasRecords">
         <generate-app-table #reportGrid [itemsSource]="reportDataDto"
                             [headers]="['Organization Name','State Agency Number','LEA Identifier (State)','LEA Identifier (NCES)','School Identifier (State)','School Identifier (NCES)','Charter Management Organization','Charter Management Organization Updated']"
@@ -66,7 +66,7 @@
     </div>
 </div>
 
-<div *ngIf="reportCode==='c103'">
+<div *ngIf="reportCode==='103'">
     <div *ngIf="!isLoading || !hasRecords">
 
     </div>

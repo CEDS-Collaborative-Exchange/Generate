@@ -12,6 +12,7 @@ namespace generate.core.Interfaces.Services
     public interface IEdfactsFileService
     {
         List<ExpandoObject> GetStudentCountData(string reportCode, string reportTypeCode, string reportLevel, string reportYear, List<FileSubmissionColumnDto> fileSubmissioncolumns);
+        List<ExpandoObject> GetSubmissionData(dynamic dataRows, List<FileSubmissionColumnDto> fileSubmissioncolumns, string factTableName, string reportCode, string reportLevel, string factFieldName);
         (IEnumerable<MembershipReportDto>, int) GetMembershipStudentCountData(string reportCode, string reportTypeCode, string reportLevel, string reportYear, List<FileSubmissionColumnDto> fileSubmissioncolumns, int startRecord, int numberOfRecords);
     }
 }

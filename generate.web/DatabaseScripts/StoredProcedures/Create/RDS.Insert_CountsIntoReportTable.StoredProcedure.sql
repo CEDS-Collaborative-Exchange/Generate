@@ -18,7 +18,7 @@ AS
 	FROM app.generatereports agr
 	INNER JOIN app.FactTables aft
 		ON agr.FactTableId = aft.FactTableId
-	WHERE agr.ReportCode = concat('c', @ReportCode)
+	WHERE agr.ReportCode = @ReportCode
 
 		--handle invalid return
 		IF @CountColumn IS NULL OR @ReportTableName IS NULL
@@ -34,7 +34,7 @@ AS
 
 	--Get the Fact Type associated with the File Specification
 	DECLARE @FactTypeCode VARCHAR(50)
-	SELECT @FactTypeCode = RDS.Get_FactTypeByReport(concat('c',@ReportCode))
+	SELECT @FactTypeCode = RDS.Get_FactTypeByReport(@ReportCode)
 
 		--handle invalid return
 		IF @FactTypeCode IS NULL
@@ -58,7 +58,7 @@ AS
 
 	DECLARE cursor_name CURSOR FOR
     SELECT N'
-		DELETE FROM rds.' + @ReportTableName + ' WHERE ReportCode = ''c' + @ReportCode + ''' AND ReportYear = ''' + @SubmissionYear + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE ''' AND CategorySetCode = ''' + CategorySetCode END + ''' AND ReportLevel = ''' + aol.LevelCode + '''
+		DELETE FROM rds.' + @ReportTableName + ' WHERE ReportCode = ''' + @ReportCode + ''' AND ReportYear = ''' + @SubmissionYear + CASE WHEN STRING_AGG(c.CategoryCode, '') = '' THEN '' ELSE ''' AND CategorySetCode = ''' + CategorySetCode END + ''' AND ReportLevel = ''' + aol.LevelCode + '''
 
 		-- insert ' + aol.LevelCode + ' sql
 		' + CASE WHEN ISNULL(STRING_AGG(c.CategoryCode, ''),'') = '' THEN '' ELSE '
@@ -66,7 +66,7 @@ AS
 			SELECT DISTINCT 
 			' + STRING_AGG('pv' + c.CategoryCode + '.CategoryOptionCode AS ' + c.CategoryCode, CHAR(10) + '		, ') + '
 			FROM ' + STRING_AGG('app.CategoryCodeOptionsByReportAndYear pv' + c.CategoryCode, CHAR(10) + '		CROSS JOIN ') + '
-			WHERE ' + STRING_AGG('pv' + c.CategoryCode + '.ReportCode = ''c' + @ReportCode + ''' AND pv' + c.CategoryCode + '.SubmissionYear = ' + @SubmissionYear + ' AND pv' + c.CategoryCode + '.CategorySetCode = ''' + cs.CategorySetCode + ''' AND pv' + c.CategoryCode + '.CategoryCode = ''' + c.CategoryCode + ''' AND pv' + c.CategoryCode + '.TableTypeAbbrv = ''' + att.TableTypeAbbrv + '''', ' AND ') + '
+			WHERE ' + STRING_AGG('pv' + c.CategoryCode + '.ReportCode = ' + @ReportCode + ' AND pv' + c.CategoryCode + '.SubmissionYear = ' + @SubmissionYear + ' AND pv' + c.CategoryCode + '.CategorySetCode = ''' + cs.CategorySetCode + ''' AND pv' + c.CategoryCode + '.CategoryCode = ''' + c.CategoryCode + ''' AND pv' + c.CategoryCode + '.TableTypeAbbrv = ''' + att.TableTypeAbbrv + '''', ' AND ') + '
 		)' END + '
 		insert into rds.' + @ReportTableName + '
 		(
@@ -154,18 +154,18 @@ AS
 			'
 	FROM app.GenerateReports gr
 	LEFT JOIN app.CategorySets cs
-		on cs.GenerateReportId = gr.GenerateReportId
+		ON cs.GenerateReportId = gr.GenerateReportId
 	LEFT JOIN app.CategorySet_Categories csc
-		on csc.CategorySetId = cs.CategorySetId
+		ON csc.CategorySetId = cs.CategorySetId
 	LEFT JOIN app.Categories c 
-		on c.CategoryId = csc.CategoryId
+		ON c.CategoryId = csc.CategoryId
 	LEFT JOIN app.GenerateReport_OrganizationLevels grol
 		ON grol.GenerateReportId = gr.GenerateReportId
 	JOIN app.OrganizationLevels aol
 		ON cs.OrganizationLevelId = aol.OrganizationLevelId
 			OR grol.OrganizationLevelId = aol.OrganizationLevelId
 	LEFT JOIN app.GenerateReport_TableType grtt
-		on gr.GenerateReportId = grtt.GenerateReportId
+		ON gr.GenerateReportId = grtt.GenerateReportId
 	JOIN app.TableTypes att
 		ON cs.TableTypeId = att.TableTypeId
 			OR grtt.TableTypeId = att.TableTypeId
@@ -175,7 +175,7 @@ AS
 		ON cd.DimensionId = d.DimensionId
 	
 	WHERE cs.SubmissionYear = @SubmissionYear
-		AND gr.ReportCode = concat('c', @ReportCode)
+		AND gr.ReportCode = @ReportCode
 	GROUP BY 
 		  gr.ReportCode
 		, aol.LevelCode
@@ -209,14 +209,14 @@ AS
 		IF (SELECT COUNT(DISTINCT ' + d.DimensionFieldName + ') 
 			FROM rds.' + @ReportTableName + '
 			WHERE ' + d.DimensionFieldName + ' <> ''MISSING''
-				AND ReportCode = ''c' + @ReportCode + ''' 
+				AND ReportCode = ' + @ReportCode + '
 				AND ReportYear = ''' + @SubmissionYear + ''' 
 				AND CategorySetCode = ''' + CategorySetCode + ''' 
 				AND ReportLevel = ''' + aol.LevelCode + ''' 
 				) > 0
 		BEGIN
 			DELETE FROM rds.' + @ReportTableName + '
-			WHERE ReportCode = ''c' + @ReportCode + ''' 
+			WHERE ReportCode = ' + @ReportCode + ' 
 				AND ReportYear = ''' + @SubmissionYear + ''' 
 				AND CategorySetCode = ''' + CategorySetCode + ''' 
 				AND ReportLevel = ''' + aol.LevelCode + ''' 
@@ -237,7 +237,7 @@ AS
 	JOIN app.Dimensions d
 		ON cd.DimensionId = d.DimensionId
 	WHERE cs.SubmissionYear = @SubmissionYear
-		AND gr.ReportCode = concat('c',@ReportCode)
+		AND gr.ReportCode = @ReportCode
 	
 	OPEN cursor_name;
 	FETCH NEXT FROM cursor_name INTO @SQLStatement;
@@ -263,7 +263,7 @@ AS
 			SELECT DISTINCT 
 			' + STRING_AGG('pv' + c.CategoryCode + '.CategoryOptionCode AS ' + c.CategoryCode, CHAR(10) + '		, ') + '
 			FROM ' + STRING_AGG('app.CategoryCodeOptionsByReportAndYear pv' + c.CategoryCode, CHAR(10) + '		CROSS JOIN ') + '
-			WHERE ' + STRING_AGG('pv' + c.CategoryCode + '.ReportCode = ''c' + @ReportCode + ''' AND pv' + c.CategoryCode + '.SubmissionYear = ' + @SubmissionYear + ' AND pv' + c.CategoryCode + '.CategorySetCode = ''' + cs.CategorySetCode + ''' AND pv' + c.CategoryCode + '.CategoryCode = ''' + c.CategoryCode + ''' AND pv' + c.CategoryCode + '.TableTypeAbbrv = ''' + att.TableTypeAbbrv + '''', ' AND ') + '
+			WHERE ' + STRING_AGG('pv' + c.CategoryCode + '.ReportCode = ' + @ReportCode + ' AND pv' + c.CategoryCode + '.SubmissionYear = ' + @SubmissionYear + ' AND pv' + c.CategoryCode + '.CategorySetCode = ''' + cs.CategorySetCode + ''' AND pv' + c.CategoryCode + '.CategoryCode = ''' + c.CategoryCode + ''' AND pv' + c.CategoryCode + '.TableTypeAbbrv = ''' + att.TableTypeAbbrv + '''', ' AND ') + '
 				AND ' + STRING_AGG('pv' + c.CategoryCode + '.CategoryOptionCode <> ''MISSING''' , ' AND ') + '
 		)
 		insert into rds.' + @ReportTableName + '
@@ -340,18 +340,18 @@ AS
 
 	FROM app.GenerateReports gr
 	LEFT JOIN app.CategorySets cs
-		on cs.GenerateReportId = gr.GenerateReportId
+		ON cs.GenerateReportId = gr.GenerateReportId
 	LEFT JOIN app.CategorySet_Categories csc
-		on csc.CategorySetId = cs.CategorySetId
+		ON csc.CategorySetId = cs.CategorySetId
 	LEFT JOIN app.Categories c 
-		on c.CategoryId = csc.CategoryId
+		ON c.CategoryId = csc.CategoryId
 	LEFT JOIN app.GenerateReport_OrganizationLevels grol
 		ON grol.GenerateReportId = gr.GenerateReportId
 	JOIN app.OrganizationLevels aol
 		ON cs.OrganizationLevelId = aol.OrganizationLevelId
 			OR grol.OrganizationLevelId = aol.OrganizationLevelId
 	LEFT JOIN app.GenerateReport_TableType grtt
-		on gr.GenerateReportId = grtt.GenerateReportId
+		ON gr.GenerateReportId = grtt.GenerateReportId
 	JOIN app.TableTypes att
 		ON cs.TableTypeId = att.TableTypeId
 			OR grtt.TableTypeId = att.TableTypeId
@@ -360,7 +360,7 @@ AS
 	LEFT JOIN app.Dimensions d
 		ON cd.DimensionId = d.DimensionId
 	WHERE cs.SubmissionYear = @SubmissionYear
-		AND gr.ReportCode = concat('c',@ReportCode)
+		AND gr.ReportCode = @ReportCode
 	GROUP BY 
 		  gr.ReportCode
 		, aol.LevelCode

@@ -45,6 +45,29 @@ BEGIN
 
 		SELECT @ChildCountDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@ChildCountDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ChildCountDate) AS VARCHAR(2)) AS DATE)
 
+	--Get the set of students from DimPeople to be used for the migrated SY
+		if object_id(N'tempdb..#dimPeople') is not null drop table #dimPeople
+
+		select K12StudentStudentIdentifierState
+			, max(DimPersonId)								DimPersonId
+			, min(RecordStartDateTime)						RecordStartDateTime
+			, max(isnull(RecordEndDateTime, @SYEndDate))	RecordEndDateTime
+			, max(isnull(birthdate, '1900-01-01'))			BirthDate
+		into #dimPeople
+		from rds.DimPeople
+		where ((RecordStartDateTime < @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) > @SYStartDate)
+			or (RecordStartDateTime >= @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) <= @SYEndDate))
+		and IsActiveK12Student = 1
+		group by K12StudentStudentIdentifierState
+		order by K12StudentStudentIdentifierState
+
+		create index IDX_dimPeople ON #dimPeople (K12StudentStudentIdentifierState, DimPersonId, RecordStartDateTime, RecordEndDateTime, Birthdate)
+
+	--reset the RecordStartDateTime if the date is prior to the default start date of 7/1
+		update #dimPeople
+		set RecordStartDateTime = @SYStartDate
+		where RecordStartDateTime < @SYStartDate
+
 	--Create the temp tables (and any relevant indexes) needed for this domain
 		SELECT *
 		INTO #vwGradeLevels
@@ -178,20 +201,16 @@ BEGIN
 				ON @ChildCountDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)		
 		--program participation special education	
 			JOIN Staging.ProgramParticipationSpecialEducation sppse
-				ON ske.StudentIdentifierState = sppse.StudentIdentifierState
+				ON ske.SchoolYear = sppse.SchoolYear
+				AND ske.StudentIdentifierState = sppse.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sppse.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sppse.SchoolIdentifierSea,'')
 				AND @ChildCountDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
 		--dimpeople	(rds)
-			JOIN RDS.DimPeople rdp
+			JOIN #dimPeople rdp
 				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-				AND IsActiveK12Student = 1
-				AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
-				AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-				AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 				AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 				AND @ChildCountDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
-
 			LEFT JOIN RDS.DimDates rdd
 				ON sppse.ProgramParticipationEndDate = rdd.DateValue
 				AND rdd.DateValue BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
@@ -217,7 +236,8 @@ BEGIN
 				AND @ChildCountDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
 		--person status 
 			LEFT JOIN Staging.PersonStatus el 
-				ON ske.StudentIdentifierState = el.StudentIdentifierState
+				ON ske.SchoolYear = el.SchoolYear
+				AND ske.StudentIdentifierState = el.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(el.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(el.SchoolIdentifierSea,'')
 				AND @ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)

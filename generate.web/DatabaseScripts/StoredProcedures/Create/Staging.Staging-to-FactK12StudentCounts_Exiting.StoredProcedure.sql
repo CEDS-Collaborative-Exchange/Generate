@@ -82,6 +82,29 @@ BEGIN
 
 		END 
 
+	--Get the set of students from DimPeople to be used for the migrated SY
+		if object_id(N'tempdb..#dimPeople') is not null drop table #dimPeople
+
+		select K12StudentStudentIdentifierState
+			, max(DimPersonId)								DimPersonId
+			, min(RecordStartDateTime)						RecordStartDateTime
+			, max(isnull(RecordEndDateTime, @SYEndDate))	RecordEndDateTime
+			, max(isnull(birthdate, '1900-01-01'))			BirthDate
+		into #dimPeople
+		from rds.DimPeople
+		where ((RecordStartDateTime < @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) > @SYStartDate)
+			or (RecordStartDateTime >= @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) <= @SYEndDate))
+		and IsActiveK12Student = 1
+		group by K12StudentStudentIdentifierState
+		order by K12StudentStudentIdentifierState
+
+		create index IDX_dimPeople ON #dimPeople (K12StudentStudentIdentifierState, DimPersonId, RecordStartDateTime, RecordEndDateTime, Birthdate)
+
+	--reset the RecordStartDateTime if the date is prior to the default start date of 7/1
+		update #dimPeople
+		set RecordStartDateTime = @SYStartDate
+		where RecordStartDateTime < @SYStartDate
+
 	--Create the temp tables (and any relevant indexes) needed for this domain
 		SELECT * 
 		INTO #vwRaces 
@@ -183,7 +206,8 @@ BEGIN
 			ON sppse.ProgramParticipationEndDate = rdd.DateValue
 	--enrollment
 		JOIN Staging.K12Enrollment ske
-			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
+			ON ske.SchoolYear = sppse.SchoolYear		
+			AND ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND rdd.DateValue BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
@@ -193,14 +217,10 @@ BEGIN
 		JOIN RDS.DimSeas rds
 			ON rdd.DateValue BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--student
-		JOIN RDS.DimPeople rdp
+		JOIN #dimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
---			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 			AND rdd.DateValue BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
-			AND IsActiveK12Student = 1
 	--demographics
 		JOIN RDS.vwDimK12Demographics rdkd
  			ON rsy.SchoolYear = rdkd.SchoolYear
@@ -250,7 +270,8 @@ BEGIN
 		)
 
 		INSERT INTO #uniqueLEAs
-		SELECT DISTINCT LeaIdentifierSea, LEA_RecordStartDateTime, LEA_RecordEndDateTime, LEA_TitleIProgramType, LEA_TitleIinstructionalService, LEA_K12LeaTitleISupportService
+		SELECT DISTINCT LeaIdentifierSea, LEA_RecordStartDateTime, LEA_RecordEndDateTime
+			, LEA_TitleIProgramType, LEA_TitleIinstructionalService, LEA_K12LeaTitleISupportService
 		FROM Staging.K12Organization
 		WHERE LEA_IsReportedFederally = 1
 		
@@ -261,8 +282,10 @@ BEGIN
 		FROM #Facts fact
 		JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON fact.StagingId = sppse.Id
+			AND sppse.SchoolYear = @SchoolYear
 		JOIN Staging.IdeaDisabilityType sidt	
-			ON sidt.StudentIdentifierState = sppse.StudentIdentifierState
+			ON sppse.SchoolYear = sidt.SchoolYear		
+			AND sidt.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND sidt.IsPrimaryDisability = 1
@@ -283,8 +306,10 @@ BEGIN
 		FROM #Facts fact
 		JOIN Staging.ProgramParticipationSpecialEducation sppse
 			ON fact.StagingId = sppse.Id
+			AND sppse.SchoolYear = @SchoolYear
 		JOIN Staging.PersonStatus el 
-			ON sppse.StudentIdentifierState = el.StudentIdentifierState
+			ON sppse.SchoolYear = el.SchoolYear		
+			AND sppse.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)

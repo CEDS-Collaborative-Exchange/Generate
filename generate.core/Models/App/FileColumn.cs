@@ -14,6 +14,7 @@ namespace generate.core.Models.App
         public int ColumnLength { get; set; }
         public string DataType { get; set; }
         public int? DimensionId { get; set; }
+        public string ReportColumn { get; set; }
         public Dimension Dimension { get; set; }
         public List<FileSubmission_FileColumn> FileSubmission_FileColumns { get; set; }
 
