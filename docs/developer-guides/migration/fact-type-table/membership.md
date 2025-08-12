@@ -57,7 +57,7 @@ ORDER BY        agrft.FactTypeId, agr.ReportCode
 The Generate ETL Documentation Templates give a detailed breakdown of all data elements needed for each Fact Type and show how data are transformed through each stage of the data migration. After completing the CEDS alignment process these templates can be used to document data transformation notes and option set mappings. They also contain a description of the CEDS data elements needed and what they are called throughout the Generate database. The ETL Templates documentation has a detailed instruction tab to help you know how to utilize this tool effectively. If you need clarification, please reach out to your CIID TA provider.
 
 {% hint style="info" %}
-You can find theMembership ETL Documentation Template.xlsx on the [ETL Documentation Template](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074) page.
+You can find the Membership ETL Documentation Template.xlsx on the [ETL Documentation Template](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074) page. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://app.gitbook.com/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/~/changes/286/developer-guides/generate-utilities/staging-etl-mapping-assistance).&#x20;
 {% endhint %}
 
 #### Generate Metadata
@@ -99,7 +99,7 @@ You can also filter the Source System Reference Data table by `FactTypeCode` and
 ```sql
 SELECT DISTINCT FactTypeCode, ReportCode, StagingTableName, StagingcolumnName, SSRDRefTableName, SSRDTableFilter 
 FROM app.vwStagingRelationships
-WHERE FactTypeCode = 'membership' and ReportCode = 'c033'
+WHERE FactTypeCode = 'membership' and ReportCode = '033'
 ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 ```
 {% endcode %}
@@ -108,7 +108,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields will need to be mapped using the value in the SSRD table using these filters. For further information please review [Source System Reference Data](../../generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data.md).
 
-Membership Reports ('C033', 'C052', 'C226') have filters
+Membership Reports ('033', '052', '226') have filters
 
 * 000100 Used for Grade Level
 * 000174 Used for LEA Operational Status
@@ -289,7 +289,7 @@ To migrate data from the CEDS Data Warehouse to the Report Tables in SSMS you wi
     UPDATE App.GenerateReports set IsLocked = 0
     UPDATE App.GenerateReports
     SET IsLocked = 1
-    WHERE ReportCode IN ('C033', 'C052', 'C226')
+    WHERE ReportCode IN ('033', '052', '226')
 
 -- C. Empty the reports table for the specific reports    
     EXEC [rds].[Empty_Reports] @FactTypeCode = 'membership'
@@ -324,12 +324,12 @@ exec Utilities.CompareSubmissionFiles
 @DatabaseName = 'Generate', -- Your database name 
 @SchemaName = 'XX', -- Your schema name 
 @SubmissionYear = 2023, -- The report year
-@ReportCode = 'C033', -- EdFacts File Number – c033 , c052, c226
+@ReportCode = 'C033', -- EdFacts File Number – 033 , 052, 226
 @ReportLevel = 'LEA', -- 'SEA', 'LEA', 'SCH'
-@LegacyTableName = 'Generate.XX.C033_LEA_2023_Legacy', -- Legacy table
-@GenerateTableName = 'Generate.XX.C033_LEA_2023_Generate', -- Generate table
+@LegacyTableName = 'Generate.XX.033_LEA_2023_Legacy', -- Legacy table
+@GenerateTableName = 'Generate.XX.033_LEA_2023_Generate', -- Generate table
 @ShowSQL = 0,
-@ComparisonResultsTableName = 'generate.XX.C033_LEA_2023_COMPARISON' -- Comparison table name
+@ComparisonResultsTableName = 'generate.XX.033_LEA_2023_COMPARISON' -- Comparison table name
 ```
 {% endcode %}
 

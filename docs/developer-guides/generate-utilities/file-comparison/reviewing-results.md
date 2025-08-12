@@ -16,13 +16,13 @@ In all cases, you can view the results of a comparison by running the following 
 Select * from [Comparison Table Name]
 ```
 
-Where `[Comparison Table Name]` is the fully qualified table name (database.schema.tablename) that contains the results. For example, the table might be named “`Generate.NH.C029_LEA_2023_COMPARISON`”.
+Where `[Comparison Table Name]` is the fully qualified table name (database.schema.tablename) that contains the results. For example, the table might be named “`Generate.NH.029_LEA_2023_COMPARISON`”.
 
 You can then filter the results as needed to determine which records have mismatches to be addressed.
 
 ### Reviewing Directory Comparison Results
 
-The C029 file contains many columns of data that must be compared. The file comparison table that is created by the utility includes a Legacy column and a Generate column for nearly every column in the C029 file.
+The 029 file contains many columns of data that must be compared. The file comparison table that is created by the utility includes a Legacy column and a Generate column for nearly every column in the 029 file.
 
 The table below compares records from the Legacy and Generate files, joined by **`SubmissionYear`**, **`ReportCode`**, **`ReportLevel`**, and **`StateSchoolIDNumber`**. The count of **`Errors`** in the row and a description of the **`Mismatches`** are indicated in subsequent columns. Each remaining column pairs data from the Legacy and Generate files, allowing you to easily spot discrepancies by scrolling across the table.
 
@@ -30,13 +30,13 @@ If a row has an Errors value = -1, this indicates the record exists in one of th
 
 <div data-full-width="false"><figure><img src="../../../.gitbook/assets/File Comparison C029 SCH (1).PNG" alt="A table comparing records from Legacy and Generate files in the C029 report, including columns for SubmissionYear, ReportCode, ReportLevel, StateSchoolIDNumber, Errors, Mismatch, and various Legacy and Generate file columns. Errors marked as -1 indicate records present in only one file, with the Mismatch column specifying whether the record is missing from the Legacy or Generate file."><figcaption><p>This table compares records from Legacy and Generate files in the C029 report, matched by SubmissionYear, ReportCode, ReportLevel, and StateSchoolIDNumber. It shows error counts and mismatch descriptions, with each remaining column pairing data from both files. Errors with a value of -1 indicate records present in only one file, with details provided in the Mismatch column.</p></figcaption></figure></div>
 
-The C039 Comparison table is similar to the C029 Comparison table but with fewer columns.  In most cases all results for the C039 that don’t match will show “-1” for the Errors because a Grade Level ID may not exist in one of the files.
+The 039 Comparison table is similar to the 029 Comparison table but with fewer columns.  In most cases all results for the 039 that don’t match will show “-1” for the Errors because a Grade Level ID may not exist in one of the files.
 
 You can alter the query to filter the results to only show records where the Errors <> 0 to simplify your review.  You can also create summary queries to view the scope of the errors.  For example:
 
 {% code overflow="wrap" %}
 ```sql
-select Errors, count(*) Records from TESTING.[NH].[C029_SCH_2022_COMPARISON] group by Errors order by Errors
+select Errors, count(*) Records from TESTING.[NH].[029_SCH_2022_COMPARISON] group by Errors order by Errors
 ```
 {% endcode %}
 

@@ -15,37 +15,37 @@ exec Utilities.Compare_DIRECTORY
 @DatabaseName = 'Generate', 	-- Your database name 
 @SchemaName = 'XX', 		-- Your schema name 
 @SubmissionYear = 2022, 		-- The report year
-@ReportCode = 'C029', -- EdFacts File Number – either C029 or C039
+@ReportCode = '029', -- EdFacts File Number – either 029 or 039
 @ReportLevel = 'LEA', -- 'SEA', 'LEA', 'SCH' 
-@LegacyTableName = 'Generate.XX.C029_LEA_2022_Legacy', -- Legacy table
+@LegacyTableName = 'Generate.XX.029_LEA_2022_Legacy', -- Legacy table
 @ShowSQL = 0 
 ```
 
 ### Comparing Discipline Files
 
-To compare C005, C006, C007, C088, C143, or C144 files, execute the following:
+To compare 005, 006, 007, 088, 143, or 144 files, execute the following:
 
 ```sql
 exec Utilities.Compare_DISCIPLINE
 @DatabaseName = 'Generate', 	-- Your database name 
 @SchemaName = 'XX', 		-- Your schema name 
 @SubmissionYear = 2022, 	-- The report year
-@ReportCode = 'C005', -- EdFacts File Number – C005, C006, C007, C088, C143, C144
+@ReportCode = '005', -- EdFacts File Number – 005, 006, 007, 088, 143, 144
 @ReportLevel = 'LEA', -- 'SEA', 'LEA'
-@LegacyTableName = 'Generate.XX.C005_LEA_2022_Legacy', -- Legacy table
+@LegacyTableName = 'Generate.XX.005_LEA_2022_Legacy', -- Legacy table
 @ShowSQL = 0
 ```
 
 ### Comparing Child Count Files
 
-To compare C002 or C089 files, execute the following:
+To compare 002 or 089 files, execute the following:
 
 ```sql
 exec Utilities.Compare_CHILDCOUNT 
 @DatabaseName = 'Generate', 	-- Your database name 
 @SchemaName = 'XX', 		-- Your schema name 
 @SubmissionYear = 2022, 		-- The report year
-@ReportCode = 'C089', -- EdFacts File Number – either C002 or C089
+@ReportCode = '089', -- EdFacts File Number – either 002 or 089
 @ReportLevel = 'LEA', -- 'SEA', 'LEA', 'SCH' 
 @LegacyTableName = 'Generate.XX.C089_LEA_2022_Legacy', -- Legacy table
 @ShowSQL = 0
@@ -53,16 +53,16 @@ exec Utilities.Compare_CHILDCOUNT
 
 ### Comparing Exiting Files
 
-To compare C009 files, execute the following:
+To compare 009 files, execute the following:
 
 ```sql
 exec Utilities.Compare_EXITING
 @DatabaseName = 'Generate', 	-- Your database name 
 @SchemaName = 'XX', 		-- Your schema name 
 @SubmissionYear = 2022, 	-- The report year
-@ReportCode = 'C009', -- EdFacts File Number – C009
+@ReportCode = '009', -- EdFacts File Number – 009
 @ReportLevel = 'LEA', -- 'SEA', 'LEA' 
-@LegacyTableName = 'Generate.XX.C009_LEA_2022_Legacy', -- Legacy table
+@LegacyTableName = 'Generate.XX.009_LEA_2022_Legacy', -- Legacy table
 @ShowSQL = 0
 ```
 
@@ -75,10 +75,10 @@ exec Utilities.CompareSubmissionFiles
 @DatabaseName = 'Generate', 	-- Your database name 
 @SchemaName = 'XX', 		-- Your schema name 
 @SubmissionYear = 2022, 		-- The report year
-@ReportCode = 'C005', -- EdFacts File Number
+@ReportCode = '005', -- EdFacts File Number
 @ReportLevel = 'LEA', -- 'SEA', 'LEA', 'SCH' 
-@LegacyTableName = 'Generate.XX.C005_LEA_2022_Legacy', -- Legacy table
-@GenerateTableName = 'Generate.XX.C005_LEA_2022_Generate', -- Generate table
+@LegacyTableName = 'Generate.XX.005_LEA_2022_Legacy', -- Legacy table
+@GenerateTableName = 'Generate.XX.005_LEA_2022_Generate', -- Generate table
 @ShowSQL = 0, 
 @ComparisonResultsTableName = NULL
 ```

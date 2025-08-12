@@ -4,20 +4,6 @@ description: >-
   version 11.2 released in December 2023.
 cover: ../../.gitbook/assets/Generate 11.2.png
 coverY: 0
-layout:
-  cover:
-    visible: true
-    size: hero
-  title:
-    visible: true
-  description:
-    visible: true
-  tableOfContents:
-    visible: true
-  outline:
-    visible: true
-  pagination:
-    visible: true
 ---
 
 # Release Notes 11.2
