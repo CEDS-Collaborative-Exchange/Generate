@@ -39,7 +39,7 @@ CREATE TABLE [App].[EtlMetadata] (
 	[EtlMetadataId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
+
 SET IDENTITY_INSERT [App].[EtlMetadata] ON 
 
 INSERT [App].[EtlMetadata] (
@@ -3180,7 +3180,6 @@ VALUES
  (2938, 111, 359, N'FS029', N'K12 -> LEA -> Identification', N'Organization Name', N'The name of a non-person entity such as an organization, institution, agency or business.', N'Alphanumeric - 60 characters maximum', N'256', NULL, NULL, N'000204', N'58902', N'K12Organization', N'LeaOrganizationName', N'varchar(256)', N'256', N'DimLeas', N'LeaOrganizationName', N'FactOrganizationCounts', N'LeaId', N'ReportEDFactsOrganizationCounts', N'OrganizationName')
 
 SET IDENTITY_INSERT [App].[EtlMetadata] OFF
-GO
 
 --The most recent metadata for file 033 has the wrong header information for the submission file
 update fs
