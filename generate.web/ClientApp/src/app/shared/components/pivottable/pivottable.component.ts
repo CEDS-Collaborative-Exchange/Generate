@@ -494,7 +494,8 @@ export class PivottableComponent {
                 viewDef.fields.forEach(f => {
                     if (c === f.header) {
                         reportData.categorySets[0].categoryOptions.forEach(o => {
-                            if (o.categoryOptionCode === d[f.binding]) {
+                            //if (o.categoryOptionCode === d[f.binding]) {
+                            if (o.categoryOptionCode.toLowerCase() === d[f.binding].toLowerCase()) {
                                 d[f.binding] = o.categoryOptionName;
                             }
                         });

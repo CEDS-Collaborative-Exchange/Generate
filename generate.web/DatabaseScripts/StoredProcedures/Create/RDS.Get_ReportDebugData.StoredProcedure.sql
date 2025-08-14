@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [RDS].[Get_ReportDebugData]
+﻿
+CREATE PROCEDURE [RDS].[Get_ReportDebugData]
 	@reportCode as varchar(50),
 	@reportLevel as varchar(50),
 	@reportYear as varchar(50),
@@ -44,7 +45,8 @@ BEGIN
 	FETCH NEXT FROM tblcur INTO @ColumnName;
 
 	SET @SortedColumnName = @ColumnName
-	SET @sql = 'SELECT * FROM ' + '[debug].[' + @debugTable + ']' + ' WHERE '
+	--SET @sql = 'SELECT * FROM ' + '[debug].[' + @debugTable + ']' + ' WHERE '
+	SET @sql = 'SELECT * FROM ' + '[debug].[' + @debugTable + ']'
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -62,6 +64,11 @@ BEGIN
 
 	CLOSE tblcur;
 	DEALLOCATE tblcur;
+
+	IF @WHERE <> ''
+	BEGIN
+		SET @sql = @sql+ ' WHERE '
+	END
 
 	IF @reportLevel <> 'sea'
 	BEGIN
@@ -95,3 +102,4 @@ BEGIN
 	SET NOCOUNT OFF;
 END
 
+GO
