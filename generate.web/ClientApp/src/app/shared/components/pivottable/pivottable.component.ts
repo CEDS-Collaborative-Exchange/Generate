@@ -529,6 +529,21 @@ export class PivottableComponent {
             var bindings = ["k12StudentStudentIdentifierState"];
             var headers = ["Student Id"];
 
+            console.log('reportLevel');
+            console.log(reportLevel);
+            if (reportLevel == 'lea') {
+                bindings.push('leaIdentifierSea');
+                headers.push('LEA ID');
+            }
+
+            if (reportLevel == 'sch') {
+                bindings.push('leaIdentifierSea');
+                headers.push('LEA ID');
+
+                bindings.push('schoolIdentifierSea');
+                headers.push('School ID');
+            }
+
             var selectedFilter = {}
 
             for (const key in filters) {

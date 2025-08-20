@@ -6602,7 +6602,7 @@ BEGIN
 				--set the School field in the select if necessary
 				if @reportLevel = 'SCH' 
 				begin
-					set @debugTableCreate += ', sc.schoolIdentifierSea '  
+					set @debugTableCreate += ',  SC.leaIdentifierSea, sc.schoolIdentifierSea '  
 				end
 
 				--add the appropriate count column to the debug table
@@ -8197,3 +8197,6 @@ BEGIN
 	end
 	return @sql
 END
+GO
+
+

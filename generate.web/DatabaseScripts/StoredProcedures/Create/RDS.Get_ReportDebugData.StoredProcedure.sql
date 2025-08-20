@@ -65,7 +65,7 @@ BEGIN
 	CLOSE tblcur;
 	DEALLOCATE tblcur;
 
-	IF @WHERE <> ''
+	IF @WHERE <> '' OR @reportLevel <> 'sea'
 	BEGIN
 		SET @sql = @sql+ ' WHERE '
 	END
