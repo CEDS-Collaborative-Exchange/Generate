@@ -1,8 +1,8 @@
 VersionUpdates\\13.1_prerelease,Restore 13.0.sql,0
 VersionUpdates\\13.1_prerelease,App.TableChanges.sql,0
 VersionUpdates\\13.1_prerelease,App.Metadata.sql,0
-VersionUpdates\\13.1_prerelease,UpdateDbVersion.sql,0
 StoredProcedures\\Drop\\Drop,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 StoredProcedures\\Create\\Create,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 Functions\\Drop\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+VersionUpdates\\13.1_prerelease,UpdateDbVersion.sql,0
