@@ -249,6 +249,45 @@ export class FlextableComponent {
                 }
             }
 
+            /**
+             * Aligns the header and fixes header row height
+             * @param rowNum(number) generally header is on row 5, row index 4
+             */
+            const fixHeaderStyles = (rowNum:number) => {
+                // header columns to be left aligned
+                let rowIncreased = false;
+                // dictionary with header name as key and value as same
+                const headerMap = {};
+                let finalHeaderRowPixel = 0;
+                this.headers.forEach(row => {
+                    headerMap[row] = row;
+                    const rowPixel = (Math.ceil(row.length / 15) * 20);
+                    // set the highest pixel for the row
+                    finalHeaderRowPixel = rowPixel > finalHeaderRowPixel ? rowPixel : finalHeaderRowPixel;
+
+                });
+                for ( let colCount = 0; colCount< this.headers.length; colCount++) {
+                    let cellRef = this.columnToLetter(colCount + 1) + (rowNum+1).toString();
+                    let cell = ws[cellRef];
+
+                    if(cell && headerMap[cell.v]){
+                        cell.s = {...cell.s, alignment: {...cell.s.alignment || {}, horizontal: 'left',vertical: 'top' } };
+                    }
+                    if(!rowIncreased){
+                        const rowColData = XLSX.utils.decode_cell(cellRef);
+                        const rowNumberIndex = rowColData.r;
+                        ws['!rows'][rowNumberIndex] = {...ws['!rows'][rowNumberIndex], hpx : finalHeaderRowPixel};
+                        rowIncreased = true;
+                    }
+                }
+            };
+            //fix header row which is row index 4
+            fixHeaderStyles(4);
+            // based on reportTitle length setting row pixel
+            // for example if the reportTitle word length is 102, divide 102/10 = 10.2, rounded is 11, pixel = (11 * 10) => 110 + 30 = 140
+            const rowPixelCount = ( Math.ceil(this.reportTitle?.length / 10) * 10 ) + 30;
+            //setting the reportTitle row pixel
+            ws['!rows'][0] = {...ws['!rows'][0] || {}, hpx : rowPixelCount}
             XLSX.writeFile(wb, this.exportFile);
             $('.captionrow').remove();
             this.downloading = false;
