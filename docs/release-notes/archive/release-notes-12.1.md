@@ -1,8 +1,8 @@
 ---
-icon: memo
 description: >-
   This document describes the technical enhancements to Generate version 12.1
   released November 1, 2024.
+icon: memo
 ---
 
 # Release Notes 12.1
@@ -57,7 +57,7 @@ We added the ability in version 12.1 to support the reporting of ‘HS’ as the
 
 1. The Assessment needs to be added/modified with HS selected as the Grade Level. If you are updating existing assessments to use ‘HS’ you would remove the versions of that assessment with Grade Level in 9, 10, 11, or 12. After logging in, from the gear icon, select Toggle. When that page loads select ‘Assessments’ to add or modify State assessment information.
 
-<figure><img src="../.gitbook/assets/Release Notes 12.1_Assessments update v2 (1).png" alt="Screenshot of the Generate application interface showing the &#x22;Toggle&#x22; settings page. The &#x22;Assessments&#x22; option is highlighted on the left side, where users can add or modify State assessment information."><figcaption><p>To add or modify State assessment information for the new "HS" grade level in version 12.1, navigate to "Settings" and select "Toggle," then click on "Assessments."</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Release Notes 12.1_Assessments update v2 (1).png" alt="Screenshot of the Generate application interface showing the &#x22;Toggle&#x22; settings page. The &#x22;Assessments&#x22; option is highlighted on the left side, where users can add or modify State assessment information."><figcaption><p>To add or modify State assessment information for the new "HS" grade level in version 12.1, navigate to "Settings" and select "Toggle," then click on "Assessments."</p></figcaption></figure>
 
 2. When loading the student assessment data into `Staging.AssessmentResult` for those assessments, set the `GradeLevelWhenAssessed` value as ‘HS’.
 3. Add the following mapping to the `Staging.SourceSystemReferenceData` table to translate the value correctly.
@@ -83,9 +83,9 @@ In Generate 12.1, we have enhanced our testing processes by expanding unit and f
 
 ### Documentation Updates
 
-[GitHub Guide:](../developer-guides/github-guide.md) This guide provides an overview of working with the Generate GitHub repository. It covers essential steps for accessing the repository, forking and cloning the codebase, submitting pull requests, and reporting issues. This resource is designed to help both new and experienced contributors get involved in the development process and collaborate on Generate’s open-source evolution.
+[GitHub Guide:](../../developer-guides/github-guide.md) This guide provides an overview of working with the Generate GitHub repository. It covers essential steps for accessing the repository, forking and cloning the codebase, submitting pull requests, and reporting issues. This resource is designed to help both new and experienced contributors get involved in the development process and collaborate on Generate’s open-source evolution.
 
-[Azure Installation Guide: ](../developer-guides/installation/azure-installation-guide.md)The new installation guide offers step-by-step instructions for setting up Generate in an Azure environment. It includes guidance on configuring necessary Azure resources, optimizing system performance, and ensuring security within the cloud setup. This guide will streamline the installation process for users aiming to leverage Azure for hosting Generate.
+[Azure Installation Guide: ](../../developer-guides/installation/azure-installation-guide.md)The new installation guide offers step-by-step instructions for setting up Generate in an Azure environment. It includes guidance on configuring necessary Azure resources, optimizing system performance, and ensuring security within the cloud setup. This guide will streamline the installation process for users aiming to leverage Azure for hosting Generate.
 
 ### Generate Enhancements
 
