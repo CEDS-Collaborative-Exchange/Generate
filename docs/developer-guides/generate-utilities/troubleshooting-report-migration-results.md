@@ -204,3 +204,24 @@ This logic writes the student data to the debug tables. This does not impact whi
 The last part of the code to review is the actual SELECT statement at the bottom. This is the code that does the aggregation. It shows you any joins or group bys, whether the count is distinct or not, and what field is being counted for the aggregation.
 
 <figure><img src="../../.gitbook/assets/SELECT Statement Review Image.jpg" alt=""><figcaption></figcaption></figure>
+
+## ZERO Counts
+
+{% hint style="success" %}
+With the introduction of Generate version 13.0 the way Generate handles the zero count rows has changed.  &#x20;
+{% endhint %}
+
+Prior to version 13.0 the zero count rows were created on-the-fly when a submission file was requested.  Because they were not stored anywhere this made validating and comparing the zero count rows more challenging. \
+&#x20;\
+Now, the same logic that creates the appropriate zero count rows is executed during the report migration step and those rows are added directly to the Report table.  This makes them much more accessible and easy to validate.  &#x20;
+
+For example, sticking with discipline file 006 as our example, if you wanted to see the zero count rows that were created for Category Set A you could execute a query in SSMS like this: \
+&#x20;    select \* \
+&#x20;    from rds.ReportEDFactsK12StudentDisciplines \
+&#x20;    where ReportCode = '006' \
+&#x20;         and ReportYear = 2025 \
+&#x20;         and ReportLevel = 'sea' \
+&#x20;         and CategorySetCode = 'csa' \
+&#x20;         and DisciplineCount = 0 \
+&#x20;\
+This data is also visible in the UI if you select 006, 2025, SEA, and Category Set A.  The one limitation in the UI is that there is currently no way to filter the results on the count column.  You could export the results to Excel and then apply the appropriate filtering to examine just the zero count rows as well.   &#x20;
