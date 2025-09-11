@@ -27,3 +27,12 @@ hr {
     resize: both;
     overflow: auto;
 }
+
+.generate-app-student-details__scrollable-div {
+    height: 600px; /* Or max-height */
+    overflow-x: auto; /* or scroll */
+    overflow-y: auto; /* Or overflow: auto; for both directions */
+    border: 1px solid #ccc; /* Optional: for visualization */
+    padding: 10px;
+    white-space: nowrap; /* Prevents content from wrapping to the next line */
+}
