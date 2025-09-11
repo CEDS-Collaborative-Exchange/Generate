@@ -28,10 +28,8 @@ namespace generate.web.Controllers.Api.App
     public class FSMetadataCallController : Controller
     {
 
-        private readonly IOptions<AppSettings> _appSettings;
         private readonly IAppRepository _appRepository;
         private readonly IFSMetadataUpdateService _FSMetadataUpdate;
-        private readonly IRDSRepository _rdsRepository;
         private readonly bool _useWSforFSMetaUpd;
         private readonly string _fsWSURL;
         private readonly string _fsMetaFileLoc;
@@ -41,21 +39,17 @@ namespace generate.web.Controllers.Api.App
         private readonly string _fsMetaCHRLayoutFileName;
         private readonly string _bkfsMetaFileLoc;
         private readonly bool _reloadFromBackUp;
-        private readonly string _backgroundUrl;
+
         public FSMetadataCallController
         (
-            IOptions <AppSettings> appSettings,
             IAppRepository appRepository,
-            IRDSRepository rdsRepository,
             IFSMetadataUpdateService fsMetadataUpdate,
             IConfiguration configuration
         )
         {
 
-            _appSettings = appSettings;
             _appRepository = appRepository;
             _FSMetadataUpdate = fsMetadataUpdate;
-            _rdsRepository = rdsRepository;
 
             _useWSforFSMetaUpd = configuration.GetSection("appSettings").GetValue<bool>("useWSforFSMetaUpd");
             _fsWSURL = configuration.GetSection("appSettings").GetValue<string>("fsWSURL");   
@@ -66,7 +60,7 @@ namespace generate.web.Controllers.Api.App
             _fsMetaCHRLayoutFileName = configuration.GetSection("appSettings").GetValue<string>("fsMetaCHRLayoutFileName");
             _bkfsMetaFileLoc = configuration.GetSection("appSettings").GetValue<string>("bkfsMetaFileLoc");
             _reloadFromBackUp = configuration.GetSection("appSettings").GetValue<bool>("reloadFromBackUp");
-            _backgroundUrl = configuration.GetSection("appSettings").GetValue<string>("BackgroundUrl");
+            //_backgroundUrl = configuration.GetSection("appSettings").GetValue<string>("BackgroundUrl");
         }
 
         [HttpGet("fsservc/{SelSchYear}")]
