@@ -21,14 +21,21 @@ namespace generate.overnighttest
 {
     public class Worker
     {
-        private string[] programArgs; 
+        private string[] programArgs;
+        /// <summary>
+        /// Only run pre dmc once if testing only
+        /// when --migrate or --testallfact or --testfilespec --testfacttype
+        /// 
+        /// </summary>
+        private bool runPreDmc = true;
+        private Dictionary<CommandType, string> commandTypeToValueDict;
         public Worker(string[] args)
         {
             this.programArgs = args;
-        }        
+        }
         private IServiceProvider? serviceProvider;
         private int schoolyear = DateTime.Now.Year;
-        
+
         /// <summary>
         /// Intiliazes and Register Service with Dependency Injections
         /// Such as DbContext and Services
@@ -78,7 +85,7 @@ namespace generate.overnighttest
             rootCommand.Options.Add(TEST_FACT_TYPE_OPTION);
             rootCommand.Options.Add(ENABLE_TEST_OPTION);
             rootCommand.Options.Add(DISABLE_TEST_OPTION);
-           
+
             rootCommand.Options.Add(SCHOOL_YEAR_OPTION);
             var commandToValue = new Dictionary<CommandType, string>();
 
@@ -90,7 +97,7 @@ namespace generate.overnighttest
             // eg. -enabletest should have FS002,FS005 so on
             Console.Out.WriteLine("ParseResultValue:" + parsedResult);
             Console.Out.WriteLine("ParseResultValue Errors:" + parsedResult.Errors.Count);
-            List<CommandType> trackCommands =[];
+            List<CommandType> trackCommands = [];
             // on error exit and log the reason
             if (parsedResult.Errors.Count > 0)
             {
@@ -227,14 +234,23 @@ namespace generate.overnighttest
         }
         public void Start()
         {
+            try
+            {
+                InitializeAndConfigure();
 
-            InitializeAndConfigure();
+                RunTasksBasedOnCommands();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("There was an error Running this job");
+                Console.Error.WriteLine(ex.ToString());
+                Environment.Exit(-1);
+            }
 
-            RunTasksBasedOnCommands();
 
 
         }
-     
+
         /// <summary>
         /// Based on arguments passed invokes Different functions
         /// eg. for migrate --migrate ///
@@ -248,18 +264,19 @@ namespace generate.overnighttest
         /// <param name="args"></param>
         private void RunTasksBasedOnCommands()
         {
-            Dictionary<CommandType, string> commandToValueDict = ParseArgumentAndBuildCommand();
+            Dictionary<CommandType, string> commandTypeToValueDict = ParseArgumentAndBuildCommand();
 
             // if --migrate was passed will allow to run migrate and also allow other command to execute
             // so in one inovaction --migrate --testallfact will migrate and run all test
             // --migrate --enabletest will migrate and enabletests
-            if (commandToValueDict.ContainsKey(CommandType.MIGRATE))
+            if (commandTypeToValueDict.ContainsKey(CommandType.MIGRATE))
             {
+                RunPreDmc();
                 RunMigration();
             }
 
             // --enabletest  was passed will enable or disable and allow other commands
-            if (commandToValueDict.TryGetValue(CommandType.ENABLE_TEST, out string? enableTestVals))
+            if (commandTypeToValueDict.TryGetValue(CommandType.ENABLE_TEST, out string? enableTestVals))
             {
                 EnableOrDisableTests(enableTestVals, true);
                 //EnableOrDisableTests(commandToValueDict.GetValueOrDefault(CommandType.ENABLE_TEST, EMPTY_STRING), true);
@@ -267,30 +284,33 @@ namespace generate.overnighttest
 
             // -- --disabltest was passed will enable or disable and allow other commands
 
-            if (commandToValueDict.TryGetValue(CommandType.DISABLE_TEST, out string? disableTestVals))
+            if (commandTypeToValueDict.TryGetValue(CommandType.DISABLE_TEST, out string? disableTestVals))
             {
                 EnableOrDisableTests(disableTestVals, false);
                 //EnableOrDisableTests(commandToValueDict.GetValueOrDefault(CommandType.DISABLE_TEST, EMPTY_STRING), false);
             }
 
             // --testallfact was passed, will not run any other command
-            if (commandToValueDict.ContainsKey(CommandType.TEST_ALL_FACT))
+            if (commandTypeToValueDict.ContainsKey(CommandType.TEST_ALL_FACT))
             {
+                RunPreDmc();
                 RunAllTests();
                 return;
             }
 
             // --testbyfactspec was passed, will not run any other command
-            if (commandToValueDict.TryGetValue(CommandType.TEST_FACT_BY_SPEC, out string? testFactBySpecVal))
+            if (commandTypeToValueDict.TryGetValue(CommandType.TEST_FACT_BY_SPEC, out string? testFactBySpecVal))
             {
+                RunPreDmc();
                 RunTestByFileSpec(testFactBySpecVal);
                 //RunTestByFileSpec(commandToValueDict.GetValueOrDefault(CommandType.TEST_FACT_BY_SPEC, EMPTY_STRING));
                 return;
             }
 
             // --testbyfactype was passed will not run any other command
-            if (commandToValueDict.TryGetValue(CommandType.TEST_FACT_BY_TYPE, out string? testFactByTypeVal))
+            if (commandTypeToValueDict.TryGetValue(CommandType.TEST_FACT_BY_TYPE, out string? testFactByTypeVal))
             {
+                RunPreDmc();
                 RunTestByFactType(testFactByTypeVal);
                 //RunTestByFactType(commandToValueDict.GetValueOrDefault(CommandType.TEST_FACT_BY_TYPE, EMPTY_STRING));
                 return;
@@ -315,6 +335,43 @@ namespace generate.overnighttest
 
         }
 
+    
+        private void RunPreDmc()
+        {
+            Console.WriteLine("Inside RunPreDmc");
+            try
+            {
+                if (!runPreDmc)
+                {
+                    Console.WriteLine("PreDmc already ran");
+                    return;
+                }
+                using var scope = serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                string sqlUpdateStr = $@"
+                        update tr
+                        set ResponseValue = '10/21/' + CAST({schoolyear} - 1 AS VARCHAR)
+                        from App.ToggleResponses tr 
+                        inner join app.ToggleQuestions tq
+                        on tr.ToggleQuestionId = tq.ToggleQuestionId	
+                        and tq.EmapsQuestionAbbrv = 'MEMBERDTE'                    
+                    ";
+                //string sqlUpdateStr = $"update a set a.IsActive = {(enable ? 1 : 0)} from App.SqlUnitTest a where a.TestScope='{fileSpecNum}'";
+                Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
+                int rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
+                Console.WriteLine($"Rows Updated from predmc:{rowsUpdated}");
+            }
+            catch (Exception ex)
+            {
+                Console.Error.Write($"Error Running PreDmc");
+                Console.Error.WriteLine(ex);
+            }
+            finally
+            {
+                runPreDmc = false;
+            }
+
+        }
         private void RunAllTests()
         {
             Console.WriteLine("Inside RullAllTests");
@@ -322,6 +379,7 @@ namespace generate.overnighttest
             Dictionary<string, string> allTestStoredProcs = buildFileSpecToStoredProc(schoolyear);
             string factSpecValuesSeperatedByComma = string.Join(",", allTestStoredProcs.Keys);
             Console.WriteLine($"All factSpecValuesSeperatedByComma for test all :{factSpecValuesSeperatedByComma}");
+
             RunTestByFileSpec(factSpecValuesSeperatedByComma);
 
         }
@@ -331,6 +389,7 @@ namespace generate.overnighttest
             Dictionary<string, string> dict = Utils.BuildFactTypeToFileSpec();
             Console.WriteLine("Inside RunTestByFactType factTypeValuesSeperatedByComma:" + factTypeValuesSeperatedByComma);
             string[] factTypeArr = factTypeValuesSeperatedByComma.Split(",");
+
             foreach (var item in factTypeArr)
             {
                 Console.WriteLine("factType came:" + item);
@@ -343,7 +402,7 @@ namespace generate.overnighttest
                 {
                     Console.WriteLine($"No fileSpec found for factType: {item}");
                 }
-                
+
             }
 
         }
@@ -386,37 +445,49 @@ namespace generate.overnighttest
         }
         private void RunTestByFileSpec(string factSpecValuesSeperatedByComma)
         {
-            Console.WriteLine("Inside RunTestByFileSpec factSpecValuesSeperatedByComma:" + factSpecValuesSeperatedByComma);
+            Console.WriteLine($"Inside RunTestByFileSpec factSpecValuesSeperatedByComma:{factSpecValuesSeperatedByComma},runPreDmc:{runPreDmc}");
             string[] factSpecArr = factSpecValuesSeperatedByComma.Split(",");
             Dictionary<string, string> fileSpecToTestStoredProcWithSchoolYear = Utils.buildFileSpecToStoredProc(schoolyear);
-            foreach (var item in factSpecArr)
+            try
             {
-                Console.WriteLine("----------------------------------");
-                Console.WriteLine(">>>Running Test for spec::" + item);
-                if (!IsTestActiveForFileSpec(item))
+  
+                foreach (var item in factSpecArr)
                 {
-                    Console.WriteLine($"Test for spec:{item} is not active");
-                    continue;
-                }
-                var storedProc = fileSpecToTestStoredProcWithSchoolYear.GetValueOrDefault(item, Utils.EMPTY_STRING);
-                using var scope = serviceProvider.CreateScope();
-                try
-                {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    Console.WriteLine($"Running storedProc with this command:: {storedProc}");
-                    int result = dbContext.Database.ExecuteSqlRaw(
-                        storedProc
-                    );
+                    Console.WriteLine("----------------------------------");
+                    Console.WriteLine(">>>Running Test for spec::" + item);
+                    if (!IsTestActiveForFileSpec(item))
+                    {
+                        Console.WriteLine($"Test for spec:{item} is not active");
+                        continue;
+                    }
+                    var storedProc = fileSpecToTestStoredProcWithSchoolYear.GetValueOrDefault(item, Utils.EMPTY_STRING);
+                    using var scope = serviceProvider.CreateScope();
+                    try
+                    {
+                        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                        Console.WriteLine($"Running storedProc with this command:: {storedProc}");
+                        int result = dbContext.Database.ExecuteSqlRaw(
+                            storedProc
+                        );
 
-                    Console.WriteLine($"Return Code for stored proc {storedProc} is :::{result}");
+                        Console.WriteLine($"Return Code for stored proc {storedProc} is :::{result}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.Write("Error in RunTestByFileSpec for file spec:" + item);
+                        Console.Error.WriteLine(ex);
+                    }
+                    Console.WriteLine(">>>Done Running Test for spec::" + item);
                 }
-                catch (Exception ex)
-                {
-                    Console.Error.Write("Error in RunTestByFileSpec for file spec:" + item);
-                    Console.Error.WriteLine(ex);
-                }
-                Console.WriteLine(">>>Done Running Test for spec::" + item);
             }
+            catch (Exception ex)
+            {
+                Console.Error.Write($"Error in RunTestByFileSpec for file spec:{factSpecValuesSeperatedByComma}");
+                Console.Error.WriteLine(ex.ToString());
+
+            }
+
+
 
         }
 
