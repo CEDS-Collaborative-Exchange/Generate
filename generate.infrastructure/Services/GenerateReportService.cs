@@ -231,13 +231,6 @@ namespace generate.infrastructure.Services
             if (reportType == "datapopulation")
             {
                 reportDto = _dataPopulationSummaryService.GetReportDto(reportCode, reportLevel, reportYear, categorySetCode, reportSort, skip, take);
-
-                if(reportCode == "studentswdtitle1")
-                {
-                   IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
-                       && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel);
-                    reportDto.CategorySets = ConvertCategorySetToDto(categorySets.ToList());
-                }
             }
             else if (reportType == "edfactsreport")
             {
@@ -267,6 +260,14 @@ namespace generate.infrastructure.Services
                 reportDto.CategorySets = ConvertCategorySetToDto(categorySets.ToList());
 
             }
+
+            if (reportCode == "studentswdtitle1")
+            {
+                IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
+                    && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel);
+                reportDto.CategorySets = ConvertCategorySetToDto(categorySets.ToList());
+            }
+
             reportDto.ReportControlTypeName = reportControlType.ControlTypeName;
             reportDto.ReportYear = reportYear;
             return reportDto;
