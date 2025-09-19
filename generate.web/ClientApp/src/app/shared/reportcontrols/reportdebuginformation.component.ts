@@ -23,6 +23,8 @@ export class ReportDebugInformationComponent {
     public repotDebugData: any;
     public headers: any;
     public bindings: any;
+    zoomLevel = 1; // 100% zoom
+
     constructor(
         public dialogRef: MatDialogRef<ReportDebugInformationComponent>,
         private _generateReportService: GenerateReportService,

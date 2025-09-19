@@ -6,8 +6,6 @@ hr {
 
 
 .generate-app-report__title {
-    margin: 0;
-    padding: 0;
     text-align: center;
     font-size: 20px;
 }
@@ -28,11 +26,40 @@ hr {
     overflow: auto;
 }
 
+/*.generate-app-student-details__scrollable-div {
+    height: 600px;*/ /* Or max-height */
+    /*overflow-x: auto;*/ /* or scroll */
+    /*overflow-y: auto;*/ /* Or overflow: auto; for both directions */
+    /*border: 1px solid #ccc;*/ /* Optional: for visualization */
+    /*padding: 10px;
+    white-space: nowrap;*/ /* Prevents content from wrapping to the next line */
+/*}*/
+
 .generate-app-student-details__scrollable-div {
-    height: 600px; /* Or max-height */
-    overflow-x: auto; /* or scroll */
-    overflow-y: auto; /* Or overflow: auto; for both directions */
-    border: 1px solid #ccc; /* Optional: for visualization */
+    max-height: 600px;
+    overflow: auto;
+    border: 1px solid #ccc;
     padding: 10px;
-    white-space: nowrap; /* Prevents content from wrapping to the next line */
+    position: relative;
+    padding-top: 20px;
 }
+
+/* ✅ This wrapper holds zoomed content and fixes overflow cutoff */
+.zoom-wrapper {
+    transform-origin: top left;
+    width: max-content;
+    height: max-content;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.zoom-wrapper > h3 {
+    display: inline-block;
+}
+
+ /*.zoom-wrapper > h3:first-child {
+    margin-top: 0;
+    padding-top: 0.5rem;
+    margin-left: 30px;
+ }*/
