@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
+using Microsoft.AspNetCore.HttpOverrides;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -130,6 +131,9 @@ app.UseSpa(spa => {
         spa.Options.StartupTimeout = new TimeSpan(0, 2, 120);
         spa.UseAngularCliServer(npmScript: "start");
     }
+});
+app.UseForwardedHeaders(new ForwardedHeadersOptions { 
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto
 });
 
 
