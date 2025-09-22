@@ -1,5 +1,5 @@
-<div>
-    <div style="margin-top:30px;">
+<div class="generate-app-student-details__scrollable-div">
+    <div class="zoom-wrapper" [ngStyle]="{'transform': 'scale(' + zoomLevel + ')'}">
         <h3 class="generate-app-report__title">{{data.reportData.reportTitle}}</h3>
         <div class="mdl-typography--text-center generate-app-pivotgrid__categoryset-definition">
             <span>{{data.reportData.categorySets[0].categorySetName}}</span><span> - </span><span *ngFor="let cat of data.reportData.categorySets[0].categories; let i=index;"><span *ngIf="i > 0">, </span>{{cat}}</span>
@@ -8,7 +8,7 @@
             Count: {{data.recordCount}}
         </div>
     </div>
-    <div style="margin:20px 30px" class="generate-app-student-details__scrollable-div">
+    <div>
         <generate-app-table [itemsSource]="repotDebugData"
                             [headers]="headers"
                             [bindings]="bindings">
