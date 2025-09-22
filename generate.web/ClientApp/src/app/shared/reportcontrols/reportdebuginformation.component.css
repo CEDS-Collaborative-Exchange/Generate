@@ -18,7 +18,7 @@ hr {
     text-align: center;
     font-size: 14px;
     font-weight: 700;
-    margin-top:8px;
+    margin-top:5px;
 }
 
 .mdc-dialog__container {
@@ -26,22 +26,13 @@ hr {
     overflow: auto;
 }
 
-/*.generate-app-student-details__scrollable-div {
-    height: 600px;*/ /* Or max-height */
-    /*overflow-x: auto;*/ /* or scroll */
-    /*overflow-y: auto;*/ /* Or overflow: auto; for both directions */
-    /*border: 1px solid #ccc;*/ /* Optional: for visualization */
-    /*padding: 10px;
-    white-space: nowrap;*/ /* Prevents content from wrapping to the next line */
-/*}*/
-
 .generate-app-student-details__scrollable-div {
     max-height: 600px;
     overflow: auto;
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 5px;
     position: relative;
-    padding-top: 20px;
+    padding-top: 5px;
 }
 
 /* ✅ This wrapper holds zoomed content and fixes overflow cutoff */
@@ -58,8 +49,8 @@ hr {
     display: inline-block;
 }
 
- /*.zoom-wrapper > h3:first-child {
+ .zoom-wrapper > h3:first-child {
     margin-top: 0;
-    padding-top: 0.5rem;
+    padding-top: 7.5rem;
     margin-left: 30px;
- }*/
+ }
