@@ -42,6 +42,13 @@ AS
 			, NorD.NeglectedOrDelinquentAcademicAchievementIndicatorDescription
 			, NorD.NeglectedOrDelinquentAcademicOutcomeIndicatorCode
 			, NorD.NeglectedOrDelinquentAcademicOutcomeIndicatorDescription
+			--Cte Outcome Indicators
+			, Cte.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
+			, Cte.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeDescription
+			, Cte.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeEdFactsCode
+			, Cte.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
+			, Cte.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeDescription
+			, Cte.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeEdFactsCode
 
  	FROM		RDS.FactK12StudentCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
@@ -51,6 +58,7 @@ AS
 	LEFT JOIN	RDS.DimLeas							LEAs			ON Fact.LeaId					= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools					Schools			ON Fact.K12SchoolId				= Schools.DimK12SchoolId
 	LEFT JOIN	RDS.DimNorDStatuses					NorD			ON Fact.NorDStatusId			= NorD.DimNorDStatusId
+	LEFT JOIN	RDS.DimCteOutcomeIndicators			Cte				ON Fact.CteOutcomeIndicatorId	= Cte.DimCteOutcomeIndicatorId
 
 	WHERE 1 = 1
 	----2 ways to select by SchoolYear, use 1 or the other, not both
@@ -58,7 +66,7 @@ AS
 		AND DMT.IsSelected = 1
 		AND DMT.DataMigrationTypeId = 3
 	----or comment out the lines above and just set the SchoolYear
-	--	--AND SchoolYears.SchoolYear = 2024
+	--	--AND SchoolYears.SchoolYear = 2025
 	AND Fact.FactTypeId = 15
 
 
