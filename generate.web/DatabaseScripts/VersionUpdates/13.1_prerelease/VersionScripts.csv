@@ -1,8 +1,24 @@
 VersionUpdates\\13.1_prerelease,Restore 13.0.sql,0
 VersionUpdates\\13.1_prerelease,App.TableChanges.sql,0
+VersionUpdates\\13.1_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\13.1_prerelease,App.Metadata.sql,0
-StoredProcedures\\Drop,RDS.Get_ReportDebugData.StoredProcedure.sql,0
-StoredProcedures\\Create,RDS.Get_ReportDebugData.StoredProcedure.sql,0
+VersionUpdates\\13.1_prerelease,JunkTablePopulation.sql,0
+Views\\Drop,RDS.vwDimCteOutcomeIndicators.View.sql,0
+Views\\Create,RDS.vwDimCteOutcomeIndicators.View.sql,0
+Views\\Drop,Debug.vwNeglectedOrDelinquent_FactTable.View.sql,0
+Views\\Create,Debug.vwNeglectedOrDelinquent_FactTable.View.sql,0
+Views\\Drop,RDS.vwNeglectedOrDelinquent_FactTable_218.View.sql,0
+Views\\Create,RDS.vwNeglectedOrDelinquent_FactTable_218.View.sql,0
+Views\\Drop,RDS.vwNeglectedOrDelinquent_FactTable_219.View.sql,0
+Views\\Create,RDS.vwNeglectedOrDelinquent_FactTable_219.View.sql,0
+Views\\Drop,RDS.vwNeglectedOrDelinquent_FactTable_220.View.sql,0
+Views\\Create,RDS.vwNeglectedOrDelinquent_FactTable_220.View.sql,0
+Views\\Drop,RDS.vwNeglectedOrDelinquent_FactTable_221.View.sql,0
+Views\\Create,RDS.vwNeglectedOrDelinquent_FactTable_221.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+StoredProcedures\\Drop,RDS.Get_ReportDebugData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Get_ReportDebugData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_NeglectedOrDelinquent.StoredProcedure.sql,0
 VersionUpdates\\13.1_prerelease,UpdateDbVersion.sql,0

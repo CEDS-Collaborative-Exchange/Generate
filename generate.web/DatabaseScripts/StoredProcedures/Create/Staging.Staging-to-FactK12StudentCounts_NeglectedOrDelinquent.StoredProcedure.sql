@@ -108,12 +108,6 @@ BEGIN
 		INTO #vwNorDStatuses
 		FROM RDS.vwDimNOrDStatuses
 		WHERE SchoolYear = @SchoolYear
-			--AND NeglectedOrDelinquentLongTermStatusCode = 'MISSING'
-			--AND NeglectedOrDelinquentProgramTypeCode = 'MISSING'
-			--AND NeglectedProgramTypeCode = 'MISSING'
-			--AND DelinquentProgramTypeCode = 'MISSING'
-			--AND NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'MISSING'
-			--AND NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'MISSING'
 
 		CREATE CLUSTERED INDEX ix_tempvwNorDStatuses 
 			ON #vwNorDStatuses (
@@ -124,6 +118,14 @@ BEGIN
 				NeglectedOrDelinquentAcademicAchievementIndicatorMap,
 				NeglectedOrDelinquentAcademicOutcomeIndicatorMap
 			);
+
+		SELECT *
+		INTO #vwCteOutcomeIndicators
+		FROM RDS.vwDimCteOutcomeIndicators
+		WHERE SchoolYear = @SchoolYear
+
+		CREATE CLUSTERED INDEX ix_tempvwCteOutcomeIndicators
+			ON #vwCteOutcomeIndicators (DimCteOutcomeIndicatorId);
 
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
@@ -170,6 +172,7 @@ BEGIN
 			, LastQualifyingMoveDateId					int null
 			, StatusStartDateNeglectedOrDelinquentId	int null
 			, StatusEndDateNeglectedOrDelinquentId		int null
+			, CTEOutcomeIndicatorId						int null
 		)
 
 		INSERT INTO #Facts
@@ -209,6 +212,7 @@ BEGIN
 			, -1														LastQualifyingMoveDateId	
 			, ISNULL(BeginDate.DimDateId, -1)							StatusStartDateNeglectedOrDelinquentId
 			, ISNULL(EndDate.DimDateId, -1)								StatusEndDateNeglectedOrDelinquentId
+			, ISNULL(rdcoi.DimCteOutcomeIndicatorId, -1)				CTEOutcomeIndicatorId
 
 		FROM Staging.K12Enrollment ske
 		JOIN Staging.K12Organization sko
@@ -268,6 +272,12 @@ BEGIN
 			AND ISNULL(sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart, 'MISSING') = ISNULL(rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartMap, rdnds.NeglectedOrDelinquentProgramEnrollmentSubpartCode)
 			AND ISNULL(CAST(sppnord.NeglectedOrDelinquentAcademicAchievementIndicator AS SMALLINT), -1) = ISNULL(rdnds.NeglectedOrDelinquentAcademicAchievementIndicatorMap, -1)
 			AND ISNULL(CAST(sppnord.NeglectedOrDelinquentAcademicOutcomeIndicator AS SMALLINT), -1) = ISNULL(rdnds.NeglectedOrDelinquentAcademicOutcomeIndicatorMap, -1)
+	--cte outcome indicators (RDS)
+		LEFT JOIN RDS.vwDimCteOutcomeIndicators rdcoi
+			ON rdcoi.SchoolYear = @SchoolYear
+			AND ISNULL(sppnord.EdFactsAcademicOrCareerAndTechnicalOutcomeType, 'MISSING') = ISNULL(rdcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap, rdcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode)
+			AND ISNULL(sppnord.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType, 'MISSING') = ISNULL(rdcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap, rdcoi.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode)
+			AND ISNULL(rdcoi.PerkinsPostProgramPlacementIndicatorCode, 'MISSING') = 'MISSING'
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON rdis.SchoolYear = @SchoolYear
@@ -347,8 +357,9 @@ BEGIN
 			, [SpecialEducationServicesExitDateId]
 			, [MigrantStudentQualifyingArrivalDateId]
 			, [LastQualifyingMoveDateId]
-			, StatusStartDateNeglectedOrDelinquentId
-			, StatusEndDateNeglectedOrDelinquentId
+			, [StatusStartDateNeglectedOrDelinquentId]
+			, [StatusEndDateNeglectedOrDelinquentId]
+			, [CTEOutcomeIndicatorId]
 		)
 		SELECT 
 			[SchoolYearId]
@@ -383,8 +394,9 @@ BEGIN
 			, [SpecialEducationServicesExitDateId]
 			, [MigrantStudentQualifyingArrivalDateId]
 			, [LastQualifyingMoveDateId]
-			, StatusStartDateNeglectedOrDelinquentId
-			, StatusEndDateNeglectedOrDelinquentId
+			, [StatusStartDateNeglectedOrDelinquentId]
+			, [StatusEndDateNeglectedOrDelinquentId]
+			, [CTEOutcomeIndicatorId]
 		FROM #Facts
 
 		ALTER INDEX ALL ON RDS.FactK12StudentCounts REBUILD
