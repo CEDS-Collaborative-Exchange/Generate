@@ -28,8 +28,9 @@ namespace generate.overnighttest
             //SCHOOL_YEAR
         }
 
-        public static String EMPTY_STRING = "";
-        
+        public static string EMPTY_STRING = "";
+        public static string ALL_FACT = "ALL_FACT";
+         
         public static Dictionary<string, string> BuildFactTypeToFileSpec()
         {
             Dictionary<string, string> v = new Dictionary<string, string>()
@@ -139,7 +140,7 @@ namespace generate.overnighttest
 
         public static string HELP_MESSAGE = @$"
                     Usage:
-                    {ARG_MIGRATE}                           Runs Migration 
+                    {ARG_MIGRATE}   ALL_FACT or 002,003     Runs Migration with value required values are ALL_FACT or reportCode commaSeperated eg 005,002
                     {ARG_TEST_ALL_FACT}                     Tests all facts if other test options are provided, they will  be skipped
                     {ARG_TEST_FILE_SPEC} 005,001,005        Tests given file spec number multiple values can be passed seperated by comma
                     {ARG_TEST_FACT_TYPE} FS005,FS006        Tests given fact type ,  multiple values can be passed seperated by comma 
@@ -154,10 +155,11 @@ namespace generate.overnighttest
         /// --migrate argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
-        public static Option<bool> MIGRATION_OPTION = new Option<bool>(ARG_MIGRATE)
+        public static Option<string> MIGRATION_OPTION = new Option<string>(ARG_MIGRATE)
         {
-            Description = "Pass true if needed to run migration",
-            DefaultValueFactory = parseResult => false,
+            Description = "Pass fact command seperated if needed to run migration",
+            // DefaultValueFactory = parseResult => ALL_FACT,
+
 
 
         };

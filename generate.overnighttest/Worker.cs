@@ -16,11 +16,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using static generate.overnighttest.Utils;
 using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens;
 
 namespace generate.overnighttest
 {
     public class Worker
     {
+        // Directory where this application is running
+        private string appDir;
         private string[] programArgs;
         /// <summary>
         /// Only run pre dmc once if testing only
@@ -28,7 +31,6 @@ namespace generate.overnighttest
         /// 
         /// </summary>
         private bool runPreDmc = true;
-        private Dictionary<CommandType, string> commandTypeToValueDict;
         public Worker(string[] args)
         {
             this.programArgs = args;
@@ -109,11 +111,14 @@ namespace generate.overnighttest
 
             }
 
-            // if --migrate passed set value as true
-            if (parsedResult.GetValue(MIGRATION_OPTION))
+            // if --migrate passed set value 
+            string? migrateFactsValue = parsedResult.GetValue(MIGRATION_OPTION);
+            if (migrateFactsValue != null)
             {
+                migrateFactsValue = migrateFactsValue.ToUpper();
                 Console.WriteLine($"Adding option:{MIGRATION_OPTION}");
-                commandToValue.Add(CommandType.MIGRATE, bool.TrueString);
+                commandToValue.Add(CommandType.MIGRATE, migrateFactsValue);
+
                 trackCommands.Add(CommandType.MIGRATE);
             }
             else
@@ -192,7 +197,7 @@ namespace generate.overnighttest
         /// <param name="args"></param>
         private void InitializeAndConfigure()
         {
-            var appDir = PlatformServices.Default.Application.ApplicationBasePath;
+            appDir = PlatformServices.Default.Application.ApplicationBasePath;
 
             var builder = new ConfigurationBuilder()
                 .AddCommandLine(programArgs)
@@ -224,6 +229,7 @@ namespace generate.overnighttest
             var services = new ServiceCollection();
             ConfigureServices(configuration, services);
             serviceProvider = services.BuildServiceProvider();
+
 
 
 
@@ -272,7 +278,7 @@ namespace generate.overnighttest
             if (commandTypeToValueDict.ContainsKey(CommandType.MIGRATE))
             {
                 RunPreDmc();
-                RunMigration();
+                RunMigration(commandTypeToValueDict.GetValueOrDefault(CommandType.MIGRATE, EMPTY_STRING));
             }
 
             // --enabletest  was passed will enable or disable and allow other commands
@@ -293,7 +299,7 @@ namespace generate.overnighttest
             // --testallfact was passed, will not run any other command
             if (commandTypeToValueDict.ContainsKey(CommandType.TEST_ALL_FACT))
             {
-                RunPreDmc();
+
                 RunAllTests();
                 return;
             }
@@ -301,7 +307,7 @@ namespace generate.overnighttest
             // --testbyfactspec was passed, will not run any other command
             if (commandTypeToValueDict.TryGetValue(CommandType.TEST_FACT_BY_SPEC, out string? testFactBySpecVal))
             {
-                RunPreDmc();
+
                 RunTestByFileSpec(testFactBySpecVal);
                 //RunTestByFileSpec(commandToValueDict.GetValueOrDefault(CommandType.TEST_FACT_BY_SPEC, EMPTY_STRING));
                 return;
@@ -310,18 +316,86 @@ namespace generate.overnighttest
             // --testbyfactype was passed will not run any other command
             if (commandTypeToValueDict.TryGetValue(CommandType.TEST_FACT_BY_TYPE, out string? testFactByTypeVal))
             {
-                RunPreDmc();
+
                 RunTestByFactType(testFactByTypeVal);
                 //RunTestByFactType(commandToValueDict.GetValueOrDefault(CommandType.TEST_FACT_BY_TYPE, EMPTY_STRING));
                 return;
             }
         }
 
+        /// <summary>
+        /// updates the GenerateReports.isLocked for given or all report codes
+        /// If reportCodeArr is present toogle isLocked only for them
+        /// If reportCodeArr ALL that means toggle isLocked for all 
+        /// update all or certain reportCode for table GenerateReports.isLocked to 1 or 0 
+        /// </summary>
+        /// <param name="value">1 means lock, 0 means unlock</param>
+        /// <param name="reportCodeArr"> A comma seperated name of reports such as 002,003</param>
+        private void toggleReportLock(int value, string[]? reportCodeArr)
+        {
+            Console.Out.WriteLine($"Inside toggleReportLock with value:{value},and reportCodeArr:{reportCodeArr}");
+            try
+            {
+                if (reportCodeArr.IsNullOrEmpty())
+                {
+                    Console.WriteLine("Not running toggleReportLock as reportCodeArr is empty");
+                    return;
 
-        private void RunMigration()
+                }
+                Action<string, DbContext> process = (reportCode, dbContext) =>
+                {
+                    string whereClause = reportCode.Equals(ALL_FACT) ? "" : $" and ReportCode = '{reportCode}'";
+                    string sqlUpdateStr = $@"
+                            update app.GenerateReports
+                            set IsLocked = {value}
+                            where 1 = 1 {whereClause}
+                        ";
+                    Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
+                    int rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
+                    Console.WriteLine($"Rows Updated for reportCode:{reportCode} toggleReportLock:{rowsUpdated}");
+                }
+
+                ;
+                using var scope = serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                if (!reportCodeArr.Contains(ALL_FACT) && reportCodeArr.Length > 0)
+                {
+                    foreach (var reportCode in reportCodeArr)
+                    {
+                        process(reportCode, dbContext);
+                    }
+                    return;
+                }
+                else
+                {
+                    process(ALL_FACT, dbContext);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.Error.Write("Error running toggleReportLock");
+                Console.Error.Write(ex);
+            }
+        }
+        private void RunMigration(string? migrateFactRecords)
         {
             try
             {
+
+                Console.WriteLine($"Inside RunMigration with migrateFactRecords:{migrateFactRecords}");
+                string[]? factsToMigrate = [ALL_FACT];
+                // all the fact  report codes to array
+                if (migrateFactRecords != null && !migrateFactRecords.Contains(ALL_FACT))
+                {
+                    factsToMigrate = migrateFactRecords.Split(",");
+                }
+
+
+                // unlock all GenerateReports.isLocked to 0 
+                toggleReportLock(0, []);
+                // Only report that came in to be locked or if all report everthing to be locked, GenerateReports.isLocked = 1 
+                toggleReportLock(1, factsToMigrate);
                 Console.Out.WriteLine("Inside RunMigration");
                 IMigrationService migrationService = serviceProvider.GetService<IMigrationService>();
                 Console.Out.WriteLine("migrationService is present:" + migrationService);
@@ -332,10 +406,22 @@ namespace generate.overnighttest
                 Console.Error.WriteLine("Error in RunMigration");
                 Console.Error.Write(ex);
             }
+            finally
+            {
+                Console.WriteLine("Done running migration");
+
+            }
 
         }
 
-    
+        /// <summary>
+        /// Run certain database work before running migration
+        /// 1.  update ToggleResponses table.ResponseValue 
+        /// 2.  update [RDS].[DimSchoolYearDataMigrationTypes] isSelected to 0
+        /// 3.  UPDATE [RDS].[DimSchoolYearDataMigrationTypes]  SET IsSelected = 1 for DimSchoolYearId for selected school year
+        /// 4.  updates ToggleResponses table field ResponseValue with schoolYear
+        /// 5.  Runs a fresh insert to ToggleAssessments
+        /// </summary>
         private void RunPreDmc()
         {
             Console.WriteLine("Inside RunPreDmc");
@@ -348,6 +434,29 @@ namespace generate.overnighttest
                 }
                 using var scope = serviceProvider.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+
+                // updates ToggleResponses table.ResponseValue with schoolYear
+                int rowsUpdated = dbContext.Database.ExecuteSql($"update App.ToggleResponses set ResponseValue = '10/01/' + CAST({schoolyear} - 1 AS VARCHAR) where ToggleResponseId = 1");
+        
+                Console.WriteLine($"Rows Updated from ToggleResponses:{rowsUpdated}");
+                // updates DimSchoolYearDataMigrationTypes.isSelected to 0 , all migration to selected 0 
+                rowsUpdated = dbContext.Database.ExecuteSqlRaw($"UPDATE [RDS].[DimSchoolYearDataMigrationTypes] SET IsSelected = 0 ");
+                Console.WriteLine($"Rows Updated from DimSchoolYearDataMigrationTypes isselected:{rowsUpdated}");
+
+                // updates DimSchoolYearDataMigrationTypes for current schoolYear IsSelected to 1
+                List<Dictionary<string, object>> results = RunSqlCmdAndReadResult($"select DimSchoolYearId FROM [RDS].[DimSchoolYears] WHERE SchoolYear = {schoolyear}");
+                Console.WriteLine($"Found results from query:{results}");
+                if (results.Count > 0)
+                {
+                    Dictionary<string, object> firstItem = results[0];
+                    var DimSchoolYearId = firstItem.GetValueOrDefault("DimSchoolYearId", -1);
+                    Console.WriteLine($"Found DimSchoolYearId:{DimSchoolYearId}");
+                    rowsUpdated = dbContext.Database.ExecuteSql($@"UPDATE [RDS].[DimSchoolYearDataMigrationTypes]  SET IsSelected = 1 WHERE DimSchoolYearId = {DimSchoolYearId}");
+                    Console.WriteLine($"Rows Updated from DimSchoolYearDataMigrationTypes isselected to 1:{rowsUpdated}");
+
+                }
+
                 string sqlUpdateStr = $@"
                         update tr
                         set ResponseValue = '10/21/' + CAST({schoolyear} - 1 AS VARCHAR)
@@ -358,8 +467,15 @@ namespace generate.overnighttest
                     ";
                 //string sqlUpdateStr = $"update a set a.IsActive = {(enable ? 1 : 0)} from App.SqlUnitTest a where a.TestScope='{fileSpecNum}'";
                 Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
-                int rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
+                rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
                 Console.WriteLine($"Rows Updated from predmc:{rowsUpdated}");
+
+                string toggleSqlFilePath = Path.Combine(appDir, "DatabaseScripts", "InsertToggleAssessments.sql");
+                Console.WriteLine($"toggleSqlFilePath:{toggleSqlFilePath}");
+                string script = File.ReadAllText(toggleSqlFilePath);
+                Console.WriteLine($"toggleScript:{script}");
+                dbContext.Database.ExecuteSqlRaw(script);
+
             }
             catch (Exception ex)
             {
@@ -409,6 +525,48 @@ namespace generate.overnighttest
 
 
 
+        /// <summary>
+        /// Executes the given SQL query and returns the result as a list of dictionaries.
+        /// Each dictionary represents a row, mapping column names to their values.
+        /// </summary>
+        /// <param name="sqlQuery">The SQL query to execute.</param>
+        /// <returns>List of rows, each as a Dictionary&lt;string, object&gt;.</returns>
+        private List<Dictionary<string, object>> RunSqlCmdAndReadResult(string sqlQuery)
+        {
+            Console.WriteLine($"Executing RunSqlCmdAndReadResult with sqlQuery:{sqlQuery}");
+            var results = new List<Dictionary<string, object>>();
+            try
+            {
+                using var scope = serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                string connectionString = dbContext.Database.GetDbConnection().ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        int fieldCount = reader.FieldCount;
+                        while (reader.Read())
+                        {
+                            var row = new Dictionary<string, object>(fieldCount);
+                            for (int i = 0; i < fieldCount; i++)
+                            {
+                                row[reader.GetName(i)] = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                            }
+                            results.Add(row);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error executing SQL command: {ex.Message}");
+                Console.Error.WriteLine(ex);
+            }
+            return results;
+        }
+
         private bool IsTestActiveForFileSpec(string fileSpecNum)
         {
             Console.WriteLine($"Inside IsTestActiveForFileSpec with:{fileSpecNum}");
@@ -430,6 +588,7 @@ namespace generate.overnighttest
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
                         object isActiveTest = cmd.ExecuteScalar();
+
                         Console.WriteLine($"isActiveTest : {isActiveTest}");
                         return true.Equals(isActiveTest);
                     }
@@ -450,7 +609,7 @@ namespace generate.overnighttest
             Dictionary<string, string> fileSpecToTestStoredProcWithSchoolYear = Utils.buildFileSpecToStoredProc(schoolyear);
             try
             {
-  
+
                 foreach (var item in factSpecArr)
                 {
                     Console.WriteLine("----------------------------------");
