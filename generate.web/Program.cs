@@ -29,10 +29,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory() + "/Config/")
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables();
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
 
-
+if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower() != "stage")
+{
+    builder.Configuration.AddEnvironmentVariables(e => e.Prefix = "Data__");
+}
 
 AppConfiguration.ConfigureCoreServices(builder.Services);
 
