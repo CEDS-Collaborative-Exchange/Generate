@@ -1,11 +1,13 @@
 ---
-description: Resetting After a Failed Migration
+description: Resetting After a Failed Generate User Interface Migration
 ---
 
 # Troubleshooting
 
 {% hint style="info" %}
-In this instance we are describing ‘failed’ as a migration that did not complete successfully. This could be a migration that had a sql error and aborted or a migration that runs continuously until it eventually causes a time out error.\
+In this instance we are describing ‘failed’ as a migration that did not complete successfully. This could be a migration that had a sql error and aborted or a migration that runs continuously until it eventually causes a time out error.
+
+\
 This is not referring to a migration that completed but did not produce the expected results. For that, please refer to [https://app.gitbook.com/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/\~/changes/301/developer-guides/generate-utilities/troubleshooting-report-migration-results](../generate-utilities/troubleshooting-report-migration-results.md) &#x20;
 {% endhint %}
 
