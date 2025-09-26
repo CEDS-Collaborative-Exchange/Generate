@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "generate.update", "generate
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "generate.test", "generate.test\generate.test.csproj", "{A945C2C9-E848-42F7-A164-813BEE2DF39B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "generate.overnighttest", "generate.overnighttest\generate.overnighttest.csproj", "{982F188C-06FD-440A-B249-A8D665DBA4D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -150,6 +152,18 @@ Global
 		{A945C2C9-E848-42F7-A164-813BEE2DF39B}.Stage|Any CPU.Build.0 = Debug|Any CPU
 		{A945C2C9-E848-42F7-A164-813BEE2DF39B}.Test|Any CPU.ActiveCfg = Debug|Any CPU
 		{A945C2C9-E848-42F7-A164-813BEE2DF39B}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Production|Any CPU.ActiveCfg = Debug|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Production|Any CPU.Build.0 = Debug|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Stage|Any CPU.ActiveCfg = Debug|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Stage|Any CPU.Build.0 = Debug|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{982F188C-06FD-440A-B249-A8D665DBA4D0}.Test|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
