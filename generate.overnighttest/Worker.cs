@@ -17,11 +17,14 @@ using Microsoft.Extensions.PlatformAbstractions;
 using static generate.overnighttest.Utils;
 using System.Collections.Generic;
 using Microsoft.IdentityModel.Tokens;
-
+using Microsoft.Extensions.Logging;
+using System;
+using Hangfire.Logging;
 namespace generate.overnighttest
 {
     public class Worker
     {
+        
         // Directory where this application is running
         private string appDir;
         private string[] programArgs;
@@ -107,7 +110,7 @@ namespace generate.overnighttest
                 {
                     Console.Error.WriteLine(parseError.Message);
                 }
-                Environment.Exit(-1);
+                ExitWithCode(EXIT_CODES.ParseArgumentAndBuildCommand);
 
             }
 
@@ -165,7 +168,7 @@ namespace generate.overnighttest
                     if (commandToValue.Count > 0)
                     {
                         Console.Error.WriteLine($"{commandType} is not allowed with this combination of argumens: [{string.Join(", ", programArgs)}]");
-                        Environment.Exit(-1);
+                        ExitWithCode(EXIT_CODES.ParseArgumentAndBuildCommand);
                     }
                     Console.WriteLine($"Current commandToValue size: {commandToValue.Count}");
                     Console.WriteLine($"Adding option:{option} => {commandType},with value:{optionValue}");
@@ -184,7 +187,7 @@ namespace generate.overnighttest
             if (commandToValue.Count == 0)
             {
                 Console.Out.WriteLine(HELP_MESSAGE);
-                Environment.Exit(-1);
+                ExitWithCode(EXIT_CODES.ParseArgumentAndBuildCommand);
             }
 
             return commandToValue;
@@ -249,8 +252,8 @@ namespace generate.overnighttest
             catch (Exception ex)
             {
                 Console.WriteLine("There was an error Running this job");
-                Console.Error.WriteLine(ex.ToString());
-                Environment.Exit(-1);
+                // Console.Error.WriteLine(ex.ToString());
+                ExitWithCode(EXIT_CODES.Start,ex);
             }
 
 
@@ -375,7 +378,8 @@ namespace generate.overnighttest
             catch (Exception ex)
             {
                 Console.Error.Write("Error running toggleReportLock");
-                Console.Error.Write(ex);
+                // Console.Error.Write(ex);
+                ExitWithCode(EXIT_CODES.ToggleReportLock,ex);
             }
         }
         private void RunMigration(string? migrateFactRecords)
@@ -404,7 +408,8 @@ namespace generate.overnighttest
             catch (Exception ex)
             {
                 Console.Error.WriteLine("Error in RunMigration");
-                Console.Error.Write(ex);
+                // Console.Error.Write(ex);
+                ExitWithCode(EXIT_CODES.RunMigration,ex);
             }
             finally
             {
@@ -438,7 +443,7 @@ namespace generate.overnighttest
 
                 // updates ToggleResponses table.ResponseValue with schoolYear
                 int rowsUpdated = dbContext.Database.ExecuteSql($"update App.ToggleResponses set ResponseValue = '10/01/' + CAST({schoolyear} - 1 AS VARCHAR) where ToggleResponseId = 1");
-        
+
                 Console.WriteLine($"Rows Updated from ToggleResponses:{rowsUpdated}");
                 // updates DimSchoolYearDataMigrationTypes.isSelected to 0 , all migration to selected 0 
                 rowsUpdated = dbContext.Database.ExecuteSqlRaw($"UPDATE [RDS].[DimSchoolYearDataMigrationTypes] SET IsSelected = 0 ");
@@ -473,14 +478,15 @@ namespace generate.overnighttest
                 string toggleSqlFilePath = Path.Combine(appDir, "DatabaseScripts", "InsertToggleAssessments.sql");
                 Console.WriteLine($"toggleSqlFilePath:{toggleSqlFilePath}");
                 string script = File.ReadAllText(toggleSqlFilePath);
-                Console.WriteLine($"toggleScript:{script}");
+                // Console.WriteLine($"toggleScript:{script}");
                 dbContext.Database.ExecuteSqlRaw(script);
 
             }
             catch (Exception ex)
             {
                 Console.Error.Write($"Error Running PreDmc");
-                Console.Error.WriteLine(ex);
+                // Console.Error.WriteLine(ex);
+                ExitWithCode(EXIT_CODES.RunPreDmc,ex);
             }
             finally
             {
@@ -562,7 +568,8 @@ namespace generate.overnighttest
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"Error executing SQL command: {ex.Message}");
-                Console.Error.WriteLine(ex);
+                //Console.Error.WriteLine(ex);
+                ExitWithCode(EXIT_CODES.RunSqlCmdAndReadResult,ex);
             }
             return results;
         }
@@ -634,7 +641,8 @@ namespace generate.overnighttest
                     catch (Exception ex)
                     {
                         Console.Error.Write("Error in RunTestByFileSpec for file spec:" + item);
-                        Console.Error.WriteLine(ex);
+                        // Console.Error.WriteLine(ex);
+                        ExitWithCode(EXIT_CODES.RunTestByFileSpec,ex);
                     }
                     Console.WriteLine(">>>Done Running Test for spec::" + item);
                 }
@@ -642,7 +650,8 @@ namespace generate.overnighttest
             catch (Exception ex)
             {
                 Console.Error.Write($"Error in RunTestByFileSpec for file spec:{factSpecValuesSeperatedByComma}");
-                Console.Error.WriteLine(ex.ToString());
+                //Console.Error.WriteLine(ex.ToString());
+                 ExitWithCode(EXIT_CODES.RunTestByFileSpec,ex);
 
             }
 
@@ -668,7 +677,8 @@ namespace generate.overnighttest
                 catch (Exception ex)
                 {
                     Console.Error.Write($"Error update SqlUnitTest for spec:{fileSpecNum} when enable is :{enable},message:{ex.Message}");
-                    Console.Error.WriteLine(ex);
+                    // Console.Error.WriteLine(ex);
+                    ExitWithCode(EXIT_CODES.EnableOrDisableTests,ex);
                 }
             }
         }

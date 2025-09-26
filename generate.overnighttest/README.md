@@ -4,7 +4,11 @@ Following arguments are supported
 
 -Migration
 ```
-dotnet run --migrate
+#running all fact
+dotnet run --migrate ALL_FACT
+#running by report
+dotnet run --migrate 002,005
+
 ```
 
 -Test All fact

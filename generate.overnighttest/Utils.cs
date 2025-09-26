@@ -4,9 +4,51 @@ using System.Diagnostics;
 namespace generate.overnighttest
 {
 
+
     public static class Utils
     {
 
+        public enum EXIT_CODES
+        {
+            Start = 1,
+            EnableOrDisableTests = 2,
+            IsTestActiveForFileSpec = 3,
+            ParseArgumentAndBuildCommand = 4,
+            RunAllTests = 5,
+            RunMigration = 6,
+            RunPreDmc = 7,
+            RunSqlCmdAndReadResult = 8,
+            RunTasksBasedOnCommands = 9,
+            RunTestByFactType = 10,
+            RunTestByFileSpec = 11,
+            ToggleReportLock = 12
+        }
+
+
+        public static void ExitWithCode(EXIT_CODES exitCode, Exception? ex = null)
+        {
+            try
+            {
+                var errorTime = DateTime.Now;
+
+                int exitNum = (int)exitCode;
+                //Console.Error.WriteLine($"Exiting with error exitcode:{exitCode}");
+                Console.Error.WriteLine($"<ERROR-START ErrorTime=\"{errorTime}\">");
+                Console.Error.WriteLine($"EXIT_CODES:{exitCode},with errorNum:{exitNum}");
+                if (ex != null)
+                {
+                    Console.Error.WriteLine(ex);
+                }
+                Console.Error.WriteLine($"</ERROR-END/>");
+                Environment.Exit(exitNum);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine($"Grave error occured:{e}");    
+                Environment.Exit(100);
+            }
+
+        }
 
         /// <summary>
         /// enum to identify command types
@@ -30,7 +72,7 @@ namespace generate.overnighttest
 
         public static string EMPTY_STRING = "";
         public static string ALL_FACT = "ALL_FACT";
-         
+
         public static Dictionary<string, string> BuildFactTypeToFileSpec()
         {
             Dictionary<string, string> v = new Dictionary<string, string>()
@@ -164,7 +206,7 @@ namespace generate.overnighttest
 
         };
 
-       /// <summary>
+        /// <summary>
         /// --testallfact argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
@@ -174,7 +216,7 @@ namespace generate.overnighttest
             DefaultValueFactory = parseResult => false
         };
 
-       /// <summary>
+        /// <summary>
         /// --testallfact argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
@@ -186,7 +228,7 @@ namespace generate.overnighttest
 
         };
 
-       /// <summary>
+        /// <summary>
         /// --testallfact argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
@@ -197,7 +239,7 @@ namespace generate.overnighttest
             //Required = true
         };
 
-       /// <summary>
+        /// <summary>
         /// --enabletest argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
@@ -208,7 +250,7 @@ namespace generate.overnighttest
             //Required = true
         };
 
-       /// <summary>
+        /// <summary>
         /// --disabletest argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
@@ -219,7 +261,7 @@ namespace generate.overnighttest
             //Required = true
         };
 
-       /// <summary>
+        /// <summary>
         /// --schoolyear argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
