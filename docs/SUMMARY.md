@@ -37,6 +37,7 @@
   * [Subfolder configuration](developer-guides/installation/subfolder-configuration.md)
   * [Optional Installations](developer-guides/installation/optional-installations.md)
   * [Azure Installation Guide](developer-guides/installation/azure-installation-guide.md)
+  * [Generate Security Protocols](developer-guides/installation/generate-security-protocols.md)
   * [Installation FAQ](developer-guides/installation/installation-faq.md)
   * [Upgrade](developer-guides/installation/upgrade/README.md)
     * [Generate Update](developer-guides/installation/upgrade/generate-update.md)
