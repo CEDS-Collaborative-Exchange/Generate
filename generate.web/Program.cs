@@ -33,7 +33,7 @@ builder.Configuration
 
 if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower() != "stage")
 {
-    builder.Configuration.AddEnvironmentVariables(e => e.Prefix = "Data__");
+    builder.Configuration.AddEnvironmentVariables(e => e.Prefix = "Data");
 }
 
 AppConfiguration.ConfigureCoreServices(builder.Services);
