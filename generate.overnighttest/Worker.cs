@@ -20,6 +20,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Logging;
 using System;
 using Hangfire.Logging;
+using System.Web.Services.Description;
+using generate.core.Interfaces.Repositories.App;
+using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 namespace generate.overnighttest
 {
     public class Worker
@@ -229,7 +233,7 @@ namespace generate.overnighttest
 
             IConfigurationRoot configuration = builder.Build();
 
-            var services = new ServiceCollection();
+            var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
             ConfigureServices(configuration, services);
             serviceProvider = services.BuildServiceProvider();
 
@@ -253,7 +257,7 @@ namespace generate.overnighttest
             {
                 Console.WriteLine("There was an error Running this job");
                 // Console.Error.WriteLine(ex.ToString());
-                ExitWithCode(EXIT_CODES.Start,ex);
+                ExitWithCode(EXIT_CODES.Start, ex);
             }
 
 
@@ -311,7 +315,7 @@ namespace generate.overnighttest
             if (commandTypeToValueDict.TryGetValue(CommandType.TEST_FACT_BY_SPEC, out string? testFactBySpecVal))
             {
 
-                RunTestByFileSpec(testFactBySpecVal);
+                RunTestByFileSpecReportCode([testFactBySpecVal]);
                 //RunTestByFileSpec(commandToValueDict.GetValueOrDefault(CommandType.TEST_FACT_BY_SPEC, EMPTY_STRING));
                 return;
             }
@@ -320,7 +324,7 @@ namespace generate.overnighttest
             if (commandTypeToValueDict.TryGetValue(CommandType.TEST_FACT_BY_TYPE, out string? testFactByTypeVal))
             {
 
-                RunTestByFactType(testFactByTypeVal);
+                RunTestByFactType([testFactByTypeVal.ToUpper()]);
                 //RunTestByFactType(commandToValueDict.GetValueOrDefault(CommandType.TEST_FACT_BY_TYPE, EMPTY_STRING));
                 return;
             }
@@ -498,27 +502,34 @@ namespace generate.overnighttest
         {
             Console.WriteLine("Inside RullAllTests");
 
-            Dictionary<string, string> allTestStoredProcs = buildFileSpecToStoredProc(schoolyear);
+            Dictionary<string, string> allTestStoredProcs = buildFileSpecReportCodeToStoredProc(schoolyear);
             string factSpecValuesSeperatedByComma = string.Join(",", allTestStoredProcs.Keys);
             Console.WriteLine($"All factSpecValuesSeperatedByComma for test all :{factSpecValuesSeperatedByComma}");
 
-            RunTestByFileSpec(factSpecValuesSeperatedByComma);
+            RunTestByFileSpecReportCode(allTestStoredProcs.Keys.ToList());
 
         }
 
-        private void RunTestByFactType(string factTypeValuesSeperatedByComma)
+        /// <summary>
+        /// for fact types given ASSESSEMENT,DROPOUT 
+        /// runs test for given reportCodes under each fact type
+        /// If given ASSESSMENT : runs test for all 050,113,125,126,137,138,139,175,178,179,185,188,189,224,225
+        /// </summary>
+        /// <param name="factTypeValuesList"></param>
+        private void RunTestByFactType(IList<string> factTypeValuesList)
         {
-            Dictionary<string, string> dict = Utils.BuildFactTypeToFileSpec();
-            Console.WriteLine("Inside RunTestByFactType factTypeValuesSeperatedByComma:" + factTypeValuesSeperatedByComma);
-            string[] factTypeArr = factTypeValuesSeperatedByComma.Split(",");
+            // Dictionary<string, string> dict = Utils.BuildFactTypeToFileSpec();
+            Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider);
+            Console.WriteLine("Inside RunTestByFactType factTypeValuesSeperatedByComma:" + TryToString(factTypeValuesList));
+            //string[] factTypeArr = factTypeValuesList.Split(",");
 
-            foreach (var item in factTypeArr)
+            foreach (var item in factTypeValuesList)
             {
                 Console.WriteLine("factType came:" + item);
-                if (dict.TryGetValue(item, out string fileSpec))
+                if (factTypeCodeToReportCodes.TryGetValue(item, out IList<string> reportCodes))
                 {
-                    Console.WriteLine($"Found fileSpec:{fileSpec}");
-                    RunTestByFileSpec(fileSpec);
+                    //string reportCodeCommaSeperated = string.Join(",", reportCodes);
+                    RunTestByFileSpecReportCode(reportCodes);
                 }
                 else
                 {
@@ -609,15 +620,23 @@ namespace generate.overnighttest
                 return false;
             }
         }
-        private void RunTestByFileSpec(string factSpecValuesSeperatedByComma)
+        
+        /// <summary>
+        /// 
+        /// Takes a list of reportCodes 002,005 etc and runs test for them
+        /// </summary>
+        /// <param name="reportCodeList"></param>
+        private void RunTestByFileSpecReportCode(IList<string> reportCodeList)
         {
-            Console.WriteLine($"Inside RunTestByFileSpec factSpecValuesSeperatedByComma:{factSpecValuesSeperatedByComma},runPreDmc:{runPreDmc}");
-            string[] factSpecArr = factSpecValuesSeperatedByComma.Split(",");
-            Dictionary<string, string> fileSpecToTestStoredProcWithSchoolYear = Utils.buildFileSpecToStoredProc(schoolyear);
+            // string factSpecValuesSeperatedByComma
+            string reportCodeListStr = string.Join(",", reportCodeList);
+            Console.WriteLine($"Inside RunTestByFileSpec factSpecValuesSeperatedByComma:{reportCodeListStr},runPreDmc:{runPreDmc}");
+            //string[] reportCodeList = factSpecValuesSeperatedByComma.Split(",");
+            Dictionary<string, string> fileSpecToTestStoredProcWithSchoolYear = Utils.buildFileSpecReportCodeToStoredProc(schoolyear);
             try
             {
 
-                foreach (var item in factSpecArr)
+                foreach (var item in reportCodeList)
                 {
                     Console.WriteLine("----------------------------------");
                     Console.WriteLine(">>>Running Test for spec::" + item);
@@ -642,16 +661,16 @@ namespace generate.overnighttest
                     {
                         Console.Error.Write("Error in RunTestByFileSpec for file spec:" + item);
                         // Console.Error.WriteLine(ex);
-                        ExitWithCode(EXIT_CODES.RunTestByFileSpec,ex);
+                        ExitWithCode(EXIT_CODES.RunTestByFileSpec, ex);
                     }
                     Console.WriteLine(">>>Done Running Test for spec::" + item);
                 }
             }
             catch (Exception ex)
             {
-                Console.Error.Write($"Error in RunTestByFileSpec for file spec:{factSpecValuesSeperatedByComma}");
+                Console.Error.Write($"Error in RunTestByFileSpec for file spec:{reportCodeListStr}");
                 //Console.Error.WriteLine(ex.ToString());
-                 ExitWithCode(EXIT_CODES.RunTestByFileSpec,ex);
+                ExitWithCode(EXIT_CODES.RunTestByFileSpec, ex);
 
             }
 
@@ -663,16 +682,21 @@ namespace generate.overnighttest
         {
             Console.WriteLine($"Inside EnableOrDisableTests enable:{enable} fileSpecNumbers:{fileSpecNumbers}, ");
             string[] fileSpecArr = fileSpecNumbers.Split(",");
-            foreach (var fileSpecNum in fileSpecArr)
+            foreach (string fileSpecNum in fileSpecArr)
             {
                 try
                 {
+                    string copyFileSpecNum = fileSpecNum;
+                    if (!copyFileSpecNum.StartsWith("FS"))
+                    {
+                        copyFileSpecNum = "FS" + fileSpecNum;
+                    }
                     using var scope = serviceProvider.CreateScope();
                     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    string sqlUpdateStr = $"update a set a.IsActive = {(enable ? 1 : 0)} from App.SqlUnitTest a where a.TestScope='{fileSpecNum}'";
+                    string sqlUpdateStr = $"update a set a.IsActive = {(enable ? 1 : 0)} from App.SqlUnitTest a where a.TestScope='{copyFileSpecNum}'";
                     Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
                     int rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
-                    Console.WriteLine($"fileSpecNum :{fileSpecNum} updated rows:{rowsUpdated}");
+                    Console.WriteLine($"fileSpecNum :{copyFileSpecNum} updated rows:{rowsUpdated}");
                 }
                 catch (Exception ex)
                 {
