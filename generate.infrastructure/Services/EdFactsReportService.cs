@@ -236,45 +236,52 @@ namespace generate.infrastructure.Services
             {
                 foreach (var item in queryData)
                 {
-                    dynamic row = new ExpandoObject();
-                    row.stateCode = item.StateCode;
-                    row.stateName = item.StateName;
-                    row.organizationStateId = item.OrganizationNcesId;
-                    row.rowKey = item.OrganizationName;
-                    row.parentOrganizationStateId = item.ParentOrganizationStateId;
-
-                    // Category column
-                    if (columns.ContainsKey("Category"))
-                    {
-                        row.col_1 = categorySetCode switch
-                        {
-                            "CSA" or "CSA1" => item.RACE,
-                            "CSB" or "CSB1" => item.DISABILITY,
-                            "CSC" or "CSC1" => item.LEPSTATUS,
-                            "CSD" or "CSD1" => item.ECODISSTATUS,
-                            _ => null
-                        };
-                    }
-
-                    // Indicator columns (layout varies by categorySetCode)
-                    if (categorySetCode is "TOT" or "TOT1")
-                    {
-                        row.col_1 = item.STATEDEFINEDCUSTOMINDICATORCODE;
-                        row.col_2 = item.INDICATORSTATUS;
-                        row.col_3 = item.STATEDEFINEDSTATUSCODE;
-                    }
-                    else
-                    {
-                        row.col_2 = item.STATEDEFINEDCUSTOMINDICATORCODE;
-                        row.col_3 = item.INDICATORSTATUS;
-                        row.col_4 = item.STATEDEFINEDSTATUSCODE;
-                    }
-
+                    dynamic row = processOrganizationStatusRow(item, columns, categorySetCode);
                     reportDto.data.Add(row);
                 }
             }
 
             return reportDto;
+
+        }
+
+        private dynamic processOrganizationStatusRow(ReportEDFactsOrganizationStatusCount item, Dictionary<string, string> columns, string categorySetCode)
+        {
+            dynamic row = new ExpandoObject();
+            row.stateCode = item.StateCode;
+            row.stateName = item.StateName;
+            row.organizationStateId = item.OrganizationNcesId;
+            row.rowKey = item.OrganizationName;
+            row.parentOrganizationStateId = item.ParentOrganizationStateId;
+
+            // Category column
+            if (columns.ContainsKey("Category"))
+            {
+                row.col_1 = categorySetCode switch
+                {
+                    "CSA" or "CSA1" => item.RACE,
+                    "CSB" or "CSB1" => item.DISABILITY,
+                    "CSC" or "CSC1" => item.LEPSTATUS,
+                    "CSD" or "CSD1" => item.ECODISSTATUS,
+                    _ => null
+                };
+            }
+
+            // Indicator columns (layout varies by categorySetCode)
+            if (categorySetCode is "TOT" or "TOT1")
+            {
+                row.col_1 = item.STATEDEFINEDCUSTOMINDICATORCODE;
+                row.col_2 = item.INDICATORSTATUS;
+                row.col_3 = item.STATEDEFINEDSTATUSCODE;
+            }
+            else
+            {
+                row.col_2 = item.STATEDEFINEDCUSTOMINDICATORCODE;
+                row.col_3 = item.INDICATORSTATUS;
+                row.col_4 = item.STATEDEFINEDSTATUSCODE;
+            }
+
+            return row;
 
         }
 

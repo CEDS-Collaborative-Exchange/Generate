@@ -104,15 +104,6 @@ namespace generate.infrastructure.Repositories.RDS
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
 
-            // Precompute fields for readability
-            Func<dynamic, string> getOrgNcesId = x => isSEA ? x.DimSchool.StateAnsiCode :
-                                                       isLEA ? x.DimSchool.LeaIdentifierNces :
-                                                               x.DimSchool.SchoolIdentifierNces;
-
-            Func<dynamic, string> getOrgStateId = x => isSEA ? x.DimSchool.SeaIdentifierState :
-                                                            isLEA ? x.DimSchool.LeaIdentifierState :
-                                                                    x.DimSchool.SchoolIdentifierState;
-
             Func<dynamic, string> getOrgName = x => isSEA ? x.DimSchool.SeaName :
                                                       isLEA ? x.DimSchool.LeaName :
                                                               x.DimSchool.NameOfInstitution;
@@ -127,8 +118,8 @@ namespace generate.infrastructure.Repositories.RDS
                     x.DimSchool.StateAbbreviationCode,
                     x.DimSchool.StateAnsiCode,
                     x.DimSchool.StateAbbreviationDescription,
-                    OrganizationNcesId = getOrgNcesId(x),
-                    OrganizationStateId = getOrgStateId(x),
+                    OrganizationNcesId = GetOrgNcesId(x, reportLevel),
+                    OrganizationStateId = GetOrgStateId(x, reportLevel),
                     OrganizationName = getOrgName(x),
                     ParentOrganizationStateId = getParentStateId(x),
                     AGE = categories.Contains("|AGE|") ? x.DimAge.AgeEdFactsCode : null,
@@ -163,6 +154,36 @@ namespace generate.infrastructure.Repositories.RDS
             return groupedFacts;
 
         }
+
+        private string GetOrgStateId(dynamic x, string reportLevel)
+        {
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            if (isSEA)
+                return x.DimSchool.SeaIdentifierState;
+
+            if (isLEA)
+                return x.DimSchool.LeaIdentifierState;
+
+            return x.DimSchool.SchoolIdentifierState;
+        }
+
+        private string GetOrgNcesId(dynamic x, string reportLevel)
+        {
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            if (isSEA)
+                return x.DimSchool.StateAnsiCode;
+
+            if (isLEA)
+                return x.DimSchool.LeaIdentifierNces;
+
+            return x.DimSchool.SchoolIdentifierNces;
+        }
+
+
 
         #endregion
 
