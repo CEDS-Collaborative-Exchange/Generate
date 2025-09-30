@@ -208,7 +208,7 @@ namespace generate.overnighttest
 
             var builder = new ConfigurationBuilder()
                 .AddCommandLine(programArgs)
-                .AddEnvironmentVariables(e => e.Prefix = "Data__")
+                .AddEnvironmentVariables(e => e.Prefix = "Data")
                 .AddUserSecrets(Assembly.GetExecutingAssembly(), true);
 
 
