@@ -39,11 +39,13 @@ var builder = WebApplication.CreateBuilder();
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
-    .AddEnvironmentVariables(e => e.Prefix = "Data__")
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
-    
 
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower() != "stage")
+{
+    builder.Configuration.AddEnvironmentVariables(e => e.Prefix = "Data");
+}
 
 
 builder.Logging.AddSerilog(new LoggerConfiguration()
