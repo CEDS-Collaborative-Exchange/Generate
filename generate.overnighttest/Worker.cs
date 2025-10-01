@@ -240,7 +240,7 @@ namespace generate.overnighttest
 
 
 
-            GlobalConfiguration.Configuration.UseSqlServerStorage(configuration.GetValue<string>("Data:HangfireConnection"), new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
+            GlobalConfiguration.Configuration.UseSqlServerStorage(configuration["Data:HangfireConnection"], new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
 
 
 
