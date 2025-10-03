@@ -375,6 +375,8 @@ export class PivottableComponent {
                 return matchFound;
             });
 
+        console.log(reportData.categorySets[0]);
+
         if (uiData.length > 0) {
             if (reportData.categorySets[0].organizationLevelCode.toLowerCase() == "sea") {
                 this.paginator.disabled = true;
@@ -546,8 +548,13 @@ export class PivottableComponent {
 
             var selectedFilter = {}
 
+            //console.log('Filters are :' + filters);
+            //console.log('Options are :' + reportData.categorySets[0].categoryOptions);
+            //console.log(e.srcElement);
+           
             for (const key in filters) {
                 if (filters.hasOwnProperty(key)) {
+                    console.log('key is :' + key);
                     const column = viewDef.fields.find(f => f.header === key).binding;
                     if (column) {
 
@@ -557,6 +564,7 @@ export class PivottableComponent {
                         }
                         if (column === 'tableTypeAbbrv') {
                             var col = e.srcElement.classList[2];
+
                             var keys = String(pivotData.colKeys);
                             var split_keys = keys.split(",");
                             if (col === 'col0') {
@@ -569,6 +577,7 @@ export class PivottableComponent {
                             bindings.push(column);
                             headers.push('TableTypeAbbrv');
                         }
+                        console.log('option is: ' + filters[key]);
                         let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionName === filters[key]);
                         if (categoryOption) {
                             selectedFilter[column] = categoryOption.categoryOptionCode;

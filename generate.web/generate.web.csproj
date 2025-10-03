@@ -69,6 +69,7 @@
     <None Remove="ClientApp\src\app\models\app\metadataStatus.ts" />
     <None Remove="ClientApp\src\app\models\app\schoolYear.ts" />
     <None Remove="ClientApp\src\app\models\app\stagingValidationResult.ts" />
+    <None Remove="ClientApp\src\app\models\app\tableType.ts" />
     <None Remove="ClientApp\src\app\services\app\auth.service.ts" />
     <None Remove="ClientApp\src\app\services\app\dataMigrationHistory.service.ts" />
     <None Remove="ClientApp\src\app\shared\guards\confirmation.guard.ts" />

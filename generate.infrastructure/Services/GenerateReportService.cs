@@ -195,7 +195,100 @@ namespace generate.infrastructure.Services
             return results;
         }
 
-        
+        public GenerateReportDto GetReportDto(GenerateReport report, string reportYear)
+        {
+            IEnumerable<OrganizationLevel> organizationLevels = _appRepository.GetAll<OrganizationLevel>(0, 0);
+
+            GenerateReportDto result = new GenerateReportDto();
+            List<CategorySet> categorySets = new List<CategorySet>();
+
+
+            List<OrganizationLevel> reportOrganizationLevels = organizationLevels.Where(l => report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == l.OrganizationLevelId)).ToList();
+            List<OrganizationLevelDto> reportLevelDtos = new List<OrganizationLevelDto>();
+
+            bool seaLevel = false;
+            bool leaLevel = false;
+            bool schLevel = false;
+            string connectionLink = string.Empty;
+
+            if (report.CedsConnection != null)
+            {
+                connectionLink = "https://ceds.ed.gov/connectReport.aspx?uid=" + report.CedsConnection.CedsUseCaseId.ToString();
+            }
+
+            foreach (var item in reportOrganizationLevels)
+            {
+                OrganizationLevelDto levelDto = new OrganizationLevelDto();
+                levelDto.OrganizationLevelId = item.OrganizationLevelId;
+                levelDto.LevelCode = item.LevelCode;
+                levelDto.LevelName = item.LevelName;
+                reportLevelDtos.Add(levelDto);
+                if (item.LevelCode == "sea")
+                {
+                    seaLevel = true;
+                }
+                else if (item.LevelCode == "lea")
+                {
+                    leaLevel = true;
+                }
+                else if (item.LevelCode == "sch")
+                {
+                    schLevel = true;
+                }
+            }
+
+            List<CategorySetDto> reportCategorySetDtos = new List<CategorySetDto>();
+            reportCategorySetDtos = GetCategorySetsByYear(report, reportYear);
+
+
+            List<GenerateReportFilterOptionDto> reportFilterOptionDtos = new List<GenerateReportFilterOptionDto>();
+            if (report.GenerateReportFilterOptions != null)
+            {
+                foreach (var item in report.GenerateReportFilterOptions)
+                {
+                    GenerateReportFilterOptionDto filterOptiondto = new GenerateReportFilterOptionDto();
+                    filterOptiondto.GenerateReportFilterOptionId = item.GenerateReportFilterOptionId;
+                    filterOptiondto.FilterCode = item.FilterCode;
+                    filterOptiondto.FilterName = item.FilterName;
+                    filterOptiondto.FilterSequence = item.FilterSequence;
+                    filterOptiondto.IsDefaultOption = item.IsDefaultOption;
+                    filterOptiondto.IsSubFilter = item.IsSubFilter;
+                    reportFilterOptionDtos.Add(filterOptiondto);
+                }
+            }
+
+            GenerateReportDto dto = new GenerateReportDto()
+            {
+                GenerateReportId = report.GenerateReportId,
+                GenerateReportTypeId = report.GenerateReportTypeId,
+                GenerateReportControlTypeId = report.GenerateReportControlTypeId,
+                ReportControlType = report.GenerateReportControlType,
+                ReportCode = report.ReportCode,
+                ReportName = report.ReportName,
+                ReportShortName = report.ReportShortName != null ? report.ReportShortName : report.ReportName,
+                ReportTypeAbbreviation = report.ReportTypeAbbreviation != null ? report.ReportTypeAbbreviation : "",
+                CategorySetControlCaption = report.CategorySetControlCaption != null ? report.CategorySetControlCaption : "",
+                ShowCategorySetControl = report.ShowCategorySetControl,
+                CedsConnectionId = report.CedsConnectionId,
+                ReportSequence = report.ReportSequence,
+                OrganizationLevels = reportLevelDtos,
+                CategorySets = reportCategorySetDtos,
+                ReportFilterOptions = reportFilterOptionDtos,
+                SeaLevel = seaLevel,
+                LeaLevel = leaLevel,
+                SchLevel = schLevel,
+                FilterControlLabel = report.FilterControlLabel,
+                SubFilterControlLabel = report.SubFilterControlLabel,
+                ShowFilterControl = report.ShowFilterControl,
+                ShowSubFilterControl = report.ShowSubFilterControl,
+                ShowGraph = report.ShowGraph,
+                ShowData = report.ShowData,
+                isActive = false,
+                ConnectionLink = connectionLink
+            };
+
+            return dto;
+        }
 
         public GenerateReportDataDto GetReportDataDto(string reportType, string reportCode, string reportLevel, string reportYear, string categorySetCode, string reportLea = null, string reportSchool = null, string reportFilter = null, string reportSubFilter = null, string reportGrade = null, string organizationalIdList = null, int reportSort = 1, int skip = 0, int take = 50, int pageSize = 10, int page = 1)
         {
@@ -286,6 +379,19 @@ namespace generate.infrastructure.Services
             return reportCategorySetDtos;
         }
 
+        public List<CategorySetDto> GetCategorySetsByYear(GenerateReport report, string reportYear)
+        {
+            List<CategorySet> reportCategorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == report.ReportCode && c.SubmissionYear == reportYear, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType).ToList();
+
+            if (report.ReportCode == "150") { reportCategorySets = reportCategorySets.Where(c => report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId) && c.TableType.TableTypeAbbrv == "GRADRT4YRADJ").ToList(); }
+            else if (report.ReportCode == "151") { reportCategorySets = reportCategorySets.Where(c => report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId) && c.TableType.TableTypeAbbrv == "GRADCOHORT4YR").ToList(); }
+            else { reportCategorySets = reportCategorySets.Where(c => report.GenerateReport_OrganizationLevels.Any(r => r.OrganizationLevelId == c.OrganizationLevelId)).ToList(); }
+
+            List<CategorySetDto> reportCategorySetDtos = ConvertCategorySetToDto(reportCategorySets);
+
+            return reportCategorySetDtos;
+        }
+
         public List<CategorySetDto> ConvertCategorySetToDto(List<CategorySet> categorySets)
         {
             List<CategorySetDto> reportCategorySetDtos = new List<CategorySetDto>();
@@ -329,6 +435,9 @@ namespace generate.infrastructure.Services
                             });
                         }
                     }
+
+                    //List<TableType> tableTypes = new List<TableType>();
+                    categorySetDto.TableTypes = categorySets.AsQueryable().Select(c => c.TableType).Distinct().ToList();
 
                     categorySetDto.Categories = categories;
                     categorySetDto.CategoryOptions = categoryOptions;

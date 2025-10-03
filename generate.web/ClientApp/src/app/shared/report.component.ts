@@ -21,6 +21,7 @@ import { CategorySetDto } from '../models/app/categorySetDto';
 import { OrganizationDto } from '../models/ods/organizationDto';
 import { GradeLevelDto } from '../models/ods/gradeLevelDto';
 import { GenerateReportFilterOptionDto } from '../models/app/generateReportFilterOptionDto';
+import { TableType } from '../models/app/tableType';
 
 import { FlextableComponent } from './components/flextable/flextable.component';
 
@@ -51,6 +52,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     private submissionYears: string[];
     private categorySets: CategorySetDto[];
+    private tableTypes: TableType[];
     private leas: OrganizationDto[];
     private schools: OrganizationDto[];
     private filteredSchools: OrganizationDto[];
@@ -398,7 +400,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
     getReport(newParameters: GenerateReportParametersDto) {
 
         forkJoin(
-            this._generateReportService.getReportByCodes(this.reportType, newParameters.reportCode),
+            this._generateReportService.getReportByCodeAndYear(this.reportType, newParameters.reportCode, newParameters.reportYear),
         ).subscribe(data => {
 
             this.currentReport = data[0];
@@ -434,6 +436,8 @@ export class ReportComponent implements AfterViewInit, OnInit {
             
 
             this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
+            this.tableTypes = this.categorySets[0].tableTypes;
+            console.log(this.tableTypes);
 
             if (this.categorySets !== undefined && this.categorySets.length > 0) {
                 newParameters.reportCategorySet = this.categorySets.filter(t => t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear)[0];
@@ -856,6 +860,21 @@ export class ReportComponent implements AfterViewInit, OnInit {
                         error => this.errorMessage = <any>error);
 
         return false;
+    }
+
+    setTableType(event, comboTableTypeCode) {
+        //let newParameters: GenerateReportParametersDto = this.getNewReportParameters();
+        //if (comboTableTypeCode.selectedItem !== undefined) {
+
+        //    if (newParameters.t !== comboTableTypeCode.selectedItem) {
+
+        //        newParameters.reportYear = comboTableTypeCode.selectedItem;
+        //        newParameters.reportPage = 1;
+
+        //        this.getReport(newParameters);
+        //    }
+        //}
+        console.log(comboTableTypeCode);
     }
 
 

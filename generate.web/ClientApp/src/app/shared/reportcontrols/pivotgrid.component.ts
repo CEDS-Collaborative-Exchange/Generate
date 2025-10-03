@@ -230,6 +230,8 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
                 categorySetCode = this.reportParameters.reportCategorySet.categorySetCode;
             }
 
+            if (this.reportParameters.reportTableType )
+
 
             this.subscriptions.push(this._generateReportService.getPagedReport(this.reportParameters.reportType, this.reportParameters.reportCode, this.reportParameters.reportLevel, this.reportParameters.reportYear, categorySetCode, this.reportParameters.reportSort, skip, take, this.pageSize, this.gridPageNumber)
                 .subscribe(
