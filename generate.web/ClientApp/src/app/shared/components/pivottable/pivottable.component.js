@@ -349,6 +349,7 @@ var PivottableComponent = function () {
                 }
                 return matchFound;
             });
+            console.log(exports.reportData.categorySets[0]);
             if (uiData.length > 0) {
                 if (exports.reportData.categorySets[0].organizationLevelCode.toLowerCase() == "sea") {
                     this.paginator.disabled = true;
@@ -453,7 +454,8 @@ var PivottableComponent = function () {
                     viewDef.fields.forEach(function (f) {
                         if (c === f.header) {
                             exports.reportData.categorySets[0].categoryOptions.forEach(function (o) {
-                                if (o.categoryOptionCode === d[f.binding]) {
+                                //if (o.categoryOptionCode === d[f.binding]) {
+                                if (o.categoryOptionCode.toLowerCase() === d[f.binding].toLowerCase()) {
                                     d[f.binding] = o.categoryOptionName;
                                 }
                             });
@@ -480,9 +482,22 @@ var PivottableComponent = function () {
                 //  let headers = reportData.categorySets[0].categories;
                 var bindings = ["k12StudentStudentIdentifierState"];
                 var headers = ["Student Id"];
+                console.log('reportLevel');
+                console.log(reportLevel);
+                if (reportLevel == 'lea') {
+                    bindings.push('leaIdentifierSea');
+                    headers.push('LEA ID');
+                }
+                if (reportLevel == 'sch') {
+                    bindings.push('leaIdentifierSea');
+                    headers.push('LEA ID');
+                    bindings.push('schoolIdentifierSea');
+                    headers.push('School ID');
+                }
                 var selectedFilter = {};
                 var _loop_1 = function (key) {
                     if (filters.hasOwnProperty(key)) {
+                        console.log('key is :' + key);
                         var column = viewDef.fields.find(function (f) { return f.header === key; }).binding;
                         if (column) {
                             if (column === 'organizationIdentifierSea') {
@@ -501,6 +516,7 @@ var PivottableComponent = function () {
                                 bindings.push(column);
                                 headers.push('TableTypeAbbrv');
                             }
+                            console.log('option is: ' + filters[key]);
                             var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (f) { return f.categoryOptionName === filters[key]; });
                             if (categoryOption) {
                                 selectedFilter[column] = categoryOption.categoryOptionCode;
@@ -517,6 +533,9 @@ var PivottableComponent = function () {
                     }
                 };
                 var col, keys, split_keys;
+                //console.log('Filters are :' + filters);
+                //console.log('Options are :' + reportData.categorySets[0].categoryOptions);
+                //console.log(e.srcElement);
                 for (var key in filters) {
                     _loop_1(key);
                 }

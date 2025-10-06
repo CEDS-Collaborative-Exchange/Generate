@@ -21,7 +21,7 @@ export interface IGenerateReportParametersDto {
     reportSchool: string;
     connectionLink: string;
     organizationalIdList: string;
-    reportTableType: TableType;
+    reportTableTypeAbbrv: string;
 }
 
 export class GenerateReportParametersDto implements IGenerateReportParametersDto {
@@ -44,5 +44,5 @@ export class GenerateReportParametersDto implements IGenerateReportParametersDto
     reportSchool: string;
     connectionLink: string;
     organizationalIdList: string;
-    reportTableType: TableType;
+    reportTableTypeAbbrv: string;
 }

@@ -216,6 +216,7 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
             }
 
             let categorySetCode: string = 'null';
+            let tableTypeAbbrv: string = '';
 
 
 
@@ -230,10 +231,14 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
                 categorySetCode = this.reportParameters.reportCategorySet.categorySetCode;
             }
 
-            if (this.reportParameters.reportTableType )
+            if (this.reportParameters.reportTableTypeAbbrv !== undefined) {
+                tableTypeAbbrv = this.reportParameters.reportTableTypeAbbrv;
+            }
+
+            console.log(tableTypeAbbrv);
 
 
-            this.subscriptions.push(this._generateReportService.getPagedReport(this.reportParameters.reportType, this.reportParameters.reportCode, this.reportParameters.reportLevel, this.reportParameters.reportYear, categorySetCode, this.reportParameters.reportSort, skip, take, this.pageSize, this.gridPageNumber)
+            this.subscriptions.push(this._generateReportService.getPagedReport(this.reportParameters.reportType, this.reportParameters.reportCode, this.reportParameters.reportLevel, this.reportParameters.reportYear, categorySetCode, tableTypeAbbrv, this.reportParameters.reportSort, skip, take, this.pageSize, this.gridPageNumber)
                 .subscribe(
                     reportDataDto => {
 

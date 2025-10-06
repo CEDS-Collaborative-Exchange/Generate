@@ -324,6 +324,10 @@ export class ReportComponent implements AfterViewInit, OnInit {
                         newParameters.reportYear = (new Date()).getFullYear().toString();
                     }
 
+                    if (newParameters.reportTableTypeAbbrv === undefined) {
+                        newParameters.reportTypeAbbreviation = this.tableTypes[0].tableTypeAbbrv;
+                    }
+
                     this.reportswithGradeFilter = '';
                     this.errorMessage = null;
 
@@ -442,6 +446,10 @@ export class ReportComponent implements AfterViewInit, OnInit {
             if (this.categorySets !== undefined && this.categorySets.length > 0) {
                 newParameters.reportCategorySet = this.categorySets.filter(t => t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear)[0];
                 newParameters.reportCategorySetCode = newParameters.reportCategorySet.categorySetCode;
+            }
+
+            if (this.tableTypes !== undefined && this.tableTypes.length > 0) {
+                newParameters.reportTableTypeAbbrv = this.tableTypes[0].tableTypeAbbrv;
             }
 
             newParameters.connectionLink = this.currentReport.connectionLink;
@@ -686,6 +694,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
         newParameters.reportSchool = this.reportParameters.reportSchool;
         newParameters.connectionLink = this.reportParameters.connectionLink;
         newParameters.organizationalIdList = this.reportParameters.organizationalIdList;
+        newParameters.reportTableTypeAbbrv = this.reportParameters.reportTableTypeAbbrv;
         return newParameters;
 
     }
@@ -862,19 +871,20 @@ export class ReportComponent implements AfterViewInit, OnInit {
         return false;
     }
 
-    setTableType(event, comboTableTypeCode) {
-        //let newParameters: GenerateReportParametersDto = this.getNewReportParameters();
-        //if (comboTableTypeCode.selectedItem !== undefined) {
+    setTableType(event, comboTableType) {
 
-        //    if (newParameters.t !== comboTableTypeCode.selectedItem) {
+        let reportTableType: TableType;
+        let newParameters: GenerateReportParametersDto = this.getNewReportParameters();
+        if (comboTableType.selectedItem !== undefined) {
 
-        //        newParameters.reportYear = comboTableTypeCode.selectedItem;
-        //        newParameters.reportPage = 1;
+            reportTableType = comboTableType.selectedItem;
+            if (newParameters.reportTableTypeAbbrv !== reportTableType.tableTypeAbbrv) {
 
-        //        this.getReport(newParameters);
-        //    }
-        //}
-        console.log(comboTableTypeCode);
+                newParameters.reportTableTypeAbbrv = reportTableType.tableTypeAbbrv;
+                newParameters.reportPage = 1;
+                this.reportParameters = newParameters;
+            }
+        }
     }
 
 

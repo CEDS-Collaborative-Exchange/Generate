@@ -290,7 +290,7 @@ namespace generate.infrastructure.Services
             return dto;
         }
 
-        public GenerateReportDataDto GetReportDataDto(string reportType, string reportCode, string reportLevel, string reportYear, string categorySetCode, string reportLea = null, string reportSchool = null, string reportFilter = null, string reportSubFilter = null, string reportGrade = null, string organizationalIdList = null, int reportSort = 1, int skip = 0, int take = 50, int pageSize = 10, int page = 1)
+        public GenerateReportDataDto GetReportDataDto(string reportType, string reportCode, string reportLevel, string reportYear, string categorySetCode, string tableTypeAbbrv, string reportLea = null, string reportSchool = null, string reportFilter = null, string reportSubFilter = null, string reportGrade = null, string organizationalIdList = null, int reportSort = 1, int skip = 0, int take = 50, int pageSize = 10, int page = 1)
         {
             categorySetCode = NormalizeNull(categorySetCode);
             reportLea = NormalizeNull(reportLea);
@@ -327,11 +327,12 @@ namespace generate.infrastructure.Services
             }
             else if (reportType == "edfactsreport")
             {
-                reportDto = _edFactsReportService.GetReportDto(reportCode, reportLevel, reportYear, categorySetCode, reportSort, pageSize, page);
+                reportDto = _edFactsReportService.GetReportDto(reportCode, reportLevel, reportYear, categorySetCode, tableTypeAbbrv, reportSort, pageSize, page);
                 IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode 
                         && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel , 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
                 if (reportCode == "150") { categorySets = categorySets.Where(c => c.TableType.TableTypeAbbrv == "GRADRT4YRADJ"); }
                 else if (reportCode == "151") { categorySets = categorySets.Where(c =>  c.TableType.TableTypeAbbrv == "GRADCOHORT4YR"); }
+                
                 reportDto.CategorySets = ConvertCategorySetToDto(categorySets.ToList());
 
             }
