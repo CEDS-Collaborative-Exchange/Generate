@@ -349,7 +349,6 @@ var PivottableComponent = function () {
                 }
                 return matchFound;
             });
-            console.log(exports.reportData.categorySets[0]);
             if (uiData.length > 0) {
                 if (exports.reportData.categorySets[0].organizationLevelCode.toLowerCase() == "sea") {
                     this.paginator.disabled = true;
@@ -495,6 +494,8 @@ var PivottableComponent = function () {
                     headers.push('School ID');
                 }
                 var selectedFilter = {};
+                //console.log('Filters are :' + filters);
+                exports.reportData.categorySets[0].categoryOptions.forEach(function (t) { return console.log(t.categoryOptionName); });
                 var _loop_1 = function (key) {
                     if (filters.hasOwnProperty(key)) {
                         console.log('key is :' + key);
@@ -504,18 +505,23 @@ var PivottableComponent = function () {
                                 selectedFilter[column] = filters[key];
                             }
                             if (column === 'tableTypeAbbrv') {
-                                col = e.srcElement.classList[2];
-                                keys = String(pivotData.colKeys);
-                                split_keys = keys.split(",");
-                                if (col === 'col0') {
-                                    selectedFilter[column] = split_keys[0];
-                                }
-                                else if (col === 'col1') {
-                                    selectedFilter[column] = split_keys[1];
-                                }
+                                //var col = e.srcElement.classList[2];
+                                //var keys = String(pivotData.colKeys);
+                                //var split_keys = keys.split(",");
+                                //if (col === 'col0') {
+                                //    selectedFilter[column] = split_keys[0];
+                                //}
+                                //else if (col === 'col1') {
+                                //    selectedFilter[column] = split_keys[1];
+                                //}
+                                selectedFilter[column] = filters[key];
                                 bindings.push(column);
                                 headers.push('TableTypeAbbrv');
                             }
+                            //if (column === 'gradelevel') {
+                            //    let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionCode === filters[key]);
+                            //    filters[key] = categoryOption.categoryOptionName;
+                            //}
                             console.log('option is: ' + filters[key]);
                             var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (f) { return f.categoryOptionName === filters[key]; });
                             if (categoryOption) {
@@ -532,9 +538,6 @@ var PivottableComponent = function () {
                         }
                     }
                 };
-                var col, keys, split_keys;
-                //console.log('Filters are :' + filters);
-                //console.log('Options are :' + reportData.categorySets[0].categoryOptions);
                 //console.log(e.srcElement);
                 for (var key in filters) {
                     _loop_1(key);

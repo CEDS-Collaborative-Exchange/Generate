@@ -105,7 +105,7 @@
             </div>
         </div>
 
-        <div *ngIf="currentReport !== undefined && currentReport.showCategorySetControl && showCategorySet()" class="mdl-cell {{parameterColumnSpanCss()}}">
+        <div *ngIf="currentReport !== undefined && showTableType()" class="mdl-cell {{parameterColumnSpanCss()}}">
             <div class="generate-app-report-controls__sectiontitle">Table Type</div>
             <div>
                 <generate-app-combo-box class="{{reportWidth()}}" #comboTableTypeCode [itemsSource]="tableTypes" [isEditable]="false" displayMemberPath="tableTypeAbbrv"

@@ -1345,6 +1345,16 @@ export class ReportComponent implements AfterViewInit, OnInit {
         return isDisplayed;
     }
 
+    showTableType() {
+        let isDisplayed: boolean = false;
+        const assessmentCodes = ['175', '178', '179', '185', '188', '189'];
+
+        if (assessmentCodes.includes(this.reportParameters.reportCode)) {
+            isDisplayed = true;
+        }
+        return isDisplayed;
+    }
+
     metadataCss(status: string) {
         if (status === "FAILED") { this.metadataStatusCss = 'generate-app-report-metadata__error'; }
         else {
