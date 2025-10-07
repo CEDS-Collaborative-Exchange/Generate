@@ -41,7 +41,7 @@ LEFT JOIN       RDS.DimFactTypes            AS rdft
 LEFT JOIN       App.GenerateReports         AS agr
                     ON agr.GenerateReportId = agrft.GenerateReportId    
 WHERE           rdft.FactTypeCode = 'membership'
-                AND LEN(agr.ReportCode) = 4 -- only return those with report code    with a EDFacts format
+                AND LEN(agr.ReportCode) = 3 -- only return those with report code    with a EDFacts format
 ORDER BY        agrft.FactTypeId, agr.ReportCode
 ```
 {% endcode %}
@@ -93,6 +93,8 @@ The Generate Toggle tables store information from the E&#x44;_&#x46;acts_ Metada
 To find the Source System Reference Data needed for each Fact Type, you can query the system by running the following script by `FactTypeCode` and `ReportCode`.&#x20;
 
 You can also filter the Source System Reference Data table by `FactTypeCode` and `ReportCode` as shown below.
+
+If there are no rows returned in the query with StagingTableName or StagingcolumnName that just means, there is no required data to map.
 {% endhint %}
 
 {% code overflow="wrap" %}
@@ -136,7 +138,26 @@ For Membership , this Stored Procedure is called `[Source].[Source-to-Staging_Me
 
 The tools from the Set Up phase (ETL Checklist and Generate metadata) are used to guide writing the ETL Code in this Stored Procedure. Additionally, ETL code written previously to perform this work in the education agency's source system(s) can also be a useful resource at this step, particularly for ensuring critical data handling and business rules from the source system are retained in the Generate Source to Staging ETL.
 
-<figure><img src="../../../.gitbook/assets/Source-to-Staging_Membership.png" alt="A SQL Server Management Studio window displaying a stored procedure named &#x22;[Source].[Source-to-Staging_Membership]&#x22; in the Generate database. The Object Explorer panel on the left shows a list of stored procedures under the &#x22;Source&#x22; schema, while the query editor on the right contains a template for the stored procedure with a placeholder for ETL code. "><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_Membership" Fact Type.</p></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (228).png" alt=""><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_(Fact Type Name)" Fact Type.</p></figcaption></figure>
+
+This is a sample of the stored procedure for each Fact Type which displays that it is empty by default, and also where you can place your specific ETL code.&#x20;
+
+```
+/****** Object:  StoredProcedure [Source].[Source-to-Staging_Membership]    Script Date: 8/18/2025 10:12:03 AM ******/
+SET ANSI_NULLS ON
+GO
+ 
+SET QUOTED_IDENTIFIER OFF
+GO
+ 
+CREATE PROCEDURE [Source].[Source-to-Staging_Membership] 
+	@schoolYear smallint
+AS
+--BEGIN
+	--State specific ETL code here
+--END
+GO
+```
 
 #### Running the ETL
 

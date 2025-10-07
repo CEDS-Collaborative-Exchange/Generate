@@ -51,7 +51,7 @@ LEFT JOIN       RDS.DimFactTypes            AS rdft
 LEFT JOIN       App.GenerateReports         AS agr
                     ON agr.GenerateReportId = agrft.GenerateReportId    
 WHERE           rdft.FactTypeCode = 'directory'
-                AND LEN(agr.ReportCode) = 4 -- only return those with report code    with a EDFacts format
+                AND LEN(agr.ReportCode) = 3 -- only return those with report code    with a EDFacts format
 ORDER BY        agrft.FactTypeId, agr.ReportCode
 ```
 {% endcode %}
@@ -123,10 +123,19 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields will need to be mapped using the value in the SSRD table using these filters. For further information please review [Source System Reference Data](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data).
 
+{% hint style="success" %}
+To find the Source System Reference Data needed for each Fact Type, you can query the system by running the following script by `FactTypeCode` and `ReportCode`.&#x20;
+
+You can also filter the Source System Reference Data table by `FactTypeCode` and `ReportCode` as shown below.
+
+If there are no rows returned in the query with StagingTableName or StagingcolumnName that just means, there is no required data to map.
+{% endhint %}
+
 \
 Directory Reports ('029', '035', '039', '129', '130', '131', '163', '170', '190', '193', '196', '197', '198', '205', '206', '207', '223') have filters:
 
 * 000100 Used for Grade Level
+* 000126 Used for Grade Level When Assessed
 * 000174 Used for LEA Operational Status
 * 000533 Used for School Operational Status
 * 001156 Used for Organization Type
@@ -152,7 +161,26 @@ The Generate database has a stored procedure for each Fact Type which is empty i
 
 The tools from the Set Up phase (ETL Checklist and Generate metadata) are used to guide writing the ETL Code in this Stored Procedure. Additionally, ETL code written previously to perform this work in the education agency's source system(s) can also be a useful resource at this step, particularly for ensuring critical data handling and business rules from the source system are retained in the Generate Source to Staging ETL.
 
-<figure><img src="../../../.gitbook/assets/Source-to-Staging_Directory.png" alt="A SQL Server Management Studio window displaying a stored procedure named &#x22;[Source].[Source-to-Staging_Directory]&#x22; in the Generate database."><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_Directory" Fact Type.</p></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (228).png" alt=""><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_(Fact Type Name)" Fact Type.</p></figcaption></figure>
+
+This is a sample of the stored procedure for each Fact Type which displays that it is empty by default, and also where you can place your specific ETL code.&#x20;
+
+```
+/****** Object:  StoredProcedure [Source].[Source-to-Staging_Directory]    Script Date: 8/18/2025 10:12:03 AM ******/
+SET ANSI_NULLS ON
+GO
+ 
+SET QUOTED_IDENTIFIER OFF
+GO
+ 
+CREATE PROCEDURE [Source].[Source-to-Staging_Directory] 
+	@schoolYear smallint
+AS
+--BEGIN
+	--State specific ETL code here
+--END
+GO
+```
 
 #### Running the ETL
 
