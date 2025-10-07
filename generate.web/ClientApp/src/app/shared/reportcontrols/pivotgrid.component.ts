@@ -231,11 +231,15 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
                 categorySetCode = this.reportParameters.reportCategorySet.categorySetCode;
             }
 
+            /*console.log(this.reportParameters.reportTableTypeAbbrv);*/
+
             if (this.reportParameters.reportTableTypeAbbrv !== undefined) {
                 tableTypeAbbrv = this.reportParameters.reportTableTypeAbbrv;
-            }
+            } else {
+                tableTypeAbbrv = this.reportParameters.reportCategorySet.tableTypes[0].tableTypeAbbrv;
+            } 
 
-            console.log(tableTypeAbbrv);
+            /*console.log(tableTypeAbbrv);*/
 
 
             this.subscriptions.push(this._generateReportService.getPagedReport(this.reportParameters.reportType, this.reportParameters.reportCode, this.reportParameters.reportLevel, this.reportParameters.reportYear, categorySetCode, tableTypeAbbrv, this.reportParameters.reportSort, skip, take, this.pageSize, this.gridPageNumber)

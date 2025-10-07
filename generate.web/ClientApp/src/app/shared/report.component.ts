@@ -413,7 +413,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
                 if (this.currentReport.organizationLevels.filter(t => t.levelCode === newParameters.reportLevel).length < 1) {
                     for (let i = 0; i < this.currentReport.organizationLevels.length; i++) {
                         let level: OrganizationLevelDto = this.currentReport.organizationLevels[i];
-                        console.log('Level report is : ' + level.levelCode);
+                        /*console.log('Level report is : ' + level.levelCode);*/
 
                         if (level.levelCode === 'sea') {
                             newParameters.reportLevel = 'sea';
@@ -441,7 +441,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
             this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
             this.tableTypes = this.categorySets[0].tableTypes;
-            console.log(this.tableTypes);
+            /*console.log(this.tableTypes);*/
 
             if (this.categorySets !== undefined && this.categorySets.length > 0) {
                 newParameters.reportCategorySet = this.categorySets.filter(t => t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear)[0];
@@ -793,15 +793,18 @@ export class ReportComponent implements AfterViewInit, OnInit {
                     newParameters.reportCode = reportCode;
                     newParameters.reportPage = 1;
                     newParameters.reportSort = 1;
-                    newParameters.reportCategorySetCode = 'CSA'
+                    newParameters.reportCategorySetCode = 'CSA';
+                    newParameters.reportTableTypeAbbrv = undefined;
+                    
 
                     if (this.submissionYears !== undefined && this.submissionYears.length > 0) {
-                        this.getReport(newParameters);
+                       this.getReport(newParameters);
                     } else {
                         this.getReportYears(newParameters);
+                        this.reportParameters = newParameters;
                     }
 
-                    this.reportParameters = newParameters;
+                   
 
                 }
 
@@ -983,7 +986,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
     }
 
     setReportLea(event, comboReportLea) {
-        console.log('MySetLea');
+        /*console.log('MySetLea');*/
         let newParameters: GenerateReportParametersDto = this.getNewReportParameters();
         if (newParameters.reportCode === 'studentssummary') {
             this.flag1 = true;

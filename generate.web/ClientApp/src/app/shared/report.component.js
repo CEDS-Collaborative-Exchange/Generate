@@ -336,7 +336,7 @@ var ReportComponent = function () {
                     if (_this.currentReport.organizationLevels.filter(function (t) { return t.levelCode === newParameters.reportLevel; }).length < 1) {
                         for (var i = 0; i < _this.currentReport.organizationLevels.length; i++) {
                             var level = _this.currentReport.organizationLevels[i];
-                            console.log('Level report is : ' + level.levelCode);
+                            /*console.log('Level report is : ' + level.levelCode);*/
                             if (level.levelCode === 'sea') {
                                 newParameters.reportLevel = 'sea';
                                 break;
@@ -363,7 +363,7 @@ var ReportComponent = function () {
                 }
                 _this.categorySets = _this.getCategorySets(_this.currentReport.categorySets, newParameters);
                 _this.tableTypes = _this.categorySets[0].tableTypes;
-                console.log(_this.tableTypes);
+                /*console.log(this.tableTypes);*/
                 if (_this.categorySets !== undefined && _this.categorySets.length > 0) {
                     newParameters.reportCategorySet = _this.categorySets.filter(function (t) { return t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear; })[0];
                     newParameters.reportCategorySetCode = newParameters.reportCategorySet.categorySetCode;
@@ -631,13 +631,14 @@ var ReportComponent = function () {
                         newParameters.reportPage = 1;
                         newParameters.reportSort = 1;
                         newParameters.reportCategorySetCode = 'CSA';
+                        newParameters.reportTableTypeAbbrv = undefined;
                         if (_this.submissionYears !== undefined && _this.submissionYears.length > 0) {
                             _this.getReport(newParameters);
                         }
                         else {
                             _this.getReportYears(newParameters);
+                            _this.reportParameters = newParameters;
                         }
-                        _this.reportParameters = newParameters;
                     }
                 }
                 //else if (comboReportCode.selectedItem !== undefined && this.currentReport !== undefined) {
@@ -771,7 +772,7 @@ var ReportComponent = function () {
             return false;
         };
         ReportComponent_1.prototype.setReportLea = function (event, comboReportLea) {
-            console.log('MySetLea');
+            /*console.log('MySetLea');*/
             var newParameters = this.getNewReportParameters();
             if (newParameters.reportCode === 'studentssummary') {
                 this.flag1 = true;

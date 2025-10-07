@@ -327,12 +327,21 @@ namespace generate.infrastructure.Services
             }
             else if (reportType == "edfactsreport")
             {
+                string[] assessmentList = ["175", "178", "179", "185", "188", "189"];
                 reportDto = _edFactsReportService.GetReportDto(reportCode, reportLevel, reportYear, categorySetCode, tableTypeAbbrv, reportSort, pageSize, page);
-                IEnumerable<CategorySet> categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode 
-                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel , 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
-                if (reportCode == "150") { categorySets = categorySets.Where(c => c.TableType.TableTypeAbbrv == "GRADRT4YRADJ"); }
+                IEnumerable<CategorySet> categorySets = null;
+                if (assessmentList.Contains(reportCode) && tableTypeAbbrv.Length > 0)
+                {
+                    categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
+                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel && c.TableType.TableTypeAbbrv == tableTypeAbbrv, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
+                }
+                else if (reportCode == "150") { categorySets = categorySets.Where(c => c.TableType.TableTypeAbbrv == "GRADRT4YRADJ"); }
                 else if (reportCode == "151") { categorySets = categorySets.Where(c =>  c.TableType.TableTypeAbbrv == "GRADCOHORT4YR"); }
-                
+                else {
+                    categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
+                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
+                }
+
                 reportDto.CategorySets = ConvertCategorySetToDto(categorySets.ToList());
 
             }

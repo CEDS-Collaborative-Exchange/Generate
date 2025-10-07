@@ -8197,6 +8197,5 @@ BEGIN
 	end
 	return @sql
 END
-GO
 
 

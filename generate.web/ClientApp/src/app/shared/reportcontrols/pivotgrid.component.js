@@ -206,10 +206,14 @@ var PivotGridComponent = function () {
                 if (this.reportParameters.reportCategorySet !== undefined) {
                     categorySetCode = this.reportParameters.reportCategorySet.categorySetCode;
                 }
+                /*console.log(this.reportParameters.reportTableTypeAbbrv);*/
                 if (this.reportParameters.reportTableTypeAbbrv !== undefined) {
                     tableTypeAbbrv = this.reportParameters.reportTableTypeAbbrv;
                 }
-                console.log(tableTypeAbbrv);
+                else {
+                    tableTypeAbbrv = this.reportParameters.reportCategorySet.tableTypes[0].tableTypeAbbrv;
+                }
+                /*console.log(tableTypeAbbrv);*/
                 this.subscriptions.push(this._generateReportService.getPagedReport(this.reportParameters.reportType, this.reportParameters.reportCode, this.reportParameters.reportLevel, this.reportParameters.reportYear, categorySetCode, tableTypeAbbrv, this.reportParameters.reportSort, skip, take, this.pageSize, this.gridPageNumber)
                     .subscribe(function (reportDataDto) {
                     _this.reportDataDto = reportDataDto;
