@@ -114,8 +114,114 @@
     	ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_CteOutcomeIndicatorId]
 	END
 
+
+=======
+/**************
+CIID-8062
+**************/
+--Drop any constraints on the Fact table that reference the deprecated Fact table
+    DECLARE @sql NVARCHAR(MAX);
+    SET @sql = N'';    
+
+    SELECT @sql = @sql + 
+        'ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] DROP CONSTRAINT [' + fk.name + '];' + CHAR(13)
+    FROM sys.foreign_keys fk
+    INNER JOIN sys.tables t ON fk.parent_object_id = t.object_id
+    WHERE t.name = 'OrganizationCounts'
+    AND SCHEMA_NAME(t.schema_id) = 'RDS';
+
+    EXEC sp_executesql @sql;
+
+--Drop the deprecated Fact table
+    IF OBJECT_ID('RDS.FactOrganizationStatusCounts', 'U') IS NOT NULL
+        DROP TABLE RDS.FactOrganizationStatusCounts;
+
+--Drop and Recreate the Fact table
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] DROP CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimSchoolPerformanceIndicatorStateDefinedStatuses];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] DROP CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimSchoolPerformanceIndicators];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] DROP CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimRaces];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] DROP CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimK12Demographics];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] DROP CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimIdeaStatuses];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] DROP CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimFactTypes];
+
+    IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[RDS].[FactSchoolPerformanceIndicators]') AND type in (N'U'))
+        DROP TABLE [RDS].[FactSchoolPerformanceIndicators];
+
+    CREATE TABLE [RDS].[FactSchoolPerformanceIndicators](
+        [FactSchoolPerformanceIndicatorId] [int] IDENTITY(1,1) NOT NULL,
+        [FactTypeId] [int] NOT NULL,
+        [K12SchoolId] [int] NOT NULL,
+        [SchoolYearId] [int] NOT NULL,
+        [RaceId] [int] NULL,
+        [IdeaStatusId] [int] NULL,
+        [K12DemographicId] [int] NULL,
+        [EconomicallyDisadvantagedStatusId] [int] NULL,
+        [EnglishLearnerStatusId] [int] NULL,
+        [SchoolPerformanceIndicatorCategoryId] [int] NULL,
+        [SchoolPerformanceIndicatorId] [int] NULL,
+        [SchoolPerformanceIndicatorStateDefinedStatusId] [int] NULL,
+        [SchoolQualityOrStudentSuccessIndicatorId] [int] NULL,
+        [IndicatorStatusId] [int] NULL,
+        [SubgroupId] [int] NULL,
+    CONSTRAINT [PK_FactSchoolPerformanceIndicators] PRIMARY KEY CLUSTERED 
+    (
+        [FactSchoolPerformanceIndicatorId] ASC
+    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF, DATA_COMPRESSION = PAGE) ON [PRIMARY]
+    ) ON [PRIMARY];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators]  WITH CHECK ADD  CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimFactTypes] FOREIGN KEY([FactTypeId])
+    REFERENCES [RDS].[DimFactTypes] ([DimFactTypeId]);
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] CHECK CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimFactTypes];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators]  WITH CHECK ADD  CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimIdeaStatuses] FOREIGN KEY([IdeaStatusId])
+    REFERENCES [RDS].[DimIdeaStatuses] ([DimIdeaStatusId]);
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] CHECK CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimIdeaStatuses];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators]  WITH CHECK ADD  CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimK12Demographics] FOREIGN KEY([K12DemographicId])
+    REFERENCES [RDS].[DimK12Demographics] ([DimK12DemographicId]);
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] CHECK CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimK12Demographics];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators]  WITH CHECK ADD  CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimRaces] FOREIGN KEY([RaceId])
+    REFERENCES [RDS].[DimRaces] ([DimRaceId]);
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] CHECK CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimRaces];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators]  WITH CHECK ADD  CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimSchoolPerformanceIndicators] FOREIGN KEY([SchoolPerformanceIndicatorId])
+    REFERENCES [RDS].[DimSchoolPerformanceIndicators] ([DimSchoolPerformanceIndicatorId]);
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] CHECK CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimSchoolPerformanceIndicators];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators]  WITH CHECK ADD  CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimSchoolPerformanceIndicatorStateDefinedStatuses] FOREIGN KEY([SchoolPerformanceIndicatorStateDefinedStatusId])
+    REFERENCES [RDS].[DimSchoolPerformanceIndicatorStateDefinedStatuses] ([DimSchoolPerformanceIndicatorStateDefinedStatusId]);
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] CHECK CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimSchoolPerformanceIndicatorStateDefinedStatuses];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators]  WITH CHECK ADD  CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimIndicatorStatuses] FOREIGN KEY([IndicatorStatusId])
+    REFERENCES [RDS].[DimIndicatorStatuses] ([DimIndicatorStatusId]);
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] CHECK CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimIndicatorStatuses];
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators]  WITH CHECK ADD  CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimSubgroups] FOREIGN KEY([SubgroupId])
+    REFERENCES [RDS].[DimSubgroups] ([DimSubgroupId]);
+
+    ALTER TABLE [RDS].[FactSchoolPerformanceIndicators] CHECK CONSTRAINT [FK_FactSchoolPerformanceIndicators_DimSubgroups];
+
+    --Add the required columns to the Report table
+
+   	IF COL_LENGTH('RDS.ReportEDFactsSchoolPerformanceIndicators', 'INDICATORTYPE') IS NULL
+	BEGIN
+		ALTER TABLE RDS.ReportEDFactsSchoolPerformanceIndicators ADD INDICATORTYPE VARCHAR(50) NULL;
+	END
+
     IF COL_LENGTH('RDS.ReportEdFactsK12StudentAssessments', 'NEGLECTEDPROGRAMTYPE') IS NULL
 	BEGIN
 		ALTER TABLE [RDS].[ReportEdFactsK12StudentAssessments] ADD [NEGLECTEDPROGRAMTYPE] NVARCHAR(50) NULL
 	END
-
