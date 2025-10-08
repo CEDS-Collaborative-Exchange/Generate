@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [Staging].[Staging-to-DimSchoolPerformanceIndicatorStateDefinedStatusestateDefinedStatuses]
+﻿CREATE PROCEDURE [Staging].[Staging-to-DimSchoolPerformanceIndicatorStateDefinedStatuses]
 AS
 BEGIN
 
