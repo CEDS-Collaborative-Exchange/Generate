@@ -114,6 +114,8 @@
     	ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_CteOutcomeIndicatorId]
 	END
 
+
+=======
 /**************
 CIID-8062
 **************/
@@ -217,4 +219,9 @@ CIID-8062
    	IF COL_LENGTH('RDS.ReportEDFactsSchoolPerformanceIndicators', 'INDICATORTYPE') IS NULL
 	BEGIN
 		ALTER TABLE RDS.ReportEDFactsSchoolPerformanceIndicators ADD INDICATORTYPE VARCHAR(50) NULL;
+	END
+
+    IF COL_LENGTH('RDS.ReportEdFactsK12StudentAssessments', 'NEGLECTEDPROGRAMTYPE') IS NULL
+	BEGIN
+		ALTER TABLE [RDS].[ReportEdFactsK12StudentAssessments] ADD [NEGLECTEDPROGRAMTYPE] NVARCHAR(50) NULL
 	END

@@ -55,7 +55,7 @@ namespace generate.infrastructure.Services
 			
         }
 
-        public GenerateReportDataDto GetReportDto(string reportCode, string reportLevel, string reportYear, string categorySetCode, int reportSort = 1, int pageSize = 10, int page = 1)
+        public GenerateReportDataDto GetReportDto(string reportCode, string reportLevel, string reportYear, string categorySetCode, string tableTypeAbbrv, int reportSort = 1, int pageSize = 10, int page = 1)
         {
 
             // Declare empty dto
@@ -123,7 +123,7 @@ namespace generate.infrastructure.Services
             else if (report.FactTable.FactTableName == "FactK12StudentAssessments")
             {
                 var query = _factStudentAssessmentRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                dataRows = query.ToList();
+                dataRows = query.Where(t => t.TableTypeAbbrv == tableTypeAbbrv).ToList();
                 reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
             }
             else if (report.FactTable.FactTableName == "FactK12StaffCounts")

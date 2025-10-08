@@ -199,6 +199,22 @@ export class GenerateReportService extends BaseService {
 
     }
 
+    getReportByCodeAndYear(reportType: string, reportCode: string, reportYear: string): Observable<GenerateReportDto> {
+        let url = this._apiUrl + '/report/' + reportType + '/' + reportCode + '/' + reportYear;
+
+        return this.http.get<GenerateReportDto>(url, { observe: 'response' })
+            .pipe(
+                map(resp => {
+                    return resp.body;
+                }),
+                tap(resp => {
+                    this.log(`getReportByCodes`);
+                }),
+                catchError(this.handleError)
+            );
+
+    }
+
     getReport(reportType: string, reportCode: string, reportLevel: string, reportYear: string, reportCategorySetCode: string, reportSort: number, skip: number, take: number): Observable<any> {
         let url = this._apiUrl + '/' + reportType + '/' + reportCode + '/' + reportLevel + '/' + reportYear + '/' + reportCategorySetCode + '?sort=' + reportSort + '&skip=' + skip + '&take=' + take;
 
@@ -216,16 +232,16 @@ export class GenerateReportService extends BaseService {
 
     }
 
-    getPagedReport(reportType: string, reportCode: string, reportLevel: string, reportYear: string, reportCategorySetCode: string, reportSort: number, skip: number, take: number, pageSize: number, page: number): Observable<any> {
+    getPagedReport(reportType: string, reportCode: string, reportLevel: string, reportYear: string, reportCategorySetCode: string, tableTypeAbbrv: string, reportSort: number, skip: number, take: number, pageSize: number, page: number): Observable<any> {
 
         if (pageSize === undefined) {
             pageSize = 10;
         }
 
-        let url = this._apiUrl + '/pages' + '/' + reportType + '/' + reportCode + '/' + reportLevel + '/' + reportYear + '/' + reportCategorySetCode + '?sort=' + reportSort + '&skip=' + skip + '&take=' + take + '&pageSize=' + pageSize + '&page=' + page;
+        let url = this._apiUrl + '/pages' + '/' + reportType + '/' + reportCode + '/' + reportLevel + '/' + reportYear + '/' + reportCategorySetCode + '/' + tableTypeAbbrv + '?sort=' + reportSort + '&skip=' + skip + '&take=' + take + '&pageSize=' + pageSize + '&page=' + page;
 
 
-        return this.http.get<GenerateReportDto>(url, { observe: 'response' })
+        return this.http.get<GenerateReportDataDto>(url, { observe: 'response' })
             .pipe(
                 map(resp => {
                     return resp.body;

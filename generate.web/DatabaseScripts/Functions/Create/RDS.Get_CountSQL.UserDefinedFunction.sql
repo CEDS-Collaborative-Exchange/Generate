@@ -354,7 +354,7 @@ BEGIN
 	else if @reportLevel = 'lea'
 	begin
 		set @idFieldsSQL = '
-		isnull(s.LeaIdentifierNces, '') as OrganizationIdentifierNces,
+		isnull(s.LeaIdentifierNces, '''') as OrganizationIdentifierNces,
 		s.LeaIdentifierSea as OrganizationIdentifierSea,
 		s.LeaOrganizationName as OrganizationName,
 		s.StateANSICode as ParentOrganizationIdentifierSea'
@@ -362,7 +362,7 @@ BEGIN
 	else if @reportLevel = 'sch'
 	begin
 		set @idFieldsSQL = '
-		isnull(s.SchoolIdentifierNces, '') as OrganizationIdentifierNces,
+		isnull(s.SchoolIdentifierNces, '''') as OrganizationIdentifierNces,
 		s.SchoolIdentifierSea as OrganizationIdentifierSea,
 		s.NameOfInstitution as OrganizationName,
 		s.LeaIdentifierSea as ParentOrganizationIdentifierSea'
@@ -8197,6 +8197,5 @@ BEGIN
 	end
 	return @sql
 END
-GO
 
 

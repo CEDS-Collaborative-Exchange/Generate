@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [RDS].[Get_ReportDebugData]
+﻿CREATE PROCEDURE [RDS].[Get_ReportDebugData]
 	@reportCode as varchar(50),
 	@reportLevel as varchar(50),
 	@reportYear as varchar(50),
@@ -13,14 +12,7 @@ BEGIN
 	declare @debugTable varchar(200)
 	declare @sql varchar(500)
 	declare @WHERE varchar(200) = ''
-
-	SELECT @debugTable = TABLE_NAME
-	FROM INFORMATION_SCHEMA.TABLES
-	WHERE TABLE_NAME like '%' + @reportCode + '_' + @reportLevel + '_' + @categorySetCode + '_' + @reportYear + '%'
-
-	--select @debugTable
-
---	DECLARE @json NVARCHAR(MAX) = N'{"IDEADISABILITYTYPE":"AUT", "RACE":"AM7", "SEX":"M"}';
+	declare @tableTypeAbbrv as varchar(50)
 
 	DECLARE @QueryParam TABLE
 	(
@@ -30,6 +22,24 @@ BEGIN
 	INSERT INTO @QueryParam
 	SELECT [key], value AS ColumnName
 	FROM OPENJSON(@parameters)
+
+
+	IF @reportCode in ('175','178','179','185','188','189')
+	BEGIN
+		select @tableTypeAbbrv = 'ASMTADMNMTH' + RIGHT([value], 2) from @QueryParam where [Name] = 'tableTypeAbbrv'
+
+		SELECT @debugTable = TABLE_NAME
+		FROM INFORMATION_SCHEMA.TABLES
+		WHERE TABLE_NAME like '%' + @reportCode + '_' + @reportLevel + '_' + @categorySetCode + '_' + @reportYear +
+		'_' + @tableTypeAbbrv  + '%'
+	END
+	ELSE
+	BEGIN
+		SELECT @debugTable = TABLE_NAME
+		FROM INFORMATION_SCHEMA.TABLES
+		WHERE TABLE_NAME like '%' + @reportCode + '_' + @reportLevel + '_' + @categorySetCode + '_' + @reportYear + '%'
+	END
+
 
 	--SELECT * FROM @QueryParam
 
@@ -45,8 +55,15 @@ BEGIN
 	FETCH NEXT FROM tblcur INTO @ColumnName;
 
 	SET @SortedColumnName = @ColumnName
-	--SET @sql = 'SELECT * FROM ' + '[debug].[' + @debugTable + ']' + ' WHERE '
-	SET @sql = 'SELECT * FROM ' + '[debug].[' + @debugTable + ']'
+
+	IF @reportCode in ('175','178','179','185','188','189')
+	BEGIN
+		SET @sql = 'SELECT  + '''  + @tableTypeAbbrv +  ''' as TableTypeAbbrv, * FROM ' + '[debug].[' + @debugTable + ']'
+	END
+	ELSE
+	BEGIN
+		SET @sql = 'SELECT * FROM ' + '[debug].[' + @debugTable + ']'
+	END
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -101,5 +118,3 @@ BEGIN
 	EXEC(@sql)
 	SET NOCOUNT OFF;
 END
-
-GO

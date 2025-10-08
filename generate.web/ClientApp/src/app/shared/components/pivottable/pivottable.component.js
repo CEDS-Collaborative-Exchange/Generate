@@ -75,7 +75,7 @@ var PivottableComponent = function () {
             this.searchContainer = (__runInitializers(this, _paginator_extraInitializers), __runInitializers(this, _searchContainer_initializers, void 0));
             this.currentPage = (__runInitializers(this, _searchContainer_extraInitializers), 0);
             this.itemsPerPage = 10;
-            console.log('constructor');
+            /* console.log('constructor');*/
             this.populateReport = this.populateReport.bind(this);
             this.markSearchFields = this.markSearchFields.bind(this);
             this.restoreSearchFields = this.restoreSearchFields.bind(this);
@@ -99,7 +99,7 @@ var PivottableComponent = function () {
             exports.inclusions = {};
             exports.gstudentCount = this.studentCount;
             exports.reportData = JSON.parse(JSON.stringify(this.reportDataDto));
-            console.log('ngOnInit');
+            /*console.log('ngOnInit');*/
             this.populateReport();
             //        this.paginator.firstPage();
             $('.pvtAxisLabel').find('span').remove();
@@ -148,7 +148,7 @@ var PivottableComponent = function () {
         };
         ;
         PivottableComponent_1.prototype.ngOnChanges = function (changes) {
-            console.log('ngOnChanges');
+            /* console.log('ngOnChanges');*/
             if (this.reportInputChanges(changes)) {
                 exports.filterBy2 = {};
             }
@@ -453,7 +453,8 @@ var PivottableComponent = function () {
                     viewDef.fields.forEach(function (f) {
                         if (c === f.header) {
                             exports.reportData.categorySets[0].categoryOptions.forEach(function (o) {
-                                if (o.categoryOptionCode === d[f.binding]) {
+                                //if (o.categoryOptionCode === d[f.binding]) {
+                                if (o.categoryOptionCode.toLowerCase() === d[f.binding].toLowerCase()) {
                                     d[f.binding] = o.categoryOptionName;
                                 }
                             });
@@ -480,27 +481,46 @@ var PivottableComponent = function () {
                 //  let headers = reportData.categorySets[0].categories;
                 var bindings = ["k12StudentStudentIdentifierState"];
                 var headers = ["Student Id"];
+                //console.log('reportLevel');
+                //console.log(reportLevel);
+                if (reportLevel == 'lea') {
+                    bindings.push('leaIdentifierSea');
+                    headers.push('LEA ID');
+                }
+                if (reportLevel == 'sch') {
+                    bindings.push('leaIdentifierSea');
+                    headers.push('LEA ID');
+                    bindings.push('schoolIdentifierSea');
+                    headers.push('School ID');
+                }
                 var selectedFilter = {};
                 var _loop_1 = function (key) {
                     if (filters.hasOwnProperty(key)) {
+                        /*console.log('key is :' + key);*/
                         var column = viewDef.fields.find(function (f) { return f.header === key; }).binding;
                         if (column) {
                             if (column === 'organizationIdentifierSea') {
                                 selectedFilter[column] = filters[key];
                             }
                             if (column === 'tableTypeAbbrv') {
-                                col = e.srcElement.classList[2];
-                                keys = String(pivotData.colKeys);
-                                split_keys = keys.split(",");
-                                if (col === 'col0') {
-                                    selectedFilter[column] = split_keys[0];
-                                }
-                                else if (col === 'col1') {
-                                    selectedFilter[column] = split_keys[1];
-                                }
+                                //var col = e.srcElement.classList[2];
+                                //var keys = String(pivotData.colKeys);
+                                //var split_keys = keys.split(",");
+                                //if (col === 'col0') {
+                                //    selectedFilter[column] = split_keys[0];
+                                //}
+                                //else if (col === 'col1') {
+                                //    selectedFilter[column] = split_keys[1];
+                                //}
+                                selectedFilter[column] = filters[key];
                                 bindings.push(column);
                                 headers.push('TableTypeAbbrv');
                             }
+                            //if (column === 'gradelevel') {
+                            //    let categoryOption = reportData.categorySets[0].categoryOptions.find(f => f.categoryOptionCode === filters[key]);
+                            //    filters[key] = categoryOption.categoryOptionName;
+                            //}
+                            /*console.log('option is: ' + filters[key]);*/
                             var categoryOption = exports.reportData.categorySets[0].categoryOptions.find(function (f) { return f.categoryOptionName === filters[key]; });
                             if (categoryOption) {
                                 selectedFilter[column] = categoryOption.categoryOptionCode;
@@ -516,7 +536,6 @@ var PivottableComponent = function () {
                         }
                     }
                 };
-                var col, keys, split_keys;
                 for (var key in filters) {
                     _loop_1(key);
                 }
@@ -656,8 +675,6 @@ var PivottableComponent = function () {
                     }
                 },
                 onRefresh: function (config) {
-                    console.log('load completed');
-                    console.log(config);
                     var html = $("#containerExport").html();
                     var table = document.getElementsByClassName('pvtTable');
                     var colLength = $('#containerExport .pvtTable thead').find('tr:nth-child(1)').children().length;
@@ -672,7 +689,7 @@ var PivottableComponent = function () {
                     var wb = XLSX.utils.table_to_book(table[1], { sheet: 'Generate Report' });
                     //    const wb = XLSX.utils.table_to_book(table, { sheet: 'StyledSheet' });
                     var count = $('#containerExport .pvtTable tr').length;
-                    console.log(count);
+                    /*                console.log(count)*/
                     //pvtAxisLabel
                     $('#containerExport .pvtTable th').css('color', 'red');
                     var ws = wb.Sheets['Generate Report'];
@@ -1118,7 +1135,7 @@ var PivottableComponent = function () {
                     }
                 },
                 onRefresh: function (config) {
-                    console.log('completed-onrefresh');
+                    /*console.log('completed-onrefresh');*/
                     var html = $("#containerExport").html();
                     var table = document.getElementsByClassName('pvtTable');
                     $('#containerExport .pvtTable thead').prepend('<tr><td>n1</td></tr><tr><td>n2</td></tr>');
@@ -1156,7 +1173,7 @@ var PivottableComponent = function () {
                     //   ws['!rows'] = [{ height: 200 }, { height: 200 }, { height: 150 }];
                     //first row e.g. A1:AB12
                     var ref = ws["!fullref"];
-                    console.log(ref);
+                    /*console.log(ref);*/
                     var range = XLSX.utils.decode_range(ws['!ref']);
                     //0 index based
                     var colTotal = range.e.c;
