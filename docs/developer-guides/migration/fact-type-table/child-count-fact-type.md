@@ -81,7 +81,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 #### Toggle Settings
 
-The Generate Toggle tables store information from the E&#x44;_&#x46;acts_ Metadata and Process System (EMAPS) survey that impacts the business logic used to ETL the data for E&#x44;_&#x46;acts_ reporting. It is important to make sure these questions are completed before data is migrated and that they match what was entered in EMAPS. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually after you complete your EMAPS survey. Instructions for how to find and update the Toggle page are available in the [Toggle documentation](../../../user-guide/settings/toggle.md).
+The Generate Toggle tables store information from the E&#x44;_&#x46;acts_ Metadata and Process System (EMAPS) survey that impacts the business logic used to ETL the data for E&#x44;_&#x46;acts_ reporting. It is important to make sure these questions are completed before data is migrated and that they match what was entered in EMAPS. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually after you complete your EMAPS survey. Instructions for how to find and update the Toggle page are available in the [Toggle documentation](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/settings/toggle).
 
 #### Source System Reference Data Settings
 
@@ -114,6 +114,7 @@ Child Count Reports ('002', '089') have filters
 * 000126 Used for Grade Level When Assessed
 * 000174 Used for LEA Operational Status
 * 000533 Used for School Operational Status
+* 001156 Used for Organization Type
 
 [Source System Reference Data Mapping Utility](../../generate-utilities/source-system-reference-data-mapping-utility/) can be used to determine which option-set value mappings are needed for a Fact Type and which have been mapped. Note that new installations of Generate will come with both the InputCode and OutputCode fields loaded and you will need to review and update any values in the InputCode field to match your source data.
 

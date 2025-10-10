@@ -111,6 +111,7 @@ In some instances, the CEDS reference table needs to be further qualified to det
 Exiting Reports ('009') have filters
 
 * 000100 Used for Grade Level
+* 000126 Used for Grade Level When Assessed
 * 000174 Used for LEA Operational Status
 * 000533 Used for School Operational Status
 * 001156 Used for Organization Type

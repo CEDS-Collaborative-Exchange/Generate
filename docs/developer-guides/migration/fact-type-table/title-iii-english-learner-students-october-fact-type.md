@@ -63,7 +63,7 @@ ORDER BY        agrft.FactTypeId, agr.ReportCode
 The Generate ETL Documentation Templates give a detailed breakdown of all data elements needed for each Fact Type and show how data are transformed through each stage of the data migration. After completing the CEDS alignment process these templates can be used to document data transformation notes and option set mappings. They also contain a description of the CEDS data elements needed and what they are called throughout the Generate database. The ETL Templates documentation has a detailed instruction tab to help you know how to utilize this tool effectively. If you need clarification, please reach out to your CIID TA provider.
 
 {% hint style="info" %}
-You can find the Title III English Learner Students - October ETL Documentation Template.xlsx on the [ETL Documentation Template](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074) page. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://app.gitbook.com/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/~/changes/286/developer-guides/generate-utilities/staging-etl-mapping-assistance).
+You can find the Title III English Learner Students - October ETL Documentation Template.xlsx on the [ETL Documentation Template](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074) page. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-etl-mapping-assistance).
 {% endhint %}
 
 **Generate Metadata**
@@ -88,11 +88,11 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 **Toggle Settings**
 
-The Generate Toggle tables store information from the E&#x44;_&#x46;acts_ Metadata and Process System (EMAPS) survey that impacts the business logic used to ETL the data for E&#x44;_&#x46;acts_ reporting. It is important to make sure these questions are completed before data is migrated and that they match what was entered in EMAPS. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually after you complete your EMAPS survey. Instructions for how to find and update the Toggle page are available in the Toggle documentation.
+The Generate Toggle tables store information from the E&#x44;_&#x46;acts_ Metadata and Process System (EMAPS) survey that impacts the business logic used to ETL the data for E&#x44;_&#x46;acts_ reporting. It is important to make sure these questions are completed before data is migrated and that they match what was entered in EMAPS. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually after you complete your EMAPS survey. Instructions for how to find and update the Toggle page are available in the [Toggle documentation](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/settings/toggle).
 
 **Source System Reference Data Settings**
 
-Source System Reference Data is used in the Staging to RDS Migration to determine how source system option set values map to CEDS option set values. This table needs to be updated with the complete set of values for all categorical fields by school year.
+[Source System Reference Data](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data) is used in the Staging to RDS Migration to determine how source system option set values map to CEDS option set values. This table needs to be updated with the complete set of values for all categorical fields by school year.
 
 {% hint style="success" %}
 To find the Source System Reference Data needed for each Fact Type, you can query the system by running the following script by `FactTypeCode` and `ReportCode`.
@@ -113,16 +113,17 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 **Source System Reference Tables Title III English Learner Students - October Filters**
 
-In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields will need to be mapped using the value in the SSRD table using these filters. For further information please review Source System Reference Data.
+In some instances, the CEDS reference table needs to be further qualified to determine what level or type of data is being referenced by the Table Filter field. For example, the fallowing fields will need to be mapped using the value in the SSRD table using these filters. For further information please review [Source System Reference Data](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/source-system-reference-data-mapping-utility/source-system-reference-data).
 
 Title III English Learner Students - October Reports ('141') have filters
 
 * 000100 Used for Grade Level
+* 000126 Used for Grade Level When Assessed
 * 000174 Used for LEA Operational Status
 * 000533 Used for School Operational Status
 * 001156 Used for Organization Type
 
-Source System Reference Data Mapping Utility can be used to determine which option-set value mappings are needed for a Fact Type and which have been mapped. Note that new installations of Generate will come with both the InputCode and OutputCode fields loaded and you will need to review and update any values in the InputCode field to match your source data.
+[Source System Reference Data Mapping Utility](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/source-system-reference-data-mapping-utility) can be used to determine which option-set value mappings are needed for a Fact Type and which have been mapped. Note that new installations of Generate will come with both the InputCode and OutputCode fields loaded and you will need to review and update any values in the InputCode field to match your source data.
 
 {% code overflow="wrap" %}
 ```sql
@@ -198,7 +199,7 @@ Once data has been migrated to the Staging tables there are two Generate tools t
 
 **Staging Validation Utility**
 
-Generate has a Staging Validation Process which can be called at the Fact Type or E&#x44;_&#x46;acts_ file level.
+Generate has a [Staging Validation Process](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-validation) which can be called at the Fact Type or E&#x44;_&#x46;acts_ file level.
 
 {% hint style="success" %}
 The following is an example code snippet of how to call these Stored Procedures by the Title III English Learner Students - October Fact Type.
@@ -211,7 +212,7 @@ exec [Staging].[StagingValidation_GetResults] 2024,'titleIIIELOct'
 
 **Staging Table Debug View Process**
 
-To aid validation we developed Staging Table Debug views that join together the Staging data for a Fact Type in a standard format that can be used for Generate testing. You can utilize these views in researching specific subsets of data or specific student data. These views can be found in the debug schema and will automatically be filtered by the school year(s) selected in the Generate web application. Opening the view in SSMS will provide you with a variety of filtering options to modify the query as needed during testing. Detailed instructions on how to utilize this process to debug Staging table data can be found in the Staging Table Validation Process.
+To aid validation we developed Staging Table Debug views that join together the Staging data for a Fact Type in a standard format that can be used for Generate testing. You can utilize these views in researching specific subsets of data or specific student data. These views can be found in the debug schema and will automatically be filtered by the school year(s) selected in the Generate web application. Opening the view in SSMS will provide you with a variety of filtering options to modify the query as needed during testing. Detailed instructions on how to utilize this process to debug Staging table data can be found in the [Staging Table Validation Process](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-validation/staging-table-validation-process).
 
 The following is an example code snippet of how to select the Title III English Learner Students - October Staging Table Debug view:
 
@@ -280,7 +281,7 @@ Once data has been migrated to the Staging tables the Fact Table Debug View can 
 
 **Fact Table Debug View**
 
-The Fact Table Debug view joins together the CEDS Data Warehouse data for a Fact Type in a standard format that is used for Generate testing. This view will automatically be filtered by the school year(s) selected in the Generate web application and stored in the `RDS.DimSchoolYearDataMigrationTypes` table. However, opening the view in SSMS will provide you with a variety of filtering options to modify this query as needed during testing. Detailed instructions on how to utilize this process to debug Fact Table data can be found in the Fact Type Table Validation Process guide.
+The Fact Table Debug view joins together the CEDS Data Warehouse data for a Fact Type in a standard format that is used for Generate testing. This view will automatically be filtered by the school year(s) selected in the Generate web application and stored in the `RDS.DimSchoolYearDataMigrationTypes` table. However, opening the view in SSMS will provide you with a variety of filtering options to modify this query as needed during testing. Detailed instructions on how to utilize this process to debug Fact Table data can be found in the [Fact Type Table Validation Process](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/fact-type-table-validation-process) guide.
 
 {% hint style="success" %}
 The following is an example code snippet of how to select the Title III English Learner Students - October Staging Table Debug view:
@@ -339,7 +340,7 @@ Over time these tables will accumulate and create clutter in the Generate databa
 
 **File Comparison Utility**
 
-The File Comparison Utility allows you to compare E&#x44;_&#x46;acts_ submission files to data stored in the Report Tables in the Generate database. Instructions on how to use the `Utilities.CompareSubmissionFiles` Stored Procedure are available here. Typically, this step is performed in the first year of reporting a file through Generate to compare it to previous submission files produced by the legacy system.
+The [File Comparison Utility](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/file-comparison) allows you to compare E&#x44;_&#x46;acts_ submission files to data stored in the Report Tables in the Generate database. Instructions on how to use the `Utilities.CompareSubmissionFiles` Stored Procedure are available here. Typically, this step is performed in the first year of reporting a file through Generate to compare it to previous submission files produced by the legacy system.
 
 {% code overflow="wrap" %}
 ```sql
@@ -369,4 +370,4 @@ This [IDEA Part B Data Review](https://ciidta.communities.ed.gov/#communities/pd
 
 ### Staging Table Snapshot Utility
 
-Generate allows states to create a backup or “snapshot” of staging tables. This is an optional utility that can be executed as needed or embedded into the State’s ETL workflow logic. The Staging Table Snapshot Utility provides a method to create a backup copy of staging tables for future use and reference after an ETL has populated Generate’s staging tables. This helps to ensure consistency across all E&#x44;_&#x46;acts_ reports for a given year and developers can preserve data in staging tables across ETL executions. This is best utilized after you have confirmed the Fact Type has successfully produced an accurate E&#x44;_&#x46;acts_ file.
+Generate allows states to create a backup or “snapshot” of staging tables. This is an optional utility that can be executed as needed or embedded into the State’s ETL workflow logic. The [Staging Table Snapshot Utility](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-table-snapshot) provides a method to create a backup copy of staging tables for future use and reference after an ETL has populated Generate’s staging tables. This helps to ensure consistency across all E&#x44;_&#x46;acts_ reports for a given year and developers can preserve data in staging tables across ETL executions. This is best utilized after you have confirmed the Fact Type has successfully produced an accurate E&#x44;_&#x46;acts_ file.

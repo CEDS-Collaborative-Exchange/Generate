@@ -104,7 +104,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 #### Toggle Settings
 
-The Generate Toggle tables store information from the EDFacts Metadata and Process System (EMAPS) survey that impacts the business logic used to ETL the data for EDFacts reporting. It is important to make sure these questions are completed before data is migrated and that they match what was entered in EMAPS. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually after you complete your EMAPS survey. Instructions for how to find and update the Toggle page are available in the Toggle documentation.
+The Generate Toggle tables store information from the EDFacts Metadata and Process System (EMAPS) survey that impacts the business logic used to ETL the data for EDFacts reporting. It is important to make sure these questions are completed before data is migrated and that they match what was entered in EMAPS. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually after you complete your EMAPS survey. Instructions for how to find and update the Toggle page are available in the [Toggle documentation](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/settings/toggle).
 
 #### Source System Reference Data Settings
 
@@ -237,8 +237,8 @@ The following is an example code snippet of how to select the Directory Staging 
 {% endhint %}
 
 ```sql
-select * from [debug].[vwDirectoryLEA_StagingTable]
-select * from [debug].[vwDirectorySCH_StagingTable]
+select * from [debug].[vwDirectoryLEA_StagingTables]
+select * from [debug].[vwDirectorySCH_StagingTables]
 ```
 
 ***
