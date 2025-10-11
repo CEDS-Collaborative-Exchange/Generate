@@ -118,6 +118,19 @@
 /**************
 CIID-8062
 **************/
+--Create the new Fact Type
+	insert into RDS.DimFactTypes
+	values ('schoolperformanceindicators','SCHOOLPERFORMANCEINDICATORS - 199, 200, 201, 202, 205', 'School Performance Indicators');
+
+--Update the report to Fact Type relationship
+    update gf
+    set FactTypeId = (select DimFactTypeId from rds.DimFactTypes where FactTypeCode = 'schoolperformanceindicators')
+    from app.GenerateReport_FactType gf
+        inner join app.GenerateReports r
+            on gf.GenerateReportId = r.GenerateReportId
+    where reportcode in ('199','200','201','202','205')
+
+
 --Drop any constraints on the Fact table that reference the deprecated Fact table
     DECLARE @sql NVARCHAR(MAX);
     SET @sql = N'';    
@@ -222,15 +235,15 @@ CIID-8062
 
     IF COL_LENGTH('RDS.ReportEdFactsK12StudentAssessments', 'NEGLECTEDPROGRAMTYPE') IS NULL
 	BEGIN
-		ALTER TABLE [RDS].[ReportEdFactsK12StudentAssessments] ADD [NEGLECTEDPROGRAMTYPE] NVARCHAR(50) NULL
+		ALTER TABLE [RDS].[ReportEdFactsK12StudentAssessments] ADD [NEGLECTEDPROGRAMTYPE] NVARCHAR(50) NULL;
 	END
 
      IF COL_LENGTH('RDS.ReportEDFactsK12StudentCounts', 'NEGLECTEDPROGRAMTYPE') IS NULL
 	BEGIN
-		ALTER TABLE [RDS].[ReportEDFactsK12StudentCounts] ADD [NEGLECTEDPROGRAMTYPE] NVARCHAR(50) NULL
+		ALTER TABLE [RDS].[ReportEDFactsK12StudentCounts] ADD [NEGLECTEDPROGRAMTYPE] NVARCHAR(50) NULL;
 	END
 
      IF COL_LENGTH('RDS.ReportEDFactsK12StudentCounts', 'DELINQUENTPROGRAMTYPE') IS NULL
 	BEGIN
-		ALTER TABLE [RDS].[ReportEDFactsK12StudentCounts] ADD [DELINQUENTPROGRAMTYPE] NVARCHAR(50) NULL
+		ALTER TABLE [RDS].[ReportEDFactsK12StudentCounts] ADD [DELINQUENTPROGRAMTYPE] NVARCHAR(50) NULL;
 	END

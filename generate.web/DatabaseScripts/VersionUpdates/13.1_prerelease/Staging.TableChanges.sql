@@ -53,10 +53,10 @@ Staging.SchoolPerformanceIndicators
         [SchoolPerformanceIndicatorStateDefinedStatus] [varchar](100) NULL,
         [SchoolPerformanceIndicatorStateDefinedStatusDescription] [varchar](200) NULL,
         [SchoolQualityOrStudentSuccessIndicatorType] [varchar](100) NULL,
-        [RaceEthnicity] [varchar](100) NULL,
-        [IdeaIndicator] [varchar](100) NULL,
-        [EnglishLearnerStatus] [varchar](100) NULL,
-        [EconomicDisadvantageStatus] [varchar](100) NULL,
+        [Race] [varchar](100) NULL,
+        [IdeaIndicator] [bit] NULL,
+        [EnglishLearnerStatus] [bit] NULL,
+        [EconomicDisadvantageStatus] [bit] NULL,
         [SubgroupCode] [varchar](100) NULL,
         [RecordStartDateTime] [datetime] NULL,
         [RecordEndDateTime] [datetime] NULL,
@@ -113,6 +113,11 @@ Staging.SchoolPerformanceIndicators
     EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001966' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
     EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22923' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
     EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The origins of a person.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'Race'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Race' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'Race'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001943' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'Race'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22955' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'Race'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'Race'
 
 --Drop the tables that are no longer needed
     IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[Staging].[SchoolPerformanceIndicatorStateDefinedStatus]') AND type in (N'U'))
