@@ -1,19 +1,21 @@
 /**********************************************************************
 Author: AEM Corp
-Date:	5/1/2022
-Description: Migrates Organization Data from Staging to RDS.FactOrganizationCounts
+Date:	10/11/2025
+Description: Migrates Organization Data from Staging to RDS.FactSchoolPerformanceIndicators
 
-NOTE: This Stored Procedure processes files: 029, 035, 039, 103, 129, 130, 131, 163, 170, 190, 193, 196, 197, 198, 205, 206
+NOTE: This Stored Procedure processes files: 199, 200, 201, 202, 205
 
-1/10/2024 JW CIID-5731
 ************************************************************************/
-CREATE PROCEDURE Staging.[Staging-to-FactOrganizationCounts]
+CREATE PROCEDURE [Staging].[Staging-to-FactSchoolPerformanceIndicators]
 	@SchoolYear smallint 
-
 AS   
 BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
 
 	BEGIN TRY
+
+		IF OBJECT_ID(N'tempdb..#vwRaces') IS NOT NULL DROP TABLE #vwRaces
 
 		--Get the school year being migrated
 		DECLARE @SchoolYearId int
@@ -21,418 +23,170 @@ BEGIN
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
-		IF OBJECT_ID(N'tempdb..#seaOrganizationTypes') IS NOT NULL DROP TABLE #seaOrganizationTypes
-		IF OBJECT_ID(N'tempdb..#leaOrganizationTypes') IS NOT NULL DROP TABLE #leaOrganizationTypes
-		IF OBJECT_ID(N'tempdb..#schoolOrganizationTypes') IS NOT NULL DROP TABLE #schoolOrganizationTypes
-
-		--Get the organization types via SourceSystemReferenceData
-		CREATE TABLE #seaOrganizationTypes (
-			SeaOrganizationType					VARCHAR(20)
-		)
-		
-		CREATE TABLE #leaOrganizationTypes (
-			LeaOrganizationType					VARCHAR(20)
-		)
-
-		CREATE TABLE #schoolOrganizationTypes (
-			K12SchoolOrganizationType			VARCHAR(20)
-		)
-
-
-		INSERT INTO #seaOrganizationTypes
-		SELECT 
-			InputCode
-		FROM Staging.SourceSystemReferenceData 
-		WHERE TableName = 'RefOrganizationType' 
-			AND TableFilter = '001156' 
-			AND OutputCode = 'SEA'
-			AND SchoolYear = @SchoolYear
-		
-		INSERT INTO #leaOrganizationTypes
-		SELECT 
-			InputCode
-		FROM Staging.SourceSystemReferenceData 
-		WHERE TableName = 'RefOrganizationType' 
-			AND TableFilter = '001156' 
-			AND OutputCode = 'LEA'
-			AND SchoolYear = @SchoolYear
-
-		INSERT INTO #schoolOrganizationTypes
-		SELECT 
-			InputCode
-		FROM Staging.SourceSystemReferenceData 
-		WHERE TableName = 'RefOrganizationType' 
-			AND TableFilter = '001156' 
-			AND OutputCode = 'K12School'
-			AND SchoolYear = @SchoolYear
-
 		DECLARE @factTypeId AS INT
-		SELECT @factTypeId = DimFactTypeId FROM rds.DimFactTypes WHERE FactTypeCode = 'directory'
+		SELECT @factTypeId = DimFactTypeId FROM rds.DimFactTypes WHERE FactTypeCode = 'schoolperformanceindicators'
 
-		DECLARE @dimSeaId AS INT, @DimK12StaffId INT, @DimIeuId INT, @dimLeaId INT, @DimK12SchoolId INT
-			, @IsCharterSchool AS BIT, @leaOrganizationId AS INT, @schoolOrganizationId AS INT
+		DECLARE @dimLeaId INT, @DimK12SchoolId INT
 		
-		DECLARE @count AS INT
-		DECLARE @dimCharterSchoolManagerId AS INT
-		DECLARE @dimCharterSchoolSecondaryManagerId AS INT
-		DECLARE @dimCharterSchoolAuthorizerId AS INT
-		DECLARE @dimCharterSchoolSecondaryAuthorizerId AS INT
+	--Create the temp tables (and any relevant indexes) needed for this domain
+		SELECT *
+		INTO #vwRaces
+		FROM RDS.vwDimRaces
+		WHERE SchoolYear = @SchoolYear
 
-		DECLARE @leaOperationalStatustypeId AS INT, @schOperationalStatustypeId AS INT
-		SELECT @leaOperationalStatustypeId = RefOperationalStatusTypeId FROM dbo.RefOperationalStatusType WHERE Code = '000174'
-		SELECT @schOperationalStatustypeId = RefOperationalStatusTypeId FROM dbo.RefOperationalStatusType WHERE Code = '000533'
-		
-		-- DELETE RECORDS FOR SCHOOL YEAR FROM FACT TABLE
-		DELETE FROM rds.FactOrganizationCounts 
+		CREATE CLUSTERED INDEX ix_tempvwRaces 			
+			ON #vwRaces (RaceMap);
+			
+	--Clear the Fact table of the data about to be migrated  
+		DELETE FROM rds.FactSchoolPerformanceIndicators 
 		WHERE SchoolYearId = @SchoolYearId
 
-		--Get the ID for the State School Officer
-		SELECT @DimK12StaffId = MAX(rdp.DimPersonId)
-		FROM RDS.DimPeople rdp
-		JOIN Staging.StateDetail ssd
-			ON rdp.K12StaffStaffMemberIdentifierState = ssd.SeaContact_Identifier
-			AND rdp.IsActiveK12Staff = 1
-			AND (ssd.RecordStartDateTime >= Staging.GetFiscalYearStartDate(@SchoolYear)
-				AND ISNULL(ssd.RecordEndDateTime, Staging.GetFiscalYearEndDate(@SchoolYear)) <= Staging.GetFiscalYearEndDate(@SchoolYear))
-
-		-------------------------------
-		--SEA
-		-------------------------------
-		INSERT INTO [RDS].[FactOrganizationCounts] (
-			[SchoolYearId]
-			, [FactTypeId]
-			, [SeaId]
-			, [LeaId]
-			, [K12StaffId]
-			, [K12SchoolId]
-			, [TitleIStatusId]
-			, [TitleIParentalInvolveRes]
-			, [TitleIPartAAllocations]
-			, [AuthorizingBodyCharterSchoolAuthorizerId]
-			, [SecondaryAuthorizingBodyCharterSchoolAuthorizerId]
-			, [CharterSchoolManagementOrganizationId]
-			, [CharterSchoolUpdatedManagementOrganizationId]
-			, [ReasonApplicabilityId]
-			, [SchoolImprovementFunds]
-			, [K12OrganizationStatusId]
-			, [K12SchoolStatusId]
-			, [K12SchoolStateStatusId]
-			, [FederalProgramsFundingAllocationType]
-			, [FederalProgramCode]
-			, [FederalProgramsFundingAllocation]
-			, [ComprehensiveAndTargetedSupportId]
-			, [CharterSchoolStatusId]
-			, [SubgroupId]
-			, [OrganizationCount]
+		IF OBJECT_ID('tempdb..#Facts') IS NOT NULL 
+			DROP TABLE #Facts
+		
+	--Create and load #Facts temp table
+		CREATE TABLE #Facts (
+			FactTypeId											int null
+			, SchoolYearId										int null
+			, LeaId												int null
+			, K12SchoolId										int null
+			, RaceId											int null
+			, IdeaStatusId										int null
+			, K12DemographicId									int null
+			, EconomicallyDisadvantagedStatusId					int null
+			, EnglishLearnerStatusId							int null
+			, SchoolPerformanceIndicatorCategoryId				int null
+			, SchoolPerformanceIndicatorId						int null
+			, SchoolPerformanceIndicatorStateDefinedStatusId	int null
+			, SchoolQualityOrStudentSuccessIndicatorId			int null
+			, IndicatorStatusId									int null
+			, SubgroupId										int null
 		)
-		SELECT 
-			@SchoolYearId 													AS SchoolYearId
-			, @factTypeId 													AS FactTypeId
-			, Sea.DimSeaId 													AS SeaId
-			, -1 	 														AS LeaId
-			, ISNULL( @DimK12StaffId, -1)	 								AS K12StaffId
-			, -1 	 														AS K12SchoolId
-			, -1  															AS TitleIStatusId
-			, -1  															AS TitleIParentalInvolveRes
-			, -1  															AS TitleIPartAAllocations
-			, -1  															AS AuthorizingBodyCharterSchoolAuthorizerId
-			, -1 															AS SecondaryAuthorizingBodyCharterSchoolAuthorizerId
-			, -1 															AS CharterSchoolManagementOrganizationId
-			, -1 															AS CharterSchoolUpdatedManagementOrganizationId
-			, -1 															AS ReasonApplicabilityId
-			, -1 															AS SchoolImprovementFunds
-			, -1	  														AS K12OrganizationStatusId
-			, -1															AS K12SchoolStatusId
-			, -1  															AS K12SchoolstateStatusId
-			, ISNULL(soff.FederalProgramFundingAllocationType, 'MISSING') 	AS FederalProgramsFundingAllocationType
-			, ISNULL(soff.FederalProgramCode, 'MISSING') 					AS FederalProgramCode
-			, CONVERT(int, ISNULL(soff.FederalProgramsFundingAllocation,0))	AS FederalProgramsFundingAllocation
-			, -1 															AS ComprehensiveAndTargetedSupportId
-			, -1 															AS CharterSchoolStatusId
-			, -1 															AS SubgroupId
-			, 1 															AS OrganizationCount
 
-		FROM Staging.StateDetail ssd
-		INNER JOIN RDS.DimSeas Sea
-			ON ssd.SeaOrganizationIdentifierSea = Sea.SeaOrganizationIdentifierSea
-			AND isnull(Sea.RecordEndDateTime, '6/30/' + convert(varchar, @SchoolYear)) >= '6/30/' + convert(varchar, @SchoolYear)
-		LEFT JOIN Staging.OrganizationFederalFunding soff 
-			ON ssd.SeaOrganizationIdentifierSea = soff.OrganizationIdentifier
-			AND ssd.SchoolYear = soff.SchoolYear
-			AND soff.OrganizationType in (select SeaOrganizationType from #seaOrganizationTypes)
-			--AND soff.REAPAlternativeFundingStatusCode IS NOT NULL -- Not sure if we need this
+		INSERT INTO #Facts
+		SELECT DISTINCT 
+			@factTypeId																	AS FactTypeId
+			, @SchoolYearId																AS SchoolYearId
+			, rdl.DimLeaID																AS LeaId
+			, rdksch.DimK12SchoolId														AS K12SchoolId
+			, ISNULL(rdr.DimRaceId, -1)													AS RaceId
+			, ISNULL(rdis.DimIdeaStatusId, -1)											AS IdeaStatusId
+			, -1																		AS K12DemographicId
+			, ISNULL(rdeds.DimEconomicallyDisadvantagedStatusId, -1)					AS EconomicallyDisadvantagedStatusId
+			, ISNULL(rdels.DimEnglishLearnerStatusId, -1)								AS EnglishLearnerStatusId
+			, ISNULL(rdspic.DimSchoolPerformanceIndicatorCategoryId, -1)				AS SchoolPerformanceIndicatorCategoryId
+			, ISNULL(rdspi.DimSchoolPerformanceIndicatorId, -1)							AS SchoolPerformanceIndicatorId
+			, ISNULL(rdspisds.DimSchoolPerformanceIndicatorStateDefinedStatusId, -1)	AS SchoolPerformanceIndicatorStateDefinedStatusId
+			, -1																		AS SchoolQualityOrStudentSuccessIndicatorId
+			, ISNULL(rdins.DimIndicatorStatusId,-1)										AS IndicatorStatusId
+			, ISNULL(rds.DimSubgroupId,-1)												AS SubgroupId
 
-		-------------------------------
-		--LEA
-		-------------------------------
-		-- Get distinct list of LEAs from Staging along with latest start date (in cases where more than one status/startdate exists for an LEA
-		IF OBJECT_ID(N'tempdb..#SortLEAs') IS NOT NULL DROP TABLE #SortLEAs
-		IF OBJECT_ID(N'tempdb..#DistinctLEAs') IS NOT NULL DROP TABLE #DistinctLEAs
-
-		SELECT DISTINCT
-			DimLeaId, LeaIdentifierSea, RecordStartDateTime, 
-			ROW_NUMBER() OVER (
-				PARTITION BY LeaIdentifierSea
-				ORDER BY RecordStartDateTime desc) row_num
-		INTO #SortLEAs
-		FROM RDS.DimLeas
-		WHERE RecordStartDateTime BETWEEN Staging.GetFiscalYearStartDate(@SchoolYear) AND Staging.GetFiscalYearEndDate(@SchoolYear) 
-
-		SELECT * 
-		INTO #DistinctLEAs
-		FROM #SortLEAs
-		WHERE LeaIdentifierSea IS NOT NULL
-		AND row_num = 1
-	
-		INSERT INTO
-		[RDS].[FactOrganizationCounts] (
-			[SchoolYearId]
-			, [FactTypeId]
-			, [SeaId]
-			, [LeaId]
-			, [K12StaffId]
-			, [K12SchoolId]
-			, [TitleIStatusId]
-			, [TitleIParentalInvolveRes]
-			, [TitleIPartAAllocations]
-			, [AuthorizingBodyCharterSchoolAuthorizerId]
-			, [SecondaryAuthorizingBodyCharterSchoolAuthorizerId]
-			, [CharterSchoolManagementOrganizationId]
-			, [CharterSchoolUpdatedManagementOrganizationId]
-			, [ReasonApplicabilityId]
-			, [SchoolImprovementFunds]
-			, [K12OrganizationStatusId]
-			, [K12SchoolStatusId]
-			, [K12SchoolStateStatusId]
-			, [FederalProgramsFundingAllocationType]
-			, [FederalProgramCode]
-			, [FederalProgramsFundingAllocation]
-			, [ComprehensiveAndTargetedSupportId]
-			, [CharterSchoolStatusId]
-			, [SubgroupId]
-			, [OrganizationCount]
-		)
-		SELECT DISTINCT
-			@SchoolYearId													AS SchoolYearId
-			, @factTypeId													AS FactTypeId
-			, -1															AS SeaId
-			, rdl.DimLeaID													AS LeaId
-			, -1															AS K12StaffId
-			, -1															AS K12SchoolId
-			, -1															AS TitleIStatusId
-			, isnull(round(soff.ParentalInvolvementReservationFunds,0),0)	AS TitleIParentalInvolveRes
-			, CASE WHEN soff.FederalProgramCode ='84.010' 
-				THEN round(soff.FederalProgramsFundingAllocation,0) 
-				ELSE 0 
-			END 															AS TitleIPartAAllocations
-			, -1															AS AuthorizingBodyCharterSchoolAuthorizerId
-			, -1															AS SecondaryAuthorizingBodyCharterSchoolAuthorizerId
-			, -1															AS CharterSchoolManagementOrganizationId
-			, -1															AS CharterSchoolUpdatedManagementOrganizationId
-			, -1															AS ReasonApplicabilityId
-			, NULL															AS SchoolImprovementFunds
-			, ISNULL(organizationStatus.DimK12OrganizationStatusId,-1)		AS K12OrganizationStatusId
-			, -1															AS K12SchoolStatusId
-			, -1															AS K12SchoolstateStatusId
-			, ISNULL(soff.FederalProgramFundingAllocationType, 'MISSING')	AS FederalProgramsFundingAllocationType
-			, ISNULL(soff.FederalProgramCode, 'MISSING')					AS FederalProgramCode
-			, CONVERT(int, ISNULL(soff.FederalProgramsFundingAllocation,0))	AS FederalProgramsFundingAllocation
-			, -1															AS ComprehensiveAndTargetedSupportId
-			, -1															AS CharterSchoolStatusId
-			, -1															AS SubgroupId
-			, 1																AS OrganizationCount
-
-		FROM Staging.K12Organization sko
-		JOIN #DistinctLEAs dleas
-			ON sko.LeaIdentifierSea = dleas.LeaIdentifierSea
-			AND sko.LEA_RecordStartDateTime = dleas.RecordStartDateTime
-		JOIN RDS.DimLeas rdl
-			ON sko.LeaIdentifierSea = rdl.LeaIdentifierSea
-			AND dleas.DimLeaID = rdl.DimLeaID
-			AND rdl.DimLeaId <> -1 and ReportedFederally = 1
+		FROM Staging.SchoolPerformanceIndicators sspi
+	--schools (rds)
+		LEFT JOIN RDS.DimK12Schools rdksch
+			ON sspi.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
+			AND (
+				(rdksch.RecordStartDateTime < staging.GetFiscalYearStartDate(@SchoolYear) 
+					and ISNULL(rdksch.RecordEndDateTime, staging.GetFiscalYearEndDate(@SchoolYear)) >= staging.GetFiscalYearStartDate(@SchoolYear))
+				OR 
+				(rdksch.RecordStartDateTime >= staging.GetFiscalYearStartDate(@SchoolYear) 
+					and ISNULL(rdksch.RecordEndDateTime, staging.GetFiscalYearEndDate(@SchoolYear)) <= staging.GetFiscalYearEndDate(@SchoolYear))
+			)
+	--leas (rds)
+		LEFT JOIN RDS.DimLeas rdl
+			ON sspi.LeaIdentifierSea = rdl.LeaIdentifierSea
 			AND (
 				(rdl.RecordStartDateTime < staging.GetFiscalYearStartDate(@SchoolYear) 
-					AND rdl.RecordEndDateTime IS NULL)
+					and ISNULL(rdl.RecordEndDateTime, staging.GetFiscalYearEndDate(@SchoolYear)) >= staging.GetFiscalYearStartDate(@SchoolYear))
 				OR 
 				(rdl.RecordStartDateTime >= staging.GetFiscalYearStartDate(@SchoolYear) 
-					AND rdl.RecordStartDateTime <= staging.GetFiscalYearEndDate(@SchoolYear))
+					and ISNULL(rdl.RecordEndDateTime, staging.GetFiscalYearEndDate(@SchoolYear)) <= staging.GetFiscalYearEndDate(@SchoolYear))
 			)
-		LEFT JOIN Staging.OrganizationFederalFunding soff
-			ON sko.LeaIdentifierSea = soff.OrganizationIdentifier
-			AND sko.SchoolYear = soff.SchoolYear
-			AND soff.OrganizationType in (select LEAOrganizationType from #leaOrganizationTypes)
-			--AND soff.REAPAlternativeFundingStatusCode IS NOT NULL
-		LEFT JOIN RDS.vwDimK12OrganizationStatuses organizationStatus
-			ON organizationStatus.SchoolYear = sko.SchoolYear
-			AND ISNULL(sko.LEA_GunFreeSchoolsActReportingStatus, 'MISSING') = ISNULL(organizationStatus.GunFreeSchoolsActReportingStatusMap, organizationStatus.GunFreeSchoolsActReportingStatusCode)
-			AND ISNULL(CAST(sko.LEA_McKinneyVentoSubgrantRecipient AS SMALLINT), -1) = ISNULL(organizationStatus.McKinneyVentoSubgrantRecipientMap, -1)
-			AND organizationStatus.HighSchoolGraduationRateIndicatorStatusCode = 'Missing'
-			AND organizationStatus.REAPAlternativeFundingStatusCode = 'Missing'
-			
-		-------------------------------
-		--School
-		-------------------------------
-		DECLARE @SchoolIdentifierSea VARCHAR(60)
+	--race (RDS)
+		LEFT JOIN #vwRaces rdr
+			ON rdr.SchoolYear = @SchoolYear
+			AND ISNULL(sspi.Race, 'MISSING') = ISNULL(rdr.RaceMap, rdr.RaceCode)
+	--idea disability (RDS)
+		LEFT JOIN RDS.vwDimIdeaStatuses rdis
+			ON rdis.SchoolYear = @SchoolYear
+			AND ISNULL(CAST(sspi.IDEAIndicator AS SMALLINT), -1) = ISNULL(rdis.IdeaIndicatorMap, -1)
+			AND rdis.IdeaEducationalEnvironmentForSchoolAgeCode = 'MISSING'
+			AND rdis.IdeaEducationalEnvironmentForEarlyChildhoodCode = 'MISSING'
+			AND rdis.SpecialEducationExitReasonCode = 'MISSING'
+	--english learner (RDS)
+		LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
+			ON rdels.SchoolYear = @SchoolYear
+			AND ISNULL(CAST(sspi.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
+			AND PerkinsEnglishLearnerStatusCode = 'MISSING'
+	--economically disadvantaged (RDS)
+		LEFT JOIN RDS.vwDimEconomicallyDisadvantagedStatuses rdeds
+			ON rdeds.SchoolYear = @SchoolYear
+			AND ISNULL(CAST(sspi.EconomicDisadvantageStatus AS SMALLINT), -1) = ISNULL(rdeds.EconomicDisadvantageStatusMap, -1)
+			AND EligibilityStatusForSchoolFoodServiceProgramsCode = 'MISSING'
+			AND NationalSchoolLunchProgramDirectCertificationIndicatorCode = 'MISSING'
+	--SchoolPerformanceIndicatorCategories (RDS)
+		LEFT JOIN RDS.vwDimSchoolPerformanceIndicatorCategories rdspic
+			ON rdspic.SchoolYear = @SchoolYear
+			AND ISNULL(sspi.SchoolPerformanceIndicatorCategory, 'MISSING') = ISNULL(rdspic.SchoolPerformanceIndicatorCategoryMap, rdspic.SchoolPerformanceIndicatorCategoryCode)
+	--SchoolPerformanceIndicators (RDS)
+		LEFT JOIN RDS.vwDimSchoolPerformanceIndicators rdspi
+			ON rdspi.SchoolYear = @SchoolYear
+			AND ISNULL(sspi.SchoolPerformanceIndicatorType, 'MISSING') = ISNULL(rdspi.SchoolPerformanceIndicatorTypeMap, rdspi.SchoolPerformanceIndicatorTypeCode)
+	--Subgroups (RDS)
+		LEFT JOIN RDS.vwDimSubgroups rds
+			ON rds.SchoolYear = @SchoolYear
+			AND ISNULL(sspi.SubgroupCode, 'MISSING') = ISNULL(rds.SubgroupMap, rds.SubgroupCode)
+	--IndicatorStatuses (RDS)
+		LEFT JOIN RDS.vwDimIndicatorStatuses rdins
+			ON rdins.SchoolYear = @SchoolYear
+			AND ISNULL(sspi.SchoolPerformanceIndicatorStatus, 'MISSING') = ISNULL(rdins.IndicatorStatusMap, rdins.IndicatorStatusCode)
+	--SchoolPerformanceIndicatorStateDefinedStatuses (RDS)
+		LEFT JOIN RDS.DimSchoolPerformanceIndicatorStateDefinedStatuses rdspisds
+			ON ISNULL(sspi.SchoolPerformanceIndicatorStatus, 'MISSING') = ISNULL(rdspisds.SchoolPerformanceIndicatorStateDefinedStatusCode, 'MISSING')
 
-		-- Get distinct list of Schools from Staging along with latest start date (in cases where more than one status/startdate exists for a school
-		IF OBJECT_ID(N'tempdb..#SortSchools') IS NOT NULL DROP TABLE #SortSchools
-		IF OBJECT_ID(N'tempdb..#DistinctSchools') IS NOT NULL DROP TABLE #DistinctSchools
-		IF OBJECT_ID(N'tempdb..#DimCharterSchoolAuthorizers_Primary') IS NOT NULL DROP TABLE #DimCharterSchoolAuthorizers_Primary
-		IF OBJECT_ID(N'tempdb..#DimCharterSchoolAuthorizers_Secondary') IS NOT NULL DROP TABLE #DimCharterSchoolAuthorizers_Secondary
 
-		SELECT DISTINCT
-			DimK12SchoolId, SchoolIdentifierSea, RecordStartDateTime, 
-			ROW_NUMBER() OVER (
-				PARTITION BY SchoolIdentifierSea
-				ORDER BY RecordStartDateTime desc) row_num
-		INTO #SortSchools
-		FROM RDS.DimK12Schools
-		WHERE RecordStartDateTime BETWEEN Staging.GetFiscalYearStartDate(@SchoolYear) AND Staging.GetFiscalYearEndDate(@SchoolYear) 
-
-		SELECT * 
-		INTO #DistinctSchools
-		FROM #SortSchools
-		WHERE SchoolIdentifierSea IS NOT NULL
-		AND row_num = 1
-
-		-- Get Charter School Authorizer data
-		-- Primary
-		SELECT CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea
-			, CharterSchoolAuthorizerTypeCode
-			, sko.SchoolIdentifierSea
-			, min(dimCharterSchoolAuthorizerId) 'MinId'
-			, max(dimCharterSchoolAuthorizerId) 'MaxId'
-		INTO #DimCharterSchoolAuthorizers_Primary
-		FROM rds.DimCharterSchoolAuthorizers rcsa
-		INNER JOIN Staging.K12Organization sko
-			ON sko.School_CharterSchoolIndicator = 1
-			AND rcsa.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea = sko.School_CharterPrimaryAuthorizer
-		WHERE rcsa.RecordStartDateTime >= '7/1/' + convert(varchar, @SchoolYear-1) 
-		AND isnull(rcsa.RecordEndDateTime, '6/30/' + convert(varchar, @SchoolYear)) <= '6/30/' + convert(varchar, @SchoolYear)
-		GROUP BY rcsa.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea
-			, CharterSchoolAuthorizerTypeCode
-			, sko.SchoolIdentifierSea
-		ORDER BY sko.SchoolIdentifierSea
-
-		-- Secondary
-		SELECT CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea
-			, CharterSchoolAuthorizerTypeCode
-			, sko.SchoolIdentifierSea
-			, min(dimCharterSchoolAuthorizerId) 'MinId'
-			, max(dimCharterSchoolAuthorizerId) 'MaxId'
-		INTO #DimCharterSchoolAuthorizers_Secondary
-		FROM rds.DimCharterSchoolAuthorizers rcsa
-		INNER JOIN Staging.K12Organization sko
-			ON sko.School_CharterSchoolIndicator = 1
-			AND rcsa.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea = sko.School_CharterSecondaryAuthorizer
-		WHERE rcsa.RecordStartDateTime >= '7/1/' + convert(varchar, @SchoolYear-1) 
-		AND isnull(rcsa.RecordEndDateTime, '6/30/' + convert(varchar, @SchoolYear)) <= '6/30/' + convert(varchar, @SchoolYear)
-		GROUP BY rcsa.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea
-			, CharterSchoolAuthorizerTypeCode
-			, sko.SchoolIdentifierSea
-		ORDER BY sko.SchoolIdentifierSea
-
-		----INSERT INTO FactOrganizationCounts
-		INSERT INTO 
-		[RDS].[FactOrganizationCounts] (
-			[SchoolYearId]
-			, [FactTypeId]
-			, [SeaId]
-			, [LeaId]
-			, [K12StaffId]
-			, [K12SchoolId]
-			, [TitleIStatusId]
-			, [TitleIParentalInvolveRes]
-			, [TitleIPartAAllocations]
-			, [AuthorizingBodyCharterSchoolAuthorizerId]
-			, [SecondaryAuthorizingBodyCharterSchoolAuthorizerId]
-			, [CharterSchoolManagementOrganizationId]
-			, [CharterSchoolUpdatedManagementOrganizationId]
-			, [ReasonApplicabilityId]
-			, [SchoolImprovementFunds]
-			, [K12OrganizationStatusId]
-			, [K12SchoolStatusId]
-			, [K12SchoolStateStatusId]
-			, [FederalProgramsFundingAllocationType]
-			, [FederalProgramCode]
-			, [FederalProgramsFundingAllocation]
-			, [ComprehensiveAndTargetedSupportId]
-			, [CharterSchoolStatusId]
-			, [SubgroupId]
-			, [OrganizationCount]
+	--Final insert into RDS.FactSchoolPerformanceIndicators table
+		INSERT INTO [RDS].[FactSchoolPerformanceIndicators] (
+			FactTypeId
+			, SchoolYearId
+			, LeaId
+			, K12SchoolId
+			, RaceId
+			, IdeaStatusId
+			, K12DemographicId
+			, EconomicallyDisadvantagedStatusId
+			, EnglishLearnerStatusId
+			, SchoolPerformanceIndicatorCategoryId
+			, SchoolPerformanceIndicatorId
+			, SchoolPerformanceIndicatorStateDefinedStatusId
+			, SchoolQualityOrStudentSuccessIndicatorId
+			, IndicatorStatusId
+			, SubgroupId
 		)
 		SELECT DISTINCT 
-			@SchoolYearId												AS SchoolYearId
-			, @factTypeId												AS FactTypeId
-			, -1														AS SeaId
-			, -1														AS LeaId
-			, -1														AS K12StaffId
-			, rk12s.DimK12SchoolId										AS K12SchoolId
-			, ISNULL(t.DimOrganizationTitleIStatusId,-1)				AS TitleIStatusId
-			, -1														AS TitleIParentalInvolveRes
-			, -1														AS TitleIPartAAllocations
-			, isnull(CSAP.MinId,-1)										AS AuthorizingBodyCharterSchoolAuthorizerId
-			, isnull(CSAS.MinId,-1)										AS SecondaryAuthorizingBodyCharterSchoolAuthorizerId
-			, -1														AS CharterSchoolManagementOrganizationId
-			, -1														AS CharterSchoolUpdatedManagementOrganizationId
-			, -1														AS ReasonApplicabilityId
-			, NULL														AS SchoolImprovementFunds
-			, ISNULL(organizationStatus.DimK12OrganizationStatusId,-1)	AS K12OrganizationStatusId
-			, ISNULL(s.DimK12SchoolstatusId,-1)							AS K12SchoolStatusId
-			, -1														AS K12SchoolstateStatusId
-			, -1														AS FederalProgramsFundingAllocationType
-			, -1														AS FederalProgramCode
-			, -1 														AS FederalProgramsFundingAllocation
-			, -1														AS ComprehensiveAndTargetedSupportId
-			, -1														AS CharterSchoolStatusId
-			, -1														AS SubgroupId
-			, 1															AS OrganizationCount
+			FactTypeId
+			, SchoolYearId
+			, LeaId
+			, K12SchoolId
+			, RaceId
+			, IdeaStatusId
+			, K12DemographicId
+			, EconomicallyDisadvantagedStatusId
+			, EnglishLearnerStatusId
+			, SchoolPerformanceIndicatorCategoryId
+			, SchoolPerformanceIndicatorId
+			, SchoolPerformanceIndicatorStateDefinedStatusId
+			, SchoolQualityOrStudentSuccessIndicatorId
+			, IndicatorStatusId
+			, SubgroupId
+		FROM #Facts
 
-		FROM Staging.K12Organization sk12o
-		JOIN #DistinctSchools dschools
-			ON sk12o.SchoolIdentifierSea = dschools.SchoolIdentifierSea
-			AND sk12o.School_RecordStartDateTime = dschools.RecordStartDateTime
-
-		JOIN RDS.DimK12Schools rk12s 
-			ON sk12o.SchoolIdentifierSea = rk12s.SchoolIdentifierSea
-			AND dschools.DimK12SchoolID = rk12s.DimK12SchoolId
-			AND rk12s.DimK12SchoolId <> -1 and ReportedFederally = 1
-			AND (
-				(rk12s.RecordStartDateTime < staging.GetFiscalYearStartDate(@SchoolYear) and rk12s.RecordEndDateTime IS NULL)
-				OR 
-				(rk12s.RecordStartDateTime >= staging.GetFiscalYearStartDate(@SchoolYear) and rk12s.RecordStartDateTime <= staging.GetFiscalYearEndDate(@SchoolYear))
-			)
-
-		LEFT JOIN rds.vwDimK12Schoolstatuses s
-			ON isnull(s.MagnetOrSpecialProgramEmphasisSchoolMap, s.MagnetOrSpecialProgramEmphasisSchoolCode) = isnull(sk12o.School_MagnetOrSpecialProgramEmphasisSchool, 'MISSING')
-			AND isnull(s.NslpStatusMap, s.NslpStatusCode) = isnull(sk12o.School_NationalSchoolLunchProgramStatus, 'MISSING')
-			AND isnull(s.SharedTimeIndicatorMap, s.SharedTimeIndicatorCode) = isnull(sk12o.School_SharedTimeIndicator, 'MISSING')
-			AND isnull(s.VirtualSchoolStatusMap, s.VirtualSchoolStatusCode) = isnull(sk12o.School_VirtualSchoolStatus, 'MISSING')
-			AND s.SchoolImprovementStatusCode = 'MISSING' 
-			AND isnull(s.PersistentlyDangerousStatusMap, s.PersistentlyDangerousStatusCode) = isnull(sk12o.School_SchoolDangerousStatus, 'MISSING')
-			AND isnull(s.StatePovertyDesignationMap, s.StatePovertyDesignationCode) = isnull(sk12o.School_StatePovertyDesignation, 'MISSING')
-			AND isnull(s.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeMap, s.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode) = isnull(sk12o.School_ProgressAchievingEnglishLanguageProficiencyIndicatorType, 'MISSING')
-		LEFT JOIN rds.vwDimOrganizationTitleIStatuses t 
-			ON t.TitleIInstructionalServicesCode = NULL
-			AND t.TitleIProgramTypeCode = NULL 
-			AND isnull(t.TitleISchoolStatusMap, t.TitleISchoolStatusCode) = isnull(sk12o.School_TitleISchoolStatus, 'MISSING')    
-			AND t.TitleISupportServicesCode = NULL 
-		LEFT JOIN rds.vwDimK12OrganizationStatuses organizationStatus 
-			ON organizationStatus.SchoolYear = sk12o.SchoolYear
-			AND isnull(sk12o.School_GunFreeSchoolsActReportingStatus, 'MISSING') = isnull(organizationStatus.GunFreeSchoolsActReportingStatusMap, organizationStatus.GunFreeSchoolsActReportingStatusCode)
-			AND organizationStatus.HighSchoolGraduationRateIndicatorStatusCode = 'MISSING' 
-			AND organizationStatus.REAPAlternativeFundingStatusCode = 'MISSING' 
-			AND organizationStatus.McKinneyVentoSubgrantRecipientCode = 'MISSING' 
-		LEFT JOIN #DimCharterSchoolAuthorizers_Primary CSAP
-			ON CSAP.SchoolIdentifierSea = sk12o.SchoolIdentifierSea
-		LEFT JOIN #DimCharterSchoolAuthorizers_Secondary CSAS
-			ON CSAS.SchoolIdentifierSea = sk12o.SchoolIdentifierSea
+		ALTER INDEX ALL ON RDS.FactSchoolPerformanceIndicators REBUILD
 
 	END TRY
 	BEGIN CATCH
 		INSERT INTO app.DataMigrationHistories(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
-		VALUES	(getutcdate(), 2, 'RDS.FactOrganizationCounts - Error Occurred - ' + CAST(ERROR_MESSAGE() AS VARCHAR(900)))
+		VALUES	(getutcdate(), 2, 'RDS.FactSchoolPerformanceIndicators - Error Occurred - ' + CAST(ERROR_MESSAGE() AS VARCHAR(900)))
 	END CATCH
 
 END
-

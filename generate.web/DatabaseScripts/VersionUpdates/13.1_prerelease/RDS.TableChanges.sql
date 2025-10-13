@@ -167,6 +167,7 @@ CIID-8062
     CREATE TABLE [RDS].[FactSchoolPerformanceIndicators](
         [FactSchoolPerformanceIndicatorId] [int] IDENTITY(1,1) NOT NULL,
         [FactTypeId] [int] NOT NULL,
+        [LeaId] [int] NOT NULL,
         [K12SchoolId] [int] NOT NULL,
         [SchoolYearId] [int] NOT NULL,
         [RaceId] [int] NULL,
