@@ -323,7 +323,7 @@ namespace generate.infrastructure.Repositories.App
                         throw new OperationCanceledException();
                     }
 
-                    await _context.Database.ExecuteSqlRawAsync("app.Migrate_Data");
+                    await _context.Database.ExecuteSqlRawAsync("app.Migrate_Data",this.source.Token);
                     await Task.Delay(400);
                 }
             }
