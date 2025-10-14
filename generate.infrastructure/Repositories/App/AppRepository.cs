@@ -16,6 +16,7 @@ using generate.core.Interfaces.Repositories.App;
 using System.Threading;
 using Hangfire;
 using System.IO;
+using Hangfire.Server;
 
 namespace generate.infrastructure.Repositories.App
 {
@@ -88,6 +89,7 @@ namespace generate.infrastructure.Repositories.App
 
         public void CompleteMigration(string dataMigrationTypeCode, string dataMigrationStatusCode)
         {
+            Console.WriteLine($"CompleteMigration called with dataMigrationTypeCode:{dataMigrationTypeCode},dataMigrationStatusCode:{dataMigrationStatusCode}");
             DataMigration dataMigration = _context.Set<DataMigration>().FirstOrDefault(x => x.DataMigrationType.DataMigrationTypeCode == dataMigrationTypeCode);
 
             if (dataMigration != null) {
@@ -107,6 +109,7 @@ namespace generate.infrastructure.Repositories.App
                     currentStatus = dataMigration.DataMigrationStatus.DataMigrationStatusCode;
                 }
 
+                Console.WriteLine($"currentStatus:{currentStatus}");
                 // Do not complete if status is already error
                 if (currentStatus != "error")
                 {
@@ -225,6 +228,7 @@ namespace generate.infrastructure.Repositories.App
         {
             try
             {
+                Console.WriteLine(">>Inside ExecuteSqlBasedMigration");
                 // Start migration
                 StartMigration(dataMigrationTypeCode, false);
 
@@ -240,21 +244,39 @@ namespace generate.infrastructure.Repositories.App
 
                 if (jobCancellationToken != null)
                 {
-                    Task.Run(() =>
+                    // Task.Run(() =>
+                    // {
+                    //     try
+                    //     {
+                    //         while (true)
+                    //         {
+                    //             Thread.Sleep(1000);
+                    //             jobCancellationToken.ThrowIfCancellationRequested();
+                    //         }
+                    //     }
+                    //     catch (Exception)
+                    //     {
+                    //         this.source.Cancel();
+                    //     }
+                    // }, this.source.Token);
+                            // Start a background task to poll for manual cancellation
+            var pollTask = Task.Run(async () =>
+            {
+                while (!this.source.Token.IsCancellationRequested)
+                {
+                    await Task.Delay(1000);
+                    try
                     {
-                        try
-                        {
-                            while (true)
-                            {
-                                Thread.Sleep(1000);
-                                jobCancellationToken.ThrowIfCancellationRequested();
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            this.source.Cancel();
-                        }
-                    }, this.source.Token);
+                        jobCancellationToken.ThrowIfCancellationRequested(); // detect manual cancel
+                        this.source.Token.ThrowIfCancellationRequested();
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        Console.WriteLine("Invoking OperationCanceledException");
+                        this.source.Cancel();
+                    }
+                }
+            });    
                 }
 
                 var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
@@ -262,8 +284,17 @@ namespace generate.infrastructure.Repositories.App
 
                 _context.Database.SetCommandTimeout(oldTimeOut);
             }
+            catch (OperationCanceledException ex)
+            {
+                Console.Error.WriteLine($">>Error occured ExecuteSqlBasedMigration OperationCanceledException{ex}");
+                this.LogException(dataMigrationTypeCode, ex);
+                this.CompleteMigration(dataMigrationTypeCode, "error");
+                throw;
+            }
+
             catch (Exception ex)
             {
+                Console.Error.WriteLine($">>Error occured ExecuteSqlBasedMigration Exception{ex}");
                 this.LogException(dataMigrationTypeCode, ex);
                 this.CompleteMigration(dataMigrationTypeCode, "error");
                 throw;
@@ -273,6 +304,52 @@ namespace generate.infrastructure.Repositories.App
 
         }
 
+        public async Task ExecuteSqlBasedMigrationAsyncWithTask(string dataMigrationTypeCode,PerformContext context)
+        {
+
+            try
+            {
+                Console.WriteLine($"ExecuteSqlBasedMigrationAsyncWithTask dataMigrationTypeCode:{dataMigrationTypeCode}");
+                StartMigration(dataMigrationTypeCode, false);
+                var monitor = JobStorage.Current.GetMonitoringApi();
+
+                while (true)
+                {
+                    var state = monitor.JobDetails(context.BackgroundJob.Id)?.History?.FirstOrDefault()?.StateName;
+                    if (state == "Deleted" || state == "Failed")
+                    {
+                        Console.WriteLine("Job manually deleted — canceling SQL...");
+                        // If you have a cancellation token, trigger it here
+                        throw new OperationCanceledException();
+                    }
+
+                    await _context.Database.ExecuteSqlRawAsync("app.Migrate_Data");
+                    await Task.Delay(400);
+                }
+            }
+            catch (OperationCanceledException oe)
+            {
+                Console.Error.WriteLine($">>Error occured ExecuteSqlBasedMigrationAsyncWithTask caught OperationCanceledException:{oe}");
+
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($">>Error occured ExecuteSqlBasedMigrationAsyncWithTask caught Exception:{ex}");
+
+            }
+            finally
+            {
+                  try
+                  {
+                    this.CompleteMigration(dataMigrationTypeCode, "error");   
+                  }
+                  catch (Exception eex)
+                  {
+                    Console.Error.WriteLine($">>Error occured CompleteMigration caught Exception:{eex}");
+                    
+                  } 
+            }
+        }
 
         public IEnumerable<GenerateReport> GetReports(string reportTypeCode, int skip = 0, int take = 50)
         {

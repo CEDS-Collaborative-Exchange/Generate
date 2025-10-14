@@ -67,5 +67,6 @@ namespace generate.core.Interfaces.Repositories.App
         void UpdateViewDefinitions();
 
         void CompleteReportMigrationIfReady();
+        Task ExecuteSqlBasedMigrationAsyncWithTask(string dataMigrationTypeCode, Hangfire.Server.PerformContext context);
     }
 }

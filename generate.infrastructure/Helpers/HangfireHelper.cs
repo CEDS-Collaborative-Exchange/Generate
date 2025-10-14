@@ -57,7 +57,7 @@ namespace generate.infrastructure.Helpers
             else
             {
                 BackgroundJob.ContinueJobWith<IAppRepository>(parentJobId, x =>
-                    x.ExecuteSqlBasedMigration(dataMigrationTypeCode, JobCancellationToken.Null)
+                    x.ExecuteSqlBasedMigration(dataMigrationTypeCode,  JobCancellationToken.Null)
                 );
             }
         }
