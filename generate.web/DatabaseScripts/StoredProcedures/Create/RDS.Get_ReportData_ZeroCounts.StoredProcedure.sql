@@ -409,9 +409,9 @@ BEGIN
 
 	if(@factReportTable = 'ReportEDFactsK12StaffCounts')
 	begin
-		set @zeroCntSql = @zeroCntSql + ','
 		set @zeroCntSql = @zeroCntSql + '
-			[' + @factField + '] 
+			[' + @factField + '] ,
+			[StaffCount]
 		'
 	end
 	else if(@factReportTable = 'ReportEDFactsK12StudentCounts')
