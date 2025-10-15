@@ -15,11 +15,12 @@ namespace generate.infrastructure.Helpers
     {
 
         private readonly IFSMetadataUpdateService _fsMetadataUpdateService;
-
+        private readonly ILogger log;
         public HangfireHelper(
-            IFSMetadataUpdateService fsMetadataUpdateService
+            IFSMetadataUpdateService fsMetadataUpdateService,ILogger<HangfireHelper> iLogger
         )
         {
+            log = iLogger;
             _fsMetadataUpdateService = fsMetadataUpdateService ?? throw new ArgumentNullException(nameof(fsMetadataUpdateService));
         }
 
@@ -50,9 +51,12 @@ namespace generate.infrastructure.Helpers
             // SQL Based Migration - State ODS migration and legacy RDS/Report migration
             if(string.IsNullOrEmpty(parentJobId))
             {
+                log.LogInformation($"TriggerSqlBasedMigration enque for dataMigrationTypeCode:{dataMigrationTypeCode},parentJobId:{dataMigrationTypeCode} ");
                 BackgroundJob.Enqueue<IAppRepository>(x =>
                     x.ExecuteSqlBasedMigration(dataMigrationTypeCode, JobCancellationToken.Null)
                 );
+                log.LogInformation("Coming back after queuing");
+
             }
             else
             {

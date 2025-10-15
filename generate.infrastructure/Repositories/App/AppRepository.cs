@@ -16,6 +16,8 @@ using generate.core.Interfaces.Repositories.App;
 using System.Threading;
 using Hangfire;
 using System.IO;
+using System.IO.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace generate.infrastructure.Repositories.App
 {
@@ -23,17 +25,23 @@ namespace generate.infrastructure.Repositories.App
     public class AppRepository : RepositoryBase, IAppRepository, IDisposable
     {
         private CancellationTokenSource source;
-        public AppRepository(AppDbContext context)
+        private ILogger logger;
+        private readonly IServiceScopeFactory _scopeFactory;
+
+        public AppRepository(AppDbContext context, ILogger<AppRepository> iLogger, IServiceScopeFactory scopeFactory)
             : base(context)
         {
             this.source = new CancellationTokenSource();
+            this.logger = iLogger;
+            this._scopeFactory = scopeFactory;
+
         }
 
         public void Dispose()
         {
             GC.SuppressFinalize(this);
         }
-        
+
         public void StartMigration(string dataMigrationTypeCode, bool setToProcessing = false)
         {
             // Start time (UTC date)
@@ -68,7 +76,7 @@ namespace generate.infrastructure.Repositories.App
                 Save();
             }
 
-           
+
             LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Started", true);
 
         }
@@ -76,9 +84,9 @@ namespace generate.infrastructure.Repositories.App
         public void CompleteReportMigrationIfReady()
         {
             // Make sure all report tasks are completed
-
+            logger.LogInformation("Inside CompleteReportMigrationIfReady");
             var reportsPending = _context.Set<GenerateReport>().Any(x => x.IsLocked);
-            
+            logger.LogInformation("Is reportsPending :{reportPending}", reportsPending);
             if (!reportsPending)
             {
                 this.CompleteMigration("report", "success");
@@ -88,9 +96,12 @@ namespace generate.infrastructure.Repositories.App
 
         public void CompleteMigration(string dataMigrationTypeCode, string dataMigrationStatusCode)
         {
+            logger.LogInformation($"Inside CompleteMigration dataMigrationTypeCode:{dataMigrationTypeCode},dataMigrationStatusCode:{dataMigrationStatusCode}", dataMigrationTypeCode, dataMigrationStatusCode);
+
             DataMigration dataMigration = _context.Set<DataMigration>().FirstOrDefault(x => x.DataMigrationType.DataMigrationTypeCode == dataMigrationTypeCode);
 
-            if (dataMigration != null) {
+            if (dataMigration != null)
+            {
                 // Make sure we get latest from database in case data was updated by Hangfire
                 _context.Entry<DataMigration>(dataMigration).Reload();
 
@@ -221,55 +232,165 @@ namespace generate.infrastructure.Repositories.App
             return results;
         }
 
+        // public async Task ExecuteSqlBasedMigrationAsync(int iterationCount, IJobCancellationToken token)
+        // {
+        //     try
+        //     {
+        //         for (var i = 1; i <= iterationCount; i++)
+        //         {
+        //             await Task.Delay(1000);
+        //             Console.WriteLine("Performing step {0} of {1}...", i, iterationCount);
+
+        //             token.ThrowIfCancellationRequested();
+        //         }
+        //     }
+        //     catch (OperationCanceledException)
+        //     {
+        //         Console.WriteLine("Cancellation requested, exiting...");
+        //         throw;
+        //     }
+        // }
+
+        // public async Task ExecuteSqlBasedMigrationAsync(string dataMigrationTypeCode, IJobCancellationToken token)
+        // {
+        //     try
+        //     {
+        //         // Start migration
+        //         StartMigration(dataMigrationTypeCode, false);
+
+        //         int? oldTimeOut = _context.Database.GetCommandTimeout();
+        //         _context.Database.SetCommandTimeout(30000);
+
+        //         var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
+        //         await dbTask;
+
+        //         _context.Database.SetCommandTimeout(oldTimeOut);
+        //     }
+        //     catch (OperationCanceledException)
+        //     {
+        //         Console.WriteLine("Cancellation requested, exiting...");
+        //         this.LogException(dataMigrationTypeCode, new OperationCanceledException());
+        //         this.CompleteMigration(dataMigrationTypeCode, "error");
+        //         throw;
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         this.LogException(dataMigrationTypeCode, ex);
+        //         this.CompleteMigration(dataMigrationTypeCode, "error");
+        //         throw;
+        //     }
+        // }
+
         public void ExecuteSqlBasedMigration(string dataMigrationTypeCode, IJobCancellationToken jobCancellationToken)
         {
-            try
+            logger.LogInformation($"Inside ExecuteSqlBasedMigration dataMigrationTypeCode:{dataMigrationTypeCode}");
+
+            // using (var transactionMigration = _context.Database.BeginTransaction())
+            // {
+            //     logger.LogInformation("Starting migration");
+            //     StartMigration(dataMigrationTypeCode, false);
+            //     transactionMigration.Commit();
+            // }
+            logger.LogInformation("Starting migration");
+            StartMigration(dataMigrationTypeCode, false);
+
+
+            Task runningTask = null;
+            bool jobCancelled = false;
+            using (var scope = _scopeFactory.CreateScope())
             {
-                // Start migration
-                StartMigration(dataMigrationTypeCode, false);
-
-                // Run migration
-
-                int? oldTimeOut = _context.Database.GetCommandTimeout();
-                _context.Database.SetCommandTimeout(30000);
-
-                // Workaround for the fact that ShutdownCancellationToken is not called when the job is deleted
-                // https://github.com/HangfireIO/Hangfire/issues/211
-
-                //var source = new CancellationTokenSource();
-
-                if (jobCancellationToken != null)
+                var localDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var transactionMigration = localDbContext.Database.BeginTransaction();
+                // }
+                //using (var transactionMigration = _context.Database.BeginTransaction())
+                //{
+                int? oldTimeOut = -1;
+                try
                 {
-                    Task.Run(() =>
+
+                    oldTimeOut = localDbContext.Database.GetCommandTimeout();
+                    localDbContext.Database.SetCommandTimeout(30000);
+                    // Workaround for the fact that ShutdownCancellationToken is not called when the job is deleted
+                    // https://github.com/HangfireIO/Hangfire/issues/211
+
+                    //var source = new CancellationTokenSource();
+
+                    if (jobCancellationToken != null)
                     {
-                        try
+                        logger.LogInformation("Scheduling check for cancellation");
+                        runningTask = Task.Run(() =>
                         {
-                            while (true)
+                            try
                             {
-                                Thread.Sleep(1000);
-                                jobCancellationToken.ThrowIfCancellationRequested();
+                                while (true)
+                                {
+                                    Thread.Sleep(1000);
+                                    jobCancellationToken.ThrowIfCancellationRequested();
+                                }
                             }
-                        }
-                        catch (Exception)
+                            catch (Exception)
+                            {
+                                jobCancelled = true;
+                                logger.LogError(">>>Exception caught for ThrowIfCancellationRequested");
+                                this.source.Cancel();
+                            }
+                        }, this.source.Token);
+                    }
+                    logger.LogInformation("Starting ExecuteSqlRawAsync for migrate");
+                    var dbTask = localDbContext.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
+                    dbTask.Wait();
+                    transactionMigration.Commit();
+
+
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError($">>>Rollback tranction because of {ex}");
+                    try
+                    {
+                        transactionMigration.Rollback();
+
+                    }
+                    catch (Exception te)
+                    {
+                        logger.LogError(">>>Error on rollback:{err}", te);
+                    }
+                    this.LogException(dataMigrationTypeCode, ex);
+
+                    //throw;
+                }
+                finally
+                {
+                    try
+                    {
+                        if (runningTask != null)
                         {
-                            this.source.Cancel();
+                            logger.LogInformation("Disposing the runningTask");
+                            runningTask.Wait();
+                            runningTask.Dispose();
                         }
-                    }, this.source.Token);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(">>>Error disposing task {ex}", ex);
+                    }
+                    if (oldTimeOut != -1)
+                    {
+                        localDbContext.Database.SetCommandTimeout(oldTimeOut);
+
+                    }
+                    
+                    if (jobCancelled)
+                    {
+                        logger.LogInformation("Job cancelleation requested so completing jobs with error");
+                        this.CompleteMigration(dataMigrationTypeCode, "error");
+                    }
+
                 }
 
-                var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
-                dbTask.Wait();
 
-                _context.Database.SetCommandTimeout(oldTimeOut);
+
             }
-            catch (Exception ex)
-            {
-                this.LogException(dataMigrationTypeCode, ex);
-                this.CompleteMigration(dataMigrationTypeCode, "error");
-                throw;
-            }
-
-
 
         }
 
@@ -342,9 +463,9 @@ namespace generate.infrastructure.Repositories.App
             .Include(x => x.OrganizationLevel)
             .Where(x =>
                 x.GenerateReport.ReportCode == reportCode &&
-                x.SubmissionYear == reportYear                
+                x.SubmissionYear == reportYear
             );
-            
+
             if (reportLevel != null)
             {
                 categorySets = categorySets.Where(x => x.OrganizationLevel.LevelCode == reportLevel);
@@ -355,7 +476,7 @@ namespace generate.infrastructure.Repositories.App
 
         public void MarkReportAsComplete(string reportCode)
         {
-
+            logger.LogInformation($"Inside MarkReportAsComplete for reportCode:{reportCode} as complete.");
             // Verify that all pending jobs have completed first
 
             var api = JobStorage.Current.GetMonitoringApi();

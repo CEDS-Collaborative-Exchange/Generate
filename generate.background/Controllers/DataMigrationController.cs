@@ -48,6 +48,7 @@ namespace generate.background.Controllers
             }
             catch (Exception ex)
             {
+                Console.Error.WriteLine($">>Erro in Cance service:{ex}");
                 return BadRequest(ex);
             }
         }

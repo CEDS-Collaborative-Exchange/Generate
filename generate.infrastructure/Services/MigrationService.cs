@@ -6,6 +6,7 @@ using generate.core.Interfaces.Services;
 using generate.core.Models.App;
 using generate.core.Models.RDS;
 using Hangfire;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -23,14 +24,17 @@ namespace generate.infrastructure.Services
         private readonly ITestDataInitializer _testDataInitializer;
         private readonly IHangfireHelper _hangfireHelper;
 
+        private readonly ILogger log;
+
         public MigrationService(
             IAppRepository appRepository,
             IRDSRepository rdsRepository,
             ITestDataInitializer testDataInitializer,
-            IHangfireHelper hangfireHelper
+            IHangfireHelper hangfireHelper,
+            ILogger<MigrationService> _logger
             )
         {
-
+            log = _logger;
             _appRepository = appRepository ?? throw new ArgumentNullException(nameof(appRepository));
             _rdsRepository = rdsRepository ?? throw new ArgumentNullException(nameof(rdsRepository));
             _testDataInitializer = testDataInitializer ?? throw new ArgumentNullException(nameof(testDataInitializer));
@@ -39,7 +43,7 @@ namespace generate.infrastructure.Services
 
         public void CancelMigration(string dataMigrationTypeCode)
         {
-
+            
             _appRepository.LogDataMigrationHistory(dataMigrationTypeCode, "Canceling migration", true);
 
             var api = JobStorage.Current.GetMonitoringApi();
@@ -57,8 +61,16 @@ namespace generate.infrastructure.Services
                 processingJobs = api.ProcessingJobs(0, 1);
 
             }
+            // try
+            // {
+            //     _appRepository.CompleteMigration(dataMigrationTypeCode, "error");
 
-            _appRepository.CompleteMigration(dataMigrationTypeCode, "error");
+            // }catch(Exception e)
+            // {
+            //     log.LogError($">>Error on CompleteMigration :{e}");
+            //     throw;
+                
+            // }
 
         }
 
