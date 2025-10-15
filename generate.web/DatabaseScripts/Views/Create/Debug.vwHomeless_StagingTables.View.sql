@@ -15,6 +15,7 @@ AS
 		, hm.Homelessness_StatusStartDate
 		, hm.Homelessness_StatusEndDate
 		, hm.HomelessUnaccompaniedYouth
+		, hm.HomelessServicedIndicator
 
 		, hmnr.HomelessNightTimeResidence
 		, hmnr.HomelessNightTimeResidence_StartDate
