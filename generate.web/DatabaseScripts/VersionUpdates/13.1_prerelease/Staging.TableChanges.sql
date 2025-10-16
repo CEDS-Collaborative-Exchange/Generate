@@ -126,6 +126,19 @@ Staging.SchoolPerformanceIndicators
     IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[Staging].[SchoolQualityOrStudentSuccessIndicatorType]') AND type in (N'U'))
         DROP TABLE [Staging].[SchoolQualityOrStudentSuccessIndicatorType]
 
+/************************************************************
+Source to Staging Assessment Stored Procedure Rename
+************************************************************/
+    --Check if the 'new' name for the Source to Staging Assessment SP already exists (no trailing 's')
+    IF NOT EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'Source' AND ROUTINE_NAME = 'Source-to-Staging_Assessment') 
+    BEGIN
+        --Check if the 'old' name for the SP exists (with the trailing 's')
+        IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'Source' AND ROUTINE_NAME = 'Source-to-Staging_Assessments') 
+        BEGIN
+            --rename the SP to the correct version without the trailing 's'
+            EXEC sp_rename 'Source.Source-to-Staging_Assessments', 'Source-to-Staging_Assessment', 'OBJECT';
+        END
+    END
 
 
 

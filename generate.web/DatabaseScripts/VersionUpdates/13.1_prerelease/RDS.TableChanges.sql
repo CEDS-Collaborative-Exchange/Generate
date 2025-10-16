@@ -122,6 +122,12 @@ CIID-8062
 	insert into RDS.DimFactTypes
 	values ('schoolperformanceindicators','SCHOOLPERFORMANCEINDICATORS - 199, 200, 201, 202, 205', 'School Performance Indicators');
 
+--Remove the reports from the previous Fact Type
+    update RDS.DimFactTypes
+    set FactTypeDescription = 'ORGANIZATIONSTATUS -'
+        , FactTypeLabel = 'Organization Status'
+    where FactTypeCode = 'organizationstatus';
+
 --Update the report to Fact Type relationship
     update gf
     set FactTypeId = (select DimFactTypeId from rds.DimFactTypes where FactTypeCode = 'schoolperformanceindicators')
