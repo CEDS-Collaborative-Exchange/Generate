@@ -6322,27 +6322,31 @@ BEGIN
 					begin
 							set @sql = @sql + '						
 							;with cte as (
-								select K12StudentStudentIdentifierState, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState ORDER BY EnrollmentEntryDateId) as ''rownum'' 
+								select K12StudentStudentIdentifierState, EnrollmentEntryDateId, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState ORDER BY EnrollmentEntryDateId) as ''rownum'' 
 								from #CategorySet
 							)
 							delete s from #CategorySet s
-							inner join cte c on s.K12StudentStudentIdentifierState = c.K12StudentStudentIdentifierState
-							where  rownum > 1
+							inner join cte c 
+								on s.K12StudentStudentIdentifierState = c.K12StudentStudentIdentifierState
+							where rownum > 1 
+								and s.EnrollmentEntryDateId = c.EnrollmentEntryDateId
 							'
 					end 
 					else if @reportLevel = 'lea'
 					begin
 							set @sql = @sql + '						
 							;with cte as (
-								select K12StudentStudentIdentifierState, DimLeaId, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState, DimLeaId ORDER BY EnrollmentEntryDateId) as ''rownum'' 
+								select K12StudentStudentIdentifierState, DimLeaId, EnrollmentEntryDateId, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState, DimLeaId ORDER BY EnrollmentEntryDateId) as ''rownum'' 
 								from #CategorySet
 							)
 							delete s from #CategorySet s
-							inner join cte c on s.K12StudentStudentIdentifierState = c.K12StudentStudentIdentifierState and s.DimLeaId = c.DimLeaId
-							where  rownum > 1
+							inner join cte c 
+								on s.K12StudentStudentIdentifierState = c.K12StudentStudentIdentifierState 
+								and s.DimLeaId = c.DimLeaId
+							where rownum > 1 
+								and s.EnrollmentEntryDateId = c.EnrollmentEntryDateId
 							'
 					end 
-
 			end
 			else
 			-- all other report codes

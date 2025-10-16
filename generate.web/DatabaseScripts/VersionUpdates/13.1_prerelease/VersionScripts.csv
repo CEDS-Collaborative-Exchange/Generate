@@ -4,6 +4,8 @@ VersionUpdates\\13.1_prerelease,App.TableChanges.sql,0
 VersionUpdates\\13.1_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.1_prerelease,App.Metadata.sql,0
 VersionUpdates\\13.1_prerelease,JunkTablePopulation.sql,0
+Views\\Drop,Debug.vwHomeless_StagingTables.View.sql,0
+Views\\Create,Debug.vwHomeless_StagingTables.View.sql,0
 Views\\Drop,RDS.vwDimCteOutcomeIndicators.View.sql,0
 Views\\Create,RDS.vwDimCteOutcomeIndicators.View.sql,0
 Views\\Drop,Debug.vwNeglectedOrDelinquent_FactTable.View.sql,0
