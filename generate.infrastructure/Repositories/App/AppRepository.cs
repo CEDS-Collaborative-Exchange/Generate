@@ -16,6 +16,8 @@ using generate.core.Interfaces.Repositories.App;
 using System.Threading;
 using Hangfire;
 using System.IO;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace generate.infrastructure.Repositories.App
 {
@@ -23,10 +25,14 @@ namespace generate.infrastructure.Repositories.App
     public class AppRepository : RepositoryBase, IAppRepository, IDisposable
     {
         private CancellationTokenSource source;
-        public AppRepository(AppDbContext context)
+        private readonly ILogger logger;
+        private readonly IServiceScopeFactory _scopeFactory;
+        public AppRepository(AppDbContext context, ILogger<AppRepository> iLogger, IServiceScopeFactory scopeFactory)
             : base(context)
         {
             this.source = new CancellationTokenSource();
+            this.logger = iLogger;
+            this._scopeFactory = scopeFactory;
         }
 
         public void Dispose()
@@ -88,6 +94,9 @@ namespace generate.infrastructure.Repositories.App
 
         public void CompleteMigration(string dataMigrationTypeCode, string dataMigrationStatusCode)
         {
+            logger.LogInformation("Inside CompleteMigration dataMigrationTypeCode:{},dataMigrationStatusCode:{}",dataMigrationTypeCode,dataMigrationStatusCode);
+            try
+            {
             DataMigration dataMigration = _context.Set<DataMigration>().FirstOrDefault(x => x.DataMigrationType.DataMigrationTypeCode == dataMigrationTypeCode);
 
             if (dataMigration != null) {
@@ -124,6 +133,11 @@ namespace generate.infrastructure.Repositories.App
                     dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
 
                     var lockedReports = this.GetReports().Where(r => r.IsLocked);
+                    logger.LogInformation("how many lockedReports:{}", lockedReports.Count());
+                    if (lockedReports.Count() < 1 ){
+                        logger.LogInformation("There are no lockReports CompleteMigration not needed");
+                        return;
+                    }
                     var factTypeId = lockedReports.ToList()[0].GenerateReport_FactTypes[0].FactTypeId;
                     var dataMigrtionTasks = _context.Set<DataMigrationTask>().OrderBy(t => t.TaskSequence).Where(t => t.FactTypeId == factTypeId).Select(t => t.DataMigrationTaskId.ToString()).ToList();
                     dataMigration.DataMigrationTaskList = string.Join(",", dataMigrtionTasks);
@@ -147,20 +161,45 @@ namespace generate.infrastructure.Repositories.App
                     LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Completed after Cancel/Error", true);
                     this.MarkReportsAsComplete();
                 }
+            }               
+            }catch(Exception ex)
+            {
+                logger.LogError("Exception in CompleteMigration with error:{ex}", ex);   
             }
+ 
         }
 
         public void MarkReportsAsComplete()
         {
+            logger.LogInformation("Inside MarkReportsAsComplete");
             var lockedReports = this.GetReports().Where(r => r.IsLocked);
+            List<string> erroredReportCode = [];
+             List<string> succeedReportCodes = [];
+
             foreach (var report in lockedReports)
             {
-                this.MarkReportAsComplete(report.ReportCode);
+                var reportCode = report.ReportCode;
+                //this.MarkReportAsComplete(report.ReportCode);
+                bool success = Task.Run(async () => await MarkReportAsCompleteAsync(reportCode)).Result;
+                if (!success)
+                {
+                    erroredReportCode.Add(reportCode);
+                }
+                else
+                {
+                    succeedReportCodes.Add(reportCode);
+                }
             }
+            logger.LogInformation("erroredReportCode are {}", erroredReportCode);
+
+            logger.LogInformation("succeedReportCodes are {}", succeedReportCodes);
+
+        
         }
 
         public void LogException(string dataMigrationTypeCode, Exception ex)
         {
+            logger.LogError("Inside LogException {dataMigrationTypeCode}",dataMigrationTypeCode);
             LogDataMigrationHistory(dataMigrationTypeCode, "Error Occurred - " + ex.Message, true);
             LogDataMigrationHistory(dataMigrationTypeCode, "Error Stack Trace = " + ex.StackTrace, true);
 
@@ -274,6 +313,113 @@ namespace generate.infrastructure.Repositories.App
         }
 
 
+        public async Task ExecuteSqlBasedMigrationJobAsync(string dataMigrationTypeCode, IJobCancellationToken jobCancellationToken)
+        {
+            logger.LogInformation("[ExecuteSqlBasedMigrationJobAsync] Starting migration for {dataMigrationTypeCode}", dataMigrationTypeCode);
+
+            StartMigration(dataMigrationTypeCode);
+            
+            using var scope = _scopeFactory.CreateScope();
+            var localDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            localDbContext.Database.SetCommandTimeout(30000);
+            int? originalTimeout = null;
+            var procName = "app.Migrate_Data"; // Stored procedure name
+
+            // Local CTS we control; will be cancelled when Hangfire signals cancellation
+            using var cts = new CancellationTokenSource();
+            using var transaction = await localDbContext.Database.BeginTransactionAsync(cts.Token);
+            Task monitoringTask = null;
+            try
+            {
+               
+                if (jobCancellationToken != null)
+                {
+                    monitoringTask = Task.Run(async () =>
+                      {
+                          try
+                          {
+                              while (!cts.IsCancellationRequested)
+                              {
+                                  await Task.Delay(1000, cts.Token).ConfigureAwait(false);
+                                  try
+                                  {
+                                      jobCancellationToken.ThrowIfCancellationRequested();
+                                  }
+                                  catch (Exception)
+                                  {
+                                      // Any exception thrown here indicates cancellation
+                                      cts.Cancel();
+                                      logger.LogWarning("[ExecuteSqlBasedMigrationJobAsync] Cancellation requested by user.");
+                                  }
+                              }
+                          }
+                          catch (OperationCanceledException) { /* expected when cts cancelled */ }
+                      });
+                }
+                logger.LogInformation("[ExecuteSqlBasedMigrationJobAsync] Executing stored proc {procName} without external transaction", procName);
+
+                try
+                {
+                    originalTimeout = localDbContext.Database.GetCommandTimeout();
+
+                    await localDbContext.Database.ExecuteSqlRawAsync(procName, cts.Token);
+                    logger.LogInformation("[ExecuteSqlBasedMigrationJobAsync] Migration stored proc {procName} executed successfully.", procName);
+                    await transaction.CommitAsync(cts.Token);
+                }
+                catch (Exception execEx)
+                {
+                    logger.LogError(execEx, "[ExecuteSqlBasedMigrationJobAsync] Error executing stored procedure {procName}", procName);
+                    throw;
+                }
+
+
+            }
+            catch(OperationCanceledException oex)
+            {
+                await transaction.RollbackAsync(cts.Token).ConfigureAwait(false);
+                logger.LogError("General OperationCanceledException caught outer try {oex}", oex);
+                await transaction.RollbackAsync(cts.Token);
+                LogException(dataMigrationTypeCode, oex);
+                CompleteMigration(dataMigrationTypeCode, "error");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync(cts.Token);
+                logger.LogError("General Execption caught outer try {ex}", ex);
+                LogException(dataMigrationTypeCode, ex);
+                CompleteMigration(dataMigrationTypeCode, "error");
+                
+            }
+            finally
+            {
+                // Signal monitoring loop to stop
+                if (!cts.IsCancellationRequested)
+                {
+                    cts.Cancel();
+                }
+
+                if (monitoringTask != null)
+                {
+                    try { await monitoringTask.ConfigureAwait(false); } catch { /* swallow */ }
+                    monitoringTask.Dispose();
+                }        
+
+                if (originalTimeout.HasValue)
+                {
+                    try 
+                    { 
+                        if (localDbContext != null && localDbContext.Database != null)
+                        {
+                            localDbContext.Database.SetCommandTimeout(originalTimeout); 
+                        }
+                    } 
+                    catch (Exception ex) 
+                    { 
+                        logger.LogError(ex, "[ExecuteSqlBasedMigrationJobAsync] Error restoring timeout.");
+                    }
+                }             
+            }
+        }
         public IEnumerable<GenerateReport> GetReports(string reportTypeCode, int skip = 0, int take = 50)
         {
 
@@ -313,7 +459,7 @@ namespace generate.infrastructure.Repositories.App
 
         public IEnumerable<GenerateReport> GetReports(int skip = 0, int take = 50)
         {
-
+            logger.LogInformation("Inside GetReports");
             DbSet<GenerateReport> set = _context.Set<GenerateReport>();
             IQueryable<GenerateReport> results = set.AsQueryable();
 
@@ -332,8 +478,11 @@ namespace generate.infrastructure.Repositories.App
                 results = results.Take(take);
             }
 
+            logger.LogInformation("Inside GetReports returning results:{}",results);
+
             return results;
         }
+
 
         public IQueryable<CategorySet> GetCategorySets(string reportCode, string reportYear, string reportLevel)
         {
@@ -342,9 +491,9 @@ namespace generate.infrastructure.Repositories.App
             .Include(x => x.OrganizationLevel)
             .Where(x =>
                 x.GenerateReport.ReportCode == reportCode &&
-                x.SubmissionYear == reportYear                
+                x.SubmissionYear == reportYear
             );
-            
+
             if (reportLevel != null)
             {
                 categorySets = categorySets.Where(x => x.OrganizationLevel.LevelCode == reportLevel);
@@ -354,6 +503,71 @@ namespace generate.infrastructure.Repositories.App
         }
 
         public void MarkReportAsComplete(string reportCode)
+        {
+
+            // Verify that all pending jobs have completed first
+
+            var api = JobStorage.Current.GetMonitoringApi();
+            var reportMigrationJobs = api.ProcessingJobs(0, (int)api.ProcessingCount()).Where(x => x.Value.InProcessingState && x.Value.Job.Method.Name == "ExecuteReportMigrationByYearLevelAndCategorySet");
+
+            if (!reportMigrationJobs.Any())
+            {
+                GenerateReport report = _context.Set<GenerateReport>().Where(x => x.ReportCode == reportCode).FirstOrDefault();
+                if (report != null)
+                {
+                    report.IsLocked = false;
+                    _context.SaveChanges();
+                }
+
+                this.CompleteReportMigrationIfReady();
+
+            }
+
+        }
+
+        public async Task<bool> MarkReportAsCompleteAsync(string reportCode)
+        {
+            logger.LogInformation("[MarkReportAsCompleteAsync] Marking report {reportCode} as complete", reportCode);
+            try
+            {
+                // Use a separate scope to avoid DataReader conflicts
+                using var scope = _scopeFactory.CreateScope();
+                var scopedContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+                // Verify that all pending jobs have completed first
+                var api = JobStorage.Current.GetMonitoringApi();
+                var reportMigrationJobs = api.ProcessingJobs(0, (int)api.ProcessingCount())
+                    .Where(x => x.Value.InProcessingState && x.Value.Job.Method.Name == "ExecuteReportMigrationByYearLevelAndCategorySet");
+
+                if (!reportMigrationJobs.Any())
+                {
+                    var report = await scopedContext.Set<GenerateReport>()
+                        .FirstOrDefaultAsync(x => x.ReportCode == reportCode);
+
+                    if (report != null)
+                    {
+                        report.IsLocked = false;
+                        await scopedContext.SaveChangesAsync();
+                        logger.LogInformation("[MarkReportAsCompleteAsync] Report {reportCode} marked as complete", reportCode);
+                    }
+
+                    CompleteReportMigrationIfReady();
+                }
+                else
+                {
+                    logger.LogInformation("[MarkReportAsCompleteAsync] Report migration jobs still in progress, not marking complete yet");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "[MarkReportAsCompleteAsync] Error marking report {reportCode} as complete", reportCode);
+                return false;
+            }
+            return true;
+
+        }
+        
+        private void MarkReportAsCompleteLocal(string reportCode)
         {
 
             // Verify that all pending jobs have completed first

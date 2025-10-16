@@ -51,13 +51,13 @@ namespace generate.infrastructure.Helpers
             if(string.IsNullOrEmpty(parentJobId))
             {
                 BackgroundJob.Enqueue<IAppRepository>(x =>
-                    x.ExecuteSqlBasedMigration(dataMigrationTypeCode, JobCancellationToken.Null)
+                    x.ExecuteSqlBasedMigrationJobAsync(dataMigrationTypeCode, JobCancellationToken.Null)
                 );
             }
             else
             {
                 BackgroundJob.ContinueJobWith<IAppRepository>(parentJobId, x =>
-                    x.ExecuteSqlBasedMigration(dataMigrationTypeCode, JobCancellationToken.Null)
+                    x.ExecuteSqlBasedMigrationJobAsync(dataMigrationTypeCode, JobCancellationToken.Null)
                 );
             }
         }

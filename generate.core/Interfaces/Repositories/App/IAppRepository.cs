@@ -59,6 +59,7 @@ namespace generate.core.Interfaces.Repositories.App
         void LogDataMigrationHistory(string dataMigrationTypeCode, string dataMigrationHistoryMessage, bool logToDatabase = true);
         IEnumerable<DataMigrationHistory> GetMigrationHistory(string dataMigrationTypeCode, int skip = 0, int take = 1000);
         void ExecuteSqlBasedMigration(string dataMigrationTypeCode, IJobCancellationToken jobCancellationToken);
+        Task ExecuteSqlBasedMigrationJobAsync(string dataMigrationTypeCode, IJobCancellationToken jobCancellationToken);
         IEnumerable<GenerateReport> GetReports(string reportTypeCode, int skip = 0, int take = 50);
         IEnumerable<GenerateReport> GetReports(int skip = 0, int take = 50);
         IQueryable<CategorySet> GetCategorySets(string reportCode, string reportYear, string reportLevel);
