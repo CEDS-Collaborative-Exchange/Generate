@@ -53,7 +53,7 @@ namespace generate.infrastructure.Helpers
             {
                 log.LogInformation($"TriggerSqlBasedMigration enque for dataMigrationTypeCode:{dataMigrationTypeCode},parentJobId:{dataMigrationTypeCode} ");
                 BackgroundJob.Enqueue<IAppRepository>(x =>
-                    x.ExecuteSqlBasedMigration(dataMigrationTypeCode, JobCancellationToken.Null)
+                    x.ExecuteSqlBasedMigrationJobAsync(dataMigrationTypeCode, JobCancellationToken.Null)
                 );
                 log.LogInformation("Coming back after queuing");
 
@@ -61,7 +61,7 @@ namespace generate.infrastructure.Helpers
             else
             {
                 BackgroundJob.ContinueJobWith<IAppRepository>(parentJobId, x =>
-                    x.ExecuteSqlBasedMigration(dataMigrationTypeCode, JobCancellationToken.Null)
+                    x.ExecuteSqlBasedMigrationJobAsync(dataMigrationTypeCode, JobCancellationToken.Null)
                 );
             }
         }
