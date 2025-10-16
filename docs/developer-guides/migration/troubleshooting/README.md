@@ -1,0 +1,3 @@
+# Troubleshooting
+
+<table data-view="cards"><thead><tr><th></th><th></th><th></th><th data-hidden data-card-target data-type="content-ref"></th></tr></thead><tbody><tr><td><mark style="color:$success;"><strong>User Interface Migration Troubleshooting</strong></mark></td><td>How to reset a failed Generate user interface migration</td><td></td><td><a href="unser-interface-migration-troubleshooting.md">unser-interface-migration-troubleshooting.md</a></td></tr><tr><td><mark style="color:$success;"><strong>Troubleshooting Report Migration Results</strong></mark></td><td>How to validate and troubleshoot the report migration</td><td></td><td><a href="troubleshooting-report-migration-results.md">troubleshooting-report-migration-results.md</a></td></tr></tbody></table>

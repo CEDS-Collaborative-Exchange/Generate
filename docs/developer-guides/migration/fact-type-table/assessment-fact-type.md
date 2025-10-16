@@ -154,7 +154,7 @@ exec [Utilities].[Check_SourceSystemReferenceData_Mapping] 'assessment', '2024',
 
 The Generate database has a stored procedure for each Fact Type which is empty in the default load of the Generate database and serves as a placeholder. Since this Stored Procedure ETLs data from the education agency's source system(s) into the Generate Staging environment, the ETL code will be customized to your education agency's context.
 
-For Assessments, this Stored Procedure is called **\[Source].\[Source-to-Staging\_Assessments]**.
+For Assessments, this Stored Procedure is called **\[Source].\[Source-to-Staging\_Assessment]**.
 
 The tools from the Set Up phase (ETL Checklist and Generate metadata) are used to guide writing the ETL Code in this Stored Procedure. Additionally, ETL code written previously to perform this work in the education agency's source system(s) can also be a useful resource at this step, particularly for ensuring critical data handling and business rules from the source system are retained in the Generate Source to Staging ETL.
 
@@ -163,14 +163,14 @@ The tools from the Set Up phase (ETL Checklist and Generate metadata) are used t
 This is a sample of the stored procedure for each Fact Type which displays that it is empty by default, and also where you can place your specific ETL code.&#x20;
 
 ```
-/****** Object:  StoredProcedure [Source].[Source-to-Staging_Assessments]    Script Date: 8/18/2025 10:12:03 AM ******/
+/****** Object:  StoredProcedure [Source].[Source-to-Staging_Assessment]    Script Date: 8/18/2025 10:12:03 AM ******/
 SET ANSI_NULLS ON
 GO
  
 SET QUOTED_IDENTIFIER OFF
 GO
  
-CREATE PROCEDURE [Source].[Source-to-Staging_Assessments] 
+CREATE PROCEDURE [Source].[Source-to-Staging_Assessment] 
 	@schoolYear smallint
 AS
 --BEGIN
@@ -188,7 +188,7 @@ GO
 The Source to Staging code can be run from SQL Server Management Studio (SSMS) by passing in the current school year as a parameter. Generate uses the end school year. For example, 2023-24 would be specified as '2024'.
 
 ```sql
-exec [Source].[Source-to-Staging_Assessments] 2024
+exec [Source].[Source-to-Staging_Assessment] 2024
 ```
 {% endtab %}
 
@@ -359,7 +359,7 @@ Over time these tables will accumulate and create clutter in the Generate databa
 
 #### File Comparison Utility
 
-The [File Comparison Utility](../../generate-utilities/file-comparison/) allows you to compare E&#x44;_&#x46;acts_ submission files to data stored in the Report Tables in the Generate database. Instructions on how to use the `Utilities.Compare_ASSESSMENTS` Stored Procedure are available here. Typically, this step is performed in the first year of reporting a file through Generate to compare it to previous submission files produced by the legacy system.
+The [File Comparison Utility](../../generate-utilities/file-comparison/) allows you to compare E&#x44;_&#x46;acts_ submission files to data stored in the Report Tables in the Generate database. Instructions on how to use the `Utilities.Compare_ASSESSMENT` Stored Procedure are available here. Typically, this step is performed in the first year of reporting a file through Generate to compare it to previous submission files produced by the legacy system.
 
 {% code overflow="wrap" %}
 ```sql
