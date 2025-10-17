@@ -248,7 +248,7 @@ select * from [debug].[vwAssessment_StagingTables]
 {% tab title="Manually" %}
 #### Migrating Staging to CEDS Data Warehouse in the Reporting Data Store (RDS) (Manually)
 
-To migrate data from Staging to the CEDS Data Warehouse you will need to call the `[App].[Wrapper_Migrate_Assessments_to_RDS]`Stored Procedure. This wrapper will call several Stored Procedures to migrate data to the dimension and fact tables in the CEDS Data Warehouse as well as log this activity in the `App.DataMigrationHistories` table. This process will also create debug tables that contain the information that is utilized in the counts and can be used in the validation process.
+To migrate data from Staging to the CEDS Data Warehouse you will need to call the `[App].[Wrapper_Migrate_Assessment_to_RDS]`Stored Procedure. This wrapper will call several Stored Procedures to migrate data to the dimension and fact tables in the CEDS Data Warehouse as well as log this activity in the `App.DataMigrationHistories` table. This process will also create debug tables that contain the information that is utilized in the counts and can be used in the validation process.
 
 {% code overflow="wrap" %}
 ```sql
