@@ -210,8 +210,8 @@ BEGIN
 			, -1														SpecialEducationServicesExitDateId	
 			, -1														MigrantStudentQualifyingArrivalDateId	
 			, -1														LastQualifyingMoveDateId	
-			, ISNULL(BeginDate.DimDateId, -1)							StatusStartDateNeglectedOrDelinquentId
-			, ISNULL(EndDate.DimDateId, -1)								StatusEndDateNeglectedOrDelinquentId
+			, ISNULL(rds.Get_DimDate(sppnord.ProgramParticipationBeginDate), -1)	StatusStartDateNeglectedOrDelinquentId
+			, ISNULL(rds.Get_DimDate(sppnord.ProgramParticipationEndDate), -1)		StatusEndDateNeglectedOrDelinquentId
 			, ISNULL(rdcoi.DimCteOutcomeIndicatorId, -1)				CTEOutcomeIndicatorId
 
 		FROM Staging.K12Enrollment ske
@@ -302,12 +302,6 @@ BEGIN
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
-	-- ProgramParticipationEndDate
-		LEFT JOIN RDS.DimDates BeginDate 
-			ON sppnord.ProgramParticipationEndDate = BeginDate.DateValue
-	-- ProgramParticipationEndDate
-		LEFT JOIN RDS.DimDates EndDate 
-			ON sppnord.ProgramParticipationEndDate = EndDate.DateValue
 	--Lea Operational Status	
 		LEFT JOIN Staging.SourceSystemReferenceData sssrd
 			ON sko.SchoolYear = sssrd.SchoolYear
