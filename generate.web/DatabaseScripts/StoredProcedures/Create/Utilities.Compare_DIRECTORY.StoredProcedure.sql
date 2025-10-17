@@ -36,9 +36,9 @@ declare
 	@ComparisonResultsTableName varchar(200) = ''
 
 
-if @ReportCode not in ('C029', 'C039')
+if @ReportCode not in ('029', '039')
 	begin
-		print '@ReportCode must be C029 or C039'
+		print '@ReportCode must be 029 or 039'
 		return
 	end
 
@@ -55,81 +55,98 @@ exec Utilities.CreateSubmissionFileTable
 
 select @SQL = 'INSERT INTO ' + @CreatedTableName
 
-if @ReportCode = 'C029'
+if @ReportCode = '029'
 	begin
 		if @ReportLevel = 'SEA'
 			begin
 				select @SQL = @SQL + '
 				select distinct 
-					NULL					FileRecordNumber,
-					StateANSICode			FIPSStateCode,
-					''01''					StateAgencyNumber,
-					NULL					Filler,
-					NULL					Filler,
-					NULL					Filler6,
-					NULL					Filler7,
-					OrganizationName		StateAgencyName,
-					Website					StateAgencyWebAddress,
-					Telephone				PhoneNumber,
-					MailingAddressStreet	MailingAddress1,
-					MailingAddressApartmentRoomOrSuiteNumber					MailingAddress2,
-					NULL					MailingAddress3,
-					MailingAddressCity		MailingCity,
-					MailingAddressState		MailingPostalStateCode,
-					left(MailingAddressPostalCode,5)	 MailingZipCode,
-					case when len(MailingAddressPostalCode)=10 then right(MailingAddressPostalCode,4) else '''' end	 MailingZipcodePlus4,
+					NULL										FileRecordNumber,
+					StateANSICode								FIPSStateCode,
+					''01''										StateAgencyNumber,
+					NULL										Filler,
+					NULL										Filler,
+					NULL										Filler6,
+					NULL										Filler7,
+					OrganizationName							StateAgencyName,
+					Website										StateAgencyWebAddress,
+					Telephone									PhoneNumber,
+					MailingAddressStreet						MailingAddress1,
+					MailingAddressApartmentRoomOrSuiteNumber	MailingAddress2,
+					NULL										MailingAddress3,
+					MailingAddressCity							MailingCity,
+					MailingAddressState							MailingPostalStateCode,
+					left(MailingAddressPostalCode,5)			MailingZipCode,
+					case when len(MailingAddressPostalCode)=10 
+						then right(MailingAddressPostalCode,4) 
+						else '''' 
+					end											MailingZipcodePlus4,
 					PhysicalAddressStreet	LocationAddress1,
-					PhysicalAddressApartmentRoomOrSuiteNumber					LocationAddress2,
-					NULL					LocationAddress3,
-					PhysicalAddressCity		LocationCity,
-					PhysicalAddressState	LocationPostalStateCode,
-					left(PhysicalAddressPostalCode,5)	 LocationZipCode,
-					case when len(PhysicalAddressPostalCode)=10 then right(PhysicalAddressPostalCode,4) else '''' end	 LocationZipcodePlus4,
-					NULL					Filler,
-					NULL					Filler,
-					NULL					Filler,
-					NULL					Filler,
-					Null					Filler,
-					NULL					Explanation'
+					PhysicalAddressApartmentRoomOrSuiteNumber	LocationAddress2,
+					NULL										LocationAddress3,
+					PhysicalAddressCity							LocationCity,
+					PhysicalAddressState						LocationPostalStateCode,
+					left(PhysicalAddressPostalCode,5)			LocationZipCode,
+					case when len(PhysicalAddressPostalCode)=10 
+						then right(PhysicalAddressPostalCode,4) 
+						else '''' 
+					end											LocationZipcodePlus4,
+					NULL										Filler,
+					NULL										Filler,
+					NULL										Filler,
+					NULL										Filler,
+					Null										Filler,
+					NULL										Explanation'
 			end
 
 		if @ReportLevel = 'LEA'
 			begin
 				select @SQL = @SQL + '
 				select distinct 
-					NULL					FileRecordNumber,
-					StateANSICode			FIPSStateCode,
-					''01''					StateAgencyNumber,
-					OrganizationStateId		StateLEAIdNumber,
-					OrganizationNcesId		NCESLEAIDNumber,
-					NULL					Filler6,
-					NULL					Filler7,
-					OrganizationName		LEAName,
-					case when isnull(OutOfStateIndicator,0) = 0 then ''NO'' else ''YES'' end		OutOfStateInd,
-					LEAType					LEAType,
-					Website					LEAWebAddress,
-					SupervisoryUnionIdentificationNumber	SupervisoryUnion,
-					Telephone				LEAPhoneNumber,
-					MailingAddressStreet	MailingAddress1,
-					MailingAddressApartmentRoomOrSuiteNumber					MailingAddress2,
-					NULL					MailingAddress3,
-					MailingAddressCity		MailingCity,
-					MailingAddressState		MailingPostalStateCode,
-					left(MailingAddressPostalCode,5)	 MailingZipCode,
-					case when len(MailingAddressPostalCode)=10 then right(MailingAddressPostalCode,4) else '''' end	 MailingZipcodePlus4,
-					PhysicalAddressStreet	LocationAddress1,
-					PhysicalAddressApartmentRoomOrSuiteNumber					LocationAddress2,
-					NULL					LocationAddress3,
-					PhysicalAddressCity		LocationCity,
-					PhysicalAddressState	LocationPostalStateCode,
-					left(PhysicalAddressPostalCode,5)	 LocationZipCode,
-					case when len(PhysicalAddressPostalCode)=10 then right(PhysicalAddressPostalCode,4) else '''' end	 LocationZipcodePlus4,
-					OperationalStatus		LEASysOpstatus,
-					UpdatedOperationalStatus		LEAOpStatusNew,
-					NULL					StatusEffectiveDate,
-					case when isnull(CharterLeaStatus,''NO'') = ''NO'' then ''CHRTNOTLEA'' else isnull(CharterLEAStatus,'''') end		ChrtSchoolLEAStatusID,
-					PriorLeaStateIdentifier	PriorStateLEAID,
-					NULL					Explanation'
+					NULL										FileRecordNumber,
+					StateANSICode								FIPSStateCode,
+					''01''										StateAgencyNumber,
+					OrganizationStateId							StateLEAIdNumber,
+					OrganizationNcesId							NCESLEAIDNumber,
+					NULL										Filler6,
+					NULL										Filler7,
+					OrganizationName							LEAName,
+					case when isnull(OutOfStateIndicator,0) = 0 
+						then ''NO'' else ''YES'' 
+					end											OutOfStateInd,
+					LEAType										LEAType,
+					Website										LEAWebAddress,
+					SupervisoryUnionIdentificationNumber		SupervisoryUnion,
+					Telephone									LEAPhoneNumber,
+					MailingAddressStreet						MailingAddress1,
+					MailingAddressApartmentRoomOrSuiteNumber	MailingAddress2,
+					NULL										MailingAddress3,
+					MailingAddressCity							MailingCity,
+					MailingAddressState							MailingPostalStateCode,
+					left(MailingAddressPostalCode,5)			MailingZipCode,
+					case when len(MailingAddressPostalCode)=10 
+						then right(MailingAddressPostalCode,4) 
+						else '''' 
+					end											MailingZipcodePlus4,
+					PhysicalAddressStreet						LocationAddress1,
+					PhysicalAddressApartmentRoomOrSuiteNumber	LocationAddress2,
+					NULL										LocationAddress3,
+					PhysicalAddressCity							LocationCity,
+					PhysicalAddressState						LocationPostalStateCode,
+					left(PhysicalAddressPostalCode,5)			LocationZipCode,
+					case when len(PhysicalAddressPostalCode)=10 
+						then right(PhysicalAddressPostalCode,4) 
+						else '''' 
+					end											LocationZipcodePlus4,
+					OperationalStatus							LEASysOpstatus,
+					UpdatedOperationalStatus					LEAOpStatusNew,
+					NULL										StatusEffectiveDate,
+					case when isnull(CharterLeaStatus,''NO'') = ''NO'' 
+						then ''CHRTNOTLEA'' 
+						else isnull(CharterLEAStatus,'''') 
+					end											ChrtSchoolLEAStatusID,
+					PriorLeaStateIdentifier						PriorStateLEAID,
+					NULL										Explanation'
 
 			end
 
@@ -137,60 +154,72 @@ if @ReportCode = 'C029'
 			begin
 				select @SQL = @SQL + '
 				select distinct 
-					NULL					FileRecordNumber,
-					StateANSICode			FIPSStateCode,
-					''01''					StateAgencyNumber,
-					ParentOrganizationStateId StateLEAIDNumber,
-					ParentOrganizationNCESId	NCESLEAIDNumber,
-					OrganizationStateId		StateLEAIdNumber,
-					OrganizationNcesId		NCESLEAIDNumber,
-					OrganizationName		SchoolName,
-					SchoolType				SchoolType,
-					case when isnull(OutOfStateIndicator,0) = 0 then ''NO'' else ''YES'' end		OutOfStateInd,
-					Website					WebAddress,
-					Telephone				PhoneNumber,
-					MailingAddressStreet	MailingAddress1,
-					MailingAddressApartmentRoomOrSuiteNumber					MailingAddress2,
-					NULL					MailingAddress3,
-					MailingAddressCity		MailingCity,
-					MailingAddressState		MailingPostalStateCode,
-					left(MailingAddressPostalCode,5)	 MailingZipCode,
-					case when len(MailingAddressPostalCode)=10 then right(MailingAddressPostalCode,4) else '''' end	 MailingZipcodePlus4,
-					PhysicalAddressStreet	LocationAddress1,
-					PhysicalAddressApartmentRoomOrSuiteNumber					LocationAddress2,
-					NULL					LocationAddress3,
-					PhysicalAddressCity		LocationCity,
-					PhysicalAddressState	LocationPostalStateCode,
-					left(PhysicalAddressPostalCode,5)	 LocationZipCode,
-					case when len(PhysicalAddressPostalCode)=10 then right(PhysicalAddressPostalCode,4) else '''' end	 LocationZipcodePlus4,
-					OperationalStatus		SchoolSysOpstatus,
+					NULL										FileRecordNumber,
+					StateANSICode								FIPSStateCode,
+					''01''										StateAgencyNumber,
+					ParentOrganizationStateId					StateLEAIDNumber,
+					ParentOrganizationNCESId					NCESLEAIDNumber,
+					OrganizationStateId							StateLEAIdNumber,
+					OrganizationNcesId							NCESLEAIDNumber,
+					OrganizationName							SchoolName,
+					SchoolType									SchoolType,
+					case when isnull(OutOfStateIndicator,0) = 0 
+						then ''NO'' 
+						else ''YES'' 
+					end											OutOfStateInd,
+					Website										WebAddress,
+					Telephone									PhoneNumber,
+					MailingAddressStreet						MailingAddress1,
+					MailingAddressApartmentRoomOrSuiteNumber	MailingAddress2,
+					NULL										MailingAddress3,
+					MailingAddressCity							MailingCity,
+					MailingAddressState							MailingPostalStateCode,
+					left(MailingAddressPostalCode,5)			MailingZipCode,
+					case when len(MailingAddressPostalCode)=10 
+						then right(MailingAddressPostalCode,4) 
+						else '''' 
+					end											MailingZipcodePlus4,
+					PhysicalAddressStreet						LocationAddress1,
+					PhysicalAddressApartmentRoomOrSuiteNumber	LocationAddress2,
+					NULL										LocationAddress3,
+					PhysicalAddressCity							LocationCity,
+					PhysicalAddressState						LocationPostalStateCode,
+					left(PhysicalAddressPostalCode,5)			LocationZipCode,
+					case when len(PhysicalAddressPostalCode)=10 
+						then right(PhysicalAddressPostalCode,4) 
+						else '''' 
+					end											LocationZipcodePlus4,
+					OperationalStatus							SchoolSysOpstatus,
 					UpdatedOperationalStatus					SchoolOpStatusNew,
-					NULL					StatusEffectiveDate,
-					case when isnull(CharterSchoolStatus,''NO'') = ''NO'' then ''NO'' else ''YES'' end		ChrtStatusID,
-					PriorLEAStateIdentifier		PriorStateLEAId,
-					PriorSchoolStateIdentifier	PriorStateSchoolID,
-					ReconstitutedStatus	ReconstitutedStatus,
-					NULL	Filler,
-					CharterSchoolAuthorizerIdPrimary,
-					CharterSchoolAuthorizerIdSecondary,
-					NULL					Explanation'
+					NULL										StatusEffectiveDate,
+					case when isnull(CharterSchoolStatus,''NO'') = ''NO'' 
+						then ''NO'' 
+						else ''YES'' 
+					end											ChrtStatusID,
+					PriorLEAStateIdentifier						PriorStateLEAId,
+					PriorSchoolStateIdentifier					PriorStateSchoolID,
+					ReconstitutedStatus							ReconstitutedStatus,
+					NULL										Filler,
+					CharterSchoolAuthorizerIdPrimary			PrimaryCharterAuthorizer,
+					CharterSchoolAuthorizerIdSecondary			SecondaryCharterAuthorizer,
+					NULL										Explanation'
 			end
 	end
-if @ReportCode = 'C039'
+if @ReportCode = '039'
 	begin
 		if @ReportLevel = 'LEA'
 			begin
 				select @SQL = @SQL + '
 				select distinct 
-					NULL					FileRecordNumber,
-					StateANSICode			FIPSStateCode,
-					''01''					StateAgencyNumber,
-					OrganizationStateId		StateLEAIdNumber,
-					NULL					Filler2,
-					NULL					Filler3,
-					NULL					Filler4,
-					GradeLevel				GradeLevelId,
-					NULL					Explanation'
+					NULL						FileRecordNumber,
+					StateANSICode				FIPSStateCode,
+					''01''						StateAgencyNumber,
+					OrganizationStateId			StateLEAIdNumber,
+					NULL						Filler2,
+					NULL						Filler3,
+					NULL						Filler4,
+					GradeLevel					GradeLevelId,
+					NULL						Explanation'
 
 			end
 
@@ -198,15 +227,15 @@ if @ReportCode = 'C039'
 			begin
 				select @SQL = @SQL + '
 				select distinct 
-					NULL					FileRecordNumber,
-					StateANSICode			FIPSStateCode,
-					''01''					StateAgencyNumber,
-					ParentOrganizationStateId		StateLEAIdNumber,
-					NULL					Filler2,
-					OrganizationStateId		StateSchoolIDNumber,
-					NULL					Filler4,
-					GradeLevel				GradeLevelId,
-					NULL					Explanation'
+					NULL						FileRecordNumber,
+					StateANSICode				FIPSStateCode,
+					''01''						StateAgencyNumber,
+					ParentOrganizationStateId	StateLEAIdNumber,
+					NULL						Filler2,
+					OrganizationStateId			StateSchoolIDNumber,
+					NULL						Filler4,
+					GradeLevel					GradeLevelId,
+					NULL						Explanation'
 			end
 
 	end
@@ -229,9 +258,9 @@ else
 	end
 
 -- NOW DO THE COMPARISON ----------------------
-if @ReportCode = 'C029'
+if @ReportCode = '029'
 	begin
-		exec Utilities.CompareSubmissionFiles_C029
+		exec Utilities.CompareSubmissionFiles_029
 			@DatabaseName = @DatabaseName,
 			@SchemaName = @SchemaName,
 			@SubmissionYear = @SubmissionYear,
@@ -242,9 +271,9 @@ if @ReportCode = 'C029'
 			@ShowSQL = @ShowSQL,
 				@ComparisonResultsTableName = @ComparisonResultsTableName output
 	end
-if @ReportCode = 'C039'
+if @ReportCode = '039'
 	begin
-		exec Utilities.CompareSubmissionFiles_C039
+		exec Utilities.CompareSubmissionFiles_039
 			@DatabaseName = @DatabaseName,
 			@SchemaName = @SchemaName,
 			@SubmissionYear = @SubmissionYear,
@@ -260,6 +289,3 @@ if @ReportCode = 'C039'
 	print 'RESULTS ARE LOCATED IN ' + @ComparisonResultsTableName
 
 END
-
-
-

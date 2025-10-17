@@ -32,9 +32,9 @@ declare
 	@ComparisonResultsTableName varchar(200) = ''
 
 
-if @ReportCode not in ('C175', 'C178', 'C179', 'C185', 'C188', 'C189', 'C224', 'C225')
+if @ReportCode not in ('175', '178', '179', '185', '188', '189', '224', '225')
 	begin
-		print '@ReportCode must be C175, C178, C179, C185, C188, C189, C224, C225'
+		print '@ReportCode must be 175, 178, 179, 185, 188, 189, 224, 225'
 		return
 	end
 
@@ -49,7 +49,7 @@ exec Utilities.CreateSubmissionFileTable
 	@CreatedTableName = @CreatedTableName OUTPUT
 
 select @SQL = 'INSERT INTO ' + @CreatedTableName
-if @ReportCode in ('C175', 'C178', 'C179')
+if @ReportCode in ('175', '178', '179')
 	begin
 		if @ReportLevel = 'SEA'
 			begin
@@ -223,7 +223,7 @@ if @ReportCode in ('C185', 'C188', 'C189')
 					AssessmentCount											Amount'
 			end
 end
-if @ReportCode in ('C224')
+if @ReportCode in ('224')
 	begin
 		select @SQL = @SQL + '
 		select distinct 
@@ -240,7 +240,7 @@ if @ReportCode in ('C224')
 			AssessmentCount						Amount'
 		end
 
-if @ReportCode in ('C225')
+if @ReportCode in ('225')
 	begin
 		select @SQL = @SQL + '
 		select distinct 
@@ -288,5 +288,3 @@ else
 	print 'RESULTS ARE LOCATED IN ' + @ComparisonResultsTableName
 
 END
-
-

@@ -33,9 +33,9 @@ declare
 	@ComparisonResultsTableName varchar(200) = ''
 
 
-if @ReportCode not in ('C002', 'C089')
+if @ReportCode not in ('002', '089')
 	begin
-		print '@ReportCode must be C002 or C089'
+		print '@ReportCode must be 002 or 089'
 		return
 	end
 
@@ -52,7 +52,7 @@ exec Utilities.CreateSubmissionFileTable
 
 
 select @SQL = 'INSERT INTO ' + @CreatedTableName
-if @ReportCode = 'C002'
+if @ReportCode = '002'
 	begin
 		if @ReportLevel = 'SEA'
 			begin
@@ -145,7 +145,7 @@ if @ReportCode = 'C002'
 					StudentCount					Amount'
 			end
 		end
-if @ReportCode = 'C089'
+if @ReportCode = '089'
 	begin
 		if @ReportLevel = 'SEA'
 			begin
@@ -161,7 +161,7 @@ if @ReportCode = 'C089'
 					Sex								GenderId,
 					Age								AgeID,
 					ENGLISHLEARNERSTATUS			LEPStatusID,
-					IDEADISABILITYTYPE			DisabilityCategoryId,
+					IDEADISABILITYTYPE				DisabilityCategoryId,
 					NULL							Filler12,
 					NULL							Filler13,
 					NULL							Filler14,
@@ -187,7 +187,7 @@ if @ReportCode = 'C089'
 					Sex								GenderId,
 					Age								AgeID,
 					ENGLISHLEARNERSTATUS			LEPStatusID,
-					IDEADISABILITYTYPE			DisabilityCategoryId,
+					IDEADISABILITYTYPE				DisabilityCategoryId,
 					NULL							Filler12,
 					NULL							Filler13,
 					NULL							Filler14,
@@ -232,6 +232,3 @@ else
 	print 'RESULTS ARE LOCATED IN ' + @ComparisonResultsTableName
 
 END
-
-
-
