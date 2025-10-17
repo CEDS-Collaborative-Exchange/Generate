@@ -566,29 +566,6 @@ namespace generate.infrastructure.Repositories.App
             return true;
 
         }
-        
-        private void MarkReportAsCompleteLocal(string reportCode)
-        {
-
-            // Verify that all pending jobs have completed first
-
-            var api = JobStorage.Current.GetMonitoringApi();
-            var reportMigrationJobs = api.ProcessingJobs(0, (int)api.ProcessingCount()).Where(x => x.Value.InProcessingState && x.Value.Job.Method.Name == "ExecuteReportMigrationByYearLevelAndCategorySet");
-
-            if (!reportMigrationJobs.Any())
-            {
-                GenerateReport report = _context.Set<GenerateReport>().Where(x => x.ReportCode == reportCode).FirstOrDefault();
-                if (report != null)
-                {
-                    report.IsLocked = false;
-                    _context.SaveChanges();
-                }
-
-                this.CompleteReportMigrationIfReady();
-
-            }
-
-        }
 
         public void UpdateViewDefinitions()
         {
