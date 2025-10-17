@@ -31,10 +31,18 @@ AS
 		, sssrd2.InputCode AS DelinquentProgramTypeMap
 
 		, rdnods.NeglectedOrDelinquentAcademicAchievementIndicatorCode
-		, sssrd4.InputCode as NeglectedOrDelinquentAcademicAchievementIndicatorMap
+		, case 
+				when rdnods.NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'Yes' then 1
+				when rdnods.NeglectedOrDelinquentAcademicAchievementIndicatorCode = 'No' then 0
+				else NULL 
+			end as NeglectedOrDelinquentAcademicAchievementIndicatorMap
 
 		, rdnods.NeglectedOrDelinquentAcademicOutcomeIndicatorCode
-		, sssrd3.InputCode as NeglectedOrDelinquentAcademicOutcomeIndicatorMap
+		, case 
+				when rdnods.NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'Yes' then 1
+				when rdnods.NeglectedOrDelinquentAcademicOutcomeIndicatorCode = 'No' then 0
+				else NULL 
+			end as NeglectedOrDelinquentAcademicOutcomeIndicatorMap
 		
 	FROM rds.DimNOrDStatuses rdnods
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
@@ -50,14 +58,6 @@ AS
 		ON rdnods.DelinquentProgramTypeCode = sssrd2.OutputCode
 		AND sssrd2.TableName = 'RefDelinquentProgramType'
 		AND rsy.SchoolYear = sssrd2.SchoolYear
-	LEFT JOIN staging.SourceSystemReferenceData sssrd3
-		ON rdnods.NeglectedOrDelinquentAcademicOutcomeIndicatorCode = sssrd3.OutputCode
-		AND sssrd3.TableName = 'RefNeglectedOrDelinquentAcademicOutcomeIndicator'
-		AND rsy.SchoolYear = sssrd3.SchoolYear
-	LEFT JOIN staging.SourceSystemReferenceData sssrd4
-		ON rdnods.NeglectedOrDelinquentAcademicAchievementIndicatorCode = sssrd4.OutputCode
-		AND sssrd4.TableName = 'RefNeglectedOrDelinquentAcademicAchievementIndicator'
-		AND rsy.SchoolYear = sssrd4.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd5
 		ON rdnods.NeglectedOrDelinquentProgramEnrollmentSubpartCode = sssrd5.OutputCode
 		AND sssrd5.TableName = 'RefNeglectedOrDelinquentProgramEnrollmentSubpart'

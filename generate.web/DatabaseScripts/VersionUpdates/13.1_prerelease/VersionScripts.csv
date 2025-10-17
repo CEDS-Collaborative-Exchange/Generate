@@ -24,6 +24,8 @@ Views\\Drop,RDS.vwDimSchoolPerformanceIndicatorStateDefinedStatuses.View.sql,0
 Views\\Create,RDS.vwDimSchoolPerformanceIndicatorStateDefinedStatuses.View.sql,0
 Views\\Drop,RDS.vwDimIndicatorStatuses.View.sql,0
 Views\\Create,RDS.vwDimIndicatorStatuses.View.sql,0
+Views\\Drop,RDS.vwDimNOrDStatuses.View.sql,0
+Views\\Create,RDS.vwDimNOrDStatuses.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportData_ZeroCounts.StoredProcedure.sql,0
