@@ -6,6 +6,10 @@ VersionUpdates\\13.1_prerelease,App.Metadata.sql,0
 VersionUpdates\\13.1_prerelease,JunkTablePopulation.sql,0
 Views\\Drop,Debug.vwHomeless_StagingTables.View.sql,0
 Views\\Create,Debug.vwHomeless_StagingTables.View.sql,0
+Views\\Drop,Debug.vwAssessment_StagingTables.View.sql,0
+Views\\Create,Debug.vwAssessment_StagingTables.View.sql,0
+Views\\Drop,Debug.vwAssessment_FactTable.View.sql,0
+Views\\Create,Debug.vwAssessment_FactTable.View.sql,0
 Views\\Drop,RDS.vwDimCteOutcomeIndicators.View.sql,0
 Views\\Create,RDS.vwDimCteOutcomeIndicators.View.sql,0
 Views\\Drop,Debug.vwNeglectedOrDelinquent_FactTable.View.sql,0
@@ -77,4 +81,20 @@ StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProce
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql, 0
+StoredProcedures\\Create,Utilities.Compare_ASSESSMENTS.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Utilities.Compare_CHILDCOUNT.StoredProcedure.sql, 0
+StoredProcedures\\Create,Utilities.Compare_CHILDCOUNT.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Utilities.Compare_DIRECTORY.StoredProcedure.sql, 0
+StoredProcedures\\Create,Utilities.Compare_DIRECTORY.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Utilities.Compare_DISCIPLINE.StoredProcedure.sql, 0
+StoredProcedures\\Create,Utilities.Compare_DISCIPLINE.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Utilities.Compare_EXITING.StoredProcedure.sql, 0
+StoredProcedures\\Create,Utilities.Compare_EXITING.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Utilities.CompareSubmissionFiles.StoredProcedure.sql, 0
+StoredProcedures\\Create,Utilities.CompareSubmissionFiles.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Utilities.CompareSubmissionFiles_029.StoredProcedure.sql, 0
+StoredProcedures\\Create,Utilities.CompareSubmissionFiles_029.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Utilities.CompareSubmissionFiles_039.StoredProcedure.sql, 0
+StoredProcedures\\Create,Utilities.CompareSubmissionFiles_039.StoredProcedure.sql, 0
 VersionUpdates\\13.1_prerelease,UpdateDbVersion.sql,0

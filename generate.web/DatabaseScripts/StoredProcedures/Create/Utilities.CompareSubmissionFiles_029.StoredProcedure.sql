@@ -1,30 +1,31 @@
-CREATE PROCEDURE [Utilities].[CompareSubmissionFiles_C039] 
+CREATE PROCEDURE [Utilities].[CompareSubmissionFiles_029] 
 
-
-		@DatabaseName varchar(25), -- If NULL then DatabaseName = 'Generate'
-		@SchemaName varchar(25),
-		@SubmissionYear int,
-		@ReportCode varchar(10),
-		@ReportLevel varchar(3),
-		@LegacyTableName varchar(100), 
-		@GenerateTableName varchar(100),
-		@ShowSQL bit = 0,
-		@ComparisonResultsTableName varchar(200) output
+	@DatabaseName varchar(25), -- If NULL then DatabaseName = 'Generate'
+	@SchemaName varchar(25),
+	@SubmissionYear int,
+	@ReportCode varchar(10),
+	@ReportLevel varchar(3),
+	@LegacyTableName varchar(100), 
+	@GenerateTableName varchar(100),
+	@ShowSQL bit = 0,
+	@ComparisonResultsTableName varchar(200) output
 
 AS
-BEGIN
 
+BEGIN
 /****************************************************************************************
 AEM Inc.
 CIID Generate Team
-February 14, 2023
+November 22, 2022
 
-This procedure creates and populates a comparison table for the specified table names for C039.
+This procedure creates and populates a comparison table for the specified table names for 029.
 
 The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@ReportLevel_@SubmissionYear_COMPARISON]
 
-*****************************************************************************************/
+MODIFIED
+March 15, 2023 - Added alternate comparisons for OutOfStateInd and ChrtSchoolLEAStatusId to handle multiple options
 
+*****************************************************************************************/
 	SET NOCOUNT ON
 
 	select @DatabaseName = ltrim(rtrim(case when isnull(@DatabaseName,'') = '' or ltrim(rtrim(@DatabaseName)) = '' then isnull(@DatabaseName,'Generate') else @DatabaseName end))
@@ -81,7 +82,7 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 		end
 
 	-- CREATE THE DROP TABLE SQL -------------------------------------------------------------------------------------------
-	select @DropSQL = 'IF EXISTS(SELECT 1 FROM ' + @DatabaseName + '.INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ''' + @SchemaName + ''' AND TABLE_NAME = ''' + @TableName + ''')' + char(10)
+	select @DropSQL = 'IF EXISTS(SELECT 1 FROM [' + @DatabaseName + '].INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ''' + @SchemaName + ''' AND TABLE_NAME = ''' + @TableName + ''')' + char(10)
 	select @DropSQL = @DropSQL + 'BEGIN' + char(10)
 	select @DropSQL = @DropSQL + char(9) + 'DROP TABLE ' + @ComparisonResultsTableName + char(10)
 	select @DropSQL = @DropSQL + 'END'
@@ -92,6 +93,7 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 	select @InsertQuery = 'select DISTINCT ' + convert(varchar, @SubmissionYear) + ' SubmissionYear, ''' + @ReportCode + ''' ReportCode, ''' + @ReportLevel + ''' ReportLevel,' + char(10)
 	select @InsertQuery = @InsertQuery + char(9) +
 			case 
+				when @ReportLevel = 'SEA' then 'ISNULL(L.FIPSStateCode, G.FIPSStateCode) FIPSStateCode, '
 				when @ReportLevel = 'LEA' then 'ISNULL(L.StateLEAIDNumber, G.StateLEAIDNumber) StateLEAIDNumber, '
 				when @ReportLevel = 'SCH' then 'ISNULL(L.StateSchoolIDNumber, G.StateSchoolIDNumber) StateSchoolIDNumber, '
 			end + char(10)
@@ -100,11 +102,13 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 	select @InsertQuery = @InsertQuery + char(9) + 'case ' + char(10)
 	select @InsertQuery = @InsertQuery + char(9) + char(9) + 'when ' + 
 		case
+			when @ReportLevel = 'SEA' then 'L.FIPSStateCode '
 			when @ReportLevel = 'LEA' then 'L.StateLEAIDNumber '
 			when @ReportLevel = 'SCH' then 'L.StateSchoolIDNumber '
 		end + 'IS NULL then ''* NOT IN LEGACY FILE *''' + char(10)
 	select @InsertQuery = @InsertQuery + char(9) + char(9) + 'when ' + 
 		case
+			when @ReportLevel = 'SEA' then 'G.FIPSStateCode '
 			when @ReportLevel = 'LEA' then 'G.StateLEAIDNumber '
 			when @ReportLevel = 'SCH' then 'G.StateSchoolIDNumber '
 		end + 'IS NULL then ''* NOT IN GENERATE FILE *''' + char(10)
@@ -117,11 +121,24 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 		begin
 			select @ColumnName = ColumnName from #SelectColumns where ID = @ID
 			select @InsertQuery = @InsertQuery + 
-				case when (@ReportLevel = 'LEA' and @ColumnName <> 'StateLEAIDNumber')
+				case when (@ReportLevel = 'SEA' and @ColumnName <> 'FIPSStateCode')
+					or (@ReportLevel = 'LEA' and @ColumnName <> 'StateLEAIDNumber')
 					or (@ReportLevel = 'SCH' and @ColumnName <> 'StateSchoolIDNumber')
 				then
-				char(9) + 
-				'CASE WHEN ISNULL(L.' + @ColumnName + ','''') <> ISNULL(G.' + @ColumnName + ','''') THEN ''' + @ColumnName + ' | '' else '''' end + ' + char(10)
+					case 
+						when @ColumnName = 'OutOfStateInd'
+							then char(9) +
+							'CASE WHEN ISNULL(L.' + @ColumnName + ',''NO'') <> ISNULL(G.' + @ColumnName + ','''') 
+							THEN ''' + @ColumnName + ' | '' else '''' end + ' + char(10)
+						when @ColumnName = 'ChrtSchoolLEAStatusId'
+							then char(9) +
+							'CASE WHEN ISNULL(L.' + @ColumnName + ',''NO'') <> ISNULL(G.' + @ColumnName + ','''')
+							AND L.' + @ColumnName + ' <> ''NOTCHR'' AND G.' + @ColumnName + ' <> ''NA''
+							THEN ''' + @ColumnName + ' | '' else '''' end + ' + char(10)
+					else
+						char(9) + 
+						'CASE WHEN ISNULL(L.' + @ColumnName + ','''') <> ISNULL(G.' + @ColumnName + ','''') THEN ''' + @ColumnName + ' | '' else '''' end + ' + char(10)
+					end
 				else ''
 				end
 			select @ID +=1
@@ -137,7 +154,8 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 		begin
 			select @ColumnName = ColumnName from #SelectColumns where ID = @ID
 			select @InsertQuery = @InsertQuery + 
-				case when (@ReportLevel = 'LEA' and @ColumnName <> 'StateLEAIDNumber')
+				case when (@ReportLevel = 'SEA' and @ColumnName <> 'FIPSStateCode')
+					or (@ReportLevel = 'LEA' and @ColumnName <> 'StateLEAIDNumber')
 					or (@ReportLevel = 'SCH' and @ColumnName <> 'StateSchoolIDNumber')
 				then
 				char(9) + 
@@ -153,10 +171,11 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 		select @InsertQuery = @InsertQuery + 'ON '
 		select @InsertQuery = @InsertQuery + 
 			case 
+				when @ReportLevel = 'SEA' then 'ISNULL(L.FIPSStateCode, G.FIPSStateCode) = ISNULL(G.FIPSStateCode, L.FIPSStateCode)'
 				when @ReportLevel = 'LEA' then 'ISNULL(L.StateLEAIDNumber, G.StateLEAIDNumber) = ISNULL(G.StateLEAIDNumber, L.StateLEAIDNumber)'
 				when @ReportLevel = 'SCH' then 'ISNULL(L.StateSchoolIDNumber, G.StateSchoolIDNumber) = ISNULL(G.StateSchoolIDNumber, L.StateSchoolIDNumber)'
 			end + char(10)
-		select @InsertQuery = @InsertQuery + 'AND ISNULL(L.GradeLevelId, G.GradeLevelId) = ISNULL(G.GradeLevelId, L.GradeLevelId)' + char(10)
+
 
 
 	-- EXECUTE SQL -------------------------------------------------------------
@@ -209,7 +228,4 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 		return
 	end catch	
 
-
-
 END
-	

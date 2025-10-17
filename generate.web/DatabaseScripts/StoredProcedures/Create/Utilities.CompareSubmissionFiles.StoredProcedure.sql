@@ -1,16 +1,14 @@
 CREATE PROCEDURE [Utilities].[CompareSubmissionFiles] 
 
-		@DatabaseName varchar(100), -- If NULL then DatabaseName = 'Generate'
-		@SchemaName varchar(25),
-		@SubmissionYear int,
-		@ReportCode varchar(10),
-		@ReportLevel varchar(3),
-		@LegacyTableName varchar(100), 
-		@GenerateTableName varchar(100),
-		@ShowSQL bit = 0,
-		@ComparisonResultsTableName varchar(200) output
-
-
+	@DatabaseName varchar(100), -- If NULL then DatabaseName = 'Generate'
+	@SchemaName varchar(25),
+	@SubmissionYear int,
+	@ReportCode varchar(10),
+	@ReportLevel varchar(3),
+	@LegacyTableName varchar(100), 
+	@GenerateTableName varchar(100),
+	@ShowSQL bit = 0,
+	@ComparisonResultsTableName varchar(200) output
 
 AS
 BEGIN
@@ -24,7 +22,7 @@ This procedure creates and populates a comparison table for the specified table 
 The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@ReportLevel_@SubmissionYear_COMPARISON]
 
 *****************************************************************************************/
-	SET NOCOUNT ON
+	SET NOCOUNT ON;
 
 	declare @CompareColumn varchar(50) = 'Amount' -- Note: this value is the same for all file specs except C029 and C039 (based on current CIID files)
 
@@ -36,6 +34,7 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 
 	-- LOAD FILE SPEC METADATA INTO TEMP TABLE --------------------------------------------------
 	begin try
+
 		select identity(int,1,1) as ID, R.GenerateReportId, R.ReportCode, OL.LevelCode, FSFC.SequenceNumber, FC.ColumnName
 		into #SelectColumns
 		from app.GenerateReports R
@@ -53,12 +52,12 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 		and ColumnName not like '%FILLER%'
 		and ColumnName not like '%Explanation%'
 		order by SequenceNumber
+
 	end try
 	begin catch
 		print 'Error reading metadata!'
 		return
 	end catch
-
 
 	declare 
 		@DropSQL varchar(max) = '',
@@ -71,7 +70,6 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 
 	select @ComparisonResultsTableName = '[' + @DatabaseName + '].[' + @SchemaName + '].[' + @TableName + ']'
 
-
 	if @ColumnCount = 0
 		begin
 			print 'No Metadata defined!'
@@ -83,8 +81,6 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 	select @DropSQL = @DropSQL + 'BEGIN' + char(10)
 	select @DropSQL = @DropSQL + char(9) + 'DROP TABLE ' + @ComparisonResultsTableName + char(10)
 	select @DropSQL = @DropSQL + 'END'
-
-
 
 	-- CREATE THE CREATE TABLE SQL --------------------------------------------------
 	select @InsertQuery = 'select DISTINCT ''' + @ReportCode + ''' ReportCode, ''' + @ReportLevel + ''' ReportLevel,' + char(10)
@@ -118,10 +114,10 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 			select @ID +=1
 		end
 
-		select @InsertQuery = @InsertQuery + 'INTO ' + @ComparisonResultsTableName + char(10)
-		select @InsertQuery = @InsertQuery + 'FROM ' + @LegacyTableName + ' L' + char(10)
-		select @InsertQuery = @InsertQuery + 'FULL OUTER JOIN ' + @GenerateTableName + ' G' + char(10)
-		select @InsertQuery = @InsertQuery + 'ON '
+	select @InsertQuery = @InsertQuery + 'INTO ' + @ComparisonResultsTableName + char(10)
+	select @InsertQuery = @InsertQuery + 'FROM ' + @LegacyTableName + ' L' + char(10)
+	select @InsertQuery = @InsertQuery + 'FULL OUTER JOIN ' + @GenerateTableName + ' G' + char(10)
+	select @InsertQuery = @InsertQuery + 'ON '
 
 		
 	-- RESET TO ADD THE JOIN COLUMNS
@@ -191,7 +187,5 @@ The table will be named as follows: [@DatabaseName].[@SchemaName].[@ReportCode_@
 		print 'COMPARISON INSERT QUERY FAILED - ' + ERROR_MESSAGE()
 		return
 	end catch	
-END
-	
 
-	
+END
