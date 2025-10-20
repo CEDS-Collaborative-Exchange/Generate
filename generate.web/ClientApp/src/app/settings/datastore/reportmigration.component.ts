@@ -432,7 +432,6 @@ export class ReportMigationComponent implements OnDestroy {
                         if (elapsedSecondsSinceError > 120 || data.reportLastMigrationHistoryDate == null) {
                             this.reportMigrationIsAvailable = true;
                             this.reportMessage = 'Last migration was initiated ' + userName + factTypeMessage + ' and was either cancelled or resulted in an error. If the migration failed, check the Data Migration Log tab on this page or click <a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting" target="_blank">here</a> for documentation on possible migration issues.';
-                            //this.reportMessage = 'Last migration was initiated ' + userName + factTypeMessage + ' and was either cancelled or resulted in an error. Please check <a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting">here</a>.';
                             this.isCanceling = false;
                         }
                         else {
