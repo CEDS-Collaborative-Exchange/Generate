@@ -27,7 +27,7 @@
                     </div>
 
                     <div [hidden]="!showReportMigrateStatus && !showReportMigrateProgress && !showReportMigrateTimeRemaining" class="mdl-typography--text-center">
-                        <div class="generate-report-status" [hidden]="!showReportMigrateStatus"> {{ reportMessage }} </div>
+                        <div class="generate-report-status" [hidden]="!showReportMigrateStatus" [innerHTML]="reportMessage"></div>
                         <div class="generate-report-status mdl-progress mdl-js-progress generate-report__progress" style="margin:auto" [hidden]="!showReportMigrateProgress" id="reportMigrationStatus"></div>
                         <div class="generate-report-status" [hidden]="!showReportMigrateTimeRemaining">{{ estimatedReportCompletionTime }}</div>
                     </div>

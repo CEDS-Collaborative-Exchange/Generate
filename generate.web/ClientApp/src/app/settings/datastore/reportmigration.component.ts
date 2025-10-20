@@ -431,7 +431,8 @@ export class ReportMigationComponent implements OnDestroy {
                         // Do not make migration available again until at least 2 minutes after cancel/error
                         if (elapsedSecondsSinceError > 120 || data.reportLastMigrationHistoryDate == null) {
                             this.reportMigrationIsAvailable = true;
-                            this.reportMessage = 'Last migration was initiated ' + userName + factTypeMessage + ' and was either cancelled or resulted in an error. Please check <a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting">here</a>.';
+                            this.reportMessage = `Last migration was initiated by ${userName}${factTypeMessage} and was either cancelled or resulted in an error. Please check <a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting">here</a>.`;
+                            //this.reportMessage = 'Last migration was initiated ' + userName + factTypeMessage + ' and was either cancelled or resulted in an error. Please check <a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting">here</a>.';
                             this.isCanceling = false;
                         }
                         else {
