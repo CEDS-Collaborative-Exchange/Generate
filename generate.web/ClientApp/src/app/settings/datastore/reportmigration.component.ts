@@ -431,13 +431,13 @@ export class ReportMigationComponent implements OnDestroy {
                         // Do not make migration available again until at least 2 minutes after cancel/error
                         if (elapsedSecondsSinceError > 120 || data.reportLastMigrationHistoryDate == null) {
                             this.reportMigrationIsAvailable = true;
-                            this.reportMessage = `Last migration was initiated by ${userName}${factTypeMessage} and was either cancelled or resulted in an error. Please check <a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting">here</a>.`;
+                            this.reportMessage = 'Last migration was initiated ' + userName + factTypeMessage + ' and was either cancelled or resulted in an error. If the migration failed, check the Data Migration Log tab on this page or click <a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting" target="_blank">here</a> for documentation on possible migration issues.';
                             //this.reportMessage = 'Last migration was initiated ' + userName + factTypeMessage + ' and was either cancelled or resulted in an error. Please check <a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting">here</a>.';
                             this.isCanceling = false;
                         }
                         else {
                             this.reportMigrationIsAvailable = false;
-                            this.reportMessage = 'Last Migration was initiated ' + userName + factTypeMessage + ' and was either cancelled or resulted in an error - please wait for tasks to finish (approximately ' + timeRemaining + ' seconds). Please check <a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting">here</a>.';
+                            this.reportMessage = 'Last Migration was initiated ' + userName + factTypeMessage + ' and was either cancelled or resulted in an error - please wait for tasks to finish (approximately ' + timeRemaining + ' seconds). If the migration failed, check the Data Migration Log tab on this page or click <a href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/troubleshooting" target="_blank">here</a> for documentation on possible migration issues.';
                             this.isCanceling = true;
                         }
 
