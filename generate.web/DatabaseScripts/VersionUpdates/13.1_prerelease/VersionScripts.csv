@@ -46,6 +46,10 @@ StoredProcedures\\Drop,Staging.Staging-to-DimSchoolPerformanceIndicators.StoredP
 StoredProcedures\\Create,Staging.Staging-to-DimSchoolPerformanceIndicators.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimSchoolPerformanceIndicatorStateDefinedStatuses.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimSchoolPerformanceIndicatorStateDefinedStatuses.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactSchoolPerformanceIndicators.StoredProcedure.sql,0
