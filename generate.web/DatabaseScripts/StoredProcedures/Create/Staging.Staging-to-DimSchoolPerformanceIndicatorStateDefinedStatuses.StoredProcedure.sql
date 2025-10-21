@@ -10,7 +10,7 @@ BEGIN
 		IF NOT EXISTS (SELECT 1 FROM RDS.DimSchoolPerformanceIndicatorStateDefinedStatuses WHERE DimSchoolPerformanceIndicatorStateDefinedStatusId = -1)
 		BEGIN
 
-			SET IDENTITY_INSERT RDS.DimSchoolPerfomanceIndicators ON
+			SET IDENTITY_INSERT RDS.DimSchoolPerformanceIndicatorStateDefinedStatuses ON
 
 			INSERT INTO RDS.DimSchoolPerformanceIndicatorStateDefinedStatuses
 				(DimSchoolPerformanceIndicatorStateDefinedStatusId)

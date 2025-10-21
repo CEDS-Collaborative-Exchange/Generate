@@ -4,6 +4,10 @@ VersionUpdates\\13.1_prerelease,App.TableChanges.sql,0
 VersionUpdates\\13.1_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.1_prerelease,App.Metadata.sql,0
 VersionUpdates\\13.1_prerelease,JunkTablePopulation.sql,0
+Views\\Drop,Debug.vwAssessment_StagingTables.View.sql,0
+Views\\Create,Debug.vwAssessment_StagingTables.View.sql,0
+Views\\Drop,Debug.vwAssessment_FactTable.View.sql,0
+Views\\Create,Debug.vwAssessment_FactTable.View.sql,0
 Views\\Drop,Debug.vwHomeless_StagingTables.View.sql,0
 Views\\Create,Debug.vwHomeless_StagingTables.View.sql,0
 Views\\Drop,RDS.vwDimCteOutcomeIndicators.View.sql,0
@@ -46,6 +50,8 @@ StoredProcedures\\Drop,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactSchoolPerformanceIndicators.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactSchoolPerformanceIndicators.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_ChronicAbsenteeism.StoredProcedure.sql,0
@@ -81,4 +87,6 @@ StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProce
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_SpecEdExit.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Wrapper_Migrate_SchoolPerformanceIndicators_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Wrapper_Migrate_SchoolPerformanceIndicators_to_RDS.StoredProcedure.sql,0
 VersionUpdates\\13.1_prerelease,UpdateDbVersion.sql,0
