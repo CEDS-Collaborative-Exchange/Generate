@@ -274,9 +274,9 @@ BEGIN
 		ON sop.InstitutionTelephoneNumberType = sssrd6.InputCode
 		AND sssrd6.TableName = 'RefInstitutionTelephoneType'
 		AND sko.SchoolYear = sssrd6.SchoolYear
+		AND sssrd6.OutputCode = 'Main'
 	WHERE 
-		sssrd6.OutputCode = 'Main'
-		AND sko.SchoolIdentifierSea is not null and -- Prevent null schools from inserting into DimK12Schools
+		sko.SchoolIdentifierSea is not null and -- Prevent null schools from inserting into DimK12Schools
 		(@DataCollectionName IS NULL	
 		OR (
 			sko.DataCollectionName = @dataCollectionName
