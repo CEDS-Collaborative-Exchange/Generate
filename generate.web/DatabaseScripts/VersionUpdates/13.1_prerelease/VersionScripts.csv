@@ -111,6 +111,8 @@ StoredProcedures\\Drop,Utilities.CompareSubmissionFiles_029.StoredProcedure.sql,
 StoredProcedures\\Create,Utilities.CompareSubmissionFiles_029.StoredProcedure.sql, 0
 StoredProcedures\\Drop,Utilities.CompareSubmissionFiles_039.StoredProcedure.sql, 0
 StoredProcedures\\Create,Utilities.CompareSubmissionFiles_039.StoredProcedure.sql, 0
+StoredProcedures\\Drop,Utilities.View_EDFactsReportMetadata.StoredProcedure.sql, 0
+StoredProcedures\\Create,Utilities.View_EDFactsReportMetadata.StoredProcedure.sql, 0
 StoredProcedures\\Drop,App.Wrapper_Migrate_SchoolPerformanceIndicators_to_RDS.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Wrapper_Migrate_SchoolPerformanceIndicators_to_RDS.StoredProcedure.sql,0
 VersionUpdates\\13.1_prerelease,UpdateDbVersion.sql,0
