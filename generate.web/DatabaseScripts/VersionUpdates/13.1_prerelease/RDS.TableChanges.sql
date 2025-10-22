@@ -119,8 +119,11 @@
 CIID-8062
 **************/
 --Create the new Fact Type
-	insert into RDS.DimFactTypes
-	values ('schoolperformanceindicators','SCHOOLPERFORMANCEINDICATORS - 199, 200, 201, 202, 205', 'School Performance Indicators');
+	IF NOT EXISTS(SELECT 1 FROM RDS.DimFactTypes WHERE FactTypeCode = 'schoolperformanceindicators')
+	BEGIN
+        insert into RDS.DimFactTypes
+        values ('schoolperformanceindicators','SCHOOLPERFORMANCEINDICATORS - 199, 200, 201, 202, 205', 'School Performance Indicators');
+    END
 
 --Remove the reports from the previous Fact Type
     update RDS.DimFactTypes
@@ -135,7 +138,6 @@ CIID-8062
         inner join app.GenerateReports r
             on gf.GenerateReportId = r.GenerateReportId
     where reportcode in ('199','200','201','202','205')
-
 
 --Drop any constraints on the Fact table that reference the deprecated Fact table
     DECLARE @sql NVARCHAR(MAX);

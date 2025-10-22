@@ -83,7 +83,7 @@ BEGIN
 
 		FROM Staging.SchoolPerformanceIndicators sspi
 	--schools (rds)
-		LEFT JOIN RDS.DimK12Schools rdksch
+		JOIN RDS.DimK12Schools rdksch
 			ON sspi.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND (
 				(rdksch.RecordStartDateTime < staging.GetFiscalYearStartDate(@SchoolYear) 
