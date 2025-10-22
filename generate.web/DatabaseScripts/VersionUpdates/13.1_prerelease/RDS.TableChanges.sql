@@ -114,7 +114,6 @@
     	ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_CteOutcomeIndicatorId]
 	END
 
-
 /**************
 CIID-8062
 **************/
