@@ -31,9 +31,9 @@ declare
 	@ComparisonResultsTableName varchar(200) = ''
 
 
-if @ReportCode not in ('C009')
+if @ReportCode not in ('009')
 	begin
-		print '@ReportCode must be C009'
+		print '@ReportCode must be 009'
 		return
 	end
 
@@ -147,6 +147,3 @@ else
 	print 'RESULTS ARE LOCATED IN ' + @ComparisonResultsTableName
 
 END
-
-
-

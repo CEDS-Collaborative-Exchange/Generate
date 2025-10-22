@@ -32,9 +32,9 @@ declare
 	@ComparisonResultsTableName varchar(200) = ''
 
 
-if @ReportCode not in ('C005', 'C006', 'C007', 'C088', 'C143', 'C144')
+if @ReportCode not in ('005', '006', '007', '088', '143', '144')
 	begin
-		print '@ReportCode must be C005, C006, C007, C088, C143 or C144'
+		print '@ReportCode must be 005, 006, 007, 088, 143 or 144'
 		return
 	end
 
@@ -51,7 +51,7 @@ exec Utilities.CreateSubmissionFileTable
 
 
 select @SQL = 'INSERT INTO ' + @CreatedTableName
-if @ReportCode = 'C088'
+if @ReportCode = '088'
 	begin
 		if @ReportLevel = 'SEA'
 			begin
@@ -102,7 +102,7 @@ else -- All other file specs use Filler1 and Filler2
 
 	end
 
-if @ReportCode = 'C005'
+if @ReportCode = '005'
 	begin
 		select @SQL = @SQL + '
 					TableTypeAbbrv					TableTypeAbbrv,
@@ -123,7 +123,7 @@ if @ReportCode = 'C005'
 					DisciplineCount					Amount'
 	end
 
-if @ReportCode = 'C006'
+if @ReportCode = '006'
 	begin
 		select @SQL = @SQL + '
 					TableTypeAbbrv					TableTypeAbbrv,
@@ -145,7 +145,7 @@ if @ReportCode = 'C006'
 
 	end
 
-if @ReportCode = 'C007'
+if @ReportCode = '007'
 	begin
 		select @SQL = @SQL + '
 					TableTypeAbbrv					TableTypeAbbrv,
@@ -168,7 +168,7 @@ if @ReportCode = 'C007'
 	end
 
 
-if @ReportCode = 'C088'
+if @ReportCode = '088'
 	begin
 		select @SQL = @SQL + '
 					TableTypeAbbrv					TableTypeAbbrv,
@@ -183,7 +183,7 @@ if @ReportCode = 'C088'
 
 	end
 
-if @ReportCode = 'C143'
+if @ReportCode = '143'
 	begin
 		select @SQL = @SQL + '
 					TableTypeAbbrv					TableTypeAbbrv,
@@ -198,7 +198,7 @@ if @ReportCode = 'C143'
 
 	end
 
-if @ReportCode = 'C144'
+if @ReportCode = '144'
 	begin
 		select @SQL = @SQL + '
 					TableTypeAbbrv					TableTypeAbbrv,
@@ -243,6 +243,3 @@ else
 	print 'RESULTS ARE LOCATED IN ' + @ComparisonResultsTableName
 
 END
-
-
-
