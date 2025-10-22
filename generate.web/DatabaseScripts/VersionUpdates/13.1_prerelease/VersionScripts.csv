@@ -4,6 +4,10 @@ VersionUpdates\\13.1_prerelease,App.TableChanges.sql,0
 VersionUpdates\\13.1_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.1_prerelease,App.Metadata.sql,0
 VersionUpdates\\13.1_prerelease,JunkTablePopulation.sql,0
+Views\\Drop,Debug.vwAssessment_StagingTables.View.sql,0
+Views\\Create,Debug.vwAssessment_StagingTables.View.sql,0
+Views\\Drop,Debug.vwAssessment_FactTable.View.sql,0
+Views\\Create,Debug.vwAssessment_FactTable.View.sql,0
 Views\\Drop,Debug.vwHomeless_StagingTables.View.sql,0
 Views\\Create,Debug.vwHomeless_StagingTables.View.sql,0
 Views\\Drop,Debug.vwAssessment_StagingTables.View.sql,0
@@ -30,6 +34,10 @@ Views\\Drop,RDS.vwDimSchoolPerformanceIndicatorStateDefinedStatuses.View.sql,0
 Views\\Create,RDS.vwDimSchoolPerformanceIndicatorStateDefinedStatuses.View.sql,0
 Views\\Drop,RDS.vwDimIndicatorStatuses.View.sql,0
 Views\\Create,RDS.vwDimIndicatorStatuses.View.sql,0
+Views\\Drop,RDS.vwDimNOrDStatuses.View.sql,0
+Views\\Create,RDS.vwDimNOrDStatuses.View.sql,0
+Functions\\Drop,RDS.Get_DimDate.UserDefinedFunction.sql,0
+Functions\\Create,RDS.Get_DimDate.UserDefinedFunction.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportData_ZeroCounts.StoredProcedure.sql,0
@@ -42,10 +50,16 @@ StoredProcedures\\Drop,Staging.Staging-to-DimSchoolPerformanceIndicators.StoredP
 StoredProcedures\\Create,Staging.Staging-to-DimSchoolPerformanceIndicators.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimSchoolPerformanceIndicatorStateDefinedStatuses.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimSchoolPerformanceIndicatorStateDefinedStatuses.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactSchoolPerformanceIndicators.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactSchoolPerformanceIndicators.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_ChildCount.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_ChronicAbsenteeism.StoredProcedure.sql,0
@@ -97,4 +111,6 @@ StoredProcedures\\Drop,Utilities.CompareSubmissionFiles_029.StoredProcedure.sql,
 StoredProcedures\\Create,Utilities.CompareSubmissionFiles_029.StoredProcedure.sql, 0
 StoredProcedures\\Drop,Utilities.CompareSubmissionFiles_039.StoredProcedure.sql, 0
 StoredProcedures\\Create,Utilities.CompareSubmissionFiles_039.StoredProcedure.sql, 0
+StoredProcedures\\Drop,App.Wrapper_Migrate_SchoolPerformanceIndicators_to_RDS.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Wrapper_Migrate_SchoolPerformanceIndicators_to_RDS.StoredProcedure.sql,0
 VersionUpdates\\13.1_prerelease,UpdateDbVersion.sql,0

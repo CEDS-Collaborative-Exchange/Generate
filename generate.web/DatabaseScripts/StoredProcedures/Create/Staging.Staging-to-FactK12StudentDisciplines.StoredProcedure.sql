@@ -250,45 +250,46 @@ BEGIN
 		)
 		INSERT INTO #Facts
 		SELECT 
-			sd.Id                                         			StagingId
-			, rda.DimAgeId                                     	 	AgeId
-			, @SchoolYearId											SchoolYearId
-			, ISNULL(rdkd.DimK12DemographicId, -1)                  K12DemographicId
-			, ISNULL(rddisc.DimDisciplineStatusId, -1)              DisciplineId
-			, @FactTypeId                                           FactTypeId
-			, ISNULL(rdis.DimIdeaStatusId, -1)                      IdeaStatusId
-			, ISNULL(rdksch.DimK12SchoolId, -1)                     K12SchoolId
-			, rdp.DimPersonId                                       K12StudentId
-			, 1                                                     DisciplineCount
-			, ISNULL(rdf.DimFirearmId, -1)                          FirearmId
-			, ISNULL(rgls.DimGradeLevelId, -1)                      GradeLevelId
-			, -1                                                    CteStatusId
-			, ISNULL(rdl.DimLeaID, -1)                              LeaId
-			, ISNULL(rdr.DimRaceId, -1)                             RaceId
-			, ISNULL(rds.DimSeaId, -1)                              SeaId
-			, -1                                                    IeuId
-			, -1                                                    DataCollectionId
-			, -1                                                    DisabilityStatusId
-			, -1                                                    DisciplinaryActionEndDateId  
-			, ISNULL(disaction.DimDateId, -1)                       DisciplinaryActionStartDateId 
-			, ISNULL(rddisc.DimDisciplineStatusId, -1)              DisciplineStatusId
-			, -1                                                    EconomicallyDisadvantagedStatusId 
-			, ISNULL(rdels.DimEnglishLearnerStatusId, -1)           EnglishLearnerStatusId
-			, ISNULL(rdfds.DimFirearmDisciplineStatusId, -1)		FirearmDisciplineStatusId 
-			, -1                                                    FosterCareStatusId
-			, -1                                                    HomelessnessStatusId
-			, -1                                                    ImmigrantStatusId
-			, sd.IncidentIdentifier                                 IncidentIdentifier
-			, -1                                                    IncidentStatusId
-			, ISNULL(Incident.DimDateId, -1)                        IncidentDateId 
-			, -1                                                    MigrantStatusId
-			, -1                                                    MilitaryStatusId
-			, -1                                                    NOrDStatusId
-			, ISNULL(rdidt.DimIdeaDisabilityTypeId, -1)             PrimaryDisabilityTypeId
-			, -1                                                    SecondaryDisabilityTypeId
-			, -1                                                    TitleIStatusId
-			, -1                                                    TitleIIIStatusId
-			, ISNULL(sd.DurationOfDisciplinaryAction, 0)            DurationOfDisciplinaryAction
+			sd.Id                                         					StagingId
+			, rda.DimAgeId                                     	 			AgeId
+			, @SchoolYearId													SchoolYearId
+			, ISNULL(rdkd.DimK12DemographicId, -1)							K12DemographicId
+			, ISNULL(rddisc.DimDisciplineStatusId, -1)						DisciplineId
+			, @FactTypeId													FactTypeId
+			, ISNULL(rdis.DimIdeaStatusId, -1)								IdeaStatusId
+			, ISNULL(rdksch.DimK12SchoolId, -1)								K12SchoolId
+			, rdp.DimPersonId												K12StudentId
+			, 1																DisciplineCount
+			, ISNULL(rdf.DimFirearmId, -1)									FirearmId
+			, ISNULL(rgls.DimGradeLevelId, -1)								GradeLevelId
+			, -1															CteStatusId
+			, ISNULL(rdl.DimLeaID, -1)										LeaId
+			, ISNULL(rdr.DimRaceId, -1)										RaceId
+			, ISNULL(rds.DimSeaId, -1)										SeaId
+			, -1															IeuId
+			, -1															DataCollectionId
+			, -1															DisabilityStatusId
+			, -1															DisciplinaryActionEndDateId  
+			, ISNULL(rds.Get_DimDate(sd.DisciplinaryActionStartDate), -1)	DisciplinaryActionStartDateId
+			, ISNULL(rddisc.DimDisciplineStatusId, -1)						DisciplineStatusId
+			, -1															EconomicallyDisadvantagedStatusId 
+			, ISNULL(rdels.DimEnglishLearnerStatusId, -1)					EnglishLearnerStatusId
+			, ISNULL(rdfds.DimFirearmDisciplineStatusId, -1)				FirearmDisciplineStatusId 
+			, -1															FosterCareStatusId
+			, -1															HomelessnessStatusId
+			, -1															ImmigrantStatusId
+			, sd.IncidentIdentifier											IncidentIdentifier
+			, -1															IncidentStatusId
+			, ISNULL(rds.Get_DimDate(sd.IncidentDate), -1)					IncidentDateId
+			, -1															MigrantStatusId
+			, -1															MilitaryStatusId
+			, -1															NOrDStatusId
+			, ISNULL(rdidt.DimIdeaDisabilityTypeId, -1)						PrimaryDisabilityTypeId
+			, -1															SecondaryDisabilityTypeId
+			, -1															TitleIStatusId
+			, -1															TitleIIIStatusId
+			, ISNULL(sd.DurationOfDisciplinaryAction, 0)					DurationOfDisciplinaryAction
+
 		FROM Staging.Discipline sd 
 			JOIN Staging.K12Enrollment ske
 				ON sd.SchoolYear 									= ske.SchoolYear
@@ -396,12 +397,6 @@ BEGIN
 				ON rdfds.SchoolYear = @SchoolYear
 				AND ISNULL(sd.DisciplineMethodFirearm, 'MISSING')   	= ISNULL(rdfds.DisciplineMethodForFirearmsIncidentsMap, rdfds.DisciplineMethodForFirearmsIncidentsCode)
 				AND ISNULL(sd.IDEADisciplineMethodFirearm, 'MISSING')   = ISNULL(rdfds.IdeaDisciplineMethodForFirearmsIncidentsMap, rdfds.IdeaDisciplineMethodForFirearmsIncidentsCode) 
-		-- incident date
-			LEFT JOIN RDS.DimDates incident 
-				ON sd.IncidentDate =  incident.DateValue
-		-- disciplinary action start date
-			LEFT JOIN RDS.DimDates disaction 
-				ON sd.DisciplinaryActionStartDate =  disaction.DateValue
 		-- firearm type
 			LEFT JOIN RDS.vwDimFirearms rdf
 				ON rdf.SchoolYear = @SchoolYear

@@ -53,7 +53,7 @@ BEGIN
 		FROM RDS.vwDimK12StaffCategories
 		WHERE SchoolYear = @SchoolYear
 
-	    --CREATE CLUSTERED INDEX ix_tempvwK12StaffCategories ON #vwK12StaffCategories (K12StaffClassificationMap, SpecialEducationSupportServicesCategoryMap, TitleIProgramStaffCategoryMap);
+	   -- CREATE CLUSTERED INDEX ix_tempvwK12StaffCategories ON #vwK12StaffCategories (K12StaffClassificationMap, SpecialEducationSupportServicesCategoryMap, TitleIProgramStaffCategoryMap);
 
 		
 		SELECT @FactTypeId = DimFactTypeId 
@@ -87,20 +87,20 @@ BEGIN
 
 		INSERT INTO #Facts
 		SELECT DISTINCT 
-			ssa.Id										StagingId
-			, rsy.DimSchoolYearId						SchoolYearId
-			, @FactTypeId								FactTypeId
-			, ISNULL(rds.DimSeaId, -1)					SeaId
-			, ISNULL(rdl.DimLeaID, -1)					LeaId
-			, ISNULL(rdksch.DimK12SchoolId, -1)			K12SchoolId
-			, ISNULL(rdp.DimPersonId, -1)				K12StaffId
-			, ISNULL(rdkss.DimK12StaffStatusId, -1)		K12StaffStatusId
-			, ISNULL(rdksc.DimK12StaffCategoryId, -1)	K12StaffCategoryId
-			, -1										TitleIIIStatusId
-			, ISNULL(credIss.DimDateId, -1)				CredentialIssuanceDateId
-			, ISNULL(credExp.DimDateId, -1)				CredentialExpirationDateId
-			, 1											StaffCounts
-			, ISNULL(FullTimeEquivalency, 0)			StaffFullTimeEquivalency
+			ssa.Id														StagingId
+			, rsy.DimSchoolYearId										SchoolYearId
+			, @FactTypeId												FactTypeId
+			, ISNULL(rds.DimSeaId, -1)									SeaId
+			, ISNULL(rdl.DimLeaID, -1)									LeaId
+			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
+			, ISNULL(rdp.DimPersonId, -1)								K12StaffId
+			, ISNULL(rdkss.DimK12StaffStatusId, -1)						K12StaffStatusId
+			, ISNULL(rdksc.DimK12StaffCategoryId, -1)					K12StaffCategoryId
+			, -1														TitleIIIStatusId
+			, ISNULL(rds.Get_DimDate(ssa.CredentialIssuanceDate), -1)	CredentialIssuanceDateId
+			, ISNULL(rds.Get_DimDate(ssa.CredentialExpirationDate), -1)	CredentialExpirationDateId
+			, 1															StaffCounts
+			, ISNULL(FullTimeEquivalency, 0)							StaffFullTimeEquivalency
 		FROM Staging.K12StaffAssignment ssa
 		JOIN RDS.DimSchoolYears rsy
 			ON ssa.SchoolYear = rsy.SchoolYear
@@ -132,12 +132,6 @@ BEGIN
 			AND rdkss.HighlyQualifiedTeacherIndicatorCode = 'MISSING'
 			AND ISNULL(ssa.SpecialEducationTeacherQualificationStatus, 'MISSING') = ISNULL(rdkss.SpecialEducationTeacherQualificationStatusMap, rdkss.SpecialEducationTeacherQualificationStatusCode)
             AND	ISNULL(ssa.EdFactsCertificationStatus, 'MISSING') = ISNULL(rdkss.EdFactsCertificationStatusMap, rdkss.EdFactsCertificationStatusCode)
-	--credential issuance date	
-		LEFT JOIN RDS.DimDates CredIss
-			ON ssa.CredentialIssuanceDate = CredIss.DateValue
-	--credential expiration date	
-		LEFT JOIN RDS.DimDates CredExp
-			ON ssa.CredentialExpirationDate = CredExp.DateValue
 	--person (rds)
 		JOIN RDS.DimPeople rdp
 			ON ssa.StaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState
