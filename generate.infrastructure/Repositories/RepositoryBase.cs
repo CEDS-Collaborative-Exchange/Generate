@@ -21,7 +21,7 @@ namespace generate.infrastructure.Repositories
     public abstract class RepositoryBase
     {
         public DbContext _context;
-        
+
         public RepositoryBase(DbContext context)
         {
             _context = context;
@@ -81,23 +81,34 @@ namespace generate.infrastructure.Repositories
         public virtual IEnumerable<T> GetAllReadOnly<T>(int skip = 0, int take = 50, params Expression<Func<T, object>>[] eagerLoad)
             where T : class
         {
-            if (take == 0)
+            using (var transaction = _context.Database.BeginTransaction(System.Data.IsolationLevel.ReadCommitted))
             {
+                try
+                {
+                    if (take == 0)
+                    {
                 return GetAllQuery<T>(eagerLoad)
-                    .AsNoTracking()
-                    .ToList();
-            }
-            else
-            {
-                // Default sort by primary key
-                var keyName = _context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties.Select(x => x.Name).FirstOrDefault();
+                            .AsNoTracking()
+                            .ToList();
+                    }
+                    else
+                    {
+                        // Default sort by primary key
+                        var keyName = _context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties.Select(x => x.Name).FirstOrDefault();
 
                 return GetAllQuery<T>(eagerLoad)
-                    .AsNoTracking()
-                    .OrderBy(e => EF.Property<int>(e, keyName))
-                    .Skip(skip)
-                    .Take(take)
-                    .ToList();
+                            .AsNoTracking()
+                            .OrderBy(e => EF.Property<int>(e, keyName))
+                            .Skip(skip)
+                            .Take(take)
+                            .ToList();
+                        
+                    }
+                }
+                finally
+                {
+                    transaction.Commit();
+                }
             }
         }
 
@@ -205,29 +216,50 @@ namespace generate.infrastructure.Repositories
                     .Where(criteria)
                     .Count();
         }
-        
+
         protected virtual IQueryable<T> GetAllQuery<T>(params Expression<Func<T, object>>[] eagerLoad)
             where T : class
         {
-            DbSet<T> _set = _context.Set<T>();
+            using (var transaction = _context.Database.BeginTransaction(System.Data.IsolationLevel.ReadCommitted))
 
-            if (eagerLoad != null && eagerLoad.Length > 0)
-            {
-                return eagerLoad.Aggregate(_set.AsQueryable(), (c, i) => c.Include(i));
-            }
+                try
+                {
+                    {
+                        DbSet<T> _set = _context.Set<T>();
 
-            return _set;
+                        if (eagerLoad != null && eagerLoad.Length > 0)
+                        {
+                            return eagerLoad.Aggregate(_set.AsQueryable(), (c, i) => c.Include(i));
+                        }
+
+                        return _set;
+                    }
+                }
+                finally
+                {
+                    transaction.Commit();
+                }
         }
 
         public virtual T GetById<T>(int id)
             where T : class
         {
-            DbSet<T> _set = _context.Set<T>();
-            var keyName = _context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties.Select(x => x.Name).FirstOrDefault();
-            return _set.Where(e => EF.Property<int>(e, keyName) == id).FirstOrDefault();
+            using (var transaction = _context.Database.BeginTransaction(System.Data.IsolationLevel.ReadCommitted))
+                try
+                {
+                    {
+                        DbSet<T> _set = _context.Set<T>();
+                        var keyName = _context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties.Select(x => x.Name).FirstOrDefault();
+                        return _set.Where(e => EF.Property<int>(e, keyName) == id).FirstOrDefault();
+                    }
+                }
+                finally
+                {
+                    transaction.Commit();
+                }
         }
 
-        
+
         public virtual bool Any<T>(params Expression<Func<T, object>>[] eagerLoad)
             where T : class
         {
@@ -291,7 +323,7 @@ namespace generate.infrastructure.Repositories
             _context.Database.SetCommandTimeout(oldTimeout);
         }
 
-       // Save
+        // Save
 
 
         public virtual int Save()

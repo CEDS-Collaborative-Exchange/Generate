@@ -42,40 +42,43 @@ namespace generate.infrastructure.Repositories.App
         
         public void StartMigration(string dataMigrationTypeCode, bool setToProcessing = false)
         {
+            logger.LogInformation("Inside StartMigration dataMigrationTypeCode:{dataMigrationTypeCode},setToProcessing:{setToProcessing}", dataMigrationTypeCode, setToProcessing);
             // Start time (UTC date)
             DateTime startDate = DateTime.UtcNow;
 
-            // Get dataMigration for type
-            DataMigration dataMigration = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == dataMigrationTypeCode, 0, 0, d => d.DataMigrationStatus).FirstOrDefault();
+                // Get dataMigration for type
+                DataMigration dataMigration = Find<DataMigration>(m => m.DataMigrationType.DataMigrationTypeCode == dataMigrationTypeCode, 0, 0, d => d.DataMigrationStatus).FirstOrDefault();
+                logger.LogInformation("Found dataMigration:{dataMigration}", dataMigration);
+                // Get statuses
+                List<DataMigrationStatus> dataMigrationStatuses = GetAllReadOnly<DataMigrationStatus>(0, 0).ToList();
+                DataMigrationStatus pendingStatus = null;
+                DataMigrationStatus processingStatus = null;
 
-            // Get statuses
-            List<DataMigrationStatus> dataMigrationStatuses = GetAllReadOnly<DataMigrationStatus>(0, 0).ToList();
-            DataMigrationStatus pendingStatus = null;
-            DataMigrationStatus processingStatus = null;
-
-            if (dataMigrationStatuses != null)
-            {
-                pendingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "pending");
-                processingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "processing");
-            }
-
-            if (dataMigration != null)
-            {
-                // Set Migration Status to pending, set last trigger date
-                if (setToProcessing && processingStatus != null)
+                if (dataMigrationStatuses != null)
                 {
-                    dataMigration.DataMigrationStatusId = processingStatus.DataMigrationStatusId;
+                    pendingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "pending");
+                    processingStatus = dataMigrationStatuses.FirstOrDefault(s => s.DataMigrationStatusCode == "processing");
                 }
-                else if (pendingStatus != null)
+
+                if (dataMigration != null)
                 {
-                    dataMigration.DataMigrationStatusId = pendingStatus.DataMigrationStatusId;
-                }
-                dataMigration.LastTriggerDate = startDate;
+                    // Set Migration Status to pending, set last trigger date
+                    if (setToProcessing && processingStatus != null)
+                    {
+                        dataMigration.DataMigrationStatusId = processingStatus.DataMigrationStatusId;
+                    }
+                    else if (pendingStatus != null)
+                    {
+                        dataMigration.DataMigrationStatusId = pendingStatus.DataMigrationStatusId;
+                    }
+                    dataMigration.LastTriggerDate = startDate;
                 Save();
-            }
+                }
 
-           
-            LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Started", true);
+
+
+            logger.LogInformation("Saving migration history");
+                            LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Started", true);
 
         }
 
@@ -318,7 +321,7 @@ namespace generate.infrastructure.Repositories.App
             logger.LogInformation("[ExecuteSqlBasedMigrationJobAsync] Starting migration for {dataMigrationTypeCode}", dataMigrationTypeCode);
 
             StartMigration(dataMigrationTypeCode);
-            
+            logger.LogInformation("Done StartMigration call");
             using var scope = _scopeFactory.CreateScope();
             var localDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             localDbContext.Database.SetCommandTimeout(30000);
@@ -327,7 +330,7 @@ namespace generate.infrastructure.Repositories.App
 
             // Local CTS we control; will be cancelled when Hangfire signals cancellation
             using var cts = new CancellationTokenSource();
-            using var transaction = await localDbContext.Database.BeginTransactionAsync(cts.Token);
+            using var transaction = await localDbContext.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadUncommitted,cts.Token);
             Task monitoringTask = null;
             try
             {
@@ -360,8 +363,8 @@ namespace generate.infrastructure.Repositories.App
 
                 try
                 {
+                    
                     originalTimeout = localDbContext.Database.GetCommandTimeout();
-
                     await localDbContext.Database.ExecuteSqlRawAsync(procName, cts.Token);
                     logger.LogInformation("[ExecuteSqlBasedMigrationJobAsync] Migration stored proc {procName} executed successfully.", procName);
                     await transaction.CommitAsync(cts.Token);
@@ -378,7 +381,6 @@ namespace generate.infrastructure.Repositories.App
             {
                 await transaction.RollbackAsync(cts.Token).ConfigureAwait(false);
                 logger.LogError("General OperationCanceledException caught outer try {oex}", oex);
-                await transaction.RollbackAsync(cts.Token);
                 LogException(dataMigrationTypeCode, oex);
                 CompleteMigration(dataMigrationTypeCode, "error");
             }
