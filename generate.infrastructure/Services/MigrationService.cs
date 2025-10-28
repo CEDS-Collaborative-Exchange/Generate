@@ -39,7 +39,7 @@ namespace generate.infrastructure.Services
 
         public void CancelMigration(string dataMigrationTypeCode)
         {
-
+            Console.WriteLine($"Inside CancelMigration:{dataMigrationTypeCode}");
             _appRepository.LogDataMigrationHistory(dataMigrationTypeCode, "Canceling migration", true);
 
             var api = JobStorage.Current.GetMonitoringApi();
@@ -64,7 +64,7 @@ namespace generate.infrastructure.Services
 
         public void MigrateData(string dataMigrationTypeCode)
         {
-            
+            Console.WriteLine($"Inside MigrateData:{dataMigrationTypeCode}");
             if (dataMigrationTypeCode == "ods")
             {
 
