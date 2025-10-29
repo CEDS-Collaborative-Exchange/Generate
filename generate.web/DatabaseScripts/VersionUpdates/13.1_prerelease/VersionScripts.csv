@@ -4,6 +4,10 @@ VersionUpdates\\13.1_prerelease,App.TableChanges.sql,0
 VersionUpdates\\13.1_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.1_prerelease,App.Metadata.sql,0
 VersionUpdates\\13.1_prerelease,JunkTablePopulation.sql,0
+Views\\Drop,Debug.vwSchoolPerformanceIndicators_StagingTables.View.sql,0
+Views\\Create,Debug.vwSchoolPerformanceIndicators_StagingTables.View.sql,0
+Views\\Drop,Debug.vwSchoolPerformanceIndicators_FactTable.View.sql,0
+Views\\Create,Debug.vwSchoolPerformanceIndicators_FactTable.View.sql,0
 Views\\Drop,Debug.vwAssessment_StagingTables.View.sql,0
 Views\\Create,Debug.vwAssessment_StagingTables.View.sql,0
 Views\\Drop,Debug.vwAssessment_FactTable.View.sql,0
@@ -14,6 +18,10 @@ Views\\Drop,Debug.vwAssessment_StagingTables.View.sql,0
 Views\\Create,Debug.vwAssessment_StagingTables.View.sql,0
 Views\\Drop,Debug.vwAssessment_FactTable.View.sql,0
 Views\\Create,Debug.vwAssessment_FactTable.View.sql,0
+Views\\Drop,Debug.vwTitleI_FactTable.View.sql,0
+Views\\Create,Debug.vwTitleI_FactTable.View.sql,0
+Views\\Drop,RDS.vwTitleI_FactTable_222.View.sql,0
+Views\\Create,RDS.vwTitleI_FactTable_222.View.sql,0
 Views\\Drop,RDS.vwDimCteOutcomeIndicators.View.sql,0
 Views\\Create,RDS.vwDimCteOutcomeIndicators.View.sql,0
 Views\\Drop,Debug.vwNeglectedOrDelinquent_FactTable.View.sql,0

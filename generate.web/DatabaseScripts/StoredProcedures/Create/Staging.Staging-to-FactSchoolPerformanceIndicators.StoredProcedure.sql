@@ -142,8 +142,7 @@ BEGIN
 			AND ISNULL(sspi.SchoolPerformanceIndicatorStatus, 'MISSING') = ISNULL(rdins.IndicatorStatusMap, rdins.IndicatorStatusCode)
 	--SchoolPerformanceIndicatorStateDefinedStatuses (RDS)
 		LEFT JOIN RDS.DimSchoolPerformanceIndicatorStateDefinedStatuses rdspisds
-			ON ISNULL(sspi.SchoolPerformanceIndicatorStatus, 'MISSING') = ISNULL(rdspisds.SchoolPerformanceIndicatorStateDefinedStatusCode, 'MISSING')
-
+			ON ISNULL(sspi.SchoolPerformanceIndicatorStateDefinedStatus, 'MISSING') = ISNULL(rdspisds.SchoolPerformanceIndicatorStateDefinedStatusCode, 'MISSING')
 
 	--Final insert into RDS.FactSchoolPerformanceIndicators table
 		INSERT INTO [RDS].[FactSchoolPerformanceIndicators] (
