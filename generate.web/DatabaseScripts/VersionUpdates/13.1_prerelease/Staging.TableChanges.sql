@@ -191,6 +191,19 @@ Staging.SchoolPerformanceIndicators
 			('2025', 'RefSchoolPerformanceIndicators', NULL, 'PAELP2', 'PAELP2')
 	end
 
+--Add SSRD values to convert TitleIProgramType
+	if not exists (select 1 
+					from staging.SourceSystemReferenceData 
+					where tablename = 'RefTitleIProgramType'
+					and SchoolYear = '2025')
+	begin
+		insert into staging.SourceSystemReferenceData 
+		values ('2025', 'RefTitleIProgramType', NULL, 'LocalNeglectedProgram', 'LocalNeglectedProgram'),
+			('2025', 'RefTitleIProgramType', NULL, 'PrivateSchoolStudents', 'PrivateSchoolStudents'),
+			('2025', 'RefTitleIProgramType', NULL, 'SchoolwideProgram', 'SchoolwideProgram'),
+			('2025', 'RefTitleIProgramType', NULL, 'TargetedAssistanceProgram', 'TargetedAssistanceProgram')
+	end
+
 /************************************************************
 Source to Staging Assessment Stored Procedure Rename
 ************************************************************/

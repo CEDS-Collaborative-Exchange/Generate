@@ -23,6 +23,6 @@ AS
 		  	, a.[ProgramParticipationFosterCareEdFactsCode]
 	FROM [debug].[vwTitleI_FactTable] a
 	WHERE ProgramParticipationFosterCareEdFactsCode = 'FOSTERCARE' 
-		AND SchoolOperationalStatus IN ('Open','New') 
-		AND SchoolTypeCode in ('CareerAndTechnical','Alternative','Special','Regular')
-		AND TitleISchoolStatusEdFactsCode in ('TGELGBTGPROG', 'SWELIGTGPROG', 'SWELIGSWPROG')
+		AND LeaOperationalStatus IN ('Open','New') 
+		AND TitleIProgramTypeCode in ('LocalNeglectedProgram','PrivateSchoolStudents','SchoolwideProgram','TargetedAssistanceProgram')
+		--AND TitleISchoolStatusEdFactsCode in ('TGELGBTGPROG', 'SWELIGTGPROG', 'SWELIGSWPROG')
