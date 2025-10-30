@@ -197,7 +197,8 @@ namespace generate.infrastructure.Services
                     string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
                     detailUrl = string.Format(detailUrl, collectName, essDSNameAbbrv, maxVersionNumber.ToString(), fqYrName);
 
-                    var client1 = new RestClient(new RestClientOptions(new Uri(detailUrl)));
+                    var clientOptions = new RestClientOptions(new Uri(detailUrl)) { MaxTimeout = 180000 };
+                    var client1 = new RestClient(clientOptions);
                     var request1 = new RestRequest("", Method.Get);
                     var response1 = client1.Execute(request1);
 
@@ -2471,7 +2472,8 @@ namespace generate.infrastructure.Services
                 //fsLayoutURL = "https://edfacts.ed.gov/generate/DataSetYearVersionFSLayoutDetailsByAllAbbrv?collectionAbbrv=EDFACTS&dataSetAbbrv=ESS&versionNum=13&yearAbbrv=2022-2023";
                 //fqYrName = "2022";
 
-                var client1 = new RestClient(new RestClientOptions(new Uri(fsLayoutURL)));
+                var clientOptions = new RestClientOptions(new Uri(fsLayoutURL)) { MaxTimeout = 180000 };
+                var client1 = new RestClient(clientOptions);
                 var request1 = new RestRequest("", Method.Get);
                 var response1 = client1.Execute(request1);
 
@@ -2479,19 +2481,19 @@ namespace generate.infrastructure.Services
                 edfacts1 = edfacts1.Replace("{\"DataSetYearVersionFSLayoutDetails\":", "").Replace("]}", "]");
 
             }
-            else
-            {
+            //else
+            //{
 
-                var filename = dataSetAbbrv == "ESS" ? _fsMetaESSLayoutFileName : dataSetAbbrv == "CHRTR" ? _fsMetaCHRLayoutFileName : "";
-                var fileloc = _fsMetaFileLoc + "\\" + filename; //_fsMetaCHRDetailFileName;
+            //    var filename = dataSetAbbrv == "ESS" ? _fsMetaESSLayoutFileName : dataSetAbbrv == "CHRTR" ? _fsMetaCHRLayoutFileName : "";
+            //    var fileloc = _fsMetaFileLoc + "\\" + filename; //_fsMetaCHRDetailFileName;
 
-                using (StreamReader r = new StreamReader(fileloc))
-                {
-                    edfacts1 = r.ReadToEnd();
-                    edfacts1 = edfacts1.Replace("{\"DataSetYearVersionFSLayoutDetails\":", "").Replace("]}", "]");
-                }
+            //    using (StreamReader r = new StreamReader(fileloc))
+            //    {
+            //        edfacts1 = r.ReadToEnd();
+            //        edfacts1 = edfacts1.Replace("{\"DataSetYearVersionFSLayoutDetails\":", "").Replace("]}", "]");
+            //    }
 
-            }
+            //}
 
             List<DataSetYearVersionFSLayoutDetailsByAllAbbrv> DSYVrFSLay = JsonConvert.DeserializeObject<List<DataSetYearVersionFSLayoutDetailsByAllAbbrv>>(edfacts1);
 
@@ -2719,10 +2721,11 @@ namespace generate.infrastructure.Services
 
                         // check if file col exists
 
+                        fileCol = _appDbContext.FileColumns;
+
                         int filecolid = fileCol.
                         Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
                         && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
-                        && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
                         ).OrderBy(a => a.FileColumnId).
                         Select(a => a.FileColumnId).FirstOrDefault();
 
