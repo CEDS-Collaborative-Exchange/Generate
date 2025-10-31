@@ -1,0 +1,1 @@
+DROP PROCEDURE [Staging].[Staging-to-FactK12StudentAssessments]

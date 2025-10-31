@@ -75,7 +75,7 @@ BEGIN
 			, SeaId									int null
 			, LeaId									int null
 			, K12SchoolId							int null
-			, K12StaffId							int null
+			, K12Staff_CurrentId					int null
 			, K12StaffStatusId						int null
 			, K12StaffCategoryId					int null
 			, TitleIIIStatusId						int null
@@ -93,7 +93,7 @@ BEGIN
 			, ISNULL(rds.DimSeaId, -1)					SeaId
 			, ISNULL(rdl.DimLeaID, -1)					LeaId
 			, ISNULL(rdksch.DimK12SchoolId, -1)			K12SchoolId
-			, ISNULL(rdp.DimPersonId, -1)				K12StaffId
+			, ISNULL(rdpc.DimPersonId, -1)				K12Staff_CurrentId
 			, ISNULL(rdkss.DimK12StaffStatusId, -1)		K12StaffStatusId
 			, ISNULL(rdksc.DimK12StaffCategoryId, -1)	K12StaffCategoryId
 			, -1										TitleIIIStatusId
@@ -139,14 +139,11 @@ BEGIN
 		LEFT JOIN RDS.DimDates CredExp
 			ON ssa.CredentialExpirationDate = CredExp.DateValue
 	--person (rds)
-		JOIN RDS.DimPeople rdp
-			ON ssa.StaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState
-			AND rdp.IsActiveK12Staff = 1
-			AND ISNULL(ssa.FirstName, 'MISSING') = ISNULL(rdp.FirstName, 'MISSING')
-			AND ISNULL(ssa.MiddleName, 'MISSING') = ISNULL(rdp.MiddleName, 'MISSING')
-			AND ISNULL(ssa.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
-			AND @ChildCountDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
-			AND @ChildCountDate BETWEEN ssa.AssignmentStartDate AND ISNULL(ssa.AssignmentEndDate, @SYEndDate)
+		LEFT JOIN RDS.DimPeople_Current rdpc
+			ON ssa.StaffMemberIdentifierState = rdpc.K12StaffStaffMemberIdentifierState
+			AND ISNULL(ssa.Birthdate, '1/1/1900') = ISNULL(rdpc.BirthDate, '1/1/1900')
+			AND rdpc.IsActiveK12Staff = 1
+		WHERE @ChildCountDate BETWEEN ssa.AssignmentStartDate AND ISNULL(ssa.AssignmentEndDate, @SYEndDate)
 		
 	--Final insert into RDS.FactK12StaffCounts table
 		INSERT INTO RDS.FactK12StaffCounts ( 
@@ -156,6 +153,7 @@ BEGIN
 			, LeaId
 			, K12SchoolId
 			, K12StaffId
+			, K12Staff_CurrentId
 			, K12StaffStatusId
 			, K12StaffCategoryId
 			, TitleIIIStatusId
@@ -170,7 +168,8 @@ BEGIN
 			, SeaId
 			, LeaId
 			, K12SchoolId
-			, K12StaffId
+			, -1
+			, K12Staff_CurrentId
 			, K12StaffStatusId
 			, K12StaffCategoryId
 			, TitleIIIStatusId

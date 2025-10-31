@@ -149,7 +149,7 @@ BEGIN
 			, -1														IEUId
 			, ISNULL(rdl.DimLeaID, -1)									LEAId
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
-			, ISNULL(rdp.DimPersonId, -1)								K12StudentId
+			, -1														K12StudentId
 			, ISNULL(rdpc.DimPersonId, -1)								K12Student_CurrentId
 			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId
 			, -1														LanguageId
@@ -201,6 +201,9 @@ BEGIN
 		--dimpeople_current (rds)
 			LEFT JOIN RDS.DimPeople_Current rdpc
 				ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
+				AND ISNULL(ske.FirstName, '') = ISNULL(rdpc.FirstName, '')
+				AND ISNULL(ske.MiddleName, '') = ISNULL(rdpc.MiddleName, '')
+				AND ISNULL(ske.LastOrSurname, 'MISSING') = rdpc.LastOrSurname
 				AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdpc.BirthDate, '1/1/1900')
 
 			LEFT JOIN RDS.DimDates rdd

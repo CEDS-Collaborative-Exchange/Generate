@@ -59,28 +59,7 @@ BEGIN
 		FROM RDS.DimSchoolYears
 		WHERE SchoolYear = @SchoolYear
 
-	--Get the set of students from DimPeople to be used for the migrated SY
-		if object_id(N'tempdb..#dimPeople') is not null drop table #dimPeople
-
-		select K12StudentStudentIdentifierState
-			, max(DimPersonId)								DimPersonId
-			, min(RecordStartDateTime)						RecordStartDateTime
-			, max(isnull(RecordEndDateTime, @SYEndDate))	RecordEndDateTime
-			, max(isnull(birthdate, '1900-01-01'))			BirthDate
-		into #dimPeople
-		from rds.DimPeople
-		where ((RecordStartDateTime < @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) > @SYStartDate)
-			or (RecordStartDateTime >= @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) <= @SYEndDate))
-		and IsActiveK12Student = 1
-		group by K12StudentStudentIdentifierState
-		order by K12StudentStudentIdentifierState
-
-		create index IDX_dimPeople ON #dimPeople (K12StudentStudentIdentifierState, DimPersonId, RecordStartDateTime, RecordEndDateTime, Birthdate)
-
-	--reset the RecordStartDateTime if the date is prior to the default start date of 7/1
-		update #dimPeople
-		set RecordStartDateTime = @SYStartDate
-		where RecordStartDateTime < @SYStartDate
+	-- No longer using #dimPeople temp table - direct join to DimPeople_Current
 
 	--Create the temp views (and any relevant indexes) needed for this domain
 	-- #vwAssessments
@@ -410,6 +389,7 @@ BEGIN
 			, LeaId											int null	
 			, K12SchoolId									int null	
 			, K12StudentId									int null	
+			, K12Student_CurrentId							int null	
 			, GradeLevelWhenAssessedId						int null	
 			, AssessmentId									int null	
 			, AssessmentSubtestId							int null		
@@ -452,7 +432,8 @@ BEGIN
 			, -1															IeuId									
 			, ISNULL(rdl.DimLeaID, -1)										LeaId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)								K12SchoolId							
-			, ISNULL(rdp.DimPersonId, -1)									K12StudentId							
+			, -1														K12StudentId							
+			, ISNULL(rdpc.DimPersonId, -1)									K12Student_CurrentId					
 			, ISNULL(rgls.DimGradeLevelId, -1)								GradeLevelWhenAssessedId				
 			, ISNULL(rda.DimAssessmentId, -1)								AssessmentId							
 			, -1															AssessmentSubtestId					
@@ -505,11 +486,11 @@ BEGIN
 		--seas (rds)			
 			JOIN RDS.DimSeas rds
 				ON sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)		
-		--dimpeople	(rds)
-			JOIN #dimPeople rdp
-				ON ske.StudentIdentifierState 			= rdp.K12StudentStudentIdentifierState
-				AND ISNULL(ske.Birthdate, '1/1/1900') 	= ISNULL(rdp.BirthDate, '1/1/1900')
-				AND ISNULL(sar.AssessmentAdministrationStartDate, '1/1/1900') BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
+		--dimpeople	(rds) - direct join to DimPeople_Current
+			LEFT JOIN RDS.DimPeople_Current rdpc
+				ON ISNULL(ske.StudentIdentifierState, '') = ISNULL(rdpc.K12StudentStudentIdentifierState, '')
+				AND ISNULL(ske.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
+				AND rdpc.IsActiveK12Student = 1
 		--assessments (rds)
 			LEFT JOIN #vwAssessments rda
 				ON ISNULL(sar.AssessmentIdentifier, 'MISSING') 			= ISNULL(rda.AssessmentIdentifierState, 'MISSING')
@@ -786,7 +767,7 @@ BEGIN
 	FROM RDS.FactK12StudentAssessments rfksa
 	JOIN RDS.DimSchoolYears rdsy
 		ON rfksa.SchoolYearId = rdsy.DimSchoolYearId
-	JOIN RDS.DimPeople rdp
+	JOIN RDS.DimPeople_Current rdp
 		ON rfksa.K12StudentId = rdp.DimPersonId
 	JOIN RDS.DimK12Schools rdks
 		ON rfksa.K12SchoolId = rdks.DimK12SchoolId

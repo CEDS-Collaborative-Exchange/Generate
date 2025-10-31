@@ -131,7 +131,8 @@ BEGIN
 			, -1														IEUId									
 			, ISNULL(rdl.DimLeaID, -1)									LEAId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId							
-			, ISNULL(rdp.DimPersonId, -1)								K12StudentId							
+			, -1														K12StudentId							
+			, ISNULL(rdpc.DimPersonId, -1)								K12Student_CurrentId							
 			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId							
 			, ISNULL(rdds.DimDisabilityStatusId, -1)					IdeaStatusId							
 			, -1														LanguageId							
@@ -243,14 +244,11 @@ BEGIN
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
-		JOIN RDS.DimPeople rdp
+		JOIN RDS.DimPeople_Current rdpc
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND rdp.IsActiveK12Student = 1
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
-			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
+
 
 
 	--Final insert into RDS.FactK12StudentCounts table
@@ -267,6 +265,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
+			, [K12Student_CurrentId]
 			, [IdeaStatusId]
 			, [DisabilityStatusId]
 			, [LanguageId]
@@ -301,6 +300,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
+			, [K12Student_CurrentId]
 			, [IdeaStatusId]
 			, [DisabilityStatusId]
 			, [LanguageId]

@@ -1,7 +1,8 @@
 /**********************************************************************
 Author: AEM Corp
 Date:	1/6/2022
-Description: Migrates Child Count Data from Staging to RDS.FactK12StudentCounts
+Description: Migrates Child Count Data fr			, -1																	K12StudentId
+			, ISNULL(rdpc.DimPersonId, -1)									K12Student_CurrentId Staging to RDS.FactK12StudentCounts
 
 NOTE: This Stored Procedure processes files: 002, 089
 ************************************************************************/
@@ -45,28 +46,7 @@ BEGIN
 
 		SELECT @ChildCountDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@ChildCountDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ChildCountDate) AS VARCHAR(2)) AS DATE)
 
-	--Get the set of students from DimPeople to be used for the migrated SY
-		if object_id(N'tempdb..#dimPeople') is not null drop table #dimPeople
-
-		select K12StudentStudentIdentifierState
-			, max(DimPersonId)								DimPersonId
-			, min(RecordStartDateTime)						RecordStartDateTime
-			, max(isnull(RecordEndDateTime, @SYEndDate))	RecordEndDateTime
-			, max(isnull(birthdate, '1900-01-01'))			BirthDate
-		into #dimPeople
-		from rds.DimPeople
-		where ((RecordStartDateTime < @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) > @SYStartDate)
-			or (RecordStartDateTime >= @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) <= @SYEndDate))
-		and IsActiveK12Student = 1
-		group by K12StudentStudentIdentifierState
-		order by K12StudentStudentIdentifierState
-
-		create index IDX_dimPeople ON #dimPeople (K12StudentStudentIdentifierState, DimPersonId, RecordStartDateTime, RecordEndDateTime, Birthdate)
-
-	--reset the RecordStartDateTime if the date is prior to the default start date of 7/1
-		update #dimPeople
-		set RecordStartDateTime = @SYStartDate
-		where RecordStartDateTime < @SYStartDate
+	-- No longer using #dimPeople temp table - direct join to DimPeople_Current
 
 	--Create the temp tables (and any relevant indexes) needed for this domain
 		SELECT *
@@ -131,6 +111,7 @@ BEGIN
 			, LEAId									int null
 			, K12SchoolId							int null
 			, K12StudentId							int null
+			, K12Student_CurrentId					int null
 			, IdeaStatusId							int null
 			, LanguageId							int null
 			, MigrantStatusId						int null
@@ -166,12 +147,13 @@ BEGIN
 			, -1														IEUId
 			, ISNULL(rdl.DimLeaID, -1)									LEAId
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
-			, ISNULL(rdp.DimPersonId, -1)								K12StudentId
+			, -1														K12StudentId
+			, ISNULL(rdpc.DimPersonId, -1)								K12Student_CurrentId
 			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId
 			, -1														LanguageId
 			, -1														MigrantStatusId
 			, -1														TitleIStatusId
-			, -1														TitleIIIStatusId
+			, -1		+												TitleIIIStatusId
 			, -1														AttendanceId
 			, -1														CohortStatusId
 			, -1														NOrDStatusId
@@ -206,14 +188,14 @@ BEGIN
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sppse.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sppse.SchoolIdentifierSea,'')
 				AND @ChildCountDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
-		--dimpeople	(rds)
-			JOIN #dimPeople rdp
-				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-				AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-				AND @ChildCountDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
+		--dimpeople	(rds) - direct join to DimPeople_Current
+			LEFT JOIN RDS.DimPeople_Current rdpc
+				ON ISNULL(ske.StudentIdentifierState, '') = ISNULL(rdpc.K12StudentStudentIdentifierState, '')
+				AND ISNULL(ske.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
+				AND rdpc.IsActiveK12Student = 1
+		--date (rds)			
 			LEFT JOIN RDS.DimDates rdd
 				ON sppse.ProgramParticipationEndDate = rdd.DateValue
-				AND rdd.DateValue BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
 		--leas (rds)	
 			LEFT JOIN RDS.DimLeas rdl
 				ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
@@ -287,6 +269,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
+			, [K12Student_CurrentId]
 			, [IdeaStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]
@@ -320,6 +303,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
+			, [K12Student_CurrentId]
 			, [IdeaStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]

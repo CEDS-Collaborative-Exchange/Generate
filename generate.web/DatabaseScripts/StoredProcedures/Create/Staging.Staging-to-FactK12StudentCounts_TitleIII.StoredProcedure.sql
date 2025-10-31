@@ -79,6 +79,7 @@ BEGIN
         , [ProgramStatusId]
         , [K12SchoolId]
         , [K12StudentId]
+        , [K12Student_CurrentId]
         , [StudentCount]
         , [LanguageId]
         , [MigrantId]
@@ -105,7 +106,8 @@ BEGIN
 		, -1										IdeaStatusId	
 		, -1										ProgramStatusId
 		, ISNULL(rdksch.DimK12SchoolId, -1)			K12SchoolId
-		, ISNULL(rdks.DimK12StudentId, -1)			K12StudentId
+		, -1										K12StudentId
+		, rdpc.DimPersonId							K12Student_CurrentId
 		, 1											StudentCount
 		, -1										LanguageId
 		, -1										MigrantId
@@ -157,13 +159,9 @@ BEGIN
 		--			when spr.RaceType IS NULL AND ske.HispanicLatinoEthnicity = 1 then 'HispaniceorLatinoEthnicity'
 		--			when spr.RaceType IS NULL AND ske.HispanicLatinoEthnicity is null then 'Missing'
 		--		END
-		LEFT JOIN RDS.DimK12Students rdks
-			ON ske.Student_Identifier_State = rdks.StateStudentIdentifier
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdks.FirstName, '')
-			AND ISNULL(ske.MiddleName, '') = ISNULL(rdks.MiddleName, '')
-			AND ISNULL(ske.LastName, 'MISSING') = rdks.LastName
-			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdks.BirthDate, '1/1/1900')
-			AND @SessionBeginDate BETWEEN rdks.RecordStartDateTime AND ISNULL(rdks.RecordEndDateTime, GETDATE())
+		LEFT JOIN RDS.DimPeople_Current rdpc
+			ON ske.Student_Identifier_State = rdpc.K12StudentStudentIdentifierState
+			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdpc.BirthDate, '1/1/1900')
 	WHERE 
 		(ppt3.ProgramParticipationBeginDate < @SessionEndDate) and (ppt3.ProgramParticipationEndDate > @SessionBeginDate) 
 		OR 

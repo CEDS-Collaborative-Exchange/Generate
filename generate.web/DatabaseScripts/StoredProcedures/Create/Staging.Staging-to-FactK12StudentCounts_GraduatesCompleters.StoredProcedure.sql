@@ -44,28 +44,7 @@ BEGIN
 		SELECT @ReportingStartDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-10-01'AS DATE)
 		SELECT @ReportingEndDate = CAST(CAST(@SchoolYear AS CHAR(4)) + '-09-30'AS DATE)
 
-	--Get the set of students from DimPeople to be used for the migrated SY
-		if object_id(N'tempdb..#dimPeople') is not null drop table #dimPeople
-
-		select K12StudentStudentIdentifierState
-			, max(DimPersonId)								DimPersonId
-			, min(RecordStartDateTime)						RecordStartDateTime
-			, max(isnull(RecordEndDateTime, @SYEndDate))	RecordEndDateTime
-			, max(isnull(birthdate, '1900-01-01'))			BirthDate
-		into #dimPeople
-		from rds.DimPeople
-		where ((RecordStartDateTime < @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) > @SYStartDate)
-			or (RecordStartDateTime >= @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) <= @SYEndDate))
-		and IsActiveK12Student = 1
-		group by K12StudentStudentIdentifierState
-		order by K12StudentStudentIdentifierState
-
-		create index IDX_dimPeople ON #dimPeople (K12StudentStudentIdentifierState, DimPersonId, RecordStartDateTime, RecordEndDateTime, Birthdate)
-
-	--reset the RecordStartDateTime if the date is prior to the default start date of 7/1
-		update #dimPeople
-		set RecordStartDateTime = @SYStartDate
-		where RecordStartDateTime < @SYStartDate
+	-- No longer using #dimPeople temp table - direct join to DimPeople_Current
 
 	--Create the temp views (and any relevant indexes) needed for this domain
 		SELECT *
@@ -156,6 +135,7 @@ BEGIN
 			, LEAId										int null
 			, K12SchoolId								int null
 			, K12StudentId								int null
+			, K12Student_CurrentId						int null
 			, IdeaStatusId								int null
 			, LanguageId								int null
 			, MigrantStatusId							int null
@@ -191,7 +171,8 @@ BEGIN
 			, -1														IEUId									
 			, ISNULL(rdl.DimLeaID, -1)									LEAId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId							
-			, ISNULL(rdp.DimPersonId, -1)								K12StudentId							
+			, -1														K12StudentId							
+			, ISNULL(rdpc.DimPersonId, -1)								K12Student_CurrentId
 			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId							
 			, -1														LanguageId							
 			, ISNULL(rdms.DimMigrantStatusId, -1)						MigrantStatusId						
@@ -216,11 +197,10 @@ BEGIN
 		FROM Staging.K12Enrollment ske
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
-		JOIN #dimPeople rdp
-			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND ((rdp.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
-				OR (rdp.RecordStartDateTime < @ReportingStartDate AND ISNULL(rdp.RecordEndDateTime, @SYEndDate) > @ReportingStartDate))
+		LEFT JOIN RDS.DimPeople_Current rdpc
+			ON ISNULL(ske.StudentIdentifierState, '') = ISNULL(rdpc.K12StudentStudentIdentifierState, '')
+			AND ISNULL(ske.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
+			AND rdpc.IsActiveK12Student = 1
 		JOIN RDS.DimSeas rds
 			ON ((rds.RecordStartDateTime BETWEEN @ReportingStartDate and @ReportingEndDate)
 				OR (rds.RecordStartDateTime < @ReportingStartDate AND ISNULL(rds.RecordEndDateTime, @SYEndDate) > @ReportingStartDate))
@@ -337,6 +317,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
+			, [K12Student_CurrentId]
 			, [IdeaStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]
@@ -371,6 +352,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
+			, [K12Student_CurrentId]
 			, [IdeaStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]

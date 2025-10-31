@@ -99,6 +99,9 @@ BEGIN
 		AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
 	LEFT JOIN RDS.DimPeople_Current rdpc
 		ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
+		AND ISNULL(ske.FirstName, '') = ISNULL(rdpc.FirstName, '')
+		AND ISNULL(ske.MiddleName, '') = ISNULL(rdpc.MiddleName, '')
+		AND ISNULL(ske.LastOrSurname, 'MISSING') = ISNULL(rdpc.LastOrSurname, 'MISSING')
 		AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdpc.BirthDate, '1/1/1900')
 	LEFT JOIN RDS.vwDimK12Demographics rdkd
 		ON rsy.SchoolYear = rdkd.SchoolYear

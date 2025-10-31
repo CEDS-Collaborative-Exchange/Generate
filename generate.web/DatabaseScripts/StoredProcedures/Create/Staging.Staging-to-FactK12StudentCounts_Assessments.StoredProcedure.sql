@@ -11,8 +11,6 @@ AS
 
 BEGIN
 
-declare @schoolyear int = 2023
-
 	-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.
 	SET NOCOUNT ON;
 
@@ -271,7 +269,8 @@ declare @schoolyear int = 2023
 			, -1														IeuId									
 			, ISNULL(rdl.DimLeaID, -1)									LeaId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId							
-			, ISNULL(rdp.DimPersonId, -1)								K12StudentId							
+			, -1														K12StudentId							
+			, ISNULL(rdpc.DimPersonId, -1)								K12Student_CurrentId
 			, ISNULL(rgls.DimGradeLevelId, -1)							GradeLevelWhenAssessedId				
 			, -1														AssessmentId							
 			, -1														AssessmentSubtestId					
@@ -319,15 +318,11 @@ declare @schoolyear int = 2023
 				ON ske.StudentIdentifierState = sar.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sar.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sar.SchoolIdentifierSea,'')
-		--dimpeople	(rds)
-			JOIN RDS.DimPeople rdp
-				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-				AND IsActiveK12Student = 1
-				AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
-				AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-				AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
-				AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-				AND @ChildCountDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, GETDATE())
+		--dimpeople_current (rds)
+			LEFT JOIN RDS.DimPeople_Current rdpc
+				ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
+				AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdpc.BirthDate, '1/1/1900')
+				AND rdpc.IsActiveK12Student = 1
 		--leas (rds)	
 			LEFT JOIN RDS.DimLeas rdl
 				ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
@@ -461,7 +456,8 @@ declare @schoolyear int = 2023
 			, [IeuId]									
 			, [LeaId]									
 			, [K12SchoolId]
-			, [K12StudentId]							
+			, [K12StudentId]
+			, [K12Student_CurrentId]							
 			, [GradeLevelWhenAssessedId]
 			, [AssessmentId]			
 			, [AssessmentSubtestId]
@@ -502,7 +498,8 @@ declare @schoolyear int = 2023
 			, [IeuId]									
 			, [LeaId]									
 			, [K12SchoolId]
-			, [K12StudentId]							
+			, [K12StudentId]
+			, [K12Student_CurrentId]							
 			, [GradeLevelWhenAssessedId]
 			, [AssessmentId]			
 			, [AssessmentSubtestId]

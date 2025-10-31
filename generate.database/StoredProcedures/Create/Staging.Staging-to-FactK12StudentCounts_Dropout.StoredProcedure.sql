@@ -180,7 +180,8 @@ BEGIN
 			, -1														IEUId									
 			, ISNULL(rdl.DimLeaID, -1)									LEAId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId							
-			, ISNULL(rdp.DimPersonId, -1)								K12StudentId							
+			, -1														K12StudentId							
+			, ISNULL(rdis.DimIdeaStatusId, -1)							K12Student_CurrentId							
 			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId							
 			, ISNULL(rdds.DimDisabilityStatusId, -1)						DisabilityStatusId							
 			, -1														LanguageId							

@@ -1,7 +1,15 @@
 /**********************************************************************
 Author: AEM Corp
 Date:	3/1/2022
-Description: Migrates Exiting Data from Staging to RDS.FactK12StudentCounts
+Description			, K12SchoolId									int null
+			, K12StudentId									int null
+			, K12Student_CurrentId							int null
+
+			, IdeaStatusId									int nullgrates Exiting Data from Staging to 			, ISNULL(rdksch.DimK12SchoolId, -1)						K12SchoolId
+			, -1													K12StudentId
+			, rdpc.DimPersonId									K12Student_CurrentId
+
+			, -1													IdeaStatusIdFactK12StudentCounts
 
 NOTE: This Stored Procedure processes files: 009
 ************************************************************************/
@@ -157,7 +165,8 @@ BEGIN
 			, -1														IEUId
 			, ISNULL(rdl.DimLeaID, -1)									LEAId
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
-			, ISNULL(rdp.DimPersonId, -1)								K12StudentId
+			, -1														K12StudentId
+			, ISNULL(rdpc.DimPersonId, -1)								K12Student_CurrentId
 
 			, -1														IdeaStatusId
 			, -1														LanguageId
@@ -195,14 +204,10 @@ BEGIN
 		JOIN RDS.DimSeas rds
 			ON rdd.DateValue BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--student
-		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
---			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
-			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND rdd.DateValue BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
-			AND IsActiveK12Student = 1
+		LEFT JOIN RDS.DimPeople_Current rdpc
+			ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
+			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdpc.BirthDate, '1/1/1900')
+			AND rdpc.IsActiveK12Student = 1
 	--demographics
 		JOIN RDS.vwDimK12Demographics rdkd
  			ON rsy.SchoolYear = rdkd.SchoolYear
@@ -308,6 +313,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
+			, [K12Student_CurrentId]
 			, [IdeaStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]
@@ -341,6 +347,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
+			, [K12Student_CurrentId]
 			, [IdeaStatusId]
 			, [LanguageId]
 			, [MigrantStatusId]

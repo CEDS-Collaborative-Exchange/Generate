@@ -28,6 +28,8 @@ BEGIN
 		SELECT @EndDate = CAST('6/30/' + CAST(@SchoolYear  AS VARCHAR(4)) AS DATE)
 
 	--Create the temp views (and any relevant indexes) needed for this domain
+	-- No longer using #dimPeople temp table - direct join to DimPeople_Current
+
 		SELECT *
 		INTO #vwGradeLevels
 		FROM RDS.vwDimGradeLevels
@@ -103,6 +105,7 @@ BEGIN
 			, LEAId									int null
 			, K12SchoolId							int null
 			, K12StudentId							int null
+			, K12Student_CurrentId					int null
 			, IdeaStatusId							int null
 			, DisabilityStatusId					int null
 			, LanguageId							int null
@@ -139,7 +142,8 @@ BEGIN
 			, -1														IEUId									
 			, ISNULL(rdl.DimLeaID, -1)									LEAId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId							
-			, ISNULL(rdp.DimPersonId, -1)								K12StudentId							
+			, -1														K12StudentId							
+			, ISNULL(rdpc.DimPersonId, -1)								K12Student_CurrentId					
 			, -1														IdeaStatusId							
 			, -1														DisabilityStatusId							
 			, -1														LanguageId							
@@ -222,14 +226,11 @@ BEGIN
 			ON rdidt.SchoolYear = @SchoolYear
 			AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING') = ISNULL(rdidt.IdeaDisabilityTypeMap, rdidt.IdeaDisabilityTypeCode)
 
-		JOIN RDS.DimPeople rdp
-			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND rdp.IsActiveK12Student = 1
-			AND ISNULL(ske.FirstName, '') = ISNULL(rdp.FirstName, '')
-			AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
-			AND ISNULL(ske.LastOrSurname, 'MISSING') = rdp.LastOrSurname
-			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
-			AND ske.EnrollmentEntryDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @EndDate)
+	--student (rds) - direct join to DimPeople_Current
+		LEFT JOIN RDS.DimPeople_Current rdpc
+			ON ISNULL(ske.StudentIdentifierState, '') = ISNULL(rdpc.K12StudentStudentIdentifierState, '')
+			AND ISNULL(ske.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
+			AND rdpc.IsActiveK12Student = 1
 
 
 	--Final insert into RDS.FactK12StudentCounts table
@@ -246,6 +247,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
+			, [K12Student_CurrentId]
 			, [IdeaStatusId]
 			, [DisabilityStatusId]
 			, [LanguageId]
@@ -280,6 +282,7 @@ BEGIN
 			, [LEAId]
 			, [K12SchoolId]
 			, [K12StudentId]
+			, [K12Student_CurrentId]
 			, [IdeaStatusId]
 			, [DisabilityStatusId]
 			, [LanguageId]
