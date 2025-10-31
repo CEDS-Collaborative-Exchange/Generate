@@ -18,6 +18,7 @@ BEGIN
 		, LeaIndividualizedEducationProgramId
 		, K12SchoolId
 		, K12StudentId
+		, K12Student_CurrentId
 		, K12DemographicId
 		, K12CourseId
 		, K12CourseStatusId
@@ -39,6 +40,7 @@ BEGIN
 		, ISNULL(rdlIep.DimLeaId, -1) AS LeaIndividualizedEducationProgramId
 		, ISNULL(rdksch.DimK12SchoolId, -1) AS K12SchoolId
 		, ISNULL(rdp.DimPersonId, -1) AS K12StudentId
+		, ISNULL(rdpc.DimPersonId, -1) AS K12Student_CurrentId
 		, ISNULL(rdkd.DimK12DemographicId, -1) AS K12DemographicId
 		, -1 as DimK12CourseId
 		, ISNULL(coursestatus.DimK12CourseStatusId,-1) as DimK12CourseStatusId
@@ -95,6 +97,9 @@ BEGIN
 		AND ISNULL(ske.MiddleName, '') = ISNULL(rdp.MiddleName, '')
 		AND ISNULL(ske.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
 		AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
+	LEFT JOIN RDS.DimPeople_Current rdpc
+		ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
+		AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdpc.BirthDate, '1/1/1900')
 	LEFT JOIN RDS.vwDimK12Demographics rdkd
 		ON rsy.SchoolYear = rdkd.SchoolYear
 		AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)

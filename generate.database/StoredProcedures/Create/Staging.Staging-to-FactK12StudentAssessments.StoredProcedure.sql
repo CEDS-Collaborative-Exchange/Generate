@@ -386,6 +386,7 @@ BEGIN
 			, LeaId											int null	
 			, K12SchoolId									int null	
 			, K12StudentId									int null	
+			, K12Student_CurrentId							int null	
 			, GradeLevelWhenAssessedId						int null	
 			, AssessmentId									int null	
 			, AssessmentSubtestId							int null		
@@ -428,6 +429,7 @@ BEGIN
 			, ISNULL(rdl.DimLeaID, -1)										LeaId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)								K12SchoolId							
 			, ISNULL(rdp.DimPersonId, -1)									K12StudentId							
+			, ISNULL(rdpc.DimPersonId, -1)									K12Student_CurrentId					
 			, ISNULL(rgls.DimGradeLevelId, -1)								GradeLevelWhenAssessedId				
 			, ISNULL(rda.DimAssessmentId, -1)								AssessmentId							
 			, -1															AssessmentSubtestId					
@@ -485,6 +487,10 @@ BEGIN
 				AND IsActiveK12Student 					= 1
 				AND ISNULL(ske.Birthdate, '1/1/1900') 	= ISNULL(rdp.BirthDate, '1/1/1900')
 				AND ISNULL(sar.AssessmentAdministrationStartDate, '1/1/1900') BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
+		--dimpeople_current (rds)
+			LEFT JOIN RDS.DimPeople_Current rdpc
+				ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
+				AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdpc.BirthDate, '1/1/1900')
 		--assessments (rds)
 			LEFT JOIN #vwAssessments rda
 				ON ISNULL(sar.AssessmentIdentifier, 'MISSING') 			= ISNULL(rda.AssessmentIdentifierState, 'MISSING')
@@ -622,6 +628,7 @@ BEGIN
 			, [LeaId]									
 			, [K12SchoolId]
 			, [K12StudentId]							
+			, [K12Student_CurrentId]					
 			, [GradeLevelWhenAssessedId]
 			, [AssessmentId]			
 			, [AssessmentSubtestId]
@@ -662,6 +669,7 @@ BEGIN
 			, [LeaId]									
 			, [K12SchoolId]
 			, [K12StudentId]							
+			, [K12Student_CurrentId]					
 			, [GradeLevelWhenAssessedId]
 			, [AssessmentId]			
 			, [AssessmentSubtestId]

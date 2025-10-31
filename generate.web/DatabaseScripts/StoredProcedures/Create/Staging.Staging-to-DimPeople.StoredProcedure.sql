@@ -22,6 +22,20 @@ BEGIN
 			SET IDENTITY_INSERT RDS.DimPeople off
 		END
 
+		-- Ensure -1 record exists in DimPeople_Current
+		IF NOT EXISTS (SELECT 1 FROM RDS.DimPeople_Current WHERE DimPersonId = -1)
+		BEGIN
+
+			SET IDENTITY_INSERT RDS.DimPeople_Current ON
+
+			INSERT INTO RDS.DimPeople_Current
+			(DimPersonId)
+			VALUES
+			(-1)
+	
+			SET IDENTITY_INSERT RDS.DimPeople_Current off
+		END
+
 		IF OBJECT_ID(N'tempdb..#People') IS NOT NULL DROP TABLE #People
 		CREATE TABLE #People (
 			  BirthDate						  DATE
@@ -305,6 +319,53 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#upd') IS NOT NULL DROP TABLE #upd
 		
 		ALTER INDEX ALL ON RDS.DimPeople REBUILD
+
+		-- Populate DimPeople_Current with current/active records
+		-- Clear existing records (except -1) 
+		DELETE FROM RDS.DimPeople_Current 
+		WHERE DimPersonId <> -1
+
+		-- Insert current records from DimPeople into DimPeople_Current
+		INSERT INTO RDS.DimPeople_Current (
+			DimPersonId,
+			BirthDate,
+			FirstName,
+			LastOrSurname,
+			MiddleName,
+			PersonalTitleOrPrefix,
+			PositionTitle,
+			ElectronicEmailAddressWork,
+			TelephoneNumberWork,
+			K12StudentStudentIdentifierState,
+			PsStudentStudentIdentifierState,
+			K12StaffMemberIdentiferState,
+			IsActiveK12Student,
+			IsActivePsStudent,
+			IsActiveK12StaffMember,
+			RecordStartDateTime,
+			RecordEndDateTime
+		)
+		SELECT 
+			DimPersonId,
+			BirthDate,
+			FirstName,
+			LastOrSurname,
+			MiddleName,
+			PersonalTitleOrPrefix,
+			PositionTitle,
+			ElectronicEmailAddressWork,
+			TelephoneNumberWork,
+			K12StudentStudentIdentifierState,
+			PsStudentStudentIdentifierState,
+			K12StaffMemberIdentiferState,
+			IsActiveK12Student,
+			IsActivePsStudent,
+			IsActiveK12StaffMember,
+			RecordStartDateTime,
+			RecordEndDateTime
+		FROM RDS.DimPeople
+		WHERE RecordEndDateTime IS NULL  -- Only current/active records
+		AND DimPersonId <> -1
 
 		COMMIT TRANSACTION
 

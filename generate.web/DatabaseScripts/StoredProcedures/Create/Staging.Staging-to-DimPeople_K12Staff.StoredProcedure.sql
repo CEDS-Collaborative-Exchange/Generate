@@ -20,6 +20,20 @@ BEGIN
 			SET IDENTITY_INSERT RDS.DimPeople off
 		END
 
+		-- Ensure -1 record exists in DimPeople_Current
+		IF NOT EXISTS (SELECT 1 FROM RDS.DimPeople_Current WHERE DimPersonId = -1)
+		BEGIN
+
+			SET IDENTITY_INSERT RDS.DimPeople_Current ON
+
+			INSERT INTO RDS.DimPeople_Current
+			(DimPersonId)
+			VALUES
+			(-1)
+	
+			SET IDENTITY_INSERT RDS.DimPeople_Current off
+		END
+
 		CREATE TABLE #k12Staff (
 			FirstName										NVARCHAR(75) NULL
 			, MiddleName									NVARCHAR(75) NULL
@@ -112,6 +126,53 @@ BEGIN
 			AND staff.RecordStartDateTime = upd.RecordStartDateTime
 		WHERE upd.RecordEndDateTime <> '1900-01-01 00:00:00.000'
 			AND staff.RecordEndDateTime IS NULL
+
+		-- Populate DimPeople_Current with active K12 staff records
+		-- Populate DimPeople_Current with active K12 staff records
+
+		-- Insert new current K12 staff records into DimPeople_Current
+		INSERT INTO RDS.DimPeople_Current (
+			FirstName,
+			MiddleName,
+			LastOrSurname,
+			BirthDate,
+			PositionTitle,
+			K12StaffStaffMemberIdentifierState,
+			IsActiveK12Staff
+		)
+		SELECT 
+			rdp.FirstName,
+			rdp.MiddleName,
+			rdp.LastOrSurname,
+			rdp.BirthDate,
+			rdp.PositionTitle,
+			rdp.K12StaffStaffMemberIdentifierState,
+			rdp.IsActiveK12Staff
+		FROM RDS.DimPeople rdp
+		LEFT JOIN RDS.DimPeople_Current rdpc
+			ON rdp.K12StaffStaffMemberIdentifierState = rdpc.K12StaffStaffMemberIdentifierState
+			AND rdp.BirthDate = rdpc.BirthDate
+		WHERE rdp.IsActiveK12Staff = 1 
+		AND rdpc.DimPersonId IS NULL  -- Only new active records
+		AND rdp.RecordEndDateTime IS NULL  -- Only current/active records
+		AND rdp.DimPersonId <> -1
+
+		-- Update existing records in DimPeople_Current
+		UPDATE rdpc
+		SET 
+			rdpc.FirstName = rdp.FirstName,
+			rdpc.MiddleName = rdp.MiddleName,
+			rdpc.LastOrSurname = rdp.LastOrSurname,
+			rdpc.BirthDate = rdp.BirthDate,
+			rdpc.PositionTitle = rdp.PositionTitle,
+			rdpc.IsActiveK12Staff = rdp.IsActiveK12Staff
+		FROM RDS.DimPeople_Current rdpc
+		INNER JOIN RDS.DimPeople rdp
+			ON rdpc.K12StaffStaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState
+			AND rdpc.BirthDate = rdp.BirthDate
+		WHERE rdp.IsActiveK12Staff = 1
+		AND rdp.RecordEndDateTime IS NULL  -- Only current/active records
+		AND rdp.DimPersonId <> -1
 				
 	END TRY
 	BEGIN CATCH

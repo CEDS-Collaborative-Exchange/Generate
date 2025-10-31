@@ -210,7 +210,7 @@ BEGIN
 								on fact.SchoolYearId = dates.DimSchoolYearId
 							inner join rds.DimSeas sea 
 								on fact.SeaId = sea.DimSeaId
-							left outer join rds.DimPeople p 
+							left outer join rds.DimPeople_Current p 
 								on fact.K12StaffId = p.DimPersonId
 						where dates.SchoolYear = @reportYear 
 						and sea.DimSeaId <> -1
@@ -1597,7 +1597,7 @@ BEGIN
 								on fact.SchoolYearId = d.DimSchoolYearId
 							inner join rds.DimSeas sea 
 								on fact.SeaId = sea.DimSeaId
-							left outer join rds.DimPeople p 
+							left outer join rds.DimPeople_Current p 
 								on fact.K12StaffId = p.DimPersonId
 						where d.SchoolYear = @reportYear 
 						and sea.DimSeaId <> -1

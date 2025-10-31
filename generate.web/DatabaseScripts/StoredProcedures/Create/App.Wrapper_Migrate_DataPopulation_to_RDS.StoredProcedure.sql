@@ -7,10 +7,10 @@ BEGIN
 	BEGIN TRY
 
 	--Populate the RDS tables from Staging data
-		--Populate DimPeople
+		--Populate DimPeople and DimPeople_Current
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Datapopulation - Start Staging-to-DimPeople_K12Students')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Migration Wrapper Datapopulation - Start Staging-to-DimPeople_K12Students and DimPeople_Current')
 
 			exec Staging.[Staging-To-DimPeople_K12Students] NULL
 

@@ -8,10 +8,10 @@ BEGIN
 		EXEC Staging.Rollover_SourceSystemReferenceData -- This only happens when it is needed
 
 	--Populate the RDS tables from ODS data
-		--Populate DimPeople
+		--Populate DimPeople and DimPeople_Current
 			--write out message to DataMigrationHistories
 			insert into app.DataMigrationHistories
-			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Staff 1 of 6 - Staging-to-DimPeople_K112staff')
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) values	(getutcdate(), 2, 'RDS Staff 1 of 6 - Staging-to-DimPeople_K12Staff and DimPeople_Current')
 
 			exec Staging.[Staging-To-DimPeople_K12Staff] NULL
 
