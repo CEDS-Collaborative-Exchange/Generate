@@ -125,11 +125,11 @@
 		, [SchoolPerformanceIndicatorCategoryEdFactsCode]
 	)	
 	VALUES 
-		('GRM',	'Graduation Rate Measure', 'GRM'),
-		('AAM',	'Academic Achievement Measure', 'AAM'),
-		('OAM',	'Other Academic Measure', 'OAM'),
-		('IND',	'School Quality and Student Success Measure', 'IND'),
-		('PAELP', 'Progress Achieving English Language Proficiency Measure', 'PAELP')
+		('GRM',	'Graduation Rate Measure', 'GRADRSTAT'),
+		('AAM',	'Academic Achievement Measure', 'ACHIVSTAT'),
+		('OAM',	'Other Academic Measure', 'OTHESTAT'),
+		('IND',	'School Quality and Student Success Measure', 'INDQUALSTAT'),
+		('PAELP', 'Progress Achieving English Language Proficiency Measure', 'ENGLANSTA')
 
 	----------------------------------------------------
 	-- Populate DimSchoolPerformanceIndicators		 ---
