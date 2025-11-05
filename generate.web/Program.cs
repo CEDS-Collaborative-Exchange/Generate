@@ -31,7 +31,7 @@ builder.Configuration
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
 
-if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower() != "stage")
+if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower() == "test")
 {
     builder.Configuration.AddEnvironmentVariables(e => e.Prefix = "Data");
 }
