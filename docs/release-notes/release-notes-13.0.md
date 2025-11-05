@@ -1,6 +1,6 @@
 ---
 description: This document describes the technical enhancements to Generate version 13.0.
-icon: sparkles
+icon: memo
 cover: ../.gitbook/assets/GenerateBanner13_0 1.avif
 coverY: 0
 ---

@@ -128,6 +128,7 @@
 ## Release Notes
 
 * [Introduction](release-notes/introduction.md)
+* [Release Notes 13.1](release-notes/release-notes-13.1.md)
 * [Release Notes 13.0](release-notes/release-notes-13.0.md)
 * [Release Notes 12.4](release-notes/release-notes-12.4.md)
 * [Release Notes 12.3](release-notes/release-notes-12.3.md)
