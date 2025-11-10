@@ -3,6 +3,7 @@ CREATE PROCEDURE [RDS].[Get_ReportData_ZeroCounts]
 	@reportLevel as varchar(50),
 	@reportYear as varchar(50),
 	@categorySetCode as varchar(50),
+	@tableTypeAbbrv as varchar(50),
 	@includeZeroCounts as bit,
 	@includeFriendlyCaptions as bit,
 	@obscureMissingCategoryCounts as bit,
@@ -183,10 +184,12 @@ BEGIN
 	inner join app.GenerateReports r on cs.GenerateReportId = r.GenerateReportId
 	inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
 	inner join app.OrganizationLevels o on cs.OrganizationLevelId = o.OrganizationLevelId
+	left outer join app.TableTypes tt on cs.TableTypeId = tt.TableTypeId
 	where r.ReportCode = @reportCode
 	and cs.SubmissionYear = @reportYear
 	and o.LevelCode = @reportLevel
 	and cs.CategorySetCode = isnull(@categorySetCode, cs.CategorySetCode)
+	and tt.TableTypeAbbrv = @tableTypeAbbrv
 
 
 	declare @sql as nvarchar(max)
@@ -228,10 +231,12 @@ BEGIN
 				inner join app.CategorySets cs on opt.CategorySetId = cs.CategorySetId
 				inner join app.OrganizationLevels o on cs.OrganizationLevelId = o.OrganizationLevelId
 				inner join app.GenerateReports r on cs.GenerateReportId = r.GenerateReportId
+				left outer join app.TableTypes tt on cs.TableTypeId = tt.TableTypeId
 				where r.ReportCode = @reportCode
 				and o.LevelCode = @reportLevel
 				and cs.SubmissionYear = @reportYear
 				and cs.CategorySetCode = isnull(@categorySetCode, cs.CategorySetCode)
+				and tt.TableTypeAbbrv = @tableTypeAbbrv
 			'
 		end
 	
@@ -489,6 +494,7 @@ BEGIN
 		and f.ReportYear = @reportYear
 		and f.ReportLevel = @reportLevel
 		and f.CategorySetCode = isnull(@categorySetCode, f.CategorySetCode)		
+		and f.TableTypeAbbrv = @tableTypeAbbrv
 	'
 
 	declare @categoryCode as nvarchar(150)
@@ -654,6 +660,7 @@ BEGIN
 			where r.ReportCode = @reportCode 
 			and levels.LevelCode = @reportLevel 
 			and cs.SubmissionYear = @reportYear
+			and tt.TableTypeAbbrv = @tableTypeAbbrv
 			order by cs.CategorySetSequence
 
 			OPEN categoryset_cursor1
@@ -737,21 +744,22 @@ BEGIN
 		end
 		else
 		begin
+		--STUDPERFMLG, STUDPERFMHS
 			set @includeOrganizationSQL = 1
-			SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @categorySetCode, 'zero',@includeOrganizationSQL, 0,@tableTypeAbbrvs, @totalIndicators, @factTypeCode)
+			SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @categorySetCode, 'zero',@includeOrganizationSQL, 0, @tableTypeAbbrv, @totalIndicators, @factTypeCode)
 
-			/*
-			PRINT '  456'
-			PRINT ' @reportCode - ' + cast ( @reportCode as varchar (10))
-			PRINT ' @reportLevel - ' + cast ( @reportLevel as varchar (10))
-			PRINT ' @reportYear - ' + cast ( @reportYear as varchar (10))
-			PRINT ' @categorySetCode - ' + cast ( @categorySetCode as varchar (10))
-			PRINT ' @includeOrganizationSQL - ' + cast ( @includeOrganizationSQL as varchar (10))
-			PRINT ' @tableTypeAbbrvs - ' + cast ( @tableTypeAbbrvs as varchar (10))
-			PRINT ' @totalIndicators - ' + cast ( @totalIndicators as varchar (10))
-			PRINT ' @factTypeCode - ' + cast ( @factTypeCode as varchar (10))
-			PRINT '---'
-			*/
+
+			--PRINT '  456'
+			--PRINT ' @reportCode - ' + cast ( @reportCode as varchar (10))
+			--PRINT ' @reportLevel - ' + cast ( @reportLevel as varchar (10))
+			--PRINT ' @reportYear - ' + cast ( @reportYear as varchar (10))
+			--PRINT ' @categorySetCode - ' + cast ( @categorySetCode as varchar (10))
+			--PRINT ' @includeOrganizationSQL - ' + cast ( @includeOrganizationSQL as varchar (10))
+			--PRINT ' @tableTypeAbbrvs - ' + cast ( @tableTypeAbbrvs as varchar (10))
+			--PRINT ' @totalIndicators - ' + cast ( @totalIndicators as varchar (10))
+			--PRINT ' @factTypeCode - ' + cast ( @factTypeCode as varchar (10))
+			--PRINT '---'
+
 			IF(@zeroCountSql IS NOT NULL)
 			begin
 				set @sql = @sql + '
@@ -796,10 +804,13 @@ BEGIN
 			on r.GenerateReportTypeId = t.GenerateReportTypeId
 		inner join app.OrganizationLevels o 
 			on cs.OrganizationLevelId = o.OrganizationLevelId
+		left outer join app.TableTypes tt
+			on cs.TableTypeId = tt.TableTypeId
 		where r.ReportCode = @reportCode
 		and cs.SubmissionYear = @reportYear
 		and o.LevelCode = @reportLevel
 		and cs.CategorySetCode = isnull(@categorySetCode, cs.CategorySetCode)
+		and tt.TableTypeAbbrv = @tableTypeAbbrv
 		order by cs.CategorySetCode, d.DimensionFieldName
 
 		OPEN reportField_cursor  
@@ -994,13 +1005,10 @@ BEGIN
 	BEGIN 
 
 		DECLARE @ParmDefinition as nvarchar(max)
-		SET @ParmDefinition = N'@reportCode varchar(100), @reportYear varchar(100), @reportLevel varchar(100), @categorySetCode varchar(100), @isOnlineReport bit';  
-		EXECUTE sp_executesql @sql, @ParmDefinition, @reportCode = @reportCode, @reportYear = @reportYear, @reportLevel = @reportLevel, @categorySetCode = @categorySetCode, @isOnlineReport=@isOnlineReport;
+		SET @ParmDefinition = N'@reportCode varchar(100), @reportYear varchar(100), @reportLevel varchar(100), @categorySetCode varchar(100), @tableTypeAbbrv as varchar(50), @isOnlineReport bit';  
+		EXECUTE sp_executesql @sql, @ParmDefinition, @reportCode = @reportCode, @reportYear = @reportYear, @reportLevel = @reportLevel, @categorySetCode = @categorySetCode, @tableTypeAbbrv = @tableTypeAbbrv, @isOnlineReport=@isOnlineReport;
 
 	END
 
 	SET NOCOUNT OFF;
 END
-GO
-
-
