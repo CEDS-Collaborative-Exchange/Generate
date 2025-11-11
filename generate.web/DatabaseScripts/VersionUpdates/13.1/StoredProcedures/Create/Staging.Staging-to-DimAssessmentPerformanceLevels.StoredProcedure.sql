@@ -4,6 +4,16 @@ BEGIN
 
 	SET NOCOUNT ON;
 
+	--Get the SY value from the migration for the SSRD join condition
+    DECLARE @SchoolYear int
+    SELECT @SchoolYear = (	select sy.SchoolYear
+							from rds.DimSchoolYearDataMigrationTypes dm
+								inner join rds.dimschoolyears sy
+									on dm.dimschoolyearid = sy.dimschoolyearid
+							where IsSelected = 1
+							and dm.DataMigrationTypeId = 3
+						)
+
 	BEGIN TRY
 		BEGIN TRANSACTION
 
@@ -37,7 +47,7 @@ BEGIN
 			, AssessmentPerformanceLevelUpperCutScore
 		)		
 		SELECT DISTINCT
-			sa.AssessmentPerformanceLevelIdentifier
+			ssrd.OutputCode
 			, sa.AssessmentPerformanceLevelLabel
 --verify the Score Metric field and why it is in Staging.AssessmentResult and not in Staging.Assessment
 			, NULL											AS AssessmentPerformanceLevelScoreMetric
@@ -53,6 +63,10 @@ BEGIN
 			AND ISNULL(sar.AssessmentTypeAdministeredToEnglishLearners, '') = ISNULL(sa.AssessmentTypeAdministeredToEnglishLearners, '')
 			AND ISNULL(sar.AssessmentPerformanceLevelIdentifier, '')		= ISNULL(sa.AssessmentPerformanceLevelIdentifier, '')
 			AND ISNULL(sar.AssessmentPerformanceLevelLabel, '')				= ISNULL(sa.AssessmentPerformanceLevelLabel, '')
+		LEFT JOIN Staging.SourceSystemReferenceData ssrd
+			ON ssrd.tablename = 'AssessmentPerformanceLevel_Identifier'
+			AND ssrd.InputCode = sar.AssessmentPerformanceLevelIdentifier
+			AND ssrd.SchoolYear = @SchoolYear
 
 
 		MERGE RDS.DimAssessmentPerformanceLevels AS trgt
