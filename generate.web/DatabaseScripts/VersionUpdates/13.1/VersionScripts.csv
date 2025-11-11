@@ -50,6 +50,8 @@ VersionUpdates\\13.1\\Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 VersionUpdates\\13.1\\Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 VersionUpdates\\13.1\\StoredProcedures\\Drop,RDS.Get_ReportData_ZeroCounts.StoredProcedure.sql,0
 VersionUpdates\\13.1\\StoredProcedures\\Create,RDS.Get_ReportData_ZeroCounts.StoredProcedure.sql,0
+VersionUpdates\\13.1\\StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
+VersionUpdates\\13.1\\StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
 VersionUpdates\\13.1\\StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql,0
 VersionUpdates\\13.1\\StoredProcedures\\Create,Staging.Staging-to-DimPeople_K12Students.StoredProcedure.sql,0
 VersionUpdates\\13.1\\StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql,0
@@ -62,6 +64,8 @@ VersionUpdates\\13.1\\StoredProcedures\\Drop,Staging.Staging-to-DimLeas.StoredPr
 VersionUpdates\\13.1\\StoredProcedures\\Create,Staging.Staging-to-DimLeas.StoredProcedure.sql,0
 VersionUpdates\\13.1\\StoredProcedures\\Drop,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
 VersionUpdates\\13.1\\StoredProcedures\\Create,Staging.Staging-to-DimK12Schools.StoredProcedure.sql,0
+VersionUpdates\\13.1\\StoredProcedures\\Drop,Staging.Staging-to-DimAssessmentPerformanceLevels.StoredProcedure.sql,0
+VersionUpdates\\13.1\\StoredProcedures\\Create,Staging.Staging-to-DimAssessmentPerformanceLevels.StoredProcedure.sql,0
 VersionUpdates\\13.1\\StoredProcedures\\Drop,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 VersionUpdates\\13.1\\StoredProcedures\\Create,RDS.Get_ReportDebugData.StoredProcedure.sql,0
 VersionUpdates\\13.1\\StoredProcedures\\Drop,Staging.Staging-to-FactSchoolPerformanceIndicators.StoredProcedure.sql,0
