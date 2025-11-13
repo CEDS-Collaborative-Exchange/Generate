@@ -33,9 +33,10 @@ namespace generate.infrastructure.Repositories.App
         {
             GC.SuppressFinalize(this);
         }
-        
+
         public void StartMigration(string dataMigrationTypeCode, bool setToProcessing = false)
         {
+            Console.WriteLine($"Inside |StartMigration| with dataMigrationTypeCode:{dataMigrationTypeCode}");
             // Start time (UTC date)
             DateTime startDate = DateTime.UtcNow;
 
@@ -65,10 +66,11 @@ namespace generate.infrastructure.Repositories.App
                     dataMigration.DataMigrationStatusId = pendingStatus.DataMigrationStatusId;
                 }
                 dataMigration.LastTriggerDate = startDate;
+                Console.WriteLine($"Inside |StartMigration| saving dataMigration:{dataMigration}");
                 Save();
             }
 
-           
+
             LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Started", true);
 
         }
@@ -78,7 +80,7 @@ namespace generate.infrastructure.Repositories.App
             // Make sure all report tasks are completed
 
             var reportsPending = _context.Set<GenerateReport>().Any(x => x.IsLocked);
-            
+
             if (!reportsPending)
             {
                 this.CompleteMigration("report", "success");
@@ -172,7 +174,7 @@ namespace generate.infrastructure.Repositories.App
 
         public void LogDataMigrationHistory(string dataMigrationTypeCode, string dataMigrationHistoryMessage, bool logToDatabase = true)
         {
-
+            Console.WriteLine($"Inside |LogDataMigrationHistory| with dataMigrationTypeCode:{dataMigrationTypeCode},dataMigrationHistoryMessage:{dataMigrationHistoryMessage}");
             Console.WriteLine(DateTime.Now + " - " + dataMigrationTypeCode + " - " + dataMigrationHistoryMessage);
 
             if (logToDatabase)
@@ -220,50 +222,86 @@ namespace generate.infrastructure.Repositories.App
 
             return results;
         }
-
         public void ExecuteSqlBasedMigration(string dataMigrationTypeCode, IJobCancellationToken jobCancellationToken)
         {
             try
             {
+                Console.WriteLine($"Inside ExecuteSqlBasedMigration dataMigrationTypeCode:{dataMigrationTypeCode}");
                 // Start migration
                 StartMigration(dataMigrationTypeCode, false);
 
                 // Run migration
 
                 int? oldTimeOut = _context.Database.GetCommandTimeout();
-                _context.Database.SetCommandTimeout(30000);
+                // _context.Database.SetCommandTimeout(30000);
 
                 // Workaround for the fact that ShutdownCancellationToken is not called when the job is deleted
                 // https://github.com/HangfireIO/Hangfire/issues/211
 
                 //var source = new CancellationTokenSource();
 
-                if (jobCancellationToken != null)
+
+
+                // var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
+                // dbTask.Wait();
+
+                var connection = _context.Database.GetDbConnection();
+
+                if (connection.State != ConnectionState.Open)
                 {
-                    Task.Run(() =>
+                    connection.Open();
+                }
+                using (var command = connection.CreateCommand())
+                {
+
+                    Action cancelWithGrace = () =>
                     {
                         try
                         {
-                            while (true)
-                            {
-                                Thread.Sleep(1000);
-                                jobCancellationToken.ThrowIfCancellationRequested();
-                            }
+                            Console.WriteLine("Inside cancelWithGrace");
+                            command.Cancel();
+                            source.Cancel();
                         }
-                        catch (Exception)
+                        catch (System.Exception ex)
                         {
-                            this.source.Cancel();
+                            Console.Error.WriteLine($"Exception called canceWithGrace:{ex}");
                         }
-                    }, this.source.Token);
+
+                    };
+
+                    if (jobCancellationToken != null)
+                    {
+                        Task.Run(() =>
+                        {
+                            try
+                            {
+                                while (true)
+                                {
+                                    Thread.Sleep(1000);
+                                    jobCancellationToken.ThrowIfCancellationRequested();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.Error.WriteLine($"Cancellation called :{ex}");
+                                // command.Cancel();
+                                // this.source.Cancel();
+                                cancelWithGrace();
+                            }
+                        }, source.Token);
+                    }
+                    command.CommandTimeout = 300000;
+                    command.CommandText = "EXEC app.Migrate_Data";
+                    Console.WriteLine("Executing Migrate_Data stored proc");
+                    int rowsAffected = command.ExecuteNonQueryAsync().GetAwaiter().GetResult();
+                    Console.WriteLine($"Done Executing Migrate_Data stored proc rowsAffected:{rowsAffected}");
+
                 }
-
-                var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
-                dbTask.Wait();
-
-                _context.Database.SetCommandTimeout(oldTimeOut);
+                //_context.Database.SetCommandTimeout(oldTimeOut);
             }
             catch (Exception ex)
             {
+                Console.Error.WriteLine($"Exception in ExecuteSqlBasedMigration :{ex}");
                 this.LogException(dataMigrationTypeCode, ex);
                 this.CompleteMigration(dataMigrationTypeCode, "error");
                 throw;
@@ -272,6 +310,57 @@ namespace generate.infrastructure.Repositories.App
 
 
         }
+        // public void ExecuteSqlBasedMigration(string dataMigrationTypeCode, IJobCancellationToken jobCancellationToken)
+        // {
+        //     try
+        //     {
+        //         // Start migration
+        //         StartMigration(dataMigrationTypeCode, false);
+
+        //         // Run migration
+
+        //         int? oldTimeOut = _context.Database.GetCommandTimeout();
+        //         _context.Database.SetCommandTimeout(30000);
+
+        //         // Workaround for the fact that ShutdownCancellationToken is not called when the job is deleted
+        //         // https://github.com/HangfireIO/Hangfire/issues/211
+
+        //         //var source = new CancellationTokenSource();
+
+        //         if (jobCancellationToken != null)
+        //         {
+        //             Task.Run(() =>
+        //             {
+        //                 try
+        //                 {
+        //                     while (true)
+        //                     {
+        //                         Thread.Sleep(1000);
+        //                         jobCancellationToken.ThrowIfCancellationRequested();
+        //                     }
+        //                 }
+        //                 catch (Exception)
+        //                 {
+        //                     this.source.Cancel();
+        //                 }
+        //             }, this.source.Token);
+        //         }
+
+        //         var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
+        //         dbTask.Wait();
+
+        //         _context.Database.SetCommandTimeout(oldTimeOut);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         this.LogException(dataMigrationTypeCode, ex);
+        //         this.CompleteMigration(dataMigrationTypeCode, "error");
+        //         throw;
+        //     }
+
+
+
+        // }
 
 
         public IEnumerable<GenerateReport> GetReports(string reportTypeCode, int skip = 0, int take = 50)
@@ -342,9 +431,9 @@ namespace generate.infrastructure.Repositories.App
             .Include(x => x.OrganizationLevel)
             .Where(x =>
                 x.GenerateReport.ReportCode == reportCode &&
-                x.SubmissionYear == reportYear                
+                x.SubmissionYear == reportYear
             );
-            
+
             if (reportLevel != null)
             {
                 categorySets = categorySets.Where(x => x.OrganizationLevel.LevelCode == reportLevel);
@@ -357,7 +446,7 @@ namespace generate.infrastructure.Repositories.App
         {
 
             // Verify that all pending jobs have completed first
-
+            Console.WriteLine($"Inside MarkReportAsComplete reportCode:{reportCode}");
             var api = JobStorage.Current.GetMonitoringApi();
             var reportMigrationJobs = api.ProcessingJobs(0, (int)api.ProcessingCount()).Where(x => x.Value.InProcessingState && x.Value.Job.Method.Name == "ExecuteReportMigrationByYearLevelAndCategorySet");
 
@@ -367,6 +456,7 @@ namespace generate.infrastructure.Repositories.App
                 if (report != null)
                 {
                     report.IsLocked = false;
+                    Console.WriteLine("Inside MarkReportAsComplete unlocking report");
                     _context.SaveChanges();
                 }
 

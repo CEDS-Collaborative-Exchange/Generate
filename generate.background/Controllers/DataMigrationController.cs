@@ -27,12 +27,14 @@ namespace generate.background.Controllers
         {
             try
             {
+                Console.WriteLine($"Inside MigrateData migrationType:{migrationType}");
                 _migrationService.MigrateData(migrationType);
 
                 return Ok();
             }
             catch (Exception ex)
             {
+                Console.Error.WriteLine($"Exception in MigrationData:{ex}");
                 return BadRequest(ex);
             }
         }
@@ -42,12 +44,15 @@ namespace generate.background.Controllers
         {
             try
             {
+                Console.WriteLine($"Inside Cancel migrationType:{migrationType}");
+
                 _migrationService.CancelMigration(migrationType);
 
                 return Ok();
             }
             catch (Exception ex)
             {
+                Console.Error.WriteLine($"Exception in Cancel:{ex}");
                 return BadRequest(ex);
             }
         }
