@@ -1,4 +1,4 @@
-CREATE PROCEDURE [RDS].[Create_ReportData]
+ALTER PROCEDURE [RDS].[Create_ReportData]
 	@reportCode as varchar(50),
 	@dimFactTypeCode as varchar(50),
 	@runAsTest as bit

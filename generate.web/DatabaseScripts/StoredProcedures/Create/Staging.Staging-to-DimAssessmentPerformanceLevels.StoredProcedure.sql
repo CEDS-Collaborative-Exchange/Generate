@@ -1,4 +1,4 @@
-CREATE PROCEDURE [Staging].[Staging-to-DimAssessmentPerformanceLevels]
+ALTER PROCEDURE [Staging].[Staging-to-DimAssessmentPerformanceLevels]
 AS
 BEGIN
 
