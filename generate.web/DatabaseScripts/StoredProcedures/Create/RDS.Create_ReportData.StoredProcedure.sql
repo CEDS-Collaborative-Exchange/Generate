@@ -305,7 +305,7 @@ BEGIN
 
 						PRINT @countToZeroCountPrint
 
-						EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode ,	1,0,1,0,1
+						EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs,	1,0,1,0,1
 
 						set @countToZeroCountPrint = char(13) + char(10)
 						set @countToZeroCountPrint += '------------------------------------------------------------------------------------------------'
@@ -326,7 +326,7 @@ BEGIN
 						SET @ParmDefinition = N'@dimFactTypeId int, @dimSchoolYearId int, @reportLevel varchar(50)';  
 						EXECUTE sp_executesql @sql, @ParmDefinition, @dimFactTypeId = @dimFactTypeId, @dimSchoolYearId = @dimSchoolYearId, @reportLevel = @reportLevel;
 
-						EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode ,	1,0,1,0,0
+						EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs,	1,0,1,0,0
 
 					end
 
@@ -371,6 +371,3 @@ BEGIN
 	SET NOCOUNT OFF;
 
 END
-GO
-
-

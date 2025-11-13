@@ -255,3 +255,10 @@ CIID-8062
 	BEGIN
 		ALTER TABLE [RDS].[ReportEDFactsK12StudentCounts] ADD [DELINQUENTPROGRAMTYPE] NVARCHAR(50) NULL;
 	END
+
+ -- Set the Report NCES columns to NULLABLE
+ ALTER TABLE RDS.ReportEdFactsK12StudentAssessments ALTER COLUMN OrganizationIdentifierNCES nvarchar(100) NULL;
+ ALTER TABLE RDS.ReportEdFactsK12StudentDisciplines ALTER COLUMN OrganizationIdentifierNCES nvarchar(100) NULL;
+ ALTER TABLE RDS.ReportEdFactsK12StudentCounts ALTER COLUMN OrganizationIdentifierNCES nvarchar(100) NULL;
+ ALTER TABLE RDS.ReportEdFactsK12StaffCounts ALTER COLUMN OrganizationIdentifierNCES nvarchar(100) NULL;
+
