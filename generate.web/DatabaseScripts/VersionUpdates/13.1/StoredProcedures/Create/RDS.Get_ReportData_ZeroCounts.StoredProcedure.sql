@@ -772,8 +772,25 @@ BEGIN
 		begin
 		--STUDPERFMLG, STUDPERFMHS
 			set @includeOrganizationSQL = 1
-			SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @categorySetCode, 'zero',@includeOrganizationSQL, 0, @tableTypeAbbrv, @totalIndicators, @factTypeCode)
 
+			select @totalIndicators = 
+			CASE WHEN CHARINDEX('total', cs.CategorySetName) > 0 THEN 'Y'
+					ELSE 'N'
+			END
+			from app.CategorySets cs
+			inner join app.GenerateReports r 
+				on cs.GenerateReportId = r.GenerateReportId
+			inner join app.OrganizationLevels levels 
+				on cs.OrganizationLevelId =levels.OrganizationLevelId
+			left outer join app.TableTypes tt 
+				on cs.TableTypeId = tt.TableTypeId
+			where r.ReportCode = @reportCode 
+			and levels.LevelCode = @reportLevel 
+			and cs.SubmissionYear = @reportYear
+			and tt.TableTypeAbbrv = @tableTypeAbbrv
+			and cs.CategorySetCode = @categorySetCode
+
+			SELECT @zeroCountSql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @categorySetCode, 'zero',@includeOrganizationSQL, 0, @tableTypeAbbrv, @totalIndicators, @factTypeCode)
 
 			--PRINT '  456'
 			--PRINT ' @reportCode - ' + cast ( @reportCode as varchar (10))
