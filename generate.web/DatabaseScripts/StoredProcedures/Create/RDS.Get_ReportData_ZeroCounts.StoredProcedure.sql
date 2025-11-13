@@ -1,4 +1,4 @@
-ALTER PROCEDURE [RDS].[Get_ReportData_ZeroCounts]
+CREATE PROCEDURE [RDS].[Get_ReportData_ZeroCounts]
 	@reportCode as varchar(50),
 	@reportLevel as varchar(50),
 	@reportYear as varchar(50),

@@ -1,4 +1,4 @@
-ALTER FUNCTION [RDS].[Get_CountSQL] (
+CREATE FUNCTION [RDS].[Get_CountSQL] (
 	@reportCode as nvarchar(150),
 	@reportLevel as nvarchar(10),
 	@reportYear as nvarchar(10),

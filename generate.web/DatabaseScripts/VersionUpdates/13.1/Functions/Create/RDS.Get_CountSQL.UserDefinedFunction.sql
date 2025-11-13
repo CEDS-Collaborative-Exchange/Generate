@@ -6918,7 +6918,7 @@ BEGIN
 
 				if @categorySetCode = 'TOT'
 				begin
-					if(@reportCode in ('002','089','052','033','118')) 
+					if(@reportCode in ('002','089','052','033')) 
 					begin	
  
 						set @sql = @sql + '
@@ -7869,7 +7869,7 @@ BEGIN
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
 				AND RIGHT(a.TableTypeAbbrv, 2) = ''LG''
-				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'')
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'')
 				AND NOT EXISTS (Select 1 from app.ToggleAssessments b
 									where a.GradeLevel = b.Grade
 									and a.AssessmentAcademicSubject = b.Subject
@@ -7890,11 +7890,21 @@ BEGIN
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
 				AND RIGHT(a.TableTypeAbbrv, 2) = ''HS''
-				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''ALTPARTALTACH'')
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'')
 				AND NOT EXISTS (Select 1 from app.ToggleAssessments b
 									where a.GradeLevel = b.Grade
 									and a.AssessmentAcademicSubject = b.Subject
 									and a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = (''P'' + replace(b.AssessmentTypeCode, ''ASMT'', ''ASM'')))'
+
+			set @sql = @sql + ' 
+				delete a from @reportData a
+				where a.' + @factField + ' = 0
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR IN (''MEDEXEMPT'', ''NPART'')
+				AND NOT EXISTS (Select distinct b.Grade 
+									from app.ToggleAssessments b
+									where a.GradeLevel = b.Grade
+									and a.AssessmentAcademicSubject = b.Subject)'
+
 		end
 		/*Student count for displaced homemakers ?  If the state does not have displaced homemakers at the secondary level, leave that category set out of the file */
 		else if @reportCode in ('082','083','142','154','155','156','157','158') and @toggleDisplacedHomemakers = '0'
@@ -8201,5 +8211,3 @@ BEGIN
 	end
 	return @sql
 END
-
-
