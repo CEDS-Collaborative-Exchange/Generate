@@ -35,6 +35,9 @@ Generate version 13.1 focuses on IDEA Reports, Non-IDEA Reports, User Interface,
 * Assessments **(**&#x31;75, 178, 179, 185, 188, 18&#x39;**)**&#x20;
   * Removed an old version of the debug views that is no longer valid
   * Renamed the Source-to-Staging\_Assessment stored procedure to match the Fact Type name
+  * Corrected an issue with zero counts incorrectly being included at the LEA/SCH level.&#x20;
+  * Corrected an issue that was preventing the appropriate zero counts at the SEA level separated by the Grade Level groups
+  * Corrected an issue in the submission file that was not including the Total Indicator for the zero count rows
 
 #### Non-IDEA Reports
 
