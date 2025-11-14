@@ -324,7 +324,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
                         newParameters.reportYear = (new Date()).getFullYear().toString();
                     }
 
-                    if (newParameters.reportTableTypeAbbrv === undefined) {
+                    if (newParameters.reportTableTypeAbbrv === undefined && !this.isNullOrUndefined(this.tableTypes)) {
                         newParameters.reportTypeAbbreviation = this.tableTypes[0].tableTypeAbbrv;
                     }
 
@@ -441,15 +441,17 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
             this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
             this.tableTypes = this.categorySets[0].tableTypes;
-            /*console.log(this.tableTypes);*/
+            console.log(this.tableTypes);
 
             if (this.categorySets !== undefined && this.categorySets.length > 0) {
                 newParameters.reportCategorySet = this.categorySets.filter(t => t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear)[0];
                 newParameters.reportCategorySetCode = newParameters.reportCategorySet.categorySetCode;
             }
 
-            if (this.tableTypes !== undefined && this.tableTypes.length > 0) {
-                newParameters.reportTableTypeAbbrv = this.tableTypes[0].tableTypeAbbrv;
+            if (!this.isNullOrUndefined(this.tableTypes) && this.tableTypes.length > 0) {
+                if (!this.isNullOrUndefined(this.tableTypes[0])) {
+                    newParameters.reportTableTypeAbbrv = this.tableTypes[0].tableTypeAbbrv;
+                }
             }
 
             newParameters.connectionLink = this.currentReport.connectionLink;
