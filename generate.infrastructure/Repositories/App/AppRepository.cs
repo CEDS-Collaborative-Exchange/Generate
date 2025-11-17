@@ -252,7 +252,8 @@ namespace generate.infrastructure.Repositories.App
                         }
                         catch (Exception)
                         {
-                            this.source.Cancel();
+                            this.source.Cancel(); 
+                            this.source.Dispose();
                         }
                     }, this.source.Token);
                 }
