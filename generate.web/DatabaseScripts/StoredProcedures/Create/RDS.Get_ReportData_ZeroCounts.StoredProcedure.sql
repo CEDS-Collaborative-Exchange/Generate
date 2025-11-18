@@ -67,11 +67,7 @@ BEGIN
 		on r.ToggleQuestionId = q.ToggleQuestionId
 	WHERE q.EmapsQuestionAbbrv = 'LUNCHCOUNTS'
 
-	--Manually exclude the 0 counts from the Reports that are using the new dynamic logic
-	if @reportCode in ('218','219','220','221','222','224','225','226')
-	begin
-		set @includeZeroCounts = 0
-	end
+
 
 	if @factTable = 'FactCustomCounts'
 	begin
@@ -628,43 +624,7 @@ BEGIN
 		'
 	end			-- END @isPerformanceSql = 1
 
-	--ChildCount
-	if @reportCode in ('002', '089')
-	begin
-		set @includeZeroCounts = 0
-		if @reportLevel = 'SEA' set @includeZeroCounts = 1
-		if @reportLevel <> 'SEA' and @categorySetCode = 'TOT' set @includeZeroCounts = 1
-	end
-	--Discipline
-	if @reportCode in ('005','006','007','088','143','144')
-	begin 
-		if @reportLevel = 'sea' 
-			set @includeZeroCounts = 1
-		else 
-			set @includeZeroCounts = 0
-	end
-	--Assessments
-	if @reportCode in ('175','178','179','185','188','189') 
-	begin
-		if @reportLevel = 'sea'
-			set @includeZeroCounts = 1
-		else 
-			set @includeZeroCounts = 0
-	end
-	--Homeless
-	if @reportCode in ('118','194') 
-	begin
-		if @reportLevel = 'sea'
-			set @includeZeroCounts = 1
-		else 
-			set @includeZeroCounts = 0
-	end
-	--TitleIIIELSY
-	if @reportCode in ('045', '116')
-	begin
-		set @includeZeroCounts = 0
-		if @reportCode = '116' and @reportLevel = 'sea' set @includeZeroCounts = 1
-	end
+	
 
 	-- Zero Counts
 	if @includeZeroCounts = 1

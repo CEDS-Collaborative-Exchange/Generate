@@ -30,11 +30,14 @@ BEGIN
 		declare @factTable as varchar(50)
 		declare @factField as varchar(50)
 		declare @factReportTable as varchar(50)
+		declare @includeZeroCounts as bit = 0
 
 		select @factTable = ft.FactTableName, @factField = ft.FactFieldName, @factReportTable = ft.FactReportTableName
 		from app.FactTables ft 
 		inner join app.GenerateReports r on ft.FactTableId = r.FactTableId
 		where r.ReportCode = @reportCode
+
+		
 
 
 		-- Loop through all submission years
@@ -216,6 +219,27 @@ BEGIN
 
 				set @categorySetCntr = @categorySetCntr + 1
 
+
+				set @includeZeroCounts = 0
+
+				
+				if @reportLevel = 'sea' 
+				begin
+					set @includeZeroCounts = 1
+				end
+
+				if @reportCode in ('045','218','219','220','221','222','224','225','226')
+				begin
+					set @includeZeroCounts = 0
+				end
+
+				--ChildCount
+				if @reportCode in ('002', '089')
+				begin
+					if @reportLevel <> 'SEA' and @categorySetCode = 'TOT' set @includeZeroCounts = 1
+				end
+				
+
 				-- Log status
 
 				print ''
@@ -294,39 +318,46 @@ BEGIN
 							set @printString = SUBSTRING(@printString, @CurrentEnd+@offset, LEN(@printString))   
 						END
 
-						declare @countToZeroCountPrint nvarchar(max)
+						IF @includeZeroCounts = 1
+						BEGIN
 
-						set @countToZeroCountPrint = char(13) + char(10)
-						set @countToZeroCountPrint += '-------------------------------------------------------------------------------------------------'
-						set @countToZeroCountPrint += char(13) + char(10)
-						set @countToZeroCountPrint += '-- This is the beginning of the ZeroCounts logic that inserts these rows into the Report Table --'
-						set @countToZeroCountPrint += char(13) + char(10)
-						set @countToZeroCountPrint += '-------------------------------------------------------------------------------------------------'
+							declare @countToZeroCountPrint nvarchar(max)
 
-						PRINT @countToZeroCountPrint
+							set @countToZeroCountPrint = char(13) + char(10)
+							set @countToZeroCountPrint += '-------------------------------------------------------------------------------------------------'
+							set @countToZeroCountPrint += char(13) + char(10)
+							set @countToZeroCountPrint += '-- This is the beginning of the ZeroCounts logic that inserts these rows into the Report Table --'
+							set @countToZeroCountPrint += char(13) + char(10)
+							set @countToZeroCountPrint += '-------------------------------------------------------------------------------------------------'
 
-						EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs,	1,0,1,0,1
+							PRINT @countToZeroCountPrint
 
-						set @countToZeroCountPrint = char(13) + char(10)
-						set @countToZeroCountPrint += '------------------------------------------------------------------------------------------------'
-						set @countToZeroCountPrint += char(13) + char(10)
-						set @countToZeroCountPrint += '-- End of ZeroCounts logic --'
-						set @countToZeroCountPrint += char(13) + char(10)
-						set @countToZeroCountPrint += '------------------------------------------------------------------------------------------------'
+							EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs, 1,0,1,0,1
 
-						PRINT @countToZeroCountPrint
+							set @countToZeroCountPrint = char(13) + char(10)
+							set @countToZeroCountPrint += '------------------------------------------------------------------------------------------------'
+							set @countToZeroCountPrint += char(13) + char(10)
+							set @countToZeroCountPrint += '-- End of ZeroCounts logic --'
+							set @countToZeroCountPrint += char(13) + char(10)
+							set @countToZeroCountPrint += '------------------------------------------------------------------------------------------------'
+
+							PRINT @countToZeroCountPrint
+						END
 
 					end
 					else
 					begin
 					
-						-- Execute @sql
-						------------------------------
-						declare @ParmDefinition as nvarchar(max)
-						SET @ParmDefinition = N'@dimFactTypeId int, @dimSchoolYearId int, @reportLevel varchar(50)';  
-						EXECUTE sp_executesql @sql, @ParmDefinition, @dimFactTypeId = @dimFactTypeId, @dimSchoolYearId = @dimSchoolYearId, @reportLevel = @reportLevel;
+						IF @includeZeroCounts = 1
+						BEGIN
+							-- Execute @sql
+							------------------------------
+							declare @ParmDefinition as nvarchar(max)
+							SET @ParmDefinition = N'@dimFactTypeId int, @dimSchoolYearId int, @reportLevel varchar(50)';  
+							EXECUTE sp_executesql @sql, @ParmDefinition, @dimFactTypeId = @dimFactTypeId, @dimSchoolYearId = @dimSchoolYearId, @reportLevel = @reportLevel;
 
-						EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs,	1,0,1,0,0
+							EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs, 1,0,1,0,0
+						END
 
 					end
 
