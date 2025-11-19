@@ -223,7 +223,14 @@ BEGIN
 				set @includeZeroCounts = 0
 
 				
-				if @reportLevel = 'sea' 
+				if @reportLevel <> 'SEA' and @reportCode in ('002', '089') and @categorySetCode = 'TOT' set @includeZeroCounts = 1
+
+				if @reportLevel = 'SEA' 
+				begin
+					set @includeZeroCounts = 1
+				end
+
+				if @reportCode in ('052','032','040','033')
 				begin
 					set @includeZeroCounts = 1
 				end
@@ -232,12 +239,7 @@ BEGIN
 				begin
 					set @includeZeroCounts = 0
 				end
-
-				--ChildCount
-				if @reportCode in ('002', '089')
-				begin
-					if @reportLevel <> 'SEA' and @categorySetCode = 'TOT' set @includeZeroCounts = 1
-				end
+				
 				
 
 				-- Log status
