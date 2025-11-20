@@ -76,8 +76,8 @@ namespace generate.overnighttest
             //SCHOOL_YEAR
         }
 
-        public static string EMPTY_STRING = "";
-        public static string ALL_FACT = "ALL_FACT";
+        public static readonly string EMPTY_STRING = "";
+        public static readonly string ALL_FACT = "ALL_FACT";
 
         public static Dictionary<string, string> BuildFactTypeToFileSpec()
         {
@@ -209,9 +209,9 @@ namespace generate.overnighttest
                 {"118",$"EXEC App.FS118_TestCase     {SchoolYear}"},
                 {"141",$"EXEC App.FS141_TestCase     {SchoolYear}"},
                 {"194",$"EXEC App.FS194_TestCase     {SchoolYear}"},
-                {"210",$"EXEC Staging.RunEndToEndTest	 '210', {SchoolYear}, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1"},
-                {"222",$"EXEC Staging.RunEndToEndTest	 '222', {SchoolYear}, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1"},
-                {"226",$"EXEC Staging.RunEndToEndTest	 '226', {SchoolYear}, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1"},
+                {"210",$"EXEC Staging.RunEndToEndTest '210', {SchoolYear}, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1"},
+                {"222",$"EXEC Staging.RunEndToEndTest '222', {SchoolYear}, 'ReportEdFactsK12StudentCounts', 'StudentIdentifierState', 'StudentCount', 1"},
+                {"226",$"EXEC Staging.RunEndToEndTest '226', {SchoolYear}, 'ReportEdFactsK12StudentAssessments', 'StudentIdentifierState', 'StudentCount', 1"},
 
 
         };
@@ -221,37 +221,37 @@ namespace generate.overnighttest
         /// <summary>
         /// --migrate
         /// </summary>
-        public static string ARG_MIGRATE = "--migrate";
+        public static readonly string ARG_MIGRATE = "--migrate";
 
         /// <summary>
         /// --testallfact
         /// </summary>
-        public static string ARG_TEST_ALL_FACT = "--testallfact";
+        public static readonly string ARG_TEST_ALL_FACT = "--testallfact";
         /// <summary>
         /// --testfilespec
         /// </summary>
-        public static string ARG_TEST_FILE_SPEC = "--testfilespec";
+        public static readonly string ARG_TEST_FILE_SPEC = "--testfilespec";
         /// <summary>
         /// -testfacttype
         /// </summary>
-        public static string ARG_TEST_FACT_TYPE = "--testfacttype";
+        public static readonly string ARG_TEST_FACT_TYPE = "--testfacttype";
         /// <summary>
         /// --enabletest
         /// </summary>
-        public static string ARG_ENABLE_TEST = "--enabletest";
+        public static readonly string ARG_ENABLE_TEST = "--enabletest";
         /// <summary>
         /// --disabletest
         /// </summary>
-        public static string ARG_DISABLE_TEST = "--disabletest";
+        public static readonly string ARG_DISABLE_TEST = "--disabletest";
 
         /// <summary>
         /// --schoolyear
         /// </summary>
-        public static string ARG_SCHOOL_YEAR = "--schoolyear";
+        public static readonly string ARG_SCHOOL_YEAR = "--schoolyear";
 
         static String factTypeToFileSpecStringHelper = string.Join("\t\t", BuildFactTypeToFileSpec().Select(kvp => $"{kvp.Key}:{kvp.Value}\n"));
 
-        public static string HELP_MESSAGE = @$"
+        public static readonly string HELP_MESSAGE = @$"
                     Usage:
                     {ARG_MIGRATE}   ALL_FACT or 002,003                 Runs Migration with value required values are ALL_FACT or reportCode commaSeperated eg 005,002
                     {ARG_TEST_ALL_FACT}                                 Tests all facts if other test options are provided, they will  be skipped
@@ -268,7 +268,7 @@ namespace generate.overnighttest
         /// --migrate argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
-        public static Option<string> MIGRATION_OPTION = new Option<string>(ARG_MIGRATE)
+        public static readonly Option<string> MIGRATION_OPTION = new Option<string>(ARG_MIGRATE)
         {
             Description = "Pass fact command seperated if needed to run migration",
             // DefaultValueFactory = parseResult => ALL_FACT,
@@ -281,7 +281,7 @@ namespace generate.overnighttest
         /// --testallfact argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
-        public static Option<bool> TEST_ALL_FACT_OPTION = new Option<bool>(ARG_TEST_ALL_FACT)
+        public static readonly Option<bool> TEST_ALL_FACT_OPTION = new Option<bool>(ARG_TEST_ALL_FACT)
         {
             Description = "Pass true if needed to test all fact",
             DefaultValueFactory = parseResult => false
@@ -291,7 +291,7 @@ namespace generate.overnighttest
         /// --testallfact argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
-        public static Option<string> TEST_FILE_SPEC_OPTION = new Option<string>(ARG_TEST_FILE_SPEC)
+        public static readonly Option<string> TEST_FILE_SPEC_OPTION = new Option<string>(ARG_TEST_FILE_SPEC)
         {
             Description = "Pass File Spec number eg. F005, or 005 etc.",
             //DefaultValueFactory = parseResult => EMPTY_STRING,
@@ -303,7 +303,7 @@ namespace generate.overnighttest
         /// --testallfact argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
-        public static Option<string> TEST_FACT_TYPE_OPTION = new Option<string>(ARG_TEST_FACT_TYPE)
+        public static readonly Option<string> TEST_FACT_TYPE_OPTION = new Option<string>(ARG_TEST_FACT_TYPE)
         {
             Description = "Pass Fact Type assessment, childcount etc.",
             //DefaultValueFactory = parseResult => EMPTY_STRING,
@@ -314,7 +314,7 @@ namespace generate.overnighttest
         /// --enabletest argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
-        public static Option<string> ENABLE_TEST_OPTION = new Option<string>(ARG_ENABLE_TEST)
+        public static readonly Option<string> ENABLE_TEST_OPTION = new Option<string>(ARG_ENABLE_TEST)
         {
             Description = "Pass file spec numbers to enable eg. 002,005",
             //DefaultValueFactory = parseResult => EMPTY_STRING,
@@ -325,7 +325,7 @@ namespace generate.overnighttest
         /// --disabletest argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
-        public static Option<string> DISABLE_TEST_OPTION = new Option<string>(ARG_DISABLE_TEST)
+        public static readonly Option<string> DISABLE_TEST_OPTION = new Option<string>(ARG_DISABLE_TEST)
         {
             Description = "Pass file spec numbers to disable eg. 002,005",
             //DefaultValueFactory = parseResult => EMPTY_STRING,
@@ -336,7 +336,7 @@ namespace generate.overnighttest
         /// --schoolyear argument  System.CommandLine.Option 
         /// that has description and parser
         /// </summary>
-        public static Option<int> SCHOOL_YEAR_OPTION = new Option<int>(ARG_SCHOOL_YEAR)
+        public static readonly Option<int> SCHOOL_YEAR_OPTION = new Option<int>(ARG_SCHOOL_YEAR)
         {
             Description = "Pass School year needed",
             DefaultValueFactory = parseResult => DateTime.Now.Year,
