@@ -196,80 +196,23 @@ namespace generate.infrastructure.Services
             else if (report.FactTable.FactTableName == "FactK12StudentCounts")
             {
                 var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                if (reportLevel == "lea" && reportLea != null && reportLea != "all")
-                {
-                    query = query.Where(t => t.OrganizationIdentifierSea == reportLea).ToList();
-                }
-                if (reportLevel == "sch")
-                {
-                    if (reportLea != null && reportLea != "all")
-                    {
-                        query = query.Where(t => t.ParentOrganizationIdentifierSea == reportLea).ToList();
-                    }
-                    if (reportSchool != null && reportSchool != "all")
-                    {
-                        query = query.Where(t => t.OrganizationIdentifierSea == reportSchool).ToList();
-                    }
-                }
-
-                if (reportFilter != null && reportFilter != "AllStudents")
-                {
-                    if (reportFilter == "WDIS")
-                    {
-                        query = query.Where(t => t.IDEADISABILITYTYPE != "MISSING").ToList();
-                    }
-                    else if (reportFilter == "WODIS")
-                    {
-                        query = query.Where(t => t.IDEADISABILITYTYPE == "MISSING").ToList();
-                    }
-
-                }
-                dataRows = query.ToList();
-                reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
+                var (rows, dataCount) = FilterStudentCountReportData(query, reportLevel, reportLea, reportSchool, reportFilter, organizationalIdList);
+                dataRows = rows;
+                reportDto.dataCount = dataCount;
             }
             else if (report.FactTable.FactTableName == "FactK12StudentAssessments")
             {
                 var query = _factStudentAssessmentRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                if (reportLevel == "lea" && reportLea != null && reportLea != "all")
-                {
-                    query = query.Where(t => t.OrganizationIdentifierSea == reportLea).ToList();
-                }
-                if (reportLevel == "sch")
-                {
-                    if (reportLea != null && reportLea != "all")
-                    {
-                        query = query.Where(t => t.ParentOrganizationIdentifierSea == reportLea).ToList();
-                    }
-                    if (reportSchool != null && reportSchool != "all")
-                    {
-                        query = query.Where(t => t.OrganizationIdentifierSea == reportSchool).ToList();
-                    }
-                }
-                dataRows = query.ToList();
-                reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
+                var (rows, dataCount) = FilterStudentAssessmentReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                dataRows = rows;
+                reportDto.dataCount = dataCount;
             }
             else if (report.FactTable.FactTableName == "FactK12StudentDisciplines")
             {
                 var query = _factStudentDisciplineRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
-
-                if (reportLevel == "lea" && reportLea != null && reportLea != "all")
-                {
-                    query = query.Where(t => t.OrganizationName == reportLea).ToList();
-                }
-                if (reportLevel == "sch")
-                {
-                    if (reportLea != null && reportLea != "all")
-                    {
-                        query = query.Where(t => t.ParentOrganizationIdentifierSea == reportLea).ToList();
-                    }
-                    if (reportSchool != null && reportSchool != "all")
-                    {
-                        query = query.Where(t => t.OrganizationIdentifierSea == reportSchool).ToList();
-                    }
-                }
-
-                dataRows = query.ToList();
-                reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
+                var (rows, dataCount) = FilterStudentDisciplineReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                dataRows = rows;
+                reportDto.dataCount = dataCount;
             }
             else if (report.FactTable.FactTableName == "FactCustomCounts")
             {
@@ -336,6 +279,177 @@ namespace generate.infrastructure.Services
             return (resultList, distinctCount);
         }
 
+        public (dynamic DataRows, int DistinctCount)
+    FilterStudentCountReportData(
+    IEnumerable<ReportEDFactsK12StudentCount> query,
+    string reportLevel,
+    string reportLea,
+    string reportSchool,
+    string reportFilter,
+    string organizationalIdList)
+        {
+            // Apply LEA-level filtering
+            if (reportLevel == "lea" && !string.IsNullOrEmpty(reportLea) && reportLea != "all")
+            {
+                query = query.Where(t => t.OrganizationIdentifierSea == reportLea);
+            }
+            else if (reportLevel == "lea" && reportLea != null && reportLea == "all")
+            {
+                int[] organizationIds = organizationalIdList.Split(',').Select(h => Int32.Parse(h)).ToArray();
+                List<string> od = new List<string>();
+                foreach (var organizationId in organizationIds)
+                {
+                    if (organizationId != 0 && organizationId != -1)
+                    {
+                        OrganizationDetail OD = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
+                        if (OD != null)
+                            od.Add(OD.Name);
+                    }
+                }
+                query = query.Where(x => od.Contains(x.OrganizationName)).ToList();
+            }
+
+            // Apply School-level filtering
+            if (reportLevel == "sch")
+            {
+                if (!string.IsNullOrEmpty(reportLea) && reportLea != "all")
+                {
+                    query = query.Where(t => t.ParentOrganizationIdentifierSea == reportLea);
+                }
+
+                if (!string.IsNullOrEmpty(reportSchool) && reportSchool != "all")
+                {
+                    query = query.Where(t => t.OrganizationIdentifierSea == reportSchool);
+                }
+            }
+
+            if (reportFilter != null && reportFilter != "AllStudents")
+            {
+                if (reportFilter == "WDIS")
+                {
+                    query = query.Where(t => t.IDEADISABILITYTYPE != "MISSING").ToList();
+                }
+                else if (reportFilter == "WODIS")
+                {
+                    query = query.Where(t => t.IDEADISABILITYTYPE == "MISSING").ToList();
+                }
+
+            }
+
+            var resultList = query.ToList();
+            var distinctCount = resultList
+                .Select(q => q.OrganizationIdentifierSea)
+                .Distinct()
+                .Count();
+
+            return (resultList, distinctCount);
+        }
+
+        public (dynamic DataRows, int DistinctCount)
+    FilterStudentAssessmentReportData(
+    IEnumerable<ReportEDFactsK12StudentAssessment> query,
+    string reportLevel,
+    string reportLea,
+    string reportSchool,
+    string organizationalIdList)
+        {
+            // Apply LEA-level filtering
+            if (reportLevel == "lea" && !string.IsNullOrEmpty(reportLea) && reportLea != "all")
+            {
+                query = query.Where(t => t.OrganizationIdentifierSea == reportLea);
+            }
+            else if (reportLevel == "lea" && reportLea != null && reportLea == "all")
+            {
+                int[] organizationIds = organizationalIdList.Split(',').Select(h => Int32.Parse(h)).ToArray();
+                List<string> od = new List<string>();
+                foreach (var organizationId in organizationIds)
+                {
+                    if (organizationId != 0 && organizationId != -1)
+                    {
+                        OrganizationDetail OD = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
+                        if (OD != null)
+                            od.Add(OD.Name);
+                    }
+                }
+                query = query.Where(x => od.Contains(x.OrganizationName)).ToList();
+            }
+
+            // Apply School-level filtering
+            if (reportLevel == "sch")
+            {
+                if (!string.IsNullOrEmpty(reportLea) && reportLea != "all")
+                {
+                    query = query.Where(t => t.ParentOrganizationIdentifierSea == reportLea);
+                }
+
+                if (!string.IsNullOrEmpty(reportSchool) && reportSchool != "all")
+                {
+                    query = query.Where(t => t.OrganizationIdentifierSea == reportSchool);
+                }
+            }
+
+           
+            var resultList = query.ToList();
+            var distinctCount = resultList
+                .Select(q => q.OrganizationIdentifierSea)
+                .Distinct()
+                .Count();
+
+            return (resultList, distinctCount);
+        }
+
+        public (dynamic DataRows, int DistinctCount)
+    FilterStudentDisciplineReportData(
+    IEnumerable<ReportEDFactsK12StudentDiscipline> query,
+    string reportLevel,
+    string reportLea,
+    string reportSchool,
+    string organizationalIdList)
+        {
+            // Apply LEA-level filtering
+            if (reportLevel == "lea" && !string.IsNullOrEmpty(reportLea) && reportLea != "all")
+            {
+                query = query.Where(t => t.OrganizationIdentifierSea == reportLea);
+            }
+            else if (reportLevel == "lea" && reportLea != null && reportLea == "all")
+            {
+                int[] organizationIds = organizationalIdList.Split(',').Select(h => Int32.Parse(h)).ToArray();
+                List<string> od = new List<string>();
+                foreach (var organizationId in organizationIds)
+                {
+                    if (organizationId != 0 && organizationId != -1)
+                    {
+                        OrganizationDetail OD = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
+                        if (OD != null)
+                            od.Add(OD.Name);
+                    }
+                }
+                query = query.Where(x => od.Contains(x.OrganizationName)).ToList();
+            }
+
+            // Apply School-level filtering
+            if (reportLevel == "sch")
+            {
+                if (!string.IsNullOrEmpty(reportLea) && reportLea != "all")
+                {
+                    query = query.Where(t => t.ParentOrganizationIdentifierSea == reportLea);
+                }
+
+                if (!string.IsNullOrEmpty(reportSchool) && reportSchool != "all")
+                {
+                    query = query.Where(t => t.OrganizationIdentifierSea == reportSchool);
+                }
+            }
+
+
+            var resultList = query.ToList();
+            var distinctCount = resultList
+                .Select(q => q.OrganizationIdentifierSea)
+                .Distinct()
+                .Count();
+
+            return (resultList, distinctCount);
+        }
 
         public string PadNumbers(string input)
         {
