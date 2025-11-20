@@ -349,17 +349,17 @@ BEGIN
 					end
 					else
 					begin
-					
-						IF @includeZeroCounts = 1
-						BEGIN
+									
 							-- Execute @sql
 							------------------------------
 							declare @ParmDefinition as nvarchar(max)
 							SET @ParmDefinition = N'@dimFactTypeId int, @dimSchoolYearId int, @reportLevel varchar(50)';  
 							EXECUTE sp_executesql @sql, @ParmDefinition, @dimFactTypeId = @dimFactTypeId, @dimSchoolYearId = @dimSchoolYearId, @reportLevel = @reportLevel;
-
-							EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs, 1,0,1,0,0
-						END
+							
+							IF @includeZeroCounts = 1
+							BEGIN
+								EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs, 1,0,1,0,0
+							END
 
 					end
 
