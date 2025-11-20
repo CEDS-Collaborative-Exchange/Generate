@@ -83,44 +83,36 @@ namespace generate.infrastructure.Services
             if (report.ReportCode == "studentfederalprogramsparticipation" || report.ReportCode == "studentmultifedprogsparticipation")
             {
                 var query = _customReportRepository.Get_FederalProgramReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter);
-                if (reportLevel == "lea" && reportLea != null && reportLea != "all")
-                {
-                    query = query.Where(t => t.OrganizationStateId == reportLea).ToList();
-                }
-                if (reportLevel == "sch")
-                {
-                    if (reportLea != null && reportLea != "all")
-                    {
-                        query = query.Where(t => t.ParentOrganizationStateId == reportLea).ToList();
-                    }
-                    if (reportSchool != null && reportSchool != "all")
-                    {
-                        query = query.Where(t => t.OrganizationStateId == reportSchool).ToList();
-                    }
-                }
-                dataRows = query.ToList();
-                reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
+                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool);
+                dataRows = rows;
+                reportDto.dataCount = dataCount;
             }
             else if (report.ReportCode == "disciplinaryremovals")
             {
                 var query = _customReportRepository.Get_DisciplinaryRemovalsReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                if (reportLevel == "lea" && reportLea != null && reportLea != "all")
-                {
-                    query = query.Where(t => t.OrganizationStateId == reportLea).ToList();
-                }
-                dataRows = query.ToList();
-                reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
+                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool);
+                dataRows = rows;
+                reportDto.dataCount = dataCount;
+                //if (reportLevel == "lea" && reportLea != null && reportLea != "all")
+                //{
+                //    query = query.Where(t => t.OrganizationStateId == reportLea).ToList();
+                //}
+                //dataRows = query.ToList();
+                //reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
             }
             else if (report.ReportCode == "stateassessmentsperformance")
             {
                 var query = _customReportRepository.Get_AssessmentPerformanceReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter, reportSubFilter, reportGrade);
-                if (reportLevel == "lea" && reportLea != null && reportLea != "all")
-                {
-                    query = query.Where(t => t.OrganizationStateId == reportLea).ToList();
-                }
+                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool);
+                dataRows = rows;
+                reportDto.dataCount = dataCount;
+                //if (reportLevel == "lea" && reportLea != null && reportLea != "all")
+                //{
+                //    query = query.Where(t => t.OrganizationStateId == reportLea).ToList();
+                //}
 
-                dataRows = query.ToList();
-                reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
+                //dataRows = query.ToList();
+                //reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
             }
             else if (report.ReportCode == "edenvironmentdisabilitiesage3-5" || report.ReportCode == "edenvironmentdisabilitiesage6-21")
             {
@@ -526,6 +518,43 @@ namespace generate.infrastructure.Services
 
             return reportDto;
         }
+
+        public (dynamic DataRows, int DistinctCount)
+    FilterCustomReportData(
+        IEnumerable<FactCustomCount> query,
+        string reportLevel,
+        string reportLea,
+        string reportSchool)
+        {
+            // Apply LEA-level filtering
+            if (reportLevel == "lea" && !string.IsNullOrEmpty(reportLea) && reportLea != "all")
+            {
+                query = query.Where(t => t.OrganizationStateId == reportLea);
+            }
+
+            // Apply School-level filtering
+            if (reportLevel == "sch")
+            {
+                if (!string.IsNullOrEmpty(reportLea) && reportLea != "all")
+                {
+                    query = query.Where(t => t.ParentOrganizationStateId == reportLea);
+                }
+
+                if (!string.IsNullOrEmpty(reportSchool) && reportSchool != "all")
+                {
+                    query = query.Where(t => t.OrganizationStateId == reportSchool);
+                }
+            }
+
+            var resultList = query.ToList();
+            var distinctCount = resultList
+                .Select(q => q.OrganizationStateId)
+                .Distinct()
+                .Count();
+
+            return (resultList, distinctCount);
+        }
+
 
         public string PadNumbers(string input)
         {
