@@ -2,7 +2,7 @@
     "profiles": {
         "generate.overnighttest": {
             "commandName": "Project",
-            "commandLineArgs": "--testfacttype CHILDCOUNT",
+            "commandLineArgs": "migrate --migrate",
             "environmentVariables": {
                 "DOTNET_ENVIRONMENT": "Development",
                 "ASPNETCORE_ENVIRONMENT": "Development"

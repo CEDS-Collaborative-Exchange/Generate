@@ -387,6 +387,16 @@ namespace generate.infrastructure.Repositories.App
 
 
         }
+
+        public void RunBeforeTests(int submissionYear)
+        {
+
+            int? oldTimeOut = _context.Database.GetCommandTimeout();
+            _context.Database.SetCommandTimeout(11000);
+            _context.Database.ExecuteSqlRaw("app.Run_Before_Tests @submissionYear = {0}", submissionYear);
+            _context.Database.SetCommandTimeout(oldTimeOut);
+
+        }
     }
 
 }
