@@ -397,6 +397,28 @@ namespace generate.infrastructure.Repositories.App
             _context.Database.SetCommandTimeout(oldTimeOut);
 
         }
-    }
 
+        public void toggleReportLock(string reportCode, bool isLocked)
+        {
+            if (reportCode == "") {
+                var reports = Find<GenerateReport>(t => t.IsActive).ToList();
+                foreach (var report in reports) {
+                    report.IsLocked = isLocked;
+                    _context.SaveChanges();
+                }
+            }
+            else
+            {
+                var report = _context.Set<GenerateReport>().FirstOrDefault(x => x.ReportCode == reportCode);
+                report.IsLocked = isLocked;
+                _context.SaveChanges();
+            }
+
+        }
+
+        public void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)
+        {
+
+        }
+    }
 }

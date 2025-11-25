@@ -350,33 +350,26 @@ namespace generate.overnighttest
                     return;
 
                 }
-                Action<string, DbContext> process = (reportCode, dbContext) =>
+                IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+                Action<string> process = (reportCode) =>
                 {
-                    string whereClause = reportCode.Equals(ALL_FACT) ? "" : $" and ReportCode = '{reportCode}'";
-                    string sqlUpdateStr = $@"
-                            update app.GenerateReports
-                            set IsLocked = {value}
-                            where 1 = 1 {whereClause}
-                        ";
-                    Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
-                    int rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
-                    Console.WriteLine($"Rows Updated for reportCode:{reportCode} toggleReportLock:{rowsUpdated}");
-                }
+                    string report = reportCode.Equals(ALL_FACT) ? "" : reportCode;
+                    appRepository.toggleReportLock(report, Convert.ToBoolean(value));
+                };
 
-                ;
                 using var scope = serviceProvider.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 if (!reportCodeArr.Contains(ALL_FACT) && reportCodeArr.Length > 0)
                 {
                     foreach (var reportCode in reportCodeArr)
                     {
-                        process(reportCode, dbContext);
+                        process(reportCode);
                     }
                     return;
                 }
                 else
                 {
-                    process(ALL_FACT, dbContext);
+                    process(ALL_FACT);
                 }
 
             }
@@ -668,8 +661,6 @@ namespace generate.overnighttest
                 }
             }
         }
-
-
 
 
     }
