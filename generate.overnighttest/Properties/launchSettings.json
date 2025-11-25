@@ -2,7 +2,7 @@
     "profiles": {
         "generate.overnighttest": {
             "commandName": "Project",
-            "commandLineArgs": "migrate --migrate",
+            "commandLineArgs": "--migrate 002,089",
             "environmentVariables": {
                 "DOTNET_ENVIRONMENT": "Development",
                 "ASPNETCORE_ENVIRONMENT": "Development"

@@ -432,74 +432,6 @@ namespace generate.overnighttest
         /// 4.  updates ToggleResponses table field ResponseValue with schoolYear
         /// 5.  Runs a fresh insert to ToggleAssessments
         /// </summary>
-        //private void RunPreDmc()
-        //{
-        //    Console.WriteLine("Inside RunPreDmc");
-        //    try
-        //    {
-        //        if (!runPreDmc)
-        //        {
-        //            Console.WriteLine("PreDmc already ran");
-        //            return;
-        //        }
-        //        using var scope = serviceProvider.CreateScope();
-        //        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-
-        //        // updates ToggleResponses table.ResponseValue with schoolYear
-        //        int rowsUpdated = dbContext.Database.ExecuteSql($"update App.ToggleResponses set ResponseValue = '10/01/' + CAST({schoolyear} - 1 AS VARCHAR) where ToggleResponseId = 1");
-
-        //        Console.WriteLine($"Rows Updated from ToggleResponses:{rowsUpdated}");
-        //        // updates DimSchoolYearDataMigrationTypes.isSelected to 0 , all migration to selected 0 
-        //        rowsUpdated = dbContext.Database.ExecuteSqlRaw($"UPDATE [RDS].[DimSchoolYearDataMigrationTypes] SET IsSelected = 0 ");
-        //        Console.WriteLine($"Rows Updated from DimSchoolYearDataMigrationTypes isselected:{rowsUpdated}");
-
-        //        // updates DimSchoolYearDataMigrationTypes for current schoolYear IsSelected to 1
-        //        List<Dictionary<string, object>> results = RunSqlCmdAndReadResult($"select DimSchoolYearId FROM [RDS].[DimSchoolYears] WHERE SchoolYear = {schoolyear}");
-        //        Console.WriteLine($"Found results from query:{results}");
-        //        if (results.Count > 0)
-        //        {
-        //            Dictionary<string, object> firstItem = results[0];
-        //            var DimSchoolYearId = firstItem.GetValueOrDefault("DimSchoolYearId", -1);
-        //            Console.WriteLine($"Found DimSchoolYearId:{DimSchoolYearId}");
-        //            rowsUpdated = dbContext.Database.ExecuteSql($@"UPDATE [RDS].[DimSchoolYearDataMigrationTypes]  SET IsSelected = 1 WHERE DimSchoolYearId = {DimSchoolYearId}");
-        //            Console.WriteLine($"Rows Updated from DimSchoolYearDataMigrationTypes isselected to 1:{rowsUpdated}");
-
-        //        }
-
-        //        string sqlUpdateStr = $@"
-        //                update tr
-        //                set ResponseValue = '10/21/' + CAST({schoolyear} - 1 AS VARCHAR)
-        //                from App.ToggleResponses tr 
-        //                inner join app.ToggleQuestions tq
-        //                on tr.ToggleQuestionId = tq.ToggleQuestionId	
-        //                and tq.EmapsQuestionAbbrv = 'MEMBERDTE'                    
-        //            ";
-        //        //string sqlUpdateStr = $"update a set a.IsActive = {(enable ? 1 : 0)} from App.SqlUnitTest a where a.TestScope='{fileSpecNum}'";
-        //        Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
-        //        rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
-        //        Console.WriteLine($"Rows Updated from predmc:{rowsUpdated}");
-
-        //        string toggleSqlFilePath = Path.Combine(appDir, "DatabaseScripts", "InsertToggleAssessments.sql");
-        //        Console.WriteLine($"toggleSqlFilePath:{toggleSqlFilePath}");
-        //        string script = File.ReadAllText(toggleSqlFilePath);
-        //        // Console.WriteLine($"toggleScript:{script}");
-        //        dbContext.Database.ExecuteSqlRaw(script);
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.Error.Write($"Error Running PreDmc");
-        //        // Console.Error.WriteLine(ex);
-        //        ExitWithCode(EXIT_CODES.RunPreDmc,ex);
-        //    }
-        //    finally
-        //    {
-        //        runPreDmc = false;
-        //    }
-
-        //}
-
         private void RunPreDmc()
         {
             Console.WriteLine("Inside RunPreDmc");
@@ -511,8 +443,7 @@ namespace generate.overnighttest
                     return;
                 }
 
-                using var scope = serviceProvider.CreateScope();
-                var appRepository = scope.ServiceProvider.GetRequiredService<AppRepository>();
+                IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
                 appRepository.RunBeforeTests(schoolyear);
 
             }

@@ -67,5 +67,6 @@ namespace generate.core.Interfaces.Repositories.App
         void UpdateViewDefinitions();
 
         void CompleteReportMigrationIfReady();
+        void RunBeforeTests(int submissionYear);
     }
 }
