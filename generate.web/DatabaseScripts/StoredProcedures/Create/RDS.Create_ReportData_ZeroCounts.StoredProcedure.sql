@@ -7,8 +7,8 @@ CREATE PROCEDURE [RDS].[Create_ReportData_ZeroCounts]
 	@includeZeroCounts as bit,
 	@includeFriendlyCaptions as bit,
 	@obscureMissingCategoryCounts as bit,
-	@isOnlineReport as bit=0,
-	@runAsTest as bit=0
+	@isOnlineReport as bit = 0,
+	@runAsTest as bit = 0
 AS
 
 BEGIN
