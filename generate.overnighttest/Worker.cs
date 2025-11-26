@@ -574,7 +574,7 @@ namespace generate.overnighttest
                 return false;
             }
         }
-        
+
         /// <summary>
         /// 
         /// Takes a list of reportCodes 002,005 etc and runs test for them
@@ -630,36 +630,14 @@ namespace generate.overnighttest
             }
 
 
-
         }
 
         private void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)
         {
             Console.WriteLine($"Inside EnableOrDisableTests enable:{enable} fileSpecNumbers:{fileSpecNumbers}, ");
-            string[] fileSpecArr = fileSpecNumbers.Split(",");
-            foreach (string fileSpecNum in fileSpecArr)
-            {
-                try
-                {
-                    string copyFileSpecNum = fileSpecNum;
-                    if (!copyFileSpecNum.StartsWith("FS"))
-                    {
-                        copyFileSpecNum = "FS" + fileSpecNum;
-                    }
-                    using var scope = serviceProvider.CreateScope();
-                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    string sqlUpdateStr = $"update a set a.IsActive = {(enable ? 1 : 0)} from App.SqlUnitTest a where a.TestScope='{copyFileSpecNum}'";
-                    Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
-                    int rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
-                    Console.WriteLine($"fileSpecNum :{copyFileSpecNum} updated rows:{rowsUpdated}");
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.Write($"Error update SqlUnitTest for spec:{fileSpecNum} when enable is :{enable},message:{ex.Message}");
-                    // Console.Error.WriteLine(ex);
-                    ExitWithCode(EXIT_CODES.EnableOrDisableTests,ex);
-                }
-            }
+            IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+            appRepository.EnableOrDisableTests(fileSpecNumbers, enable);
+            
         }
 
 

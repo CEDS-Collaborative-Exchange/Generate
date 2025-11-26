@@ -418,7 +418,10 @@ namespace generate.infrastructure.Repositories.App
 
         public void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)
         {
-
+            int? oldTimeOut = _context.Database.GetCommandTimeout();
+            _context.Database.SetCommandTimeout(11000);
+            _context.Database.ExecuteSqlRaw("app.Enable_Disable_Tests @testScope = {0}, @isActive = {1}", fileSpecNumbers, enable);
+            _context.Database.SetCommandTimeout(oldTimeOut);
         }
     }
 }
