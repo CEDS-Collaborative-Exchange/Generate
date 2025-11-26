@@ -488,12 +488,12 @@ BEGIN TRY
 			--Remove exit reasons that are invalid based on Toggle
 			DELETE FROM #Staging
 			WHERE SpecialEducationExitReasonEdFactsCode = 'RC'
-			AND @RCValid = 0
+			AND isnull(@RCValid, 0) = 0
 		
 			DELETE FROM #Staging
 			WHERE SpecialEducationExitReasonEdFactsCode = 'GRADALTDPL'
-			AND @GRADALTDPLValid = 0
-
+			AND isnull(@GRADALTDPLValid, 0) = 0
+			
 /**************************************************************************************************************************
 BEGIN CREATING TEST RESULTS
 ***************************************************************************************************************************/

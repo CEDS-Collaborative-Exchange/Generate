@@ -139,7 +139,7 @@ BEGIN
 			, ISNULL(rgls.DimGradeLevelId, -1)							GradeLevelId							
 			, -1 														AgeId									
 			, ISNULL(rdr.DimRaceId, -1)									RaceId								
-			, -1														K12DemographicId						
+			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId
 			, 1															StudentCount							
 			, ISNULL(rds.DimSeaId, -1)									SEAId									
 			, -1														IEUId									
@@ -156,7 +156,7 @@ BEGIN
 			, -1 														CohortStatusId						
 			, -1														NOrDStatusId							
 			, -1														CTEStatusId							
-			, -1														K12EnrollmentStatusId					
+			, ISNULL(rdkes.DimK12EnrollmentStatusId, -1)				K12EnrollmentStatusId					
 			, ISNULL(rdels.DimEnglishLearnerStatusId, -1)				EnglishLearnerStatusId				
 			, -1														HomelessnessStatusId					
 			, ISNULL(rdeds.DimEconomicallyDisadvantagedStatusId, -1)	EconomicallyDisadvantagedStatusId		
@@ -166,10 +166,13 @@ BEGIN
 			, -1														SpecialEducationServicesExitDateId	
 			, -1														MigrantStudentQualifyingArrivalDateId	
 			, -1														LastQualifyingMoveDateId						
-
 		FROM Staging.K12Enrollment ske
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
+		--demographics			
+		JOIN RDS.vwDimK12Demographics rdkd
+			ON rsy.SchoolYear = rdkd.SchoolYear
+			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
 		JOIN #dimPeople rdp
 			ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdp.BirthDate, '1/1/1900')
@@ -209,6 +212,15 @@ BEGIN
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND el.EnglishLearner_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+	--k12 enrollment status	
+		LEFT JOIN RDS.vwDimK12EnrollmentStatuses rdkes
+			ON ske.SchoolYear = rdkes.SchoolYear
+			AND rdkes.EnrollmentStatusCode = 'MISSING'
+			AND rdkes.EntryTypeCode = 'MISSING'
+			AND rdkes.ExitOrWithdrawalTypeCode = 'MISSING'
+			AND ISNULL(ske.PostSecondaryEnrollmentStatus, 'MISSING') = ISNULL(rdkes.PostSecondaryEnrollmentStatusMap, rdkes.PostSecondaryEnrollmentStatusCode)
+			AND rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
+			AND rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
 	--race	
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
 			ON ske.SchoolYear = spr.SchoolYear
