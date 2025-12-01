@@ -3,43 +3,40 @@ CREATE PROCEDURE [RDS].[Create_ReportData]
 	@dimFactTypeCode as varchar(50),
 	@runAsTest as bit
 AS
-BEGIN
+begin
 
-	SET NOCOUNT ON;
+	set NOCOUNT ON;
 	
 	begin try
 
 		-- Get GenerateReportTypeCode
-
 		declare @generateReportTypeCode as varchar(50)
 		select @generateReportTypeCode = t.ReportTypeCode
 		from app.GenerateReports r
-		inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
+			inner join app.GenerateReportTypes t 
+				on r.GenerateReportTypeId = t.GenerateReportTypeId
 		where r.ReportCode = @reportCode
 
 		-- Get DataMigrationId and DimFactTypeId
-
 		declare @dataMigrationTypeId as int, @dimFactTypeId as int
 
 		select @dimFactTypeId = DimFactTypeId from rds.DimFactTypes where FactTypeCode = @dimFactTypeCode
 		select  @dataMigrationTypeId = DataMigrationTypeId from app.DataMigrationTypes where DataMigrationTypeCode = 'report'
 
-		
 		-- Get Fact/Report Tables/Fields
-
 		declare @factTable as varchar(50)
 		declare @factField as varchar(50)
 		declare @factReportTable as varchar(50)
+		declare @includeZeroCounts as bit = 0
 
 		select @factTable = ft.FactTableName, @factField = ft.FactFieldName, @factReportTable = ft.FactReportTableName
 		from app.FactTables ft 
-		inner join app.GenerateReports r on ft.FactTableId = r.FactTableId
+			inner join app.GenerateReports r 
+				on ft.FactTableId = r.FactTableId
 		where r.ReportCode = @reportCode
-
 
 		-- Loop through all submission years
 		---------------------------------------------
-
 		declare @submissionYears as table(
 			SubmissionYear varchar(50)
 		)
@@ -69,54 +66,58 @@ BEGIN
 			if(@reportCode = 'yeartoyearprogress')
 			begin
 
-				insert into @submissionYears
-				(
+				insert into @submissionYears (
 					SubmissionYear
 				)
 				select distinct cs.SubmissionYear 
 				from app.CategorySets cs 
-				inner join app.GenerateReports r on cs.GenerateReportId = r.GenerateReportId
-				inner join rds.DimSchoolYears d on d.SchoolYear = cs.SubmissionYear
+					inner join app.GenerateReports r 
+						on cs.GenerateReportId = r.GenerateReportId
+					inner join rds.DimSchoolYears d 
+						on d.SchoolYear = cs.SubmissionYear
 				Where ReportCode = @reportCode
 
 			end
 			else
 			begin
 
-				insert into @submissionYears
-				(
+				insert into @submissionYears (
 					SubmissionYear
 				)
 				select distinct cs.SubmissionYear 
 				from app.CategorySets cs 
-				inner join app.GenerateReports r on cs.GenerateReportId = r.GenerateReportId
-				inner join rds.DimSchoolYears d on d.SchoolYear = cs.SubmissionYear
-				inner join rds.DimSchoolYearDataMigrationTypes dd on dd.DimSchoolYearId = d.DimSchoolYearId and dd.IsSelected=1 and dd.DataMigrationTypeId=@dataMigrationTypeId
-				Where ReportCode = @reportCode and r.isLocked=1
+					inner join app.GenerateReports r	
+						on cs.GenerateReportId = r.GenerateReportId
+					inner join rds.DimSchoolYears d 
+						on d.SchoolYear = cs.SubmissionYear
+					inner join rds.DimSchoolYearDataMigrationTypes dd 
+						on dd.DimSchoolYearId = d.DimSchoolYearId 
+						and dd.IsSelected = 1 
+						and dd.DataMigrationTypeId = @dataMigrationTypeId
+				where ReportCode = @reportCode 
+				and r.isLocked=1
 			end
 
 		end
 
 		declare @reportYear as varchar(50)
 	
-		DECLARE submissionYear_cursor CURSOR FOR 
-		SELECT SubmissionYear
-		FROM @submissionYears ORDER BY SubmissionYear
+		declare submissionYear_cursor cursor for
+		select SubmissionYear
+		from @submissionYears order by SubmissionYear
 
-		OPEN submissionYear_cursor
-		FETCH NEXT FROM submissionYear_cursor INTO @reportYear
+		open submissionYear_cursor
+		fetch next from submissionYear_cursor into @reportYear
 
-		WHILE @@FETCH_STATUS = 0
-		BEGIN
+		while @@FETCH_STATUS = 0
+		begin
 
 			-- Get DimSchoolYearId
-
 			declare @dimSchoolYearId as int
 			select @dimSchoolYearId = DimSchoolYearId from rds.DimSchoolYears where SchoolYear = @reportYear
 
 			-- Get Category Sets for this Submission Year
-
-			declare @categorySets as table(
+			declare @categorySets as table (
 				CategorySetId int,
 				ReportLevel varchar(5),
 				CategorySetCode varchar(50),
@@ -127,8 +128,7 @@ BEGIN
 			)
 			delete from @categorySets
 		
-			insert @categorySets
-			(	
+			insert @categorySets (	
 				CategorySetId,
 				ReportLevel,
 				CategorySetCode,
@@ -144,49 +144,21 @@ BEGIN
 				isnull(app.Get_CategoriesByCategorySet(cs.CategorySetId, 1, 0), '') as Categories,
 				isnull(app.Get_CategoriesByCategorySet(cs.CategorySetId, 1, 1), '') as ReportFields,
 				isnull(tt.TableTypeAbbrv, '') as TableTypeAbbrv,
-				CASE WHEN CHARINDEX('total', cs.CategorySetName) > 0 Then 'Y'
+				CASE WHEN charindex('total', cs.CategorySetName) > 0 Then 'Y'
 					 ELSE 'N'
-				END as TotalIndicator
+				end as TotalIndicator
 			from app.CategorySets cs 
-			inner join app.GenerateReports r on cs.GenerateReportId = r.GenerateReportId
-			inner join app.GenerateReportTypes t on r.GenerateReportTypeId = t.GenerateReportTypeId
-			inner join app.OrganizationLevels o on cs.OrganizationLevelId = o.OrganizationLevelId
-			left outer join app.TableTypes tt on cs.TableTypeId = tt.TableTypeId
+				inner join app.GenerateReports r 
+					on cs.GenerateReportId = r.GenerateReportId
+				inner join app.GenerateReportTypes t 
+					on r.GenerateReportTypeId = t.GenerateReportTypeId
+				inner join app.OrganizationLevels o 
+					on cs.OrganizationLevelId = o.OrganizationLevelId
+				left outer join app.TableTypes tt 
+					on cs.TableTypeId = tt.TableTypeId
 			where r.ReportCode = @reportCode
 			and cs.SubmissionYear = @reportYear
 			order by o.OrganizationLevelId, cs.CategorySetCode
-
-			-- Get Categories available to this report
-
-			declare @CategoriesAvailable as table (
-				CategoryCode nvarchar(100), 
-				ReportField nvarchar(100),
-				DataPopulationDimensionField nvarchar(100),
-				EdFactsDimensionField nvarchar(100),
-				DimensionTable nvarchar(100),
-				IsOrganizationLevelSpecific bit,
-				IsCalculated bit
-			)
-
-			delete from @CategoriesAvailable
-
-			insert into @CategoriesAvailable 
-			(CategoryCode, ReportField, DataPopulationDimensionField, EdFactsDimensionField, DimensionTable, IsOrganizationLevelSpecific, IsCalculated) 
-			select c.CategoryCode, 
-			upper(d.DimensionFieldName) as ReportField, 
-			d.DimensionFieldName + 'Code' as DataPopulationDimensionField,
-			d.DimensionFieldName + 'EdFactsCode' as EdFactsDimensionField,
-			dt.DimensionTableName,
-			d.IsOrganizationLevelSpecific,
-			d.IsCalculated
-			from App.Categories c
-			inner join App.Category_Dimensions cd on cd.CategoryId = c.CategoryId
-			inner join App.Dimensions d on cd.DimensionId = d.DimensionId
-			inner join App.DimensionTables dt on dt.DimensionTableId = d.DimensionTableId
-			inner join App.FactTable_DimensionTables fd on d.DimensionTableId = fd.DimensionTableId
-			inner join App.FactTables ft on fd.FactTableId = ft.FactTableId
-			where ft.FactTableName = @factTable
-
 
 			-- Loop through Category Sets for this Submission Year
 			---------------------------------------------
@@ -204,25 +176,42 @@ BEGIN
 			set @categorySetCntr = 0
 			declare @reportDescription as varchar(2000)
 
-			DECLARE categoryset_cursor CURSOR FOR 
-			SELECT CategorySetId, ReportLevel, CategorySetCode, Categories, ReportFields, TableTypeAbbrv, TotalIndicator
+			declare categoryset_cursor CURSOR FOR 
+			select CategorySetId, ReportLevel, CategorySetCode, Categories, ReportFields, TableTypeAbbrv, TotalIndicator
 			FROM @categorySets
 
-			OPEN categoryset_cursor
-			FETCH NEXT FROM categoryset_cursor INTO @categorySetId, @reportLevel, @categorySetCode, @categorySetCategoryList, @categorySetReportFieldList, @tableTypeAbbrv, @totalIndicator
+			open categoryset_cursor
+			fetch next from categoryset_cursor into @categorySetId, @reportLevel, @categorySetCode, @categorySetCategoryList, @categorySetReportFieldList, @tableTypeAbbrv, @totalIndicator
 
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
+			while @@FETCH_STATUS = 0
+			begin
 
 				set @categorySetCntr = @categorySetCntr + 1
+				set @includeZeroCounts = 0
+				
+				if @reportLevel <> 'SEA' and @reportCode in ('002', '089') and @categorySetCode = 'TOT' set @includeZeroCounts = 1
 
+				if @reportLevel = 'SEA' 
+				begin
+					set @includeZeroCounts = 1
+				end
+
+				if @reportCode in ('052','032','040','033')
+				begin
+					set @includeZeroCounts = 1
+				end
+
+				if @reportCode in ('045','218','219','220','221','222','224','225','226')
+				begin
+					set @includeZeroCounts = 0
+				end
+				
 				-- Log status
-
 				print ''
 				print '----------------------------------'
 				print '-- ' + @reportYear + ' - ' + convert(varchar(20), @categorySetCntr) + ' of ' + convert(varchar(20), @categorySetCnt) + ' / ' + @reportCode + '-' + @reportLevel + '-' + @categorySetCode + ' - ' + @categorySetCategoryList
 				print '----------------------------------'
-				SET @reportDescription = @reportCode + '-' + @reportYear + '-' + @categorySetCode + ' - ' + @categorySetCategoryList
+				set @reportDescription = @reportCode + '-' + @reportYear + '-' + @categorySetCode + ' - ' + @categorySetCategoryList
 
 				if @runAsTest = 0
 				begin
@@ -241,58 +230,59 @@ BEGIN
 
 				-- Only process if Categories set data hasn't already been generated
 
-				DECLARE @sqlAlreadyRun nvarchar(500)
-				DECLARE @sqlAlreadyRunParm nvarchar(500)
-				DECLARE @reportCount int
-				DECLARE @tableTypeAbbrvs as varchar(50)
-				DECLARE @totalIndicators as varchar(1)
+				declare @sqlAlreadyRun nvarchar(500)
+				declare @sqlAlreadyRunParm nvarchar(500)
+				declare @reportCount int
+				declare @tableTypeAbbrvs as varchar(50)
+				declare @totalIndicators as varchar(1)
 
-				set @tableTypeAbbrvs=@tableTypeAbbrv
-				set @totalIndicators=@totalIndicator
-				
+				set @tableTypeAbbrvs = @tableTypeAbbrv
+				set @totalIndicators = @totalIndicator
 
-					-- Dynamic sql variables
-					declare @sql as nvarchar(max)
-					set @sql = ''
+				-- Dynamic sql variables
+				declare @sql as nvarchar(max)
+				set @sql = ''
 
-					select @sql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @categorySetCode, 'actual', 1, 0, @tableTypeAbbrvs, @totalIndicators, @dimFactTypeCode)
+				select @sql = [RDS].[Get_CountSQL] (@reportCode, @reportLevel, @reportYear, @categorySetCode, 'actual', 1, 0, @tableTypeAbbrvs, @totalIndicators, @dimFactTypeCode)
 
-					--PRINT '' 
-					--PRINT '@reportCode : '+@reportCode
-					--PRINT '@reportLevel : '+@reportLevel
-					--PRINT '@reportYear : '+@reportYear
-					--PRINT '@categorySetCode : '+@categorySetCode
-					--PRINT '@tableTypeAbbrvs : '+@tableTypeAbbrvs
-					--PRINT '@totalIndicators : '+@totalIndicators
-					--PRINT '@dimFactTypeCode : '+@dimFactTypeCode
-					--PRINT ''
+				--PRINT '' 
+				--PRINT '@reportCode : '+@reportCode
+				--PRINT '@reportLevel : '+@reportLevel
+				--PRINT '@reportYear : '+@reportYear
+				--PRINT '@categorySetCode : '+@categorySetCode
+				--PRINT '@tableTypeAbbrvs : '+@tableTypeAbbrvs
+				--PRINT '@totalIndicators : '+@totalIndicators
+				--PRINT '@dimFactTypeCode : '+@dimFactTypeCode
+				--PRINT ''
 					
-					if @runAsTest = 1
-					begin
-						-- Print @sql
-						------------------------
-				
-						DECLARE @printString NVARCHAR(MAX);
-						set @printString = @sql;
-						DECLARE @CurrentEnd BIGINT; /* track the length of the next substring */
-						DECLARE @offset tinyint; /*tracks the amount of offset needed */
-						set @printString = replace(  replace(@printString, char(13) + char(10), char(10))   , char(13), char(10))
+				if @runAsTest = 1
+				begin
+					-- Print @sql
+					------------------------
+					declare @printString nvarchar(MAX);
+					set @printString = @sql;
+					declare @CurrentEnd bigint; /* track the length of the next substring */
+					declare @offset tinyint; /*tracks the amount of offset needed */
+					set @printString = replace(  replace(@printString, char(13) + char(10), char(10))   , char(13), char(10))
 
-						WHILE LEN(@printString) > 1
-						BEGIN
-							IF CHARINDEX(CHAR(10), @printString) between 1 AND 4000
-							BEGIN
-									SET @CurrentEnd =  CHARINDEX(char(10), @printString) -1
-									set @offset = 2
-							END
-							ELSE
-							BEGIN
-									SET @CurrentEnd = 4000
-									set @offset = 1
-							END   
-							PRINT SUBSTRING(@printString, 1, @CurrentEnd) 
-							set @printString = SUBSTRING(@printString, @CurrentEnd+@offset, LEN(@printString))   
-						END
+					while len(@printString) > 1
+					begin
+						if charindex(char(10), @printString) between 1 AND 4000
+						begin
+								set @CurrentEnd =  charindex(char(10), @printString) -1
+								set @offset = 2
+						end
+						ELSE
+						begin
+								set @CurrentEnd = 4000
+								set @offset = 1
+						end   
+						PRINT SUBSTRING(@printString, 1, @CurrentEnd) 
+						set @printString = SUBSTRING(@printString, @CurrentEnd + @offset, len(@printString))   
+					end
+
+					if @includeZeroCounts = 1
+					begin
 
 						declare @countToZeroCountPrint nvarchar(max)
 
@@ -305,7 +295,7 @@ BEGIN
 
 						PRINT @countToZeroCountPrint
 
-						EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs,	1,0,1,0,1
+						exec [RDS].[Create_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs, 1,0,1,0,1
 
 						set @countToZeroCountPrint = char(13) + char(10)
 						set @countToZeroCountPrint += '------------------------------------------------------------------------------------------------'
@@ -315,47 +305,46 @@ BEGIN
 						set @countToZeroCountPrint += '------------------------------------------------------------------------------------------------'
 
 						PRINT @countToZeroCountPrint
-
 					end
-					else
-					begin
+
+				end
+				else
+				begin
 					
-						-- Execute @sql
-						------------------------------
-						declare @ParmDefinition as nvarchar(max)
-						SET @ParmDefinition = N'@dimFactTypeId int, @dimSchoolYearId int, @reportLevel varchar(50)';  
-						EXECUTE sp_executesql @sql, @ParmDefinition, @dimFactTypeId = @dimFactTypeId, @dimSchoolYearId = @dimSchoolYearId, @reportLevel = @reportLevel;
+					-- Execute @sql
+					------------------------------
+					declare @ParmDefinition as nvarchar(max)
+					set @ParmDefinition = N'@dimFactTypeId int, @dimSchoolYearId int, @reportLevel varchar(50)';  
+					execute sp_executesql @sql, @ParmDefinition, @dimFactTypeId = @dimFactTypeId, @dimSchoolYearId = @dimSchoolYearId, @reportLevel = @reportLevel;
 
-						EXEC [RDS].[Get_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs,	1,0,1,0,0
-
+					if @includeZeroCounts = 1
+					begin
+						exec [RDS].[Create_ReportData_ZeroCounts] 	@reportCode, @reportLevel ,	@reportYear ,	@categorySetCode , @tableTypeAbbrvs, 1,0,1,0,0
 					end
 
+				end
 
+				fetch next from categoryset_cursor into @categorySetId, @reportLevel, @categorySetCode, @categorySetCategoryList, @categorySetReportFieldList, @tableTypeAbbrv, @totalIndicator
+			end
 
-				FETCH NEXT FROM categoryset_cursor INTO @categorySetId, @reportLevel, @categorySetCode, @categorySetCategoryList, @categorySetReportFieldList, @tableTypeAbbrv, @totalIndicator
-			END
+			close categoryset_cursor
+			deallocate categoryset_cursor
 
-			CLOSE categoryset_cursor
-			DEALLOCATE categoryset_cursor
-
-
-			FETCH NEXT FROM submissionYear_cursor INTO @reportYear
-		END
-
-		CLOSE submissionYear_cursor
-		DEALLOCATE submissionYear_cursor
-
-		IF exists(select 1 from app.GenerateReports where ReportCode=@reportCode and IsLocked=1 and UseLegacyReportMigration = 1)
-		begin
-			 IF(@reportCode not in('studentfederalprogramsparticipation','studentmultifedprogsparticipation'))
-			 BEGIN
-				update app.GenerateReports set IsLocked=0 where ReportCode=@reportCode and IsLocked=1 and UseLegacyReportMigration = 1
-			 END
+			fetch next from submissionYear_cursor into @reportYear
 		end
 
+		close submissionYear_cursor
+		deallocate submissionYear_cursor
+
+		if exists(select 1 from app.GenerateReports where ReportCode = @reportCode and IsLocked = 1 and UseLegacyReportMigration = 1)
+		begin
+			 if(@reportCode not in('studentfederalprogramsparticipation','studentmultifedprogsparticipation'))
+			 begin
+				update app.GenerateReports set IsLocked = 0 where ReportCode = @reportCode and IsLocked = 1 and UseLegacyReportMigration = 1
+			 end
+		end
 
 	end try
-
 	begin catch
 
 		declare @msg as nvarchar(max)
@@ -364,10 +353,10 @@ BEGIN
 		declare @sev as int
 		set @sev = ERROR_SEVERITY()
 
-		RAISERROR(@msg, @sev, 1)
+		raiserror(@msg, @sev, 1)
 
 	end catch
 
-	SET NOCOUNT OFF;
+	set NOCOUNT OFF;
 
-END
+end

@@ -14,7 +14,7 @@ BEGIN
 							where IsSelected = 1
 							and dm.DataMigrationTypeId = 3
 						)
-    SELECT @StateCode = StateAbbreviationCode from Staging.StateDetail where SchoolYear = @schoolyear
+    SELECT @StateCode = (select distinct(StateAbbreviationCode) from Staging.StateDetail where isnull(SchoolYear, '') <> '' and isnull(StateAbbreviationCode, '') <> '')
 	SELECT @StateName = (	select CedsOptionSetDescription 
 							from ceds.CedsOptionSetMapping 
 							where CedsElementTechnicalName = 'StateAbbreviation' 

@@ -52,17 +52,20 @@ namespace generate.web.Controllers.Api.App
         }
 
 
-
+        public class CancelMigrationRequest
+        {
+            public string MigrationType { get; set; }
+        }
 
         [HttpPut("CancelMigration")]
-        public IActionResult CancelMigration([FromBody]string migrationType)
+        public IActionResult CancelMigration([FromBody] CancelMigrationRequest cancelMigrationRequest)
         {
             try
             {
 
                 var backgroundUrl = _appSettings.Value.BackgroundUrl;
                 var client = new RestClient(backgroundUrl + "/api/DataMigration/");
-                var request = new RestRequest("MigrateData/Cancel/" + migrationType, Method.Get);
+                var request = new RestRequest("MigrateData/Cancel/" + cancelMigrationRequest.MigrationType, Method.Get);
                 var response = client.Get(request);
 
                 return new OkResult();

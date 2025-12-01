@@ -31,7 +31,7 @@ AS
 		AND rsy.SchoolYear = sssrd3.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd4
 		ON rdkes.PostSecondaryEnrollmentStatusCode = sssrd4.OutputCode
-		AND sssrd4.TableName = 'RefPsExitOrWithdrawalType'
+		AND sssrd4.TableName = 'RefPostsecondaryEnrollmentStatus'
 		AND rsy.SchoolYear = sssrd4.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd5
 		ON rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = sssrd5.OutputCode
