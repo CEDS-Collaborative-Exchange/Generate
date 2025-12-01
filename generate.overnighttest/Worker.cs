@@ -7,6 +7,7 @@ using generate.core.Config;
 using generate.core.Interfaces.Services;
 using generate.infrastructure.Contexts;
 using generate.infrastructure.Services;
+using generate.infrastructure.Repositories.App;
 using generate.web.Config;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -239,8 +240,8 @@ namespace generate.overnighttest
 
 
 
-
-            GlobalConfiguration.Configuration.UseSqlServerStorage("Server=10.0.2.10;Database=generate-test;User ID=generate;Password=78h&LUogZ#qvZ9i;MultipleActiveResultSets=true;trustServerCertificate=true;Connect Timeout=300;", new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
+            GlobalConfiguration.Configuration.UseSqlServerStorage("Server=(localdb)\\MSSQLLocalDB;Database=Generate;Trusted_Connection=true;MultipleActiveResultSets=true;trustServerCertificate=true;", new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
+            //GlobalConfiguration.Configuration.UseSqlServerStorage("Server=10.0.2.10;Database=generate-test;User ID=generate;Password=78h&LUogZ#qvZ9i;MultipleActiveResultSets=true;trustServerCertificate=true;Connect Timeout=300;", new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
 
 
 
@@ -349,33 +350,26 @@ namespace generate.overnighttest
                     return;
 
                 }
-                Action<string, DbContext> process = (reportCode, dbContext) =>
+                IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+                Action<string> process = (reportCode) =>
                 {
-                    string whereClause = reportCode.Equals(ALL_FACT) ? "" : $" and ReportCode = '{reportCode}'";
-                    string sqlUpdateStr = $@"
-                            update app.GenerateReports
-                            set IsLocked = {value}
-                            where 1 = 1 {whereClause}
-                        ";
-                    Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
-                    int rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
-                    Console.WriteLine($"Rows Updated for reportCode:{reportCode} toggleReportLock:{rowsUpdated}");
-                }
+                    string report = reportCode.Equals(ALL_FACT) ? "" : reportCode;
+                    appRepository.toggleReportLock(report, Convert.ToBoolean(value));
+                };
 
-                ;
                 using var scope = serviceProvider.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 if (!reportCodeArr.Contains(ALL_FACT) && reportCodeArr.Length > 0)
                 {
                     foreach (var reportCode in reportCodeArr)
                     {
-                        process(reportCode, dbContext);
+                        process(reportCode);
                     }
                     return;
                 }
                 else
                 {
-                    process(ALL_FACT, dbContext);
+                    process(ALL_FACT);
                 }
 
             }
@@ -441,63 +435,23 @@ namespace generate.overnighttest
                     Console.WriteLine("PreDmc already ran");
                     return;
                 }
-                using var scope = serviceProvider.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-
-                // updates ToggleResponses table.ResponseValue with schoolYear
-                int rowsUpdated = dbContext.Database.ExecuteSql($"update App.ToggleResponses set ResponseValue = '10/01/' + CAST({schoolyear} - 1 AS VARCHAR) where ToggleResponseId = 1");
-
-                Console.WriteLine($"Rows Updated from ToggleResponses:{rowsUpdated}");
-                // updates DimSchoolYearDataMigrationTypes.isSelected to 0 , all migration to selected 0 
-                rowsUpdated = dbContext.Database.ExecuteSqlRaw($"UPDATE [RDS].[DimSchoolYearDataMigrationTypes] SET IsSelected = 0 ");
-                Console.WriteLine($"Rows Updated from DimSchoolYearDataMigrationTypes isselected:{rowsUpdated}");
-
-                // updates DimSchoolYearDataMigrationTypes for current schoolYear IsSelected to 1
-                List<Dictionary<string, object>> results = RunSqlCmdAndReadResult($"select DimSchoolYearId FROM [RDS].[DimSchoolYears] WHERE SchoolYear = {schoolyear}");
-                Console.WriteLine($"Found results from query:{results}");
-                if (results.Count > 0)
-                {
-                    Dictionary<string, object> firstItem = results[0];
-                    var DimSchoolYearId = firstItem.GetValueOrDefault("DimSchoolYearId", -1);
-                    Console.WriteLine($"Found DimSchoolYearId:{DimSchoolYearId}");
-                    rowsUpdated = dbContext.Database.ExecuteSql($@"UPDATE [RDS].[DimSchoolYearDataMigrationTypes]  SET IsSelected = 1 WHERE DimSchoolYearId = {DimSchoolYearId}");
-                    Console.WriteLine($"Rows Updated from DimSchoolYearDataMigrationTypes isselected to 1:{rowsUpdated}");
-
-                }
-
-                string sqlUpdateStr = $@"
-                        update tr
-                        set ResponseValue = '10/21/' + CAST({schoolyear} - 1 AS VARCHAR)
-                        from App.ToggleResponses tr 
-                        inner join app.ToggleQuestions tq
-                        on tr.ToggleQuestionId = tq.ToggleQuestionId	
-                        and tq.EmapsQuestionAbbrv = 'MEMBERDTE'                    
-                    ";
-                //string sqlUpdateStr = $"update a set a.IsActive = {(enable ? 1 : 0)} from App.SqlUnitTest a where a.TestScope='{fileSpecNum}'";
-                Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
-                rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
-                Console.WriteLine($"Rows Updated from predmc:{rowsUpdated}");
-
-                string toggleSqlFilePath = Path.Combine(appDir, "DatabaseScripts", "InsertToggleAssessments.sql");
-                Console.WriteLine($"toggleSqlFilePath:{toggleSqlFilePath}");
-                string script = File.ReadAllText(toggleSqlFilePath);
-                // Console.WriteLine($"toggleScript:{script}");
-                dbContext.Database.ExecuteSqlRaw(script);
+                IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+                appRepository.RunBeforeTests(schoolyear);
 
             }
             catch (Exception ex)
             {
                 Console.Error.Write($"Error Running PreDmc");
                 // Console.Error.WriteLine(ex);
-                ExitWithCode(EXIT_CODES.RunPreDmc,ex);
+                ExitWithCode(EXIT_CODES.RunPreDmc, ex);
             }
             finally
             {
                 runPreDmc = false;
             }
-
         }
+
         private void RunAllTests()
         {
             Console.WriteLine("Inside RullAllTests");
@@ -620,7 +574,7 @@ namespace generate.overnighttest
                 return false;
             }
         }
-        
+
         /// <summary>
         /// 
         /// Takes a list of reportCodes 002,005 etc and runs test for them
@@ -676,39 +630,15 @@ namespace generate.overnighttest
             }
 
 
-
         }
 
         private void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)
         {
             Console.WriteLine($"Inside EnableOrDisableTests enable:{enable} fileSpecNumbers:{fileSpecNumbers}, ");
-            string[] fileSpecArr = fileSpecNumbers.Split(",");
-            foreach (string fileSpecNum in fileSpecArr)
-            {
-                try
-                {
-                    string copyFileSpecNum = fileSpecNum;
-                    if (!copyFileSpecNum.StartsWith("FS"))
-                    {
-                        copyFileSpecNum = "FS" + fileSpecNum;
-                    }
-                    using var scope = serviceProvider.CreateScope();
-                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    string sqlUpdateStr = $"update a set a.IsActive = {(enable ? 1 : 0)} from App.SqlUnitTest a where a.TestScope='{copyFileSpecNum}'";
-                    Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
-                    int rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
-                    Console.WriteLine($"fileSpecNum :{copyFileSpecNum} updated rows:{rowsUpdated}");
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.Write($"Error update SqlUnitTest for spec:{fileSpecNum} when enable is :{enable},message:{ex.Message}");
-                    // Console.Error.WriteLine(ex);
-                    ExitWithCode(EXIT_CODES.EnableOrDisableTests,ex);
-                }
-            }
+            IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+            appRepository.EnableOrDisableTests(fileSpecNumbers, enable);
+            
         }
-
-
 
 
     }

@@ -11,4 +11,8 @@ StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Enable_Disable_Tests.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Enable_Disable_Tests.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Run_Before_Tests.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Run_Before_Tests.StoredProcedure.sql,0
 VersionUpdates\\13.2_prerelease,UpdateDbVersion.sql,0
