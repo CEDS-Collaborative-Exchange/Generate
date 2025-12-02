@@ -2,8 +2,13 @@ VersionUpdates\\13.2_prerelease,Restore 13.1.sql,0
 VersionUpdates\\13.2_prerelease,App.TableChanges.sql,0
 VersionUpdates\\13.2_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.2_prerelease,RDS.TableChanges.sql,0
+VersionUpdates\\13.2_prerelease,JunkTablePopulation.sql,0
 Views\\Drop,RDS.vwDimK12EnrollmentStatuses.View.sql,0
 Views\\Create,RDS.vwDimK12EnrollmentStatuses.View.sql,0
+Views\\Drop,RDS.vwDimPsEnrollmentStatuses.View.sql,0
+Views\\Create,RDS.vwDimPsEnrollmentStatuses.View.sql,0
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportData_ZeroCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_ReportData_ZeroCounts.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData_ZeroCounts.StoredProcedure.sql,0
