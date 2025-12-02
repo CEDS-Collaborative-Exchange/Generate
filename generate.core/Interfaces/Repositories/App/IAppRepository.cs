@@ -67,5 +67,8 @@ namespace generate.core.Interfaces.Repositories.App
         void UpdateViewDefinitions();
 
         void CompleteReportMigrationIfReady();
+        void RunBeforeTests(int submissionYear);
+        void toggleReportLock(string reportCode, bool isLocked);
+        void EnableOrDisableTests(string fileSpecNumbers, bool enable = true);
     }
 }

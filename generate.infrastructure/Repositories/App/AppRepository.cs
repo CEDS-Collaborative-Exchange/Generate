@@ -443,6 +443,41 @@ namespace generate.infrastructure.Repositories.App
 
 
         }
-    }
 
+        public void RunBeforeTests(int submissionYear)
+        {
+
+            int? oldTimeOut = _context.Database.GetCommandTimeout();
+            _context.Database.SetCommandTimeout(11000);
+            _context.Database.ExecuteSqlRaw("app.Run_Before_Tests @submissionYear = {0}", submissionYear);
+            _context.Database.SetCommandTimeout(oldTimeOut);
+
+        }
+
+        public void toggleReportLock(string reportCode, bool isLocked)
+        {
+            if (reportCode == "") {
+                var reports = Find<GenerateReport>(t => t.IsActive).ToList();
+                foreach (var report in reports) {
+                    report.IsLocked = isLocked;
+                    _context.SaveChanges();
+                }
+            }
+            else
+            {
+                var report = _context.Set<GenerateReport>().FirstOrDefault(x => x.ReportCode == reportCode);
+                report.IsLocked = isLocked;
+                _context.SaveChanges();
+            }
+
+        }
+
+        public void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)
+        {
+            int? oldTimeOut = _context.Database.GetCommandTimeout();
+            _context.Database.SetCommandTimeout(11000);
+            _context.Database.ExecuteSqlRaw("app.Enable_Disable_Tests @testScope = {0}, @isActive = {1}", fileSpecNumbers, enable);
+            _context.Database.SetCommandTimeout(oldTimeOut);
+        }
+    }
 }
