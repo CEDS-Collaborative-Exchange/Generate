@@ -479,5 +479,13 @@ namespace generate.infrastructure.Repositories.App
             _context.Database.ExecuteSqlRaw("app.Enable_Disable_Tests @testScope = {0}, @isActive = {1}", fileSpecNumbers, enable);
             _context.Database.SetCommandTimeout(oldTimeOut);
         }
+
+        public void MigrateMetadata(int submissionYear, bool isTransferAppToMetadata = true)
+        {
+            int? oldTimeOut = _context.Database.GetCommandTimeout();
+            _context.Database.SetCommandTimeout(11000);
+            _context.Database.ExecuteSqlRaw("app.Migrate_Metadata @submissionYear = {0}, @isTransferAppToMetadata = {1}", submissionYear, isTransferAppToMetadata);
+            _context.Database.SetCommandTimeout(oldTimeOut);
+        }
     }
 }
