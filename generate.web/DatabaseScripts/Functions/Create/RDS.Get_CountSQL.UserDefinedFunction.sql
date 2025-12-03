@@ -1361,6 +1361,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimAssessmentAdministrationId'
 		end
+		else if @dimensionTable = 'DimPSEnrollmentStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimPSEnrollmentStatusId'
+		end
 			
 		set @factKey = REPLACE(@dimensionPrimaryKey, 'Dim', '')
 
@@ -4186,7 +4190,7 @@ BEGIN
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					select distinct fact.K12StudentId,  studentStatus.DimK12EnrollmentStatusId, p.K12StudentStudentIdentifierState
+					select distinct fact.K12StudentId,  studentStatus.DimPsEnrollmentStatusId, p.K12StudentStudentIdentifierState
 					from rds.' + @factTable + ' fact '
 
 			if @reportLevel = 'lea'
@@ -4214,12 +4218,12 @@ BEGIN
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				inner join rds.DimK12EnrollmentStatuses studentStatus 
-					on studentStatus.DimK12EnrollmentStatusId=fact.K12EnrollmentStatusId
-				where studentStatus.PostSecondaryEnrollmentStatusEdFactsCode<>''MISSING''	
+				inner join rds.DimPSEnrollmentStatuses studentStatus 
+					on studentStatus.DimPSEnrollmentStatusId = fact.PSEnrollmentStatusId
+				where studentStatus.PostSecondaryEnrollmentActionEdFactsCode <> ''MISSING''	
 			) rules
 				on fact.K12StudentId = rules.K12StudentId  
-				and fact.K12EnrollmentStatusId = rules.DimK12EnrollmentStatusId'
+				and fact.PSEnrollmentStatusId = rules.DimPSEnrollmentStatusId'
 		end
 		else if @reportCode in ('204')
 		begin
