@@ -2,6 +2,7 @@ VersionUpdates\\13.2_prerelease,Restore 13.1.sql,0
 VersionUpdates\\13.2_prerelease,App.TableChanges.sql,0
 VersionUpdates\\13.2_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.2_prerelease,RDS.TableChanges.sql,0
+VersionUpdates\\13.2_prerelease,App.Metadata.sql,0
 VersionUpdates\\13.2_prerelease,JunkTablePopulation.sql,0
 Views\\Drop,RDS.vwDimK12EnrollmentStatuses.View.sql,0
 Views\\Create,RDS.vwDimK12EnrollmentStatuses.View.sql,0
