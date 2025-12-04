@@ -240,6 +240,8 @@ namespace generate.infrastructure.Services
 
                 }
 
+                _appRepository.MigrateMetadata("ESS", maxSubmissionYear, true);
+
                 var time1 = DateTime.Now;
                 DeleteExistingCatInfobyYearandDS(collectName, essDSNameAbbrv, maxVersionNumber.ToString(), fqYrName, maxSubmissionYear.ToString(), DSYVrdetail);
                 var time2 = DateTime.Now;
@@ -353,6 +355,8 @@ namespace generate.infrastructure.Services
 
                 //DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(edfacts);
 
+                _appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, true);
+
                 DeleteExistingCatInfobyYearandDS(collectName, charterDSNameAbbrv, maxVersNum, fqYrName, year.ToString(), DSYVrdetail);
 
                 populateCatInfoData(collectName, charterDSNameAbbrv, maxVersNum, fqYrName, DSYVrdetail);
@@ -400,15 +404,15 @@ namespace generate.infrastructure.Services
                 else
                 {
 
-                    if (!string.IsNullOrEmpty(_bkfsMetaFileLoc) && _reloadFromBackUp)
-                    {
-                        if (!Directory.Exists(_bkfsMetaFileLoc)) Directory.CreateDirectory(_bkfsMetaFileLoc);
+                    //if (!string.IsNullOrEmpty(_bkfsMetaFileLoc) && _reloadFromBackUp)
+                    //{
+                    //    if (!Directory.Exists(_bkfsMetaFileLoc)) Directory.CreateDirectory(_bkfsMetaFileLoc);
 
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflname, edfacts);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflname, chrtr);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflnameFLay, bkESSFLay);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflnameFLay, bkCHRFLay);
-                    }
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflname, edfacts);
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflname, chrtr);
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflnameFLay, bkESSFLay);
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflnameFLay, bkCHRFLay);
+                    //}
 
                     var time = DateTime.Now;
                     var status = "The metadata was successfully updated on " + time.ToString() + ".";
@@ -448,24 +452,9 @@ namespace generate.infrastructure.Services
                 UpdateKeyinGenConfig(FSMetalogKey, status);
                 UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausFail);
 
-                if (checkBackupFilesExists() && _reloadFromBackUp)
-                {
-                    _reloadFromBackUp = false; // setting back to false, so reload from back up occurs once.
-                    _useWSforFSMetaUpd = false;
-                    UpdateKeyinGenConfig(essKey, "");
-                    UpdateKeyinGenConfig(chrKey, "");
-                    _fsMetaFileLoc = _bkfsMetaFileLoc;
-                    _fsMetaESSDetailFileName = bkESSflname;
-                    _fsMetaCHRDetailFileName = bkCHRflname;
-                    _fsMetaESSLayoutFileName = bkESSflnameFLay;
-                    _fsMetaCHRLayoutFileName = bkCHRflnameFLay;
+                _appRepository.MigrateMetadata("ESS", maxSubmissionYear, false);
+                _appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, false);
 
-                    _logger.LogCritical("");
-                    _logger.LogCritical("----- Restarting FS processing using back up files -----");
-                    _logger.LogCritical("");
-
-                    goto startFS_Processing;
-                }
 
                 return "FS Metadata population FAILED. Log ID: " + logid + ". Please contact your admin.";
             }
