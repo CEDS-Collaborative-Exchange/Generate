@@ -17,14 +17,18 @@ BEGIN
 		DROP TABLE IF EXISTS Metadata.CategoryOptions
 		DROP TABLE IF EXISTS Metadata.CategorySet_Categories
 		DROP TABLE IF EXISTS Metadata.CategorySets
+		--DROP TABLE IF EXISTS Metadata.FileColumns
 		DROP TABLE IF EXISTS Metadata.FileSubmission_FileColumns
 		DROP TABLE IF EXISTS Metadata.FileSubmissions
+
+		--SELECT * INTO Metadata.FileColumns
+		--FROM app.FileColumns
 
 		IF @dataSetType = 'ESS'
 		BEGIN
 
 			--insert into Metadata.CategorySets
-			SELECT * into Metadata.CategorySets FROM app.CategorySets WHERE SubmissionYear = 2025
+			SELECT * into Metadata.CategorySets FROM app.CategorySets WHERE SubmissionYear = @submissionYear
 			  AND GenerateReportId NOT IN (
 					SELECT value 
 					FROM STRING_SPLIT(@charterReportIds, ',')
@@ -105,7 +109,7 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		
+			
 		IF @dataSetType = 'ESS'
 		BEGIN
 
@@ -211,18 +215,23 @@ BEGIN
 
 			SET IDENTITY_INSERT app.FileSubmissions OFF
 
+			
 			INSERT INTO [App].[FileSubmission_FileColumns]
 				 ([FileSubmissionId],[FileColumnId],[EndPosition],[IsOptional],[SequenceNumber],[StartPosition])
 		    SELECT [FileSubmissionId],[FileColumnId],[EndPosition],[IsOptional],[SequenceNumber],[StartPosition]
 			FROM Metadata.FileSubmission_FileColumns
 			where FilesubmissionId IN (
-				 select [FileSubmissionId]
-				 from Metadata.FileSubmissions
+				 select distinct [FileSubmissionId]
+				 from app.FileSubmissions
 				 Where SubmissionYear = @submissionYear
 				 AND GenerateReportId NOT IN (
 					SELECT value 
 					FROM STRING_SPLIT(@charterReportIds, ',')
 				 ))
+				AND FileColumnId IN (
+					select distinct FileColumnId
+					from app.FileColumns
+				)
 
 		END
 		ELSE IF @dataSetType = 'CHARTER'
@@ -335,13 +344,17 @@ BEGIN
 		    SELECT [FileSubmissionId],[FileColumnId],[EndPosition],[IsOptional],[SequenceNumber],[StartPosition]
 			FROM Metadata.FileSubmission_FileColumns
 			where FilesubmissionId IN (
-				 select [FileSubmissionId]
-				 from Metadata.FileSubmissions
+				  select distinct [FileSubmissionId]
+				 from app.FileSubmissions
 				 Where SubmissionYear = @submissionYear
 				 AND GenerateReportId IN (
 					SELECT value 
 					FROM STRING_SPLIT(@charterReportIds, ',')
 				 ))
+				 AND FileColumnId IN (
+					select distinct FileColumnId
+					from app.FileColumns
+				)
 
 		END
 
