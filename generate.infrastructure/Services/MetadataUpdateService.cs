@@ -426,6 +426,9 @@ namespace generate.infrastructure.Services
             }
             catch (Exception e)
             {
+                _appRepository.MigrateMetadata("ESS", maxSubmissionYear, false);
+                _appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, false);
+
                 var x = e.Message;
                 var y = e.InnerException;
                 var time = DateTime.Now;
@@ -451,9 +454,6 @@ namespace generate.infrastructure.Services
        
                 UpdateKeyinGenConfig(FSMetalogKey, status);
                 UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausFail);
-
-                _appRepository.MigrateMetadata("ESS", maxSubmissionYear, false);
-                _appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, false);
 
 
                 return "FS Metadata population FAILED. Log ID: " + logid + ". Please contact your admin.";
