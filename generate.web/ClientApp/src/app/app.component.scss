@@ -77,4 +77,38 @@ $fa-font-path: "~font-awesome/fonts/";
   justify-content: flex-start !important;
 }
 
+/* Hide drawer by default */
+.mdl-layout--fixed-drawer .mdl-layout__drawer {
+    display: none;
+}
 
+.mdl-layout--fixed-drawer .mdl-layout__content {
+    margin-left: 0;
+}
+
+ /*Show drawer ONLY at high zoom (or very narrow desktop) */
+@media (max-width: 900px) {
+    .mdl-layout--fixed-drawer .mdl-layout__drawer {
+        display: block;
+        transform: translateX(0) !important;
+        left: 0 !important;
+        width: 240px;
+    }
+
+    .mdl-layout--fixed-drawer .mdl-layout__content {
+        margin-left: 240px;
+    }
+}
+
+.submenu {
+    display: none;
+    padding-left: 16px; /* indent for submenu items */
+}
+
+.submenu.open {
+    display: block;
+}
+
+.expandable {
+    cursor: pointer;
+}

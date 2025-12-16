@@ -5,7 +5,7 @@
 <header class="mdl-layout__header">
     <h1 class="generate-text--screen-reader-only" aria-hidden="true">GENERATE</h1>
     <div class="mdl-layout__header-row mdl-color--white" aria-hidden="true">
-        <div >
+        <div>
             <span class="mdl-layout-title">
                 <img src="./assets/images/icon-generate-xs.png" alt="Generate Logo" />
                 <span class="generate-app-title">GENERATE</span>
@@ -13,19 +13,19 @@
         </div>
         <div class="mdl-layout-spacer"></div>
         <generate-app-login></generate-app-login>
-    </div>  
-    <div class="mdl-layout__header-row generate-app__header">
-        <nav class="mdl-navigation mdl-layout--large-screen-only">
+    </div>
+    <div class="mdl-layout__header-row generate-app__header  mdl-layout--large-screen-only">
+        <nav class="mdl-navigation">
 
             <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-left generate-app-menu__item--border-right" tabindex="4" [routerLink]="['/']"><i class="fa fa-home fa-3x generate-app-menu__item--icon" alt="Home"><span class="generate-text--screen-reader-only">Home</span></i></a>
 
-            <a id="generate-app-menu__item--resources" class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" href="#" tabindex="5" (click)="onClickMenuItem()" >Resources</a>
+            <a id="generate-app-menu__item--resources" class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" href="#" tabindex="5" (click)="onClickMenuItem()">Resources</a>
 
             <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect generate-app-menu__dropdown" for="generate-app-menu__item--resources">
-                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link"  rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/" target="_blank">User Guide</a></li>
+                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/" target="_blank">User Guide</a></li>
                 <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation" target="_blank">Documentation</a></li>
                 <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link" rel="noopener noreferrer" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support" target="_blank">Support</a></li>
-                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link"  href="#" [routerLink]="['/about']">About Generate</a></li>
+                <li class="generate-app-menu__dropdown-item"><a class="mdl-menu__item generate-app-menu__link" href="#" [routerLink]="['/about']">About Generate</a></li>
             </ul>
 
             <a class="mdl-navigation__link generate-app-menu__item generate-app-menu__item--border-right" (click)="gotoSummary()" tabindex="10" href="#">Data Population Summary</a>

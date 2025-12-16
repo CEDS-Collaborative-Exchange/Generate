@@ -21,6 +21,16 @@ declare var componentHandler: any;
 
 export class AppComponent implements AfterViewInit, OnInit {
 
+    submenus = {
+        resources: false,
+        reports: false
+    };
+
+    // Toggle submenu open/close
+    toggleSubmenu(menu: 'resources' | 'reports') {
+        this.submenus[menu] = !this.submenus[menu];
+    }
+
     constructor(
         private _router: Router,
         private _titleService: Title,
@@ -53,12 +63,58 @@ export class AppComponent implements AfterViewInit, OnInit {
     }
 
     ngAfterViewInit() {
-        componentHandler.upgradeAllRegistered();
-       /* componentHandler.upgradeDom();*/
+        componentHandler.upgradeDom();
+    }
 
-        //if (window['componentHandler']) {
-        //    window['componentHandler'].upgradeDom();
-        //}
+    gotoSummary() {
+        if (this.userService.isLoggedIn()) {
+            this._router.navigateByUrl('/reports/summary');
+        }
+        else {
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            let data = { message: 'You must be logged in to access this area of Generate.' };
+            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+        }
+        return false;
+    }
+
+    gotoReportsEdFacts() {
+
+        if (this.userService.isLoggedIn()) {
+            this._router.navigate(['/reports/edfacts']);
+        }
+        else {
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            let data = { message: 'You must be logged in to access this area of Generate.' };
+            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+        }
+        return false;
+    }
+
+    gotoReportsSppApr() {
+        if (this.userService.isLoggedIn()) {
+            this._router.navigate(['/reports/sppapr']);
+        }
+        else {
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            let data = { message: 'You must be logged in to access this area of Generate.' };
+            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+        }
+
+        return false;
+    }
+
+    gotoReportsLibrary() {
+        if (this.userService.isLoggedIn()) {
+            this._router.navigate(['/reports/library']);
+        }
+        else {
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            let data = { message: 'You must be logged in to access this area of Generate.' };
+            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+        }
+
+        return false;
     }
     
 }
