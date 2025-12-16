@@ -29,6 +29,18 @@
             </div>
 
             <a class="mdl-navigation__link" href="https://ciidta.communities.ed.gov/#program" target="_blank">CIID</a>
+
+            <div *ngIf="userService.isLoggedIn()" class="mdl-navigation__link expandable" (click)="toggleSubmenu('settings')">
+                Settings <i class="material-icons" style="float:right;">expand_more</i>
+            </div>
+            <div class="submenu" [class.open]="submenus.settings">
+                <a class="mdl-navigation__link" href="#" [routerLink]="['/settings/toggle']">Toggle</a>
+                <a *ngIf="userService.isAdmin()" class="mdl-navigation__link" href="#" [routerLink]="['/settings/datamigration']">Data Migration</a>
+                <a *ngIf="userService.isAdmin()" class="mdl-navigation__link" href="#" [routerLink]="['/settings/update']">Update</a>
+                <a class="mdl-navigation__link" href="#" [routerLink]="['/settings/metadata']">Metadata</a>
+            </div>
+
+            <generate-app-login></generate-app-login>
             <!--<a class="mdl-navigation__link" href="#">LOG IN</a>-->
         </nav>
     </div>

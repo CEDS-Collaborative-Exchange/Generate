@@ -123,3 +123,18 @@
     color: #e5ebf0 !important;
     border-style: solid !important;
 }
+
+/*.generate-app-hamburger-login__button-container{
+    display: none;
+}*/
+
+/*Show drawer ONLY at high zoom (or very narrow desktop) */
+@media (max-width: 1100px) {
+    /*.generate-app-hamburger-login__button-container {
+        display: block;
+    }*/
+
+    .generate-app-shared-loggedin__text{
+        display: none;
+    }
+}

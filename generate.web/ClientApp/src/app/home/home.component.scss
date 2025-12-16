@@ -232,3 +232,18 @@
     background-color: $color-accent-light !important;
     color: #000000 !important;
 }
+
+
+@media (max-width: 1100px) {
+    .generate-home__sidebar{
+        display: none;
+    }
+
+    .generate-home__reports {
+        display: none;
+    }
+
+    .generate-home__button{
+        display: none;
+    }
+}

@@ -17,6 +17,9 @@
                 <i class="fa fa-sign-in"></i><span class="generate-text--screen-reader-only">Log in</span>
             </button>
         </div>
+        <!--<div *ngIf="isOAuth" class="generate-app-hamburger-login__button-container">
+            <a href="#" (click)="loginAzure()">Login</a>
+        </div>-->
         <form *ngIf="!isOAuth" (submit)="login($event, username.value, userpassword.value)">
 
             <div>

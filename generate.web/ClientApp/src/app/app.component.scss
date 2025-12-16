@@ -87,7 +87,7 @@ $fa-font-path: "~font-awesome/fonts/";
 }
 
  /*Show drawer ONLY at high zoom (or very narrow desktop) */
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
     .mdl-layout--fixed-drawer .mdl-layout__drawer {
         display: block;
         transform: translateX(0) !important;

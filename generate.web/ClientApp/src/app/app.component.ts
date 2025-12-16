@@ -13,7 +13,7 @@ declare var componentHandler: any;
     selector: 'app',
     templateUrl: './app.component.html',
     styleUrls: [ './app.component.scss' ],
-    providers: [Title],
+    providers: [Title, UserService],
     encapsulation: ViewEncapsulation.None
 })
 
@@ -23,18 +23,19 @@ export class AppComponent implements AfterViewInit, OnInit {
 
     submenus = {
         resources: false,
-        reports: false
+        reports: false,
+        settings: false
     };
 
     // Toggle submenu open/close
-    toggleSubmenu(menu: 'resources' | 'reports') {
+    toggleSubmenu(menu: 'resources' | 'reports' | 'settings') {
         this.submenus[menu] = !this.submenus[menu];
     }
 
     constructor(
         private _router: Router,
         private _titleService: Title,
-        private userService: UserService,
+        public userService: UserService,
         private appConfig: AppConfig) { }
 
     ngOnInit() {
