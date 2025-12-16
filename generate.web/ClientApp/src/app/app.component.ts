@@ -53,7 +53,12 @@ export class AppComponent implements AfterViewInit, OnInit {
     }
 
     ngAfterViewInit() {
-        componentHandler.upgradeAllRegistered();  
+        componentHandler.upgradeAllRegistered();
+       /* componentHandler.upgradeDom();*/
+
+        //if (window['componentHandler']) {
+        //    window['componentHandler'].upgradeDom();
+        //}
     }
     
 }

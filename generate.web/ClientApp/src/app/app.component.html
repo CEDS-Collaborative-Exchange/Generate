@@ -1,8 +1,16 @@
 <a href="#app-generate-main" class="generate-text--screen-reader-only">Skip to main content</a>
 <div class="mdl-layout mdl-js-layout mdl-layout--no-desktop-drawer-button mdl-layout--fixed-header">
     <generate-app-header></generate-app-header>
+    <div class="mdl-layout__drawer">
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="https://ciidta.communities.ed.gov/#program" target="_blank">CIID</a>
+            <a class="mdl-navigation__link" href="https://ciidta.communities.ed.gov/#communities/pdc/documents/17667" target="_blank">User Guide</a>
+            <a class="mdl-navigation__link" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation" target="_blank">Documentation</a>
+            <a class="mdl-navigation__link" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support" target="_blank">Support</a>
+        </nav>
+    </div>
     <main id="app-generate-main" class="mdl-layout__content">
-        <router-outlet></router-outlet>
-        <generate-app-footer></generate-app-footer>
+            <router-outlet></router-outlet>
+            <generate-app-footer></generate-app-footer>
     </main>
 </div>
