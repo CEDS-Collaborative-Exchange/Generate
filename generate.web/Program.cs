@@ -28,13 +28,10 @@ using Microsoft.AspNetCore.HttpOverrides;
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory() + "/Config/")
+    .AddEnvironmentVariables(e => e.Prefix = "Data")
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
 
-if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower() == "test")
-{
-    builder.Configuration.AddEnvironmentVariables(e => e.Prefix = "Data");
-}
 
 AppConfiguration.ConfigureCoreServices(builder.Services);
 
