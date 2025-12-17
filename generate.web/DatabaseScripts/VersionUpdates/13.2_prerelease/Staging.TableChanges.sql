@@ -87,9 +87,9 @@
         END
 
     --Drop the indexes that exist
-        IF EXISTS(SELECT 1 FROM sys.indexes WHERE name = 'IX_K12Enrollment_DataCollectionName')
+        IF EXISTS(SELECT 1 FROM sys.indexes WHERE name = 'IX_Staging_K12Enrollment_DataCollectionName')
         BEGIN
-            DROP INDEX IX_K12Enrollment_DataCollectionName ON Staging.K12Enrollment;
+            DROP INDEX IX_Staging_K12Enrollment_DataCollectionName ON Staging.K12Enrollment;
         END
 
         IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Staging_K12Enrollment_StuId_SchId_Hispanic_RecordStartDateTime')
@@ -100,6 +100,11 @@
         IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Staging_K12Enrollment_WithIdentifiers')
         BEGIN
             DROP INDEX IX_Staging_K12Enrollment_WithIdentifiers ON Staging.K12Enrollment;
+        END
+
+        IF EXISTS(SELECT 1 FROM sys.indexes WHERE name = 'IX_K12Enrollment_DataCollectionName')
+        BEGIN
+            DROP INDEX IX_K12Enrollment_DataCollectionName ON Staging.K12Enrollment;
         END
 
     --Drop the columns at the bottom of the table temporarily
