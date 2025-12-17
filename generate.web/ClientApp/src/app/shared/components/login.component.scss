@@ -124,17 +124,13 @@
     border-style: solid !important;
 }
 
-/*.generate-app-hamburger-login__button-container{
-    display: none;
-}*/
-
 /*Show drawer ONLY at high zoom (or very narrow desktop) */
 @media (max-width: 1100px) {
-    /*.generate-app-hamburger-login__button-container {
-        display: block;
-    }*/
+    .generate-app-shared-login__button-container{
+        padding-left:1.2rem;
+    }
 
-    .generate-app-shared-loggedin__text{
+    .generate-app-shared-loggedin__text {
         display: none;
     }
 }
