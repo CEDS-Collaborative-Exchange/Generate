@@ -36,10 +36,12 @@ using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder();
+string environment_string = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") + "_";
+
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
-    .AddEnvironmentVariables(e => e.Prefix = "Data")
+    .AddEnvironmentVariables(prefix: environment_string)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
     

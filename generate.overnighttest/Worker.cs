@@ -239,8 +239,8 @@ namespace generate.overnighttest
             serviceProvider = services.BuildServiceProvider();
 
 
-
-            GlobalConfiguration.Configuration.UseSqlServerStorage("Server=(localdb)\\MSSQLLocalDB;Database=Generate;Trusted_Connection=true;MultipleActiveResultSets=true;trustServerCertificate=true;", new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
+            GlobalConfiguration.Configuration.UseSqlServerStorage(configuration["Data:AppDbContextConnection"], new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
+            //GlobalConfiguration.Configuration.UseSqlServerStorage("Server=(localdb)\\MSSQLLocalDB;Database=Generate;Trusted_Connection=true;MultipleActiveResultSets=true;trustServerCertificate=true;", new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
             //GlobalConfiguration.Configuration.UseSqlServerStorage("Server=10.0.2.10;Database=generate-test;User ID=generate;Password=78h&LUogZ#qvZ9i;MultipleActiveResultSets=true;trustServerCertificate=true;Connect Timeout=300;", new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
 
 
