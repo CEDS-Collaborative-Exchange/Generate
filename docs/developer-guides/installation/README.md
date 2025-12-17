@@ -115,6 +115,7 @@ To retain proper formatting, Notepad++ is recommended over Notepad or Wordpad.
 "Data": {
 "AppDbContextConnection": "Server=192.168.01.01;Database=generate;User ID=generate;Password=xxxxxxxxxxx;trustServerCertificate=true;MultipleActiveResultSets=true;",
 "ODSDbContextConnection": "Server=192.168.01.01;Database=generate;User ID=generate;Password=xxxxxxxxxxx;trustServerCertificate=true;MultipleActiveResultSets=true;",
+"StagingDbContextConnection": "Server=192.168.1.1;Database=generate;User ID=generate;Password=xxxxxxxxxxx;trustServerCertificate=true;MultipleActiveResultSets=true;",
 "RDSDbContextConnection": "Server=192.168.01.01;Database=generate;User ID=generate;Password=xxxxxxxxxxx;trustServerCertificate=true;MultipleActiveResultSets=true;Connect Timeout=300;"
 }
 }
