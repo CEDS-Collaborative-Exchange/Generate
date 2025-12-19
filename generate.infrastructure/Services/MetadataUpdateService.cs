@@ -105,7 +105,7 @@ namespace generate.infrastructure.Services
         public string callInitFSmetaServc()
         {
 
-        startFS_Processing:
+        //startFS_Processing:
 
             //var collectName = "EDFACTS";
             //var charterDSName = "Charter Collections";
@@ -240,6 +240,8 @@ namespace generate.infrastructure.Services
 
                 }
 
+                _appRepository.MigrateMetadata("ESS", maxSubmissionYear, true);
+
                 var time1 = DateTime.Now;
                 DeleteExistingCatInfobyYearandDS(collectName, essDSNameAbbrv, maxVersionNumber.ToString(), fqYrName, maxSubmissionYear.ToString(), DSYVrdetail);
                 var time2 = DateTime.Now;
@@ -353,6 +355,8 @@ namespace generate.infrastructure.Services
 
                 //DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(edfacts);
 
+                _appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, true);
+
                 DeleteExistingCatInfobyYearandDS(collectName, charterDSNameAbbrv, maxVersNum, fqYrName, year.ToString(), DSYVrdetail);
 
                 populateCatInfoData(collectName, charterDSNameAbbrv, maxVersNum, fqYrName, DSYVrdetail);
@@ -400,15 +404,15 @@ namespace generate.infrastructure.Services
                 else
                 {
 
-                    if (!string.IsNullOrEmpty(_bkfsMetaFileLoc) && _reloadFromBackUp)
-                    {
-                        if (!Directory.Exists(_bkfsMetaFileLoc)) Directory.CreateDirectory(_bkfsMetaFileLoc);
+                    //if (!string.IsNullOrEmpty(_bkfsMetaFileLoc) && _reloadFromBackUp)
+                    //{
+                    //    if (!Directory.Exists(_bkfsMetaFileLoc)) Directory.CreateDirectory(_bkfsMetaFileLoc);
 
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflname, edfacts);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflname, chrtr);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflnameFLay, bkESSFLay);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflnameFLay, bkCHRFLay);
-                    }
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflname, edfacts);
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflname, chrtr);
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflnameFLay, bkESSFLay);
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflnameFLay, bkCHRFLay);
+                    //}
 
                     var time = DateTime.Now;
                     var status = "The metadata was successfully updated on " + time.ToString() + ".";
@@ -422,6 +426,9 @@ namespace generate.infrastructure.Services
             }
             catch (Exception e)
             {
+                _appRepository.MigrateMetadata("ESS", maxSubmissionYear, false);
+                _appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, false);
+
                 var x = e.Message;
                 var y = e.InnerException;
                 var time = DateTime.Now;
@@ -448,24 +455,6 @@ namespace generate.infrastructure.Services
                 UpdateKeyinGenConfig(FSMetalogKey, status);
                 UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausFail);
 
-                if (checkBackupFilesExists() && _reloadFromBackUp)
-                {
-                    _reloadFromBackUp = false; // setting back to false, so reload from back up occurs once.
-                    _useWSforFSMetaUpd = false;
-                    UpdateKeyinGenConfig(essKey, "");
-                    UpdateKeyinGenConfig(chrKey, "");
-                    _fsMetaFileLoc = _bkfsMetaFileLoc;
-                    _fsMetaESSDetailFileName = bkESSflname;
-                    _fsMetaCHRDetailFileName = bkCHRflname;
-                    _fsMetaESSLayoutFileName = bkESSflnameFLay;
-                    _fsMetaCHRLayoutFileName = bkCHRflnameFLay;
-
-                    _logger.LogCritical("");
-                    _logger.LogCritical("----- Restarting FS processing using back up files -----");
-                    _logger.LogCritical("");
-
-                    goto startFS_Processing;
-                }
 
                 return "FS Metadata population FAILED. Log ID: " + logid + ". Please contact your admin.";
             }
@@ -2643,64 +2632,148 @@ namespace generate.infrastructure.Services
         public void populateFSLayout(List<DataSetYearVersionFSLayoutDetailsByAllAbbrv> DSYVrFSLay)
         {
 
-            var fsLay = DSYVrFSLay.Select(a => new {
-                a.IsDatacollEnabledLEA,
-                a.IsDatacollEnabledSCH,
-                a.IsDatacollEnabledSEA,
-                a.FileSpecNum,
-                a.FileType,
-                a.EULevelAbbr,
-                a.YearName,
-                a.ColLen,
-                a.ColName,
-                a.ColDataTypeAbbr,
-                a.ColDisplayName,
-                a.ColTypeAbbr,
-                a.ColEndPos,
-                a.ColOptionalityAbbr,
-                a.ColSeqNum,
-                a.ColStartPos
-            });
-
-            var distFS = DSYVrFSLay.OrderBy(x => x.FileSpecNum).Select(a => a.FileSpecNum).Distinct().ToList();//.Take(10);
-            var year = DSYVrFSLay.Select(a => new { Year = a.YearName.Replace("SY ", "").Substring(0, 4) }).FirstOrDefault();
-
-            IQueryable<GenerateReport> genRep = _appDbContext.GenerateReports;
-
-            OrganizationLevel sea = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "SEA").FirstOrDefault();
-            OrganizationLevel lea = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "LEA").FirstOrDefault();
-            OrganizationLevel sch = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "SCH").FirstOrDefault();
-            OrganizationLevel cao = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "CAO").FirstOrDefault();
-            OrganizationLevel cmo = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "CMO").FirstOrDefault();
-
-            IQueryable<FileColumn> fileCol = _appDbContext.FileColumns;
-
-            foreach (var fs in distFS)
+            try
             {
 
-                var genid = genRep.Where(a => a.ReportCode == fs).Select(a => a.GenerateReportId).FirstOrDefault();
-                var euLevel = fsLay.Where(a => a.FileSpecNum == fs).Select(a => new { a.IsDatacollEnabledLEA, a.IsDatacollEnabledSEA, a.IsDatacollEnabledSCH, a.FileType }).FirstOrDefault();
-
-                FileSubmission _fs;
-                int fs_seaid;
-                int fs_leaid;
-                int fs_schid;
-
-                #region SEA
-
-                if (euLevel.IsDatacollEnabledSEA == 1)
+                var fsLay = DSYVrFSLay.Select(a => new
                 {
-                    _fs = new FileSubmission();
-                    //_fs.OrganizationLevel = sea;
-                    _fs.OrganizationLevel = (fs == "190" ? cao : fs == "196" ? cmo : sea);
-                    _fs.SubmissionYear = year.Year.ToString();
-                    _fs.GenerateReportId = genid;
-                    _fs.FileSubmissionDescription = "SEA " + euLevel.FileType;
-                    _appDbContext.FileSubmissions.Add(_fs);
-                    _appDbContext.SaveChanges();
-                    fs_seaid = _fs.FileSubmissionId;
+                    a.IsDatacollEnabledLEA,
+                    a.IsDatacollEnabledSCH,
+                    a.IsDatacollEnabledSEA,
+                    a.FileSpecNum,
+                    a.FileType,
+                    a.EULevelAbbr,
+                    a.YearName,
+                    a.ColLen,
+                    a.ColName,
+                    a.ColDataTypeAbbr,
+                    a.ColDisplayName,
+                    a.ColTypeAbbr,
+                    a.ColEndPos,
+                    a.ColOptionalityAbbr,
+                    a.ColSeqNum,
+                    a.ColStartPos
+                });
 
-                    var fsLaySEA = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "STA" && a.ColTypeAbbr != "HDR")  //HDR = HEADER
+                var distFS = DSYVrFSLay.OrderBy(x => x.FileSpecNum).Select(a => a.FileSpecNum).Distinct().ToList();//.Take(10);
+                var year = DSYVrFSLay.Select(a => new { Year = a.YearName.Replace("SY ", "").Substring(0, 4) }).FirstOrDefault();
+
+                IQueryable<GenerateReport> genRep = _appDbContext.GenerateReports;
+
+                OrganizationLevel sea = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "SEA").FirstOrDefault();
+                OrganizationLevel lea = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "LEA").FirstOrDefault();
+                OrganizationLevel sch = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "SCH").FirstOrDefault();
+                OrganizationLevel cao = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "CAO").FirstOrDefault();
+                OrganizationLevel cmo = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "CMO").FirstOrDefault();
+
+                IQueryable<FileColumn> fileCol = _appDbContext.FileColumns;
+
+                foreach (var fs in distFS)
+                {
+
+                    var genid = genRep.Where(a => a.ReportCode == fs).Select(a => a.GenerateReportId).FirstOrDefault();
+                    var euLevel = fsLay.Where(a => a.FileSpecNum == fs).Select(a => new { a.IsDatacollEnabledLEA, a.IsDatacollEnabledSEA, a.IsDatacollEnabledSCH, a.FileType }).FirstOrDefault();
+
+                    FileSubmission _fs;
+                    int fs_seaid;
+                    int fs_leaid;
+                    int fs_schid;
+
+                    #region SEA
+
+                    string file_description = "";
+
+                    if (euLevel.IsDatacollEnabledSEA == 1)
+                    {
+                        file_description = "SEA " + euLevel.FileType;
+
+                        _fs = new FileSubmission();
+                        //_fs.OrganizationLevel = sea;
+                        _fs.OrganizationLevel = (fs == "190" ? cao : fs == "196" ? cmo : sea);
+                        _fs.SubmissionYear = year.Year.ToString();
+                        _fs.GenerateReportId = genid;
+                        _fs.FileSubmissionDescription = file_description.Substring(0, file_description.Length - 1);
+                        _appDbContext.FileSubmissions.Add(_fs);
+                        _appDbContext.SaveChanges();
+                        fs_seaid = _fs.FileSubmissionId;
+
+                        var fsLaySEA = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "STA" && a.ColTypeAbbr != "HDR")  //HDR = HEADER
+                            .Select(x => new
+                            {
+                                x.ColLen,
+                                x.ColName,
+                                x.ColDataTypeAbbr,
+                                x.ColDisplayName,
+                                x.ColEndPos,
+                                x.ColOptionalityAbbr,
+                                x.ColSeqNum,
+                                x.ColStartPos
+                            }).OrderBy(a => a.ColSeqNum);
+
+                        int i = 0;
+                        foreach (var item in fsLaySEA)
+                        {
+
+                            // check if file col exists
+
+                            int filecolid = fileCol.
+                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
+                            && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
+                            && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
+                            ).OrderBy(a => a.FileColumnId).
+                            Select(a => a.FileColumnId).FirstOrDefault();
+
+                            if (filecolid == 0)
+                            {
+
+                                FileColumn _fc = new FileColumn();
+                                _fc.ColumnLength = (int)item.ColLen;
+                                _fc.ColumnName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                                _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
+                                _fc.DisplayName = item.ColDisplayName.Length > 100 ? item.ColDisplayName.Substring(0, 99) : item.ColDisplayName;
+                                // _fc.DimensionId =
+
+                                _appDbContext.FileColumns.Add(_fc);
+                                _appDbContext.SaveChanges();
+                                filecolid = _fc.FileColumnId;
+
+                            }
+
+                            FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
+                            fsfc.FileSubmissionId = fs_seaid;
+                            fsfc.FileColumnId = filecolid;
+                            fsfc.EndPosition = (int)item.ColEndPos;
+                            fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
+                            fsfc.SequenceNumber = (int)item.ColSeqNum;
+                            fsfc.StartPosition = (int)item.ColStartPos;
+
+                            _appDbContext.FileSubmission_FileColumns.Add(fsfc);
+                            _appDbContext.SaveChanges();
+                            //filecolid = fsfc.FileColumnId;
+                            i++;
+                        }
+
+                    }
+
+                    #endregion
+
+                    #region LEA
+
+                    if (euLevel.IsDatacollEnabledLEA == 1)
+                    {
+                        file_description = "LEA " + euLevel.FileType;
+
+                        _fs = new FileSubmission();
+                        _fs.OrganizationLevel = lea;
+                        _fs.SubmissionYear = year.Year.ToString();
+                        _fs.GenerateReportId = genid;
+                        _fs.FileSubmissionDescription = file_description.Substring(0, file_description.Length - 1);
+                        _appDbContext.FileSubmissions.Add(_fs);
+                        _appDbContext.SaveChanges();
+                        fs_leaid = _fs.FileSubmissionId;
+
+
+                        var fsLayLEA = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "LEA" && a.ColTypeAbbr != "HDR")
                         .Select(x => new
                         {
                             x.ColLen,
@@ -2713,202 +2786,135 @@ namespace generate.infrastructure.Services
                             x.ColStartPos
                         }).OrderBy(a => a.ColSeqNum);
 
-                    int i = 0;
-                    foreach (var item in fsLaySEA)
-                    {
 
-                        // check if file col exists
-
-                        int filecolid = fileCol.
-                        Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
-                        && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
-                        && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
-                        ).OrderBy(a => a.FileColumnId).
-                        Select(a => a.FileColumnId).FirstOrDefault();
-
-                        if (filecolid == 0)
+                        foreach (var item in fsLayLEA)
                         {
 
-                            FileColumn _fc = new FileColumn();
-                            _fc.ColumnLength = (int)item.ColLen;
-                            _fc.ColumnName = item.ColName;
-                            _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
-                            _fc.DisplayName = item.ColDisplayName;
-                            // _fc.DimensionId =
+                            // check if file col exists
 
-                            _appDbContext.FileColumns.Add(_fc);
+                            int filecolid = fileCol.
+                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
+                            && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
+                            && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
+                            ).OrderBy(a => a.FileColumnId).
+                            Select(a => a.FileColumnId).FirstOrDefault();
+
+                            if (filecolid == 0)
+                            {
+
+                                FileColumn _fc = new FileColumn();
+                                _fc.ColumnLength = (int)item.ColLen;
+                                _fc.ColumnName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                                _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
+                                _fc.DisplayName = item.ColDisplayName.Length > 100 ? item.ColDisplayName.Substring(0, 99) : item.ColDisplayName;
+                                // _fc.DimensionId =
+
+                                _appDbContext.FileColumns.Add(_fc);
+                                _appDbContext.SaveChanges();
+                                filecolid = _fc.FileColumnId;
+
+                            }
+
+                            FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
+                            fsfc.FileSubmissionId = fs_leaid;
+                            fsfc.FileColumnId = filecolid;
+                            fsfc.EndPosition = (int)item.ColEndPos;
+                            fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
+                            fsfc.SequenceNumber = (int)item.ColSeqNum;
+                            fsfc.StartPosition = (int)item.ColStartPos;
+
+
+                            _appDbContext.FileSubmission_FileColumns.Add(fsfc);
                             _appDbContext.SaveChanges();
-                            filecolid = _fc.FileColumnId;
+                            //filecolid = fsfc.FileColumnId;
+
 
                         }
 
-                        FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
-                        fsfc.FileSubmissionId = fs_seaid;
-                        fsfc.FileColumnId = filecolid;
-                        fsfc.EndPosition = (int)item.ColEndPos;
-                        fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
-                        fsfc.SequenceNumber = (int)item.ColSeqNum;
-                        fsfc.StartPosition = (int)item.ColStartPos;
-
-                        _appDbContext.FileSubmission_FileColumns.Add(fsfc);
-                        _appDbContext.SaveChanges();
-                        //filecolid = fsfc.FileColumnId;
-                        i++;
                     }
 
-                }
+                    #endregion
 
-                #endregion
+                    #region SCH
 
-                #region LEA
-
-                if (euLevel.IsDatacollEnabledLEA == 1)
-                {
-                    _fs = new FileSubmission();
-                    _fs.OrganizationLevel = lea;
-                    _fs.SubmissionYear = year.Year.ToString();
-                    _fs.GenerateReportId = genid;
-                    _fs.FileSubmissionDescription = "LEA " + euLevel.FileType;
-                    _appDbContext.FileSubmissions.Add(_fs);
-                    _appDbContext.SaveChanges();
-                    fs_leaid = _fs.FileSubmissionId;
-
-
-                    var fsLayLEA = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "LEA" && a.ColTypeAbbr != "HDR")
-                    .Select(x => new
+                    if (euLevel.IsDatacollEnabledSCH == 1)
                     {
-                        x.ColLen,
-                        x.ColName,
-                        x.ColDataTypeAbbr,
-                        x.ColDisplayName,
-                        x.ColEndPos,
-                        x.ColOptionalityAbbr,
-                        x.ColSeqNum,
-                        x.ColStartPos
-                    }).OrderBy(a => a.ColSeqNum);
+                        file_description = "SCHOOL " + euLevel.FileType;
+
+                        _fs = new FileSubmission();
+                        _fs.OrganizationLevel = sch;
+                        _fs.SubmissionYear = year.Year.ToString();
+                        _fs.GenerateReportId = genid;
+                        _fs.FileSubmissionDescription = file_description.Substring(0, file_description.Length - 1);
+                        _appDbContext.FileSubmissions.Add(_fs);
+                        _appDbContext.SaveChanges();
+                        fs_schid = _fs.FileSubmissionId;
+
+                        var fsLaySCH = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "SCH" && a.ColTypeAbbr != "HDR")
+                        .Select(x => new
+                        {
+                            x.ColLen,
+                            x.ColName,
+                            x.ColDataTypeAbbr,
+                            x.ColDisplayName,
+                            x.ColEndPos,
+                            x.ColOptionalityAbbr,
+                            x.ColSeqNum,
+                            x.ColStartPos
+                        }).OrderBy(a => a.ColSeqNum);
 
 
-                    foreach (var item in fsLayLEA)
-                    {
-
-                        // check if file col exists
-
-                        int filecolid = fileCol.
-                        Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
-                        && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
-                        && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
-                        ).OrderBy(a => a.FileColumnId).
-                        Select(a => a.FileColumnId).FirstOrDefault();
-
-                        if (filecolid == 0)
+                        foreach (var item in fsLaySCH)
                         {
 
-                            FileColumn _fc = new FileColumn();
-                            _fc.ColumnLength = (int)item.ColLen;
-                            _fc.ColumnName = item.ColName;
-                            _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
-                            _fc.DisplayName = item.ColDisplayName;
-                            // _fc.DimensionId =
+                            // check if file col exists
 
-                            _appDbContext.FileColumns.Add(_fc);
+                            int filecolid = fileCol.
+                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
+                            && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
+                            && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
+                            ).OrderBy(a => a.FileColumnId).
+                            Select(a => a.FileColumnId).FirstOrDefault();
+
+                            if (filecolid == 0)
+                            {
+
+                                FileColumn _fc = new FileColumn();
+                                _fc.ColumnLength = (int)item.ColLen;
+                                _fc.ColumnName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                                _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
+                                _fc.DisplayName = item.ColDisplayName.Length > 100 ? item.ColDisplayName.Substring(0, 99) : item.ColDisplayName;
+                                // _fc.DimensionId =
+
+                                _appDbContext.FileColumns.Add(_fc);
+                                _appDbContext.SaveChanges();
+                                filecolid = _fc.FileColumnId;
+
+                            }
+
+                            FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
+                            fsfc.FileSubmissionId = fs_schid;
+                            fsfc.FileColumnId = filecolid;
+                            fsfc.EndPosition = (int)item.ColEndPos;
+                            fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
+                            fsfc.SequenceNumber = (int)item.ColSeqNum;
+                            fsfc.StartPosition = (int)item.ColStartPos;
+
+                            _appDbContext.FileSubmission_FileColumns.Add(fsfc);
                             _appDbContext.SaveChanges();
-                            filecolid = _fc.FileColumnId;
+                            //filecolid = fsfc.FileColumnId;
 
                         }
 
-                        FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
-                        fsfc.FileSubmissionId = fs_leaid;
-                        fsfc.FileColumnId = filecolid;
-                        fsfc.EndPosition = (int)item.ColEndPos;
-                        fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
-                        fsfc.SequenceNumber = (int)item.ColSeqNum;
-                        fsfc.StartPosition = (int)item.ColStartPos;
-
-
-                        _appDbContext.FileSubmission_FileColumns.Add(fsfc);
-                        _appDbContext.SaveChanges();
-                        //filecolid = fsfc.FileColumnId;
-
-
                     }
 
-                }
-
-                #endregion
-
-                #region SCH
-
-                if (euLevel.IsDatacollEnabledSCH == 1)
-                {
-                    _fs = new FileSubmission();
-                    _fs.OrganizationLevel = sch;
-                    _fs.SubmissionYear = year.Year.ToString();
-                    _fs.GenerateReportId = genid;
-                    _fs.FileSubmissionDescription = "SCHOOL " + euLevel.FileType;
-                    _appDbContext.FileSubmissions.Add(_fs);
-                    _appDbContext.SaveChanges();
-                    fs_schid = _fs.FileSubmissionId;
-
-                    var fsLaySCH = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "SCH" && a.ColTypeAbbr != "HDR")
-                    .Select(x => new
-                    {
-                        x.ColLen,
-                        x.ColName,
-                        x.ColDataTypeAbbr,
-                        x.ColDisplayName,
-                        x.ColEndPos,
-                        x.ColOptionalityAbbr,
-                        x.ColSeqNum,
-                        x.ColStartPos
-                    }).OrderBy(a => a.ColSeqNum);
-
-
-                    foreach (var item in fsLaySCH)
-                    {
-
-                        // check if file col exists
-
-                        int filecolid = fileCol.
-                        Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
-                        && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
-                        && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
-                        ).OrderBy(a => a.FileColumnId).
-                        Select(a => a.FileColumnId).FirstOrDefault();
-
-                        if (filecolid == 0)
-                        {
-
-                            FileColumn _fc = new FileColumn();
-                            _fc.ColumnLength = (int)item.ColLen;
-                            _fc.ColumnName = item.ColName;
-                            _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
-                            _fc.DisplayName = item.ColDisplayName;
-                            // _fc.DimensionId =
-
-                            _appDbContext.FileColumns.Add(_fc);
-                            _appDbContext.SaveChanges();
-                            filecolid = _fc.FileColumnId;
-
-                        }
-
-                        FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
-                        fsfc.FileSubmissionId = fs_schid;
-                        fsfc.FileColumnId = filecolid;
-                        fsfc.EndPosition = (int)item.ColEndPos;
-                        fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
-                        fsfc.SequenceNumber = (int)item.ColSeqNum;
-                        fsfc.StartPosition = (int)item.ColStartPos;
-
-                        _appDbContext.FileSubmission_FileColumns.Add(fsfc);
-                        _appDbContext.SaveChanges();
-                        //filecolid = fsfc.FileColumnId;
-
-                    }
+                    #endregion
 
                 }
-
-                #endregion
-
+            }
+            catch (Exception ex) {
+                _logger.LogError(ex.Message);
+                throw ex;
             }
 
         }

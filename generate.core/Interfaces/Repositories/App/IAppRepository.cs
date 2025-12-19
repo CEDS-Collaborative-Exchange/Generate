@@ -70,5 +70,6 @@ namespace generate.core.Interfaces.Repositories.App
         void RunBeforeTests(int submissionYear);
         void toggleReportLock(string reportCode, bool isLocked);
         void EnableOrDisableTests(string fileSpecNumbers, bool enable = true);
+        void MigrateMetadata(string dataSetType, int submissionYear, bool isTransferAppToMetadata = true);
     }
 }

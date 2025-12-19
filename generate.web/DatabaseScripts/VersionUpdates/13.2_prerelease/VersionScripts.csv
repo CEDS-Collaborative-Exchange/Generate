@@ -1,4 +1,5 @@
 VersionUpdates\\13.2_prerelease,Restore 13.1.sql,0
+VersionUpdates\\13.2_prerelease,App.Schema.sql,0
 VersionUpdates\\13.2_prerelease,App.TableChanges.sql,0
 VersionUpdates\\13.2_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.2_prerelease,RDS.TableChanges.sql,0
@@ -21,4 +22,6 @@ StoredProcedures\\Drop,App.Enable_Disable_Tests.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Enable_Disable_Tests.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Run_Before_Tests.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Run_Before_Tests.StoredProcedure.sql,0
+StoredProcedures\\Drop,App.Migrate_Metadata.StoredProcedure.sql,0
+StoredProcedures\\Create,App.Migrate_Metadata.StoredProcedure.sql,0
 VersionUpdates\\13.2_prerelease,UpdateDbVersion.sql,0
