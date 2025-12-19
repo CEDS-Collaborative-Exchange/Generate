@@ -123,3 +123,14 @@
     color: #e5ebf0 !important;
     border-style: solid !important;
 }
+
+/*Show drawer ONLY at high zoom (or very narrow desktop) */
+@media (max-width: 1100px) {
+    .generate-app-shared-login__button-container{
+        padding-left:1.2rem;
+    }
+
+    .generate-app-shared-loggedin__text {
+        display: none;
+    }
+}
