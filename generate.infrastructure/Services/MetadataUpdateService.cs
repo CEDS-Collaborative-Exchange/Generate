@@ -2716,8 +2716,11 @@ namespace generate.infrastructure.Services
 
                             // check if file col exists
 
+                            string colName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                            colName = (colName == "Student Count") ? "Amount" : colName;
+
                             int filecolid = fileCol.
-                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
+                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == colName
                             && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
                             && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
                             ).OrderBy(a => a.FileColumnId).
@@ -2728,7 +2731,7 @@ namespace generate.infrastructure.Services
 
                                 FileColumn _fc = new FileColumn();
                                 _fc.ColumnLength = (int)item.ColLen;
-                                _fc.ColumnName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                                _fc.ColumnName = colName;
                                 _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
                                 _fc.DisplayName = item.ColDisplayName.Length > 100 ? item.ColDisplayName.Substring(0, 99) : item.ColDisplayName;
                                 // _fc.DimensionId =
@@ -2737,7 +2740,7 @@ namespace generate.infrastructure.Services
                                 _appDbContext.SaveChanges();
                                 filecolid = _fc.FileColumnId;
 
-                            }
+                            } 
 
                             FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
                             fsfc.FileSubmissionId = fs_seaid;
@@ -2792,8 +2795,11 @@ namespace generate.infrastructure.Services
 
                             // check if file col exists
 
+                            string colName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                            colName = (colName == "Student Count") ? "Amount" : colName;
+
                             int filecolid = fileCol.
-                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
+                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == colName
                             && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
                             && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
                             ).OrderBy(a => a.FileColumnId).
@@ -2804,7 +2810,7 @@ namespace generate.infrastructure.Services
 
                                 FileColumn _fc = new FileColumn();
                                 _fc.ColumnLength = (int)item.ColLen;
-                                _fc.ColumnName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                                _fc.ColumnName = colName;
                                 _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
                                 _fc.DisplayName = item.ColDisplayName.Length > 100 ? item.ColDisplayName.Substring(0, 99) : item.ColDisplayName;
                                 // _fc.DimensionId =
@@ -2868,9 +2874,11 @@ namespace generate.infrastructure.Services
                         {
 
                             // check if file col exists
+                            string colName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                            colName = (colName == "Student Count") ? "Amount" : colName;
 
                             int filecolid = fileCol.
-                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
+                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == colName
                             && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
                             && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
                             ).OrderBy(a => a.FileColumnId).
@@ -2881,7 +2889,7 @@ namespace generate.infrastructure.Services
 
                                 FileColumn _fc = new FileColumn();
                                 _fc.ColumnLength = (int)item.ColLen;
-                                _fc.ColumnName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                                _fc.ColumnName = colName;
                                 _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
                                 _fc.DisplayName = item.ColDisplayName.Length > 100 ? item.ColDisplayName.Substring(0, 99) : item.ColDisplayName;
                                 // _fc.DimensionId =
