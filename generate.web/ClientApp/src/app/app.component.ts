@@ -32,6 +32,16 @@ export class AppComponent implements AfterViewInit, OnInit {
         this.submenus[menu] = !this.submenus[menu];
     }
 
+    //isDrawerOpen = false;
+
+    //openDrawer() {
+    //    this.isDrawerOpen = true;
+    //}
+
+    //closeDrawer() {
+    //    this.isDrawerOpen = false;
+    //}
+
     constructor(
         private _router: Router,
         private _titleService: Title,
