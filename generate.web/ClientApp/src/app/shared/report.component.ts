@@ -441,18 +441,21 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
             this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
             this.tableTypes = this.categorySets[0].tableTypes;
-            console.log(this.tableTypes);
 
             if (this.categorySets !== undefined && this.categorySets.length > 0) {
                 newParameters.reportCategorySet = this.categorySets.filter(t => t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear)[0];
                 newParameters.reportCategorySetCode = newParameters.reportCategorySet.categorySetCode;
             }
 
-            if (!this.isNullOrUndefined(this.tableTypes) && this.tableTypes.length > 0) {
+            if (this.tableTypes !== undefined && this.tableTypes.length > 0) {
                 if (!this.isNullOrUndefined(this.tableTypes[0])) {
                     newParameters.reportTableTypeAbbrv = this.tableTypes[0].tableTypeAbbrv;
                 }
+                else {
+                    newParameters.reportTableTypeAbbrv = null;
+                }
             }
+
 
             newParameters.connectionLink = this.currentReport.connectionLink;
             this.getOrganizationLevelByCode(newParameters);
