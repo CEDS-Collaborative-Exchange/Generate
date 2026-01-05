@@ -30,6 +30,16 @@ export class AppHeaderComponent implements AfterViewInit {
         componentHandler.upgradeAllRegistered();  
     }
 
+    isDrawerOpen = false;
+
+    openDrawer() {
+        this.isDrawerOpen = true;
+    }
+
+    closeDrawer() {
+        this.isDrawerOpen = false;
+    }
+
     onClickMenuItem() {
         return false;
     }
