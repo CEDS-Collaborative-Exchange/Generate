@@ -87,7 +87,7 @@ $fa-font-path: "~font-awesome/fonts/";
 }
 
  /*Show drawer ONLY at high zoom (or very narrow desktop) */
-@media (max-width: 1100px) {
+/*@media (max-width: 1100px) {
     .mdl-layout--fixed-drawer .mdl-layout__drawer {
         display: block;
         transform: translateX(0) !important;
@@ -98,7 +98,7 @@ $fa-font-path: "~font-awesome/fonts/";
     .mdl-layout--fixed-drawer .mdl-layout__content {
         margin-left: 240px;
     }
-}
+}*/
 
 .submenu {
     display: none;
@@ -111,4 +111,33 @@ $fa-font-path: "~font-awesome/fonts/";
 
 .expandable {
     cursor: pointer;
+}
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Drawer */
+.drawer {
+    width: 260px;
+    background: #fff;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.2);
+    transform: translateX(-260px);
+    transition: transform 0.3s ease;
+}
+
+.drawer.open {
+    transform: translateX(0);
+}
+
+/* Content area */
+.app-content {
+    flex: 1;
+    padding: 16px;
+    transition: margin-left 0.3s ease;
+}
+
+.app-content.shifted {
+    margin-left: 260px;
 }

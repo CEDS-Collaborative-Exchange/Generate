@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/app/user.service';
 
@@ -15,9 +15,12 @@ declare var componentHandler: any;
 
 
 
+
 export class AppHeaderComponent implements AfterViewInit {
 
     public userService: UserService;
+    @Input() isDrawerOpen = false;
+    @Output() close = new EventEmitter<void>();
 
     constructor(
         private _router: Router,
@@ -26,11 +29,23 @@ export class AppHeaderComponent implements AfterViewInit {
         this.userService = _UserService;
     }
 
+    submenus = {
+        resources: false,
+        reports: false,
+        settings: false
+    };
+
+    // Toggle submenu open/close
+    toggleSubmenu(menu: 'resources' | 'reports' | 'settings') {
+        this.submenus[menu] = !this.submenus[menu];
+    }
+
+
     ngAfterViewInit() {
         componentHandler.upgradeAllRegistered();  
     }
 
-    isDrawerOpen = false;
+    /*isDrawerOpen = false;*/
 
     openDrawer() {
         this.isDrawerOpen = true;

@@ -38,69 +38,59 @@ var __setFunctionName = (this && this.__setFunctionName) || function (f, name, p
     return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppComponent = void 0;
+exports.AppHeaderComponent = void 0;
 var core_1 = require("@angular/core");
-var router_1 = require("@angular/router");
-var platform_browser_1 = require("@angular/platform-browser");
-var user_service_1 = require("./services/app/user.service");
-var AppComponent = function () {
+var user_service_1 = require("../../services/app/user.service");
+var AppHeaderComponent = function () {
     var _classDecorators = [(0, core_1.Component)({
-            selector: 'app',
-            templateUrl: './app.component.html',
-            styleUrls: ['./app.component.scss'],
-            providers: [platform_browser_1.Title, user_service_1.UserService],
-            encapsulation: core_1.ViewEncapsulation.None
+            selector: 'generate-app-header',
+            templateUrl: './app-header.component.html',
+            styleUrls: ['./app-header.component.scss'],
+            providers: [
+                user_service_1.UserService
+            ]
         })];
     var _classDescriptor;
     var _classExtraInitializers = [];
     var _classThis;
-    var AppComponent = _classThis = /** @class */ (function () {
-        function AppComponent_1(_router, _titleService, userService, appConfig) {
+    var _isDrawerOpen_decorators;
+    var _isDrawerOpen_initializers = [];
+    var _isDrawerOpen_extraInitializers = [];
+    var _close_decorators;
+    var _close_initializers = [];
+    var _close_extraInitializers = [];
+    var AppHeaderComponent = _classThis = /** @class */ (function () {
+        function AppHeaderComponent_1(_router, _UserService) {
             this._router = _router;
-            this._titleService = _titleService;
-            this.userService = userService;
-            this.appConfig = appConfig;
-            this.submenus = {
+            this._UserService = _UserService;
+            this.isDrawerOpen = __runInitializers(this, _isDrawerOpen_initializers, false);
+            this.close = (__runInitializers(this, _isDrawerOpen_extraInitializers), __runInitializers(this, _close_initializers, new core_1.EventEmitter()));
+            this.submenus = (__runInitializers(this, _close_extraInitializers), {
                 resources: false,
                 reports: false,
                 settings: false
-            };
-            this.isDrawerOpen = false;
+            });
+            this.userService = _UserService;
         }
         // Toggle submenu open/close
-        AppComponent_1.prototype.toggleSubmenu = function (menu) {
+        AppHeaderComponent_1.prototype.toggleSubmenu = function (menu) {
             this.submenus[menu] = !this.submenus[menu];
         };
-        AppComponent_1.prototype.toggleDrawer = function () {
-            this.isDrawerOpen = !this.isDrawerOpen;
+        AppHeaderComponent_1.prototype.ngAfterViewInit = function () {
+            componentHandler.upgradeAllRegistered();
         };
-        AppComponent_1.prototype.closeDrawer = function () {
+        /*isDrawerOpen = false;*/
+        AppHeaderComponent_1.prototype.openDrawer = function () {
+            this.isDrawerOpen = true;
+        };
+        AppHeaderComponent_1.prototype.closeDrawer = function () {
             this.isDrawerOpen = false;
         };
-        AppComponent_1.prototype.ngOnInit = function () {
-            var _this = this;
-            this._router.events.subscribe(function (event) {
-                if (event instanceof router_1.NavigationEnd) {
-                    _this.appConfig.getConfig().subscribe(function (res) {
-                        if (res.authType.toUpperCase() === 'OAUTH') {
-                            if (_this.userService.isLoggedIn && event.urlAfterRedirects != '/' && event.urlAfterRedirects.indexOf('login') <= 0) {
-                                window.localStorage.setItem('lastUrl', event.urlAfterRedirects);
-                            }
-                        }
-                        else {
-                            if (_this.userService.isLoggedIn && event.urlAfterRedirects != '/') {
-                                window.localStorage.setItem('lastUrl', event.urlAfterRedirects);
-                            }
-                        }
-                    });
-                }
-            });
+        AppHeaderComponent_1.prototype.onClickMenuItem = function () {
+            return false;
         };
-        AppComponent_1.prototype.ngAfterViewInit = function () {
-            componentHandler.upgradeDom();
-        };
-        AppComponent_1.prototype.gotoSummary = function () {
-            if (this.userService.isLoggedIn()) {
+        AppHeaderComponent_1.prototype.gotoSummary = function () {
+            if (this._UserService.isLoggedIn()) {
                 this._router.navigateByUrl('/reports/summary');
             }
             else {
@@ -110,8 +100,8 @@ var AppComponent = function () {
             }
             return false;
         };
-        AppComponent_1.prototype.gotoReportsEdFacts = function () {
-            if (this.userService.isLoggedIn()) {
+        AppHeaderComponent_1.prototype.gotoReportsEdFacts = function () {
+            if (this._UserService.isLoggedIn()) {
                 this._router.navigate(['/reports/edfacts']);
             }
             else {
@@ -121,8 +111,8 @@ var AppComponent = function () {
             }
             return false;
         };
-        AppComponent_1.prototype.gotoReportsSppApr = function () {
-            if (this.userService.isLoggedIn()) {
+        AppHeaderComponent_1.prototype.gotoReportsSppApr = function () {
+            if (this._UserService.isLoggedIn()) {
                 this._router.navigate(['/reports/sppapr']);
             }
             else {
@@ -132,8 +122,8 @@ var AppComponent = function () {
             }
             return false;
         };
-        AppComponent_1.prototype.gotoReportsLibrary = function () {
-            if (this.userService.isLoggedIn()) {
+        AppHeaderComponent_1.prototype.gotoReportsLibrary = function () {
+            if (this._UserService.isLoggedIn()) {
                 this._router.navigate(['/reports/library']);
             }
             else {
@@ -143,17 +133,21 @@ var AppComponent = function () {
             }
             return false;
         };
-        return AppComponent_1;
+        return AppHeaderComponent_1;
     }());
-    __setFunctionName(_classThis, "AppComponent");
+    __setFunctionName(_classThis, "AppHeaderComponent");
     (function () {
         var _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
+        _isDrawerOpen_decorators = [(0, core_1.Input)()];
+        _close_decorators = [(0, core_1.Output)()];
+        __esDecorate(null, null, _isDrawerOpen_decorators, { kind: "field", name: "isDrawerOpen", static: false, private: false, access: { has: function (obj) { return "isDrawerOpen" in obj; }, get: function (obj) { return obj.isDrawerOpen; }, set: function (obj, value) { obj.isDrawerOpen = value; } }, metadata: _metadata }, _isDrawerOpen_initializers, _isDrawerOpen_extraInitializers);
+        __esDecorate(null, null, _close_decorators, { kind: "field", name: "close", static: false, private: false, access: { has: function (obj) { return "close" in obj; }, get: function (obj) { return obj.close; }, set: function (obj, value) { obj.close = value; } }, metadata: _metadata }, _close_initializers, _close_extraInitializers);
         __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        AppComponent = _classThis = _classDescriptor.value;
+        AppHeaderComponent = _classThis = _classDescriptor.value;
         if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         __runInitializers(_classThis, _classExtraInitializers);
     })();
-    return AppComponent = _classThis;
+    return AppHeaderComponent = _classThis;
 }();
-exports.AppComponent = AppComponent;
-//# sourceMappingURL=app.component.js.map
+exports.AppHeaderComponent = AppHeaderComponent;
+//# sourceMappingURL=app-header.component.js.map

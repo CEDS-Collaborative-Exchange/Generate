@@ -59,10 +59,55 @@
 </header>
 
 <div class="drawer" [class.open]="isDrawerOpen">
-    <p>Drawer content</p>
+    <nav class="mdl-navigation vertical-nav">
+
+        <a class="mdl-navigation__link generate-app-menu__item-link"
+           routerLink="/"
+           routerLinkActive="active"
+           (click)="closeDrawer()">
+            Home
+        </a>
+
+        <!-- Expandable Resources -->
+        <div class="mdl-navigation__link generate-app-menu__item-link expandable" (click)="toggleSubmenu('resources')">
+            Resources <i class="material-icons" style="float:right;">{{ submenus.resources ? 'expand_less' : 'expand_more' }}</i>
+        </div>
+        <div class="submenu" [class.open]="submenus.resources">
+            <a class="mdl-navigation__link generate-app-menu__item-link" href="https://ciidta.communities.ed.gov/#communities/pdc/documents/17667" target="_blank">User Guide</a>
+            <a class="mdl-navigation__link generate-app-menu__item-link" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation" target="_blank">Documentation</a>
+            <a class="mdl-navigation__link generate-app-menu__item-link" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support" target="_blank">Support</a>
+            <a class="mdl-navigation__link generate-app-menu__item-link" href="#" [routerLink]="['/about']">About Generate</a>
+        </div>
+
+
+        <a class="mdl-navigation__link generate-app-menu__item-link" (click)="gotoSummary()" href="#" routerLinkActive="active">Data Population Summary</a>
+
+        <!-- Expandable Standard Reports -->
+        <div class="mdl-navigation__link generate-app-menu__item-link expandable" (click)="toggleSubmenu('reports')">
+            Standard Reports <i class="material-icons" style="float:right;">{{ submenus.reports ? 'expand_less' : 'expand_more' }}</i>
+        </div>
+        <div class="submenu" [class.open]="submenus.reports">
+            <a class="mdl-navigation__link generate-app-menu__item-link" href="#" (click)="gotoReportsEdFacts()">EDFacts Reports</a>
+            <a class="mdl-navigation__link generate-app-menu__item-link" href="#" (click)="gotoReportsSppApr()">SPP/APR Reports</a>
+            <a class="mdl-navigation__link generate-app-menu__item-link" href="#" (click)="gotoReportsLibrary()">Reports Library</a>
+        </div>
+
+
+        <a class="mdl-navigation__link generate-app-menu__item-link"
+           href="https://ciidta.communities.ed.gov/#program"
+           target="_blank"
+           rel="noopener">
+            CIID
+        </a>
+
+        <generate-app-login></generate-app-login>
+
+    </nav>
 </div>
 
-<!-- Overlay -->
 <div class="overlay"
      *ngIf="isDrawerOpen"
-     (click)="closeDrawer()"></div>
+     (click)="closeDrawer()">
+</div>
+
+

@@ -1,13 +1,14 @@
 <a href="#app-generate-main" class="generate-text--screen-reader-only">Skip to main content</a>
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
-    <generate-app-header></generate-app-header>
+<div class="mdl-layout app-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
+    <generate-app-header [isDrawerOpen]="isDrawerOpen"
+    (close)="closeDrawer()"></generate-app-header>
 
-    <div class="mdl-layout__drawer">
+    <!--<div class="mdl-layout__drawer">
         <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href="#" [routerLink]="['/']">Home</a>
+            <a class="mdl-navigation__link" href="#" [routerLink]="['/']">Home</a>-->
 
-            <!-- Expandable Resources -->
-            <div class="mdl-navigation__link expandable" (click)="toggleSubmenu('resources')">
+    <!-- Expandable Resources -->
+         <!--<div class="mdl-navigation__link expandable" (click)="toggleSubmenu('resources')">
                 Resources <i class="material-icons" style="float:right;">{{ submenus.resources ? 'expand_less' : 'expand_more' }}</i>
             </div>
             <div class="submenu" [class.open]="submenus.resources">
@@ -17,10 +18,10 @@
                 <a class="mdl-navigation__link" href="#" [routerLink]="['/about']">About Generate</a>
             </div>
 
-            <a class="mdl-navigation__link" (click)="gotoSummary()" href="#">Data Population Summary</a>
+            <a class="mdl-navigation__link" (click)="gotoSummary()" href="#">Data Population Summary</a>-->
 
             <!-- Expandable Standard Reports -->
-            <div class="mdl-navigation__link expandable" (click)="toggleSubmenu('reports')">
+            <!--<div class="mdl-navigation__link expandable" (click)="toggleSubmenu('reports')">
                 Standard Reports <i class="material-icons" style="float:right;">{{ submenus.reports ? 'expand_less' : 'expand_more' }}</i>
             </div>
             <div class="submenu" [class.open]="submenus.reports">
@@ -43,8 +44,8 @@
 
             <generate-app-login></generate-app-login>
         </nav>
-    </div>
-    <main id="app-generate-main" class="mdl-layout__content">
+    </div>-->
+    <main id="app-generate-main" class="mdl-layout__content app-content" [class.shifted]="isDrawerOpen">
         <router-outlet></router-outlet>
         <generate-app-footer></generate-app-footer>
     </main>
