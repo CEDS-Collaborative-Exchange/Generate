@@ -1,70 +1,33 @@
-import { Component, AfterViewInit, ViewEncapsulation, OnInit } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { Title } from '@angular/platform-browser';
-import { UserService } from './services/app/user.service';
-import { IAppConfig } from './models/app-config.model';
-import { AppConfig } from './app.config';
-
-
-
-declare var componentHandler: any;
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Router, NavigationEnd, RouterLink } from '@angular/router';
+import { UserService } from '../../../services/app/user.service';
 
 @Component({
-    selector: 'app',
-    templateUrl: './app.component.html',
-    styleUrls: [ './app.component.scss' ],
-    providers: [Title, UserService],
-    encapsulation: ViewEncapsulation.None
+  selector: 'app-app-drawer',
+  standalone: true,
+  imports: [],
+  templateUrl: './app-drawer.component.html',
+  styleUrl: './app-drawer.component.css'
 })
+export class AppDrawerComponent {
 
+    @Input() isDrawerOpen = false;
+    @Output() close = new EventEmitter<void>();
 
+    submenus = {
+        resources: false,
+        reports: false,
+        settings: false
+    };
 
-export class AppComponent implements AfterViewInit, OnInit {
-
-    isDrawerOpen = false;
-
-    toggleDrawer() {
-        this.isDrawerOpen = !this.isDrawerOpen;
-    }
-
-    closeDrawer() {
-        this.isDrawerOpen = false;
+    // Toggle submenu open/close
+    toggleSubmenu(menu: 'resources' | 'reports' | 'settings') {
+        this.submenus[menu] = !this.submenus[menu];
     }
 
     constructor(
         private _router: Router,
-        private _titleService: Title,
-        public userService: UserService,
-        private appConfig: AppConfig) { }
-
-    ngOnInit() {
-
-        this._router.events.subscribe(event => {
-
-            if(event instanceof NavigationEnd) {
-
-                this.appConfig.getConfig().subscribe((res: IAppConfig) => {
-
-                    if (res.authType.toUpperCase() === 'OAUTH') {
-
-                        if (this.userService.isLoggedIn && event.urlAfterRedirects != '/' && event.urlAfterRedirects.indexOf('login') <= 0) {
-                            window.localStorage.setItem('lastUrl', event.urlAfterRedirects)
-                        }
-                    } else {
-                        if (this.userService.isLoggedIn && event.urlAfterRedirects != '/') {
-                            window.localStorage.setItem('lastUrl', event.urlAfterRedirects)
-                        }
-                    }
-
-                })
-                
-            }
-        })
-    }
-
-    ngAfterViewInit() {
-        componentHandler.upgradeDom();
-    }
+        private userService: UserService) { }
 
     gotoSummary() {
         if (this.userService.isLoggedIn()) {
@@ -116,5 +79,4 @@ export class AppComponent implements AfterViewInit, OnInit {
 
         return false;
     }
-    
 }

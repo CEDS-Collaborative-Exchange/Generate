@@ -20,6 +20,7 @@ import { AboutComponent } from './about/about.component';
 import { AppNotFoundComponent } from './shared/components/app-not-found.component';
 import { AppHeaderComponent } from './shared/components/app-header.component';
 import { AppFooterComponent } from './shared/components/app-footer.component';
+import { AppDrawerComponent } from './shared/components/app-drawer/app-drawer.component';
 
 
 /* Shared Modules */
@@ -78,7 +79,8 @@ export function MSALInstanceFactory(): IPublicClientApplication {
             AppRoutingModule,
             SharedModule,
             MatPaginatorModule,
-            MsalModule
+            MsalModule,
+            AppDrawerComponent
         ],
         declarations: [
             HomeComponent,
@@ -86,7 +88,7 @@ export function MSALInstanceFactory(): IPublicClientApplication {
             AppNotFoundComponent,
             AppComponent,
             AppHeaderComponent,
-            AppFooterComponent
+            AppFooterComponent,
         ],
         providers: [
             AppConfig,

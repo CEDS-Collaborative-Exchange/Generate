@@ -1,9 +1,15 @@
 <a href="#app-generate-main" class="generate-text--screen-reader-only">Skip to main content</a>
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
-    <generate-app-header></generate-app-header>
-    
-    <main id="app-generate-main" class="mdl-layout__content">
-        <router-outlet></router-outlet>
-        <generate-app-footer></generate-app-footer>
-    </main>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer app-shell">
+
+    <app-app-drawer class="app-drawer" [isDrawerOpen]="isDrawerOpen"
+                    (close)="closeDrawer()"></app-app-drawer>
+
+    <div class="app-main" [class.shifted]="isDrawerOpen">
+        <generate-app-header></generate-app-header>
+
+        <main id="app-generate-main" class="mdl-layout__content app-content">
+            <router-outlet></router-outlet>
+            <generate-app-footer></generate-app-footer>
+        </main>
+    </div>
 </div>
