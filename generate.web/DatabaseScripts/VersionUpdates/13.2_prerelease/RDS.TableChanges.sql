@@ -64,3 +64,27 @@
         ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostsecondaryEnrollmentActionEdFactsCode VARCHAR(50) NULL;
     END
 
+-----------------------------------------------
+--CIID-8170 
+-----------------------------------------------
+
+    --Remove the constraint on TitleIStatusId in FactOrganizationCounts
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_TitleIStatusId]
+
+    --Rename the column TitleIStatusId to OrganizationTitleIStatusId
+   	IF COL_LENGTH('RDS.FactOrganizationCounts', 'TitleIStatusId') IS NOT NULL
+	BEGIN
+		exec sp_rename 'RDS.FactOrganizationCounts.TitleIStatusId', 'OrganizationTitleIStatusId', 'COLUMN';
+	END
+
+    --Add the default constraint back on the renamed column
+    ALTER TABLE [RDS].[FactOrganizationCounts] ADD  CONSTRAINT [DF_FactOrganizationCounts_OrganizationTitleIStatusId]  DEFAULT ((-1)) FOR [OrganizationTitleIStatusId]
+
+    --Add the new column to FactOrganizationCounts
+    IF COL_LENGTH('RDS.FactOrganizationCounts', 'HomelessChildrenandYouthReservation') IS NULL
+    BEGIN
+        ALTER TABLE RDS.FactOrganizationCounts ADD HomelessChildrenandYouthReservation INT NULL;
+    END
+
+
+

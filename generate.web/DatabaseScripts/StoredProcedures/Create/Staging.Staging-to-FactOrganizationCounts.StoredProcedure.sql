@@ -105,9 +105,10 @@ BEGIN
 			, [LeaId]
 			, [K12StaffId]
 			, [K12SchoolId]
-			, [TitleIStatusId]
+			, [OrganizationTitleIStatusId]
 			, [TitleIParentalInvolveRes]
 			, [TitleIPartAAllocations]
+			, [HomelessChildrenandYouthReservation]
 			, [AuthorizingBodyCharterSchoolAuthorizerId]
 			, [SecondaryAuthorizingBodyCharterSchoolAuthorizerId]
 			, [CharterSchoolManagementOrganizationId]
@@ -132,9 +133,10 @@ BEGIN
 			, -1 	 														AS LeaId
 			, ISNULL( @DimK12StaffId, -1)	 								AS K12StaffId
 			, -1 	 														AS K12SchoolId
-			, -1  															AS TitleIStatusId
+			, -1  															AS OrganizationTitleIStatusId
 			, -1  															AS TitleIParentalInvolveRes
 			, -1  															AS TitleIPartAAllocations
+			, -1  															AS HomelessChildrenandYouthReservation
 			, -1  															AS AuthorizingBodyCharterSchoolAuthorizerId
 			, -1 															AS SecondaryAuthorizingBodyCharterSchoolAuthorizerId
 			, -1 															AS CharterSchoolManagementOrganizationId
@@ -192,9 +194,10 @@ BEGIN
 			, [LeaId]
 			, [K12StaffId]
 			, [K12SchoolId]
-			, [TitleIStatusId]
+			, [OrganizationTitleIStatusId]
 			, [TitleIParentalInvolveRes]
 			, [TitleIPartAAllocations]
+			, [HomelessChildrenandYouthReservation]
 			, [AuthorizingBodyCharterSchoolAuthorizerId]
 			, [SecondaryAuthorizingBodyCharterSchoolAuthorizerId]
 			, [CharterSchoolManagementOrganizationId]
@@ -219,12 +222,13 @@ BEGIN
 			, rdl.DimLeaID													AS LeaId
 			, -1															AS K12StaffId
 			, -1															AS K12SchoolId
-			, -1															AS TitleIStatusId
-			, isnull(round(soff.ParentalInvolvementReservationFunds,0),0)	AS TitleIParentalInvolveRes
+			, ISNULL(t.DimOrganizationTitleIStatusId,-1)					AS OrganizationTitleIStatusId
+			, ISNULL(round(soff.ParentalInvolvementReservationFunds,0),0)	AS TitleIParentalInvolveRes
 			, CASE WHEN soff.FederalProgramCode ='84.010' 
 				THEN round(soff.FederalProgramsFundingAllocation,0) 
 				ELSE 0 
 			END 															AS TitleIPartAAllocations
+			, -1  															AS HomelessChildrenandYouthReservation
 			, -1															AS AuthorizingBodyCharterSchoolAuthorizerId
 			, -1															AS SecondaryAuthorizingBodyCharterSchoolAuthorizerId
 			, -1															AS CharterSchoolManagementOrganizationId
@@ -268,6 +272,11 @@ BEGIN
 			AND ISNULL(CAST(sko.LEA_McKinneyVentoSubgrantRecipient AS SMALLINT), -1) = ISNULL(organizationStatus.McKinneyVentoSubgrantRecipientMap, -1)
 			AND organizationStatus.HighSchoolGraduationRateIndicatorStatusCode = 'Missing'
 			AND organizationStatus.REAPAlternativeFundingStatusCode = 'Missing'
+		LEFT JOIN rds.vwDimOrganizationTitleIStatuses t 
+			ON t.TitleIInstructionalServicesCode = 'MISSING'
+			AND isnull(t.TitleIProgramTypeMap, t.TitleIProgramTypeCode) = isnull(sko.LEA_TitleIProgramType, 'MISSING')
+			AND t.TitleISchoolStatusCode = 'MISSING'
+			AND t.TitleISupportServicesCode = 'MISSING' 
 			
 		-------------------------------
 		--School
@@ -341,9 +350,10 @@ BEGIN
 			, [LeaId]
 			, [K12StaffId]
 			, [K12SchoolId]
-			, [TitleIStatusId]
+			, [OrganizationTitleIStatusId]
 			, [TitleIParentalInvolveRes]
 			, [TitleIPartAAllocations]
+			, [HomelessChildrenandYouthReservation]
 			, [AuthorizingBodyCharterSchoolAuthorizerId]
 			, [SecondaryAuthorizingBodyCharterSchoolAuthorizerId]
 			, [CharterSchoolManagementOrganizationId]
@@ -368,11 +378,12 @@ BEGIN
 			, -1														AS LeaId
 			, -1														AS K12StaffId
 			, rk12s.DimK12SchoolId										AS K12SchoolId
-			, ISNULL(t.DimOrganizationTitleIStatusId,-1)				AS TitleIStatusId
+			, ISNULL(t.DimOrganizationTitleIStatusId,-1)				AS OrganizationTitleIStatusId
 			, -1														AS TitleIParentalInvolveRes
 			, -1														AS TitleIPartAAllocations
-			, isnull(CSAP.MinId,-1)										AS AuthorizingBodyCharterSchoolAuthorizerId
-			, isnull(CSAS.MinId,-1)										AS SecondaryAuthorizingBodyCharterSchoolAuthorizerId
+			, -1  														AS HomelessChildrenandYouthReservation
+			, ISNULL(CSAP.MinId,-1)										AS AuthorizingBodyCharterSchoolAuthorizerId
+			, ISNULL(CSAS.MinId,-1)										AS SecondaryAuthorizingBodyCharterSchoolAuthorizerId
 			, -1														AS CharterSchoolManagementOrganizationId
 			, -1														AS CharterSchoolUpdatedManagementOrganizationId
 			, -1														AS ReasonApplicabilityId
@@ -413,10 +424,10 @@ BEGIN
 			AND isnull(s.StatePovertyDesignationMap, s.StatePovertyDesignationCode) = isnull(sk12o.School_StatePovertyDesignation, 'MISSING')
 			AND isnull(s.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeMap, s.ProgressAchievingEnglishLanguageProficiencyIndicatorTypeCode) = isnull(sk12o.School_ProgressAchievingEnglishLanguageProficiencyIndicatorType, 'MISSING')
 		LEFT JOIN rds.vwDimOrganizationTitleIStatuses t 
-			ON t.TitleIInstructionalServicesCode = NULL
-			AND t.TitleIProgramTypeCode = NULL 
+			ON t.TitleIInstructionalServicesCode = 'MISSING'
+			AND t.TitleIProgramTypeCode = 'MISSING' 
 			AND isnull(t.TitleISchoolStatusMap, t.TitleISchoolStatusCode) = isnull(sk12o.School_TitleISchoolStatus, 'MISSING')    
-			AND t.TitleISupportServicesCode = NULL 
+			AND t.TitleISupportServicesCode = 'MISSING' 
 		LEFT JOIN rds.vwDimK12OrganizationStatuses organizationStatus 
 			ON organizationStatus.SchoolYear = sk12o.SchoolYear
 			AND isnull(sk12o.School_GunFreeSchoolsActReportingStatus, 'MISSING') = isnull(organizationStatus.GunFreeSchoolsActReportingStatusMap, organizationStatus.GunFreeSchoolsActReportingStatusCode)
