@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/app/user.service';
 
@@ -17,6 +17,7 @@ declare var componentHandler: any;
 
 export class AppHeaderComponent implements AfterViewInit {
 
+    @Output() openDrawer = new EventEmitter<void>();
     public userService: UserService;
 
     constructor(
@@ -28,6 +29,10 @@ export class AppHeaderComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         componentHandler.upgradeAllRegistered();  
+    }
+
+    emitDrawer() {
+        this.openDrawer.emit();
     }
 
     onClickMenuItem() {

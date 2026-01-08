@@ -102,7 +102,7 @@ $fa-font-path: "~font-awesome/fonts/";
 
 .submenu {
     display: none;
-    padding-left: 16px; /* indent for submenu items */
+    padding-left: 16px;
 }
 
 .submenu.open {
@@ -114,37 +114,37 @@ $fa-font-path: "~font-awesome/fonts/";
 }
 
 .app-shell {
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
+    position: relative;
 }
 
-/* Drawer */
+/* Drawer does NOT consume layout space */
 .app-drawer {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 260px;
-    flex-shrink: 0;
+    height: 100vh;
+    z-index: 1000;
 }
 
+/* Hidden by default */
 .drawer {
-    width: 260px;
-    background: #fff;
-    box-shadow: 2px 0 6px rgba(0,0,0,0.2);
     transform: translateX(-260px);
     transition: transform 0.3s ease;
 }
 
+/* Visible when open */
 .drawer.open {
     transform: translateX(0);
 }
 
-/* Main wrapper (header + content) */
+/* Main content fills full width */
 .app-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    width: 100%;
     transition: margin-left 0.3s ease;
 }
 
+/* Shift ONLY when drawer is open */
 .app-main.shifted {
     margin-left: 260px;
 }

@@ -5,7 +5,7 @@
                     (close)="closeDrawer()"></app-app-drawer>
 
     <div class="app-main" [class.shifted]="isDrawerOpen">
-        <generate-app-header></generate-app-header>
+        <generate-app-header (openDrawer)="toggleDrawer()"></generate-app-header>
 
         <main id="app-generate-main" class="mdl-layout__content app-content">
             <router-outlet></router-outlet>
