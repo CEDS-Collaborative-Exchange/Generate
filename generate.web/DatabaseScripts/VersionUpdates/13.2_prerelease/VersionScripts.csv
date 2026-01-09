@@ -26,4 +26,6 @@ StoredProcedures\\Drop,App.Run_Before_Tests.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Run_Before_Tests.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Migrate_Metadata.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Migrate_Metadata.StoredProcedure.sql,0
+StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 VersionUpdates\\13.2_prerelease,UpdateDbVersion.sql,0
