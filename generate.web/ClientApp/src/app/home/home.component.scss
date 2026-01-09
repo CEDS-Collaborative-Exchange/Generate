@@ -235,15 +235,20 @@
 
 
 @media (max-width: 1100px) {
-    .generate-home__sidebar{
-        display: none;
+    /*.generate-home__sidebar {
+        margin-left: -100px;
     }
+*/
+    /*.generate-home__reports-computer img {
+        width: 10px;*/ /* smaller at ~175% zoom */
+        /*display:block;
+    }*/
 
-    .generate-home__reports {
-        display: none;
-    }
+    /*.generate-home__reports {
+        margin-left: -100px;
+    }*/
 
-    .generate-home__button{
-        display: none;
-    }
+/*    .generate-home__button {
+        margin-left: -16px;
+    }*/
 }

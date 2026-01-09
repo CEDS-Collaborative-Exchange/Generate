@@ -1,11 +1,7 @@
 <div class="drawer" [class.open]="isDrawerOpen">
     <nav class="mdl-navigation vertical-nav">
 
-        <a class="mdl-navigation__link generate-app-menu__item-link"
-           routerLink="/"
-           routerLinkActive="active">
-            Home
-        </a>
+        <a class="mdl-navigation__link generate-app-menu__item-link" (click)="gotoHome()">Home</a>
 
         <!-- Expandable Resources -->
         <div class="mdl-navigation__link generate-app-menu__item-link expandable" (click)="toggleSubmenu('resources')">
@@ -15,7 +11,7 @@
             <a class="mdl-navigation__link generate-app-menu__item-link" href="https://ciidta.communities.ed.gov/#communities/pdc/documents/17667" target="_blank">User Guide</a>
             <a class="mdl-navigation__link generate-app-menu__item-link" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation" target="_blank">Documentation</a>
             <a class="mdl-navigation__link generate-app-menu__item-link" href="https://center-for-the-integration-of-id.gitbook.io/generate-documentation/user-guide/support" target="_blank">Support</a>
-            <a class="mdl-navigation__link generate-app-menu__item-link" href="#" routerLink="['/about']">About Generate</a>
+            <a class="mdl-navigation__link generate-app-menu__item-link" (click)="gotoAbout()">About Generate</a>
         </div>
 
 

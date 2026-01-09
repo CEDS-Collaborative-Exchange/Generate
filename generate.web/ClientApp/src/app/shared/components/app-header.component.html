@@ -51,9 +51,13 @@
                 <li class="generate-app-menu__dropdown-item"><a href="#" [routerLink]="['/settings/metadata']" class="mdl-menu__item generate-app-menu__link">Metadata</a></li>
             </ul>
         </nav>
-        <div class="menu-btn" (click)="emitDrawer()">
-            <i class="material-icons">menu</i>
-        </div>
+    </div>
+    <div class="mdl-layout__header-row generate-app--hamburger__header">
+        <nav class="mdl-navigation">
+            <div class="menu-btn" (click)="emitDrawer()">
+                <i class="material-icons">menu</i>
+            </div>
+        </nav>
     </div>
 </header>
 

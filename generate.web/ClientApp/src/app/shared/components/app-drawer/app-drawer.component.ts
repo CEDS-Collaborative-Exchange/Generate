@@ -29,6 +29,10 @@ export class AppDrawerComponent {
         private _router: Router,
         private userService: UserService) { }
 
+    gotoHome() { this._router.navigateByUrl('/'); }
+
+    gotoAbout() { this._router.navigateByUrl('/about'); }
+
     gotoSummary() {
         if (this.userService.isLoggedIn()) {
             this._router.navigateByUrl('/reports/summary');
