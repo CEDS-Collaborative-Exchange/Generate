@@ -21,8 +21,6 @@ The basic steps for comparing a legacy file to a Generate file are to:
 5. Review the results of the comparison
 6. Resolve issues and repeat steps 2-5 as needed until satisfied with the comparison
 
-{% embed url="https://www.figma.com/board/5qr4sYgmsUUpcaCRcdQD4y/Generate-EdFacts-File-Submission-Comparison-Utility?node-id=1:365&t=RMHT6TfCov4nrrfF-1" fullWidth="false" %}
-
 ### Office Hour Demonstration
 
 {% embed url="https://youtu.be/MmfmSMswVFM?t=722" %}
