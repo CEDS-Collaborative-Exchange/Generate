@@ -17,13 +17,14 @@ AS
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaOrganizationName
 			, LEAs.LeaOperationalStatus
-			, TitleI.TitleIProgramTypeCode
+			, organizationTitleIStatus.TitleIProgramTypeCode
 			, Schools.SchoolIdentifierSea
 			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
-			, TitleI.TitleISchoolStatusEdFactsCode
+			, organizationTitleIStatus.TitleISchoolStatusCode
+			, TitleI.TitleIIndicatorCode
 			, Grades.GradeLevelEdFactsCode
 			, Races.RaceEdFactsCode
 			--Homeless	
@@ -51,8 +52,14 @@ AS
 	LEFT JOIN	RDS.DimEnglishLearnerStatuses				EL			ON Fact.EnglishLearnerStatusId		= EL.DimEnglishLearnerStatusId
 	LEFT JOIN	RDS.DimHomelessnessStatuses					Home		ON Fact.HomelessnessStatusId		= Home.DimHomelessnessStatusId
 	LEFT JOIN	RDS.DimMigrantStatuses						Mig			ON Fact.MigrantStatusId				= Mig.DimMigrantStatusId
-	LEFT JOIN	RDS.DimOrganizationTitleIStatuses			TitleI		ON Fact.TitleIStatusId				= TitleI.DimOrganizationTitleIStatusId
+	LEFT JOIN	RDS.DimTitleIStatuses						TitleI		ON Fact.TitleIStatusId				= TitleI.DimTitleIStatusId
 	LEFT JOIN 	RDS.DimFosterCareStatuses					Foster		ON Fact.FosterCareStatusId			= Foster.DimFosterCareStatusId
+	LEFT JOIN   (
+				SELECT t.TitleIProgramTypeCode, t.TitleISchoolStatusCode, sch.SchoolIdentifierSea
+				FROM RDS.FactOrganizationCounts f
+				inner join rds.DimK12Schools sch on f.K12SchoolId = sch.DimK12SchoolId
+				inner join rds.DimOrganizationTitleIStatuses t on f.OrganizationTitleIStatusId = t.DimOrganizationTitleIStatusId
+				) organizationTitleIStatus ON organizationTitleIStatus.SchoolIdentifierSea = Schools.SchoolIdentifierSea
 
 	WHERE 1 = 1
 	--2 ways to select by SchoolYear, use 1 or the other, not both
