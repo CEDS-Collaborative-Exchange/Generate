@@ -645,12 +645,10 @@ BEGIN
 
 					select @sql = @sql + 
 					'
-					select distinct StudentIdentifierState
+					select distinct ske.StudentIdentifierState
 					into #excludeStudents
-					from staging.ProgramParticipationSpecialEducation
-					where IDEAIndicator = 1
-					and isnull(ProgramParticipationEndDate, ''' + @calculatedSYEndDate + ''') >= ''' + @calculatedSYEndDate + '''
-					order by StudentIdentifierState
+					from Staging.K12Enrollment ske
+					where isnull(ske.EnrollmentExitDate, ''' + @calculatedSYEndDate + ''') >= ''' + @calculatedSYEndDate + '''
 					' + char(10)
 
 					select @sql = @sql + 
