@@ -4,7 +4,7 @@
  Update app.FileColumns set ReportColumn = 'MailingAddressPostalCode' where ColumnName = 'MailingZipcode'
  Update app.FileColumns set ReportColumn = 'MailingAddressState' where ColumnName = 'MailingPostalStateCode'
 
- ---------------------------------------
+---------------------------------------
 --Changes for File 160
 --------------------------------------- 
    
@@ -29,3 +29,11 @@
 		insert into app.FactTable_DimensionTables(FactTableId, DimensionTableId)
 		values (@factTableId, @dimensionTableId)
 	END
+
+---------------------------------------
+--Changes for File 116
+--------------------------------------- 
+    update app.filecolumns
+    set dimensionid = 55
+        , ReportColumn = 'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE'
+    where ReportColumn = 'TITLEIIILANGUAGEINSTRUCTION'

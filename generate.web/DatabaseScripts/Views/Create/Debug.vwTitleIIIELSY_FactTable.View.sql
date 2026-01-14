@@ -23,6 +23,7 @@ AS
 
 			, Races.RaceEdFactsCode
 			, Grades.GradeLevelEdFactsCode
+			, Ages.AgeEdFactsCode
 
 			--English Learner
 			, EL.EnglishLearnerStatusEdFactsCode
@@ -40,6 +41,7 @@ AS
 	LEFT JOIN	RDS.DimRaces							Races		ON Fact.RaceId						= Races.DimRaceId
 	LEFT JOIN	RDS.DimGradeLevels						Grades		ON Fact.GradeLevelId				= Grades.DimGradeLevelId
 	LEFT JOIN 	RDS.DimTitleIIIStatuses					TitleIII	ON Fact.TitleIIIStatusId			= TitleIII.DimTitleIIIStatusId		
+	LEFT JOIN	RDS.DimAges								Ages		ON Fact.AgeId						= Ages.DimAgeId      
 	
 	WHERE 1 = 1
 	--2 ways to select by SchoolYear, use 1 or the other, not both
