@@ -356,13 +356,13 @@ BEGIN
 					from app.FileColumns
 				)
 
-		END
+			DROP TABLE IF EXISTS Metadata.CategoryOptions
+			DROP TABLE IF EXISTS Metadata.CategorySet_Categories
+			DROP TABLE IF EXISTS Metadata.CategorySets
+			DROP TABLE IF EXISTS Metadata.FileSubmission_FileColumns
+			DROP TABLE IF EXISTS Metadata.FileSubmissions
 
-		DROP TABLE IF EXISTS Metadata.CategoryOptions
-		DROP TABLE IF EXISTS Metadata.CategorySet_Categories
-		DROP TABLE IF EXISTS Metadata.CategorySets
-		DROP TABLE IF EXISTS Metadata.FileSubmission_FileColumns
-		DROP TABLE IF EXISTS Metadata.FileSubmissions
+		END
 
 	END
 	
