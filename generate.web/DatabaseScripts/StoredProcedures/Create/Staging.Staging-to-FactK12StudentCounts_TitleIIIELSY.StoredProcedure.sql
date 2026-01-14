@@ -65,8 +65,8 @@ BEGIN
 			, max(isnull(birthdate, '1900-01-01'))			BirthDate
 		into #dimPeople
 		from rds.DimPeople
-		where ((RecordStartDateTime < @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) > @SYStartDate)
-			or (RecordStartDateTime >= @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) <= @SYEndDate))
+		where ((RecordStartDateTime <= @SYStartDate and RecordEndDateTime > @SYStartDate)
+			or (RecordStartDateTime > @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) <= @SYEndDate))
 		and IsActiveK12Student = 1
 		group by K12StudentStudentIdentifierState
 		order by K12StudentStudentIdentifierState
@@ -93,6 +93,13 @@ BEGIN
 
 		CREATE CLUSTERED INDEX ix_tempvwTitleIIIStatuses 
 			ON #vwTitleIIIStatuses (TitleIIIImmigrantParticipationStatusMap, ProficiencyStatusMap, TitleIIIAccountabilityProgressStatusMap, TitleIIILanguageInstructionProgramTypeMap);
+
+		SELECT * INTO #vwImmigrantStatuses
+		FROM RDS.vwDimImmigrantStatuses 
+		WHERE SchoolYear = @SchoolYear
+
+		CREATE CLUSTERED INDEX ix_tempvwImmigrantStatuses 
+			ON #vwImmigrantStatuses (TitleIIIImmigrantStatusMap, TitleIIIImmigrantParticipationStatusMap);
 
 		SELECT *
 		INTO #vwGradeLevels
@@ -209,7 +216,7 @@ BEGIN
 			, -1												HomelessnessStatusId					
 			, -1												EconomicallyDisadvantagedStatusId		
 			, -1												FosterCareStatusId					
-			, -1												ImmigrantStatusId						
+			, isnull(rdis.DimImmigrantStatusId, -1)				ImmigrantStatusId
 			, -1												PrimaryDisabilityTypeId				
 			, -1												SpecialEducationServicesExitDateId	
 			, -1												MigrantStudentQualifyingArrivalDateId	
@@ -231,7 +238,7 @@ BEGIN
 			and CONVERT(DATE, ske.EnrollmentEntryDate) = CONVERT(DATE, rdp.RecordStartDateTime)
 			and ISNULL(CONVERT(DATE, ske.EnrollmentExitDate), @SYEndDate) = ISNULL(CONVERT(DATE, rdp.RecordEndDateTime), @SYEndDate)
 	-- TitleIII Status
-		LEFT JOIN Staging.ProgramParticipationTitleIII sppt3
+		JOIN Staging.ProgramParticipationTitleIII sppt3
 			ON ske.SchoolYear = sppt3.SchoolYear		
 			AND ske.StudentIdentifierState = sppt3.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppt3.LeaIdentifierSeaAccountability, '') 
@@ -258,12 +265,16 @@ BEGIN
 			AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate) >= @SYStartDate
 	--title III (rds)
 		LEFT JOIN #vwTitleIIIStatuses rdt3s
-			ON ISNULL(sppt3.TitleIIIImmigrantStatus, -1) 						= ISNULL(CAST(rdt3s.TitleIIIImmigrantParticipationStatusMap AS SMALLINT), -1)
+			ON ISNULL(CAST(sppt3.TitleIIIImmigrantStatus AS INT), -1) 			= ISNULL(CAST(rdt3s.TitleIIIImmigrantParticipationStatusMap AS SMALLINT), -1)
 			AND ISNULL(sppt3.TitleIIILanguageInstructionProgramType, 'MISSING') = ISNULL(rdt3s.TitleIIILanguageInstructionProgramTypeMap, rdt3s.TitleIIILanguageInstructionProgramTypeCode)
 			AND ISNULL(sppt3.Proficiency_TitleIII, 'MISSING') 					= ISNULL(rdt3s.ProficiencyStatusMap, rdt3s.ProficiencyStatusCode) 
 			AND ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING') 	= ISNULL(rdt3s.TitleIIIAccountabilityProgressStatusMap, rdt3s.TitleIIIAccountabilityProgressStatusCode)
-			AND ISNULL(sppt3.EnglishLearnersExitedStatus, -1)   				= ISNULL(CAST(rdt3s.EnglishLearnersExitedStatusMap AS SMALLINT), -1)
+			AND ISNULL(CAST(sppt3.EnglishLearnersExitedStatus AS INT), -1)   	= ISNULL(CAST(rdt3s.EnglishLearnersExitedStatusMap AS SMALLINT), -1)
 			AND rdt3s.ProgramParticipationTitleIIILiepCode 						= 'MISSING'
+	--immigrant (rds)
+		LEFT JOIN #vwImmigrantStatuses rdis
+			ON ISNULL(sppt3.TitleIIIImmigrantStatus, -1) 						= ISNULL(CAST(rdis.TitleIIIImmigrantStatusMap AS SMALLINT), -1)
+			AND ISNULL(sppt3.TitleIIIImmigrantParticipationStatus, -1) 			= ISNULL(CAST(rdis.TitleIIIImmigrantParticipationStatusMap AS SMALLINT), -1)
 	--english learner (rds)
 		LEFT JOIN #vwEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdels.EnglishLearnerStatusMap AS SMALLINT), -1)

@@ -86,5 +86,28 @@
         ALTER TABLE RDS.FactOrganizationCounts ADD HomelessChildrenandYouthReservation INT NULL;
     END
 
+-----------------------------------------------
+--File 138 changes	
+-----------------------------------------------
+	--Add AssessmentStatus to the Fact table
+    IF COL_LENGTH('RDS.FactK12StudentAssessments', 'AssessmentStatusId') IS NULL
+    BEGIN
+        ALTER TABLE RDS.FactK12StudentAssessments ADD AssessmentStatusId INT NULL;
+    END
+
+	IF NOT EXISTS (
+    SELECT 1
+    FROM sys.foreign_keys fk
+    JOIN sys.tables t ON fk.parent_object_id = t.object_id
+    WHERE t.name = 'FactK12StudentAssessments'
+      AND fk.name = 'FK_FactK12StudentAssessments_AssessmentStatusId'
+	)
+	BEGIN
+		ALTER TABLE RDS.FactK12StudentAssessments
+		ADD CONSTRAINT FK_FactK12StudentAssessments_AssessmentStatusId
+		FOREIGN KEY (AssessmentStatusId)
+		REFERENCES RDS.DimAssessmentStatuses(DimAssessmentStatusId);
+	END
+
 
 
