@@ -6322,7 +6322,7 @@ BEGIN
 							'
 					END
 
-					if @reportLevel = 'sea'
+					if @reportLevel = 'sea' and @categoryCode = 'TOT'
 					begin
 							set @sql = @sql + '						
 							;with cte as (
@@ -6336,7 +6336,7 @@ BEGIN
 								and s.EnrollmentEntryDateId = c.EnrollmentEntryDateId
 							'
 					end 
-					else if @reportLevel = 'lea'
+					else if @reportLevel = 'lea' and @categoryCode = 'TOT'
 					begin
 							set @sql = @sql + '						
 							;with cte as (
