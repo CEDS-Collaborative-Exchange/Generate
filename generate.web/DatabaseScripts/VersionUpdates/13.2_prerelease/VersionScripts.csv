@@ -9,6 +9,8 @@ Views\\Drop,RDS.vwDimK12EnrollmentStatuses.View.sql,0
 Views\\Create,RDS.vwDimK12EnrollmentStatuses.View.sql,0
 Views\\Drop,RDS.vwDimPsEnrollmentStatuses.View.sql,0
 Views\\Create,RDS.vwDimPsEnrollmentStatuses.View.sql,0
+Views\\Drop,RDS.vwDimAssessmentStatuses.View.sql,0
+Views\\Create,RDS.vwDimAssessmentStatuses.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 StoredProcedures\\Drop,RDS.Get_ReportData_ZeroCounts.StoredProcedure.sql,0
@@ -16,6 +18,8 @@ StoredProcedures\\Drop,RDS.Create_ReportData_ZeroCounts.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData_ZeroCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
