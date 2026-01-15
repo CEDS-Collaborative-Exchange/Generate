@@ -1,12 +1,16 @@
 CREATE VIEW [debug].[vwTitleIIIELSY_StagingTables] 
 AS
 	SELECT	DISTINCT 
-		enrollment.StudentIdentifierState
-		, enrollment.LEAIdentifierSeaAccountability
-		, enrollment.SchoolIdentifierSea
-		, enrollment.FirstName
-		, enrollment.LastOrSurname
-		, enrollment.MiddleName
+		enrollment.SchoolYear
+		,enrollment.StudentIdentifierState
+		,enrollment.LEAIdentifierSeaAccountability
+		,enrollment.SchoolIdentifierSea
+		,enrollment.FirstName
+		,enrollment.LastOrSurname
+		,enrollment.MiddleName
+		,enrollment.GradeLevel
+		,enrollment.BirthDate
+		,[RDS].[Get_Age] (enrollment.BirthDate, dates.ResponseValue) AS CalculatedAge 
 
 		, el.EnglishLearnerStatus
 		, el.EnglishLearner_StatusStartDate
@@ -42,6 +46,10 @@ AS
 		ON sssrd.SchoolYear = enrollment.SchoolYear
 		AND sssrd.TableName = 'RefTitleIIILanguageInstructionProgramType'
 		AND titleIII.TitleIIILanguageInstructionProgramType = sssrd.InputCode
+
+	--Join to get the child count date for the age calculation
+	JOIN App.ToggleQuestions		toggle 		ON		toggle.EmapsQuestionAbbrv	=	'MEMBERDTE'		
+	JOIN App.ToggleResponses		dates		ON		toggle.ToggleQuestionId		=	dates.ToggleQuestionId
 
 	WHERE 1 = 1
 	AND el.EnglishLearnerStatus = 1

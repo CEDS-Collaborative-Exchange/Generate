@@ -29,7 +29,8 @@ BEGIN
 		@SchoolYearId INT,
 		@SYStartDate DATE,
 		@SYEndDate DATE,
-		@ReportingDate DATE
+		@ReportingDate DATE,
+		@MembershipDate DATE
 		
 		SELECT @SchoolYearId = DimSchoolYearId 
 		FROM RDS.DimSchoolYears
@@ -77,6 +78,26 @@ BEGIN
 		update #dimPeople
 		set RecordStartDateTime = @SYStartDate
 		where RecordStartDateTime < @SYStartDate
+
+	--Get the Membership date from Toggle (if set)
+		SELECT @SchoolYearId = DimSchoolYearId 
+		FROM RDS.DimSchoolYears
+		WHERE SchoolYear = @SchoolYear
+
+		SELECT @MembershipDate = tr.ResponseValue
+		FROM App.ToggleQuestions tq
+		JOIN App.ToggleResponses tr
+			ON tq.ToggleQuestionId = tr.ToggleQuestionId
+		WHERE tq.EmapsQuestionAbbrv = 'MEMBERDTE'
+ 
+		IF ISNULL(@MembershipDate, '') = ''
+		BEGIN
+			SELECT @MembershipDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-10-01' AS DATE)
+		END
+		ELSE 
+		BEGIN
+			SELECT @MembershipDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@MembershipDate) AS VARCHAR(2)) + '-' + CAST(DAY(@MembershipDate) AS VARCHAR(2)) AS DATE)
+		END
 
 	--Create the temp tables (and any relevant indexes) needed for this domain
 		SELECT *
@@ -192,7 +213,7 @@ BEGIN
 			, rsy.DimSchoolYearId								SchoolYearId
 			, @FactTypeId										FactTypeId							
 			, ISNULL(rgls.DimGradeLevelId, -1)					GradeLevelId							
-			, -1												AgeId									
+			, ISNULL(rda.DimAgeId, -1)							AgeId
 			, ISNULL(rdr.DimRaceId, -1)							RaceId								
 			, -1												K12DemographicId						
 			, 1													StudentCount							
@@ -237,6 +258,9 @@ BEGIN
 			AND ISNULL(rdp.RecordEndDateTime, @SYEndDate) >= @SYStartDate
 			and CONVERT(DATE, ske.EnrollmentEntryDate) = CONVERT(DATE, rdp.RecordStartDateTime)
 			and ISNULL(CONVERT(DATE, ske.EnrollmentExitDate), @SYEndDate) = ISNULL(CONVERT(DATE, rdp.RecordEndDateTime), @SYEndDate)
+	--age			
+		JOIN RDS.DimAges rda
+			ON RDS.Get_Age(ske.Birthdate, @MembershipDate) = rda.AgeValue
 	-- TitleIII Status
 		JOIN Staging.ProgramParticipationTitleIII sppt3
 			ON ske.SchoolYear = sppt3.SchoolYear		
