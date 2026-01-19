@@ -273,8 +273,8 @@ BEGIN
 			AND organizationStatus.HighSchoolGraduationRateIndicatorStatusCode = 'Missing'
 			AND organizationStatus.REAPAlternativeFundingStatusCode = 'Missing'
 		LEFT JOIN rds.vwDimOrganizationTitleIStatuses t 
-			ON t.TitleIInstructionalServicesCode = 'MISSING'
-			AND isnull(t.TitleIProgramTypeMap, t.TitleIProgramTypeCode) = isnull(sko.LEA_TitleIProgramType, 'MISSING')
+			ON isnull(sko.LEA_TitleIProgramType, 'MISSING') = isnull(t.TitleIProgramTypeMap, t.TitleIProgramTypeCode)
+			AND t.TitleIInstructionalServicesCode = 'MISSING'
 			AND t.TitleISchoolStatusCode = 'MISSING'
 			AND t.TitleISupportServicesCode = 'MISSING' 
 			
