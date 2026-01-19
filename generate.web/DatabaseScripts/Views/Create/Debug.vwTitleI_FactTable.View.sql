@@ -24,7 +24,7 @@ AS
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
 			, OrgTitleIS.TitleISchoolStatusEdFactsCode
-
+			, TitleI.TitleIIndicatorCode
 			, Grades.GradeLevelEdFactsCode
 			, Races.RaceEdFactsCode
 			--Homeless	
