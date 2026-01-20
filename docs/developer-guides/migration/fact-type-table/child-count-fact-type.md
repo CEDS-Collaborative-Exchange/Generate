@@ -173,8 +173,7 @@ exec [Source].[Source-to-Staging_ChildCount] 2024
 {% tab title="Generate UI" %}
 #### Migrating Source to Staging (Generate User Interface)
 
-This ETL can also be run from the Generate user interface.\
-
+This ETL can also be run from the Generate user interface.<br>
 
 {% content-ref url="../../../user-guide/settings/data-migration.md" %}
 [data-migration.md](../../../user-guide/settings/data-migration.md)
