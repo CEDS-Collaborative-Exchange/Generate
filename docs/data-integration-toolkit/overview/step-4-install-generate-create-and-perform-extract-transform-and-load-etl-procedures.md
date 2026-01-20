@@ -10,7 +10,7 @@ In Step 4, the project team will integrate the data identified and aligned in pr
 
 Step 4 involves creating the ETL code and executing the movement of data from source systems into the CEDS&#x20;data structures.
 
-<figure><img src="../.gitbook/assets/Screenshot 2025-12-15 145735.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot 2025-12-15 145735.png" alt=""><figcaption></figcaption></figure>
 
 ### Process and Timing
 

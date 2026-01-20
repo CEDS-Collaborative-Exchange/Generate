@@ -30,12 +30,12 @@
 
 ## Data Integration Toolkit
 
-* [Overview](data-integration-toolkit/overview.md)
-* [Step 1: Define Goals for Integration](data-integration-toolkit/step-1-define-goals-for-integration.md)
-* [Step 2: Establish Project Plan and Structure for Data Integration Work](data-integration-toolkit/step-2-establish-project-plan-and-structure-for-data-integration-work.md)
-* [Step 3: Map Source Data Elements to CEDS](data-integration-toolkit/step-3-map-source-data-elements-to-ceds.md)
-* [Step 4: Install Generate, create and perform extract, transform, and load (ETL) procedures](data-integration-toolkit/step-4-install-generate-create-and-perform-extract-transform-and-load-etl-procedures.md)
-* [Step 5: Document IDEA Part B Data Submission Processes and Conduct an After-Action Review](data-integration-toolkit/step-5-document-idea-part-b-data-submission-processes-and-conduct-an-after-action-review.md)
+* [Overview](data-integration-toolkit/overview/README.md)
+  * [Step 1: Define Goals for Integration](data-integration-toolkit/overview/step-1-define-goals-for-integration.md)
+  * [Step 2: Establish Project Plan and Structure for Data Integration Work](data-integration-toolkit/overview/step-2-establish-project-plan-and-structure-for-data-integration-work.md)
+  * [Step 3: Map Source Data Elements to CEDS](data-integration-toolkit/overview/step-3-map-source-data-elements-to-ceds.md)
+  * [Step 4: Install Generate, create and perform extract, transform, and load (ETL) procedures](data-integration-toolkit/overview/step-4-install-generate-create-and-perform-extract-transform-and-load-etl-procedures.md)
+  * [Step 5: Document IDEA Part B Data Submission Processes and Conduct an After-Action Review](data-integration-toolkit/overview/step-5-document-idea-part-b-data-submission-processes-and-conduct-an-after-action-review.md)
 
 ## Developer Guides
 

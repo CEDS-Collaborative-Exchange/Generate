@@ -108,7 +108,7 @@ As the team maps out the disgram, consider the following:&#x20;
 The activities in Task 1.3 are to confirm the scope of work on the data integration project and secure SEA&#x20;resources needed for that work. The scope document for the data integration project takes the goals and&#x20;questions presented in the use case, frames them within the current SEA environment, and further defines&#x20;the work of the project. It also defines the limits of the project. The scope document supports a common&#x20;understanding of the project parameters and expectations, and serves as a management tool to ensure goals&#x20;are met.\
 This task also sets the stage for acquiring necessary resources, obtaining approvals, and preparing to begin&#x20;work. It can serve as the foundation for the project management plan, resource allocation, budgeting, and&#x20;prioritization of the work.
 
-<figure><img src="../.gitbook/assets/Screenshot 2025-12-01 125656.png" alt=""><figcaption><p>This diagram is useful as a reference throughout the<br>data integration project, and as a communication aid<br>with stakeholders within the department and with<br>department leadership.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot 2025-12-01 125656.png" alt=""><figcaption><p>This diagram is useful as a reference throughout the<br>data integration project, and as a communication aid<br>with stakeholders within the department and with<br>department leadership.</p></figcaption></figure>
 
 #### Activity 1.3.1: Define scope of the data integration project.&#x20;
 
