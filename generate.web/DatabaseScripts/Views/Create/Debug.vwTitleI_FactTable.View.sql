@@ -53,6 +53,7 @@ AS
 	LEFT JOIN	RDS.DimHomelessnessStatuses					Home		ON Fact.HomelessnessStatusId		= Home.DimHomelessnessStatusId
 	LEFT JOIN	RDS.DimMigrantStatuses						Mig			ON Fact.MigrantStatusId				= Mig.DimMigrantStatusId
 	LEFT JOIN 	RDS.DimFosterCareStatuses					Foster		ON Fact.FosterCareStatusId			= Foster.DimFosterCareStatusId
+	LEFT JOIN 	RDS.DimTitleIStatuses						TitleI		ON Fact.TitleIStatusId				= TitleI.DimTitleIStatusId
 	--join to FactOrganizationCounts by LEA to get the OrganizatuionTitleIStatus
 	LEFT JOIN 	RDS.FactOrganizationCounts					FactLea		ON Fact.LeaId							= FactLea.LeaId			AND Fact.SchoolYearId = FactLea.SchoolYearId	
 	LEFT JOIN	RDS.DimOrganizationTitleIStatuses			OrgTitleIL	ON FactLea.OrganizationTitleIStatusId	= OrgTitleIL.DimOrganizationTitleIStatusId
