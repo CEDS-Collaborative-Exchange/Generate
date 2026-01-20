@@ -2186,7 +2186,8 @@ namespace generate.testdata.DataGenerators
                         SchoolYear = schoolYear.ToString(),
                         StateFullAcademicYear = fullYearStatus ? true : false,
                         LEAFullAcademicYear = fullYearStatus ? true : false,
-                        SchoolFullAcademicYear = fullYearStatus ? true : false
+                        SchoolFullAcademicYear = fullYearStatus ? true : false,
+                        AssessedFirstTime = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.AssessedFirstTimeDistribution)
                     };
 
                     if (!assessmentResult.AssessmentRegistrationParticipationIndicator.Value)

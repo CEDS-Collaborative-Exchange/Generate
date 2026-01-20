@@ -26,12 +26,36 @@ BEGIN
 
 	IF @reportCode in ('175','178','179','185','188','189')
 	BEGIN
-		select @tableTypeAbbrv = 'ASMTADMNMTH' + RIGHT([value], 2) from @QueryParam where [Name] = 'tableTypeAbbrv'
+		
+		IF @reportCode = '175'
+		BEGIN
+			select @tableTypeAbbrv = 'ASMTADMNMTH' + RIGHT([value], 2) from @QueryParam where [Name] = 'tableTypeAbbrv'
+		END
+		ELSE IF @reportCode = '178'
+		BEGIN
+			select @tableTypeAbbrv = 'ASMTADMN' + RIGHT([value], 5) from @QueryParam where [Name] = 'tableTypeAbbrv'
+		END
+		ELSE IF @reportCode = '179'
+		BEGIN
+			select @tableTypeAbbrv = 'ASMTADMNSCI' + RIGHT([value], 2) from @QueryParam where [Name] = 'tableTypeAbbrv'
+		END
+		ELSE IF @reportCode = '185'
+		BEGIN
+			select @tableTypeAbbrv = 'PARTSTATUSMTH' + RIGHT([value], 2) from @QueryParam where [Name] = 'tableTypeAbbrv'
+		END
+		ELSE IF @reportCode = '188'
+		BEGIN
+			select @tableTypeAbbrv = 'PARTSTATUS' + RIGHT([value], 5) from @QueryParam where [Name] = 'tableTypeAbbrv'
+		END
+		ELSE IF @reportCode = '189'
+		BEGIN
+			select @tableTypeAbbrv = 'PARTSTATUSSCI' + RIGHT([value], 2) from @QueryParam where [Name] = 'tableTypeAbbrv'
+		END
 
 		SELECT @debugTable = TABLE_NAME
 		FROM INFORMATION_SCHEMA.TABLES
-		WHERE TABLE_NAME like '%' + @reportCode + '_' + @reportLevel + '_' + @categorySetCode + '_' + @reportYear +
-		'_' + @tableTypeAbbrv  + '%'
+		WHERE TABLE_NAME like '%' + @reportCode + '_' + @reportLevel + '_' + @categorySetCode + '_' + @reportYear + '%'
+		AND TABLE_NAME like '%' + @tableTypeAbbrv  + '%'
 	END
 	ELSE
 	BEGIN
