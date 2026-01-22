@@ -5486,11 +5486,11 @@ ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationC
 
 
 
-PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_OrganizationTitleIStatusId]...';
+--PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_OrganizationTitleIStatusId]...';
 
 
 
-ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_OrganizationTitleIStatusId];
+--ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_OrganizationTitleIStatusId];
 
 
 
@@ -6942,11 +6942,11 @@ ALTER TABLE [RDS].[FactAeStudentEnrollments] DROP CONSTRAINT [FK_FactAeStudentEn
 
 
 
-PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentCounts_PSEnrollmentStatusId]...';
+--PRINT N'Dropping Foreign Key [RDS].[FK_FactK12StudentCounts_PSEnrollmentStatusId]...';
 
 
 
-ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [FK_FactK12StudentCounts_PSEnrollmentStatusId];
+--ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [FK_FactK12StudentCounts_PSEnrollmentStatusId];
 
 
 
@@ -9439,3 +9439,14 @@ ALTER TABLE [RDS].[BridgeK12StudentDisciplineIdeaDisabilityTypes] DROP CONSTRAIN
 
 
 PRINT N'Starting rebuilding table [RDS].[BridgeK12StudentCourseSectionK12Staff]...';
+
+
+PRINT N'Dropping Index [RDS].[DimAssessmentAdministrations].[IX_DimAssessmentAdministrations_AssessmentAdministrationSubjectEdFactsCode]...';
+
+
+
+DROP INDEX [IX_DimAssessmentAdministrations_AssessmentAdministrationSubjectEdFactsCode]
+    ON [RDS].[DimAssessmentAdministrations];
+
+DROP INDEX [ix_DimAssessmentRegistrations_CompletionStatus_FullYearAcademicCodes_ReasonNotTested]
+    ON [RDS].[DimAssessmentRegistrations];
