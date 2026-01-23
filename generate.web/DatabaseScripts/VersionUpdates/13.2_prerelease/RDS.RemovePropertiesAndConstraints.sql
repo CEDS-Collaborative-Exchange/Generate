@@ -9450,3 +9450,83 @@ DROP INDEX [IX_DimAssessmentAdministrations_AssessmentAdministrationSubjectEdFac
 
 DROP INDEX [ix_DimAssessmentRegistrations_CompletionStatus_FullYearAcademicCodes_ReasonNotTested]
     ON [RDS].[DimAssessmentRegistrations];
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] DROP CONSTRAINT [FK_FactFinancialAccountBalances_IeuId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_IeuId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] DROP CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_IeuId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] DROP CONSTRAINT [FK_FactFinancialAccountBalances_LeaFinancialAccountBalanceId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialAccountBalanceId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] DROP CONSTRAINT [FK_FactFinancialAccountBalances_LeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] DROP CONSTRAINT [FK_FactFinancialAccountBalances_LeaFinancialAccountId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialAccountId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] DROP CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialExpenditureClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialRevenueClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] DROP CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaFinancialExpenditureClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] DROP CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaFinancialRevenueClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] DROP CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_LeaId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] DROP CONSTRAINT [FK_FactFinancialAccountBalances_LeaId]
+
+DROP INDEX [IX_DimSchoolPerformanceIndicatorCategories_SchoolPerformanceIndicatorCategoryCode] ON [RDS].[DimSchoolPerformanceIndicatorCategories]
+
+DROP INDEX [IX_DimSchoolPerformanceIndicatorCategories_SchoolPerformanceIndicatorCategoryEdFactsCode] ON [RDS].[DimSchoolPerformanceIndicatorCategories]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] DROP CONSTRAINT [FK_FactFinancialAccountBalances_SeaFinancialAccountBalanceId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialAccountBalanceId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] DROP CONSTRAINT [FK_FactFinancialAccountBalances_SeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] DROP CONSTRAINT [FK_FactFinancialAccountBalances_SeaFinancialAccountId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialAccountId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] DROP CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialExpenditureClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialRevenueClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] DROP CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaFinancialExpenditureClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] DROP CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaFinancialRevenueClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] DROP CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] DROP CONSTRAINT [FK_FactFinancialAccountBudgets_SeaId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] DROP CONSTRAINT [FK_FactFinancialAccountBalances_SeaId]
+
+ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_K12StaffCategoryId]
+
+ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_TitleIStatusId]
+
+ALTER TABLE [RDS].[BridgeK12StudentAssessmentAccommodations] DROP CONSTRAINT [FK_BridgeK12StudentAssessmentAccommodations_FactK12StudentAssessmentId]
+
+ALTER TABLE [RDS].[BridgeK12StudentDisciplineDiscplineReasons] DROP CONSTRAINT [FK_BridgeK12StudentDisciplineDiscplineReasons_FactK12StudentDisciplines]
+
+DROP INDEX [IX_FactStudentCountReports_CategorySetCode_DISABILITY_Report] ON [RDS].[ReportEDFactsK12StudentCounts]
+
+ALTER TABLE [RDS].[BridgeK12StudentDisciplineDiscplineReasons] DROP CONSTRAINT [FK_BridgeK12StudentDisciplineDiscplineReasons_DimDisciplineReasons]
+
+DROP INDEX [IX_DimAssessmentAdministrations_AssessmentAdministrationSubjectEdFactsCode] ON [RDS].[DimAssessmentAdministrations]

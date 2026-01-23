@@ -450,6 +450,23 @@ ALTER TABLE [RDS].[DimDates] ALTER COLUMN [MonthName] NVARCHAR (50) NOT NULL;
 ALTER TABLE [RDS].[DimDates] ALTER COLUMN [SubmissionYear] NVARCHAR (50) NOT NULL;
 ALTER TABLE [RDS].[DimDates] ALTER COLUMN [Year] INT NOT NULL;
 
+ SET IDENTITY_INSERT RDS.DimDates ON
+
+	INSERT INTO [RDS].[DimDates]
+           (DimDateId
+		   ,[DateValue]
+           ,[Day]
+           ,[DayOfWeek]
+           ,[DayOfYear]
+           ,[Month]
+           ,[MonthName]
+           ,[SubmissionYear]
+           ,[Year])
+     VALUES(-1, '1950-11-01 00:00:00.0000000', 1, 'MISSING', 305, 11, 'MISSING', 'MISSING', 1950)
+
+
+  SET IDENTITY_INSERT RDS.DimDates OFF
+
 
 PRINT N'Creating Index [RDS].[DimDates].[IX_DimDates_DateValue]...';
 
@@ -1318,6 +1335,8 @@ CREATE NONCLUSTERED INDEX [IX_DimK12SchoolStatuses_VirtualSchoolStatusEdFactsCod
 
 PRINT N'Altering Table [RDS].[DimK12StaffCategories]...';
 
+ Update rds.DimK12StaffCategories set K12StaffClassificationEdFactsCode = K12StaffClassificationCode 
+ where K12StaffClassificationCode = 'SpecialEducationTeachers' and K12StaffClassificationEdFactsCode IS NULL
 
 
 ALTER TABLE [RDS].[DimK12StaffCategories] ALTER COLUMN [K12StaffClassificationCode] NVARCHAR (50) NOT NULL;
@@ -1531,6 +1550,9 @@ CREATE NONCLUSTERED INDEX [IX_DimK12StaffStatuses_SpecialEducationTeacherQualifi
 
 PRINT N'Altering Table [RDS].[DimLanguages]...';
 
+Update rds.DimLanguages set Iso6393LanguageCodeCode = 'MISSING', Iso6393LanguageCodeDescription = 'Missing'
+where Iso6393LanguageCodeCode IS NULL
+
 ALTER TABLE [RDS].[DimLanguages] ALTER COLUMN [Iso6392LanguageCodeCode] NVARCHAR (50) NOT NULL;
 
 ALTER TABLE [RDS].[DimLanguages] ALTER COLUMN [Iso6392LanguageCodeDescription] NVARCHAR (200) NOT NULL;
@@ -1621,22 +1643,22 @@ ALTER TABLE [RDS].[DimLeas] ADD PhysicalAddressCountyName NVARCHAR (30) NULL;
 ALTER TABLE [RDS].[DimLeas] ADD PRIMARY KEY CLUSTERED (DimLeaId ASC);
 
 
-PRINT N'Creating Index [RDS].[DimLeas].[IX_DimLeas_RecordStartDateTime]...';
+--PRINT N'Creating Index [RDS].[DimLeas].[IX_DimLeas_RecordStartDateTime]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IX_DimLeas_RecordStartDateTime]
-    ON [RDS].[DimLeas]([RecordStartDateTime] ASC)
-    INCLUDE([LeaIdentifierSea], [RecordEndDateTime]);
+--CREATE NONCLUSTERED INDEX [IX_DimLeas_RecordStartDateTime]
+--    ON [RDS].[DimLeas]([RecordStartDateTime] ASC)
+--    INCLUDE([LeaIdentifierSea], [RecordEndDateTime]);
 
 
 
-PRINT N'Creating Index [RDS].[DimLeas].[IX_DimLeas_LeaIdentifierSea_RecordStartDateTime]...';
+--PRINT N'Creating Index [RDS].[DimLeas].[IX_DimLeas_LeaIdentifierSea_RecordStartDateTime]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IX_DimLeas_LeaIdentifierSea_RecordStartDateTime]
-    ON [RDS].[DimLeas]([LeaIdentifierSea] ASC, [RecordStartDateTime] ASC);
+--CREATE NONCLUSTERED INDEX [IX_DimLeas_LeaIdentifierSea_RecordStartDateTime]
+--    ON [RDS].[DimLeas]([LeaIdentifierSea] ASC, [RecordStartDateTime] ASC);
 
 
 PRINT N'Starting rebuilding table [RDS].[DimMilitaryStatuses]...';
@@ -1929,52 +1951,52 @@ ALTER TABLE [RDS].[DimPeople] ADD GenerationCodeOrSuffix NVARCHAR (75) NULL;
 ALTER TABLE [RDS].[DimPeople] ADD HighestLevelOfEducationCompletedCode NVARCHAR (50) NULL;
 ALTER TABLE [RDS].[DimPeople] ADD HighestLevelOfEducationCompletedDescription NVARCHAR (200) NULL;
 
-PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_IsActiveK12Student]...';
+--PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_IsActiveK12Student]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IX_DimPeople_IsActiveK12Student]
-    ON [RDS].[DimPeople]([IsActiveK12Student] ASC)
-    INCLUDE([DimPersonId]);
+--CREATE NONCLUSTERED INDEX [IX_DimPeople_IsActiveK12Student]
+--    ON [RDS].[DimPeople]([IsActiveK12Student] ASC)
+--    INCLUDE([DimPersonId]);
 
 
 
-PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_IsActiveK12Student_IsActivePsStudent_WithIncludes]...';
+--PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_IsActiveK12Student_IsActivePsStudent_WithIncludes]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IX_DimPeople_IsActiveK12Student_IsActivePsStudent_WithIncludes]
-    ON [RDS].[DimPeople]([IsActiveK12Student] ASC, [IsActivePsStudent] ASC)
-    INCLUDE([Birthdate], [K12StudentStudentIdentifierState], [RecordStartDateTime]);
+--CREATE NONCLUSTERED INDEX [IX_DimPeople_IsActiveK12Student_IsActivePsStudent_WithIncludes]
+--    ON [RDS].[DimPeople]([IsActiveK12Student] ASC, [IsActivePsStudent] ASC)
+--    INCLUDE([Birthdate], [K12StudentStudentIdentifierState], [RecordStartDateTime]);
 
 
 
-PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_K12Students]...';
+--PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_K12Students]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IX_DimPeople_K12Students]
-    ON [RDS].[DimPeople]([K12StudentStudentIdentifierState] ASC, [FirstName] ASC, [MiddleName] ASC, [LastOrSurname] ASC, [Birthdate] ASC, [RecordStartDateTime] ASC, [RecordEndDateTime] ASC);
+--CREATE NONCLUSTERED INDEX [IX_DimPeople_K12Students]
+--    ON [RDS].[DimPeople]([K12StudentStudentIdentifierState] ASC, [FirstName] ASC, [MiddleName] ASC, [LastOrSurname] ASC, [Birthdate] ASC, [RecordStartDateTime] ASC, [RecordEndDateTime] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_RecordStartDateTime_WithIncludes]...';
+--PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_RecordStartDateTime_WithIncludes]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IX_DimPeople_RecordStartDateTime_WithIncludes]
-    ON [RDS].[DimPeople]([RecordStartDateTime] ASC)
-    INCLUDE([FirstName], [MiddleName], [LastOrSurname], [Birthdate], [K12StudentStudentIdentifierState], [PsStudentStudentIdentifierState], [K12StaffStaffMemberIdentifierState]);
+--CREATE NONCLUSTERED INDEX [IX_DimPeople_RecordStartDateTime_WithIncludes]
+--    ON [RDS].[DimPeople]([RecordStartDateTime] ASC)
+--    INCLUDE([FirstName], [MiddleName], [LastOrSurname], [Birthdate], [K12StudentStudentIdentifierState], [PsStudentStudentIdentifierState], [K12StaffStaffMemberIdentifierState]);
 
 
 
-PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_RecordStartDateTime_K12ID_PSID_RecordEndDateTime]...';
+--PRINT N'Creating Index [RDS].[DimPeople].[IX_DimPeople_RecordStartDateTime_K12ID_PSID_RecordEndDateTime]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IX_DimPeople_RecordStartDateTime_K12ID_PSID_RecordEndDateTime]
-    ON [RDS].[DimPeople]([RecordStartDateTime] ASC)
-    INCLUDE([K12StudentStudentIdentifierState], [PsStudentStudentIdentifierState], [RecordEndDateTime]);
+--CREATE NONCLUSTERED INDEX [IX_DimPeople_RecordStartDateTime_K12ID_PSID_RecordEndDateTime]
+--    ON [RDS].[DimPeople]([RecordStartDateTime] ASC)
+--    INCLUDE([K12StudentStudentIdentifierState], [PsStudentStudentIdentifierState], [RecordEndDateTime]);
 
 
 
@@ -2154,6 +2176,8 @@ CREATE NONCLUSTERED INDEX [IX_DimPsInstitution_IpedsUnitId_RecordStartDateTime]
 
 PRINT N'Altering Table [RDS].[DimRaces]...';
 
+Update rds.DimRaces set RaceDescription = 'Missing', RaceEdFactsCode = 'MISSING' where DimRaceId = -1
+
 ALTER TABLE [RDS].[DimRaces] ALTER COLUMN [RaceCode] NVARCHAR (50) NOT NULL;
 ALTER TABLE [RDS].[DimRaces] ALTER COLUMN [RaceDescription] NVARCHAR (200) NOT NULL;
 ALTER TABLE [RDS].[DimRaces] ALTER COLUMN [RaceEdFactsCode] NVARCHAR (100) NOT NULL;
@@ -2194,25 +2218,6 @@ ALTER TABLE [RDS].[DimSchoolPerformanceIndicatorCategories] ALTER COLUMN [School
 ALTER TABLE [RDS].[DimSchoolPerformanceIndicatorCategories] ALTER COLUMN [SchoolPerformanceIndicatorCategoryEdFactsCode] VARCHAR (50) NOT NULL;
 
 
-
-PRINT N'Creating Index [RDS].[DimSchoolPerformanceIndicatorCategories].[IX_DimSchoolPerformanceIndicatorCategories_SchoolPerformanceIndicatorCategoryCode]...';
-
-
-
-CREATE NONCLUSTERED INDEX [IX_DimSchoolPerformanceIndicatorCategories_SchoolPerformanceIndicatorCategoryCode]
-    ON [RDS].[DimSchoolPerformanceIndicatorCategories]([SchoolPerformanceIndicatorCategoryCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
-
-
-PRINT N'Creating Index [RDS].[DimSchoolPerformanceIndicatorCategories].[IX_DimSchoolPerformanceIndicatorCategories_SchoolPerformanceIndicatorCategoryEdFactsCode]...';
-
-
-
-CREATE NONCLUSTERED INDEX [IX_DimSchoolPerformanceIndicatorCategories_SchoolPerformanceIndicatorCategoryEdFactsCode]
-    ON [RDS].[DimSchoolPerformanceIndicatorCategories]([SchoolPerformanceIndicatorCategoryEdFactsCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
-
-
 PRINT N'Altering Table [RDS].[DimSchoolPerformanceIndicators]...';
 
 
@@ -2225,23 +2230,6 @@ ALTER TABLE [RDS].[DimSchoolPerformanceIndicators] ALTER COLUMN [SchoolPerforman
 
 
 
-PRINT N'Creating Index [RDS].[DimSchoolPerformanceIndicators].[IX_DimSchoolPerformanceIndicators_SchoolPerformanceIndicatorTypeCode]...';
-
-
-
-CREATE NONCLUSTERED INDEX [IX_DimSchoolPerformanceIndicators_SchoolPerformanceIndicatorTypeCode]
-    ON [RDS].[DimSchoolPerformanceIndicators]([SchoolPerformanceIndicatorTypeCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
-
-
-PRINT N'Creating Index [RDS].[DimSchoolPerformanceIndicators].[IX_DimSchoolPerformanceIndicators_SchoolPerformanceIndicatorTypeEdFactsCode]...';
-
-
-
-CREATE NONCLUSTERED INDEX [IX_DimSchoolPerformanceIndicators_SchoolPerformanceIndicatorTypeEdFactsCode]
-    ON [RDS].[DimSchoolPerformanceIndicators]([SchoolPerformanceIndicatorTypeEdFactsCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
-
-
 
 PRINT N'Altering Table [RDS].[DimSchoolPerformanceIndicatorStateDefinedStatuses]...';
 
@@ -2250,15 +2238,6 @@ PRINT N'Altering Table [RDS].[DimSchoolPerformanceIndicatorStateDefinedStatuses]
 ALTER TABLE [RDS].[DimSchoolPerformanceIndicatorStateDefinedStatuses] ALTER COLUMN [SchoolPerformanceIndicatorStateDefinedStatusCode] NVARCHAR (50) NOT NULL;
 
 ALTER TABLE [RDS].[DimSchoolPerformanceIndicatorStateDefinedStatuses] ALTER COLUMN [SchoolPerformanceIndicatorStateDefinedStatusDescription] NVARCHAR (200) NOT NULL;
-
-
-
-PRINT N'Creating Index [RDS].[DimSchoolPerformanceIndicatorStateDefinedStatuses].[IX_DimSchoolPerformanceIndicatorStateDefinedStatuses_SchoolPerformanceIndicatorStateDefinedStatusCode]...';
-
-
-
-CREATE NONCLUSTERED INDEX [IX_DimSchoolPerformanceIndicatorStateDefinedStatuses_SchoolPerformanceIndicatorStateDefinedStatusCode]
-    ON [RDS].[DimSchoolPerformanceIndicatorStateDefinedStatuses]([SchoolPerformanceIndicatorStateDefinedStatusCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 
 
@@ -2273,13 +2252,6 @@ ALTER TABLE [RDS].[DimSchoolQualityOrStudentSuccessIndicators] ALTER COLUMN [Sch
 ALTER TABLE [RDS].[DimSchoolQualityOrStudentSuccessIndicators] ALTER COLUMN [SchoolQualityOrStudentSuccessIndicatorTypeEdFactsCode] NVARCHAR (50) NOT NULL;
 
 
-
-PRINT N'Creating Index [RDS].[DimSchoolQualityOrStudentSuccessIndicators].[IX_DimSchoolQualityOrStudentSuccessIndicators_SchoolQualityOrStudentSuccessIndicatorTypeCode]...';
-
-
-
-CREATE NONCLUSTERED INDEX [IX_DimSchoolQualityOrStudentSuccessIndicators_SchoolQualityOrStudentSuccessIndicatorTypeCode]
-    ON [RDS].[DimSchoolQualityOrStudentSuccessIndicators]([SchoolQualityOrStudentSuccessIndicatorTypeCode] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE);
 
 DROP TABLE [RDS].[DimSeaFinancialAccountBalances];
 
@@ -2381,15 +2353,6 @@ ALTER TABLE [RDS].[DimStateDefinedCustomIndicators] ALTER COLUMN [StateDefinedCu
 
 
 
-PRINT N'Creating Index [RDS].[DimStateDefinedCustomIndicators].[IX_DimStateDefinedCustomIndicators_StateDefinedCustomIndicatorCode]...';
-
-
-
-CREATE NONCLUSTERED INDEX [IX_DimStateDefinedCustomIndicators_StateDefinedCustomIndicatorCode]
-    ON [RDS].[DimStateDefinedCustomIndicators]([StateDefinedCustomIndicatorCode] ASC) WITH (DATA_COMPRESSION = PAGE);
-
-
-
 PRINT N'Altering Table [RDS].[DimStateDefinedStatuses]...';
 
 
@@ -2397,16 +2360,6 @@ PRINT N'Altering Table [RDS].[DimStateDefinedStatuses]...';
 ALTER TABLE [RDS].[DimStateDefinedStatuses] ALTER COLUMN [StateDefinedStatusCode] NVARCHAR (50) NOT NULL;
 
 ALTER TABLE [RDS].[DimStateDefinedStatuses] ALTER COLUMN [StateDefinedStatusDescription] NVARCHAR (200) NOT NULL;
-
-
-
-PRINT N'Creating Index [RDS].[DimStateDefinedStatuses].[IX_DimStateDefinedStatuses_StateDefinedStatusCode]...';
-
-
-
-CREATE NONCLUSTERED INDEX [IX_DimStateDefinedStatuses_StateDefinedStatusCode]
-    ON [RDS].[DimStateDefinedStatuses]([StateDefinedStatusCode] ASC) WITH (DATA_COMPRESSION = PAGE);
-
 
 
 PRINT N'Altering Table [RDS].[DimSubgroups]...';
@@ -2820,453 +2773,453 @@ ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
 ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
     ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDatePerkinsEnglishLearnerId] DEFAULT ((-1)) FOR [StatusStartDatePerkinsEnglishLearnerId];
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimAccessibleEducationMaterialProviders]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimAccessibleEducationMaterialProviders]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimAccessibleEducationMaterialProviders]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([AccessibleEducationMaterialProviderId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimAccessibleEducationMaterialProviders]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([AccessibleEducationMaterialProviderId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimAccessibleEducationMaterials]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimAccessibleEducationMaterials]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimAccessibleEducationMaterials]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([AccessibleEducationMaterialStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimAccessibleEducationMaterials]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([AccessibleEducationMaterialStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimDataCollections]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimDataCollections]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimDataCollections]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([DataCollectionId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimDataCollections]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([DataCollectionId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_CountDateId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_CountDateId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_CountDateId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([CountDateId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_CountDateId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([CountDateId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_EnrollmentEntryDateId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_EnrollmentEntryDateId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_EnrollmentEntryDateId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([EnrollmentEntryDateId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_EnrollmentEntryDateId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([EnrollmentEntryDateId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_EnrollmentExitDateId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_EnrollmentExitDateId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_EnrollmentExitDateId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([EnrollmentExitDateId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_EnrollmentExitDateId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([EnrollmentExitDateId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateEconomicallyDisadvantagedId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateEconomicallyDisadvantagedId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateEconomicallyDisadvantagedId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateEconomicallyDisadvantagedId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateEconomicallyDisadvantagedId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateEconomicallyDisadvantagedId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateEconomicallyDisadvantagedId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateEconomicallyDisadvantagedId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateEconomicallyDisadvantagedId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateEconomicallyDisadvantagedId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateEconomicallyDisadvantagedId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateEconomicallyDisadvantagedId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateEnglishLearnerId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateEnglishLearnerId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateEnglishLearnerId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateEnglishLearnerId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateEnglishLearnerId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateEnglishLearnerId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateEnglishLearnerId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateEnglishLearnerId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateEnglishLearnerId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateEnglishLearnerId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateEnglishLearnerId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateEnglishLearnerId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateHomelessnessId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateHomelessnessId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateHomelessnessId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateHomelessnessId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateHomelessnessId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateHomelessnessId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateHomelessnessId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateHomelessnessId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateHomelessnessId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateHomelessnessId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateHomelessnessId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateHomelessnessId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateIdeaId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateIdeaId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateIdeaId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateIdeaId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateIdeaId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateIdeaId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateIdeaId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateIdeaId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateIdeaId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateIdeaId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateIdeaId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateIdeaId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateMigrantId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateMigrantId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateMigrantId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateMigrantId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateMigrantId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateMigrantId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateMigrantId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateMigrantId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateMigrantId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateMigrantId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateMigrantId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateMigrantId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateMilitaryId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateMilitaryId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateMilitaryId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateMilitaryId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDateMilitaryId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDateMilitaryId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateMilitaryId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateMilitaryId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateMilitaryId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateMilitaryId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDateMilitaryId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDateMilitaryId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDatePerkinsEnglishLearnerId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDatePerkinsEnglishLearnerId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDatePerkinsEnglishLearnerId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDatePerkinsEnglishLearnerId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusStartDatePerkinsEnglishLearnerId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusStartDatePerkinsEnglishLearnerId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDatePerkinsEnglishLearnerId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDatePerkinsEnglishLearnerId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDatePerkinsEnglishLearnerId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDatePerkinsEnglishLearnerId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_StatusEndDatePerkinsEnglishLearnerId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([StatusEndDatePerkinsEnglishLearnerId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceIssuedDateId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceIssuedDateId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceIssuedDateId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([LearningResourceIssuedDateId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceIssuedDateId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([LearningResourceIssuedDateId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceOrderedDateId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceOrderedDateId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceOrderedDateId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([LearningResourceOrderedDateId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceOrderedDateId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([LearningResourceOrderedDateId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceReceivedDateId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceReceivedDateId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceReceivedDateId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([LearningResourceReceivedDateId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_LearningResourceReceivedDateId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([LearningResourceReceivedDateId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_K12Student_CurrentId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_K12Student_CurrentId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_K12Student_CurrentId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12Student_CurrentId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_K12Student_CurrentId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12Student_CurrentId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_CourseSectionStartDateId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_CourseSectionStartDateId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_CourseSectionStartDateId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([CourseSectionStartDateId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_CourseSectionStartDateId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([CourseSectionStartDateId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_CourseSectionEndDateId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_CourseSectionEndDateId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_CourseSectionEndDateId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([CourseSectionEndDateId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_CourseSectionEndDateId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([CourseSectionEndDateId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimDisabilityStatuses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimDisabilityStatuses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimDisabilityStatuses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([DisabilityStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimDisabilityStatuses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([DisabilityStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimEconomicallyDisadvantagedStatuses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimEconomicallyDisadvantagedStatuses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimEconomicallyDisadvantagedStatuses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([EconomicallyDisadvantagedStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimEconomicallyDisadvantagedStatuses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([EconomicallyDisadvantagedStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimEnglishLearnerStatuses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimEnglishLearnerStatuses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimEnglishLearnerStatuses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([EnglishLearnerStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimEnglishLearnerStatuses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([EnglishLearnerStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimFosterCareStatuses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimFosterCareStatuses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimFosterCareStatuses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([FosterCareStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimFosterCareStatuses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([FosterCareStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimGradeLevels]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimGradeLevels]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimGradeLevels]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([EntryGradeLevelId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimGradeLevels]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([EntryGradeLevelId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimHomelessnessStatuses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimHomelessnessStatuses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimHomelessnessStatuses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([HomelessnessStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimHomelessnessStatuses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([HomelessnessStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_PrimaryIdeaDisabilityTypeId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_PrimaryIdeaDisabilityTypeId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_PrimaryIdeaDisabilityTypeId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([PrimaryIdeaDisabilityTypeId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_PrimaryIdeaDisabilityTypeId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([PrimaryIdeaDisabilityTypeId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_SecondaryIdeaDisabilityTypeId]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_SecondaryIdeaDisabilityTypeId]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_SecondaryIdeaDisabilityTypeId]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([SecondaryIdeaDisabilityTypeId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_SecondaryIdeaDisabilityTypeId]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([SecondaryIdeaDisabilityTypeId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimIdeaStatuses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimIdeaStatuses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimIdeaStatuses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([IdeaStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimIdeaStatuses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([IdeaStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimRaces]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimRaces]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimRaces]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([RaceId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimRaces]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([RaceId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimRuralStatuses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimRuralStatuses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimRuralStatuses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([RuralStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimRuralStatuses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([RuralStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimIeus]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimIeus]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimIeus]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([IeuId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimIeus]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([IeuId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimImmigrantStatuses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimImmigrantStatuses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimImmigrantStatuses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([ImmigrantStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimImmigrantStatuses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([ImmigrantStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Courses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Courses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Courses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12CourseId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Courses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12CourseId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Demographics]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Demographics]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Demographics]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12DemographicId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Demographics]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12DemographicId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12EnrollmentStatuses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12EnrollmentStatuses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12EnrollmentStatuses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12EnrollmentStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12EnrollmentStatuses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12EnrollmentStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Schools]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Schools]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Schools]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12SchoolId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimK12Schools]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12SchoolId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimLeas]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimLeas]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimLeas]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([LeaId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimLeas]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([LeaId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimMigrantStatuses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimMigrantStatuses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimMigrantStatuses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([MigrantStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimMigrantStatuses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([MigrantStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimMilitaryStatuses]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimMilitaryStatuses]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimMilitaryStatuses]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([MilitaryStatusId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimMilitaryStatuses]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([MilitaryStatusId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimPeople]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimPeople]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimPeople]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12StudentId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimPeople]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([K12StudentId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimScedCodes]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimScedCodes]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimScedCodes]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([ScedCodeId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimScedCodes]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([ScedCodeId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimSchoolYears]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimSchoolYears]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimSchoolYears]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([SchoolYearId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimSchoolYears]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([SchoolYearId] ASC);
 
 
 
-PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimSeas]...';
+--PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimSeas]...';
 
 
 
-CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimSeas]
-    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([SeaId] ASC);
+--CREATE NONCLUSTERED INDEX [IXFK_FactK12AccessibleEducationMaterialAssignments_DimSeas]
+--    ON [RDS].[FactK12AccessibleEducationMaterialAssignments]([SeaId] ASC);
 
 
 DROP TABLE [RDS].[FactK12ProgramParticipations];
@@ -33563,7 +33516,7 @@ ALTER TABLE [RDS].[FactQuarterlyEmployments] WITH NOCHECK
     ADD CONSTRAINT [FK_FactQuarterlyEmployments_RecordStatusId] FOREIGN KEY ([RecordStatusId]) REFERENCES [RDS].[DimRecordStatuses] ([DimRecordStatusId]);
 
 
-
+PRINT N'Check Check Constraints'
 
 
 
@@ -34073,7 +34026,7 @@ ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12
 
 ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_EnglishLearnerStatusId];
 
-ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_K12Student_CurrentId];
+--ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_K12Student_CurrentId];
 
 ALTER TABLE [RDS].[FactK12StudentCounts] WITH CHECK CHECK CONSTRAINT [FK_FactK12StudentCounts_NOrDStatusId];
 
@@ -34321,7 +34274,7 @@ ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactO
 
 ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12StaffId];
 
-ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12Staff_CurrentId];
+--ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_K12Staff_CurrentId];
 
 ALTER TABLE [RDS].[FactOrganizationCounts] WITH CHECK CHECK CONSTRAINT [FK_FactOrganizationCounts_CharterSchoolUpdatedManagementOrganizationId];
 
@@ -35631,5 +35584,190 @@ ALTER TABLE [RDS].[FactQuarterlyEmployments] WITH CHECK CHECK CONSTRAINT [FK_Fac
 
 CREATE NONCLUSTERED INDEX [IX_DimAssessmentAdministrations_AssessmentAdministrationSubjectEdFactsCode]
     ON [RDS].[DimAssessmentAdministrations]([AssessmentIdentifier] ASC);
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBalances_IeuId] FOREIGN KEY([IeuId])
+REFERENCES [RDS].[DimIeus] ([DimIeuId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] CHECK CONSTRAINT [FK_FactFinancialAccountBalances_IeuId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_IeuId] FOREIGN KEY([IeuId])
+REFERENCES [RDS].[DimIeus] ([DimIeuId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_IeuId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_IeuId] FOREIGN KEY([IeuId])
+REFERENCES [RDS].[DimIeus] ([DimIeuId])
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] CHECK CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_IeuId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBalances_LeaFinancialAccountBalanceId] FOREIGN KEY([LeaFinancialAccountBalanceId])
+REFERENCES [RDS].[DimLeaFinancialAccountBalances] ([DimLeaFinancialAccountBalanceId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] CHECK CONSTRAINT [FK_FactFinancialAccountBalances_LeaFinancialAccountBalanceId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialAccountBalanceId] FOREIGN KEY([LeaFinancialAccountBalanceId])
+REFERENCES [RDS].[DimLeaFinancialAccountBalances] ([DimLeaFinancialAccountBalanceId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialAccountBalanceId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBalances_LeaFinancialAccountClassificationId] FOREIGN KEY([LeaFinancialAccountClassificationId])
+REFERENCES [RDS].[DimLeaFinancialAccountClassifications] ([DimLeaFinancialAccountClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] CHECK CONSTRAINT [FK_FactFinancialAccountBalances_LeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialAccountClassificationId] FOREIGN KEY([LeaFinancialAccountClassificationId])
+REFERENCES [RDS].[DimLeaFinancialAccountClassifications] ([DimLeaFinancialAccountClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialAccountId] FOREIGN KEY([LeaFinancialAccountId])
+REFERENCES [RDS].[DimFinancialAccounts] ([DimFinancialAccountId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialAccountId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBalances_LeaFinancialAccountId] FOREIGN KEY([LeaFinancialAccountId])
+REFERENCES [RDS].[DimFinancialAccounts] ([DimFinancialAccountId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] CHECK CONSTRAINT [FK_FactFinancialAccountBalances_LeaFinancialAccountId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaFinancialAccountClassificationId] FOREIGN KEY([LeaFinancialAccountClassificationId])
+REFERENCES [RDS].[DimLeaFinancialAccountClassifications] ([DimLeaFinancialAccountClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] CHECK CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialExpenditureClassificationId] FOREIGN KEY([LeaFinancialExpenditureClassificationId])
+REFERENCES [RDS].[DimLeaFinancialExpenditureClassifications] ([DimLeaFinancialExpenditureClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialExpenditureClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialRevenueClassificationId] FOREIGN KEY([LeaFinancialRevenueClassificationId])
+REFERENCES [RDS].[DimLeaFinancialRevenueClassifications] ([DimLeaFinancialRevenueClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_LeaFinancialRevenueClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaFinancialExpenditureClassificationId] FOREIGN KEY([LeaFinancialExpenditureClassificationId])
+REFERENCES [RDS].[DimLeaFinancialExpenditureClassifications] ([DimLeaFinancialExpenditureClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] CHECK CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaFinancialExpenditureClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaFinancialRevenueClassificationId] FOREIGN KEY([LeaFinancialRevenueClassificationId])
+REFERENCES [RDS].[DimLeaFinancialRevenueClassifications] ([DimLeaFinancialRevenueClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] CHECK CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaFinancialRevenueClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaId] FOREIGN KEY([LeaId])
+REFERENCES [RDS].[DimLeas] ([DimLeaID])
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] CHECK CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_LeaId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_LeaId] FOREIGN KEY([LeaId])
+REFERENCES [RDS].[DimLeas] ([DimLeaID])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_LeaId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBalances_LeaId] FOREIGN KEY([LeaId])
+REFERENCES [RDS].[DimLeas] ([DimLeaID])
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] CHECK CONSTRAINT [FK_FactFinancialAccountBalances_LeaId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBalances_SeaFinancialAccountBalanceId] FOREIGN KEY([SeaFinancialAccountBalanceId])
+REFERENCES [RDS].[DimSeaFinancialAccountBalances] ([DimSeaFinancialAccountBalanceId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] CHECK CONSTRAINT [FK_FactFinancialAccountBalances_SeaFinancialAccountBalanceId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialAccountBalanceId] FOREIGN KEY([SeaFinancialAccountBalanceId])
+REFERENCES [RDS].[DimSeaFinancialAccountBalances] ([DimSeaFinancialAccountBalanceId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialAccountBalanceId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBalances_SeaFinancialAccountClassificationId] FOREIGN KEY([SeaFinancialAccountClassificationId])
+REFERENCES [RDS].[DimSeaFinancialAccountClassifications] ([DimSeaFinancialAccountClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] CHECK CONSTRAINT [FK_FactFinancialAccountBalances_SeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialAccountClassificationId] FOREIGN KEY([SeaFinancialAccountClassificationId])
+REFERENCES [RDS].[DimSeaFinancialAccountClassifications] ([DimSeaFinancialAccountClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialAccountId] FOREIGN KEY([SeaFinancialAccountId])
+REFERENCES [RDS].[DimFinancialAccounts] ([DimFinancialAccountId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialAccountId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBalances_SeaFinancialAccountId] FOREIGN KEY([SeaFinancialAccountId])
+REFERENCES [RDS].[DimFinancialAccounts] ([DimFinancialAccountId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] CHECK CONSTRAINT [FK_FactFinancialAccountBalances_SeaFinancialAccountId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaFinancialAccountClassificationId] FOREIGN KEY([SeaFinancialAccountClassificationId])
+REFERENCES [RDS].[DimSeaFinancialAccountClassifications] ([DimSeaFinancialAccountClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] CHECK CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaFinancialAccountClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialExpenditureClassificationId] FOREIGN KEY([SeaFinancialExpenditureClassificationId])
+REFERENCES [RDS].[DimSeaFinancialExpenditureClassifications] ([DimSeaFinancialExpenditureClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialExpenditureClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialRevenueClassificationId] FOREIGN KEY([SeaFinancialRevenueClassificationId])
+REFERENCES [RDS].[DimSeaFinancialRevenueClassifications] ([DimSeaFinancialRevenueClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_SeaFinancialRevenueClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaFinancialExpenditureClassificationId] FOREIGN KEY([SeaFinancialExpenditureClassificationId])
+REFERENCES [RDS].[DimSeaFinancialExpenditureClassifications] ([DimSeaFinancialExpenditureClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] CHECK CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaFinancialExpenditureClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaFinancialRevenueClassificationId] FOREIGN KEY([SeaFinancialRevenueClassificationId])
+REFERENCES [RDS].[DimSeaFinancialRevenueClassifications] ([DimSeaFinancialRevenueClassificationId])
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] CHECK CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaFinancialRevenueClassificationId]
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaId] FOREIGN KEY([SeaId])
+REFERENCES [RDS].[DimSeas] ([DimSeaID])
+
+ALTER TABLE [RDS].[FactFinancialAccountGeneralLedgers] CHECK CONSTRAINT [FK_FactFinancialAccountGeneralLedgers_SeaId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBudgets_SeaId] FOREIGN KEY([SeaId])
+REFERENCES [RDS].[DimSeas] ([DimSeaID])
+
+ALTER TABLE [RDS].[FactFinancialAccountBudgets] CHECK CONSTRAINT [FK_FactFinancialAccountBudgets_SeaId]
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances]  WITH CHECK ADD  CONSTRAINT [FK_FactFinancialAccountBalances_SeaId] FOREIGN KEY([SeaId])
+REFERENCES [RDS].[DimSeas] ([DimSeaID])
+
+ALTER TABLE [RDS].[FactFinancialAccountBalances] CHECK CONSTRAINT [FK_FactFinancialAccountBalances_SeaId]
+
+ALTER TABLE [RDS].[BridgeK12StudentAssessmentAccommodations]  WITH CHECK ADD  CONSTRAINT [FK_BridgeK12StudentAssessmentAccommodations_FactK12StudentAssessmentId] FOREIGN KEY([FactK12StudentAssessmentId])
+REFERENCES [RDS].[FactK12StudentAssessments] ([FactK12StudentAssessmentId])
+
+ALTER TABLE [RDS].[BridgeK12StudentAssessmentAccommodations] CHECK CONSTRAINT [FK_BridgeK12StudentAssessmentAccommodations_FactK12StudentAssessmentId]
+
+ALTER TABLE [RDS].[BridgeK12StudentDisciplineDiscplineReasons]  WITH CHECK ADD  CONSTRAINT [FK_BridgeK12StudentDisciplineDiscplineReasons_FactK12StudentDisciplines] FOREIGN KEY([FactK12StudentDisciplineId])
+REFERENCES [RDS].[FactK12StudentDisciplines] ([FactK12StudentDisciplineId])
+
+ALTER TABLE [RDS].[BridgeK12StudentDisciplineDiscplineReasons] CHECK CONSTRAINT [FK_BridgeK12StudentDisciplineDiscplineReasons_FactK12StudentDisciplines]
+
+CREATE NONCLUSTERED INDEX [IX_FactStudentCountReports_CategorySetCode_DISABILITY_Report] ON [RDS].[ReportEDFactsK12StudentCounts]
+(
+	[CategorySetCode] ASC,
+	[IDEADISABILITYTYPE] ASC,
+	[ReportCode] ASC,
+	[ReportLevel] ASC,
+	[ReportYear] ASC
+)
+INCLUDE([CTEPARTICIPANT],[ELIGIBILITYSTATUSFORSCHOOLFOODSERVICEPROGRAMS],[PROGRAMPARTICIPATIONFOSTERCARE],[HOMELESSNESSSTATUS],[TITLEIIIIMMIGRANTPARTICIPATIONSTATUS],[ENGLISHLEARNERSTATUS],[MIGRANTSTATUS],[OrganizationName],[OrganizationIdentifierNces],[OrganizationIdentifierSea],[ParentOrganizationIdentifierSea],[SECTION504STATUS],[StateANSICode],[StateAbbreviationCode],[StateAbbreviationDescription],[StudentCount],[TITLEISCHOOLSTATUS]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+
+ALTER TABLE [RDS].[BridgeK12StudentDisciplineDiscplineReasons]  WITH CHECK ADD  CONSTRAINT [FK_BridgeK12StudentDisciplineDiscplineReasons_DimDisciplineReasons] FOREIGN KEY([DisciplineReasonId])
+REFERENCES [RDS].[DimDisciplineReasons] ([DimDisciplineReasonId])
+
+ALTER TABLE [RDS].[BridgeK12StudentDisciplineDiscplineReasons] CHECK CONSTRAINT [FK_BridgeK12StudentDisciplineDiscplineReasons_DimDisciplineReasons]
+
+--CREATE NONCLUSTERED INDEX [IX_DimAssessmentAdministrations_AssessmentAdministrationSubjectEdFactsCode] ON [RDS].[DimAssessmentAdministrations]
+--(
+--	[AssessmentIdentifier] ASC
+--)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 
 PRINT N'Update complete.';
