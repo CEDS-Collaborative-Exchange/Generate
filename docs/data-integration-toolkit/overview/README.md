@@ -41,5 +41,4 @@ Each task description details&#x20;
 * [ ] **Step 4.** Implement and perform extract, transform and load (ETL) procedures
 * [ ] **Step 5.** Review and validate sustainable data integration process
 
-The steps of this toolkit are not limited to data integration; the toolkit can also serve as a general project\
-management tool. The artifacts produced while completing the steps support data governance structures&#x20;that can be expanded beyond IDEA data and establishes strong data governance principles and sustainable&#x20;practices.
+The steps of this toolkit are not limited to data integration; the toolkit can also serve as a general project&#x20;management tool. The artifacts produced while completing the steps support data governance structures&#x20;that can be expanded beyond IDEA data and establishes strong data governance principles and sustainable&#x20;practices.

@@ -49,9 +49,9 @@ In the Roles and Responsibilities tab, SEAs can document staff responsible for:
 
 #### Activity 2.1.2 Document data stewards and sources&#x20;
 
-The Data Stewards and Sources tab in the Data Integration Project Planner helps project teams document the&#x20;data steward and data source for each data collection. For each EDFacts file, this tab contains the yearly due&#x20;date, file numbers and titles, content area, data stewards, and local data sources. For each file, record the name&#x20;and position for each data steward, and the location of the local data source.\
-This tab serves as a quick reference resource and should be updated as staff turnover, or as data sources shift.\
-This information will also be used in the Project Plan tab and in Step 5 in the IDEA Part B Data Submission&#x20;Organizer.
+The Data Stewards and Sources tab in the Data Integration Project Planner helps project teams document the&#x20;data steward and data source for each data collection. For each EDFacts file, this tab contains the yearly due&#x20;date, file numbers and titles, content area, data stewards, and local data sources. For each file, record the name&#x20;and position for each data steward, and the location of the local data source.
+
+This tab serves as a quick reference resource and should be updated as staff turnover, or as data sources shift.&#x20;This information will also be used in the Project Plan tab and in Step 5 in the IDEA Part B Data Submission&#x20;Organizer.
 
 **Resources**&#x20;
 
@@ -75,10 +75,8 @@ SEAs can use the Communication Plan tab in the Data Integration Project Planner 
 In the Communication Plan tab, SEAs can document:
 
 * stakeholder names, roles, contact information, and the type of communication they will receive;
-* regularly scheduled project meetings, including the type of meeting, the frequency, staff leading the  \
-  meeting, participants, and meeting location;
-* a running list of project documents, including document names, descriptions, owners, and document  \
-  distribution lists; and
+* regularly scheduled project meetings, including the type of meeting, the frequency, staff leading the  &#x20;meeting, participants, and meeting location;
+* a running list of project documents, including document names, descriptions, owners, and document  &#x20;distribution lists; and
 * other communication vehicles, including communication methods, frequency, owners, and document  &#x20;distribution lists.
 
 When creating their communication plan, project teams will determine who will be responsible for managing,&#x20;updating, and distributing the plan. Having a dedicated team member, often the Project Manager, oversee&#x20;communication can keep the work on track. Routinely reviewing the communication plan and making updates,&#x20;as necessary, is essential to keeping internal and external stakeholders well-informed.
@@ -93,8 +91,9 @@ Prior to developing a project plan (see Task 2.4), project teams should create a
 
 #### Activity 2.3.1 Record key dates in an IDEA PArt B data collection calendar&#x20;
 
-A calendar for IDEA data collections is not only important for current members of the project but also new team&#x20;members if there is turnover on the project. When creating this documentation, the team should determine&#x20;how they will maintain the calendar so changes initiated by the SEA or the federal government are reflected.\
-The calendar should include not only the EDFacts and SPP/APR due dates but also tasks or deadlines needed to&#x20;maintain legacy data systems while integration work is being done.
+A calendar for IDEA data collections is not only important for current members of the project but also new team&#x20;members if there is turnover on the project. When creating this documentation, the team should determine&#x20;how they will maintain the calendar so changes initiated by the SEA or the federal government are reflected.
+
+The calendar should include not only the EDFacts and SPP/APR due dates but also tasks or deadlines needed to&#x20;maintain legacy data systems while integration work is being done.
 
 While developing the calendar, keep the following questions in mind:
 
@@ -120,8 +119,7 @@ The project team should identify members who are responsible for&#x20;managing 
   meetings;
 * taking and distributing notes from project team meetings;
 * collecting regular status updates from the project team;
-* developing and maintaining a system for tracking data integration  \
-  progress;
+* developing and maintaining a system for tracking data integration  &#x20;progress;
 * maintaining and updating the project plan; and
 * elevating relevant issues and decisions to SEA leadership.
 
@@ -131,8 +129,9 @@ In Step 5 of the Toolkit, we will&#x20;introduce The Data Collection&#x20;Orga
 
 **Create a Resource Repository**&#x20;
 
-Project teams should also establish a resource repository (e.g., SharePoint site, Teams channel, network directory)&#x20;and assign someone to maintain it. This repository should be accessible to all members of the project team and&#x20;used to store relevant files, including project planning documents, meeting notes, data systems documentation,&#x20;and technical documentation.\
-When creating the repository, consider solutions that may already be available and familiar to the project team&#x20;members and the tool’s usability, flexibility, and support of system users.
+Project teams should also establish a resource repository (e.g., SharePoint site, Teams channel, network directory)&#x20;and assign someone to maintain it. This repository should be accessible to all members of the project team and&#x20;used to store relevant files, including project planning documents, meeting notes, data systems documentation,&#x20;and technical documentation.
+
+When creating the repository, consider solutions that may already be available and familiar to the project team&#x20;members and the tool’s usability, flexibility, and support of system users.
 
 **Develop a Project Plan**
 

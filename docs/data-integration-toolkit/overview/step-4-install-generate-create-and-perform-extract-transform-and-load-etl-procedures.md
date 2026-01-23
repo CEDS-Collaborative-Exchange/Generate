@@ -17,8 +17,9 @@ Step 4 involves creating the ETL code and executing the movement of data from so
 The tasks in Step 4 include installing Generate, building the ETLs, and reviewing data quality after the data are&#x20;transformed and migrated into Generate. Planning for the location and installation of Generate will have been&#x20;begun in Step 1.2.2 Document Data System Architecture.\
 The effort involved in building ETLs and reviewing data depends on how many EDFacts files are in scope for this&#x20;project and the availability of ETL developer resources. As the team gains familiarity with the process and related&#x20;documents, the step will become less burdensome.
 
-For each ETL checklist, allow a few weeks to build the ETL–depending on how much time each team member can dedicate to this work or if you are receiving intensive technical assistance from CIID. ETL developers who are&#x20;familiar with the CEDS physical data structure will also improve the speed at which the ETL is developed.\
-The process in Step 4, except for installing Generate, will be repeated for each ETL in scope of the SEA’s project.
+For each ETL checklist, allow a few weeks to build the ETL–depending on how much time each team member can dedicate to this work or if you are receiving intensive technical assistance from CIID. ETL developers who are&#x20;familiar with the CEDS physical data structure will also improve the speed at which the ETL is developed.
+
+The process in Step 4, except for installing Generate, will be repeated for each ETL in scope of the SEA’s project.
 
 ### Task 4.1: Install the Generate software
 

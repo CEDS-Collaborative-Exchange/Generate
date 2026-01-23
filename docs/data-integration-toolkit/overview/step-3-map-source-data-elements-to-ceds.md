@@ -10,8 +10,7 @@ In Step 3, SEA project teams will locate and document the source elements and as
 
 CEDS is an accessible, searchable, and centralized location for metadata. Aligning source data to CEDS allows&#x20;SEA staff and stakeholders to improve their understanding of SEA data and to share metadata. The resulting&#x20;documentation of business rules can be used internally (e.g., to train new staff ) and publicly (i.e., published&#x20;CEDS maps) to communicate how source data maps to CEDS.
 
-\
-Aligning source elements to CEDS is important because it describes how source data should be transformed&#x20;to create accurate files for EDFacts reporting. Aligning source elements to CEDS is the first step in translating&#x20;source data to a common language and creates an understanding of how the SEA’s data relates to the&#x20;standard. Sharing Align maps and viewing other states’ maps can help identify commonalities and encourage&#x20;partnerships or information sharing.
+Aligning source elements to CEDS is important because it describes how source data should be transformed&#x20;to create accurate files for EDFacts reporting. Aligning source elements to CEDS is the first step in translating&#x20;source data to a common language and creates an understanding of how the SEA’s data relates to the&#x20;standard. Sharing Align maps and viewing other states’ maps can help identify commonalities and encourage&#x20;partnerships or information sharing.
 
 ## Process and Timing
 
@@ -25,10 +24,12 @@ Upon completion of this task, the project team will have created and organized a
 
 #### Activity 3.1.1: Locate or create a data dictionary for needed source systems and document&#xD; metadata in the ETL checklist
 
-To document source systems, SEAs may use existing data dictionaries such as system user guides, data manuals,&#x20;or technical specifications. For each source system, SMEs identified in Activity 2.1.2 Document Data Stewards&#x20;and Systems, will locate or create lists of required elements from each source.\
-If no data dictionary exists, project teams can leverage the CEDS Align template and online Align tool to create&#x20;and manage a data dictionary or use the ETL Checklist as the basis for a data dictionary.\
-Using the information from the data dictionary, begin entering metadata into the ETL Checklists. Download the&#x20;ETL Checklist(s) that are in the project’s scope from the CIID website. Take some time to review the checklists&#x20;and familiarize yourself with the tabs and columns. Navigate to the ETL tab within the workbook and scroll to&#x20;the right (Row 2, CEDS Element Details, Columns R and S) to see the specific CEDS elements needed to align to&#x20;your source data dictionary. The CEDS element metadata from the ETL checklist will provide context to the SME&#x20;in creating or locating items in the source system’s data dictionary.\
-Enter the following source metadata for each data source/set and the associated data elements from the data&#x20;dictionary in the ETL Checklists (Columns A-M):
+To document source systems, SEAs may use existing data dictionaries such as system user guides, data manuals,&#x20;or technical specifications. For each source system, SMEs identified in Activity 2.1.2 Document Data Stewards&#x20;and Systems, will locate or create lists of required elements from each source.
+
+If no data dictionary exists, project teams can leverage the CEDS Align template and online Align tool to create&#x20;and manage a data dictionary or use the ETL Checklist as the basis for a data dictionary.\
+Using the information from the data dictionary, begin entering metadata into the ETL Checklists. Download the&#x20;ETL Checklist(s) that are in the project’s scope from the CIID website. Take some time to review the checklists&#x20;and familiarize yourself with the tabs and columns. Navigate to the ETL tab within the workbook and scroll to&#x20;the right (Row 2, CEDS Element Details, Columns R and S) to see the specific CEDS elements needed to align to&#x20;your source data dictionary. The CEDS element metadata from the ETL checklist will provide context to the SME&#x20;in creating or locating items in the source system’s data dictionary.
+
+Enter the following source metadata for each data source/set and the associated data elements from the data&#x20;dictionary in the ETL Checklists (Columns A-M):
 
 * System Name&#x20;
 * Technical Name
@@ -54,16 +55,8 @@ After the data dictionary is located or created, and metadata has been entered i
 {% hint style="success" %}
 CEDS Tips
 
-* If using CEDS Align for your data dictionary, create an Align map for  \
-  each source system involved in the data integration effort. For example,  \
-  Directory data required for EDFacts file FS029 may be in an organization  \
-  management system while special education data may come from a  \
-  statewide IEP system. Each system should have a separate Align map in  \
-  CEDS.
-* For maintenance of sources to CEDS alignments in future years, the team  \
-  may find it easiest to download the Align map, make any additional  \
-  changes for the new school year, then upload it to the Align tool as a new  \
-  map.
+* If using CEDS Align for your data dictionary, create an Align map for  &#x20;each source system involved in the data integration effort. For example,  &#x20;Directory data required for EDFacts file FS029 may be in an organization  &#x20;management system while special education data may come from a  &#x20;statewide IEP system. Each system should have a separate Align map in  &#x20;CEDS.
+* For maintenance of sources to CEDS alignments in future years, the team  &#x20;may find it easiest to download the Align map, make any additional  &#x20;changes for the new school year, then upload it to the Align tool as a new  &#x20;map.
 {% endhint %}
 
 For each ETL Checklist,&#x20;schedule a team meeting to&#x20;review the data dictionary&#x20;information completed in the&#x20;previous activity. This team&#x20;should include a SME and&#x20;technical staff who understand&#x20;intended uses for the data&#x20;elements in the data system&#x20;in question. Use the ETL tab in&#x20;the ETL Checklist to review and&#x20;confirm the data dictionary&#x20;information and record the&#x20;transformation rules. Data stewards will verify that they have addressed all discrepancies and verify that the&#x20;proposed logic makes sense.&#x20;
