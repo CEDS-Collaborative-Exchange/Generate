@@ -1,4 +1,4 @@
-CREATE VIEW [Debug].[vwStaff_FactTable] 
+CREATE VIEW [debug].[vwStaff_FactTable] 
 AS
 	SELECT	
 			Fact.FactK12StaffCountId
@@ -30,6 +30,7 @@ AS
 			, StaffCat.K12StaffClassificationEdFactsCode
 			, StaffCat.SpecialEducationSupportServicesCategoryEdFactsCode
 			, StaffCat.TitleIProgramStaffCategoryEdFactsCode
+			, StaffCat.TitleIIILanguageInstructionIndicatorCode
 
 			, Fact.StaffCount
 			, Fact.StaffFullTimeEquivalency
@@ -52,4 +53,3 @@ AS
 	--or comment out the lines above and just set the SchoolYear
 		--AND SchoolYears.SchoolYear = 2023
 	AND Fact.FactTypeId = 26
-	

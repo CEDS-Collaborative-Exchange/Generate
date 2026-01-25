@@ -5064,7 +5064,7 @@ BEGIN
 
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					SELECT distinct fact.K12StaffId, title3.DimTitleIIIStatusId
+					SELECT distinct fact.K12StaffId, staffCat.DimK12StaffCategoryId
 					from rds.' + @factTable + ' fact '
 
 			if @reportLevel = 'lea'
@@ -5085,15 +5085,15 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimTitleIIIStatuses title3 
-					on fact.TitleIIIStatusId = title3.DimTitleIIIStatusId				
+				inner join rds.DimK12StaffCategories staffCat 
+					on fact.K12StaffCategoryId = staffCat.DimK12StaffCategoryId				
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and fact.K12SchoolId <> -1
-				where title3.TitleIIILanguageInstructionProgramTypeCode <> ''MISSING''
+				where staffCat.TitleIIILanguageInstructionIndicatorCode =  ''Yes''
 			) rules
 				on fact.K12StaffId = rules.K12StaffId 
-				and fact.TitleiiiStatusId = rules.DimTitleIIIStatusId'
+				and fact.K12StaffCategoryId = rules.DimK12StaffCategoryId'
 		end
 
 		else if @reportCode in ('203')

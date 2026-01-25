@@ -121,6 +121,7 @@ BEGIN
 			AND ISNULL(ssa.K12StaffClassification, 'MISSING') = ISNULL(rdksc.K12StaffClassificationMap, rdksc.K12StaffClassificationCode)
 			AND ISNULL(ssa.SpecialEducationStaffCategory, 'MISSING') = ISNULL(rdksc.SpecialEducationSupportServicesCategoryMap, rdksc.SpecialEducationSupportServicesCategoryCode)
 			AND ISNULL(ssa.TitleIProgramStaffCategory, 'MISSING') = ISNULL(rdksc.TitleIProgramStaffCategoryMap, rdksc.TitleIProgramStaffCategoryCode)
+			AND ISNULL(CAST(ssa.TitleIIILanguageInstructionIndicator AS SMALLINT), -1) = ISNULL(CAST(rdksc.TitleIIILanguageInstructionIndicatorMap AS SMALLINT), -1)
 	--staff statuses (rds)
 		LEFT JOIN #vwK12StaffStatuses rdkss
 			ON rsy.SchoolYear = rdkss.SchoolYear
