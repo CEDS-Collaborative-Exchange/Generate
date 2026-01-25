@@ -807,7 +807,6 @@ BEGIN
 				end
 			end -- 002/089
 
-			-- JW 7/20/2023 Fixed FS141 performance issues by using #temp table rather than "In subselect"
 			if @reportCode in ('141')
 			begin
 				select @sql = @sql + char(10) + char(10)
@@ -818,6 +817,8 @@ BEGIN
 				select @sql = @sql +
 					'select distinct 
 						fact.K12StudentId,  
+						fact.LeaId,
+						fact.K12SchoolId,
 						m.DimEnglishLearnerStatusId, 
 						g.DimGradelevelId, 
 						people.K12StudentStudentIdentifierState
@@ -859,6 +860,27 @@ BEGIN
 
 				select @sql = @sql + char(10) + 
 				'CREATE INDEX IDX_Students ON #Students (K12StudentId, K12StudentStudentIdentifierState)' + char(10) + char(10)
+
+				--Added to remove LEAs and Schools that are not reported federally
+				--LEA
+				select @sql = @sql + char(10) + '
+				delete s
+				from #students s
+					inner join rds.DimLeas l
+						on s.LeaId = l.DimLeaID
+						and s.LeaId <> -1
+				where l.ReportedFederally <> 1'
+
+				--School
+				select @sql = @sql + char(10) + '
+				delete s
+				from #students s
+					inner join rds.DimK12Schools sch
+						on s.K12SchoolId = sch.DimK12SchoolId
+						and s.K12SchoolId <> -1
+				where sch.ReportedFederally <> 1'
+
+				select @sql = @sql + char(10)
 
 			end
 
