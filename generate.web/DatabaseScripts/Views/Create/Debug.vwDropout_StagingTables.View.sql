@@ -79,8 +79,7 @@ AS
 		AND enrollment.ExitOrWithdrawalType = sssrd.InputCode
 
 	WHERE 1 = 1
-	AND sssrd.OutputCode in (01925, 01927, 01931)  --need to verify these codes and add any that are missing
+	AND sssrd.OutputCode = 01927  --need to verify if more codes need to be included
 
-	--01925 - Expelled or involuntarily withdrawn
 	--09927 - Discontinued schooling
-	--01931 - Not enrolled, unknown status
+	
