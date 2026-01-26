@@ -148,56 +148,54 @@ BEGIN
 
 		INSERT INTO #Facts
 		SELECT
-			sppse.Id													StagingId
-			, rsy.DimSchoolYearId										SchoolYearId
-			, @FactTypeId												FactTypeId
-			, -1														GradeLevelId
-			, rda.DimAgeId												AgeId
-			, ISNULL(rdr.DimRaceId, -1)									RaceId
-			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId
-			, 1															StudentCount
-			, ISNULL(rds.DimSeaId, -1)									SEAId
-			, -1														IEUId
-			, ISNULL(rdl.DimLeaID, -1)									LEAId
-			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
-			, -1														K12StudentId
-			, ISNULL(rdpc.DimPersonId, -1)								K12Student_CurrentId
-			, -1														IdeaStatusId
-			, -1														LanguageId
-			, -1														MigrantStatusId
-			, -1														K12StudentStatusId
-			, -1														TitleIStatusId
-			, -1														TitleIIIStatusId
-			, -1														AttendanceId
-			, -1														CohortStatusId
-			, -1														NOrDStatusId
-			, -1														CTEStatusId
-			, -1														K12EnrollmentStatusId
-			, -1 														EnglishLearnerStatusId
-			, -1														HomelessnessStatusId
-			, -1														EconomicallyDisadvantagedStatusId
-			, -1														FosterCareStatusId
-			, -1														ImmigrantStatusId
-			, -1														PrimaryDisabilityTypeId
-			, ISNULL(rdd.DimDateId, -1)									SpecialEducationServicesExitDateId
-			, -1														MigrantStudentQualifyingArrivalDateId
-			, -1														LastQualifyingMoveDateId
+			sppse.Id															StagingId
+			, rsy.DimSchoolYearId												SchoolYearId
+			, @FactTypeId														FactTypeId
+			, -1																GradeLevelId
+			, rda.DimAgeId														AgeId
+			, ISNULL(rdr.DimRaceId, -1)											RaceId
+			, ISNULL(rdkd.DimK12DemographicId, -1)								K12DemographicId
+			, 1																	StudentCount
+			, ISNULL(rds.DimSeaId, -1)											SEAId
+			, -1																IEUId
+			, ISNULL(rdl.DimLeaID, -1)											LEAId
+			, ISNULL(rdksch.DimK12SchoolId, -1)									K12SchoolId
+			, -1																K12StudentId
+			, ISNULL(rdpc.DimPersonId, -1)										K12Student_CurrentId
+			, -1																IdeaStatusId
+			, -1																LanguageId
+			, -1																MigrantStatusId
+			, -1																K12StudentStatusId
+			, -1																TitleIStatusId
+			, -1																TitleIIIStatusId
+			, -1																AttendanceId
+			, -1																CohortStatusId
+			, -1																NOrDStatusId
+			, -1																CTEStatusId
+			, -1																K12EnrollmentStatusId
+			, -1 																EnglishLearnerStatusId
+			, -1																HomelessnessStatusId
+			, -1																EconomicallyDisadvantagedStatusId
+			, -1																FosterCareStatusId
+			, -1																ImmigrantStatusId
+			, -1																PrimaryDisabilityTypeId
+			, ISNULL(rds.Get_DimDate(sppse.ProgramParticipationEndDate), -1)	SpecialEducationServicesExitDateId
+			, -1																MigrantStudentQualifyingArrivalDateId
+			, -1																LastQualifyingMoveDateId
 
 		FROM Staging.ProgramParticipationSpecialEducation sppse
-		JOIN RDS.DimDates rdd
-			ON sppse.ProgramParticipationEndDate = rdd.DateValue
 	--enrollment
 		JOIN Staging.K12Enrollment ske
 			ON ske.SchoolYear = sppse.SchoolYear		
 			AND ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
-			AND rdd.DateValue BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+			AND sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 	--sea	
 		JOIN RDS.DimSeas rds
-			ON rdd.DateValue BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
+			ON sppse.ProgramParticipationEndDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--student
 		LEFT JOIN RDS.DimPeople_Current rdpc
 			ON ISNULL(ske.StudentIdentifierState, '') = ISNULL(rdpc.K12StudentStudentIdentifierState, '')
@@ -209,15 +207,15 @@ BEGIN
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
 	--age	
 		JOIN RDS.DimAges rda
-			ON RDS.Get_Age(ske.Birthdate, IIF(rdd.DateValue < @ChildCountDate, @PreviousChildCountDate, @ChildCountDate)) = rda.AgeValue
+			ON RDS.Get_Age(ske.Birthdate, IIF(sppse.ProgramParticipationEndDate < @ChildCountDate, @PreviousChildCountDate, @ChildCountDate)) = rda.AgeValue
 	--lea	
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND rdd.DateValue BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
+			AND sppse.ProgramParticipationEndDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 	--school
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND rdd.DateValue BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
+			AND sppse.ProgramParticipationEndDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 	--race
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr
 			ON ske.SchoolYear = spr.SchoolYear

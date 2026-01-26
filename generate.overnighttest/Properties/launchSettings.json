@@ -1,0 +1,28 @@
+{
+    "profiles": {
+        "generate.overnighttest": {
+            "commandName": "Project",
+            "commandLineArgs": "--migrate 002,089",
+            "environmentVariables": {
+                "DOTNET_ENVIRONMENT": "Development",
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        "build": {
+            "commandName": "Project",
+            "commandLineArgs": "--testfacttype CHILDCOUNT",
+            "environmentVariables": {
+                "DOTNET_ENVIRONMENT": "Test",
+                "ASPNETCORE_ENVIRONMENT": "Test"
+            }
+        },
+        "stage": {
+            "commandName": "Project",
+            "commandLineArgs": "--testfacttype CHILDCOUNT",
+            "environmentVariables": {
+                "DOTNET_ENVIRONMENT": "Stage",
+                "ASPNETCORE_ENVIRONMENT": "Stage"
+            }
+        }
+    }
+}

@@ -14,7 +14,7 @@ BEGIN
 							where IsSelected = 1
 							and dm.DataMigrationTypeId = 3
 						)
-    SELECT @StateCode = StateAbbreviationCode from Staging.StateDetail where SchoolYear = @schoolyear
+    SELECT @StateCode = (select distinct(StateAbbreviationCode) from Staging.StateDetail where isnull(SchoolYear, '') <> '' and isnull(StateAbbreviationCode, '') <> '')
 	SELECT @StateName = (	select CedsOptionSetDescription 
 							from ceds.CedsOptionSetMapping 
 							where CedsElementTechnicalName = 'StateAbbreviation' 
@@ -185,14 +185,13 @@ BEGIN
 			ON sop.InstitutionTelephoneNumberType = sssrd2.InputCode
 			AND sssrd2.TableName = 'RefInstitutionTelephoneType'
 			AND sko.SchoolYear = sssrd2.SchoolYear
+			AND sssrd2.OutputCode = 'Main'
 		LEFT JOIN staging.SourceSystemReferenceData sssrd3
 			ON sko.LEA_CharterLeaStatus = sssrd3.InputCode
 			AND sssrd3.TableName = 'RefCharterLeaStatus'
 			AND sko.SchoolYear = sssrd3.SchoolYear
-
 		WHERE 
-			sssrd2.OutputCode = 'Main'
-			AND sko.LeaIdentifierSea is not null 
+			sko.LeaIdentifierSea is not null 
 			AND
 			(@dataCollectionName IS NULL
 			OR (

@@ -1,4 +1,5 @@
-﻿import {CategorySetDto} from './categorySetDto';
+import { CategorySetDto } from './categorySetDto';
+import { TableType } from './tableType'
 
 export interface IGenerateReportParametersDto {
     reportType: string;
@@ -20,6 +21,7 @@ export interface IGenerateReportParametersDto {
     reportSchool: string;
     connectionLink: string;
     organizationalIdList: string;
+    reportTableTypeAbbrv: string;
 }
 
 export class GenerateReportParametersDto implements IGenerateReportParametersDto {
@@ -42,4 +44,5 @@ export class GenerateReportParametersDto implements IGenerateReportParametersDto
     reportSchool: string;
     connectionLink: string;
     organizationalIdList: string;
+    reportTableTypeAbbrv: string;
 }

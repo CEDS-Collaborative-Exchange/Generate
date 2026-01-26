@@ -474,8 +474,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(8)
                     .IsUnicode(false);
 
-                entity.Property(e => e.RunDateTime).HasColumnType("datetime");
-
                 entity.Property(e => e.SchoolIdentifierSea)
                     .HasColumnName("SchoolIdentifierSea")
                     .HasMaxLength(100)

@@ -375,16 +375,16 @@ namespace generate.infrastructure.Services
                         if (code == "Missing")
                         {
                             dict[code] = g.Where(c => c.DISCIPLINARYACTIONTAKEN == "MISSING")
-                                          .Sum(c => (c.DisciplineCount > 0) ? 1 : 0);
+                                          .Count(c => c.DisciplineCount > 0);
                         }
                         else if (code == "Total")
                         {
-                            dict[code] = g.Sum(c => (c.DisciplineCount > 0) ? 1 : 0);
+                            dict[code] = g.Count(c => c.DisciplineCount > 0); ;
                         }
                         else
                         {
                             dict[$"d{code}"] = g.Where(c => c.DISCIPLINARYACTIONTAKEN == code)
-                                                .Sum(c => (c.DisciplineCount > 0) ? 1 : 0);
+                                                .Count(c => c.DisciplineCount > 0);
                         }
                     }
 

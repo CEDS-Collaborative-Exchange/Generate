@@ -12,7 +12,7 @@ BEGIN
 							where IsSelected = 1
 							and dm.DataMigrationTypeId = 3
 						)
-    SELECT @StateCode = StateAbbreviationCode from Staging.StateDetail where SchoolYear = @schoolyear
+    SELECT @StateCode = (select distinct(StateAbbreviationCode) from Staging.StateDetail where isnull(SchoolYear, '') <> '' and isnull(StateAbbreviationCode, '') <> '')
 	SELECT @StateName = (	select CedsOptionSetDescription 
 							from ceds.CedsOptionSetMapping 
 							where CedsElementTechnicalName = 'StateAbbreviation' 
@@ -274,9 +274,9 @@ BEGIN
 		ON sop.InstitutionTelephoneNumberType = sssrd6.InputCode
 		AND sssrd6.TableName = 'RefInstitutionTelephoneType'
 		AND sko.SchoolYear = sssrd6.SchoolYear
+		AND sssrd6.OutputCode = 'Main'
 	WHERE 
-		sssrd6.OutputCode = 'Main'
-		AND sko.SchoolIdentifierSea is not null and -- Prevent null schools from inserting into DimK12Schools
+		sko.SchoolIdentifierSea is not null and -- Prevent null schools from inserting into DimK12Schools
 		(@DataCollectionName IS NULL	
 		OR (
 			sko.DataCollectionName = @dataCollectionName

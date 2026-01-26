@@ -196,6 +196,7 @@ var PivotGridComponent = function () {
                     this.reportParameters.reportSort = 1;
                 }
                 var categorySetCode = 'null';
+                var tableTypeAbbrv = '';
                 if (this.reportParameters.reportCategorySetCode !== undefined) {
                     categorySetCode = this.reportParameters.reportCategorySetCode;
                 }
@@ -205,7 +206,15 @@ var PivotGridComponent = function () {
                 if (this.reportParameters.reportCategorySet !== undefined) {
                     categorySetCode = this.reportParameters.reportCategorySet.categorySetCode;
                 }
-                this.subscriptions.push(this._generateReportService.getPagedReport(this.reportParameters.reportType, this.reportParameters.reportCode, this.reportParameters.reportLevel, this.reportParameters.reportYear, categorySetCode, this.reportParameters.reportSort, skip, take, this.pageSize, this.gridPageNumber)
+                /*console.log(this.reportParameters.reportTableTypeAbbrv);*/
+                if (this.reportParameters.reportTableTypeAbbrv !== undefined) {
+                    tableTypeAbbrv = this.reportParameters.reportTableTypeAbbrv;
+                }
+                else {
+                    tableTypeAbbrv = this.reportParameters.reportCategorySet.tableTypes[0].tableTypeAbbrv;
+                }
+                /*console.log(tableTypeAbbrv);*/
+                this.subscriptions.push(this._generateReportService.getPagedReport(this.reportParameters.reportType, this.reportParameters.reportCode, this.reportParameters.reportLevel, this.reportParameters.reportYear, categorySetCode, tableTypeAbbrv, this.reportParameters.reportSort, skip, take, this.pageSize, this.gridPageNumber)
                     .subscribe(function (reportDataDto) {
                     _this.reportDataDto = reportDataDto;
                     _this.cvData = reportDataDto.data;

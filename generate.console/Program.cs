@@ -64,7 +64,7 @@ namespace generate.console
 
             var builder = new ConfigurationBuilder()
                 .AddCommandLine(args)
-                .AddEnvironmentVariables(e => e.Prefix = "Data__")
+                .AddEnvironmentVariables(e => e.Prefix = "Data")
                 .AddUserSecrets(Assembly.GetExecutingAssembly(), true);
                 
 

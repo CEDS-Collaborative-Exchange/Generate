@@ -23,6 +23,8 @@ export class ReportDebugInformationComponent {
     public repotDebugData: any;
     public headers: any;
     public bindings: any;
+    zoomLevel = 1; // 100% zoom
+
     constructor(
         public dialogRef: MatDialogRef<ReportDebugInformationComponent>,
         private _generateReportService: GenerateReportService,
@@ -68,7 +70,7 @@ export class ReportDebugInformationComponent {
             .subscribe(
                 data => {
                     this.repotDebugData = data.map(i => i['fields']);
-                   
+
                 },
                 error => this.errorMessage = <any>error));
     }
@@ -84,16 +86,12 @@ export class ReportDebugInformationComponent {
             fileName += ' - ' + this.data.categorySetCode;
         }
 
-        let reportTitle = this.data.reportData.reportTitle + '-';
-        reportTitle += this.data.reportData.categorySets[0].categorySetName + '-';
-
-        reportTitle += this.data.reportData.categorySets[0].categories.join(',');
+        let reportTitle = this.data.reportData.reportTitle;// reportTitle just the title removing categorySetName
 
         fileName += ".xlsx";
 
-
-        let reportYearCaption = this.data.reportYear;
-        let totalCaption = "";
+        let caption2 = this.data.reportData.categorySets[0].categories.join(','); //caption2 as category set
+        let caption3 = "Count: "+this.data.recordCount;
 
         let reportCaptionCol = 3;
         let reportCols = [];
@@ -105,7 +103,7 @@ export class ReportDebugInformationComponent {
             { hpx: 20 }, // row 2 sets to the height of 16 in pixels
             { hpx: 45 }, // row 2 sets to the height of 16 in pixels
         ];
-        this.flextableComponent.exportToExcel(fileName, reportTitle, reportYearCaption, totalCaption, reportCols, reportRows, reportCaptionCol);
+        this.flextableComponent.exportToExcel(fileName, reportTitle, caption2, caption3, reportCols, reportRows, reportCaptionCol);
 
         return;
     }

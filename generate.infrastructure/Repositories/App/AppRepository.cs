@@ -124,10 +124,13 @@ namespace generate.infrastructure.Repositories.App
                     dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
 
                     var lockedReports = this.GetReports().Where(r => r.IsLocked);
-                    var factTypeId = lockedReports.ToList()[0].GenerateReport_FactTypes[0].FactTypeId;
-                    var dataMigrtionTasks = _context.Set<DataMigrationTask>().OrderBy(t => t.TaskSequence).Where(t => t.FactTypeId == factTypeId).Select(t => t.DataMigrationTaskId.ToString()).ToList();
-                    dataMigration.DataMigrationTaskList = string.Join(",", dataMigrtionTasks);
-                    _context.SaveChanges();
+                    if (lockedReports.Any())
+                    {
+                        var factTypeId = lockedReports.ToList()[0].GenerateReport_FactTypes[0].FactTypeId;
+                        var dataMigrtionTasks = _context.Set<DataMigrationTask>().OrderBy(t => t.TaskSequence).Where(t => t.FactTypeId == factTypeId).Select(t => t.DataMigrationTaskId.ToString()).ToList();
+                        dataMigration.DataMigrationTaskList = string.Join(",", dataMigrtionTasks);
+                        _context.SaveChanges();
+                    }
 
                     // Log migration complete message
 
@@ -231,36 +234,90 @@ namespace generate.infrastructure.Repositories.App
                 // Run migration
 
                 int? oldTimeOut = _context.Database.GetCommandTimeout();
-                _context.Database.SetCommandTimeout(30000);
+                //_context.Database.SetCommandTimeout(30000);
 
                 // Workaround for the fact that ShutdownCancellationToken is not called when the job is deleted
                 // https://github.com/HangfireIO/Hangfire/issues/211
 
                 //var source = new CancellationTokenSource();
 
-                if (jobCancellationToken != null)
+                var connection = _context.Database.GetDbConnection();
+
+                if (connection.State != ConnectionState.Open)
                 {
-                    Task.Run(() =>
+                    connection.Open();
+                }
+
+                //if (jobCancellationToken != null)
+                //{
+                //    Task.Run(() =>
+                //    {
+                //        try
+                //        {
+                //            while (true)
+                //            {
+                //                Thread.Sleep(1000);
+                //                jobCancellationToken.ThrowIfCancellationRequested();
+                //            }
+                //        }
+                //        catch (Exception)
+                //        {
+                //            this.source.Cancel(); 
+                //            this.source.Dispose();
+                //        }
+                //    }, this.source.Token);
+                //}
+
+                //var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
+                //dbTask.Wait();
+
+                //_context.Database.SetCommandTimeout(oldTimeOut);
+
+                using (var command = connection.CreateCommand())
+                {
+
+                    Action cancelWithGrace = () =>
                     {
                         try
                         {
-                            while (true)
-                            {
-                                Thread.Sleep(1000);
-                                jobCancellationToken.ThrowIfCancellationRequested();
-                            }
+                            command.Cancel();
+                            source.Cancel();
                         }
-                        catch (Exception)
+                        catch (System.Exception ex)
                         {
-                            this.source.Cancel();
+                            Console.Error.WriteLine($"Exception called canceWithGrace:{ex}");
                         }
-                    }, this.source.Token);
+
+                    };
+
+                    if (jobCancellationToken != null)
+                    {
+                        Task.Run(() =>
+                        {
+                            try
+                            {
+                                while (true)
+                                {
+                                    Thread.Sleep(1000);
+                                    jobCancellationToken.ThrowIfCancellationRequested();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.Error.WriteLine($"Cancellation called :{ex}");
+                                // command.Cancel();
+                                // this.source.Cancel();
+                                cancelWithGrace();
+                            }
+                        }, source.Token);
+                    }
+                    command.CommandTimeout = 300000;
+                    command.CommandText = "EXEC app.Migrate_Data";
+                    //Console.WriteLine("Executing Migrate_Data stored proc");
+                    command.ExecuteNonQueryAsync().GetAwaiter().GetResult();
+                    //Console.WriteLine($"Done Executing Migrate_Data stored proc rowsAffected:{rowsAffected}");
+
                 }
-
-                var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
-                dbTask.Wait();
-
-                _context.Database.SetCommandTimeout(oldTimeOut);
             }
             catch (Exception ex)
             {
@@ -386,6 +443,49 @@ namespace generate.infrastructure.Repositories.App
 
 
         }
-    }
 
+        public void RunBeforeTests(int submissionYear)
+        {
+
+            int? oldTimeOut = _context.Database.GetCommandTimeout();
+            _context.Database.SetCommandTimeout(11000);
+            _context.Database.ExecuteSqlRaw("app.Run_Before_Tests @submissionYear = {0}", submissionYear);
+            _context.Database.SetCommandTimeout(oldTimeOut);
+
+        }
+
+        public void toggleReportLock(string reportCode, bool isLocked)
+        {
+            if (reportCode == "") {
+                var reports = Find<GenerateReport>(t => t.IsActive).ToList();
+                foreach (var report in reports) {
+                    report.IsLocked = isLocked;
+                    _context.SaveChanges();
+                }
+            }
+            else
+            {
+                var report = _context.Set<GenerateReport>().FirstOrDefault(x => x.ReportCode == reportCode);
+                report.IsLocked = isLocked;
+                _context.SaveChanges();
+            }
+
+        }
+
+        public void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)
+        {
+            int? oldTimeOut = _context.Database.GetCommandTimeout();
+            _context.Database.SetCommandTimeout(11000);
+            _context.Database.ExecuteSqlRaw("app.Enable_Disable_Tests @testScope = {0}, @isActive = {1}", fileSpecNumbers, enable);
+            _context.Database.SetCommandTimeout(oldTimeOut);
+        }
+
+        public void MigrateMetadata(string dataSetType, int submissionYear, bool isTransferAppToMetadata = true)
+        {
+            int? oldTimeOut = _context.Database.GetCommandTimeout();
+            _context.Database.SetCommandTimeout(11000);
+            _context.Database.ExecuteSqlRaw("app.Migrate_Metadata @dataSetType = {0}, @submissionYear = {1}, @isTransferAppToMetadata = {2}", dataSetType, submissionYear, isTransferAppToMetadata);
+            _context.Database.SetCommandTimeout(oldTimeOut);
+        }
+    }
 }

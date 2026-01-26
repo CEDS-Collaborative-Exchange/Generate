@@ -55,7 +55,7 @@ namespace generate.infrastructure.Services
 			
         }
 
-        public GenerateReportDataDto GetReportDto(string reportCode, string reportLevel, string reportYear, string categorySetCode, int reportSort = 1, int pageSize = 10, int page = 1)
+        public GenerateReportDataDto GetReportDto(string reportCode, string reportLevel, string reportYear, string categorySetCode, string tableTypeAbbrv, int reportSort = 1, int pageSize = 10, int page = 1)
         {
 
             // Declare empty dto
@@ -67,8 +67,13 @@ namespace generate.infrastructure.Services
                 && r.ReportCode == reportCode
                 && r.GenerateReport_OrganizationLevels.Count(l => l.OrganizationLevel.LevelCode == reportLevel) == 1, 0, 1, r => r.CategorySets, r => r.FactTable)
                 .FirstOrDefault();
+            
+            bool isOnlineReport = false;
 
-
+            if (reportCode == "204" || reportCode == "151" || reportCode == "150")
+            {
+                isOnlineReport = true;
+            }
 
             if (report.ReportCode.ToLower() == "059" && reportLevel == "sch")
             {
@@ -82,7 +87,7 @@ namespace generate.infrastructure.Services
 
             reportDto.ReportTitle = report.ReportName;                
             
-            bool includeZeroCounts = false;
+            //bool includeZeroCounts = false;
             //if (reportLevel == "sea")
             //{
             //    includeZeroCounts = true;
@@ -99,19 +104,12 @@ namespace generate.infrastructure.Services
 
             if (report.ReportCode == "052")
             {
-                bool isOnlineReport = false;
-
                 var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, categorySetCode, false, isOnlineReport);
                 dataRows = query.Item1.ToList();
                 reportDto.dataCount = query.Item1.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
             }
             else if (report.FactTable.FactTableName == "FactK12StudentCounts")
             {
-                bool isOnlineReport = false;
-                if (reportCode == "204" || reportCode == "151" || reportCode == "150")
-                {
-                    isOnlineReport = true;
-                }
                 var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, false, false, isOnlineReport);
                 dataRows = query.ToList();
                 reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
@@ -125,7 +123,7 @@ namespace generate.infrastructure.Services
             else if (report.FactTable.FactTableName == "FactK12StudentAssessments")
             {
                 var query = _factStudentAssessmentRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                dataRows = query.ToList();
+                dataRows = query.Where(t => t.TableTypeAbbrv == tableTypeAbbrv).ToList();
                 reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
             }
             else if (report.FactTable.FactTableName == "FactK12StaffCounts")
@@ -134,30 +132,13 @@ namespace generate.infrastructure.Services
                 dataRows = query.ToList();
                 reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
             }
-            else if (report.FactTable.FactTableName == "FactOrganizationCounts")
-            {
-                if(reportCode == "039")
-                {
-                    var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                    dataRows = query.ToList();
-                    reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
-
-                }
-                else if (reportCode == "130")
-                {
-                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                    dataRows = query.ToList();
-                    reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
-                }
-                else {
-                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                    dataRows = query.ToList();
-                    reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
-                }
-                
-                
-            }
             reportDto.data = dataRows;
+
+            if (report.FactTable.FactTableName == "FactOrganizationCounts")
+            {
+                reportDto = GetOrganizationReportData(reportCode, reportLevel, reportYear, categorySetCode);
+            }
+            
 
             if (report.FactTable.FactTableName == "FactOrganizationStatusCounts")
 			{
@@ -165,6 +146,39 @@ namespace generate.infrastructure.Services
             }
                         
             return reportDto;
+        }
+
+        public GenerateReportDataDto GetOrganizationReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode)
+        {
+            GenerateReportDataDto reportDto = new GenerateReportDataDto();
+            reportDto.structure = new GenerateReportStructureDto();
+            reportDto.data = new List<ExpandoObject>();
+
+            dynamic dataRows = new List<ExpandoObject>();
+
+            if (reportCode == "039")
+            {
+                var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, categorySetCode);
+                dataRows = query.ToList();
+                reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
+
+            }
+            else if (reportCode == "130")
+            {
+                var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, categorySetCode);
+                dataRows = query.ToList();
+                reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
+            }
+            else
+            {
+                var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
+                dataRows = query.ToList();
+                reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
+            }
+            reportDto.data = dataRows;
+
+            return reportDto;
+   
         }
 
         public GenerateReportDataDto GetOrganizationStatusReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode)
@@ -222,45 +236,52 @@ namespace generate.infrastructure.Services
             {
                 foreach (var item in queryData)
                 {
-                    dynamic row = new ExpandoObject();
-                    row.stateCode = item.StateCode;
-                    row.stateName = item.StateName;
-                    row.organizationStateId = item.OrganizationNcesId;
-                    row.rowKey = item.OrganizationName;
-                    row.parentOrganizationStateId = item.ParentOrganizationStateId;
-
-                    // Category column
-                    if (columns.ContainsKey("Category"))
-                    {
-                        row.col_1 = categorySetCode switch
-                        {
-                            "CSA" or "CSA1" => item.RACE,
-                            "CSB" or "CSB1" => item.DISABILITY,
-                            "CSC" or "CSC1" => item.LEPSTATUS,
-                            "CSD" or "CSD1" => item.ECODISSTATUS,
-                            _ => null
-                        };
-                    }
-
-                    // Indicator columns (layout varies by categorySetCode)
-                    if (categorySetCode is "TOT" or "TOT1")
-                    {
-                        row.col_1 = item.STATEDEFINEDCUSTOMINDICATORCODE;
-                        row.col_2 = item.INDICATORSTATUS;
-                        row.col_3 = item.STATEDEFINEDSTATUSCODE;
-                    }
-                    else
-                    {
-                        row.col_2 = item.STATEDEFINEDCUSTOMINDICATORCODE;
-                        row.col_3 = item.INDICATORSTATUS;
-                        row.col_4 = item.STATEDEFINEDSTATUSCODE;
-                    }
-
+                    dynamic row = processOrganizationStatusRow(item, columns, categorySetCode);
                     reportDto.data.Add(row);
                 }
             }
 
             return reportDto;
+
+        }
+
+        private dynamic processOrganizationStatusRow(ReportEDFactsOrganizationStatusCount item, Dictionary<string, string> columns, string categorySetCode)
+        {
+            dynamic row = new ExpandoObject();
+            row.stateCode = item.StateCode;
+            row.stateName = item.StateName;
+            row.organizationStateId = item.OrganizationNcesId;
+            row.rowKey = item.OrganizationName;
+            row.parentOrganizationStateId = item.ParentOrganizationStateId;
+
+            // Category column
+            if (columns.ContainsKey("Category"))
+            {
+                row.col_1 = categorySetCode switch
+                {
+                    "CSA" or "CSA1" => item.RACE,
+                    "CSB" or "CSB1" => item.DISABILITY,
+                    "CSC" or "CSC1" => item.LEPSTATUS,
+                    "CSD" or "CSD1" => item.ECODISSTATUS,
+                    _ => null
+                };
+            }
+
+            // Indicator columns (layout varies by categorySetCode)
+            if (categorySetCode is "TOT" or "TOT1")
+            {
+                row.col_1 = item.STATEDEFINEDCUSTOMINDICATORCODE;
+                row.col_2 = item.INDICATORSTATUS;
+                row.col_3 = item.STATEDEFINEDSTATUSCODE;
+            }
+            else
+            {
+                row.col_2 = item.STATEDEFINEDCUSTOMINDICATORCODE;
+                row.col_3 = item.INDICATORSTATUS;
+                row.col_4 = item.STATEDEFINEDSTATUSCODE;
+            }
+
+            return row;
 
         }
 

@@ -397,6 +397,7 @@ BEGIN
 			, AssessmentRegistrationId						int null	
 			, AssessmentParticipationSessionId				int null	
 			, AssessmentResultId							int null	
+			, AssessmentStatusId							int null	
 			, AssessmentPerformanceLevelId					int null		
 			, AssessmentCount								int null	
 			, AssessmentResultScoreValueRawScore			nvarchar(35) null	
@@ -441,6 +442,7 @@ BEGIN
 			, ISNULL(rdars.DimAssessmentRegistrationId, -1)					AssessmentRegistrationId				
 			, -1															AssessmentParticipationSessionId		
 			, ISNULL(rdar.DimAssessmentResultId, -1)						AssessmentResultId					
+			, ISNULL(rdas.DimAssessmentStatusId, -1)						AssessmentStatusId					
 			, ISNULL(rdapl.DimAssessmentPerformanceLevelId, -1)				AssessmentPerformanceLevelId			
 			, 1																AssessmentCount						
 			, ISNULL(sar.ScoreValue, -1)									AssessmentResultScoreValueRawScore	
@@ -512,6 +514,11 @@ BEGIN
 				AND rdars.LeaFullAcademicYearCode 													= 'MISSING'
 				AND rdars.SchoolFullAcademicYearCode 												= 'MISSING'
 				AND rdars.AssessmentRegistrationCompletionStatusCode 								= 'MISSING'
+		--assessment status
+			LEFT JOIN RDS.vwDimAssessmentStatuses rdas
+				ON rdas.SchoolYear = rsy.SchoolYear
+				AND ISNULL(CAST(sar.AssessedFirstTime AS SMALLINT), -1) = ISNULL(rdas.AssessedFirstTimeMap, -1)
+				AND rdas.ProgressLevelCode								= 'MISSING'
 		--assessment administration (rds)
 			LEFT JOIN #tempAssessmentAdministrations rdaa
 				ON sar.LeaIdentifierSeaAccountability 								= rdaa.LEAIdentifierSea
@@ -674,6 +681,7 @@ BEGIN
 			, [AssessmentRegistrationId]				
 			, [AssessmentParticipationSessionId]
 			, [AssessmentResultId]	
+			, [AssessmentStatusId]	
 			, [AssessmentPerformanceLevelId]
 			, [AssessmentCount]		
 			, [AssessmentResultScoreValueRawScore]
@@ -715,6 +723,7 @@ BEGIN
 			, [AssessmentRegistrationId]				
 			, [AssessmentParticipationSessionId]
 			, [AssessmentResultId]	
+			, [AssessmentStatusId]	
 			, [AssessmentPerformanceLevelId]
 			, [AssessmentCount]		
 			, [AssessmentResultScoreValueRawScore]

@@ -135,38 +135,37 @@ BEGIN
 
 		INSERT INTO #Facts
 		SELECT DISTINCT
-			sppse.Id													StagingId
-			, rsy.DimSchoolYearId										SchoolYearId
-			, @FactTypeId												FactTypeId
-			, ISNULL(rgls.DimGradeLevelId, -1)							GradeLevelId
-			, rda.DimAgeId												AgeId
-			, ISNULL(rdr.DimRaceId, -1)									RaceId
-			, ISNULL(rdkd.DimK12DemographicId, -1)						K12DemographicId
-			, 1															StudentCount
-			, ISNULL(rds.DimSeaId, -1)									SEAId
-			, -1														IEUId
-			, ISNULL(rdl.DimLeaID, -1)									LEAId
-			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
-			, -1														K12StudentId
-			, ISNULL(rdpc.DimPersonId, -1)								K12Student_CurrentId
-			, ISNULL(rdis.DimIdeaStatusId, -1)							IdeaStatusId
-			, -1														LanguageId
-			, -1														MigrantStatusId
-			, -1														TitleIStatusId
-			, -1		+												TitleIIIStatusId
-			, -1														AttendanceId
-			, -1														CohortStatusId
-			, -1														NOrDStatusId
-			, -1														CTEStatusId
-			, -1														K12EnrollmentStatusId
-			, ISNULL(rdels.DimEnglishLearnerStatusId, -1)				EnglishLearnerStatusId
-			, -1										 				HomelessnessStatusId
-			, -1										 				EconomicallyDisadvantagedStatusId
-			, -1														FosterCareStatusId
-			, -1														ImmigrantStatusId
-			, ISNULL(rdidt.DimIdeaDisabilityTypeId, -1)					PrimaryDisabilityTypeId
-			, ISNULL(rdd.DimDateId, -1)									SpecialEducationServicesExitDateId
-			, -1														MigrantStudentQualifyingArrivalDateId
+			sppse.Id															StagingId
+			, rsy.DimSchoolYearId												SchoolYearId
+			, @FactTypeId														FactTypeId
+			, ISNULL(rgls.DimGradeLevelId, -1)									GradeLevelId
+			, rda.DimAgeId														AgeId
+			, ISNULL(rdr.DimRaceId, -1)											RaceId
+			, ISNULL(rdkd.DimK12DemographicId, -1)								K12DemographicId
+			, 1																	StudentCount
+			, ISNULL(rds.DimSeaId, -1)											SEAId
+			, -1																IEUId
+			, ISNULL(rdl.DimLeaID, -1)											LEAId
+			, ISNULL(rdksch.DimK12SchoolId, -1)									K12SchoolId
+			, ISNULL(rdpc.DimPersonId, -1)										K12Student_CurrentId
+			, ISNULL(rdis.DimIdeaStatusId, -1)									IdeaStatusId
+			, -1																LanguageId
+			, -1																MigrantStatusId
+			, -1																TitleIStatusId
+			, -1																TitleIIIStatusId
+			, -1																AttendanceId
+			, -1																CohortStatusId
+			, -1																NOrDStatusId
+			, -1																CTEStatusId
+			, -1																K12EnrollmentStatusId
+			, ISNULL(rdels.DimEnglishLearnerStatusId, -1)						EnglishLearnerStatusId
+			, -1										 						HomelessnessStatusId
+			, -1										 						EconomicallyDisadvantagedStatusId
+			, -1																FosterCareStatusId
+			, -1																ImmigrantStatusId
+			, ISNULL(rdidt.DimIdeaDisabilityTypeId, -1)							PrimaryDisabilityTypeId
+			, ISNULL(rds.Get_DimDate(sppse.ProgramParticipationEndDate), -1)	SpecialEducationServicesExitDateId
+			, -1																MigrantStudentQualifyingArrivalDateId
 			, -1								
 		FROM Staging.K12Enrollment ske
 			JOIN RDS.DimSchoolYears rsy

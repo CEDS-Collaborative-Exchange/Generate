@@ -478,7 +478,7 @@ BEGIN
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
 						left outer join rds.DimOrganizationTitleIStatuses titleIStatus 
-							on fact.TitleIStatusId = titleIStatus.DimOrganizationTitleIStatusId
+							on fact.OrganizationTitleIStatusId = titleIStatus.DimOrganizationTitleIStatusId
 						where d.SchoolYear = @reportYear 
 						and latestSchool.DimK12SchoolId <> -1 
 						and ISNULL(latestSchool.ReportedFederally, 1) = 1
@@ -1551,7 +1551,7 @@ BEGIN
 						INNER JOIN rds.DimK12Schools sch
 							on fact.K12SchoolId = sch.DimK12SchoolId
 						inner join RDS.DimOrganizationTitleIStatuses statuses 
-							on fact.TitleIStatusId= statuses.DimOrganizationTitleIStatusId
+							on fact.OrganizationTitleIStatusId= statuses.DimOrganizationTitleIStatusId
 					where d.SchoolYear = @reportYear 
 					and sch.DimK12SchoolId <> -1	
 					and ISNULL(sch.ReportedFederally, 1) = 1
@@ -1881,7 +1881,7 @@ BEGIN
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
 						left outer join rds.DimOrganizationTitleIStatuses orgTitleIStatus 
-							on fact.TitleIStatusId = orgTitleIStatus.DimOrganizationTitleIStatusId					
+							on fact.OrganizationTitleIStatusId = orgTitleIStatus.DimOrganizationTitleIStatusId					
 					where dates.SchoolYear = @reportYear 
 					and sch.DimK12SchoolId <> -1
 					and ISNULL(sch.ReportedFederally, 1) = 1 

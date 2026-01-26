@@ -110,6 +110,23 @@ namespace generate.web.Controllers.Api.App
 
         }
 
+        [HttpGet("report/{reportTypeCode}/{reportCode}/{reportYear}")]
+        public JsonResult GetReportByYear(string reportTypeCode, string reportCode, string reportYear)
+        {
+
+            if (reportTypeCode == null || reportCode == null || reportYear == null)
+            {
+                return null;
+            }
+
+            //List<GenerateReport> reportList = new List<GenerateReport>();
+            GenerateReport report = _generateReportService.GetReports(reportTypeCode).FirstOrDefault(s => s.ReportCode == reportCode);
+            //reportList.Add(report);
+            var result = _generateReportService.GetReportDto(report, reportYear);
+            return Json(result);
+
+        }
+
         [HttpGet("{reportTypeCode}/{reportCode}/{reportLevel}/{reportYear}/{categorySetCode}")]
         public ContentResult Get(string reportTypeCode, string reportCode, string reportLevel, string reportYear, string categorySetCode, [FromQuery] int sort = 1, [FromQuery] int skip = 0, [FromQuery] int take = 50)
         {
@@ -119,12 +136,12 @@ namespace generate.web.Controllers.Api.App
                 return null;
             }
 
-            GenerateReportDataDto reportDto = _generateReportService.GetReportDataDto(reportTypeCode, reportCode, reportLevel, reportYear, categorySetCode, null, null, null, null, null, null, sort, skip, take);
+            GenerateReportDataDto reportDto = _generateReportService.GetReportDataDto(reportTypeCode, reportCode, reportLevel, reportYear, categorySetCode,"", null, null, null, null, null, null, sort, skip, take);
             return this.JsonWithoutEmptyProperties(reportDto);
         }
 
-        [HttpGet("pages/{reportTypeCode}/{reportCode}/{reportLevel}/{reportYear}/{categorySetCode}")]
-        public ContentResult GetPagedReport(string reportTypeCode, string reportCode, string reportLevel, string reportYear, string categorySetCode, [FromQuery] int sort = 1, [FromQuery] int skip = 0, [FromQuery] int take = 50, [FromQuery] int pageSize = 10, [FromQuery] int page = 1)
+        [HttpGet("pages/{reportTypeCode}/{reportCode}/{reportLevel}/{reportYear}/{categorySetCode}/{tableTypeAbbrv}")]
+        public ContentResult GetPagedReport(string reportTypeCode, string reportCode, string reportLevel, string reportYear, string categorySetCode, string tableTypeAbbrv, [FromQuery] int sort = 1, [FromQuery] int skip = 0, [FromQuery] int take = 50, [FromQuery] int pageSize = 10, [FromQuery] int page = 1)
         {
 
             if (reportTypeCode == null || reportCode == null || reportLevel == null || reportYear == null || categorySetCode == null)
@@ -132,7 +149,7 @@ namespace generate.web.Controllers.Api.App
                 return null;
             }
 
-            GenerateReportDataDto reportDto = _generateReportService.GetReportDataDto(reportTypeCode, reportCode, reportLevel, reportYear, categorySetCode, null, null, null, null, null, null, sort, skip, take, pageSize, page);
+            GenerateReportDataDto reportDto = _generateReportService.GetReportDataDto(reportTypeCode, reportCode, reportLevel, reportYear, categorySetCode, tableTypeAbbrv, null, null, null, null, null, null, sort, skip, take, pageSize, page);
             return this.JsonWithoutEmptyProperties(reportDto);
         }
 
@@ -145,7 +162,7 @@ namespace generate.web.Controllers.Api.App
                 return null;
             }
 
-            GenerateReportDataDto reportDto = _generateReportService.GetReportDataDto(reportTypeCode, reportCode, reportLevel, reportYear, categorySetCode, reportLea, reportSchool, reportFilter, reportSubFilter, reportGrade, organizationalIdList, sort, skip, take);
+            GenerateReportDataDto reportDto = _generateReportService.GetReportDataDto(reportTypeCode, reportCode, reportLevel, reportYear, categorySetCode, "", reportLea, reportSchool, reportFilter, reportSubFilter, reportGrade, organizationalIdList, sort, skip, take);
 
             return this.JsonWithoutEmptyProperties(reportDto);
         }

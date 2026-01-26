@@ -354,7 +354,7 @@ BEGIN
 	else if @reportLevel = 'lea'
 	begin
 		set @idFieldsSQL = '
-		s.LeaIdentifierNces as OrganizationIdentifierNces,
+		isnull(s.LeaIdentifierNces, '''') as OrganizationIdentifierNces,
 		s.LeaIdentifierSea as OrganizationIdentifierSea,
 		s.LeaOrganizationName as OrganizationName,
 		s.StateANSICode as ParentOrganizationIdentifierSea'
@@ -362,7 +362,7 @@ BEGIN
 	else if @reportLevel = 'sch'
 	begin
 		set @idFieldsSQL = '
-		s.SchoolIdentifierNces as OrganizationIdentifierNces,
+		isnull(s.SchoolIdentifierNces, '''') as OrganizationIdentifierNces,
 		s.SchoolIdentifierSea as OrganizationIdentifierSea,
 		s.NameOfInstitution as OrganizationName,
 		s.LeaIdentifierSea as ParentOrganizationIdentifierSea'
@@ -645,12 +645,10 @@ BEGIN
 
 					select @sql = @sql + 
 					'
-					select distinct StudentIdentifierState
+					select distinct ske.StudentIdentifierState
 					into #excludeStudents
-					from staging.ProgramParticipationSpecialEducation
-					where IDEAIndicator = 1
-					and isnull(ProgramParticipationEndDate, ''' + @calculatedSYEndDate + ''') >= ''' + @calculatedSYEndDate + '''
-					order by StudentIdentifierState
+					from Staging.K12Enrollment ske
+					where isnull(ske.EnrollmentExitDate, ''' + @calculatedSYEndDate + ''') >= ''' + @calculatedSYEndDate + '''
 					' + char(10)
 
 					select @sql = @sql + 
@@ -1360,6 +1358,10 @@ BEGIN
 		else if @dimensionTable = 'DimAssessmentAdministrations'
 		begin
 			set @dimensionPrimaryKey = 'DimAssessmentAdministrationId'
+		end
+		else if @dimensionTable = 'DimPSEnrollmentStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimPSEnrollmentStatusId'
 		end
 			
 		set @factKey = REPLACE(@dimensionPrimaryKey, 'Dim', '')
@@ -4186,7 +4188,7 @@ BEGIN
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					select distinct fact.K12Student_CurrentId,  studentStatus.DimK12EnrollmentStatusId, p.K12StudentStudentIdentifierState
+					select distinct fact.K12Student_CurrentId,  studentStatus.DimPsEnrollmentStatusId, p.K12StudentStudentIdentifierState
 					from rds.' + @factTable + ' fact '
 
 			if @reportLevel = 'lea'
@@ -4214,12 +4216,12 @@ BEGIN
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				inner join rds.DimK12EnrollmentStatuses studentStatus 
-					on studentStatus.DimK12EnrollmentStatusId=fact.K12EnrollmentStatusId
-				where studentStatus.PostSecondaryEnrollmentStatusEdFactsCode<>''MISSING''	
+				inner join rds.DimPSEnrollmentStatuses studentStatus 
+					on studentStatus.DimPSEnrollmentStatusId = fact.PSEnrollmentStatusId
+				where studentStatus.PostSecondaryEnrollmentActionEdFactsCode <> ''MISSING''	
 			) rules
 				on fact.K12Student_CurrentId = rules.K12Student_CurrentId  
-				and fact.K12EnrollmentStatusId = rules.DimK12EnrollmentStatusId'
+				and fact.PSEnrollmentStatusId = rules.DimPSEnrollmentStatusId'
 		end
 		else if @reportCode in ('204')
 		begin
@@ -6318,31 +6320,35 @@ BEGIN
 							'
 					END
 
-					if @reportLevel = 'sea'
+					if @reportLevel = 'sea' and @categoryCode = 'TOT'
 					begin
 							set @sql = @sql + '						
 							;with cte as (
-								select K12StudentStudentIdentifierState, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState ORDER BY EnrollmentEntryDateId) as ''rownum'' 
+								select K12StudentStudentIdentifierState, EnrollmentEntryDateId, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState ORDER BY EnrollmentEntryDateId) as ''rownum'' 
 								from #CategorySet
 							)
 							delete s from #CategorySet s
-							inner join cte c on s.K12StudentStudentIdentifierState = c.K12StudentStudentIdentifierState
-							where  rownum > 1
+							inner join cte c 
+								on s.K12StudentStudentIdentifierState = c.K12StudentStudentIdentifierState
+							where rownum > 1 
+								and s.EnrollmentEntryDateId = c.EnrollmentEntryDateId
 							'
 					end 
-					else if @reportLevel = 'lea'
+					else if @reportLevel = 'lea' and @categoryCode = 'TOT'
 					begin
 							set @sql = @sql + '						
 							;with cte as (
-								select K12StudentStudentIdentifierState, DimLeaId, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState, DimLeaId ORDER BY EnrollmentEntryDateId) as ''rownum'' 
+								select K12StudentStudentIdentifierState, DimLeaId, EnrollmentEntryDateId, ROW_NUMBER() OVER(PARTITION BY K12StudentStudentIdentifierState, DimLeaId ORDER BY EnrollmentEntryDateId) as ''rownum'' 
 								from #CategorySet
 							)
 							delete s from #CategorySet s
-							inner join cte c on s.K12StudentStudentIdentifierState = c.K12StudentStudentIdentifierState and s.DimLeaId = c.DimLeaId
-							where  rownum > 1
+							inner join cte c 
+								on s.K12StudentStudentIdentifierState = c.K12StudentStudentIdentifierState 
+								and s.DimLeaId = c.DimLeaId
+							where rownum > 1 
+								and s.EnrollmentEntryDateId = c.EnrollmentEntryDateId
 							'
 					end 
-
 			end
 			else
 			-- all other report codes
@@ -7865,7 +7871,7 @@ BEGIN
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
 				AND RIGHT(a.TableTypeAbbrv, 2) = ''LG''
-				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'')
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''REGPARTWOACC'', ''REGPARTWACC'', ''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'')
 				AND NOT EXISTS (Select 1 from app.ToggleAssessments b
 									where a.GradeLevel = b.Grade
 									and a.AssessmentAcademicSubject = b.Subject
@@ -7886,11 +7892,21 @@ BEGIN
 				delete a from @reportData a
 				where a.' + @factField + ' = 0
 				AND RIGHT(a.TableTypeAbbrv, 2) = ''HS''
-				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''ALTPARTALTACH'')
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR NOT IN (''ALTPARTALTACH'', ''MEDEXEMPT'', ''NPART'')
 				AND NOT EXISTS (Select 1 from app.ToggleAssessments b
 									where a.GradeLevel = b.Grade
 									and a.AssessmentAcademicSubject = b.Subject
 									and a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR = (''P'' + replace(b.AssessmentTypeCode, ''ASMT'', ''ASM'')))'
+
+			set @sql = @sql + ' 
+				delete a from @reportData a
+				where a.' + @factField + ' = 0
+				AND a.ASSESSMENTREGISTRATIONPARTICIPATIONINDICATOR IN (''MEDEXEMPT'', ''NPART'')
+				AND NOT EXISTS (Select distinct b.Grade 
+									from app.ToggleAssessments b
+									where a.GradeLevel = b.Grade
+									and a.AssessmentAcademicSubject = b.Subject)'
+
 		end
 		/*Student count for displaced homemakers ?  If the state does not have displaced homemakers at the secondary level, leave that category set out of the file */
 		else if @reportCode in ('082','083','142','154','155','156','157','158') and @toggleDisplacedHomemakers = '0'
@@ -8197,6 +8213,3 @@ BEGIN
 	end
 	return @sql
 END
-GO
-
-
