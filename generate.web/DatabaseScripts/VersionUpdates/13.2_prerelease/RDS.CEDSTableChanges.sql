@@ -177,12 +177,10 @@ CREATE NONCLUSTERED INDEX [IX_DimAssessmentAdministrations_AssessmentAdministrat
 
 
 
-PRINT N'Creating Index [RDS].[DimAssessmentAdministrations].[IX_DimAssessmentAdministrations_AssessmentAdministrationSubjectEdFactsCode]...';
+--PRINT N'Creating Index [RDS].[DimAssessmentAdministrations].[IX_DimAssessmentAdministrations_AssessmentAdministrationSubjectEdFactsCode]...';
 
-
-
-CREATE NONCLUSTERED INDEX [IX_DimAssessmentAdministrations_AssessmentAdministrationSubjectEdFactsCode]
-    ON [RDS].[DimAssessmentAdministrations]([AssessmentIdentifier] ASC);
+--CREATE NONCLUSTERED INDEX [IX_DimAssessmentAdministrations_AssessmentAdministrationSubjectEdFactsCode]
+--    ON [RDS].[DimAssessmentAdministrations]([AssessmentIdentifier] ASC);
 
 --ALTER TABLE RDS.DimAssessmentAdministrations ALTER COLUMN AssessmentIdentifier nvarchar(40) NULL;
 --ALTER TABLE RDS.DimAssessmentAdministrations ALTER COLUMN AssessmentAdministrationAssessmentFamily nvarchar(40) NULL;

@@ -4,6 +4,7 @@ VersionUpdates\\13.2_prerelease,App.TableChanges.sql,0
 VersionUpdates\\13.2_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.2_prerelease,RDS.RemovePropertiesAndConstraints.sql,0
 VersionUpdates\\13.2_prerelease,RDS.CEDSTableChanges.sql,0
+VersionUpdates\\13.2_prerelease,RDS.AddExtendedProperties.sql,0
 VersionUpdates\\13.2_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\13.2_prerelease,App.Metadata.sql,0
 VersionUpdates\\13.2_prerelease,JunkTablePopulation.sql,0

@@ -9528,5 +9528,3 @@ ALTER TABLE [RDS].[BridgeK12StudentDisciplineDiscplineReasons] DROP CONSTRAINT [
 DROP INDEX [IX_FactStudentCountReports_CategorySetCode_DISABILITY_Report] ON [RDS].[ReportEDFactsK12StudentCounts]
 
 ALTER TABLE [RDS].[BridgeK12StudentDisciplineDiscplineReasons] DROP CONSTRAINT [FK_BridgeK12StudentDisciplineDiscplineReasons_DimDisciplineReasons]
-
-DROP INDEX [IX_DimAssessmentAdministrations_AssessmentAdministrationSubjectEdFactsCode] ON [RDS].[DimAssessmentAdministrations]
