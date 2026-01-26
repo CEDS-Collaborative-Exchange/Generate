@@ -9,6 +9,12 @@ CREATE VIEW RDS.vwDimK12StaffCategories AS
 		, sssrd2.InputCode AS SpecialEducationSupportServicesCategoryMap
 		, TitleIProgramStaffCategoryCode 
 		, sssrd3.InputCode AS TitleIProgramStaffCategoryMap
+		, TitleIIILanguageInstructionIndicatorCode
+		, CASE TitleIIILanguageInstructionIndicatorCode
+			WHEN 'Yes' THEN 1
+			WHEN 'No' THEN 0
+			ELSE -1
+		END AS TitleIIILanguageInstructionIndicatorMap
 	FROM rds.DimK12StaffCategories rdksc
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1

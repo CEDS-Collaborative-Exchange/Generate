@@ -16,5 +16,8 @@ AS
 		  	, f.[NameOfInstitution]
 		  	, f.[SchoolOperationalStatus]
 		  	, f.[SchoolTypeCode]
+	  		, f.[EdFactsCertificationStatusEdFactsCode]
+			, f.[TitleIIILanguageInstructionIndicatorCode]
 	FROM [debug].[vwStaff_FactTable] f
-	WHERE SchoolOperationalStatus IN ('Open','New') 
+	WHERE SchoolOperationalStatus NOT IN ('Closed', 'Inactive', 'FutureAgency') 
+	AND TitleIIILanguageInstructionIndicatorCode = 'Yes'

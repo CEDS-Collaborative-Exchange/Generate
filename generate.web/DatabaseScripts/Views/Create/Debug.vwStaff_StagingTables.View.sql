@@ -24,6 +24,7 @@ CREATE VIEW [Debug].[vwStaff_StagingTables] AS
 				, AssignmentEndDate
 				, EdFactsTeacherInexperiencedStatus
 				, EDFactsTeacherOutOfFieldStatus
+				, TitleIIILanguageInstructionIndicator
 				, RecordStartDateTime
 				, RecordEndDateTime
 
