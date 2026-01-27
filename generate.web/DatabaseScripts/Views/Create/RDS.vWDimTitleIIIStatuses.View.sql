@@ -20,8 +20,8 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 		, sssrd2.InputCode as TitleIIIAccountabilityProgressStatusMap
 		, rdt3s.TitleIIILanguageInstructionProgramTypeCode
 		, sssrd3.InputCode as TitleIIILanguageInstructionProgramTypeMap
-		, rdt3s.EnglishLearnersExitedStatusCode
-		, CASE rdt3s.EnglishLearnersExitedStatusCode
+		, rdt3s.EnglishLearnerExitedStatusCode
+		, CASE rdt3s.EnglishLearnerExitedStatusCode
 			WHEN 'Yes' THEN 1 
 			WHEN 'No' THEN 0
 			ELSE -1

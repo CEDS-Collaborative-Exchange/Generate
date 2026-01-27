@@ -1,13 +1,3 @@
-/**********************************************************************
-Author: AEM Corp
-Date:	1/6/2022
-Description: Migrates Assessment Data from Staging to RDS.FactK12StudentAssessments
-
-NOTE: This Stored Procedure processes files: 175, 178, 179, 185, 188, 189, 224, 225
-
-JW 11/16/2023: Made changes to address join issues
-JW 4/10/2024: Added NorD Logic
-************************************************************************/
 CREATE PROCEDURE [Staging].[Staging-to-FactK12StudentAssessment]
 	@SchoolYear SMALLINT
 AS
@@ -176,8 +166,8 @@ BEGIN
 			AssessmentAdministrationCode, AssessmentAdministrationName,
 			convert(date, AssessmentAdministrationStartDate) AssessmentAdministrationStartDate,
 			convert(date, AssessmentAdministrationFinishDate) AssessmentAdministrationFinishDate,
-			AssessmentAdministrationAssessmentFamily, SchoolIdentifierSEA, SchoolIdentificationSystem,
-			LEAIdentifierSea, LEAIdentificationSystem, AssessmentAdministrationOrganizationName, 
+			AssessmentAdministrationAssessmentFamily, SchoolIdentifier, SchoolIdentificationSystem,
+			LocalEducationAgencyIdentifier, LEAIdentificationSystem, AssessmentAdministrationOrganizationName, 
 			AssessmentAdministrationPeriodDescription, AssessmentSecureIndicator
 		INTO #tempAssessmentAdministrations
 		FROM RDS.DimAssessmentAdministrations
@@ -186,7 +176,7 @@ BEGIN
 
 		CREATE INDEX IX_tempAssessmentAdministrations 
 			ON #tempAssessmentAdministrations(
-				LeaIdentifierSea, SchoolIdentifierSea,
+				LocalEducationAgencyIdentifier, SchoolIdentifier,
 				AssessmentAdministrationAssessmentFamily, AssessmentAdministrationStartDate, AssessmentAdministrationFinishDate)
 
 	-- #tempIdeaStatus
@@ -540,8 +530,8 @@ BEGIN
 				AND rdas.ProgressLevelCode								= 'MISSING'
 		--assessment administration (rds)
 			LEFT JOIN #tempAssessmentAdministrations rdaa
-				ON sar.LeaIdentifierSeaAccountability 								= rdaa.LEAIdentifierSea
-				AND sar.SchoolIdentifierSea 										= rdaa.SchoolIdentifierSea
+				ON sar.LeaIdentifierSeaAccountability 								= rdaa.LocalEducationAgencyIdentifier
+				AND sar.SchoolIdentifierSea 										= rdaa.SchoolIdentifier
 				AND sar.AssessmentIdentifier 										= rdaa.AssessmentIdentifier
 				AND ISNULL(sar.AssessmentFamilyTitle, '') 							= ISNULL(rdaa.AssessmentAdministrationAssessmentFamily, '')
 				AND ISNULL(sar.AssessmentAdministrationStartDate, '1900-01-01') 	= ISNULL(rdaa.AssessmentAdministrationStartDate, '1900-01-01')

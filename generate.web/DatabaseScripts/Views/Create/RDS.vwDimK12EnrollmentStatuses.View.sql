@@ -9,12 +9,10 @@ AS
 		, sssrd2.InputCode AS EntryTypeMap        
 		, ExitOrWithdrawalTypeCode                
 		, sssrd3.InputCode AS ExitOrWithdrawalTypeMap         
-		, PostSecondaryEnrollmentStatusCode                
-		, sssrd4.InputCode AS PostSecondaryEnrollmentStatusMap         
-		, EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode
-		, sssrd5.InputCode AS EdFactsAcademicOrCareerAndTechnicalOutcomeTypeMap         
-		, EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode
-		, sssrd6.InputCode AS EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeMap         
+		, AdjustedExitOrWithdrawalTypeCode                
+		, sssrd4.InputCode AS AdjustedExitOrWithdrawalTypeMap         
+		, ExitOrWithdrawalStatusCode
+		, sssrd5.InputCode AS ExitOrWithdrawalStatusMap         
 	FROM rds.DimK12EnrollmentStatuses rdkes
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
@@ -30,14 +28,10 @@ AS
 		AND sssrd3.TableName = 'RefExitOrWithdrawalType'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd4
-		ON rdkes.PostSecondaryEnrollmentStatusCode = sssrd4.OutputCode
-		AND sssrd4.TableName = 'RefPostsecondaryEnrollmentStatus'
+		ON rdkes.AdjustedExitOrWithdrawalTypeCode = sssrd4.OutputCode
+		AND sssrd4.TableName = 'RefAdjustedExitOrWithdrawalType'
 		AND rsy.SchoolYear = sssrd4.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd5
-		ON rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = sssrd5.OutputCode
-		AND sssrd5.TableName = 'refEdFactsAcademicOrCareerAndTechnicalOutcomeType'
+		ON rdkes.ExitOrWithdrawalStatusCode = sssrd5.OutputCode
+		AND sssrd5.TableName = 'RefExitOrWithdrawalStatus'
 		AND rsy.SchoolYear = sssrd5.SchoolYear
-	LEFT JOIN staging.SourceSystemReferenceData sssrd6
-		ON rdkes.EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = sssrd6.OutputCode
-		AND sssrd6.TableName = 'refEdFactsAcademicOrCareerAndTechnicalOutcomeExitType'
-		AND rsy.SchoolYear = sssrd6.SchoolYear

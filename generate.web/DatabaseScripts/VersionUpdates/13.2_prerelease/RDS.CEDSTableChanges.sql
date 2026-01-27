@@ -2091,7 +2091,7 @@ ALTER TABLE [RDS].[DimPsDemographics] ALTER COLUMN [SexDescription] NVARCHAR (20
 DROP TABLE [RDS].[DimPsEnrollmentStatuses];
 
 CREATE TABLE [RDS].[DimPsEnrollmentStatuses] (
-    [DimPsEnrollmentStatusId]                      INT            IDENTITY (1, 1) NOT NULL,
+    [DimPsEnrollmentStatusId]                      BIGINT            IDENTITY (1, 1) NOT NULL,
     [PostsecondaryExitOrWithdrawalTypeCode]        NVARCHAR (50)  CONSTRAINT [DF_DimPsEnrollmentStatuses_PostsecondaryExitOrWithdrawalTypeCode] DEFAULT ('MISSING') NOT NULL,
     [PostsecondaryExitOrWithdrawalTypeDescription] NVARCHAR (200) CONSTRAINT [DF_DimPsEnrollmentStatuses_PostsecondaryExitOrWithdrawalTypeDescription] DEFAULT ('MISSING') NOT NULL,
     [PostsecondaryEnrollmentStatusCode]            NVARCHAR (50)  CONSTRAINT [DF_DimPsEnrollmentStatuses_PostsecondaryEnrollmentStatusCode] DEFAULT ('MISSING') NOT NULL,
