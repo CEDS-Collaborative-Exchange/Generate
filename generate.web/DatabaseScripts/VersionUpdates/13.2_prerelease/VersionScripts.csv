@@ -38,6 +38,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql
 StoredProcedures\\Create,Staging.Staging-to-FactK12StaffCounts.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_Dropout.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_Dropout.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentCounts_HSGradPSEnroll.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentCounts_TitleIIIELSY.StoredProcedure.sql,0
