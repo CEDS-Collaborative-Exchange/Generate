@@ -1,14 +1,14 @@
 CREATE VIEW RDS.vwDimComprehensiveAndTargetedSupports
 AS
 	SELECT
-		cts.DimComprehensiveAndTargetedSupportId
-		, sy.SchoolYear
-		, cts.AdditionalTargetedSupportAndImprovementStatusCode
-		, ssrd2.InputCode AS [AdditionalTargetedSupportAndImprovementStatusMap]
-		, cts.ComprehensiveSupportAndImprovementStatusCode
-		, ssrd3.InputCode AS [ComprehensiveSupportAndImprovementStatusMap]
-		, cts.TargetedSupportAndImprovementStatusCode
-		, ssrd4.InputCode AS [TargetedSupportAndImprovementStatusMap]
+		cts.DimComprehensiveAndTargetedSupportId,
+		sy.SchoolYear,
+		cts.AdditionalTargetedSupportAndImprovementStatusCode,
+		[AdditionalTargetedSupportAndImprovementStatusMap] = ISNULL(ssrd2.InputCode,'MISSING'),
+		cts.ComprehensiveSupportAndImprovementStatusCode,
+		[ComprehensiveSupportAndImprovementStatusMap] = ISNULL(ssrd3.InputCode,'MISSING'),
+		cts.TargetedSupportAndImprovementStatusCode,
+		[TargetedSupportAndImprovementStatusMap] = ISNULL(ssrd4.InputCode,'MISSING')
 	FROM RDS.DimComprehensiveAndTargetedSupports cts
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM Staging.SourceSystemReferenceData) sy
 	LEFT JOIN Staging.SourceSystemReferenceData ssrd2
@@ -23,3 +23,4 @@ AS
 		ON cts.TargetedSupportAndImprovementStatusCode = ssrd4.OutputCode
 		AND ssrd4.TableName = 'RefTargetedSupportAndImprovementStatus'
 		AND sy.SchoolYear = ssrd4.SchoolYear
+

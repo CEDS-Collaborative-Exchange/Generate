@@ -325,9 +325,9 @@ BEGIN
 		INNER JOIN RDS.vwDimMilitaryStatuses rdmils
 			ON sps.SchoolYear = rdmils.SchoolYear
 			AND ISNULL(sps.MilitaryConnectedStudentIndicator, 'MISSING') = ISNULL(rdmils.MilitaryConnectedStudentIndicatorMap, rdmils.MilitaryConnectedStudentIndicatorCode)
-			AND rdmils.MilitaryActiveStudentIndicatorCode = 'MISSING'
+			AND rdmils.ActiveMilitaryStatusIndicatorCode = 'MISSING'
 			AND rdmils.MilitaryBranchCode = 'MISSING'
-			AND rdmils.MilitaryVeteranStudentIndicatorCode = 'MISSING'
+			AND rdmils.MilitaryVeteranStatusIndicatorCode = 'MISSING'
 		WHERE sps.MilitaryConnectedStudentIndicator is not null
 
 		CREATE INDEX IX_tempMilitaryStatus 
@@ -858,11 +858,11 @@ BEGIN
 		AND rda.AssessmentTypeAdministeredCode in ('REGASSWACC')
 
 	--Update the Fact Assessment table with the Accomodation Id
-		UPDATE f
-		SET FactK12StudentAssessmentAccommodationId = rbsaa.FactK12StudentAssessmentAccommodationId
-		FROM RDS.FactK12StudentAssessments f
-			JOIN RDS.BridgeK12StudentAssessmentAccommodations rbsaa
-				ON f.FactK12StudentAssessmentId = rbsaa.FactK12StudentAssessmentId
+		--UPDATE f
+		--SET FactK12StudentAssessmentAccommodationId = rbsaa.FactK12StudentAssessmentAccommodationId
+		--FROM RDS.FactK12StudentAssessments f
+		--	JOIN RDS.BridgeK12StudentAssessmentAccommodations rbsaa
+		--		ON f.FactK12StudentAssessmentId = rbsaa.FactK12StudentAssessmentId
 
 	END TRY
 	BEGIN CATCH

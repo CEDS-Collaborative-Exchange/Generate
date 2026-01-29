@@ -1,46 +1,56 @@
 CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 	SELECT
-		rdt3s.DimTitleIIIStatusId
+		  rdt3s.DimTitleIIIStatusId
 		, rsy.SchoolYear
-		, rdt3s.TitleIIIImmigrantParticipationStatusCode
-		, CASE rdt3s.TitleIIIImmigrantParticipationStatusCode
+
+		,rdt3s.TitleIIIImmigrantParticipationStatusCode
+		,CASE rdt3s.TitleIIIImmigrantParticipationStatusCode
 			WHEN 'Yes' then 1
 			WHEN 'No' then 0
 			ELSE -1
-		  END AS TitleIIIImmigrantParticipationStatusMap
+		END	as TitleIIIImmigrantParticipationStatusMap
+
 		, rdt3s.ProgramParticipationTitleIIILiepCode
 		, CASE rdt3s.ProgramParticipationTitleIIILiepCode
 			WHEN 'Yes' THEN 1 
 			WHEN 'No' THEN 0
 			ELSE -1
-		  END AS TitleIIIProgramParticipationLiepMap
+		  END AS ProgramParticipationTitleIIILiepMap
+
 		, rdt3s.ProficiencyStatusCode
-		, sssrd1.InputCode AS ProficiencyStatusMap
+		, sssrd3.OutputCode AS ProficiencyStatusMap
+
 		, rdt3s.TitleIIIAccountabilityProgressStatusCode
-		, sssrd2.InputCode as TitleIIIAccountabilityProgressStatusMap
+		, sssrd4.OutputCode as TitleIIIAccountabilityProgressStatusMap
+
 		, rdt3s.TitleIIILanguageInstructionProgramTypeCode
-		, sssrd3.InputCode as TitleIIILanguageInstructionProgramTypeMap
-		, rdt3s.EnglishLearnerExitedStatusCode
-		, CASE rdt3s.EnglishLearnerExitedStatusCode
-			WHEN 'Yes' THEN 1 
-			WHEN 'No' THEN 0
-			ELSE -1
-		  END AS EnglishLearnersExitedStatusMap
-  	FROM rds.DimTitleIIIStatuses rdt3s
-	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
-	--ProficiencyStatusCode
-	LEFT JOIN staging.SourceSystemReferenceData sssrd1
+		, sssrd5.OutputCode as TitleIIILanguageInstructionProgramTypeMap
+
+	FROM RDS.DimTitleIIIStatuses rdt3s
+
+
+	CROSS JOIN (SELECT DISTINCT SchoolYear FROM Staging.SourceSystemReferenceData) rsy
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd1
 		ON rdt3s.ProficiencyStatusCode = sssrd1.OutputCode
-		AND sssrd1.TableName = 'refProficiencyStatus'
+		AND sssrd1.TableName = 'RefTitleIIIProfessionalDevelopmentType'
 		AND rsy.SchoolYear = sssrd1.SchoolYear
-	--TitleIIIAccountabilityProgressStatusCode
-	LEFT JOIN staging.SourceSystemReferenceData sssrd2
+		
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd2
 		ON rdt3s.TitleIIIAccountabilityProgressStatusCode = sssrd2.OutputCode
 		AND sssrd2.TableName = 'RefTitleIIIAccountability'
 		AND rsy.SchoolYear = sssrd2.SchoolYear
-	--TitleIIILanguageInstructionProgramTypeCode
-	LEFT JOIN staging.SourceSystemReferenceData sssrd3
-		ON rdt3s.TitleIIILanguageInstructionProgramTypeCode = sssrd3.OutputCode
-		AND sssrd3.TableName = 'RefTitleIIILanguageInstructionProgramType'
+
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd3
+		ON rdt3s.ProficiencyStatusCode = sssrd3.OutputCode
+		AND sssrd3.TableName = 'refProficiencyStatus'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
 
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd4
+		ON rdt3s.TitleIIIAccountabilityProgressStatusCode = sssrd4.OutputCode
+		AND sssrd4.TableName = 'RefTitleIIIAccountability'
+		AND rsy.SchoolYear = sssrd4.SchoolYear
+
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd5
+		ON rdt3s.TitleIIILanguageInstructionProgramTypeCode = sssrd5.OutputCode
+		AND sssrd5.TableName = 'RefTitleIIILanguageInstructionProgramType'
+		AND rsy.SchoolYear = sssrd5.SchoolYear
