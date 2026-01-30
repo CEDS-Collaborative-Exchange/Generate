@@ -5455,7 +5455,7 @@ CREATE TABLE [RDS].[FactK12StudentEnrollments] (
     [K12RetentionStatusId]                       INT            CONSTRAINT [DF_FactK12StudentEnrollments_K12RetentionStatusId] DEFAULT ((-1)) NOT NULL,
     [K12DropoutStatusId]                         INT            CONSTRAINT [DF_FactK12StudentEnrollments_K12DropoutStatusId] DEFAULT ((-1)) NOT NULL,
     [CteOutcomeIndicatorId]                      INT            CONSTRAINT [DF_FactK12StudentEnrollments_CteOutcomeIndicatorId] DEFAULT ((-1)) NOT NULL,
-    [PsEnrollmentStatusId]                       INT            CONSTRAINT [DF_FactK12StudentEnrollments_PsEnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
+    [PsEnrollmentStatusId]                       BIGINT         CONSTRAINT [DF_FactK12StudentEnrollments_PsEnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
     [K12DemographicId]                           INT            CONSTRAINT [DF_FactK12StudentEnrollments_K12DemographicId] DEFAULT ((-1)) NOT NULL,
     [IdeaStatusId]                               INT            CONSTRAINT [DF_FactK12StudentEnrollments_IdeaStatusId] DEFAULT ((-1)) NOT NULL,
     [DisabilityStatusId]                         INT            CONSTRAINT [DF_FactK12StudentEnrollments_DisabilityStatusId] DEFAULT ((-1)) NOT NULL,
@@ -6589,7 +6589,7 @@ CREATE TABLE [RDS].[FactPsStudentEnrollments] (
     [EntryDateIntoPostSecondaryId] INT    CONSTRAINT [DF_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId] DEFAULT ((-1)) NOT NULL,
     [EnrollmentEntryDateId]        INT    CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentEntryDateId] DEFAULT ((-1)) NOT NULL,
     [EnrollmentExitDateId]         INT    CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentExitDateId] DEFAULT ((-1)) NOT NULL,
-    [PsEnrollmentStatusId]         INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsEnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
+    [PsEnrollmentStatusId]         BIGINT    CONSTRAINT [DF_FactPsStudentEnrollments_PsEnrollmentStatusId] DEFAULT ((-1)) NOT NULL,
     [PsInstitutionStatusId]        INT    CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionStatusId] DEFAULT ((-1)) NOT NULL,
     [StudentCount]                 INT    CONSTRAINT [DF_FactPsStudentEnrollments_StudentCount] DEFAULT ((1)) NOT NULL,
     CONSTRAINT [PK_FactPsStudentEnrollments] PRIMARY KEY CLUSTERED ([FactPsStudentEnrollmentId] ASC) WITH (DATA_COMPRESSION = PAGE)
