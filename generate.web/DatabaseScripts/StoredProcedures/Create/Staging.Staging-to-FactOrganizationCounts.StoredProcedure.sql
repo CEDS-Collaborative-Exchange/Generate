@@ -228,7 +228,7 @@ BEGIN
 				THEN round(soff.FederalProgramsFundingAllocation,0) 
 				ELSE 0 
 			END 															AS TitleIPartAAllocations
-			, -1  															AS HomelessChildrenandYouthReservation
+			, ISNULL(round(soff.HomelessChildrenandYouthReservation,0),0)	AS HomelessChildrenandYouthReservation
 			, -1															AS AuthorizingBodyCharterSchoolAuthorizerId
 			, -1															AS SecondaryAuthorizingBodyCharterSchoolAuthorizerId
 			, -1															AS CharterSchoolManagementOrganizationId
@@ -237,7 +237,7 @@ BEGIN
 			, NULL															AS SchoolImprovementFunds
 			, ISNULL(organizationStatus.DimK12OrganizationStatusId,-1)		AS K12OrganizationStatusId
 			, -1															AS K12SchoolStatusId
-			, -1															AS K12SchoolstateStatusId
+			, -1															AS K12SchoolStateStatusId
 			, ISNULL(soff.FederalProgramFundingAllocationType, 'MISSING')	AS FederalProgramsFundingAllocationType
 			, ISNULL(soff.FederalProgramCode, 'MISSING')					AS FederalProgramCode
 			, CONVERT(int, ISNULL(soff.FederalProgramsFundingAllocation,0))	AS FederalProgramsFundingAllocation
@@ -265,7 +265,6 @@ BEGIN
 			ON sko.LeaIdentifierSea = soff.OrganizationIdentifier
 			AND sko.SchoolYear = soff.SchoolYear
 			AND soff.OrganizationType in (select LEAOrganizationType from #leaOrganizationTypes)
-			--AND soff.REAPAlternativeFundingStatusCode IS NOT NULL
 		LEFT JOIN RDS.vwDimK12OrganizationStatuses organizationStatus
 			ON organizationStatus.SchoolYear = sko.SchoolYear
 			AND ISNULL(sko.LEA_GunFreeSchoolsActReportingStatus, 'MISSING') = ISNULL(organizationStatus.GunFreeSchoolsActReportingStatusMap, organizationStatus.GunFreeSchoolsActReportingStatusCode)
