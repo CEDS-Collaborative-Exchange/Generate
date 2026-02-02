@@ -2,8 +2,8 @@ Param(
   [string] $version = "13.2_prerelease",
   [string] $sqlServer = "(localdb)\MSSQLLocalDB",
   [string] $db = "generate",
-  [string] $user = "generate",
-  [string] $password = "78h&LUogZ#qvZ9i")
+  [string] $user,
+  [string] $password)
 
 Echo "Version = $version"
 Echo "Server = $sqlServer"
