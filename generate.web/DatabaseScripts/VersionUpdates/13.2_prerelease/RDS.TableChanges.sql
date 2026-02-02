@@ -110,4 +110,18 @@
 	END
 
 
+-----------------------------------------------
+--File 067 changes	
+-----------------------------------------------
+
+    IF COL_LENGTH('RDS.DimK12StaffCategories', 'TitleIIILanguageInstructionIndicatorCode') IS NULL
+    BEGIN
+        ALTER TABLE RDS.DimK12StaffCategories ADD TitleIIILanguageInstructionIndicatorCode VARCHAR(50) NULL;
+    END
+	
+    IF COL_LENGTH('RDS.DimK12StaffCategories', 'TitleIIILanguageInstructionIndicatorDescription') IS NULL
+    BEGIN
+        ALTER TABLE RDS.DimK12StaffCategories ADD TitleIIILanguageInstructionIndicatorDescription VARCHAR(200) NULL;
+    END
+
 

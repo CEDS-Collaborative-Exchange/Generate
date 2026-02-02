@@ -21,6 +21,12 @@ BEGIN
 		IF OBJECT_ID(N'tempdb..#vwHomelessnessStatuses') IS NOT NULL DROP TABLE #vwHomelessnessStatuses
 		IF OBJECT_ID(N'tempdb..#vwMigrantStatuses') IS NOT NULL DROP TABLE #vwMigrantStatuses
 		IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
+		IF OBJECT_ID(N'tempdb..#tempELStatus') IS NOT NULL DROP TABLE #tempELStatus
+		IF OBJECT_ID(N'tempdb..#tempMigrantStatus') IS NOT NULL DROP TABLE #tempMigrantStatus
+		IF OBJECT_ID(N'tempdb..#tempHomelessStatus') IS NOT NULL DROP TABLE #tempHomelessStatus
+		IF OBJECT_ID(N'tempdb..#tempEcoDisStatus') IS NOT NULL DROP TABLE #tempEcoDisStatus
+		IF OBJECT_ID(N'tempdb..#tempIdeaStatus') IS NOT NULL DROP TABLE #tempIdeaStatus
+		IF OBJECT_ID(N'tempdb..#tempDisabilityStatus') IS NOT NULL DROP TABLE #tempDisabilityStatus
 
 	BEGIN TRY
 
@@ -136,6 +142,109 @@ BEGIN
 		CREATE CLUSTERED INDEX ix_tempvwMigrantStatuses
 			ON #vwMigrantStatuses (MigrantStatusMap) --, MigrantEducationProgramEnrollmentTypeCode, ContinuationOfServicesReasonCode, MigrantEducationProgramServicesTypeCode, MigrantPrioritizedForServicesCode, MEPContinuationOfServicesStatusCode, ConsolidatedMepFundsStatusCode);
 
+	--Pull the EL Status into a temp table
+		SELECT DISTINCT 
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, EnglishLearnerStatus
+			, EnglishLearner_StatusStartDate
+			, EnglishLearner_StatusEndDate
+			, SchoolYear
+		INTO #tempELStatus
+		FROM Staging.PersonStatus
+		WHERE SchoolYear = @SchoolYear
+
+	-- Create Index for #tempELStatus 
+		CREATE INDEX IX_tempELStatus 
+			ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusEndDate)
+
+	--Pull the IDEA Status into a temp table
+		SELECT DISTINCT 
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, IdeaIndicator
+			, ProgramParticipationBeginDate
+			, ProgramParticipationEndDate
+			, SchoolYear
+		INTO #tempIdeaStatus
+		FROM Staging.ProgramParticipationSpecialEducation
+		WHERE SchoolYear = @SchoolYear
+
+	-- Create Index for #tempIdeaStatus 
+		CREATE INDEX IX_tempIdeaStatus 
+			ON #tempIdeaStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, ProgramParticipationBeginDate, ProgramParticipationEndDate)
+
+	--Pull the Disability Status into a temp table
+		SELECT DISTINCT 
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, DisabilityStatus
+			, Section504Status
+			, Disability_StatusStartDate
+			, Disability_StatusEndDate
+			, SchoolYear
+		INTO #tempDisabilityStatus
+		FROM Staging.Disability
+		WHERE SchoolYear = @SchoolYear
+
+	-- Create Index for #tempIdeaStatus 
+		CREATE INDEX IX_tempDisabilityStatus 
+			ON #tempDisabilityStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Disability_StatusStartDate, Disability_StatusEndDate)
+
+	--Pull the Migrant Status into a temp table
+		SELECT DISTINCT 
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, MigrantStatus
+			, Migrant_StatusStartDate
+			, Migrant_StatusEndDate
+			, SchoolYear
+		INTO #tempMigrantStatus
+		FROM Staging.PersonStatus
+		WHERE SchoolYear = @SchoolYear
+
+	-- Create Index for #tempMigrantStatus 
+		CREATE INDEX IX_tempMigrantStatus 
+			ON #tempMigrantStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Migrant_StatusStartDate, Migrant_StatusEndDate)
+
+	--Pull the Homeless Status into a temp table
+		SELECT DISTINCT 
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, HomelessnessStatus
+			, Homelessness_StatusStartDate
+			, Homelessness_StatusEndDate
+			, SchoolYear
+		INTO #tempHomelessStatus
+		FROM Staging.PersonStatus
+		WHERE SchoolYear = @SchoolYear
+
+	-- Create Index for #tempHomelessStatus
+		CREATE INDEX IX_tempHomelessStatus 
+			ON #tempHomelessStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Homelessness_StatusStartDate, Homelessness_StatusEndDate)
+
+	--Pull the Economic Disadvantage Status into a temp table
+		SELECT DISTINCT 
+			StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, EconomicDisadvantageStatus
+			, EconomicDisadvantage_StatusStartDate
+			, EconomicDisadvantage_StatusEndDate
+			, SchoolYear
+		INTO #tempEcoDisStatus
+		FROM Staging.PersonStatus
+		WHERE SchoolYear = @SchoolYear
+
+	-- Create Index for #tempEcoDisStatus
+		CREATE INDEX IX_tempEcoDisStatus 
+			ON #tempEcoDisStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, EconomicDisadvantage_StatusStartDate, EconomicDisadvantage_StatusEndDate)
+
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
@@ -243,101 +352,53 @@ BEGIN
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
 			AND ske.EnrollmentEntryDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 	--homeless
-		LEFT JOIN Staging.PersonStatus hmStatus
+		LEFT JOIN #tempHomelessStatus hmStatus
 			ON ske.SchoolYear = hmStatus.SchoolYear		
 			AND ske.StudentIdentifierState = hmStatus.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
-			AND
-				(
-					(
-						ISNULL(hmStatus.Homelessness_StatusStartDate, @SYEndDate) <= ske.EnrollmentEntryDate 
-						AND 
-						ISNULL(hmStatus.Homelessness_StatusEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
-					) 
-					OR 
-					hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
-				)
+			AND ((hmStatus.Homelessness_StatusStartDate <= ske.EnrollmentEntryDate and isnull(hmStatus.Homelessness_StatusEndDate, @SYEndDate) > ske.EnrollmentEntryDate)
+				or (hmStatus.Homelessness_StatusStartDate > ske.EnrollmentEntryDate and hmStatus.Homelessness_StatusStartDate < isnull(ske.EnrollmentExitDate, @SYEndDate)))
 	--idea disability status
-		LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
+		LEFT JOIN #tempIdeaStatus idea
 			ON ske.SchoolYear = idea.SchoolYear		
 			AND ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
-			AND
-				(
-					(
-						ISNULL(idea.ProgramParticipationBeginDate, @SYEndDate) <= ske.EnrollmentEntryDate 
-						AND 
-						ISNULL(idea.ProgramParticipationEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
-					) 
-					OR 
-					idea.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
-				)
+			AND ((idea.ProgramParticipationBeginDate <= ske.EnrollmentEntryDate and isnull(idea.ProgramParticipationEndDate, @SYEndDate) > ske.EnrollmentEntryDate)
+				or (idea.ProgramParticipationBeginDate > ske.EnrollmentEntryDate and idea.ProgramParticipationBeginDate < isnull(ske.EnrollmentExitDate, @SYEndDate)))
 	--504 disability status
-		LEFT JOIN Staging.Disability disab
+		LEFT JOIN #tempDisabilityStatus disab
 			ON ske.SchoolYear = disab.SchoolYear		
 			AND ske.StudentIdentifierState = disab.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(disab.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(disab.SchoolIdentifierSea, '')
-			AND
-				(
-					(
-						ISNULL(disab.Disability_StatusStartDate, @SYEndDate) <= ske.EnrollmentEntryDate 
-						AND 
-						ISNULL(disab.Disability_StatusEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
-					) 
-					OR 
-					disab.Disability_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
-				)
+			AND ((disab.Disability_StatusStartDate <= ske.EnrollmentEntryDate and isnull(disab.Disability_StatusEndDate, @SYEndDate) > ske.EnrollmentEntryDate)
+				or (disab.Disability_StatusStartDate > ske.EnrollmentEntryDate and disab.Disability_StatusStartDate < isnull(ske.EnrollmentExitDate, @SYEndDate)))
 	--economic disadvantage
-		LEFT JOIN Staging.PersonStatus ecoDis
+		LEFT JOIN #tempEcoDisStatus ecoDis
 			ON ske.SchoolYear = ecoDis.SchoolYear		
 			AND ske.StudentIdentifierState = ecoDis.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(ecoDis.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(ecoDis.SchoolIdentifierSea, '')
-			AND
-				(
-					(
-						ISNULL(ecoDis.EconomicDisadvantage_StatusStartDate, @SYEndDate) <= ske.EnrollmentEntryDate 
-						AND 
-						ISNULL(ecoDis.EconomicDisadvantage_StatusEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
-					) 
-					OR 
-					ecoDis.EconomicDisadvantage_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
-				)
+			AND ((ecoDis.EconomicDisadvantage_StatusStartDate <= ske.EnrollmentEntryDate and isnull(ecoDis.EconomicDisadvantage_StatusEndDate, @SYEndDate) > ske.EnrollmentEntryDate)
+				or (ecoDis.EconomicDisadvantage_StatusStartDate > ske.EnrollmentEntryDate and ecoDis.EconomicDisadvantage_StatusStartDate < isnull(ske.EnrollmentExitDate, @SYEndDate)))
 	--english learner
-		LEFT JOIN Staging.PersonStatus el 
+		LEFT JOIN #tempELStatus el 
 			ON ske.SchoolYear = el.SchoolYear		
 			AND ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			AND
-				(
-					(
-						ISNULL(el.EnglishLearner_StatusStartDate, @SYEndDate) <= ske.EnrollmentEntryDate 
-						AND 
-						ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
-					) 
-					OR 
-					el.EnglishLearner_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
-				)
+			AND ((el.EnglishLearner_StatusStartDate <= ske.EnrollmentEntryDate and isnull(el.EnglishLearner_StatusEndDate, @SYEndDate) > ske.EnrollmentEntryDate)
+				or (el.EnglishLearner_StatusStartDate > ske.EnrollmentEntryDate and el.EnglishLearner_StatusStartDate < isnull(ske.EnrollmentExitDate, @SYEndDate)))
 	--migratory status	
-		LEFT JOIN Staging.PersonStatus migrant
+		LEFT JOIN #tempMigrantStatus migrant
 			ON ske.SchoolYear = migrant.SchoolYear		
 			AND ske.StudentIdentifierState = migrant.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
-			AND
-				(
-					(
-						ISNULL(migrant.Migrant_StatusStartDate, @SYEndDate) <= ske.EnrollmentEntryDate 
-						AND 
-						ISNULL(migrant.Migrant_StatusEndDate, @SYEndDate) >= ske.EnrollmentEntryDate
-					) 
-					OR 
-					migrant.Migrant_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate) 
-				)
+			AND ((migrant.Migrant_StatusStartDate <= ske.EnrollmentEntryDate and isnull(migrant.Migrant_StatusEndDate, @SYEndDate) > ske.EnrollmentEntryDate)
+				or (migrant.Migrant_StatusStartDate > ske.EnrollmentEntryDate and migrant.Migrant_StatusStartDate < isnull(ske.EnrollmentExitDate, @SYEndDate)))
 	--race	
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
 			ON ske.SchoolYear = spr.SchoolYear
@@ -384,7 +445,6 @@ BEGIN
 					WHEN spr.RaceMap IS NOT NULL THEN spr.RaceMap
 					ELSE 'Missing'
 				END
-
 		WHERE ske.ExitOrWithdrawalType = @ExitOrWithdrawalTypeMap
 
 	--Final insert into RDS.FactK12StudentCounts table

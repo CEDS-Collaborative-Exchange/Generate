@@ -807,7 +807,6 @@ BEGIN
 				end
 			end -- 002/089
 
-			-- JW 7/20/2023 Fixed FS141 performance issues by using #temp table rather than "In subselect"
 			if @reportCode in ('141')
 			begin
 				select @sql = @sql + char(10) + char(10)
@@ -818,6 +817,8 @@ BEGIN
 				select @sql = @sql +
 					'select distinct 
 						fact.K12StudentId,  
+						fact.LeaId,
+						fact.K12SchoolId,
 						m.DimEnglishLearnerStatusId, 
 						g.DimGradelevelId, 
 						people.K12StudentStudentIdentifierState
@@ -859,6 +860,27 @@ BEGIN
 
 				select @sql = @sql + char(10) + 
 				'CREATE INDEX IDX_Students ON #Students (K12StudentId, K12StudentStudentIdentifierState)' + char(10) + char(10)
+
+				--Added to remove LEAs and Schools that are not reported federally
+				--LEA
+				select @sql = @sql + char(10) + '
+				delete s
+				from #students s
+					inner join rds.DimLeas l
+						on s.LeaId = l.DimLeaID
+						and s.LeaId <> -1
+				where l.ReportedFederally <> 1'
+
+				--School
+				select @sql = @sql + char(10) + '
+				delete s
+				from #students s
+					inner join rds.DimK12Schools sch
+						on s.K12SchoolId = sch.DimK12SchoolId
+						and s.K12SchoolId <> -1
+				where sch.ReportedFederally <> 1'
+
+				select @sql = @sql + char(10)
 
 			end
 
@@ -5064,7 +5086,7 @@ BEGIN
 
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					SELECT distinct fact.K12StaffId, title3.DimTitleIIIStatusId
+					SELECT distinct fact.K12StaffId, staffCat.DimK12StaffCategoryId
 					from rds.' + @factTable + ' fact '
 
 			if @reportLevel = 'lea'
@@ -5085,52 +5107,60 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimTitleIIIStatuses title3 
-					on fact.TitleIIIStatusId = title3.DimTitleIIIStatusId				
+				inner join rds.DimK12StaffCategories staffCat 
+					on fact.K12StaffCategoryId = staffCat.DimK12StaffCategoryId				
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and fact.K12SchoolId <> -1
-				where title3.TitleIIILanguageInstructionProgramTypeCode <> ''MISSING''
+				where staffCat.TitleIIILanguageInstructionIndicatorCode =  ''Yes''
 			) rules
 				on fact.K12StaffId = rules.K12StaffId 
-				and fact.TitleiiiStatusId = rules.DimTitleIIIStatusId'
+				and fact.K12StaffCategoryId = rules.DimK12StaffCategoryId'
 		end
 
 		else if @reportCode in ('203')
 		begin
-
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join (
-					SELECT distinct fact.K12StaffId, s.DimK12StaffStatusId
-					from rds.' + @factTable + ' fact '
-
-			if @reportLevel = 'lea'
-			begin
-				set @sqlCountJoins = @sqlCountJoins + '
-				inner join RDS.DimLeas org 
-					on fact.LeaId = org.DimLeaId
-					AND org.ReportedFederally = 1
-					AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
-			end 
-			if @reportLevel = 'sch'
-			begin
-				set @sqlCountJoins = @sqlCountJoins + '
-				inner join RDS.DimK12Schools org 
-					on fact.K12SchoolId = org.DimK12SchoolId
-					AND org.ReportedFederally = 1
-					AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
-			end
-
-			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimK12StaffStatuses s 
-					on fact.K12StaffStatusId = s.DimK12StaffStatusId				
-					and fact.SchoolYearId = @dimSchoolYearId
-					and fact.FactTypeId = @dimFactTypeId
-					and fact.LeaId <> -1
-			) rules
-				on fact.K12StaffId = rules.K12StaffId 
-				and fact.K12StaffStatusId = rules.DimK12StaffStatusId'
+				inner join #Staff rules
+					on fact.K12StaffId = rules.K12StaffId 
+					and fact.K12StaffStatusId =  rules.DimK12StaffStatusId 
+					and fact.K12StaffCategoryId =  rules.DimK12StaffCategoryId'
 		end
+		-- else if @reportCode in ('203')
+		-- begin
+
+		-- 	set @sqlCountJoins = @sqlCountJoins + '
+		-- 		inner join (
+		-- 			SELECT distinct fact.K12StaffId, s.DimK12StaffStatusId
+		-- 			from rds.' + @factTable + ' fact '
+
+		-- 	if @reportLevel = 'lea'
+		-- 	begin
+		-- 		set @sqlCountJoins = @sqlCountJoins + '
+		-- 		inner join RDS.DimLeas org 
+		-- 			on fact.LeaId = org.DimLeaId
+		-- 			AND org.ReportedFederally = 1
+		-- 			AND org.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')'
+		-- 	end 
+		-- 	if @reportLevel = 'sch'
+		-- 	begin
+		-- 		set @sqlCountJoins = @sqlCountJoins + '
+		-- 		inner join RDS.DimK12Schools org 
+		-- 			on fact.K12SchoolId = org.DimK12SchoolId
+		-- 			AND org.ReportedFederally = 1
+		-- 			AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')'
+		-- 	end
+
+		-- 	set @sqlCountJoins = @sqlCountJoins + '
+		-- 		inner join rds.DimK12StaffStatuses s 
+		-- 			on fact.K12StaffStatusId = s.DimK12StaffStatusId				
+		-- 			and fact.SchoolYearId = @dimSchoolYearId
+		-- 			and fact.FactTypeId = @dimFactTypeId
+		-- 			and fact.LeaId <> -1
+		-- 	) rules
+		-- 		on fact.K12StaffId = rules.K12StaffId 
+		-- 		and fact.K12StaffStatusId = rules.DimK12StaffStatusId'
+		-- end
 
 		else if @reportCode in ('059')
 		begin
@@ -5181,6 +5211,93 @@ BEGIN
 		-- Insert actual count data
 		if(@factReportTable = 'ReportEDFactsK12StaffCounts')
 		begin
+
+			if @reportCode in ('203')
+			begin
+				select @sql = @sql + char(10) + char(10)
+
+				select @sql = @sql + 
+				'if OBJECT_ID(''tempdb..#Staff'') is not null drop table #Staff' + char(10)
+
+				select @sql = @sql +
+					'select distinct 
+						fact.K12StaffId,  
+						fact.LeaId,
+						fact.K12SchoolId,
+						ss.DimK12StaffStatusId, 
+						c.DimK12StaffCategoryId, 
+						people.K12StaffStaffMemberIdentifierState
+					into #Staff
+					from rds.' + @factTable + ' fact
+					inner join rds.DimPeople people
+						on fact.K12StaffId = people.DimPersonId' + char(10)
+					select @sql = @sql +
+						'inner join rds.DimK12StaffStatuses ss 
+							on fact.K12StaffStatusId = ss.DimK12StaffStatusId
+							and fact.SchoolYearId = @dimSchoolYearId
+							and fact.FactTypeId = @dimFactTypeId
+							and fact.LeaId <> -1
+						left join rds.DimK12StaffCategories c 
+							on fact.K12StaffCategoryId = c.DimK12StaffCategoryId
+							and fact.SchoolYearId = @dimSchoolYearId
+							and fact.FactTypeId = @dimFactTypeId
+							and fact.LeaId <> -1' + char(10)
+
+				if @reportLevel = 'LEA'
+					begin
+						select @sql = @sql +
+						'inner join rds.DimLeas s 
+							on fact.LeaId = s.DimLeaId
+							and fact.SchoolYearId = @dimSchoolYearId
+							and fact.FactTypeId = @dimFactTypeId
+							and s.ReportedFederally = 1
+							and s.LeaOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedBoundary'')
+							and fact.LeaId <> -1' + char(10)
+					end
+
+				if @reportLevel = 'SCH'
+					begin
+						select @sql = @sql +
+						'inner join rds.DimK12Schools s 
+							on fact.K12SchoolId = s.DimK12SchoolId
+							and fact.SchoolYearId = @dimSchoolYearId
+							and fact.FactTypeId = @dimFactTypeId
+							and s.ReportedFederally = 1
+							and s.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')
+							and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1' + char(10) 
+					end
+
+				select @sql = @sql + '
+				where fact.SchoolYearId = ' + convert(varchar, @dimSchoolYearid) + 
+				' and fact.FactTypeId = ' + convert(varchar, @dimFactTypeId) +
+				' and c.K12StaffClassificationCode in (''ELAssistantTeachers'',''ElementaryTeachers'',''ELTeachers'',''KindergartenTeachers'',''PrekindergartenTeachers'',''SecondaryTeachers'',''SpecialEducationTeachers'',''UngradedTeachers'')' + char(10)
+
+				select @sql = @sql + char(10) + 
+				'CREATE INDEX IDX_Staff ON #Staff (K12StaffId, K12StaffStaffMemberIdentifierState)' + char(10) + char(10)
+
+				--Added to remove LEAs and Schools that are not reported federally
+				--LEA
+				select @sql = @sql + char(10) + '
+				delete s
+				from #staff s
+					inner join rds.DimLeas l
+						on s.LeaId = l.DimLeaID
+						and s.LeaId <> -1
+				where l.ReportedFederally <> 1'
+
+				--School
+				select @sql = @sql + char(10) + '
+				delete s
+				from #staff s
+					inner join rds.DimK12Schools sch
+						on s.K12SchoolId = sch.DimK12SchoolId
+						and s.K12SchoolId <> -1
+				where sch.ReportedFederally <> 1'
+
+				select @sql = @sql + char(10)
+
+			end
+
 			if(@reportCode = '099')
 			begin
 
@@ -6513,7 +6630,7 @@ BEGIN
 		end
 		else if @reportCode in ('086')
 		begin
-			set @sumOperation = 'count(distinct cs.IncidentIdentifier)'
+			set @sumOperation = 'count(distinct cs.IncidentIdentifier, cs.K12StudentStudentIdentifierState)'
 		end
 		else if @reportCode in ('059', '070', '099', '112', '203')
 		begin
@@ -6831,7 +6948,7 @@ BEGIN
 			if @reportCode in ('086')
 			begin
 				set @sql = @sql + '
-					having count(distinct cs.IncidentIdentifier) > 0'
+					having count(distinct cs.IncidentIdentifier, cs.K12StudentStudentIdentifierState) > 0'
 			end
 			else
 			begin
