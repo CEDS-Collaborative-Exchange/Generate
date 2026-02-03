@@ -7037,7 +7037,7 @@ BEGIN
 
 				if @categorySetCode = 'TOT'
 				begin
-					if(@reportCode in ('002','089','052','033')) 
+					if(@reportCode in ('002','089','052','033','088','143')) 
 					begin	
  
 						set @sql = @sql + '
