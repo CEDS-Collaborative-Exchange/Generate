@@ -23,6 +23,7 @@ AS
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally
 
 			, Demo.SexEdFactsCode
 			, Ages.AgeEdFactsCode

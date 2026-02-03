@@ -17,6 +17,7 @@ AS
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally
 
 			, StaffStatus.SpecialEducationAgeGroupTaughtEdFactsCode
 			, StaffStatus.EdFactsCertificationStatusEdFactsCode

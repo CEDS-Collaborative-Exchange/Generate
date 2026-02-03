@@ -20,9 +20,10 @@ AS
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally
 				
 			, Ages.AgeValue
-			, Races.RaceCode
+			, Races.RaceEdFactsCode
 			, Grades.GradeLevelEdFactsCode
 			
 			--English Learner Status
@@ -30,7 +31,7 @@ AS
 			-- IDEA Indicator
 			, IDEAStatus.IdeaIndicatorEdFactsCode
 			-- Education Env School Age
-			, IDEAStatus.IdeaEducationalEnvironmentForSchoolAgeEDFactsCode
+			, IDEAStatus.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode
 			-- Primary Disability Type
 			, IDEADisability.IdeaDisabilityTypeEdFactsCode
 			-- Discipline Method Of Children With Disabilities

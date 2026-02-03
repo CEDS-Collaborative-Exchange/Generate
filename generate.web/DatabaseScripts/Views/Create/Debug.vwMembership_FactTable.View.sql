@@ -21,10 +21,11 @@ AS
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally
 
 			, EconDis.NationalSchoolLunchProgramDirectCertificationIndicatorCode  --FRL
 			, EconDis.EligibilityStatusForSchoolFoodServiceProgramsEdFactsCode  --FRL
-			, EconDis.EconomicDisadvantageStatusCode
+			, EconDis.EconomicDisadvantageStatusEdFactsCode
 
 			, Races.RaceEdFactsCode
 			, Grades.GradeLevelEdFactsCode

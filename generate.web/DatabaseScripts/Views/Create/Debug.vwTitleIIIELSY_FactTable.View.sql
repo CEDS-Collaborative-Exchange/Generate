@@ -20,6 +20,7 @@ AS
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally
 
 			, Races.RaceEdFactsCode
 			, Grades.GradeLevelEdFactsCode

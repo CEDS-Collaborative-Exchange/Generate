@@ -23,6 +23,7 @@ AS
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally
 			, OrgTitleIS.TitleISchoolStatusEdFactsCode
 			, TitleI.TitleIIndicatorCode
 			, Grades.GradeLevelEdFactsCode

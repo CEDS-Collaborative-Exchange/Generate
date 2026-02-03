@@ -20,6 +20,7 @@ AS
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally
 
 			, Demo.SexEdFactsCode
 			, Races.RaceEdFactsCode
@@ -27,7 +28,7 @@ AS
 			, Cohort.CohortStatusEdFactsCode
 
 			--Homeless	
-			, Home.HomelessnessStatusCode
+			, Home.HomelessnessStatusEdFactsCode
 			--IDEA Indicator
 			, Idea.IdeaIndicatorEdFactsCode
 			--English Learner

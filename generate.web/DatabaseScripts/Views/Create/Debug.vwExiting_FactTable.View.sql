@@ -1,36 +1,39 @@
 CREATE VIEW [Debug].[vwExiting_FactTable] AS
 
 	SELECT	Fact.K12StudentId
-			,Students.K12StudentStudentIdentifierState
-			,Students.BirthDate
-			,Students.FirstName
-			,Students.LastOrSurname
-			,Students.MiddleName
-			,Demo.SexCode
-			,Demo.SexEdFactsCode
+			, Students.K12StudentStudentIdentifierState
+			, Students.BirthDate
+			, Students.FirstName
+			, Students.LastOrSurname
+			, Students.MiddleName
+			, Demo.SexCode
+			, Demo.SexEdFactsCode
 			, SEAs.StateANSICode
 			, SEAs.StateAbbreviationCode
 			, SEAs.StateAbbreviationDescription
 			, SEAs.SeaOrganizationIdentifierSea
 			, SEAs.SeaOrganizationName
-			,LEAs.LeaIdentifierSea
-			,LEAs.LeaIdentifierNces
-			,LEAs.LeaOrganizationName
-			,Schools.SchoolIdentifierSea
-			,Schools.NameOfInstitution
+			, LEAs.LeaIdentifierSea
+			, LEAs.LeaIdentifierNces
+			, LEAs.LeaOrganizationName
+			, Schools.SchoolIdentifierSea
+			, Schools.NameOfInstitution
+			, Schools.SchoolOperationalStatus
+			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally
 
-			,Ages.AgeEdFactsCode
-			,Races.RaceEdFactsCode
-			,Grades.GradeLevelEdFactsCode
+			, Ages.AgeEdFactsCode
+			, Races.RaceEdFactsCode
+			, Grades.GradeLevelEdFactsCode
 
 			--Primary Disability
-			,IDEADisability.IdeaDisabilityTypeEdFactsCode
+			, IDEADisability.IdeaDisabilityTypeEdFactsCode
 			--IDEA Indicator
-			,IDEAStatus.IdeaIndicatorEdFactsCode
+			, IDEAStatus.IdeaIndicatorEdFactsCode
 			--Exit Reason
-			,IDEAStatus.SpecialEducationExitReasonEdFactsCode
+			, IDEAStatus.SpecialEducationExitReasonEdFactsCode
 			--English Learner
-			,ELStatus.EnglishLearnerStatusEdFactsCode
+			, ELStatus.EnglishLearnerStatusEdFactsCode
 			, SchoolYears.SchoolYear
 			, Fact.SeaId
 			, Fact.LeaId

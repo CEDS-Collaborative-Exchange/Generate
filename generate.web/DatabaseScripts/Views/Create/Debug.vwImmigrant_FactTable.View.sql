@@ -11,11 +11,14 @@ AS
 			, LEAs.LeaOrganizationName
 			, Schools.SchoolIdentifierSea
 			, Schools.NameOfInstitution
+			, Schools.SchoolOperationalStatus
+			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally
 
 			--Immigrant
-			, Immigrant.TitleIIIImmigrantParticipationStatusCode
+			, Immigrant.TitleIIIImmigrantParticipationStatusEDdFactsCode
 			--Native Language
-			, Lang.Iso6392LanguageCodeCode
+			, Lang.Iso6392LanguageCodeEdFactsCode
 			--English Learner
 			, EL.EnglishLearnerStatusEdFactsCode
 

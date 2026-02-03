@@ -21,19 +21,20 @@ AS
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally
 
 			, Demo.SexEdFactsCode
 			, Races.RaceEdFactsCode
 			, Grades.GradeLevelEdFactsCode
 
 			--Homeless	
-			, Home.HomelessnessStatusCode
+			, Home.HomelessnessStatusEdFactsCode
 			--IDEA Indicator
 			, Idea.IdeaIndicatorEdFactsCode
 			--English Learner
 			, EL.EnglishLearnerStatusEdFactsCode
 			--Migrant 
-			, Mig.MigrantStatusCode
+			, Mig.MigrantStatusEdFactsCode
 			--Economically Disadvantaged
 			, EcoDis.EconomicDisadvantageStatusEdFactsCode
 
