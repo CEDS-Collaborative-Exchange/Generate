@@ -37,6 +37,6 @@ namespace generate.core.Models.Staging
         public string AccommodationType { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
-        public DateTime? RunDateTime { get; set; }
+        public bool AssessedFirstTime { get; set; }
     }
 }

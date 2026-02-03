@@ -230,6 +230,7 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<int>> NumberOfDisciplinesDistribution { get; set; }
         public List<DataDistribution<bool>> GEDPreparationProgramParticipationDistribution { get; set; }
         public List<DataDistribution<bool>> FullAcademicYearPersonStatusDistribution { get; set; }
+        public List<DataDistribution<bool>> AssessedFirstTimeDistribution { get; set; }
         public List<DataDistribution<string>> RefAssessmentParticipationIndicatorDistribution { get; set; }
         public List<DataDistribution<string>> RefAssessmentRegistrationReasonNotCompleting { get; set; }
         public List<DataDistribution<string>> RefAssessmentRegistrationReasonNotTested { get; set; }
@@ -1271,6 +1272,10 @@ namespace generate.testdata.Profiles
             this.FullAcademicYearPersonStatusDistribution = new List<DataDistribution<bool>>();
             this.FullAcademicYearPersonStatusDistribution.Add(new DataDistribution<bool>() { Option = true, ExpectedDistribution = 75 });
             this.FullAcademicYearPersonStatusDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 100 });
+
+            this.AssessedFirstTimeDistribution = new List<DataDistribution<bool>>();
+            this.AssessedFirstTimeDistribution.Add(new DataDistribution<bool>() { Option = true, ExpectedDistribution = 30 });
+            this.AssessedFirstTimeDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 100 });
 
             this.RefAssessmentParticipationIndicatorDistribution = new List<DataDistribution<string>>();
             this.RefAssessmentParticipationIndicatorDistribution.Add(new DataDistribution<string>() { Option = "Participated", ExpectedDistribution = 80 });

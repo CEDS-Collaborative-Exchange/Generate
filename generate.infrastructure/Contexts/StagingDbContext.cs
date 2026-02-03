@@ -195,7 +195,7 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.RunDateTime).HasColumnType("datetime");
+                entity.Property(e => e.AssessedFirstTime);
 
                 entity.Property(e => e.SchoolFullAcademicYear)
                     .HasMaxLength(100)

@@ -1460,7 +1460,9 @@ namespace generate.testdata.DataGenerators
 
                     if (_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
                     {
-                        prog.TitleIIIImmigrantStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIStatusDistribution);
+                        bool titleIIIStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIStatusDistribution);
+                        prog.TitleIIIImmigrantStatus = titleIIIStatus;
+                        prog.TitleIIIImmigrantParticipationStatus = titleIIIStatus == true ? titleIIIStatus: false;
                         prog.TitleIIIImmigrantStatus_StartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
                         if (!_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
                         {
@@ -2186,7 +2188,8 @@ namespace generate.testdata.DataGenerators
                         SchoolYear = schoolYear.ToString(),
                         StateFullAcademicYear = fullYearStatus ? true : false,
                         LEAFullAcademicYear = fullYearStatus ? true : false,
-                        SchoolFullAcademicYear = fullYearStatus ? true : false
+                        SchoolFullAcademicYear = fullYearStatus ? true : false,
+                        AssessedFirstTime = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.AssessedFirstTimeDistribution)
                     };
 
                     if (!assessmentResult.AssessmentRegistrationParticipationIndicator.Value)
