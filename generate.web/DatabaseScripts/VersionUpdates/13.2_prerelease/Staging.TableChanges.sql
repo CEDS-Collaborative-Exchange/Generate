@@ -265,12 +265,18 @@
             ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN DataCollectionName;
         END
 
-    --Add the new columns
-        IF COL_LENGTH('Staging.OrganizationFederalFunding', 'TitleIPartAAllocations') IS NULL
+    --Drop the deprecated columns
+        IF COL_LENGTH('Staging.OrganizationFederalFunding', 'DataCollectionId') IS NOT NULL
         BEGIN
-            ALTER TABLE Staging.OrganizationFederalFunding ADD TitleIPartAAllocations NUMERIC(12,2) NULL;
+            ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN DataCollectionId;
+        END
+ 
+        IF COL_LENGTH('Staging.OrganizationFederalFunding', 'RunDateTime') IS NOT NULL
+        BEGIN
+            ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN RunDateTime;
         END
 
+    --Add the new column
         IF COL_LENGTH('Staging.OrganizationFederalFunding', 'HomelessChildrenandYouthReservation') IS NULL
         BEGIN
             ALTER TABLE Staging.OrganizationFederalFunding ADD HomelessChildrenandYouthReservation NUMERIC(12,2) NULL;
@@ -287,22 +293,6 @@
             ALTER TABLE Staging.OrganizationFederalFunding ADD DataCollectionName NVARCHAR(100);
         END
 
-         IF EXISTS(SELECT 1
-         FROM 
-             sys.extended_properties AS ep
-             INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
-             INNER JOIN sys.tables AS t ON c.object_id = t.object_id
-             INNER JOIN sys.schemas s on t.schema_id = s.schema_id
-         WHERE 
-         ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
-         AND t.name = 'OrganizationFederalFunding' AND c.name = 'TitleIPartAAllocations' )
-         BEGIN
-            EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The dollar amount of Title I, Part A funds awarded to an LEA by its SEA in accordance with the ESEA’s, as amended, regulations that govern the process an SEA uses to adjust the ED-determined Title I, Part A allocations.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'TitleIPartAAllocations'
-            EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Title I Part A Allocated Funds' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'TitleIPartAAllocations'
-            EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'TitleIPartAAllocations'
-            EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=00000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'TitleIPartAAllocations'
-            EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'TitleIPartAAllocations'
-        END
         IF EXISTS(SELECT 1
          FROM 
              sys.extended_properties AS ep
