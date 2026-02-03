@@ -147,6 +147,7 @@ BEGIN
 			, -1																IEUId
 			, ISNULL(rdl.DimLeaID, -1)											LEAId
 			, ISNULL(rdksch.DimK12SchoolId, -1)									K12SchoolId
+			, -1																K12StudentId
 			, ISNULL(rdpc.DimPersonId, -1)										K12Student_CurrentId
 			, ISNULL(rdis.DimIdeaStatusId, -1)									IdeaStatusId
 			, -1																LanguageId
