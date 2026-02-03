@@ -16,4 +16,5 @@ AS
         ON fact.DimK12SchoolId = rdks.DimK12SchoolId
     WHERE fact.EconomicDisadvantageStatusCode = 'Yes'
     AND rdks.SchoolOperationalStatus NOT IN ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
+	AND rdks.ReportedFederally <> 0
     AND fact.SchoolTypeCode <> 'Reportable'
