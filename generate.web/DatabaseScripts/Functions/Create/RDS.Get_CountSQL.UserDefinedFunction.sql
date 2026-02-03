@@ -2094,6 +2094,17 @@ BEGIN
 					end'	
 			end
 
+			--New code for 134
+			else if @categoryCode in ('AGEU3TOGR12UG')
+			begin
+				set @sqlCategoryReturnField = ' 
+					case 
+						when isnull(da.AgeCode, ''99'') IN (''3'', ''4'', ''5'')
+								and isnull(CAT_GRADELEVEL.GradeLevelEdFactsCode, ''PK'') in (''PK'',''MISSING'') THEN ''3TO5NOTK''
+						when isnull(da.AgeCode, ''99'') IN (''0'',''1'',''2'') then ''UNDER3''
+						else CAT_GRADELEVEL.GradeLevelEdFactsCode END'
+			end
+
 			---Begin New Code for c118
 			else if @categoryCode in ('AGE3TOGRADE13', 'AGEGRDWO13')
 			begin
@@ -3164,6 +3175,11 @@ BEGIN
 					on fact.K12StudentId = p.DimPersonId
 				inner join rds.DimTitleIStatuses titleI 
 					on fact.TitleIStatusId = titleI.DimTitleIStatusId
+					and fact.SchoolYearId = @dimSchoolYearId
+					and fact.FactTypeId = @dimFactTypeId
+					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+				left join rds.DimAges da
+					on fact.AgeId = da.DimAgeId
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
