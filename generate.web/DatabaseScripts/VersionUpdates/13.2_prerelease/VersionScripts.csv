@@ -53,6 +53,10 @@ Views\\Drop,RDS.vwDimPsEnrollmentStatuses.View.sql,0
 Views\\Create,RDS.vwDimPsEnrollmentStatuses.View.sql,0
 Views\\Drop,RDS.vwDimAssessmentStatuses.View.sql,0
 Views\\Create,RDS.vwDimAssessmentStatuses.View.sql,0
+Views\\Drop,RDS.vwMembership_FactTable_226.View.sql,0
+Views\\Create,RDS.vwMembership_FactTable_226.View.sql,0
+Views\\Drop,RDS.vwTitleI_FactTable_222.View.sql,0
+Views\\Create,RDS.vwTitleI_FactTable_222.View.sql,0
 Views\\Drop,RDS.vwStaff_FactTable_067.View.sql,0
 Views\\Create,RDS.vwStaff_FactTable_067.View.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
