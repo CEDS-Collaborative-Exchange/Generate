@@ -17,13 +17,14 @@ AS
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaOrganizationName
 			, LEAs.LeaOperationalStatus
+			, LEAs.LeaReportedFederally
 			, OrgTitleIL.TitleIProgramTypeCode
 			, Schools.SchoolIdentifierSea
 			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
-			, Schools.ReportedFederally
+			, Schools.SchoolReportedFederally
 			, OrgTitleIS.TitleISchoolStatusEdFactsCode
 			, TitleI.TitleIIndicatorCode
 			, Grades.GradeLevelEdFactsCode

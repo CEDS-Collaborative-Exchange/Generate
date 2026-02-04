@@ -15,12 +15,13 @@ AS
 			, SEA.SeaOrganizationName
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaOrganizationName
+			, LEAs.LeaReportedFederally
 			, Schools.SchoolIdentifierSea
 			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
-			, Schools.ReportedFederally
+			, Schools.SchoolReportedFederally
 
 			--Sex
 			, Demo.SexEdFactsCode
@@ -29,7 +30,7 @@ AS
 			--Homeless	
 			, Home.HomelessnessStatusEdFactsCode
 			--Economic Disadvantage
-			, ecoDis.EconomicDisadvantageStatusEdFactsCode
+			, EcoDis.EconomicDisadvantageStatusEdFactsCode
 			--English Learner
 			, EL.EnglishLearnerStatusEdFactsCode
 			--Section 504 Status

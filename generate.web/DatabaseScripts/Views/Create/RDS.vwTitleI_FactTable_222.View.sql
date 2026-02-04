@@ -25,4 +25,5 @@ AS
 	WHERE ProgramParticipationFosterCareEdFactsCode = 'FOSTERCARE' 
 		AND LeaOperationalStatus IN ('Open','New') 
 		AND TitleIProgramTypeCode in ('LocalNeglectedProgram','PrivateSchoolStudents','SchoolwideProgram','TargetedAssistanceProgram')
+		AND LeaReportedFederally <> 0
 		--AND TitleISchoolStatusEdFactsCode in ('TGELGBTGPROG', 'SWELIGTGPROG', 'SWELIGSWPROG')

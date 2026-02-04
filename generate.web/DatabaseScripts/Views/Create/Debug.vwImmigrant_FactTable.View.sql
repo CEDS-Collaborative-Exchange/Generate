@@ -9,12 +9,13 @@ AS
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaIdentifierNces
 			, LEAs.LeaOrganizationName
+			, LEAs.LeaReportedFederally
 			, Schools.SchoolIdentifierSea
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
-			, Schools.ReportedFederally
-
+			, Schools.SchoolReportedFederally
+			
 			--Immigrant
 			, Immigrant.TitleIIIImmigrantParticipationStatusEDdFactsCode
 			--Native Language

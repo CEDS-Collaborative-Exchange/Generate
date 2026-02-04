@@ -15,12 +15,13 @@ AS
 			, SEA.SeaOrganizationName
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaOrganizationName
+			, LEAs.LeaReportedFederally
 			, Schools.SchoolIdentifierSea
 			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
-			, Schools.ReportedFederally
+			, Schools.SchoolReportedFederally
 
 			, Races.RaceEdFactsCode
 			, Grades.GradeLevelEdFactsCode
