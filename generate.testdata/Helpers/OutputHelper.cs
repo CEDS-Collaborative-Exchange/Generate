@@ -503,7 +503,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("delete from rds.FactK12AccessibleEducationMaterialAssignments");
                 output.AppendLine("delete from rds.FactK12StudentEnrollments");
                 //output.AppendLine("delete from rds.FactOrganizationCountReports");
-                //output.AppendLine("delete from rds.FactOrganizationCounts");
+                output.AppendLine("delete from rds.FactOrganizationCounts");
                 //output.AppendLine("delete from rds.FactOrganizationStatusCountReports");
                 //output.AppendLine("delete from rds.FactOrganizationStatusCounts");
                 //output.AppendLine("delete from rds.dimseas");
@@ -512,6 +512,7 @@ namespace generate.testdata.Helpers
                 //output.AppendLine("delete from rds.DimK12Schools");
                 //output.AppendLine("delete from rds.DimCharterSchoolManagementOrganizations");
                 //output.AppendLine("delete from rds.DimCharterSchoolAuthorizers");
+                output.AppendLine("delete from rds.DimPeople_Current");
                 output.AppendLine("delete from rds.DimPeople");
                 //output.AppendLine("delete from rds.DimK12Staff");
 
@@ -525,7 +526,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12AccessibleEducationMaterialAssignments', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12StudentEnrollments', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationCountReports', RESEED, 1);");
-                //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationCounts', RESEED, 1);");
+                output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationCounts', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationStatusCountReports', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationStatusCounts', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.dimseas', RESEED, 1);");
@@ -534,6 +535,7 @@ namespace generate.testdata.Helpers
                 //output.AppendLine("DBCC CHECKIDENT('rds.DimK12Schools', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.DimCharterSchoolManagementOrganizations', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.DimCharterSchoolAuthorizers', RESEED, 1);");
+                output.AppendLine("DBCC CHECKIDENT('rds.DimPeople_Current', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.DimPeople', RESEED, 1);");
                 //output.AppendLine("DBCC CHECKIDENT('rds.DimK12Staff', RESEED, 1);");
             }

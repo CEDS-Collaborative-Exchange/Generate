@@ -14,7 +14,7 @@ AS
 		, LeaOrganizationName
 		, SchoolIdentifierSea
 		, NameOfInstitution
-		, K12StudentId
+		, K12Student_CurrentId
 		, K12StudentStudentIdentifierState
 		, IdeaDisabilityTypeEdFactsCode
 		, RaceEdFactsCode
