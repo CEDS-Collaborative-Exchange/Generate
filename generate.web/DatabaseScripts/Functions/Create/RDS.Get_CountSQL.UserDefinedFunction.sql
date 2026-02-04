@@ -5331,22 +5331,22 @@ BEGIN
 				if @reportLevel = 'sea' 
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join ( select K12StaffId, K12StaffCategoryId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFullTimeEquivalency
+					inner join ( select K12Staff_CurrentId, K12StaffCategoryId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFullTimeEquivalency
 							from rds.FactK12StaffCounts fact 
 							where fact.SchoolYearId = @dimSchoolYearId and fact.FactTypeId = @dimFactTypeId 
 							and fact.SeaId <> -1
-							group by K12StaffId, K12StaffCategoryId
+							group by K12Staff_CurrentId, K12StaffCategoryId
 						) K12StaffCount on K12StaffCount.K12Staff_CurrentId = fact.K12Staff_CurrentId 
 							and K12StaffCount.K12StaffCategoryId = fact.K12StaffCategoryId' 
 				end
 				else
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join ( select K12StaffId, LeaId, K12StaffCategoryId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFullTimeEquivalency
+					inner join ( select K12Staff_CurrentId, LeaId, K12StaffCategoryId, sum(round(StaffFullTimeEquivalency, 2)) as StaffFullTimeEquivalency
 							from rds.FactK12StaffCounts fact 
 							where fact.SchoolYearId = @dimSchoolYearId and fact.FactTypeId = @dimFactTypeId 
 							and fact.LeaId <> -1
-							group by K12StaffId, LeaId, K12StaffCategoryId
+							group by K12Staff_CurrentId, LeaId, K12StaffCategoryId
 						) K12StaffCount on K12StaffCount.K12Staff_CurrentId = fact.K12Staff_CurrentId
 							and K12StaffCount.LeaId = fact.LeaId
 							and K12StaffCount.K12StaffCategoryId = fact.K12StaffCategoryId' 
