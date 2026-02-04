@@ -16,12 +16,12 @@ CREATE VIEW [Debug].[vwExiting_FactTable] AS
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaIdentifierNces
 			, LEAs.LeaOrganizationName
-			, LEAs.LeaReportedFederally
+			, LEAs.ReportedFederally		AS LeaReportedFederally
 			, Schools.SchoolIdentifierSea
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
-			, Schools.SchoolReportedFederally
+			, Schools.ReportedFederally		AS SchoolReportedFederally
 			
 			, Ages.AgeEdFactsCode
 			, Races.RaceEdFactsCode

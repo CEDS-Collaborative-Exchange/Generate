@@ -16,13 +16,13 @@ AS
 			, SEA.SeaOrganizationName
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaOrganizationName
-			, LEAs.LeaReportedFederally
+			, LEAs.ReportedFederally		AS LeaReportedFederally
 			, Schools.SchoolIdentifierSea
 			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
-			, Schools.SchoolReportedFederally
+			, Schools.ReportedFederally		AS SchoolReportedFederally
 
 			, EconDis.NationalSchoolLunchProgramDirectCertificationIndicatorCode  --FRL
 			, EconDis.EligibilityStatusForSchoolFoodServiceProgramsEdFactsCode  --FRL

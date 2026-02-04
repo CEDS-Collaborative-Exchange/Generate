@@ -12,7 +12,7 @@ AS
         , fact.SchoolIdentifierSea
         , fact.NameOfInstitution
     FROM [debug].[vwMembership_FactTable] fact
-    WHERE fact.EconomicDisadvantageStatusCode = 'Yes'
+    WHERE fact.EconomicDisadvantageStatusEdFactsCode = 'ECODIS'
     AND fact.SchoolOperationalStatus NOT IN ('Closed', 'FutureSchool', 'Inactive', 'MISSING')
 	AND fact.SchoolReportedFederally <> 0
     AND fact.SchoolTypeCode <> 'Reportable'

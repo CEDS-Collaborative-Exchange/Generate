@@ -15,13 +15,13 @@ AS
 			, SEA.SeaOrganizationName
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaOrganizationName
-			, LEAs.LeaReportedFederally
+			, LEAs.ReportedFederally		AS LeaReportedFederally
 			, Schools.SchoolIdentifierSea
 			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
-			, Schools.SchoolReportedFederally
+			, Schools.ReportedFederally		AS SchoolReportedFederally
 
 			--Sex
 			, Demo.SexEdFactsCode
@@ -47,7 +47,7 @@ AS
 	LEFT JOIN	RDS.DimK12Schools							Schools		ON Fact.K12SchoolId							= Schools.DimK12SchoolId
 	LEFT JOIN	RDS.DimK12Demographics						Demo		ON Fact.K12DemographicId					= Demo.DimK12DemographicId
 	LEFT JOIN	RDS.DimEnglishLearnerStatuses				EL			ON Fact.EnglishLearnerStatusId				= EL.DimEnglishLearnerStatusId
-	LEFT JOIN	RDS.DimEconomicallyDisadvantagedStatuses	EcoDis		ON Fact.EconomicallyDisadvantagedStatusId	= ecoDis.DimEconomicallyDisadvantagedStatusId
+	LEFT JOIN	RDS.DimEconomicallyDisadvantagedStatuses	EcoDis		ON Fact.EconomicallyDisadvantagedStatusId	= EcoDis.DimEconomicallyDisadvantagedStatusId
 	LEFT JOIN	RDS.DimHomelessnessStatuses					Home		ON Fact.HomelessnessStatusId				= Home.DimHomelessnessStatusId
 	LEFT JOIN	RDS.DimIdeaStatuses							Idea		ON Fact.IdeaStatusId						= Idea.DimIdeaStatusId
 	LEFT JOIN	RDS.DimDisabilityStatuses					Sec504		ON Fact.DisabilityStatusId					= Sec504.DimDisabilityStatusId
