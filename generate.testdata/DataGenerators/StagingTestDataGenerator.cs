@@ -998,7 +998,7 @@ namespace generate.testdata.DataGenerators
                     var LeaFedFunds = new OrganizationFederalFunding
                     {
                         OrganizationIdentifier = o,
-                        OrganizationType = "LEA",
+                        OrganizationType = "LEA_1",
                         FederalProgramCode = programCode,
                         FederalProgramsFundingAllocation = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000),
                         FederalProgramFundingAllocationType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefFederalProgramFundingAllocationTypeDistribution),
