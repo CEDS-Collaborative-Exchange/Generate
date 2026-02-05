@@ -20,6 +20,7 @@ using System.Text;
 using generate.infrastructure.Helpers;
 using generate.infrastructure.Contexts;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace generate.testdata.DataGenerators
 {
@@ -1003,6 +1004,11 @@ namespace generate.testdata.DataGenerators
                         FederalProgramFundingAllocationType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefFederalProgramFundingAllocationTypeDistribution),
                         SchoolYear = schoolYear.ToString()
                     };
+                    if (LeaFedFunds.FederalProgramCode == "84.010")
+                    {
+                        LeaFedFunds.ParentalInvolvementReservationFunds = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000);
+                        LeaFedFunds.HomelessChildrenandYouthReservation = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000);
+                    }
                     testData.OrganizationFederalFundings.Add(LeaFedFunds);
                 }
             }

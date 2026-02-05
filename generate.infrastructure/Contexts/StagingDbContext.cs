@@ -1198,8 +1198,6 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.RunDateTime).HasColumnType("datetime");
-
                 entity.Property(e => e.SchoolYear)
                     .HasMaxLength(100)
                     .IsUnicode(false);
