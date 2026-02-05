@@ -6646,7 +6646,7 @@ BEGIN
 		end
 		else if @reportCode in ('086')
 		begin
-			set @sumOperation = 'count(distinct cs.IncidentIdentifier, cs.K12StudentStudentIdentifierState)'
+			set @sumOperation = 'count(distinct concat(cs.IncidentIdentifier, cs.K12StudentStudentIdentifierState))'
 		end
 		else if @reportCode in ('059', '070', '099', '112', '203')
 		begin
@@ -6964,7 +6964,7 @@ BEGIN
 			if @reportCode in ('086')
 			begin
 				set @sql = @sql + '
-					having count(distinct cs.IncidentIdentifier, cs.K12StudentStudentIdentifierState) > 0'
+					having count(distinct concat(cs.IncidentIdentifier, cs.K12StudentStudentIdentifierState)) > 0'
 			end
 			else
 			begin
