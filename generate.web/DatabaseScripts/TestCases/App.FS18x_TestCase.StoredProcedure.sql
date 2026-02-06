@@ -22,7 +22,7 @@ BEGIN
 
 	DECLARE @StoredProcedureName VARCHAR(100) = @FileSpec + '_TestCase'
 	DECLARE @TestScope VARCHAR(1000) = @FileSpec
-	DECLARE @ReportCode VARCHAR(20) = 'C' + right(@FileSpec,3) 
+	DECLARE @ReportCode VARCHAR(20) = right(@FileSpec,3) 
 	DECLARE @SubjectAbbrv VARCHAR(20) = 
 		case
 			when @FileSpec = 'FS185' then 'MATH' 

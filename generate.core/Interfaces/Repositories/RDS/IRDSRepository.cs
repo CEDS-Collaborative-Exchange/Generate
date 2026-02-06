@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using generate.core.Models.App;
+using generate.core.Models.RDS;
 using System.Linq.Expressions;
 using System;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,7 @@ namespace generate.core.Interfaces.Repositories.RDS
         void ExecuteSql(string sql, params object[] parameters);
 
         bool CheckIfDirectoryDataExists(int schoolYearId);
+        DimFactType GetFactType(string factTypeCode);
 
 
     }
