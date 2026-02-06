@@ -15,14 +15,16 @@ AS
 			, SEA.SeaOrganizationName
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaOrganizationName
+			, LEAs.ReportedFederally		AS LeaReportedFederally
 			, Schools.SchoolIdentifierSea
 			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally		AS SchoolReportedFederally
 				
 			, Ages.AgeValue
-			, Races.RaceCode
+			, Races.RaceEdFactsCode
 			, Grades.GradeLevelEdFactsCode
 			
 			--English Learner Status
@@ -30,7 +32,7 @@ AS
 			-- IDEA Indicator
 			, IDEAStatus.IdeaIndicatorEdFactsCode
 			-- Education Env School Age
-			, IDEAStatus.IdeaEducationalEnvironmentForSchoolAgeEDFactsCode
+			, IDEAStatus.IdeaEducationalEnvironmentForSchoolAgeEdFactsCode
 			-- Primary Disability Type
 			, IDEADisability.IdeaDisabilityTypeEdFactsCode
 			-- Discipline Method Of Children With Disabilities

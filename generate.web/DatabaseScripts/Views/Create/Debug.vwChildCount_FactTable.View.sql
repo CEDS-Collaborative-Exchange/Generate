@@ -18,11 +18,13 @@ AS
 			, SEA.SeaOrganizationName
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaOrganizationName
+			, LEAs.ReportedFederally		AS LeaReportedFederally
 			, Schools.SchoolIdentifierSea
 			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally		AS SchoolReportedFederally
 
 			, Demo.SexEdFactsCode
 			, Ages.AgeEdFactsCode

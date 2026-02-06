@@ -16,11 +16,13 @@ AS
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaOrganizationName
 			, LEAs.DimLeaId	
+			, LEAs.ReportedFederally		AS LeaReportedFederally
 			, Schools.SchoolIdentifierSea
 			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally		AS SchoolReportedFederally
 
 			, Assess.AssessmentTitle
 			, Assess.AssessmentIdentifierState
@@ -46,11 +48,11 @@ AS
 			--Economically Disadvantaged
 			, Econ.EconomicDisadvantageStatusCode
 			--Migratory
-			, Migr.MigrantStatusCode
+			, Migr.MigrantStatusEdFactsCode
 			--Homelessness
-			, Hmls.HomelessnessStatusCode
+			, Hmls.HomelessnessStatusEdFactsCode
 			--Foster Care
-			, Fstr.ProgramParticipationFosterCareCode
+			, Fstr.ProgramParticipationFosterCareEdFactsCode
 			--Military Connected
 			, Mil.MilitaryConnectedStudentIndicatorCode
 			--N or D

@@ -15,11 +15,13 @@ AS
 			, SEA.SeaOrganizationName
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaOrganizationName
+			, LEAs.ReportedFederally		AS LeaReportedFederally
 			, Schools.SchoolIdentifierSea
 			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally		AS SchoolReportedFederally
 
 			, Demo.SexEdFactsCode
 			, Races.RaceEdFactsCode
@@ -27,13 +29,13 @@ AS
 			, Diploma.HighSchoolDiplomaTypeEdFactsCode
 			
 			--Homeless	
-			, Home.HomelessnessStatusCode
+			, Home.HomelessnessStatusEdFactsCode
 			--IDEA Indicator
 			, Idea.IdeaIndicatorEdFactsCode
 			--English Learner
 			, EL.EnglishLearnerStatusEdFactsCode
 			--Migrant 
-			, Mig.MigrantStatusCode
+			, Mig.MigrantStatusEdFactsCode
 			--Economically Disadvantaged
 			, EcoDis.EconomicDisadvantageStatusEdFactsCode
 
