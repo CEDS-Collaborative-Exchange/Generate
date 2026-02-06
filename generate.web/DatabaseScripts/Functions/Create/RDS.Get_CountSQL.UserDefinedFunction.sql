@@ -5011,11 +5011,16 @@ BEGIN
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimPeople p
 					on fact.K12StudentId = p.DimPersonId
-				inner join rds.DimK12Schools s on fact.K12SchoolId = s.DimK12SchoolId
+				inner join rds.DimK12Schools s 
+					on fact.K12SchoolId = s.DimK12SchoolId
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				inner join rds.DimAttendances m on fact.AttendanceId = m.DimAttendanceId
+				inner join rds.DimAttendances m 	
+					on fact.AttendanceId = m.DimAttendanceId
+				inner join rds.DimGradeLevels gl 
+					on fact.GradeLevelId = gl.DimGradeLevelId
+					and gl.GradeLevelEdFactsCode in (''KG'',''01'',''02'',''03'',''04'',''05'',''06'',''07'',''08'',''09'',''10'',''11'',''12'',''UG'')
 				where m.AbsenteeismCode = ''CA''
 			) rules
 				on fact.K12StudentId = rules.K12StudentId 
