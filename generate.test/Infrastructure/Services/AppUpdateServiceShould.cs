@@ -233,11 +233,28 @@ namespace generate.test.Infrastructure.Services
             return context;
         }
 
+        private RDSDbContext GetRdsDbContext()
+        {
+
+            var options = new DbContextOptionsBuilder<infrastructure.Contexts.RDSDbContext>()
+                              .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                              .Options;
+
+            var logger = Mock.Of<ILogger<RDSDbContext>>();
+
+            var appSettings = Mock.Of<IOptions<AppSettings>>();
+
+            var context = new RDSDbContext(options, logger);
+
+            return context;
+        }
+
         private AppDbContext GetContextWithData()
         {
 
             var context = this.GetContext();
-            var repository = new AppRepository(context);
+            var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+            var repository = new AppRepository(context, rdsRepository);
 
             GenerateConfiguration configVersion = new GenerateConfiguration()
             {
@@ -368,7 +385,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -392,7 +410,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = new Mock<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -418,7 +437,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = new Mock<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -447,7 +467,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = new Mock<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -478,7 +499,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = new Mock<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -509,7 +531,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = new Mock<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -541,7 +564,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = new Mock<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -572,7 +596,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = new Mock<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -602,7 +627,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -968,7 +994,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -995,7 +1022,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -1023,7 +1051,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -1051,7 +1080,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -1080,7 +1110,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -1108,7 +1139,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -1137,7 +1169,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -1165,7 +1198,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -1188,7 +1222,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate_WrongPrerequisite();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelper = Mock.Of<IZipFileHelper>();
 
@@ -1213,7 +1248,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
 
@@ -1241,7 +1277,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
 
@@ -1272,7 +1309,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
 
@@ -1303,7 +1341,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_BackgroundUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
 
@@ -1334,7 +1373,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
 
@@ -1368,7 +1408,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate_WrongPrerequisite();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
 
@@ -1401,7 +1442,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
 
@@ -1431,7 +1473,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_Empty();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
 
@@ -1458,7 +1501,8 @@ namespace generate.test.Infrastructure.Services
                 // Arrange
                 var fileSystem = SetupFileSystem_SingleValidUpdate();
                 var logger = Mock.Of<ILogger<AppUpdateService>>();
-                var appRepository = new AppRepository(context);
+                var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
+                var appRepository = new AppRepository(context, rdsRepository);
                 var appSettings = Mock.Of<IOptions<AppSettings>>();
                 var zipFileHelperMock = new Mock<IZipFileHelper>();
 

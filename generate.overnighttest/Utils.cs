@@ -130,7 +130,7 @@ namespace generate.overnighttest
                                             .OrderBy(t => t.FactTypeCode)
                                             .ToList();
 
-            Console.WriteLine($"factTypes:{TryToString(factTypes)}");
+            //Console.WriteLine($"factTypes:{TryToString(factTypes)}");
 
             // Create a dictionary with DimFactTypeId as key and value as DimFactType
             Dictionary<int, DimFactType> factIdToTrackDimFactType = factTypes
@@ -138,7 +138,7 @@ namespace generate.overnighttest
 
 
             List<GenerateReport> reportLists = appRepository.GetReports(0, 0).ToList();
-            Console.WriteLine($"reportLists:{TryToString(reportLists)}");
+            //Console.WriteLine($"reportLists:{TryToString(reportLists)}");
 
             Dictionary<string, IList<string>> factDescrToReportCodesList = new Dictionary<string, IList<string>>();
             foreach (GenerateReport report in reportLists)
