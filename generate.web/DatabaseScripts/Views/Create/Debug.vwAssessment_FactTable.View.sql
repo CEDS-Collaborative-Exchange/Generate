@@ -62,7 +62,7 @@ AS
  	FROM		RDS.FactK12StudentAssessments				Fact
 	JOIN		RDS.DimSchoolYears							SchoolYears	ON Fact.SchoolYearId						= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes			DMT			ON SchoolYears.dimschoolyearid				= DMT.dimschoolyearid		
-	LEFT JOIN	RDS.DimPeople								Students	ON Fact.K12StudentId						= Students.DimPersonId			AND Students.IsActiveK12Student = 1
+	LEFT JOIN	RDS.DimPeople_Current						Students	ON Fact.K12Student_CurrentId				= Students.DimPersonId			AND Students.IsActiveK12Student = 1
 	LEFT JOIN	RDS.DimSeas									SEA			ON Fact.SeaId								= SEA.DimSeaId
 	LEFT JOIN	RDS.DimLeas									LEAs		ON Fact.LeaId								= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools							Schools		ON Fact.K12SchoolId							= Schools.DimK12SchoolId

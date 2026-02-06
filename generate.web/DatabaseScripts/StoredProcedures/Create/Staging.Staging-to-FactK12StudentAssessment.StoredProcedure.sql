@@ -252,9 +252,10 @@ BEGIN
 		INNER JOIN RDS.vwDimHomelessnessStatuses rdhs
 			ON sps.SchoolYear = rdhs.SchoolYear
 			AND ISNULL(CAST(sps.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)
-			AND rdhs.HomelessPrimaryNighttimeResidenceCode = 'MISSING'
-			AND rdhs.HomelessUnaccompaniedYouthStatusCode = 'MISSING'
-			AND rdhs.HomelessServicedIndicatorCode = 'MISSING'
+			AND ISNULL(sps.HomelessNightTimeResidence, 'MISSING') = ISNULL(rdhs.HomelessPrimaryNighttimeResidenceMap, rdhs.HomelessPrimaryNighttimeResidenceCode)
+			AND ISNULL(CAST(sps.HomelessUnaccompaniedYouth AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessUnaccompaniedYouthStatusMap AS SMALLINT), -1)
+			AND ISNULL(CAST(sps.HomelessServicedIndicator AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessServicedIndicatorMap AS SMALLINT), -1)
+
 
 		CREATE INDEX IX_tempHomelessnessStatus 
 			ON #tempHomelessnessStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Homelessness_StatusStartDate, Homelessness_StatusEndDate)
@@ -673,7 +674,8 @@ BEGIN
 			, [IeuId]									
 			, [LeaId]									
 			, [K12SchoolId]
-			, [K12StudentId]							
+			, [K12StudentId]
+			, [K12Student_CurrentId]										
 			, [GradeLevelWhenAssessedId]
 			, [AssessmentId]			
 			, [AssessmentSubtestId]
@@ -715,7 +717,8 @@ BEGIN
 			, [IeuId]									
 			, [LeaId]									
 			, [K12SchoolId]
-			, [K12StudentId]							
+			, [K12StudentId]
+			, [K12Student_CurrentId]										
 			, [GradeLevelWhenAssessedId]
 			, [AssessmentId]			
 			, [AssessmentSubtestId]
