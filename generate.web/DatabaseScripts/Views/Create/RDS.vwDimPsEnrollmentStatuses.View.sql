@@ -10,7 +10,13 @@ AS
 		, PostSecondaryEnrollmentActionCode
 		, sssrd3.InputCode AS PostSecondaryEnrollmentActionMap
 	FROM rds.DimPsEnrollmentStatuses rdpes
-	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
+	CROSS JOIN (select sy.SchoolYear
+    			from rds.DimSchoolYearDataMigrationTypes dm
+	    			inner join rds.dimschoolyears sy
+			    		on dm.dimschoolyearid = sy.dimschoolyearid
+			    where IsSelected = 1
+			    and dm.DataMigrationTypeId = 3
+			) AS rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd
 		ON rdpes.PostsecondaryExitOrWithdrawalTypeCode = sssrd.OutputCode
 		AND sssrd.TableName = 'RefPSExitOrWithdrawalType'
