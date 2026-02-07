@@ -1,25 +1,19 @@
-CREATE VIEW [RDS].[vwDimPsEnrollmentStatuses]
+CREATE VIEW RDS.vwDimPsEnrollmentStatuses
 AS
 	SELECT
-		DimPsEnrollmentStatusId
+		  rdpes.[DimPsEnrollmentStatusId]
 		, rsy.SchoolYear
-		, PostsecondaryExitOrWithdrawalTypeCode
-		, sssrd.InputCode AS PostsecondaryExitOrWithdrawalTypeMap
-		, PostSecondaryEnrollmentStatusCode
-		, sssrd2.InputCode AS PostSecondaryEnrollmentStatusMap
-		, PostSecondaryEnrollmentActionCode
-		, sssrd3.InputCode AS PostSecondaryEnrollmentActionMap
-	FROM rds.DimPsEnrollmentStatuses rdpes
-	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
-	LEFT JOIN staging.SourceSystemReferenceData sssrd
-		ON rdpes.PostsecondaryExitOrWithdrawalTypeCode = sssrd.OutputCode
-		AND sssrd.TableName = 'RefPSExitOrWithdrawalType'
-		AND rsy.SchoolYear = sssrd.SchoolYear
-	LEFT JOIN staging.SourceSystemReferenceData sssrd2
-		ON rdpes.PostSecondaryEnrollmentStatusCode = sssrd2.OutputCode
-		AND sssrd2.TableName = 'RefPostSecondaryEnrollmentStatus'
+		, rdpes.[PostsecondaryExitOrWithdrawalTypeCode]                
+		, ISNULL(sssrd1.InputCode, 'MISSING') AS [PostsecondaryExitOrWithdrawalTypeMap]
+		, rdpes.[PostsecondaryEnrollmentStatusCode]
+		, ISNULL(sssrd2.InputCode, 'MISSING') AS [PostsecondaryEnrollmentStatusMap]       
+	FROM RDS.DimPsEnrollmentStatuses rdpes
+	CROSS JOIN (SELECT DISTINCT SchoolYear FROM Staging.SourceSystemReferenceData) rsy
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd1
+		ON rdpes.[PostsecondaryExitOrWithdrawalTypeCode] = sssrd1.OutputCode
+		AND sssrd1.TableName = 'RefPSExitOrWithdrawalType'
+		AND rsy.SchoolYear = sssrd1.SchoolYear
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd2
+		ON rdpes.[PostsecondaryEnrollmentStatusCode] = sssrd2.OutputCode
+		AND sssrd2.TableName = 'RefPSEnrollmentStatus'
 		AND rsy.SchoolYear = sssrd2.SchoolYear
-	LEFT JOIN staging.SourceSystemReferenceData sssrd3
-		ON rdpes.PostSecondaryEnrollmentActionCode = sssrd3.OutputCode
-		AND sssrd3.TableName = 'RefPostSecondaryEnrollmentAction'
-		AND rsy.SchoolYear = sssrd3.SchoolYear

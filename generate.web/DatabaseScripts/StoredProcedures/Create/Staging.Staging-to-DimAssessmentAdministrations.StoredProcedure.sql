@@ -55,13 +55,13 @@ BEGIN
 			, AssessmentSecureIndicator
 		)		
 		SELECT DISTINCT
-			sa.AssessmentIdentifier
+			  SUBSTRING(sa.AssessmentIdentifier,1,40)
 			, NULL											AS AssessmentIdentificationSystem
 			, NULL											AS AssessmentAdministrationCode
 			, NULL											AS AssessmentAdministrationName
 			, sa.AssessmentAdministrationStartDate
 			, sa.AssessmentAdministrationFinishDate
-			, sa.AssessmentFamilyTitle						AS AssessmentAdministrationAssessmentFamily
+			, SUBSTRING(sa.AssessmentFamilyTitle,1,40)		AS AssessmentAdministrationAssessmentFamily
 			, sar.SchoolIdentifierSea						AS SchoolIdentifierSea
 			, NULL											AS SchoolIdentificationSystem
 			, sar.LeaIdentifierSeaAccountability			AS LeaIdentifierSea
@@ -87,9 +87,9 @@ BEGIN
 				AND ISNULL(trgt.AssessmentAdministrationStartDate, '')			= ISNULL(src.AssessmentAdministrationStartDate, '')
 				AND ISNULL(trgt.AssessmentAdministrationFinishDate, '')			= ISNULL(src.AssessmentAdministrationFinishDate, '')
 				AND ISNULL(trgt.AssessmentAdministrationAssessmentFamily, '')	= ISNULL(src.AssessmentAdministrationAssessmentFamily, '')
-				AND ISNULL(trgt.SchoolIdentifierSea, '')						= ISNULL(src.SchoolIdentifierSea, '')
+				AND ISNULL(trgt.SchoolIdentifier, '')							= ISNULL(src.SchoolIdentifierSea, '')
 				AND ISNULL(trgt.SchoolIdentificationSystem, '')					= ISNULL(src.SchoolIdentificationSystem, '')
-				AND ISNULL(trgt.LeaIdentifierSea, '')							= ISNULL(src.LeaIdentifierSea, '')
+				AND ISNULL(trgt.LocalEducationAgencyIdentifier, '')				= ISNULL(src.LeaIdentifierSea, '')
 				AND ISNULL(trgt.LEAIdentificationSystem, '')					= ISNULL(src.LEAIdentificationSystem, '')
 				AND ISNULL(trgt.AssessmentAdministrationOrganizationName, '')	= ISNULL(src.AssessmentAdministrationOrganizationName, '')
 				AND ISNULL(trgt.AssessmentAdministrationPeriodDescription, '')	= ISNULL(src.AssessmentAdministrationPeriodDescription, '')
@@ -104,9 +104,9 @@ BEGIN
 			, AssessmentAdministrationStartDate
 			, AssessmentAdministrationFinishDate
 			, AssessmentAdministrationAssessmentFamily
-			, SchoolIdentifierSea
+			, SchoolIdentifier
 			, SchoolIdentificationSystem
-			, LeaIdentifierSea
+			, LocalEducationAgencyIdentifier
 			, LEAIdentificationSystem
 			, AssessmentAdministrationOrganizationName
 			, AssessmentAdministrationPeriodDescription

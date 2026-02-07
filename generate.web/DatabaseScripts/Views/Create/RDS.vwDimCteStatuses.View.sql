@@ -10,7 +10,7 @@ AS
 			ELSE -1
 		  END AS CteAeDisplacedHomemakerIndicatorMap
 		, rdcs.CteNontraditionalGenderStatusCode
-		, sssrd1.InputCode AS CteNontraditionalGenderStatusMap
+		, sssrd1.OutputCode AS CteNontraditionalGenderStatusMap
 		, rdcs.CteNontraditionalCompletionCode
 		, CASE rdcs.CteNontraditionalCompletionCode 
 			WHEN 'Yes' THEN 1 
@@ -35,9 +35,9 @@ AS
 			WHEN 'No' THEN 0
 			ELSE -1
 		 END AS CteConcentratorMap
-	FROM rds.DimCteStatuses rdcs
-	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
-	LEFT JOIN staging.SourceSystemReferenceData sssrd1
+	FROM RDS.DimCteStatuses rdcs
+	CROSS JOIN (SELECT DISTINCT SchoolYear FROM Staging.SourceSystemReferenceData) rsy
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd1
 		ON rdcs.CteNontraditionalGenderStatusCode = sssrd1.OutputCode
 		AND sssrd1.TableName = 'RefCteNonTraditionalGenderStatus'
 		AND rsy.SchoolYear = sssrd1.SchoolYear
