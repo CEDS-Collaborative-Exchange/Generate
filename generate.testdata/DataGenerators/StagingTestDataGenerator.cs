@@ -20,6 +20,7 @@ using System.Text;
 using generate.infrastructure.Helpers;
 using generate.infrastructure.Contexts;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace generate.testdata.DataGenerators
 {
@@ -997,12 +998,17 @@ namespace generate.testdata.DataGenerators
                     var LeaFedFunds = new OrganizationFederalFunding
                     {
                         OrganizationIdentifier = o,
-                        OrganizationType = "LEA",
+                        OrganizationType = "LEA_1",
                         FederalProgramCode = programCode,
                         FederalProgramsFundingAllocation = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000),
                         FederalProgramFundingAllocationType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefFederalProgramFundingAllocationTypeDistribution),
                         SchoolYear = schoolYear.ToString()
                     };
+                    if (LeaFedFunds.FederalProgramCode == "84.010")
+                    {
+                        LeaFedFunds.ParentalInvolvementReservationFunds = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000);
+                        LeaFedFunds.HomelessChildrenandYouthReservation = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000);
+                    }
                     testData.OrganizationFederalFundings.Add(LeaFedFunds);
                 }
             }
@@ -1460,7 +1466,9 @@ namespace generate.testdata.DataGenerators
 
                     if (_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
                     {
-                        prog.TitleIIIImmigrantStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIStatusDistribution);
+                        bool titleIIIStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIStatusDistribution);
+                        prog.TitleIIIImmigrantStatus = titleIIIStatus;
+                        prog.TitleIIIImmigrantParticipationStatus = titleIIIStatus == true ? titleIIIStatus: false;
                         prog.TitleIIIImmigrantStatus_StartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
                         if (!_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
                         {

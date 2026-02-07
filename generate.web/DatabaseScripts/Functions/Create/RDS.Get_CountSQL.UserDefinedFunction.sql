@@ -2094,6 +2094,17 @@ BEGIN
 					end'	
 			end
 
+			--New code for 134
+			else if @categoryCode in ('AGEU3TOGR12UG')
+			begin
+				set @sqlCategoryReturnField = ' 
+					case 
+						when isnull(da.AgeCode, ''99'') IN (''3'', ''4'', ''5'')
+								and isnull(CAT_GRADELEVEL.GradeLevelEdFactsCode, ''PK'') in (''PK'',''MISSING'') THEN ''3TO5NOTK''
+						when isnull(da.AgeCode, ''99'') IN (''0'',''1'',''2'') then ''UNDER3''
+						else CAT_GRADELEVEL.GradeLevelEdFactsCode END'
+			end
+
 			---Begin New Code for c118
 			else if @categoryCode in ('AGE3TOGRADE13', 'AGEGRDWO13')
 			begin
@@ -3164,6 +3175,11 @@ BEGIN
 					on fact.K12StudentId = p.DimPersonId
 				inner join rds.DimTitleIStatuses titleI 
 					on fact.TitleIStatusId = titleI.DimTitleIStatusId
+					and fact.SchoolYearId = @dimSchoolYearId
+					and fact.FactTypeId = @dimFactTypeId
+					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+				left join rds.DimAges da
+					on fact.AgeId = da.DimAgeId
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
@@ -4995,11 +5011,16 @@ BEGIN
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join rds.DimPeople p
 					on fact.K12StudentId = p.DimPersonId
-				inner join rds.DimK12Schools s on fact.K12SchoolId = s.DimK12SchoolId
+				inner join rds.DimK12Schools s 
+					on fact.K12SchoolId = s.DimK12SchoolId
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				inner join rds.DimAttendances m on fact.AttendanceId = m.DimAttendanceId
+				inner join rds.DimAttendances m 	
+					on fact.AttendanceId = m.DimAttendanceId
+				inner join rds.DimGradeLevels gl 
+					on fact.GradeLevelId = gl.DimGradeLevelId
+					and gl.GradeLevelEdFactsCode in (''KG'',''01'',''02'',''03'',''04'',''05'',''06'',''07'',''08'',''09'',''10'',''11'',''12'',''UG'')
 				where m.AbsenteeismCode = ''CA''
 			) rules
 				on fact.K12StudentId = rules.K12StudentId 
@@ -6630,7 +6651,7 @@ BEGIN
 		end
 		else if @reportCode in ('086')
 		begin
-			set @sumOperation = 'count(distinct cs.IncidentIdentifier, cs.K12StudentStudentIdentifierState)'
+			set @sumOperation = 'count(distinct concat(cs.IncidentIdentifier, cs.K12StudentStudentIdentifierState))'
 		end
 		else if @reportCode in ('059', '070', '099', '112', '203')
 		begin
@@ -6948,7 +6969,7 @@ BEGIN
 			if @reportCode in ('086')
 			begin
 				set @sql = @sql + '
-					having count(distinct cs.IncidentIdentifier, cs.K12StudentStudentIdentifierState) > 0'
+					having count(distinct concat(cs.IncidentIdentifier, cs.K12StudentStudentIdentifierState)) > 0'
 			end
 			else
 			begin
@@ -7037,7 +7058,7 @@ BEGIN
 
 				if @categorySetCode = 'TOT'
 				begin
-					if(@reportCode in ('002','089','052','033')) 
+					if(@reportCode in ('002','089','052','033','088','143')) 
 					begin	
  
 						set @sql = @sql + '

@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
 using generate.infrastructure.Contexts;
 using generate.core.Models.App;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using System.Data;
-using System.Data.SqlClient;
-using System.Dynamic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using generate.core.Config;
 using generate.core.Interfaces.Repositories.App;
+using generate.core.Interfaces.Repositories.RDS;
 using System.Threading;
 using Hangfire;
-using System.IO;
+
 
 namespace generate.infrastructure.Repositories.App
 {
@@ -23,10 +18,12 @@ namespace generate.infrastructure.Repositories.App
     public class AppRepository : RepositoryBase, IAppRepository, IDisposable
     {
         private CancellationTokenSource source;
-        public AppRepository(AppDbContext context)
+        private readonly IRDSRepository _rdsRepository;
+        public AppRepository(AppDbContext context, IRDSRepository rdsRepository)
             : base(context)
         {
             this.source = new CancellationTokenSource();
+            _rdsRepository = rdsRepository;
         }
 
         public void Dispose()
@@ -454,20 +451,33 @@ namespace generate.infrastructure.Repositories.App
 
         }
 
-        public void toggleReportLock(string reportCode, bool isLocked)
+        public void toggleReportLock(string factTypeCode, string reportCode, bool isLocked)
         {
-            if (reportCode == "") {
-                var reports = Find<GenerateReport>(t => t.IsActive).ToList();
-                foreach (var report in reports) {
+
+            if (reportCode != "")
+            {
+                var report = _context.Set<GenerateReport>().FirstOrDefault(x => x.ReportCode == reportCode);
+                report.IsLocked = isLocked;
+                _context.SaveChanges();
+            }
+            else if (factTypeCode != "")
+            {
+                var factType = _rdsRepository.GetFactType(factTypeCode);
+                var reports = Find<GenerateReport>(t => t.GenerateReport_FactTypes.Any(t => t.FactTypeId == factType.DimFactTypeId)).ToList();
+                foreach (var report in reports)
+                {
                     report.IsLocked = isLocked;
                     _context.SaveChanges();
                 }
             }
             else
             {
-                var report = _context.Set<GenerateReport>().FirstOrDefault(x => x.ReportCode == reportCode);
-                report.IsLocked = isLocked;
-                _context.SaveChanges();
+                var reports = Find<GenerateReport>(t => t.IsActive).ToList();
+                foreach (var report in reports)
+                {
+                    report.IsLocked = isLocked;
+                    _context.SaveChanges();
+                }
             }
 
         }

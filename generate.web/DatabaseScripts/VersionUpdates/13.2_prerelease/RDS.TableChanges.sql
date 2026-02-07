@@ -86,6 +86,15 @@
         ALTER TABLE RDS.FactOrganizationCounts ADD HomelessChildrenandYouthReservation INT NULL;
     END
 
+    --Add the default constraint back on the renamed column
+    ALTER TABLE [RDS].[FactOrganizationCounts] ADD  CONSTRAINT [DF_FactOrganizationCounts_HomelessChildrenandYouthReservation]  DEFAULT ((0)) FOR [HomelessChildrenandYouthReservation]
+
+    --Add the new column to ReportEdFactsOrganizationCounts
+    IF COL_LENGTH('RDS.ReportEdFactsOrganizationCounts', 'HomelessChildrenandYouthReservation') IS NULL
+    BEGIN
+        ALTER TABLE RDS.ReportEdFactsOrganizationCounts ADD HomelessChildrenandYouthReservation INT NULL;
+    END
+
 -----------------------------------------------
 --File 138 changes	
 -----------------------------------------------

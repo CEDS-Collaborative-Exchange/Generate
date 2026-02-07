@@ -15,11 +15,13 @@ AS
 			, SEA.SeaOrganizationName
 			, LEAs.LeaIdentifierSea
 			, LEAs.LeaOrganizationName
+			, LEAs.ReportedFederally		AS LeaReportedFederally
 			, Schools.SchoolIdentifierSea
 			, Schools.DimK12SchoolId
 			, Schools.NameOfInstitution
 			, Schools.SchoolOperationalStatus
 			, Schools.SchoolTypeCode
+			, Schools.ReportedFederally		AS SchoolReportedFederally
 
 			, Ages.AgeEdFactsCode
 			, Races.RaceEdFactsCode
@@ -27,14 +29,14 @@ AS
 			--Homeless	
 			, HM.HomelessnessStatusEdFactsCode
 			, HM.HomelessServicedIndicatorCode
-			, HM.HomelessPrimaryNighttimeResidenceCode
-			, HM.HomelessUnaccompaniedYouthStatusCode
+			, HM.HomelessPrimaryNighttimeResidenceEdFactsCode
+			, HM.HomelessUnaccompaniedYouthStatusEdFactsCode
 			--IDEA Indicator
 			, IDEAStatus.IdeaIndicatorEdFactsCode
 			--English Learner
 			, EL.EnglishLearnerStatusEdFactsCode
 			--Migrant 
-			, Mig.MigrantStatusCode
+			, Mig.MigrantStatusEdFactsCode
 
  	FROM		RDS.FactK12StudentCounts			Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	

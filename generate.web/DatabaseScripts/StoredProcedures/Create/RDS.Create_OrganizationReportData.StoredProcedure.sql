@@ -714,6 +714,7 @@ BEGIN
 						, [TotalIndicator]
 						, [TitleiParentalInvolveRes]
 						, [TitleiPartaAllocations]
+						, [HomelessChildrenandYouthReservation]
 					)
 					select distinct @categorySetCode
 						, 1 as OrganizationCount
@@ -728,6 +729,7 @@ BEGIN
 						, 0 as TotalIndicator
 						, ISNULL(TitleiParentalInvolveRes, -1)
 						, TitleiPartaAllocations
+						, HomelessChildrenandYouthReservation
 					from rds.FactOrganizationCounts fact
 						inner join rds.DimSchoolYears d
 							on fact.SchoolYearId = d.DimSchoolYearId

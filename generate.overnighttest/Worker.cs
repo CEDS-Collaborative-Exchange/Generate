@@ -1,30 +1,32 @@
+using generate.core.Config;
+using generate.core.Interfaces.Repositories.App;
+using generate.core.Interfaces.Repositories.RDS;
+using generate.core.Interfaces.Services;
+using generate.core.Models.RDS;
+using generate.infrastructure.Contexts;
+using generate.infrastructure.Repositories.App;
+using generate.infrastructure.Services;
+using generate.web.Config;
+using Hangfire;
+using Hangfire.Logging;
+using Hangfire.SqlServer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Reflection;
-using generate.core.Config;
-using generate.core.Interfaces.Services;
-using generate.infrastructure.Contexts;
-using generate.infrastructure.Services;
-using generate.infrastructure.Repositories.App;
-using generate.web.Config;
-using Hangfire;
-using Hangfire.SqlServer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.PlatformAbstractions;
-using static generate.overnighttest.Utils;
-using System.Collections.Generic;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Logging;
-using System;
-using Hangfire.Logging;
 using System.Web.Services.Description;
-using generate.core.Interfaces.Repositories.App;
-using System.Collections.ObjectModel;
-using System.Collections.Immutable;
+using static generate.overnighttest.Utils;
 namespace generate.overnighttest
 {
     public class Worker
@@ -339,7 +341,7 @@ namespace generate.overnighttest
         /// </summary>
         /// <param name="value">1 means lock, 0 means unlock</param>
         /// <param name="reportCodeArr"> A comma seperated name of reports such as 002,003</param>
-        private void toggleReportLock(int value, string[]? reportCodeArr)
+        private void toggleReportLock(int value, string[]? reportCodeArr, bool isFactType)
         {
             Console.Out.WriteLine($"Inside toggleReportLock with value:{value},and reportCodeArr:{reportCodeArr}");
             try
@@ -354,7 +356,9 @@ namespace generate.overnighttest
                 Action<string> process = (reportCode) =>
                 {
                     string report = reportCode.Equals(ALL_FACT) ? "" : reportCode;
-                    appRepository.toggleReportLock(report, Convert.ToBoolean(value));
+                    if (isFactType) { appRepository.toggleReportLock(report, "", Convert.ToBoolean(value)); }
+                    else { appRepository.toggleReportLock("", report, Convert.ToBoolean(value)); }
+                   
                 };
 
                 using var scope = serviceProvider.CreateScope();
@@ -387,17 +391,22 @@ namespace generate.overnighttest
 
                 Console.WriteLine($"Inside RunMigration with migrateFactRecords:{migrateFactRecords}");
                 string[]? factsToMigrate = [ALL_FACT];
+                bool isFactType = false;
                 // all the fact  report codes to array
                 if (migrateFactRecords != null && !migrateFactRecords.Contains(ALL_FACT))
                 {
+                    Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider);
                     factsToMigrate = migrateFactRecords.Split(",");
+                    if (factsToMigrate.Length == 1 && factTypeCodeToReportCodes.ContainsKey(factsToMigrate[0])) { 
+                          isFactType = true;         
+                    }
                 }
 
 
                 // unlock all GenerateReports.isLocked to 0 
-                toggleReportLock(0, []);
+                toggleReportLock(0, [], isFactType);
                 // Only report that came in to be locked or if all report everthing to be locked, GenerateReports.isLocked = 1 
-                toggleReportLock(1, factsToMigrate);
+                toggleReportLock(1, factsToMigrate, isFactType);
                 Console.Out.WriteLine("Inside RunMigration");
                 IMigrationService migrationService = serviceProvider.GetService<IMigrationService>();
                 Console.Out.WriteLine("migrationService is present:" + migrationService);
@@ -436,7 +445,10 @@ namespace generate.overnighttest
                     return;
                 }
 
-                IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+                using var scope = serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                IRDSRepository rDSRepository = serviceProvider.GetService<IRDSRepository>();
+                IAppRepository appRepository = new AppRepository(dbContext, rDSRepository);
                 appRepository.RunBeforeTests(schoolyear);
 
             }
