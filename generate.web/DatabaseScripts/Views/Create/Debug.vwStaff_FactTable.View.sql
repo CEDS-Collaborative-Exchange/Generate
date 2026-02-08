@@ -24,7 +24,7 @@ AS
 			, StaffStatus.EdFactsCertificationStatusEdFactsCode
 			, StaffStatus.HighlyQualifiedTeacherIndicatorEdFactsCode
 			, StaffStatus.EdFactsTeacherInexperiencedStatusEdFactsCode
-			, StaffStatus.TeachingCredentialTypeEdFactsCode
+			, StaffStatus.TeachingCredentialTypeCode
 			, StaffStatus.EdFactsTeacherOutOfFieldStatusEdFactsCode
 			, StaffStatus.SpecialEducationTeacherQualificationStatusEdFactsCode
 			, StaffStatus.ParaprofessionalQualificationStatusEdFactsCode

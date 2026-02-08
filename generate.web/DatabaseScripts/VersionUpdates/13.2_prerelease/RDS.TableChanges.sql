@@ -13,12 +13,28 @@
 --File 160 changes	
 -----------------------------------------------
 
+	--Add Postsecondary Enrollment Action to the dimension table
+    IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostSecondaryEnrollmentActionCode') IS NULL
+    BEGIN
+        ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostSecondaryEnrollmentActionCode VARCHAR(50) NULL;
+    END
+	
+    IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostSecondaryEnrollmentActionDescription') IS NULL
+    BEGIN
+        ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostSecondaryEnrollmentActionDescription VARCHAR(200) NULL;
+    END
+
+    IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostSecondaryEnrollmentActionEdFactsCode') IS NULL
+    BEGIN
+        ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostSecondaryEnrollmentActionEdFactsCode VARCHAR(50) NULL;
+    END
+
 	--Add PSEnrollmentStatus to the Fact table
     IF COL_LENGTH('RDS.FactK12StudentCounts', 'PsEnrollmentStatusId') IS NULL
     BEGIN
         ALTER TABLE RDS.FactK12StudentCounts ADD PsEnrollmentStatusId BIGINT NULL;
     END
-
+       
 	IF NOT EXISTS (
     SELECT 1
     FROM sys.foreign_keys fk
@@ -33,37 +49,10 @@
 		REFERENCES RDS.DimPsEnrollmentStatuses(DimPSEnrollmentStatusId);
 	END
 
-	--Add the new columns to the PSEnrollmentSStatuses dimension
-    IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostsecondaryEnrollmentStatusCode') IS NULL
+    IF COL_LENGTH('RDS.FactK12StudentCounts', 'PsEnrollmentStatusId') IS NOT NULL
     BEGIN
-        ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostsecondaryEnrollmentStatusCode VARCHAR(50) NULL;
+    	ALTER TABLE [RDS].[FactK12StudentCounts] ADD CONSTRAINT [DF_FactK12StudentCounts_PsEnrollmentStatusId] DEFAULT ((-1)) FOR [PsEnrollmentStatusId];
     END
-
-    IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostsecondaryEnrollmentStatusDescription') IS NULL
-    BEGIN
-        ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostsecondaryEnrollmentStatusDescription VARCHAR(200) NULL;
-    END
-
-    IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostsecondaryEnrollmentStatusEdFactsCode') IS NULL
-    BEGIN
-        ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostsecondaryEnrollmentStatusEdFactsCode VARCHAR(50) NULL;
-    END
-
-    IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostsecondaryEnrollmentActionCode') IS NULL
-    BEGIN
-        ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostsecondaryEnrollmentActionCode VARCHAR(50) NULL;
-    END
-
-    IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostsecondaryEnrollmentActionDescription') IS NULL
-    BEGIN
-        ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostsecondaryEnrollmentActionDescription VARCHAR(200) NULL;
-    END
-
-    IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostsecondaryEnrollmentActionEdFactsCode') IS NULL
-    BEGIN
-        ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostsecondaryEnrollmentActionEdFactsCode VARCHAR(50) NULL;
-    END
-
 -----------------------------------------------
 --CIID-8170 
 -----------------------------------------------
@@ -118,7 +107,6 @@
 		REFERENCES RDS.DimAssessmentStatuses(DimAssessmentStatusId);
 	END
 
-
 -----------------------------------------------
 --File 067 changes	
 -----------------------------------------------
@@ -133,4 +121,46 @@
         ALTER TABLE RDS.DimK12StaffCategories ADD TitleIIILanguageInstructionIndicatorDescription VARCHAR(200) NULL;
     END
 
+-----------------------------------------------
+--File 203 changes	
+-----------------------------------------------
+
+    IF COL_LENGTH('RDS.DimK12StaffStatuses', 'TeachingCredentialTypeCode') IS NULL
+    BEGIN
+        ALTER TABLE RDS.DimK12StaffStatuses ADD TeachingCredentialTypeCode VARCHAR(50) NULL;
+    END
+	
+    IF COL_LENGTH('RDS.DimK12StaffStatuses', 'TeachingCredentialTypeDescription') IS NULL
+    BEGIN
+        ALTER TABLE RDS.DimK12StaffStatuses ADD TeachingCredentialTypeDescription VARCHAR(200) NULL;
+    END
+
+-----------------------------------------------
+--CIID-8648 changes	
+-----------------------------------------------
+
+	--Add PSEnrollmentStatus to the Fact table
+    IF COL_LENGTH('RDS.FactK12StudentCounts', 'CteOutcomeIndicatorId') IS NULL
+    BEGIN
+        ALTER TABLE RDS.FactK12StudentCounts ADD CteOutcomeIndicatorId BIGINT NULL;
+    END
+       
+	IF NOT EXISTS (
+    SELECT 1
+    FROM sys.foreign_keys fk
+    JOIN sys.tables t ON fk.parent_object_id = t.object_id
+    WHERE t.name = 'FactK12StudentCounts'
+      AND fk.name = 'FK_FactK12StudentCounts_CteOutcomeIndicatorId'
+	)
+	BEGIN
+		ALTER TABLE RDS.FactK12StudentCounts
+		ADD CONSTRAINT FK_FactK12StudentCounts_CteOutcomeIndicatorId
+		FOREIGN KEY (CteOutcomeIndicatorId)
+		REFERENCES RDS.DimPsEnrollmentStatuses(DimPSEnrollmentStatusId);
+	END
+
+    IF COL_LENGTH('RDS.FactK12StudentCounts', 'CteOutcomeIndicatorId') IS NOT NULL
+    BEGIN
+    	ALTER TABLE [RDS].[FactK12StudentCounts] ADD CONSTRAINT [DF_FactK12StudentCounts_CteOutcomeIndicatorId] DEFAULT ((-1)) FOR [CteOutcomeIndicatorId];
+    END
 

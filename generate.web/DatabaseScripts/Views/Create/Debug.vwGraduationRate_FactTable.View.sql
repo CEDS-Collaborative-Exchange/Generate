@@ -26,7 +26,7 @@ AS
 			, Demo.SexEdFactsCode
 			, Races.RaceEdFactsCode
 			, Diploma.HighSchoolDiplomaTypeEdFactsCode
-			, Cohort.CohortStatusEdFactsCode
+			, Cohort.EdFactsCohortGraduationStatusEdFactsCode
 
 			--Homeless	
 			, Home.HomelessnessStatusEdFactsCode

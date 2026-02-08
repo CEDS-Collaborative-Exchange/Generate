@@ -51,9 +51,8 @@ BEGIN
 			where ExitOrWithdrawalTypeCode = '01927'
 				and EnrollmentStatusCode = 'MISSING'
 				and EntryTypeCode = 'MISSING'
-				and PostSecondaryEnrollmentStatusCode = 'MISSING'
-				and EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
-				and EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
+				and AdjustedExitOrWithdrawalTypeCode = 'MISSING'
+				and ExitOrWithdrawalStatusCode = 'MISSING'
 				and SchoolYear = @SchoolYear
 				)
 
@@ -63,9 +62,8 @@ BEGIN
 			where ExitOrWithdrawalTypeCode = '01927'
 				and EnrollmentStatusCode = 'MISSING'
 				and EntryTypeCode = 'MISSING'
-				and PostSecondaryEnrollmentStatusCode = 'MISSING'
-				and EdFactsAcademicOrCareerAndTechnicalOutcomeTypeCode = 'MISSING'
-				and EdFactsAcademicOrCareerAndTechnicalOutcomeExitTypeCode = 'MISSING'
+				and AdjustedExitOrWithdrawalTypeCode = 'MISSING'
+				and ExitOrWithdrawalStatusCode = 'MISSING'
 				and SchoolYear = @SchoolYear
 				)
 
