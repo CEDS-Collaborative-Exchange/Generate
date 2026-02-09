@@ -72,7 +72,7 @@ There are two types of users in Generate: _Reviewer_ and _Administrator_. Check 
 
 <details>
 
-<summary>❓ <strong>Can the ED</strong><em><strong>Facts</strong></em><strong> submission files be submitted to the EDEN Submission System (ESS) from Generate?</strong></summary>
+<summary>❓ <strong>Can the EDFacts Submission files be submitted to EDPass from Generate?</strong></summary>
 
 **No**. You need to save the files on your computer and submit them as you normally would.
 
@@ -82,7 +82,7 @@ There are two types of users in Generate: _Reviewer_ and _Administrator_. Check 
 
 <summary>🆘 <strong>Why isn’t XML showing up as a submission file type?</strong></summary>
 
-Submission file types can be different depending on the year selected. Beginning in 2016-17, ESS stopped accepting the .XML file type. Beginning with 2016-17 forward, Generate does not display that file type as an option. For years prior to 2016-17, the .XML file type is displayed as an option.
+Submission file types can be different depending on the year selected. Beginning in 2016-17, the legacy system for EDFacts files, ESS, stopped accepting the .XML file type. These files are not accepted by EDPass. Beginning with 2016-17 forward, Generate does not display that file type as an option. For years prior to 2016-17, the .XML file type is displayed as an option.
 
 </details>
 
@@ -90,7 +90,7 @@ Submission file types can be different depending on the year selected. Beginning
 
 <summary>❓ <strong>Why does Generate exclude counts for Homebound/Hospital (HH) and Parentally Placed in Private Schools (PPPS) for FS002 at the School level? Before implementing Generate, we were able to submit these records without receiving submission or validation errors.</strong></summary>
 
-The file specification for FS002 excludes these counts from the school level submission. There are no submission or validation errors built into the EDFacts Submission System for these two values. Since Generate is programmed to follow the business rules within each file specification, HH and PPPS records will be excluded from files created through Generate.
+The file specification for FS002 excludes these counts from the school level submission. There are no submission or validation errors built into EDPass for these two values. Since Generate is programmed to follow the business rules within each file specification, HH and PPPS records will be excluded from files created through Generate.
 
 </details>
 

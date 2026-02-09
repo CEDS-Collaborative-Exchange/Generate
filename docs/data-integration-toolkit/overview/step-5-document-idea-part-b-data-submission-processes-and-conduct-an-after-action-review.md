@@ -25,12 +25,12 @@ Successful, sustained implementation of the data integration project requires an
 
 #### Activity 5.1.1: Complete the IDEA Part B Data Submission Organizer
 
-This organizer helps project teams keep track of data elements, action items, deadlines, and team member&#x20;responsibilities for submitting IDEA Part B E&#x44;_&#x46;acts_ files. The organizer provides a yearly calendar to benchmark&#x20;annual events as well as a separate worksheet for each IDEA Part B data submission. Several sections of the&#x20;organizer are based on documentation originally completed in the Project Planner The tabs in the organizer&#x20;include:
+This organizer helps project teams keep track of data elements, action items, deadlines, and team member&#x20;responsibilities for submitting IDEA Part B EDFacts files. The organizer provides a yearly calendar to benchmark&#x20;annual events as well as a separate worksheet for each IDEA Part B data submission. Several sections of the&#x20;organizer are based on documentation originally completed in the Project Planner. The tabs in the organizer&#x20;include:
 
 * Calendar – provides a monthly view of the IDEA data tasks and when submissions are due, with flexibility for  &#x20;SEAs to add their own internal tasks, SEA reports, and/or due dates)
 * Child Count
-* Maintenance of Effort (MOE) Reduction and Coordinated Early Intervening Services (CEIS) – tab included for  &#x20;convenience, not an EDFacts Submission System submission
-* Dispute Resolution – tab included for convenience, not an EDFacts Submission System submission
+* Maintenance of Effort (MOE) Reduction and Coordinated Early Intervening Services (CEIS)
+* Dispute Resolution&#x20;
 * Personnel
 * Exiting
 * Discipline
@@ -42,7 +42,7 @@ This organizer helps project teams keep track of data elements, action items, de
 Prior to finalizing the documentation compiled for each data submission, the team should solicit feedback and&#x20;obtain final approval of information documented in the IDEA Part B Data Submission Organizer. The following&#x20;staff should review the documentation prior to approval:
 
 * IDEA Part B Data Manager
-* E&#x44;_&#x46;acts_ Coordinators
+* EDFacts Coordinators
 * Staff on the data governance team
 * Team members who are responsible for the data submissions (team members may vary based on the IDEA  &#x20;Part B data submission)
 * Staff who are documented in the organizer as lead or support staff; and
