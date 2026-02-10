@@ -230,9 +230,6 @@ namespace generate.infrastructure.Repositories.App
 
                 // Run migration
 
-                int? oldTimeOut = _context.Database.GetCommandTimeout();
-                //_context.Database.SetCommandTimeout(30000);
-
                 // Workaround for the fact that ShutdownCancellationToken is not called when the job is deleted
                 // https://github.com/HangfireIO/Hangfire/issues/211
 
