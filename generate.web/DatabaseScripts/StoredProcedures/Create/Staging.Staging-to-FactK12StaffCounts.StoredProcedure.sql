@@ -55,6 +55,11 @@ BEGIN
 
 	   -- CREATE CLUSTERED INDEX ix_tempvwK12StaffCategories ON #vwK12StaffCategories (K12StaffClassificationMap, SpecialEducationSupportServicesCategoryMap, TitleIProgramStaffCategoryMap);
 
+	    SELECT *
+		INTO #vwDimTeachingCredentialStatuses
+		FROM RDS.vwDimTeachingCredentialStatuses
+		WHERE SchoolYear = @SchoolYear
+
 		
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
@@ -78,6 +83,7 @@ BEGIN
 			, K12StaffId							int null
 			, K12StaffStatusId						int null
 			, K12StaffCategoryId					int null
+			, TeachingCredentialStatusId			int null
 			, TitleIIIStatusId						int null
 			, CredentialIssuanceDateId				int null
 			, CredentialExpirationDateId			int null
@@ -96,6 +102,7 @@ BEGIN
 			, ISNULL(rdp.DimPersonId, -1)								K12StaffId
 			, ISNULL(rdkss.DimK12StaffStatusId, -1)						K12StaffStatusId
 			, ISNULL(rdksc.DimK12StaffCategoryId, -1)					K12StaffCategoryId
+			, ISNULL(rdtcs.DimTeachingCredentialStatusId, -1)			TeachingCredentialStatusId
 			, -1														TitleIIIStatusId
 			, ISNULL(rds.Get_DimDate(ssa.CredentialIssuanceDate), -1)	CredentialIssuanceDateId
 			, ISNULL(rds.Get_DimDate(ssa.CredentialExpirationDate), -1)	CredentialExpirationDateId
@@ -128,11 +135,14 @@ BEGIN
 			AND ISNULL(ssa.SpecialEducationAgeGroupTaught, 'MISSING') = ISNULL(rdkss.SpecialEducationAgeGroupTaughtMap, rdkss.SpecialEducationAgeGroupTaughtCode)
 			AND ISNULL(ssa.EDFactsTeacherOutOfFieldStatus, 'MISSING') = ISNULL(rdkss.EDFactsTeacherOutOfFieldStatusMap, rdkss.EDFactsTeacherOutOfFieldStatusCode)
 			AND ISNULL(ssa.EdFactsTeacherInexperiencedStatus, 'MISSING') = ISNULL(rdkss.EdFactsTeacherInexperiencedStatusMap, rdkss.EdFactsTeacherInexperiencedStatusCode)
-			AND ISNULL(ssa.TeachingCredentialType, 'MISSING') = ISNULL(rdkss.TeachingCredentialTypeMap, rdkss.TeachingCredentialTypeCode)
 			AND ISNULL(ssa.ParaprofessionalQualificationStatus, 'MISSING') = ISNULL(rdkss.ParaprofessionalQualificationStatusMap, rdkss.ParaprofessionalQualificationStatusCode)
 			AND rdkss.HighlyQualifiedTeacherIndicatorCode = 'MISSING'
 			AND ISNULL(ssa.SpecialEducationTeacherQualificationStatus, 'MISSING') = ISNULL(rdkss.SpecialEducationTeacherQualificationStatusMap, rdkss.SpecialEducationTeacherQualificationStatusCode)
             AND	ISNULL(ssa.EdFactsCertificationStatus, 'MISSING') = ISNULL(rdkss.EdFactsCertificationStatusMap, rdkss.EdFactsCertificationStatusCode)
+		LEFT JOIN #vwDimTeachingCredentialStatuses rdtcs
+			ON rsy.SchoolYear = rdtcs.SchoolYear
+			AND ISNULL(ssa.TeachingCredentialType, 'MISSING') = ISNULL(rdtcs.TeachingCredentialTypeMap, rdtcs.TeachingCredentialTypeCode)
+			AND rdtcs.TeachingCredentialBasisCode = 'MISSING'
 	--person (rds)
 		JOIN RDS.DimPeople rdp
 			ON ssa.StaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState
@@ -153,6 +163,7 @@ BEGIN
 			, K12StaffId
 			, K12StaffStatusId
 			, K12StaffCategoryId
+			, TeachingCredentialStatusId
 			, TitleIIIStatusId
 			, CredentialIssuanceDateId
 			, CredentialExpirationDateId
@@ -168,6 +179,7 @@ BEGIN
 			, K12StaffId
 			, K12StaffStatusId
 			, K12StaffCategoryId
+			, TeachingCredentialStatusId
 			, TitleIIIStatusId
 			, CredentialIssuanceDateId
 			, CredentialExpirationDateId

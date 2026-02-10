@@ -37,3 +37,27 @@
     set dimensionid = 55
         , ReportColumn = 'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE'
     where ReportColumn = 'TITLEIIILANGUAGEINSTRUCTION'
+
+
+
+
+IF NOT EXISTS(SELECT 1 from app.DimensionTables where DimensionTableName = 'DimTeachingCredentialStatuses')
+BEGIN
+	INSERT INTO [App].[DimensionTables]
+			   ([DimensionTableName]
+			   ,[IsReportingDimension])
+	VALUES('DimTeachingCredentialStatuses', 0)
+END
+
+
+select @dimensionTableId = DimensionTableId from app.DimensionTables where DimensionTableName = 'DimTeachingCredentialStatuses'
+
+Update app.Dimensions set DimensionTableId = @dimensionTableId where DimensionFieldName = 'TeachingCredentialType'
+
+select @factTableId = FactTableId from app.FactTables where FactTableName = 'FactK12StaffCounts'
+	
+IF NOT EXISTS (select 1 from app.FactTable_DimensionTables where FactTableId = @factTableId and DimensionTableId = @dimensionTableId)
+BEGIN
+	insert into app.FactTable_DimensionTables(FactTableId, DimensionTableId)
+	values (@factTableId, @dimensionTableId)
+END

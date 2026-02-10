@@ -24,7 +24,7 @@ AS
 			, StaffStatus.EdFactsCertificationStatusEdFactsCode
 			, StaffStatus.HighlyQualifiedTeacherIndicatorEdFactsCode
 			, StaffStatus.EdFactsTeacherInexperiencedStatusEdFactsCode
-			, StaffStatus.TeachingCredentialTypeCode
+			, TeachStatus.TeachingCredentialTypeCode
 			, StaffStatus.EdFactsTeacherOutOfFieldStatusEdFactsCode
 			, StaffStatus.SpecialEducationTeacherQualificationStatusEdFactsCode
 			, StaffStatus.ParaprofessionalQualificationStatusEdFactsCode
@@ -46,6 +46,7 @@ AS
 	LEFT JOIN	RDS.DimK12Schools					Schools			ON Fact.K12SchoolId				= Schools.DimK12SchoolId
 	LEFT JOIN	RDS.DimK12StaffStatuses				StaffStatus		ON Fact.K12StaffStatusId		= StaffStatus.DimK12StaffStatusId
 	LEFT JOIN	RDS.DimK12StaffCategories			StaffCat		ON Fact.K12StaffCategoryId		= StaffCat.DimK12StaffCategoryId
+	LEFT JOIN	RDS.DimTeachingCredentialStatuses	TeachStatus		ON Fact.TeachingCredentialStatusId = TeachStatus.DimTeachingCredentialStatusId
     --uncomment/modify the where clause conditions as necessary for validation
     WHERE 1 = 1
 	--2 ways to select by SchoolYear, use 1 or the other, not both
