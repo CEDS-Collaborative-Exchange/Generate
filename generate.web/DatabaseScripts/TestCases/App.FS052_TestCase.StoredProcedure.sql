@@ -1080,7 +1080,7 @@ BEGIN
 		Total at the LEA level
 		***********************************************************************/
 		SELECT 
-			LEAIdentifierSeaAccountability,
+			s.LEAIdentifierSeaAccountability,
 			COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 		INTO #LEA_TOT
 		FROM #c052staging s
@@ -1088,7 +1088,7 @@ BEGIN
 		ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability
 		WHERE elea.LeaIdentifierSeaAccountability IS NULL -- exclude non reported LEAs
 		GROUP BY 
-			LEAIdentifierSeaAccountability
+			s.LEAIdentifierSeaAccountability
 		
 		INSERT INTO App.SqlUnitTestCaseResult (
 			[SqlUnitTestId]

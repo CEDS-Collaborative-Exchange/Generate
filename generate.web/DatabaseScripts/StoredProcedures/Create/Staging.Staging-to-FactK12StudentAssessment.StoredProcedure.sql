@@ -406,7 +406,6 @@ BEGIN
 			, AssessmentAdministrationId					int null		
 			, AssessmentRegistrationId						int null	
 			, AssessmentParticipationSessionId				int null	
-			, AssessmentResultId							int null	
 			, AssessmentStatusId							int null	
 			, AssessmentPerformanceLevelId					int null		
 			, AssessmentCount								int null	
@@ -431,7 +430,6 @@ BEGIN
 			, NOrDStatusId									int null	
 			, TitleIStatusId								int null	
 			, TitleIIIStatusId								int null	
-			, FactK12StudentAssessmentAccommodationId		int null	
 			, PrimaryDisabilityTypeId						int null
 		)
 
@@ -448,9 +446,8 @@ BEGIN
 			, ISNULL(rda.DimAssessmentId, -1)								AssessmentId							
 			, -1															AssessmentSubtestId					
 			, ISNULL(rdaa.DimAssessmentAdministrationId, -1)				AssessmentAdministrationId			
-			, ISNULL(rdars.DimAssessmentRegistrationId, -1)					AssessmentRegistrationId				
+			, ISNULL(rdar.DimAssessmentRegistrationId, -1)					AssessmentRegistrationId				
 			, -1															AssessmentParticipationSessionId		
-			, ISNULL(rdar.DimAssessmentResultId, -1)						AssessmentResultId					
 			, ISNULL(rdas.DimAssessmentStatusId, -1)						AssessmentStatusId					
 			, ISNULL(rdapl.DimAssessmentPerformanceLevelId, -1)				AssessmentPerformanceLevelId			
 			, 1																AssessmentCount						
@@ -479,7 +476,6 @@ BEGIN
 			  end															NOrDStatusId							
 			, -1															TitleIStatusId						
 			, ISNULL(title3.DimTitleIIIStatusId, -1)						TitleIIIStatusId						
-			, -1															FactK12StudentAssessmentAccommodationId
 			, ISNULL(rdidt.DimIdeaDisabilityTypeId, -1)					    PrimaryDisabilityTypeId
 
 		FROM Staging.K12Enrollment ske
@@ -510,19 +506,15 @@ BEGIN
 				AND ISNULL(sar.AssessmentTypeAdministered, 'MISSING') 	= ISNULL(rda.AssessmentTypeAdministeredMap, rda.AssessmentTypeAdministeredCode)	--RefAssessmentTypeCildrenWithDisabilities
 				AND ISNULL(sar.AssessmentTypeAdministeredToEnglishLearners, 'MISSING') = ISNULL(rda.AssessmentTypeAdministeredToEnglishLearnersMap, rda.AssessmentTypeAdministeredToEnglishLearnersCode)	--RefAssessmentTypeAdministeredToEnglishLearners
 				and sar.SchoolYear = rda.SchoolYear
-		--assessment results (rds)
-			LEFT JOIN RDS.vwDimAssessmentResults rdar
-				ON rdar.SchoolYear = rsy.SchoolYear
-				AND ISNULL(sar.AssessmentScoreMetricType, '') = ISNULL(rdar.AssessmentScoreMetricTypeCode, '')	--RefScoreMetricType
 		--assessment registrations (rds)
-			LEFT JOIN #vwAssessmentRegistrations rdars
-				ON ISNULL(CAST(sar.AssessmentRegistrationParticipationIndicator AS SMALLINT), -1) 	= ISNULL(rdars.AssessmentRegistrationParticipationIndicatorMap, -1)
-				AND ISNULL(sar.AssessmentRegistrationReasonNotCompleting, 'MISSING') 				= ISNULL(rdars.AssessmentRegistrationReasonNotCompletingMap, rdars.AssessmentRegistrationReasonNotCompletingCode)	--RefAssessmentReasonNotCompleting
-				AND ISNULL(sar.AssessmentRegistrationReasonNotTested, 'MISSING') 					= ISNULL(rdars.ReasonNotTestedMap, rdars.ReasonNotTestedCode)	--RefReasonNotTested
-				AND rdars.StateFullAcademicYearCode 												= 'MISSING'
-				AND rdars.LeaFullAcademicYearCode 													= 'MISSING'
-				AND rdars.SchoolFullAcademicYearCode 												= 'MISSING'
-				AND rdars.AssessmentRegistrationCompletionStatusCode 								= 'MISSING'
+			LEFT JOIN #vwAssessmentRegistrations rdar
+				ON ISNULL(CAST(sar.AssessmentRegistrationParticipationIndicator AS SMALLINT), -1) 	= ISNULL(rdar.AssessmentRegistrationParticipationIndicatorMap, -1)
+				AND ISNULL(sar.AssessmentRegistrationReasonNotCompleting, 'MISSING') 				= ISNULL(rdar.AssessmentRegistrationReasonNotCompletingMap, rdar.AssessmentRegistrationReasonNotCompletingCode)	--RefAssessmentReasonNotCompleting
+				AND ISNULL(sar.AssessmentRegistrationReasonNotTested, 'MISSING') 					= ISNULL(rdar.ReasonNotTestedMap, rdar.ReasonNotTestedCode)	--RefReasonNotTested
+				AND rdar.StateFullAcademicYearCode 													= 'MISSING'
+				AND rdar.LeaFullAcademicYearCode 													= 'MISSING'
+				AND rdar.SchoolFullAcademicYearCode 												= 'MISSING'
+				AND rdar.AssessmentRegistrationCompletionStatusCode 								= 'MISSING'
 		--assessment status
 			LEFT JOIN RDS.vwDimAssessmentStatuses rdas
 				ON rdas.SchoolYear = rsy.SchoolYear
@@ -663,7 +655,6 @@ BEGIN
 			WHERE 
 			sar.AssessmentAdministrationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 
-
 		DELETE FROM RDS.BridgeK12StudentAssessmentAccommodations
 		WHERE FactK12StudentAssessmentId IN (
 			SELECT FactK12StudentAssessmentId FROM RDS.FactK12StudentAssessments
@@ -689,7 +680,6 @@ BEGIN
 			, [AssessmentAdministrationId]
 			, [AssessmentRegistrationId]				
 			, [AssessmentParticipationSessionId]
-			, [AssessmentResultId]	
 			, [AssessmentStatusId]	
 			, [AssessmentPerformanceLevelId]
 			, [AssessmentCount]		
@@ -714,7 +704,6 @@ BEGIN
 			, [NOrDStatusId]
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
-			, [FactK12StudentAssessmentAccommodationId]
 			, [PrimaryDisabilityTypeId]
 		)
 		SELECT 
@@ -731,7 +720,6 @@ BEGIN
 			, [AssessmentAdministrationId]
 			, [AssessmentRegistrationId]				
 			, [AssessmentParticipationSessionId]
-			, [AssessmentResultId]	
 			, [AssessmentStatusId]	
 			, [AssessmentPerformanceLevelId]
 			, [AssessmentCount]		
@@ -756,7 +744,6 @@ BEGIN
 			, [NOrDStatusId]
 			, [TitleIStatusId]
 			, [TitleIIIStatusId]
-			, [FactK12StudentAssessmentAccommodationId]
 			, [PrimaryDisabilityTypeId]
 		FROM #Facts
 
