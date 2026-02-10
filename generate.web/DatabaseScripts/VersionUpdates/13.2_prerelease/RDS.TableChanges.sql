@@ -164,3 +164,102 @@
     	ALTER TABLE [RDS].[FactK12StudentCounts] ADD CONSTRAINT [DF_FactK12StudentCounts_CteOutcomeIndicatorId] DEFAULT ((-1)) FOR [CteOutcomeIndicatorId];
     END
 
+------------------------------------------------
+--Create default rows in new tables
+-----------------------------------------------
+
+IF (select count(*) from rds.DimIeus where DimIeuId = -1) = 0
+BEGIN
+
+    SET IDENTITY_INSERT rds.DimIeus ON
+    insert into rds.DimIeus(
+        DimIeuId
+        ,[IeuOrganizationName]
+        ,[IeuOrganizationIdentifierSea]
+        ,[SeaOrganizationName]
+        ,[SeaOrganizationIdentifierSea]
+        ,[StateAnsiCode]
+        ,[StateAbbreviationCode]
+        ,[StateAbbreviationDescription]
+        ,[MailingAddressStreetNumberAndName]
+        ,[MailingAddressApartmentRoomOrSuiteNumber]
+        ,[MailingAddressCity]
+        ,[MailingAddressStateAbbreviation]
+        ,[MailingAddressPostalCode]
+        ,[MailingAddressCountyAnsiCodeCode]
+        ,[MailingAddressCountyName]
+        ,[OutOfStateIndicator]
+        ,[OrganizationOperationalStatus]
+        ,[OperationalStatusEffectiveDate]
+        ,[PhysicalAddressStreetNumberAndName]
+        ,[PhysicalAddressApartmentRoomOrSuiteNumber]
+        ,[PhysicalAddressCity]
+        ,[PhysicalAddressPostalCode]
+        ,[PhysicalAddressStateAbbreviation]
+        ,[PhysicalAddressCountyAnsiCodeCode]
+        ,[PhysicalAddressCountyName]
+        ,[TelephoneNumber]
+        ,[WebSiteAddress]
+        ,[OrganizationRegionGeoJson]
+        ,[Latitude]
+        ,[Longitude]
+        ,[RecordStartDateTime]
+        ,[RecordEndDateTime]
+    )
+    values (-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL
+    ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-07-01',NULL)			
+    SET IDENTITY_INSERT rds.DimIeus OFF
+END
+
+IF (SELECT COUNT(*) FROM rds.DimPeople_Current WHERE DimPersonId = -1) = 0
+BEGIN
+
+    set identity_insert rds.DimPeople_Current ON
+    insert into rds.DimPeople_Current (
+        [DimPersonId]
+        ,[FirstName]
+        ,[MiddleName]
+        ,[LastOrSurname]
+        ,[Birthdate]
+        ,[ELChildChildIdentifierState]
+        ,[K12StudentStudentIdentifierState]
+        ,[K12StudentStudentIdentifierDistrict]
+        ,[K12StudentStudentIdentifierNationalMigrant]
+        ,[PsStudentStudentIdentifierState]
+        ,[AeStudentStudentIdentifierState]
+        ,[WorkforceProgramParticipantPersonIdentifierState]
+        ,[ELStaffStaffMemberIdentifierState]
+        ,[K12StaffStaffMemberIdentifierState]
+        ,[K12StaffStaffMemberIdentifierDistrict]
+        ,[PsStaffStaffMemberIdentifierState]
+        ,[PersonIdentifierDriversLicense]
+        ,[PersonIdentifierSSN]
+        ,[PersonIdentifierState]
+        ,[StudentIdentifierState]
+        ,[IsActiveELChild]
+        ,[IsActiveK12Student]
+        ,[IsActivePsStudent]
+        ,[IsActiveAeStudent]
+        ,[IsActiveWorkforceProgramParticipant]
+        ,[IsActiveELStaff]
+        ,[IsActiveK12Staff]
+        ,[IsActivePsStaff]
+        ,[ElectronicMailAddressHome]
+        ,[ElectronicMailAddressOrganizational]
+        ,[ElectronicMailAddressWork]
+        ,[TelephoneNumberFax]
+        ,[TelephoneNumberHome]
+        ,[TelephoneNumberMobile]
+        ,[TelephoneNumberWork]
+        ,[PersonalTitleOrPrefix]
+        ,[PositionTitle]
+        ,[GenerationCodeOrSuffix]
+        ,[HighestLevelOfEducationCompletedCode]
+        ,[HighestLevelOfEducationCompletedDescription]
+    )
+    values
+    (-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+    ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+    ,NULL,NULL)
+    set identity_insert rds.DimPeople_Current OFF
+END
