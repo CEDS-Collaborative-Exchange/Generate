@@ -171,7 +171,8 @@
 IF (select count(*) from rds.DimIeus where DimIeuId = -1) = 0
 BEGIN
 
-    SET IDENTITY_INSERT rds.DimIeus ON
+    SET IDENTITY_INSERT rds.DimIeus ON;
+
     insert into rds.DimIeus(
         DimIeuId
         ,[IeuOrganizationName]
@@ -208,13 +209,16 @@ BEGIN
     )
     values (-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL
     ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-07-01',NULL)			
-    SET IDENTITY_INSERT rds.DimIeus OFF
+
+    SET IDENTITY_INSERT rds.DimIeus OFF;
+
 END
 
 IF (SELECT COUNT(*) FROM rds.DimPeople_Current WHERE DimPersonId = -1) = 0
 BEGIN
 
-    set identity_insert rds.DimPeople_Current ON
+    set identity_insert rds.DimPeople_Current ON;
+
     insert into rds.DimPeople_Current (
         [DimPersonId]
         ,[FirstName]
@@ -261,5 +265,7 @@ BEGIN
     (-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
     ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
     ,NULL,NULL)
-    set identity_insert rds.DimPeople_Current OFF
+    
+    set identity_insert rds.DimPeople_Current OFF;
+
 END
