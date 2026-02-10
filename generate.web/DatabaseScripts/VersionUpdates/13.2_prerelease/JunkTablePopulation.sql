@@ -391,10 +391,8 @@
 			, SpecialEducationParaprofessionalDescription
 			, SpecialEducationTeacherCode
 			, SpecialEducationTeacherDescription
-		   	, TeachingCredentialTypeCode
-		   	, TeachingCredentialTypeDescription
 		)
-		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
 
 		SET IDENTITY_INSERT RDS.DimK12StaffStatuses OFF
 	END
@@ -560,20 +558,7 @@
 	FROM [CEDS].CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'SpecialEducationTeacher'
 
-	IF OBJECT_ID('tempdb..#TeachingCredentialType') IS NOT NULL
-		DROP TABLE #TeachingCredentialType
-
-	CREATE TABLE #TeachingCredentialType (TeachingCredentialTypeCode VARCHAR(50), TeachingCredentialTypeDescription VARCHAR(200))
-
-	INSERT INTO #TeachingCredentialType VALUES ('MISSING', 'MISSING')
-	INSERT INTO #TeachingCredentialType 
-	SELECT 
-		CedsOptionSetCode
-		, CedsOptionSetDescription
-	FROM [CEDS].CedsOptionSetMapping
-	WHERE CedsElementTechnicalName like 'TeachingCredentialType'
-	AND CedsOptionSetCode IN ('Emergency', 'Provisional')
-
+	
 	INSERT INTO RDS.DimK12StaffStatuses (
 		SpecialEducationAgeGroupTaughtCode
 		, SpecialEducationAgeGroupTaughtDescription
@@ -604,8 +589,6 @@
 		, SpecialEducationParaprofessionalDescription
 		, SpecialEducationTeacherCode
 		, SpecialEducationTeacherDescription
-		, TeachingCredentialTypeCode
-		, TeachingCredentialTypeDescription
 	)
 	SELECT 
 		seagt.SpecialEducationAgeGroupTaughtCode 
@@ -637,8 +620,6 @@
 		, sep.SpecialEducationParaprofessionalDescription
 		, spet.SpecialEducationTeacherCode
 		, spet.SpecialEducationTeacherDescription
-		, tct.TeachingCredentialTypeCode
-		, tct.TeachingCredentialTypeDescription
 	FROM #SpecialEducationAgeGroupTaught seagt
 	CROSS JOIN #EdFactsCertificationStatus efcs
 	CROSS JOIN #HighlyQualifiedTeacherIndicator hqti
@@ -650,7 +631,6 @@
 	CROSS JOIN #CTEInstructorIndustryCertification cteiic
 	CROSS JOIN #SpecialEducationParaprofessional sep
 	CROSS JOIN #SpecialEducationTeacher spet
-	CROSS JOIN #TeachingCredentialType tct
 	LEFT JOIN RDS.DimK12StaffStatuses main
 		ON seagt.SpecialEducationAgeGroupTaughtCode = main.SpecialEducationAgeGroupTaughtCode
 		AND efcs.EdFactsCertificationStatusCode = main.EdFactsCertificationStatusCode
@@ -663,7 +643,6 @@
 		AND cteiic.CTEInstructorIndustryCertificationCode = main.CTEInstructorIndustryCertificationCode
 		AND sep.SpecialEducationParaprofessionalCode = main.SpecialEducationParaprofessionalCode
 		AND spet.SpecialEducationTeacherCode = main.SpecialEducationTeacherCode
-		AND tct.TeachingCredentialTypeCode = main.TeachingCredentialTypeCode
 	WHERE main.DimK12StaffStatusId IS NULL
 
 	DROP TABLE #SpecialEducationAgeGroupTaught
@@ -677,6 +656,69 @@
 	DROP TABLE #CTEInstructorIndustryCertification
 	DROP TABLE #SpecialEducationParaprofessional
 	DROP TABLE #SpecialEducationTeacher
-	DROP TABLE #TeachingCredentialType
+
+----------------------------------------------------
+-- Populate DimTeachingCredentialStatuses ---
+----------------------------------------------------
+
+IF NOT EXISTS (SELECT 1 FROM RDS.DimTeachingCredentialStatuses d WHERE d.DimTeachingCredentialStatusId = -1) BEGIN
+	SET IDENTITY_INSERT RDS.DimTeachingCredentialStatuses ON
+
+	INSERT INTO [RDS].DimTeachingCredentialStatuses
+       ([DimTeachingCredentialStatusId]
+	   ,[TeachingCredentialTypeCode]
+	   ,[TeachingCredentialTypeDescription]
+	   ,[TeachingCredentialTypeEdFactsCode]
+	   ,[TeachingCredentialBasisCode]
+	   ,[TeachingCredentialBasisDescription])
+		VALUES (
+			  -1
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			)
+
+	SET IDENTITY_INSERT RDS.DimTeachingCredentialStatuses OFF
+END
+
+IF OBJECT_ID('tempdb..#TeachingCredentialType') IS NOT NULL BEGIN
+		DROP TABLE #TeachingCredentialType
+	END
+CREATE TABLE #TeachingCredentialType (TeachingCredentialTypeCode VARCHAR(50), TeachingCredentialTypeDescription VARCHAR(200), TeachingCredentialTypeEdFactsCode VARCHAR(50))
+
+INSERT INTO #TeachingCredentialType VALUES ('MISSING', 'MISSING', 'MISSING')
+INSERT INTO #TeachingCredentialType VALUES ('Emergency', 'Emergency', 'Emergency')
+INSERT INTO #TeachingCredentialType VALUES ('Provisional', 'Provisional', 'Provisional')
 
 
+IF OBJECT_ID('tempdb..#TeachingCredentialBasis') IS NOT NULL BEGIN
+		DROP TABLE #TeachingCredentialBasis
+	END
+CREATE TABLE #TeachingCredentialBasis (TeachingCredentialBasisCode VARCHAR(50), TeachingCredentialBasisDescription VARCHAR(200))
+
+INSERT INTO #TeachingCredentialBasis VALUES ('MISSING', 'MISSING')
+
+
+INSERT INTO RDS.DimTeachingCredentialStatuses
+	   ([TeachingCredentialTypeCode]
+	   ,[TeachingCredentialTypeDescription]
+	   ,[TeachingCredentialTypeEdFactsCode]
+	   ,[TeachingCredentialBasisCode]
+	   ,[TeachingCredentialBasisDescription])
+SELECT DISTINCT
+	  a.TeachingCredentialTypeCode
+	, a.TeachingCredentialTypeDescription
+	, a.TeachingCredentialTypeEdFactsCode
+	, b.TeachingCredentialBasisCode
+	, b.TeachingCredentialBasisDescription
+FROM #TeachingCredentialType a
+CROSS JOIN #TeachingCredentialBasis b
+LEFT JOIN RDS.DimTeachingCredentialStatuses main
+	ON a.TeachingCredentialTypeCode = main.TeachingCredentialTypeCode
+	AND b.TeachingCredentialBasisCode = main.TeachingCredentialBasisCode
+WHERE main.DimTeachingCredentialStatusId IS NULL
+
+DROP TABLE #TeachingCredentialType
+DROP TABLE #TeachingCredentialBasis

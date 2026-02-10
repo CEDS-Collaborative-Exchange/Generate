@@ -8,8 +8,6 @@ CREATE VIEW RDS.vwDimK12StaffStatuses AS
 		, sssrd2.InputCode AS EdFactsTeacherInexperiencedStatusMap
 		, rdkss.EdFactsTeacherOutOfFieldStatusCode 
 		, sssrd3.InputCode AS EdFactsTeacherOutOfFieldStatusMap
-		--, rdkss.TeachingCredentialTypeCode
-		--, sssrd4.InputCode AS TeachingCredentialTypeMap
 		, rdkss.ParaprofessionalQualificationStatusCode
 		, sssrd5.InputCode AS ParaprofessionalQualificationStatusMap
 		, rdkss.HighlyQualifiedTeacherIndicatorCode
@@ -35,10 +33,6 @@ CREATE VIEW RDS.vwDimK12StaffStatuses AS
 		ON rdkss.EdFactsTeacherOutOfFieldStatusCode = sssrd3.OutputCode
 		AND sssrd3.TableName = 'RefOutOfFieldStatus'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
-	--LEFT JOIN staging.SourceSystemReferenceData sssrd4
-	--	ON rdkss.TeachingCredentialTypeCode = sssrd4.OutputCode
-	--	AND sssrd4.TableName = 'RefTeachingCredentialType'
-	--	AND rsy.SchoolYear = sssrd4.SchoolYear
 	LEFT JOIN staging.SourceSystemReferenceData sssrd5
 		ON rdkss.ParaprofessionalQualificationStatusCode = sssrd5.OutputCode
 		AND sssrd5.TableName = 'RefParaprofessionalQualification'
