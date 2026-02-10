@@ -60,6 +60,7 @@ namespace generate.overnighttest
             services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
             services.Configure<DataSettings>(configuration.GetSection("Data"));
 
+            
             services
                .AddDbContext<AppDbContext>(options =>
                     options.UseSqlServer(configuration["Data:AppDbContextConnection"]))
@@ -242,9 +243,17 @@ namespace generate.overnighttest
 
 
             GlobalConfiguration.Configuration.UseSqlServerStorage(configuration["Data:AppDbContextConnection"], new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
+
             //GlobalConfiguration.Configuration.UseSqlServerStorage("Server=(localdb)\\MSSQLLocalDB;Database=Generate;Trusted_Connection=true;MultipleActiveResultSets=true;trustServerCertificate=true;", new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
             //GlobalConfiguration.Configuration.UseSqlServerStorage("Server=10.0.2.10;Database=generate-test;User ID=generate;Password=78h&LUogZ#qvZ9i;MultipleActiveResultSets=true;trustServerCertificate=true;Connect Timeout=300;", new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
 
+            using var server = new BackgroundJobServer(
+            new BackgroundJobServerOptions
+            {
+                WorkerCount = Environment.ProcessorCount
+            });
+
+            Console.WriteLine("Hangfire Server started. Press Ctrl+C to exit.");
 
 
         }
@@ -408,9 +417,12 @@ namespace generate.overnighttest
                 // Only report that came in to be locked or if all report everthing to be locked, GenerateReports.isLocked = 1 
                 toggleReportLock(1, factsToMigrate, isFactType);
                 Console.Out.WriteLine("Inside RunMigration");
-                IMigrationService migrationService = serviceProvider.GetService<IMigrationService>();
-                Console.Out.WriteLine("migrationService is present:" + migrationService);
-                migrationService.MigrateData("report");
+                //IMigrationService migrationService = serviceProvider.GetService<IMigrationService>();
+                //Console.Out.WriteLine("migrationService is present:" + migrationService);
+                //migrationService.MigrateData("report");
+                BackgroundJob.Enqueue<IMigrationService>(s =>
+                    s.MigrateData("report")
+                );
             }
             catch (Exception ex)
             {
@@ -420,7 +432,7 @@ namespace generate.overnighttest
             }
             finally
             {
-                Console.WriteLine("Done running migration");
+                Console.WriteLine("Migration Job in Queue");
 
             }
 
