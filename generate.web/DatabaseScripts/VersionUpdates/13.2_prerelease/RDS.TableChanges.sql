@@ -10,6 +10,17 @@
 	END
 
 -----------------------------------------------
+--Assessments
+-----------------------------------------------
+
+    --Add the column back top report table
+
+   	IF COL_LENGTH('RDS.ReportEDFactsK12StudentAssessments', 'NEGLECTEDPROGRAMTYPE') IS NULL
+	BEGIN
+		ALTER TABLE RDS.ReportEDFactsK12StudentAssessments ADD NEGLECTEDPROGRAMTYPE VARCHAR(50) NULL;
+	END
+
+-----------------------------------------------
 --File 160 changes	
 -----------------------------------------------
 
@@ -168,104 +179,159 @@
 --Create default rows in new tables
 -----------------------------------------------
 
-IF (select count(*) from rds.DimIeus where DimIeuId = -1) = 0
-BEGIN
+    IF (select count(*) from rds.DimIeus where DimIeuId = -1) = 0
+    BEGIN
 
-    SET IDENTITY_INSERT rds.DimIeus ON;
+        SET IDENTITY_INSERT rds.DimIeus ON;
 
-    insert into rds.DimIeus(
-        DimIeuId
-        ,[IeuOrganizationName]
-        ,[IeuOrganizationIdentifierSea]
-        ,[SeaOrganizationName]
-        ,[SeaOrganizationIdentifierSea]
-        ,[StateAnsiCode]
-        ,[StateAbbreviationCode]
-        ,[StateAbbreviationDescription]
-        ,[MailingAddressStreetNumberAndName]
-        ,[MailingAddressApartmentRoomOrSuiteNumber]
-        ,[MailingAddressCity]
-        ,[MailingAddressStateAbbreviation]
-        ,[MailingAddressPostalCode]
-        ,[MailingAddressCountyAnsiCodeCode]
-        ,[MailingAddressCountyName]
-        ,[OutOfStateIndicator]
-        ,[OrganizationOperationalStatus]
-        ,[OperationalStatusEffectiveDate]
-        ,[PhysicalAddressStreetNumberAndName]
-        ,[PhysicalAddressApartmentRoomOrSuiteNumber]
-        ,[PhysicalAddressCity]
-        ,[PhysicalAddressPostalCode]
-        ,[PhysicalAddressStateAbbreviation]
-        ,[PhysicalAddressCountyAnsiCodeCode]
-        ,[PhysicalAddressCountyName]
-        ,[TelephoneNumber]
-        ,[WebSiteAddress]
-        ,[OrganizationRegionGeoJson]
-        ,[Latitude]
-        ,[Longitude]
-        ,[RecordStartDateTime]
-        ,[RecordEndDateTime]
-    )
-    values (-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL
-    ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-07-01',NULL)			
+        insert into rds.DimIeus(
+            DimIeuId
+            ,[IeuOrganizationName]
+            ,[IeuOrganizationIdentifierSea]
+            ,[SeaOrganizationName]
+            ,[SeaOrganizationIdentifierSea]
+            ,[StateAnsiCode]
+            ,[StateAbbreviationCode]
+            ,[StateAbbreviationDescription]
+            ,[MailingAddressStreetNumberAndName]
+            ,[MailingAddressApartmentRoomOrSuiteNumber]
+            ,[MailingAddressCity]
+            ,[MailingAddressStateAbbreviation]
+            ,[MailingAddressPostalCode]
+            ,[MailingAddressCountyAnsiCodeCode]
+            ,[MailingAddressCountyName]
+            ,[OutOfStateIndicator]
+            ,[OrganizationOperationalStatus]
+            ,[OperationalStatusEffectiveDate]
+            ,[PhysicalAddressStreetNumberAndName]
+            ,[PhysicalAddressApartmentRoomOrSuiteNumber]
+            ,[PhysicalAddressCity]
+            ,[PhysicalAddressPostalCode]
+            ,[PhysicalAddressStateAbbreviation]
+            ,[PhysicalAddressCountyAnsiCodeCode]
+            ,[PhysicalAddressCountyName]
+            ,[TelephoneNumber]
+            ,[WebSiteAddress]
+            ,[OrganizationRegionGeoJson]
+            ,[Latitude]
+            ,[Longitude]
+            ,[RecordStartDateTime]
+            ,[RecordEndDateTime]
+        )
+        values (-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL
+        ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-07-01',NULL)			
 
-    SET IDENTITY_INSERT rds.DimIeus OFF;
+        SET IDENTITY_INSERT rds.DimIeus OFF;
 
-END
+    END
 
-IF (SELECT COUNT(*) FROM rds.DimPeople_Current WHERE DimPersonId = -1) = 0
-BEGIN
+    IF (SELECT COUNT(*) FROM rds.DimPeople_Current WHERE DimPersonId = -1) = 0
+    BEGIN
 
-    set identity_insert rds.DimPeople_Current ON;
+        set identity_insert rds.DimPeople_Current ON;
 
-    insert into rds.DimPeople_Current (
-        [DimPersonId]
-        ,[FirstName]
-        ,[MiddleName]
-        ,[LastOrSurname]
-        ,[Birthdate]
-        ,[ELChildChildIdentifierState]
-        ,[K12StudentStudentIdentifierState]
-        ,[K12StudentStudentIdentifierDistrict]
-        ,[K12StudentStudentIdentifierNationalMigrant]
-        ,[PsStudentStudentIdentifierState]
-        ,[AeStudentStudentIdentifierState]
-        ,[WorkforceProgramParticipantPersonIdentifierState]
-        ,[ELStaffStaffMemberIdentifierState]
-        ,[K12StaffStaffMemberIdentifierState]
-        ,[K12StaffStaffMemberIdentifierDistrict]
-        ,[PsStaffStaffMemberIdentifierState]
-        ,[PersonIdentifierDriversLicense]
-        ,[PersonIdentifierSSN]
-        ,[PersonIdentifierState]
-        ,[StudentIdentifierState]
-        ,[IsActiveELChild]
-        ,[IsActiveK12Student]
-        ,[IsActivePsStudent]
-        ,[IsActiveAeStudent]
-        ,[IsActiveWorkforceProgramParticipant]
-        ,[IsActiveELStaff]
-        ,[IsActiveK12Staff]
-        ,[IsActivePsStaff]
-        ,[ElectronicMailAddressHome]
-        ,[ElectronicMailAddressOrganizational]
-        ,[ElectronicMailAddressWork]
-        ,[TelephoneNumberFax]
-        ,[TelephoneNumberHome]
-        ,[TelephoneNumberMobile]
-        ,[TelephoneNumberWork]
-        ,[PersonalTitleOrPrefix]
-        ,[PositionTitle]
-        ,[GenerationCodeOrSuffix]
-        ,[HighestLevelOfEducationCompletedCode]
-        ,[HighestLevelOfEducationCompletedDescription]
-    )
-    values
-    (-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
-    ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
-    ,NULL,NULL)
+        insert into rds.DimPeople_Current (
+            [DimPersonId]
+            ,[FirstName]
+            ,[MiddleName]
+            ,[LastOrSurname]
+            ,[Birthdate]
+            ,[ELChildChildIdentifierState]
+            ,[K12StudentStudentIdentifierState]
+            ,[K12StudentStudentIdentifierDistrict]
+            ,[K12StudentStudentIdentifierNationalMigrant]
+            ,[PsStudentStudentIdentifierState]
+            ,[AeStudentStudentIdentifierState]
+            ,[WorkforceProgramParticipantPersonIdentifierState]
+            ,[ELStaffStaffMemberIdentifierState]
+            ,[K12StaffStaffMemberIdentifierState]
+            ,[K12StaffStaffMemberIdentifierDistrict]
+            ,[PsStaffStaffMemberIdentifierState]
+            ,[PersonIdentifierDriversLicense]
+            ,[PersonIdentifierSSN]
+            ,[PersonIdentifierState]
+            ,[StudentIdentifierState]
+            ,[IsActiveELChild]
+            ,[IsActiveK12Student]
+            ,[IsActivePsStudent]
+            ,[IsActiveAeStudent]
+            ,[IsActiveWorkforceProgramParticipant]
+            ,[IsActiveELStaff]
+            ,[IsActiveK12Staff]
+            ,[IsActivePsStaff]
+            ,[ElectronicMailAddressHome]
+            ,[ElectronicMailAddressOrganizational]
+            ,[ElectronicMailAddressWork]
+            ,[TelephoneNumberFax]
+            ,[TelephoneNumberHome]
+            ,[TelephoneNumberMobile]
+            ,[TelephoneNumberWork]
+            ,[PersonalTitleOrPrefix]
+            ,[PositionTitle]
+            ,[GenerationCodeOrSuffix]
+            ,[HighestLevelOfEducationCompletedCode]
+            ,[HighestLevelOfEducationCompletedDescription]
+        )
+        values
+        (-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+        ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+        ,NULL,NULL)
+        
+        set identity_insert rds.DimPeople_Current OFF;
+
+    END
+
+    IF (SELECT COUNT(*) FROM rds.DimAssessmentSubtests WHERE DimAssessmentSubtestId = -1) = 0
+    BEGIN
+
+        set identity_insert RDS.DimAssessmentSubtests ON;
+
+        insert into RDS.DimAssessmentSubtests (
+            [DimAssessmentSubtestId]
+            ,[AssessmentFormNumber]
+            ,[AssessmentAcademicSubjectCode]
+            ,[AssessmentAcademicSubjectDescription]
+            ,[AssessmentSubtestIdentifierInternal]
+            ,[AssessmentSubtestTitle]
+            ,[AssessmentSubtestAbbreviation]
+            ,[AssessmentSubtestDescription]
+            ,[AssessmentSubtestVersion]
+            ,[AssessmentLevelForWhichDesigned]
+            ,[AssessmentEarlyLearningDevelopmentalDomain]
+            ,[AssessmentSubtestPublishedDate]
+            ,[AssessmentSubtestMinimumValue]
+            ,[AssessmentSubtestMaximumValue]
+            ,[AssessmentSubtestScaleOptimalValue]
+            ,[AssessmentContentStandardType]
+            ,[AssessmentPurpose]
+            ,[AssessmentSubtestRules]
+            ,[AssessmentFormSubtestTier]
+            ,[AssessmentFormSubtestContainerOnly]
+        )
+        values (-1, NULL,-1,-1,-1,-1,-1,-1,-1,-1,-1,NULL,-1,-1,-1,-1,-1,-1,-1,-1)
+
+        set identity_insert RDS.DimAssessmentSubtests OFF;
+
+    END
+
+    IF (SELECT COUNT(*) FROM rds.DimCompetencyDefinitions WHERE DimCompetencyDefinitionId = -1) = 0
+    BEGIN
+
+        set identity_insert RDS.DimCompetencyDefinitions ON;
+
+        insert into RDS.DimCompetencyDefinitions (
+            [DimCompetencyDefinitionId]
+            ,[CompetencyDefinitionIdentifier]
+            ,[CompetencyDefinitionCode]
+            ,[CompetencyDefinitionShortName]
+            ,[CompetencyDefinitionStatement]
+            ,[CompetencyDefinitionType]
+            ,[CompetencyDefinitionValidStartDate]
+            ,[CompetencyDefinitionValidEndDate]
+        )
+        values (-1,NULL,NULL,NULL,NULL,NULL,-1,NULL) 
+
+        set identity_insert RDS.DimCompetencyDefinitions OFF;
+
+    END
     
-    set identity_insert rds.DimPeople_Current OFF;
-
-END
