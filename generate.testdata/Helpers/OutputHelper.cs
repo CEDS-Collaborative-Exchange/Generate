@@ -507,7 +507,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("delete from rds.ReportEDFactsOrganizationStatusCounts");
                 output.AppendLine("delete from rds.FactOrganizationStatusCounts");
                 output.AppendLine("delete from rds.dimseas");
-                output.AppendLine("delete from rds.dimieus");
+                //output.AppendLine("delete from rds.dimieus");
                 output.AppendLine("delete from rds.dimleas");
                 output.AppendLine("delete from rds.DimK12Schools");
                 output.AppendLine("delete from rds.DimCharterSchoolManagementOrganizations");
@@ -528,7 +528,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("DBCC CHECKIDENT('rds.ReportEDFactsOrganizationStatusCounts', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.FactOrganizationStatusCounts', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.dimseas', RESEED, 1);");
-                output.AppendLine("DBCC CHECKIDENT('rds.dimieus', RESEED, 1);");
+                //output.AppendLine("DBCC CHECKIDENT('rds.dimieus', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.dimleas', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.DimK12Schools', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.DimCharterSchoolManagementOrganizations', RESEED, 1);");
