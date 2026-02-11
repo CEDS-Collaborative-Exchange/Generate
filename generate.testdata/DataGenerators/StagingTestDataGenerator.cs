@@ -1102,7 +1102,8 @@ namespace generate.testdata.DataGenerators
                 var s = new K12Enrollment();
                 var rnd = ThreadSafeRandom.NewRandom();
 
-                var orgs = _testDataHelper.GetRandomObject(rnd, allOrgs);
+                var filteredOrgs = allOrgs.Where(o => o.LeaIdentifierSea != "00044A" && o.SchoolIdentifierSea != "00044A000").ToList();
+                var orgs = _testDataHelper.GetRandomObject(rnd, filteredOrgs);
                 var birthdate = _testDataHelper.GetBirthDate(rnd, SchoolYear, _testDataProfile.MinimumAgeOfStudent, _testDataProfile.MaximumAgeOfStudent);
                 var entryDate = _testDataHelper.GetEntryDate(rnd, BaseProgramEntryDate);
                 var cohortYear = _testDataHelper.GetEntryDate(rnd, entryDate).Year.ToString();
