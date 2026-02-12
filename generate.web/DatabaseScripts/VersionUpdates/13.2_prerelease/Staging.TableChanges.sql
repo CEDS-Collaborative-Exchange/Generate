@@ -11,6 +11,21 @@
 	end
 
 -----------------------------------------------
+--Staging.ProgramParticipationTitleIII
+-----------------------------------------------
+
+   	IF COL_LENGTH('Staging.ProgramParticipationTitleIII', 'EnglishLearnersExitedStatus') IS NOT NULL
+	BEGIN
+		exec sp_rename 'Staging.ProgramParticipationTitleIII.EnglishLearnersExitedStatus', 'EnglishLearnerExitedStatus', 'COLUMN';
+	END
+
+    --Dropping RunDateTime, we don't use that anymore
+    IF COL_LENGTH('Staging.ProgramParticipationTitleIII', 'RunDateTime') IS NOT NULL  
+    BEGIN
+        ALTER TABLE Staging.ProgramParticipationTitleIII DROP COLUMN RunDateTime;
+    END
+
+-----------------------------------------------
 --Staging.K12Enrollment
 -----------------------------------------------
 	--Add Post Secondary Enrollment Action

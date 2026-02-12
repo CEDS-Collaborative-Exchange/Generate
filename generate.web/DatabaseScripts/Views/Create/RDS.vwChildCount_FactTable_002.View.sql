@@ -14,7 +14,7 @@ AS
 		, LeaOrganizationName
 		, SchoolIdentifierSea
 		, NameOfInstitution
-		, vw.K12StudentId
+		, vw.K12Student_CurrentId
 		, K12StudentStudentIdentifierState
 		, IdeaDisabilityTypeEdFactsCode
 		, RaceEdFactsCode
@@ -25,7 +25,7 @@ AS
 		, 1 AS StudentCount
 	FROM Debug.vwChildCount_FactTable vw
 	LEFT JOIN (
-		select distinct K12StudentId
+		select distinct K12Student_CurrentId
 		from [Debug].[vwChildCount_FactTable] fact
 		WHERE NOT AgeEdFactsCode in (	
 							select replace(ResponseValue, ' Years', '') AS Ages
@@ -50,10 +50,10 @@ AS
 						) 
 		AND  IdeaDisabilityTypeEdFactsCode = 'DD'
 	) dd
-		ON vw.K12StudentId = dd.K12StudentId
+		ON vw.K12Student_CurrentId = dd.K12Student_CurrentId
 	WHERE AgeEdFactsCode IN ('5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21')
 		AND (CASE 
 				WHEN AgeEdFactsCode = '5' AND GradeLevelEdFactsCode in ('MISSING','PK') THEN 0
 				ELSE 1
 			END) = 1
-		AND dd.K12StudentId IS NULL
+		AND dd.K12Student_CurrentId IS NULL

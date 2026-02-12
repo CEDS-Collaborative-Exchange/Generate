@@ -269,7 +269,7 @@ BEGIN
 			AND ISNULL(sppt3.TitleIIILanguageInstructionProgramType, 'MISSING') = ISNULL(rdt3s.TitleIIILanguageInstructionProgramTypeMap, rdt3s.TitleIIILanguageInstructionProgramTypeCode)
 			AND ISNULL(sppt3.Proficiency_TitleIII, 'MISSING') 					= ISNULL(rdt3s.ProficiencyStatusMap, rdt3s.ProficiencyStatusCode) 
 			AND ISNULL(sppt3.TitleIIIAccountabilityProgressStatus, 'MISSING') 	= ISNULL(rdt3s.TitleIIIAccountabilityProgressStatusMap, rdt3s.TitleIIIAccountabilityProgressStatusCode)
-			AND ISNULL(CAST(sppt3.EnglishLearnersExitedStatus AS INT), -1)   	= ISNULL(CAST(rdt3s.EnglishLearnersExitedStatusMap AS SMALLINT), -1)
+			AND ISNULL(CAST(sppt3.EnglishLearnerExitedStatus AS INT), -1)   	= ISNULL(CAST(rdt3s.EnglishLearnerExitedStatusMap AS SMALLINT), -1)
 			AND rdt3s.ProgramParticipationTitleIIILiepCode 						= 'MISSING'
 	--immigrant (rds)
 		LEFT JOIN #vwImmigrantStatuses rdis

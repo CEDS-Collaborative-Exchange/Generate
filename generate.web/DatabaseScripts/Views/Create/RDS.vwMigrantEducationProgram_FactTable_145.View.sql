@@ -2,7 +2,7 @@ CREATE VIEW [RDS].[vwMigrantEducationProgram_FactTable_145]
 AS
 	SELECT 	f.[FactK12StudentCountId]
 			, f.[SchoolYear]
-		  	, f.[K12StudentId]
+		  	, f.[K12Student_CurrentId]
 		  	, f.[K12StudentStudentIdentifierState]
 		  	, f.[BirthDate]
 		  	, f.[FirstName]

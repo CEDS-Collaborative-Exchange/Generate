@@ -2,7 +2,7 @@ CREATE VIEW [RDS].[vwChronicAbsenteeism_FactTable_195]
 AS
     SELECT  f.[FactK12StudentCountId]
 			, f.[SchoolYear]
-		  	, f.[K12StudentId]
+		  	, f.[K12Student_CurrentId]
 		  	, f.[K12StudentStudentIdentifierState]
 		  	, f.[BirthDate]
 		  	, f.[FirstName]

@@ -4,7 +4,7 @@ AS
 			Fact.FactK12StaffCountId
 			, Staff.K12StaffStaffMemberIdentifierState
 			, SchoolYear
-			, Fact.K12StaffId
+			, Fact.K12Staff_CurrentId
 			, SEA.StateANSICode
 			, SEA.StateAbbreviationCode
 			, SEA.StateAbbreviationDescription
@@ -40,7 +40,7 @@ AS
 	FROM		RDS.FactK12StaffCounts				Fact
 	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
 	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid		
-	LEFT JOIN	RDS.DimPeople						Staff			ON Fact.K12StaffId				= Staff.DimPersonId					AND Staff.IsActiveK12Staff = 1
+	LEFT JOIN	RDS.DimPeople_Current				Staff			ON Fact.K12Staff_CurrentId		= Staff.DimPersonId					AND Staff.IsActiveK12Staff = 1
 	LEFT JOIN	RDS.DimSeas                        	SEA         	ON Fact.SeaId   				= SEA.DimSeaId
 	LEFT JOIN	RDS.DimLeas							LEAs			ON Fact.LeaId					= LEAs.DimLeaId
 	LEFT JOIN	RDS.DimK12Schools					Schools			ON Fact.K12SchoolId				= Schools.DimK12SchoolId

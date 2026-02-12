@@ -25,12 +25,12 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 
 		, rdt3s.TitleIIILanguageInstructionProgramTypeCode
 		, sssrd3.InputCode as TitleIIILanguageInstructionProgramTypeMap
-		, rdt3s.EnglishLearnersExitedStatusCode
-		, CASE rdt3s.EnglishLearnersExitedStatusCode
+		, rdt3s.EnglishLearnerExitedStatusCode
+		, CASE rdt3s.EnglishLearnerExitedStatusCode
 			WHEN 'Yes' THEN 1 
 			WHEN 'No' THEN 0
 			ELSE -1
-		  END AS EnglishLearnersExitedStatusMap
+		  END AS EnglishLearnerExitedStatusMap
   	FROM rds.DimTitleIIIStatuses rdt3s
 	CROSS JOIN (select sy.SchoolYear
     			from rds.DimSchoolYearDataMigrationTypes dm

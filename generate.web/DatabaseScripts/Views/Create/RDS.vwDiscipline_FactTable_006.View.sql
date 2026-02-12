@@ -2,7 +2,7 @@ CREATE VIEW [RDS].[vwDiscipline_FactTable_006]
 AS
 	SELECT 	f.[FactK12StudentDisciplineId]
 			, f.[SchoolYear]
-		  	, f.[K12StudentId]
+		  	, f.[K12Student_CurrentId]
 		  	, f.[K12StudentStudentIdentifierState]
 		  	, f.[BirthDate]
 		  	, f.[FirstName]

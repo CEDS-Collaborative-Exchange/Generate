@@ -2,7 +2,7 @@ CREATE VIEW [RDS].[vwHomeless_FactTable_118]
 AS
 	SELECT 	f.[FactK12StudentCountId]
 			, f.[SchoolYear]
-		  	, f.[K12StudentId]
+		  	, f.[K12Student_CurrentId]
 		  	, f.[K12StudentStudentIdentifierState]
 		  	, f.[BirthDate]
 		  	, f.[FirstName]

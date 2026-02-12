@@ -2,7 +2,7 @@ CREATE VIEW [RDS].[vwHSGradPSEnroll_FactTable_160]
 AS
 	SELECT 	f.[FactK12StudentCountId]
 			, f.[SchoolYear]
-		  	, f.[K12StudentId]
+		  	, f.[K12Student_CurrentId]
 		  	, f.[K12StudentStudentIdentifierState]
 		  	, f.[BirthDate]
 		  	, f.[FirstName]

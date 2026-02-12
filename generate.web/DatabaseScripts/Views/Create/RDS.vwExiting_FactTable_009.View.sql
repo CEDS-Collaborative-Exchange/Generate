@@ -14,7 +14,7 @@ AS
 		, LeaOrganizationName
 		, SchoolIdentifierSea
 		, NameOfInstitution
-		, vw.K12StudentId
+		, vw.K12Student_CurrentId
 		, K12StudentStudentIdentifierState
 		, IdeaDisabilityTypeEdFactsCode
 		, SpecialEducationExitReasonEdFactsCode

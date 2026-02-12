@@ -751,8 +751,8 @@ BEGIN
 	FROM RDS.FactK12StudentAssessments rfksa
 	JOIN RDS.DimSchoolYears rdsy
 		ON rfksa.SchoolYearId = rdsy.DimSchoolYearId
-	JOIN RDS.DimPeople rdp
-		ON rfksa.K12StudentId = rdp.DimPersonId
+	JOIN RDS.DimPeople_Current rdpc
+		ON rfksa.K12Student_CurrentId = rdpc.DimPersonId
 	JOIN RDS.DimK12Schools rdks
 		ON rfksa.K12SchoolId = rdks.DimK12SchoolId
 	JOIN RDS.DimLeas rdlsAcc
@@ -812,8 +812,8 @@ BEGIN
 				ON rfsa.LeaId = lea.DimLeaID
 			JOIN RDS.DimK12Schools sch 
 				ON rfsa.K12SchoolId = sch.DimK12SchoolId
-			JOIN RDS.DimPeople students 
-				ON rfsa.K12StudentId = students.DimPersonId
+			JOIN RDS.DimPeople_Current students 
+				ON rfsa.K12Student_CurrentId = students.DimPersonId
 			JOIN #tempAccomodations acc
 				ON lea.LeaIdentifierSea = acc.LeaIdentifierSeaAccountability
 				AND sch.SchoolIdentifierSea = acc.SchoolIdentifierSea
