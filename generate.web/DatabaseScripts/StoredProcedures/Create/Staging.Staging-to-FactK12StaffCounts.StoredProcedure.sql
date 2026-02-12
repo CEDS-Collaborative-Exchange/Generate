@@ -54,8 +54,7 @@ BEGIN
 		WHERE SchoolYear = @SchoolYear
 
 	   -- CREATE CLUSTERED INDEX ix_tempvwK12StaffCategories ON #vwK12StaffCategories (K12StaffClassificationMap, SpecialEducationSupportServicesCategoryMap, TitleIProgramStaffCategoryMap);
-
-		
+	
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'staff'
@@ -93,7 +92,7 @@ BEGIN
 			, ISNULL(rds.DimSeaId, -1)									SeaId
 			, ISNULL(rdl.DimLeaID, -1)									LeaId
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
-			, ISNULL(rdp.DimPersonId, -1)								K12StaffId
+			, ISNULL(rdpc.DimPersonId, -1)								K12StaffId
 			, ISNULL(rdkss.DimK12StaffStatusId, -1)						K12StaffStatusId
 			, ISNULL(rdksc.DimK12StaffCategoryId, -1)					K12StaffCategoryId
 			, -1														TitleIIIStatusId
@@ -133,15 +132,11 @@ BEGIN
 			AND rdkss.HighlyQualifiedTeacherIndicatorCode = 'MISSING'
 			AND ISNULL(ssa.SpecialEducationTeacherQualificationStatus, 'MISSING') = ISNULL(rdkss.SpecialEducationTeacherQualificationStatusMap, rdkss.SpecialEducationTeacherQualificationStatusCode)
             AND	ISNULL(ssa.EdFactsCertificationStatus, 'MISSING') = ISNULL(rdkss.EdFactsCertificationStatusMap, rdkss.EdFactsCertificationStatusCode)
-	--person (rds)
-		JOIN RDS.DimPeople rdp
-			ON ssa.StaffMemberIdentifierState = rdp.K12StaffStaffMemberIdentifierState
-			AND rdp.IsActiveK12Staff = 1
-			AND ISNULL(ssa.FirstName, 'MISSING') = ISNULL(rdp.FirstName, 'MISSING')
-			AND ISNULL(ssa.MiddleName, 'MISSING') = ISNULL(rdp.MiddleName, 'MISSING')
-			AND ISNULL(ssa.LastOrSurname, 'MISSING') = ISNULL(rdp.LastOrSurname, 'MISSING')
-			AND @ChildCountDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
-			AND @ChildCountDate BETWEEN ssa.AssignmentStartDate AND ISNULL(ssa.AssignmentEndDate, @SYEndDate)
+	--dimpeople	(rds) - direct join to DimPeople_Current
+		LEFT JOIN RDS.DimPeople_Current rdpc
+			ON ISNULL(ssa.StaffMemberIdentifierState, '') = ISNULL(rdpc.K12StaffStaffMemberIdentifierState, '')
+			AND ISNULL(ssa.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
+			AND rdpc.IsActiveK12Staff = 1
 		
 	--Final insert into RDS.FactK12StaffCounts table
 		INSERT INTO RDS.FactK12StaffCounts ( 

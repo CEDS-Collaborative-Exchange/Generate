@@ -57,28 +57,7 @@ BEGIN
 
 		SELECT @ChildCountDate = CAST(CAST(@SchoolYear - 1 AS CHAR(4)) + '-' + CAST(MONTH(@ChildCountDate) AS VARCHAR(2)) + '-' + CAST(DAY(@ChildCountDate) AS VARCHAR(2)) AS DATE)
 	
-	--Get the set of students from DimPeople to be used for the migrated SY
-		if object_id(N'tempdb..#dimPeople') is not null drop table #dimPeople
-
-		select K12StudentStudentIdentifierState
-			, max(DimPersonId)								DimPersonId
-			, min(RecordStartDateTime)						RecordStartDateTime
-			, max(isnull(RecordEndDateTime, @SYEndDate))	RecordEndDateTime
-			, max(isnull(birthdate, '1900-01-01'))			BirthDate
-		into #dimPeople
-		from rds.DimPeople
-		where ((RecordStartDateTime < @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) > @SYStartDate)
-			or (RecordStartDateTime >= @SYStartDate and isnull(RecordEndDateTime, @SYEndDate) <= @SYEndDate))
-		and IsActiveK12Student = 1
-		group by K12StudentStudentIdentifierState
-		order by K12StudentStudentIdentifierState
-
-		create index IDX_dimPeople ON #dimPeople (K12StudentStudentIdentifierState, DimPersonId, RecordStartDateTime, RecordEndDateTime, Birthdate)
-
-	--reset the RecordStartDateTime if the date is prior to the default start date of 7/1
-		update #dimPeople
-		set RecordStartDateTime = @SYStartDate
-		where RecordStartDateTime < @SYStartDate
+	-- No longer using #dimPeople temp table - direct join to DimPeople_Current
 
 	-- Creating temp tables to be used in the select statement joins 
 		SELECT *
@@ -258,7 +237,7 @@ BEGIN
 			, @FactTypeId													FactTypeId
 			, ISNULL(rdis.DimIdeaStatusId, -1)								IdeaStatusId
 			, ISNULL(rdksch.DimK12SchoolId, -1)								K12SchoolId
-			, rdp.DimPersonId												K12StudentId
+			, ISNULL(rdpc.DimPersonId, -1)									K12StudentId
 			, 1																DisciplineCount
 			, ISNULL(rdf.DimFirearmId, -1)									FirearmId
 			, ISNULL(rgls.DimGradeLevelId, -1)								GradeLevelId
@@ -309,11 +288,11 @@ BEGIN
 			JOIN RDS.vwDimK12Demographics rdkd
 				ON rdkd.SchoolYear = @SchoolYear
 				AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
-		--dimpeople (rds)
-			JOIN #dimPeople rdp
-				ON ske.StudentIdentifierState = rdp.K12StudentStudentIdentifierState
-				AND ISNULL(ske.Birthdate, '1/1/1900') 		= ISNULL(rdp.BirthDate, '1/1/1900')
-				AND sd.DisciplinaryActionStartDate BETWEEN rdp.RecordStartDateTime AND ISNULL(rdp.RecordEndDateTime, @SYEndDate)
+		--dimpeople	(rds) - direct join to DimPeople_Current
+			LEFT JOIN RDS.DimPeople_Current rdpc
+				ON ISNULL(ske.StudentIdentifierState, '') = ISNULL(rdpc.K12StudentStudentIdentifierState, '')
+				AND ISNULL(ske.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
+				AND rdpc.IsActiveK12Student = 1
 		--program participation special education              
 			LEFT JOIN #tempIdeaStatus sppse
 				ON sd.SchoolYear 									= sppse.SchoolYear
