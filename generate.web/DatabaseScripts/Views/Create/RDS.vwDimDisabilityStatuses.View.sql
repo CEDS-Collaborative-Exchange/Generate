@@ -20,7 +20,13 @@ AS
 		, rdds.DisabilityDeterminationSourceTypeCode
 		, sssrd2.InputCode AS DisabilityDeterminationSourceTypeMap
 	FROM rds.DimDisabilityStatuses rdds
-	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
+	CROSS JOIN (select sy.SchoolYear
+    			from rds.DimSchoolYearDataMigrationTypes dm
+	    			inner join rds.dimschoolyears sy
+			    		on dm.dimschoolyearid = sy.dimschoolyearid
+			    where IsSelected = 1
+			    and dm.DataMigrationTypeId = 3
+			) AS rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
 		ON rdds.DisabilityConditionTypeCode = sssrd1.OutputCode
 		AND sssrd1.TableName = 'RefDisabilityConditionType'

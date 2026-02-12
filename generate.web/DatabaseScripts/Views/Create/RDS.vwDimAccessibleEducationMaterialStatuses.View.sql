@@ -9,7 +9,13 @@ SELECT
   , [AccessibleFormatTypeCode]
   , sssrd3.InputCode AS AccessibleFormatTypeMap
 FROM RDS.DimAccessibleEducationMaterialStatuses daems
-CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
+CROSS JOIN (select sy.SchoolYear
+    				from rds.DimSchoolYearDataMigrationTypes dm
+		    			inner join rds.dimschoolyears sy
+				    		on dm.dimschoolyearid = sy.dimschoolyearid
+				    where IsSelected = 1
+				    and dm.DataMigrationTypeId = 3
+			) AS rsy
 LEFT JOIN Staging.SourceSystemReferenceData sssrd1
   ON sssrd1.SchoolYear = rsy.SchoolYear
   AND daems.AccessibleFormatIssuedIndicatorCode = sssrd1.OutputCode

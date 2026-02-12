@@ -16,7 +16,13 @@ CREATE VIEW RDS.vwDimK12StaffCategories AS
 			ELSE -1
 		END AS TitleIIILanguageInstructionIndicatorMap
 	FROM rds.DimK12StaffCategories rdksc
-	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
+	CROSS JOIN (select sy.SchoolYear
+    			from rds.DimSchoolYearDataMigrationTypes dm
+	    			inner join rds.dimschoolyears sy
+			    		on dm.dimschoolyearid = sy.dimschoolyearid
+			    where IsSelected = 1
+			    and dm.DataMigrationTypeId = 3
+			) AS rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd1
 		ON rdksc.K12StaffClassificationCode = sssrd1.OutputCode
 		AND sssrd1.TableName = 'RefK12StaffClassification'

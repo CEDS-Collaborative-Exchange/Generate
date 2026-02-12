@@ -4,10 +4,16 @@ AS
 		  DimK12DemographicId
 		, rsy.SchoolYear
 		, SexCode
-		, ISNULL(sssrd1.InputCode, 'MISSING') AS SexMap
-	FROM RDS.DimK12Demographics rdkd
-	CROSS JOIN (SELECT DISTINCT SchoolYear FROM Staging.SourceSystemReferenceData) rsy
-	LEFT JOIN Staging.SourceSystemReferenceData sssrd1
+		, sssrd1.InputCode AS SexMap
+	FROM rds.DimK12Demographics rdkd
+	CROSS JOIN (select sy.SchoolYear
+    			from rds.DimSchoolYearDataMigrationTypes dm
+	    			inner join rds.dimschoolyears sy
+			    		on dm.dimschoolyearid = sy.dimschoolyearid
+			    where IsSelected = 1
+			    and dm.DataMigrationTypeId = 3
+			) AS rsy
+	LEFT JOIN staging.SourceSystemReferenceData sssrd1
 		ON rdkd.SexCode = sssrd1.OutputCode
 		AND rsy.SchoolYear = sssrd1.SchoolYear
 		AND sssrd1.TableName = 'RefSex'
