@@ -469,7 +469,9 @@ namespace generate.infrastructure.Repositories.App
             }
             else
             {
-                var reports = Find<GenerateReport>(t => t.IsActive).ToList();
+                var reportList = "029,002,005,006,007,009,032,033,040,052,088,089,116,118,141,143,144,175,178,179,185,188,189,194";
+                string[] reportCodes = reportList.Split(',');
+                var reports = Find<GenerateReport>(t =>reportCodes.Contains(t.ReportCode) &&  t.IsActive).ToList();
                 foreach (var report in reports)
                 {
                     report.IsLocked = isLocked;
