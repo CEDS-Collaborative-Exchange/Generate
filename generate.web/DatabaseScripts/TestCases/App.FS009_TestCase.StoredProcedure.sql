@@ -65,6 +65,9 @@ BEGIN TRY
 		IF OBJECT_ID('tempdb..#staging') IS NOT NULL
 		DROP TABLE #staging
 
+		IF OBJECT_ID('tempdb..#stagingNoExit') IS NOT NULL
+		DROP TABLE #stagingNoExit
+
 		DECLARE @ChildCountDate DATETIME
 
  		select @ChildCountDate = CAST('10/01/' + cast(@SchoolYear - 1 AS Varchar(4)) AS DATETIME)
@@ -145,7 +148,7 @@ BEGIN TRY
 		CREATE TABLE #catchmentType ( CatchmentArea varchar(100) )
 		INSERT INTO #catchmentType VALUES ( 'Districtwide (students moving out of district)' )
 		INSERT INTO #catchmentType VALUES ( 'Entire state (students moving out of state)' )
-		
+
 		DECLARE @catchmentArea VARCHAR(50)
 
 		DECLARE db_cursor CURSOR FOR 
@@ -200,6 +203,8 @@ BEGIN TRY
 			EXEC RDS.Create_ReportData '009', 'exiting', 0
 	
 			IF OBJECT_ID('tempdb..#staging') IS NOT NULL DROP TABLE #staging
+
+			IF OBJECT_ID('tempdb..#stagingNoExit') IS NOT NULL DROP TABLE #stagingNoExit
 
 			IF OBJECT_ID('tempdb..#stuLeaTemp') IS NOT NULL	DROP TABLE #stuLeaTemp
 
@@ -312,8 +317,9 @@ BEGIN TRY
 				, SexEdFactsCode							VARCHAR(100)
 				, EnglishLearnerStatus						VARCHAR(100)
 				, EnglishLearnerStatusEdFactsCode			VARCHAR(100)
-
+				, EnrollmentExitDate						DATETIME
 			)
+			
 
 			INSERT INTO #staging
 			SELECT DISTINCT 
@@ -442,7 +448,8 @@ BEGIN TRY
 							ELSE 'MISSING'
 						END
 					ELSE 'MISSING'
-				END AS EnglishLearnerStatusEdFactsCode
+				END AS EnglishLearnerStatusEdFactsCode,
+				ske.EnrollmentExitDate
 			FROM Staging.K12Enrollment ske
 			LEFT JOIN #stuLea latest
 				ON ske.StudentIdentifierState = latest.StudentIdentifierState
@@ -493,6 +500,14 @@ BEGIN TRY
 			DELETE FROM #Staging
 			WHERE SpecialEducationExitReasonEdFactsCode = 'GRADALTDPL'
 			AND isnull(@GRADALTDPLValid, 0) = 0
+
+			SELECT * 
+			INTO #stagingNoExit
+			FROM #staging
+
+			DELETE FROM #staging
+			WHERE SpecialEducationExitReasonEdFactsCode = 'MKC'
+			AND isnull(EnrollmentExitDate, @SYEnd) >= @SYEnd
 			
 /**************************************************************************************************************************
 BEGIN CREATING TEST RESULTS
@@ -709,7 +724,7 @@ BEGIN CREATING TEST RESULTS
 				  Age
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC6
-			FROM #staging 
+			FROM #stagingNoExit
 			GROUP BY Age
 				
 			INSERT INTO App.SqlUnitTestCaseResult 
@@ -746,7 +761,7 @@ BEGIN CREATING TEST RESULTS
 				  RaceEdFactsCode
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC7
-			FROM #staging 
+			FROM #stagingNoExit 
 			GROUP BY RaceEdFactsCode
 				
 			INSERT INTO App.SqlUnitTestCaseResult 
@@ -783,7 +798,7 @@ BEGIN CREATING TEST RESULTS
 				  SexEdFactsCode
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC8
-			FROM #staging 
+			FROM #stagingNoExit 
 			WHERE SexEdFactsCode <> 'MISSING'
 			GROUP BY SexEdFactsCode
 				
@@ -821,7 +836,7 @@ BEGIN CREATING TEST RESULTS
 				  EnglishLearnerStatusEdFactsCode
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC9
-			FROM #staging 
+			FROM #stagingNoExit 
 			WHERE EnglishLearnerStatusEdFactsCode <> 'MISSING'
 			GROUP BY EnglishLearnerStatusEdFactsCode
 				
@@ -859,7 +874,7 @@ BEGIN CREATING TEST RESULTS
 				  IdeaDisabilityTypeEdFactsCode
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC10
-			FROM #staging s
+			FROM #stagingNoExit s
 			JOIN #disabilityCodes d
 				ON s.IdeaDisabilityTypeEdFactsCode = d.CategoryOptionCode
 			GROUP BY IdeaDisabilityTypeEdFactsCode
@@ -897,7 +912,7 @@ BEGIN CREATING TEST RESULTS
 			SELECT 
 				COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC11
-			FROM #staging 
+			FROM #stagingNoExit 
 
 			INSERT INTO App.SqlUnitTestCaseResult 
 			(
@@ -1185,7 +1200,7 @@ BEGIN CREATING TEST RESULTS
 				, s.LeaIdentifierSeaAccountability
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC17
-			FROM #staging s
+			FROM #stagingNoExit s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
 			LEFT JOIN #CAT_Organizations org
@@ -1231,7 +1246,7 @@ BEGIN CREATING TEST RESULTS
 				, s.LeaIdentifierSeaAccountability
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC18
-			FROM #staging s
+			FROM #stagingNoExit s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
 			LEFT JOIN #CAT_Organizations org
@@ -1277,7 +1292,7 @@ BEGIN CREATING TEST RESULTS
 				, s.LeaIdentifierSeaAccountability
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC19
-			FROM #staging s
+			FROM #stagingNoExit s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
 			LEFT JOIN #CAT_Organizations org
@@ -1324,7 +1339,7 @@ BEGIN CREATING TEST RESULTS
 				, s.LeaIdentifierSeaAccountability
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC20
-			FROM #staging s
+			FROM #stagingNoExit s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
 			LEFT JOIN #CAT_Organizations org
@@ -1371,7 +1386,7 @@ BEGIN CREATING TEST RESULTS
 				, s.LeaIdentifierSeaAccountability
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC21
-			FROM #staging s
+			FROM #stagingNoExit s
 			JOIN #disabilityCodes d
 				ON s.IdeaDisabilityTypeEdFactsCode = d.CategoryOptionCode
 			LEFT JOIN #notReportedFederallyLeas nrflea
@@ -1418,7 +1433,7 @@ BEGIN CREATING TEST RESULTS
 				  s.LeaIdentifierSeaAccountability
 				, COUNT(DISTINCT StudentIdentifierState) AS StudentCount
 			INTO #TC22
-			FROM #staging s
+			FROM #stagingNoExit s
 			LEFT JOIN #notReportedFederallyLeas nrflea
 				ON s.LeaIdentifierSeaAccountability = nrflea.LeaIdentifierSeaAccountability
 			LEFT JOIN #CAT_Organizations org
