@@ -195,7 +195,7 @@ BEGIN
 			, FactTypeId        							int null
 			, IdeaStatusId     								int null
 			, K12SchoolId      								int null
-			, K12StudentId    								int null
+			, K12Student_CurrentId							int null
 			, DisciplineCount               				int null
 			, FirearmId          							int null
 			, GradeLevelId    								int null
@@ -237,7 +237,7 @@ BEGIN
 			, @FactTypeId													FactTypeId
 			, ISNULL(rdis.DimIdeaStatusId, -1)								IdeaStatusId
 			, ISNULL(rdksch.DimK12SchoolId, -1)								K12SchoolId
-			, ISNULL(rdpc.DimPersonId, -1)									K12StudentId
+			, ISNULL(rdpc.DimPersonId, -1)									K12Student_CurrentId
 			, 1																DisciplineCount
 			, ISNULL(rdf.DimFirearmId, -1)									FirearmId
 			, ISNULL(rgls.DimGradeLevelId, -1)								GradeLevelId
@@ -391,7 +391,7 @@ BEGIN
 			, IeuId
 			, LeaId
 			, K12SchoolId
-			, K12StudentId
+			, K12Student_CurrentId
 			, AgeId
 			, CteStatusId
 			, DisabilityStatusId
@@ -430,7 +430,7 @@ BEGIN
 			, IeuId
 			, LeaId
 			, K12SchoolId
-			, K12StudentId
+			, K12Student_CurrentId
 			, AgeId
 			, CteStatusId
 			, DisabilityStatusId

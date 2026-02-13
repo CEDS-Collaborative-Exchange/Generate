@@ -74,7 +74,7 @@ BEGIN
 			, SeaId									int null
 			, LeaId									int null
 			, K12SchoolId							int null
-			, K12StaffId							int null
+			, K12Staff_CurrentId					int null
 			, K12StaffStatusId						int null
 			, K12StaffCategoryId					int null
 			, TitleIIIStatusId						int null
@@ -92,7 +92,7 @@ BEGIN
 			, ISNULL(rds.DimSeaId, -1)									SeaId
 			, ISNULL(rdl.DimLeaID, -1)									LeaId
 			, ISNULL(rdksch.DimK12SchoolId, -1)							K12SchoolId
-			, ISNULL(rdpc.DimPersonId, -1)								K12StaffId
+			, ISNULL(rdpc.DimPersonId, -1)								K12Staff_CurrentId
 			, ISNULL(rdkss.DimK12StaffStatusId, -1)						K12StaffStatusId
 			, ISNULL(rdksc.DimK12StaffCategoryId, -1)					K12StaffCategoryId
 			, -1														TitleIIIStatusId
@@ -145,7 +145,7 @@ BEGIN
 			, SeaId
 			, LeaId
 			, K12SchoolId
-			, K12StaffId
+			, K12Staff_CurrentId
 			, K12StaffStatusId
 			, K12StaffCategoryId
 			, TitleIIIStatusId
@@ -160,7 +160,7 @@ BEGIN
 			, SeaId
 			, LeaId
 			, K12SchoolId
-			, K12StaffId
+			, K12Staff_CurrentId
 			, K12StaffStatusId
 			, K12StaffCategoryId
 			, TitleIIIStatusId
