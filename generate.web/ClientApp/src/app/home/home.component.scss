@@ -1,5 +1,9 @@
 @import '../variables.scss';
 
+body {
+    overflow-x: hidden;
+}
+
 // generate-home__section
 
 .generate-home__section {
@@ -95,6 +99,8 @@
 
 .generate-home__reports-computer {
     display: inline-block;
+    margin-left: -60px;
+    margin-right: 60px;
 }
 
 .generate-home__reports-pill-group {
