@@ -127,7 +127,8 @@
 /*Show drawer ONLY at high zoom (or very narrow desktop) */
 @media (max-width: 1100px) {
     .generate-app-shared-login__button-container{
-        padding-left:1.2rem;
+        padding-left: 0;
+        margin-right: auto;
     }
 
     .generate-app-shared-loggedin__text {

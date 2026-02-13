@@ -155,3 +155,15 @@ $fa-font-path: "~font-awesome/fonts/";
     overflow: auto;
     padding: 16px;
 }
+
+/* Hide drawer at normal zoom (wider viewports) */
+@media (min-width: 1101px) {
+    .drawer,
+    .app-drawer {
+        display: none !important;
+    }
+    
+    .app-main.shifted {
+        margin-left: 0;
+    }
+}
