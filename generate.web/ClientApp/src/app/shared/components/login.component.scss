@@ -131,6 +131,14 @@
         margin-right: auto;
     }
 
+    /* Position button at 70% only when drawer is open */
+    .generate-app-shared-login__button-container.drawer-open {
+        position: absolute;
+        left: 70%;
+        top: 5px;
+        transform: translateX(-50%);
+    }
+
     .generate-app-shared-loggedin__text {
         display: none;
     }

@@ -96,6 +96,10 @@
     display: none;
 }
 
+.mdl-layout__header-row {
+    position: relative;
+}
+
 @media (max-width: 1100px) {
 
     .generate-app__header{

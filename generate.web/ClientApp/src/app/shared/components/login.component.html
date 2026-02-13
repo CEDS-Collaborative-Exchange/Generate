@@ -7,7 +7,7 @@
     </div>
 
     <div *ngIf="!isAuthenticating && !userService.isLoggedIn()">
-        <div *ngIf="isOAuth" class="generate-app-shared-login__button-container">
+        <div *ngIf="isOAuth" class="generate-app-shared-login__button-container" [ngClass]="{'drawer-open': isDrawerOpen}">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
                     (click)="loginAzure()" autofocus id="loginButton-lg" tabindex="1">
                 Log in
@@ -30,7 +30,7 @@
                     <label class="mdl-textfield__label" for="userpassword">Password</label>
                 </div>
 
-                <div class="generate-app-shared-login__button-container">
+                <div class="generate-app-shared-login__button-container" [ngClass]="{'drawer-open': isDrawerOpen}">
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
                             (click)="login($event, username.value, userpassword.value)" id="loginButton-lg" tabindex="3">
                         Log in
