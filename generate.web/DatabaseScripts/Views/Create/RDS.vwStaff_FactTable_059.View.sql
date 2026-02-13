@@ -2,7 +2,7 @@ CREATE VIEW [RDS].[vwStaff_FactTable_059]
 AS
 	SELECT 	f.[FactK12StaffCountId]
 			, f.[SchoolYear]
-		  	, f.[K12StaffId]
+		  	, f.[K12Staff_CurrentId]
 			, f.[K12StaffStaffMemberIdentifierState]
 		  	, f.[StateANSICode]
 		  	, f.[StateAbbreviationCode]

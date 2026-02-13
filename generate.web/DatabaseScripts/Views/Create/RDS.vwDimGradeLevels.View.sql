@@ -15,9 +15,15 @@ AS
 			WHEN '001057' THEN 'Assessment Registration Grade Level to Be Assessed'
 			WHEN '001210' THEN 'Exit Grade Level'
 		  END as GradeLevelTypeDescription
-	FROM RDS.DimGradeLevels rdgl
-	CROSS JOIN (SELECT DISTINCT SchoolYear FROM Staging.SourceSystemReferenceData) rsy
-	LEFT JOIN Staging.SourceSystemReferenceData sssrd
+	FROM rds.DimGradeLevels rdgl
+	CROSS JOIN (select sy.SchoolYear
+    			from rds.DimSchoolYearDataMigrationTypes dm
+	    			inner join rds.dimschoolyears sy
+			    		on dm.dimschoolyearid = sy.dimschoolyearid
+			    where IsSelected = 1
+			    and dm.DataMigrationTypeId = 3
+			) AS rsy
+	LEFT JOIN staging.SourceSystemReferenceData sssrd
 		ON rdgl.GradeLevelCode = sssrd.OutputCode
 		AND sssrd.TableName = 'RefGradeLevel'
 		AND rsy.SchoolYear = sssrd.SchoolYear

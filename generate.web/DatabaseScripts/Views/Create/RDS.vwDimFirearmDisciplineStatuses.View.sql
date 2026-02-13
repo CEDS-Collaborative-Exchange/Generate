@@ -7,9 +7,15 @@ AS
 		, sssrd.InputCode AS DisciplineMethodForFirearmsIncidentsMap
 		, rdfds.IdeaDisciplineMethodForFirearmsIncidentsCode
 		, sssrd2.InputCode AS IdeaDisciplineMethodForFirearmsIncidentsMap
-	FROM RDS.DimFirearmDisciplineStatuses rdfds
-	CROSS JOIN (SELECT DISTINCT SchoolYear FROM Staging.SourceSystemReferenceData) rsy
-	LEFT JOIN Staging.SourceSystemReferenceData sssrd
+	FROM rds.DimFirearmDisciplineStatuses rdfds
+	CROSS JOIN (select sy.SchoolYear
+    			from rds.DimSchoolYearDataMigrationTypes dm
+	    			inner join rds.dimschoolyears sy
+			    		on dm.dimschoolyearid = sy.dimschoolyearid
+			    where IsSelected = 1
+			    and dm.DataMigrationTypeId = 3
+			) AS rsy
+	LEFT JOIN staging.SourceSystemReferenceData sssrd
 		ON rdfds.DisciplineMethodForFirearmsIncidentsCode = sssrd.OutputCode
 		AND sssrd.TableName = 'RefDisciplineMethodFirearms'
 		AND rsy.SchoolYear = sssrd.SchoolYear

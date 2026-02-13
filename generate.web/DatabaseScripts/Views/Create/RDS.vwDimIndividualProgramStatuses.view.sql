@@ -13,7 +13,13 @@ AS
 				ELSE 0
 			  END AS ConsentToEvaluationIndicatorMap
 	FROM rds.DimIndividualizedProgramStatuses rdips
-	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
+	CROSS JOIN (select sy.SchoolYear
+    			from rds.DimSchoolYearDataMigrationTypes dm
+	    			inner join rds.dimschoolyears sy
+			    		on dm.dimschoolyearid = sy.dimschoolyearid
+			    where IsSelected = 1
+			    and dm.DataMigrationTypeId = 3
+			) AS rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd
 			ON rdips.IndividualizedProgramTypeCode = sssrd.OutputCode
 			AND rsy.SchoolYear = sssrd.SchoolYear

@@ -15,7 +15,13 @@ AS
 			WHEN 'No' THEN 0
 		END AS IdeaIndicatorMap
 	FROM rds.DimIdeaStatuses rdis
-	CROSS JOIN (SELECT DISTINCT SchoolYear FROM staging.SourceSystemReferenceData) rsy
+	CROSS JOIN (select sy.SchoolYear
+    			from rds.DimSchoolYearDataMigrationTypes dm
+	    			inner join rds.dimschoolyears sy
+			    		on dm.dimschoolyearid = sy.dimschoolyearid
+			    where IsSelected = 1
+			    and dm.DataMigrationTypeId = 3
+			) AS rsy
 	LEFT JOIN staging.SourceSystemReferenceData sssrd
 		ON rdis.SpecialEducationExitReasonCode = sssrd.OutputCode
 		AND sssrd.TableName = 'RefSpecialEducationExitReason'
