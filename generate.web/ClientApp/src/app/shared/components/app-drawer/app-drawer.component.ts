@@ -29,13 +29,20 @@ export class AppDrawerComponent {
         private _router: Router,
         private userService: UserService) { }
 
-    gotoHome() { this._router.navigateByUrl('/'); }
+    gotoHome() { 
+        this._router.navigateByUrl('/');
+        this.close.emit();
+    }
 
-    gotoAbout() { this._router.navigateByUrl('/about'); }
+    gotoAbout() { 
+        this._router.navigateByUrl('/about');
+        this.close.emit();
+    }
 
     gotoSummary() {
         if (this.userService.isLoggedIn()) {
             this._router.navigateByUrl('/reports/summary');
+            this.close.emit();
         }
         else {
             let snackbarContainer = document.querySelector('#generate-app__message');
@@ -49,6 +56,7 @@ export class AppDrawerComponent {
 
         if (this.userService.isLoggedIn()) {
             this._router.navigate(['/reports/edfacts']);
+            this.close.emit();
         }
         else {
             let snackbarContainer = document.querySelector('#generate-app__message');
@@ -61,6 +69,7 @@ export class AppDrawerComponent {
     gotoReportsSppApr() {
         if (this.userService.isLoggedIn()) {
             this._router.navigate(['/reports/sppapr']);
+            this.close.emit();
         }
         else {
             let snackbarContainer = document.querySelector('#generate-app__message');
@@ -74,6 +83,7 @@ export class AppDrawerComponent {
     gotoReportsLibrary() {
         if (this.userService.isLoggedIn()) {
             this._router.navigate(['/reports/library']);
+            this.close.emit();
         }
         else {
             let snackbarContainer = document.querySelector('#generate-app__message');

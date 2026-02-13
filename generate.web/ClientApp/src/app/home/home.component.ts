@@ -34,53 +34,68 @@ export class HomeComponent implements AfterViewInit {
         return false;
     }
 
-    gotoReportsEdFacts() {
+    gotoReportsEdFacts(event?: Event) {
+        if (event) event.preventDefault();
 
         if (this._UserService.isLoggedIn()) {
             this._router.navigate(['/reports/edfacts']);
         }
         else {
-            let snackbarContainer = document.querySelector('#generate-home__message');
-            let data = { message: 'You must be logged in to access this area of Generate.' };
-            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            if (snackbarContainer) {
+                let data = { message: 'You must be logged in to access this area of Generate.' };
+                snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            }
         }
         return false;
     }
 
-    gotoReportsSppApr() {
+    gotoReportsSppApr(event?: Event) {
+        if (event) event.preventDefault();
+
         if (this._UserService.isLoggedIn()) {
             this._router.navigate(['/reports/sppapr']);
         }
         else {
-            let snackbarContainer = document.querySelector('#generate-home__message');
-            let data = { message: 'You must be logged in to access this area of Generate.' };
-            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            if (snackbarContainer) {
+                let data = { message: 'You must be logged in to access this area of Generate.' };
+                snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            }
         }
 
         return false;
     }
 
-    gotoReportsLibrary(){
+    gotoReportsLibrary(event?: Event) {
+        if (event) event.preventDefault();
+
         if (this._UserService.isLoggedIn()) {
             this._router.navigate(['/reports/library']);
         }
         else {
-            let snackbarContainer = document.querySelector('#generate-home__message');
-            let data = { message: 'You must be logged in to access this area of Generate.' };
-            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            if (snackbarContainer) {
+                let data = { message: 'You must be logged in to access this area of Generate.' };
+                snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            }
         }
 
         return false;
     }
 
-    gotoSummary() {
+    gotoSummary(event?: Event) {
+        if (event) event.preventDefault();
+
         if (this._UserService.isLoggedIn()) {
             this._router.navigateByUrl('/reports/summary');
         }
         else {
-            let snackbarContainer = document.querySelector('#generate-home__message');
-            let data = { message: 'You must be logged in to access this area of Generate.' };
-            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            if (snackbarContainer) {
+                let data = { message: 'You must be logged in to access this area of Generate.' };
+                snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            }
         }
         return false;
     }
@@ -90,7 +105,8 @@ export class HomeComponent implements AfterViewInit {
         return false;
     }
 
-     gotoAboutPage() {
+     gotoAboutPage(event?: Event) {
+        if (event) event.preventDefault();
         this._router.navigate(['/about']);
         return false;
     }
