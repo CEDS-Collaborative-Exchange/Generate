@@ -378,7 +378,7 @@ BEGIN
 			, IeuId											int null	
 			, LeaId											int null	
 			, K12SchoolId									int null	
-			, K12StudentId									int null	
+			, K12Student_CurrentId							int null	
 			, GradeLevelWhenAssessedId						int null	
 			, AssessmentId									int null	
 			, AssessmentSubtestId							int null		
@@ -420,7 +420,7 @@ BEGIN
 			, -1															IeuId									
 			, ISNULL(rdl.DimLeaID, -1)										LeaId									
 			, ISNULL(rdksch.DimK12SchoolId, -1)								K12SchoolId							
-			, ISNULL(rdpc.DimPersonId, -1)									K12StudentId							
+			, ISNULL(rdpc.DimPersonId, -1)									K12Student_CurrentId							
 			, ISNULL(rgls.DimGradeLevelId, -1)								GradeLevelWhenAssessedId				
 			, ISNULL(rda.DimAssessmentId, -1)								AssessmentId							
 			, -1															AssessmentSubtestId					
@@ -652,7 +652,7 @@ BEGIN
 			, [IeuId]									
 			, [LeaId]									
 			, [K12SchoolId]
-			, [K12StudentId]							
+			, [K12Student_CurrentId]							
 			, [GradeLevelWhenAssessedId]
 			, [AssessmentId]			
 			, [AssessmentSubtestId]
@@ -692,7 +692,7 @@ BEGIN
 			, [IeuId]									
 			, [LeaId]									
 			, [K12SchoolId]
-			, [K12StudentId]							
+			, [K12Student_CurrentId]							
 			, [GradeLevelWhenAssessedId]
 			, [AssessmentId]			
 			, [AssessmentSubtestId]
