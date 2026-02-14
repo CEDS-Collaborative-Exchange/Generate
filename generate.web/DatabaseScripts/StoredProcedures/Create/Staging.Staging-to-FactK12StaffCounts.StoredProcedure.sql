@@ -8,6 +8,7 @@ BEGIN
 	-- Drop temp tables.  This allows for running the procedure as a script while debugging
 		IF OBJECT_ID(N'tempdb..#vwK12StaffStatuses') IS NOT NULL DROP TABLE #vwK12StaffStatuses
 		IF OBJECT_ID(N'tempdb..#vwK12StaffCategories') IS NOT NULL DROP TABLE #vwK12StaffCategories
+		IF OBJECT_ID(N'tempdb..#vwTeachingCredentialStatuses') IS NOT NULL DROP TABLE #vwTeachingCredentialStatuses
 
 	BEGIN TRY
 
@@ -43,18 +44,36 @@ BEGIN
 		INTO #vwK12StaffStatuses
 		FROM RDS.vwDimK12StaffStatuses
 		WHERE SchoolYear = @SchoolYear
+		AND SpecialEducationRelatedServicesPersonnelCode = 'MISSING'
+		AND CTEInstructorIndustryCertificationCode = 'MISSING'
+		AND SpecialEducationParaprofessionalCode = 'MISSING'
+		AND SpecialEducationTeacherCode = 'MISSING'
 
-		--CREATE CLUSTERED INDEX ix_tempvwK12StaffStatuses ON #vwK12StaffStatuses (SpecialEducationAgeGroupTaughtMap, EdFactsTeacherInexperiencedStatusMap, EdFactsTeacherOutOfFieldStatusMap
-		--	, TeachingCredentialTypeMap, ParaprofessionalQualificationStatusMap, HighlyQualifiedTeacherIndicatorMap, SpecialEducationTeacherQualificationStatusMap
-		--	, EdFactsCertificationStatusMap);
+		--CREATE CLUSTERED INDEX ix_tempvwK12StaffStatuses ON #vwK12StaffStatuses (
+		--	SpecialEducationAgeGroupTaughtMap, SpecialEducationAgeGroupTaughtCode, EdFactsTeacherOutOfFieldStatusMap, EdFactsTeacherOutOfFieldStatusCode,
+		--	EdFactsTeacherInexperiencedStatusMap, EdFactsTeacherInexperiencedStatusCode, ParaprofessionalQualificationStatusMap, ParaprofessionalQualificationStatusCode, 
+		--	SpecialEducationTeacherQualificationStatusMap, SpecialEducationTeacherQualificationStatusCode, EdFactsCertificationStatusMap, EdFactsCertificationStatusCode
+		--);		
 		
 		SELECT *
 		INTO #vwK12StaffCategories
 		FROM RDS.vwDimK12StaffCategories
 		WHERE SchoolYear = @SchoolYear
+		AND K12StaffClassificationCode NOT IN ('BehavioralSpecialists','FamilyServiceWorkers','HealthSpecialists','HomeVisitors',
+												'InstructionalCoordinators','MentalHealthSpecialists','NutritionSpecialists'
+												,'SocialWorkers','StudentSupportServicesStaff')
+		AND TitleIProgramStaffCategoryCode = 'MISSING'
 
-	   -- CREATE CLUSTERED INDEX ix_tempvwK12StaffCategories ON #vwK12StaffCategories (K12StaffClassificationMap, SpecialEducationSupportServicesCategoryMap, TitleIProgramStaffCategoryMap);
+		--CREATE CLUSTERED INDEX ix_tempvwK12StaffCategories ON #vwK12StaffCategories (
+		--	SchoolYear,K12StaffClassificationMap,K12StaffClassificationCode,SpecialEducationSupportServicesCategoryMap,
+		--	SpecialEducationSupportServicesCategoryCode,TitleIProgramStaffCategoryMap,TitleIProgramStaffCategoryCode,TitleIIILanguageInstructionIndicatorMap
+		--);	
 	
+	    SELECT *
+		INTO #vwTeachingCredentialStatuses
+		FROM RDS.vwDimTeachingCredentialStatuses
+		WHERE SchoolYear = @SchoolYear
+
 		SELECT @FactTypeId = DimFactTypeId 
 		FROM rds.DimFactTypes
 		WHERE FactTypeCode = 'staff'
@@ -77,6 +96,7 @@ BEGIN
 			, K12Staff_CurrentId					int null
 			, K12StaffStatusId						int null
 			, K12StaffCategoryId					int null
+			, TeachingCredentialStatusId			int null
 			, TitleIIIStatusId						int null
 			, CredentialIssuanceDateId				int null
 			, CredentialExpirationDateId			int null
@@ -95,6 +115,7 @@ BEGIN
 			, ISNULL(rdpc.DimPersonId, -1)								K12Staff_CurrentId
 			, ISNULL(rdkss.DimK12StaffStatusId, -1)						K12StaffStatusId
 			, ISNULL(rdksc.DimK12StaffCategoryId, -1)					K12StaffCategoryId
+			, ISNULL(rdtcs.DimTeachingCredentialStatusId, -1)			TeachingCredentialStatusId
 			, -1														TitleIIIStatusId
 			, ISNULL(rds.Get_DimDate(ssa.CredentialIssuanceDate), -1)	CredentialIssuanceDateId
 			, ISNULL(rds.Get_DimDate(ssa.CredentialExpirationDate), -1)	CredentialExpirationDateId
@@ -103,6 +124,11 @@ BEGIN
 		FROM Staging.K12StaffAssignment ssa
 		JOIN RDS.DimSchoolYears rsy
 			ON ssa.SchoolYear = rsy.SchoolYear
+	--dimpeople	(rds) - direct join to DimPeople_Current
+		JOIN RDS.DimPeople_Current rdpc
+			ON ISNULL(ssa.StaffMemberIdentifierState, '') = ISNULL(rdpc.K12StaffStaffMemberIdentifierState, '')
+			AND ISNULL(ssa.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
+			AND rdpc.IsActiveK12Staff = 1
 	--lea (rds)
 		LEFT JOIN RDS.DimLeas rdl
 			ON ssa.LeaIdentifierSea = rdl.LeaIdentifierSea
@@ -125,18 +151,21 @@ BEGIN
 		LEFT JOIN #vwK12StaffStatuses rdkss
 			ON rsy.SchoolYear = rdkss.SchoolYear
 			AND ISNULL(ssa.SpecialEducationAgeGroupTaught, 'MISSING') = ISNULL(rdkss.SpecialEducationAgeGroupTaughtMap, rdkss.SpecialEducationAgeGroupTaughtCode)
-			AND ISNULL(ssa.EDFactsTeacherOutOfFieldStatus, 'MISSING') = ISNULL(rdkss.EDFactsTeacherOutOfFieldStatusMap, rdkss.EDFactsTeacherOutOfFieldStatusCode)
-			AND ISNULL(ssa.EdFactsTeacherInexperiencedStatus, 'MISSING') = ISNULL(rdkss.EdFactsTeacherInexperiencedStatusMap, rdkss.EdFactsTeacherInexperiencedStatusCode)
-			AND ISNULL(ssa.TeachingCredentialType, 'MISSING') = ISNULL(rdkss.TeachingCredentialTypeMap, rdkss.TeachingCredentialTypeCode)
-			AND ISNULL(ssa.ParaprofessionalQualificationStatus, 'MISSING') = ISNULL(rdkss.ParaprofessionalQualificationStatusMap, rdkss.ParaprofessionalQualificationStatusCode)
-			AND rdkss.HighlyQualifiedTeacherIndicatorCode = 'MISSING'
-			AND ISNULL(ssa.SpecialEducationTeacherQualificationStatus, 'MISSING') = ISNULL(rdkss.SpecialEducationTeacherQualificationStatusMap, rdkss.SpecialEducationTeacherQualificationStatusCode)
             AND	ISNULL(ssa.EdFactsCertificationStatus, 'MISSING') = ISNULL(rdkss.EdFactsCertificationStatusMap, rdkss.EdFactsCertificationStatusCode)
-	--dimpeople	(rds) - direct join to DimPeople_Current
-		LEFT JOIN RDS.DimPeople_Current rdpc
-			ON ISNULL(ssa.StaffMemberIdentifierState, '') = ISNULL(rdpc.K12StaffStaffMemberIdentifierState, '')
-			AND ISNULL(ssa.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
-			AND rdpc.IsActiveK12Staff = 1
+			AND rdkss.HighlyQualifiedTeacherIndicatorCode = 'MISSING'
+			AND ISNULL(ssa.EdFactsTeacherInexperiencedStatus, 'MISSING') = ISNULL(rdkss.EdFactsTeacherInexperiencedStatusMap, rdkss.EdFactsTeacherInexperiencedStatusCode)
+			AND ISNULL(ssa.EDFactsTeacherOutOfFieldStatus, 'MISSING') = ISNULL(rdkss.EDFactsTeacherOutOfFieldStatusMap, rdkss.EDFactsTeacherOutOfFieldStatusCode)
+			AND ISNULL(ssa.SpecialEducationTeacherQualificationStatus, 'MISSING') = ISNULL(rdkss.SpecialEducationTeacherQualificationStatusMap, rdkss.SpecialEducationTeacherQualificationStatusCode)
+			AND ISNULL(ssa.ParaprofessionalQualificationStatus, 'MISSING') = ISNULL(rdkss.ParaprofessionalQualificationStatusMap, rdkss.ParaprofessionalQualificationStatusCode)
+			AND rdkss.SpecialEducationRelatedServicesPersonnelCode = 'MISSING'
+			AND rdkss.CTEInstructorIndustryCertificationCode = 'MISSING'
+			AND rdkss.SpecialEducationParaprofessionalCode = 'MISSING'
+			AND rdkss.SpecialEducationTeacherCode = 'MISSING'
+	--teaching credentials
+		LEFT JOIN #vwTeachingCredentialStatuses rdtcs
+			ON rsy.SchoolYear = rdtcs.SchoolYear
+			AND ISNULL(ssa.TeachingCredentialType, 'MISSING') = ISNULL(rdtcs.TeachingCredentialTypeMap, rdtcs.TeachingCredentialTypeCode)
+			AND rdtcs.TeachingCredentialBasisCode = 'MISSING'
 		
 	--Final insert into RDS.FactK12StaffCounts table
 		INSERT INTO RDS.FactK12StaffCounts ( 
@@ -148,6 +177,7 @@ BEGIN
 			, K12Staff_CurrentId
 			, K12StaffStatusId
 			, K12StaffCategoryId
+			, TeachingCredentialStatusId
 			, TitleIIIStatusId
 			, CredentialIssuanceDateId
 			, CredentialExpirationDateId
@@ -163,6 +193,7 @@ BEGIN
 			, K12Staff_CurrentId
 			, K12StaffStatusId
 			, K12StaffCategoryId
+			, TeachingCredentialStatusId
 			, TitleIIIStatusId
 			, CredentialIssuanceDateId
 			, CredentialExpirationDateId
@@ -174,9 +205,9 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
-	insert into app.DataMigrationHistories
-		(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
-		values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
+		insert into app.DataMigrationHistories
+			(DataMigrationHistoryDate, DataMigrationTypeId, DataMigrationHistoryMessage) 
+			values	(getutcdate(), 2, 'ERROR: ' + ERROR_MESSAGE())
 	END CATCH
 		
 END

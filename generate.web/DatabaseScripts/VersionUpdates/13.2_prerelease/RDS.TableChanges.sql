@@ -133,20 +133,6 @@
     END
 
 -----------------------------------------------
---File 203 changes	
------------------------------------------------
-
-    IF COL_LENGTH('RDS.DimK12StaffStatuses', 'TeachingCredentialTypeCode') IS NULL
-    BEGIN
-        ALTER TABLE RDS.DimK12StaffStatuses ADD TeachingCredentialTypeCode VARCHAR(50) NULL;
-    END
-	
-    IF COL_LENGTH('RDS.DimK12StaffStatuses', 'TeachingCredentialTypeDescription') IS NULL
-    BEGIN
-        ALTER TABLE RDS.DimK12StaffStatuses ADD TeachingCredentialTypeDescription VARCHAR(200) NULL;
-    END
-
------------------------------------------------
 --CIID-8648 changes	
 -----------------------------------------------
 
