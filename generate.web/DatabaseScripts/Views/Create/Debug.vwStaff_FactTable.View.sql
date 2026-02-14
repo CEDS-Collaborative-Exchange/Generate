@@ -24,7 +24,6 @@ AS
 			, StaffStatus.EdFactsCertificationStatusEdFactsCode
 			, StaffStatus.HighlyQualifiedTeacherIndicatorEdFactsCode
 			, StaffStatus.EdFactsTeacherInexperiencedStatusEdFactsCode
-			, StaffStatus.TeachingCredentialTypeCode
 			, StaffStatus.EdFactsTeacherOutOfFieldStatusEdFactsCode
 			, StaffStatus.SpecialEducationTeacherQualificationStatusEdFactsCode
 			, StaffStatus.ParaprofessionalQualificationStatusEdFactsCode
@@ -34,18 +33,21 @@ AS
 			, StaffCat.TitleIProgramStaffCategoryEdFactsCode
 			, StaffCat.TitleIIILanguageInstructionIndicatorCode
 
+			, TeachStat.TeachingCredentialTypeCode
+
 			, Fact.StaffCount
 			, Fact.StaffFullTimeEquivalency
 
 	FROM		RDS.FactK12StaffCounts				Fact
-	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId			= SchoolYears.DimSchoolYearId	
-	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.dimschoolyearid	= DMT.dimschoolyearid		
-	LEFT JOIN	RDS.DimPeople_Current				Staff			ON Fact.K12Staff_CurrentId		= Staff.DimPersonId					AND Staff.IsActiveK12Staff = 1
-	LEFT JOIN	RDS.DimSeas                        	SEA         	ON Fact.SeaId   				= SEA.DimSeaId
-	LEFT JOIN	RDS.DimLeas							LEAs			ON Fact.LeaId					= LEAs.DimLeaId
-	LEFT JOIN	RDS.DimK12Schools					Schools			ON Fact.K12SchoolId				= Schools.DimK12SchoolId
-	LEFT JOIN	RDS.DimK12StaffStatuses				StaffStatus		ON Fact.K12StaffStatusId		= StaffStatus.DimK12StaffStatusId
-	LEFT JOIN	RDS.DimK12StaffCategories			StaffCat		ON Fact.K12StaffCategoryId		= StaffCat.DimK12StaffCategoryId
+	JOIN		RDS.DimSchoolYears					SchoolYears		ON Fact.SchoolYearId				= SchoolYears.DimSchoolYearId	
+	JOIN		RDS.DimSchoolYearDataMigrationTypes DMT				ON SchoolYears.dimschoolyearid		= DMT.dimschoolyearid		
+	LEFT JOIN	RDS.DimPeople_Current				Staff			ON Fact.K12Staff_CurrentId			= Staff.DimPersonId		AND Staff.IsActiveK12Staff = 1
+	LEFT JOIN	RDS.DimSeas                        	SEA         	ON Fact.SeaId   					= SEA.DimSeaId
+	LEFT JOIN	RDS.DimLeas							LEAs			ON Fact.LeaId						= LEAs.DimLeaId
+	LEFT JOIN	RDS.DimK12Schools					Schools			ON Fact.K12SchoolId					= Schools.DimK12SchoolId
+	LEFT JOIN	RDS.DimK12StaffStatuses				StaffStatus		ON Fact.K12StaffStatusId			= StaffStatus.DimK12StaffStatusId
+	LEFT JOIN	RDS.DimK12StaffCategories			StaffCat		ON Fact.K12StaffCategoryId			= StaffCat.DimK12StaffCategoryId
+	LEFT JOIN	RDS.DimTeachingCredentialStatuses	TeachStat		ON Fact.TeachingCredentialStatusId	= TeachStat.DimTeachingCredentialStatusId
     --uncomment/modify the where clause conditions as necessary for validation
     WHERE 1 = 1
 	--2 ways to select by SchoolYear, use 1 or the other, not both

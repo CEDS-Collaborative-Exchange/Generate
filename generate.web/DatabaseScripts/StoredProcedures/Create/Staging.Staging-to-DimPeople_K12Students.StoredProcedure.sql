@@ -144,7 +144,7 @@ BEGIN
 		FROM RDS.DimPeople rdp
 		LEFT JOIN RDS.DimPeople_Current rdpc
 			ON rdp.K12StudentStudentIdentifierState = rdpc.K12StudentStudentIdentifierState
-			AND rdp.BirthDate = rdpc.BirthDate
+			AND ISNULL(rdp.BirthDate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
 		WHERE rdp.IsActiveK12Student = 1 
 		AND rdpc.DimPersonId IS NULL  -- Only new active records
 		AND rdp.RecordEndDateTime IS NULL  -- Only current/active records
@@ -161,7 +161,7 @@ BEGIN
 		FROM RDS.DimPeople_Current rdpc
 		INNER JOIN RDS.DimPeople rdp
 			ON rdpc.K12StudentStudentIdentifierState = rdp.K12StudentStudentIdentifierState
-			AND rdpc.BirthDate = rdp.BirthDate
+			AND ISNULL(rdpc.BirthDate, '1900-01-01') = ISNULL(rdp.BirthDate, '1900-01-01')
 		WHERE rdp.IsActiveK12Student = 1
 		AND rdp.RecordEndDateTime IS NULL  -- Only current/active records
 		AND rdp.DimPersonId <> -1
