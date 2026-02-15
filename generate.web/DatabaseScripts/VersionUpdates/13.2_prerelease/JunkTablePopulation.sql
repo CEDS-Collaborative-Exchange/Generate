@@ -437,7 +437,10 @@
 	DROP TABLE #TeachingCredentialType
 	DROP TABLE #TeachingCredentialBasis
 
---Remove the old data so we can repopulate after adding the new fields
+	-------------------------------------------------------------------------
+	-- Populate DimK12StaffStatuses
+	-------------------------------------------------------------------------
+	--Remove the old data so we can repopulate after adding the new fields
 	DELETE FROM [RDS].[DimK12StaffStatuses]
 
 	--Start the repopulation	
@@ -496,7 +499,11 @@
 	SELECT
 		  CedsOptionSetCode
 		, CedsOptionSetDescription
-		, CedsOptionSetCode AS EdFactsOptionSetCode
+		, CASE CedsOptionSetCode 
+			WHEN '3TO5' THEN '3TO5NOTK'
+			WHEN '6TO21' THEN 'AGE5KTO21'
+			ELSE 'MISSING'
+		END AS EdFactsOptionSetCode
 	FROM [CEDS].CedsOptionSetMapping
 	WHERE CedsElementTechnicalName = 'SpecialEducationAgeGroupTaught'
 
