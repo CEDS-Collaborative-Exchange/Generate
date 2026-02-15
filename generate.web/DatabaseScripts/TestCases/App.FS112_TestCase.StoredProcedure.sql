@@ -82,17 +82,9 @@ BEGIN
 
 		INSERT INTO #excludedLeas 
 		SELECT DISTINCT LEAIdentifierSea
-		FROM Staging.K12Organization sko
-		LEFT JOIN Staging.OrganizationPhone sop
-				ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
-				AND sop.OrganizationType in (	SELECT InputCode
-											FROM Staging.SourceSystemReferenceData 
-											WHERE TableName = 'RefOrganizationType' 
-												AND TableFilter = '001156'
-												AND OutputCode = 'LEA' AND SchoolYear = @SchoolYear)
+		FROM Staging.K12Organization 
 		WHERE LEA_IsReportedFederally = 0
-			OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
-			OR sop.OrganizationIdentifier IS NULL
+			OR ISNULL(LEA_OperationalStatus, 'Closed') in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
 
 		SELECT DISTINCT 
 			StaffMemberIdentifierState
@@ -135,11 +127,11 @@ BEGIN
 		JOIN Staging.K12Organization sko
 			ON sksa.LeaIdentifierSea = sko.LeaIdentifierSea
 			AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, GETDATE())
-		WHERE @ChildCountDate BETWEEN sksa.AssignmentStartDate AND ISNULL(sksa.AssignmentEndDate, GETDATE())
-			AND ParaprofessionalQualificationStatus IS NOT NULL
+		WHERE ParaprofessionalQualificationStatus IS NOT NULL
 			AND sksa.SpecialEducationAgeGroupTaught IS NOT NULL
---		AND ProgramTypeCode = @SPEDProgram
---		WHERE sksa.SchoolYear = @SchoolYear
+			AND sksa.SchoolYear = @SchoolYear
+--			AND @ChildCountDate BETWEEN sksa.AssignmentStartDate AND ISNULL(sksa.AssignmentEndDate, GETDATE())
+--			AND ProgramTypeCode = @SPEDProgram
 
 /* Test Case 1:
 	CSA at the SEA level 
@@ -520,8 +512,8 @@ BEGIN
 		--from App.SqlUnitTestCaseResult r
 		--	inner join App.SqlUnitTest t
 		--		on r.SqlUnitTestId = t.SqlUnitTestId
-		--WHERE TestCaseName = 'TOT LEA Match All' 
-		--AND t.TestScope = 'FS112'
+		--WHERE t.TestScope = 'FS112'
 		--AND Passed = 0
+		--AND TestCaseDetails like '%sea%'
 
 END
