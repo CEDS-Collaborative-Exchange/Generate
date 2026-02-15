@@ -1,6 +1,6 @@
 CREATE VIEW RDS.vwDimK12StaffCategories AS 
 
-	SELECT
+	SELECT 
 		  DimK12StaffCategoryId
 		, rsy.SchoolYear
 		, K12StaffClassificationCode 
@@ -9,6 +9,10 @@ CREATE VIEW RDS.vwDimK12StaffCategories AS
 		, sssrd2.InputCode AS SpecialEducationSupportServicesCategoryMap
 		, TitleIProgramStaffCategoryCode 
 		, sssrd3.InputCode AS TitleIProgramStaffCategoryMap
+		, MigrantEducationProgramStaffCategoryCode
+		, sssrd4.InputCode AS MigrantEducationProgramStaffCategoryMap
+		, ProfessionalEducationalJobClassificationCode
+		, sssrd5.InputCode AS ProfessionalEducationalJobClassificationMap
 		, TitleIIILanguageInstructionIndicatorCode
 		, CASE TitleIIILanguageInstructionIndicatorCode
 			WHEN 'Yes' THEN 1
@@ -35,3 +39,11 @@ CREATE VIEW RDS.vwDimK12StaffCategories AS
 		ON rdksc.TitleIProgramStaffCategoryCode = sssrd3.OutputCode
 		AND sssrd3.TableName = 'RefTitleIProgramStaffCategory'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
+	LEFT JOIN staging.SourceSystemReferenceData sssrd4
+		ON rdksc.MigrantEducationProgramStaffCategoryCode = sssrd4.OutputCode
+		AND sssrd4.TableName = 'RefMigrantEducationProgramStaffCategory'
+		AND rsy.SchoolYear = sssrd4.SchoolYear
+	LEFT JOIN staging.SourceSystemReferenceData sssrd5
+		ON rdksc.ProfessionalEducationalJobClassificationCode = sssrd5.OutputCode
+		AND sssrd5.TableName = 'RefProfessionalEducationalJobClassification'
+		AND rsy.SchoolYear = sssrd5.SchoolYear
