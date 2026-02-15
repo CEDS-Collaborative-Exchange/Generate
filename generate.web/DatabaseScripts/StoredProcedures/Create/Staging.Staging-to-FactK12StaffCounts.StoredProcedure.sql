@@ -44,10 +44,6 @@ BEGIN
 		INTO #vwK12StaffStatuses
 		FROM RDS.vwDimK12StaffStatuses
 		WHERE SchoolYear = @SchoolYear
-		AND SpecialEducationRelatedServicesPersonnelCode = 'MISSING'
-		AND CTEInstructorIndustryCertificationCode = 'MISSING'
-		AND SpecialEducationParaprofessionalCode = 'MISSING'
-		AND SpecialEducationTeacherCode = 'MISSING'
 
 		--CREATE CLUSTERED INDEX ix_tempvwK12StaffStatuses ON #vwK12StaffStatuses (
 		--	SpecialEducationAgeGroupTaughtMap, SpecialEducationAgeGroupTaughtCode, EdFactsTeacherOutOfFieldStatusMap, EdFactsTeacherOutOfFieldStatusCode,
@@ -59,10 +55,6 @@ BEGIN
 		INTO #vwK12StaffCategories
 		FROM RDS.vwDimK12StaffCategories
 		WHERE SchoolYear = @SchoolYear
-		AND K12StaffClassificationCode NOT IN ('BehavioralSpecialists','FamilyServiceWorkers','HealthSpecialists','HomeVisitors',
-												'InstructionalCoordinators','MentalHealthSpecialists','NutritionSpecialists'
-												,'SocialWorkers','StudentSupportServicesStaff')
-		AND TitleIProgramStaffCategoryCode = 'MISSING'
 
 		--CREATE CLUSTERED INDEX ix_tempvwK12StaffCategories ON #vwK12StaffCategories (
 		--	SchoolYear,K12StaffClassificationMap,K12StaffClassificationCode,SpecialEducationSupportServicesCategoryMap,
@@ -145,7 +137,9 @@ BEGIN
 			ON rsy.SchoolYear = rdksc.SchoolYear
 			AND ISNULL(ssa.K12StaffClassification, 'MISSING') = ISNULL(rdksc.K12StaffClassificationMap, rdksc.K12StaffClassificationCode)
 			AND ISNULL(ssa.SpecialEducationStaffCategory, 'MISSING') = ISNULL(rdksc.SpecialEducationSupportServicesCategoryMap, rdksc.SpecialEducationSupportServicesCategoryCode)
-			AND ISNULL(ssa.TitleIProgramStaffCategory, 'MISSING') = ISNULL(rdksc.TitleIProgramStaffCategoryMap, rdksc.TitleIProgramStaffCategoryCode)
+			AND rdksc.TitleIProgramStaffCategoryCode = 'MISSING'
+			AND rdksc.MigrantEducationProgramStaffCategoryCode = 'MISSING'
+			AND rdksc.ProfessionalEducationalJobClassificationCode = 'MISSING'
 			AND ISNULL(CAST(ssa.TitleIIILanguageInstructionIndicator AS SMALLINT), -1) = ISNULL(CAST(rdksc.TitleIIILanguageInstructionIndicatorMap AS SMALLINT), -1)
 	--staff statuses (rds)
 		LEFT JOIN #vwK12StaffStatuses rdkss
