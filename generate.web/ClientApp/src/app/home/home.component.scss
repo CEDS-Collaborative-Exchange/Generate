@@ -245,6 +245,10 @@ body {
         display: flex;
         flex-wrap: wrap;
     }
+
+    .generate-home__reports-pill-group {
+        height: auto;
+    }
     
     .generate-home__section--intro {
         max-width: 800px;
@@ -263,7 +267,8 @@ body {
         flex-wrap: wrap;
         gap: 20px;
         order: 2;
-        margin-top: 100px;
+        margin-top: 20px;
+        clear: both;
     }
 
 }
