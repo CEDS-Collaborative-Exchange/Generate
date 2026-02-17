@@ -190,7 +190,7 @@ BEGIN
 			ON ske.EnrollmentEntryDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--dimpeople	(rds) - direct join to DimPeople_Current
 		LEFT JOIN RDS.DimPeople_Current rdpc
-			ON ISNULL(ske.StudentIdentifierState, '') = ISNULL(rdpc.K12StudentStudentIdentifierState, '')
+			ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
 			AND ISNULL(ske.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
 			AND rdpc.IsActiveK12Student = 1
 	--title I
