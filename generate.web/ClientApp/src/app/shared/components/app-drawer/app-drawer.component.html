@@ -35,7 +35,17 @@
             CIID
         </a>
 
-        <!--<generate-app-login></generate-app-login>-->
+        <div *ngIf="userService.isLoggedIn()" class="mdl-navigation__link generate-app-menu__item-link expandable" (click)="toggleSubmenu('settings')">
+            Settings <i class="material-icons" style="float:right;">{{ submenus.settings ? 'expand_less' : 'expand_more' }}</i>
+        </div>
+        <div *ngIf="userService.isLoggedIn()" class="submenu" [class.open]="submenus.settings">
+            <a class="mdl-navigation__link generate-app-menu__item-link" href="#" (click)="gotoSettingsToggle()">Toggle</a>
+            <a *ngIf="userService.isAdmin()" class="mdl-navigation__link generate-app-menu__item-link" href="#" (click)="gotoSettingsDataMigration()">Data Migration</a>
+            <a *ngIf="userService.isAdmin()" class="mdl-navigation__link generate-app-menu__item-link" href="#" (click)="gotoSettingsUpdate()">Update</a>
+            <a class="mdl-navigation__link generate-app-menu__item-link" href="#" (click)="gotoSettingsMetadata()">Metadata</a>
+        </div>
+
+        <generate-app-login></generate-app-login>
 
     </nav>
 </div>

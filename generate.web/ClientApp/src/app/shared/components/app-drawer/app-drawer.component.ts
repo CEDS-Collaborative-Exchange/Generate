@@ -1,11 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Router, NavigationEnd, RouterLink } from '@angular/router';
+import { Router, RouterLinkActive } from '@angular/router';
+import { SharedModule } from '../../shared.module';
 import { UserService } from '../../../services/app/user.service';
 
 @Component({
   selector: 'app-app-drawer',
   standalone: true,
-  imports: [],
+    imports: [CommonModule, RouterLinkActive, SharedModule],
   templateUrl: './app-drawer.component.html',
   styleUrl: './app-drawer.component.css'
 })
@@ -27,7 +29,7 @@ export class AppDrawerComponent {
 
     constructor(
         private _router: Router,
-        private userService: UserService) { }
+        public userService: UserService) { }
 
     gotoHome() { 
         this._router.navigateByUrl('/');
@@ -91,6 +93,30 @@ export class AppDrawerComponent {
             snackbarContainer['MaterialSnackbar'].showSnackbar(data);
         }
 
+        return false;
+    }
+
+    gotoSettingsToggle() {
+        this._router.navigate(['/settings/toggle']);
+        this.close.emit();
+        return false;
+    }
+
+    gotoSettingsDataMigration() {
+        this._router.navigate(['/settings/datamigration']);
+        this.close.emit();
+        return false;
+    }
+
+    gotoSettingsUpdate() {
+        this._router.navigate(['/settings/update']);
+        this.close.emit();
+        return false;
+    }
+
+    gotoSettingsMetadata() {
+        this._router.navigate(['/settings/metadata']);
+        this.close.emit();
         return false;
     }
 }

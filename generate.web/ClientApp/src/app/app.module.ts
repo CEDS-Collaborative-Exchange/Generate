@@ -88,7 +88,7 @@ export function MSALInstanceFactory(): IPublicClientApplication {
             AppNotFoundComponent,
             AppComponent,
             AppHeaderComponent,
-            AppFooterComponent,
+            AppFooterComponent
         ],
         providers: [
             AppConfig,
