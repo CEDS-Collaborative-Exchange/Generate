@@ -6,7 +6,7 @@
         <button class="mdl-snackbar__action" type="button"><span class="generate-text--screen-reader-only">Activate Toast Notification</span></button>
     </div>
 
-    <div *ngIf="!isAuthenticating && !userService.isLoggedIn()">
+    <div *ngIf="!isAuthenticating && !userService.isLoggedIn() && !isDrawerOpen">
         <div *ngIf="isOAuth" class="generate-app-shared-login__button-container" [ngClass]="{'drawer-open': isDrawerOpen}">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
                     (click)="loginAzure()" autofocus id="loginButton-lg" tabindex="1">
