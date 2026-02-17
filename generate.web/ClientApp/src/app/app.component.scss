@@ -125,6 +125,7 @@ $fa-font-path: "~font-awesome/fonts/";
     width: 260px;
     height: 100vh;
     z-index: 1000;
+    overflow-y: auto;
 }
 
 /* Hidden by default */
@@ -136,6 +137,21 @@ $fa-font-path: "~font-awesome/fonts/";
 /* Visible when open */
 .drawer.open {
     transform: translateX(0);
+}
+
+/* Make drawer responsive at high zoom levels */
+@media (max-width: 500px) {
+    .app-drawer {
+        width: 200px;
+    }
+    
+    .drawer {
+        transform: translateX(-200px);
+    }
+    
+    .app-main.shifted {
+        margin-left: 200px;
+    }
 }
 
 /* Main content fills full width */

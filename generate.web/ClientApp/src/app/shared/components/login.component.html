@@ -44,17 +44,19 @@
 
         </form>
     </div>
-    <div *ngIf="!isAuthenticating && userService.isLoggedIn()">             
+    <div *ngIf="!isAuthenticating && userService.isLoggedIn() && !isDrawerOpen">             
         <form (submit)="logout($event)">
 
             <div class="generate-app-shared-loggedin__text" aria-hidden="true">
                 {{ userService.getUserDisplayName() }} ({{userService.getRole()}})
             </div>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only generate-app-button--colored"
+                    [ngClass]="{'drawer-open': isDrawerOpen}"
                     (click)="logout($event)" id="logoutButton-lg">
                 Log out
             </button>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
+                    [ngClass]="{'drawer-open': isDrawerOpen}"
                     (click)="logout($event)" id="logoutButton-sm">
                 <i class="fa fa-sign-out"></i><span class="generate-text--screen-reader-only">Log out</span>
             </button>
