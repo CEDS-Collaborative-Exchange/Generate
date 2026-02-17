@@ -474,7 +474,7 @@ BEGIN
 				ON sar.AssessmentAdministrationStartDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)		
 		--dimpeople	(rds) - direct join to DimPeople_Current
 			LEFT JOIN RDS.DimPeople_Current rdpc
-				ON ISNULL(ske.StudentIdentifierState, '') = ISNULL(rdpc.K12StudentStudentIdentifierState, '')
+				ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
 				AND ISNULL(ske.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
 				AND rdpc.IsActiveK12Student = 1
 		--assessments (rds)
@@ -759,18 +759,18 @@ BEGIN
 		ON rfksa.LeaId = rdlsAcc.DimLeaID
 
 	left JOIN #raceHispanic rhLEA
-		on rhLEA.StudentIdentifierState 						= rdp.K12StudentStudentIdentifierState 
+		on rhLEA.StudentIdentifierState 						= rdpc.K12StudentStudentIdentifierState 
 		and ISNULL(rhLEA.LeaIdentifierSeaAccountability, '') 	= rdlsAcc.LeaIdentifierSea
 
 	LEFT JOIN #raceHispanic rh
-		ON rh.StudentIdentifierState 						= rdp.K12StudentStudentIdentifierState
+		ON rh.StudentIdentifierState 						= rdpc.K12StudentStudentIdentifierState
 		and rhLEA.LeaIdentifierSeaAccountability 			= rh.LeaIdentifierSeaAccountability
 		AND ISNULL(rh.LeaIdentifierSeaAccountability, '') 	= rdlsAcc.LeaIdentifierSea
 		AND ISNULL(rh.SchoolIdentifierSea, '') 				= isnull(rdks.SchoolIdentifierSea, '')
 	--race (staging + function)	
 	LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
 		ON rdsy.SchoolYear = spr.SchoolYear
-		AND rdp.K12StudentStudentIdentifierState 	= spr.StudentIdentifierState
+		AND rdpc.K12StudentStudentIdentifierState 	= spr.StudentIdentifierState
 		AND (rdks.SchoolIdentifierSea 				= spr.SchoolIdentifierSea
 			OR rdlsAcc.LeaIdentifierSea 			= spr.LeaIdentifierSeaAccountability)
 			

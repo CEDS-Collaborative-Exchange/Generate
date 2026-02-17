@@ -512,7 +512,9 @@ namespace generate.testdata.Helpers
                 output.AppendLine("delete from rds.DimK12Schools");
                 output.AppendLine("delete from rds.DimCharterSchoolManagementOrganizations");
                 output.AppendLine("delete from rds.DimCharterSchoolAuthorizers");
+                output.AppendLine("delete from rds.DimPeople_Current");
                 output.AppendLine("delete from rds.DimPeople");
+                
 
                 output.AppendLine("DBCC CHECKIDENT('rds.FactK12StaffCounts', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.ReportEDFactsK12StudentAssessments', RESEED, 1);");
@@ -533,6 +535,7 @@ namespace generate.testdata.Helpers
                 output.AppendLine("DBCC CHECKIDENT('rds.DimK12Schools', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.DimCharterSchoolManagementOrganizations', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.DimCharterSchoolAuthorizers', RESEED, 1);");
+                output.AppendLine("DBCC CHECKIDENT('rds.DimPeople_Current', RESEED, 1);");
                 output.AppendLine("DBCC CHECKIDENT('rds.DimPeople', RESEED, 1);");
 
             }

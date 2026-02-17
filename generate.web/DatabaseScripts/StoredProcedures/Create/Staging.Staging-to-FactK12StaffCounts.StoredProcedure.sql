@@ -118,7 +118,7 @@ BEGIN
 			ON ssa.SchoolYear = rsy.SchoolYear
 	--dimpeople	(rds) - direct join to DimPeople_Current
 		JOIN RDS.DimPeople_Current rdpc
-			ON ISNULL(ssa.StaffMemberIdentifierState, '') = ISNULL(rdpc.K12StaffStaffMemberIdentifierState, '')
+			ON ssa.StaffMemberIdentifierState = rdpc.K12StaffStaffMemberIdentifierState
 			AND ISNULL(ssa.Birthdate, '1900-01-01') = ISNULL(rdpc.BirthDate, '1900-01-01')
 			AND rdpc.IsActiveK12Staff = 1
 	--lea (rds)
