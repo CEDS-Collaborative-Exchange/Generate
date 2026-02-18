@@ -563,7 +563,7 @@ BEGIN
 				select @sql = @sql +
 				char(10) + 'into #Students
 				from rds.' + @factTable + ' fact
-				inner join rds.DimPeople people
+				inner join rds.DimPeople_Current people
 					on fact.K12Student_CurrentId = people.DimPersonId' + char(10)
 					
 				if @reportLevel = 'SEA'
@@ -762,7 +762,7 @@ BEGIN
 						WHEN fact.SeaId > 0 THEN fact.SeaId
 						ELSE -1
 					END <> -1
-				inner join rds.DimPeople rdp
+				inner join rds.DimPeople_Current rdp
 					on fact.K12Student_CurrentId = rdp.DimPersonId
 				inner join rds.DimIdeaStatuses rdis 
 					on fact.IdeaStatusId = rdis.DimIdeaStatusId
@@ -824,7 +824,7 @@ BEGIN
 						people.K12StudentStudentIdentifierState
 					into #Students
 					from rds.' + @factTable + ' fact
-					inner join rds.DimPeople people
+					inner join rds.DimPeople_Current people
 						on fact.K12Student_CurrentId = people.DimPersonId' + char(10)
 					select @sql = @sql +
 						'inner join rds.DimEnglishLearnerStatuses m 
@@ -909,7 +909,7 @@ BEGIN
 						on dl.DimLeaId = rfksd.LeaId' + char(10)
 				end 
 				select @sql = @sql + 
-				'inner join rds.DimPeople rdp 
+				'inner join rds.DimPeople_Current rdp 
 					on rfksd.K12Student_CurrentId = rdp.DimPersonId
 					and rfksd.SchoolYearId = @dimSchoolYearId
 					and rfksd.FactTypeId = @dimFactTypeId
@@ -965,7 +965,7 @@ BEGIN
 				end
 
 				set @sql = @sql + '
-					inner join rds.DimPeople rdp
+					inner join rds.DimPeople_Current rdp
 						on fact.K12Student_CurrentId = rdp.DimPersonId
 					inner join #Students Students
 						on Students.K12StudentStudentIdentifierState = rdp.K12StudentStudentIdentifierState '
@@ -1018,7 +1018,7 @@ BEGIN
 				'				select rdp.K12StudentStudentIdentifierState
 				into #Students
 				from RDS.FactK12StudentDisciplines rfksd 
-				inner join rds.DimPeople rdp 
+				inner join rds.DimPeople_Current rdp 
 					on rfksd.K12Student_CurrentId = rdp.DimPersonId
 					and rfksd.SchoolYearId = @dimSchoolYearId
 					and rfksd.FactTypeId = @dimFactTypeId
@@ -1043,7 +1043,7 @@ BEGIN
 				'select rdp.K12StudentStudentIdentifierState
 				into #Students
 				from RDS.FactK12StudentDisciplines rfksd 
-				inner join rds.DimPeople rdp 
+				inner join rds.DimPeople_Current rdp 
 					on rfksd.K12Student_CurrentId = rdp.DimPersonId
 					and rfksd.SchoolYearId = @dimSchoolYearId
 					and rfksd.FactTypeId = @dimFactTypeId
@@ -1361,7 +1361,7 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimOrganizationTitleIStatusId'
 		end
-		else if @dimensionTable ='DimPeople'
+		else if @dimensionTable ='DimPeople_Current'
 		begin
 			set @dimensionPrimaryKey = 'DimPersonId'
 		end
@@ -2626,7 +2626,7 @@ BEGIN
 		end
 		else if @reportCode in ('116')
 		begin
-			set @reportFilterJoin = 'inner join RDS.DimPeople rules
+			set @reportFilterJoin = 'inner join RDS.DimPeople_Current rules
 										on rules.DimPersonId = fact.K12Student_CurrentId
 									inner join rds.DimTitleIIIStatuses titleIII on fact.TitleIIIStatusId = titleIII.DimTitleIIIStatusId'
 			set @reportFilterCondition = 'and titleIII.TitleIIILanguageInstructionProgramTypeCode <> ''MISSING'''
@@ -2732,7 +2732,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople rdp 
+				inner join rds.DimPeople_Current rdp 
 					on fact.K12Student_CurrentId = rdp.DimPersonId
 				left join #Students Students
 					on Students.K12StudentStudentIdentifierState = rdp.K12StudentStudentIdentifierState
@@ -2789,7 +2789,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople rdp
+				inner join rds.DimPeople_Current rdp
 					on fact.K12Student_CurrentId = rdp.DimPersonId
 				left join #Students Students
 					on Students.K12StudentStudentIdentifierState = rdp.K12StudentStudentIdentifierState
@@ -2860,7 +2860,7 @@ BEGIN
 					and age.AgeValue >= 14 and age.AgeValue <= 21
 				inner join rds.DimLeas lea
 					on fact.LeaId = lea.DimLeaId
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -2926,7 +2926,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople rdp 
+				inner join rds.DimPeople_Current rdp 
 					on fact.K12Student_CurrentId = rdp.DimPersonId
 				inner join rds.DimLeas l 
 					on fact.LeaId = l.DimLeaId
@@ -2978,7 +2978,7 @@ BEGIN
 						on fact.AgeId = rda.DimAgeId
 						and rda.AgeValue >= 3 
 						and rda.AgeValue <= 5
-					inner join rds.DimPeople rdp
+					inner join rds.DimPeople_Current rdp
 						on fact.K12Student_CurrentId = rdp.DimPersonId
 					inner join rds.DimGradeLevels rdgl 
 						on fact.GradeLevelId = rdgl.DimGradeLevelId
@@ -3101,7 +3101,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople rdp
+				inner join rds.DimPeople_Current rdp
 					on fact.K12Student_CurrentId = rdp.DimPersonId
 				inner join rds.DimAges age 
 					on fact.AgeId = age.DimAgeId
@@ -3171,7 +3171,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimTitleIStatuses titleI 
 					on fact.TitleIStatusId = titleI.DimTitleIStatusId
@@ -3216,7 +3216,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimAssessments assessment 
 					on fact.AssessmentID = assessment.DimAssessmentID
@@ -3263,7 +3263,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimAssessments assessment 
 					on fact.AssessmentID = assessment.DimAssessmentID
@@ -3307,7 +3307,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople rdp
+				inner join rds.DimPeople_Current rdp
 					on fact.K12Student_CurrentId = rdp.DimPersonId
                 inner join rds.DimAges rda 
 					on fact.AgeId = rda.DimAgeId
@@ -3394,7 +3394,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -3470,7 +3470,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -3508,7 +3508,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -3548,7 +3548,7 @@ BEGIN
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
@@ -3587,7 +3587,7 @@ BEGIN
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
@@ -3626,7 +3626,7 @@ BEGIN
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
@@ -3665,7 +3665,7 @@ BEGIN
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
@@ -3704,7 +3704,7 @@ BEGIN
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
@@ -3743,7 +3743,7 @@ BEGIN
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
@@ -3782,7 +3782,7 @@ BEGIN
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
@@ -3821,7 +3821,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimAges age 
 					on fact.AgeId = age.DimAgeId
@@ -3860,7 +3860,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimAges age 
 					on fact.AgeId = age.DimAgeId
@@ -3903,7 +3903,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimAges age 
 					on fact.AgeId = age.DimAgeId
@@ -3942,7 +3942,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -3981,7 +3981,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4020,7 +4020,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4063,7 +4063,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4102,7 +4102,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4144,7 +4144,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4183,7 +4183,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4205,7 +4205,7 @@ BEGIN
 		else if @reportCode in ('118')
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join RDS.DimLeas org 
 						on fact.LeaId = org.DimLeaId '
@@ -4247,7 +4247,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4288,7 +4288,7 @@ BEGIN
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
@@ -4328,7 +4328,7 @@ BEGIN
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
@@ -4406,14 +4406,14 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
 						and fact.SchoolYearId = @dimSchoolYearId
 						and fact.FactTypeId = @dimFactTypeId
 						and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-					inner join rds.DimPeople students 
+					inner join rds.DimPeople_Current students 
 						on students.DimPersonId = fact.K12Student_CurrentId
 					where (Convert(int,SUBSTRING(students.Cohort,6,4)) - Convert(int,SUBSTRING(students.Cohort,1,4))) in (' + @cohortYearTotal + ')
 					and students.Cohort is not null
@@ -4444,14 +4444,14 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				inner join rds.DimPeople students 
+				inner join rds.DimPeople_Current students 
 					on students.DimPersonId = fact.K12Student_CurrentId
 				where (Convert(int,SUBSTRING(students.Cohort,6,4)) - Convert(int,SUBSTRING(students.Cohort,1,4))) in (' + @cohortYear + ')
 				and students.Cohort is not null
@@ -4516,14 +4516,14 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
 					and fact.SchoolYearId = @dimSchoolYearId
 					and fact.FactTypeId = @dimFactTypeId
 					and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-				inner join rds.DimPeople students 
+				inner join rds.DimPeople_Current students 
 					on students.DimPersonId = fact.K12Student_CurrentId
 				where (Convert(int,SUBSTRING(students.Cohort,6,4)) - Convert(int,SUBSTRING(students.Cohort,1,4))) = ' + @cohortYear + '
 				and students.Cohort is not null
@@ -4557,7 +4557,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4602,7 +4602,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4653,7 +4653,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4693,7 +4693,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4737,7 +4737,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4781,7 +4781,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4824,7 +4824,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -4867,7 +4867,7 @@ BEGIN
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
@@ -4912,7 +4912,7 @@ BEGIN
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople p
+					inner join rds.DimPeople_Current p
 						on fact.K12Student_CurrentId = p.DimPersonId
 					inner join rds.DimK12Schools s 
 						on fact.K12SchoolId = s.DimK12SchoolId
@@ -4969,7 +4969,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -5009,7 +5009,7 @@ BEGIN
 			end
 
 			set @sqlCountJoins = @sqlCountJoins + '
-				inner join rds.DimPeople p
+				inner join rds.DimPeople_Current p
 					on fact.K12Student_CurrentId = p.DimPersonId
 				inner join rds.DimK12Schools s 
 					on fact.K12SchoolId = s.DimK12SchoolId
@@ -5250,7 +5250,7 @@ BEGIN
 						people.K12StaffStaffMemberIdentifierState
 					into #Staff
 					from rds.' + @factTable + ' fact
-					inner join rds.DimPeople people
+					inner join rds.DimPeople_Current people
 						on fact.K12Staff_CurrentId = people.DimPersonId' + char(10)
 					select @sql = @sql +
 						'inner join rds.DimK12StaffStatuses ss 
@@ -5553,7 +5553,7 @@ BEGIN
 						exitDate.DateValue as SpecialEducationServicesExitDate,
 					sum(isnull(fact.' + @factField + ', 0))
 					from rds.' + @factTable + ' fact  
-						inner join rds.DimPeople p
+						inner join rds.DimPeople_Current p
 							on fact.K12Student_CurrentId = p.DimPersonId '
 					+ @sqlCountJoins 
 					+ ' ' + @reportFilterJoin + '
@@ -5635,7 +5635,7 @@ BEGIN
 				end + 'stu.K12StudentStudentIdentifierState,sum(fact.DisciplineCount) as DisciplineCount, sum(fact.DurationOfDisciplinaryAction) as DurationOfDisciplinaryAction' 
 				+ @sqlCategoryQualifiedSubDimensionFields + 
 				' from rds.' + @factTable + ' fact '
-				+ ' join rds.DimPeople stu on fact.K12Student_CurrentId = stu.DimPersonId '
+				+ ' join rds.DimPeople_Current stu on fact.K12Student_CurrentId = stu.DimPersonId '
 				+ @sqlCountJoins 
 				+ ' ' + @reportFilterJoin + '
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
@@ -5705,7 +5705,7 @@ BEGIN
 				sum(isnull(fact.DurationOfDisciplinaryAction, 0)),
 				sum(isnull(fact.' + @factField + ', 0))
 				from rds.' + @factTable + ' fact ' 
-				+ ' join rds.DimPeople stu on fact.K12Student_CurrentId = stu.DimPersonId '
+				+ ' join rds.DimPeople_Current stu on fact.K12Student_CurrentId = stu.DimPersonId '
 				+ @sqlCountJoins 
 				+ ' ' + @reportFilterJoin + '
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
@@ -5764,7 +5764,7 @@ BEGIN
 				sum(isnull(fact.DurationOfDisciplinaryAction, 0)),
 				sum(isnull(fact.' + @factField + ', 0))
 				from rds.' + @factTable + ' fact ' 
-				+ ' join rds.DimPeople stu on fact.K12Student_CurrentId = stu.DimPersonId '
+				+ ' join rds.DimPeople_Current stu on fact.K12Student_CurrentId = stu.DimPersonId '
 				+ @sqlCountJoins 
 				+ ' ' + @reportFilterJoin + '
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
@@ -5823,7 +5823,7 @@ BEGIN
 				sum(isnull(fact.DurationOfDisciplinaryAction, 0)),
 				sum(isnull(fact.' + @factField + ', 0))
 				from rds.' + @factTable + ' fact ' 
-				+ ' join rds.DimPeople stu on fact.K12Student_CurrentId = stu.DimPersonId '
+				+ ' join rds.DimPeople_Current stu on fact.K12Student_CurrentId = stu.DimPersonId '
 				+ @sqlCountJoins 
 				+ ' ' + @reportFilterJoin + '
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
@@ -5881,7 +5881,7 @@ BEGIN
 				sum(isnull(fact.DurationOfDisciplinaryAction, 0)),
 				sum(isnull(fact.' + @factField + ', 0))
 				from rds.' + @factTable + ' fact ' 
-				+ ' join rds.DimPeople stu on fact.K12Student_CurrentId = stu.DimPersonId '
+				+ ' join rds.DimPeople_Current stu on fact.K12Student_CurrentId = stu.DimPersonId '
 				+ @sqlCountJoins 
 				+ ' ' + @reportFilterJoin + '
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
@@ -5939,7 +5939,7 @@ BEGIN
 				fact.IncidentIdentifier,
 				sum(isnull(fact.' + @factField + ', 0))
 				from rds.' + @factTable + ' fact ' 
-				+ ' join rds.DimPeople stu on fact.K12Student_CurrentId = stu.DimPersonId '
+				+ ' join rds.DimPeople_Current stu on fact.K12Student_CurrentId = stu.DimPersonId '
 				+ @sqlCountJoins 
 				+ ' ' + @reportFilterJoin + '
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
@@ -5997,7 +5997,7 @@ BEGIN
 				sum(isnull(fact.' + @factField + ', 0))
 				from rds.' + @factTable + ' fact ' + @sqlCountJoins 
 				+ ' ' + @reportFilterJoin + '
-				inner join rds.DimPeople p on fact.K12Student_CurrentId = p.DimPersonId 
+				inner join rds.DimPeople_Current p on fact.K12Student_CurrentId = p.DimPersonId 
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
 				and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
 				and ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
@@ -6052,7 +6052,7 @@ BEGIN
 				sum(isnull(fact.' + @factField + ', 0))
 				from rds.' + @factTable + ' fact ' + @sqlCountJoins 
 				+ ' ' + @reportFilterJoin + '
-				inner join rds.DimPeople p on fact.K12Student_CurrentId = p.DimPersonId 
+				inner join rds.DimPeople_Current p on fact.K12Student_CurrentId = p.DimPersonId 
 				where fact.SchoolYearId = @dimSchoolYearId ' + @reportFilterCondition + '
 				and fact.FactTypeId = @dimFactTypeId ' + @queryFactFilter + '
 				and ' + case when @reportLevel = 'sea' then 'fact.SeaId <> -1'
@@ -6716,7 +6716,7 @@ BEGIN
 				)
 				select s.K12StudentStudentIdentifierState , sc.schoolIdentifierSea, c.StudentCount, c.TableTypeAbbrv				
 				from #categorySet c 
-				inner join rds.DimPeople s 
+				inner join rds.DimPeople_Current s 
 					on c.DimStudentId = s.DimPersonId 
 				inner join rds.DimK12Schools sc 
 					on c.DimK12SchoolId = sc.DimK12SchoolId 
@@ -6780,11 +6780,11 @@ BEGIN
 				IF @reportCode IN ('059', '067', '070', '099', '112', '203')
 				BEGIN
 					set @debugTableCreate += '					from #categorySet c ' + char(10) +
-					'					inner join rds.DimPeople s ' + char(10)
+					'					inner join rds.DimPeople_Current s ' + char(10)
 					+ '						on c.DimK12Staff_CurrentId = s.DimPersonId ' + char(10)
 				END 
 				--these reports have been converted to use K12StudentStudentIdentifierState instead of K12Student_CurrentId
-				--	in #Students and #categorySet so no need to join to DimPeople
+				--	in #Students and #categorySet so no need to join to DimPeople_Current
 				ELSE IF @reportCode IN ('009','005','006','007','086','088','143','144','118') 
 				BEGIN
 					set @debugTableCreate += '					from #categorySet c ' + char(10)
@@ -6792,7 +6792,7 @@ BEGIN
 				ELSE	
 				BEGIN
 					set @debugTableCreate += '					from #categorySet c ' + char(10) +
-					'					inner join rds.DimPeople s ' + char(10)
+					'					inner join rds.DimPeople_Current s ' + char(10)
 					+ '						on c.DimStudentId = s.DimPersonId ' + char(10)
 				END 
 

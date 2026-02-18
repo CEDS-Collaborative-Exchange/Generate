@@ -86,14 +86,29 @@ BEGIN
 		DELETE FROM rds.FactOrganizationCounts 
 		WHERE SchoolYearId = @SchoolYearId
 
+		-- Ensure -1 record exists in DimPeople_Current
+		IF NOT EXISTS (SELECT 1 FROM RDS.DimPeople_Current WHERE DimPersonId = -1)
+		BEGIN
+
+			SET IDENTITY_INSERT RDS.DimPeople_Current ON
+
+			INSERT INTO RDS.DimPeople_Current
+			(DimPersonId)
+			VALUES
+			(-1)
+	
+			SET IDENTITY_INSERT RDS.DimPeople_Current off
+		END
+
 		--Get the ID for the State School Officer
 		SELECT @DimK12StaffId = MAX(rdp.DimPersonId)
-		FROM RDS.DimPeople rdp
+		FROM RDS.DimPeople_Current rdp
 		JOIN Staging.StateDetail ssd
 			ON rdp.K12StaffStaffMemberIdentifierState = ssd.SeaContact_Identifier
 			AND rdp.IsActiveK12Staff = 1
 			AND (ssd.RecordStartDateTime >= Staging.GetFiscalYearStartDate(@SchoolYear)
 				AND ISNULL(ssd.RecordEndDateTime, Staging.GetFiscalYearEndDate(@SchoolYear)) <= Staging.GetFiscalYearEndDate(@SchoolYear))
+
 
 		-------------------------------
 		--SEA
