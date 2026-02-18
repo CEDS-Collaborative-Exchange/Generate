@@ -100,6 +100,8 @@ Views\\Drop,RDS.vwMembership_FactTable_033.View.sql,0
 Views\\Create,RDS.vwMembership_FactTable_033.View.sql,0
 Views\\Drop,RDS.vwMembership_FactTable_052.View.sql,0
 Views\\Create,RDS.vwMembership_FactTable_052.View.sql,0
+Views\\Drop,RDS.vwMembership_FactTable_226.View.sql,0
+Views\\Create,RDS.vwMembership_FactTable_226.View.sql,0
 Views\\Drop,debug.vwMigrantEducationProgram_FactTable.View.sql,0
 Views\\Create,debug.vwMigrantEducationProgram_FactTable.View.sql,0
 Views\\Drop,RDS.vwMigrantEducationProgram_FactTable_054.View.sql,0
