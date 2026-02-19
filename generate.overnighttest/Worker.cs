@@ -546,7 +546,7 @@ namespace generate.overnighttest
                     try
                     {
                         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                        dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+                        dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(30));
                         Console.WriteLine($"Running storedProc with this command:: {storedProc}");
                         int result = dbContext.Database.ExecuteSqlRaw(
                             storedProc
