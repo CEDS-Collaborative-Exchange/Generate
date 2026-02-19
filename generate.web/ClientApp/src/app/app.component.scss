@@ -125,18 +125,21 @@ $fa-font-path: "~font-awesome/fonts/";
     width: 260px;
     height: 100vh;
     z-index: 1000;
-    overflow-y: auto;
 }
 
-/* Hidden by default */
+/* Hidden by default — no overflow so no scrollbar leaks when off-screen */
 .drawer {
     transform: translateX(-260px);
     transition: transform 0.3s ease;
+    overflow: hidden;
+    visibility: hidden;
 }
 
 /* Visible when open */
 .drawer.open {
     transform: translateX(0);
+    overflow-y: auto;
+    visibility: visible;
 }
 
 /* Make drawer responsive at high zoom levels */
@@ -151,6 +154,7 @@ $fa-font-path: "~font-awesome/fonts/";
     
     .app-main.shifted {
         margin-left: 200px;
+        width: calc(100% - 200px);
     }
 }
 
@@ -163,6 +167,7 @@ $fa-font-path: "~font-awesome/fonts/";
 /* Shift ONLY when drawer is open */
 .app-main.shifted {
     margin-left: 260px;
+    width: calc(100% - 260px);
 }
 
 /* Content area */
@@ -172,7 +177,8 @@ $fa-font-path: "~font-awesome/fonts/";
     padding: 16px;
 }
 
-/* Hide drawer at normal zoom (wider viewports) */
+/* Hide drawer at normal zoom levels (< ~175% on 1920px displays).
+   1100px breakpoint = 1920px / 1.75 ≈ 1097px, rounded to 1100px. */
 @media (min-width: 1101px) {
     .drawer,
     .app-drawer {
@@ -181,5 +187,6 @@ $fa-font-path: "~font-awesome/fonts/";
     
     .app-main.shifted {
         margin-left: 0;
+        width: 100%;
     }
 }

@@ -13,6 +13,8 @@ body {
 
 .generate-home__section--intro {
     margin-bottom: 10px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .generate-home-color-text--primary {
@@ -244,6 +246,15 @@ body {
     .mdl-grid {
         display: flex;
         flex-wrap: wrap;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .mdl-cell {
+        min-width: 0;
+        box-sizing: border-box;
+        max-width: 100%;
     }
 
     .generate-home__reports-pill-group {
@@ -251,9 +262,14 @@ body {
     }
     
     .generate-home__section--intro {
-        max-width: 800px;
+        max-width: 100%;
+        width: 100%;
         margin: 0;
         text-align: left;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        white-space: normal;
+        box-sizing: border-box;
     }
     
     .generate-home__reports-computer img {
@@ -264,11 +280,48 @@ body {
         width: 100%;
         display: flex;
         justify-content: flex-start;
+        padding-left: 40px;
         flex-wrap: wrap;
         gap: 20px;
         order: 2;
         margin-top: 20px;
         clear: both;
+    }
+
+    .generate-home__reports {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .generate-home__reports-computer {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 16px;
+    }
+
+    .generate-home__reports-pill-group {
+        display: block;
+        margin-left: 0;
+        height: auto;
+    }
+
+    .generate-home__reports-pill {
+        width: auto;
+        max-width: 430px;
+    }
+
+    .generate-home__section.mdl-typography--title {
+        font-size: clamp(12px, 1.8vw, 20px);
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        box-sizing: border-box;
+        max-width: 100%;
+        padding-left: 8px;
+        padding-right: 8px;
     }
 
 }
