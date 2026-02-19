@@ -60,9 +60,30 @@ $fa-font-path: "~font-awesome/fonts/";
     position:absolute;
     left:-10000px;
     top:auto;
+    background-color: #000000;
     width:1px;
     height:1px;
     overflow:hidden;
+}
+
+.generate-text--screen-reader-only:focus
+{
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px 16px;
+    border: 3px solid #ffffff;
+    border-radius: 4px;
+    z-index: 9999;
+    outline: 3px solid #ffbf47;
+    outline-offset: 2px;
 }
 
 .generate-text--screen-reader-only-alt
