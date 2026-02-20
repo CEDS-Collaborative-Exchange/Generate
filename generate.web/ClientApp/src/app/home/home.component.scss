@@ -1,5 +1,9 @@
 @import '../variables.scss';
 
+body {
+    overflow-x: hidden;
+}
+
 // generate-home__section
 
 .generate-home__section {
@@ -9,6 +13,8 @@
 
 .generate-home__section--intro {
     margin-bottom: 10px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .generate-home-color-text--primary {
@@ -70,20 +76,20 @@
 }
 
 .generate-home__button-dropdown-item {
-    color: #ffffff !important;
+    color: $color-primary-dark !important;
 }
 
 .generate-home__button-dropdown-item:hover, .generate-home__button-dropdown-item:hover .generate-home__button-link {
-    background-color: $color-accent-light !important;
-    color: $color-primary !important;
+    background-color: $color-accent !important;
+    color: #ffffff !important;
 }
 
 .generate-home__button-dropdown-item:hover {
-    background-color: $color-accent-light !important;
+    background-color: $color-accent !important;
 }
 
 .generate-home__button-dropdown {
-    background-color: $color-primary;
+    background-color: $color-accent-light;
 }
 
 
@@ -95,6 +101,8 @@
 
 .generate-home__reports-computer {
     display: inline-block;
+    margin-left: -60px;
+    margin-right: 60px;
 }
 
 .generate-home__reports-pill-group {
@@ -235,15 +243,85 @@
 
 
 @media (max-width: 1100px) {
-    .generate-home__sidebar{
-        display: none;
+    .mdl-grid {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .mdl-cell {
+        min-width: 0;
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    .generate-home__reports-pill-group {
+        height: auto;
+    }
+    
+    .generate-home__section--intro {
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
+        text-align: left;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        white-space: normal;
+        box-sizing: border-box;
+    }
+    
+    .generate-home__reports-computer img {
+        display: inline-block;
+    }
+    
+    .generate-home__sidebar {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        padding-left: 60px;
+        flex-wrap: wrap;
+        gap: 20px;
+        order: 2;
+        margin-top: 20px;
+        clear: both;
     }
 
     .generate-home__reports {
-        display: none;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
-    .generate-home__button{
-        display: none;
+    .generate-home__reports-computer {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 16px;
     }
+
+    .generate-home__reports-pill-group {
+        display: block;
+        margin-left: 0;
+        height: auto;
+    }
+
+    .generate-home__reports-pill {
+        width: auto;
+        max-width: 430px;
+    }
+
+    .generate-home__section.mdl-typography--title {
+        font-size: clamp(12px, 1.8vw, 20px);
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        box-sizing: border-box;
+        max-width: 100%;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
 }

@@ -58,6 +58,7 @@ var about_component_1 = require("./about/about.component");
 var app_not_found_component_1 = require("./shared/components/app-not-found.component");
 var app_header_component_1 = require("./shared/components/app-header.component");
 var app_footer_component_1 = require("./shared/components/app-footer.component");
+var app_drawer_component_1 = require("./shared/components/app-drawer/app-drawer.component");
 /* Shared Modules */
 var app_routing_module_1 = require("./app-routing.module");
 var shared_module_1 = require("./shared/shared.module");
@@ -101,7 +102,8 @@ var AppModule = function () {
                 app_routing_module_1.AppRoutingModule,
                 shared_module_1.SharedModule,
                 paginator_1.MatPaginatorModule,
-                msal_angular_1.MsalModule
+                msal_angular_1.MsalModule,
+                app_drawer_component_1.AppDrawerComponent
             ],
             declarations: [
                 home_component_1.HomeComponent,
@@ -109,7 +111,8 @@ var AppModule = function () {
                 app_not_found_component_1.AppNotFoundComponent,
                 app_component_1.AppComponent,
                 app_header_component_1.AppHeaderComponent,
-                app_footer_component_1.AppFooterComponent
+                app_footer_component_1.AppFooterComponent,
+                app_drawer_component_1.AppDrawerComponent
             ],
             providers: [
                 app_config_1.AppConfig,

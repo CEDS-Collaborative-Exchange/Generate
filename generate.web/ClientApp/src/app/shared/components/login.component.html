@@ -6,8 +6,8 @@
         <button class="mdl-snackbar__action" type="button"><span class="generate-text--screen-reader-only">Activate Toast Notification</span></button>
     </div>
 
-    <div *ngIf="!isAuthenticating && !userService.isLoggedIn()">
-        <div *ngIf="isOAuth" class="generate-app-shared-login__button-container">
+    <div *ngIf="!isAuthenticating && !userService.isLoggedIn() && !isDrawerOpen">
+        <div *ngIf="isOAuth" class="generate-app-shared-login__button-container" [ngClass]="{'drawer-open': isDrawerOpen}">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
                     (click)="loginAzure()" autofocus id="loginButton-lg" tabindex="1">
                 Log in
@@ -30,7 +30,7 @@
                     <label class="mdl-textfield__label" for="userpassword">Password</label>
                 </div>
 
-                <div class="generate-app-shared-login__button-container">
+                <div class="generate-app-shared-login__button-container" [ngClass]="{'drawer-open': isDrawerOpen}">
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only"
                             (click)="login($event, username.value, userpassword.value)" id="loginButton-lg" tabindex="3">
                         Log in
@@ -44,17 +44,19 @@
 
         </form>
     </div>
-    <div *ngIf="!isAuthenticating && userService.isLoggedIn()">             
+    <div *ngIf="!isAuthenticating && userService.isLoggedIn() && !isDrawerOpen">             
         <form (submit)="logout($event)">
 
             <div class="generate-app-shared-loggedin__text" aria-hidden="true">
                 {{ userService.getUserDisplayName() }} ({{userService.getRole()}})
             </div>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--large-screen-only generate-app-button--colored"
+                    [ngClass]="{'drawer-open': isDrawerOpen}"
                     (click)="logout($event)" id="logoutButton-lg">
                 Log out
             </button>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored generate-app-shared-login__button mdl-layout--small-screen-only"
+                    [ngClass]="{'drawer-open': isDrawerOpen}"
                     (click)="logout($event)" id="logoutButton-sm">
                 <i class="fa fa-sign-out"></i><span class="generate-text--screen-reader-only">Log out</span>
             </button>

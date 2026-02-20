@@ -60,9 +60,30 @@ $fa-font-path: "~font-awesome/fonts/";
     position:absolute;
     left:-10000px;
     top:auto;
+    background-color: #000000;
     width:1px;
     height:1px;
     overflow:hidden;
+}
+
+.generate-text--screen-reader-only:focus
+{
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px 16px;
+    border: 3px solid #ffffff;
+    border-radius: 4px;
+    z-index: 9999;
+    outline: 3px solid #ffbf47;
+    outline-offset: 2px;
 }
 
 .generate-text--screen-reader-only-alt
@@ -78,16 +99,16 @@ $fa-font-path: "~font-awesome/fonts/";
 }
 
 /* Hide drawer by default */
-.mdl-layout--fixed-drawer .mdl-layout__drawer {
+/*.mdl-layout--fixed-drawer .mdl-layout__drawer {
     display: none;
 }
 
 .mdl-layout--fixed-drawer .mdl-layout__content {
     margin-left: 0;
-}
+}*/
 
  /*Show drawer ONLY at high zoom (or very narrow desktop) */
-@media (max-width: 1100px) {
+/*@media (max-width: 1100px) {
     .mdl-layout--fixed-drawer .mdl-layout__drawer {
         display: block;
         transform: translateX(0) !important;
@@ -98,11 +119,11 @@ $fa-font-path: "~font-awesome/fonts/";
     .mdl-layout--fixed-drawer .mdl-layout__content {
         margin-left: 240px;
     }
-}
+}*/
 
 .submenu {
     display: none;
-    padding-left: 16px; /* indent for submenu items */
+    padding-left: 16px;
 }
 
 .submenu.open {
@@ -111,4 +132,82 @@ $fa-font-path: "~font-awesome/fonts/";
 
 .expandable {
     cursor: pointer;
+}
+
+.app-shell {
+    position: relative;
+}
+
+/* Drawer does NOT consume layout space */
+.app-drawer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    z-index: 1000;
+}
+
+/* Hidden by default — no overflow so no scrollbar leaks when off-screen */
+.drawer {
+    transform: translateX(-260px);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+    visibility: hidden;
+}
+
+/* Visible when open */
+.drawer.open {
+    transform: translateX(0);
+    overflow-y: auto;
+    visibility: visible;
+}
+
+/* Make drawer responsive at high zoom levels */
+@media (max-width: 500px) {
+    .app-drawer {
+        width: 200px;
+    }
+    
+    .drawer {
+        transform: translateX(-200px);
+    }
+    
+    .app-main.shifted {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
+}
+
+/* Main content fills full width */
+.app-main {
+    width: 100%;
+    transition: margin-left 0.3s ease;
+}
+
+/* Shift ONLY when drawer is open */
+.app-main.shifted {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+}
+
+/* Content area */
+.app-content {
+    flex: 1;
+    overflow: auto;
+    padding: 16px;
+}
+
+/* Hide drawer at normal zoom levels (< ~175% on 1920px displays).
+   1100px breakpoint = 1920px / 1.75 ≈ 1097px, rounded to 1100px. */
+@media (min-width: 1101px) {
+    .drawer,
+    .app-drawer {
+        display: none !important;
+    }
+    
+    .app-main.shifted {
+        margin-left: 0;
+        width: 100%;
+    }
 }

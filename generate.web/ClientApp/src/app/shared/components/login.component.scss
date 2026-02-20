@@ -18,9 +18,24 @@
     padding-top: 15px;
 }
 
+:host-context(app-app-drawer) .generate-app-shared-login__button-container {
+  margin-left: 20px;
+}
+
 .generate-app-shared-login__button{
     min-width: 40px !important;
 }
+
+.generate-app-shared-login__button.drawer-open {
+  margin-left: 30px;
+}
+
+:host-context(.drawer.open) #logoutButton-lg,
+:host-context(.drawer.open) #logoutButton-sm {
+    margin-left: 22px;
+    margin-top: 8px;
+}
+
 .generate-app-button--colored {
     background-color: $color-primary-dark;
 }
@@ -55,7 +70,7 @@
   transform: translate(0, -100%);
   transition: transform 0.25s $animation-curve-fast-out-linear-in;
   pointer-events: none;
-  @media(max-width: $snackbar-tablet-breakpoint - 1) {
+  @media (max-width: #{$snackbar-tablet-breakpoint - 1}) {
     width: 100%;
     left: 0;
     min-height: 48px;
@@ -111,9 +126,28 @@
   }
 }
 
-#loginButton-lg:focus {
+#loginButton-lg,
+#loginButton-sm {
+    background-color: #37474f !important;
+    color: #ffffff !important;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+}
+
+#loginButton-lg:hover,
+#loginButton-sm:hover {
+    background-color: #546d78 !important;
+    color: #ffffff !important;
+}
+
+#loginButton-lg:focus,
+#loginButton-sm:focus {
+    background-color: #37474f !important;
+    color: #ffffff !important;
     cursor: pointer !important;
-    border-color: #161718 !important;
+    outline: 3px solid #ffbf47 !important;
+    outline-offset: 2px !important;
+    border-color: #ffffff !important;
     border-style: solid !important;
 }
 
@@ -127,7 +161,16 @@
 /*Show drawer ONLY at high zoom (or very narrow desktop) */
 @media (max-width: 1100px) {
     .generate-app-shared-login__button-container{
-        padding-left:1.2rem;
+        padding-left: 0;
+        margin-right: auto;
+    }
+
+    /* Position button at 70% only when drawer is open */
+    .generate-app-shared-login__button-container.drawer-open {
+        position: absolute;
+        left: 70%;
+        top: 5px;
+        transform: translateX(-50%);
     }
 
     .generate-app-shared-loggedin__text {

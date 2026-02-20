@@ -92,3 +92,38 @@
     color: #000000 !important;
 }
 
+.generate-app--hamburger__header {
+    display: none;
+}
+
+.mdl-layout__header {
+    z-index: 1101;
+}
+
+.mdl-layout__header-row {
+    position: relative;
+}
+
+@media (max-width: 1100px) {
+
+    .mdl-layout__header {
+        display: flex !important;
+    }
+
+    .generate-app__header{
+        display: none;
+    }
+
+    .generate-app--hamburger__header {
+        display: flex !important;
+        align-items: center;
+        background-color: $color-primary-dark !important;
+    }
+
+    .menu-btn {
+        pointer-events: auto;
+        cursor: pointer;
+        z-index: 1000;
+        color: #ffffff;
+    }
+}

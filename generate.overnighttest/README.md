@@ -9,6 +9,7 @@ dotnet run --migrate ALL_FACT
 #running by report
 dotnet run --migrate 002,005
 
+dotnet run --migrate 002,005,006,007,009,029,070,088,089,099,112,143,144,175,178,179,185,188,189
 ```
 
 -Test All fact

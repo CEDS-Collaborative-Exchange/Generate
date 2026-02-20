@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewEncapsulation, OnInit } from '@angular/core';
+import { Component, AfterViewInit, ViewEncapsulation, OnInit, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { UserService } from './services/app/user.service';
@@ -21,15 +21,23 @@ declare var componentHandler: any;
 
 export class AppComponent implements AfterViewInit, OnInit {
 
-    submenus = {
-        resources: false,
-        reports: false,
-        settings: false
-    };
+    isDrawerOpen = false;
 
-    // Toggle submenu open/close
-    toggleSubmenu(menu: 'resources' | 'reports' | 'settings') {
-        this.submenus[menu] = !this.submenus[menu];
+    toggleDrawer() {
+        this.isDrawerOpen = !this.isDrawerOpen;
+    }
+
+    closeDrawer() {
+        this.isDrawerOpen = false;
+    }
+
+    // Auto-close the drawer when the viewport is wider than 1100px
+    // (i.e. the user zooms back out below ~175% on a 1920px display)
+    @HostListener('window:resize')
+    onResize() {
+        if (window.innerWidth > 1100) {
+            this.isDrawerOpen = false;
+        }
     }
 
     constructor(
