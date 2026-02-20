@@ -28,7 +28,7 @@ namespace generate.infrastructure.Repositories.App
 
         public void Dispose()
         {
-            source?.Dispose();
+            //source?.Dispose();
             GC.SuppressFinalize(this);
         }
         
