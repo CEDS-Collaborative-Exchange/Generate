@@ -53,8 +53,6 @@ namespace generate.infrastructure.Services
 
         public GenerateReportDataDto GetReportDto(string reportCode, string reportLevel, string reportYear, string categorySetCode, string reportLea = null, string reportSchool = null, string reportFilter = null, string reportSubFilter = null, string reportGrade = null, string organizationalIdList = null, int reportSort = 1, int skip = 0, int take = 50)
         {
-
-            // Declare empty dto
             GenerateReportDataDto reportDto = new GenerateReportDataDto();
             reportDto.structure = new GenerateReportStructureDto();
             reportDto.data = new List<ExpandoObject>();
@@ -64,167 +62,174 @@ namespace generate.infrastructure.Services
                 && r.GenerateReport_OrganizationLevels.Count(l => l.OrganizationLevel.LevelCode == reportLevel) == 1, 0, 1, r => r.CategorySets, r => r.FactTable)
                 .FirstOrDefault();
 
-
             if (report == null)
             {
                 reportDto.dataCount = -1;
                 return reportDto;
             }
-            else
+
+            reportDto.ReportTitle = report.ReportName;
+
+            if (report.ReportCode == "yeartoyearprogress")
             {
-                reportDto.ReportTitle = report.ReportName;
+                string subject = reportFilter == "MATH" ? "Mathematics" : "Reading/Language Arts";
+                reportDto.ReportTitle = categorySetCode == "All"
+                    ? "Year to Year Progress for All Students in " + subject
+                    : "Year to Year Progress in " + subject;
             }
 
-            // Data
-
-            dynamic dataRows = new List<ExpandoObject>();
-
-
-            if (report.ReportCode == "studentfederalprogramsparticipation" || report.ReportCode == "studentmultifedprogsparticipation")
-            {
-                var query = _customReportRepository.Get_FederalProgramReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter);
-                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-            }
-            else if (report.ReportCode == "disciplinaryremovals")
-            {
-                var query = _customReportRepository.Get_DisciplinaryRemovalsReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-            }
-            else if (report.ReportCode == "stateassessmentsperformance")
-            {
-                var query = _customReportRepository.Get_AssessmentPerformanceReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter, reportSubFilter, reportGrade);
-                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-
-            }
-            else if (report.ReportCode == "edenvironmentdisabilitiesage3-5" || report.ReportCode == "edenvironmentdisabilitiesage6-21")
-            {
-                var query = _customReportRepository.Get_EducationEnvironmentDisabilitiesReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-            }
-            else if (report.ReportCode == "yeartoyearchildcount")
-            {
-                var query = _customReportRepository.Get_YearToYearChildCountReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-            }
-            else if (report.ReportCode == "yeartoyearexitcount")
-            {
-                if (reportLevel.ToLower() == "sch" && reportFilter.ToLower() != "select")
-                {
-                    var query = _customReportRepository.Get_YearToYearExitCountReportDataSCH(reportCode, reportLevel, reportYear, categorySetCode, reportFilter);
-                    var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                    dataRows = rows;
-                    reportDto.dataCount = dataCount;
-                }
-                else
-                {
-                    var query = _customReportRepository.Get_YearToYearExitCountReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter);
-                    var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                    dataRows = rows;
-                    reportDto.dataCount = dataCount;
-                }
-            }
-            else if (report.ReportCode == "yeartoyearremovalcount")
-            {
-                var query = _customReportRepository.Get_YearToYearRemovalCountReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter);
-                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-
-            }
-            else if (report.ReportCode == "studentssummary")
-            {
-                var query = _customReportRepository.Get_LEAStudentsSummary(reportCode, reportLevel, reportYear, categorySetCode, reportFilter, reportLea);
-                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-            }
-            else if (report.ReportCode == "yeartoyearprogress")
-            {
-                var query = _customReportRepository.Get_YearToYearProgressReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter, reportSubFilter, reportGrade, reportLea, reportSchool);
-
-                string subject = (reportFilter == "MATH") ? "Mathematics" : "Reading/Language Arts";
-                if (categorySetCode == "All")
-                {
-                    reportDto.ReportTitle = "Year to Year Progress for All Students in " + subject;
-                }
-                else
-                {
-                    reportDto.ReportTitle = "Year to Year Progress in " + subject;
-                }
-
-                dataRows = query.ToList();
-                reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
-            }
-            else if (report.ReportCode == "yeartoyearattendance")
-            {
-                var query = _customReportRepository.Get_YearToYearAttendanceReportData(reportCode, reportLevel, reportYear, categorySetCode, reportGrade, reportLea, reportSchool);
-
-                dataRows = query.ToList();
-                reportDto.dataCount = query.Select(q => q.OrganizationStateId).Distinct().Count();
-            }
-            else if (report.ReportCode == "yeartoyearenvironmentcount")
-            {
-                var query = _customReportRepository.Get_YearToYearEnvironmentCountReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                
-                if (categorySetCode != "all")
-                {
-                    if (categorySetCode == "schoolage")
-                    {
-                        query = query.Where(t => t.CategorySetCode == "School Age (6-21)").ToList();
-                    }
-                    else if (categorySetCode == "earlychildhood")
-                    {
-                        query = query.Where(t => t.CategorySetCode == "Early Childhood (3-5)").ToList();
-                    }
-
-                }
-                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-            }
-
-            else if (report.FactTable.FactTableName == "FactK12StudentCounts")
-            {
-                var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                var (rows, dataCount) = FilterStudentCountReportData(query, reportLevel, reportLea, reportSchool, reportFilter, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-            }
-            else if (report.FactTable.FactTableName == "FactK12StudentAssessments")
-            {
-                var query = _factStudentAssessmentRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                var (rows, dataCount) = FilterStudentAssessmentReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-            }
-            else if (report.FactTable.FactTableName == "FactK12StudentDisciplines")
-            {
-                var query = _factStudentDisciplineRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                var (rows, dataCount) = FilterStudentDisciplineReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-            }
-            else if (report.FactTable.FactTableName == "FactCustomCounts")
-            {
-                var query = _customReportRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
-                var (rows, dataCount) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
-                dataRows = rows;
-                reportDto.dataCount = dataCount;
-            }
-
+            var (dataRows, dataCount) = FetchReportData(report, reportCode, reportLevel, reportYear, categorySetCode, reportFilter, reportSubFilter, reportGrade, reportLea, reportSchool, organizationalIdList);
             reportDto.data = dataRows;
+            reportDto.dataCount = dataCount;
 
             return reportDto;
+        }
+
+        private (dynamic DataRows, int DataCount) FetchReportData(GenerateReport report, string reportCode, string reportLevel, string reportYear, string categorySetCode, string reportFilter, string reportSubFilter, string reportGrade, string reportLea, string reportSchool, string organizationalIdList)
+        {
+            switch (report.ReportCode)
+            {
+                case "studentfederalprogramsparticipation":
+                case "studentmultifedprogsparticipation":
+                {
+                    var query = _customReportRepository.Get_FederalProgramReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter);
+                    var (rows, count) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                    return (rows, count);
+                }
+                case "disciplinaryremovals":
+                {
+                    var query = _customReportRepository.Get_DisciplinaryRemovalsReportData(reportCode, reportLevel, reportYear, categorySetCode);
+                    var (rows, count) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                    return (rows, count);
+                }
+                case "stateassessmentsperformance":
+                {
+                    var query = _customReportRepository.Get_AssessmentPerformanceReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter, reportSubFilter, reportGrade);
+                    var (rows, count) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                    return (rows, count);
+                }
+                case "edenvironmentdisabilitiesage3-5":
+                case "edenvironmentdisabilitiesage6-21":
+                {
+                    var query = _customReportRepository.Get_EducationEnvironmentDisabilitiesReportData(reportCode, reportLevel, reportYear, categorySetCode);
+                    var (rows, count) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                    return (rows, count);
+                }
+                case "yeartoyearchildcount":
+                {
+                    var query = _customReportRepository.Get_YearToYearChildCountReportData(reportCode, reportLevel, reportYear, categorySetCode);
+                    var (rows, count) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                    return (rows, count);
+                }
+                case "yeartoyearexitcount":
+                    return FetchYearToYearExitCountData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter, reportLea, reportSchool, organizationalIdList);
+                case "yeartoyearremovalcount":
+                {
+                    var query = _customReportRepository.Get_YearToYearRemovalCountReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter);
+                    var (rows, count) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                    return (rows, count);
+                }
+                case "studentssummary":
+                {
+                    var query = _customReportRepository.Get_LEAStudentsSummary(reportCode, reportLevel, reportYear, categorySetCode, reportFilter, reportLea);
+                    var (rows, count) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                    return (rows, count);
+                }
+                case "yeartoyearprogress":
+                {
+                    var query = _customReportRepository.Get_YearToYearProgressReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter, reportSubFilter, reportGrade, reportLea, reportSchool);
+                    return (query.ToList(), query.Select(q => q.OrganizationStateId).Distinct().Count());
+                }
+                case "yeartoyearattendance":
+                {
+                    var query = _customReportRepository.Get_YearToYearAttendanceReportData(reportCode, reportLevel, reportYear, categorySetCode, reportGrade, reportLea, reportSchool);
+                    return (query.ToList(), query.Select(q => q.OrganizationStateId).Distinct().Count());
+                }
+                case "yeartoyearenvironmentcount":
+                    return FetchYearToYearEnvironmentCountData(reportCode, reportLevel, reportYear, categorySetCode, reportLea, reportSchool, organizationalIdList);
+                default:
+                    return FetchFactTableReportData(report, reportCode, reportLevel, reportYear, categorySetCode, reportFilter, reportLea, reportSchool, organizationalIdList);
+            }
+        }
+
+        private (dynamic DataRows, int DataCount) FetchYearToYearExitCountData(string reportCode, string reportLevel, string reportYear, string categorySetCode, string reportFilter, string reportLea, string reportSchool, string organizationalIdList)
+        {
+            if (reportLevel.ToLower() == "sch" && reportFilter.ToLower() != "select")
+            {
+                var query = _customReportRepository.Get_YearToYearExitCountReportDataSCH(reportCode, reportLevel, reportYear, categorySetCode, reportFilter);
+                var (rows, count) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                return (rows, count);
+            }
+            else
+            {
+                var query = _customReportRepository.Get_YearToYearExitCountReportData(reportCode, reportLevel, reportYear, categorySetCode, reportFilter);
+                var (rows, count) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                return (rows, count);
+            }
+        }
+
+        private (dynamic DataRows, int DataCount) FetchYearToYearEnvironmentCountData(string reportCode, string reportLevel, string reportYear, string categorySetCode, string reportLea, string reportSchool, string organizationalIdList)
+        {
+            var query = _customReportRepository.Get_YearToYearEnvironmentCountReportData(reportCode, reportLevel, reportYear, categorySetCode);
+
+            if (categorySetCode == "schoolage")
+            {
+                query = query.Where(t => t.CategorySetCode == "School Age (6-21)").ToList();
+            }
+            else if (categorySetCode == "earlychildhood")
+            {
+                query = query.Where(t => t.CategorySetCode == "Early Childhood (3-5)").ToList();
+            }
+
+            var (rows, count) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+            return (rows, count);
+        }
+
+        private (dynamic DataRows, int DataCount) FetchFactTableReportData(GenerateReport report, string reportCode, string reportLevel, string reportYear, string categorySetCode, string reportFilter, string reportLea, string reportSchool, string organizationalIdList)
+        {
+            switch (report.FactTable.FactTableName)
+            {
+                case "FactK12StudentCounts":
+                {
+                    var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
+                    var (rows, count) = FilterStudentCountReportData(query, reportLevel, reportLea, reportSchool, reportFilter, organizationalIdList);
+                    return (rows, count);
+                }
+                case "FactK12StudentAssessments":
+                {
+                    var query = _factStudentAssessmentRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
+                    var (rows, count) = FilterStudentAssessmentReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                    return (rows, count);
+                }
+                case "FactK12StudentDisciplines":
+                {
+                    var query = _factStudentDisciplineRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
+                    var (rows, count) = FilterStudentDisciplineReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                    return (rows, count);
+                }
+                case "FactCustomCounts":
+                {
+                    var query = _customReportRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode);
+                    var (rows, count) = FilterCustomReportData(query, reportLevel, reportLea, reportSchool, organizationalIdList);
+                    return (rows, count);
+                }
+                default:
+                    return (new List<ExpandoObject>(), 0);
+            }
+        }
+
+        private List<string> ResolveOrganizationNames(string organizationalIdList)
+        {
+            var organizationIds = organizationalIdList.Split(',').Select(h => int.Parse(h));
+            var names = new List<string>();
+            foreach (var organizationId in organizationIds)
+            {
+                if (organizationId == 0 || organizationId == -1) continue;
+                var od = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
+                if (od != null)
+                    names.Add(od.Name);
+            }
+            return names;
         }
 
         public (dynamic DataRows, int DistinctCount)
@@ -240,34 +245,20 @@ namespace generate.infrastructure.Services
             {
                 query = query.Where(t => t.OrganizationStateId == reportLea);
             }
-            else if (reportLevel == "lea" && reportLea != null && reportLea == "all")
+            else if (reportLevel == "lea" && reportLea == "all")
             {
-                int[] organizationIds = organizationalIdList.Split(',').Select(h => Int32.Parse(h)).ToArray();
-                List<string> od = new List<string>();
-                foreach (var organizationId in organizationIds)
-                {
-                    if (organizationId != 0 && organizationId != -1)
-                    {
-                        OrganizationDetail OD = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
-                        if (OD != null)
-                            od.Add(OD.Name);
-                    }
-                }
-                query = query.Where(x => od.Contains(x.OrganizationName)).ToList();
+                var names = ResolveOrganizationNames(organizationalIdList);
+                query = query.Where(x => names.Contains(x.OrganizationName)).ToList();
             }
 
             // Apply School-level filtering
             if (reportLevel == "sch")
             {
                 if (!string.IsNullOrEmpty(reportLea) && reportLea != "all")
-                {
                     query = query.Where(t => t.ParentOrganizationStateId == reportLea);
-                }
 
                 if (!string.IsNullOrEmpty(reportSchool) && reportSchool != "all")
-                {
                     query = query.Where(t => t.OrganizationStateId == reportSchool);
-                }
             }
 
             var resultList = query.ToList();
@@ -293,48 +284,23 @@ namespace generate.infrastructure.Services
             {
                 query = query.Where(t => t.OrganizationIdentifierSea == reportLea);
             }
-            else if (reportLevel == "lea" && reportLea != null && reportLea == "all")
+            else if (reportLevel == "lea" && reportLea == "all")
             {
-                int[] organizationIds = organizationalIdList.Split(',').Select(h => Int32.Parse(h)).ToArray();
-                List<string> od = new List<string>();
-                foreach (var organizationId in organizationIds)
-                {
-                    if (organizationId != 0 && organizationId != -1)
-                    {
-                        OrganizationDetail OD = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
-                        if (OD != null)
-                            od.Add(OD.Name);
-                    }
-                }
-                query = query.Where(x => od.Contains(x.OrganizationName)).ToList();
+                var names = ResolveOrganizationNames(organizationalIdList);
+                query = query.Where(x => names.Contains(x.OrganizationName)).ToList();
             }
 
             // Apply School-level filtering
             if (reportLevel == "sch")
             {
                 if (!string.IsNullOrEmpty(reportLea) && reportLea != "all")
-                {
                     query = query.Where(t => t.ParentOrganizationIdentifierSea == reportLea);
-                }
 
                 if (!string.IsNullOrEmpty(reportSchool) && reportSchool != "all")
-                {
                     query = query.Where(t => t.OrganizationIdentifierSea == reportSchool);
-                }
             }
 
-            if (reportFilter != null && reportFilter != "AllStudents")
-            {
-                if (reportFilter == "WDIS")
-                {
-                    query = query.Where(t => t.IDEADISABILITYTYPE != "MISSING").ToList();
-                }
-                else if (reportFilter == "WODIS")
-                {
-                    query = query.Where(t => t.IDEADISABILITYTYPE == "MISSING").ToList();
-                }
-
-            }
+            query = ApplyDisabilityFilter(query, reportFilter);
 
             var resultList = query.ToList();
             var distinctCount = resultList
@@ -343,6 +309,15 @@ namespace generate.infrastructure.Services
                 .Count();
 
             return (resultList, distinctCount);
+        }
+
+        private IEnumerable<ReportEDFactsK12StudentCount> ApplyDisabilityFilter(IEnumerable<ReportEDFactsK12StudentCount> query, string reportFilter)
+        {
+            if (reportFilter == "WDIS")
+                return query.Where(t => t.IDEADISABILITYTYPE != "MISSING").ToList();
+            if (reportFilter == "WODIS")
+                return query.Where(t => t.IDEADISABILITYTYPE == "MISSING").ToList();
+            return query;
         }
 
         public (dynamic DataRows, int DistinctCount)
@@ -358,37 +333,22 @@ namespace generate.infrastructure.Services
             {
                 query = query.Where(t => t.OrganizationIdentifierSea == reportLea);
             }
-            else if (reportLevel == "lea" && reportLea != null && reportLea == "all")
+            else if (reportLevel == "lea" && reportLea == "all")
             {
-                int[] organizationIds = organizationalIdList.Split(',').Select(h => Int32.Parse(h)).ToArray();
-                List<string> od = new List<string>();
-                foreach (var organizationId in organizationIds)
-                {
-                    if (organizationId != 0 && organizationId != -1)
-                    {
-                        OrganizationDetail OD = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
-                        if (OD != null)
-                            od.Add(OD.Name);
-                    }
-                }
-                query = query.Where(x => od.Contains(x.OrganizationName)).ToList();
+                var names = ResolveOrganizationNames(organizationalIdList);
+                query = query.Where(x => names.Contains(x.OrganizationName)).ToList();
             }
 
             // Apply School-level filtering
             if (reportLevel == "sch")
             {
                 if (!string.IsNullOrEmpty(reportLea) && reportLea != "all")
-                {
                     query = query.Where(t => t.ParentOrganizationIdentifierSea == reportLea);
-                }
 
                 if (!string.IsNullOrEmpty(reportSchool) && reportSchool != "all")
-                {
                     query = query.Where(t => t.OrganizationIdentifierSea == reportSchool);
-                }
             }
 
-           
             var resultList = query.ToList();
             var distinctCount = resultList
                 .Select(q => q.OrganizationIdentifierSea)
@@ -411,36 +371,21 @@ namespace generate.infrastructure.Services
             {
                 query = query.Where(t => t.OrganizationIdentifierSea == reportLea);
             }
-            else if (reportLevel == "lea" && reportLea != null && reportLea == "all")
+            else if (reportLevel == "lea" && reportLea == "all")
             {
-                int[] organizationIds = organizationalIdList.Split(',').Select(h => Int32.Parse(h)).ToArray();
-                List<string> od = new List<string>();
-                foreach (var organizationId in organizationIds)
-                {
-                    if (organizationId != 0 && organizationId != -1)
-                    {
-                        OrganizationDetail OD = _idsRepository.Find<OrganizationDetail>(f => f.OrganizationDetailId == organizationId, 0, 1).FirstOrDefault();
-                        if (OD != null)
-                            od.Add(OD.Name);
-                    }
-                }
-                query = query.Where(x => od.Contains(x.OrganizationName)).ToList();
+                var names = ResolveOrganizationNames(organizationalIdList);
+                query = query.Where(x => names.Contains(x.OrganizationName)).ToList();
             }
 
             // Apply School-level filtering
             if (reportLevel == "sch")
             {
                 if (!string.IsNullOrEmpty(reportLea) && reportLea != "all")
-                {
                     query = query.Where(t => t.ParentOrganizationIdentifierSea == reportLea);
-                }
 
                 if (!string.IsNullOrEmpty(reportSchool) && reportSchool != "all")
-                {
                     query = query.Where(t => t.OrganizationIdentifierSea == reportSchool);
-                }
             }
-
 
             var resultList = query.ToList();
             var distinctCount = resultList

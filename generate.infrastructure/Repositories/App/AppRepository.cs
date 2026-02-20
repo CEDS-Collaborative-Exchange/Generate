@@ -28,6 +28,7 @@ namespace generate.infrastructure.Repositories.App
 
         public void Dispose()
         {
+            //source?.Dispose();
             GC.SuppressFinalize(this);
         }
         
@@ -87,66 +88,63 @@ namespace generate.infrastructure.Repositories.App
         {
             DataMigration dataMigration = _context.Set<DataMigration>().FirstOrDefault(x => x.DataMigrationType.DataMigrationTypeCode == dataMigrationTypeCode);
 
-            if (dataMigration != null) {
-                // Make sure we get latest from database in case data was updated by Hangfire
-                _context.Entry<DataMigration>(dataMigration).Reload();
+            if (dataMigration == null) return;
 
-                var migrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusId == dataMigration.DataMigrationStatusId);
-                var currentStatus = "";
+            // Make sure we get latest from database in case data was updated by Hangfire
+            _context.Entry<DataMigration>(dataMigration).Reload();
 
-                if (migrationStatus != null)
+            var migrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusId == dataMigration.DataMigrationStatusId);
+            var currentStatus = "";
+
+            if (migrationStatus != null)
+            {
+                currentStatus = migrationStatus.DataMigrationStatusCode;
+            }
+
+            if (dataMigration.DataMigrationStatus != null)
+            {
+                currentStatus = dataMigration.DataMigrationStatus.DataMigrationStatusCode;
+            }
+
+            // Do not complete if status is already error
+            if (currentStatus != "error")
+            {
+                // Set duration if not error/canceled
+                if (dataMigrationStatusCode != "error")
                 {
-                    currentStatus = migrationStatus.DataMigrationStatusCode;
+                    var startTime = dataMigration.LastTriggerDate;
+                    var endTime = DateTime.UtcNow;
+                    var duration = endTime.Subtract(startTime.Value);
+                    dataMigration.LastDurationInSeconds = (int)duration.TotalSeconds;
                 }
 
-                if (dataMigration.DataMigrationStatus != null)
+                var dataMigrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusCode == dataMigrationStatusCode);
+                dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
+
+                var lockedReports = this.GetReports().Where(r => r.IsLocked);
+                if (lockedReports.Any())
                 {
-                    currentStatus = dataMigration.DataMigrationStatus.DataMigrationStatusCode;
+                    var factTypeId = lockedReports.ToList()[0].GenerateReport_FactTypes[0].FactTypeId;
+                    var dataMigrtionTasks = _context.Set<DataMigrationTask>().OrderBy(t => t.TaskSequence).Where(t => t.FactTypeId == factTypeId).Select(t => t.DataMigrationTaskId.ToString()).ToList();
+                    dataMigration.DataMigrationTaskList = string.Join(",", dataMigrtionTasks);
+                    _context.SaveChanges();
                 }
 
-                // Do not complete if status is already error
-                if (currentStatus != "error")
+                // Log migration complete message
+                if (dataMigrationStatusCode == "error")
                 {
-
-                    // Set duration if not error/canceled
-                    if (dataMigrationStatusCode != "error")
-                    {
-                        var startTime = dataMigration.LastTriggerDate;
-                        var endTime = DateTime.UtcNow;
-                        var duration = endTime.Subtract(startTime.Value);
-                        dataMigration.LastDurationInSeconds = (int)duration.TotalSeconds;
-                    }
-
-                    var dataMigrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusCode == dataMigrationStatusCode);
-                    dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
-
-                    var lockedReports = this.GetReports().Where(r => r.IsLocked);
-                    if (lockedReports.Any())
-                    {
-                        var factTypeId = lockedReports.ToList()[0].GenerateReport_FactTypes[0].FactTypeId;
-                        var dataMigrtionTasks = _context.Set<DataMigrationTask>().OrderBy(t => t.TaskSequence).Where(t => t.FactTypeId == factTypeId).Select(t => t.DataMigrationTaskId.ToString()).ToList();
-                        dataMigration.DataMigrationTaskList = string.Join(",", dataMigrtionTasks);
-                        _context.SaveChanges();
-                    }
-
-                    // Log migration complete message
-
-                    if (dataMigrationStatusCode == "error")
-                    {
-                        LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Complete - either due to error or cancellation", true);
-                        this.MarkReportsAsComplete();
-                    }
-                    else
-                    {
-                        LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Complete - successful", true);
-                    }
-
+                    LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Complete - either due to error or cancellation", true);
+                    this.MarkReportsAsComplete();
                 }
                 else
                 {
-                    LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Completed after Cancel/Error", true);
-                    this.MarkReportsAsComplete();
+                    LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Complete - successful", true);
                 }
+            }
+            else
+            {
+                LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Completed after Cancel/Error", true);
+                this.MarkReportsAsComplete();
             }
         }
 

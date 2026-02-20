@@ -18,16 +18,16 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 		  END AS ProgramParticipationTitleIIILiepMap
 
 		, rdt3s.ProficiencyStatusCode
-		, sssrd3.OutputCode AS ProficiencyStatusMap
+		, sssrd3.InputCode AS ProficiencyStatusMap
 
 		, rdt3s.TitleIIIAccountabilityProgressStatusCode
-		, sssrd4.OutputCode as TitleIIIAccountabilityProgressStatusMap
+		, sssrd4.InputCode as TitleIIIAccountabilityProgressStatusMap
 
 		, rdt3s.TitleIIILanguageInstructionProgramTypeCode
-		, sssrd3.InputCode as TitleIIILanguageInstructionProgramTypeMap
+		, sssrd5.InputCode as TitleIIILanguageInstructionProgramTypeMap
 		, rdt3s.EnglishLearnerExitedStatusCode
 		, CASE rdt3s.EnglishLearnerExitedStatusCode
-			WHEN 'Yes' THEN 1 
+			WHEN 'Yes' THEN 1
 			WHEN 'No' THEN 0
 			ELSE -1
 		  END AS EnglishLearnerExitedStatusMap
@@ -52,7 +52,7 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 
 	LEFT JOIN Staging.SourceSystemReferenceData sssrd3
 		ON rdt3s.ProficiencyStatusCode = sssrd3.OutputCode
-		AND sssrd3.TableName = 'refProficiencyStatus'
+		AND sssrd3.TableName = 'RefProficiencyStatus'
 		AND rsy.SchoolYear = sssrd3.SchoolYear
 
 	LEFT JOIN Staging.SourceSystemReferenceData sssrd4
@@ -64,3 +64,4 @@ CREATE VIEW [RDS].[vwDimTitleIIIStatuses] AS
 		ON rdt3s.TitleIIILanguageInstructionProgramTypeCode = sssrd5.OutputCode
 		AND sssrd5.TableName = 'RefTitleIIILanguageInstructionProgramType'
 		AND rsy.SchoolYear = sssrd5.SchoolYear
+
