@@ -25,6 +25,16 @@ using System.Reflection;
 
 namespace generate.console
 {
+    public record TestDataOptions(
+        string TestDataType,
+        int Seed,
+        int QuantityOfStudents,
+        int SchoolYear,
+        int NumberOfYears,
+        string FormatType,
+        string OutputType,
+        string DataStandardType);
+
     public class Program
     {
         private static IServiceProvider serviceProvider;
@@ -268,7 +278,7 @@ namespace generate.console
                         return;
                     }
 
-                    GenerateTestData(testDataType, seed, quantityOfStudents, schoolYear, numberOfYears, formatType, outputType, dataStandardType);
+                    GenerateTestData(new TestDataOptions(testDataType, seed, quantityOfStudents, schoolYear, numberOfYears, formatType, outputType, dataStandardType));
 
                     break;
 
@@ -284,8 +294,17 @@ namespace generate.console
 
         }
 
-        public static void GenerateTestData(string testDataType, int seed, int quantityOfStudents, int schoolYear, int numberOfYears, string formatType, string outputType, string dataStandardType)
+        public static void GenerateTestData(TestDataOptions options)
         {
+            string testDataType = options.TestDataType;
+            int seed = options.Seed;
+            int quantityOfStudents = options.QuantityOfStudents;
+            int schoolYear = options.SchoolYear;
+            int numberOfYears = options.NumberOfYears;
+            string formatType = options.FormatType;
+            string outputType = options.OutputType;
+            string dataStandardType = options.DataStandardType;
+
             string outputTypeToGenerate = outputType;
             const string invalidString = "Invalid Arguments";
             const string spacer = "-----------------------";
