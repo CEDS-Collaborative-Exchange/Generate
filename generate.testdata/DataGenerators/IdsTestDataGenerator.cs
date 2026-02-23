@@ -95,9 +95,7 @@ namespace generate.testdata.DataGenerators
 
             // Begin Output
 
-            StringBuilder output = new StringBuilder();
-
-            output = _outputHelper.CreateStartOutput("0001_Generate", quantityOfStudents, this.FormatType, this.Seed, "ods");
+            var output = _outputHelper.CreateStartOutput("0001_Generate", quantityOfStudents, this.FormatType, this.Seed, "ods");
 
             if (this.FormatType == "sql")
             {
@@ -130,90 +128,7 @@ namespace generate.testdata.DataGenerators
 
             for (int seaCntr = 0; seaCntr < _testDataProfile.QuantityOfSeas; seaCntr++)
             {
-
-                output = _outputHelper.CreateStartOutput((seaCntr + 2).ToString().PadLeft(4, '0') + "_SEA", quantityOfStudents, this.FormatType, this.Seed, "ods");
-
-                int seaOrganizationId = 0;
-                RefState refState = null;
-
-                testData = this.GetFreshTestDataObject(seaOrganizationId);
-
-                // SEA
-                testData = CreateSea(globalRandom, testData, out seaOrganizationId, out refState);
-                output = this.AddTestDataToOutput(testData, output, (seaCntr + 2).ToString().PadLeft(4, '0') + "-0000-SEA", "SEA Data - " + (seaCntr + 1) + " of " + _testDataProfile.QuantityOfSeas, false);
-
-                // Write output - SEA
-                output = _outputHelper.AddEndToOutput(output, this.FormatType);
-                sectionName = "02_" + (seaCntr + 2).ToString().PadLeft(4, '0') + "_0000_SEA";
-                _outputHelper.WriteOutput(output, "ods", this.FormatType, this.OutputType, this.FilePath, sectionName);
-                if (this.FormatType == "sql")
-                {
-                    this.ScriptsToExecute.Add("OdsTestData_" + sectionName + ".sql");
-                }
-
-                if (this.OutputType != "console")
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("======================");
-                    Console.WriteLine("SEA Id = " + seaOrganizationId + " (" + (seaCntr + 1) + " of " + _testDataProfile.QuantityOfSeas + ")");
-                    Console.WriteLine("======================");
-                }
-
-                // Get LEA count
-                int averageStudentsPerLea = _testDataHelper.GetRandomIntInRange(globalRandom, _testDataProfile.MinimumAverageStudentsPerLea, _testDataProfile.MaximumAverageStudentsPerLea);
-                int quantityOfLeas = (int)Math.Ceiling((decimal)quantityOfStudents / (decimal)averageStudentsPerLea);
-
-
-                int quantityOfStudentsPerIteration = _testDataProfile.StudentIterationSize;
-                int totalIterations = (int)Math.Ceiling((decimal)quantityOfStudents / (decimal)_testDataProfile.StudentIterationSize);
-
-                int quantityOfLeasPerIteration = quantityOfLeas / totalIterations;
-                int quantityofRemainingLeas = quantityOfLeas;
-
-                
-                int quantityofRemainingStudents = quantityOfStudents;
-
-                if (totalIterations < 1)
-                {
-                    totalIterations = 1;
-                }
-
-                for (int i = 1; i <= totalIterations; i++)
-                {
-                                       
-                    if(quantityOfLeasPerIteration > quantityofRemainingLeas)
-                    {
-                        quantityOfLeasPerIteration = quantityofRemainingLeas;
-                    }
-
-                    if (quantityOfStudentsPerIteration > quantityofRemainingStudents)
-                    {
-                        quantityOfStudentsPerIteration = quantityofRemainingStudents;
-                    }
-                   
-                    this.CreateTestDataInBatches("Organizations", quantityOfLeasPerIteration, seaCntr, seaOrganizationId, refState, i, globalRandom);
-
-                    this.CreateTestDataInBatches("Persons", quantityOfStudentsPerIteration, seaCntr, seaOrganizationId, refState, i, globalRandom);
-
-                    quantityofRemainingLeas = quantityofRemainingLeas - quantityOfLeasPerIteration;
-                    quantityofRemainingStudents = quantityofRemainingStudents - quantityOfStudentsPerIteration;
-
-                    this.EmptyIterationData();
-                }
-
-                if (this.OutputType != "console")
-                {
-                    Console.WriteLine("");
-                    Console.WriteLine("======================");
-                    Console.WriteLine("Total LEAs = " + this.TotalLeasCreated);
-                    Console.WriteLine("Total Schools = " + this.TotalSchoolsCreated);
-                    Console.WriteLine("Total Students = " + this.TotalStudentsCreated);
-                    Console.WriteLine("Total Personnel = " + this.TotalPersonnelCreated);
-                    Console.WriteLine("======================");
-                }
-
-               
-
+                ProcessSingleSea(seaCntr, quantityOfStudents, globalRandom);
             }
 
             if (this.FormatType == "sql")
@@ -222,7 +137,85 @@ namespace generate.testdata.DataGenerators
                 _outputHelper.WriteOutput(powershellScriptOutput, "ods", "powershell", this.OutputType, this.FilePath);
             }
 
-           
+        }
+
+        private void ProcessSingleSea(int seaCntr, int quantityOfStudents, Random globalRandom)
+        {
+            var output = _outputHelper.CreateStartOutput((seaCntr + 2).ToString().PadLeft(4, '0') + "_SEA", quantityOfStudents, this.FormatType, this.Seed, "ods");
+
+            int seaOrganizationId = 0;
+            RefState refState = null;
+
+            var testData = this.GetFreshTestDataObject(seaOrganizationId);
+
+            // SEA
+            testData = CreateSea(globalRandom, testData, out seaOrganizationId, out refState);
+            output = this.AddTestDataToOutput(testData, output, (seaCntr + 2).ToString().PadLeft(4, '0') + "-0000-SEA", "SEA Data - " + (seaCntr + 1) + " of " + _testDataProfile.QuantityOfSeas, false);
+
+            // Write output - SEA
+            output = _outputHelper.AddEndToOutput(output, this.FormatType);
+            var sectionName = "02_" + (seaCntr + 2).ToString().PadLeft(4, '0') + "_0000_SEA";
+            _outputHelper.WriteOutput(output, "ods", this.FormatType, this.OutputType, this.FilePath, sectionName);
+            if (this.FormatType == "sql")
+            {
+                this.ScriptsToExecute.Add("OdsTestData_" + sectionName + ".sql");
+            }
+
+            if (this.OutputType != "console")
+            {
+                Console.WriteLine();
+                Console.WriteLine("======================");
+                Console.WriteLine("SEA Id = " + seaOrganizationId + " (" + (seaCntr + 1) + " of " + _testDataProfile.QuantityOfSeas + ")");
+                Console.WriteLine("======================");
+            }
+
+            // Get LEA count
+            int averageStudentsPerLea = _testDataHelper.GetRandomIntInRange(globalRandom, _testDataProfile.MinimumAverageStudentsPerLea, _testDataProfile.MaximumAverageStudentsPerLea);
+            int quantityOfLeas = (int)Math.Ceiling((decimal)quantityOfStudents / (decimal)averageStudentsPerLea);
+
+            int quantityOfStudentsPerIteration = _testDataProfile.StudentIterationSize;
+            int totalIterations = (int)Math.Ceiling((decimal)quantityOfStudents / (decimal)_testDataProfile.StudentIterationSize);
+
+            int quantityOfLeasPerIteration = quantityOfLeas / totalIterations;
+            int quantityofRemainingLeas = quantityOfLeas;
+            int quantityofRemainingStudents = quantityOfStudents;
+
+            if (totalIterations < 1)
+            {
+                totalIterations = 1;
+            }
+
+            for (int i = 1; i <= totalIterations; i++)
+            {
+                if (quantityOfLeasPerIteration > quantityofRemainingLeas)
+                {
+                    quantityOfLeasPerIteration = quantityofRemainingLeas;
+                }
+
+                if (quantityOfStudentsPerIteration > quantityofRemainingStudents)
+                {
+                    quantityOfStudentsPerIteration = quantityofRemainingStudents;
+                }
+
+                this.CreateTestDataInBatches("Organizations", quantityOfLeasPerIteration, seaCntr, seaOrganizationId, refState, i, globalRandom);
+                this.CreateTestDataInBatches("Persons", quantityOfStudentsPerIteration, seaCntr, seaOrganizationId, refState, i, globalRandom);
+
+                quantityofRemainingLeas = quantityofRemainingLeas - quantityOfLeasPerIteration;
+                quantityofRemainingStudents = quantityofRemainingStudents - quantityOfStudentsPerIteration;
+
+                this.EmptyIterationData();
+            }
+
+            if (this.OutputType != "console")
+            {
+                Console.WriteLine("");
+                Console.WriteLine("======================");
+                Console.WriteLine("Total LEAs = " + this.TotalLeasCreated);
+                Console.WriteLine("Total Schools = " + this.TotalSchoolsCreated);
+                Console.WriteLine("Total Students = " + this.TotalStudentsCreated);
+                Console.WriteLine("Total Personnel = " + this.TotalPersonnelCreated);
+                Console.WriteLine("======================");
+            }
         }
 
         private void InitializeVariables(string filePath = null, int? seed = null, string formatType = null, string outputType = null)

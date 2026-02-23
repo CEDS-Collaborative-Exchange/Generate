@@ -12,7 +12,7 @@ namespace generate.core.Models.RDS
         public Dictionary<string, object> Fields { get; set; } = new Dictionary<string, object>();
         public object this[string key]
         {
-            get => Fields.ContainsKey(key) ? Fields[key] : null;
+            get => Fields.TryGetValue(key, out var value) ? value : null;
             set => Fields[key] = value;
         }
         public string ToJson()

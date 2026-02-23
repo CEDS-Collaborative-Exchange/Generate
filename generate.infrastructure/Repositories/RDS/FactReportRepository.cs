@@ -106,13 +106,19 @@ namespace generate.infrastructure.Repositories.RDS
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
 
-            Func<dynamic, string> getOrgName = x => isSEA ? x.DimSchool.SeaName :
-                                                      isLEA ? x.DimSchool.LeaName :
-                                                              x.DimSchool.NameOfInstitution;
+            Func<dynamic, string> getOrgName = x =>
+            {
+                if (isSEA) return x.DimSchool.SeaName;
+                if (isLEA) return x.DimSchool.LeaName;
+                return x.DimSchool.NameOfInstitution;
+            };
 
-            Func<dynamic, string?> getParentStateId = x => isSEA ? null :
-                                                         isLEA ? x.DimSchool.SeaIdentifierState :
-                                                                 x.DimSchool.LeaIdentifierState;
+            Func<dynamic, string?> getParentStateId = x =>
+            {
+                if (isSEA) return null;
+                if (isLEA) return x.DimSchool.SeaIdentifierState;
+                return x.DimSchool.LeaIdentifierState;
+            };
 
             var groupedFacts = facts
                 .GroupBy(x => new
@@ -282,24 +288,32 @@ namespace generate.infrastructure.Repositories.RDS
 
             // Predefine grouping field selectors
             Func<dynamic, string> getOrgNcesId = x =>
-                reportLevel == "sea" ? x.DimLea.StateAnsiCode :
-                reportLevel == "lea" ? (x.DimLea.LeaIdentifierNces ?? "") :
-                                       (x.DimSchool.SchoolIdentifierNces ?? "");
+            {
+                if (reportLevel == "sea") return x.DimLea.StateAnsiCode;
+                if (reportLevel == "lea") return x.DimLea.LeaIdentifierNces ?? "";
+                return x.DimSchool.SchoolIdentifierNces ?? "";
+            };
 
             Func<dynamic, string> getOrgStateId = x =>
-                reportLevel == "sea" ? x.DimLea.SeaIdentifierState :
-                reportLevel == "lea" ? x.DimLea.LeaIdentifierState :
-                                       x.DimSchool.SchoolIdentifierState;
+            {
+                if (reportLevel == "sea") return x.DimLea.SeaIdentifierState;
+                if (reportLevel == "lea") return x.DimLea.LeaIdentifierState;
+                return x.DimSchool.SchoolIdentifierState;
+            };
 
             Func<dynamic, string> getOrgName = x =>
-                reportLevel == "sea" ? x.DimLea.SeaName :
-                reportLevel == "lea" ? x.DimLea.LeaName :
-                                       x.DimSchool.NameOfInstitution;
+            {
+                if (reportLevel == "sea") return x.DimLea.SeaName;
+                if (reportLevel == "lea") return x.DimLea.LeaName;
+                return x.DimSchool.NameOfInstitution;
+            };
 
             Func<dynamic, string?> getParentOrgStateId = x =>
-                reportLevel == "sea" ? null :
-                reportLevel == "lea" ? x.DimLea.SeaIdentifierState :
-                                       x.DimSchool.LeaIdentifierState;
+            {
+                if (reportLevel == "sea") return null;
+                if (reportLevel == "lea") return x.DimLea.SeaIdentifierState;
+                return x.DimSchool.LeaIdentifierState;
+            };
 
             var groupedFacts = facts
                 .GroupBy(x => new
@@ -451,24 +465,32 @@ namespace generate.infrastructure.Repositories.RDS
 
             // Precomputed selectors
             Func<dynamic, string> getOrgNcesId = x =>
-                reportLevel == "sea" ? x.DimLea.StateAnsiCode :
-                reportLevel == "lea" ? (x.DimLea.LeaIdentifierNces ?? "") :
-                                       (x.DimSchool.SchoolIdentifierNces ?? "");
+            {
+                if (reportLevel == "sea") return x.DimLea.StateAnsiCode;
+                if (reportLevel == "lea") return x.DimLea.LeaIdentifierNces ?? "";
+                return x.DimSchool.SchoolIdentifierNces ?? "";
+            };
 
             Func<dynamic, string> getOrgStateId = x =>
-                reportLevel == "sea" ? x.DimLea.SeaIdentifierState :
-                reportLevel == "lea" ? x.DimLea.LeaIdentifierState :
-                                       x.DimSchool.SchoolIdentifierState;
+            {
+                if (reportLevel == "sea") return x.DimLea.SeaIdentifierState;
+                if (reportLevel == "lea") return x.DimLea.LeaIdentifierState;
+                return x.DimSchool.SchoolIdentifierState;
+            };
 
             Func<dynamic, string> getOrgName = x =>
-                reportLevel == "sea" ? x.DimLea.SeaName :
-                reportLevel == "lea" ? x.DimLea.LeaName :
-                                       x.DimSchool.NameOfInstitution;
+            {
+                if (reportLevel == "sea") return x.DimLea.SeaName;
+                if (reportLevel == "lea") return x.DimLea.LeaName;
+                return x.DimSchool.NameOfInstitution;
+            };
 
             Func<dynamic, string?> getParentStateId = x =>
-                reportLevel == "sea" ? null :
-                reportLevel == "lea" ? x.DimLea.SeaIdentifierState :
-                                       x.DimSchool.LeaIdentifierState;
+            {
+                if (reportLevel == "sea") return null;
+                if (reportLevel == "lea") return x.DimLea.SeaIdentifierState;
+                return x.DimSchool.LeaIdentifierState;
+            };
 
             var joinedFacts = facts
                 .ToList()
@@ -512,7 +534,7 @@ namespace generate.infrastructure.Repositories.RDS
                         ? (
                             int.TryParse(x.t1.DimAssessment.PerformanceLevelEdFactsCode?.LastOrDefault().ToString(), out var perf)
                             && int.TryParse(x.t2.ProficientOrAboveLevel, out var cutoff)
-                                ? (perf >= cutoff ? "PROFICIENT" : "BELOWPROFICIENT")
+                                ? perf >= cutoff ? "PROFICIENT" : "BELOWPROFICIENT"
                                 : null
                         )
                         : null
