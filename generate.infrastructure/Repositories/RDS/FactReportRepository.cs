@@ -1,4 +1,5 @@
-﻿using generate.core.Interfaces.Repositories.App;
+﻿#nullable enable
+using generate.core.Interfaces.Repositories.App;
 using generate.core.Interfaces.Repositories.RDS;
 using generate.core.Models.App;
 using generate.core.Models.RDS;

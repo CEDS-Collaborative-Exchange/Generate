@@ -1,6 +1,4 @@
 ﻿using generate.core.Config;
-using generate.core.Interfaces.Repositories.App;
-using generate.core.Interfaces.Repositories.RDS;
 using generate.core.Interfaces.Services;
 using generate.infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +14,7 @@ namespace generate.web.Controllers.Api.App
     public class AboutController : Controller
     {
 
-        private readonly IAppRepository _appRepository;
         private readonly IAboutService _AboutService;
-        private readonly IRDSRepository _rdsRepository;
 
         public AboutController
         (

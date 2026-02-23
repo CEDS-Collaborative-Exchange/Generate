@@ -12,7 +12,6 @@ using generate.testdata.Interfaces;
 using generate.testdata.Profiles;
 using generate.infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -35,8 +34,6 @@ namespace generate.web.Config
 {
     public static class AppConfiguration
     {
-
-        private static IConfigurationRoot Configuration;
 
         public static void ConfigureCoreServices(IServiceCollection services)
         {

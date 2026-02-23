@@ -33,7 +33,7 @@ namespace generate.overnighttest
     {
         
         // Directory where this application is running
-        private string appDir;
+        private string? appDir;
         private string[] programArgs;
         /// <summary>
         /// Only run pre dmc once if testing only
@@ -361,7 +361,7 @@ namespace generate.overnighttest
                     return;
 
                 }
-                IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+                IAppRepository appRepository = serviceProvider!.GetRequiredService<IAppRepository>();
                 Action<string> process = (reportCode) =>
                 {
                     string report = reportCode.Equals(ALL_FACT) ? "" : reportCode;
@@ -370,7 +370,7 @@ namespace generate.overnighttest
                    
                 };
 
-                using var scope = serviceProvider.CreateScope();
+                using var scope = serviceProvider!.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 if (!reportCodeArr.Contains(ALL_FACT) && reportCodeArr.Length > 0)
                 {
@@ -457,9 +457,9 @@ namespace generate.overnighttest
                     return;
                 }
 
-                using var scope = serviceProvider.CreateScope();
+                using var scope = serviceProvider!.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                IRDSRepository rDSRepository = serviceProvider.GetService<IRDSRepository>();
+                IRDSRepository rDSRepository = serviceProvider!.GetRequiredService<IRDSRepository>();
                 IAppRepository appRepository = new AppRepository(dbContext, rDSRepository);
                 appRepository.RunBeforeTests(schoolyear);
 
@@ -542,7 +542,7 @@ namespace generate.overnighttest
                         Console.WriteLine($"Test for spec:{item} is not active");
                         continue;
                     }
-                    using var scope = serviceProvider.CreateScope();
+                    using var scope = serviceProvider!.CreateScope();
                     try
                     {
                         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -577,7 +577,7 @@ namespace generate.overnighttest
         private void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)
         {
             Console.WriteLine($"Inside EnableOrDisableTests enable:{enable} fileSpecNumbers:{fileSpecNumbers}, ");
-            IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+            IAppRepository appRepository = serviceProvider!.GetRequiredService<IAppRepository>();
             appRepository.EnableOrDisableTests(fileSpecNumbers, enable);
             
         }

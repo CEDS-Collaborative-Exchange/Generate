@@ -104,7 +104,7 @@ namespace generate.infrastructure.Services
 
             if (report.ReportCode == "052")
             {
-                var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, categorySetCode, false, isOnlineReport);
+                var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, categorySetCode, new MembershipReportQueryOptions(ObscureMissingCategoryCounts: isOnlineReport));
                 dataRows = query.Item1.ToList();
                 reportDto.dataCount = query.Item1.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
             }

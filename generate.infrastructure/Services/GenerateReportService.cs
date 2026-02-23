@@ -462,7 +462,7 @@ namespace generate.infrastructure.Services
 
         public List<ReportDebug> GetReportDebugData(string reportCode, string reportLevel, string reportYear, string categorySetCode, string parameters, int sort = 1, int skip = 0, int take = 50, int pageSize = 10, int page = 1)
         {
-            return _reportDebugRepository.Get_ReportDebugData(reportCode, reportLevel, reportYear, categorySetCode, parameters, sort, skip, take, pageSize, page).ToList();
+            return _reportDebugRepository.Get_ReportDebugData(reportCode, reportLevel, reportYear, categorySetCode, parameters, new ReportDebugPagingOptions(sort, skip, take, pageSize, page)).ToList();
         }
 
         public string NormalizeNull(string input) => input == "null" ? null : input;

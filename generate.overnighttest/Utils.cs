@@ -122,8 +122,8 @@ namespace generate.overnighttest
         /// <returns></returns>
         public static Dictionary<string, IList<string>> factTypeDescriptionToReportCodes(IServiceProvider serviceProvider)
         {
-            IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
-            IRDSRepository rDSRepository = serviceProvider.GetService<IRDSRepository>();
+            IAppRepository appRepository = serviceProvider.GetRequiredService<IAppRepository>();
+            IRDSRepository rDSRepository = serviceProvider.GetRequiredService<IRDSRepository>();
 
             List<DimFactType> factTypes = rDSRepository.GetAll<DimFactType>()
                                             .Where(t => t.DimFactTypeId > 0)

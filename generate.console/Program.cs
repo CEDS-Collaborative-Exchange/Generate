@@ -193,9 +193,9 @@ namespace generate.console
                     Console.WriteLine(GetHelpText());
                     break;
 
-                case "update":
-                    Update(environment);
-                    break;
+                // case "update":
+                //     Update(environment);
+                //     break;
 
                 case "testdata":
                     // Get additional arguments
@@ -355,21 +355,21 @@ namespace generate.console
             }
         }
 
-        public static void Update(string environment)
-        {
-            IDbUpdaterService dbUpdaterService = serviceProvider.GetService<IDbUpdaterService>();
-            DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory());
-            string rootDir = di.Parent.FullName;
-            string updatePath = rootDir + "\\generate.web";
+        // public static void Update(string environment)
+        // {
+        //     IDbUpdaterService dbUpdaterService = serviceProvider.GetService<IDbUpdaterService>();
+        //     DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory());
+        //     string rootDir = di.Parent.FullName;
+        //     string updatePath = rootDir + "\\generate.web";
 
-            if (environment == "test" || environment == "stage")
-            {
-                updatePath = "D:\\apps\\generate.web." + environment;
-            }
+        //     if (environment == "test" || environment == "stage")
+        //     {
+        //         updatePath = "D:\\apps\\generate.web." + environment;
+        //     }
 
-            Console.WriteLine("Update Path = " + updatePath);
-            dbUpdaterService.Update(true, updatePath);
-        }
+        //     Console.WriteLine("Update Path = " + updatePath);
+        //     dbUpdaterService.Update(true, updatePath);
+        // }
 
 
     }

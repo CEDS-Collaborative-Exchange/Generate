@@ -122,7 +122,7 @@ namespace generate.infrastructure.Services
                 }
                 else if (report.ReportCode == "130")
                 {
-                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, true);
+                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, new OrganizationCountQueryOptions(ObscureMissingCategoryCounts: true));
                     dataRows = query.ToList();
                 }
                 else if (report.ReportCode == "039")
@@ -220,7 +220,7 @@ namespace generate.infrastructure.Services
         {
             List<MembershipReportDto> dataRows = new List<MembershipReportDto>();
 
-            var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, null, false, true, false, startRecord, numberOfRecords);
+            var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, null, new MembershipReportQueryOptions(ObscureMissingCategoryCounts: true, StartRecord: startRecord, NumberOfRecords: numberOfRecords));
             dataRows = query.Item1.ToList();
 
             return (dataRows, query.Item2);

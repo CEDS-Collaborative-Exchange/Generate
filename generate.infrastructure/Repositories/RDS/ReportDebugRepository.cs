@@ -27,8 +27,15 @@ namespace generate.infrastructure.Repositories.RDS
             _logger = logger;
         }
 
-        public IEnumerable<ReportDebug> Get_ReportDebugData(string reportCode, string reportLevel, string reportYear, string categorySetCode, string parameters, int sort, int skip, int take, int pageSize, int page)
+        public IEnumerable<ReportDebug> Get_ReportDebugData(string reportCode, string reportLevel, string reportYear, string categorySetCode, string parameters, ReportDebugPagingOptions paging = null)
         {
+            paging ??= new ReportDebugPagingOptions();
+            int sort = paging.Sort;
+            int skip = paging.Skip;
+            int take = paging.Take;
+            int pageSize = paging.PageSize;
+            int page = paging.Page;
+
             int totalRecordCount = 0;
 
             var returnObject = new List<ReportDebug>();

@@ -63,8 +63,9 @@ namespace generate.infrastructure.Repositories.RDS
 
         }
 
-        public IEnumerable<ReportEDFactsGradesOffered> Get_GradesOfferedReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool flag = false)
+        public IEnumerable<ReportEDFactsGradesOffered> Get_GradesOfferedReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, OrganizationCountQueryOptions options = null)
         {
+            options ??= new OrganizationCountQueryOptions();
             // Convert bool parameters to bit values
 
             var returnObject = new List<ReportEDFactsGradesOffered>();
@@ -74,7 +75,7 @@ namespace generate.infrastructure.Repositories.RDS
             {
                 oldTimeout = _context.Database.GetCommandTimeout();
                 _context.Database.SetCommandTimeout(11000);
-                returnObject = _context.Set<ReportEDFactsGradesOffered>().FromSqlRaw("rds.Get_OrganizationReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @flag={4}", reportCode, reportLevel, reportYear, categorySetCode, flag).ToList();
+                returnObject = _context.Set<ReportEDFactsGradesOffered>().FromSqlRaw("rds.Get_OrganizationReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @flag={4}", reportCode, reportLevel, reportYear, categorySetCode, options.Flag).ToList();
             }
             catch (Exception ex)
             {
@@ -90,8 +91,9 @@ namespace generate.infrastructure.Repositories.RDS
 
         }
 
-        public IEnumerable<ReportEDFactsPersistentlyDangerous> Get_PersistentlyDangerousReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeZeroCounts = false, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool flag = false)
+        public IEnumerable<ReportEDFactsPersistentlyDangerous> Get_PersistentlyDangerousReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, OrganizationCountQueryOptions options = null)
         {
+            options ??= new OrganizationCountQueryOptions();
             // Convert bool parameters to bit values
 
 
@@ -102,7 +104,7 @@ namespace generate.infrastructure.Repositories.RDS
             {
                 oldTimeout = _context.Database.GetCommandTimeout();
                 _context.Database.SetCommandTimeout(11000);
-                returnObject = _context.Set<ReportEDFactsPersistentlyDangerous>().FromSqlRaw("rds.Get_OrganizationReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @flag={4}", reportCode, reportLevel, reportYear, categorySetCode, flag).ToList();
+                returnObject = _context.Set<ReportEDFactsPersistentlyDangerous>().FromSqlRaw("rds.Get_OrganizationReportData @reportCode = {0}, @reportLevel = {1}, @reportYear = {2}, @categorySetCode = {3}, @flag={4}", reportCode, reportLevel, reportYear, categorySetCode, options.Flag).ToList();
             }
             catch (Exception ex)
             {

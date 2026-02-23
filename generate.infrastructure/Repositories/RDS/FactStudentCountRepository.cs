@@ -86,8 +86,15 @@ namespace generate.infrastructure.Repositories.RDS
 
 
 
-        public (IEnumerable<MembershipReportDto>,int)  Get_MembershipReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, bool includeFriendlyCaptions = false, bool obscureMissingCategoryCounts = false, bool isOnlineReport = false, int startRecord = 1, int numberOfRecords = 1000000)
+        public (IEnumerable<MembershipReportDto>,int)  Get_MembershipReportData(string reportCode, string reportLevel, string reportYear, string categorySetCode, MembershipReportQueryOptions options = null)
         {
+            options ??= new MembershipReportQueryOptions();
+            bool includeFriendlyCaptions = options.IncludeFriendlyCaptions;
+            bool obscureMissingCategoryCounts = options.ObscureMissingCategoryCounts;
+            bool isOnlineReport = options.IsOnlineReport;
+            int startRecord = options.StartRecord;
+            int numberOfRecords = options.NumberOfRecords;
+
             // Convert bool parameters to bit values
 
             //int zeroCounts = 0;
