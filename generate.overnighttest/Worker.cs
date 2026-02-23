@@ -372,7 +372,7 @@ namespace generate.overnighttest
 
                 using var scope = serviceProvider!.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                if (!reportCodeArr.Contains(ALL_FACT) && reportCodeArr.Length > 0)
+                if (!reportCodeArr!.Contains(ALL_FACT) && reportCodeArr!.Length > 0)
                 {
                     foreach (var reportCode in reportCodeArr)
                     {
@@ -404,7 +404,7 @@ namespace generate.overnighttest
                 // all the fact  report codes to array
                 if (migrateFactRecords != null && !migrateFactRecords.Contains(ALL_FACT))
                 {
-                    Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider);
+                    Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider!);
                     factsToMigrate = migrateFactRecords.Split(",");
                     if (factsToMigrate.Length == 1 && factTypeCodeToReportCodes.ContainsKey(factsToMigrate[0])) { 
                           isFactType = true;         
@@ -497,14 +497,14 @@ namespace generate.overnighttest
         private void RunTestByFactType(IList<string> factTypeValuesList)
         {
             // Dictionary<string, string> dict = Utils.BuildFactTypeToFileSpec();
-            Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider);
+            Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider!);
             Console.WriteLine("Inside RunTestByFactType factTypeValuesSeperatedByComma:" + TryToString(factTypeValuesList));
             //string[] factTypeArr = factTypeValuesList.Split(",");
 
             foreach (var item in factTypeValuesList)
             {
                 Console.WriteLine("factType came:" + item);
-                if (factTypeCodeToReportCodes.TryGetValue(item, out IList<string> reportCodes))
+                if (factTypeCodeToReportCodes.TryGetValue(item, out IList<string>? reportCodes))
                 {
                     //string reportCodeCommaSeperated = string.Join(",", reportCodes);
                     RunTestByFileSpecReportCode(reportCodes);

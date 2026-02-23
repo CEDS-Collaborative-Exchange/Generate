@@ -37,7 +37,7 @@ namespace generate.infrastructure.Repositories.RDS
 
             if (logToDatabase)
             {
-                DataMigrationType dataMigrationType = _appDbContext.DataMigrationTypes.Where(s => s.DataMigrationTypeCode == dataMigrationTypeCode).FirstOrDefault();
+                DataMigrationType? dataMigrationType = _appDbContext.DataMigrationTypes.Where(s => s.DataMigrationTypeCode == dataMigrationTypeCode).FirstOrDefault();
                 if (dataMigrationType != null)
                 {
                     DataMigrationHistory historyRecord = new DataMigrationHistory()
@@ -78,6 +78,7 @@ namespace generate.infrastructure.Repositories.RDS
                 .Where(x => x.ToggleQuestion.EmapsQuestionAbbrv == "CHDCTDISCAT")
                 .Select(x => mapping.GetValueOrDefault(x.ResponseValue))
                 .Where(val => val != null)
+                .Select(val => val!)
                 .ToList();
         }
 
