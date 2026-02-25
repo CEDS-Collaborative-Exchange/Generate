@@ -105,7 +105,7 @@ BEGIN
 								BEGIN
 									IF (@reportCode='067')
 									BEGIN
-										SET @factFieldName='personnelCount'
+										SET @factFieldName='staffCount'
 									END
 									ELSE IF (@reportCode='150')
 									BEGIN
