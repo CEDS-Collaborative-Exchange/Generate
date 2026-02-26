@@ -111,7 +111,8 @@ namespace generate.infrastructure.Services
             else if (report.FactTable.FactTableName == "FactK12StudentCounts")
             {
                 var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, categorySetCode, false, false, isOnlineReport);
-                dataRows = query.ToList();
+                if (report.ReportCode == "116") { dataRows = query.Where(t => t.TableTypeAbbrv == tableTypeAbbrv).ToList(); }
+                else { dataRows = query.ToList(); }
                 reportDto.dataCount = query.Select(q => q.OrganizationIdentifierSea).Distinct().Count();
              }
             else if (report.FactTable.FactTableName == "FactK12StudentDisciplines")

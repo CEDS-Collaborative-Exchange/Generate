@@ -1091,8 +1091,8 @@ var ReportComponent = function () {
         };
         ReportComponent_1.prototype.showTableType = function () {
             var isDisplayed = false;
-            var assessmentCodes = ['175', '178', '179', '185', '188', '189'];
-            if (assessmentCodes.includes(this.reportParameters.reportCode)) {
+            var ttCodes = ['175', '178', '179', '185', '188', '189', '116'];
+            if (ttCodes.includes(this.reportParameters.reportCode)) {
                 isDisplayed = true;
             }
             return isDisplayed;

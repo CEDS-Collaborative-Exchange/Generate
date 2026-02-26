@@ -1355,9 +1355,9 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     showTableType() {
         let isDisplayed: boolean = false;
-        const assessmentCodes = ['175', '178', '179', '185', '188', '189'];
+        const ttCodes = ['175', '178', '179', '185', '188', '189', '116'];
 
-        if (assessmentCodes.includes(this.reportParameters.reportCode)) {
+        if (ttCodes.includes(this.reportParameters.reportCode)) {
             isDisplayed = true;
         }
         return isDisplayed;
