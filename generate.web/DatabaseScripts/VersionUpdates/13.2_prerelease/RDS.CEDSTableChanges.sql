@@ -208,6 +208,12 @@ ALTER TABLE [RDS].[DimAssessmentPerformanceLevels] ALTER COLUMN [AssessmentPerfo
 ALTER TABLE [RDS].[DimAssessmentPerformanceLevels] ALTER COLUMN [AssessmentPerformanceLevelScoreMetric] NVARCHAR (30) NOT NULL;
 ALTER TABLE [RDS].[DimAssessmentPerformanceLevels] ALTER COLUMN [AssessmentPerformanceLevelUpperCutScore] NVARCHAR (30) NOT NULL;
 
+ Update rds.DimAssessmentPerformanceLevels set AssessmentPerformanceLevelIdentifier = 'MISSING' where DimAssessmentPerformanceLevelId = -1
+ Update rds.DimAssessmentPerformanceLevels set AssessmentPerformanceLevelLabel = 'MISSING'	  where DimAssessmentPerformanceLevelId = -1
+ Update rds.DimAssessmentPerformanceLevels set AssessmentPerformanceLevelScoreMetric = 'MISSING' where DimAssessmentPerformanceLevelId = -1
+ Update rds.DimAssessmentPerformanceLevels set AssessmentPerformanceLevelLowerCutScore = 'MISSING' where DimAssessmentPerformanceLevelId = -1
+ Update rds.DimAssessmentPerformanceLevels set AssessmentPerformanceLevelUpperCutScore = 'MISSING' where DimAssessmentPerformanceLevelId = -1
+
 PRINT N'Creating Index [RDS].[DimAssessmentPerformanceLevels].[IX_DimAssessmentPerformanceLevels_AssessmentPerformanceLevelIdentifier]...';
 
 CREATE NONCLUSTERED INDEX [IX_DimAssessmentPerformanceLevels_AssessmentPerformanceLevelIdentifier]
