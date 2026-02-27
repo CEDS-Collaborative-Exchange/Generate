@@ -251,8 +251,9 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
                         this.cvData = reportDataDto.data;
 
                         if (reportDataDto.categorySets !== null && reportDataDto.categorySets.length > 0) {
-
+                            console.log(reportDataDto.categorySets);
                             this.reportParameters.reportCategorySet = reportDataDto.categorySets[0];
+                            this.reportParameters.reportTableTypeAbbrv = reportDataDto.categorySets[0].tableTypes[0].tableTypeAbbrv;
 
                             if (this.reportDataDto === null) {
                                 this.errorMessage = 'Invalid Report';
