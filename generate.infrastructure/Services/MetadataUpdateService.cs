@@ -121,7 +121,7 @@ namespace generate.infrastructure.Services
             List<DataSetYearVersionByAllAbbrv> initDSYVr = null;
             int maxSubmissionYear = 0;
             int maxVersionNumber = 0;
-            int nxtYear = 0;
+            int prevYear = 0;
             string fqYrName = string.Empty;
 
             try
@@ -152,27 +152,6 @@ namespace generate.infrastructure.Services
                     initDSYVr = JsonConvert.DeserializeObject<List<DataSetYearVersionByAllAbbrv>>(cont);
 
                 }
-                else
-                {
-                    /*
-                     *      Manual file load not needed here
-
-                    var fileloc = _fsMetaFileLoc + "\\" + _fsMetaParentFileName;
-                    using (StreamReader r = new StreamReader(fileloc))
-                    {
-                        cont = r.ReadToEnd();
-                        cont = cont.Replace("{\"DataSetYearVersions\":", "");
-                        cont = cont.Replace("]}", "]");
-                    }
-
-                    initDSYVr = JsonConvert.DeserializeObject<List<DataSetYearVersionByAllAbbrv>>(cont);
-                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == "Published").Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
-                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == "Published" && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
-                    nxtYear = maxSubmissionYear + 1;
-                    fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
-
-                    */
-                }
 
                 #endregion
 
@@ -184,11 +163,11 @@ namespace generate.infrastructure.Services
                 {
                     UpdateKeyinGenConfig(FSMetalogKey, "The metadata is currently being processed.");
                     UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausProcessing);
-                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
-                    if (!string.IsNullOrEmpty(_selSYr)) { maxSubmissionYear = Convert.ToInt32(_selSYr); } 
-                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
-                    nxtYear = maxSubmissionYear + 1;
-                    fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
+                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
+                    if (!string.IsNullOrEmpty(_selSYr)) { maxSubmissionYear = Convert.ToInt32(_selSYr); }
+                    prevYear = maxSubmissionYear - 1;
+                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + prevYear.ToString())).Max(a => a.VersionNumber);
+                    fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
 
                     bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(true, maxSubmissionYear.ToString(), maxVersionNumber);
                     if (!checkPrevFSPop) { skipESSPop = true; goto skipESSPopulation; }
@@ -222,7 +201,7 @@ namespace generate.infrastructure.Services
                     {
                         if ((int?)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault() != null)
                         {
-                            maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault();
+                            maxSubmissionYear = ((int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault()) + 1;
                         }
                     }
 
@@ -232,8 +211,8 @@ namespace generate.infrastructure.Services
                             maxVersionNumber = (int)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault();
                         }
                     }
-                    nxtYear = maxSubmissionYear + 1;
-                    fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
+                    prevYear = maxSubmissionYear - 1;
+                    fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
 
                     bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(true, maxSubmissionYear.ToString(), maxVersionNumber);
                     if (!checkPrevFSPop) { skipESSPop = true; goto skipESSPopulation; }
@@ -266,7 +245,7 @@ namespace generate.infrastructure.Services
 
                 maxSubmissionYear = 0;
                 maxVersionNumber = 0;
-                nxtYear = 0;
+                prevYear = 0;
                 fqYrName = string.Empty;
                 var chrtr = string.Empty;
                 int year = 0;
@@ -290,11 +269,11 @@ namespace generate.infrastructure.Services
                                         orderby n.VersionNumber descending
                                         select new { Year = n.YearName.Replace("SY ", "").Substring(0, 4), versNum = n.VersionNumber.ToString() };
 
-                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
+                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
                     if (!string.IsNullOrEmpty(_selSYr)) { maxSubmissionYear = Convert.ToInt32(_selSYr); }
-                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
-                    nxtYear = maxSubmissionYear + 1;
-                    fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
+                    prevYear = maxSubmissionYear + 1;
+                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + prevYear.ToString())).Max(a => a.VersionNumber);
+                    fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
                     //year = charterQuery4 is null  ? 0 : int.Parse(charterQuery4.FirstOrDefault().Year);
                     year = maxSubmissionYear;
                     if (charterQuery4.FirstOrDefault() is not null)
@@ -333,7 +312,7 @@ namespace generate.infrastructure.Services
                     //DSYVrdetail = (List<DataSetYearVersionDetailsByAllAbbrv>)DSYVrdetail.Where(a => a.DSAbbrv == essDSNameAbbrv).Select(a => a);
                     if ((int?)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault() != null)
                     {
-                        maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault();
+                        maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault() + 1;
                     }
 
                     if ((int?)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault() != null)
@@ -341,8 +320,8 @@ namespace generate.infrastructure.Services
                         maxVersionNumber = (int)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault();
                     }
 
-                    nxtYear = maxSubmissionYear + 1;
-                    fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
+                    prevYear = maxSubmissionYear + 1;
+                    fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
 
                     // check later if need to removed : SA Check
                     year = maxSubmissionYear;
@@ -1606,6 +1585,7 @@ namespace generate.infrastructure.Services
                            d.IsDatacollEnabledLEA,
                            d.IsDatacollEnabledSCH,
                            d.IsDatacollEnabledSEA,
+                           d.YearAbbrv,
                            d.YearValue,
                            d.TableName
                        };
@@ -1625,6 +1605,7 @@ namespace generate.infrastructure.Services
                             a.DEName,
                             a.DEAbbr,
                             a.DEOrderNum,
+                            a.YearAbbrv,
                             a.YearValue,
                             a.TableName,
                             a.DGName,
@@ -1713,6 +1694,7 @@ namespace generate.infrastructure.Services
                     _appDbContext.SaveChanges();
                 }
 
+                string submissionYear = csi.YearAbbrv.Split('-')[1].ToString();
 
                 if (csi.IsDatacollEnabledSEA == 1)
                 {
@@ -1721,7 +1703,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = csName;
                     cs.CategorySetSequence = csi.DEOrderNum;
                     cs.OrganizationLevelId = 1;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.GenerateReportId = genReportId;
                     cs.TableTypeId = tableType.TableTypeId;
                     _appDbContext.CategorySets.Add(cs);
@@ -1739,7 +1721,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = csName;
                     cs.CategorySetSequence = csi.DEOrderNum;
                     cs.OrganizationLevelId = 2;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -1757,7 +1739,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = csName;
                     cs.CategorySetSequence = csi.DEOrderNum;
                     cs.OrganizationLevelId = 3;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -1899,6 +1881,7 @@ namespace generate.infrastructure.Services
             {
                 a.FileSpecName,
                 a.FileSpecNum,
+                a.YearAbbrv,
                 a.YearValue,
                 a.IsDatacollEnabledLEA,
                 a.IsDatacollEnabledSCH,
@@ -1908,6 +1891,7 @@ namespace generate.infrastructure.Services
                 a.ElectronicFileDesc
             }).Distinct().ToList();
 
+            
 
             foreach (var csi in qry_noCSFSpecs_dist)
             {
@@ -1920,6 +1904,7 @@ namespace generate.infrastructure.Services
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
 
+                string submissionYear = csi.YearAbbrv.Split('-')[1].ToString();
 
                 /////////
 
@@ -1978,7 +1963,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1112;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -1994,7 +1979,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1182;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2010,7 +1995,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2029,7 +2014,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 2;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId; // Defaulted to 21. Check with Team.
                     _appDbContext.CategorySets.Add(cs);
@@ -2048,7 +2033,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 3;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2092,6 +2077,7 @@ namespace generate.infrastructure.Services
             {
                 a.FileSpecName,
                 a.FileSpecNum,
+                a.YearAbbrv,
                 a.YearValue,
                 a.IsDatacollEnabledLEA,
                 a.IsDatacollEnabledSCH,
@@ -2113,7 +2099,7 @@ namespace generate.infrastructure.Services
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
 
-
+                string submissionYear = csi.YearAbbrv.Split('-')[1].ToString();
                 /////////
 
                 if (genReportId == 0)
@@ -2167,7 +2153,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1112;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2183,7 +2169,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1182;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2199,7 +2185,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2218,7 +2204,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 2;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId; // Defaulted to 21. Check with Team.
                     _appDbContext.CategorySets.Add(cs);
@@ -2237,7 +2223,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 3;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2281,6 +2267,7 @@ namespace generate.infrastructure.Services
             {
                 a.FileSpecName,
                 a.FileSpecNum,
+                a.YearAbbrv,
                 a.YearValue,
                 a.IsDatacollEnabledLEA,
                 a.IsDatacollEnabledSCH,
@@ -2304,7 +2291,7 @@ namespace generate.infrastructure.Services
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
 
-
+                string submissionYear = csi.YearAbbrv.Split('-')[1].ToString();
                 /////////
 
                 if (genReportId == 0)
@@ -2358,7 +2345,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1112;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2374,7 +2361,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1182;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2390,7 +2377,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2409,7 +2396,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 2;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId; // Defaulted to 21. Check with Team.
                     _appDbContext.CategorySets.Add(cs);
@@ -2428,7 +2415,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 3;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2486,16 +2473,17 @@ namespace generate.infrastructure.Services
 
 
             /* ****** Basic Year Check ****** */
-            string fsLayYear = DSYVrFSLay.Select(a => a.YearName.Replace("SY ", "").Substring(0, 4)).FirstOrDefault();
-            if (fsLayYear != fqYrName.Substring(0, 4))
+            string fsLayYear = DSYVrFSLay.Select(a => a.YearName.Replace("SY ", "").Substring(4, 4)).FirstOrDefault();
+            string submissionYear = fqYrName.Split('-')[1].ToString();
+            if (fsLayYear != submissionYear)
             {
                 var err = " FSLayout Year does not match FS Metadata Year for {0} DataSet. FSLayoutYear : {1} ; FSMetaYear : {2} .";
-                err = string.Format(err, dataSetAbbrv, fsLayYear, fqYrName.Substring(0, 4));
+                err = string.Format(err, dataSetAbbrv, fsLayYear, submissionYear);
                 throw new Exception(err);
             }
 
             // delete FS data in specific Year
-            DeleteFSLayoutInfo(fqYrName.Substring(0, 4), DSYVrFSLay);
+            DeleteFSLayoutInfo(submissionYear, DSYVrFSLay);
             populateFSLayout(DSYVrFSLay);
             // Populate FS data in specific Year
 
@@ -2656,7 +2644,7 @@ namespace generate.infrastructure.Services
                 });
 
                 var distFS = DSYVrFSLay.OrderBy(x => x.FileSpecNum).Select(a => a.FileSpecNum).Distinct().ToList();//.Take(10);
-                var year = DSYVrFSLay.Select(a => new { Year = a.YearName.Replace("SY ", "").Substring(0, 4) }).FirstOrDefault();
+                var year = DSYVrFSLay.Select(a => new { Year = a.YearName.Replace("SY ", "").Substring(4, 4) }).FirstOrDefault();
 
                 IQueryable<GenerateReport> genRep = _appDbContext.GenerateReports;
 
@@ -3083,12 +3071,11 @@ namespace generate.infrastructure.Services
             cont = cont.Replace("{\"DataSetYearVersions\":", "").Replace("]}", "]");
 
             initDSYVr = JsonConvert.DeserializeObject<List<DataSetYearVersionByAllAbbrv>>(cont);
-            maxESSSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
-            maxCHRSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
+            maxESSSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
+            maxCHRSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
             maxSubmissionYear = maxESSSubmissionYear > maxCHRSubmissionYear ? maxESSSubmissionYear : maxCHRSubmissionYear;
 
             var ddlstring = "[" + maxSubmissionYear.ToString() + "," + (maxSubmissionYear - 1).ToString() + "," + (maxSubmissionYear - 2).ToString() + "]";
-            //var ddlstring = "[2025,2024]";
             return ddlstring;
         }
 
