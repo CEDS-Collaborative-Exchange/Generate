@@ -95,7 +95,7 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<bool>> LeaHasNcesIdDistribution { get; set; }
         public List<DataDistribution<string>> RefK12leaTitleIsupportServiceDistribution { get; set; }
         public List<DataDistribution<string>> RefTitleIinstructionalServiceDistribution { get; set; }
-        public List<DataDistribution<string>> RefTitleIprogramTypeDistribution { get; set; }
+        public List<DataDistribution<string>> RefTitleIProgramTypeDistribution { get; set; }
         public List<DataDistribution<string>> RefMepProjectTypeDistribution { get; set; }
         public List<DataDistribution<string>> LeaRefOperationalStatusDistribution { get; set; }
         public List<DataDistribution<string>> RefCharterLeaStatusDistribution { get; set; }
@@ -591,11 +591,11 @@ namespace generate.testdata.Profiles
             this.RefTitleIinstructionalServiceDistribution.Add(new DataDistribution<string>() { Option = "CareerAndTechnical", ExpectedDistribution = 90 });
             this.RefTitleIinstructionalServiceDistribution.Add(new DataDistribution<string>() { Option = "Other", ExpectedDistribution = 100 });
 
-            this.RefTitleIprogramTypeDistribution = new List<DataDistribution<string>>();
-            this.RefTitleIprogramTypeDistribution.Add(new DataDistribution<string>() { Option = "TargetedAssistanceProgram", ExpectedDistribution = 25 });
-            this.RefTitleIprogramTypeDistribution.Add(new DataDistribution<string>() { Option = "SchoolwideProgram", ExpectedDistribution = 50 });
-            this.RefTitleIprogramTypeDistribution.Add(new DataDistribution<string>() { Option = "PrivateSchoolStudents", ExpectedDistribution = 75 });
-            this.RefTitleIprogramTypeDistribution.Add(new DataDistribution<string>() { Option = "LocalNeglectedProgram", ExpectedDistribution = 100 });
+            this.RefTitleIProgramTypeDistribution = new List<DataDistribution<string>>();
+            this.RefTitleIProgramTypeDistribution.Add(new DataDistribution<string>() { Option = "TargetedAssistanceProgram", ExpectedDistribution = 25 });
+            this.RefTitleIProgramTypeDistribution.Add(new DataDistribution<string>() { Option = "SchoolwideProgram", ExpectedDistribution = 50 });
+            this.RefTitleIProgramTypeDistribution.Add(new DataDistribution<string>() { Option = "PrivateSchoolStudents", ExpectedDistribution = 75 });
+            this.RefTitleIProgramTypeDistribution.Add(new DataDistribution<string>() { Option = "LocalNeglectedProgram", ExpectedDistribution = 100 });
 
             this.RefMepProjectTypeDistribution = new List<DataDistribution<string>>();
             this.RefMepProjectTypeDistribution.Add(new DataDistribution<string>() { Option = "SchoolDay", ExpectedDistribution = 25 });
