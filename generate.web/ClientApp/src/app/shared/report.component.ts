@@ -1367,7 +1367,11 @@ export class ReportComponent implements AfterViewInit, OnInit {
         const ttCodes = ['175', '178', '179', '185', '188', '189', '116'];
 
         if (ttCodes.includes(this.reportParameters.reportCode)) {
-            isDisplayed = true;
+            if (this.reportParameters.reportCode === '116' && this.reportParameters.reportCategorySetCode !== 'CSA') {
+                isDisplayed = false;
+            } else {
+                isDisplayed = true;
+            }
         }
         return isDisplayed;
     }

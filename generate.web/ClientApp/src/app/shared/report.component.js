@@ -369,9 +369,7 @@ var ReportComponent = function () {
                     /*this.reportParameters.reportLevel = newParameters.reportLevel;*/
                 }
                 _this.categorySets = _this.getCategorySets(_this.currentReport.categorySets, newParameters);
-                console.log(_this.categorySets);
                 _this.tableTypes = _this.categorySets[0].tableTypes;
-                console.log(_this.categorySets[0].tableTypes);
                 if (_this.categorySets !== undefined && _this.categorySets.length > 0) {
                     newParameters.reportCategorySet = _this.categorySets.filter(function (t) { return t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear; })[0];
                     newParameters.reportCategorySetCode = newParameters.reportCategorySet.categorySetCode;
@@ -1108,7 +1106,12 @@ var ReportComponent = function () {
             var isDisplayed = false;
             var ttCodes = ['175', '178', '179', '185', '188', '189', '116'];
             if (ttCodes.includes(this.reportParameters.reportCode)) {
-                isDisplayed = true;
+                if (this.reportParameters.reportCode === '116' && this.reportParameters.reportCategorySetCode !== 'CSA') {
+                    isDisplayed = false;
+                }
+                else {
+                    isDisplayed = true;
+                }
             }
             return isDisplayed;
         };

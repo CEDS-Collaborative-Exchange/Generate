@@ -376,21 +376,6 @@ BEGIN
 								END
 							END
 
-							IF(@reportCode = '116')
-							BEGIN
-								IF EXISTS (SELECT 1 FROM app.CategorySets cs 
-										   INNER JOIN app.TableTypes tt ON cs.TableTypeId = tt.TableTypeId
-										   INNER JOIN rds.DimSchoolYears dd on cs.SubmissionYear = dd.SchoolYear
-										   WHERE  dd.SchoolYear  > 2018
-										   AND cs.CategorySetCode = 'CSA'
-										   AND tt.TableTypeAbbrv = 'TTLIIILEPSTDSRV' 
-										   AND cs.CategorySetId = @categorySetId)
-								BEGIN
-									SET @fields=@fields+ ',{"binding":"titleiiilanguageinstruction","header":"Language Instruction Educational Program Type","dataType":2,"aggregate":0,"showAs":0,"descending":false,"format":"n0","wordWrap":true,"isContentHtml":false}'
-									SET @rowFields=@rowFields+',"Language Instruction Educational Program Type"'
-								END
-							END
-					
 							set @colFields =@colFields+']}'
 								SET @rowFields=@rowFields+']},'
 
