@@ -254,6 +254,7 @@ namespace generate.testdata.DataGenerators
                     StudentsEnrolledAtSeaLevelOnly.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     StudentsEnrolledAtLeaLevelOnly.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     CIID5128MulipleRace.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
+                    FS086_CIID8626.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
 
                 }
                 else
