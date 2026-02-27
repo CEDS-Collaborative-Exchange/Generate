@@ -97,7 +97,6 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<bool>> LeaHasNcesIdDistribution { get; set; }
         List<DataDistribution<string>> RefK12leaTitleIsupportServiceDistribution { get; set; }
         List<DataDistribution<string>> RefTitleIinstructionalServiceDistribution { get; set; }
-        List<DataDistribution<string>> RefTitleIprogramTypeDistribution { get; set; }
         List<DataDistribution<string>> RefMepProjectTypeDistribution { get; set; }
         List<DataDistribution<string>> LeaRefOperationalStatusDistribution { get; set; }
         List<DataDistribution<string>> RefCharterLeaStatusDistribution { get; set; }
@@ -128,6 +127,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<bool>> HasHomelessProgramDistribution { get; set; }
 
 
+        List<DataDistribution<string>> RefTitleIProgramTypeDistribution { get; set; }
         List<DataDistribution<string>> RefTitleIschoolStatusDistribution { get; set; }
         List<DataDistribution<string>> RefMagnetSpecialProgramDistribution { get; set; }
         List<DataDistribution<string>> RefNSLPStatusDistribution { get; set; }

@@ -254,6 +254,7 @@ namespace generate.testdata.DataGenerators
                     StudentsEnrolledAtSeaLevelOnly.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     StudentsEnrolledAtLeaLevelOnly.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     CIID5128MulipleRace.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
+                    FS086_CIID8626.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
 
                 }
                 else
@@ -2406,6 +2407,9 @@ namespace generate.testdata.DataGenerators
         {
             testData.K12Organizations.ForEach(o =>
             {
+                //FS222 column
+                o.LEA_TitleIProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIProgramTypeDistribution);
+
                 o.School_TitleISchoolStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIschoolStatusDistribution);
                 o.School_GunFreeSchoolsActReportingStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefGunFreeSchoolsActReportingStatusDistribution);
                 o.School_SchoolDangerousStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSchoolDangerousStatusDistribution);

@@ -492,3 +492,10 @@ IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IXFK_FactOrganizationCoun
 
 
 -- End of upgrade script
+
+-------------------------------------------
+-- File 067
+-------------------------------------------
+    --Add missing metadata
+    insert into app.Category_Dimensions
+    values (513, 3)
