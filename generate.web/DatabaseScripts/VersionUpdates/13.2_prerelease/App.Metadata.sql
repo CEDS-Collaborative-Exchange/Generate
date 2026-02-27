@@ -1,4 +1,4 @@
- declare @factTableId as int, @dimensionTableId as int
+ declare @factTableId as int, @dimensionTableId as int,  @categoryId as INT, @dimensionId as INT
  
  Update app.FileColumns set ReportColumn = 'MailingAddressCity' where ColumnName = 'MailingCity'
  Update app.FileColumns set ReportColumn = 'MailingAddressPostalCode' where ColumnName = 'MailingZipcode'
@@ -37,3 +37,18 @@
     set dimensionid = 55
         , ReportColumn = 'TITLEIIILANGUAGEINSTRUCTIONPROGRAMTYPE'
     where ReportColumn = 'TITLEIIILANGUAGEINSTRUCTION'
+
+   
+
+    select @dimensionId = DimensionId from app.Dimensions where DimensionFieldName = 'EdFactsCertificationStatus'
+    select @categoryId = CategoryId from app.Categories where CategoryCode = 'CERTSTATUSTLIII'
+
+    IF NOT EXISTS(SELECT 1 FROM app.Category_Dimensions where CategoryId = @categoryId and DimensionId = @dimensionId)
+    BEGIN
+        INSERT INTO [App].[Category_Dimensions]
+                   ([CategoryId]
+                   ,[DimensionId])
+             VALUES (@categoryId, @dimensionId)
+    END
+
+    exec App.UpdateViewDefinitions
