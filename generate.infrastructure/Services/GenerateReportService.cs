@@ -452,7 +452,8 @@ namespace generate.infrastructure.Services
                     }
 
                     //List<TableType> tableTypes = new List<TableType>();
-                    categorySetDto.TableTypes = categorySets.AsQueryable().Select(c => c.TableType).Distinct().ToList();
+                    categorySetDto.TableTypes = categorySets.AsQueryable().Where(c => c.CategorySetCode == item.CategorySetCode).Select(c => c.TableType).Distinct().ToList();
+                    //categorySets.AsQueryable().Select(c => c.TableType).Distinct().ToList();
 
                     categorySetDto.Categories = categories;
                     categorySetDto.CategoryOptions = categoryOptions;

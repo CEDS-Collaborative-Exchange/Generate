@@ -64,6 +64,9 @@ var ReportComponent = function () {
     var _flextableComponent_decorators;
     var _flextableComponent_initializers = [];
     var _flextableComponent_extraInitializers = [];
+    var _comboTableTypeCode_decorators;
+    var _comboTableTypeCode_initializers = [];
+    var _comboTableTypeCode_extraInitializers = [];
     var ReportComponent = _classThis = /** @class */ (function () {
         function ReportComponent_1(_router, _generateReportService, _dataMigrationService, _organizationService, _gradelevelService, activatedRoute, _metadataUpdate) {
             this._router = _router;
@@ -76,7 +79,8 @@ var ReportComponent = function () {
             this.subscriptions = [];
             this.reportType = __runInitializers(this, _reportType_initializers, void 0);
             this.flextableComponent = (__runInitializers(this, _reportType_extraInitializers), __runInitializers(this, _flextableComponent_initializers, void 0));
-            this.reportParameters = (__runInitializers(this, _flextableComponent_extraInitializers), new generateReportParametersDto_1.GenerateReportParametersDto());
+            this.comboTableTypeCode = (__runInitializers(this, _flextableComponent_extraInitializers), __runInitializers(this, _comboTableTypeCode_initializers, void 0));
+            this.reportParameters = (__runInitializers(this, _comboTableTypeCode_extraInitializers), new generateReportParametersDto_1.GenerateReportParametersDto());
             this.isReportChanged = false;
             this.flag = false;
             this.flag1 = false;
@@ -280,7 +284,10 @@ var ReportComponent = function () {
                             newParameters.reportYear = (new Date()).getFullYear().toString();
                         }
                         if (newParameters.reportTableTypeAbbrv === undefined && !_this.isNullOrUndefined(_this.tableTypes)) {
-                            newParameters.reportTypeAbbreviation = _this.tableTypes[0].tableTypeAbbrv;
+                            newParameters.reportTableTypeAbbrv = _this.tableTypes[0].tableTypeAbbrv;
+                            if (_this.comboTableTypeCode) {
+                                _this.comboTableTypeCode.selectedItem = _this.tableTypes[0];
+                            }
                         }
                         _this.reportswithGradeFilter = '';
                         _this.errorMessage = null;
@@ -362,7 +369,9 @@ var ReportComponent = function () {
                     /*this.reportParameters.reportLevel = newParameters.reportLevel;*/
                 }
                 _this.categorySets = _this.getCategorySets(_this.currentReport.categorySets, newParameters);
+                console.log(_this.categorySets);
                 _this.tableTypes = _this.categorySets[0].tableTypes;
+                console.log(_this.categorySets[0].tableTypes);
                 if (_this.categorySets !== undefined && _this.categorySets.length > 0) {
                     newParameters.reportCategorySet = _this.categorySets.filter(function (t) { return t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear; })[0];
                     newParameters.reportCategorySetCode = newParameters.reportCategorySet.categorySetCode;
@@ -370,6 +379,9 @@ var ReportComponent = function () {
                 if (_this.tableTypes !== undefined && _this.tableTypes.length > 0) {
                     if (!_this.isNullOrUndefined(_this.tableTypes[0])) {
                         newParameters.reportTableTypeAbbrv = _this.tableTypes[0].tableTypeAbbrv;
+                        if (_this.comboTableTypeCode) {
+                            _this.comboTableTypeCode.selectedItem = _this.tableTypes.find(function (t) { return t.tableTypeAbbrv == newParameters.reportTableTypeAbbrv; });
+                        }
                     }
                     else {
                         newParameters.reportTableTypeAbbrv = null;
@@ -604,6 +616,9 @@ var ReportComponent = function () {
                     if (newParameters.reportCategorySet.categorySetCode !== reportCategorySet.categorySetCode) {
                         newParameters.reportCategorySet = reportCategorySet;
                         newParameters.reportCategorySetCode = reportCategorySet.categorySetCode;
+                        if (newParameters.reportCode === '116') {
+                            newParameters.reportTableTypeAbbrv = undefined;
+                        }
                         if (this.reportType === 'statereport') {
                             this.setQueryString(newParameters);
                         }
@@ -1115,8 +1130,10 @@ var ReportComponent = function () {
         var _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
         _reportType_decorators = [(0, core_1.Input)()];
         _flextableComponent_decorators = [(0, core_1.ViewChild)(flextable_component_1.FlextableComponent)];
+        _comboTableTypeCode_decorators = [(0, core_1.ViewChild)('comboTableTypeCode')];
         __esDecorate(null, null, _reportType_decorators, { kind: "field", name: "reportType", static: false, private: false, access: { has: function (obj) { return "reportType" in obj; }, get: function (obj) { return obj.reportType; }, set: function (obj, value) { obj.reportType = value; } }, metadata: _metadata }, _reportType_initializers, _reportType_extraInitializers);
         __esDecorate(null, null, _flextableComponent_decorators, { kind: "field", name: "flextableComponent", static: false, private: false, access: { has: function (obj) { return "flextableComponent" in obj; }, get: function (obj) { return obj.flextableComponent; }, set: function (obj, value) { obj.flextableComponent = value; } }, metadata: _metadata }, _flextableComponent_initializers, _flextableComponent_extraInitializers);
+        __esDecorate(null, null, _comboTableTypeCode_decorators, { kind: "field", name: "comboTableTypeCode", static: false, private: false, access: { has: function (obj) { return "comboTableTypeCode" in obj; }, get: function (obj) { return obj.comboTableTypeCode; }, set: function (obj, value) { obj.comboTableTypeCode = value; } }, metadata: _metadata }, _comboTableTypeCode_initializers, _comboTableTypeCode_extraInitializers);
         __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
         ReportComponent = _classThis = _classDescriptor.value;
         if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
