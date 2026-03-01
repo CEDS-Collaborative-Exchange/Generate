@@ -8,6 +8,7 @@ VersionUpdates\\13.2_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\13.2_prerelease,App.TableChanges.sql,0
 VersionUpdates\\13.2_prerelease,App.Metadata.sql,0
 VersionUpdates\\13.2_prerelease,JunkTablePopulation.sql,0
+VersionUpdates\\13.2_prerelease,dbo.TableChanges.sql,0
 Views\\Drop,debug.vwDropout_StagingTables.View.sql,0
 Views\\Create,debug.vwDropout_StagingTables.View.sql,0
 Views\\Drop,debug.vwStaff_StagingTables.View.sql,0
@@ -279,6 +280,10 @@ StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimCharterSchoolAuthorizers.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimCharterSchoolAuthorizers.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimCharterSchoolManagementOrganizations.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimCharterSchoolManagementOrganizations.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimAssessmentAdministrations.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimAssessmentAdministrations.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimPeople_K12Staff.StoredProcedure.sql,0

@@ -111,8 +111,9 @@ BEGIN
 	LEFT JOIN Staging.OrganizationPhone sop
 		ON scsmo.CharterSchoolManagementOrganizationOrganizationIdentifierEIN = sop.OrganizationIdentifier
 		AND sop.OrganizationType = orgTypes.CharterSchoolManagementOrganization
-	LEFT JOIN dbo.RefCharterSchoolManagementOrganizationType refcsmot
-		ON refcsmot.Code = ssrd.OutputCode
+	LEFT JOIN ceds.CedsOptionSetMapping refcsmot
+		ON refcsmot.CedsElementTechnicalName = 'CharterSchoolManagementOrganizationType'
+		AND refcsmot.CedsOptionSetCode = ssrd.OutputCode
 
 -- MERGE INTO DimCharterSchoolManagementOrganizations
 	BEGIN TRY
