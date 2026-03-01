@@ -115,8 +115,9 @@ BEGIN
 	LEFT JOIN Staging.OrganizationPhone sop
 		ON scsa.CharterSchoolAuthorizingOrganizationOrganizationIdentifierSea = sop.OrganizationIdentifier
 		AND sop.OrganizationType = orgTypes.CharterSchoolAuthorizingOrganization
-	LEFT JOIN dbo.RefCharterSchoolAuthorizerType refcsat
-		ON refcsat.Code = ssrd.OutputCode
+	LEFT JOIN ceds.CedsOptionSetMapping refcsat
+		ON refcsat.CedsElementTechnicalName = 'CharterSchoolAuthorizerType'
+		AND refcsat.CedsOptionSetCode = ssrd.OutputCode
 
 -- MERGE INTO DimCharterSchoolAuthorizers
 	BEGIN TRY
