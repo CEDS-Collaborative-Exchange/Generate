@@ -219,7 +219,9 @@ var PivotGridComponent = function () {
                     _this.reportDataDto = reportDataDto;
                     _this.cvData = reportDataDto.data;
                     if (reportDataDto.categorySets !== null && reportDataDto.categorySets.length > 0) {
+                        console.log(reportDataDto.categorySets);
                         _this.reportParameters.reportCategorySet = reportDataDto.categorySets[0];
+                        _this.reportParameters.reportTableTypeAbbrv = reportDataDto.categorySets[0].tableTypes[0].tableTypeAbbrv;
                         if (_this.reportDataDto === null) {
                             _this.errorMessage = 'Invalid Report';
                         }

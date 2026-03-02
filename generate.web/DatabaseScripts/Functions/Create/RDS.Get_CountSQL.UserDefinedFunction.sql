@@ -1434,8 +1434,9 @@ BEGIN
 			begin
 				set @sqlCategoryOptions = @sqlCategoryOptions + '
 			insert into #cat_' + @reportField + '
-			select distinct Code
-			from dbo.RefSex
+			select distinct CedsOptionSetCode
+			from ceds.CedsOptionSetMapping
+			where CedsElementTechnicalName = ''Sex''
 
 			insert into #cat_' + @reportField + '
 			select ''MISSING''
@@ -1446,8 +1447,9 @@ BEGIN
 			begin
 				set @sqlCategoryOptions = @sqlCategoryOptions + '
 			insert into #cat_' + @reportField + '
-			select distinct Code
-			from dbo.RefRace
+			select distinct CedsOptionSetCode
+			from ceds.CedsOptionSetMapping
+			where CedsElementTechnicalName = ''Race''
 
 			insert into #cat_' + @reportField + '
 			select ''MISSING''

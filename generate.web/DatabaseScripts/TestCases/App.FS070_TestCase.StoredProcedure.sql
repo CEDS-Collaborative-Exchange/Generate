@@ -63,10 +63,6 @@ BEGIN
 	-- Clear out last run
 	DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId
 	
-	--Get the Special Education program code
-	DECLARE @SPEDProgram varchar(5)
-	SELECT @SPEDProgram = [code] from dbo.RefProgramType where [Definition] = 'Special Education Services'
-
 	--Get School Year End Date
 	DECLARE @SYStartDate datetime = staging.GetFiscalYearStartDate(@schoolYear)
 

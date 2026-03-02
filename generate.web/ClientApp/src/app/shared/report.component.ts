@@ -24,6 +24,7 @@ import { GenerateReportFilterOptionDto } from '../models/app/generateReportFilte
 import { TableType } from '../models/app/tableType';
 
 import { FlextableComponent } from './components/flextable/flextable.component';
+import { ComboBoxComponent } from './components/combo-box/combo-box.component';
 
 
 declare let componentHandler: any;
@@ -47,6 +48,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     @Input() reportType: string;
     @ViewChild(FlextableComponent) flextableComponent: FlextableComponent;
+    @ViewChild('comboTableTypeCode') comboTableTypeCode: ComboBoxComponent;
 
     public reportParameters: IGenerateReportParametersDto = new GenerateReportParametersDto();
 
@@ -325,7 +327,10 @@ export class ReportComponent implements AfterViewInit, OnInit {
                     }
 
                     if (newParameters.reportTableTypeAbbrv === undefined && !this.isNullOrUndefined(this.tableTypes)) {
-                        newParameters.reportTypeAbbreviation = this.tableTypes[0].tableTypeAbbrv;
+                        newParameters.reportTableTypeAbbrv = this.tableTypes[0].tableTypeAbbrv;
+                        if (this.comboTableTypeCode) {
+                            this.comboTableTypeCode.selectedItem = this.tableTypes[0];
+                        }
                     }
 
                     this.reportswithGradeFilter = '';
@@ -450,6 +455,9 @@ export class ReportComponent implements AfterViewInit, OnInit {
             if (this.tableTypes !== undefined && this.tableTypes.length > 0) {
                 if (!this.isNullOrUndefined(this.tableTypes[0])) {
                     newParameters.reportTableTypeAbbrv = this.tableTypes[0].tableTypeAbbrv;
+                    if (this.comboTableTypeCode) {
+                        this.comboTableTypeCode.selectedItem = this.tableTypes.find(t => t.tableTypeAbbrv == newParameters.reportTableTypeAbbrv);
+                    }
                 }
                 else {
                     newParameters.reportTableTypeAbbrv = null;
@@ -754,6 +762,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
                 if (newParameters.reportCategorySet.categorySetCode !== reportCategorySet.categorySetCode) {
                     newParameters.reportCategorySet = reportCategorySet;
                     newParameters.reportCategorySetCode = reportCategorySet.categorySetCode;
+                    if (newParameters.reportCode === '116') { newParameters.reportTableTypeAbbrv = undefined; }
 
                     if (this.reportType === 'statereport') {
                         this.setQueryString(newParameters);
@@ -1355,10 +1364,14 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     showTableType() {
         let isDisplayed: boolean = false;
-        const assessmentCodes = ['175', '178', '179', '185', '188', '189'];
+        const ttCodes = ['175', '178', '179', '185', '188', '189', '116'];
 
-        if (assessmentCodes.includes(this.reportParameters.reportCode)) {
-            isDisplayed = true;
+        if (ttCodes.includes(this.reportParameters.reportCode)) {
+            if (this.reportParameters.reportCode === '116' && this.reportParameters.reportCategorySetCode !== 'CSA') {
+                isDisplayed = false;
+            } else {
+                isDisplayed = true;
+            }
         }
         return isDisplayed;
     }

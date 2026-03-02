@@ -78,10 +78,6 @@ BEGIN
 		DECLARE @dimCharterSchoolAuthorizerId AS INT
 		DECLARE @dimCharterSchoolSecondaryAuthorizerId AS INT
 
-		DECLARE @leaOperationalStatustypeId AS INT, @schOperationalStatustypeId AS INT
-		SELECT @leaOperationalStatustypeId = RefOperationalStatusTypeId FROM dbo.RefOperationalStatusType WHERE Code = '000174'
-		SELECT @schOperationalStatustypeId = RefOperationalStatusTypeId FROM dbo.RefOperationalStatusType WHERE Code = '000533'
-		
 		-- DELETE RECORDS FOR SCHOOL YEAR FROM FACT TABLE
 		DELETE FROM rds.FactOrganizationCounts 
 		WHERE SchoolYearId = @SchoolYearId
