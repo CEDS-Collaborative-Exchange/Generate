@@ -28,6 +28,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -267,11 +268,11 @@ namespace generate.infrastructure.Services
                     var charterQuery4 = from n in initDSYVr
                                         where n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + charterQuery3.Year)
                                         orderby n.VersionNumber descending
-                                        select new { Year = n.YearName.Replace("SY ", "").Substring(0, 4), versNum = n.VersionNumber.ToString() };
+                                        select new { Year = (int.Parse(n.YearName.Replace("SY ", "").Substring(0, 4)) + 1).ToString(), versNum = n.VersionNumber.ToString() };
 
                     maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
                     if (!string.IsNullOrEmpty(_selSYr)) { maxSubmissionYear = Convert.ToInt32(_selSYr); }
-                    prevYear = maxSubmissionYear + 1;
+                    prevYear = maxSubmissionYear - 1;
                     maxVersionNumber = initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + prevYear.ToString())).Max(a => a.VersionNumber);
                     fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
                     //year = charterQuery4 is null  ? 0 : int.Parse(charterQuery4.FirstOrDefault().Year);
@@ -2473,7 +2474,7 @@ namespace generate.infrastructure.Services
 
 
             /* ****** Basic Year Check ****** */
-            string fsLayYear = DSYVrFSLay.Select(a => a.YearName.Replace("SY ", "").Substring(4, 4)).FirstOrDefault();
+            string fsLayYear = ((int.Parse(DSYVrFSLay.Select(a => a.YearName.Replace("SY ", "").Substring(0, 4)).FirstOrDefault())) + 1).ToString();
             string submissionYear = fqYrName.Split('-')[1].ToString();
             if (fsLayYear != submissionYear)
             {
@@ -2644,7 +2645,7 @@ namespace generate.infrastructure.Services
                 });
 
                 var distFS = DSYVrFSLay.OrderBy(x => x.FileSpecNum).Select(a => a.FileSpecNum).Distinct().ToList();//.Take(10);
-                var year = DSYVrFSLay.Select(a => new { Year = a.YearName.Replace("SY ", "").Substring(4, 4) }).FirstOrDefault();
+                var year = DSYVrFSLay.Select(a => new { Year = (int.Parse(a.YearName.Replace("SY ", "").Substring(0, 4)) + 1).ToString() }).FirstOrDefault();
 
                 IQueryable<GenerateReport> genRep = _appDbContext.GenerateReports;
 
@@ -2678,7 +2679,7 @@ namespace generate.infrastructure.Services
                         _fs = new FileSubmission();
                         //_fs.OrganizationLevel = sea;
                         _fs.OrganizationLevel = (fs == "190" ? cao : fs == "196" ? cmo : sea);
-                        _fs.SubmissionYear = year.Year.ToString();
+                        _fs.SubmissionYear = year.Year;
                         _fs.GenerateReportId = genid;
                         _fs.FileSubmissionDescription = file_description.Substring(0, file_description.Length - 1);
                         _appDbContext.FileSubmissions.Add(_fs);
