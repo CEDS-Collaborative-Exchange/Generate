@@ -138,6 +138,11 @@ $fa-font-path: "~font-awesome/fonts/";
     position: relative;
 }
 
+/* Override MDL's fixed-drawer margin — custom drawer handles its own layout */
+.mdl-layout--fixed-drawer > .mdl-layout__content {
+    margin-left: 0;
+}
+
 /* Drawer does NOT consume layout space */
 .app-drawer {
     position: absolute;
@@ -191,8 +196,9 @@ $fa-font-path: "~font-awesome/fonts/";
     width: calc(100% - 260px);
 }
 
-/* Content area */
+/* Content area — override MDL's inline-block so content fills full width */
 .app-content {
+    display: block;
     flex: 1;
     overflow: auto;
     padding: 16px;

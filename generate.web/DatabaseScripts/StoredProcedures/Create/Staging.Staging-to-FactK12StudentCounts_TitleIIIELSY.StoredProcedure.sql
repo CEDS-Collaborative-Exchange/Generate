@@ -21,6 +21,7 @@ BEGIN
 	IF OBJECT_ID(N'tempdb..#vwLanguages') IS NOT NULL DROP TABLE #vwLanguages
 	IF OBJECT_ID(N'tempdb..#vwGradeLevels') IS NOT NULL DROP TABLE #vwGradeLevels
 	IF OBJECT_ID(N'tempdb..#vwIdeaStatuses') IS NOT NULL DROP TABLE #vwIdeaStatuses
+	IF OBJECT_ID(N'tempdb..#vwImmigrantStatuses') IS NOT NULL DROP TABLE #vwImmigrantStatuses
 
 	BEGIN TRY
 
@@ -121,6 +122,7 @@ BEGIN
 		INTO #vwLanguages
 		FROM RDS.vwDimLanguages
 		WHERE SchoolYear = @SchoolYear
+		AND isnull(Iso6392LanguageMap, '') <> ''  
 		GROUP BY SchoolYear, Iso6392LanguageCodeCode, Iso6392LanguageMap
 
 		CREATE CLUSTERED INDEX ix_tempvwLanguages
