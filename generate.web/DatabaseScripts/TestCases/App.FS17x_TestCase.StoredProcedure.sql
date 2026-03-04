@@ -263,162 +263,160 @@ Use the @FileSpec parameter to pass in one of the
 		OR sop.OrganizationIdentifier IS NULL
 
 
-	-- #StagingAssessment --------------------------------------------------------------------------------
-		SELECT *
-		INTO #StagingAssessment
-		FROM Staging.Assessment
-		WHERE [AssessmentAcademicSubject] = @AssessmentAcademicSubject
-		--AND AssessmentType = @AssessmentType
+-- #StagingAssessment --------------------------------------------------------------------------------
+	SELECT *
+	INTO #StagingAssessment
+	FROM Staging.Assessment
+	WHERE [AssessmentAcademicSubject] = @AssessmentAcademicSubject
+	--AND AssessmentType = @AssessmentType
 
-			CREATE NONCLUSTERED INDEX IX_a ON #StagingAssessment (AssessmentTitle,AssessmentAcademicSubject,AssessmentPurpose,
-			AssessmentPerformanceLevelIdentifier)
+		CREATE NONCLUSTERED INDEX IX_a ON #StagingAssessment (AssessmentTitle,AssessmentAcademicSubject,AssessmentPurpose,
+		AssessmentPerformanceLevelIdentifier)
 
-	-- #StagingAssessmentResult ----------------------------------------------------------------------------
-		SELECT ReportTotal.*, rdg.GradeLevelCode, ssrd.OutputCode AssessmentAcademicSubjectCode--, ssrd1.OutputCode AssessmentPurposeCode
-		INTO #StagingAssessmentResult 
-		--select *
-		FROM Staging.AssessmentResult ReportTotal
-		LEFT JOIN RDS.vwDimGradeLevels rdg
-			on ReportTotal.GradeLevelWhenAssessed = rdg.GradeLevelMap
-			and ReportTotal.SchoolYear = rdg.SchoolYear
-			and rdg.GradeLevelTypeCode = '000126'
-		LEFT JOIN Staging.SourceSystemReferenceData ssrd
-			on ReportTotal.AssessmentAcademicSubject = ssrd.InputCode
-			and ReportTotal.SchoolYear = ssrd.SchoolYear
-			and ssrd.TableName = 'RefAcademicSubject'
-		--LEFT JOIN Staging.SourceSystemReferenceData ssrd1
-		--	on ReportTotal.AssessmentPurpose = ssrd1.InputCode
-		--	and ReportTotal.SchoolYear = ssrd1.SchoolYear
-		--	and ssrd1.TableName = 'RefAssessmentPurpose'
-		WHERE 
-		AssessmentRegistrationParticipationIndicator = 1
-		AND AssessmentAcademicSubject = @AssessmentAcademicSubject
-		AND ReportTotal.SchoolYear = @SchoolYear
-		--AND AssessmentType = @AssessmentType
-		--AND ssrd1.OutputCode = @AssessmentPurpose
+-- #StagingAssessmentResult ----------------------------------------------------------------------------
+	SELECT ReportTotal.*, rdg.GradeLevelCode, ssrd.OutputCode AssessmentAcademicSubjectCode--, ssrd1.OutputCode AssessmentPurposeCode
+	INTO #StagingAssessmentResult 
+	--select *
+	FROM Staging.AssessmentResult ReportTotal
+	LEFT JOIN RDS.vwDimGradeLevels rdg
+		on ReportTotal.GradeLevelWhenAssessed = rdg.GradeLevelMap
+		and ReportTotal.SchoolYear = rdg.SchoolYear
+		and rdg.GradeLevelTypeCode = '000126'
+	LEFT JOIN Staging.SourceSystemReferenceData ssrd
+		on ReportTotal.AssessmentAcademicSubject = ssrd.InputCode
+		and ReportTotal.SchoolYear = ssrd.SchoolYear
+		and ssrd.TableName = 'RefAcademicSubject'
+	--LEFT JOIN Staging.SourceSystemReferenceData ssrd1
+	--	on ReportTotal.AssessmentPurpose = ssrd1.InputCode
+	--	and ReportTotal.SchoolYear = ssrd1.SchoolYear
+	--	and ssrd1.TableName = 'RefAssessmentPurpose'
+	WHERE 
+	AssessmentRegistrationParticipationIndicator = 1
+	AND AssessmentAcademicSubject = @AssessmentAcademicSubject
+	AND ReportTotal.SchoolYear = @SchoolYear
+	--AND AssessmentType = @AssessmentType
+	--AND ssrd1.OutputCode = @AssessmentPurpose
 --and ReportTotal.studentidentifierstate = '0000388798'
 --return
 
-			CREATE NONCLUSTERED INDEX IX_asr ON #StagingAssessmentResult (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea,
-			SchoolYear,GradeLevelWhenAssessed,AssessmentTitle,AssessmentAcademicSubject,--AssessmentPurpose,
-			AssessmentPerformanceLevelIdentifier)
+		CREATE NONCLUSTERED INDEX IX_asr ON #StagingAssessmentResult (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea,
+		SchoolYear,GradeLevelWhenAssessed,AssessmentTitle,AssessmentAcademicSubject,--AssessmentPurpose,
+		AssessmentPerformanceLevelIdentifier)
 
-	-- #DimAssessments ---------------------------------------------------------------------------------------
-		SELECT DISTINCT
-			AssessmentIdentifierState, 
-			AssessmentAcademicSubjectCode, AssessmentAcademicSubjectMap, 
-			AssessmentTypeAdministeredCode,AssessmentTypeAdministeredMap,
-			AssessmentPerformanceLevelIdentifier, ssrd.InputCode 'AssessmentPerformanceLevelMap'
-		INTO #DimAssessments
-		FROM RDS.vwDimAssessments rda
-		cross join RDS.DimAssessmentPerformanceLevels rdapl
-		inner join staging.SourceSystemReferenceData ssrd
-			on ssrd.SchoolYear = @SchoolYear
-			and ssrd.InputCode = rdapl.AssessmentPerformanceLevelIdentifier
-			and ssrd.TableName = 'AssessmentPerformanceLevel_Identifier'
+-- #DimAssessments ---------------------------------------------------------------------------------------
+	SELECT DISTINCT
+		AssessmentIdentifierState, 
+		AssessmentAcademicSubjectCode, AssessmentAcademicSubjectMap, 
+		AssessmentTypeAdministeredCode,AssessmentTypeAdministeredMap,
+		AssessmentPerformanceLevelIdentifier, ssrd.InputCode 'AssessmentPerformanceLevelMap'
+	INTO #DimAssessments
+	FROM RDS.vwDimAssessments rda
+	cross join RDS.DimAssessmentPerformanceLevels rdapl
+	inner join staging.SourceSystemReferenceData ssrd
+		on ssrd.SchoolYear = @SchoolYear
+		and ssrd.InputCode = rdapl.AssessmentPerformanceLevelIdentifier
+		and ssrd.TableName = 'AssessmentPerformanceLevel_Identifier'
 
-			CREATE NONCLUSTERED INDEX IX_ds ON #DimAssessments (AssessmentAcademicSubjectCode,AssessmentTypeAdministeredCode,AssessmentPerformanceLevelIdentifier)
+		CREATE NONCLUSTERED INDEX IX_ds ON #DimAssessments (AssessmentAcademicSubjectCode,AssessmentTypeAdministeredCode,AssessmentPerformanceLevelIdentifier)
 
-	-- #ToggleAssessments ---------------------------------------------------------------------------------------
-		SELECT 
-		*
-		INTO #ToggleAssessments
-		FROM App.ToggleAssessments
-		WHERE [Subject] = @SubjectAbbrv
+-- #ToggleAssessments ---------------------------------------------------------------------------------------
+	SELECT *
+	INTO #ToggleAssessments
+	FROM App.ToggleAssessments
+	WHERE [Subject] = @SubjectAbbrv
 
-			CREATE NONCLUSTERED INDEX IX_ta ON #ToggleAssessments (AssessmentTypeCode,Grade,[Subject])
+		CREATE NONCLUSTERED INDEX IX_ta ON #ToggleAssessments (AssessmentTypeCode,Grade,[Subject])
 
-	-- #StagingPersonStatus ---------------------------------------------------------------------------------------
-		SELECT 
-			EnglishLearnerStatus
-			, EnglishLearner_StatusStartDate
-			, EnglishLearner_StatusEndDate
-			, EconomicDisadvantageStatus
-			, EconomicDisadvantage_StatusStartDate
-			, EconomicDisadvantage_StatusEndDate
-			, MigrantStatus
-			, Migrant_StatusStartDate
-			, Migrant_StatusEndDate
-			, HomelessnessStatus
-			, Homelessness_StatusStartDate
-			, Homelessness_StatusEndDate
-			, ProgramType_FosterCare
-			, FosterCare_ProgramParticipationStartDate
-			, FosterCare_ProgramParticipationEndDate
-			, MilitaryConnectedStudentIndicator
-			, MilitaryConnected_StatusStartDate
-			, MilitaryConnected_StatusEndDate
-			, sps.StudentIdentifierState
-			, sps.LeaIdentifierSeaAccountability
-			, sps.SchoolIdentifierSea		
-		INTO #StagingPersonStatus
-		FROM Staging.PersonStatus sps
-		left join Staging.IdeaDisabilityType sdt
-			on sps.StudentIdentifierState = sdt.StudentIdentifierState
-			and sps.LeaIdentifierSeaAccountability = sdt.LeaIdentifierSeaAccountability
-			and sps.SchoolIdentifierSea = sdt.SchoolIdentifierSea
+-- #StagingPersonStatus ---------------------------------------------------------------------------------------
+	SELECT 
+		EnglishLearnerStatus
+		, EnglishLearner_StatusStartDate
+		, EnglishLearner_StatusEndDate
+		, EconomicDisadvantageStatus
+		, EconomicDisadvantage_StatusStartDate
+		, EconomicDisadvantage_StatusEndDate
+		, MigrantStatus
+		, Migrant_StatusStartDate
+		, Migrant_StatusEndDate
+		, HomelessnessStatus
+		, Homelessness_StatusStartDate
+		, Homelessness_StatusEndDate
+		, ProgramType_FosterCare
+		, FosterCare_ProgramParticipationStartDate
+		, FosterCare_ProgramParticipationEndDate
+		, MilitaryConnectedStudentIndicator
+		, MilitaryConnected_StatusStartDate
+		, MilitaryConnected_StatusEndDate
+		, sps.StudentIdentifierState
+		, sps.LeaIdentifierSeaAccountability
+		, sps.SchoolIdentifierSea		
+	INTO #StagingPersonStatus
+	FROM Staging.PersonStatus sps
+	left join Staging.IdeaDisabilityType sdt
+		on sps.StudentIdentifierState = sdt.StudentIdentifierState
+		and sps.LeaIdentifierSeaAccountability = sdt.LeaIdentifierSeaAccountability
+		and sps.SchoolIdentifierSea = sdt.SchoolIdentifierSea
 
-			CREATE NONCLUSTERED INDEX IX_sps ON #StagingPersonStatus (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
+		CREATE NONCLUSTERED INDEX IX_sps ON #StagingPersonStatus (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
 
-	-- #StagingProgramParticipationSpecialEducation ----------------------------------------------------------------
-		SELECT 
-			sppse.IDEAIndicator
-			, sppse.ProgramParticipationBeginDate		[IDEA_StatusStartDate]
-			, sppse.ProgramParticipationEndDate			[IDEA_StatusEndDate] 
-			, sppse.StudentIdentifierState
-			, sppse.LeaIdentifierSeaAccountability
-			, sppse.SchoolIdentifierSea		
-		INTO #StagingProgramParticipationSpecialEducation
-		FROM Staging.ProgramParticipationSpecialEducation sppse
+-- #StagingProgramParticipationSpecialEducation ----------------------------------------------------------------
+	SELECT 
+		sppse.IDEAIndicator
+		, sppse.ProgramParticipationBeginDate		[IDEA_StatusStartDate]
+		, sppse.ProgramParticipationEndDate			[IDEA_StatusEndDate] 
+		, sppse.StudentIdentifierState
+		, sppse.LeaIdentifierSeaAccountability
+		, sppse.SchoolIdentifierSea		
+	INTO #StagingProgramParticipationSpecialEducation
+	FROM Staging.ProgramParticipationSpecialEducation sppse
 
-			CREATE NONCLUSTERED INDEX IX_spppse ON #StagingProgramParticipationSpecialEducation (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
+		CREATE NONCLUSTERED INDEX IX_spppse ON #StagingProgramParticipationSpecialEducation (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
 
-	-- #StagingK12Enrollment --------------------------------------------------------------------------------------
-		SELECT [Sex]
-			,StudentIdentifierState
-			,LeaIdentifierSeaAccountability
-			,SchoolIdentifierSea
-			,HispanicLatinoEthnicity
-		INTO #StagingK12Enrollment
-		FROM Staging.K12Enrollment
-    
-			CREATE NONCLUSTERED INDEX IX_ske ON #StagingK12Enrollment (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea,HispanicLatinoEthnicity)
+-- #StagingK12Enrollment --------------------------------------------------------------------------------------
+	SELECT Sex
+		, StudentIdentifierState
+		, LeaIdentifierSeaAccountability
+		, SchoolIdentifierSea
+		, HispanicLatinoEthnicity
+		, EnrollmentEntryDate
+		, EnrollmentExitDate
+	INTO #StagingK12Enrollment
+	FROM Staging.K12Enrollment s
 
-	-- #StagingPersonRace ---------------------------------------------------------------------------------------
-		SELECT StudentIdentifierState
-			, elea.LeaIdentifierSeaAccountability
-			, esch.SchIdentifierSea
-			,SchoolYear
-			,CASE WHEN (elea.LeaIdentifierSeaAccountability IS NOT NULL AND esch.SchIdentifierSea IS NOT NULL)  THEN RaceType 
-			 ELSE 'MISSING' END as RaceType
-			,RecordStartDateTime
-			,RecordEndDateTime
-		INTO #StagingPersonRace
-		FROM Staging.K12PersonRace s
-		LEFT JOIN #excludedLeas elea ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability AND elea.LeaIdentifierSeaAccountability IS NULL
-		LEFT JOIN #excludedSchools esch ON s.SchoolIdentifierSea = esch.SchIdentifierSea AND esch.SchIdentifierSea IS NULL
-		WHERE SchoolYear = @SchoolYear
+		CREATE NONCLUSTERED INDEX IX_ske ON #StagingK12Enrollment (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea,HispanicLatinoEthnicity,EnrollmentEntryDate,EnrollmentExitDate)
 
-		CREATE NONCLUSTERED INDEX IX_spr ON #StagingPersonRace (StudentIdentifierState,SchoolYear,RaceType,RecordStartDateTime,RecordEndDateTime)
+-- #StagingPersonRace ---------------------------------------------------------------------------------------
+	SELECT StudentIdentifierState
+		, LeaIdentifierSeaAccountability
+		, SchoolIdentifierSea
+		, SchoolYear
+		, RaceType 			  
+		, RecordStartDateTime
+		, RecordEndDateTime
+	INTO #StagingPersonRace
+	FROM Staging.K12PersonRace s
+	WHERE SchoolYear = @SchoolYear
 
-	-- #DimRaces ---------------------------------------------------------------------------------------
-		SELECT v.*, d.RaceEdFactsCode
-		INTO #DimRaces
-		FROM RDS.vwDimRaces v
-		inner join RDS.DimRaces d
-			on v.DimRaceId = d.DimRaceId
-		where SchoolYear = @SchoolYear
+	CREATE NONCLUSTERED INDEX IX_spr ON #StagingPersonRace (StudentIdentifierState,SchoolYear,RaceType,RecordStartDateTime,RecordEndDateTime)
 
-	-- #DimSchoolYears ---------------------------------------------------------------------------------------
-		SELECT 
-			SchoolYear
-				,SessionBeginDate
-				,SessionEndDate
-		INTO #DimSchoolYears
-		FROM RDS.DimSchoolYears
-		WHERE SchoolYear = @SchoolYear
+-- #DimRaces ---------------------------------------------------------------------------------------
+	SELECT v.*, d.RaceEdFactsCode
+	INTO #DimRaces
+	FROM RDS.vwDimRaces v
+	inner join RDS.DimRaces d
+		on v.DimRaceId = d.DimRaceId
+	where SchoolYear = @SchoolYear
 
-	-- #Staging ----------------------------------------------------------------------------------------------
+-- #DimSchoolYears ---------------------------------------------------------------------------------------
+	SELECT 
+		SchoolYear
+			,SessionBeginDate
+			,SessionEndDate
+	INTO #DimSchoolYears
+	FROM RDS.DimSchoolYears
+	WHERE SchoolYear = @SchoolYear
+
+-- #Staging ----------------------------------------------------------------------------------------------
 	SELECT 
 		asr.StudentIdentifierState
 		, asr.LeaIdentifierSeaAccountability
@@ -450,6 +448,8 @@ Use the @FileSpec parameter to pass in one of the
 															  THEN 'MILCNCTD' ELSE 'MISSING' END 
 		, ppse.IDEAEducationalEnvironmentForSchoolAge
 		, asr.AssessmentAdministrationStartDate
+		, ske.EnrollmentEntryDate
+		, ske.EnrollmentExitDate
 		, idea.IDEA_StatusStartDate
 		, idea.IDEA_StatusEndDate
 		, spr.RecordStartDateTime
@@ -550,26 +550,37 @@ Use the @FileSpec parameter to pass in one of the
 				AND ((mcs.MilitaryConnected_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND mcs.MilitaryConnected_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
 					AND ISNULL(mcs.MilitaryConnected_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
+
 	LEFT JOIN #StagingPersonRace spr
 		ON spr.StudentIdentifierState = ske.StudentIdentifierState
 			AND spr.SchoolYear = sy.SchoolYear
-			AND ske.SchoolIdentifierSea = spr.SchIdentifierSea
-			AND ske.LeaIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability
+			AND spr.SchoolIdentifierSea = ske.SchoolIdentifierSea
+			AND spr.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
 			AND ISNULL(asr.AssessmentAdministrationStartDate, spr.RecordStartDateTime)
 			BETWEEN spr.RecordStartDateTime
 				AND ISNULL(spr.RecordEndDateTime, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE))
 			AND (sy.SessionBeginDate <= ISNULL(spr.RecordEndDateTime,CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE))
 			AND sy.SessionEndDate >= ISNULL(spr.RecordEndDateTime,CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)))	
+
 	LEFT JOIN #DimRaces rdr
 		ON (ske.HispanicLatinoEthnicity = 1 and rdr.RaceEdFactsCode = 'HI7')
 				OR (ske.HispanicLatinoEthnicity = 0 AND spr.RaceType = rdr.RaceMap)
+
 	LEFT JOIN staging.ProgramParticipationSpecialEducation ppse
 		ON ppse.StudentIdentifierState = asr.StudentIdentifierState
 			AND ppse.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND ppse.SchoolIdentifierSea = asr.SchoolIdentifierSea
+
+	LEFT JOIN #excludedLeas elea 
+		ON ske.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability 
+		AND elea.LeaIdentifierSeaAccountability IS NULL
+
+	LEFT JOIN #excludedSchools esch 
+		ON ske.SchoolIdentifierSea = esch.SchIdentifierSea 
+		AND esch.SchIdentifierSea IS NULL
+
 	WHERE asr.SchoolYear = @SchoolYear
 	AND replace(ta.[Subject], '_1', '') = @SubjectAbbrv
-	AND spr.LeaIdentifierSeaAccountability IS NOT NULL AND spr.SchIdentifierSea IS NOT NULL
 
 -----------------------------------------------------------------------------------------------------------------
 -- BUILD CATEGORY SET TEMP TABLES FROM REPORT TABLE ---------------------------------------------------------------------

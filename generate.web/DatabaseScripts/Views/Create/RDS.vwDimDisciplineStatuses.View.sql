@@ -2,7 +2,7 @@ CREATE VIEW RDS.vwDimDisciplineStatuses
 AS
 	SELECT
 		DimDisciplineStatusId
-		, sssrd1.SchoolYear
+		, rsy.SchoolYear
 		, rdds.DisciplinaryActionTakenCode
 		, ISNULL(sssrd1.InputCode, 'MISSING') AS DisciplinaryActionTakenMap
 		, DisciplineMethodOfChildrenWithDisabilitiesCode
