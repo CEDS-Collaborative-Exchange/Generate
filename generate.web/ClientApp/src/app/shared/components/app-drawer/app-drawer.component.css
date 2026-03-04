@@ -1,7 +1,33 @@
+.drawer {
+    position: relative;
+}
+
+.drawer-close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #616161;
+    padding: 4px;
+    line-height: 1;
+    z-index: 1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.drawer-close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
 .vertical-nav {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    padding-top: 40px;
 }
 
 .mdl-navigation {

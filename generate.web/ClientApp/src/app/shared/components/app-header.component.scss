@@ -125,5 +125,15 @@
         cursor: pointer;
         z-index: 1000;
         color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        .menu-btn-text {
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
     }
 }
