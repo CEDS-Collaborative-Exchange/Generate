@@ -1,7 +1,9 @@
 <div class="drawer" [class.open]="isDrawerOpen">
-    <button class="drawer-close-btn" (click)="close.emit()" aria-label="Close drawer">
-        <i class="material-icons">close</i>
-    </button>
+    <div class="drawer-close-row">
+        <button class="drawer-close-btn" (click)="close.emit()" aria-label="Close drawer">
+            <i class="material-icons">close</i>
+        </button>
+    </div>
     <nav class="mdl-navigation vertical-nav">
 
         <a class="mdl-navigation__link generate-app-menu__item-link" (click)="gotoHome()">Home</a>
