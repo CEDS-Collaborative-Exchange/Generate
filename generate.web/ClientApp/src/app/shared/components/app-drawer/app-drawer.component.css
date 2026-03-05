@@ -44,6 +44,7 @@
     margin: 0;
     line-height: 1.4;
     text-align: left;
+    border-bottom: 1px solid #9e9e9e;
 }
 
     .mdl-navigation__link:hover {
