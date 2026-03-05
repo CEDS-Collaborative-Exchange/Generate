@@ -2,7 +2,7 @@ CREATE VIEW RDS.vwDimHomelessnessStatuses
 AS
 	SELECT
 		  DimHomelessnessStatusId
-		, sssrd.SchoolYear
+		, rsy.SchoolYear
 		, rdhs.HomelessnessStatusCode
 		, CASE rdhs.HomelessnessStatusCode 
 			WHEN 'Yes' THEN 1 

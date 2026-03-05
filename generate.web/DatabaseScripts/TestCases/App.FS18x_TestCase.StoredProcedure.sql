@@ -227,7 +227,6 @@ BEGIN
 		WHERE [AssessmentAcademicSubject] = @AssessmentAcademicSubject
 		--AND AssessmentType = @AssessmentType
 
-
 			CREATE NONCLUSTERED INDEX IX_a ON #StagingAssessment (AssessmentTitle,AssessmentAcademicSubject,AssessmentPurpose,
 			AssessmentPerformanceLevelIdentifier)
 
@@ -252,7 +251,6 @@ BEGIN
 			SchoolYear,GradeLevelWhenAssessed,AssessmentTitle,AssessmentAcademicSubject,--AssessmentPurpose,
 			AssessmentPerformanceLevelIdentifier)
 
-
 	-- #DimAssessments ---------------------------------------------------------------------------------------
 		SELECT DISTINCT
 			AssessmentIdentifierState, 
@@ -268,8 +266,6 @@ BEGIN
 			and ssrd.TableName = 'AssessmentPerformanceLevel_Identifier'
 
 			CREATE NONCLUSTERED INDEX IX_ds ON #DimAssessments (AssessmentAcademicSubjectCode,AssessmentTypeAdministeredCode,AssessmentPerformanceLevelIdentifier)
-
-
 
 	-- #ToggleAssessments ---------------------------------------------------------------------------------------
 		SELECT *
@@ -312,7 +308,6 @@ BEGIN
 
 			CREATE NONCLUSTERED INDEX IX_sps ON #StagingPersonStatus (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
 
-
 	-- #StagingProgramParticipationSpecialEducation ----------------------------------------------------------------
 		SELECT 
 			sppse.IDEAIndicator
@@ -326,32 +321,29 @@ BEGIN
 
 			CREATE NONCLUSTERED INDEX IX_spppse ON #StagingProgramParticipationSpecialEducation (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea)
 
-
-
 	-- #StagingK12Enrollment --------------------------------------------------------------------------------------
-		SELECT [Sex]
-			,StudentIdentifierState
-			,LeaIdentifierSeaAccountability
-			,SchoolIdentifierSea
-			,HispanicLatinoEthnicity
+		SELECT Sex
+			, StudentIdentifierState
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, HispanicLatinoEthnicity
+			, EnrollmentEntryDate
+			, EnrollmentExitDate
 		INTO #StagingK12Enrollment
-		FROM Staging.K12Enrollment
-    
+		FROM Staging.K12Enrollment 
+
 			CREATE NONCLUSTERED INDEX IX_ske ON #StagingK12Enrollment (StudentIdentifierState,LeaIdentifierSeaAccountability,SchoolIdentifierSea,HispanicLatinoEthnicity)
 
 	-- #StagingPersonRace ---------------------------------------------------------------------------------------
 		SELECT StudentIdentifierState
-			, elea.LeaIdentifierSeaAccountability
-			, esch.SchIdentifierSea
-			,SchoolYear
-			,CASE WHEN (elea.LeaIdentifierSeaAccountability IS NOT NULL AND esch.SchIdentifierSea IS NOT NULL)  THEN RaceType 
-			 ELSE 'MISSING' END as RaceType
-			,RecordStartDateTime
-			,RecordEndDateTime
+			, LeaIdentifierSeaAccountability
+			, SchoolIdentifierSea
+			, SchoolYear
+			, RaceType 			  
+			, RecordStartDateTime
+			, RecordEndDateTime
 		INTO #StagingPersonRace
 		FROM Staging.K12PersonRace s
-		LEFT JOIN #excludedLeas elea ON s.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability AND elea.LeaIdentifierSeaAccountability IS NULL
-		LEFT JOIN #excludedSchools esch ON s.SchoolIdentifierSea = esch.SchIdentifierSea AND esch.SchIdentifierSea IS NULL
 		WHERE SchoolYear = @SchoolYear
 
 			CREATE NONCLUSTERED INDEX IX_spr ON #StagingPersonRace (StudentIdentifierState,SchoolYear,RaceType,RecordStartDateTime,RecordEndDateTime)
@@ -523,8 +515,8 @@ BEGIN
 	LEFT JOIN #StagingPersonRace spr
 		ON spr.StudentIdentifierState = ske.StudentIdentifierState
 			AND spr.SchoolYear = sy.SchoolYear
-			AND ske.SchoolIdentifierSea = spr.SchIdentifierSea
-			AND ske.LeaIdentifierSeaAccountability = spr.LeaIdentifierSeaAccountability
+			AND spr.SchoolIdentifierSea = ske.SchoolIdentifierSea
+			AND spr.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
 			AND ISNULL(asr.AssessmentAdministrationStartDate, spr.RecordStartDateTime)
 			BETWEEN spr.RecordStartDateTime
 				AND ISNULL(spr.RecordEndDateTime, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE))
@@ -537,10 +529,16 @@ BEGIN
 		ON ppse.StudentIdentifierState = asr.StudentIdentifierState
 			AND ppse.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
 			AND ppse.SchoolIdentifierSea = asr.SchoolIdentifierSea
-			
+	LEFT JOIN #excludedLeas elea 
+		ON ske.LeaIdentifierSeaAccountability = elea.LeaIdentifierSeaAccountability 
+		AND elea.LeaIdentifierSeaAccountability IS NULL
+
+	LEFT JOIN #excludedSchools esch 
+		ON ske.SchoolIdentifierSea = esch.SchIdentifierSea 
+		AND esch.SchIdentifierSea IS NULL
+
 	WHERE asr.SchoolYear = @SchoolYear
 	AND replace(ta.[Subject], '_1', '') = @SubjectAbbrv
-	AND spr.LeaIdentifierSeaAccountability IS NOT NULL AND spr.SchIdentifierSea IS NOT NULL
 
 
 
