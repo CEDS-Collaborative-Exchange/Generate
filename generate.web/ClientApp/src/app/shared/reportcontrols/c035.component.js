@@ -110,6 +110,14 @@ var C035Component = function () {
                     .subscribe(function (reportDataDto) {
                     _this.reportDataDto = reportDataDto;
                     _this.cvData = _this.reportDataDto.data;
+                    // Replace allocation type codes with descriptions
+                    if (_this.cvData && Array.isArray(_this.cvData)) {
+                        _this.cvData.forEach(function (row) {
+                            if (row.federalFundAllocationType) {
+                                row.federalFundAllocationType = _this.getAllocationTypeDescription(row.federalFundAllocationType) || row.federalFundAllocationType;
+                            }
+                        });
+                    }
                     if (_this.reportParameters.reportCategorySet === undefined) {
                         if (_this.reportDataDto.categorySets !== null && _this.reportDataDto.categorySets.length > 0) {
                             _this.reportParameters.reportCategorySet = _this.getDefaultCategorySet(_this.reportDataDto.categorySets);
@@ -411,16 +419,16 @@ var C035Component = function () {
         };
         C035Component_1.prototype.getAllocationTypeDescription = function (allocationCode) {
             var description = '';
-            if (allocationCode === 'RETAINED') {
+            if (allocationCode === 'RETAINED' || allocationCode === 'RETAINED_1') {
                 description = 'Retained by SEA for program administration, etc';
             }
-            else if (allocationCode === 'TRANSFER') {
+            else if (allocationCode === 'TRANSFER' || allocationCode === 'TRANSFER_1') {
                 description = 'Transferred to another state-level agency';
             }
-            else if (allocationCode === 'DISTNONLEA') {
+            else if (allocationCode === 'DISTNONLEA' || allocationCode === 'DISTNONLEA_1') {
                 description = 'Distributed to entities other than LEAs';
             }
-            else if (allocationCode === 'UNALLOC') {
+            else if (allocationCode === 'UNALLOC' || allocationCode === 'UNALLOC_1') {
                 description = 'Unallocated or returned funds';
             }
             return description;

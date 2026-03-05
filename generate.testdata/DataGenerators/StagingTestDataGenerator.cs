@@ -982,7 +982,7 @@ namespace generate.testdata.DataGenerators
                 var SeaFedFunds = new OrganizationFederalFunding
                 {
                     OrganizationIdentifier = "39",
-                    OrganizationType = "SEA",
+                    OrganizationType = "SEA_1",
                     FederalProgramCode = programCode,
                     FederalProgramsFundingAllocation = _testDataHelper.GetRandomDecimalInRange(rnd, 10000, 100000),
                     FederalProgramFundingAllocationType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefFederalProgramFundingAllocationTypeDistribution),

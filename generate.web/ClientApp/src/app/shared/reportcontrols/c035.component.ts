@@ -450,16 +450,16 @@ export class C035Component implements AfterViewInit, OnChanges, OnInit {
     getAllocationTypeDescription(allocationCode: string) {
         let description: string = '';
 
-        if (allocationCode === 'RETAINED') {
+        if (allocationCode === 'RETAINED' || allocationCode === 'RETAINED_1') {
             description = 'Retained by SEA for program administration, etc';
         }
-        else if (allocationCode === 'TRANSFER') {
+        else if (allocationCode === 'TRANSFER' || allocationCode === 'TRANSFER_1') {
             description = 'Transferred to another state-level agency';
         }
-        else if (allocationCode === 'DISTNONLEA'){
+        else if (allocationCode === 'DISTNONLEA' || allocationCode === 'DISTNONLEA_1'){
             description = 'Distributed to entities other than LEAs';
         }
-        else if (allocationCode === 'UNALLOC') {
+        else if (allocationCode === 'UNALLOC' || allocationCode === 'UNALLOC_1') {
             description = 'Unallocated or returned funds';
         }
 
