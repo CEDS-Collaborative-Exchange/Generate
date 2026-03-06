@@ -1775,7 +1775,7 @@ BEGIN
 						left outer join rds.DimK12SchoolStatuses schStatus 
 							on fact.K12SchoolStatusId = schStatus.DimK12SchoolStatusId
 						left outer join rds.DimOrganizationTitleIStatuses titleIStatus 
-							on fact.TitleIStatusId = titleIStatus.DimOrganizationTitleIStatusId
+							on fact.OrganizationTitleIStatusId = titleIStatus.DimOrganizationTitleIStatusId
 						where dates.SchoolYear = @reportYear
 						and latestSchool.DimK12SchoolId <> -1 
 						and ISNULL(latestSchool.ReportedFederally, 1) = 1

@@ -71,7 +71,7 @@ BEGIN
 		, @StateCode 														'StateAbbreviationCode'
 		, @StateANSICode 													'StateANSICode'
 		, scsmo.CharterSchoolManagementOrganizationType						'CharterSchoolManagementOrganizationTypeCode'
-		, refcsmot.[Definition]												'CharterSchoolManagementOrganizationTypeDescription'
+		, refcsmot.CedsOptionSetDefinition									'CharterSchoolManagementOrganizationTypeDescription'
 		, ssrd.OutputCode				 									'CharterSchoolManagementOrganizationTypeEdfactsCode'
 		, smam.AddressStreetNumberAndName				 					'MailingAddressStreetNumberAndName'
 		, smam.AddressCity 													'MailingAddressCity'
