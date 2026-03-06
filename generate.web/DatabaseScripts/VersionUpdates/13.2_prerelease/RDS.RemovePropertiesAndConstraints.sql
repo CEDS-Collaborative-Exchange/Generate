@@ -2725,6 +2725,14 @@ DROP INDEX [IX_DimK12StaffCategories_TitleIProgramStaffCategoryEdFactsCode]
     ON [RDS].[DimK12StaffCategories];
 
 
+PRINT N'Dropping Index [RDS].[DimK12StaffCategories].[IX_DimK12StaffCategories_Category]...';
+
+
+
+DROP INDEX [IX_DimK12StaffCategories_Category]
+    ON [RDS].[DimK12StaffCategories];
+
+
 
 PRINT N'Dropping Index [RDS].[DimK12StaffStatuses].[IX_DimK12StaffStatuses_EdFactsCertificationStatusCode]...';
 

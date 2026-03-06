@@ -9,7 +9,7 @@
 	FROM RDS.DimTeachingCredentialStatuses rdkss
 	CROSS JOIN (SELECT DISTINCT SchoolYear FROM Staging.SourceSystemReferenceData) rsy
 	LEFT JOIN Staging.SourceSystemReferenceData sssrd1
-		ON rdkss.TeachingCredentialBasisCode = sssrd1.OutputCode
+		ON rdkss.TeachingCredentialTypeCode = sssrd1.OutputCode
 		AND sssrd1.TableName = 'RefTeachingCredentialType'
 		AND rsy.SchoolYear = sssrd1.SchoolYear
 	LEFT JOIN Staging.SourceSystemReferenceData sssrd2

@@ -1341,6 +1341,10 @@ BEGIN
 		begin
 			set @dimensionPrimaryKey = 'DimK12StaffCategoryId'
 		end
+		else if @dimensionTable = 'DimTeachingCredentialStatuses'
+		begin
+			set @dimensionPrimaryKey = 'DimTeachingCredentialStatusId'
+		end
 		else if @dimensionTable = 'DimLanguages'
 		begin
 			set @dimensionPrimaryKey = 'DimLanguageId'
