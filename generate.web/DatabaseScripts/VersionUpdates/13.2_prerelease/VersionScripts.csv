@@ -280,6 +280,8 @@ StoredProcedures\\Drop,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_ReportData.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Create_OrganizationReportData.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimSeas.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimSeas.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimCharterSchoolAuthorizers.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-DimCharterSchoolAuthorizers.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimCharterSchoolManagementOrganizations.StoredProcedure.sql,0
