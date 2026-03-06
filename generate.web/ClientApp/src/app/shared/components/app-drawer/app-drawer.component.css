@@ -1,3 +1,30 @@
+.drawer {
+    position: relative;
+}
+
+.drawer-close-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 8px 0;
+}
+
+.drawer-close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #616161;
+    padding: 4px;
+    line-height: 1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.drawer-close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
 .vertical-nav {
     display: flex;
     flex-direction: column;
@@ -17,6 +44,7 @@
     margin: 0;
     line-height: 1.4;
     text-align: left;
+    border-bottom: 1px solid #9e9e9e;
 }
 
     .mdl-navigation__link:hover {
