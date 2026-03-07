@@ -752,3 +752,131 @@
 	DROP TABLE #SpecialEducationTeacher
 
 
+	-----------------------------------------------------
+	-- Populate DimMilitaryStatuses					   --
+	-----------------------------------------------------
+	delete from RDS.DimMilitaryStatuses
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimMilitaryStatuses d WHERE d.DimMilitaryStatusId = -1) BEGIN
+		SET IDENTITY_INSERT rds.DimMilitaryStatuses ON
+
+			INSERT INTO rds.DimMilitaryStatuses (
+						  DimMilitaryStatusId
+						, MilitaryConnectedStudentIndicatorCode       
+						, MilitaryConnectedStudentIndicatorDescription
+						, MilitaryConnectedStudentIndicatorEdFactsCode
+						, ActiveMilitaryStatusIndicatorCode          
+						, ActiveMilitaryStatusIndicatorDescription   
+						, MilitaryBranchCode                          
+						, MilitaryBranchDescription                   
+						, MilitaryVeteranStatusIndicatorCode         
+						, MilitaryVeteranStatusIndicatorDescription  
+					)
+			VALUES (
+					-1
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING')
+
+		SET IDENTITY_INSERT rds.DimMilitaryStatuses OFF
+	END
+
+	IF OBJECT_ID('tempdb..#MilitaryConnectedStudentIndicator') IS NOT NULL
+		DROP TABLE #MilitaryConnectedStudentIndicator
+
+	CREATE TABLE #MilitaryConnectedStudentIndicator (MilitaryConnectedStudentIndicatorCode VARCHAR(50), MilitaryConnectedStudentIndicatorDescription VARCHAR(200), MilitaryConnectedStudentIndicatorEdFactsCode VARCHAR(50))
+
+	INSERT INTO #MilitaryConnectedStudentIndicator VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #MilitaryConnectedStudentIndicator 
+	SELECT 
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+		, EdFactsOptionSetCode
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'MilitaryConnectedStudentIndicator'
+
+	IF OBJECT_ID('tempdb..#ActiveMilitaryStatusIndicator') IS NOT NULL
+		DROP TABLE #ActiveMilitaryStatusIndicator
+
+	CREATE TABLE #ActiveMilitaryStatusIndicator (ActiveMilitaryStatusIndicatorCode VARCHAR(50), ActiveMilitaryStatusIndicatorDescription VARCHAR(200))
+
+	INSERT INTO #ActiveMilitaryStatusIndicator VALUES ('MISSING', 'MISSING')
+	INSERT INTO #ActiveMilitaryStatusIndicator 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'ActiveMilitaryStatusIndicator'
+
+	IF OBJECT_ID('tempdb..#MilitaryBranch') IS NOT NULL
+		DROP TABLE #MilitaryBranch
+
+	CREATE TABLE #MilitaryBranch (MilitaryBranchCode VARCHAR(50), MilitaryBranchDescription VARCHAR(200))
+
+	INSERT INTO #MilitaryBranch VALUES ('MISSING', 'MISSING')
+	INSERT INTO #MilitaryBranch 
+	SELECT 
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'MilitaryBranch'
+	
+	IF OBJECT_ID('tempdb..#MilitaryVeteranStatusIndicator') IS NOT NULL
+		DROP TABLE #MilitaryVeteranStatusIndicator
+
+	CREATE TABLE #MilitaryVeteranStatusIndicator (MilitaryVeteranStatusIndicatorCode VARCHAR(50), MilitaryVeteranStatusIndicatorDescription VARCHAR(200))
+
+	INSERT INTO #MilitaryVeteranStatusIndicator VALUES ('MISSING', 'MISSING')
+	INSERT INTO #MilitaryVeteranStatusIndicator 
+	SELECT 
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'MilitaryVeteranStatusIndicator'
+
+	INSERT INTO rds.DimMilitaryStatuses 
+		(
+			  MilitaryConnectedStudentIndicatorCode       
+			, MilitaryConnectedStudentIndicatorDescription
+			, MilitaryConnectedStudentIndicatorEdFactsCode
+			, ActiveMilitaryStatusIndicatorCode          
+			, ActiveMilitaryStatusIndicatorDescription   
+			, MilitaryBranchCode                          
+			, MilitaryBranchDescription                   
+			, MilitaryVeteranStatusIndicatorCode         
+			, MilitaryVeteranStatusIndicatorDescription  
+		)
+	SELECT 
+		  a.MilitaryConnectedStudentIndicatorCode
+		, a.MilitaryConnectedStudentIndicatorDescription
+		, a.MilitaryConnectedStudentIndicatorEdFactsCode
+		, b.ActiveMilitaryStatusIndicatorCode
+		, b.ActiveMilitaryStatusIndicatorDescription
+		, c.MilitaryBranchCode
+		, c.MilitaryBranchDescription
+		, d.MilitaryVeteranStatusIndicatorCode
+		, d.MilitaryVeteranStatusIndicatorDescription
+	FROM #MilitaryConnectedStudentIndicator a
+	CROSS JOIN #ActiveMilitaryStatusIndicator b
+	CROSS JOIN #MilitaryBranch c
+	CROSS JOIN #MilitaryVeteranStatusIndicator d
+	LEFT JOIN RDS.DimMilitaryStatuses main
+		ON  a.MilitaryConnectedStudentIndicatorCode = main.MilitaryConnectedStudentIndicatorCode
+		AND b.ActiveMilitaryStatusIndicatorCode	 = main.ActiveMilitaryStatusIndicatorCode
+		AND c.MilitaryBranchCode						 = main.MilitaryBranchCode
+		AND d.MilitaryVeteranStatusIndicatorCode   = main.MilitaryVeteranStatusIndicatorCode
+	WHERE main.DimMilitaryStatusId IS NULL
+
+	DROP TABLE #MilitaryConnectedStudentIndicator
+	DROP TABLE #ActiveMilitaryStatusIndicator
+	DROP TABLE #MilitaryBranch
+	DROP TABLE #MilitaryVeteranStatusIndicator
+
+
+
