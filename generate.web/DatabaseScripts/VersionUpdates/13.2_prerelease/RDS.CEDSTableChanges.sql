@@ -1406,6 +1406,10 @@ CREATE NONCLUSTERED INDEX [IX_DimK12StaffCategories_TitleIProgramStaffCategoryEd
     ON [RDS].[DimK12StaffCategories]([TitleIProgramStaffCategoryEdFactsCode] ASC) WITH (DATA_COMPRESSION = PAGE);
 
 
+CREATE NONCLUSTERED INDEX IX_DimK12StaffCategories_Category 
+    ON RDS.DimK12StaffCategories(DimK12StaffCategoryId) INCLUDE(SpecialEducationSupportServicesCategoryEdFactsCode);
+
+
 
 PRINT N'Altering Table [RDS].[DimK12StaffStatuses]...';
 
