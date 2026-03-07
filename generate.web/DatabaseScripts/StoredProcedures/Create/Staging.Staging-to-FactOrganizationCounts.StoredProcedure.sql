@@ -82,6 +82,20 @@ BEGIN
 		DELETE FROM rds.FactOrganizationCounts 
 		WHERE SchoolYearId = @SchoolYearId
 
+		-- Ensure -1 record exists in DimPeople
+		IF NOT EXISTS (SELECT 1 FROM RDS.DimPeople WHERE DimPersonId = -1)
+		BEGIN
+
+			SET IDENTITY_INSERT RDS.DimPeople ON
+
+			INSERT INTO RDS.DimPeople
+			(DimPersonId)
+			VALUES
+			(-1)
+	
+			SET IDENTITY_INSERT RDS.DimPeople off
+		END
+
 		-- Ensure -1 record exists in DimPeople_Current
 		IF NOT EXISTS (SELECT 1 FROM RDS.DimPeople_Current WHERE DimPersonId = -1)
 		BEGIN
