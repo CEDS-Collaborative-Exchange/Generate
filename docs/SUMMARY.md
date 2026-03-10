@@ -48,7 +48,7 @@
   * [Azure Installation Guide](developer-guides/installation/azure-installation-guide.md)
   * [Generate Security Protocols](developer-guides/installation/generate-security-protocols.md)
   * [Installation FAQ](developer-guides/installation/installation-faq.md)
-  * [Upgrade](developer-guides/installation/upgrade/README.md)
+  * [Installation & Update](developer-guides/installation/upgrade/README.md)
     * [Generate Update](developer-guides/installation/upgrade/generate-update.md)
     * [Optional Installations](developer-guides/installation/upgrade/optional-installations.md)
     * [Troubleshooting the Generate Update Process](developer-guides/installation/upgrade/troubleshooting-the-generate-update-process.md)
