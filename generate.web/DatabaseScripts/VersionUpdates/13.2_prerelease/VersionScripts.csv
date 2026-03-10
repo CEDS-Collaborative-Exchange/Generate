@@ -332,6 +332,8 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentDisciplines.StoredProced
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentDisciplines.StoredProcedure.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactOrganizationCounts.StoredProcedure.sql,0
+StoredProcedures\\Drop,Utilities.Student_StagingToFactDifference.StoredProcedure.sql,0
+StoredProcedures\\Create,Utilities.Student_StagingToFactDifference.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Enable_Disable_Tests.StoredProcedure.sql,0
 StoredProcedures\\Create,App.Enable_Disable_Tests.StoredProcedure.sql,0
 StoredProcedures\\Drop,App.Run_Before_Tests.StoredProcedure.sql,0
