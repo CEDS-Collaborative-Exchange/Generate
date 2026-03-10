@@ -178,7 +178,7 @@ namespace generate.infrastructure.Services
                     {
                         field = SubmissionFileHelper.GetLeaIdentifier(factTableName, reportLevel);
                     }
-                    else if (column.ColumnName == "NCESLEAIDNumber")
+                    else if (column.ColumnName == "NCESLEAIDNumber" || column.ColumnName == "NCESSchoolIDNumber")
                     {
                         field = SubmissionFileHelper.GetNCESIdentifier(factTableName, reportLevel);
                     }
