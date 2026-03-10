@@ -13,15 +13,15 @@ A supplemental release extends an existing software version by introducing new c
 There will be links below with the data, Release Version it applies to and instructions that you will review to understand the new scripts, components, or configuration steps required to support the extended functionality.
 
 {% hint style="info" %}
-No Supplemental Release at this time.
+No Supplemental Release at this time. Past Supplemental Releases can be found here: [Github Generate File Storage](https://github.com/CEDS-Collaborative-Exchange/Generate/tree/master/docs/Generate%20File%20Storage)
 {% endhint %}
 
 **HotFix**
 
-A hot fix addresses an issue in an existing feature that is not functioning as expected after a release. These updates correct defects, errors, or unintended behavior discovered in the current version of the software. Hot fixes are issued to resolve problems that may impact system functionality, data accuracy, or user workflows without waiting for the next full release cycle. You will receive notification when a HotFix is available. When a HotFix is published, the required scripts, files, and implementation instructions will be provided in this section so you can apply the correction to their current environment and restore the expected behavior of the system.
+A hot fix addresses an issue in an existing feature that is not functioning as expected after a release. These updates correct defects, errors, or unintended behavior discovered in the current version of the software. Hot fixes are issued to resolve problems that may impact system functionality, data accuracy, or user workflows without waiting for the next full release cycle. You will receive notification when a HotFix is available. When a HotFix is published, the required scripts, files, and implementation instructions will be provided in this section so you can apply the correction to your current environment and restore the expected behavior of the system.
 
 {% hint style="info" %}
-No Supplemental Release at this time.
+No Supplemental Release at this time. Past HotFix Releases can be found here: [Github Generate File Storage](https://github.com/CEDS-Collaborative-Exchange/Generate/tree/master/docs/Generate%20File%20Storage)
 {% endhint %}
 
 
