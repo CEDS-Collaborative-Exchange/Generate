@@ -80,7 +80,7 @@ namespace generate.testdata.TestCaseData
                 IncidentIdentifier = "086-001",
                 DisciplinaryActionStartDate = DateTime.Parse("10/1/" + (schoolYear - 1).ToString()),
                 DisciplinaryActionTaken = refDisciplinaryActionTaken,
-                FirearmType = "Handguns_1",
+                FirearmType = "Handguns",
                 DisciplineMethodFirearm = refDisciplineMethodFirearms,
                 SchoolYear = Convert.ToInt16(schoolYear),
             };
@@ -93,7 +93,7 @@ namespace generate.testdata.TestCaseData
                 IncidentIdentifier = "086-001",
                 DisciplinaryActionStartDate = DateTime.Parse("10/1/" + (schoolYear - 1).ToString()),
                 DisciplinaryActionTaken = refDisciplinaryActionTaken,
-                FirearmType = "RiflesShotguns_1",
+                FirearmType = "RiflesShotguns",
                 DisciplineMethodFirearm = refDisciplineMethodFirearms,
                 SchoolYear = Convert.ToInt16(schoolYear),
             };
