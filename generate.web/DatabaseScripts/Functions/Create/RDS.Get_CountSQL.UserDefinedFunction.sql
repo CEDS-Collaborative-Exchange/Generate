@@ -5027,7 +5027,7 @@ BEGIN
 				inner join rds.DimGradeLevels gl 
 					on fact.GradeLevelId = gl.DimGradeLevelId
 					and gl.GradeLevelEdFactsCode in (''KG'',''01'',''02'',''03'',''04'',''05'',''06'',''07'',''08'',''09'',''10'',''11'',''12'',''UG'')
-				where m.AbsenteeismCode = ''CA''
+				where m.ChronicStudentAbsenteeismIndicatorCode = ''CA''
 			) rules
 				on fact.K12Student_CurrentId = rules.K12Student_CurrentId 
 				and fact.AttendanceId = rules.DimAttendanceId'

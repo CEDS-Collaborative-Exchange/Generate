@@ -878,5 +878,181 @@
 	DROP TABLE #MilitaryBranch
 	DROP TABLE #MilitaryVeteranStatusIndicator
 
+	-----------------------------------------------------
+	-- Populate DimAttendances                     --
+	-----------------------------------------------------
+
+	--Drop any FK constraints
+	ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [FK_FactK12StudentCounts_AttendanceId]
+	ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_AttendanceId]
+
+	
+	--Remove any existing rows before populating
+	DELETE FROM RDS.DimAttendances
+
+
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimAttendances d WHERE d.DimAttendanceId = -1) BEGIN
+		SET IDENTITY_INSERT RDS.DimAttendances ON
+
+		INSERT INTO [RDS].[DimAttendances]
+           ([DimAttendanceId]
+           ,ChronicStudentAbsenteeismIndicatorCode
+           ,ChronicStudentAbsenteeismIndicatorDescription
+		   ,ChronicStudentAbsenteeismIndicatorEdFactsCode
+		   ,AttendanceEventTypeCode
+		   ,AttendanceEventTypeDescription
+		   ,AttendanceStatusCode
+		   ,AttendanceStatusDescription
+		   ,PresentAttendanceCategoryCode
+		   ,PresentAttendanceCategoryDescription
+		   ,AbsentAttendanceCategoryCode
+		   ,AbsentAttendanceCategoryDescription
+		   )
+			VALUES (
+				  -1
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				)
+
+		SET IDENTITY_INSERT RDS.DimAttendances OFF
+
+	END
+
+	IF OBJECT_ID('tempdb..#ChronicStudentAbsenteeismIndicator') IS NOT NULL BEGIN
+		DROP TABLE #ChronicStudentAbsenteeismIndicator
+	END
+
+	CREATE TABLE #ChronicStudentAbsenteeismIndicator (ChronicStudentAbsenteeismIndicatorCode VARCHAR(50), ChronicStudentAbsenteeismIndicatorDescription VARCHAR(200), ChronicStudentAbsenteeismIndicatorEdFactsCode VARCHAR(50))
+
+	INSERT INTO #ChronicStudentAbsenteeismIndicator VALUES ('MISSING', 'MISSING', 'MISSING')
+
+	--Insert the default row until the CEDS table is updated
+	INSERT INTO #ChronicStudentAbsenteeismIndicator VALUES ('CA', 'Chronically Absent', 'MISSING')
+
+	--INSERT INTO #ChronicStudentAbsenteeismIndicator 
+	--SELECT
+	--	  CedsOptionSetCode
+	--	, CedsOptionSetDescription
+	--	, EdFactsOptionSetCode
+	--FROM [CEDS].CedsOptionSetMapping
+	--WHERE CedsElementTechnicalName = 'ChronicStudentAbsenteeismIndicator'
+
+	IF OBJECT_ID('tempdb..#AttendanceEventType') IS NOT NULL BEGIN
+		DROP TABLE #AttendanceEventType
+	END
+
+	CREATE TABLE #AttendanceEventType (AttendanceEventTypeCode VARCHAR(50), AttendanceEventTypeDescription VARCHAR(200))
+
+	INSERT INTO #AttendanceEventType VALUES ('MISSING', 'MISSING')
+	INSERT INTO #AttendanceEventType 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'AttendanceEventType'
+
+	IF OBJECT_ID('tempdb..#AttendanceStatus') IS NOT NULL BEGIN
+		DROP TABLE #AttendanceStatus
+	END
+
+	CREATE TABLE #AttendanceStatus (AttendanceStatusCode VARCHAR(50), AttendanceStatusDescription VARCHAR(200))
+
+	INSERT INTO #AttendanceStatus VALUES ('MISSING', 'MISSING')
+	INSERT INTO #AttendanceStatus 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'AttendanceStatus'
+
+	IF OBJECT_ID('tempdb..#PresentAttendanceCategory') IS NOT NULL BEGIN
+		DROP TABLE #PresentAttendanceCategory
+	END
+
+	CREATE TABLE #PresentAttendanceCategory (PresentAttendanceCategoryCode VARCHAR(50), PresentAttendanceCategoryDescription VARCHAR(200))
+
+	INSERT INTO #PresentAttendanceCategory VALUES ('MISSING', 'MISSING')
+	INSERT INTO #PresentAttendanceCategory 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'PresentAttendanceCategory'
+
+	IF OBJECT_ID('tempdb..#AbsentAttendanceCategory') IS NOT NULL BEGIN
+		DROP TABLE #AbsentAttendanceCategory
+	END
+
+	CREATE TABLE #AbsentAttendanceCategory (AbsentAttendanceCategoryCode VARCHAR(50), AbsentAttendanceCategoryDescription VARCHAR(200))
+
+	INSERT INTO #AbsentAttendanceCategory VALUES ('MISSING', 'MISSING')
+	INSERT INTO #AbsentAttendanceCategory 
+	SELECT
+		  CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'AbsentAttendanceCategory'
+
+	INSERT INTO RDS.DimAttendances
+		(
+			  ChronicStudentAbsenteeismIndicatorCode
+			, ChronicStudentAbsenteeismIndicatorDescription
+			, ChronicStudentAbsenteeismIndicatorEdFactsCode
+			, AttendanceEventTypeCode
+			, AttendanceEventTypeDescription
+			, AttendanceStatusCode
+			, AttendanceStatusDescription
+			, PresentAttendanceCategoryCode
+			, PresentAttendanceCategoryDescription
+			, AbsentAttendanceCategoryCode
+			, AbsentAttendanceCategoryDescription
+		)
+	SELECT 
+			  a.ChronicStudentAbsenteeismIndicatorCode
+			, a.ChronicStudentAbsenteeismIndicatorDescription
+			, a.ChronicStudentAbsenteeismIndicatorEdFactsCode
+			, b.AttendanceEventTypeCode
+			, b.AttendanceEventTypeDescription
+			, c.AttendanceStatusCode
+			, c.AttendanceStatusDescription
+			, d.PresentAttendanceCategoryCode
+			, d.PresentAttendanceCategoryDescription
+			, e.AbsentAttendanceCategoryCode
+			, e.AbsentAttendanceCategoryDescription
+
+	FROM #ChronicStudentAbsenteeismIndicator a
+	CROSS JOIN #AttendanceEventType b
+	CROSS JOIN #AttendanceStatus c
+	CROSS JOIN #PresentAttendanceCategory d
+	CROSS JOIN #AbsentAttendanceCategory e
+	LEFT JOIN RDS.DimAttendances main
+		ON a.ChronicStudentAbsenteeismIndicatorCode = main.ChronicStudentAbsenteeismIndicatorCode
+		AND b.AttendanceEventTypeCode = main.AttendanceEventTypeCode
+		AND c.AttendanceStatusCode = main.AttendanceStatusCode
+		AND d.PresentAttendanceCategoryCode = main.PresentAttendanceCategoryCode
+		AND e.AbsentAttendanceCategoryCode = main.AbsentAttendanceCategoryCode
+	WHERE main.DimAttendanceId IS NULL
+
+	DROP TABLE #ChronicStudentAbsenteeismIndicator
+	DROP TABLE #AttendanceEventType
+	DROP TABLE #AttendanceStatus
+	DROP TABLE #PresentAttendanceCategory
+	DROP TABLE #AbsentAttendanceCategory
+
+	--Add the constraints back
+	ALTER TABLE [RDS].[FactK12StudentCounts] ADD  CONSTRAINT [DF_FactK12StudentCounts_AttendanceId]  DEFAULT ((-1)) FOR [AttendanceId]
+
+	ALTER TABLE [RDS].[FactK12StudentCounts]  WITH CHECK ADD  CONSTRAINT [FK_FactK12StudentCounts_AttendanceId] FOREIGN KEY([AttendanceId])
+	REFERENCES [RDS].[DimAttendances] ([DimAttendanceId])
 
 
