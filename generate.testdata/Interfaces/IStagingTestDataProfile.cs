@@ -291,6 +291,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<string>> RefSpecialEducationTeacherQualificationStatusDistribution { get; set; }
         List<DataDistribution<string>> RefSpecialEducationAgeGroupTaughtDistribution { get; set; }
         List<DataDistribution<string>> RefProgramTypeDistribution { get; set; }
+        List<DataDistribution<bool>> TitleIIILanguageInstructionIndicatorDistribution { get; set; }
         #endregion
 
         #region Charter

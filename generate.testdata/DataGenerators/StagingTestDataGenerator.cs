@@ -901,6 +901,7 @@ namespace generate.testdata.DataGenerators
                 staff.EdFactsTeacherInexperiencedStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefInexperiencedStatusDistribution);
                 staff.EDFactsTeacherOutOfFieldStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefOutOfFieldStatusDistribution);
                 staff.EdFactsCertificationStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefEdFactsCertificationStatusDistribution);
+                staff.TitleIIILanguageInstructionIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.TitleIIILanguageInstructionIndicatorDistribution);
                 staff.RecordStartDateTime = _testDataHelper.GetSessionStartDate(rnd, schoolYear);
                 staff.RecordEndDateTime = _testDataHelper.GetSessionEndDate(rnd, schoolYear);
                 staff.SchoolYear = schoolYear.ToString();
