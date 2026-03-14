@@ -32,6 +32,7 @@ namespace generate.core.Models.Staging
         public string EDFactsTeacherOutOfFieldStatus { get; set; }
         public string EdFactsCertificationStatus { get; set; }
         public string ProgramTypeCode { get; set; }
+        public bool? TitleIIILanguageInstructionIndicator { get; set; }
         public string SchoolYear { get; set; }
         public DateTime? RecordStartDateTime { get; set; }
         public DateTime? RecordEndDateTime { get; set; }

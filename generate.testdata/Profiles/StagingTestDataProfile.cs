@@ -281,6 +281,7 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<string>> RefSpecialEducationTeacherQualificationStatusDistribution { get; set; }
         public List<DataDistribution<string>> RefSpecialEducationAgeGroupTaughtDistribution { get; set; }
         public List<DataDistribution<string>> RefProgramTypeDistribution { get; set; }
+        public List<DataDistribution<bool>> TitleIIILanguageInstructionIndicatorDistribution { get; set; }
         # endregion
 
         #region Charter
@@ -1675,6 +1676,9 @@ namespace generate.testdata.Profiles
             this.RefEdFactsCertificationStatusDistribution.Add(new DataDistribution<string>() { Option = "FC", ExpectedDistribution = 50 });
             this.RefEdFactsCertificationStatusDistribution.Add(new DataDistribution<string>() { Option = "NFC", ExpectedDistribution = 100 });
 
+            this.TitleIIILanguageInstructionIndicatorDistribution = new List<DataDistribution<bool>>();
+            this.TitleIIILanguageInstructionIndicatorDistribution.Add(new DataDistribution<bool>() { Option = true, ExpectedDistribution = 50 });
+            this.TitleIIILanguageInstructionIndicatorDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 100 });
 
             this.RefSpecialEducationTeacherQualificationStatusDistribution = new List<DataDistribution<string>>();
             this.RefSpecialEducationTeacherQualificationStatusDistribution.Add(new DataDistribution<string>() { Option = "SPEDTCHFULCRT", ExpectedDistribution = 50 });
