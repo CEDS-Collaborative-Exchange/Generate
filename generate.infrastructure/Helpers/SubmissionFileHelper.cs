@@ -10,34 +10,50 @@ namespace generate.infrastructure.Utilities
 {
     public static class SubmissionFileHelper
     {
-        public static string GetLeaIdentifier(string factTableName, string reportLevel)
+        public static string GetLeaIdentifier(string factTableName, string reportLevel, string columnName)
         {
             string field = "";
             if (factTableName == "FactOrganizationCounts")
             {
                 if (reportLevel == "lea") { field = "OrganizationStateId"; }
-                else if (reportLevel == "sch") { field = "ParentOrganizationStateId"; }
+                else if (reportLevel == "sch")
+                {
+                    if (columnName == "StateSchoolIDNumber") { field = "OrganizationStateId"; }
+                    else { field = "ParentOrganizationStateId"; }
+                }
             }
             else
             {
                 if (reportLevel == "lea") { field = "OrganizationIdentifierSea"; }
-                else if (reportLevel == "sch") { field = "ParentOrganizationIdentifierSea"; }
+                else if (reportLevel == "sch")
+                {
+                    if (columnName == "StateSchoolIDNumber") { field = "OrganizationIdentifierSea"; }
+                    else { field = "ParentOrganizationIdentifierSea"; }
+                }
             }
             return field;
         }
 
-        public static string GetNCESIdentifier(string factTableName, string reportLevel)
+        public static string GetNCESIdentifier(string factTableName, string reportLevel, string columnName)
         {
             string field = "";
             if (factTableName == "FactOrganizationCounts")
             {
                 if (reportLevel == "lea") { field = "OrganizationNcesId"; }
-                else if (reportLevel == "sch") { field = "ParentOrganizationNcesId"; }
+                else if (reportLevel == "sch")
+                {
+                    if (columnName == "NCESSchoolIDNumber") { field = "OrganizationNcesId"; }
+                    else { field = "ParentOrganizationNcesId"; }
+                }
             }
             else
             {
                 if (reportLevel == "lea") { field = "OrganizationIdentifierNces"; }
-                else if (reportLevel == "sch") { field = "ParentOrganizationIdentifierNces"; }
+                else if (reportLevel == "sch")
+                {
+                    if (columnName == "NCESSchoolIDNumber") { field = "OrganizationIdentifierNces"; }
+                    else { field = "ParentOrganizationIdentifierNces"; }
+                }
             }
             return field;
         }
