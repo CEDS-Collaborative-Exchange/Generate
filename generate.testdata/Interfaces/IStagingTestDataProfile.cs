@@ -281,7 +281,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<bool>> IsAeStaffDistribution { get; set; }
         List<DataDistribution<string>> RefCredentialTypeDistribution { get; set; }
         List<DataDistribution<string>> RefTeachingCredentialTypeDistribution { get; set; }
-        List<DataDistribution<string>> RefSpecialEducationStaffCategoryDistribution { get; set; }
+        List<DataDistribution<string>> RefSpecialEducationSupportServicesCategoryDistribution { get; set; }
         List<DataDistribution<string>> RefK12StaffClassificationDistribution { get; set; }
         List<DataDistribution<string>> RefTitleIProgramStaffCategoryDistribution { get; set; }
         List<DataDistribution<string>> RefParaprofessionalQualificationDistribution { get; set; }

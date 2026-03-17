@@ -16,7 +16,7 @@ namespace generate.core.Models.Staging
         public string Sex { get; set; }
         public string PositionTitle { get; set; }
         public decimal? FullTimeEquivalency { get; set; }
-        public string SpecialEducationStaffCategory { get; set; }
+        public string SpecialEducationSupportServicesCategory { get; set; }
         public string K12StaffClassification { get; set; }
         public string TitleIProgramStaffCategory { get; set; }
         public string TeachingCredentialType { get; set; }

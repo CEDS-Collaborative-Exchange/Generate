@@ -906,7 +906,7 @@ namespace generate.testdata.DataGenerators
                 staff.RecordEndDateTime = _testDataHelper.GetSessionEndDate(rnd, schoolYear);
                 staff.SchoolYear = schoolYear.ToString();
 
-                staff.SpecialEducationStaffCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSpecialEducationStaffCategoryDistribution);
+                staff.SpecialEducationSupportServicesCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSpecialEducationSupportServicesCategoryDistribution);
                 staff.TitleIProgramStaffCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIProgramStaffCategoryDistribution);
 
 

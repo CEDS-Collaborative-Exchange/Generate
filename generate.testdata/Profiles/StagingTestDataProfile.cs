@@ -271,7 +271,7 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<bool>> IsAeStaffDistribution { get; set; }
         public List<DataDistribution<string>> RefCredentialTypeDistribution { get; set; }
         public List<DataDistribution<string>> RefTeachingCredentialTypeDistribution { get; set; }
-        public List<DataDistribution<string>> RefSpecialEducationStaffCategoryDistribution { get; set; }
+        public List<DataDistribution<string>> RefSpecialEducationSupportServicesCategoryDistribution { get; set; }
         public List<DataDistribution<string>> RefK12StaffClassificationDistribution { get; set; }
         public List<DataDistribution<string>> RefTitleIProgramStaffCategoryDistribution { get; set; }
         public List<DataDistribution<string>> RefParaprofessionalQualificationDistribution { get; set; }
@@ -1604,18 +1604,18 @@ namespace generate.testdata.Profiles
             this.RefTeachingCredentialTypeDistribution.Add(new DataDistribution<string>() { Option = "09999", ExpectedDistribution = 100 });
 
 
-            this.RefSpecialEducationStaffCategoryDistribution = new List<DataDistribution<string>>();
-            this.RefSpecialEducationStaffCategoryDistribution.Add(new DataDistribution<string>() { Option = "PSYCH", ExpectedDistribution = 9 });
-            this.RefSpecialEducationStaffCategoryDistribution.Add(new DataDistribution<string>() { Option = "SOCIALWORK", ExpectedDistribution = 18 });
-            this.RefSpecialEducationStaffCategoryDistribution.Add(new DataDistribution<string>() { Option = "OCCTHERAP", ExpectedDistribution = 27 });
-            this.RefSpecialEducationStaffCategoryDistribution.Add(new DataDistribution<string>() { Option = "AUDIO", ExpectedDistribution = 36 });
-            this.RefSpecialEducationStaffCategoryDistribution.Add(new DataDistribution<string>() { Option = "PEANDREC", ExpectedDistribution = 45 });
-            this.RefSpecialEducationStaffCategoryDistribution.Add(new DataDistribution<string>() { Option = "PHYSTHERAP", ExpectedDistribution = 54 });
-            this.RefSpecialEducationStaffCategoryDistribution.Add(new DataDistribution<string>() { Option = "SPEECHPATH", ExpectedDistribution = 63 });
-            this.RefSpecialEducationStaffCategoryDistribution.Add(new DataDistribution<string>() { Option = "INTERPRET", ExpectedDistribution = 72 });
-            this.RefSpecialEducationStaffCategoryDistribution.Add(new DataDistribution<string>() { Option = "COUNSELOR", ExpectedDistribution = 81 });
-            this.RefSpecialEducationStaffCategoryDistribution.Add(new DataDistribution<string>() { Option = "ORIENTMOBIL", ExpectedDistribution = 90 });
-            this.RefSpecialEducationStaffCategoryDistribution.Add(new DataDistribution<string>() { Option = "MEDNURSE", ExpectedDistribution = 100 });
+            this.RefSpecialEducationSupportServicesCategoryDistribution = new List<DataDistribution<string>>();
+            this.RefSpecialEducationSupportServicesCategoryDistribution.Add(new DataDistribution<string>() { Option = "PSYCH", ExpectedDistribution = 9 });
+            this.RefSpecialEducationSupportServicesCategoryDistribution.Add(new DataDistribution<string>() { Option = "SOCIALWORK", ExpectedDistribution = 18 });
+            this.RefSpecialEducationSupportServicesCategoryDistribution.Add(new DataDistribution<string>() { Option = "OCCTHERAP", ExpectedDistribution = 27 });
+            this.RefSpecialEducationSupportServicesCategoryDistribution.Add(new DataDistribution<string>() { Option = "AUDIO", ExpectedDistribution = 36 });
+            this.RefSpecialEducationSupportServicesCategoryDistribution.Add(new DataDistribution<string>() { Option = "PEANDREC", ExpectedDistribution = 45 });
+            this.RefSpecialEducationSupportServicesCategoryDistribution.Add(new DataDistribution<string>() { Option = "PHYSTHERAP", ExpectedDistribution = 54 });
+            this.RefSpecialEducationSupportServicesCategoryDistribution.Add(new DataDistribution<string>() { Option = "SPEECHPATH", ExpectedDistribution = 63 });
+            this.RefSpecialEducationSupportServicesCategoryDistribution.Add(new DataDistribution<string>() { Option = "INTERPRET", ExpectedDistribution = 72 });
+            this.RefSpecialEducationSupportServicesCategoryDistribution.Add(new DataDistribution<string>() { Option = "COUNSELOR", ExpectedDistribution = 81 });
+            this.RefSpecialEducationSupportServicesCategoryDistribution.Add(new DataDistribution<string>() { Option = "ORIENTMOBIL", ExpectedDistribution = 90 });
+            this.RefSpecialEducationSupportServicesCategoryDistribution.Add(new DataDistribution<string>() { Option = "MEDNURSE", ExpectedDistribution = 100 });
 
 
             this.RefK12StaffClassificationDistribution = new List<DataDistribution<string>>();

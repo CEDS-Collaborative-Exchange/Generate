@@ -11,6 +11,15 @@
 	end
 
 -----------------------------------------------
+--Staging.K12StaffAssignment
+-----------------------------------------------
+
+   	IF COL_LENGTH('Staging.K12StaffAssignment', 'SpecialEducationStaffCategory') IS NOT NULL
+	BEGIN
+		exec sp_rename 'Staging.K12StaffAssignment.SpecialEducationStaffCategory', 'SpecialEducationSupportServicesCategory', 'COLUMN';
+	END
+
+-----------------------------------------------
 --Staging.ProgramParticipationTitleIII
 -----------------------------------------------
 
