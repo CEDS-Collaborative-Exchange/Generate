@@ -55,6 +55,39 @@ You will need to remove the header row from the file prior to loading it into SQ
 
 If BPC is not enabled on your server, you will need to import the file into the table created earlier using whatever utility you have available. This could be the SQL Import tool or some other utility. Make sure to remove or ignore the header row when importing the file.
 
+**Loading a Legacy File When Using The Wizard**
+
+1. Make sure to remove or ignore the header row when importing the file.&#x20;
+2. Make sure the file is closed before you try to import.
+3. Right click on the Generate Database > Tasks>Import Data
+4. In the Data Source dropdown select Flat File Source and browse to the file location. (you might need to change the fie type to see the file.
+   1. Uncheck the Column Names in the first row.
+   2. Click on Advanced in the left navigation and follow step 5.
+
+<figure><img src="../../../.gitbook/assets/Wizard step 4.jpg" alt=""><figcaption></figcaption></figure>
+
+5. For the columns that are or could be longer than 50 characters, change the Output column width to 100. (You can select preview in the left menu to see what fields might be longer than 50) Websites and names are known for being too long.
+
+<figure><img src="../../../.gitbook/assets/Wizard step 5.jpg" alt=""><figcaption></figcaption></figure>
+
+6. Select Next and select SQL Server Native Client 11.0 and select the server and database.
+
+<figure><img src="../../../.gitbook/assets/Wizard step 6.jpg" alt=""><figcaption></figcaption></figure>
+
+7. Select Next and type the schema name in to the Destination field and use the dropdown to find the table and replace the file name.&#x20;
+
+<figure><img src="../../../.gitbook/assets/Wizard step 7 (002).jpg" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../../../.gitbook/assets/Wizard step 7b.jpg" alt=""><figcaption></figcaption></figure>
+
+8. Once you have selected the Destination table, select the Edit Mappings button and map the destination fields in order of the Destination dropdown.&#x20;
+
+<figure><img src="../../../.gitbook/assets/Wizard step 8 (002).jpg" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../../../.gitbook/assets/Wizard step 8b.jpg" alt=""><figcaption></figcaption></figure>
+
+9. Select Ok, Next, then select Finish and the data will load into the table. If you get errors, it is usually a length issue. The error will tell you the issue and the Column and row that had the issue.
+
 ***
 
 ## Loading Generate Files into a Table
