@@ -136,7 +136,7 @@ BEGIN
 		LEFT JOIN #vwK12StaffCategories rdksc 
 			ON rsy.SchoolYear = rdksc.SchoolYear
 			AND ISNULL(ssa.K12StaffClassification, 'MISSING') = ISNULL(rdksc.K12StaffClassificationMap, rdksc.K12StaffClassificationCode)
-			AND ISNULL(ssa.SpecialEducationStaffCategory, 'MISSING') = ISNULL(rdksc.SpecialEducationSupportServicesCategoryMap, rdksc.SpecialEducationSupportServicesCategoryCode)
+			AND ISNULL(ssa.SpecialEducationSupportServicesCategory, 'MISSING') = ISNULL(rdksc.SpecialEducationSupportServicesCategoryMap, rdksc.SpecialEducationSupportServicesCategoryCode)
 			AND rdksc.TitleIProgramStaffCategoryCode = 'MISSING'
 			AND rdksc.MigrantEducationProgramStaffCategoryCode = 'MISSING'
 			AND rdksc.ProfessionalEducationalJobClassificationCode = 'MISSING'

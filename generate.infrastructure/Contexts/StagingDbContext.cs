@@ -944,7 +944,7 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.SpecialEducationStaffCategory)
+                entity.Property(e => e.SpecialEducationSupportServicesCategory)
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
