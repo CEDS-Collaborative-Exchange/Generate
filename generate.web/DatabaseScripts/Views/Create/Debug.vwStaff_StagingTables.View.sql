@@ -11,7 +11,7 @@ CREATE VIEW [Debug].[vwStaff_StagingTables] AS
 				, Sex
 				, PositionTitle
 				, FullTimeEquivalency
-				, SpecialEducationStaffCategory
+				, SpecialEducationSupportServicesCategory
 				, K12StaffClassification
 				, TitleIProgramStaffCategory
 				, TeachingCredentialType
@@ -42,7 +42,7 @@ CREATE VIEW [Debug].[vwStaff_StagingTables] AS
 	--AND Sex = ''
 	--AND PositionTitle = ''
 	--AND FullTimeEquivalency = ''
-	--AND SpecialEducationStaffCategory = ''
+	--AND SpecialEducationSupportServicesCategory = ''
 	--AND K12StaffClassification = ''
 	--AND TitleIProgramStaffCategory = ''
 	--AND TeachingCredentialType = ''
