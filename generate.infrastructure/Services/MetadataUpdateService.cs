@@ -28,7 +28,6 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography;
-using System.Threading;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -143,8 +142,8 @@ namespace generate.infrastructure.Services
                 {
 
                     string initCallUrl = _fsWSURL + initSubdir;
-                    var client = new RestClient(new RestClientOptions(new Uri(initCallUrl)));
-                    var request = new RestRequest("", Method.Get);
+                    var client = new RestClient(initCallUrl);
+                    var request = new RestRequest("", Method.GET);
                     var response = client.Execute(request);
 
                     cont = response.Content;
@@ -177,8 +176,8 @@ namespace generate.infrastructure.Services
                     string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
                     detailUrl = string.Format(detailUrl, collectName, essDSNameAbbrv, maxVersionNumber.ToString(), fqYrName);
 
-                    var client1 = new RestClient(new RestClientOptions(new Uri(detailUrl)));
-                    var request1 = new RestRequest("", Method.Get);
+                    var client1 = new RestClient(detailUrl);
+                    var request1 = new RestRequest("", Method.GET);
                     var response1 = client1.Execute(request1);
 
                     edfacts = response1.Content;
@@ -290,8 +289,8 @@ namespace generate.infrastructure.Services
                     string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
                     detailUrl = string.Format(detailUrl, collectName, charterDSNameAbbrv, maxVersionNumber.ToString(), fqYrName);
 
-                    var client1 = new RestClient(new RestClientOptions(new Uri(detailUrl)));
-                    var request1 = new RestRequest("", Method.Get);
+                    var client1 = new RestClient(detailUrl);
+                    var request1 = new RestRequest("", Method.GET);
                     var response1 = client1.Execute(request1);
 
                     chrtr = response1.Content;
@@ -2448,8 +2447,8 @@ namespace generate.infrastructure.Services
                 //fsLayoutURL = "https://edfacts.ed.gov/generate/DataSetYearVersionFSLayoutDetailsByAllAbbrv?collectionAbbrv=EDFACTS&dataSetAbbrv=ESS&versionNum=13&yearAbbrv=2022-2023";
                 //fqYrName = "2022";
 
-                var client1 = new RestClient(new RestClientOptions(new Uri(fsLayoutURL)));
-                var request1 = new RestRequest("", Method.Get);
+                var client1 = new RestClient(fsLayoutURL);
+                var request1 = new RestRequest("", Method.GET);
                 var response1 = client1.Execute(request1);
 
                 edfacts1 = response1.Content;
@@ -2911,7 +2910,7 @@ namespace generate.infrastructure.Services
             }
             catch (Exception ex) {
                 _logger.LogError(ex.Message);
-                throw ex;
+                throw;
             }
 
         }
@@ -3064,8 +3063,8 @@ namespace generate.infrastructure.Services
             int maxCHRSubmissionYear = 0;
             int maxSubmissionYear = 0;
             string initCallUrl = _fsWSURL + initSubdir;
-            var client = new RestClient(new RestClientOptions(new Uri(initCallUrl)));
-            var request = new RestRequest("", Method.Get);
+            var client = new RestClient(initCallUrl);
+            var request = new RestRequest("", Method.GET);
             var response = client.Execute(request);
 
             cont = response.Content;

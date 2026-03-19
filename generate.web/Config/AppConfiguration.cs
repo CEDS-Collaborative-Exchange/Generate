@@ -35,9 +35,6 @@ namespace generate.web.Config
 {
     public static class AppConfiguration
     {
-
-        private static IConfigurationRoot Configuration;
-
         public static void ConfigureCoreServices(IServiceCollection services)
         {
             // Utilities

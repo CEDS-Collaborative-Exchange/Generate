@@ -16,9 +16,7 @@ namespace generate.web.Controllers.Api.App
     public class AboutController : Controller
     {
 
-        private readonly IAppRepository _appRepository;
         private readonly IAboutService _AboutService;
-        private readonly IRDSRepository _rdsRepository;
 
         public AboutController
         (

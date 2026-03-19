@@ -47,7 +47,7 @@ namespace generate.web.Controllers.Api.App
             // Get downloaded updates on background server
             var backgroundUrl = _appSettings.Value.BackgroundUrl;
             var client = new RestClient(backgroundUrl + "/api/backgroundUpdate/");
-            var request = new RestRequest("", Method.Get);
+            var request = new RestRequest("", Method.GET);
 
             _logger.LogInformation("DownloadedUpdates - Calling " + backgroundUrl + "/api/backgroundUpdate/");
 
@@ -123,7 +123,7 @@ namespace generate.web.Controllers.Api.App
             // Download web updates to background server
             var backgroundUrl = _appSettings.Value.BackgroundUrl;
             var client = new RestClient(backgroundUrl + "/api/backgroundUpdate/");
-            var request = new RestRequest("download", Method.Post);
+            var request = new RestRequest("download", Method.POST);
             var response = client.Post(request);
 
             if (response.IsSuccessful)
@@ -145,7 +145,7 @@ namespace generate.web.Controllers.Api.App
             // Delete web updates from background server
             var backgroundUrl = _appSettings.Value.BackgroundUrl;
             var client = new RestClient(backgroundUrl + "/api/backgroundUpdate/");
-            var request = new RestRequest("clear", Method.Post);
+            var request = new RestRequest("clear", Method.POST);
             var response = client.Post(request);
 
             if (response.IsSuccessful)
@@ -182,7 +182,7 @@ namespace generate.web.Controllers.Api.App
                 // Apply update on web server using background server
                 var backgroundUrl = _appSettings.Value.BackgroundUrl;
                 var client = new RestClient(backgroundUrl + "/api/backgroundUpdate/");
-                var request = new RestRequest("execute", Method.Put);
+                var request = new RestRequest("execute", Method.PUT);
                 var response = client.Put(request);
 
                 if (response.IsSuccessful)

@@ -65,7 +65,7 @@ namespace generate.web.Controllers.Api.App
 
                 var backgroundUrl = _appSettings.Value.BackgroundUrl;
                 var client = new RestClient(backgroundUrl + "/api/DataMigration/");
-                var request = new RestRequest("MigrateData/Cancel/" + cancelMigrationRequest.MigrationType, Method.Get);
+                var request = new RestRequest("MigrateData/Cancel/" + cancelMigrationRequest.MigrationType, Method.GET);
                 var response = client.Get(request);
 
                 return new OkResult();
@@ -89,7 +89,7 @@ namespace generate.web.Controllers.Api.App
 
                 var backgroundUrl = _appSettings.Value.BackgroundUrl;
                 var client = new RestClient(backgroundUrl + "/api/DataMigration/");
-                var request = new RestRequest("MigrateData/ods", Method.Get);
+                var request = new RestRequest("MigrateData/ods", Method.GET);
                 var response = client.Get(request);
 
                 return new OkResult();
@@ -115,7 +115,7 @@ namespace generate.web.Controllers.Api.App
 
                 var backgroundUrl = _appSettings.Value.BackgroundUrl;
                 var client = new RestClient(backgroundUrl + "/api/DataMigration/");
-                var request = new RestRequest("MigrateData/rds", Method.Get);
+                var request = new RestRequest("MigrateData/rds", Method.GET);
                 var response = client.Get(request);
 
                 return new OkResult();
@@ -149,7 +149,7 @@ namespace generate.web.Controllers.Api.App
 
                 var backgroundUrl = _appSettings.Value.BackgroundUrl;
                 var client = new RestClient(backgroundUrl + "/api/DataMigration/");
-                var request = new RestRequest("MigrateData/report", Method.Get);
+                var request = new RestRequest("MigrateData/report", Method.GET);
                 var response = client.Get(request);
 
                 return new OkResult();

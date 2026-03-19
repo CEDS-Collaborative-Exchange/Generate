@@ -119,8 +119,8 @@ namespace generate.infrastructure.Services
             string currentVersion = this.GetCurrentVersion();
             string updateUrl = this.GetUpdateUrl();
 
-            var client = new RestClient(new RestClientOptions(new Uri(updateUrl + "/api/update/" + currentVersion)));
-            var request = new RestRequest("", Method.Get);
+            var client = new RestClient(updateUrl + "/api/update/" + currentVersion);
+            var request = new RestRequest("", Method.GET);
             var response = client.Execute(request);
             List<UpdatePackageDto> pendingUpdates = JsonConvert.DeserializeObject<List<UpdatePackageDto>>(response.Content);
 
@@ -219,8 +219,8 @@ namespace generate.infrastructure.Services
 
             // Download updates
 
-            var client = new RestClient(new RestClientOptions(new Uri(updateUrl)));
-            var request = new RestRequest("/api/update/" + currentVersion, Method.Get);
+            var client = new RestClient(updateUrl);
+            var request = new RestRequest("/api/update/" + currentVersion, Method.GET);
             var response = client.Execute(request);
             List<UpdatePackageDto> pendingUpdates = JsonConvert.DeserializeObject<List<UpdatePackageDto>>(response.Content);
 
@@ -234,12 +234,12 @@ namespace generate.infrastructure.Services
                 foreach (var update in pendingUpdates.OrderBy(x => x.MajorVersion).ThenBy(x => x.MinorVersion).Take(1))
                 {
                     // Download zip file
-                    var zipRequest = new RestRequest("/Updates/" + update.FileName, Method.Get);
+                    var zipRequest = new RestRequest("/Updates/" + update.FileName, Method.GET);
                     byte[] updateResponse = client.DownloadData(zipRequest);
                     _fileSystem.File.WriteAllBytes(updatePath + "/" + update.FileName, updateResponse);
 
                     // Download json file
-                    var jsonRequest = new RestRequest("/Updates/" + update.FileName.Replace(".zip", ".json"), Method.Get);
+                    var jsonRequest = new RestRequest("/Updates/" + update.FileName.Replace(".zip", ".json"), Method.GET);
                     var jsonResponse = client.DownloadData(jsonRequest);
                     _fileSystem.File.WriteAllBytes(updatePath + "/" + update.FileName.Replace(".zip", ".json"), jsonResponse);
 
