@@ -90,20 +90,23 @@ else if ("OAUTH".Equals(builder.Configuration.GetValue<string>("AppSettings:User
                     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
     builder.Services.AddAuthorization();
 
-
+#pragma warning disable CA1416
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddUserStore<ApplicationUserStore<ApplicationUser>>()
     .AddRoleStore<ApplicationRoleStore>()
     .AddUserManager<ApplicationUserManager>();
+#pragma warning restore CA1416
 }
 else // AD Auth
 {
     builder.Services.AddAuthorization();
     builder.Services.AddAuthentication().AddCookie();
+#pragma warning disable CA1416
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddUserStore<ApplicationUserStore<ApplicationUser>>()
     .AddRoleStore<ApplicationRoleStore>()
     .AddUserManager<ApplicationUserManager>();
+#pragma warning restore CA1416
 }
 
 
