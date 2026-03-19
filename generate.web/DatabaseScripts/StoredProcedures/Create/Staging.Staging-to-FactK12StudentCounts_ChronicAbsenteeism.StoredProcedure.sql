@@ -40,6 +40,16 @@ BEGIN
 		SET @SYStartDate = staging.GetFiscalYearStartDate(@SchoolYear)
 		SET @SYEndDate = staging.GetFiscalYearEndDate(@SchoolYear)
 
+		--Get the ID value for Chronic Absenteeism Indicator = 'CA'
+		DECLARE @ChronicAbsenteeId int = (SELECT DimAttendanceId 
+											FROM rds.DimAttendances
+											WHERE ChronicStudentAbsenteeismIndicatorCode = 'CA'
+											AND AttendanceEventTypeCode = 'MISSING'
+											AND AttendanceStatusCode = 'MISSING'
+											AND PresentAttendanceCategoryCode = 'MISSING'
+											AND AbsentAttendanceCategoryCode = 'MISSING'
+										)
+
 	-- No longer using #dimPeople temp table - direct join to DimPeople_Current
 
 	--Create the temp views (and any relevant indexes) needed for this domain
@@ -211,7 +221,7 @@ BEGIN
 			, -1 														MigrantStatusId						
 			, -1														TitleIStatusId						
 			, -1														TitleIIIStatusId						
-			, 1															AttendanceId							
+			, @ChronicAbsenteeId										AttendanceId							
 			, -1 														CohortStatusId						
 			, -1														NOrDStatusId							
 			, -1														CTEStatusId							
