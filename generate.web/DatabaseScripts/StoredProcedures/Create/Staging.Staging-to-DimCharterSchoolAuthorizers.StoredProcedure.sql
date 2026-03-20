@@ -71,7 +71,7 @@ BEGIN
 		, @StateCode 												'StateAbbreviationCode'
 		, @StateANSICode 											'StateANSICode'
 		, ssrd.OutputCode											'CharterSchoolAuthorizerTypeCode'
-		, refcsat.CedsOptionSetDefinition							'CharterSchoolAuthorizerTypeDescription'
+		, SUBSTRING(refcsat.CedsOptionSetDefinition, 1, 100)		'CharterSchoolAuthorizerTypeDescription'
 		, ssrd.OutputCode											'CharterSchoolAuthorizerTypeEdFactsCode'
 		, smam.AddressStreetNumberAndName				 			'MailingAddressStreetNumberAndName'
 		, smam.AddressApartmentRoomOrSuiteNumber					'MailingAddressApartmentRoomOrSuiteNumber'
