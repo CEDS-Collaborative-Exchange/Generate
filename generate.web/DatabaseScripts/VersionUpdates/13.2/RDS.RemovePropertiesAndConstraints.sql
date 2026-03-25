@@ -2729,8 +2729,16 @@ PRINT N'Dropping Index [RDS].[DimK12StaffCategories].[IX_DimK12StaffCategories_C
 
 
 
-DROP INDEX [IX_DimK12StaffCategories_Category]
+IF EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = 'IX_DimK12StaffCategories_Category'
+      AND object_id = OBJECT_ID('[RDS].[DimK12StaffCategories]')
+)
+BEGIN
+    DROP INDEX [IX_DimK12StaffCategories_Category]
     ON [RDS].[DimK12StaffCategories];
+END
 
 
 
