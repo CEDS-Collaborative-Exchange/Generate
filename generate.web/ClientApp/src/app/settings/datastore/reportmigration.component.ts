@@ -182,7 +182,6 @@ export class ReportMigationComponent implements OnDestroy {
                 this.selectedFactTypeCode = this.lastRunFactType.factTypeCode;
 
             }
-            console.log(this.reportYears);
             this.reportYears.forEach((item, index) => {
                 if (item.isSelected) {
                     this.selectedyear = item;
@@ -193,7 +192,6 @@ export class ReportMigationComponent implements OnDestroy {
                     isSelected: item.isSelected
                 };
                 this.yearsNew.push(this.dimSchoolYearDataMigrationType);
-                console.log(this.yearsNew);
 
             });
             this.migrationTasks.forEach(b => {
@@ -277,17 +275,20 @@ export class ReportMigationComponent implements OnDestroy {
 
     onReportYearUpdate(ev, control) {
         this.checkedYear = control.selectedItem;
-        console.log(this.yearsNew);
-        console.log(this.checkedYear);
-        this.yearsNew.forEach((item, index) => {
+        
+        // Update yearsNew for data consistency
+        this.yearsNew.forEach((item) => {
             if (item.dimSchoolYearId === this.checkedYear.dimSchoolYearId) {
                 item.isSelected = true;
-                this.selectedIndex = index;
             }
             else {
                 item.isSelected = false;
             }
         });
+        
+        // Set selectedIndex using cvDataYear (the array displayed in dropdown)
+        // cvDataYear contains distinct years, so we must find index in that array
+        this.selectedIndex = this.cvDataYear.findIndex(y => y.dimSchoolYearId === this.checkedYear.dimSchoolYearId);
     }
 
     onFactTypeUpdate(ev, control) {

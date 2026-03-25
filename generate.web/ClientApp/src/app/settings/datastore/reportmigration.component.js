@@ -192,11 +192,9 @@ var ReportMigationComponent = function () {
                 if (_this.lastRunFactType !== null) {
                     _this.selectedFactTypeCode = _this.lastRunFactType.factTypeCode;
                 }
-                console.log(_this.reportYears);
                 _this.reportYears.forEach(function (item, index) {
                     if (item.isSelected) {
                         _this.selectedyear = item;
-                        _this.selectedIndex = index;
                     }
                     _this.dimSchoolYearDataMigrationType = {
                         dimSchoolYearId: item.dimSchoolYearId,
@@ -204,7 +202,6 @@ var ReportMigationComponent = function () {
                         isSelected: item.isSelected
                     };
                     _this.yearsNew.push(_this.dimSchoolYearDataMigrationType);
-                    console.log(_this.yearsNew);
                 });
                 _this.migrationTasks.forEach(function (b) {
                     _this.generateReportTypes.forEach(function (c) {
@@ -222,7 +219,15 @@ var ReportMigationComponent = function () {
                 else {
                     _this.cvData = _this.migrationTasks;
                 }
-                _this.cvDataYear = _this.reportYears;
+                // Filter to get distinct school years
+                var distinctYears = _this.reportYears.filter(function (year, index, self) {
+                    return self.findIndex(function (y) { return y.dimSchoolYearId === year.dimSchoolYearId; }) === index;
+                });
+                // Set selectedIndex to the year where isSelected = true
+                if (_this.selectedyear) {
+                    _this.selectedIndex = distinctYears.findIndex(function (y) { return y.dimSchoolYearId === _this.selectedyear.dimSchoolYearId; });
+                }
+                _this.cvDataYear = distinctYears;
                 _this.cvFactTypes = _this.factTypes;
             });
         };
@@ -271,17 +276,18 @@ var ReportMigationComponent = function () {
         ReportMigationComponent_1.prototype.onReportYearUpdate = function (ev, control) {
             var _this = this;
             this.checkedYear = control.selectedItem;
-            console.log(this.yearsNew);
-            console.log(this.checkedYear);
-            this.yearsNew.forEach(function (item, index) {
+            // Update yearsNew for data consistency
+            this.yearsNew.forEach(function (item) {
                 if (item.dimSchoolYearId === _this.checkedYear.dimSchoolYearId) {
                     item.isSelected = true;
-                    _this.selectedIndex = index;
                 }
                 else {
                     item.isSelected = false;
                 }
             });
+            // Set selectedIndex using cvDataYear (the array displayed in dropdown)
+            // cvDataYear contains distinct years, so we must find index in that array
+            this.selectedIndex = this.cvDataYear.findIndex(function (y) { return y.dimSchoolYearId === _this.checkedYear.dimSchoolYearId; });
         };
         ReportMigationComponent_1.prototype.onFactTypeUpdate = function (ev, control) {
             var selectedFactTypeId = control.selectedItem.dimFactTypeId;
