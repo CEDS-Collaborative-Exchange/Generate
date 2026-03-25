@@ -70,7 +70,7 @@ var SharedModule = function () {
                 dialog_component_1.DialogComponent,
                 autocomplete_component_1.AutocompleteComponent,
                 flextable_component_1.FlextableComponent,
-                report_library_table_component_1.ReportLibraryTableComponent,
+                report_library_table_component_1.ReportLibraryTableComponent
             ],
             declarations: [
                 breadcrumbs_component_1.BreadcrumbsComponent,
@@ -92,7 +92,7 @@ var SharedModule = function () {
                 dialog_component_1.DialogComponent,
                 autocomplete_component_1.AutocompleteComponent,
                 flextable_component_1.FlextableComponent,
-                report_library_table_component_1.ReportLibraryTableComponent,
+                report_library_table_component_1.ReportLibraryTableComponent
             ]
         })];
     var _classDescriptor;

@@ -175,7 +175,6 @@ namespace generate.web.Controllers.Api.App
         {
 
             List<string> dimSchoolYears = _appRepository.GetAll<CategorySet>(0, 0).Select(s => s.SubmissionYear).OrderByDescending(t => Convert.ToInt16(t)).Distinct().ToList();
-            var datamigrationType = _appRepository.Find<DataMigrationType>(s => s.DataMigrationTypeCode == migrationType).FirstOrDefault();
             List<DimSchoolYearDto> yearDto = new List<DimSchoolYearDto>();
 
             foreach (var schoolYear in dimSchoolYears)
@@ -184,22 +183,22 @@ namespace generate.web.Controllers.Api.App
 
                 if (dimYear != null)
                 {
-                    DimSchoolYearDto dt = new DimSchoolYearDto();
-                    dt.DimSchoolYearId = dimYear.DimSchoolYearId;
-                    dt.SchoolYear = dimYear.SchoolYear.ToString();
-                    dt.SessionBeginDate = dimYear.SessionBeginDate;
-                    dt.SessionEndDate = dimYear.SessionEndDate;
-
-                    var dm = _rdsRepository.Find<DimSchoolYearDataMigrationType>(s => s.DimSchoolYearId == dimYear.DimSchoolYearId && s.DataMigrationTypeId == datamigrationType.DataMigrationTypeId).FirstOrDefault();
-                    if (dm == null || dm.IsSelected == false)
-                        dt.IsSelected = false;
-                    else
-                        dt.IsSelected = true;
-                    if (dm != null)
+                    var syMigrationTypes = _rdsRepository.Find<DimSchoolYearDataMigrationType>(s => s.DimSchoolYearId == dimYear.DimSchoolYearId);
+                    
+                    if (syMigrationTypes != null && syMigrationTypes.Any())
                     {
-                        dt.DataMigrationTypeId = dm.DataMigrationTypeId;
+                        foreach (var dm in syMigrationTypes)
+                        {
+                            DimSchoolYearDto dt = new DimSchoolYearDto();
+                            dt.DimSchoolYearId = dimYear.DimSchoolYearId;
+                            dt.SchoolYear = dimYear.SchoolYear.ToString();
+                            dt.SessionBeginDate = dimYear.SessionBeginDate;
+                            dt.SessionEndDate = dimYear.SessionEndDate;
+                            dt.IsSelected = dm.IsSelected;
+                            dt.DataMigrationTypeId = dm.DataMigrationTypeId;
+                            yearDto.Add(dt);
+                        }
                     }
-                    yearDto.Add(dt);
                 }
 
             }

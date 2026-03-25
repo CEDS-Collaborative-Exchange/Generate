@@ -39,12 +39,15 @@ var __setFunctionName = (this && this.__setFunctionName) || function (f, name, p
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppDrawerComponent = void 0;
+var common_1 = require("@angular/common");
 var core_1 = require("@angular/core");
+var router_1 = require("@angular/router");
+var shared_module_1 = require("../../shared.module");
 var AppDrawerComponent = function () {
     var _classDecorators = [(0, core_1.Component)({
             selector: 'app-app-drawer',
             standalone: true,
-            imports: [],
+            imports: [common_1.CommonModule, router_1.RouterLinkActive, shared_module_1.SharedModule],
             templateUrl: './app-drawer.component.html',
             styleUrl: './app-drawer.component.css'
         })];
@@ -58,11 +61,97 @@ var AppDrawerComponent = function () {
     var _close_initializers = [];
     var _close_extraInitializers = [];
     var AppDrawerComponent = _classThis = /** @class */ (function () {
-        function AppDrawerComponent_1() {
+        function AppDrawerComponent_1(_router, userService) {
+            this._router = _router;
+            this.userService = userService;
             this.isDrawerOpen = __runInitializers(this, _isDrawerOpen_initializers, false);
             this.close = (__runInitializers(this, _isDrawerOpen_extraInitializers), __runInitializers(this, _close_initializers, new core_1.EventEmitter()));
-            __runInitializers(this, _close_extraInitializers);
+            this.submenus = (__runInitializers(this, _close_extraInitializers), {
+                resources: false,
+                reports: false,
+                settings: false
+            });
         }
+        // Toggle submenu open/close
+        AppDrawerComponent_1.prototype.toggleSubmenu = function (menu) {
+            this.submenus[menu] = !this.submenus[menu];
+        };
+        AppDrawerComponent_1.prototype.gotoHome = function () {
+            this._router.navigateByUrl('/');
+            this.close.emit();
+        };
+        AppDrawerComponent_1.prototype.gotoAbout = function () {
+            this._router.navigateByUrl('/about');
+            this.close.emit();
+        };
+        AppDrawerComponent_1.prototype.gotoSummary = function () {
+            if (this.userService.isLoggedIn()) {
+                this._router.navigateByUrl('/reports/summary');
+                this.close.emit();
+            }
+            else {
+                var snackbarContainer = document.querySelector('#generate-app__message');
+                var data = { message: 'You must be logged in to access this area of Generate.' };
+                snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            }
+            return false;
+        };
+        AppDrawerComponent_1.prototype.gotoReportsEdFacts = function () {
+            if (this.userService.isLoggedIn()) {
+                this._router.navigate(['/reports/edfacts']);
+                this.close.emit();
+            }
+            else {
+                var snackbarContainer = document.querySelector('#generate-app__message');
+                var data = { message: 'You must be logged in to access this area of Generate.' };
+                snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            }
+            return false;
+        };
+        AppDrawerComponent_1.prototype.gotoReportsSppApr = function () {
+            if (this.userService.isLoggedIn()) {
+                this._router.navigate(['/reports/sppapr']);
+                this.close.emit();
+            }
+            else {
+                var snackbarContainer = document.querySelector('#generate-app__message');
+                var data = { message: 'You must be logged in to access this area of Generate.' };
+                snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            }
+            return false;
+        };
+        AppDrawerComponent_1.prototype.gotoReportsLibrary = function () {
+            if (this.userService.isLoggedIn()) {
+                this._router.navigate(['/reports/library']);
+                this.close.emit();
+            }
+            else {
+                var snackbarContainer = document.querySelector('#generate-app__message');
+                var data = { message: 'You must be logged in to access this area of Generate.' };
+                snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+            }
+            return false;
+        };
+        AppDrawerComponent_1.prototype.gotoSettingsToggle = function () {
+            this._router.navigate(['/settings/toggle']);
+            this.close.emit();
+            return false;
+        };
+        AppDrawerComponent_1.prototype.gotoSettingsDataMigration = function () {
+            this._router.navigate(['/settings/datamigration']);
+            this.close.emit();
+            return false;
+        };
+        AppDrawerComponent_1.prototype.gotoSettingsUpdate = function () {
+            this._router.navigate(['/settings/update']);
+            this.close.emit();
+            return false;
+        };
+        AppDrawerComponent_1.prototype.gotoSettingsMetadata = function () {
+            this._router.navigate(['/settings/metadata']);
+            this.close.emit();
+            return false;
+        };
         return AppDrawerComponent_1;
     }());
     __setFunctionName(_classThis, "AppDrawerComponent");
