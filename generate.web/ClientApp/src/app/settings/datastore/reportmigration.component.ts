@@ -182,10 +182,10 @@ export class ReportMigationComponent implements OnDestroy {
                 this.selectedFactTypeCode = this.lastRunFactType.factTypeCode;
 
             }
+            console.log(this.reportYears);
             this.reportYears.forEach((item, index) => {
                 if (item.isSelected) {
                     this.selectedyear = item;
-                    this.selectedIndex = index;
                 }
                 this.dimSchoolYearDataMigrationType = {
                     dimSchoolYearId: item.dimSchoolYearId,
@@ -193,6 +193,7 @@ export class ReportMigationComponent implements OnDestroy {
                     isSelected: item.isSelected
                 };
                 this.yearsNew.push(this.dimSchoolYearDataMigrationType);
+                console.log(this.yearsNew);
 
             });
             this.migrationTasks.forEach(b => {
@@ -213,7 +214,17 @@ export class ReportMigationComponent implements OnDestroy {
                 this.cvData = this.migrationTasks;
             }
 
-            this.cvDataYear = this.reportYears;
+            // Filter to get distinct school years
+            const distinctYears = this.reportYears.filter((year, index, self) => 
+                self.findIndex(y => y.dimSchoolYearId === year.dimSchoolYearId) === index
+            );
+            
+            // Set selectedIndex to the year where isSelected = true
+            if (this.selectedyear) {
+                this.selectedIndex = distinctYears.findIndex(y => y.dimSchoolYearId === this.selectedyear.dimSchoolYearId);
+            }
+            
+            this.cvDataYear = distinctYears;
             this.cvFactTypes = this.factTypes;
         });
     }
@@ -266,6 +277,8 @@ export class ReportMigationComponent implements OnDestroy {
 
     onReportYearUpdate(ev, control) {
         this.checkedYear = control.selectedItem;
+        console.log(this.yearsNew);
+        console.log(this.checkedYear);
         this.yearsNew.forEach((item, index) => {
             if (item.dimSchoolYearId === this.checkedYear.dimSchoolYearId) {
                 item.isSelected = true;
