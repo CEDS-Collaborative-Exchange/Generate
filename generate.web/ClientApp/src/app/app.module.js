@@ -111,8 +111,7 @@ var AppModule = function () {
                 app_not_found_component_1.AppNotFoundComponent,
                 app_component_1.AppComponent,
                 app_header_component_1.AppHeaderComponent,
-                app_footer_component_1.AppFooterComponent,
-                app_drawer_component_1.AppDrawerComponent
+                app_footer_component_1.AppFooterComponent
             ],
             providers: [
                 app_config_1.AppConfig,
