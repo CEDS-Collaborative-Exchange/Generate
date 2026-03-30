@@ -50,9 +50,9 @@ BEGIN
 			ssrd.OutputCode
 			, sa.AssessmentPerformanceLevelLabel
 --verify the Score Metric field and why it is in Staging.AssessmentResult and not in Staging.Assessment
-			, NULL											AS AssessmentPerformanceLevelScoreMetric
-			, NULL											AS AssessmentPerformanceLevelLowerCutScore
-			, NULL											AS AssessmentPerformanceLevelUpperCutScore
+			, ''											AS AssessmentPerformanceLevelScoreMetric
+			, ''											AS AssessmentPerformanceLevelLowerCutScore
+			, ''											AS AssessmentPerformanceLevelUpperCutScore
 		FROM Staging.AssessmentResult sar
 		JOIN Staging.Assessment sa
 			ON ISNULL(sar.AssessmentTitle, '')								= ISNULL(sa.AssessmentTitle, '')

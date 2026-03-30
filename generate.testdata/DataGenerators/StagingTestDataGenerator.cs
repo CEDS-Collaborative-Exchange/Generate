@@ -663,7 +663,7 @@ namespace generate.testdata.DataGenerators
                 string refAssessmentType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefAssessmentTypeDistribution);
 
                 int minimumPerformanceLevel = 1;
-                int maximumPerformanceLevel = 5;
+                int maximumPerformanceLevel = 6;
 
                 string refAssessmentTypeAdministeredCode = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefAssessmentTypeAdministeredDistribution);
                 string refAssessmentTypeAdministeredToEnglishLearnersCode = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefAssessmentTypeAdministeredToEnglishLearnersDistribution);
