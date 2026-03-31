@@ -21,6 +21,7 @@ import { CategorySetDto } from '../models/app/categorySetDto';
 import { OrganizationDto } from '../models/ods/organizationDto';
 import { GradeLevelDto } from '../models/ods/gradeLevelDto';
 import { GenerateReportFilterOptionDto } from '../models/app/generateReportFilterOptionDto';
+import { TableType } from '../models/app/tableType';
 
 import { FlextableComponent } from './components/flextable/flextable.component';
 
@@ -51,6 +52,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     private submissionYears: string[];
     private categorySets: CategorySetDto[];
+    private tableTypes: TableType[];
     private leas: OrganizationDto[];
     private schools: OrganizationDto[];
     private filteredSchools: OrganizationDto[];
@@ -322,6 +324,10 @@ export class ReportComponent implements AfterViewInit, OnInit {
                         newParameters.reportYear = (new Date()).getFullYear().toString();
                     }
 
+                    if (newParameters.reportTableTypeAbbrv === undefined) {
+                        newParameters.reportTypeAbbreviation = this.tableTypes[0].tableTypeAbbrv;
+                    }
+
                     this.reportswithGradeFilter = '';
                     this.errorMessage = null;
 
@@ -398,7 +404,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
     getReport(newParameters: GenerateReportParametersDto) {
 
         forkJoin(
-            this._generateReportService.getReportByCodes(this.reportType, newParameters.reportCode),
+            this._generateReportService.getReportByCodeAndYear(this.reportType, newParameters.reportCode, newParameters.reportYear),
         ).subscribe(data => {
 
             this.currentReport = data[0];
@@ -407,7 +413,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
                 if (this.currentReport.organizationLevels.filter(t => t.levelCode === newParameters.reportLevel).length < 1) {
                     for (let i = 0; i < this.currentReport.organizationLevels.length; i++) {
                         let level: OrganizationLevelDto = this.currentReport.organizationLevels[i];
-                        console.log('Level report is : ' + level.levelCode);
+                        /*console.log('Level report is : ' + level.levelCode);*/
 
                         if (level.levelCode === 'sea') {
                             newParameters.reportLevel = 'sea';
@@ -434,10 +440,16 @@ export class ReportComponent implements AfterViewInit, OnInit {
             
 
             this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
+            this.tableTypes = this.categorySets[0].tableTypes;
+            /*console.log(this.tableTypes);*/
 
             if (this.categorySets !== undefined && this.categorySets.length > 0) {
                 newParameters.reportCategorySet = this.categorySets.filter(t => t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear)[0];
                 newParameters.reportCategorySetCode = newParameters.reportCategorySet.categorySetCode;
+            }
+
+            if (this.tableTypes !== undefined && this.tableTypes.length > 0) {
+                newParameters.reportTableTypeAbbrv = this.tableTypes[0].tableTypeAbbrv;
             }
 
             newParameters.connectionLink = this.currentReport.connectionLink;
@@ -682,6 +694,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
         newParameters.reportSchool = this.reportParameters.reportSchool;
         newParameters.connectionLink = this.reportParameters.connectionLink;
         newParameters.organizationalIdList = this.reportParameters.organizationalIdList;
+        newParameters.reportTableTypeAbbrv = this.reportParameters.reportTableTypeAbbrv;
         return newParameters;
 
     }
@@ -780,15 +793,18 @@ export class ReportComponent implements AfterViewInit, OnInit {
                     newParameters.reportCode = reportCode;
                     newParameters.reportPage = 1;
                     newParameters.reportSort = 1;
-                    newParameters.reportCategorySetCode = 'CSA'
+                    newParameters.reportCategorySetCode = 'CSA';
+                    newParameters.reportTableTypeAbbrv = undefined;
+                    
 
                     if (this.submissionYears !== undefined && this.submissionYears.length > 0) {
-                        this.getReport(newParameters);
+                       this.getReport(newParameters);
                     } else {
                         this.getReportYears(newParameters);
+                        this.reportParameters = newParameters;
                     }
 
-                    this.reportParameters = newParameters;
+                   
 
                 }
 
@@ -856,6 +872,22 @@ export class ReportComponent implements AfterViewInit, OnInit {
                         error => this.errorMessage = <any>error);
 
         return false;
+    }
+
+    setTableType(event, comboTableType) {
+
+        let reportTableType: TableType;
+        let newParameters: GenerateReportParametersDto = this.getNewReportParameters();
+        if (comboTableType.selectedItem !== undefined) {
+
+            reportTableType = comboTableType.selectedItem;
+            if (newParameters.reportTableTypeAbbrv !== reportTableType.tableTypeAbbrv) {
+
+                newParameters.reportTableTypeAbbrv = reportTableType.tableTypeAbbrv;
+                newParameters.reportPage = 1;
+                this.reportParameters = newParameters;
+            }
+        }
     }
 
 
@@ -954,7 +986,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
     }
 
     setReportLea(event, comboReportLea) {
-        console.log('MySetLea');
+        /*console.log('MySetLea');*/
         let newParameters: GenerateReportParametersDto = this.getNewReportParameters();
         if (newParameters.reportCode === 'studentssummary') {
             this.flag1 = true;
@@ -1312,6 +1344,16 @@ export class ReportComponent implements AfterViewInit, OnInit {
         }
         if (this.reportParameters.reportCode === '190' || this.reportParameters.reportCode === '196' || this.reportParameters.reportCode === '197' || this.reportParameters.reportCode === '198') {
             isDisplayed = false;
+        }
+        return isDisplayed;
+    }
+
+    showTableType() {
+        let isDisplayed: boolean = false;
+        const assessmentCodes = ['175', '178', '179', '185', '188', '189'];
+
+        if (assessmentCodes.includes(this.reportParameters.reportCode)) {
+            isDisplayed = true;
         }
         return isDisplayed;
     }

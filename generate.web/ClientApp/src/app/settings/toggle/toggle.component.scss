@@ -1,4 +1,4 @@
-﻿@import '../../variables.scss';
+@import '../../variables.scss';
 @import '../../../../node_modules/material-design-lite/src/_variables.scss';
 @import '../../../../node_modules/material-design-lite/src/_mixins.scss';
 
@@ -38,6 +38,10 @@
     width: 100%;
 }
 
+.mdl-button--raised.mdl-button--colored {
+    background: #546d78 !important;
+    color: #fff
+}
 
 
 .generate-app-toggle__question-text{
@@ -76,6 +80,8 @@ select::-ms-expand {
 
 .clickable {
     cursor: pointer;
+    color: #a86500 !important;
+    text-decoration: underline !important;
 }
 
 .generate-app-toggle__button{
@@ -108,4 +114,20 @@ select::-ms-expand {
 
 .generate-app-toggle__radio-labeltext{
     display: table;
+}
+
+
+.generate-app-toggle__question-radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+}
+
+.generate-app-toggle__question-radio-button {
+    margin: 5px;
+}
+
+.questiontext {
+    color: #546d78 !important;
 }

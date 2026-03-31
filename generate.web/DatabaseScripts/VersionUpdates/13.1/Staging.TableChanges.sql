@@ -1,0 +1,219 @@
+/************************************************************
+Staging.SchoolPerformanceIndicators
+************************************************************/
+
+--find and drop all extended properties on the table and columns
+    DECLARE @sql NVARCHAR(MAX) = N'';
+
+    SELECT @sql = @sql + '
+    EXEC sys.sp_dropextendedproperty 
+        @name = N''' + ep.name + ''', 
+        @level0type = N''SCHEMA'', @level0name = N''Staging'', 
+        @level1type = N''TABLE'', @level1name = N''SchoolPerformanceIndicators''' +
+        CASE 
+            WHEN ep.minor_id > 0 THEN 
+                ', @level2type = N''COLUMN'', @level2name = N''' + c.name + ''''
+            ELSE ''
+        END + ';
+    '
+    FROM sys.extended_properties ep
+    INNER JOIN sys.objects o ON ep.major_id = o.object_id
+    LEFT JOIN sys.columns c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+    WHERE o.name = 'SchoolPerformanceIndicators'
+    AND SCHEMA_NAME(o.schema_id) = 'Staging';
+
+    EXEC sp_executesql @sql;
+
+-- Find and drop all foreign keys on Staging.SchoolPerformanceIndicators
+    SET @sql = N'';    
+
+    SELECT @sql = @sql + 
+        'ALTER TABLE [Staging].[SchoolPerformanceIndicators] DROP CONSTRAINT [' + fk.name + '];' + CHAR(13)
+    FROM sys.foreign_keys fk
+    INNER JOIN sys.tables t ON fk.parent_object_id = t.object_id
+    WHERE t.name = 'SchoolPerformanceIndicators'
+    AND SCHEMA_NAME(t.schema_id) = 'Staging';
+
+    EXEC sp_executesql @sql;
+
+
+--Drop the table if it exists
+    IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[Staging].[SchoolPerformanceIndicators]') AND type in (N'U'))
+    DROP TABLE [Staging].[SchoolPerformanceIndicators];
+
+--Add the reconstructed table 
+    CREATE TABLE [Staging].[SchoolPerformanceIndicators](
+        [Id] [int] IDENTITY(1,1) NOT NULL,
+        [LeaIdentifierSea] [nvarchar](50) NOT NULL,
+        [SchoolIdentifierSea] [nvarchar](50) NOT NULL,
+        [SchoolYear] [smallint] NULL,
+        [SchoolPerformanceIndicatorCategory] [varchar](100) NULL,
+        [SchoolPerformanceIndicatorType] [varchar](100) NULL,
+        [SchoolPerformanceIndicatorStatus] [varchar](100) NULL,
+        [SchoolPerformanceIndicatorStateDefinedStatus] [varchar](100) NULL,
+        [SchoolPerformanceIndicatorStateDefinedStatusDescription] [varchar](200) NULL,
+        [SchoolQualityOrStudentSuccessIndicatorType] [varchar](100) NULL,
+        [Race] [varchar](100) NULL,
+        [IdeaIndicator] [bit] NULL,
+        [EnglishLearnerStatus] [bit] NULL,
+        [EconomicDisadvantageStatus] [bit] NULL,
+        [SubgroupCode] [varchar](100) NULL,
+        [RecordStartDateTime] [datetime] NULL,
+        [RecordEndDateTime] [datetime] NULL,
+        [DataCollectionName] [nvarchar](100) NULL,
+    CONSTRAINT [PK_SchoolPerformanceIndicators] PRIMARY KEY CLUSTERED 
+    (
+        [Id] ASC
+    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF, DATA_COMPRESSION = PAGE) ON [PRIMARY]
+    ) ON [PRIMARY]
+
+--Add the extended properties back to the table and columns
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'A unique number or alphanumeric code assigned to a local education agency by a school system, a state, or other agency or entity.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'LeaIdentifierSea'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Local Education Agency Identifier' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'LeaIdentifierSea'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001068' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'LeaIdentifierSea'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=21153' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'LeaIdentifierSea'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'LeaIdentifierSea'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'A unique number or alphanumeric code assigned to an institution by a school, school system, a state, or other agency or entity.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'SchoolIdentifierSea'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'School Identifier' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'SchoolIdentifierSea'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001069' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'SchoolIdentifierSea'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=21155' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'SchoolIdentifierSea'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'SchoolIdentifierSea'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The year for a reported school session.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'School Year' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000243' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=21243' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The start date and, optionally, time that a record is active as used to support version control.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Record Start Date Time' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001917' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22898' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The end date and, optionally, time that a record is active as used to support version control.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Record End Date Time' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001918' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22899' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'An indication that the student met the State criteria for classification as having an economic disadvantage.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'EconomicDisadvantageStatus'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Economic Disadvantage Status' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'EconomicDisadvantageStatus'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000086' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'EconomicDisadvantageStatus'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=21086' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'EconomicDisadvantageStatus'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'EconomicDisadvantageStatus'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'In coordination with the state''s definition based on Section 8101(20) of the ESEA, as amended by the ESSA, the term ''English learner'', when used with respect to an individual, means an individual:  (A) who is aged 3 through 21;  (B) who is enrolled or preparing to enroll in an elementary school or a secondary school;  (C)   (i) who was not born in the United States or whose native languages are languages other than English;  (ii)   (I) who is a Native American or Alaska Native, or a native resident of the outlying areas; and  (II) who comes from an environment where a language other than English has had a significant impact on the individual''s level of English language proficiency; or  (iii) who is migratory, whose native language is a language other than English, and who come from an environment where a language other than English is dominant; and  (D) whose difficulties in speaking, reading, writing, or understanding the English language may be sufficient to deny the individual   (i) the ability to meet the challenging State academic standards;  (ii) the ability to successfully achieve in classrooms where the language of instruction is English; or  (iii) the opportunity to participate fully in society.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'EnglishLearnerStatus'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'English Learner Status' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'EnglishLearnerStatus'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000180' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'EnglishLearnerStatus'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=21180' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'EnglishLearnerStatus'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'EnglishLearnerStatus'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'A person having intellectual disability; hearing impairment, including deafness; speech or language impairment; visual impairment, including blindness; serious emotional disturbance (hereafter referred to as emotional disturbance); orthopedic impairment; autism; traumatic brain injury; developmental delay; other health impairment; specific learning disability; deaf-blindness; or multiple disabilities and who, by reason thereof, receive special education and related services under the Individuals with Disabilities Education Act (IDEA) according to an Individualized Education Program (IEP), Individual Family Service Plan (IFSP), or service plan.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'IDEAIndicator'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'IDEA Indicator' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'IDEAIndicator'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000151' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'IDEAIndicator'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=21151' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'IDEAIndicator'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'IDEAIndicator'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'A human readable name used to identify the data within the collection.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Data Collection Name' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001966' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22923' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The origins of a person.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'Race'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Race' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'Race'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001943' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'Race'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22955' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'Race'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'SchoolPerformanceIndicators', @level2type=N'COLUMN',@level2name=N'Race'
+
+--Drop the tables that are no longer needed
+    IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[Staging].[SchoolPerformanceIndicatorStateDefinedStatus]') AND type in (N'U'))
+        DROP TABLE [Staging].[SchoolPerformanceIndicatorStateDefinedStatus]
+
+    IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[Staging].[SchoolQualityOrStudentSuccessIndicatorType]') AND type in (N'U'))
+        DROP TABLE [Staging].[SchoolQualityOrStudentSuccessIndicatorType]
+
+--Add some default Source System Reference Data mappings for School Performance Indicators for SY 2025
+--Add SSRD values to convert IndicatorStatuses
+	if not exists (select 1 
+					from staging.SourceSystemReferenceData 
+					where tablename = 'RefIndicatorStatuses'
+					and SchoolYear = '2025')
+	begin
+		insert into staging.SourceSystemReferenceData 
+		values ('2025', 'RefIndicatorStatuses', NULL, 'NOSTUDENTS', 'NOSTUDENTS'),
+			('2025', 'RefIndicatorStatuses', NULL, 'STTDEF', 'STTDEF'),
+			('2025', 'RefIndicatorStatuses', NULL, 'TOOFEW', 'TOOFEW')
+	end
+
+--Add SSRD values to convert SchoolPerformanceIndicatorCategories
+	if not exists (select 1 
+					from staging.SourceSystemReferenceData 
+					where tablename = 'RefSchoolPerformanceIndicatorCategories'
+					and SchoolYear = '2025')
+	begin
+		insert into staging.SourceSystemReferenceData 
+		values ('2025', 'RefSchoolPerformanceIndicatorCategories', NULL, 'AAM', 'AAM'),
+			('2025', 'RefSchoolPerformanceIndicatorCategories', NULL, 'GRM', 'GRM'),
+			('2025', 'RefSchoolPerformanceIndicatorCategories', NULL, 'IND', 'IND'),
+			('2025', 'RefSchoolPerformanceIndicatorCategories', NULL, 'OAM', 'OAM'),
+			('2025', 'RefSchoolPerformanceIndicatorCategories', NULL, 'PAELP', 'PAELP')
+	end
+
+--Add SSRD values to convert SchoolPerformanceIndicators
+	if not exists (select 1 
+					from staging.SourceSystemReferenceData 
+					where tablename = 'RefSchoolPerformanceIndicators'
+					and SchoolYear = '2025')
+	begin
+		insert into staging.SourceSystemReferenceData 
+		values ('2025', 'RefSchoolPerformanceIndicators', NULL, 'AAM01', 'AAM01'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'AAM02', 'AAM02'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'AAM03', 'AAM03'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'AAM04', 'AAM04'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'AAM05', 'AAM05'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'AAM06', 'AAM06'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'GRM01', 'GRM01'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'GRM02', 'GRM02'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'GRM03', 'GRM03'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND01', 'IND01'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND02', 'IND02'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND03', 'IND03'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND04', 'IND04'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND05', 'IND05'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND06', 'IND06'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND07', 'IND07'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND08', 'IND08'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND09', 'IND09'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND10', 'IND10'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND11', 'IND11'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'IND12', 'IND12'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'OAM01', 'OAM01'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'OAM02', 'OAM02'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'OAM03', 'OAM03'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'OAM04', 'OAM04'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'OAM05', 'OAM05'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'OAM06', 'OAM06'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'PAELP1', 'PAELP1'),
+			('2025', 'RefSchoolPerformanceIndicators', NULL, 'PAELP2', 'PAELP2')
+	end
+
+--Add SSRD values to convert TitleIProgramType
+	if not exists (select 1 
+					from staging.SourceSystemReferenceData 
+					where tablename = 'RefTitleIProgramType'
+					and SchoolYear = '2025')
+	begin
+		insert into staging.SourceSystemReferenceData 
+		values ('2025', 'RefTitleIProgramType', NULL, 'LocalNeglectedProgram', 'LocalNeglectedProgram'),
+			('2025', 'RefTitleIProgramType', NULL, 'PrivateSchoolStudents', 'PrivateSchoolStudents'),
+			('2025', 'RefTitleIProgramType', NULL, 'SchoolwideProgram', 'SchoolwideProgram'),
+			('2025', 'RefTitleIProgramType', NULL, 'TargetedAssistanceProgram', 'TargetedAssistanceProgram')
+	end
+
+/************************************************************
+Source to Staging Assessment Stored Procedure Rename
+************************************************************/
+    --Check if the 'new' name for the Source to Staging Assessment SP already exists (no trailing 's')
+    IF NOT EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'Source' AND ROUTINE_NAME = 'Source-to-Staging_Assessment') 
+    BEGIN
+        --Check if the 'old' name for the SP exists (with the trailing 's')
+        IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'Source' AND ROUTINE_NAME = 'Source-to-Staging_Assessments') 
+        BEGIN
+            --rename the SP to the correct version without the trailing 's'
+            EXEC sp_rename 'Source.Source-to-Staging_Assessments', 'Source-to-Staging_Assessment', 'OBJECT';
+        END
+    END

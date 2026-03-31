@@ -1,4 +1,5 @@
-﻿using System;
+﻿using generate.core.Models.App;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,5 +18,6 @@ namespace generate.core.Dtos.App
         public string IncludeOnFilter { get; set; }
         public List<string> Categories { get; set; }
         public List<CategorySetCategoryOptionDto> CategoryOptions { get; set; }
+        public List<TableType> TableTypes { get; set; }
     }
 }

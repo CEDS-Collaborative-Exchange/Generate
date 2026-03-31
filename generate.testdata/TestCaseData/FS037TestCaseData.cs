@@ -53,6 +53,7 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "037CID2517",
                 LeaIdentifierSeaAccountability = Org.LeaIdentifierSea,
                 SchoolIdentifierSea = Org.SchoolIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = true,
                 EnglishLearner_StatusStartDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString()),
                 HomelessnessStatus = true,

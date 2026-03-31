@@ -1,0 +1,4 @@
+IF NOT EXISTS (SELECT 1 FROM sys.schemas WHERE name = 'CEDS')
+BEGIN
+	EXEC sp_executesql N'CREATE SCHEMA CEDS'
+END

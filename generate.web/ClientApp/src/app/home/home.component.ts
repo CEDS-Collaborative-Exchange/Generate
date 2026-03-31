@@ -30,6 +30,10 @@ export class HomeComponent implements AfterViewInit {
         componentHandler.upgradeAllRegistered();
     }
 
+    onClickMenuItem() {
+        return false;
+    }
+
     gotoReportsEdFacts() {
 
         if (this._UserService.isLoggedIn()) {

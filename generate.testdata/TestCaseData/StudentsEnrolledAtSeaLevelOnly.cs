@@ -38,6 +38,7 @@ namespace generate.testdata.TestCaseData
             {
                 StudentIdentifierState = "9990000003",
                 IDEAEducationalEnvironmentForSchoolAge = env,
+                SchoolYear = (schoolYear).ToString(),
                 ProgramParticipationBeginDate = DateTime.Parse("7/30/" + (schoolYear - 1).ToString()),
                 ProgramParticipationEndDate = DateTime.Parse("3/1/" + schoolYear.ToString()),
                 SpecialEducationExitReason = "HighSchoolDiploma",
@@ -47,6 +48,7 @@ namespace generate.testdata.TestCaseData
             var personStatus = new core.Models.Staging.PersonStatus()
             {
                 StudentIdentifierState = "9990000003",
+                SchoolYear = (schoolYear).ToString(),
                 EconomicDisadvantageStatus = true,
                 EconomicDisadvantage_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
                 EnglishLearnerStatus = false,

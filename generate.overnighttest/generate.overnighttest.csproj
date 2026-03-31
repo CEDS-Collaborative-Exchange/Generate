@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <UserSecretsId>b238522b-2767-4070-9a83-50b6cfba5f2c</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire.Core" Version="1.7.31" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.7.31" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    <!-- <PackageReference Include="System.CommandLine" Version="2.0.0-beta7.25380.108" />
+    2.0.0-rc.1.25451.107 
+    -->
+    <PackageReference Include="System.CommandLine" Version="2.0.0-rc.1.25451.107" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Config\**\*">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="DatabaseScripts\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\generate.core\generate.core.csproj" />
+    <ProjectReference Include="..\generate.infrastructure\generate.infrastructure.csproj" />
+    <ProjectReference Include="..\generate.shared\generate.shared.csproj" />
+    <ProjectReference Include="..\generate.testdata\generate.testdata.csproj" />
+    <ProjectReference Include="..\generate.web\generate.web.csproj" />
+  </ItemGroup>
+</Project>

@@ -13,7 +13,6 @@ namespace generate.web.Security.Embeddable
     {
         // Search and create a user from Active Directory
 
-        private IOptions<AppSettings> _appSettings;
         private readonly ILogger _logger;
         //private string _UserContainer;
 
@@ -21,9 +20,8 @@ namespace generate.web.Security.Embeddable
         private String _adminUserName;
         private String _reviewerUserName;
 
-        public EmbeddedUserStore(IOptions<AppSettings> appSettings, ILogger<EmbeddedUserStore<T>> logger, IConfiguration configuration) : base()
+        public EmbeddedUserStore(ILogger<EmbeddedUserStore<T>> logger, IConfiguration configuration) : base()
         {
-            _appSettings = appSettings;
             _logger = logger;
 
             _adminUserName = configuration.GetSection("AppSettings").GetValue<string>("EmbeddedAdminUserName");

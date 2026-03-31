@@ -443,7 +443,8 @@ namespace generate.infrastructure.Services
                 _logger.LogCritical(err7);
                 _logger.LogCritical("");
 
-                var status = "The metadata update failed. The last attempt was on " + time.ToString() + ". Please see Log ID: " + logid + ".";
+                var status = "The Metadata Update failed. The last attempt was on " + time.ToString() + ". Please see Log ID: " + logid + ". To retrieve the metadata file and manually process it, navigate to the File Storage page in GitBook at https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/installation/upgrade/generate-file-storage";
+       
                 UpdateKeyinGenConfig(FSMetalogKey, status);
                 UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausFail);
 

@@ -1,4 +1,4 @@
-﻿@import '../../variables.scss';
+@import '../../variables.scss';
 @import '../../../../node_modules/material-design-lite/src/_variables.scss';
 @import '../../../../node_modules/material-design-lite/src/_mixins.scss';
 
@@ -21,9 +21,12 @@
 .generate-app-shared-login__button{
     min-width: 40px !important;
 }
+.generate-app-button--colored {
+    background-color: $color-primary-dark;
+}
 
-.generate-app-shared-loggedin__text{
-    color: $color-primary;
+.generate-app-shared-loggedin__text {
+    color: $color-primary-dark;
     display: inline;
     vertical-align: middle;
     margin-right: 3px;
@@ -106,4 +109,17 @@
       pointer-events: auto;
     }
   }
+}
+
+#loginButton-lg:focus {
+    cursor: pointer !important;
+    border-color: #161718 !important;
+    border-style: solid !important;
+}
+
+#logoutButton-lg:focus {
+    cursor: pointer !important;
+    border-color: #161718 !important;
+    color: #e5ebf0 !important;
+    border-style: solid !important;
 }

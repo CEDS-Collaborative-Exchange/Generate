@@ -1,0 +1,25 @@
+CREATE VIEW [RDS].[vwHomeless_FactTable_194] 
+AS
+	SELECT 	f.[FactK12StudentCountId]
+			, f.[SchoolYear]
+		  	, f.[K12StudentId]
+		  	, f.[K12StudentStudentIdentifierState]
+		  	, f.[BirthDate]
+		  	, f.[FirstName]
+		  	, f.[LastOrSurname]
+		  	, f.[MiddleName]
+		  	, f.[StateANSICode]
+		  	, f.[StateAbbreviationCode]
+		  	, f.[StateAbbreviationDescription]
+		  	, f.[SeaOrganizationIdentifierSea]
+		  	, f.[SeaOrganizationName]
+		  	, f.[LeaIdentifierSea]
+		  	, f.[LeaOrganizationName]
+		  	, f.[SchoolIdentifierSea]
+		  	, f.[DimK12SchoolId]
+		  	, f.[NameOfInstitution]
+		  	, f.[SchoolOperationalStatus]
+		  	, f.[SchoolTypeCode]
+	FROM [debug].[vwHomeless_FactTable] f
+	WHERE SchoolOperationalStatus IN ('Open','New') 
+		AND HomelessServicedIndicatorCode = 'Yes'

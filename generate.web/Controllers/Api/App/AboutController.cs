@@ -16,24 +16,17 @@ namespace generate.web.Controllers.Api.App
     public class AboutController : Controller
     {
 
-        private readonly IOptions<AppSettings> _appSettings;
         private readonly IAppRepository _appRepository;
         private readonly IAboutService _AboutService;
         private readonly IRDSRepository _rdsRepository;
 
         public AboutController
         (
-            IOptions<AppSettings> appSettings,
-            IAppRepository appRepository,
-            IRDSRepository rdsRepository,
             IAboutService aboutService,
             IConfiguration configuration
         )
         {
-            _appSettings = appSettings;
-            _appRepository = appRepository;
             _AboutService = aboutService;
-            _rdsRepository = rdsRepository;
         }
 
         //[HttpGet("getvers")]

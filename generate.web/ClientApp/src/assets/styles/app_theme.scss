@@ -18,3 +18,15 @@ $app-theme: mat.define-light-theme(
 .mdc-text-field {
     background-color: white !important;
 }
+
+.mdl-switch__thumb {
+    background: #D28004;
+}
+
+.mdc-radio__outer-circle {
+    border-color: #D28004 !important;
+}
+
+.mdc-radio__inner-circle {
+    border-color: #D28004 !important;
+}

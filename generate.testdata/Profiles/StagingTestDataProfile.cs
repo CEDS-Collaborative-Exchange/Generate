@@ -198,7 +198,7 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<bool>> MigrantEducationProgramContinuationOfServices { get; set; }
         public List<DataDistribution<string>> ContinuationOfServicesReason { get; set; }
         public List<DataDistribution<bool>> MigrantPrioritizedForServices { get; set; }
-        //        public List<DataDistribution<bool>> MilitaryConnectedStudentIndicatorDistribution { get; set; }
+        //      public List<DataDistribution<bool>> MilitaryConnectedStudentIndicatorDistribution { get; set; }
 
         public List<DataDistribution<string>> RefMilitaryConnectedStudentIndicatorDistribution { get; set; }
         public List<DataDistribution<bool>> Section504ProgramParticipationDistribution { get; set; }
@@ -217,6 +217,7 @@ namespace generate.testdata.Profiles
         public List<DataDistribution<bool>> NorDStatusDistribution { get; set; }
         public List<DataDistribution<bool>> NorDExitingDistribution { get; set; }
         public List<DataDistribution<string>> NorDSubpartDistribution { get; set; }
+        public List<DataDistribution<bool>> NorDLongTermStatusDistribution { get; set; }
         public List<DataDistribution<string>> NorDOutcomeExitDistribution { get; set; }
         public List<DataDistribution<bool>> NorDOutcomeIndicatorDistribution { get; set; }
         public List<DataDistribution<bool>> NorDAchievementIndicatorDistribution { get; set; }
@@ -1161,6 +1162,10 @@ namespace generate.testdata.Profiles
             this.DelinquentProgramParticipationDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 50 });
             this.DelinquentProgramParticipationDistribution.Add(new DataDistribution<bool>() { Option = true, ExpectedDistribution = 100 });
 
+            this.NorDLongTermStatusDistribution = new List<DataDistribution<bool>>();
+            this.NorDLongTermStatusDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 50 });
+            this.NorDLongTermStatusDistribution.Add(new DataDistribution<bool>() { Option = true, ExpectedDistribution = 100 });
+
             this.RefNeglectedOrDelinquentProgramTypeDistribution = new List<DataDistribution<string>>();
             this.RefNeglectedOrDelinquentProgramTypeDistribution.Add(new DataDistribution<string>() { Option = "NeglectedPrograms", ExpectedDistribution = 14 });
             this.RefNeglectedOrDelinquentProgramTypeDistribution.Add(new DataDistribution<string>() { Option = "DelinquentPrograms", ExpectedDistribution = 28 });
@@ -1216,8 +1221,8 @@ namespace generate.testdata.Profiles
             this.NorDStatusDistribution.Add(new DataDistribution<bool>() { Option = false, ExpectedDistribution = 100 });
 
             this.NorDSubpartDistribution = new List<DataDistribution<string>>();
-            this.NorDSubpartDistribution.Add(new DataDistribution<string>() { Option = "1", ExpectedDistribution = 50 });
-            this.NorDSubpartDistribution.Add(new DataDistribution<string>() { Option = "2", ExpectedDistribution = 100 });
+            this.NorDSubpartDistribution.Add(new DataDistribution<string>() { Option = "Subpart1", ExpectedDistribution = 50 });
+            this.NorDSubpartDistribution.Add(new DataDistribution<string>() { Option = "Subpart2", ExpectedDistribution = 100 });
 
             this.NorDOutcomeDistribution = new List<DataDistribution<string>>();
             this.NorDOutcomeDistribution.Add(new DataDistribution<string>() { Option = "EARNGED", ExpectedDistribution = 14 });
@@ -1682,6 +1687,5 @@ namespace generate.testdata.Profiles
 
             #endregion
         }
-
     }
 }

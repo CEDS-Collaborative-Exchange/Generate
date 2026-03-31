@@ -160,7 +160,7 @@ namespace generate.testdata.DataGenerators
                 LEAGradePKOnlyTestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                 LEAGradeKGOnlyTestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                 OrganizationsNotReportedFederallyTestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
-                ReservedK12OrganizationStaticData.AppendStaticK12OrganizationData(testData, globalRandom, _testDataHelper, SchoolYear);
+                //ReservedK12OrganizationStaticData.AppendStaticK12OrganizationData(testData, globalRandom, _testDataHelper, SchoolYear);
                 FS029_CIID4827_TestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                 //FS002_CIID4780_TestCaseData.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                 AccessibleEducationMaterialProviderStaticDataUtility.AppendAccessibleEducationMaterialProviderData(testData, globalRandom, _testDataHelper, SchoolYear);
@@ -1571,6 +1571,7 @@ namespace generate.testdata.DataGenerators
                         nord.ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-90));
                         nord.NeglectedOrDelinquentProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefNeglectedOrDelinquentProgramTypeDistribution);
                         nord.NeglectedOrDelinquentProgramEnrollmentSubpart = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDSubpartDistribution);
+                        nord.NeglectedOrDelinquentLongTermStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDLongTermStatusDistribution);
                         nord.ProgressLevel_Math = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefProgressLevelDistribution);
                         nord.ProgressLevel_Reading = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefProgressLevelDistribution);
                         nord.ProgramParticipationEndDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDExitingDistribution) ? BaseProgramExitDate.AddDays(-10) : (DateTime?)null;
@@ -2051,6 +2052,7 @@ namespace generate.testdata.DataGenerators
                         nord.ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-90));
                         nord.NeglectedOrDelinquentProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefNeglectedOrDelinquentProgramTypeDistribution);
                         nord.NeglectedOrDelinquentProgramEnrollmentSubpart = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDSubpartDistribution);
+                        nord.NeglectedOrDelinquentLongTermStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDLongTermStatusDistribution);
                         nord.ProgressLevel_Math = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefProgressLevelDistribution);
                         nord.ProgressLevel_Reading = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefProgressLevelDistribution);
                         nord.ProgramParticipationEndDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDExitingDistribution) ? BaseProgramExitDate.AddDays(-10) : (DateTime?)null;

@@ -1,4 +1,4 @@
-<div *ngIf="reportType !== 'statereport' && currentMigrationStatus == null" class="mdl-typography--text-center">
+<div *ngIf="reportType !== 'statereport' && currentMigrationStatus == null" class="mdl-typography--text-center" aria-hidden="true">
     <div class="mdl-grid">
         <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
             <div class="mdl-spinner mdl-js-spinner is-active"></div>
@@ -6,7 +6,7 @@
     </div>
 </div>
 
-<div *ngIf="reportType === 'statereport' && currentReport === undefined" class="mdl-typography--text-center">
+<div *ngIf="reportType === 'statereport' && currentReport === undefined" class="mdl-typography--text-center" aria-hidden="true">
     <div class="mdl-grid">
         <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center">
             <div class="mdl-spinner mdl-js-spinner is-active"></div>
@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div *ngIf="errorMessage != null" class="mdl-typography--text-center">
+<div *ngIf="errorMessage != null" class="mdl-typography--text-center" aria-hidden="true">
     <div class="mdl-grid">
         <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center generate-app-report-data__error">
             {{errorMessage}}
@@ -27,12 +27,13 @@
     <div class="mdl-grid generate-app-report-controls">
 
 
-        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center {{metadataStatusCss}}">
+        <div class="mdl-cell mdl-cell--12-col mdl-typography--text-center {{metadataStatusCss}}" aria-hidden="true">
             {{metadataStatusMessage}}
         </div>
 
         <div class="mdl-cell {{parameterColumnSpanCss()}}">
-            <div class="generate-app-report-controls__sectiontitle"><label for="generate-app-report-controls__report">Report</label></div>
+            <!--<div class="generate-app-report-controls__sectiontitle"><label for="generate-app-report-controls__report">Report</label></div>-->
+            <div class="generate-app-report-controls__sectiontitle">Report</div>
             <div>
                 <generate-app-combo-box class="{{reportWidth()}}" #comboReportCode [itemsSource]="generateReports" [isEditable]="false" displayMemberPath="reportShortName"
                                         (isDroppedDownChanged)="reportChanged($event)" (selectedIndexChanged)="setReportCode($event, comboReportCode, comboYear)"></generate-app-combo-box>
@@ -47,11 +48,11 @@
         </div>
 
         <!--<div *ngIf="currentReport === undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
-            <div class="generate-app-report-controls__sectiontitle">Year</div>
-            <div>
-                <generate-app-combo-box #comboYear class="generate-app-report-controls__year" [isReadOnly]="true" [isEditable]="false" [itemsSource]="submissionYears"></generate-app-combo-box>
-            </div>
-        </div>-->
+        <div class="generate-app-report-controls__sectiontitle">Year</div>
+        <div>
+            <generate-app-combo-box #comboYear class="generate-app-report-controls__year" [isReadOnly]="true" [isEditable]="false" [itemsSource]="submissionYears"></generate-app-combo-box>
+        </div>
+    </div>-->
 
         <div *ngIf="currentReport !== undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
             <div class="generate-app-report-controls__sectiontitle">Level</div>
@@ -97,9 +98,18 @@
         </div>
 
         <div *ngIf="currentReport === undefined" class="mdl-cell {{parameterColumnSpanCss()}}">
-            <div class="generate-app-report-controls__sectiontitle"><label for="generate-app-report-controls__categoryset">Category Set</label></div>
+            <!--<div class="generate-app-report-controls__sectiontitle"><label for="generate-app-report-controls__categoryset">Category Set</label></div>-->
+            <div class="generate-app-report-controls__sectiontitle">Category Set</div>
             <div>
                 <generate-app-combo-box class="generate-app-report-controls__categoryset" #comboCategorySet [isReadOnly]="true" [itemsSource]="categorySets" displayMemberPath="categorySetName" [isEditable]="false"></generate-app-combo-box>
+            </div>
+        </div>
+
+        <div *ngIf="currentReport !== undefined && showTableType()" class="mdl-cell {{parameterColumnSpanCss()}}">
+            <div class="generate-app-report-controls__sectiontitle">Table Type</div>
+            <div>
+                <generate-app-combo-box class="{{reportWidth()}}" #comboTableTypeCode [itemsSource]="tableTypes" [isEditable]="false" displayMemberPath="tableTypeAbbrv"
+                                         (selectedIndexChanged)="setTableType($event, comboTableTypeCode)"></generate-app-combo-box>
             </div>
         </div>
 

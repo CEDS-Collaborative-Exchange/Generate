@@ -2,7 +2,7 @@
   "profiles": {
     "generate.console": {
       "commandName": "Project",
-      "commandLineArgs": "testdata staging 1000 40000 sql 2024 1 non-ceds execute",
+      "commandLineArgs": "testdata staging 1000 40000 sql 2025 1 non-ceds execute",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development",
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -10,7 +10,7 @@
     },
     "build": {
       "commandName": "Project",
-      "commandLineArgs": "testdata staging 5000 500000 sql 2024 1 non-ceds execute",
+      "commandLineArgs": "testdata staging 5000 500000 sql 2025 1 non-ceds execute",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Test",
         "ASPNETCORE_ENVIRONMENT": "Test"
@@ -18,7 +18,7 @@
     },
     "stage": {
       "commandName": "Project",
-      "commandLineArgs": "testdata staging 5000 500000 sql 2024 1 non-ceds execute",
+      "commandLineArgs": "testdata staging 5000 500000 sql 2025 1 non-ceds execute",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Stage",
         "ASPNETCORE_ENVIRONMENT": "Stage"

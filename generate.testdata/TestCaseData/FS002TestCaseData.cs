@@ -99,6 +99,7 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "002CID4482",
                 LeaIdentifierSeaAccountability = firstOrg.LeaIdentifierSea,
                 SchoolIdentifierSea = firstOrg.SchoolIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
             };
@@ -108,6 +109,7 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "002CID4482",
                 LeaIdentifierSeaAccountability = secondOrg.LeaIdentifierSea,
                 SchoolIdentifierSea = secondOrg.SchoolIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
             };
@@ -119,6 +121,7 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "002CID4482",
                 LeaIdentifierSeaAccountability = firstOrg.LeaIdentifierSea,
                 SchoolIdentifierSea = firstOrg.SchoolIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
                 IDEAIndicator = true,
                 ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
@@ -129,6 +132,7 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "002CID4482",
                 LeaIdentifierSeaAccountability = secondOrg.LeaIdentifierSea,
                 SchoolIdentifierSea = secondOrg.SchoolIdentifierSea,
+                SchoolYear = (schoolYear).ToString(),
                 IDEAEducationalEnvironmentForSchoolAge = env,
                 IDEAIndicator = true,
                 ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),

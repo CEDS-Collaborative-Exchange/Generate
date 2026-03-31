@@ -19,6 +19,8 @@ using generate.core.Models.RDS;
 using generate.core.Interfaces.Repositories.App;
 using generate.core.Dtos.RDS;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Data;
+using generate.infrastructure.Utilities;
 
 namespace generate.infrastructure.Services
 {
@@ -60,7 +62,7 @@ namespace generate.infrastructure.Services
                 && r.ReportCode == reportCode
                 && r.GenerateReport_OrganizationLevels.Count(l => l.OrganizationLevel.LevelCode == reportLevel) == 1, 0, 1, r => r.FactTable)
                 .FirstOrDefault();
-            
+
             string factTableName = "";
             string factFieldName = "";
             string factReportDtoIdName = "";
@@ -74,36 +76,36 @@ namespace generate.infrastructure.Services
 
             dynamic dataRows = new List<ExpandoObject>();
 
-            bool includeZeroCounts = false;
-            if (reportLevel == "sea" || reportCode.ToLower() == "052" || reportCode.ToLower() == "032" || reportCode.ToLower() == "040" || reportCode.ToLower() == "033")
-            {
-                includeZeroCounts = true;
-            }
+            //bool includeZeroCounts = false;
+            //if (reportLevel == "sea" || reportCode.ToLower() == "052" || reportCode.ToLower() == "032" || reportCode.ToLower() == "040" || reportCode.ToLower() == "033")
+            //{
+            //    includeZeroCounts = true;
+            //}
 
-            if (reportCode.ToLower() == "045")
-            {
-                includeZeroCounts = false;
-            }
+            //if (reportCode.ToLower() == "045")
+            //{
+            //    includeZeroCounts = false;
+            //}
 
 
             if (factTableName == "FactK12StudentCounts")
             {
-                var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, includeZeroCounts, false, true);
+                var query = _factStudentCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, true);
                 dataRows = query.ToList();
             }
             else if (factTableName == "FactK12StudentDisciplines")
             {
-                var query = _factStudentDisciplineRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, includeZeroCounts, false, true);
+                var query = _factStudentDisciplineRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, true);
                 dataRows = query.ToList();
             }
             else if (factTableName == "FactK12StudentAssessments")
             {
-                var query = _factStudentAssessmentRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, includeZeroCounts, false, true);
+                var query = _factStudentAssessmentRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, true);
                 dataRows = query.ToList();
             }
             else if (factTableName == "FactK12StaffCounts")
             {
-                var query = _factStaffCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, includeZeroCounts, false, true);
+                var query = _factStaffCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, true);
                 dataRows = query.ToList();
             }
             else if (factTableName == "FactOrganizationStatusCounts")
@@ -113,19 +115,17 @@ namespace generate.infrastructure.Services
             }
             else if (factTableName == "FactOrganizationCounts")
             {
-
-
                 if (report.ReportCode == "205")
                 {
-                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
+                    var query = _factOrganizationCountRepository.Get_ReportData(reportCode, reportLevel, reportYear, null, false, false, true);
                     dataRows = query.ToList();
                 }
-                else if(report.ReportCode == "130")
+                else if (report.ReportCode == "130")
                 {
-                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, false, true);
+                    var query = _factOrganizationCountRepository.Get_PersistentlyDangerousReportData(reportCode, reportLevel, reportYear, null, false, false, true);
                     dataRows = query.ToList();
                 }
-                else if(report.ReportCode == "039")
+                else if (report.ReportCode == "039")
                 {
                     var query = _factOrganizationCountRepository.Get_GradesOfferedReportData(reportCode, reportLevel, reportYear, null);
                     dataRows = query.ToList();
@@ -176,53 +176,19 @@ namespace generate.infrastructure.Services
                     }
                     else if (column.ColumnName == "StateLEAIDNumber")
                     {
-                        if(factTableName == "FactOrganizationCounts")
-                        {
-                            if (reportLevel == "lea") { field = "OrganizationStateId"; }
-                            else if (reportLevel == "sch") { field = "ParentOrganizationStateId"; }
-                        }
-                        else
-                        {
-                            if (reportLevel == "lea") { field = "OrganizationIdentifierSea"; }
-                            else if (reportLevel == "sch") { field = "ParentOrganizationIdentifierSea"; }
-                        }
-                        
+                        field = SubmissionFileHelper.GetLeaIdentifier(factTableName, reportLevel);
                     }
                     else if (column.ColumnName == "NCESLEAIDNumber")
                     {
-                        if (factTableName == "FactOrganizationCounts")
-                        {
-                            if (reportLevel == "lea") { field = "OrganizationNcesId"; }
-                            else if (reportLevel == "sch") { field = "ParentOrganizationNcesId"; }
-                        }
-                        else
-                        {
-                            if (reportLevel == "lea") { field = "OrganizationIdentifierNces"; }
-                            else if (reportLevel == "sch") { field = "ParentOrganizationIdentifierNces"; }
-                        }
-
+                        field = SubmissionFileHelper.GetNCESIdentifier(factTableName, reportLevel);
                     }
                     else if (column.ColumnName == "StateSchoolIDNumber")
                     {
-                        if (factTableName == "FactOrganizationCounts")
-                        {
-                            field = "OrganizationStateId";
-                        }
-                        else
-                        {
-                            field = "OrganizationIdentifierSea";
-                        }
-
+                        field = SubmissionFileHelper.GetStateSchoolIdentifier(factTableName);
                     }
                     else if (column.ColumnName == "Amount")
                     {
-                        string reportCodes = "199,200,201,202,206";
-                        field = factFieldName;
-                        if (reportCode == "150") { field = "StudentRate"; }
-                        else if (reportCode == "035") { field = "FederalFundAllocated"; }
-                        else if (reportCodes.Contains(reportCode)) { field = "INDICATORSTATUS"; }
-                        else if (reportCode == "205") { field = "PROGRESSACHIEVINGENGLISHLANGUAGE"; }
-
+                        field = SubmissionFileHelper.GetAmount(factFieldName, reportCode);
                     }
                     else if (column.ColumnName == "HomelessStatusID")
                     {
@@ -254,9 +220,7 @@ namespace generate.infrastructure.Services
         {
             List<MembershipReportDto> dataRows = new List<MembershipReportDto>();
 
-            bool includeZeroCounts = true;
-
-            var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, null, includeZeroCounts, false, true, false, startRecord, numberOfRecords);
+            var query = _factStudentCountRepository.Get_MembershipReportData(reportCode, reportLevel, reportYear, null, false, true, false, startRecord, numberOfRecords);
             dataRows = query.Item1.ToList();
 
             return (dataRows, query.Item2);

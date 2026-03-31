@@ -35,6 +35,7 @@ import { ReportMigationComponent } from './datastore/reportmigration.component';
 import { UpdateComponent } from './update/update.component';
 import { MetadataComponent } from './metadata/metadata.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatRadioModule } from '@angular/material/radio'
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
@@ -49,6 +50,7 @@ import { FormsModule } from '@angular/forms';
         GuiGridModule,
         MatTabsModule,
         MatIconModule,
+        MatRadioModule,
         FormsModule
     ],
     declarations: [

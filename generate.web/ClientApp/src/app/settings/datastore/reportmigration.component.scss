@@ -114,7 +114,8 @@
 .generate-report-status {
     padding: 5px;
     font-size: 12px;
-    color: $color-primary;
+    color: #546d78 !important;
+    /*$color-primary;*/
 }
 
 .generate-report__progress {

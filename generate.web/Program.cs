@@ -22,16 +22,19 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
+using Microsoft.AspNetCore.HttpOverrides;
 
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory() + "/Config/")
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables();
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
 
-
+if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower() == "test")
+{
+    builder.Configuration.AddEnvironmentVariables(e => e.Prefix = "Data");
+}
 
 AppConfiguration.ConfigureCoreServices(builder.Services);
 
@@ -127,9 +130,12 @@ app.UseSpa(spa => {
     if (builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("CI"))
     {
         spa.Options.SourcePath = "ClientApp";
-        spa.Options.StartupTimeout = new TimeSpan(0, 0, 120);
+        spa.Options.StartupTimeout = new TimeSpan(0, 2, 120);
         spa.UseAngularCliServer(npmScript: "start");
     }
+});
+app.UseForwardedHeaders(new ForwardedHeadersOptions { 
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto
 });
 
 

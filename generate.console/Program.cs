@@ -30,7 +30,7 @@ namespace generate.console
         private static IServiceProvider serviceProvider;
         private static IConfigurationRoot Configuration;
 
-        public Program()
+        protected Program()
         {
         }
 
@@ -64,11 +64,10 @@ namespace generate.console
 
             var builder = new ConfigurationBuilder()
                 .AddCommandLine(args)
-                .AddEnvironmentVariables(e => e.Prefix = "Data__")
+                .AddEnvironmentVariables(e => e.Prefix = "Data")
                 .AddUserSecrets(Assembly.GetExecutingAssembly(), true);
                 
 
-            var config = builder.Build();
             string environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
 
 
@@ -195,14 +194,9 @@ namespace generate.console
                     int schoolYear;
                     int numberOfYears;
                     string dataStandardType;
-                    string testDataType = "staging";
-                    seed = 1000;
-                    quantityOfStudents = 10000;
-                    string formatType = "sql";
-                    string outputType = "execute";
-                    schoolYear = 2023;
-                    numberOfYears = 1;
-                    dataStandardType = "ceds";
+                    string testDataType;
+                    string formatType;
+                    string outputType;
 
                     if (commandLineArguments.Count < 9)
                     {

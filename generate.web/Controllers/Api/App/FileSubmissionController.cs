@@ -31,21 +31,17 @@ namespace generate.web.Controllers.Api.App
         private IAppRepository _fileSubmissionRepository;
         private IFileSubmissionService _fileSubmissionService;
         private IEdfactsFileService _edfactsFileService;
-        private readonly IOptions<AppSettings> _appSettings;
         private int _iterationSize;
 
         public FileSubmissionController(
             IAppRepository fileSubmissionRepository,
             IFileSubmissionService fileSubmissionService,
             IEdfactsFileService edfactsFileService,
-            IOptions<AppSettings> appSettings,
             IConfiguration configuration)
         {
             _fileSubmissionRepository = fileSubmissionRepository;
             _fileSubmissionService = fileSubmissionService;
             _edfactsFileService = edfactsFileService;
-            _appSettings = appSettings;
-
             _iterationSize = Convert.ToInt32(configuration.GetSection("appSettings").GetValue<string>("FileIterationSize"));
         }
 
@@ -123,7 +119,7 @@ namespace generate.web.Controllers.Api.App
                     tableCount = dataTable.Count;
                     startRecord = startRecord + numberOfRecords;
                     dataTable = null;
-                    GC.Collect();
+                    //GC.Collect();
                 }
 
                 Response.Body.FlushAsync();

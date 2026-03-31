@@ -36,7 +36,7 @@ namespace generate.web.Config
     public static class AppConfiguration
     {
 
-        public static IConfigurationRoot Configuration;
+        private static IConfigurationRoot Configuration;
 
         public static void ConfigureCoreServices(IServiceCollection services)
         {
@@ -84,7 +84,7 @@ namespace generate.web.Config
 
             services.AddScoped<IDimensionRepository, DimensionRepository>();
 
-
+            services.AddScoped<IReportDebugRepository, ReportDebugRepository>();
             // Services
             //////////////////////
 

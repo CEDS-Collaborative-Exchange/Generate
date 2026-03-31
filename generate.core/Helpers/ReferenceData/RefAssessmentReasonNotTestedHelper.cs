@@ -12,14 +12,6 @@ namespace generate.core.Helpers.ReferenceData
 
         public static List<RefAssessmentReasonNotTested> GetData()
         {
-            /*
-            select 'data.Add(new RefAssessmentReasonNotTested() { 
-            RefAssessmentReasonNotTestedId = ' + convert(varchar(20), RefAssessmentReasonNotTestedId) + ',
-            Code = "' + Code + '",
-            Description = "' + [Description] + '"
-            });'
-            from dbo.RefAssessmentReasonNotTested
-            */
 
             var data = new List<RefAssessmentReasonNotTested>();
 

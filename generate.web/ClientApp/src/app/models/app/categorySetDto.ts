@@ -1,4 +1,5 @@
-import {CategoryOptionDto} from './categoryOptionDto';
+import { CategoryOptionDto } from './categoryOptionDto';
+import { TableType } from './tableType';
 
 export interface CategorySetDto {
     categorySetId: number;
@@ -11,6 +12,7 @@ export interface CategorySetDto {
     excludeOnFilter: string;
     categories: Array<string>;
     categoryOptions: Array<CategoryOptionDto>;
+    tableTypes: Array<TableType>;
 }
 export interface Categoriess {
     categoryId: number;

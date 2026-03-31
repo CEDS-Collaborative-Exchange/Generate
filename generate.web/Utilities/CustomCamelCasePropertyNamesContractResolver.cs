@@ -13,16 +13,16 @@ namespace generate
 
         class CustomNamingStrategy : CamelCaseNamingStrategy
         {
-            protected override string ResolvePropertyName(string propertyName)
+            protected override string ResolvePropertyName(string name)
 
             {
                 var fields  = new List<string> { "TITLE1PROGRAMTYPE", "TITLE1INSTRUCTIONALSERVICES", "TITLE1SUPPORTSERVICES","TITLE1SCHOOLSTATUS","MOBILITYSTATUS12MO", "SECTION504PROGRAM" };
 
-                if (fields.Contains(propertyName))
+                if (fields.Contains(name))
                 {
-                    return propertyName.ToLower();
+                    return name.ToLower();
                 }               
-                else return base.ResolvePropertyName(propertyName);
+                else return base.ResolvePropertyName(name);
             }
         }
     }

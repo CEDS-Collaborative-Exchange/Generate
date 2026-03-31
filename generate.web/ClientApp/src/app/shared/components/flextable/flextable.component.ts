@@ -73,6 +73,7 @@ export class FlextableComponent {
     populateReport() {
         if (this.itemsSource == null)
             return;
+
         let reportData = null;
         if (!Array.isArray(this.itemsSource)) {
             reportData = this.itemsSource.data;
@@ -128,7 +129,7 @@ export class FlextableComponent {
             } else {
                 ws['!cols'] = wscols;
             }
-            
+
 
             let reportData = null;
             if (!Array.isArray(this.itemsSource)) {
@@ -139,9 +140,9 @@ export class FlextableComponent {
             }
             let wsrows = [
                 { hpx: 25 }, // row 1 sets to the height of pixels
-                { hpx: 23 }, 
-                { hpx: 20 }, 
-                { hpx: 20 }, 
+                { hpx: 23 },
+                { hpx: 20 },
+                { hpx: 20 },
                 { hpx: 25 }
             ];
             reportData.forEach(f => {
@@ -153,43 +154,46 @@ export class FlextableComponent {
             } else {
                 ws['!rows'] = wsrows;
             }
-            
+
 
             if (ws["!merges"] === undefined)
                 ws["!merges"] = [];
 
             let new_headers = [];
-            new_headers.push('');
+            //new_headers.push('');
             new_headers.push(this.reportTitle);
 
             let captionStartCol = this.reportCaptionCol;
             let captionEndCol = this.reportCaptionCol + 1;
-            ws["!merges"].push({ s: { r: 0, c: 1 }, e: { r: 0, c: 2 } });
+            const lastCellIdx:number = this.headers.length -1;
+            ws["!merges"].push({ s: { r: 0, c: 0 }, e: { r: 0, c:lastCellIdx  } });
 
             //Add report captions
             XLSX.utils.sheet_add_aoa(ws, [new_headers],
                 { origin: "A1" });
-            ws['B1'].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'center', vertical: 'center', wrapText: true } };
-
+            ws['A1'].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'center', vertical: 'center', wrapText: true } };
+            //ws['!cols'][0] = { wch: (this.reportTitle.length + 10) };
+            ws['!rows'] = ws['!rows'] || [];
+            ws['!rows'][0] = { hpx: 25 }; // row height
             new_headers = [];
-            new_headers.push('');
+            //new_headers.push('');
 
             new_headers.push(this.reportCaption2);
-            ws["!merges"].push({ s: { r: 1, c: 1 }, e: { r: 1, c: 2 } });
+            ws["!merges"].push({ s: { r: 1, c: 0 }, e: { r: 1, c: lastCellIdx } });
             XLSX.utils.sheet_add_aoa(ws, [new_headers],
                 { origin: "A2" });
 
-            ws['B2'].s = { font: { bold: false }, alignment: { horizontal: 'center', vertical: 'center' } };
-            
+            ws['A2'].s = { font: { bold: false }, alignment: { horizontal: 'center', vertical: 'center' } };
+
             new_headers = [];
-            new_headers.push('');
+            //new_headers.push('');
 
             new_headers.push(this.reportCaption3);
-            ws["!merges"].push({ s: { r: 2, c: 1 }, e: { r: 2, c: 2 } });
+            ws["!merges"].push({ s: { r: 2, c: 0 }, e: { r: 2, c: lastCellIdx } });
             XLSX.utils.sheet_add_aoa(ws, [new_headers],
                 { origin: "A3" });
 
-            ws['B3'].s = { font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } };
+            ws['A3'].s = { font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } };
 
             let dataRowHeight = this.reportRows[5] !== undefined ? this.reportRows[5] : { hpx: 25 };
 
@@ -248,6 +252,63 @@ export class FlextableComponent {
                 }
             }
 
+
+            /**
+             * Aligns the header
+             * @param rowNum(number) generally header is on row 5, row index 4
+             */
+            const fixHeaderStyles = (rowNum:number) => {
+                // header columns to be left aligned
+                let colIncreased = false;
+                // dictionary with header name as key and value as same
+                const headerMap = {};
+                let finalHeaderRowPixel = 0;
+                let finalHeaderColSizeInChar = 0 ;
+                this.headers.forEach(headerColVal => {
+                    headerMap[headerColVal] = headerColVal;
+                    // const rowPixel = (Math.ceil(row.length / 15) * 10);
+                    //const rowPixel = row.length * 7;
+                    // set the highest pixel for the row
+                    // finalHeaderRowPixel = rowPixel> finalHeaderColSizeInChar ? rowPixel : finalHeaderRowPixel;
+
+                });
+                for ( let colCount = 0; colCount< this.headers.length; colCount++) {
+                    let cellRef = this.columnToLetter(colCount + 1) + (rowNum+1).toString();
+                    let cell = ws[cellRef];
+
+                    if(cell && headerMap[cell.v]){
+                        //cell.wch = 10;//cell.v?.length + 1;
+                        const fontObj = {...cell.font || {}, bold : true};
+                        cell.s = {...cell.s, font : fontObj, alignment: {...cell.s.alignment || {}, horizontal: 'left',vertical: 'top' } };
+
+                    }
+
+                }
+            };
+            //fix header row which is row index 4
+            fixHeaderStyles(4);
+
+            // This sets the column width based on title's length divided by  how many headers column are available
+            if (this.headers && this.headers.length) {
+                ws['!cols'] = this.headers.map(header => ({
+                   // eg if title text length is 100 and total 4 headers ,each column length will be (110)/4
+                    wch : (this.reportTitle.length + 10) / this.headers.length,
+                }));
+            }
+            // all column data as left alignment
+            for (let i = 5; i <= rowTotal; i++) {
+                for (let j = 0; j <= this.headers.length; j++) {
+                    let cellRef = this.columnToLetter(j + 1) + (i + 1).toString();
+                    let cell = ws[cellRef];
+                    if (cell !== undefined) {
+                        cell.s = {
+                            ...cell.s,
+                            alignment: { ...cell.s?.alignment, horizontal: 'left', vertical: 'center', wrapText: true }
+                        };
+                    }
+                }
+            }
+
             XLSX.writeFile(wb, this.exportFile);
             $('.captionrow').remove();
             this.downloading = false;
@@ -274,15 +335,15 @@ export class FlextableComponent {
                 clearTimeout(this._toFilter);
             }
             let self = this;
-            this._toFilter = setTimeout(function () {          
+            this._toFilter = setTimeout(function () {
                 self.dataSource.filter = filterValue.trim().toLowerCase();
             }, 200);
 
 
         }
-        
+
     }
-    exportToExcel(fileName, reportTitle, caption2, caption3, reportCols, reportRows, reportCaptionCol) {
+    exportToExcel(fileName, reportTitle, caption2, caption3, reportCols, reportRows, reportCaptionCol,categorySetName:string = '') {
         console.log('completed');
         if (this.itemsSource == null)
             return;
