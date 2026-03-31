@@ -40,7 +40,7 @@ LEFT JOIN       RDS.DimFactTypes            AS rdft
 LEFT JOIN       App.GenerateReports         AS agr
                     ON agr.GenerateReportId = agrft.GenerateReportId    
 WHERE           rdft.FactTypeCode = 'childcount'
-                AND LEN(agr.ReportCode) = 4 -- only return those with report code    with a EDFacts format
+                AND LEN(agr.ReportCode) = 3 -- only return those with report code    with a EDFacts format
 ORDER BY        agrft.FactTypeId, agr.ReportCode
 ```
 {% endcode %}
@@ -56,7 +56,7 @@ ORDER BY        agrft.FactTypeId, agr.ReportCode
 The Generate ETL Documentation Templates give a detailed breakdown of all data elements needed for each Fact Type and show how data are transformed through each stage of the data migration. After completing the CEDS alignment process these templates can be used to document data transformation notes and option set mappings. They also contain a description of the CEDS data elements needed and what they are called throughout the Generate database. The ETL Templates documentation has a detailed instruction tab to help you know how to utilize this tool effectively. If you need clarification, please reach out to your CIID TA provider.
 
 {% hint style="info" %}
-You can find the Child Count ETL Documentation Template.xlsx on the [ETL Documentation Template](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074) page. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://app.gitbook.com/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/~/changes/286/developer-guides/generate-utilities/staging-etl-mapping-assistance).&#x20;
+You can find the Child Count ETL Documentation Template.xlsx on the [ETL Documentation Template](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074) page. If the ETL Documentation Template appears to not be outdated or is unavailable, please use these [alternatives to find the required mapping information](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/staging-etl-mapping-assistance).&#x20;
 {% endhint %}
 
 #### Generate Metadata
@@ -81,7 +81,7 @@ ORDER BY FactTypeCode, ReportCode, StagingTableName, StagingcolumnName
 
 #### Toggle Settings
 
-The Generate Toggle tables store information from the E&#x44;_&#x46;acts_ Metadata and Process System (EMAPS) survey that impacts the business logic used to ETL the data for E&#x44;_&#x46;acts_ reporting. It is important to make sure these questions are completed before data is migrated and that they match what was entered in EMAPS. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually after you complete your EMAPS survey. Instructions for how to find and update the Toggle page are available in the [Toggle documentation](../../../user-guide/settings/toggle.md).
+The Generate Toggle tables store information that impacts the business logic used to ETL the data for EDFacts reporting. It is important to make sure these questions are completed before data is migrated and that they match what will be entered in the corresponding EDPass Metadata Collection. These items can be updated on the Toggle page(s) in the Generate web application. The Toggle page is largely organized by Fact Type, though there may be cases where a setting from a different Fact Type or section may be required. We recommend updating all Toggle settings annually. Instructions for how to find and update the Toggle page are available in the [Toggle documentation](https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fsecure-web.cisco.com%2F1aEP72hr7IBTVweHLjXf7eTG9jcmJhhvD6Te4zA3CmgxGx91CfHUenh25tad3DDFkzv2yxwUVTW24xcwsElX5amsXNTsaGLBrqF2H4YW3TTGvdYCIZ5ZkyQrxwRQxlyeSAZ89XS9WAqNHJ3sw2KqDIt53NoNX3Q_OH8hRSmb4Sr8J6g-kJwvTQH-zaP-LyJ0AYY71PSCDiNUysKH2JTfNz7npT-cNkyA-x6VrcfdFCytA_ercSiR83HOo9SudYhDL%2Fhttps%253A%252F%252Fcenter-for-the-integration-of-id.gitbook.io%252Fgenerate-documentation%252Fuser-guide%252Fsettings%252Ftoggle\&data=05%7C02%7CAmanda.Musick%40aemcorp.com%7C1ce070137aab41a7d52308de64f57242%7C7a41925ef6974f7cbec30470887ac752%7C0%7C0%7C639059202541107319%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C\&sdata=%2F%2FpCtN8fndYp8pRKCXrIzVN4msIB%2BsxmsDZXKA2xyaE%3D\&reserved=0).
 
 #### Source System Reference Data Settings
 
@@ -91,6 +91,8 @@ The Generate Toggle tables store information from the E&#x44;_&#x46;acts_ Metada
 To find the Source System Reference Data needed for each Fact Type, you can query the system by running the following script by `FactTypeCode` and `ReportCode`.&#x20;
 
 You can also filter the Source System Reference Data table by `FactTypeCode` and `ReportCode` as shown below.
+
+If there are no rows returned in the query with StagingTableName or StagingcolumnName that just means, there is no required data to map.
 {% endhint %}
 
 {% code overflow="wrap" %}
@@ -112,6 +114,7 @@ Child Count Reports ('002', '089') have filters
 * 000126 Used for Grade Level When Assessed
 * 000174 Used for LEA Operational Status
 * 000533 Used for School Operational Status
+* 001156 Used for Organization Type
 
 [Source System Reference Data Mapping Utility](../../generate-utilities/source-system-reference-data-mapping-utility/) can be used to determine which option-set value mappings are needed for a Fact Type and which have been mapped. Note that new installations of Generate will come with both the InputCode and OutputCode fields loaded and you will need to review and update any values in the InputCode field to match your source data.
 
@@ -133,7 +136,26 @@ The Generate database has a stored procedure for each Fact Type which is empty i
 
 The tools from the Set Up phase (ETL Checklist and Generate metadata) are used to guide writing the ETL Code in this Stored Procedure. Additionally, ETL code written previously to perform this work in the education agency's source system(s) can also be a useful resource at this step, particularly for ensuring critical data handling and business rules from the source system are retained in the Generate Source to Staging ETL.
 
-<figure><img src="../../../.gitbook/assets/Source-to-Staging_ChildCount.png" alt="A SQL Server Management Studio window displaying a stored procedure named &#x22;[Source].[Source-to-Staging_ChildCount]&#x22; in the Generate database. The Object Explorer panel on the left shows a list of stored procedures under the &#x22;Source&#x22; schema, while the query editor on the right contains a template for the stored procedure with a placeholder for ETL code. "><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_ChildCount" Fact Type.</p></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (228).png" alt=""><figcaption><p>Screenshot of the Generate database structure in SQL Server Management Studio, showing a stored procedure placeholder for the "Source-to-Staging_(Fact Type Name)" Fact Type.</p></figcaption></figure>
+
+This is a sample of the stored procedure for each Fact Type which displays that it is empty by default, and also where you can place your specific ETL code.&#x20;
+
+```
+/****** Object:  StoredProcedure [Source].[Source-to-Staging_ChildCount]    Script Date: 8/18/2025 10:12:03 AM ******/
+SET ANSI_NULLS ON
+GO
+ 
+SET QUOTED_IDENTIFIER OFF
+GO
+ 
+CREATE PROCEDURE [Source].[Source-to-Staging_ChildCount] 
+	@schoolYear smallint
+AS
+--BEGIN
+	--State specific ETL code here
+--END
+GO
+```
 
 #### Running the ETL
 
@@ -151,8 +173,7 @@ exec [Source].[Source-to-Staging_ChildCount] 2024
 {% tab title="Generate UI" %}
 #### Migrating Source to Staging (Generate User Interface)
 
-This ETL can also be run from the Generate user interface.\
-
+This ETL can also be run from the Generate user interface.<br>
 
 {% content-ref url="../../../user-guide/settings/data-migration.md" %}
 [data-migration.md](../../../user-guide/settings/data-migration.md)
@@ -306,7 +327,7 @@ The process of migrating data to Report Tables creates a set of tables in the \[
 SELECT * FROM [debug].[c002_lea_CSB_2024_AGESA_DISABCATIDEA_EDENVIRIDEASA]
 ```
 
-Over time these tables will accumulate and create clutter in the Generate database debug schema. You can easily remove unneeded debug tables using the [Clean Up Debug Tables](file:///C:/o/54A84G98mRVbG3AeyXRJ/s/rRyeWMyPKDUxlv4sroOL/~/changes/210/developer-guides/generate-utilities/cleanup-debug-tables) utility.
+Over time these tables will accumulate and create clutter in the Generate database debug schema. You can easily remove unneeded debug tables using the [Clean Up Debug Tables](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/generate-utilities/cleanup-debug-tables) utility.
 
 ### Validation: Verifying Data Results
 

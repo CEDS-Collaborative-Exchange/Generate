@@ -1,7 +1,7 @@
 ---
 description: This document describes the technical enhancements to Generate version 12.2.
 icon: memo
-cover: ../.gitbook/assets/Release Notes_Release Notes 12.2_banner.png
+cover: ../../.gitbook/assets/Release Notes_Release Notes 12.2_banner.png
 coverY: 0
 ---
 
@@ -42,8 +42,8 @@ coverY: 0
 #### Documentation Updates
 
 * Installation Requirements: Updated to reflect new system specifications.
-* [Discord User Guide:](../developer-guides/discord-guide.md) Added to facilitate community collaboration.
-* [Support](../user-guide/support.md):  Consolidated resources available in the updated Generate documentation portal.
+* [Discord User Guide:](../../developer-guides/discord-guide.md) Added to facilitate community collaboration.
+* [Support](../../user-guide/support.md):  Consolidated resources available in the updated Generate documentation portal.
 
 ### Generate Enhancements
 
