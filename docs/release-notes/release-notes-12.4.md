@@ -1,6 +1,6 @@
 ---
 description: This document describes the technical enhancements to Generate version 12.4.
-icon: sparkles
+icon: memo
 cover: ../.gitbook/assets/ReleaseNotesBanner.avif
 coverY: 0
 ---
