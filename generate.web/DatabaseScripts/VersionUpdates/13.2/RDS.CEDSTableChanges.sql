@@ -2625,161 +2625,161 @@ CREATE NONCLUSTERED INDEX [IXFK_FactAeStudentEnrollments_HighSchoolDiplomaDiplom
 
 ALTER TABLE RDS.FactK12AccessibleEducationMaterialAssignments ADD K12Student_CurrentId BIGINT;
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AccessibleEducationMaterialProviderId] DEFAULT ((-1)) FOR [AccessibleEducationMaterialProviderId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AccessibleEducationMaterialProviderId] DEFAULT ((-1)) FOR [AccessibleEducationMaterialProviderId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AccessibleEducationMaterialStatusId] DEFAULT ((-1)) FOR [AccessibleEducationMaterialStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AccessibleEducationMaterialStatusId] DEFAULT ((-1)) FOR [AccessibleEducationMaterialStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AgeId] DEFAULT ((-1)) FOR [AgeId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AgeId] DEFAULT ((-1)) FOR [AgeId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AssignmentCount] DEFAULT ((1)) FOR [AssignmentCount];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AssignmentCount] DEFAULT ((1)) FOR [AssignmentCount];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_CountDateId] DEFAULT ((-1)) FOR [CountDateId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_CountDateId] DEFAULT ((-1)) FOR [CountDateId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_CourSectionEndDateId] DEFAULT ((-1)) FOR [CourseSectionEndDateId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_CourSectionEndDateId] DEFAULT ((-1)) FOR [CourseSectionEndDateId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_CourSectionStartDateId] DEFAULT ((-1)) FOR [CourseSectionStartDateId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_CourSectionStartDateId] DEFAULT ((-1)) FOR [CourseSectionStartDateId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_DataCollectionId] DEFAULT ((-1)) FOR [DataCollectionId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_DataCollectionId] DEFAULT ((-1)) FOR [DataCollectionId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_DisabilityStatusId] DEFAULT ((-1)) FOR [DisabilityStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_DisabilityStatusId] DEFAULT ((-1)) FOR [DisabilityStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EconomicallyDisadvantagedStatusId] DEFAULT ((-1)) FOR [EconomicallyDisadvantagedStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EconomicallyDisadvantagedStatusId] DEFAULT ((-1)) FOR [EconomicallyDisadvantagedStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EnglishLearnerStatusId] DEFAULT ((-1)) FOR [EnglishLearnerStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EnglishLearnerStatusId] DEFAULT ((-1)) FOR [EnglishLearnerStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EnrollmentEntryDateId] DEFAULT ((-1)) FOR [EnrollmentEntryDateId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EnrollmentEntryDateId] DEFAULT ((-1)) FOR [EnrollmentEntryDateId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EnrollmentExitDateId] DEFAULT ((-1)) FOR [EnrollmentExitDateId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EnrollmentExitDateId] DEFAULT ((-1)) FOR [EnrollmentExitDateId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EntryGradeLevelId] DEFAULT ((-1)) FOR [EntryGradeLevelId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EntryGradeLevelId] DEFAULT ((-1)) FOR [EntryGradeLevelId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_FosterCareStatusId] DEFAULT ((-1)) FOR [FosterCareStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_FosterCareStatusId] DEFAULT ((-1)) FOR [FosterCareStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_HomelessnessStatusId] DEFAULT ((-1)) FOR [HomelessnessStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_HomelessnessStatusId] DEFAULT ((-1)) FOR [HomelessnessStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_IdeaStatusId] DEFAULT ((-1)) FOR [IdeaStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_IdeaStatusId] DEFAULT ((-1)) FOR [IdeaStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_IeuId] DEFAULT ((-1)) FOR [IeuId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_IeuId] DEFAULT ((-1)) FOR [IeuId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_ImmigrantStatusId] DEFAULT ((-1)) FOR [ImmigrantStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_ImmigrantStatusId] DEFAULT ((-1)) FOR [ImmigrantStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12CourseId] DEFAULT ((-1)) FOR [K12CourseId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12CourseId] DEFAULT ((-1)) FOR [K12CourseId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12DemographicId] DEFAULT ((-1)) FOR [K12DemographicId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12DemographicId] DEFAULT ((-1)) FOR [K12DemographicId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12EnrollmentStatusId] DEFAULT ((-1)) FOR [K12EnrollmentStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12EnrollmentStatusId] DEFAULT ((-1)) FOR [K12EnrollmentStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12SchoolId] DEFAULT ((-1)) FOR [K12SchoolId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12SchoolId] DEFAULT ((-1)) FOR [K12SchoolId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12Student_CurrentId] DEFAULT ((-1)) FOR [K12Student_CurrentId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12Student_CurrentId] DEFAULT ((-1)) FOR [K12Student_CurrentId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12StudentId] DEFAULT ((-1)) FOR [K12StudentId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12StudentId] DEFAULT ((-1)) FOR [K12StudentId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LeaId] DEFAULT ((-1)) FOR [LeaId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LeaId] DEFAULT ((-1)) FOR [LeaId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceIssuedDateId] DEFAULT ((-1)) FOR [LearningResourceIssuedDateId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceIssuedDateId] DEFAULT ((-1)) FOR [LearningResourceIssuedDateId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceOrderedDateId] DEFAULT ((-1)) FOR [LearningResourceOrderedDateId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceOrderedDateId] DEFAULT ((-1)) FOR [LearningResourceOrderedDateId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceReceivedDateId] DEFAULT ((-1)) FOR [LearningResourceReceivedDateId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceReceivedDateId] DEFAULT ((-1)) FOR [LearningResourceReceivedDateId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_MigrantStatusId] DEFAULT ((-1)) FOR [MigrantStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_MigrantStatusId] DEFAULT ((-1)) FOR [MigrantStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_MilitaryStatusId] DEFAULT ((-1)) FOR [MilitaryStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_MilitaryStatusId] DEFAULT ((-1)) FOR [MilitaryStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_PrimaryIdeaDisabilityTypeId] DEFAULT ((-1)) FOR [PrimaryIdeaDisabilityTypeId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_PrimaryIdeaDisabilityTypeId] DEFAULT ((-1)) FOR [PrimaryIdeaDisabilityTypeId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_RaceId] DEFAULT ((-1)) FOR [RaceId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_RaceId] DEFAULT ((-1)) FOR [RaceId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_RuralStatusId] DEFAULT ((-1)) FOR [RuralStatusId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_RuralStatusId] DEFAULT ((-1)) FOR [RuralStatusId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_ScedCodeId] DEFAULT ((-1)) FOR [ScedCodeId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_ScedCodeId] DEFAULT ((-1)) FOR [ScedCodeId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_SchoolYearId] DEFAULT ((-1)) FOR [SchoolYearId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_SchoolYearId] DEFAULT ((-1)) FOR [SchoolYearId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_SeaId] DEFAULT ((-1)) FOR [SeaId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_SeaId] DEFAULT ((-1)) FOR [SeaId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_SecondaryIdeaDisabilityTypeId] DEFAULT ((-1)) FOR [SecondaryIdeaDisabilityTypeId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_SecondaryIdeaDisabilityTypeId] DEFAULT ((-1)) FOR [SecondaryIdeaDisabilityTypeId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateEconomicallyDisadvantagedId] DEFAULT ((-1)) FOR [StatusEndDateEconomicallyDisadvantagedId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateEconomicallyDisadvantagedId] DEFAULT ((-1)) FOR [StatusEndDateEconomicallyDisadvantagedId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateEnglishLearnerId] DEFAULT ((-1)) FOR [StatusEndDateEnglishLearnerId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateEnglishLearnerId] DEFAULT ((-1)) FOR [StatusEndDateEnglishLearnerId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateHomelessnessId] DEFAULT ((-1)) FOR [StatusEndDateHomelessnessId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateHomelessnessId] DEFAULT ((-1)) FOR [StatusEndDateHomelessnessId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateIdeaId] DEFAULT ((-1)) FOR [StatusEndDateIdeaId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateIdeaId] DEFAULT ((-1)) FOR [StatusEndDateIdeaId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateMigrantId] DEFAULT ((-1)) FOR [StatusEndDateMigrantId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateMigrantId] DEFAULT ((-1)) FOR [StatusEndDateMigrantId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateMilitaryId] DEFAULT ((-1)) FOR [StatusEndDateMilitaryId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateMilitaryId] DEFAULT ((-1)) FOR [StatusEndDateMilitaryId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDatePerkinsEnglishLearnerId] DEFAULT ((-1)) FOR [StatusEndDatePerkinsEnglishLearnerId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDatePerkinsEnglishLearnerId] DEFAULT ((-1)) FOR [StatusEndDatePerkinsEnglishLearnerId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateEconomicallyDisadvantagedId] DEFAULT ((-1)) FOR [StatusStartDateEconomicallyDisadvantagedId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateEconomicallyDisadvantagedId] DEFAULT ((-1)) FOR [StatusStartDateEconomicallyDisadvantagedId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateEnglishLearnerId] DEFAULT ((-1)) FOR [StatusStartDateEnglishLearnerId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateEnglishLearnerId] DEFAULT ((-1)) FOR [StatusStartDateEnglishLearnerId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateHomelessnessId] DEFAULT ((-1)) FOR [StatusStartDateHomelessnessId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateHomelessnessId] DEFAULT ((-1)) FOR [StatusStartDateHomelessnessId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateIdeaId] DEFAULT ((-1)) FOR [StatusStartDateIdeaId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateIdeaId] DEFAULT ((-1)) FOR [StatusStartDateIdeaId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateMigrantId] DEFAULT ((-1)) FOR [StatusStartDateMigrantId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateMigrantId] DEFAULT ((-1)) FOR [StatusStartDateMigrantId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateMilitaryId] DEFAULT ((-1)) FOR [StatusStartDateMilitaryId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateMilitaryId] DEFAULT ((-1)) FOR [StatusStartDateMilitaryId];
 
-ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
-    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDatePerkinsEnglishLearnerId] DEFAULT ((-1)) FOR [StatusStartDatePerkinsEnglishLearnerId];
+--ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments]
+--    ADD CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDatePerkinsEnglishLearnerId] DEFAULT ((-1)) FOR [StatusStartDatePerkinsEnglishLearnerId];
 
 --PRINT N'Creating Index [RDS].[FactK12AccessibleEducationMaterialAssignments].[IXFK_FactK12AccessibleEducationMaterialAssignments_DimAccessibleEducationMaterialProviders]...';
 
@@ -3429,20 +3429,20 @@ SET XACT_ABORT ON;
 
 CREATE TABLE [RDS].[tmp_ms_xx_FactK12StaffCounts] (
     [FactK12StaffCountId]        INT             IDENTITY (1, 1) NOT NULL,
-    [SchoolYearId]               INT             CONSTRAINT [DF_FactK12StaffCounts_SchoolYearId] DEFAULT ((-1)) NOT NULL,
-    [FactTypeId]                 INT             CONSTRAINT [DF_FactK12StaffCounts_FactTypeId] DEFAULT ((-1)) NOT NULL,
-    [SeaId]                      INT             CONSTRAINT [DF_FactK12StaffCounts_SeaId] DEFAULT ((-1)) NOT NULL,
-    [LeaId]                      INT             CONSTRAINT [DF_FactK12StaffCounts_LeaId] DEFAULT ((-1)) NOT NULL,
-    [K12SchoolId]                INT             CONSTRAINT [DF_FactK12StaffCounts_K12SchoolId] DEFAULT ((-1)) NOT NULL,
-    [K12StaffId]                 BIGINT          CONSTRAINT [DF_FactK12StaffCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
-    [K12Staff_CurrentId]         BIGINT          CONSTRAINT [DF_FactK12StaffCounts_K12Staff_CurrentId] DEFAULT ((-1)) NOT NULL,
-    [K12StaffStatusId]           INT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffStatusId] DEFAULT ((-1)) NOT NULL,
-    [K12StaffCategoryId]         INT             CONSTRAINT [DF_FactK12StaffCounts_K12StaffCategoryId] DEFAULT ((-1)) NOT NULL,
-    [TeachingCredentialStatusId] INT             CONSTRAINT [DF_FactK12StaffCounts_TeachingCredentialStatusId] DEFAULT ((-1)) NOT NULL,
-    [TitleIIIStatusId]           INT             CONSTRAINT [DF_FactK12StaffCounts_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
-    [CredentialIssuanceDateId]   INT             CONSTRAINT [DF_FactK12StaffCounts_CredentialIssuanceDateId] DEFAULT ((-1)) NOT NULL,
-    [CredentialExpirationDateId] INT             CONSTRAINT [DF_FactK12StaffCounts_CredentialExpirationDateId] DEFAULT ((-1)) NOT NULL,
-    [StaffCount]                 INT             CONSTRAINT [DF_FactK12StaffCounts_StaffCount] DEFAULT ((1)) NOT NULL,
+    [SchoolYearId]               INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_SchoolYearId] DEFAULT ((-1)) NOT NULL,
+    [FactTypeId]                 INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_FactTypeId] DEFAULT ((-1)) NOT NULL,
+    [SeaId]                      INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_SeaId] DEFAULT ((-1)) NOT NULL,
+    [LeaId]                      INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_LeaId] DEFAULT ((-1)) NOT NULL,
+    [K12SchoolId]                INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_K12SchoolId] DEFAULT ((-1)) NOT NULL,
+    [K12StaffId]                 BIGINT          CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_K12StaffId] DEFAULT ((-1)) NOT NULL,
+    [K12Staff_CurrentId]         BIGINT          CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_K12Staff_CurrentId] DEFAULT ((-1)) NOT NULL,
+    [K12StaffStatusId]           INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_K12StaffStatusId] DEFAULT ((-1)) NOT NULL,
+    [K12StaffCategoryId]         INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_K12StaffCategoryId] DEFAULT ((-1)) NOT NULL,
+    [TeachingCredentialStatusId] INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_TeachingCredentialStatusId] DEFAULT ((-1)) NOT NULL,
+    [TitleIIIStatusId]           INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_TitleIIIStatusId] DEFAULT ((-1)) NOT NULL,
+    [CredentialIssuanceDateId]   INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_CredentialIssuanceDateId] DEFAULT ((-1)) NOT NULL,
+    [CredentialExpirationDateId] INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_CredentialExpirationDateId] DEFAULT ((-1)) NOT NULL,
+    [StaffCount]                 INT             CONSTRAINT [tmp_ms_xx_constraint_DF_FactK12StaffCounts_StaffCount] DEFAULT ((1)) NOT NULL,
     [StaffFullTimeEquivalency]   DECIMAL (18, 3) NOT NULL,
     CONSTRAINT [tmp_ms_xx_constraint_PK_FactK12StaffCounts1] PRIMARY KEY CLUSTERED ([FactK12StaffCountId] ASC) WITH (FILLFACTOR = 80, DATA_COMPRESSION = PAGE)
 );
