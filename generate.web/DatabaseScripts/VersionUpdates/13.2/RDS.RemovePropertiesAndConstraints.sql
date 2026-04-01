@@ -3064,9 +3064,17 @@ PRINT N'Dropping Index [RDS].[DimK12StaffCategories].[IX_DimK12StaffCategories_C
 
 
 
+IF EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = 'IX_DimK12StaffCategories_Category'
+      AND object_id = OBJECT_ID('[RDS].[DimK12StaffCategories]')
+)
+BEGIN
 IF EXISTS (SELECT NULL FROM sys.indexes WHERE [name] = N'IX_DimK12StaffCategories_Category' AND object_id = OBJECT_ID(N'RDS.DimK12StaffCategories'))
     DROP INDEX [IX_DimK12StaffCategories_Category]
     ON [RDS].[DimK12StaffCategories];
+END
 
 
 
@@ -4103,21 +4111,21 @@ IF EXISTS (SELECT NULL FROM sys.indexes WHERE [name] = N'IX_Staging_ProgramParti
 
 
 
-PRINT N'Dropping Default Constraint [RDS].[DF_BridgeK12StudentCourseSectionK12Staff_K12StaffId]...';
+PRINT N'Dropping Default Constraint [RDS].[DF_CONSTRAINT [DF_BridgeK12StudentCourseSectionK12Staff_K12StaffId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_BridgeK12StudentCourseSectionK12Staff_K12StaffId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'BridgeK12StudentCourseSectionK12Staff')
-    ALTER TABLE [RDS].[BridgeK12StudentCourseSectionK12Staff] DROP CONSTRAINT [DF_BridgeK12StudentCourseSectionK12Staff_K12StaffId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_CONSTRAINT DF_BridgeK12StudentCourseSectionK12Staff_K12StaffId')
+    ALTER TABLE [RDS].[BridgeK12StudentCourseSectionK12Staff] DROP CONSTRAINT [DF_CONSTRAINT [DF_BridgeK12StudentCourseSectionK12Staff_K12StaffId];
 
 
 
-PRINT N'Dropping Default Constraint [RDS].[DF_BridgeK12StudentCourseSectionK12Staff_FactK12StudentCourseSectionId]...';
+PRINT N'Dropping Default Constraint [RDS].[DF_CONSTRAINT [DF_BridgeK12StudentCourseSectionK12Staff_FactK12StudentCourseSectionId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_BridgeK12StudentCourseSectionK12Staff_FactK12StudentCourseSectionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'BridgeK12StudentCourseSectionK12Staff')
-    ALTER TABLE [RDS].[BridgeK12StudentCourseSectionK12Staff] DROP CONSTRAINT [DF_BridgeK12StudentCourseSectionK12Staff_FactK12StudentCourseSectionId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_CONSTRAINT DF_BridgeK12StudentCourseSectionK12Staff_FactK12StudentCourseSectionId')
+    ALTER TABLE [RDS].[BridgeK12StudentCourseSectionK12Staff] DROP CONSTRAINT [DF_CONSTRAINT [DF_BridgeK12StudentCourseSectionK12Staff_FactK12StudentCourseSectionId];
 
 
 
@@ -4125,7 +4133,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_DimK12Schools_SchoolOperationalSta
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_DimK12Schools_SchoolOperationalStatus' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'DimK12Schools')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_DimK12Schools_SchoolOperationalStatus')
     ALTER TABLE [RDS].[DimK12Schools] DROP CONSTRAINT [DF_DimK12Schools_SchoolOperationalStatus];
 
 
@@ -4134,7 +4142,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_DimLeas_RecordEndDateTime]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_DimLeas_RecordEndDateTime' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'DimLeas')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_DimLeas_RecordEndDateTime')
     ALTER TABLE [RDS].[DimLeas] DROP CONSTRAINT [DF_DimLeas_RecordEndDateTime];
 
 
@@ -4143,7 +4151,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateIdeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateIdeaId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateIdeaId];
 
 
@@ -4152,7 +4160,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_MigrantStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_MigrantStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_MigrantStatusId];
 
 
@@ -4161,7 +4169,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateMilitaryId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateMilitaryId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateMilitaryId];
 
 
@@ -4170,7 +4178,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_IdeaStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_IdeaStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_IdeaStatusId];
 
 
@@ -4179,7 +4187,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_K12StudentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_K12StudentId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12StudentId];
 
 
@@ -4188,7 +4196,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_RuralStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_RuralStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_RuralStatusId];
 
 
@@ -4197,7 +4205,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateMigrantId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateMigrantId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateMigrantId];
 
 
@@ -4206,7 +4214,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_EconomicallyDisadvantagedStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_EconomicallyDisadvantagedStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EconomicallyDisadvantagedStatusId];
 
 
@@ -4215,7 +4223,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceOrderedDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceOrderedDateId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceOrderedDateId];
 
 
@@ -4224,7 +4232,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateMigrantId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateMigrantId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateMigrantId];
 
 
@@ -4233,7 +4241,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDatePerkinsEnglishLearnerId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDatePerkinsEnglishLearnerId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDatePerkinsEnglishLearnerId];
 
 
@@ -4242,7 +4250,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateMilitaryId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateMilitaryId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateMilitaryId];
 
 
@@ -4251,7 +4259,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_CourSectionEndDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_CourSectionEndDateId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_CourSectionEndDateId];
 
 
@@ -4260,7 +4268,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDatePerkinsEnglishLearnerId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDatePerkinsEnglishLearnerId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDatePerkinsEnglishLearnerId];
 
 
@@ -4269,7 +4277,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_ImmigrantStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_ImmigrantStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_ImmigrantStatusId];
 
 
@@ -4278,7 +4286,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_EntryGradeLevelId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_EntryGradeLevelId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EntryGradeLevelId];
 
 
@@ -4287,7 +4295,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateEnglishLearnerId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateEnglishLearnerId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateEnglishLearnerId];
 
 
@@ -4296,7 +4304,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_DisabilityStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_DisabilityStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_DisabilityStatusId];
 
 
@@ -4305,7 +4313,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_AgeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_AgeId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AgeId];
 
 
@@ -4314,7 +4322,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_IeuId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_IeuId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_IeuId];
 
 
@@ -4323,7 +4331,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_AccessibleEducationMaterialProviderId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_AccessibleEducationMaterialProviderId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AccessibleEducationMaterialProviderId];
 
 
@@ -4332,7 +4340,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateEconomicallyDisadvantagedId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateEconomicallyDisadvantagedId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateEconomicallyDisadvantagedId];
 
 
@@ -4341,7 +4349,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_ScedCodeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_ScedCodeId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_ScedCodeId];
 
 
@@ -4350,7 +4358,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_HomelessnessStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_HomelessnessStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_HomelessnessStatusId];
 
 
@@ -4359,7 +4367,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceReceivedDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceReceivedDateId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceReceivedDateId];
 
 
@@ -4368,7 +4376,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateHomelessnessId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateHomelessnessId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateHomelessnessId];
 
 
@@ -4377,7 +4385,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_AccessibleEducationMaterialStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_AccessibleEducationMaterialStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AccessibleEducationMaterialStatusId];
 
 
@@ -4386,7 +4394,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateEconomicallyDisadvantagedId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateEconomicallyDisadvantagedId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateEconomicallyDisadvantagedId];
 
 
@@ -4395,7 +4403,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_RaceId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_RaceId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_RaceId];
 
 
@@ -4404,7 +4412,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_EnglishLearnerStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_EnglishLearnerStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EnglishLearnerStatusId];
 
 
@@ -4413,7 +4421,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceIssuedDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceIssuedDateId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LearningResourceIssuedDateId];
 
 
@@ -4422,7 +4430,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_CountDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_CountDateId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_CountDateId];
 
 
@@ -4431,7 +4439,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_K12CourseId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_K12CourseId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12CourseId];
 
 
@@ -4440,7 +4448,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_LeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_LeaId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_LeaId];
 
 
@@ -4449,7 +4457,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_MilitaryStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_MilitaryStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_MilitaryStatusId];
 
 
@@ -4458,7 +4466,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_K12SchoolId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12SchoolId];
 
 
@@ -4467,7 +4475,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_DataCollectionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_DataCollectionId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_DataCollectionId];
 
 
@@ -4476,7 +4484,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_PrimaryIdeaDisabilityTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_PrimaryIdeaDisabilityTypeId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_PrimaryIdeaDisabilityTypeId];
 
 
@@ -4485,7 +4493,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_EnrollmentEntryDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_EnrollmentEntryDateId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EnrollmentEntryDateId];
 
 
@@ -4494,7 +4502,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_SeaId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_SeaId];
 
 
@@ -4503,7 +4511,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_SchoolYearId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_SchoolYearId];
 
 
@@ -4512,7 +4520,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_K12DemographicId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_K12DemographicId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12DemographicId];
 
 
@@ -4521,7 +4529,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateHomelessnessId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateHomelessnessId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateHomelessnessId];
 
 
@@ -4530,7 +4538,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_SecondaryIdeaDisabilityTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_SecondaryIdeaDisabilityTypeId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_SecondaryIdeaDisabilityTypeId];
 
 
@@ -4539,7 +4547,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateEnglishLearnerId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateEnglishLearnerId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusStartDateEnglishLearnerId];
 
 
@@ -4548,7 +4556,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_FosterCareStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_FosterCareStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_FosterCareStatusId];
 
 
@@ -4557,7 +4565,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_CourSectionStartDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_CourSectionStartDateId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_CourSectionStartDateId];
 
 
@@ -4566,7 +4574,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_AssignmentCount' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_AssignmentCount')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_AssignmentCount];
 
 
@@ -4575,7 +4583,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_EnrollmentExitDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_EnrollmentExitDateId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_EnrollmentExitDateId];
 
 
@@ -4584,7 +4592,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_K12EnrollmentStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_K12EnrollmentStatusId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_K12EnrollmentStatusId];
 
 
@@ -4593,7 +4601,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12AccessibleEducationMaterial
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateIdeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12AccessibleEducationMaterialAssignments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateIdeaId')
     ALTER TABLE [RDS].[FactK12AccessibleEducationMaterialAssignments] DROP CONSTRAINT [DF_FactK12AccessibleEducationMaterialAssignment_StatusEndDateIdeaId];
 
 
@@ -4602,7 +4610,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_Progr
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_ProgramParticipationExitDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_ProgramParticipationExitDateId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_ProgramParticipationExitDateId];
 
 
@@ -4611,7 +4619,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_Stude
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_StudentCount' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_StudentCount')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_StudentCount];
 
 
@@ -4620,7 +4628,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_Progr
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_ProgramParticipationStartDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_ProgramParticipationStartDateId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_ProgramParticipationStartDateId];
 
 
@@ -4629,7 +4637,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_LeaGr
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_LeaGraduationId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_LeaGraduationId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_LeaGraduationId];
 
 
@@ -4638,7 +4646,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_K12Sc
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_K12SchoolId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_K12SchoolId];
 
 
@@ -4647,7 +4655,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_LeaAt
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_LeaAttendancId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_LeaAttendancId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_LeaAttendancId];
 
 
@@ -4656,7 +4664,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_Schoo
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_SchoolYearId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_SchoolYearId];
 
 
@@ -4665,7 +4673,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_SeaId
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_SeaId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_SeaId];
 
 
@@ -4674,7 +4682,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_IdeaS
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_IdeaStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_IdeaStatusId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_IdeaStatusId];
 
 
@@ -4683,7 +4691,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_IeuId
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_IeuId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_IeuId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_IeuId];
 
 
@@ -4692,7 +4700,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_DataC
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_DataCollectionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_DataCollectionId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_DataCollectionId];
 
 
@@ -4701,7 +4709,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_K12Pr
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_K12ProgramTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_K12ProgramTypeId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_K12ProgramTypeId];
 
 
@@ -4710,7 +4718,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_LeaAc
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_LeaAccountabilityId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_LeaAccountabilityId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_LeaAccountabilityId];
 
 
@@ -4719,7 +4727,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_LeaFu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_LeaFundingId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_LeaFundingId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_LeaFundingId];
 
 
@@ -4728,7 +4736,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_K12St
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_K12StudentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_K12StudentId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_K12StudentId];
 
 
@@ -4737,7 +4745,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_K12De
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_K12DemographicId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_K12DemographicId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_K12DemographicId];
 
 
@@ -4746,7 +4754,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12ProgramParticipations_LeaIn
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12ProgramParticipations_LeaIndividualizedEducationProgramId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12ProgramParticipations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12ProgramParticipations_LeaIndividualizedEducationProgramId')
     ALTER TABLE [RDS].[FactK12ProgramParticipations] DROP CONSTRAINT [DF_FactK12ProgramParticipations_LeaIndividualizedEducationProgramId];
 
 
@@ -4755,7 +4763,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_SeaId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StaffCounts_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StaffCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StaffCounts_SeaId')
     ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_SeaId];
 
 
@@ -4764,7 +4772,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_CredentialIssua
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StaffCounts_CredentialIssuanceDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StaffCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StaffCounts_CredentialIssuanceDateId')
     ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_CredentialIssuanceDateId];
 
 
@@ -4773,7 +4781,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_K12StaffStatusI
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StaffCounts_K12StaffStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StaffCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StaffCounts_K12StaffStatusId')
     ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_K12StaffStatusId];
 
 
@@ -4790,7 +4798,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_K12SchoolId]...
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StaffCounts_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StaffCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StaffCounts_K12SchoolId')
     ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_K12SchoolId];
 
 
@@ -4799,7 +4807,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_CredentialExpir
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StaffCounts_CredentialExpirationDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StaffCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StaffCounts_CredentialExpirationDateId')
     ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_CredentialExpirationDateId];
 
 
@@ -4808,7 +4816,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_FactTypeId]...'
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StaffCounts_FactTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StaffCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StaffCounts_FactTypeId')
     ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_FactTypeId];
 
 
@@ -4817,7 +4825,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_K12StaffId]...'
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StaffCounts_K12StaffId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StaffCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StaffCounts_K12StaffId')
     ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_K12StaffId];
 
 
@@ -4826,7 +4834,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_LeaId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StaffCounts_LeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StaffCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StaffCounts_LeaId')
     ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_LeaId];
 
 
@@ -4835,7 +4843,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_TitleIIIStatusI
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StaffCounts_TitleIIIStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StaffCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StaffCounts_TitleIIIStatusId')
     ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_TitleIIIStatusId];
 
 
@@ -4844,7 +4852,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_StaffCount]...'
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StaffCounts_StaffCount' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StaffCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StaffCounts_StaffCount')
     ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_StaffCount];
 
 
@@ -4853,7 +4861,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StaffCounts_SchoolYearId]..
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StaffCounts_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StaffCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StaffCounts_SchoolYearId')
     ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_SchoolYearId];
 
 
@@ -4862,7 +4870,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Competen
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_CompetencyDefinitionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_CompetencyDefinitionId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_CompetencyDefinitionId];
 
 
@@ -4871,7 +4879,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_LeaId]..
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_LeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_LeaId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_LeaId];
 
 
@@ -4880,7 +4888,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_FactType
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_FactTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_FactTypeId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_FactTypeId];
 
 
@@ -4889,7 +4897,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_TitleIII
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_TitleIIIStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_TitleIIIStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_TitleIIIStatusId];
 
 
@@ -4898,7 +4906,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_SchoolYe
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_SchoolYearId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_SchoolYearId];
 
 
@@ -4907,7 +4915,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_MigrantS
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_MigrantStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_MigrantStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_MigrantStatusId];
 
 
@@ -4916,7 +4924,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Assessme
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_AssessmentRegistrationId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_AssessmentRegistrationId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentRegistrationId];
 
 
@@ -4925,7 +4933,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_GradeLev
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_GradeLevelWhenAssessedId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_GradeLevelWhenAssessedId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_GradeLevelWhenAssessedId];
 
 
@@ -4934,7 +4942,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_IdeaStat
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_IdeaStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_IdeaStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_IdeaStatusId];
 
 
@@ -4943,7 +4951,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_K12Schoo
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_K12SchoolId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_K12SchoolId];
 
 
@@ -4952,7 +4960,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Assessme
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_AssessmentCount' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_AssessmentCount')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentCount];
 
 
@@ -4961,7 +4969,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_SeaId]..
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_SeaId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_SeaId];
 
 
@@ -4970,7 +4978,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_K12Stude
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_K12StudentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_K12StudentId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_K12StudentId];
 
 
@@ -4979,7 +4987,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_FactK12S
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_FactK12StudentAssessmentAccommodationId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_FactK12StudentAssessmentAccommodationId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_FactK12StudentAssessmentAccommodationId];
 
 
@@ -4988,7 +4996,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Assessme
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_AssessmentResultId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_AssessmentResultId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentResultId];
 
 
@@ -4997,7 +5005,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Homeless
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_HomelessnessStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_HomelessnessStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_HomelessnessStatusId];
 
 
@@ -5006,7 +5014,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_IeuId]..
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_IeuId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_IeuId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_IeuId];
 
 
@@ -5015,7 +5023,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Assessme
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_AssessmentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_AssessmentId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentId];
 
 
@@ -5024,7 +5032,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Assessme
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_AssessmentAdministrationId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_AssessmentAdministrationId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentAdministrationId];
 
 
@@ -5033,7 +5041,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_TitleISt
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_TitleIStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_TitleIStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_TitleIStatusId];
 
 
@@ -5042,7 +5050,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Assessme
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_AssessmentPerformanceLevelId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_AssessmentPerformanceLevelId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentPerformanceLevelId];
 
 
@@ -5051,7 +5059,7 @@ PRINT N'Dropping Default Constraint unnamed constraint on [RDS].[FactK12StudentA
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF__FactK12St__Prima__1B293529' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF__FactK12St__Prima__1B293529')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF__FactK12St__Prima__1B293529];
 
 
@@ -5060,7 +5068,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Economic
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_EconomicallyDisadvantagedStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_EconomicallyDisadvantagedStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_EconomicallyDisadvantagedStatusId];
 
 
@@ -5069,7 +5077,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_FosterCa
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_FosterCareStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_FosterCareStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_FosterCareStatusId];
 
 
@@ -5078,7 +5086,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_K12Demog
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_K12DemographicId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_K12DemographicId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_K12DemographicId];
 
 
@@ -5087,7 +5095,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_NOrDStat
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_NOrDStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_NOrDStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_NOrDStatusId];
 
 
@@ -5096,7 +5104,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_EnglishL
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_EnglishLearnerStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_EnglishLearnerStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_EnglishLearnerStatusId];
 
 
@@ -5105,7 +5113,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Assessme
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_AssessmentSubtestId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_AssessmentSubtestId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentSubtestId];
 
 
@@ -5114,7 +5122,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Immigran
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_ImmigrantStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_ImmigrantStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_ImmigrantStatusId];
 
 
@@ -5123,7 +5131,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_CteStatu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_CteStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_CteStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_CteStatusId];
 
 
@@ -5132,7 +5140,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Assessme
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_AssessmentParticipationSessionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_AssessmentParticipationSessionId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentParticipationSessionId];
 
 
@@ -5141,7 +5149,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessments_Military
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessments_MilitaryStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessments_MilitaryStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_MilitaryStatusId];
 
 
@@ -5150,7 +5158,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_RaceId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_RaceId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_RaceId];
 
 
@@ -5159,7 +5167,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_AcademicTermDesignatorId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_AcademicTermDesignatorId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_AcademicTermDesignatorId];
 
 
@@ -5168,7 +5176,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_SeaId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_SeaId];
 
 
@@ -5177,7 +5185,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_IeuId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_IeuId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_IeuId];
 
 
@@ -5186,7 +5194,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_CompetencyDefinitionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_CompetencyDefinitionId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_CompetencyDefinitionId];
 
 
@@ -5195,7 +5203,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_IdeaStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_IdeaStatusId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_IdeaStatusId];
 
 
@@ -5204,7 +5212,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_AssessmentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_AssessmentId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_AssessmentId];
 
 
@@ -5213,7 +5221,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_SchoolYearId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_SchoolYearId];
 
 
@@ -5222,7 +5230,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_LeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_LeaId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_LeaId];
 
 
@@ -5231,7 +5239,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_K12DemographicId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_K12DemographicId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_K12DemographicId];
 
 
@@ -5240,7 +5248,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_AssessmentAdministrationId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_AssessmentAdministrationId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_AssessmentAdministrationId];
 
 
@@ -5249,7 +5257,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_K12SchoolId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_K12SchoolId];
 
 
@@ -5258,7 +5266,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_AssessmentSubtestId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_AssessmentSubtestId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_AssessmentSubtestId];
 
 
@@ -5267,7 +5275,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAssessmentsResultAgg
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAssessmentsResultAggregates_GradeLevelWhenAssessedId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAssessmentsResultAggregates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAssessmentsResultAggregates_GradeLevelWhenAssessedId')
     ALTER TABLE [RDS].[FactK12StudentAssessmentsResultAggregates] DROP CONSTRAINT [DF_FactK12StudentAssessmentsResultAggregates_GradeLevelWhenAssessedId];
 
 
@@ -5276,7 +5284,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAttendanceRates_LeaI
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAttendanceRates_LeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAttendanceRates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAttendanceRates_LeaId')
     ALTER TABLE [RDS].[FactK12StudentAttendanceRates] DROP CONSTRAINT [DF_FactK12StudentAttendanceRates_LeaId];
 
 
@@ -5285,7 +5293,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAttendanceRates_Atte
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAttendanceRates_AttendanceId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAttendanceRates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAttendanceRates_AttendanceId')
     ALTER TABLE [RDS].[FactK12StudentAttendanceRates] DROP CONSTRAINT [DF_FactK12StudentAttendanceRates_AttendanceId];
 
 
@@ -5294,7 +5302,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAttendanceRates_Fact
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAttendanceRates_FactTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAttendanceRates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAttendanceRates_FactTypeId')
     ALTER TABLE [RDS].[FactK12StudentAttendanceRates] DROP CONSTRAINT [DF_FactK12StudentAttendanceRates_FactTypeId];
 
 
@@ -5303,7 +5311,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAttendanceRates_K12D
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAttendanceRates_K12DemographicId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAttendanceRates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAttendanceRates_K12DemographicId')
     ALTER TABLE [RDS].[FactK12StudentAttendanceRates] DROP CONSTRAINT [DF_FactK12StudentAttendanceRates_K12DemographicId];
 
 
@@ -5312,7 +5320,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAttendanceRates_Scho
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAttendanceRates_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAttendanceRates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAttendanceRates_SchoolYearId')
     ALTER TABLE [RDS].[FactK12StudentAttendanceRates] DROP CONSTRAINT [DF_FactK12StudentAttendanceRates_SchoolYearId];
 
 
@@ -5321,7 +5329,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAttendanceRates_K12S
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAttendanceRates_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAttendanceRates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAttendanceRates_K12SchoolId')
     ALTER TABLE [RDS].[FactK12StudentAttendanceRates] DROP CONSTRAINT [DF_FactK12StudentAttendanceRates_K12SchoolId];
 
 
@@ -5330,7 +5338,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAttendanceRates_SeaI
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAttendanceRates_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAttendanceRates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAttendanceRates_SeaId')
     ALTER TABLE [RDS].[FactK12StudentAttendanceRates] DROP CONSTRAINT [DF_FactK12StudentAttendanceRates_SeaId];
 
 
@@ -5339,7 +5347,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentAttendanceRates_K12S
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentAttendanceRates_K12StudentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentAttendanceRates')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentAttendanceRates_K12StudentId')
     ALTER TABLE [RDS].[FactK12StudentAttendanceRates] DROP CONSTRAINT [DF_FactK12StudentAttendanceRates_K12StudentId];
 
 
@@ -5348,7 +5356,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_SeaId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_SeaId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_SeaId];
 
 
@@ -5357,7 +5365,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_CteStatusId].
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_CteStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_CteStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_CteStatusId];
 
 
@@ -5366,7 +5374,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_CohortGraduat
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_CohortGraduationYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_CohortGraduationYearId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_CohortGraduationYearId];
 
 
@@ -5375,7 +5383,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_HomelessnessS
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_HomelessnessStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_HomelessnessStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_HomelessnessStatusId];
 
 
@@ -5384,7 +5392,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_ImmigrantStat
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_ImmigrantStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_ImmigrantStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_ImmigrantStatusId];
 
 
@@ -5393,7 +5401,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_EnrollmentEnt
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_EnrollmentEntryDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_EnrollmentEntryDateId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_EnrollmentEntryDateId];
 
 
@@ -5402,7 +5410,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_TitleIIIStatu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_TitleIIIStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_TitleIIIStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_TitleIIIStatusId];
 
 
@@ -5411,7 +5419,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_StatusEndDate
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_StatusEndDateEnglishLearnerId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_StatusEndDateEnglishLearnerId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_StatusEndDateEnglishLearnerId];
 
 
@@ -5420,7 +5428,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_StatusStartDa
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_StatusStartDateEnglishLearnerId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_StatusStartDateEnglishLearnerId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_StatusStartDateEnglishLearnerId];
 
 
@@ -5429,7 +5437,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_LanguageId]..
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_LanguageId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_LanguageId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_LanguageId];
 
 
@@ -5438,7 +5446,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_EnglishLearne
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_EnglishLearnerStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_EnglishLearnerStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_EnglishLearnerStatusId];
 
 
@@ -5447,7 +5455,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_NOrDStatusId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_NOrDStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_NOrDStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_NOrDStatusId];
 
 
@@ -5456,7 +5464,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_DisabilitySta
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_DisabilityStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_DisabilityStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_DisabilityStatusId];
 
 
@@ -5465,7 +5473,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_K12AcademicAw
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_K12AcademicAwardStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_K12AcademicAwardStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_K12AcademicAwardStatusId];
 
 
@@ -5474,7 +5482,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_MigrantStatus
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_MigrantStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_MigrantStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_MigrantStatusId];
 
 
@@ -5483,7 +5491,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_EnrollmentSta
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_EnrollmentStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_EnrollmentStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_EnrollmentStatusId];
 
 
@@ -5492,7 +5500,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_SchoolYearId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_SchoolYearId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_SchoolYearId];
 
 
@@ -5501,7 +5509,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_StudentCount]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_StudentCount' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_StudentCount')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_StudentCount];
 
 
@@ -5510,7 +5518,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_K12SchoolId].
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_K12SchoolId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_K12SchoolId];
 
 
@@ -5519,7 +5527,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_StatusEndDate
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_StatusEndDateNeglectedOrDelinquentId];
 
 
@@ -5528,7 +5536,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_PrimaryDisabi
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_PrimaryDisabilityType' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_PrimaryDisabilityType')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_PrimaryDisabilityType];
 
 
@@ -5537,7 +5545,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_FosterCareSta
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_FosterCareStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_FosterCareStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_FosterCareStatusId];
 
 
@@ -5546,7 +5554,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_CteOutcomeInd
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_CteOutcomeIndicatorId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_CteOutcomeIndicatorId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_CteOutcomeIndicatorId];
 
 
@@ -5555,7 +5563,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_CohortYearId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_CohortYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_CohortYearId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_CohortYearId];
 
 
@@ -5564,7 +5572,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_StatusStartDa
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_StatusStartDateNeglectedOrDelinquentId];
 
 
@@ -5573,7 +5581,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_SpecialEducat
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_SpecialEducationServicesExitDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_SpecialEducationServicesExitDateId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_SpecialEducationServicesExitDateId];
 
 
@@ -5582,7 +5590,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_K12StudentId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_K12StudentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_K12StudentId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_K12StudentId];
 
 
@@ -5591,7 +5599,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_CohortStatusI
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_CohortStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_CohortStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_CohortStatusId];
 
 
@@ -5600,7 +5608,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_AgeId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_AgeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_AgeId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_AgeId];
 
 
@@ -5609,7 +5617,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_RaceId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_RaceId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_RaceId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_RaceId];
 
 
@@ -5618,7 +5626,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_FactTypeId]..
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_FactTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_FactTypeId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_FactTypeId];
 
 
@@ -5627,7 +5635,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_TitleIStatusI
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_TitleIStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_TitleIStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_TitleIStatusId];
 
 
@@ -5636,7 +5644,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_IdeaStatusId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_IdeaStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_IdeaStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_IdeaStatusId];
 
 
@@ -5645,7 +5653,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_GradeLevelId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_GradeLevelId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_GradeLevelId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_GradeLevelId];
 
 
@@ -5654,7 +5662,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_K12Demographi
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_K12Demographic' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_K12Demographic')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_K12Demographic];
 
 
@@ -5663,7 +5671,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_AttendanceId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_AttendanceId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_AttendanceId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_AttendanceId];
 
 
@@ -5672,7 +5680,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_LeaId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_LeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_LeaId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_LeaId];
 
 
@@ -5681,7 +5689,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_EnrollmentExi
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_EnrollmentExitDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_EnrollmentExitDateId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_EnrollmentExitDateId];
 
 
@@ -5690,7 +5698,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCounts_EconomicallyD
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCounts_EconomicallyDisadvantagedStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCounts_EconomicallyDisadvantagedStatusId')
     ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_EconomicallyDisadvantagedStatusId];
 
 
@@ -5699,7 +5707,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_Schoo
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_SchoolYearId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_SchoolYearId];
 
 
@@ -5708,7 +5716,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_Entry
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_EntryGradeLevelId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_EntryGradeLevelId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_EntryGradeLevelId];
 
 
@@ -5717,7 +5725,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_IeuId
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_IeuId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_IeuId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_IeuId];
 
 
@@ -5726,7 +5734,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_Stude
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_StudentCourseSectionCount' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_StudentCourseSectionCount')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_StudentCourseSectionCount];
 
 
@@ -5735,7 +5743,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_DataC
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_DataCollectionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_DataCollectionId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_DataCollectionId];
 
 
@@ -5744,7 +5752,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_CipCo
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_CipCodeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_CipCodeId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_CipCodeId];
 
 
@@ -5753,7 +5761,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_SeaId
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_SeaId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_SeaId];
 
 
@@ -5762,7 +5770,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_K12Co
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_K12CourseId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_K12CourseId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_K12CourseId];
 
 
@@ -5771,7 +5779,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_Langu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_LanguageId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_LanguageId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_LanguageId];
 
 
@@ -5780,7 +5788,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_LeaGr
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_LeaGraduationId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_LeaGraduationId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_LeaGraduationId];
 
 
@@ -5789,7 +5797,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_ScedC
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_ScedCodeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_ScedCodeId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_ScedCodeId];
 
 
@@ -5798,7 +5806,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_LeaIn
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_LeaIndividualizedEducationProgramId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_LeaIndividualizedEducationProgramId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_LeaIndividualizedEducationProgramId];
 
 
@@ -5807,7 +5815,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_LeaFu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_LeaFundingId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_LeaFundingId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_LeaFundingId];
 
 
@@ -5816,7 +5824,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_LeaAc
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_LeaAccountabilityId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_LeaAccountabilityId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_LeaAccountabilityId];
 
 
@@ -5825,7 +5833,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_K12St
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_K12StudentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_K12StudentId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_K12StudentId];
 
 
@@ -5834,7 +5842,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_K12Co
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_K12CourseStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_K12CourseStatusId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_K12CourseStatusId];
 
 
@@ -5843,7 +5851,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_K12De
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_K12DemographicId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_K12DemographicId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_K12DemographicId];
 
 
@@ -5852,7 +5860,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_K12Sc
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_K12SchoolId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_K12SchoolId];
 
 
@@ -5861,7 +5869,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentCourseSections_LeaAt
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentCourseSections_LeaAttendanceId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentCourseSections')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentCourseSections_LeaAttendanceId')
     ALTER TABLE [RDS].[FactK12StudentCourseSections] DROP CONSTRAINT [DF_FactK12StudentCourseSections_LeaAttendanceId];
 
 
@@ -5870,7 +5878,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDailyAttendances_Per
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDailyAttendances_PersonId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDailyAttendances')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDailyAttendances_PersonId')
     ALTER TABLE [RDS].[FactK12StudentDailyAttendances] DROP CONSTRAINT [DF_FactK12StudentDailyAttendances_PersonId];
 
 
@@ -5879,7 +5887,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDailyAttendances_Sch
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDailyAttendances_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDailyAttendances')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDailyAttendances_SchoolYearId')
     ALTER TABLE [RDS].[FactK12StudentDailyAttendances] DROP CONSTRAINT [DF_FactK12StudentDailyAttendances_SchoolYearId];
 
 
@@ -5888,7 +5896,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDailyAttendances_Att
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDailyAttendances_AttendanceEventDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDailyAttendances')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDailyAttendances_AttendanceEventDateId')
     ALTER TABLE [RDS].[FactK12StudentDailyAttendances] DROP CONSTRAINT [DF_FactK12StudentDailyAttendances_AttendanceEventDateId];
 
 
@@ -5897,7 +5905,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDailyAttendances_Dat
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDailyAttendances_DataCollectionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDailyAttendances')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDailyAttendances_DataCollectionId')
     ALTER TABLE [RDS].[FactK12StudentDailyAttendances] DROP CONSTRAINT [DF_FactK12StudentDailyAttendances_DataCollectionId];
 
 
@@ -5906,7 +5914,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDailyAttendances_Att
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDailyAttendances_AttendanceId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDailyAttendances')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDailyAttendances_AttendanceId')
     ALTER TABLE [RDS].[FactK12StudentDailyAttendances] DROP CONSTRAINT [DF_FactK12StudentDailyAttendances_AttendanceId];
 
 
@@ -5915,7 +5923,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDailyAttendances_Ieu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDailyAttendances_IeuId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDailyAttendances')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDailyAttendances_IeuId')
     ALTER TABLE [RDS].[FactK12StudentDailyAttendances] DROP CONSTRAINT [DF_FactK12StudentDailyAttendances_IeuId];
 
 
@@ -5924,7 +5932,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDailyAttendances_Lea
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDailyAttendances_LeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDailyAttendances')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDailyAttendances_LeaId')
     ALTER TABLE [RDS].[FactK12StudentDailyAttendances] DROP CONSTRAINT [DF_FactK12StudentDailyAttendances_LeaId];
 
 
@@ -5933,7 +5941,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDailyAttendances_K12
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDailyAttendances_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDailyAttendances')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDailyAttendances_K12SchoolId')
     ALTER TABLE [RDS].[FactK12StudentDailyAttendances] DROP CONSTRAINT [DF_FactK12StudentDailyAttendances_K12SchoolId];
 
 
@@ -5942,7 +5950,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDailyAttendances_Sea
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDailyAttendances_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDailyAttendances')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDailyAttendances_SeaId')
     ALTER TABLE [RDS].[FactK12StudentDailyAttendances] DROP CONSTRAINT [DF_FactK12StudentDailyAttendances_SeaId];
 
 
@@ -5951,7 +5959,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDisciplines_RaceId].
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDisciplines_RaceId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDisciplines')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDisciplines_RaceId')
     ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [DF_FactK12StudentDisciplines_RaceId];
 
 
@@ -5960,7 +5968,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDisciplines_Military
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDisciplines_MilitaryId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDisciplines')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDisciplines_MilitaryId')
     ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [DF_FactK12StudentDisciplines_MilitaryId];
 
 
@@ -5969,7 +5977,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentDisciplines_DataColl
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentDisciplines_DataCollectionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentDisciplines')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentDisciplines_DataCollectionId')
     ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [DF_FactK12StudentDisciplines_DataCollectionId];
 
 
@@ -5978,7 +5986,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_PersonAddressId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_PersonAddressId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_PersonAddressId];
 
 
@@ -5987,7 +5995,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_SchoolYearId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_SchoolYearId];
 
 
@@ -5996,7 +6004,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_K12StudentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_K12StudentId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_K12StudentId];
 
 
@@ -6005,7 +6013,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_CountDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_CountDateId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_CountDateId];
 
 
@@ -6014,7 +6022,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_EconomicallyDisadvantagedStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_EconomicallyDisadvantagedStatusId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_EconomicallyDisadvantagedStatusId];
 
 
@@ -6023,7 +6031,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_NcesSideVantageBeginYearDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_NcesSideVantageBeginYearDateId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_NcesSideVantageBeginYearDateId];
 
 
@@ -6032,7 +6040,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_DataCollectionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_DataCollectionId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_DataCollectionId];
 
 
@@ -6041,7 +6049,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_SeaId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_SeaId];
 
 
@@ -6050,7 +6058,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_LeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_LeaId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_LeaId];
 
 
@@ -6059,7 +6067,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_K12SchoolId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_K12SchoolId];
 
 
@@ -6068,7 +6076,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_NcesSideVantageEndYearDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_NcesSideVantageEndYearDateId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_NcesSideVantageEndYearDateId];
 
 
@@ -6077,7 +6085,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_IeuId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_IeuId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_IeuId];
 
 
@@ -6086,7 +6094,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEconomicDisadvantage
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEconomicDisadvantages_K12DemographicId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEconomicDisadvantages')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEconomicDisadvantages_K12DemographicId')
     ALTER TABLE [RDS].[FactK12StudentEconomicDisadvantages] DROP CONSTRAINT [DF_FactK12StudentEconomicDisadvantages_K12DemographicId];
 
 
@@ -6095,7 +6103,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_Responsi
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEnrollments_ResponsibleSchoolTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEnrollments_ResponsibleSchoolTypeId')
     ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_ResponsibleSchoolTypeId];
 
 
@@ -6104,7 +6112,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_LeaMembe
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEnrollments_LeaMembershipResidentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEnrollments_LeaMembershipResidentId')
     ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_LeaMembershipResidentId];
 
 
@@ -6113,7 +6121,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactK12StudentEnrollments_CountDat
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactK12StudentEnrollments_CountDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactK12StudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactK12StudentEnrollments_CountDateId')
     ALTER TABLE [RDS].[FactK12StudentEnrollments] DROP CONSTRAINT [DF_FactK12StudentEnrollments_CountDateId];
 
 
@@ -6122,7 +6130,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_ReasonAppli
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_ReasonApplicabilityId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_ReasonApplicabilityId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_ReasonApplicabilityId];
 
 
@@ -6131,7 +6139,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_K12SchoolSt
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_K12SchoolStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_K12SchoolStatusId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_K12SchoolStatusId];
 
 
@@ -6140,7 +6148,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_K12StaffId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_K12StaffId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_K12StaffId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_K12StaffId];
 
 
@@ -6149,7 +6157,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_Authorizing
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_AuthorizingBodyCharterSchoolAuthorizerId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_AuthorizingBodyCharterSchoolAuthorizerId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_AuthorizingBodyCharterSchoolAuthorizerId];
 
 
@@ -6166,7 +6174,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_SecondaryAu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_SecondaryAuthorizingBodyCharterSchoolAuthorizerId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_SecondaryAuthorizingBodyCharterSchoolAuthorizerId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_SecondaryAuthorizingBodyCharterSchoolAuthorizerId];
 
 
@@ -6175,7 +6183,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_K12SchoolSt
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_K12SchoolStateStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_K12SchoolStateStatusId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_K12SchoolStateStatusId];
 
 
@@ -6184,7 +6192,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_LeaId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_LeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_LeaId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_LeaId];
 
 
@@ -6193,7 +6201,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_K12Organiza
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_K12OrganizationStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_K12OrganizationStatusId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_K12OrganizationStatusId];
 
 
@@ -6202,7 +6210,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_CharterScho
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_CharterSchoolStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_CharterSchoolStatusId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_CharterSchoolStatusId];
 
 
@@ -6211,7 +6219,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_K12SchoolId
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_K12SchoolId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_K12SchoolId];
 
 
@@ -6220,7 +6228,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_Comprehensi
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_ComprehensiveAndTargetedSupportId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_ComprehensiveAndTargetedSupportId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_ComprehensiveAndTargetedSupportId];
 
 
@@ -6229,7 +6237,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_SubgroupId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_SubgroupId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_SubgroupId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_SubgroupId];
 
 
@@ -6238,7 +6246,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_CharterScho
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_CharterSchoolUpdatedManagementOrganizationId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_CharterSchoolUpdatedManagementOrganizationId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_CharterSchoolUpdatedManagementOrganizationId];
 
 
@@ -6247,7 +6255,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_Organizatio
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_OrganizationCount' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_OrganizationCount')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_OrganizationCount];
 
 
@@ -6256,7 +6264,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_FactTypeId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_FactTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_FactTypeId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_FactTypeId];
 
 
@@ -6265,7 +6273,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_CharterScho
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_CharterSchoolManagementOrganizationId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_CharterSchoolManagementOrganizationId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_CharterSchoolManagementOrganizationId];
 
 
@@ -6274,7 +6282,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_SeaId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_SeaId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_SeaId];
 
 
@@ -6283,7 +6291,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactOrganizationCounts_SchoolYearI
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactOrganizationCounts_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactOrganizationCounts_SchoolYearId')
     ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_SchoolYearId];
 
 
@@ -6292,7 +6300,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicAwards_School
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicAwards_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicAwards')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicAwards_SchoolYearId')
     ALTER TABLE [RDS].[FactPsStudentAcademicAwards] DROP CONSTRAINT [DF_FactPsStudentAcademicAwards_SchoolYearId];
 
 
@@ -6301,7 +6309,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicAwards_PsDemo
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicAwards_PsDemographicId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicAwards')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicAwards_PsDemographicId')
     ALTER TABLE [RDS].[FactPsStudentAcademicAwards] DROP CONSTRAINT [DF_FactPsStudentAcademicAwards_PsDemographicId];
 
 
@@ -6310,7 +6318,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_PsIns
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_PsInstitutionStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_PsInstitutionStatusId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_PsInstitutionStatusId];
 
 
@@ -6319,7 +6327,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_Stude
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_StudentCourseCount' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_StudentCourseCount')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_StudentCourseCount];
 
 
@@ -6328,7 +6336,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_PsEnr
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_PsEnrollmentStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_PsEnrollmentStatusId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_PsEnrollmentStatusId];
 
 
@@ -6337,7 +6345,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_Count
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_CountDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_CountDateId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_CountDateId];
 
 
@@ -6346,7 +6354,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_SeaId
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_SeaId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_SeaId];
 
 
@@ -6355,7 +6363,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_PsIns
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_PsInstitutionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_PsInstitutionId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_PsInstitutionId];
 
 
@@ -6364,7 +6372,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_PsStu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_PsStudentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_PsStudentId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_PsStudentId];
 
 
@@ -6373,7 +6381,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_Enrol
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_EnrollmentEntryDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_EnrollmentEntryDateId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_EnrollmentEntryDateId];
 
 
@@ -6382,7 +6390,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_DataC
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_DataCollectionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_DataCollectionId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_DataCollectionId];
 
 
@@ -6391,7 +6399,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_Enrol
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_EnrollmentExitDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_EnrollmentExitDateId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_EnrollmentExitDateId];
 
 
@@ -6400,7 +6408,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_Acade
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_AcademicTermDesignatorId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_AcademicTermDesignatorId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_AcademicTermDesignatorId];
 
 
@@ -6409,7 +6417,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_Schoo
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_SchoolYearId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_SchoolYearId];
 
 
@@ -6418,7 +6426,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentAcademicRecords_PsDem
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentAcademicRecords_PsDemographicId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentAcademicRecords')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentAcademicRecords_PsDemographicId')
     ALTER TABLE [RDS].[FactPsStudentAcademicRecords] DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_PsDemographicId];
 
 
@@ -6427,7 +6435,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_AcademicT
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_AcademicTermDesignatorId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_AcademicTermDesignatorId')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_AcademicTermDesignatorId];
 
 
@@ -6436,7 +6444,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_SchoolYea
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_SchoolYearId')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_SchoolYearId];
 
 
@@ -6445,7 +6453,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_PsInstitu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_PsInstitutionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_PsInstitutionId')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionId];
 
 
@@ -6454,7 +6462,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_StudentCo
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_StudentCount' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_StudentCount')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_StudentCount];
 
 
@@ -6463,7 +6471,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_PsInstitu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_PsInstitutionStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_PsInstitutionStatusId')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_PsInstitutionStatusId];
 
 
@@ -6472,7 +6480,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_PsStudent
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_PsStudentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_PsStudentId')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_PsStudentId];
 
 
@@ -6481,7 +6489,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_Enrollmen
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_EnrollmentEntryDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_EnrollmentEntryDateId')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentEntryDateId];
 
 
@@ -6490,7 +6498,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_CountDate
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_CountDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_CountDateId')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_CountDateId];
 
 
@@ -6499,7 +6507,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_EntryDate
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_EntryDateIntoPostSecondaryId];
 
 
@@ -6508,7 +6516,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_Enrollmen
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_EnrollmentExitDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_EnrollmentExitDateId')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_EnrollmentExitDateId];
 
 
@@ -6517,7 +6525,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_PsEnrollm
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_PsEnrollmentStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_PsEnrollmentStatusId')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_PsEnrollmentStatusId];
 
 
@@ -6526,7 +6534,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactPsStudentEnrollments_DataColle
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactPsStudentEnrollments_DataCollectionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactPsStudentEnrollments')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactPsStudentEnrollments_DataCollectionId')
     ALTER TABLE [RDS].[FactPsStudentEnrollments] DROP CONSTRAINT [DF_FactPsStudentEnrollments_DataCollectionId];
 
 
@@ -6535,7 +6543,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_ChildOutcomeS
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_ChildOutcomeSummaryAtExitId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_ChildOutcomeSummaryAtExitId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_ChildOutcomeSummaryAtExitId];
 
 
@@ -6544,7 +6552,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_LeaAttendance
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_LeaAttendanceId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_LeaAttendanceId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_LeaAttendanceId];
 
 
@@ -6553,7 +6561,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_EconomicallyD
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_EconomicallyDisadvantagedStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_EconomicallyDisadvantagedStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_EconomicallyDisadvantagedStatusId];
 
 
@@ -6562,7 +6570,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_SecondaryDisa
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_SecondaryDisabilityTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_SecondaryDisabilityTypeId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_SecondaryDisabilityTypeId];
 
 
@@ -6571,7 +6579,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_NOrDStatusId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_NOrDStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_NOrDStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_NOrDStatusId];
 
 
@@ -6580,7 +6588,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_LeaAccountabi
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_LeaAccountabilityId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_LeaAccountabilityId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_LeaAccountabilityId];
 
 
@@ -6589,7 +6597,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_Individualize
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_IndividualizedProgramStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_IndividualizedProgramStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_IndividualizedProgramStatusId];
 
 
@@ -6598,7 +6606,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_EnglishLearne
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_EnglishLearnerStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_EnglishLearnerStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_EnglishLearnerStatusId];
 
 
@@ -6607,7 +6615,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_IdeaStatusId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_IdeaStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_IdeaStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_IdeaStatusId];
 
 
@@ -6616,7 +6624,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_CteStatusId].
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_CteStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_CteStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_CteStatusId];
 
 
@@ -6625,7 +6633,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_DisabilitySta
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_DisabilityStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_DisabilityStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_DisabilityStatusId];
 
 
@@ -6634,7 +6642,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_EntryGradeLev
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_EntryGradeLevelId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_EntryGradeLevelId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_EntryGradeLevelId];
 
 
@@ -6643,7 +6651,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_EligibilityEv
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_EligibilityEvaluationDateReevaluationId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_EligibilityEvaluationDateReevaluationId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_EligibilityEvaluationDateReevaluationId];
 
 
@@ -6652,7 +6660,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_HomelessnessS
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_HomelessnessStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_HomelessnessStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_HomelessnessStatusId];
 
 
@@ -6661,7 +6669,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_ChildOutcomeS
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_ChildOutcomeSummaryDateAtExitId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_ChildOutcomeSummaryDateAtExitId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_ChildOutcomeSummaryDateAtExitId];
 
 
@@ -6670,7 +6678,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_PrimaryDisabi
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_PrimaryDisabilityTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_PrimaryDisabilityTypeId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_PrimaryDisabilityTypeId];
 
 
@@ -6679,7 +6687,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_ProgramPartic
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_ProgramParticipationStartDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_ProgramParticipationStartDateId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_ProgramParticipationStartDateId];
 
 
@@ -6688,7 +6696,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_SpecialEducat
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_SpecialEducationServicesExitDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_SpecialEducationServicesExitDateId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_SpecialEducationServicesExitDateId];
 
 
@@ -6697,7 +6705,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_ImmigrantStat
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_ImmigrantStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_ImmigrantStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_ImmigrantStatusId];
 
 
@@ -6706,7 +6714,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_DataCollectio
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_DataCollectionId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_DataCollectionId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_DataCollectionId];
 
 
@@ -6715,7 +6723,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_K12SchoolId].
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_K12SchoolId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_K12SchoolId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_K12SchoolId];
 
 
@@ -6724,7 +6732,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_LeaGraduation
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_LeaGraduationId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_LeaGraduationId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_LeaGraduationId];
 
 
@@ -6733,7 +6741,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_MigrantStatus
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_MigrantStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_MigrantStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_MigrantStatusId];
 
 
@@ -6742,7 +6750,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_K12Enrollment
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_K12EnrollmentStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_K12EnrollmentStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_K12EnrollmentStatusId];
 
 
@@ -6751,7 +6759,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_EnrollmentEnt
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_EnrollmentEntryDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_EnrollmentEntryDateId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_EnrollmentEntryDateId];
 
 
@@ -6760,7 +6768,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_ConsentToEval
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_ConsentToEvaluationDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_ConsentToEvaluationDateId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_ConsentToEvaluationDateId];
 
 
@@ -6769,7 +6777,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_IeuId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_IeuId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_IeuId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_IeuId];
 
 
@@ -6778,7 +6786,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_ChildOutcomeS
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_ChildOutcomeSummaryDateBaselineId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_ChildOutcomeSummaryDateBaselineId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_ChildOutcomeSummaryDateBaselineId];
 
 
@@ -6787,7 +6795,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_Individualize
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_IndividualizedProgramServicePlanReevaluationDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_IndividualizedProgramServicePlanReevaluationDateId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_IndividualizedProgramServicePlanReevaluationDateId];
 
 
@@ -6796,7 +6804,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_CountDateId].
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_CountDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_CountDateId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_CountDateId];
 
 
@@ -6805,7 +6813,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_LeaFundingId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_LeaFundingId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_LeaFundingId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_LeaFundingId];
 
 
@@ -6814,7 +6822,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_LeaIEPService
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_LeaIEPServiceProviderId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_LeaIEPServiceProviderId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_LeaIEPServiceProviderId];
 
 
@@ -6823,7 +6831,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_Individualize
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_IndividualizedProgramServicePlanExitDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_IndividualizedProgramServicePlanExitDateId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_IndividualizedProgramServicePlanExitDateId];
 
 
@@ -6832,7 +6840,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_SchoolYearId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_SchoolYearId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_SchoolYearId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_SchoolYearId];
 
 
@@ -6841,7 +6849,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_ResponsibleSc
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_ResponsibleSchoolTypeId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_ResponsibleSchoolTypeId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_ResponsibleSchoolTypeId];
 
 
@@ -6850,7 +6858,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_Individualize
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_IndividualizedProgramDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_IndividualizedProgramDateId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_IndividualizedProgramDateId];
 
 
@@ -6859,7 +6867,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_ChildOutcomeS
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_ChildOutcomeSummaryBaselineId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_ChildOutcomeSummaryBaselineId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_ChildOutcomeSummaryBaselineId];
 
 
@@ -6868,7 +6876,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_EligibilityEv
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_EligibilityEvaluationDateInitialId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_EligibilityEvaluationDateInitialId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_EligibilityEvaluationDateInitialId];
 
 
@@ -6877,7 +6885,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_TitleIIIStatu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_TitleIIIStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_TitleIIIStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_TitleIIIStatusId];
 
 
@@ -6886,7 +6894,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_K12Demographi
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_K12DemographicId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_K12DemographicId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_K12DemographicId];
 
 
@@ -6895,7 +6903,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_LeaIndividual
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_LeaIndividualizedEducationProgramId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_LeaIndividualizedEducationProgramId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_LeaIndividualizedEducationProgramId];
 
 
@@ -6904,7 +6912,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_FosterCareId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_FosterCareId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_FosterCareId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_FosterCareId];
 
 
@@ -6913,7 +6921,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_K12StudentId]
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_K12StudentId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_K12StudentId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_K12StudentId];
 
 
@@ -6922,7 +6930,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_MilitaryStatu
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_MilitaryStatusId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_MilitaryStatusId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_MilitaryStatusId];
 
 
@@ -6931,7 +6939,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_EnrollmentExi
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_EnrollmentExitDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_EnrollmentExitDateId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_EnrollmentExitDateId];
 
 
@@ -6940,7 +6948,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_SeaId]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_SeaId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_SeaId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_SeaId];
 
 
@@ -6949,7 +6957,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_FactSpecialEducation_Individualize
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_FactSpecialEducation_IndividualizedProgramServicePlanDateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'FactSpecialEducation')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_FactSpecialEducation_IndividualizedProgramServicePlanDateId')
     ALTER TABLE [RDS].[FactSpecialEducation] DROP CONSTRAINT [DF_FactSpecialEducation_IndividualizedProgramServicePlanDateId];
 
 
@@ -6958,7 +6966,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_DimCharterSchoolManagementOrganiza
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_DimCharterSchoolManagementOrganizations_RecordEndDateTime' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'DimCharterSchoolManagementOrganizations')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_DimCharterSchoolManagementOrganizations_RecordEndDateTime')
     ALTER TABLE [RDS].[DimCharterSchoolManagementOrganizations] DROP CONSTRAINT [DF_DimCharterSchoolManagementOrganizations_RecordEndDateTime];
 
 
@@ -6967,8 +6975,8 @@ PRINT N'Dropping Default Constraint [RDS].[DF_ToggleAssessments_Subject]...';
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_ToggleAssessments_Subject' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'ToggleAssessments')
-    ALTER TABLE [RDS].[ToggleAssessments] DROP CONSTRAINT [DF_ToggleAssessments_Subject];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_ToggleAssessments_Subject')
+    ALTER TABLE [APP].[ToggleAssessments] DROP CONSTRAINT [DF_ToggleAssessments_Subject];
 
 
 
@@ -6976,7 +6984,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_DimCompetencyDefinitionsCompetency
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_DimCompetencyDefinitionsCompetencyDefinitionValudStartDate' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'DimCompetencyDefinitions')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_DimCompetencyDefinitionsCompetencyDefinitionValudStartDate')
     ALTER TABLE [RDS].[DimCompetencyDefinitions] DROP CONSTRAINT [DF_DimCompetencyDefinitionsCompetencyDefinitionValudStartDate];
 
 
@@ -6985,7 +6993,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_ReportEDFactsOrganizationCounts_Ti
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_ReportEDFactsOrganizationCounts_TitleiParentalInvolveRes' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'ReportEdFactsOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_ReportEDFactsOrganizationCounts_TitleiParentalInvolveRes')
     ALTER TABLE [RDS].[ReportEdFactsOrganizationCounts] DROP CONSTRAINT [DF_ReportEDFactsOrganizationCounts_TitleiParentalInvolveRes];
 
 
@@ -6994,7 +7002,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_ReportEDFactsOrganizationCounts_Pa
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_ReportEDFactsOrganizationCounts_ParentOrganizationNcesId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'ReportEdFactsOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_ReportEDFactsOrganizationCounts_ParentOrganizationNcesId')
     ALTER TABLE [RDS].[ReportEdFactsOrganizationCounts] DROP CONSTRAINT [DF_ReportEDFactsOrganizationCounts_ParentOrganizationNcesId];
 
 
@@ -7003,7 +7011,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_ReportEDFactsOrganizationCounts_Ti
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_ReportEDFactsOrganizationCounts_TitleiPartaAllocations' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'ReportEdFactsOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_ReportEDFactsOrganizationCounts_TitleiPartaAllocations')
     ALTER TABLE [RDS].[ReportEdFactsOrganizationCounts] DROP CONSTRAINT [DF_ReportEDFactsOrganizationCounts_TitleiPartaAllocations];
 
 
@@ -7012,7 +7020,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_ReportEDFactsOrganizationCounts_Ou
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_ReportEDFactsOrganizationCounts_OutOfStateIndicator' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'ReportEdFactsOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_ReportEDFactsOrganizationCounts_OutOfStateIndicator')
     ALTER TABLE [RDS].[ReportEdFactsOrganizationCounts] DROP CONSTRAINT [DF_ReportEDFactsOrganizationCounts_OutOfStateIndicator];
 
 
@@ -7021,7 +7029,7 @@ PRINT N'Dropping Default Constraint [RDS].[DF_ReportEDFactsOrganizationCounts_Pa
 
 
 
-IF EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = N'DF_ReportEDFactsOrganizationCounts_ParentOrganizationStateId' AND TABLE_SCHEMA = N'RDS' AND TABLE_NAME = N'ReportEdFactsOrganizationCounts')
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE NAME = N'DF_ReportEDFactsOrganizationCounts_ParentOrganizationStateId')
     ALTER TABLE [RDS].[ReportEdFactsOrganizationCounts] DROP CONSTRAINT [DF_ReportEDFactsOrganizationCounts_ParentOrganizationStateId];
 
 

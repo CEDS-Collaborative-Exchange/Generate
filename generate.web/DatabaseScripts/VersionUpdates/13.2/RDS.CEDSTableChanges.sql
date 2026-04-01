@@ -3419,7 +3419,30 @@ CREATE NONCLUSTERED INDEX [IXFK_FactK12ProgramParticipations_TitleIIIStatusId]
 
 PRINT N'Starting rebuilding table [RDS].[FactK12StaffCounts]...';
 
-
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_SchoolYearId')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_SchoolYearId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_FactTypeId')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_FactTypeId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_SeaId')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_SeaId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_LeaId')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_LeaId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_K12SchoolId')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_K12SchoolId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_K12StaffId')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_K12StaffId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_K12StaffStatusId')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_K12StaffStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_K12StaffCategoryId')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_K12StaffCategoryId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_TitleIIIStatusId')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_TitleIIIStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_CredentialIssuanceDateId')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_CredentialIssuanceDateId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_CredentialExpirationDateId')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_CredentialExpirationDateId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StaffCounts_StaffCount')
+    ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [DF_FactK12StaffCounts_StaffCount];
 
 BEGIN TRANSACTION;
 
@@ -3599,7 +3622,70 @@ CREATE NONCLUSTERED INDEX [IXFK_FactK12StaffCounts_CredentialExpirationDateId]
 
 PRINT N'Starting rebuilding table [RDS].[FactK12StudentAssessments]...';
 
-
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_SchoolYearId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_SchoolYearId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_CountDateId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_CountDateId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_FactTypeId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_FactTypeId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_SeaId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_SeaId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_IeuId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_IeuId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_LeaId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_LeaId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_K12SchoolId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_K12SchoolId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_K12StudentId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_K12StudentId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_K12Student_CurrentId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_K12Student_CurrentId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_AssessmentId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_AssessmentSubtestId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentSubtestId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_AssessmentAdministrationId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentAdministrationId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_AssessmentRegistrationId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentRegistrationId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_AssessmentParticipationSessionId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentParticipationSessionId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_AssessmentPerformanceLevelId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentPerformanceLevelId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_CompetencyDefinitionId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_CompetencyDefinitionId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_CteStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_CteStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_GradeLevelWhenAssessedId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_GradeLevelWhenAssessedId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_IdeaStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_IdeaStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_K12DemographicId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_K12DemographicId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_NOrDStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_NOrDStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_TitleIIIStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_TitleIIIStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_EconomicallyDisadvantagedStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_EconomicallyDisadvantagedStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_EnglishLearnerStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_EnglishLearnerStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_FosterCareStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_FosterCareStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_HomelessnessStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_HomelessnessStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_ImmigrantStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_ImmigrantStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_MigrantStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_MigrantStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_MilitaryStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_MilitaryStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_TitleIStatusId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_TitleIStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_PrimaryDisabilityTypeId')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_PrimaryDisabilityTypeId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactK12StudentAssessments_AssessmentCount')
+    ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [DF_FactK12StudentAssessments_AssessmentCount];
 
 BEGIN TRANSACTION;
 
@@ -6097,7 +6183,46 @@ CREATE NONCLUSTERED INDEX [IX_FactK12StudentEnrollments_DataCollectionId_With_In
 
 PRINT N'Starting rebuilding table [RDS].[FactOrganizationCounts]...';
 
-
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_SchoolYearId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_SchoolYearId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_FactTypeId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_FactTypeId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_SeaId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_SeaId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_LeaId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_LeaId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_K12StaffId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_K12StaffId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_K12Staff_CurrentId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_K12Staff_CurrentId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_K12SchoolId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_K12SchoolId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_AuthorizingBodyCharterSchoolAuthorizerId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_AuthorizingBodyCharterSchoolAuthorizerId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_CharterSchoolManagementOrganizationId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_CharterSchoolManagementOrganizationId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_SecondaryAuthorizingBodyCharterSchoolAuthorizerId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_SecondaryAuthorizingBodyCharterSchoolAuthorizerId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_CharterSchoolStatusId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_CharterSchoolStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_CharterSchoolUpdatedManagementOrganizationId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_CharterSchoolUpdatedManagementOrganizationId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_ComprehensiveAndTargetedSupportId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_ComprehensiveAndTargetedSupportId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_ReasonApplicabilityId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_ReasonApplicabilityId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_K12OrganizationStatusId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_K12OrganizationStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_K12SchoolStatusId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_K12SchoolStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_K12SchoolStateStatusId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_K12SchoolStateStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_SubgroupId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_SubgroupId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_TitleIStatusId')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_TitleIStatusId];
+IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = 'DF_FactOrganizationCounts_OrganizationCount')
+    ALTER TABLE [RDS].[FactOrganizationCounts] DROP CONSTRAINT [DF_FactOrganizationCounts_OrganizationCount];
 
 BEGIN TRANSACTION;
 
@@ -23823,7 +23948,15 @@ ALTER TABLE [RDS].[DimTitleIIIStatuses]
 
 PRINT N'Creating Default Constraint unnamed constraint on [RDS].[ToggleAssessments]...';
 
-
+DECLARE @constraintName_ToggleAssessments_Subject NVARCHAR(256);
+SELECT @constraintName_ToggleAssessments_Subject = dc.name
+FROM   sys.default_constraints dc
+JOIN   sys.columns c ON dc.parent_object_id = c.object_id AND dc.parent_column_id = c.column_id
+JOIN   sys.tables t  ON c.object_id = t.object_id
+JOIN   sys.schemas s ON t.schema_id = s.schema_id
+WHERE  s.name = 'RDS' AND t.name = 'ToggleAssessments' AND c.name = 'Subject';
+IF @constraintName_ToggleAssessments_Subject IS NOT NULL
+    EXEC ('ALTER TABLE [RDS].[ToggleAssessments] DROP CONSTRAINT [' + @constraintName_ToggleAssessments_Subject + ']');
 
 ALTER TABLE [RDS].[ToggleAssessments]
     ADD DEFAULT (N'') FOR [Subject];
