@@ -242,42 +242,42 @@ ALTER TABLE [RDS].[DimAssessmentRegistrations] ALTER COLUMN [StateFullAcademicYe
 ALTER TABLE [RDS].[DimAssessmentRegistrations] ALTER COLUMN [StateFullAcademicYearDescription] NVARCHAR (300) NOT NULL;
 ALTER TABLE [RDS].[DimAssessmentRegistrations] ALTER COLUMN [StateFullAcademicYearEdFactsCode] NVARCHAR (50) NOT NULL;
 
-PRINT N'Altering Table [RDS].[DimAssessments]...';
+--PRINT N'Altering Table [RDS].[DimAssessments]...';
 
-UPDATE [RDS].[DimAssessments]
-   SET [AssessmentIdentifierState] = 'MISSING'
-      ,[AssessmentFamilyShortName] = 'MISSING'
-      ,[AssessmentTitle] = 'MISSING'
-      ,[AssessmentShortName] = 'MISSING'
-      ,[AssessmentTypeCode] = 'MISSING'
-      ,[AssessmentTypeDescription] = 'MISSING'
-      ,[AssessmentTypeEdFactsCode] = 'MISSING'
-      ,[AssessmentAcademicSubjectCode] = 'MISSING'
-      ,[AssessmentAcademicSubjectDescription] = 'MISSING'
-      ,[AssessmentAcademicSubjectEdFactsCode] = 'MISSING'
-      ,[AssessmentTypeAdministeredCode] = 'MISSING'
-      ,[AssessmentTypeAdministeredDescription] = 'MISSING'
-      ,[AssessmentTypeAdministeredEdFactsCode] = 'MISSING'
-      ,[AssessmentTypeAdministeredToEnglishLearnersCode] = 'MISSING'
-      ,[AssessmentTypeAdministeredToEnglishLearnersDescription] = 'MISSING'
-      ,[AssessmentTypeAdministeredToEnglishLearnersEdFactsCode] = 'MISSING'
- WHERE DimAssessmentId = -1
-
-
+--UPDATE [RDS].[DimAssessments]
+--   SET [AssessmentIdentifierState] = 'MISSING'
+--      ,[AssessmentFamilyShortName] = 'MISSING'
+--      ,[AssessmentTitle] = 'MISSING'
+--      ,[AssessmentShortName] = 'MISSING'
+--      ,[AssessmentTypeCode] = 'MISSING'
+--      ,[AssessmentTypeDescription] = 'MISSING'
+--      ,[AssessmentTypeEdFactsCode] = 'MISSING'
+--      ,[AssessmentAcademicSubjectCode] = 'MISSING'
+--      ,[AssessmentAcademicSubjectDescription] = 'MISSING'
+--      ,[AssessmentAcademicSubjectEdFactsCode] = 'MISSING'
+--      ,[AssessmentTypeAdministeredCode] = 'MISSING'
+--      ,[AssessmentTypeAdministeredDescription] = 'MISSING'
+--      ,[AssessmentTypeAdministeredEdFactsCode] = 'MISSING'
+--      ,[AssessmentTypeAdministeredToEnglishLearnersCode] = 'MISSING'
+--      ,[AssessmentTypeAdministeredToEnglishLearnersDescription] = 'MISSING'
+--      ,[AssessmentTypeAdministeredToEnglishLearnersEdFactsCode] = 'MISSING'
+-- WHERE DimAssessmentId = -1
 
 
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentAcademicSubjectCode] NVARCHAR (100) NOT NULL;
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentAcademicSubjectDescription] NVARCHAR (300) NOT NULL;
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentAcademicSubjectEdFactsCode] NVARCHAR (50) NOT NULL;
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredCode] NVARCHAR (100) NOT NULL;
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredDescription] NVARCHAR (300) NOT NULL;
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredEdFactsCode] NVARCHAR (100) NOT NULL;
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredToEnglishLearnersCode] NVARCHAR (100) NOT NULL;
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredToEnglishLearnersDescription] NVARCHAR (300) NOT NULL;
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredToEnglishLearnersEdFactsCode] NVARCHAR (100) NOT NULL;
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeCode] NVARCHAR (100) NOT NULL;
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeDescription] NVARCHAR (300) NOT NULL;
-ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeEdFactsCode] NVARCHAR (100) NOT NULL;
+
+
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentAcademicSubjectCode] NVARCHAR (100) NOT NULL;
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentAcademicSubjectDescription] NVARCHAR (300) NOT NULL;
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentAcademicSubjectEdFactsCode] NVARCHAR (50) NOT NULL;
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredCode] NVARCHAR (100) NOT NULL;
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredDescription] NVARCHAR (300) NOT NULL;
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredEdFactsCode] NVARCHAR (100) NOT NULL;
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredToEnglishLearnersCode] NVARCHAR (100) NOT NULL;
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredToEnglishLearnersDescription] NVARCHAR (300) NOT NULL;
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeAdministeredToEnglishLearnersEdFactsCode] NVARCHAR (100) NOT NULL;
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeCode] NVARCHAR (100) NOT NULL;
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeDescription] NVARCHAR (300) NOT NULL;
+--ALTER TABLE [RDS].[DimAssessments] ALTER COLUMN [AssessmentTypeEdFactsCode] NVARCHAR (100) NOT NULL;
 
 
 PRINT N'Creating Index [RDS].[DimAssessments].[IX_DimAssessments_Codes]...';
