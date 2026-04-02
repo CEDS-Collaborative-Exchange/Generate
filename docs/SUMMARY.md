@@ -74,12 +74,11 @@
   * [Implementation FAQ](developer-guides/migration/implementation-faq.md)
   * [Source to Staging](developer-guides/migration/source-to-staging.md)
   * [Staging to Fact & Dim](developer-guides/migration/staging-to-fact-and-dim.md)
- * [Working With Generate Code](developer-guides/README.md)
+  * [Working With Generate Code](developer-guides/README.md)
   * [Discord Guide](developer-guides/file-comparison/discord-guide.md)
   * [Generate Architecture](developer-guides/file-comparison/generate-architecture.md)
   * [Getting Started](developer-guides/file-comparison/getting-started.md)
   * [GitHub Guide](developer-guides/file-comparison/github-guide.md)
-
 * [Generate Utilities](developer-guides/generate-utilities/README.md)
   * [File Comparison](developer-guides/generate-utilities/file-comparison/README.md)
     * [Loading Files](developer-guides/generate-utilities/file-comparison/loading-files.md)
