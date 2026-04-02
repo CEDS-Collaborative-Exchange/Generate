@@ -33657,6 +33657,498 @@ ALTER TABLE [RDS].[FactQuarterlyEmployments] WITH NOCHECK
     ADD CONSTRAINT [FK_FactQuarterlyEmployments_RecordStatusId] FOREIGN KEY ([RecordStatusId]) REFERENCES [RDS].[DimRecordStatuses] ([DimRecordStatusId]);
 
 
+PRINT 'ADD DEFAULT ROWS TO DIMENSION TABLES'
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureAlternateResponseOptions] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureAlternateResponseOptions] WHERE [DimAccessibilityFeatureAlternateResponseOptionId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureAlternateResponseOptions] ([DimAccessibilityFeatureAlternateResponseOptionId], [AlternateResponseOptionTypeCode], [AlternateResponseOptionTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureAlternateResponseOptions] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureAssessmentExtendedTimes] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureAssessmentExtendedTimes] WHERE [DimAccessibilityFeatureAssessmentExtendedTimeId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureAssessmentExtendedTimes] ([DimAccessibilityFeatureAssessmentExtendedTimeId], [AssessmentExtendedTimeTypeCode], [AssessmentExtendedTimeTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureAssessmentExtendedTimes] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureBrailles] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureBrailles] WHERE [DimAccessibilityFeatureBrailleId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureBrailles] ([DimAccessibilityFeatureBrailleId], [BrailleAccessTypeCode], [BrailleAccessTypeDescription], [BrailleApplicationTypeCode], [BrailleApplicationTypeDescription], [BrailleCodeTypeCode], [BrailleCodeTypeDescription], [BrailleVersionTypeCode], [BrailleVersionTypeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureBrailles] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureBreaks] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureBreaks] WHERE [DimAccessibilityFeatureBreakId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureBreaks] ([DimAccessibilityFeatureBreakId], [BreakLocationTypeCode], [BreakLocationTypeDescription], [BreakTypeCode], [BreakTypeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureBreaks] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureCalculators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureCalculators] WHERE [DimAccessibilityFeatureCalculatorId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureCalculators] ([DimAccessibilityFeatureCalculatorId], [AdaptiveCalculatorTypeCode], [AdaptiveCalculatorTypeDescription], [CalculatorTypeCode], [CalculatorTypeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureCalculators] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureDisplayFormatAdjustments] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureDisplayFormatAdjustments] WHERE [DimAccessibilityFeatureDisplayFormatAdjustmentId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureDisplayFormatAdjustments] ([DimAccessibilityFeatureDisplayFormatAdjustmentId], [DisplayFormatAdjustmentTypeCode], [DisplayFormatAdjustmentTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureDisplayFormatAdjustments] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureGroupSizes] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureGroupSizes] WHERE [DimAccessibilityFeatureGroupSizeId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureGroupSizes] ([DimAccessibilityFeatureGroupSizeId], [GroupSizeTypeCode], [GroupSizeTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureGroupSizes] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureMedicalSupports] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureMedicalSupports] WHERE [DimAccessibilityFeatureMedicalSupportId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureMedicalSupports] ([DimAccessibilityFeatureMedicalSupportId], [MedicalSupportTypeCode], [MedicalSupportTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureMedicalSupports] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureReadAlouds] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureReadAlouds] WHERE [DimAccessibilityFeatureReadAloudId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureReadAlouds] ([DimAccessibilityFeatureReadAloudId], [ReadAloudTypeCode], [ReadAloudTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureReadAlouds] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureReferenceSheets] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureReferenceSheets] WHERE [DimAccessibilityFeatureReferenceSheetId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureReferenceSheets] ([DimAccessibilityFeatureReferenceSheetId], [ReferenceSheetTypeCode], [ReferenceSheetTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureReferenceSheets] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatures] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatures] WHERE [DimAccessibilityFeatureId] = -1) INSERT INTO [rds].[DimAccessibilityFeatures] ([DimAccessibilityFeatureId], [AccessibilityFeatureTypeCode], [AccessibilityFeatureTypeDescription], [AccessibilityFeatureApplicationTypeCode], [AccessibilityFeatureApplicationTypeDescription], [AccessibilityFeatureCategoryCode], [AccessibilityFeatureCategoryDescription], [AccessibilityFeatureDeliveryMethodCode], [AccessibilityFeatureDeliveryMethodDescription], [AccessibilityFeatureEmbeddedIndicatorCode], [AccessibilityFeatureEmbeddedIndicatorDescription], [AccessibilityFeaturePausesTheClockIndicatorCode], [AccessibilityFeaturePausesTheClockIndicatorDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatures] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureSettings] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureSettings] WHERE [DimAccessibilityFeatureSettingId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureSettings] ([DimAccessibilityFeatureSettingId], [SettingTypeCode], [SettingTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureSettings] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureSignedAdministrations] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureSignedAdministrations] WHERE [DimAccessibilityFeatureSignedAdministrationId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureSignedAdministrations] ([DimAccessibilityFeatureSignedAdministrationId], [SignedAdministrationDeliveryMethodCode], [SignedAdministrationDeliveryMethodDescription], [SignedAdministrationTypeCode], [SignedAdministrationTypeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureSignedAdministrations] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureTactileMediums] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureTactileMediums] WHERE [DimAccessibilityFeatureTactileMediumId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureTactileMediums] ([DimAccessibilityFeatureTactileMediumId], [TactileMediumTypeCode], [TactileMediumTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureTactileMediums] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureTranslationPresentations] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibilityFeatureTranslationPresentations] WHERE [DimAccessibilityFeatureTranslationPresentationId] = -1) INSERT INTO [rds].[DimAccessibilityFeatureTranslationPresentations] ([DimAccessibilityFeatureTranslationPresentationId], [TranslationPresentationTypeCode], [TranslationPresentationTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAccessibilityFeatureTranslationPresentations] OFF;
+    SET IDENTITY_INSERT [rds].[DimAeEmploymentBarriers] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAeEmploymentBarriers] WHERE [DimAeEmploymentBarrierId] = -1) INSERT INTO [rds].[DimAeEmploymentBarriers] ([DimAeEmploymentBarrierId], [WioaBarriersToEmploymentCode], [WioaBarriersToEmploymentDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAeEmploymentBarriers] OFF;
+    SET IDENTITY_INSERT [rds].[DimAeProgramEmploymentIndicators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAeProgramEmploymentIndicators] WHERE [DimAeProgramEmploymentIndicatorId] = -1) INSERT INTO [rds].[DimAeProgramEmploymentIndicators] ([DimAeProgramEmploymentIndicatorId], [EmployedAfterExitCode], [EmployedAfterExitDescription], [EmployedWhileEnrolledCode], [EmployedWhileEnrolledDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAeProgramEmploymentIndicators] OFF;
+    SET IDENTITY_INSERT [rds].[DimAeProgramParticipantAssessmentIndicators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAeProgramParticipantAssessmentIndicators] WHERE [DimAeProgramParticipantAssessmentIndicatorId] = -1) INSERT INTO [rds].[DimAeProgramParticipantAssessmentIndicators] ([DimAeProgramParticipantAssessmentIndicatorId], [AeFunctioningLevelAtIntakeCode], [AeFunctioningLevelAtIntakeDescription], [AeFunctioningLevelAtPosttestCode], [AeFunctioningLevelAtPosttestDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAeProgramParticipantAssessmentIndicators] OFF;
+    SET IDENTITY_INSERT [rds].[DimAeProgramParticipantGoals] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAeProgramParticipantGoals] WHERE [DimAeProgramParticipantGoalId] = -1) INSERT INTO [rds].[DimAeProgramParticipantGoals] ([DimAeProgramParticipantGoalId], [GoalsForAttendingAdultEducationCode], [GoalsForAttendingAdultEducationDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAeProgramParticipantGoals] OFF;
+    SET IDENTITY_INSERT [rds].[DimAeProgramParticipantIndicators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAeProgramParticipantIndicators] WHERE [DimAeProgramParticipantIndicatorId] = -1) INSERT INTO [rds].[DimAeProgramParticipantIndicators] ([DimAeProgramParticipantIndicatorId], [CorrectionalEducationReentryServicesParticipationIndicatorCode], [CorrectionalEducationReentryServicesParticipationIndicatorDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAeProgramParticipantIndicators] OFF;
+    SET IDENTITY_INSERT [rds].[DimAeProgramTransitionIndicators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAeProgramTransitionIndicators] WHERE [DimAeProgramTransitionIndicatorId] = -1) INSERT INTO [rds].[DimAeProgramTransitionIndicators] ([DimAeProgramTransitionIndicatorId], [AePostsecondaryTransitionActionCode], [AePostsecondaryTransitionActionDescription], [AdultEducationCredentialAttainmentPostsecondaryEnrollmentIndicatorCode], [AdultEducationCredentialAttainmentPostsecondaryEnrollmentIndicatorDescription], [AdultEducationCredentialAttainmentEmployedIndicatorCode], [AdultEducationCredentialAttainmentEmployedIndicatorDescription], [AdultEducationCredentialAttainmentPostsecondaryCredentialIndicatorCode], [AdultEducationCredentialAttainmentPostsecondaryCredentialIndicatorDescription], [AdultEducationProgramExitReasonCode], [AdultEducationProgramExitReasonDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAeProgramTransitionIndicators] OFF;
+    SET IDENTITY_INSERT [rds].[DimAlternativeSchoolStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAlternativeSchoolStatuses] WHERE [DimAlternativeSchoolStatusId] = -1) INSERT INTO [rds].[DimAlternativeSchoolStatuses] ([DimAlternativeSchoolStatusId], [AlternativeSchoolFocusTypeCode], [AlternativeSchoolFocusTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAlternativeSchoolStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimAssessmentComponents] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAssessmentComponents] WHERE [DimAssessmentComponentId] = -1) INSERT INTO [rds].[DimAssessmentComponents] ([DimAssessmentComponentId], [AssessmentComponentTypeCode], [AssessmentComponentTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimAssessmentComponents] OFF;
+    SET IDENTITY_INSERT [rds].[DimAssessmentForms] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAssessmentForms] WHERE [DimAssessmentFormId] = -1) INSERT INTO [rds].[DimAssessmentForms] ([DimAssessmentFormId], [AssessmentFormNumber]) VALUES (-1, 'missing'); SET IDENTITY_INSERT [rds].[DimAssessmentForms] OFF;
+    SET IDENTITY_INSERT [rds].[DimCalendarEventIndicators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCalendarEventIndicators] WHERE [DimCalendarEventIndicatorId] = -1) INSERT INTO [rds].[DimCalendarEventIndicators] ([DimCalendarEventIndicatorId], [CalendarEventTypeCode], [CalendarEventTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimCalendarEventIndicators] OFF;
+    SET IDENTITY_INSERT [rds].[DimCalendarSessionIndicators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCalendarSessionIndicators] WHERE [DimCalendarSessionIndicatorId] = -1) INSERT INTO [rds].[DimCalendarSessionIndicators] ([DimCalendarSessionIndicatorId], [SessionTypeCode], [SessionTypeDescription], [SessionMarkingTermIndicatorCode], [SessionMarkingTermIndicatorDescription], [SessionSchedulingTermIndicatorCode], [SessionSchedulingTermIndicatorDescription], [SessionAttendanceTermIndicatorCode], [SessionAttendanceTermIndicatorDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimCalendarSessionIndicators] OFF;
+    SET IDENTITY_INSERT [rds].[DimChildOutcomeSummaries] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimChildOutcomeSummaries] WHERE [DimChildOutcomeSummaryId] = -1) INSERT INTO [rds].[DimChildOutcomeSummaries] ([DimChildOutcomeSummaryId], [CosRatingACode], [CosRatingADescription], [CosRatingBCode], [CosRatingBDescription], [CosRatingCCode], [CosRatingCDescription], [CosProgressAIndicatorCode], [CosProgressAIndicatorDescription], [CosProgressBIndicatorCode], [CosProgressBIndicatorDescription], [CosProgressCIndicatorCode], [CosProgressCIndicatorDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimChildOutcomeSummaries] OFF;
+    SET IDENTITY_INSERT [rds].[DimCipCodes] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCipCodes] WHERE [DimCipCodeId] = -1) INSERT INTO [rds].[DimCipCodes] ([DimCipCodeId], [CipCode], [CipDescription], [CipUseCode], [CipUseDescription], [CipVersionCode], [CipVersionDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimCipCodes] OFF;
+    SET IDENTITY_INSERT [rds].[DimCohortExclusions] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCohortExclusions] WHERE [DimCohortExclusionId] = -1) INSERT INTO [rds].[DimCohortExclusions] ([DimCohortExclusionId], [CohortExclusionCode], [CohortExclusionDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimCohortExclusions] OFF;
+    SET IDENTITY_INSERT [rds].[DimCohorts] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCohorts] WHERE [DimCohortId] = -1) INSERT INTO [rds].[DimCohorts] ([DimCohortId], [CohortDescription]) VALUES (-1, 'missing'); SET IDENTITY_INSERT [rds].[DimCohorts] OFF;
+    SET IDENTITY_INSERT [rds].[DimContactIndicators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimContactIndicators] WHERE [DimContactIndicatorId] = -1) INSERT INTO [rds].[DimContactIndicators] ([DimContactIndicatorId], [PrimaryContactIndicatorCode], [PrimaryContactIndicatorDescription], [EmergencyContactIndicatorCode], [EmergencyContactIndicatorDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimContactIndicators] OFF;
+    SET IDENTITY_INSERT [rds].[DimCourseGradePointAverageIndicators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCourseGradePointAverageIndicators] WHERE [DimCourseGradePointAverageIndicatorId] = -1) INSERT INTO [rds].[DimCourseGradePointAverageIndicators] ([DimCourseGradePointAverageIndicatorId], [CourseGradePointAverageApplicabilityCode], [CourseGradePointAverageApplicabilityDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimCourseGradePointAverageIndicators] OFF;
+    SET IDENTITY_INSERT [rds].[DimCredentialAwardStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCredentialAwardStatuses] WHERE [DimCredentialAwardStatusId] = -1) INSERT INTO [rds].[DimCredentialAwardStatuses] ([DimCredentialAwardStatusId], [CredentialRevokedIndicatorCode], [CredentialRevokedIndicatorDescription], [CredentialRevokedReasonCode], [CredentialRevokedReasonDescription], [AdultEducationCertificationTypeCode], [AdultEducationCertificationTypeDescription], [CredentialSuspensionIndicatorCode], [CredentialSuspensionIndicatorDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimCredentialAwardStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimCredentials] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCredentials] WHERE [DimCredentialId] = -1) INSERT INTO [rds].[DimCredentials] ([DimCredentialId], [CredentialDefinitionTitle], [CredentialDefinitionDescription], [CredentialDefinitionAlternateName], [CredentialDefinitionCategorySystem], [CredentialDefinitionCategoryType], [CredentialDefinitionStatusTypeCode], [CredentialDefinitionStatusTypeDescription], [CredentialDefinitionIntendedPurposeTypeCode], [CredentialDefinitionIntendedPurposeTypeDescription], [CredentialDefinitionAssessmentMethodTypeCode], [CredentialDefinitionAssessmentMethodTypeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimCredentials] OFF;
+    SET IDENTITY_INSERT [rds].[DimDisciplineReasons] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimDisciplineReasons] WHERE [DimDisciplineReasonId] = -1) INSERT INTO [rds].[DimDisciplineReasons] ([DimDisciplineReasonId], [DisciplineReasonCode], [DisciplineReasonDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimDisciplineReasons] OFF;
+    SET IDENTITY_INSERT [rds].[DimEarlyChildhoolOrganizationStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimEarlyChildhoolOrganizationStatuses] WHERE [DimEarlyChildhoodOrganizationStatusId] = -1) INSERT INTO [rds].[DimEarlyChildhoolOrganizationStatuses] ([DimEarlyChildhoodOrganizationStatusId], [EarlyChildhoodProgramEnrollmentTypeCode], [EarlyChildhoodProgramEnrollmentTypeDescription], [EarlyLearningOtherFederalFundingSourcesCode], [EarlyLearningOtherFederalFundingSourcesDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimEarlyChildhoolOrganizationStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimEmploymentLocations] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimEmploymentLocations] WHERE [DimEmploymentLocationId] = -1) INSERT INTO [rds].[DimEmploymentLocations] ([DimEmploymentLocationId], [EmploymentLocationCode], [EmploymentLocationDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimEmploymentLocations] OFF;
+    SET IDENTITY_INSERT [rds].[DimEmploymentRecordSources] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimEmploymentRecordSources] WHERE [DimEmploymentRecordSourceId] = -1) INSERT INTO [rds].[DimEmploymentRecordSources] ([DimEmploymentRecordSourceId], [EmploymentRecordAdministrativeDataSourceCode], [EmploymentRecordAdministrativeDataSourceDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimEmploymentRecordSources] OFF;
+    SET IDENTITY_INSERT [rds].[DimFacilitySpaceStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFacilitySpaceStatuses] WHERE [DimFacilitySpaceStatusId] = -1) INSERT INTO [rds].[DimFacilitySpaceStatuses] ([DimFacilitySpaceStatusId], [FacilitySpaceUseTypeCode], [FacilitySpaceUseTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimFacilitySpaceStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimFacilityStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFacilityStatuses] WHERE [DimFacilityStatusId] = -1) INSERT INTO [rds].[DimFacilityStatuses] ([DimFacilityStatusId], [FacilityLeaseAmountCategoryCode], [FacilityLeaseAmountCategoryDescription], [FacilityLeaseTypeCode], [FacilityLeaseTypeDescription], [FacilityMortgageInterestTypeCode], [FacilityMortgageInterestTypeDescription], [FacilityMortgageTypeCode], [FacilityMortgageTypeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimFacilityStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimFacilityUtilization] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFacilityUtilization] WHERE [DimFacilityUtilizationStatusId] = -1) INSERT INTO [rds].[DimFacilityUtilization] ([DimFacilityUtilizationStatusId], [BuildingUseTypeCode], [BuildingUseTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimFacilityUtilization] OFF;
+    SET IDENTITY_INSERT [rds].[DimFederalFinancialAccountBalances] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFederalFinancialAccountBalances] WHERE [DimFederalFinancialAccountBalanceId] = -1) INSERT INTO [rds].[DimFederalFinancialAccountBalances] ([DimFederalFinancialAccountBalanceId], [FinancialAccountBalanceSheetCodeCode], [FinancialAccountBalanceSheetCodeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimFederalFinancialAccountBalances] OFF;
+    SET IDENTITY_INSERT [rds].[DimFederalFinancialAccountClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFederalFinancialAccountClassifications] WHERE [DimFederalFinancialAccountClassificationId] = -1) INSERT INTO [rds].[DimFederalFinancialAccountClassifications] ([DimFederalFinancialAccountClassificationId], [FinancialAccountCategoryCode], [FinancialAccountCategoryDescription], [FinancialAccountProgramCodeCode], [FinancialAccountProgramCodeDescription], [FinancialAccountFundClassificationCode], [FinancialAccountFundClassificationDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimFederalFinancialAccountClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimFederalFinancialExpenditureClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFederalFinancialExpenditureClassifications] WHERE [DimFederalFinancialExpenditureClassificationId] = -1) INSERT INTO [rds].[DimFederalFinancialExpenditureClassifications] ([DimFederalFinancialExpenditureClassificationId], [FinancialExpenditureFunctionCodeCode], [FinancialExpenditureFunctionCodeDescription], [FinancialExpenditureObjectCodeCode], [FinancialExpenditureObjectCodeDescription], [FinancialExpenditureLevelOfInstructionCodeCode], [FinancialExpenditureLevelOfInstructionCodeDescription], [FinancialExpenditureProjectReportingCodeCode], [FinancialExpenditureProjectReportingCodeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimFederalFinancialExpenditureClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimFederalFinancialRevenueClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFederalFinancialRevenueClassifications] WHERE [DimFederalFinancialRevenueClassificationId] = -1) INSERT INTO [rds].[DimFederalFinancialRevenueClassifications] ([DimFederalFinancialRevenueClassificationId], [FinancialAccountRevenueCodeCode], [FinancialAccountRevenueCodeDescription], [FinancialAccountRevenueObjectCodeCode], [FinancialAccountRevenueObjectCodeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimFederalFinancialRevenueClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimFederalProgramCodes] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFederalProgramCodes] WHERE [DimFederalProgramCodeId] = -1) INSERT INTO [rds].[DimFederalProgramCodes] ([DimFederalProgramCodeId], [FederalProgramCode], [FederalProgramCodeDescription], [FederalProgramSubgrantCode], [FederalProgramSubgrantCodeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimFederalProgramCodes] OFF;
+    SET IDENTITY_INSERT [rds].[DimGiftedAndTalentedStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimGiftedAndTalentedStatuses] WHERE [DimGiftedAndTalentedStatusId] = -1) INSERT INTO [rds].[DimGiftedAndTalentedStatuses] ([DimGiftedAndTalentedStatusId], [GiftedAndTalentedIndicatorCode], [GiftedAndTalentedIndicatorDescription], [ProgramGiftedEligibilityCriteriaCode], [ProgramGiftedEligibilityCriteriaDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimGiftedAndTalentedStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimIncidentBehaviors] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimIncidentBehaviors] WHERE [DimIncidentBehaviorId] = -1) INSERT INTO [rds].[DimIncidentBehaviors] ([DimIncidentBehaviorId], [IncidentBehaviorCode], [IncidentBehaviorDescription], [SecondaryIncidentBehaviorCode], [SecondaryIncidentBehaviorDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimIncidentBehaviors] OFF;
+    SET IDENTITY_INSERT [rds].[DimIncidents] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimIncidents] WHERE [DimIncidentId] = -1) INSERT INTO [rds].[DimIncidents] ([DimIncidentId], [IncidentIdentifier], [IncidentDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimIncidents] OFF;
+    SET IDENTITY_INSERT [rds].[DimIncidentSettings] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimIncidentSettings] WHERE [DimIncidentSettingId] = -1) INSERT INTO [rds].[DimIncidentSettings] ([DimIncidentSettingId], [IncidentLocationCode], [IncidentLocationDescription], [IncidentActivityCode], [IncidentActivityDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimIncidentSettings] OFF;
+    SET IDENTITY_INSERT [rds].[DimIncidentTimeIndicators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimIncidentTimeIndicators] WHERE [DimIncidentTimeIndicatorId] = -1) INSERT INTO [rds].[DimIncidentTimeIndicators] ([DimIncidentTimeIndicatorId], [IncidentTimeDescriptionCodeCode], [IncidentTimeDescriptionCodeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimIncidentTimeIndicators] OFF;
+    SET IDENTITY_INSERT [rds].[DimIndividualizedProgramStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimIndividualizedProgramStatuses] WHERE [DimIndividualizedProgramStatusId] = -1) INSERT INTO [rds].[DimIndividualizedProgramStatuses] ([DimIndividualizedProgramStatusId], [IndividualizedProgramTypeCode], [IndividualizedProgramTypeDescription], [StudentSupportServiceTypeCode], [StudentSupportServiceTypeDescription], [ConsentToEvaluationIndicatorCode], [ConsentToEvaluationIndicatorDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimIndividualizedProgramStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimK12AcademicAwards] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimK12AcademicAwards] WHERE [DimK12AcademicAwardId] = -1) INSERT INTO [rds].[DimK12AcademicAwards] ([DimK12AcademicAwardId], [AcademicAwardTitle]) VALUES (-1, 'missing'); SET IDENTITY_INSERT [rds].[DimK12AcademicAwards] OFF;
+    SET IDENTITY_INSERT [rds].[DimK12CourseFundings] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimK12CourseFundings] WHERE [DimK12CourseFundingId] = -1) INSERT INTO [rds].[DimK12CourseFundings] ([DimK12CourseFundingId], [CourseFundingProgram], [CourseFundingProgramAllowed]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimK12CourseFundings] OFF;
+    SET IDENTITY_INSERT [rds].[DimK12CourseSectionEnrollmentStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimK12CourseSectionEnrollmentStatuses] WHERE [DimK12CourseSectionEnrollmentStatusId] = -1) INSERT INTO [rds].[DimK12CourseSectionEnrollmentStatuses] ([DimK12CourseSectionEnrollmentStatusId], [CourseSectionEnrollmentStatusTypeCode], [CourseSectionEnrollmentStatusTypeDescription], [CourseSectionEntryTypeCode], [CourseSectionEntryTypeDescription], [CourseSectionExitTypeCode], [CourseSectionExitTypeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimK12CourseSectionEnrollmentStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimK12CourseSections] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimK12CourseSections] WHERE [DimK12CourseSectionId] = -1) INSERT INTO [rds].[DimK12CourseSections] ([DimK12CourseSectionId], [CourseSectionIdentifier], [ClassPeriod], [ClassMeetingDays], [ClassroomIdentifier], [GradeValueQualifier], [CourseDescription], [TimetableDayIdentifier]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimK12CourseSections] OFF;
+    SET IDENTITY_INSERT [rds].[DimK12CourseSectionStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimK12CourseSectionStatuses] WHERE [DimK12CourseSectionStatusId] = -1) INSERT INTO [rds].[DimK12CourseSectionStatuses] ([DimK12CourseSectionStatusId], [BlendedLearningModelTypeCode], [BlendedLearningModelTypeDescription], [CourseInteractionModeCode], [CourseInteractionModeDescription], [CourseSectionAssessmentReportingMethodCode], [CourseSectionAssessmentReportingMethodDescription], [CourseSectionInstructionalDeliveryModeCode], [CourseSectionInstructionalDeliveryModeDescription], [ReceivingLocationOfInstructionCode], [ReceivingLocationOfInstructionDescription], [VirtualIndicatorCode], [VirtualIndicatorDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimK12CourseSectionStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimK12DropoutStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimK12DropoutStatuses] WHERE [DimK12DropoutStatusId] = -1) INSERT INTO [rds].[DimK12DropoutStatuses] ([DimK12DropoutStatusId], [StudentDropoutStatusCode], [StudentDropoutStatusDescription], [DropoutReasonTypeCode], [DropoutReasonTypeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimK12DropoutStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimK12EmploymentStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimK12EmploymentStatuses] WHERE [DimK12EmploymentStatusId] = -1) INSERT INTO [rds].[DimK12EmploymentStatuses] ([DimK12EmploymentStatusId], [EmploymentStatusCode], [EmploymentStatusDescription], [EmploymentSeparationReasonCode], [EmploymentSeparationReasonDescription], [EmploymentSeparationTypeCode], [EmploymentSeparationTypeDescription], [TitleITargetedAssistanceStaffFundedCode], [TitleITargetedAssistanceStaffFundedDescription], [MEPPersonnelIndicatorCode], [MEPPersonnelIndicatorDescription], [SalaryForTeachingAssignmentOnlyIndicatorCode], [SalaryForTeachingAssignmentOnlyIndicatorDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimK12EmploymentStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimK12Jobs] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimK12Jobs] WHERE [DimK12JobId] = -1) INSERT INTO [rds].[DimK12Jobs] ([DimK12JobId], [JobIdentifierLea], [JobIdentifierSchool], [JobIdentifierSea], [JobTitle]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimK12Jobs] OFF;
+    SET IDENTITY_INSERT [rds].[DimK12RetentionStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimK12RetentionStatuses] WHERE [DimK12RetentionStatusId] = -1) INSERT INTO [rds].[DimK12RetentionStatuses] ([DimK12RetentionStatusId], [RetentionExemptionReasonCode], [RetentionExemptionReasonDescription], [EndOfTermStatusCode], [EndOfTermStatusDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimK12RetentionStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimK12StaffAssignmentStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimK12StaffAssignmentStatuses] WHERE [DimK12StaffAssignmentStatusId] = -1) INSERT INTO [rds].[DimK12StaffAssignmentStatuses] ([DimK12StaffAssignmentStatusId], [ItinerantTeacherCode], [ItinerantTeacherDescription], [ClassroomPositionTypeCode], [ClassroomPositionTypeDescription], [PrimaryAssignmentIndicatorCode], [PrimaryAssignmentIndicatorDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimK12StaffAssignmentStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimLeaFinancialAccountBalances] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimLeaFinancialAccountBalances] WHERE [DimLeaFinancialAccountBalanceId] = -1) INSERT INTO [rds].[DimLeaFinancialAccountBalances] ([DimLeaFinancialAccountBalanceId], [FinancialAccountCodingSystemOrganizationTypeCode], [FinancialAccountCodingSystemOrganizationTypeDescription], [FinancialAccountLocalBalanceSheetCodeCode], [FinancialAccountLocalBalanceSheetCodeSeaCode], [FinancialAccountLocalBalanceSheetCodeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimLeaFinancialAccountBalances] OFF;
+    SET IDENTITY_INSERT [rds].[DimLeaFinancialAccountClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimLeaFinancialAccountClassifications] WHERE [DimLeaFinancialAccountClassificationId] = -1) INSERT INTO [rds].[DimLeaFinancialAccountClassifications] ([DimLeaFinancialAccountClassificationId], [FinancialAccountCodingSystemOrganizationTypeCode], [FinancialAccountCodingSystemOrganizationTypeDescription], [FinancialAccountCategoryCode], [FinancialAccountCategorySeaCode], [FinancialAccountCategoryDescription], [FinancialAccountLocalProgramCodeCode], [FinancialAccountLocalProgramCodeSeaCode], [FinancialAccountLocalProgramCodeDescription], [FinancialAccountLocalFundClassificationCode], [FinancialAccountLocalFundClassificationSeaCode], [FinancialAccountLocalFundClassificationDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimLeaFinancialAccountClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimLeaFinancialExpenditureClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimLeaFinancialExpenditureClassifications] WHERE [DimLeaFinancialExpenditureClassificationId] = -1) INSERT INTO [rds].[DimLeaFinancialExpenditureClassifications] ([DimLeaFinancialExpenditureClassificationId], [FinancialAccountCodingSystemOrganizationTypeCode], [FinancialAccountCodingSystemOrganizationTypeDescription], [FinancialExpenditureLocalFunctionCodeCode], [FinancialExpenditureLocalFunctionCodeSeaCode], [FinancialExpenditureLocalFunctionCodeDescription], [FinancialExpenditureLocalObjectCodeCode], [FinancialExpenditureLocalObjectCodeSeaCode], [FinancialExpenditureLocalObjectCodeDescription], [FinancialExpenditureLocalLevelOfInstructionCodeCode], [FinancialExpenditureLocalLevelOfInstructionCodeSeaCode], [FinancialExpenditureLocalLevelOfInstructionCodeDescription], [FinancialExpenditureProjectReportingCodeCode], [FinancialExpenditureProjectReportingCodeSeaCode], [FinancialExpenditureProjectReportingCodeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimLeaFinancialExpenditureClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimLeaFinancialRevenueClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimLeaFinancialRevenueClassifications] WHERE [DimLeaFinancialRevenueClassificationId] = -1) INSERT INTO [rds].[DimLeaFinancialRevenueClassifications] ([DimLeaFinancialRevenueClassificationId], [FinancialAccountCodingSystemOrganizationTypeCode], [FinancialAccountCodingSystemOrganizationTypeDescription], [FinancialAccountLocalRevenueCodeCode], [FinancialAccountLocalRevenueCodeSeaCode], [FinancialAccountLocalRevenueCodeDescription], [FinancialAccountLocalRevenueObjectCodeCode], [FinancialAccountLocalRevenueObjectCodeSeaCode], [FinancialAccountLocalRevenueObjectCodeDescription], [FinancialAccountRevenueObjectCodeCode], [FinancialAccountRevenueObjectCodeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimLeaFinancialRevenueClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimNaicsCodes] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimNaicsCodes] WHERE [DimNaicsCodeId] = -1) INSERT INTO [rds].[DimNaicsCodes] ([DimNaicsCodeId], [NaicsSectorCode], [NaicsSectorDescription], [NaicsSubsectorCode], [NaicsSubsectorDescription], [NaicsIndustryGroupCode], [NaicsIndustryGroupDescription], [NaicsIndustryCode], [NaicsIndustryDescription], [NaicsNationalIndustryCode], [NaicsNationalIndustryDescription], [NaicsVersion]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimNaicsCodes] OFF;
+    SET IDENTITY_INSERT [rds].[DimOnetSocOccupationTypes] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimOnetSocOccupationTypes] WHERE [DimOnetSocOccupationTypeId] = -1) INSERT INTO [rds].[DimOnetSocOccupationTypes] ([DimOnetSocOccupationTypeId], [OnetSocOccupationTypeCode], [OnetSocOccupationTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimOnetSocOccupationTypes] OFF;
+    SET IDENTITY_INSERT [rds].[DimParentOrGuardianIndicators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimParentOrGuardianIndicators] WHERE [DimParentOrGuardianIndicatorId] = -1) INSERT INTO [rds].[DimParentOrGuardianIndicators] ([DimParentOrGuardianIndicatorId], [CustodialParentOrGuardianIndicatorCode], [CustodialParentOrGuardianIndicatorDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimParentOrGuardianIndicators] OFF;
+    SET IDENTITY_INSERT [rds].[DimPersonAddresses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimPersonAddresses] WHERE [DimPersonAddressId] = -1) INSERT INTO [rds].[DimPersonAddresses] ([DimPersonAddressId], [AddressTypeForLearnerOrFamilyCode], [AddressTypeForLearnerOrFamilyDescription], [AddressStreetNumberAndName], [AddressApartmentRoomOrSuiteNumber], [AddressCity], [StateAbbreviationCode], [StateAbbreviationDescription], [AddressPostalCode], [AddressCountyName], [CountryCodeCode], [CountryCodeDescription], [Latitude], [Longitude], [CountyAnsiCodeCode], [CountyAnsiCodeDescription], [DoNotPublishIndicator], [PersonalInformationVerificationCode], [PersonalInformationVerificationDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimPersonAddresses] OFF;
+    SET IDENTITY_INSERT [rds].[DimPersonRelationships] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimPersonRelationships] WHERE [DimPersonRelationshipId] = -1) INSERT INTO [rds].[DimPersonRelationships] ([DimPersonRelationshipId], [PersonRelationshipTypeCode], [PersonRelationshipTypeDescription], [LivesWithIndicatorCode], [LivesWithIndicatorCodeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimPersonRelationships] OFF;
+    SET IDENTITY_INSERT [rds].[DimPsAcademicAwardTitles] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimPsAcademicAwardTitles] WHERE [DimPsAcademicAwardTitleId] = -1) INSERT INTO [rds].[DimPsAcademicAwardTitles] ([DimPsAcademicAwardTitleId], [AcademicAwardTitle]) VALUES (-1, 'missing'); SET IDENTITY_INSERT [rds].[DimPsAcademicAwardTitles] OFF;
+    SET IDENTITY_INSERT [rds].[DimPsCitizenshipStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimPsCitizenshipStatuses] WHERE [DimPsCitizenshipStatusId] = -1) INSERT INTO [rds].[DimPsCitizenshipStatuses] ([DimPsCitizenshipStatusId], [UnitedStatesCitizenshipStatusCode], [UnitedStatesCitizenshipStatusDescription], [VisaTypeCode], [VisaTypeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimPsCitizenshipStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimPsCourseStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimPsCourseStatuses] WHERE [DimPsCourseStatusId] = -1) INSERT INTO [rds].[DimPsCourseStatuses] ([DimPsCourseStatusId], [CourseLevelTypeCode], [CourseLevelTypeDescription], [CourseHonorsTypeCode], [CourseHonorsTypeDescription], [CourseCreditBasisTypeCode], [CourseCreditBasisTypeDescription], [CourseCreditLevelTypeCode], [CourseCreditLevelTypeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimPsCourseStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimPsFamilyStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimPsFamilyStatuses] WHERE [DimPsFamilyStatusId] = -1) INSERT INTO [rds].[DimPsFamilyStatuses] ([DimPsFamilyStatusId], [DependencyStatusCode], [DependencyStatusDescription], [NumberOfDependentsTypeCode], [NumberOfDependentsTypeDescription], [SingleParentOrSinglePregnantWomanStatusCode], [SingleParentOrSinglePregnantWomanStatusDescription], [MaternalGuardianEducationCode], [MaternalGuardianEducationDescription], [PaternalGuardianEducationCode], [PaternalGuardianEducationDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimPsFamilyStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimRecordStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimRecordStatuses] WHERE [DimRecordStatusId] = -1) INSERT INTO [rds].[DimRecordStatuses] ([DimRecordStatusId], [RecordStatusTypeCode], [RecordStatusTypeDescription], [RecordStatusCreatorEntityCode], [RecordStatusCreatorEntityDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimRecordStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimResponsibleOrganizationTypes] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimResponsibleOrganizationTypes] WHERE [DimResponsibleOrganizationTypeId] = -1) INSERT INTO [rds].[DimResponsibleOrganizationTypes] ([DimResponsibleOrganizationTypeId], [ResponsibleDistrictTypeCode], [ResponsibleDistrictTypeDescription], [ResponsibleSchoolTypeCode], [ResponsibleSchoolTypeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimResponsibleOrganizationTypes] OFF;
+    SET IDENTITY_INSERT [rds].[DimSalaryScheduleCriteria] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimSalaryScheduleCriteria] WHERE [DimSalaryScheduleCriteriaId] = -1) INSERT INTO [rds].[DimSalaryScheduleCriteria] ([DimSalaryScheduleCriteriaId], [SalaryScheduleCriterionName], [SalaryScheduleCriterionDescription], [SalaryScheduleCriterionValue]) VALUES (-1, 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimSalaryScheduleCriteria] OFF;
+    SET IDENTITY_INSERT [rds].[DimSchoolPerformanceIndicatorStateDefinedStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimSchoolPerformanceIndicatorStateDefinedStatuses] WHERE [DimSchoolPerformanceIndicatorStateDefinedStatusId] = -1) INSERT INTO [rds].[DimSchoolPerformanceIndicatorStateDefinedStatuses] ([DimSchoolPerformanceIndicatorStateDefinedStatusId], [SchoolPerformanceIndicatorStateDefinedStatusCode], [SchoolPerformanceIndicatorStateDefinedStatusDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimSchoolPerformanceIndicatorStateDefinedStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimSchoolQualityOrStudentSuccessIndicators] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimSchoolQualityOrStudentSuccessIndicators] WHERE [DimSchoolQualityOrStudentSuccessIndicatorId] = -1) INSERT INTO [rds].[DimSchoolQualityOrStudentSuccessIndicators] ([DimSchoolQualityOrStudentSuccessIndicatorId], [SchoolQualityOrStudentSuccessIndicatorTypeCode], [SchoolQualityOrStudentSuccessIndicatorTypeDescription], [SchoolQualityOrStudentSuccessIndicatorTypeEdFactsCode]) VALUES (-1, 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimSchoolQualityOrStudentSuccessIndicators] OFF;
+    SET IDENTITY_INSERT [rds].[DimSeaFinancialAccountBalances] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimSeaFinancialAccountBalances] WHERE [DimSeaFinancialAccountBalanceId] = -1) INSERT INTO [rds].[DimSeaFinancialAccountBalances] ([DimSeaFinancialAccountBalanceId], [FinancialAccountCodingSystemOrganizationTypeCode], [FinancialAccountCodingSystemOrganizationTypeDescription], [FinancialAccountLocalBalanceSheetCodeCode], [FinancialAccountLocalBalanceSheetCodeFederalCode], [FinancialAccountLocalBalanceSheetCodeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimSeaFinancialAccountBalances] OFF;
+    SET IDENTITY_INSERT [rds].[DimSeaFinancialAccountClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimSeaFinancialAccountClassifications] WHERE [DimSeaFinancialAccountClassificationId] = -1) INSERT INTO [rds].[DimSeaFinancialAccountClassifications] ([DimSeaFinancialAccountClassificationId], [FinancialAccountCodingSystemOrganizationTypeCode], [FinancialAccountCodingSystemOrganizationTypeDescription], [FinancialAccountCategoryCode], [FinancialAccountCategoryFederalCode], [FinancialAccountCategoryDescription], [FinancialAccountLocalProgramCodeCode], [FinancialAccountLocalProgramCodeFederalCode], [FinancialAccountLocalProgramCodeDescription], [FinancialAccountLocalFundClassificationCode], [FinancialAccountLocalFundClassificationFederalCode], [FinancialAccountLocalFundClassificationDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimSeaFinancialAccountClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimSeaFinancialExpenditureClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimSeaFinancialExpenditureClassifications] WHERE [DimSeaFinancialExpenditureClassificationId] = -1) INSERT INTO [rds].[DimSeaFinancialExpenditureClassifications] ([DimSeaFinancialExpenditureClassificationId], [FinancialAccountCodingSystemOrganizationTypeCode], [FinancialAccountCodingSystemOrganizationTypeDescription], [FinancialExpenditureLocalFunctionCodeCode], [FinancialExpenditureLocalFunctionCodeFederalCode], [FinancialExpenditureLocalFunctionCodeDescription], [FinancialExpenditureLocalObjectCodeCode], [FinancialExpenditureLocalObjectCodeFederalCode], [FinancialExpenditureLocalObjectCodeDescription], [FinancialExpenditureLocalLevelOfInstructionCodeCode], [FinancialExpenditureLocalLevelOfInstructionCodeFederalCode], [FinancialExpenditureLocalLevelOfInstructionCodeDescription], [FinancialExpenditureProjectReportingCodeCode], [FinancialExpenditureProjectReportingCodeFederalCode], [FinancialExpenditureProjectReportingCodeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimSeaFinancialExpenditureClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimSeaFinancialRevenueClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimSeaFinancialRevenueClassifications] WHERE [DimSeaFinancialRevenueClassificationId] = -1) INSERT INTO [rds].[DimSeaFinancialRevenueClassifications] ([DimSeaFinancialRevenueClassificationId], [FinancialAccountCodingSystemOrganizationTypeCode], [FinancialAccountCodingSystemOrganizationTypeDescription], [FinancialAccountLocalRevenueCodeCode], [FinancialAccountLocalRevenueCodeFederalCode], [FinancialAccountLocalRevenueCodeDescription], [FinancialAccountLocalRevenueObjectCodeCode], [FinancialAccountLocalRevenueObjectCodeSeaCode], [FinancialAccountLocalRevenueObjectCodeDescription]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimSeaFinancialRevenueClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimStaffCompensationTypes] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimStaffCompensationTypes] WHERE [DimStaffCompensationTypeId] = -1) INSERT INTO [rds].[DimStaffCompensationTypes] ([DimStaffCompensationTypeId], [StaffCompensationTypeCode], [StaffCompensationTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimStaffCompensationTypes] OFF;
+    SET IDENTITY_INSERT [rds].[DimStaffEvaluationPartStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimStaffEvaluationPartStatuses] WHERE [DimStaffEvaluationPartStatusId] = -1) INSERT INTO [rds].[DimStaffEvaluationPartStatuses] ([DimStaffEvaluationPartStatusId], [StaffEvaluationSystem], [FacultyAndAdministrationPerformanceLevelCode], [FacultyAndAdministrationPerformanceLevelDescription], [TechnologySkillsStandardsMetCode], [TechnologySkillsStandardsMetDescription], [StaffEvaluationPartName]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimStaffEvaluationPartStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimStandardOccupationalClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimStandardOccupationalClassifications] WHERE [DimStandardOccupationalClassificationId] = -1) INSERT INTO [rds].[DimStandardOccupationalClassifications] ([DimStandardOccupationalClassificationId], [StandardOccupationalClassificationCode], [StandardOccupationalClassificationDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimStandardOccupationalClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimStudentSupportServiceTypes] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimStudentSupportServiceTypes] WHERE [DimStudentSupportServiceTypeId] = -1) INSERT INTO [rds].[DimStudentSupportServiceTypes] ([DimStudentSupportServiceTypeId], [StudentSupportServiceTypeCode], [StudentSupportServiceTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimStudentSupportServiceTypes] OFF;
+    SET IDENTITY_INSERT [rds].[DimWeapons] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimWeapons] WHERE [DimWeaponId] = -1) INSERT INTO [rds].[DimWeapons] ([DimWeaponId], [WeaponTypeCode], [WeaponTypeDescription], [WeaponTypeEdFactsCode]) VALUES (-1, 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimWeapons] OFF;
+    SET IDENTITY_INSERT [rds].[DimWorkBasedLearningStatuses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimWorkBasedLearningStatuses] WHERE [DimWorkBasedLearningStatusId] = -1) INSERT INTO [rds].[DimWorkBasedLearningStatuses] ([DimWorkBasedLearningStatusId], [WorkBasedLearningOpportunityTypeCode], [WorkBasedLearningOpportunityTypeDescription]) VALUES (-1, 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimWorkBasedLearningStatuses] OFF;
+    SET IDENTITY_INSERT [rds].[DimContacts] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimContacts] WHERE [DimContactId] = -1) INSERT INTO [rds].[DimContacts] ([DimContactId], [PersonalTitleOrPrefix], [FirstName], [MiddleName], [LastOrSurname], [GenerationCodeOrSuffix], [PrimaryTelephoneNumberIndicator], [PositionTitle], [ElectronicMailAddressWork], [TelephoneNumberWork]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 0, 'missing', 'missing', 'missing'); SET IDENTITY_INSERT [rds].[DimContacts] OFF;
+    SET IDENTITY_INSERT [rds].[DimAccessibleEducationMaterialProviders] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAccessibleEducationMaterialProviders] WHERE [DimAccessibleEducationMaterialProviderId] = -1) INSERT INTO [rds].[DimAccessibleEducationMaterialProviders] ([DimAccessibleEducationMaterialProviderId], [AccessibleEducationMaterialProviderOrganizationIdentifierSea], [AccessibleEducationMaterialProviderName], [StateAbbreviationCode], [StateAbbreviationDescription], [StateANSICode], [MailingAddressStreetNumberAndName], [MailingAddressApartmentRoomOrSuiteNumber], [MailingAddressCity], [MailingAddressPostalCode], [MailingAddressStateAbbreviation], [MailingAddressCountyAnsiCodeCode], [PhysicalAddressStreetNumberAndName], [PhysicalAddressApartmentRoomOrSuiteNumber], [PhysicalAddressCity], [PhysicalAddressPostalCode], [PhysicalAddressStateAbbreviation], [PhysicalAddressCountyAnsiCodeCode], [TelephoneNumber], [WebSiteAddress], [OutOfStateIndicator], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, 'missing', 'missing', '', 'missing', '', 'missing', 'missing', 'missing', 'missing', '', '', 'missing', 'missing', 'missing', 'missing', '', '', 'missing', 'missing', '', '', ''); SET IDENTITY_INSERT [rds].[DimAccessibleEducationMaterialProviders] OFF;
+    SET IDENTITY_INSERT [rds].[DimAeProgramYears] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAeProgramYears] WHERE [DimAeProgramYearId] = -1) INSERT INTO [rds].[DimAeProgramYears] ([DimAeProgramYearId], [AeProgramYear], [SessionBeginDate], [SessionEndDate]) VALUES (-1, '', '', ''); SET IDENTITY_INSERT [rds].[DimAeProgramYears] OFF;
+    SET IDENTITY_INSERT [rds].[DimAeProviders] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimAeProviders] WHERE [DimAeProviderId] = -1) INSERT INTO [rds].[DimAeProviders] ([DimAeProviderId], [AdultEducationServiceProviderIdentifierSea], [NameOfInstitution], [ShortNameOfInstitution], [AdultEducationProviderTypeCode], [AdultEducationProviderTypeDescription], [LevelOfInstitutionCode], [LevelOfInstitutionDescription], [OrganizationOperationalStatusCode], [OrganizationOperationalStatusDescription], [OperationalStatusEffectiveDate], [TelephoneNumber], [WebSiteAddress], [MailingAddressStreetNumberAndName], [MailingAddressApartmentRoomOrSuiteNumber], [MailingAddressCity], [MailingAddressStateAbbreviation], [MailingAddressPostalCode], [MailingAddressCountyAnsiCodeCode], [PhysicalAddressStreetNumberAndName], [PhysicalAddressApartmentRoomOrSuiteNumber], [PhysicalAddressCity], [PhysicalAddressStateAbbreviation], [PhysicalAddressPostalCode], [PhysicalAddressCountyAnsiCodeCode], [Latitude], [Longitude], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', '', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', 'missing', '', ''); SET IDENTITY_INSERT [rds].[DimAeProviders] OFF;
+    SET IDENTITY_INSERT [rds].[DimCalendarCrises] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCalendarCrises] WHERE [DimCalendarCrisisId] = -1) INSERT INTO [rds].[DimCalendarCrises] ([DimCalendarCrisisId], [CrisisCode], [CrisisName], [CrisisDescription], [CrisisStartDate], [CrisisEndDate], [CrisisType], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimCalendarCrises] OFF;
+    SET IDENTITY_INSERT [rds].[DimCalendarEventDays] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCalendarEventDays] WHERE [DimCalendarEventDayId] = -1) INSERT INTO [rds].[DimCalendarEventDays] ([DimCalendarEventDayId], [CalendarEventDayName], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', ''); SET IDENTITY_INSERT [rds].[DimCalendarEventDays] OFF;
+    SET IDENTITY_INSERT [rds].[DimCalendarSessions] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCalendarSessions] WHERE [DimCalendarSessionId] = -1) INSERT INTO [rds].[DimCalendarSessions] ([DimCalendarSessionId], [CalendarCode], [CalendarDescription], [SessionBeginDate], [SessionEndDate], [SessionCode], [SessionDescription], [SessionSequenceNumber], [FirstInstructionDate], [LastInstructionDate], [DaysInSession], [SchoolYearMinutes], [InstructionalMinutes], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimCalendarSessions] OFF;
+    SET IDENTITY_INSERT [rds].[DimCredentialAwards] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCredentialAwards] WHERE [DimCredentialAwardId] = -1) INSERT INTO [rds].[DimCredentialAwards] ([DimCredentialAwardId], [ProfessionalCertificateOrLicenseNumber], [CredentialAdvancedStandingDescription], [CredentialAdvancedStandingURL], [CredentialEvidenceStatement], [CredentialRevokedReason], [CredentialAwardStartDate], [CredentialAwardEndDate], [CredentialCompletionDate], [CredentialRevokedDate], [CredentialSuspensionStartDate], [CredentialSuspensionEndDate]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimCredentialAwards] OFF;
+    SET IDENTITY_INSERT [rds].[DimCredentialDefinitions] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCredentialDefinitions] WHERE [DimCredentialDefinitionId] = -1) INSERT INTO [rds].[DimCredentialDefinitions] ([DimCredentialDefinitionId], [CredentialDefinitionIdentifierCtid], [CredentialDefinitionIdentifierUri], [CredentialDefinitionIdentifierUrl], [CredentialDefinitionIdentifierUrn], [CredentialDefinitionIdentifierUuid], [CredentialDefinitionIdentifierArk], [CredentialDefinitionIdentifierDoi], [CredentialDefinitionIdentifierInfo], [CredentialDefinitionTitle], [CredentialDefinitionDescription], [CredentialTypeCode], [CredentialTypeDescription], [CredentialDefinitionCategorySystem], [CredentialDefinitionCategoryType], [CredentialDefinitionStatusTypeCode], [CredentialDefinitionStatusTypeDescription], [CredentialDefinitionIntendedPurposeTypeCode], [CredentialDefinitionIntendedPurposeTypeDescription], [CredentialDefinitionAssessmentMethodTypeCode], [CredentialDefinitionAssessmentMethodTypeDescription], [CredentialDefinitionCriteria], [CredentialDefinitionCriteriaURL], [CredentialDefinitionKeywords], [CredentialDefinitionValidationMethodDescription], [CredentialImageURL], [CredentialDefinitionDateEffective], [CredentialOfferedStartDate], [CredentialOfferedEndDate], [CoreAcademicCourseCode], [CoreAcademicCourseDescription], [CTDLAudienceLevelTypeCode], [CTDLAudienceLevelTypeDescription], [CredentialDefinitionTerminalDegreeIndicatorCode], [CredentialDefinitionTerminalDegreeIndicatorDescription], [CredentialDefinitionScedCode], [CredentialDefinitionLowGradeLevelCode], [CredentialDefinitionHighGradeLevelCode]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimCredentialDefinitions] OFF;
+    SET IDENTITY_INSERT [rds].[DimEmployers] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimEmployers] WHERE [DimEmployerId] = -1) INSERT INTO [rds].[DimEmployers] ([DimEmployerId], [EmployerOrganizationName], [EmployerOrganizationIdentifierSea], [SeaOrganizationName], [SeaOrganizationIdentifierSea], [StateAnsiCode], [StateAbbreviationCode], [StateAbbreviationDescription], [MailingAddressStreetNumberAndName], [MailingAddressApartmentRoomOrSuiteNumber], [MailingAddressCity], [MailingAddressStateAbbreviation], [MailingAddressPostalCode], [MailingAddressCountyAnsiCodeCode], [OutOfStateIndicator], [OrganizationOperationalStatus], [OperationalStatusEffectiveDate], [PhysicalAddressStreetNumberAndName], [PhysicalAddressApartmentRoomOrSuiteNumber], [PhysicalAddressCity], [PhysicalAddressPostalCode], [PhysicalAddressStateAbbreviation], [PhysicalAddressCountyAnsiCodeCode], [TelephoneNumber], [WebSiteAddress], [OrganizationRegionGeoJson], [Latitude], [Longitude], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimEmployers] OFF;
+    SET IDENTITY_INSERT [rds].[DimCredentialIssuers] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimCredentialIssuers] WHERE [DimCredentialIssuerId] = -1) INSERT INTO [rds].[DimCredentialIssuers] ([DimCredentialIssuerId], [CredentialIssuerOrganizationName], [CredentialIssuerOrganizationIdentifierSea], [SeaOrganizationName], [SeaOrganizationIdentifierSea], [CTDLOrganizationTypeCode], [CTDLOrganizationTypeDescription], [StateAnsiCode], [StateAbbreviationCode], [StateAbbreviationDescription], [MailingAddressStreetNumberAndName], [MailingAddressApartmentRoomOrSuiteNumber], [MailingAddressCity], [MailingAddressStateAbbreviation], [MailingAddressPostalCode], [MailingAddressCountyAnsiCodeCode], [OutOfStateIndicator], [OrganizationOperationalStatus], [OperationalStatusEffectiveDate], [PhysicalAddressStreetNumberAndName], [PhysicalAddressApartmentRoomOrSuiteNumber], [PhysicalAddressCity], [PhysicalAddressPostalCode], [PhysicalAddressStateAbbreviation], [PhysicalAddressCountyAnsiCodeCode], [StateIssuingProfessionalCredentialOrLicenseCode], [StateIssuingProfessionalCredentialOrLicenseDescription], [TelephoneNumber], [WebSiteAddress], [OrganizationRegionGeoJson], [Latitude], [Longitude], [ProgramSponosorTypeCode], [ProgramSponosorTypeDescription], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimCredentialIssuers] OFF;
+    SET IDENTITY_INSERT [rds].[DimEarlyLearningOrganizations] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimEarlyLearningOrganizations] WHERE [DimEarlyLearningOrganizationId] = -1) INSERT INTO [rds].[DimEarlyLearningOrganizations] ([DimEarlyLearningOrganizationId], [StateLicensedFacilityCapacity]) VALUES (-1, ''); SET IDENTITY_INSERT [rds].[DimEarlyLearningOrganizations] OFF;
+    SET IDENTITY_INSERT [rds].[DimEducationOrganizationNetworks] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimEducationOrganizationNetworks] WHERE [DimEducationOrganizationNetworkId] = -1) INSERT INTO [rds].[DimEducationOrganizationNetworks] ([DimEducationOrganizationNetworkId], [OrganizationIdentifierSea], [OrganizationTypeCode], [OrganizationTypeDescription], [OrganizationName], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimEducationOrganizationNetworks] OFF;
+    SET IDENTITY_INSERT [rds].[DimFacilities] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFacilities] WHERE [DimFacilityId] = -1) INSERT INTO [rds].[DimFacilities] ([DimFacilityId], [FacilitiesIdentifier], [FacilityBuildingName], [BuilidingSiteNumber], [BuildingArea], [TemperatureControlledBuildingArea], [BuildingNumberOfStories], [BuildingYearBuilt], [BuildingYearOfLastModernization], [FacilityBlockNumberArea], [FacilityCensusTract], [FacilityConstructionDate], [FacilityConstructionDateTypeCode], [FacilityConstructionDateTypeDescription], [FacilityConstructionYear], [FacilityExpectedLife], [FacilitySiteArea], [FacilitySiteIdentifier]) VALUES (-1, '', '', '', '', '', 0, 0, 0, '', '', '', '', '', 0, 0, 0, ''); SET IDENTITY_INSERT [rds].[DimFacilities] OFF;
+    SET IDENTITY_INSERT [rds].[DimFinancialAccounts] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFinancialAccounts] WHERE [DimFinancialAccountId] = -1) INSERT INTO [rds].[DimFinancialAccounts] ([DimFinancialAccountId], [FinancialAccountNumber], [FinancialAccountName], [FinancialAccountDescription], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimFinancialAccounts] OFF;
+    SET IDENTITY_INSERT [rds].[DimFiscalPeriods] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFiscalPeriods] WHERE [DimFiscalPeriodId] = -1) INSERT INTO [rds].[DimFiscalPeriods] ([DimFiscalPeriodId], [FiscalPeriodBeginDate], [FiscalPeriodEndDate]) VALUES (-1, '', ''); SET IDENTITY_INSERT [rds].[DimFiscalPeriods] OFF;
+    SET IDENTITY_INSERT [rds].[DimFiscalYears] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimFiscalYears] WHERE [DimFiscalYearId] = -1) INSERT INTO [rds].[DimFiscalYears] ([DimFiscalYearId], [FiscalPeriodBeginDate], [FiscalPeriodEndDate], [FiscalYear]) VALUES (-1, '', '', ''); SET IDENTITY_INSERT [rds].[DimFiscalYears] OFF;
+    SET IDENTITY_INSERT [rds].[DimK12JobPositions] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimK12JobPositions] WHERE [DimK12JobPositionId] = -1) INSERT INTO [rds].[DimK12JobPositions] ([DimK12JobPositionId], [JobPositionIdentifierSea], [JobPositionIdentifierLea], [JobPositionIdentifierSchool], [PositionTitle], [HourlyWage], [StaffCompensationBaseSalary]) VALUES (-1, '', '', '', '', 0, 0); SET IDENTITY_INSERT [rds].[DimK12JobPositions] OFF;
+    SET IDENTITY_INSERT [rds].[DimLeaJobClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimLeaJobClassifications] WHERE [DimLeaJobClassificationId] = -1) INSERT INTO [rds].[DimLeaJobClassifications] ([DimLeaJobClassificationId], [LeaIdentifierSea], [CodingSystemOranizationTypeCode], [CodingSystemOrganizationTypeDescription], [EducationJobTypeCode], [EducationJobTypeDescription], [LocalJobFunctionCode], [LocalJobFunctionDescription], [LocalJobFunctionDefinition], [LocalJobCategoryCode], [LocalJobCategoryDescription], [LocalJobCategoryDefinition], [K12StaffClassificationCode], [K12StaffClassificationDescription], [TitleIProgramStaffCategoryCode], [TitleIProgramStaffCategoryDescription], [MigrantEducationProgramStaffCategoryCode], [MigrantEducationProgramStaffCategoryDescription], [SpecialEducationSupportServicesCategoryCode], [SpecialEducationSupportServicesCategoryDescription], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimLeaJobClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimOrganizationAddresses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimOrganizationAddresses] WHERE [DimOrganizationAddressId] = -1) INSERT INTO [rds].[DimOrganizationAddresses] ([DimOrganizationAddressId], [AddressStreetNumberAndName], [AddressApartmentRoomOrSuiteNumber], [BuildingSiteNumber], [AddressCity], [AddressStateAbbreviation], [AddressPostalCode], [CountyAnsiCodeCode], [AddressCountyName], [Latitude], [Longitude], [AddressTypeForOrganizationCode], [AddressTypeForOrganizationDescription], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimOrganizationAddresses] OFF;
+    SET IDENTITY_INSERT [rds].[DimOrganizationCalendarSessions] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimOrganizationCalendarSessions] WHERE [DimOrganizationCalendarSessionId] = -1) INSERT INTO [rds].[DimOrganizationCalendarSessions] ([DimOrganizationCalendarSessionId], [SessionBeginDate], [SessionEndDate], [SessionCode], [SessionDescription], [AcademicTermDesignatorCode], [AcademicTermDesignatorDescription]) VALUES (-1, '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimOrganizationCalendarSessions] OFF;
+    SET IDENTITY_INSERT [rds].[DimOrganizations] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimOrganizations] WHERE [DimOrganizationId] = -1) INSERT INTO [rds].[DimOrganizations] ([DimOrganizationId], [OrganizationName], [ShortNameOfOrganization], [OrganizationIdentifierSea], [OrganizationIdentifierDuns], [OrganizationIdentifierFein], [OrganizationTypeCode], [OrganizationTypeDescription], [OrganizationOperationalStatusCode], [OrganizationOperationalStatusDescription], [OperationalStatusEffectiveDate], [StateAnsiCode], [StateAbbreviationCode], [StateAbbreviationDescription], [TelephoneNumberMain], [TelephoneNumberFax], [ElectronicMailAddress], [WebSiteAddress], [OutOfStateIndicator], [OrganizationRegionGeoJson], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimOrganizations] OFF;
+    SET IDENTITY_INSERT [rds].[DimPersonRelationshipToLearnerContactInformation] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimPersonRelationshipToLearnerContactInformation] WHERE [DimPersonRelationshipToLearnerContactInformationId] = -1) INSERT INTO [rds].[DimPersonRelationshipToLearnerContactInformation] ([DimPersonRelationshipToLearnerContactInformationId], [PersonRelationshipToLearnerContactPriorityNumber], [PersonRelationshipToLearnerContactRestrictionsDescription], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', ''); SET IDENTITY_INSERT [rds].[DimPersonRelationshipToLearnerContactInformation] OFF;
+    SET IDENTITY_INSERT [rds].[DimProfessionalDevelopmentActivities] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimProfessionalDevelopmentActivities] WHERE [DimProfessionalDevelopmentActivityId] = -1) INSERT INTO [rds].[DimProfessionalDevelopmentActivities] ([DimProfessionalDevelopmentActivityId], [ProfessionalDevelopmentActivityIdentifier], [ProfessionalDevelopmentActivityTitle], [SponsoringAgencyName], [ProfessionalDevelopmentActivityTypeCode], [ProfessionalDevelopmentActivityTypeDescription], [ProfessionalDevelopmentActivityDescription], [ProfessionalDevelopmentActivityEducationLevelsAddressedCode], [ProfessionalDevelopmentActivityEducationLevelsAddressedDescription], [ProfessionalDevelopmentActivityObjective], [ProfessionalDevelopmentActivityLevelCode], [ProfessionalDevelopmentActivityLevelDescription], [ProfessionalDevelopmentActivityCreditTypeCode], [ProfessionalDevelopmentActivityCreditTypeDescription], [ProfessionalDevelopmentActivityTargetAudienceCode], [ProfessionalDevelopmentActivityTargetAudienceDescription], [ProfessionalDevelopmentSessionLanguageCode], [ProfessionalDevelopmentSessionLanguageDescription], [ProfessionalDevelopmentActivityExpirationDate], [ProfessionalDevelopmentActivityApprovedPurposeCode], [ProfessionalDevelopmentActivityApprovedPurposeDescription], [ProfessionalDevelopmentActivityApprovalCode], [ProfessionalDevelopmentActivityCode], [ProfessionalDevelopmentActivityCost]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0); SET IDENTITY_INSERT [rds].[DimProfessionalDevelopmentActivities] OFF;
+    SET IDENTITY_INSERT [rds].[DimProgramYears] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimProgramYears] WHERE [DimProgramYearId] = -1) INSERT INTO [rds].[DimProgramYears] ([DimProgramYearId], [ProgramYear], [SessionBeginDate], [SessionEndDate]) VALUES (-1, '', '', ''); SET IDENTITY_INSERT [rds].[DimProgramYears] OFF;
+    SET IDENTITY_INSERT [rds].[DimPsCourses] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimPsCourses] WHERE [DimPsCourseId] = -1) INSERT INTO [rds].[DimPsCourses] ([DimPsCourseId], [CourseIdentifier], [CourseCodeSystemCode], [CourseCodeSystemDescription], [CourseSubjectAbbreviation], [CourseNumber], [CourseTitle], [CourseDescription], [CourseDepartmentName], [CourseCreditUnitsCode], [CourseCreditUnitsDescription], [CreditValue], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', 0, '', ''); SET IDENTITY_INSERT [rds].[DimPsCourses] OFF;
+    SET IDENTITY_INSERT [rds].[DimPsInstitutions] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimPsInstitutions] WHERE [DimPsInstitutionId] = -1) INSERT INTO [rds].[DimPsInstitutions] ([DimPsInstitutionId], [NameOfInstitution], [ShortNameOfInstitution], [IPEDSIdentifier], [Opeid], [OrganizationOperationalStatus], [OperationalStatusEffectiveDate], [MostPrevalentLevelOfInstitutionCode], [MailingAddressStreetNumberAndName], [MailingAddressApartmentRoomOrSuiteNumber], [MailingAddressCity], [MailingAddressPostalCode], [MailingAddressStateAbbreviation], [PhysicalAddressStreetNumberAndName], [PhysicalAddressApartmentRoomOrSuiteNumber], [PhysicalAddressCity], [PhysicalAddressPostalCode], [PhysicalAddressStateAbbreviation], [TelephoneNumber], [WebSiteAddress], [Latitude], [Longitude], [RecordStartDateTime], [RecordEndDateTime], [MailingAddressCountyAnsiCodeCode], [PhysicalAddressCountyAnsiCodeCode]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimPsInstitutions] OFF;
+    SET IDENTITY_INSERT [rds].[DimSeaJobClassifications] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimSeaJobClassifications] WHERE [DimSeaJobClassificationId] = -1) INSERT INTO [rds].[DimSeaJobClassifications] ([DimSeaJobClassificationId], [CodingSystemOrganizationTypeCode], [CodingSystemOrganizationTypeDescription], [EducationJobTypeCode], [EducationJobTypeDescription], [LocalJobFunctionCode], [LocalJobFunctionDescription], [LocalJobFunctionDefinition], [LocalJobCategoryCode], [LocalJobCategoryDescription], [LocalJobCategoryDefinition], [K12StaffClassificationCode], [K12StaffClassificationDescription], [TitleIProgramStaffCategoryCode], [TitleIProgramStaffCategoryDescription], [MigrantEducationProgramStaffCategoryCode], [MigrantEducationProgramStaffCategoryDescription], [SpecialEducationSupportServicesCategoryCode], [SpecialEducationSupportServicesCategoryDescription], [RecordStartDateTime], [RecordEndDateTime]) VALUES (-1, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''); SET IDENTITY_INSERT [rds].[DimSeaJobClassifications] OFF;
+    SET IDENTITY_INSERT [rds].[DimTimes] ON; IF NOT EXISTS (SELECT 1 FROM [rds].[DimTimes] WHERE [DimTimeId] = -1) INSERT INTO [rds].[DimTimes] ([DimTimeId], [TimeTime], [TimeHour], [TimeMinute]) VALUES (-1, '', '', ''); SET IDENTITY_INSERT [rds].[DimTimes] OFF;
+
+    IF (select count(*) from rds.DimIeus where DimIeuId = -1) = 0
+    BEGIN
+
+        SET IDENTITY_INSERT rds.DimIeus ON;
+
+        insert into rds.DimIeus(
+            DimIeuId
+            ,[IeuOrganizationName]
+            ,[IeuOrganizationIdentifierSea]
+            ,[SeaOrganizationName]
+            ,[SeaOrganizationIdentifierSea]
+            ,[StateAnsiCode]
+            ,[StateAbbreviationCode]
+            ,[StateAbbreviationDescription]
+            ,[MailingAddressStreetNumberAndName]
+            ,[MailingAddressApartmentRoomOrSuiteNumber]
+            ,[MailingAddressCity]
+            ,[MailingAddressStateAbbreviation]
+            ,[MailingAddressPostalCode]
+            ,[MailingAddressCountyAnsiCodeCode]
+            ,[MailingAddressCountyName]
+            ,[OutOfStateIndicator]
+            ,[OrganizationOperationalStatus]
+            ,[OperationalStatusEffectiveDate]
+            ,[PhysicalAddressStreetNumberAndName]
+            ,[PhysicalAddressApartmentRoomOrSuiteNumber]
+            ,[PhysicalAddressCity]
+            ,[PhysicalAddressPostalCode]
+            ,[PhysicalAddressStateAbbreviation]
+            ,[PhysicalAddressCountyAnsiCodeCode]
+            ,[PhysicalAddressCountyName]
+            ,[TelephoneNumber]
+            ,[WebSiteAddress]
+            ,[OrganizationRegionGeoJson]
+            ,[Latitude]
+            ,[Longitude]
+            ,[RecordStartDateTime]
+            ,[RecordEndDateTime]
+        )
+        values (-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL
+        ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-07-01',NULL)			
+
+        SET IDENTITY_INSERT rds.DimIeus OFF;
+
+	END
+
+    IF (SELECT COUNT(*) FROM rds.DimPeople_Current WHERE DimPersonId = -1) = 0
+    BEGIN
+
+        set identity_insert rds.DimPeople_Current ON;
+
+        insert into rds.DimPeople_Current (
+            [DimPersonId]
+            ,[FirstName]
+            ,[MiddleName]
+            ,[LastOrSurname]
+            ,[Birthdate]
+            ,[ELChildChildIdentifierState]
+            ,[K12StudentStudentIdentifierState]
+            ,[K12StudentStudentIdentifierDistrict]
+            ,[K12StudentStudentIdentifierNationalMigrant]
+            ,[PsStudentStudentIdentifierState]
+            ,[AeStudentStudentIdentifierState]
+            ,[WorkforceProgramParticipantPersonIdentifierState]
+            ,[ELStaffStaffMemberIdentifierState]
+            ,[K12StaffStaffMemberIdentifierState]
+            ,[K12StaffStaffMemberIdentifierDistrict]
+            ,[PsStaffStaffMemberIdentifierState]
+            ,[PersonIdentifierDriversLicense]
+            ,[PersonIdentifierSSN]
+            ,[PersonIdentifierState]
+            ,[StudentIdentifierState]
+            ,[IsActiveELChild]
+            ,[IsActiveK12Student]
+            ,[IsActivePsStudent]
+            ,[IsActiveAeStudent]
+            ,[IsActiveWorkforceProgramParticipant]
+            ,[IsActiveELStaff]
+            ,[IsActiveK12Staff]
+            ,[IsActivePsStaff]
+            ,[ElectronicMailAddressHome]
+            ,[ElectronicMailAddressOrganizational]
+            ,[ElectronicMailAddressWork]
+            ,[TelephoneNumberFax]
+            ,[TelephoneNumberHome]
+            ,[TelephoneNumberMobile]
+            ,[TelephoneNumberWork]
+            ,[PersonalTitleOrPrefix]
+            ,[PositionTitle]
+            ,[GenerationCodeOrSuffix]
+            ,[HighestLevelOfEducationCompletedCode]
+            ,[HighestLevelOfEducationCompletedDescription]
+        )
+        values
+        (-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+        ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+        ,NULL,NULL)
+        
+        set identity_insert rds.DimPeople_Current OFF;
+
+	END
+
+    IF (SELECT COUNT(*) FROM rds.DimAssessmentSubtests WHERE DimAssessmentSubtestId = -1) = 0
+    BEGIN
+
+        set identity_insert RDS.DimAssessmentSubtests ON;
+
+        insert into RDS.DimAssessmentSubtests (
+            [DimAssessmentSubtestId]
+            ,[AssessmentFormNumber]
+            ,[AssessmentAcademicSubjectCode]
+            ,[AssessmentAcademicSubjectDescription]
+            ,[AssessmentSubtestIdentifierInternal]
+            ,[AssessmentSubtestTitle]
+            ,[AssessmentSubtestAbbreviation]
+            ,[AssessmentSubtestDescription]
+            ,[AssessmentSubtestVersion]
+            ,[AssessmentLevelForWhichDesigned]
+            ,[AssessmentEarlyLearningDevelopmentalDomain]
+            ,[AssessmentSubtestPublishedDate]
+            ,[AssessmentSubtestMinimumValue]
+            ,[AssessmentSubtestMaximumValue]
+            ,[AssessmentSubtestScaleOptimalValue]
+            ,[AssessmentContentStandardType]
+            ,[AssessmentPurpose]
+            ,[AssessmentSubtestRules]
+            ,[AssessmentFormSubtestTier]
+            ,[AssessmentFormSubtestContainerOnly]
+        )
+        values (-1, NULL,-1,-1,-1,-1,-1,-1,-1,-1,-1,NULL,-1,-1,-1,-1,-1,-1,-1,-1)
+
+        set identity_insert RDS.DimAssessmentSubtests OFF;
+
+    END
+
+    IF (SELECT COUNT(*) FROM rds.DimCompetencyDefinitions WHERE DimCompetencyDefinitionId = -1) = 0
+    BEGIN
+
+        set identity_insert RDS.DimCompetencyDefinitions ON;
+
+        insert into RDS.DimCompetencyDefinitions (
+            [DimCompetencyDefinitionId]
+            ,[CompetencyDefinitionIdentifier]
+            ,[CompetencyDefinitionCode]
+            ,[CompetencyDefinitionShortName]
+            ,[CompetencyDefinitionStatement]
+            ,[CompetencyDefinitionType]
+            ,[CompetencyDefinitionValidStartDate]
+            ,[CompetencyDefinitionValidEndDate]
+        )
+        values (-1,NULL,NULL,NULL,NULL,NULL,-1,NULL) 
+
+        set identity_insert RDS.DimCompetencyDefinitions OFF;
+
+    END
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimPsEnrollmentStatuses WHERE DimPsEnrollmentStatusId = -1) BEGIN
+		SET IDENTITY_INSERT RDS.DimPsEnrollmentStatuses ON
+
+		INSERT INTO [RDS].DimPsEnrollmentStatuses (
+			[DimPsEnrollmentStatusId]
+		   ,[PostsecondaryExitOrWithdrawalTypeCode]
+		   ,[PostsecondaryExitOrWithdrawalTypeDescription]
+		   ,[PostsecondaryEnrollmentStatusCode]
+		   ,[PostsecondaryEnrollmentStatusDescription]
+		   ,[PostSecondaryEnrollmentStatusEdFactsCode]
+		   ,[PostsecondaryEnrollmentActionCode]
+		   ,[PostsecondaryEnrollmentActionDescription]
+		   ,[PostSecondaryEnrollmentActionEdFactsCode]
+		)
+		VALUES (
+			-1
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+	)
+
+		SET IDENTITY_INSERT RDS.DimPsEnrollmentStatuses OFF
+	END
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimAssessmentStatuses WHERE DimAssessmentStatusId = -1) BEGIN
+		SET IDENTITY_INSERT RDS.DimAssessmentStatuses ON
+
+		INSERT INTO [RDS].DimAssessmentStatuses (
+			[DimAssessmentStatusId]
+			, [ProgressLevelCode]
+			, [ProgressLevelDescription]
+			, [ProgressLevelEdFactsCode]
+			, [AssessedFirstTimeCode]
+			, [AssessedFirstTimeDescription]
+			, [AssessedFirstTimeEdFactsCode]
+		)
+		VALUES (
+			-1
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+			, 'MISSING'
+		)
+
+		SET IDENTITY_INSERT RDS.DimAssessmentStatuses OFF
+	END
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12StaffCategories d WHERE d.DimK12StaffCategoryId = -1) 
+	BEGIN
+		SET IDENTITY_INSERT RDS.DimK12StaffCategories ON
+
+		INSERT INTO [RDS].[DimK12StaffCategories]
+           ([DimK12StaffCategoryId]
+		   ,[K12StaffClassificationCode]
+           ,[K12StaffClassificationDescription]
+           ,[K12StaffClassificationEdFactsCode]
+           ,[SpecialEducationSupportServicesCategoryCode]
+           ,[SpecialEducationSupportServicesCategoryDescription]
+           ,[SpecialEducationSupportServicesCategoryEdFactsCode]
+           ,[TitleIProgramStaffCategoryCode]
+           ,[TitleIProgramStaffCategoryDescription]
+           ,[TitleIProgramStaffCategoryEdFactsCode]
+		   ,[MigrantEducationProgramStaffCategoryCode]
+		   ,[MigrantEducationProgramStaffCategoryDescription]
+		   ,[ProfessionalEducationalJobClassificationCode]
+		   ,[ProfessionalEducationalJobClassificationDescription]
+		   ,[TitleIIILanguageInstructionIndicatorCode]
+ 		   ,[TitleIIILanguageInstructionIndicatorDescription]
+		   )
+		   VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+
+			SET IDENTITY_INSERT RDS.DimK12StaffCategories OFF
+	END
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimTeachingCredentialStatuses d WHERE d.DimTeachingCredentialStatusId = -1) 
+	BEGIN
+		SET IDENTITY_INSERT rds.DimTeachingCredentialStatuses ON
+
+			INSERT INTO rds.DimTeachingCredentialStatuses (
+						  DimTeachingCredentialStatusId
+						, TeachingCredentialTypeCode
+						, TeachingCredentialTypeDescription
+						, TeachingCredentialTypeEdFactsCode
+						, TeachingCredentialBasisCode
+						, TeachingCredentialBasisDescription
+					)
+			VALUES (
+					-1
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING')
+
+		SET IDENTITY_INSERT rds.DimTeachingCredentialStatuses OFF
+	END
+
+	IF NOT EXISTS (
+			SELECT 1 FROM RDS.DimK12StaffStatuses 
+			WHERE DimK12StaffStatusId = -1
+		) 
+	BEGIN
+		SET IDENTITY_INSERT RDS.DimK12StaffStatuses ON
+
+		INSERT INTO RDS.DimK12StaffStatuses (
+			  DimK12StaffStatusId
+			, SpecialEducationAgeGroupTaughtCode
+			, SpecialEducationAgeGroupTaughtDescription
+			, SpecialEducationAgeGroupTaughtEdFactsCode
+			, EdFactsCertificationStatusCode
+			, EdFactsCertificationStatusDescription
+			, EdFactsCertificationStatusEdFactsCode
+			, HighlyQualifiedTeacherIndicatorCode
+			, HighlyQualifiedTeacherIndicatorDescription
+			, HighlyQualifiedTeacherIndicatorEdFactsCode
+			, EdFactsTeacherInexperiencedStatusCode
+			, EdFactsTeacherInexperiencedStatusDescription
+			, EdFactsTeacherInexperiencedStatusEdFactsCode
+			, EdFactsTeacherOutOfFieldStatusCode
+			, EdFactsTeacherOutOfFieldStatusDescription
+			, EdFactsTeacherOutOfFieldStatusEdFactsCode
+			, SpecialEducationTeacherQualificationStatusCode
+			, SpecialEducationTeacherQualificationStatusDescription
+			, SpecialEducationTeacherQualificationStatusEdFactsCode
+			, ParaprofessionalQualificationStatusCode
+			, ParaprofessionalQualificationStatusDescription
+			, ParaprofessionalQualificationStatusEdFactsCode
+			, SpecialEducationRelatedServicesPersonnelCode
+			, SpecialEducationRelatedServicesPersonnelDescription
+			, CTEInstructorIndustryCertificationCode
+			, CTEInstructorIndustryCertificationDescription
+			, SpecialEducationParaprofessionalCode
+			, SpecialEducationParaprofessionalDescription
+			, SpecialEducationTeacherCode
+			, SpecialEducationTeacherDescription
+		)
+		VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+
+		SET IDENTITY_INSERT RDS.DimK12StaffStatuses OFF
+	END
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimMilitaryStatuses d WHERE d.DimMilitaryStatusId = -1) BEGIN
+		SET IDENTITY_INSERT rds.DimMilitaryStatuses ON
+
+			INSERT INTO rds.DimMilitaryStatuses (
+						  DimMilitaryStatusId
+						, MilitaryConnectedStudentIndicatorCode       
+						, MilitaryConnectedStudentIndicatorDescription
+						, MilitaryConnectedStudentIndicatorEdFactsCode
+						, ActiveMilitaryStatusIndicatorCode          
+						, ActiveMilitaryStatusIndicatorDescription   
+						, MilitaryBranchCode                          
+						, MilitaryBranchDescription                   
+						, MilitaryVeteranStatusIndicatorCode         
+						, MilitaryVeteranStatusIndicatorDescription  
+					)
+			VALUES (
+					-1
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING'
+					, 'MISSING')
+
+		SET IDENTITY_INSERT rds.DimMilitaryStatuses OFF
+	END
+
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimAttendances d WHERE d.DimAttendanceId = -1) 
+	BEGIN
+		SET IDENTITY_INSERT RDS.DimAttendances ON
+
+		INSERT INTO [RDS].[DimAttendances]
+           ([DimAttendanceId]
+           ,ChronicStudentAbsenteeismIndicatorCode
+           ,ChronicStudentAbsenteeismIndicatorDescription
+		   ,ChronicStudentAbsenteeismIndicatorEdFactsCode
+		   ,AttendanceEventTypeCode
+		   ,AttendanceEventTypeDescription
+		   ,AttendanceStatusCode
+		   ,AttendanceStatusDescription
+		   ,PresentAttendanceCategoryCode
+		   ,PresentAttendanceCategoryDescription
+		   ,AbsentAttendanceCategoryCode
+		   ,AbsentAttendanceCategoryDescription
+		   )
+			VALUES (
+				  -1
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				, 'MISSING'
+				)
+
+		SET IDENTITY_INSERT RDS.DimAttendances OFF
+
+	END
+
 PRINT N'Check Check Constraints'
 
 
