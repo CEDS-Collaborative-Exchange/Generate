@@ -47,7 +47,7 @@
   * [Implementation FAQ](developer-guides/migration/implementation-faq.md)
   * [Data Migration](developer-guides/migration/data-migration.md)
   * [Fact Type Table](developer-guides/migration/fact-type-table/README.md)
-    * [Troubleshooting](developer-guides/migration/troubleshooting/README.mdd)
+    * [Troubleshooting Report Migration Results](developer-guides/migration/troubleshooting/troubleshooting-report-migration-results.md)
     * [Assessment Fact Type](developer-guides/migration/fact-type-table/assessment-fact-type.md)
     * [Child Count Fact Type](developer-guides/migration/fact-type-table/child-count-fact-type.md)
     * [Chronic Absenteeism Fact Type](developer-guides/migration/fact-type-table/chronic-absenteeism-fact-type.md)
