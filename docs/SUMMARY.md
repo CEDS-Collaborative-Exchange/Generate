@@ -114,11 +114,13 @@
 
 * [Introduction](release-notes/introduction.md)
 * [Release Notes 13.2](release-notes/release-notes-13.2.md)
+* [Release Notes 13.1](release-notes/release-notes-13.1.md)
+* [Release Notes 13.0](release-notes/release-notes-13.0.md)
 * [Release Notes 12.4](release-notes/release-notes-12.4.md)
-* [Release Notes 12.3](release-notes/release-notes-12.3.md)
-* [Release Notes 12.2](release-notes/release-notes-12.2.md)
-* [Release Notes 12.1](release-notes/release-notes-12.1.md)
 * [Archive](release-notes/archive/README.md)
+  * [Release Notes 12.3](release-notes/release-notes-12.3.md)
+  * [Release Notes 12.2](release-notes/release-notes-12.2.md)
+  * [Release Notes 12.1](release-notes/release-notes-12.1.md)
   * [Release Notes 12.0](release-notes/archive/release-notes-12.0.md)
   * [Release Notes 11.4](release-notes/archive/release-notes-11.4.md)
   * [Release Notes 11.3](release-notes/archive/release-notes-11.3.md)
@@ -147,6 +149,3 @@
   * [Release Notes 2.4](release-notes/archive/release-notes-v2.4.md)
 * [Release Notes 12.3](release-notes/release-notes-12.3-1.md)
 
-## Hot Fixes
-
-* [Hot Fix - 4/13/2023](hot-fixes/hot-fix-4-13-2023.md)
