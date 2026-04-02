@@ -28,7 +28,8 @@
 * [Support](user-guide/support.md)
 * [FAQ](user-guide/faq.md)
 ## Data Integration Toolkit
-
+* [Overview](data-integration-toolkit/overview/README.md)
+  * [Step 1: Define Goals for Integration](data-integration-toolkit/overview/step-1-define-goals-for-integration.md)
 ## Developer Guides
 
 * [Getting Started](developer-guides/getting-started.md)
