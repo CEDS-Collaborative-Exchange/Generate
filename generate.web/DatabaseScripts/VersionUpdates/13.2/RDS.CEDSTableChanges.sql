@@ -33944,15 +33944,9 @@ PRINT 'ADD DEFAULT ROWS TO DIMENSION TABLES'
 		   ,[PostsecondaryEnrollmentStatusCode]
 		   ,[PostsecondaryEnrollmentStatusDescription]
 		   ,[PostSecondaryEnrollmentStatusEdFactsCode]
-		   ,[PostsecondaryEnrollmentActionCode]
-		   ,[PostsecondaryEnrollmentActionDescription]
-		   ,[PostSecondaryEnrollmentActionEdFactsCode]
 		)
 		VALUES (
 			-1
-			, 'MISSING'
-			, 'MISSING'
-			, 'MISSING'
 			, 'MISSING'
 			, 'MISSING'
 			, 'MISSING'
@@ -34007,10 +34001,8 @@ PRINT 'ADD DEFAULT ROWS TO DIMENSION TABLES'
 		   ,[MigrantEducationProgramStaffCategoryDescription]
 		   ,[ProfessionalEducationalJobClassificationCode]
 		   ,[ProfessionalEducationalJobClassificationDescription]
-		   ,[TitleIIILanguageInstructionIndicatorCode]
- 		   ,[TitleIIILanguageInstructionIndicatorDescription]
 		   )
-		   VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+		   VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
 
 			SET IDENTITY_INSERT RDS.DimK12StaffCategories OFF
 	END
