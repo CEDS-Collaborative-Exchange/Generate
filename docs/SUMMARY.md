@@ -51,6 +51,8 @@
     * [Troubleshooting the Generate Update Process](developer-guides/installation/upgrade/troubleshooting-the-generate-update-process.md)
     * [Generate File Storage](developer-guides/installation/upgrade/generate-file-storage.md)
 * [Migration](developer-guides/migration/README.md)
+  * [Fact to Report](developer-guides/migration/fact-to-report/README.md)
+     * [The New Report Migration Process](developer-guides/migration/fact-to-report/the-new-report-migration-process.md)
   * [Troubleshooting](developer-guides/migration/troubleshooting/README.md)
      * [Troubleshooting Report Migration Results](developer-guides/migration/troubleshooting/troubleshooting-report-migration-results.md)
   * [Implementation FAQ](developer-guides/migration/implementation-faq.md)
