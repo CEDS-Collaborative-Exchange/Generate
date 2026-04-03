@@ -2,10 +2,11 @@
 --Populate DimPsEnrollmentStatuses
 -----------------------------------------------
 	--Remove the existing dimension values
-	DELETE FROM	RDS.DimPsEnrollmentStatuses
+	DELETE FROM	RDS.DimPsEnrollmentStatuses WHERE DimPsEnrollmentStatusId <> -1
 
 	--Repopulate the dimension with the new table values added
-	IF NOT EXISTS (SELECT 1 FROM RDS.DimPsEnrollmentStatuses WHERE DimPsEnrollmentStatusId = -1) BEGIN
+	IF NOT EXISTS (SELECT 1 FROM RDS.DimPsEnrollmentStatuses WHERE DimPsEnrollmentStatusId = -1) 
+	BEGIN
 		SET IDENTITY_INSERT RDS.DimPsEnrollmentStatuses ON
 
 		INSERT INTO [RDS].DimPsEnrollmentStatuses (
@@ -104,7 +105,7 @@
 -----------------------------------------------
 
 	--Remove the existing dimension values
-	DELETE FROM	RDS.DimAssessmentStatuses
+	DELETE FROM	RDS.DimAssessmentStatuses WHERE DimAssessmentStatusId <> -1
 
 	--Repopulate the dimension with the new table values added
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimAssessmentStatuses WHERE DimAssessmentStatusId = -1) BEGIN
@@ -172,7 +173,7 @@
 -----------------------------------------------
 
 	--Remove the old data so we can repopulate after adding the new fields
-	DELETE FROM [RDS].[DimK12StaffCategories]
+	DELETE FROM [RDS].[DimK12StaffCategories] WHERE DimK12StaffCategoryId <> -1
 
 	--Start the repopulation	
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12StaffCategories d WHERE d.DimK12StaffCategoryId = -1) 
@@ -357,13 +358,13 @@
 		SET IDENTITY_INSERT rds.DimTeachingCredentialStatuses ON
 
 			INSERT INTO rds.DimTeachingCredentialStatuses (
-						  DimTeachingCredentialStatusId
-						, TeachingCredentialTypeCode
-						, TeachingCredentialTypeDescription
-						, TeachingCredentialTypeEdFactsCode
-						, TeachingCredentialBasisCode
-						, TeachingCredentialBasisDescription
-					)
+						DimTeachingCredentialStatusId
+					, TeachingCredentialTypeCode
+					, TeachingCredentialTypeDescription
+					, TeachingCredentialTypeEdFactsCode
+					, TeachingCredentialBasisCode
+					, TeachingCredentialBasisDescription
+			)
 			VALUES (
 					-1
 					, 'MISSING'
@@ -441,7 +442,7 @@
 	-- Populate DimK12StaffStatuses
 	-------------------------------------------------------------------------
 	--Remove the old data so we can repopulate after adding the new fields
-	DELETE FROM [RDS].[DimK12StaffStatuses]
+	DELETE FROM [RDS].[DimK12StaffStatuses] WHERE DimK12StaffStatusId <> -1
 
 	--Start the repopulation	
 	IF NOT EXISTS (
@@ -755,7 +756,7 @@
 	-----------------------------------------------------
 	-- Populate DimMilitaryStatuses					   --
 	-----------------------------------------------------
-	delete from RDS.DimMilitaryStatuses
+	delete from RDS.DimMilitaryStatuses WHERE DimMilitaryStatusId <> -1
 
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimMilitaryStatuses d WHERE d.DimMilitaryStatusId = -1) BEGIN
 		SET IDENTITY_INSERT rds.DimMilitaryStatuses ON
@@ -888,9 +889,7 @@
 
 	
 	--Remove any existing rows before populating
-	DELETE FROM RDS.DimAttendances
-
-
+	DELETE FROM RDS.DimAttendances WHERE DimAttendanceId <> -1
 
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimAttendances d WHERE d.DimAttendanceId = -1) BEGIN
 		SET IDENTITY_INSERT RDS.DimAttendances ON
