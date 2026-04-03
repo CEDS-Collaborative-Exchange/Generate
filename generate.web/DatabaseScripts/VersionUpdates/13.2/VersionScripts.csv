@@ -3,6 +3,7 @@ VersionUpdates\\13.2,App.Schema.sql,0
 VersionUpdates\\13.2,Staging.TableChanges.sql,0
 VersionUpdates\\13.2,RDS.RemovePropertiesAndConstraints.sql,0
 VersionUpdates\\13.2,RDS.CEDSTableChanges.sql,0
+VersionUpdates\\13.2,RDS.CEDSTableChanges_2.sql,0
 VersionUpdates\\13.2,RDS.AddExtendedProperties.sql,0
 VersionUpdates\\13.2,RDS.TableChanges.sql,0
 VersionUpdates\\13.2,App.TableChanges.sql,0
