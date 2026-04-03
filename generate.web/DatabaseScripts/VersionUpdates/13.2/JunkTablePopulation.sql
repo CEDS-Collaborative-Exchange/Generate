@@ -1,6 +1,10 @@
 -----------------------------------------------
 --Populate DimPsEnrollmentStatuses
 -----------------------------------------------
+	--drop constraints
+	IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentCounts_PSEnrollmentStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentCounts')
+		ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [FK_FactK12StudentCounts_PSEnrollmentStatusId];
+
 	--Remove the existing dimension values
 	DELETE FROM	RDS.DimPsEnrollmentStatuses WHERE DimPsEnrollmentStatusId <> -1
 
@@ -100,9 +104,21 @@
 	DROP TABLE #PostsecondaryEnrollmentStatus
 	DROP TABLE #PostsecondaryEnrollmentAction
 
+	--add constraints back
+	IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentCounts_PSEnrollmentStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentCounts')
+	BEGIN 
+		ALTER TABLE [RDS].[FactK12StudentCounts]  WITH CHECK ADD  CONSTRAINT [FK_FactK12StudentCounts_PSEnrollmentStatusId] FOREIGN KEY([PsEnrollmentStatusId])
+		REFERENCES [RDS].[DimPsEnrollmentStatuses] ([DimPsEnrollmentStatusId]);
+
+		ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_PSEnrollmentStatusId];
+	END
+
 -----------------------------------------------
 --Populate DimAssessmentStatuses
 -----------------------------------------------
+	--drop constraints
+	IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentAssessments_AssessmentStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentAssessments')
+		ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [FK_FactK12StudentAssessments_AssessmentStatusId];
 
 	--Remove the existing dimension values
 	DELETE FROM	RDS.DimAssessmentStatuses WHERE DimAssessmentStatusId <> -1
@@ -168,9 +184,21 @@
 
 	DROP TABLE #ProgressLevel
 
+	--add constraints back
+	IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentAssessments_AssessmentStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentAssessments')
+	BEGIN
+		ALTER TABLE [RDS].[FactK12StudentAssessments]  WITH CHECK ADD  CONSTRAINT [FK_FactK12StudentAssessments_AssessmentStatusId] FOREIGN KEY([AssessmentStatusId])
+		REFERENCES [RDS].[DimAssessmentStatuses] ([DimAssessmentStatusId]);
+
+		ALTER TABLE [RDS].[FactK12StudentAssessments] CHECK CONSTRAINT [FK_FactK12StudentAssessments_AssessmentStatusId];
+	END
+
 -----------------------------------------------
 --Populate DimK12StaffCategories
 -----------------------------------------------
+	--Drop constraints
+	IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StaffCounts_K12StaffCategoryId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StaffCounts')
+		ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [FK_FactK12StaffCounts_K12StaffCategoryId];	
 
 	--Remove the old data so we can repopulate after adding the new fields
 	DELETE FROM [RDS].[DimK12StaffCategories] WHERE DimK12StaffCategoryId <> -1
@@ -349,6 +377,14 @@
 	DROP TABLE #MigrantEducationProgramStaffCategory
 	DROP TABLE #ProfessionalEducationalJobClassification
 
+	--add constraints back
+	IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StaffCounts_K12StaffCategoryId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StaffCounts')
+	BEGIN
+		ALTER TABLE [RDS].[FactK12StaffCounts]  WITH CHECK ADD  CONSTRAINT [FK_FactK12StaffCounts_K12StaffCategoryId] FOREIGN KEY([K12StaffCategoryId])
+		REFERENCES [RDS].[DimK12StaffCategories] ([DimK12StaffCategoryId]);
+
+		ALTER TABLE [RDS].[FactK12StaffCounts] CHECK CONSTRAINT [FK_FactK12StaffCounts_K12StaffCategoryId];
+	END
 
 	-------------------------------------------------------------------------
 	-- Populate DimTeachingCredentialStatuses   --
@@ -441,6 +477,10 @@
 	-------------------------------------------------------------------------
 	-- Populate DimK12StaffStatuses
 	-------------------------------------------------------------------------
+	--Drop constraints	
+	IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StaffCounts_K12StaffStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StaffCounts')
+		ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [FK_FactK12StaffCounts_K12StaffStatusId];
+
 	--Remove the old data so we can repopulate after adding the new fields
 	DELETE FROM [RDS].[DimK12StaffStatuses] WHERE DimK12StaffStatusId <> -1
 
@@ -752,10 +792,26 @@
 	DROP TABLE #SpecialEducationParaprofessional
 	DROP TABLE #SpecialEducationTeacher
 
+	--add constraints back
+	IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StaffCounts_K12StaffStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StaffCounts')
+	BEGIN
+		ALTER TABLE [RDS].[FactK12StaffCounts]  WITH CHECK ADD  CONSTRAINT [FK_FactK12StaffCounts_K12StaffStatusId] FOREIGN KEY([K12StaffStatusId])
+		REFERENCES [RDS].[DimK12StaffStatuses] ([DimK12StaffStatusId]);
+
+		ALTER TABLE [RDS].[FactK12StaffCounts] CHECK CONSTRAINT [FK_FactK12StaffCounts_K12StaffStatusId];
+	END
 
 	-----------------------------------------------------
 	-- Populate DimMilitaryStatuses					   --
 	-----------------------------------------------------
+	--drop constraints
+	IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentAssessments_MilitaryStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentAssessments')
+		ALTER TABLE [RDS].[FactK12StudentAssessments] DROP CONSTRAINT [FK_FactK12StudentAssessments_MilitaryStatusId];
+
+	IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentDisciplines_MilitaryStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentDisciplines')
+		ALTER TABLE [RDS].[FactK12StudentDisciplines] DROP CONSTRAINT [FK_FactK12StudentDisciplines_MilitaryStatusId];
+
+	--clear the table
 	delete from RDS.DimMilitaryStatuses WHERE DimMilitaryStatusId <> -1
 
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimMilitaryStatuses d WHERE d.DimMilitaryStatusId = -1) BEGIN
@@ -879,14 +935,31 @@
 	DROP TABLE #MilitaryBranch
 	DROP TABLE #MilitaryVeteranStatusIndicator
 
+	--add constraints back
+	IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentAssessments_MilitaryStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentAssessments')
+	BEGIN
+		ALTER TABLE [RDS].[FactK12StudentAssessments]  WITH CHECK ADD  CONSTRAINT [FK_FactK12StudentAssessments_MilitaryStatusId] FOREIGN KEY([MilitaryStatusId])
+		REFERENCES [RDS].[DimMilitaryStatuses] ([DimMilitaryStatusId]);
+
+		ALTER TABLE [RDS].[FactK12StudentAssessments] CHECK CONSTRAINT [FK_FactK12StudentAssessments_MilitaryStatusId];
+	END
+
+	IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentDisciplines_MilitaryStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentDisciplines')
+	BEGIN
+		ALTER TABLE [RDS].[FactK12StudentDisciplines]  WITH CHECK ADD  CONSTRAINT [FK_FactK12StudentDisciplines_MilitaryStatusId] FOREIGN KEY([MilitaryStatusId])
+		REFERENCES [RDS].[DimMilitaryStatuses] ([DimMilitaryStatusId]);
+
+		ALTER TABLE [RDS].[FactK12StudentDisciplines] CHECK CONSTRAINT [FK_FactK12StudentDisciplines_MilitaryStatusId];
+	END
+
+
 	-----------------------------------------------------
 	-- Populate DimAttendances                     --
 	-----------------------------------------------------
 
 	--Drop any FK constraints
-	ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [FK_FactK12StudentCounts_AttendanceId]
-	ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [DF_FactK12StudentCounts_AttendanceId]
-
+	IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentCounts_AttendanceId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentCounts')
+		ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [FK_FactK12StudentCounts_AttendanceId];
 	
 	--Remove any existing rows before populating
 	DELETE FROM RDS.DimAttendances WHERE DimAttendanceId <> -1
@@ -1049,9 +1122,12 @@
 	DROP TABLE #AbsentAttendanceCategory
 
 	--Add the constraints back
-	ALTER TABLE [RDS].[FactK12StudentCounts] ADD  CONSTRAINT [DF_FactK12StudentCounts_AttendanceId]  DEFAULT ((-1)) FOR [AttendanceId]
+	IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentCounts_AttendanceId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentCounts')
+	BEGIN 
+		ALTER TABLE [RDS].[FactK12StudentCounts]  WITH CHECK ADD  CONSTRAINT [FK_FactK12StudentCounts_AttendanceId] FOREIGN KEY([AttendanceId])
+		REFERENCES [RDS].[DimAttendances] ([DimAttendanceId]);
 
-	ALTER TABLE [RDS].[FactK12StudentCounts]  WITH CHECK ADD  CONSTRAINT [FK_FactK12StudentCounts_AttendanceId] FOREIGN KEY([AttendanceId])
-	REFERENCES [RDS].[DimAttendances] ([DimAttendanceId])
+		ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_AttendanceId];
+	END
 
 
