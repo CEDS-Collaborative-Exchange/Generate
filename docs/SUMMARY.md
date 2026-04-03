@@ -44,6 +44,7 @@
   * [Optional Installations](developer-guides/installation/optional-installations.md)
   * [Docker (Azure/AWS) Installation Guide](developer-guides/installation/docker-installation-guide.md)
   * [Installation FAQ](developer-guides/installation/installation-faq.md)
+  * [Generate Security Protocols](developer-guides/installation/generate-security-protocols.md)
   * [Upgrade](developer-guides/installation/upgrade/README.md)
     * [Generate Update](developer-guides/installation/upgrade/generate-update.md)
     * [Optional Installations](developer-guides/installation/upgrade/optional-installations.md)
