@@ -55,6 +55,8 @@
      * [Troubleshooting Report Migration Results](developer-guides/migration/troubleshooting/troubleshooting-report-migration-results.md)
   * [Implementation FAQ](developer-guides/migration/implementation-faq.md)
   * [Data Migration](developer-guides/migration/data-migration.md)
+  * [Source to Staging](developer-guides/migration/source-to-staging.md)
+  * [Staging to Fact & Dim](developer-guides/migration/staging-to-fact-and-dim.md)
   * [Fact Type Table](developer-guides/migration/fact-type-table/README.md)
     * [Assessment Fact Type](developer-guides/migration/fact-type-table/assessment-fact-type.md)
     * [Child Count Fact Type](developer-guides/migration/fact-type-table/child-count-fact-type.md)
