@@ -8,6 +8,8 @@
 	--Remove the existing dimension values
 	DELETE FROM	RDS.DimPsEnrollmentStatuses WHERE DimPsEnrollmentStatusId <> -1
 
+	DBCC CHECKIDENT ('RDS.DimPsEnrollmentStatuses', RESEED, 0);
+
 	--Repopulate the dimension with the new table values added
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimPsEnrollmentStatuses WHERE DimPsEnrollmentStatusId = -1) 
 	BEGIN
@@ -123,6 +125,8 @@
 	--Remove the existing dimension values
 	DELETE FROM	RDS.DimAssessmentStatuses WHERE DimAssessmentStatusId <> -1
 
+	DBCC CHECKIDENT ('RDS.DimAssessmentStatuses', RESEED, 0);
+
 	--Repopulate the dimension with the new table values added
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimAssessmentStatuses WHERE DimAssessmentStatusId = -1) BEGIN
 		SET IDENTITY_INSERT RDS.DimAssessmentStatuses ON
@@ -202,6 +206,8 @@
 
 	--Remove the old data so we can repopulate after adding the new fields
 	DELETE FROM [RDS].[DimK12StaffCategories] WHERE DimK12StaffCategoryId <> -1
+
+	DBCC CHECKIDENT ('RDS.DimK12StaffCategories', RESEED, 0);
 
 	--Start the repopulation	
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimK12StaffCategories d WHERE d.DimK12StaffCategoryId = -1) 
@@ -389,6 +395,9 @@
 	-------------------------------------------------------------------------
 	-- Populate DimTeachingCredentialStatuses   --
 	-------------------------------------------------------------------------
+
+	DBCC CHECKIDENT ('RDS.DimTeachingCredentialStatuses', RESEED, 0);
+
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimTeachingCredentialStatuses d WHERE d.DimTeachingCredentialStatusId = -1) 
 	BEGIN
 		SET IDENTITY_INSERT rds.DimTeachingCredentialStatuses ON
@@ -483,6 +492,8 @@
 
 	--Remove the old data so we can repopulate after adding the new fields
 	DELETE FROM [RDS].[DimK12StaffStatuses] WHERE DimK12StaffStatusId <> -1
+
+	DBCC CHECKIDENT ('RDS.DimK12StaffStatuses', RESEED, 0);
 
 	--Start the repopulation	
 	IF NOT EXISTS (
@@ -814,6 +825,8 @@
 	--clear the table
 	delete from RDS.DimMilitaryStatuses WHERE DimMilitaryStatusId <> -1
 
+	DBCC CHECKIDENT ('RDS.DimMilitaryStatuses', RESEED, 0);
+
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimMilitaryStatuses d WHERE d.DimMilitaryStatusId = -1) BEGIN
 		SET IDENTITY_INSERT rds.DimMilitaryStatuses ON
 
@@ -963,6 +976,8 @@
 	
 	--Remove any existing rows before populating
 	DELETE FROM RDS.DimAttendances WHERE DimAttendanceId <> -1
+
+	DBCC CHECKIDENT ('RDS.DimAttendances', RESEED, 0);
 
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimAttendances d WHERE d.DimAttendanceId = -1) BEGIN
 		SET IDENTITY_INSERT RDS.DimAttendances ON
