@@ -27,13 +27,16 @@
 * [Quality Assurance](user-guide/quality-assurance.md)
 * [Support](user-guide/support.md)
 * [FAQ](user-guide/faq.md)
+
 ## Data Integration Toolkit
+
 * [Overview](data-integration-toolkit/overview/README.md)
   * [Step 1: Define Goals for Integration](data-integration-toolkit/overview/step-1-define-goals-for-integration.md)
   * [Step 2: Establish Project Plan and Structure for Data Integration Work](data-integration-toolkit/overview/step-2-establish-project-plan-and-structure-for-data-integration-work.md)
   * [Step 3: Map Source Data Elements to CEDS](data-integration-toolkit/overview/step-3-map-source-data-elements-to-ceds.md)
   * [Step 4: Install Generate, create and perform extract, transform, and load (ETL) procedures](data-integration-toolkit/overview/step-4-install-generate-create-and-perform-extract-transform-and-load-etl-procedures.md)
   * [Step 5: Document IDEA Part B Data Submission Processes and Conduct an After-Action Review](data-integration-toolkit/overview/step-5-document-idea-part-b-data-submission-processes-and-conduct-an-after-action-review.md)
+
 ## Developer Guides
 
 * [Getting Started](developer-guides/getting-started.md)
@@ -52,9 +55,9 @@
     * [Generate File Storage](developer-guides/installation/upgrade/generate-file-storage.md)
 * [Migration](developer-guides/migration/README.md)
   * [Fact to Report](developer-guides/migration/fact-to-report/README.md)
-     * [The New Report Migration Process](developer-guides/migration/fact-to-report/the-new-report-migration-process.md)
+    * [The New Report Migration Process](developer-guides/migration/fact-to-report/the-new-report-migration-process.md)
   * [Troubleshooting](developer-guides/migration/troubleshooting/README.md)
-     * [Troubleshooting Report Migration Results](developer-guides/migration/troubleshooting/troubleshooting-report-migration-results.md)
+    * [Troubleshooting Report Migration Results](developer-guides/migration/troubleshooting/troubleshooting-report-migration-results.md)
   * [Implementation FAQ](developer-guides/migration/implementation-faq.md)
   * [Data Migration](developer-guides/migration/data-migration.md)
   * [Source to Staging](developer-guides/migration/source-to-staging.md)
@@ -65,7 +68,7 @@
     * [Chronic Absenteeism Fact Type](developer-guides/migration/fact-type-table/chronic-absenteeism-fact-type.md)
     * [Directory Fact Type](developer-guides/migration/fact-type-table/directory-fact-type.md)
     * [Discipline Fact Type](developer-guides/migration/fact-type-table/discipline-fact-type.md)
-    * [Exiting Fact Type](developer-guides/migration/fact-type-table/exiting-fact-type.md)   
+    * [Exiting Fact Type](developer-guides/migration/fact-type-table/exiting-fact-type.md)
     * [Graduates/Completers Fact Type](developer-guides/migration/fact-type-table/graduates-completers-fact-type.md)
     * [Graduation Rate Fact Type](developer-guides/migration/fact-type-table/graduation-rate-fact-type.md)
     * [High School Graduates Postsecondary Enrollment Fact Type](developer-guides/migration/fact-type-table/high-school-graduates-postsecondary-enrollment-fact-type.md)
@@ -143,8 +146,8 @@
 * [Release Notes 12.4](release-notes/release-notes-12.4.md)
 * [Archive](release-notes/archive/README.md)
   * [Release Notes 12.3](release-notes/release-notes-12.3.md)
-  * [Release Notes 12.2](release-notes/release-notes-12.2.md)
-  * [Release Notes 12.1](release-notes/release-notes-12.1.md)
+  * [Release Notes 12.2](release-notes/archive/release-notes-12.2.md)
+  * [Release Notes 12.1](release-notes/archive/release-notes-12.1.md)
   * [Release Notes 12.0](release-notes/archive/release-notes-12.0.md)
   * [Release Notes 11.4](release-notes/archive/release-notes-11.4.md)
   * [Release Notes 11.3](release-notes/archive/release-notes-11.3.md)

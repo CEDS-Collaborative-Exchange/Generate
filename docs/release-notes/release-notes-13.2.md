@@ -28,13 +28,13 @@ layout:
 
 Release Overview
 
-Generate version 13.2 focuses on IDEA Reports, Non-IDEA Reports, User Interface, General Changes (CEDS, Migrations, File Sharing, and Documentation).&#x20;
+Generate version 13.2 focuses on IDEA Reports, Non-IDEA Reports, User Interface, General Changes (CEDS, Migrations, File Sharing, and Documentation).
 
 ### Summary of Changes
 
 #### IDEA Reports
 
-* Assessments (088, 143)&#x20;
+* Assessments (088, 143)
   * Added additional filtering to correctly create the zero counts for the TOT category set
 
 #### Non-IDEA Reports
@@ -54,7 +54,7 @@ Generate version 13.2 focuses on IDEA Reports, Non-IDEA Reports, User Interface,
 * **Discipline (086, 163)**
   * Modified the report logic for file 086 to aggregate by Incident Identifier and Student Identifier so no students are miscounted​
   * Corrected an issue for file 163 at the School level that was preventing the School Identifier from displaying in the UI
-* **Title 1 (134, 222)**
+* **Title I (134, 222)**
   * Fixed the logic so the lower ages/grades are correctly aggregated into UNDER3 and 3TO5NOTK​
   * Corrected the new report migration code for file 222 to add zero counts where appropriate
 * **Title III EL SY (045, 116)**
@@ -76,12 +76,12 @@ Generate version 13.2 focuses on IDEA Reports, Non-IDEA Reports, User Interface,
 
 * **CEDS**
   * Implemented CEDS v13 Data Warehouse changes
-* **Migrations**&#x20;
+* **Migrations**
   * Updated all Staging-to-Fact migrations to use DimPeople\_Current
     * Added the DimPeople\_Current table from CEDS V13
     * Reduces the number of student records down to 1 per student
     * Removes dates from the records and simplifies the join logic in Generate
-    * Consistent ID values in Fact tables across Fact Types&#x20;
+    * Consistent ID values in Fact tables across Fact Types
   * Updated all the report specific views used by the new report migration logic to filter on Reported Federally​
   * Cleaned up all the Fact table debug views to use the EdFacts column from the corresponding dimension where available and verified that all the views are consistent in that column use​
   * Cleaned up all the dimension views that were using a cross join against SourceSystemReferenceData to improve performance​
@@ -90,7 +90,7 @@ Generate version 13.2 focuses on IDEA Reports, Non-IDEA Reports, User Interface,
 ### Generate Documentation / File Sharing
 
 * File Sharing
-  * Added a file sharing location (pictured right) in the Generate github for easy access to metadata files, hotfixes, and the standard install packages
+  * Added a file sharing location in the Generate github for easy access to [metadata files, hotfixes, and the standard install packages](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/installation/upgrade/generate-file-storage)
 * Documentation
   * Added a page under Installation to describe Generate security protocols​
   * Added documentation on the new Report migration process that will be incrementally phased in ​
@@ -100,6 +100,13 @@ Generate version 13.2 focuses on IDEA Reports, Non-IDEA Reports, User Interface,
 
 #### Generate 13.2 Release Tickets:
 
-Tickets are available in the CEDS-Collaborative-Exchange.&#x20;
+Tickets are available in the CEDS-Collaborative-Exchange.
 
-[**Click here** ](https://github.com/CEDS-Collaborative-Exchange/Generate/issues?q=is%3Aissue%20state%3Aopen%20label%3Av13.1)**to review the Generate 13.2 Release Tickets**
+[**Click here** ](https://github.com/CEDS-Collaborative-Exchange/Generate/issues?q=is%3Aissue%20state%3Aopen%20label%3Av13.2)**to review the Generate 13.2 Release Tickets**
+
+***
+
+## **Generate Office Hours**
+
+{% embed url="https://www.youtube.com/watch?v=wI0VEcunIOg" %}
+
