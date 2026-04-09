@@ -2675,13 +2675,14 @@ namespace generate.infrastructure.Services
                     if (euLevel.IsDatacollEnabledSEA == 1)
                     {
                         file_description = "SEA " + euLevel.FileType;
+                        file_description = file_description.Length > 50 ? file_description.Substring(0, 49) : file_description;
 
                         _fs = new FileSubmission();
                         //_fs.OrganizationLevel = sea;
                         _fs.OrganizationLevel = (fs == "190" ? cao : fs == "196" ? cmo : sea);
                         _fs.SubmissionYear = year.Year;
                         _fs.GenerateReportId = genid;
-                        _fs.FileSubmissionDescription = file_description.Substring(0, file_description.Length - 1);
+                        _fs.FileSubmissionDescription = file_description;
                         _appDbContext.FileSubmissions.Add(_fs);
                         _appDbContext.SaveChanges();
                         fs_seaid = _fs.FileSubmissionId;
@@ -2754,12 +2755,13 @@ namespace generate.infrastructure.Services
                     if (euLevel.IsDatacollEnabledLEA == 1)
                     {
                         file_description = "LEA " + euLevel.FileType;
+                        file_description = file_description.Length > 50 ? file_description.Substring(0, 49) : file_description;
 
                         _fs = new FileSubmission();
                         _fs.OrganizationLevel = lea;
                         _fs.SubmissionYear = year.Year.ToString();
                         _fs.GenerateReportId = genid;
-                        _fs.FileSubmissionDescription = file_description.Substring(0, file_description.Length - 1);
+                        _fs.FileSubmissionDescription = file_description;
                         _appDbContext.FileSubmissions.Add(_fs);
                         _appDbContext.SaveChanges();
                         fs_leaid = _fs.FileSubmissionId;
@@ -2835,12 +2837,13 @@ namespace generate.infrastructure.Services
                     if (euLevel.IsDatacollEnabledSCH == 1)
                     {
                         file_description = "SCHOOL " + euLevel.FileType;
+                        file_description = file_description.Length > 50 ? file_description.Substring(0, 49) : file_description;
 
                         _fs = new FileSubmission();
                         _fs.OrganizationLevel = sch;
                         _fs.SubmissionYear = year.Year.ToString();
                         _fs.GenerateReportId = genid;
-                        _fs.FileSubmissionDescription = file_description.Substring(0, file_description.Length - 1);
+                        _fs.FileSubmissionDescription = file_description;
                         _appDbContext.FileSubmissions.Add(_fs);
                         _appDbContext.SaveChanges();
                         fs_schid = _fs.FileSubmissionId;

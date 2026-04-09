@@ -1,13 +1,16 @@
 VersionUpdates\\13.2,Restore 13.1.sql,0
 VersionUpdates\\13.2,App.Schema.sql,0
+VersionUpdates\\13.2,FactTableBackup.sql,0
 VersionUpdates\\13.2,Staging.TableChanges.sql,0
 VersionUpdates\\13.2,RDS.RemovePropertiesAndConstraints.sql,0
 VersionUpdates\\13.2,RDS.CEDSTableChanges.sql,0
+VersionUpdates\\13.2,RDS.CEDSTableChanges_2.sql,0
 VersionUpdates\\13.2,RDS.AddExtendedProperties.sql,0
 VersionUpdates\\13.2,RDS.TableChanges.sql,0
 VersionUpdates\\13.2,App.TableChanges.sql,0
 VersionUpdates\\13.2,App.Metadata.sql,0
 VersionUpdates\\13.2,JunkTablePopulation.sql,0
+VersionUpdates\\13.2,UpdateFactTableAfterUpgrade.sql,0
 VersionUpdates\\13.2,dbo.TableChanges.sql,0
 VersionUpdates\\13.2\\Views\\Drop,debug.vwDropout_StagingTables.View.sql,0
 VersionUpdates\\13.2\\Views\\Create,debug.vwDropout_StagingTables.View.sql,0
