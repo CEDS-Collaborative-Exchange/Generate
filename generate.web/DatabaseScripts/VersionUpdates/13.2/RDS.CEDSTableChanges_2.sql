@@ -278,21 +278,16 @@
 	IF NOT EXISTS (SELECT 1 FROM RDS.DimPsEnrollmentStatuses WHERE DimPsEnrollmentStatusId = -1) BEGIN
 		SET IDENTITY_INSERT RDS.DimPsEnrollmentStatuses ON
 
-		INSERT INTO [RDS].[DimPsEnrollmentStatuses]
-           (DimPsEnrollmentStatusId
-           ,[PostsecondaryExitOrWithdrawalTypeCode]
-           ,[PostsecondaryExitOrWithdrawalTypeDescription]
-           ,[PostsecondaryEnrollmentStatusCode]
-           ,[PostsecondaryEnrollmentStatusDescription]
-           ,[PostSecondaryEnrollmentStatusEdFactsCode]
-           ,[PostSecondaryEnrollmentActionCode]
-           ,[PostSecondaryEnrollmentActionDescription]
-           ,[PostSecondaryEnrollmentActionEdFactsCode])
+		INSERT INTO [RDS].DimPsEnrollmentStatuses (
+			[DimPsEnrollmentStatusId]
+		   ,[PostsecondaryExitOrWithdrawalTypeCode]
+		   ,[PostsecondaryExitOrWithdrawalTypeDescription]
+		   ,[PostsecondaryEnrollmentStatusCode]
+		   ,[PostsecondaryEnrollmentStatusDescription]
+		   ,[PostSecondaryEnrollmentStatusEdFactsCode]
+		)
 		VALUES (
 			-1
-			, 'MISSING'
-			, 'MISSING'
-			, 'MISSING'
 			, 'MISSING'
 			, 'MISSING'
 			, 'MISSING'
@@ -347,10 +342,8 @@
 		   ,[MigrantEducationProgramStaffCategoryDescription]
 		   ,[ProfessionalEducationalJobClassificationCode]
 		   ,[ProfessionalEducationalJobClassificationDescription]
-		   ,[TitleIIILanguageInstructionIndicatorCode]
- 		   ,[TitleIIILanguageInstructionIndicatorDescription]
 		   )
-		   VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
+		   VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
 
 			SET IDENTITY_INSERT RDS.DimK12StaffCategories OFF
 	END
