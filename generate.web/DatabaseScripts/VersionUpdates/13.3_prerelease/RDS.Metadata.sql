@@ -1,0 +1,2 @@
+Update rds.DimAssessmentPerformanceLevels set AssessmentPerformanceLevelScoreMetric = '', AssessmentPerformanceLevelLowerCutScore = '', AssessmentPerformanceLevelUpperCutScore = ''
+Where AssessmentPerformanceLevelScoreMetric IS NULL

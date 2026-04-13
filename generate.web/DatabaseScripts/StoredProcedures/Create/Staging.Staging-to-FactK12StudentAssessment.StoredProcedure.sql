@@ -507,10 +507,14 @@ BEGIN
 				AND ISNULL(sar.AssessmentFamilyTitle, '') 							= ISNULL(rdaa.AssessmentAdministrationAssessmentFamily, '')
 				AND ISNULL(sar.AssessmentAdministrationStartDate, '1900-01-01') 	= ISNULL(rdaa.AssessmentAdministrationStartDate, '1900-01-01')
 				AND ISNULL(sar.AssessmentAdministrationFinishDate, '1900-01-01') 	= ISNULL(rdaa.AssessmentAdministrationFinishDate, '1900-01-01')
+			LEFT JOIN Staging.SourceSystemReferenceData ssrd
+				ON ssrd.tablename = 'AssessmentPerformanceLevel_Identifier'
+				AND ssrd.InputCode = ISNULL(sar.AssessmentPerformanceLevelIdentifier, '')
+				AND ssrd.SchoolYear = @SchoolYear
 		--assessment performance levels (rds)
 			LEFT JOIN RDS.DimAssessmentPerformanceLevels rdapl
-				ON ISNULL(sar.AssessmentPerformanceLevelIdentifier, '') 	= ISNULL(rdapl.AssessmentPerformanceLevelIdentifier, '')
-				AND ISNULL(sar.AssessmentPerformanceLevelLabel, '') 		= ISNULL(rdapl.AssessmentPerformanceLevelLabel, '')
+				ON ssrd.OutputCode 	= ISNULL(rdapl.AssessmentPerformanceLevelIdentifier, '')
+				AND ISNULL(sar.AssessmentPerformanceLevelLabel, '')  = ISNULL(rdapl.AssessmentPerformanceLevelLabel, '')
 		--leas (rds)	
 			LEFT JOIN #tempLeas rdl -- RDS.DimLeas rdl
 				ON ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(rdl.LeaIdentifierSea, '')

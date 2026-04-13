@@ -1,0 +1,8 @@
+VersionUpdates\\13.3_prerelease,Restore 13.2.sql,0
+VersionUpdates\\13.3_prerelease,App.Metadata.sql,0
+VersionUpdates\\13.3_prerelease,RDS.Metadata.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-DimAssessmentPerformanceLevels.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-DimAssessmentPerformanceLevels.StoredProcedure.sql,0
+StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql,0
+StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql,0
+VersionUpdates\\13.3_prerelease,UpdateDbVersion.sql,0
