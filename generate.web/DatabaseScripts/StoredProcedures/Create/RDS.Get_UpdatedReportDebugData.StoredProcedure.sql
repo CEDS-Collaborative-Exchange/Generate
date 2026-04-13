@@ -9,11 +9,11 @@ BEGIN
 
 	SET NOCOUNT ON;
 
-	declare @debugView varchar(200)
-	declare @sql varchar(500)
-	declare @WHERE varchar(200) = ''
-	declare @selectSQL varchar(200) = ''
-	declare @groupBySQL varchar(200) = ''
+	DECLARE @debugView VARCHAR(200);
+	DECLARE @sql NVARCHAR(MAX) = '';
+	DECLARE @WHERE NVARCHAR(MAX) = '';
+	DECLARE @selectSQL NVARCHAR(MAX) = '';
+	DECLARE @groupBySQL NVARCHAR(MAX) = '';
 	declare @tableTypeAbbrv as varchar(50)
 
 	DECLARE @QueryParam TABLE
@@ -34,79 +34,88 @@ BEGIN
 
 	IF @reportLevel = 'sea'
 	BEGIN
-		SET @selectSQL = 'select SeaOrganizationIdentifierSea, K12StudentStudentIdentifierState, count(K12StudentStudentIdentifierState) as StudentCount'
-		SET @groupBySQL = 'Group by SeaOrganizationIdentifierSea, K12StudentStudentIdentifierState'
+		SET @selectSQL = 'SELECT SeaOrganizationIdentifierSea, K12StudentStudentIdentifierState, COUNT(K12StudentStudentIdentifierState) AS StudentCount';
+		SET @groupBySQL = ' GROUP BY SeaOrganizationIdentifierSea, K12StudentStudentIdentifierState';
 	END
 	ELSE IF @reportLevel = 'lea'
 	BEGIN
-		SET @selectSQL = 'select LeaIdentifierSea, K12StudentStudentIdentifierState, count(K12StudentStudentIdentifierState) as StudentCount'
-		SET @groupBySQL = 'Group by LeaIdentifierSea, K12StudentStudentIdentifierState'
+		SET @selectSQL = 'SELECT K12StudentStudentIdentifierState, COUNT(K12StudentStudentIdentifierState) AS StudentCount';
+		SET @groupBySQL = ' GROUP BY K12StudentStudentIdentifierState';
 	END
 	ELSE IF @reportLevel = 'sch'
 	BEGIN
-		SET @selectSQL = 'select SchoolIdentifierSea, K12StudentStudentIdentifierState, count(K12StudentStudentIdentifierState) as StudentCount'
-		SET @groupBySQL = 'Group by SchoolIdentifierSea, K12StudentStudentIdentifierState'
+		SET @selectSQL = 'SELECT SchoolIdentifierSea, K12StudentStudentIdentifierState, COUNT(K12StudentStudentIdentifierState) AS StudentCount';
+		SET @groupBySQL = ' GROUP BY SchoolIdentifierSea, K12StudentStudentIdentifierState';
 	END
 
 	
-	SET @WHERE += ' WHERE SchoolYear = ' + @reportYear
+	SET @WHERE = ' WHERE SchoolYear = ''' + @reportYear + '''';
 
 
-	SELECT * FROM @QueryParam
-
+	-- Cursor over columns
 	DECLARE tblcur CURSOR FOR
 	SELECT COLUMN_NAME
 	FROM INFORMATION_SCHEMA.COLUMNS
-	WHERE TABLE_NAME = @debugView
+	WHERE TABLE_NAME = @debugView;
 
-	DECLARE @ColumnName varchar(100), @SortedColumnName varchar(100)
+	DECLARE @ColumnName VARCHAR(100);
+	DECLARE @ParamName VARCHAR(100);
+	DECLARE @ParamValue VARCHAR(100);
 
 	OPEN tblcur;
-
 	FETCH NEXT FROM tblcur INTO @ColumnName;
-
-	SET @SortedColumnName = @ColumnName
-
-	--SET @sql = 'SELECT * FROM ' + '[debug].[' + @debugTable + ']'
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		DECLARE @ParamName varchar(100), @ParamValue varchar(100)
-		SELECT @ParamName = Name,  @ParamValue = value FROM @QueryParam WHERE Name = @ColumnName
+		-- Map column name if needed
 
-		SET @selectSQL += ',' + @ParamName
-		SET @groupBySQL += ',' + @ParamName
+		SET @ParamName = ''
+		SET @ParamValue = ''
+	
+		IF @ColumnName = 'LeaIdentifierSea' AND @reportLevel = 'lea'
+			SET @ColumnName = 'organizationIdentifierSea';
 
-		IF ISNULL(@WHERE, '') <> ''
-			SET @WHERE += ' AND '
+		SELECT 
+			@ParamName = Name, 
+			@ParamValue = Value
+		FROM @QueryParam
+		WHERE Name = @ColumnName;
+
+		--select @ColumnName
+		-- SELECT @ParamName, @ParamValue
+
+		-- Reverse mapping
+		IF @ParamName = 'organizationIdentifierSea' AND @reportLevel = 'lea'
+			SET @ParamName = 'LeaIdentifierSea';
 
 		IF ISNULL(@ParamName, '') <> ''
-			SET @WHERE += @ParamName + ' = ''' + @ParamValue + ''''
-		
+		BEGIN
+			SET @selectSQL += ', ' + @ParamName;
+			SET @groupBySQL += ', ' + @ParamName;
+			SET @WHERE += ' AND ' + @ParamName + ' = ''' + @ParamValue + '''';
+		END
+
 		FETCH NEXT FROM tblcur INTO @ColumnName;
 	END
 
 	CLOSE tblcur;
 	DEALLOCATE tblcur;
 
-	--IF @WHERE <> '' OR @reportLevel <> 'sea'
-	--BEGIN
-	--	SET @sql = @sql+ ' WHERE '
-	--END
+	-- Build final SQL
+	SET @sql = @selectSQL 
+			 + ' FROM rds.' + @debugView
+			 + @WHERE 
+			 + @groupBySQL;
 
-	SET @sql = @selectSQL + ' FROM rds.' + @debugView
+	-- ✅ FULL DEBUG OUTPUT (NO TRUNCATION)
+	SELECT 
+		@selectSQL AS SelectSQL,
+		@WHERE AS WhereClause,
+		@groupBySQL AS GroupBySQL,
+		@sql AS FinalSQL;
 
-	DECLARE @OrderBy varchar(200)
-	SELECT @OrderBy = ' ORDER BY ' + @SortedColumnName
+	-- Execute
+	EXEC(@sql);
 
-	----Select @sql + @WHERE
-	SET @sql = @sql + @WHERE + @groupBySQL + @OrderBy
-
-	--declare @ParmDefinition as nvarchar(max)
-	--SET @ParmDefinition = N'@reportCode varchar(100), @reportYear varchar(100), @reportLevel varchar(100), @categorySetCode varchar(100), @isOnlineReport bit';  
-	--EXECUTE sp_executesql @sql, @ParmDefinition, @reportCode = @reportCode, @reportYear = @reportYear, @reportLevel = @reportLevel, @categorySetCode = @categorySetCode, @isOnlineReport=@isOnlineReport;
-	--EXECUTE sp_executesql @sql
-	print @sql
-	EXEC(@sql)
 	SET NOCOUNT OFF;
 END
