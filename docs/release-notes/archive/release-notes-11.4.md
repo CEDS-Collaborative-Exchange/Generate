@@ -43,8 +43,7 @@ Expanded Search Functionality:
 #### Performance Improvements
 
 Enhanced Report Display Performance: Optimized the performance of displaying results for all reports in the UI, resulting in faster loading times and smoother navigation within the application.\
-Improved Organization Level Report Performance: Enhanced the performance when switching between Organization Level reports, ensuring swift and efficient access to relevant data.\
-
+Improved Organization Level Report Performance: Enhanced the performance when switching between Organization Level reports, ensuring swift and efficient access to relevant data.<br>
 
 ### Generate Enhancements
 

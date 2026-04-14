@@ -83,8 +83,8 @@ BEGIN
 		, sksa.LeaIdentifierSea
 		, sksa.SchoolIdentifierSea
 		, FullTimeEquivalency
-		, SpecialEducationStaffCategory
-		, CASE SpecialEducationStaffCategory
+		, SpecialEducationSupportServicesCategory
+		, CASE SpecialEducationSupportServicesCategory
 			WHEN 'PSYCH'			THEN 'PSYCH'
 			WHEN 'SOCIALWORK' 		THEN 'SOCIALWORK' 
 			WHEN 'OCCTHERAP'		THEN 'OCCTHERAP'

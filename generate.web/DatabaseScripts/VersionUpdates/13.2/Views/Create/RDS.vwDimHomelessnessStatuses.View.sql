@@ -1,0 +1,36 @@
+CREATE VIEW RDS.vwDimHomelessnessStatuses 
+AS
+	SELECT
+		  DimHomelessnessStatusId
+		, rsy.SchoolYear
+		, rdhs.HomelessnessStatusCode
+		, CASE rdhs.HomelessnessStatusCode 
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
+			ELSE -1
+		  END AS HomelessnessStatusMap
+		, rdhs.HomelessPrimaryNighttimeResidenceCode
+		, sssrd.InputCode AS HomelessPrimaryNighttimeResidenceMap
+		, rdhs.HomelessServicedIndicatorCode
+		, CASE rdhs.HomelessServicedIndicatorCode 
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
+			ELSE -1
+		  END AS HomelessServicedIndicatorMap
+		, rdhs.HomelessUnaccompaniedYouthStatusCode
+		, CASE rdhs.HomelessUnaccompaniedYouthStatusCode 
+			WHEN 'Yes' THEN 1 
+			WHEN 'No' THEN 0
+			ELSE -1
+		  END AS HomelessUnaccompaniedYouthStatusMap
+	FROM rds.DimHomelessnessStatuses rdhs
+	CROSS JOIN (select sy.SchoolYear
+    			from rds.DimSchoolYearDataMigrationTypes dm
+	    			inner join rds.dimschoolyears sy
+			    		on dm.dimschoolyearid = sy.dimschoolyearid
+			    where IsSelected = 1
+			    and dm.DataMigrationTypeId = 3
+			) AS rsy
+	LEFT JOIN Staging.SourceSystemReferenceData sssrd
+		ON rdhs.HomelessPrimaryNighttimeResidenceCode = sssrd.OutputCode
+		AND sssrd.TableName = 'RefHomelessNighttimeResidence'

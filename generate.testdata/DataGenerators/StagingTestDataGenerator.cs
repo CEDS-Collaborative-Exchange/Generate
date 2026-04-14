@@ -664,7 +664,7 @@ namespace generate.testdata.DataGenerators
                 string refAssessmentType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefAssessmentTypeDistribution);
 
                 int minimumPerformanceLevel = 1;
-                int maximumPerformanceLevel = 5;
+                int maximumPerformanceLevel = 6;
 
                 string refAssessmentTypeAdministeredCode = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefAssessmentTypeAdministeredDistribution);
                 string refAssessmentTypeAdministeredToEnglishLearnersCode = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefAssessmentTypeAdministeredToEnglishLearnersDistribution);
@@ -902,11 +902,12 @@ namespace generate.testdata.DataGenerators
                 staff.EdFactsTeacherInexperiencedStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefInexperiencedStatusDistribution);
                 staff.EDFactsTeacherOutOfFieldStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefOutOfFieldStatusDistribution);
                 staff.EdFactsCertificationStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefEdFactsCertificationStatusDistribution);
+                staff.TitleIIILanguageInstructionIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.TitleIIILanguageInstructionIndicatorDistribution);
                 staff.RecordStartDateTime = _testDataHelper.GetSessionStartDate(rnd, schoolYear);
                 staff.RecordEndDateTime = _testDataHelper.GetSessionEndDate(rnd, schoolYear);
                 staff.SchoolYear = schoolYear.ToString();
 
-                staff.SpecialEducationStaffCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSpecialEducationStaffCategoryDistribution);
+                staff.SpecialEducationSupportServicesCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSpecialEducationSupportServicesCategoryDistribution);
                 staff.TitleIProgramStaffCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIProgramStaffCategoryDistribution);
 
 

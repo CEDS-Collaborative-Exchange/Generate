@@ -174,17 +174,13 @@ namespace generate.infrastructure.Services
                     {
                         DynamicClassObject.AddProperty(column.ColumnName, fileRecordNumber.ToString(), fileDataRow);
                     }
-                    else if (column.ColumnName == "StateLEAIDNumber")
+                    else if (column.ColumnName == "StateLEAIDNumber" || column.ColumnName == "StateSchoolIDNumber")
                     {
-                        field = SubmissionFileHelper.GetLeaIdentifier(factTableName, reportLevel);
+                        field = SubmissionFileHelper.GetLeaIdentifier(factTableName, reportLevel, column.ColumnName);
                     }
-                    else if (column.ColumnName == "NCESLEAIDNumber")
+                    else if (column.ColumnName == "NCESLEAIDNumber" || column.ColumnName == "NCESSchoolIDNumber")
                     {
-                        field = SubmissionFileHelper.GetNCESIdentifier(factTableName, reportLevel);
-                    }
-                    else if (column.ColumnName == "StateSchoolIDNumber")
-                    {
-                        field = SubmissionFileHelper.GetStateSchoolIdentifier(factTableName);
+                        field = SubmissionFileHelper.GetNCESIdentifier(factTableName, reportLevel, column.ColumnName);
                     }
                     else if (column.ColumnName == "Amount")
                     {

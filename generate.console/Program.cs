@@ -29,6 +29,12 @@ namespace generate.console
     {
         private static IServiceProvider serviceProvider;
         private static IConfigurationRoot Configuration;
+        private static readonly string[] RequiredDataConnectionNames = [
+            "AppDbContextConnection",
+            "StagingDbContextConnection",
+            "ODSDbContextConnection",
+            "RDSDbContextConnection"
+        ];
 
         protected Program()
         {
@@ -37,19 +43,24 @@ namespace generate.console
 
         private static void ConfigureServices(IServiceCollection services)
         {
+            var appDbContextConnection = GetRequiredDataConnection("AppDbContextConnection");
+            var stagingDbContextConnection = GetRequiredDataConnection("StagingDbContextConnection");
+            var odsDbContextConnection = GetRequiredDataConnection("ODSDbContextConnection");
+            var rdsDbContextConnection = GetRequiredDataConnection("RDSDbContextConnection");
+
             services.AddOptions();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<DataSettings>(Configuration.GetSection("Data"));
 
             services
                .AddDbContext<AppDbContext>(options =>
-                    options.UseSqlServer(Configuration["Data:AppDbContextConnection"]))
+                    options.UseSqlServer(appDbContextConnection))
                .AddDbContext<StagingDbContext>(options =>
-                    options.UseSqlServer(Configuration["Data:StagingDbContextConnection"]))
+                    options.UseSqlServer(stagingDbContextConnection))
                .AddDbContext<IDSDbContext>(options =>
-                    options.UseSqlServer(Configuration["Data:ODSDbContextConnection"]))
+                    options.UseSqlServer(odsDbContextConnection))
                .AddDbContext<RDSDbContext>(options =>
-                    options.UseSqlServer(Configuration["Data:RDSDbContextConnection"]));
+                    options.UseSqlServer(rdsDbContextConnection));
 
             services.AddLogging();
 
@@ -59,35 +70,21 @@ namespace generate.console
 
         public static void Main(string[] args)
         {
-
             var appDir = PlatformServices.Default.Application.ApplicationBasePath;
+            var environment = ResolveEnvironment();
+            var configBasePath = ResolveConfigBasePath(appDir);
 
             var builder = new ConfigurationBuilder()
-                .AddCommandLine(args)
-                .AddEnvironmentVariables(e => e.Prefix = "Data")
-                .AddUserSecrets(Assembly.GetExecutingAssembly(), true);
-                
-
-            string environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
-
-
-            if (environment == "")
-            {
-                environment = "development";
-            }
-
-            environment = environment.ToLower();
-
-            if (environment == "development")
-            {
-                appDir = Directory.GetCurrentDirectory();
-            }
-
-            builder.SetBasePath(appDir + "/Config/");
-            builder.AddJsonFile("appsettings.json", optional: true)
-                .AddJsonFile($"appsettings.{environment.ToLower()}.json", optional: true);
+                .SetBasePath(configBasePath)
+                .AddJsonFile("appsettings.json", optional: true)
+                .AddJsonFile($"appsettings.{environment}.json", optional: true)
+                .AddJsonFile($"appsettings.{environment.ToLowerInvariant()}.json", optional: true)
+                .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
+                .AddEnvironmentVariables()
+                .AddCommandLine(args);
 
             Configuration = builder.Build();
+            ValidateRequiredDataConnections();
                         
             var services = new ServiceCollection();
             ConfigureServices(services);
@@ -111,7 +108,7 @@ namespace generate.console
             }
 
 
-            RunTask(commandLineArguments, environment);
+            RunTask(commandLineArguments, environment.ToLowerInvariant());
 
         }
 
@@ -343,13 +340,82 @@ namespace generate.console
             string rootDir = di.Parent.FullName;
             string updatePath = rootDir + "\\generate.web";
 
-            if (environment == "test" || environment == "stage")
+            if (string.Equals(environment, "test", StringComparison.OrdinalIgnoreCase) || string.Equals(environment, "stage", StringComparison.OrdinalIgnoreCase))
             {
                 updatePath = "D:\\apps\\generate.web." + environment;
             }
 
             Console.WriteLine("Update Path = " + updatePath);
             dbUpdaterService.Update(true, updatePath);
+        }
+
+        private static string ResolveEnvironment()
+        {
+            var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
+
+            if (string.IsNullOrWhiteSpace(environment))
+            {
+                environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            }
+
+            if (string.IsNullOrWhiteSpace(environment))
+            {
+                environment = "Production";
+            }
+
+            return environment.Trim();
+        }
+
+        private static string ResolveConfigBasePath(string appDir)
+        {
+            var currentDirectoryConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "Config");
+            if (Directory.Exists(currentDirectoryConfigPath))
+            {
+                return currentDirectoryConfigPath;
+            }
+
+            var appDirectoryConfigPath = Path.Combine(appDir, "Config");
+            if (Directory.Exists(appDirectoryConfigPath))
+            {
+                return appDirectoryConfigPath;
+            }
+
+            return appDirectoryConfigPath;
+        }
+
+        private static void ValidateRequiredDataConnections()
+        {
+            var missingConnectionNames = RequiredDataConnectionNames
+                .Where(connectionName => string.IsNullOrWhiteSpace(GetDataConnection(connectionName)))
+                .ToList();
+
+            if (missingConnectionNames.Count == 0)
+            {
+                return;
+            }
+
+            var missingKeys = string.Join(", ", missingConnectionNames.Select(connectionName => $"Data:{connectionName}"));
+            var envKeys = string.Join(", ", missingConnectionNames.Select(connectionName => $"Data__{connectionName}"));
+
+            throw new InvalidOperationException(
+                $"Missing required database connection settings: {missingKeys}. Provide these in Config/appsettings*.json under Data or as environment variables: {envKeys}.");
+        }
+
+        private static string GetRequiredDataConnection(string connectionName)
+        {
+            var connectionValue = GetDataConnection(connectionName);
+
+            if (!string.IsNullOrWhiteSpace(connectionValue))
+            {
+                return connectionValue;
+            }
+
+            throw new InvalidOperationException($"Missing required database connection setting: Data:{connectionName}.");
+        }
+
+        private static string GetDataConnection(string connectionName)
+        {
+            return Configuration[$"Data:{connectionName}"] ?? Configuration[connectionName];
         }
 
 

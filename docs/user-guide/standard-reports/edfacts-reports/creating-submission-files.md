@@ -1,13 +1,12 @@
 # Creating Submission Files
 
-Generate creates the submission files for E&#x44;_&#x46;acts_ reports in the file types accepted by the E&#x44;_&#x46;acts_ Submission System (ESS). Only file types accepted by ESS will appear for selection.
+Generate creates the submission files for EDFacts reports in the file types accepted by EDPass. Only file types accepted by EDPass will appear for selection.
 
 Currently, accepted file types are:
 
 * Tab Delimited (.tab)
 * Comma Delimited (.csv)
 * Fixed (.txt)
-* Beginning in 2016-17, ESS stopped accepting the .XML file type. Beginning with 2016-17 forward, Generate does not display that file type as an option. For years prior to 2016-17, the .XML file type does display as an option.
 
 Use the dropdown list under CREATE SUBMISSION FILE to see the available formats, as shown below.
 
