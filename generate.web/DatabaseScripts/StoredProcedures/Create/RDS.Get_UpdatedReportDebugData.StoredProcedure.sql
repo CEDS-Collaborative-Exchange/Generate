@@ -34,8 +34,8 @@ BEGIN
 
 	IF @reportLevel = 'sea'
 	BEGIN
-		SET @selectSQL = 'SELECT SeaOrganizationIdentifierSea, K12StudentStudentIdentifierState, COUNT(K12StudentStudentIdentifierState) AS StudentCount';
-		SET @groupBySQL = ' GROUP BY SeaOrganizationIdentifierSea, K12StudentStudentIdentifierState';
+		SET @selectSQL = 'SELECT K12StudentStudentIdentifierState, COUNT(K12StudentStudentIdentifierState) AS StudentCount';
+		SET @groupBySQL = ' GROUP BY K12StudentStudentIdentifierState';
 	END
 	ELSE IF @reportLevel = 'lea'
 	BEGIN
@@ -44,8 +44,8 @@ BEGIN
 	END
 	ELSE IF @reportLevel = 'sch'
 	BEGIN
-		SET @selectSQL = 'SELECT SchoolIdentifierSea, K12StudentStudentIdentifierState, COUNT(K12StudentStudentIdentifierState) AS StudentCount';
-		SET @groupBySQL = ' GROUP BY SchoolIdentifierSea, K12StudentStudentIdentifierState';
+		SET @selectSQL = 'SELECT K12StudentStudentIdentifierState, COUNT(K12StudentStudentIdentifierState) AS StudentCount';
+		SET @groupBySQL = ' GROUP BY K12StudentStudentIdentifierState';
 	END
 
 	
@@ -72,7 +72,7 @@ BEGIN
 		SET @ParamName = ''
 		SET @ParamValue = ''
 	
-		IF @ColumnName = 'LeaIdentifierSea' AND @reportLevel = 'lea'
+		IF ((@ColumnName = 'LeaIdentifierSea') OR (@ColumnName = 'SeaOrganizationIdentifierSea'))
 			SET @ColumnName = 'organizationIdentifierSea';
 
 		SELECT 
@@ -87,6 +87,8 @@ BEGIN
 		-- Reverse mapping
 		IF @ParamName = 'organizationIdentifierSea' AND @reportLevel = 'lea'
 			SET @ParamName = 'LeaIdentifierSea';
+		ELSE IF @ParamName = 'organizationIdentifierSea' AND @reportLevel = 'sea'
+			SET @ParamName = 'SeaOrganizationIdentifierSea';
 
 		IF ISNULL(@ParamName, '') <> ''
 		BEGIN
@@ -108,11 +110,11 @@ BEGIN
 			 + @groupBySQL;
 
 	-- ✅ FULL DEBUG OUTPUT (NO TRUNCATION)
-	SELECT 
-		@selectSQL AS SelectSQL,
-		@WHERE AS WhereClause,
-		@groupBySQL AS GroupBySQL,
-		@sql AS FinalSQL;
+	--SELECT 
+	--	@selectSQL AS SelectSQL,
+	--	@WHERE AS WhereClause,
+	--	@groupBySQL AS GroupBySQL,
+	--	@sql AS FinalSQL;
 
 	-- Execute
 	EXEC(@sql);
