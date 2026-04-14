@@ -6,4 +6,6 @@ StoredProcedures\\Create,Staging.Staging-to-DimAssessmentPerformanceLevels.Store
 StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql,0
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql,0
 TestCases,App.FS070_TestCase.StoredProcedure.sql,0
+TestCases,App.FS099_TestCase.StoredProcedure.sql,0
+TestCases,App.FS112_TestCase.StoredProcedure.sql,0
 VersionUpdates\\13.3_prerelease,UpdateDbVersion.sql,0
