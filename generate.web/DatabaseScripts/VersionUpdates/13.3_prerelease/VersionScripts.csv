@@ -7,4 +7,5 @@ StoredProcedures\\Drop,Staging.Staging-to-FactK12StudentAssessment.StoredProcedu
 StoredProcedures\\Create,Staging.Staging-to-FactK12StudentAssessment.StoredProcedure.sql,0
 StoredProcedures\\Drop,RDS.Get_UpdatedReportDebugData.StoredProcedure.sql,0
 StoredProcedures\\Create,RDS.Get_UpdatedReportDebugData.StoredProcedure.sql,0
+TestCases,App.FS070_TestCase.StoredProcedure.sql,0
 VersionUpdates\\13.3_prerelease,UpdateDbVersion.sql,0
