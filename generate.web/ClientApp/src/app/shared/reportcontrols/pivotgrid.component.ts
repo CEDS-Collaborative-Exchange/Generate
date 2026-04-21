@@ -336,7 +336,7 @@ export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {
 
     showCategorySetLabel() {
         let isShow: boolean = true;
-        if (this.reportParameters.reportLevel === 'sch' && this.reportParameters.reportCode === 'c059') {
+        if (this.reportParameters.reportLevel === 'sch' && this.reportParameters.reportCode === '059') {
             isShow = false;
         }
         return isShow;
