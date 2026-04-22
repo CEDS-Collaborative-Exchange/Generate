@@ -40,7 +40,8 @@ namespace generate.infrastructure.Repositories.RDS
                 {
                     connection.Open();
 
-                    using (SqlCommand command = new SqlCommand("rds.Get_ReportDebugData", connection))
+                    string storedProc = reportCode == "222" ? "rds.Get_UpdatedReportDebugData" : "rds.Get_ReportDebugData";
+                    using (SqlCommand command = new SqlCommand(storedProc, connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.CommandTimeout = 11000;
