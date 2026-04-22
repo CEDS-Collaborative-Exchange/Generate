@@ -16,6 +16,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
 using System.Text;
 using generate.infrastructure.Helpers;
 using generate.infrastructure.Contexts;
@@ -680,7 +681,7 @@ namespace generate.testdata.DataGenerators
                         int randomDuration = _testDataHelper.GetRandomInt(rnd, new List<int>() { 1, 2, 3, 4 });
 
                         // Current Year
-                        var assessmentStartDate = DateTime.Parse("05/15/" + SchoolYear.ToString());
+                        var assessmentStartDate = DateTime.Parse("05/15/" + SchoolYear.ToString(), CultureInfo.InvariantCulture);
 
                         var assessment = new core.Models.Staging.Assessment()
                         {
@@ -890,10 +891,10 @@ namespace generate.testdata.DataGenerators
                 //staff.Sex = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.SexDistribution);
                 //staff.LastName = _testDataHelper.GetRandomString(rnd, this.LastNames);
 
-                staff.AssignmentStartDate = _testDataHelper.GetRandomDateInRange(rnd, DateTime.Parse("7/1/" + (SchoolYear - 11).ToString()), DateTime.Parse("4/30/" + SchoolYear.ToString()));
-                staff.AssignmentEndDate = _testDataHelper.GetRandomDateInRange(rnd, DateTime.Parse("6/30/" + (SchoolYear + 1).ToString()), DateTime.Parse("6/30/" + SchoolYear.ToString()));
-                staff.CredentialIssuanceDate = _testDataHelper.GetRandomDateInRange(rnd, DateTime.Parse("7/1/" + (SchoolYear - 5).ToString()), DateTime.Parse("4/30/" + (SchoolYear - 2).ToString()));
-                staff.CredentialExpirationDate = _testDataHelper.GetRandomDateInRange(rnd, DateTime.Parse("6/30/" + (SchoolYear + 1).ToString()), DateTime.Parse("4/30/" + (SchoolYear + 5).ToString()));
+                staff.AssignmentStartDate = _testDataHelper.GetRandomDateInRange(rnd, DateTime.Parse("7/1/" + (SchoolYear - 11).ToString(), CultureInfo.InvariantCulture), DateTime.Parse("4/30/" + SchoolYear.ToString(), CultureInfo.InvariantCulture));
+                staff.AssignmentEndDate = _testDataHelper.GetRandomDateInRange(rnd, DateTime.Parse("6/30/" + (SchoolYear + 1).ToString(), CultureInfo.InvariantCulture), DateTime.Parse("6/30/" + SchoolYear.ToString(), CultureInfo.InvariantCulture));
+                staff.CredentialIssuanceDate = _testDataHelper.GetRandomDateInRange(rnd, DateTime.Parse("7/1/" + (SchoolYear - 5).ToString(), CultureInfo.InvariantCulture), DateTime.Parse("4/30/" + (SchoolYear - 2).ToString(), CultureInfo.InvariantCulture));
+                staff.CredentialExpirationDate = _testDataHelper.GetRandomDateInRange(rnd, DateTime.Parse("6/30/" + (SchoolYear + 1).ToString(), CultureInfo.InvariantCulture), DateTime.Parse("4/30/" + (SchoolYear + 5).ToString(), CultureInfo.InvariantCulture));
 
                 staff.TeachingCredentialType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTeachingCredentialTypeDistribution);
                 staff.FullTimeEquivalency = _testDataHelper.GetRandomDecimalInRange(rnd, 25, 100);
@@ -1369,7 +1370,7 @@ namespace generate.testdata.DataGenerators
                         disabilityType.RecordEndDateTime = _testDataHelper.GetExitDate(rnd, disabilityType.RecordStartDateTime.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                     }
 
-                    TimeSpan span = DateTime.Parse("6/1/" + SchoolYear.ToString()) - s.Birthdate.Value;
+                    TimeSpan span = DateTime.Parse("6/1/" + SchoolYear.ToString(), CultureInfo.InvariantCulture) - s.Birthdate.Value;
                     // Because we start at year 1 for the Gregorian
                     // calendar, we must subtract a year here.
                     int age = (new DateTime(1, 1, 1) + span).Year - 1;
@@ -1855,7 +1856,7 @@ namespace generate.testdata.DataGenerators
                         disabilityType.RecordEndDateTime = _testDataHelper.GetExitDate(rnd, disabilityType.RecordStartDateTime.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                     }
 
-                    TimeSpan span = DateTime.Parse("6/1/" + SchoolYear.ToString()) - s.Birthdate.Value;
+                    TimeSpan span = DateTime.Parse("6/1/" + SchoolYear.ToString(), CultureInfo.InvariantCulture) - s.Birthdate.Value;
                     // Because we start at year 1 for the Gregorian
                     // calendar, we must subtract a year here.
                     int age = (new DateTime(1, 1, 1) + span).Year - 1;
@@ -2111,7 +2112,7 @@ namespace generate.testdata.DataGenerators
 
         private string GetGradeLevelForStudent(DateTime? birthdate, Random rnd)
         {
-            TimeSpan span = DateTime.Parse("6/1/" + (SchoolYear - 1).ToString()) - birthdate.Value;
+            TimeSpan span = DateTime.Parse("6/1/" + (SchoolYear - 1).ToString(), CultureInfo.InvariantCulture) - birthdate.Value;
             // Because we start at year 1 for the Gregorian
             // calendar, we must subtract a year here.
             int age = (new DateTime(1, 1, 1) + span).Year -1;

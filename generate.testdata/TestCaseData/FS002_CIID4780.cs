@@ -1,10 +1,11 @@
-﻿using generate.core.Helpers.TestDataHelper;
+using generate.core.Helpers.TestDataHelper;
 using generate.core.Models.IDS;
 using generate.core.Models.Staging;
 using generate.testdata.Interfaces;
 using generate.testdata.Profiles;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace generate.testdata.TestCaseData
@@ -23,9 +24,9 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "002CIID4780",
                 LeaIdentifierSeaAccountability = "140",
                 SchoolIdentifierSea = "140376",
-                Birthdate = DateTime.Parse("05/15/" + (schoolYear - 15).ToString()),
-                EnrollmentEntryDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString()),
-                EnrollmentExitDate = DateTime.Parse("6/30/" + (schoolYear).ToString()),
+                Birthdate = DateTime.Parse("05/15/" + (schoolYear - 15).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentEntryDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                EnrollmentExitDate = DateTime.Parse("6/30/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
                 FirstName = "Daffy",
                 LastOrSurname = "Duck",
                 SchoolYear = (schoolYear).ToString(),
@@ -50,7 +51,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = "140376",
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = false,
-                EnglishLearner_StatusStartDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString()),
+                EnglishLearner_StatusStartDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var env = testDataHelper.GetRandomObject<generate.core.Models.IDS.RefIdeaeducationalEnvironmentSchoolAge>(rnd, idsReferenceData.RefIdeaeducationalEnvironmentSchoolAges).Code;
@@ -63,7 +64,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 IDEAIndicator = true,
                 IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString()),
+                ProgramParticipationBeginDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             testData.K12Enrollments.Add(K12Enrollment);
