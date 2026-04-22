@@ -287,7 +287,7 @@ var PivotGridComponent = function () {
         };
         PivotGridComponent_1.prototype.showCategorySetLabel = function () {
             var isShow = true;
-            if (this.reportParameters.reportLevel === 'sch' && this.reportParameters.reportCode === 'c059') {
+            if (this.reportParameters.reportLevel === 'sch' && this.reportParameters.reportCode === '059') {
                 isShow = false;
             }
             return isShow;

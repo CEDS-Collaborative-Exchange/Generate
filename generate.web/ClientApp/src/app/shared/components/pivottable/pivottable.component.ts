@@ -520,19 +520,22 @@ export class PivottableComponent {
 
         function displayDebugInfo(e, value, filters, pivotData) {
             //let categorySetCode = reportData.categorySets[0].categorySetCode;
-            /*console.log(reportData);*/
+           /* console.log(reportData.data[0]);*/
             let reportYear = reportData.reportYear;
             let reportLevel = reportData.data[0].reportLevel;
             let categorySetCode = reportData.data[0].categorySetCode;
             let reportCode = reportData.data[0].reportCode;
             //  let headers = reportData.categorySets[0].categories;
 
+            let bindings = ["k12StudentStudentIdentifierState"];
+            let headers = ["Student Id"];
 
-            var bindings = ["k12StudentStudentIdentifierState"];
-            var headers = ["Student Id"];
+            if (reportData.data[0].hasOwnProperty('staffCount')) {
+                bindings = ["k12StaffStaffMemberIdentifierState"];
+                headers = ["Staff Id"];
+            }
 
-            //console.log('reportLevel');
-            //console.log(reportLevel);
+
             if (reportLevel == 'lea') {
                 bindings.push('leaIdentifierSea');
                 headers.push('LEA ID');
@@ -546,7 +549,7 @@ export class PivottableComponent {
                 headers.push('School ID');
             }
 
-            var selectedFilter = {}
+            let selectedFilter = {}
 
           
             for (const key in filters) {
@@ -603,8 +606,13 @@ export class PivottableComponent {
 
             const countColumn = viewDef.fields.find(f => f.header === 'Count').binding;
             if (countColumn) {
-                bindings.push(countColumn);
-                headers.push('Count');
+                if (countColumn == 'staffFullTimeEquivalency') {
+                    bindings.push('staffCount');
+                    headers.push('Count'); }
+                else {
+                    bindings.push(countColumn);
+                    headers.push('Count');
+                }
             }
 
             const selectedFilterJson = JSON.stringify(selectedFilter);
