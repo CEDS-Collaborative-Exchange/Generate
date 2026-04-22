@@ -7,7 +7,7 @@ import { ReportsComponent } from './reports.component';
 // Pages
 import { ReportsSummaryComponent } from './summary/reports-summary.component';
 import { ReportsEdfactsComponent } from './edfacts/reports-edfacts.component';
-import { ReportsSppaprComponent } from './sppapr/reports-sppapr.component';
+/*import { ReportsSppaprComponent } from './sppapr/reports-sppapr.component';*/
 import { ReportsLibraryComponent } from './library/reports-library.component';
 import { ReportsLibraryReportComponent } from './library/reports-library-report.component';
 
@@ -19,7 +19,7 @@ const featureRoutes: Routes = [
         children: [
             { path: 'summary', component: ReportsSummaryComponent },
             { path: 'edfacts', component: ReportsEdfactsComponent },
-            { path: 'sppapr', component: ReportsSppaprComponent },
+            /*{ path: 'sppapr', component: ReportsSppaprComponent },*/
             { path: 'library', component: ReportsLibraryComponent },
             { path: 'library/report', component: ReportsLibraryReportComponent },
         ]
