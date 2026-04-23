@@ -134,7 +134,7 @@ namespace generate.infrastructure.Services
             var updatePath = contentRootPath + "\\Updates";
             foreach (var fileWithFullPath in _fileSystem.Directory.GetFiles(updatePath, "*.zip", System.IO.SearchOption.TopDirectoryOnly))
             {
-                var fileName = _fileSystem.FileInfo.FromFileName(fileWithFullPath).Name;
+                var fileName = _fileSystem.FileInfo.New(fileWithFullPath).Name;
 
                 if (fileName.Contains("_"))
                 {
@@ -191,7 +191,7 @@ namespace generate.infrastructure.Services
             List<UpdatePackageDto> availableUpdates = new List<UpdatePackageDto>();
             foreach (var d in _fileSystem.Directory.GetFiles(updatePath, "*.zip", System.IO.SearchOption.TopDirectoryOnly))
             {
-                var fileName = _fileSystem.FileInfo.FromFileName(d).Name;
+                var fileName = _fileSystem.FileInfo.New(d).Name;
                 var filePath = _fileSystem.Path.Combine(updatePath, fileName);
                 var UpdatePackageDtoJsonFile = filePath.Replace(".zip", ".json");
 
@@ -255,7 +255,7 @@ namespace generate.infrastructure.Services
             foreach (var d in _fileSystem.Directory.GetFiles(updatePath, "*.zip", System.IO.SearchOption.TopDirectoryOnly))
             {
                 // Delete zip file
-                var fileName = _fileSystem.FileInfo.FromFileName(d).Name;
+                var fileName = _fileSystem.FileInfo.New(d).Name;
                 var filePath = _fileSystem.Path.Combine(updatePath, fileName);
                 _fileSystem.File.Delete(filePath);
 

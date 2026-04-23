@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <DebugType>full</DebugType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="StaticData\ncleadirectory.tab" />
@@ -20,7 +20,7 @@
     <EmbeddedResource Include="StaticData\randomschdirectory.tab" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.IO.Abstractions" Version="17.2.3" />
+    <PackageReference Include="System.IO.Abstractions" Version="22.1.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\generate.core\generate.core.csproj" />

@@ -13,7 +13,7 @@ namespace generate.test.Console
         [Fact]
         public void GetHelpText()
         {
-            var result = Program.GetHelpText();
+            var result = generate.console.Program.GetHelpText();
 
             Assert.NotNull(result);
         }
@@ -24,7 +24,7 @@ namespace generate.test.Console
             List<string> args = new List<string>();
             args.Add("invalid");
 
-            Program.RunTask(args, "development");
+            generate.console.Program.RunTask(args, "development");
 
             // No need to assert conditions -- we are just making sure that no exception occurs
 
@@ -36,7 +36,7 @@ namespace generate.test.Console
             List<string> args = new List<string>();
             args.Add("help");
 
-            Program.RunTask(args, "development");
+            generate.console.Program.RunTask(args, "development");
 
             // No need to assert conditions -- we are just making sure that no exception occurs
 
