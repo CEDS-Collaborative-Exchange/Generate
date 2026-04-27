@@ -20,7 +20,8 @@ declare let alphanum: any;
     selector: 'generate-app-studentcount',
     templateUrl: './studentcount.component.html',
     styleUrls: ['./studentcount.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class StudentCountComponent implements AfterViewInit, OnChanges, OnInit {

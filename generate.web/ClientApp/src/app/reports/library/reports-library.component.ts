@@ -18,7 +18,8 @@ declare var componentHandler: any;
     selector: 'generate-app-reports-library',
     templateUrl: './reports-library.component.html',
     styleUrls: ['./reports-library.component.scss'],
-    providers: [GenerateReportTopicService, GenerateReportService, UserService]
+    providers: [GenerateReportTopicService, GenerateReportService, UserService],
+    standalone: false
 })
     
 export class ReportsLibraryComponent implements AfterViewInit,OnInit  {

@@ -9,10 +9,11 @@ import { FlextableComponent } from '../components/flextable/flextable.component'
 declare let componentHandler: any;
 
 @Component({
-  selector: 'app-reportdebuginformation',
-  templateUrl: './reportdebuginformation.component.html',
+    selector: 'app-reportdebuginformation',
+    templateUrl: './reportdebuginformation.component.html',
     styleUrl: './reportdebuginformation.component.css',
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 export class ReportDebugInformationComponent {
     private subscriptions: Subscription[] = [];

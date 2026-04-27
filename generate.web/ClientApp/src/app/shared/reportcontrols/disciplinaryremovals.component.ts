@@ -19,7 +19,8 @@ declare let alphanum: any;
     selector: 'generate-app-disciplinaryremovals',
     templateUrl: './disciplinaryremovals.component.html',
     styleUrls: ['./disciplinaryremovals.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class DisciplinaryRemovalsComponent implements AfterViewInit, OnChanges, OnInit {

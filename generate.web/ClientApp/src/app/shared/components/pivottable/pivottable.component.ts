@@ -31,7 +31,8 @@ export var aggregateColumn: any;
     selector: 'app-pivottable',
     templateUrl: './pivottable.component.html',
     styleUrls: ['./pivottable.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class PivottableComponent {
 

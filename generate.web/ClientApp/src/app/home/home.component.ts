@@ -10,7 +10,8 @@ declare var componentHandler: any;
     selector: 'generate-app-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
-    providers: [UserService]
+    providers: [UserService],
+    standalone: false
 })
 
 export class HomeComponent implements AfterViewInit {

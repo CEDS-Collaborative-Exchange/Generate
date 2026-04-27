@@ -4,7 +4,8 @@ declare var componentHandler: any;
 
 @Component({
     templateUrl: './reports-edfacts.component.html',
-    styleUrls: ['./reports-edfacts.component.scss']
+    styleUrls: ['./reports-edfacts.component.scss'],
+    standalone: false
 })
 
 export class ReportsEdfactsComponent implements AfterViewInit {

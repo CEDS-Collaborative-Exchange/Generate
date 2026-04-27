@@ -6,7 +6,8 @@ declare var componentHandler: any;
 @Component({
     selector: 'generate-app-breadcrumbs',
     templateUrl: './breadcrumbs.component.html',
-    styleUrls: ['./breadcrumbs.component.scss']
+    styleUrls: ['./breadcrumbs.component.scss'],
+    standalone: false
 })
 export class BreadcrumbsComponent implements AfterViewInit {
 

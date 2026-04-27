@@ -21,7 +21,8 @@ declare let moment: any;
     selector: 'generate-app-rdsmigration',
     templateUrl: './rdsmigration.component.html',
     styleUrls: ['./rdsmigration.component.scss'],
-    providers: [DataMigrationService, UserService, MigrationMessageService, DataMigrationHistoryService]
+    providers: [DataMigrationService, UserService, MigrationMessageService, DataMigrationHistoryService],
+    standalone: false
 })
 export class RDSMigrationComponent implements OnInit, AfterViewInit, OnDestroy {
     

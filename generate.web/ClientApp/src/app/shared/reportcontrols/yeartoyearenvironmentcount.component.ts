@@ -15,7 +15,8 @@ declare let componentHandler: any;
     selector: 'generate-app-yeartoyearenvironmentcount',
     templateUrl: './yeartoyearenvironmentcount.component.html',
     styleUrls: ['./yeartoyearenvironmentcount.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class YearToYearEnvironmentCountComponent implements AfterViewInit, OnChanges, OnInit {

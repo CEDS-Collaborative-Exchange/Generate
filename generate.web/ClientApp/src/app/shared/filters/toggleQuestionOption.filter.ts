@@ -1,7 +1,8 @@
 ﻿import {Pipe, PipeTransform} from '@angular/core';
 
 @Pipe({
-    name: 'generateToggleQuestionOptionFilter'
+    name: 'generateToggleQuestionOptionFilter',
+    standalone: false
 })
 export class ToggleQuestionOptionFilter implements PipeTransform {
 

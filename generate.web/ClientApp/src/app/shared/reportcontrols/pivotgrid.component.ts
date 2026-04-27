@@ -29,7 +29,8 @@ declare var alphanum: any;
     selector: 'generate-app-pivotgrid',
     templateUrl: './pivotgrid.component.html',
     styleUrls: ['./pivotgrid.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class PivotGridComponent implements AfterViewInit, OnChanges, OnInit {

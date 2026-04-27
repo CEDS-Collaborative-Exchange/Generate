@@ -23,7 +23,8 @@ declare let moment: any;
     selector: 'generate-app-reportmigration',
     templateUrl: './reportmigration.component.html',
     styleUrls: ['./reportmigration.component.scss'],
-    providers: [DataMigrationService, UserService, MigrationMessageService, DataMigrationHistoryService]
+    providers: [DataMigrationService, UserService, MigrationMessageService, DataMigrationHistoryService],
+    standalone: false
 })
 export class ReportMigationComponent implements OnDestroy {
 

@@ -21,7 +21,8 @@ declare let alphanum: any;
     selector: 'generate-app-cohortgraduationrate',
     templateUrl: './cohortgraduationrate.component.html',
     styleUrls: ['./cohortgraduationrate.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class CohortGradRateComponent implements AfterViewInit, OnChanges, OnInit {

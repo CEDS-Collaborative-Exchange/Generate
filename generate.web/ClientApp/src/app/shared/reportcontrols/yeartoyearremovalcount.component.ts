@@ -18,7 +18,8 @@ declare let alphanum: any;
     selector: 'generate-app-yeartoyearremovalcount',
     templateUrl: './yeartoyearremovalcount.component.html',
     styleUrls: ['./yeartoyearremovalcount.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class YearToYearRemovalCountComponent implements AfterViewInit, OnChanges, OnInit {

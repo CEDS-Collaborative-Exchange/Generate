@@ -23,7 +23,8 @@ declare let alphanum: any;
     selector: 'generate-app-gradesoffered',
     templateUrl: './gradesoffered.component.html',
     styleUrls: ['./gradesoffered.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class GradesOfferedComponent implements AfterViewInit, OnChanges, OnInit {

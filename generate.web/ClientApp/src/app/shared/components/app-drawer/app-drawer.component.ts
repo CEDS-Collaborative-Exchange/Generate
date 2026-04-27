@@ -5,11 +5,10 @@ import { SharedModule } from '../../shared.module';
 import { UserService } from '../../../services/app/user.service';
 
 @Component({
-  selector: 'app-app-drawer',
-  standalone: true,
+    selector: 'app-app-drawer',
     imports: [CommonModule, RouterLinkActive, SharedModule],
-  templateUrl: './app-drawer.component.html',
-  styleUrl: './app-drawer.component.css'
+    templateUrl: './app-drawer.component.html',
+    styleUrl: './app-drawer.component.css'
 })
 export class AppDrawerComponent {
 

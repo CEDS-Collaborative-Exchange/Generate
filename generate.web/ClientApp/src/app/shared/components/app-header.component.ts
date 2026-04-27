@@ -10,7 +10,8 @@ declare var componentHandler: any;
     styleUrls: ['./app-header.component.scss'],
     providers: [
         UserService
-    ]
+    ],
+    standalone: false
 })
 
 

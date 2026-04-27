@@ -20,7 +20,8 @@ declare let alphanum: any;
     selector: 'generate-app-yeartoyearprogress',
     templateUrl: './yeartoyearprogress.component.html',
     styleUrls: ['./yeartoyearprogress.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class YeartoYearProgressComponent implements AfterViewInit, OnChanges, OnInit {

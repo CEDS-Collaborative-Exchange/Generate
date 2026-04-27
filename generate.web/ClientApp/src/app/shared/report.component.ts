@@ -33,7 +33,8 @@ declare let componentHandler: any;
     selector: 'generate-app-report',
     templateUrl: './report.component.html',
     styleUrls: ['./report.component.scss'],
-    providers: [GenerateReportService, DataMigrationService, OrganizationService, GradeLevelService, FSMetadataUpdate]
+    providers: [GenerateReportService, DataMigrationService, OrganizationService, GradeLevelService, FSMetadataUpdate],
+    standalone: false
 })
 
 

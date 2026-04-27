@@ -7,7 +7,8 @@ declare var componentHandler: any;
 @Component({
     selector: 'generate-app-reports-library',
     templateUrl: './reports-library-report.component.html',
-    styleUrls: ['./reports-library-report.component.scss']
+    styleUrls: ['./reports-library-report.component.scss'],
+    standalone: false
 })
 export class ReportsLibraryReportComponent implements AfterViewInit {
 
