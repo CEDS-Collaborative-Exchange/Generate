@@ -3,7 +3,7 @@ RETURNS CHAR(2)
 AS BEGIN
 	DECLARE @RefStateAnsiCode CHAR(2)
 	
-	SELECT @RefStateAnsiCode = Code FROM dbo.RefStateAnsiCode WHERE [Description] = @StateName
+	SELECT @RefStateAnsiCode = CedsOptionSetCode FROM ceds.CedsOptionSetMapping WHERE CedsOptionSetDescription = @StateName
 
 	RETURN @RefStateAnsiCode 
 END
