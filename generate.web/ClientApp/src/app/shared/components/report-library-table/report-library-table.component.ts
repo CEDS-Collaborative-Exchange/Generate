@@ -14,10 +14,9 @@ import * as $ from 'jquery';
 
 @Component({
     selector: 'generate-app-report-library-table',
-    standalone: true,
     templateUrl: './report-library-table.component.html',
     styleUrl: './report-library-table.component.css',
-    imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatPaginatorModule, MatSortModule, MatCheckboxModule],
+    imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatPaginatorModule, MatSortModule, MatCheckboxModule]
 })
 export class ReportLibraryTableComponent {
 

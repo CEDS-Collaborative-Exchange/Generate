@@ -8,12 +8,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { DialogComponent } from './dialog/dialog.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { UploadService } from './upload.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
-@NgModule({
-    imports: [CommonModule, MatButtonModule, MatDialogModule, MatListModule, FlexLayoutModule, HttpClientModule, MatProgressBarModule],
-    declarations: [UploadComponent, DialogComponent],
-    exports: [UploadComponent],
-    providers: [UploadService]
-})
+@NgModule({ declarations: [UploadComponent, DialogComponent],
+    exports: [UploadComponent], imports: [CommonModule, MatButtonModule, MatDialogModule, MatListModule, FlexLayoutModule, MatProgressBarModule], providers: [UploadService, provideHttpClient(withInterceptorsFromDi())] })
 export class UploadModule {}

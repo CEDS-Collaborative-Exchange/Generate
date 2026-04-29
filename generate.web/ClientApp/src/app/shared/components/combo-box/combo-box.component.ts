@@ -10,12 +10,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
     selector: 'generate-app-combo-box',
-    standalone: true,
     templateUrl: './combo-box.component.html',
     styleUrl: './combo-box.component.scss',
     imports: [MatFormFieldModule, MatSelectModule, MatInputModule, FormsModule],
     encapsulation: ViewEncapsulation.None
-
 })
 export class ComboBoxComponent {
     @Input() itemsSource: any[];

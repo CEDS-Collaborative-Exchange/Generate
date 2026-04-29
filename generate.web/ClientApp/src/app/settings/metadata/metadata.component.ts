@@ -10,7 +10,8 @@ declare let moment: any;
     selector: 'generate-app-metadata',
     templateUrl: './metadata.component.html',
     styleUrl: './metadata.component.scss',
-    providers: [FSMetadataUpdate]
+    providers: [FSMetadataUpdate],
+    standalone: false
 })
 export class MetadataComponent implements AfterViewInit {
 

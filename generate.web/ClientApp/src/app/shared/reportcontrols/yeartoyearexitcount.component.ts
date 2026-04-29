@@ -17,7 +17,8 @@ declare let componentHandler: any;
     selector: 'generate-app-yeartoyearexitcount',
     templateUrl: './yeartoyearexitcount.component.html',
     styleUrls: ['./yeartoyearexitcount.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class YearToYearExitCountComponent implements AfterViewInit, OnChanges, OnInit {

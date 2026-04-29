@@ -23,7 +23,8 @@ declare let alphanum: any;
     selector: 'generate-app-stateassessmentsperformance',
     templateUrl: './stateassessmentsperformance.component.html',
     styleUrls: ['./stateassessmentsperformance.component.scss'],
-    providers: [GenerateReportService, PerformanceLevelService]
+    providers: [GenerateReportService, PerformanceLevelService],
+    standalone: false
 })
 
 export class StateAssessmentsPerformanceComponent implements AfterViewInit, OnChanges, OnInit {

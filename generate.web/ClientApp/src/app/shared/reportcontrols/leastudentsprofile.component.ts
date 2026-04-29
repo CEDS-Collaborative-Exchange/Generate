@@ -19,7 +19,8 @@ declare let alphanum: any;
     selector: 'generate-app-leastudentsprofile',
     templateUrl: './leastudentsprofile.component.html',
     styleUrls: ['./leastudentsprofile.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class LeaStudentsProfileComponent implements AfterViewInit, OnChanges, OnInit {

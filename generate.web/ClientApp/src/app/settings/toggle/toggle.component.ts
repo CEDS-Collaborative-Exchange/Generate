@@ -29,7 +29,8 @@ declare let moment: any;
     selector: 'generate-app-settings-toggle',
     templateUrl: './toggle.component.html',
     styleUrls: ['./toggle.component.scss'],
-    providers: [ToggleSectionService, ToggleQuestionService, ToggleQuestionOptionService, ToggleResponseService]
+    providers: [ToggleSectionService, ToggleQuestionService, ToggleQuestionOptionService, ToggleResponseService],
+    standalone: false
 })
 export class SettingsToggleComponent implements AfterViewInit, OnInit, AfterViewChecked {
 

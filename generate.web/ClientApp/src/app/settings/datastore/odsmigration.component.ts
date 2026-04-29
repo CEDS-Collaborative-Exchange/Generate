@@ -21,7 +21,8 @@ declare let moment: any;
     selector: 'generate-app-odsmigration',
     templateUrl: './odsmigration.component.html',
     styleUrls: ['./odsmigration.component.scss'],
-    providers: [DataMigrationService, UserService, MigrationMessageService, DataMigrationHistoryService]
+    providers: [DataMigrationService, UserService, MigrationMessageService, DataMigrationHistoryService],
+    standalone: false
 })
 export class ODSMigationComponent implements OnInit, AfterViewInit, OnDestroy {
     public cvData: any;

@@ -19,10 +19,11 @@ declare let saveAs: any;
 declare let alphanum: any;
 
 @Component({
-  selector: 'generate-app-c170',
-  styleUrls: ['./c170.component.scss'],
-  templateUrl: './c170.component.html',
-  providers: [GenerateReportService]
+    selector: 'generate-app-c170',
+    styleUrls: ['./c170.component.scss'],
+    templateUrl: './c170.component.html',
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class C170Component implements AfterViewInit, OnChanges, OnInit {

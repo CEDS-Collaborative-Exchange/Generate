@@ -5,7 +5,8 @@ import { Subject } from 'rxjs';
 @Component({
     selector: 'generate-app-confirmationdialog',
     templateUrl: './confirmationdialog.component.html',
-    styleUrls: ['./confirmationdialog.component.scss']
+    styleUrls: ['./confirmationdialog.component.scss'],
+    standalone: false
 })
 export class ConfirmationDialogComponent implements OnInit {
 

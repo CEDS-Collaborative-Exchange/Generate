@@ -10,7 +10,8 @@ declare let componentHandler: any;
     selector: 'generate-app-about',
     templateUrl: './about.component.html',
     styleUrls: ['./about.component.scss'],
-    providers: [AboutServ]
+    providers: [AboutServ],
+    standalone: false
 })
 export class AboutComponent implements AfterViewInit {
 

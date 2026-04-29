@@ -22,7 +22,8 @@ declare let alphanum: any;
     selector: 'generate-app-ccdschool',
     templateUrl: './ccdschool.component.html',
     styleUrls: ['./ccdschool.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class CCDSchoolComponent implements AfterViewInit, OnChanges, OnInit {

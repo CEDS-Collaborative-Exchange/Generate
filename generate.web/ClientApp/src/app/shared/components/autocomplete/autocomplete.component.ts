@@ -15,7 +15,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     selector: 'generate-app-autocomplete',
     templateUrl: 'autocomplete.component.html',
     styleUrl: 'autocomplete.component.css',
-    standalone: true,
     encapsulation: ViewEncapsulation.None,
     imports: [
         FormsModule,
@@ -24,7 +23,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
         MatAutocompleteModule,
         ReactiveFormsModule,
         AsyncPipe,
-    ],
+    ]
 })
 export class AutocompleteComponent implements OnInit {
     myControl = new FormControl('');

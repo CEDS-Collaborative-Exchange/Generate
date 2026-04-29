@@ -355,7 +355,7 @@ namespace generate.overnighttest
             Console.Out.WriteLine($"Inside toggleReportLock with value:{value},and reportCodeArr:{reportCodeArr}");
             try
             {
-                if (reportCodeArr.IsNullOrEmpty())
+                if (reportCodeArr == null || reportCodeArr.Length == 0)
                 {
                     Console.WriteLine("Not running toggleReportLock as reportCodeArr is empty");
                     return;
@@ -538,7 +538,7 @@ namespace generate.overnighttest
                     Console.WriteLine("----------------------------------");
                     Console.WriteLine(">>>Running Test for spec::" + item);
                     var storedProc = fileSpecToTestStoredProcWithSchoolYear.GetValueOrDefault(item, Utils.EMPTY_STRING);
-                    if (storedProc.IsNullOrEmpty()) {
+                    if (string.IsNullOrEmpty(storedProc)) {
                         Console.WriteLine($"Test for spec:{item} is not active");
                         continue;
                     }

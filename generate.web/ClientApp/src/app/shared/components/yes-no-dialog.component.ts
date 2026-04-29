@@ -4,7 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
     selector: 'generate-app-yes-no-dialog',
     templateUrl: './yes-no-dialog.component.html',
-    styleUrls: ['./yes-no-dialog.component.scss']
+    styleUrls: ['./yes-no-dialog.component.scss'],
+    standalone: false
 })
 export class YesNoDialogComponent implements OnInit {
 

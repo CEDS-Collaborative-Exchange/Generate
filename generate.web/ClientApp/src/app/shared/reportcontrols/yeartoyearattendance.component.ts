@@ -20,7 +20,8 @@ declare let alphanum: any;
     selector: 'generate-app-yeartoyearattendance',
     templateUrl: './yeartoyearattendance.component.html',
     styleUrls: ['./yeartoyearattendance.component.scss'],
-    providers: [GenerateReportService]
+    providers: [GenerateReportService],
+    standalone: false
 })
 
 export class YeartoYearAttendanceComponent implements AfterViewInit, OnChanges, OnInit {

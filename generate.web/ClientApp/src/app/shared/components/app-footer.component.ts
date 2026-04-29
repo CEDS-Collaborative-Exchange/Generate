@@ -5,7 +5,8 @@ declare var componentHandler: any;
 @Component({
     selector: 'generate-app-footer',
     templateUrl: './app-footer.component.html',
-    styleUrls: ['./app-footer.component.scss']
+    styleUrls: ['./app-footer.component.scss'],
+    standalone: false
 })
     
 export class AppFooterComponent implements AfterViewInit {
