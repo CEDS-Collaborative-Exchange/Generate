@@ -4,7 +4,7 @@ description: >-
   for the Membership Fact Type.
 ---
 
-# Membership Fact Type
+# Membership
 
 {% hint style="info" %}
 Please note, to take most of these steps you will need an up-to-date version of Generate installed. Please visit the [Installation](../../installation/) or [Upgrade](../../installation/upgrade/) pages for more information.
@@ -22,9 +22,9 @@ Please note, to take most of these steps you will need an up-to-date version of 
 
 The following files have been created in Generate and submitted to E&#x44;_&#x46;acts_:
 
-* [x] 033 - Free and Reduced Price Lunch
-* [x] 052 - Membership
-* [x] 226 - Economically Disadvantaged Students
+* [x] FS033 - Free and Reduced Price Lunch
+* [x] FS052 - Membership
+* [x] FS226 - Economically Disadvantaged Students
 
 {% code overflow="wrap" %}
 ```sql

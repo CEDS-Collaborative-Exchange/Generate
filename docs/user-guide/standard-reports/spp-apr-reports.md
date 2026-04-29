@@ -1,3 +1,7 @@
+---
+hidden: true
+---
+
 # SPP/APR Reports
 
 ## SPP/APR REPORTS <a href="#spp-apr_reports" id="spp-apr_reports"></a>

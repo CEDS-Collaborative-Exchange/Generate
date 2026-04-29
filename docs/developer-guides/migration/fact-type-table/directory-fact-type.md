@@ -22,15 +22,15 @@ Please note, to take most of these steps you will need an up-to-date version of 
 
 The following files have been created in Generate and submitted to E&#x44;_&#x46;acts_:
 
-* [x] 029 - Directory
-* [x] 039 - Grades Offered
-* [x] 129: CCD School
-* [x] 130: ESEA Status\*
-* [x] 131: LEA End of School Year Status\*
-* [x] 163: Discipline Data
-* [x] 170: LEA Subgrant Status
-* [x] 190 - Charter School Authorizer Directory
-* [x] 223: Title I School Status\*
+* [x] FS029 - Directory
+* [x] FS039 - Grades Offered
+* [x] FS129: CCD School
+* [x] FS130: ESEA Status\*
+* [x] FS131: LEA End of School Year Status\*
+* [x] FS163: Discipline Data
+* [x] FS170: LEA Subgrant Status
+* [x] FS190 - Charter School Authorizer Directory
+* [x] FS223: Title I School Status\*
 
 {% hint style="info" %}
 \*At least one state was previously able to successfully populate report data in generate for these files. However, incomplete metadata prevented the Generate UI from producing the submission files, so they were created directly from the report tables instead.
@@ -60,14 +60,14 @@ ORDER BY        agrft.FactTypeId, agr.ReportCode
 
 The following files are in pilot status or are available for piloting in Generate:
 
-* [ ] 035: Federal Programs
-* [ ] 193: Title I Allocations
-* [ ] 196: Management Organization for Charter Schools Roster
-* [ ] 197: Crosswalk of Charter Schools to Management Organizations
-* [ ] 198: Charter Contracts
-* [ ] 205: Progress Achieving English Language Proficiency Indicator Status
-* [ ] 206: School Support and Improvement
-* [ ] 207: State Appropriations for Charter Schools
+* [ ] FS035: Federal Programs
+* [ ] FS193: Title I Allocations
+* [ ] FS196: Management Organization for Charter Schools Roster
+* [ ] FS197: Crosswalk of Charter Schools to Management Organizations
+* [ ] FS198: Charter Contracts
+* [ ] FS205: Progress Achieving English Language Proficiency Indicator Status
+* [ ] FS206: School Support and Improvement
+* [ ] FS207: State Appropriations for Charter Schools
 
 ***
 
