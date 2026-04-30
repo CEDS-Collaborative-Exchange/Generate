@@ -57,10 +57,10 @@ builder.Services.AddMvc()
     .AddJsonOptions(opt => opt.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
 // Add Angular services
-//builder.Services.AddSpaStaticFiles(spa => 
-//    {
-//        spa.RootPath = $"/ClientApp/dist";
-//    });
+builder.Services.AddSpaStaticFiles(spa => 
+    {
+        spa.RootPath = "ClientApp/dist/browser";
+    });
 
 // Register the Swagger generator, defining one or more Swagger documents
 builder.Services.AddSwaggerGen(c =>
@@ -123,6 +123,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 //app.UseStaticFiles(new StaticFileOptions() { RequestPath = "/ClientApp/dist" });
 app.UseStaticFiles();
+app.UseSpaStaticFiles();
 app.UseMvc();
 app.UseSpa(spa => {
 
