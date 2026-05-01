@@ -419,7 +419,7 @@ BEGIN
 			, -1														AS FederalProgramCode
 			, -1 														AS FederalProgramsFundingAllocation
 			, -1														AS ComprehensiveAndTargetedSupportId
-			, -1														AS CharterSchoolStatusId
+			, ISNULL(cs.DimCharterSchoolStatusId,-1)					AS CharterSchoolStatusId
 			, -1														AS SubgroupId
 			, 1															AS OrganizationCount
 
@@ -458,6 +458,8 @@ BEGIN
 			AND organizationStatus.HighSchoolGraduationRateIndicatorStatusCode = 'MISSING' 
 			AND organizationStatus.REAPAlternativeFundingStatusCode = 'MISSING' 
 			AND organizationStatus.McKinneyVentoSubgrantRecipientCode = 'MISSING' 
+		LEFT JOIN rds.vwDimCharterSchoolStatuses cs
+			ON isnull(cs.AppropriationMethodMap, cs.AppropriationMethodCode) = isnull(sk12o.School_CharterSchoolStateAppropriationMethod, 'MISSING')
 		LEFT JOIN #DimCharterSchoolAuthorizers_Primary CSAP
 			ON CSAP.SchoolIdentifierSea = sk12o.SchoolIdentifierSea
 		LEFT JOIN #DimCharterSchoolAuthorizers_Secondary CSAS
