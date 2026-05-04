@@ -339,7 +339,7 @@ BEGIN
 			set @migrationTaskList = CASE WHEN RIGHT(@migrationTaskList,1)=',' THEN LEFT(@migrationTaskList,LEN(@migrationTaskList)-1) ELSE @migrationTaskList END
 
 			update App.DataMigrations set DataMigrationStatusId = @successStatusId, LastDurationInSeconds = @durationInSeconds,
-										  DataMigrationTaskList = @migrationTaskList
+										  DataMigrationTaskList = LEFT(@migrationTaskList, 50)
 			where DataMigrationId = @dataMigrationId
 	
 			insert into App.DataMigrationHistories
