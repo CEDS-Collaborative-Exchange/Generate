@@ -1,4 +1,4 @@
-CREATE PROCEDURE [App].[FS17x_TestCase]	
+ALTER PROCEDURE [App].[FS17x_TestCase]	
 	@SchoolYear SMALLINT,
 	@FileSpec varchar(5)
 AS
