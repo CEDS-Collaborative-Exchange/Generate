@@ -335,8 +335,8 @@ namespace generate.overnighttest
             // --testbyfactype was passed will not run any other command
             if (commandTypeToValueDict.TryGetValue(CommandType.TEST_FACT_BY_TYPE, out string? testFactByTypeVal))
             {
-
-                RunTestByFactType([testFactByTypeVal.ToUpper()]);
+                string[] factTypes = testFactByTypeVal.Split(",");
+                RunTestByFactType(factTypes);
                 //RunTestByFactType(commandToValueDict.GetValueOrDefault(CommandType.TEST_FACT_BY_TYPE, EMPTY_STRING));
                 return;
             }
@@ -417,12 +417,34 @@ namespace generate.overnighttest
                 // Only report that came in to be locked or if all report everthing to be locked, GenerateReports.isLocked = 1 
                 toggleReportLock(1, factsToMigrate, isFactType);
                 Console.Out.WriteLine("Inside RunMigration");
-                //IMigrationService migrationService = serviceProvider.GetService<IMigrationService>();
+                IMigrationService migrationService = serviceProvider.GetService<IMigrationService>();
                 //Console.Out.WriteLine("migrationService is present:" + migrationService);
-                //migrationService.MigrateData("report");
-                BackgroundJob.Enqueue<IMigrationService>(s =>
-                    s.MigrateData("report")
-                );
+                migrationService.MigrateData("report");
+                //BackgroundJob.Enqueue<IMigrationService>(s =>
+                //    s.MigrateData("report")
+                //);
+
+                // Poll until the migration completes (success or error)
+                Console.WriteLine("Waiting for migration to complete...");
+                while (true)
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
+                    using var pollScope = serviceProvider.CreateScope();
+                    var pollContext = pollScope.ServiceProvider.GetRequiredService<AppDbContext>();
+                    var dataMigration = pollContext.Set<generate.core.Models.App.DataMigration>()
+                        .Where(m => m.DataMigrationType.DataMigrationTypeCode == "report")
+                        .Select(m => new { m.DataMigrationStatus.DataMigrationStatusCode })
+                        .FirstOrDefault();
+
+                    string statusCode = dataMigration?.DataMigrationStatusCode ?? string.Empty;
+                    Console.WriteLine($"Migration status: {statusCode}");
+
+                    if (statusCode == "success" || statusCode == "error")
+                    {
+                        Console.WriteLine($"Migration finished with status: {statusCode}");
+                        break;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -432,7 +454,7 @@ namespace generate.overnighttest
             }
             finally
             {
-                Console.WriteLine("Migration Job in Queue");
+                Console.WriteLine("Migration Job is Complete");
 
             }
 
@@ -499,7 +521,7 @@ namespace generate.overnighttest
             // Dictionary<string, string> dict = Utils.BuildFactTypeToFileSpec();
             Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider);
             Console.WriteLine("Inside RunTestByFactType factTypeValuesSeperatedByComma:" + TryToString(factTypeValuesList));
-            //string[] factTypeArr = factTypeValuesList.Split(",");
+            //string[] factTypeArr = factTypeValuesList.
 
             foreach (var item in factTypeValuesList)
             {
