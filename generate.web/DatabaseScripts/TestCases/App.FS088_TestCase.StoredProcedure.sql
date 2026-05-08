@@ -288,6 +288,7 @@ BEGIN
 		AND CAST(ISNULL(ske.EnrollmentEntryDate, '1900-01-01') AS DATE) 
             BETWEEN @SYStart AND @SYEnd 
 		AND sppse.IDEAIndicator = 1
+		AND ske.StudentIdentifierState not like 'CIID%'
 		and ISNULL(sppse.IdeaEducationalEnvironmentForSchoolAge, '') not in ('PPPS', 'PPPS_1')
 		AND (
 			ISNULL(sd.DisciplineMethodOfCwd, '') in ('InSchool','OutOfSchool','InSchool_1','OutOfSchool_1')

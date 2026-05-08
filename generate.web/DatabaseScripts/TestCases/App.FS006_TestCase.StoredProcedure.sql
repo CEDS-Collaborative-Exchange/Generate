@@ -244,6 +244,7 @@ BEGIN
 		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') NOT IN ('PPPS', 'PPPS_1')
 		AND ISNULL(sd.DisciplineMethodOfCwd, '') in ('InSchool','OutOfSchool', 'InSchool_1','OutOfSchool_1')
 		AND ISNULL(sd.IdeaInterimRemoval, '') NOT IN ('REMDW', 'REMHO', 'REMDW_1', 'REMHO_1')
+		AND ske.StudentIdentifierState not like 'CIID%'
 		AND rds.Get_Age(ske.Birthdate, @ChildCountDate) BETWEEN 3 AND 21	
 		--Discipline Date with SY range 
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 

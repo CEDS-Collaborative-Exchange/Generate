@@ -244,6 +244,7 @@ BEGIN
 	WHERE sppse.IDEAIndicator = 1
 	AND idea.IdeaDisabilityTypeCode IS NOT NULL
 	AND sd.IdeaInterimRemoval in ('REMDW_1', 'REMHO_1') 
+	AND ske.StudentIdentifierState not like 'CIID%'
 	AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
 	AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
             BETWEEN @SYStart AND @SYEnd 

@@ -114,6 +114,7 @@ BEGIN
         AND sidt.IsPrimaryDisability = 1
 	WHERE ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
 		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') NOT IN ('PPPS', 'PPPS_1')
+		AND ske.StudentIdentifierState not like 'CIID%'
 		AND sd.DisciplinaryActionTaken IN ('03086', '03087', '03086_1', '03087_1')
 		AND ((ISNULL(sppse.IDEAIndicator, 0) = 1 
 				AND rds.Get_Age(ske.Birthdate, @ChildCountDate) BETWEEN 3 AND 21

@@ -274,6 +274,7 @@ BEGIN
 	WHERE sppse.IDEAIndicator = 1
 		AND ske.Schoolyear = CAST(@SchoolYear AS VARCHAR)
 		AND ISNULL(sppse.IDEAEducationalEnvironmentForSchoolAge, '') NOT IN ('PPPS', 'PPPS_1')
+		AND ske.StudentIdentifierState not like 'CIID%'
 		AND rds.Get_Age(ske.Birthdate, @ChildCountDate) BETWEEN 3 AND 21	
 		AND (ISNULL(sd.DisciplineMethodOfCwd, '') <> ''
 			OR sd.DisciplinaryActionTaken IN ('03086', '03087', '03086_1', '03087_1')
