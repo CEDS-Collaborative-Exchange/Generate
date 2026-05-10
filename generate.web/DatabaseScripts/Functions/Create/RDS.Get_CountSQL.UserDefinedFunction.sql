@@ -501,6 +501,26 @@ BEGIN
 						where m.OrganizationIdentifierSea is NULL'
 				end
 			end
+
+			--create a temp table to hold Organizations with their grades offered 
+			if @reportCode in ('052')
+			begin
+
+				select @sql = @sql + 
+					'if OBJECT_ID(''tempdb..#gradesOffered'') is not null drop table #gradesOffered' + char(10)
+
+				select @sql = @sql + 
+					'
+					select distinct OrganizationStateId, GRADELEVEL 
+					into #gradesOffered
+					from rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''039''
+						and c39.reportLevel = ''sch'' and c39.reportyear = ''' + @reportYear + '''
+					' + char(10)
+
+				select @sql = @sql + 
+					'CREATE INDEX IDX_GradesOffered ON #gradesOffered (OrganizationStateId, Gradelevel)' + char(10) + char(10)
+			end	
+
 		end
 		else
 		begin
@@ -1881,6 +1901,25 @@ BEGIN
 						delete from @reportData where ' + @reportField + ' <> ''MISSING''					
 					end
 				'
+
+				--For Membership, remove zero counts for Grades that are not offered at the LEA/School level
+				if @reportCode = '052' 
+					and @categorySetCode in ('csa','st1','st2','st4')
+					and @reportLevel in ('lea','sch')
+				begin
+
+					set @sqlRemoveMissing = @sqlRemoveMissing + '
+					delete rd
+					from @reportData rd
+					where StudentCount = 0
+					and not exists (
+						select 1
+						from #gradesOffered tg
+						where tg.OrganizationStateId = rd.OrganizationIdentifierSea
+						and tg.GradeLevel = rd.GRADELEVEL
+					);
+					'
+				end
 
 				if @reportCode = '141' and @categorySetCode = 'csb'
 				begin

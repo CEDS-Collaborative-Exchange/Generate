@@ -5,6 +5,8 @@ VersionUpdates\\13.3_prerelease,Staging.TableChanges.sql,0
 VersionUpdates\\13.3_prerelease,JunkTablePopulation.sql,0
 Functions\\Drop,Staging.GetRefStateAnsiCode.UserDefinedFunction.sql,0
 Functions\\Create,Staging.GetRefStateAnsiCode.UserDefinedFunction.sql,0
+Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
+Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Views\\Drop,RDS.vwDimCharterSchoolStatuses.View.sql,0
 Views\\Create,RDS.vwDimCharterSchoolStatuses.View.sql,0
 StoredProcedures\\Drop,Staging.Staging-to-DimAssessmentPerformanceLevels.StoredProcedure.sql,0
