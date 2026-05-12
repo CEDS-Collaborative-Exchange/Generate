@@ -47,15 +47,16 @@ namespace generate.infrastructure.Services
         bool _useWSforFSMetaUpd = true;
         string _fsMetaFileLoc;
         string _fsWSURL;
+        string _fsApiKey;
         string _fsMetaESSDetailFileName;
         string _fsMetaCHRDetailFileName;
         string _fsMetaESSLayoutFileName;
         string _fsMetaCHRLayoutFileName;
         string _bkfsMetaFileLoc;
 
-        string initSubdir = "DataSetYearVersionByAllAbbrv";
-        string detailSubdir = "DataSetYearVersionDetailsByAllAbbrv";
-        string layoutSubdir = "DataSetYearVersionFSLayoutDetailsByAllAbbrv";
+        string initSubdir = "DataSetYearVersionByAllAbbrvExt";
+        string detailSubdir = "DataSetYearVersionDetailsByAllAbbrvExt";
+        string layoutSubdir = "DataSetYearVersionFSLayoutDetailsByAllAbbrvExt";
         string configurationCategory = "Metadata";
         string essKey = "ESSMetadata";
         string chrKey = "CHRTRMetadata";
@@ -87,6 +88,7 @@ namespace generate.infrastructure.Services
 
         bool IFSMetadataUpdateService.useWSforFSMetaUpd { get { return _useWSforFSMetaUpd; } set { _useWSforFSMetaUpd = value; } }
         string IFSMetadataUpdateService.fsWSURL { get { return _fsWSURL; } set { _fsWSURL = value; } }
+        string IFSMetadataUpdateService.metadataApiKey { get { return _fsApiKey; } set { _fsApiKey = value; } }
         string IFSMetadataUpdateService.fsMetaFileLoc { get { return _fsMetaFileLoc; } set { _fsMetaFileLoc = value; } }
         string IFSMetadataUpdateService.fsMetaESSDetailFileName { get { return _fsMetaESSDetailFileName; } set { _fsMetaESSDetailFileName = value; } }
         string IFSMetadataUpdateService.fsMetaCHRDetailFileName { get { return _fsMetaCHRDetailFileName; } set { _fsMetaCHRDetailFileName = value; } }
@@ -118,7 +120,6 @@ namespace generate.infrastructure.Services
 
             var cont = string.Empty;
 
-            List<DataSetYearVersionByAllAbbrv> initDSYVr = null;
             int maxSubmissionYear = 0;
             int maxVersionNumber = 0;
             int prevYear = 0;
@@ -137,21 +138,7 @@ namespace generate.infrastructure.Services
 
                 UpdateKeyinGenConfig(FSMetalogKey, "The metadata is currently being processed.");
                 UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausProcessing);
-
-                if (_useWSforFSMetaUpd)
-                {
-
-                    string initCallUrl = _fsWSURL + initSubdir;
-                    var client = new RestClient(new RestClientOptions(new Uri(initCallUrl)));
-                    var request = new RestRequest("", Method.Get);
-                    var response = client.Execute(request);
-
-                    cont = response.Content;
-                    cont = cont.Replace("{\"DataSetYearVersions\":", "").Replace("]}", "]");
-
-                    initDSYVr = JsonConvert.DeserializeObject<List<DataSetYearVersionByAllAbbrv>>(cont);
-
-                }
+                string downloadUrl = string.Empty;
 
                 #endregion
 
@@ -163,26 +150,33 @@ namespace generate.infrastructure.Services
                 {
                     UpdateKeyinGenConfig(FSMetalogKey, "The metadata is currently being processed.");
                     UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausProcessing);
-                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
+             
                     if (!string.IsNullOrEmpty(_selSYr)) { maxSubmissionYear = Convert.ToInt32(_selSYr); }
                     prevYear = maxSubmissionYear - 1;
-                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + prevYear.ToString())).Max(a => a.VersionNumber);
                     fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
 
-                    bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(true, maxSubmissionYear.ToString(), maxVersionNumber);
+                    bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(true, maxSubmissionYear.ToString());
                     if (!checkPrevFSPop) { skipESSPop = true; goto skipESSPopulation; }
 
-                    //string detailUrl = "https://edfacts.ed.gov/generate/DataSetYearVersionDetailsByAllAbbrv?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
-                    string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
-                    detailUrl = string.Format(detailUrl, collectName, essDSNameAbbrv, maxVersionNumber.ToString(), fqYrName);
+                    string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&yearAbbrv={2}";
+                    detailUrl = string.Format(detailUrl, collectName, essDSNameAbbrv, fqYrName);
 
                     var client1 = new RestClient(new RestClientOptions(new Uri(detailUrl)));
                     var request1 = new RestRequest("", Method.Get);
+                    request1.AddHeader("x-origin-verify", this._fsApiKey);
                     var response1 = client1.Execute(request1);
 
-                    edfacts = response1.Content;
+                    var detailWrapperResponse = JsonConvert.DeserializeObject<dynamic>(response1.Content);
+                    string detailDownloadUrl = (string)detailWrapperResponse.downloadUrl;
+
+                    var downloadClient1 = new RestClient(new RestClientOptions(new Uri(detailDownloadUrl)));
+                    var downloadRequest1 = new RestRequest("", Method.Get);
+                    var downloadResponse1 = downloadClient1.Execute(downloadRequest1);
+
+                    edfacts = downloadResponse1.Content;
                     edfacts = edfacts.Replace(strRep1, "").Replace("]}", "]");
                     DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(edfacts);
+                    maxVersionNumber = (int)DSYVrdetail[0].VersionNum;
                 }
                 else
                 {
@@ -214,12 +208,12 @@ namespace generate.infrastructure.Services
                     prevYear = maxSubmissionYear - 1;
                     fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
 
-                    bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(true, maxSubmissionYear.ToString(), maxVersionNumber);
+                    bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(true, maxSubmissionYear.ToString());
                     if (!checkPrevFSPop) { skipESSPop = true; goto skipESSPopulation; }
 
                 }
 
-                _appRepository.MigrateMetadata("ESS", maxSubmissionYear, true);
+                //_appRepository.MigrateMetadata("ESS", maxSubmissionYear, true);
 
                 var time1 = DateTime.Now;
                 DeleteExistingCatInfobyYearandDS(collectName, essDSNameAbbrv, maxVersionNumber.ToString(), fqYrName, maxSubmissionYear.ToString(), DSYVrdetail);
@@ -253,49 +247,34 @@ namespace generate.infrastructure.Services
 
                 if (_useWSforFSMetaUpd)
                 {
-
-                    var charterQuery1 = from n in initDSYVr
-                                        where n.DataSetName == charterDSName
-                                        select new { Year = n.YearName.Replace("SY ", "").Substring(0, 4) };
-
-                    var charterQuery2 = from n in charterQuery1
-                                        orderby n.Year descending
-                                        select n;
-
-                    var charterQuery3 = charterQuery2.FirstOrDefault();
-
-                    var charterQuery4 = from n in initDSYVr
-                                        where n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + charterQuery3.Year)
-                                        orderby n.VersionNumber descending
-                                        select new { Year = (int.Parse(n.YearName.Replace("SY ", "").Substring(0, 4)) + 1).ToString(), versNum = n.VersionNumber.ToString() };
-
-                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
                     if (!string.IsNullOrEmpty(_selSYr)) { maxSubmissionYear = Convert.ToInt32(_selSYr); }
                     prevYear = maxSubmissionYear - 1;
-                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + prevYear.ToString())).Max(a => a.VersionNumber);
                     fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
-                    //year = charterQuery4 is null  ? 0 : int.Parse(charterQuery4.FirstOrDefault().Year);
-                    year = maxSubmissionYear;
-                    if (charterQuery4.FirstOrDefault() is not null)
-                    {
-                        maxVersNum = charterQuery4 is null ? "" : charterQuery4.FirstOrDefault().versNum;
-                    }
 
-
-                    bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(false, maxSubmissionYear.ToString(), maxVersionNumber);
+                    bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(false, maxSubmissionYear.ToString());
                     if (!checkPrevFSPop) { skipCHRPop = true; goto skipCHRPopulation; }
 
                     
-                    string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
-                    detailUrl = string.Format(detailUrl, collectName, charterDSNameAbbrv, maxVersionNumber.ToString(), fqYrName);
+                    string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&yearAbbrv={2}";
+                    detailUrl = string.Format(detailUrl, collectName, charterDSNameAbbrv, fqYrName);
 
                     var client1 = new RestClient(new RestClientOptions(new Uri(detailUrl)));
                     var request1 = new RestRequest("", Method.Get);
+                    request1.AddHeader("x-origin-verify", this._fsApiKey); ;
                     var response1 = client1.Execute(request1);
 
-                    chrtr = response1.Content;
+                    var detailWrapperResponse = JsonConvert.DeserializeObject<dynamic>(response1.Content);
+                    string detailDownloadUrl = (string)detailWrapperResponse.downloadUrl;
+
+                    var downloadClient1 = new RestClient(new RestClientOptions(new Uri(detailDownloadUrl)));
+                    var downloadRequest1 = new RestRequest("", Method.Get);
+                    var downloadResponse1 = downloadClient1.Execute(downloadRequest1);
+
+                    chrtr = downloadResponse1.Content;
                     chrtr = chrtr.Replace(strRep1, "").Replace("]}", "]");
                     DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(chrtr);
+                    maxVersNum = DSYVrdetail[0].VersionNum.ToString();
+                    year = maxSubmissionYear;
 
                 }
                 else
@@ -327,14 +306,14 @@ namespace generate.infrastructure.Services
                     year = maxSubmissionYear;
                     maxVersNum = maxVersionNumber.ToString();
 
-                    bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(false, maxSubmissionYear.ToString(), maxVersionNumber);
+                    bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(false, maxSubmissionYear.ToString());
                     if (!checkPrevFSPop) { skipCHRPop = true; goto skipCHRPopulation; }
 
                 }
 
                 //DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(edfacts);
 
-                _appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, true);
+                //_appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, true);
 
                 DeleteExistingCatInfobyYearandDS(collectName, charterDSNameAbbrv, maxVersNum, fqYrName, year.ToString(), DSYVrdetail);
 
@@ -343,7 +322,7 @@ namespace generate.infrastructure.Services
                 /* ==== Populate CHARTER FSLayout data ==== */
                 DelandPopulateFSLayoutdata(collectName, charterDSNameAbbrv, maxVersNum.ToString(), fqYrName);
 
-                UpdPopFSMetaYrandVersinGenConfig(false, maxSubmissionYear.ToString(), maxVersionNumber);
+                UpdPopFSMetaYrandVersinGenConfig(false, maxSubmissionYear.ToString(), Convert.ToInt32(maxVersNum));
 
                 _appRepository.UpdateViewDefinitions();
 
@@ -383,16 +362,6 @@ namespace generate.infrastructure.Services
                 else
                 {
 
-                    //if (!string.IsNullOrEmpty(_bkfsMetaFileLoc) && _reloadFromBackUp)
-                    //{
-                    //    if (!Directory.Exists(_bkfsMetaFileLoc)) Directory.CreateDirectory(_bkfsMetaFileLoc);
-
-                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflname, edfacts);
-                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflname, chrtr);
-                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflnameFLay, bkESSFLay);
-                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflnameFLay, bkCHRFLay);
-                    //}
-
                     var time = DateTime.Now;
                     var status = "The metadata was successfully updated on " + time.ToString() + ".";
                     UpdateKeyinGenConfig(FSMetalogKey, status);
@@ -405,8 +374,8 @@ namespace generate.infrastructure.Services
             }
             catch (Exception e)
             {
-                _appRepository.MigrateMetadata("ESS", maxSubmissionYear, false);
-                _appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, false);
+                //_appRepository.MigrateMetadata("ESS", maxSubmissionYear, false);
+                //_appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, false);
 
                 var x = e.Message;
                 var y = e.InnerException;
@@ -2440,18 +2409,22 @@ namespace generate.infrastructure.Services
             if (_useWSforFSMetaUpd)
             {
 
-                //_fsLayoutURL = "https://edfacts.ed.gov/generate/DataSetYearVersionFSLayoutDetailsByAllAbbrv"; // Remove later
-                string fsLayoutURL = _fsWSURL + layoutSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
-                fsLayoutURL = string.Format(fsLayoutURL, collectionAbbrv, dataSetAbbrv, versionNum.ToString(), fqYrName);
-
-                //fsLayoutURL = "https://edfacts.ed.gov/generate/DataSetYearVersionFSLayoutDetailsByAllAbbrv?collectionAbbrv=EDFACTS&dataSetAbbrv=ESS&versionNum=13&yearAbbrv=2022-2023";
-                //fqYrName = "2022";
+                string fsLayoutURL = _fsWSURL + layoutSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&yearAbbrv={2}";
+                fsLayoutURL = string.Format(fsLayoutURL, collectionAbbrv, dataSetAbbrv, fqYrName);
 
                 var client1 = new RestClient(new RestClientOptions(new Uri(fsLayoutURL)));
                 var request1 = new RestRequest("", Method.Get);
+                request1.AddHeader("x-origin-verify", this._fsApiKey); ;
                 var response1 = client1.Execute(request1);
 
-                edfacts1 = response1.Content;
+                var detailWrapperResponse = JsonConvert.DeserializeObject<dynamic>(response1.Content);
+                string detailDownloadUrl = (string)detailWrapperResponse.downloadUrl;
+
+                var downloadClient1 = new RestClient(new RestClientOptions(new Uri(detailDownloadUrl)));
+                var downloadRequest1 = new RestRequest("", Method.Get);
+                var downloadResponse1 = downloadClient1.Execute(downloadRequest1);
+
+                edfacts1 = downloadResponse1.Content;
                 edfacts1 = edfacts1.Replace("{\"DataSetYearVersionFSLayoutDetails\":", "").Replace("]}", "]");
 
             }
@@ -2918,7 +2891,7 @@ namespace generate.infrastructure.Services
 
         }
 
-        public bool checkPrevPopFSMetaYrandVers(bool IsESSDS, string year, int vers)
+        public bool checkPrevPopFSMetaYrandVers(bool IsESSDS, string year)
         {
 
             IQueryable<GenerateConfiguration> gc = _appDbContext.GenerateConfigurations
@@ -2939,7 +2912,7 @@ namespace generate.infrastructure.Services
                 else
                 {
                     var arrConfigVal = genConfigVal.ToString().Split(splitKey);
-                    if (arrConfigVal.Length > 0 && arrConfigVal[0] == year && Convert.ToInt32(arrConfigVal[1]) == vers)
+                    if (arrConfigVal.Length > 0 && arrConfigVal[0] == year)
                     {
                         return false;
                     }
@@ -2961,7 +2934,7 @@ namespace generate.infrastructure.Services
                 else
                 {
                     var arrConfigVal = genConfigVal.ToString().Split(splitKey);
-                    if (arrConfigVal.Length > 0 && arrConfigVal[0] == year && Convert.ToInt32(arrConfigVal[1]) == vers)
+                    if (arrConfigVal.Length > 0 && arrConfigVal[0] == year)
                     {
                         return false;
                     }
@@ -3060,25 +3033,9 @@ namespace generate.infrastructure.Services
         public string GetLatestSYs() 
         {
 
-            var cont = string.Empty;
-            List<DataSetYearVersionByAllAbbrv> initDSYVr = null;
-            int maxESSSubmissionYear = 0;
-            int maxCHRSubmissionYear = 0;
-            int maxSubmissionYear = 0;
-            string initCallUrl = _fsWSURL + initSubdir;
-            var client = new RestClient(new RestClientOptions(new Uri(initCallUrl)));
-            var request = new RestRequest("", Method.Get);
-            var response = client.Execute(request);
+            int currentSubmissionYear = DateTime.Now.Year;
 
-            cont = response.Content;
-            cont = cont.Replace("{\"DataSetYearVersions\":", "").Replace("]}", "]");
-
-            initDSYVr = JsonConvert.DeserializeObject<List<DataSetYearVersionByAllAbbrv>>(cont);
-            maxESSSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
-            maxCHRSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
-            maxSubmissionYear = maxESSSubmissionYear > maxCHRSubmissionYear ? maxESSSubmissionYear : maxCHRSubmissionYear;
-
-            var ddlstring = "[" + maxSubmissionYear.ToString() + "," + (maxSubmissionYear - 1).ToString() + "," + (maxSubmissionYear - 2).ToString() + "]";
+            var ddlstring = "[" + (currentSubmissionYear + 1).ToString() + "," + currentSubmissionYear.ToString() + "," + (currentSubmissionYear - 1).ToString() + "]";
             return ddlstring;
         }
 

@@ -32,6 +32,7 @@ namespace generate.web.Controllers.Api.App
         private readonly IFSMetadataUpdateService _FSMetadataUpdate;
         private readonly bool _useWSforFSMetaUpd;
         private readonly string _fsWSURL;
+        private readonly string _fsApiKey;
         private readonly string _fsMetaFileLoc;
         private readonly string _fsMetaESSDetailFileName;
         private readonly string _fsMetaCHRDetailFileName;
@@ -52,7 +53,8 @@ namespace generate.web.Controllers.Api.App
             _FSMetadataUpdate = fsMetadataUpdate;
 
             _useWSforFSMetaUpd = configuration.GetSection("appSettings").GetValue<bool>("useWSforFSMetaUpd");
-            _fsWSURL = configuration.GetSection("appSettings").GetValue<string>("fsWSURL");   
+            _fsWSURL = configuration.GetSection("appSettings").GetValue<string>("fsWSURL");
+            _fsApiKey = configuration.GetSection("appSettings").GetValue<string>("metadataApiKey");
             _fsMetaFileLoc = configuration.GetSection("appSettings").GetValue<string>("fsMetaFileLoc");
             _fsMetaESSDetailFileName = configuration.GetSection("appSettings").GetValue<string>("fsMetaESSDetailFileName");
             _fsMetaCHRDetailFileName = configuration.GetSection("appSettings").GetValue<string>("fsMetaCHRDetailFileName");
@@ -69,6 +71,7 @@ namespace generate.web.Controllers.Api.App
 
             this._FSMetadataUpdate.useWSforFSMetaUpd = _useWSforFSMetaUpd;
             this._FSMetadataUpdate.fsWSURL = _fsWSURL;
+            this._FSMetadataUpdate.metadataApiKey = _fsApiKey;
             this._FSMetadataUpdate.fsMetaFileLoc = _fsMetaFileLoc;
             this._FSMetadataUpdate.fsMetaESSDetailFileName = _fsMetaESSDetailFileName;
             this._FSMetadataUpdate.fsMetaCHRDetailFileName = _fsMetaCHRDetailFileName;
@@ -98,6 +101,7 @@ namespace generate.web.Controllers.Api.App
 
             this._FSMetadataUpdate.useWSforFSMetaUpd = _useWSforFSMetaUpd;
             this._FSMetadataUpdate.fsWSURL = _fsWSURL;
+            this._FSMetadataUpdate.metadataApiKey = _fsApiKey;
             this._FSMetadataUpdate.fsMetaFileLoc = _fsMetaFileLoc;
             this._FSMetadataUpdate.fsMetaESSDetailFileName = _fsMetaESSDetailFileName;
             this._FSMetadataUpdate.fsMetaCHRDetailFileName = _fsMetaCHRDetailFileName;
