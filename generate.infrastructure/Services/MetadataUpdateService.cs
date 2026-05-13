@@ -3001,8 +3001,8 @@ namespace generate.infrastructure.Services
 
         public string GetLatestSYs() 
         {
-
-            int currentSubmissionYear = Convert.ToInt32(this._fs_Meta_SY);
+            int currentSubmissionYear = DateTime.Now.Year;
+            if (!string.IsNullOrEmpty(this._fs_Meta_SY)) { currentSubmissionYear = Convert.ToInt32(this._fs_Meta_SY); }
 
             var ddlstring = "[" + currentSubmissionYear.ToString() + "," + (currentSubmissionYear - 1).ToString() + "," + (currentSubmissionYear - 2).ToString() + "]";
             return ddlstring;
