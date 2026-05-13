@@ -48,13 +48,12 @@ namespace generate.infrastructure.Services
         string _fsMetaFileLoc;
         string _fsWSURL;
         string _fsApiKey;
+        string _fs_Meta_SY;
         string _fsMetaESSDetailFileName;
         string _fsMetaCHRDetailFileName;
         string _fsMetaESSLayoutFileName;
         string _fsMetaCHRLayoutFileName;
-        string _bkfsMetaFileLoc;
 
-        string initSubdir = "DataSetYearVersionByAllAbbrvExt";
         string detailSubdir = "DataSetYearVersionDetailsByAllAbbrvExt";
         string layoutSubdir = "DataSetYearVersionFSLayoutDetailsByAllAbbrvExt";
         string configurationCategory = "Metadata";
@@ -63,13 +62,7 @@ namespace generate.infrastructure.Services
         string splitKey = "||";
         string dataMigrationStatusName = "Processing";
         string dataMigrationTypeName = "Report Warehouse";
-        string bkESSflname = "ESS.json";
-        string bkCHRflname = "CHRTR.json";
-        string bkESSflnameFLay = "ESSFLay.json";
-        string bkCHRflnameFLay = "CHRTRFLay.json";
-        string bkESSFLay = string.Empty;
-        string bkCHRFLay = string.Empty;
-        bool _reloadFromBackUp = false;
+
         string FSMetalogKey = "MetaLastRunLog";
         string FSMetasStaKey = "metaStatus";
         string FSMetastausok = "OK";
@@ -78,8 +71,6 @@ namespace generate.infrastructure.Services
         const string pub = "Published";
         const string strRep1 = "{\"DataSetYearVersionDetails\":";
         string collectName = "EDFACTS";
-        string charterDSName = "Charter Collections";
-        string essDSName = "EDFacts Submission System";
         string charterDSNameAbbrv = "CHRTR";
         string essDSNameAbbrv = "ESS";
         string _selSYr = string.Empty;
@@ -89,13 +80,12 @@ namespace generate.infrastructure.Services
         bool IFSMetadataUpdateService.useWSforFSMetaUpd { get { return _useWSforFSMetaUpd; } set { _useWSforFSMetaUpd = value; } }
         string IFSMetadataUpdateService.fsWSURL { get { return _fsWSURL; } set { _fsWSURL = value; } }
         string IFSMetadataUpdateService.metadataApiKey { get { return _fsApiKey; } set { _fsApiKey = value; } }
+        string IFSMetadataUpdateService.metadataSY { get { return _fs_Meta_SY; } set { _fs_Meta_SY = value; } } 
         string IFSMetadataUpdateService.fsMetaFileLoc { get { return _fsMetaFileLoc; } set { _fsMetaFileLoc = value; } }
         string IFSMetadataUpdateService.fsMetaESSDetailFileName { get { return _fsMetaESSDetailFileName; } set { _fsMetaESSDetailFileName = value; } }
         string IFSMetadataUpdateService.fsMetaCHRDetailFileName { get { return _fsMetaCHRDetailFileName; } set { _fsMetaCHRDetailFileName = value; } }
         string IFSMetadataUpdateService.fsMetaESSLayoutFileName { get { return _fsMetaESSLayoutFileName; } set { _fsMetaESSLayoutFileName = value; } }
         string IFSMetadataUpdateService.fsMetaCHRLayoutFileName { get { return _fsMetaCHRLayoutFileName; } set { _fsMetaCHRLayoutFileName = value; } }
-        string IFSMetadataUpdateService.bkfsMetaFileLoc { get { return _bkfsMetaFileLoc; } set { _bkfsMetaFileLoc = value; } }
-        bool IFSMetadataUpdateService.reloadFromBackUp { get { return _reloadFromBackUp; } set { _reloadFromBackUp = value; } }
         string IFSMetadataUpdateService.selSchYr { get { return _selSYr; } set { _selSYr = value; } }
         public MetadataUpdateService(AppDbContext appDbContext, IAppRepository appRepository, ILogger<AppUpdateService> logger)
         {
@@ -107,13 +97,6 @@ namespace generate.infrastructure.Services
         public string callInitFSmetaServc()
         {
 
-        //startFS_Processing:
-
-            //var collectName = "EDFACTS";
-            //var charterDSName = "Charter Collections";
-            //var essDSName = "EDFacts Submission System";
-            //var charterDSNameAbbrv = "CHRTR";
-            //var essDSNameAbbrv = "ESS";
             bool skipESSPop = false;
             bool skipCHRPop = false;
 
@@ -2460,8 +2443,8 @@ namespace generate.infrastructure.Services
             populateFSLayout(DSYVrFSLay);
             // Populate FS data in specific Year
 
-            if (dataSetAbbrv == "ESS") { bkESSFLay = edfacts1; }
-            else if (dataSetAbbrv == "CHRTR") { bkCHRFLay = edfacts1; }
+            //if (dataSetAbbrv == "ESS") { bkESSFLay = edfacts1; }
+            //else if (dataSetAbbrv == "CHRTR") { bkCHRFLay = edfacts1; }
 
         }
 
@@ -2988,20 +2971,6 @@ namespace generate.infrastructure.Services
 
         }
 
-        public bool checkBackupFilesExists()
-        {
-            // All backup files must exist for back up to work
-
-            var file1 = File.Exists(_bkfsMetaFileLoc + @"\" + bkESSflname);
-            var file2 = File.Exists(_bkfsMetaFileLoc + @"\" + bkCHRflname);
-            var file3 = File.Exists(_bkfsMetaFileLoc + @"\" + bkESSflnameFLay);
-            var file4 = File.Exists(_bkfsMetaFileLoc + @"\" + bkCHRflnameFLay);
-
-            if (file1 && file2 && file3 && file4) { return true; }
-            else { return false; }
-
-        }
-
         public void UpdateKeyinGenConfig(string key, string log)
         {
 
@@ -3033,9 +3002,9 @@ namespace generate.infrastructure.Services
         public string GetLatestSYs() 
         {
 
-            int currentSubmissionYear = DateTime.Now.Year;
+            int currentSubmissionYear = Convert.ToInt32(this._fs_Meta_SY);
 
-            var ddlstring = "[" + (currentSubmissionYear + 1).ToString() + "," + currentSubmissionYear.ToString() + "," + (currentSubmissionYear - 1).ToString() + "]";
+            var ddlstring = "[" + currentSubmissionYear.ToString() + "," + (currentSubmissionYear - 1).ToString() + "," + (currentSubmissionYear - 2).ToString() + "]";
             return ddlstring;
         }
 

@@ -127,8 +127,8 @@ namespace generate.infrastructure.Helpers
             _fsMetadataUpdateService.fsMetaCHRDetailFileName = _fsMetaCHRDetailFileName;
             _fsMetadataUpdateService.fsMetaESSLayoutFileName = _fsMetaESSLayoutFileName;
             _fsMetadataUpdateService.fsMetaCHRLayoutFileName = _fsMetaCHRLayoutFileName;
-            _fsMetadataUpdateService.reloadFromBackUp = _reloadFromBackUp;
-            _fsMetadataUpdateService.bkfsMetaFileLoc = _bkfsMetaFileLoc;
+            //_fsMetadataUpdateService.reloadFromBackUp = _reloadFromBackUp;
+            //_fsMetadataUpdateService.bkfsMetaFileLoc = _bkfsMetaFileLoc;
 
             _fsMetadataUpdateService.callInitFSmetaServc();
 

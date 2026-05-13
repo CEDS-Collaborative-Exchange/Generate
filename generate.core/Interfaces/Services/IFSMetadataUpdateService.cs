@@ -13,13 +13,14 @@ namespace generate.core.Interfaces.Services
         bool useWSforFSMetaUpd { get; set; }
         string fsWSURL { get; set; }
         string metadataApiKey { get; set; }
+        string metadataSY { get; set; }
         string fsMetaFileLoc { get; set; }
         string fsMetaESSDetailFileName { get; set; }
         string fsMetaCHRDetailFileName { get; set; }
         string fsMetaESSLayoutFileName { get; set; }
         string fsMetaCHRLayoutFileName { get; set; }
-        string bkfsMetaFileLoc { get; set; }
-        bool reloadFromBackUp { get; set; }
+        //string bkfsMetaFileLoc { get; set; }
+        //bool reloadFromBackUp { get; set; }
 
         string selSchYr { get; set; }
         string callInitFSmetaServc();
@@ -34,7 +35,7 @@ namespace generate.core.Interfaces.Services
 
         void populateFSLayout(List<DataSetYearVersionFSLayoutDetailsByAllAbbrv> DSYVrFSLay);
 
-        public bool checkBackupFilesExists();
+        //public bool checkBackupFilesExists();
 
         public void UpdateKeyinGenConfig(string key, string log);
 
