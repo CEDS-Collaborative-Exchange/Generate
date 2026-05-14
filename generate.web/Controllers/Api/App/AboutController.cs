@@ -1,11 +1,5 @@
-﻿using generate.core.Config;
-using generate.core.Interfaces.Repositories.App;
-using generate.core.Interfaces.Repositories.RDS;
-using generate.core.Interfaces.Services;
-using generate.infrastructure.Services;
+﻿using generate.core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 
 namespace generate.web.Controllers.Api.App
 {
@@ -16,14 +10,11 @@ namespace generate.web.Controllers.Api.App
     public class AboutController : Controller
     {
 
-        private readonly IAppRepository _appRepository;
         private readonly IAboutService _AboutService;
-        private readonly IRDSRepository _rdsRepository;
 
         public AboutController
         (
-            IAboutService aboutService,
-            IConfiguration configuration
+            IAboutService aboutService
         )
         {
             _AboutService = aboutService;

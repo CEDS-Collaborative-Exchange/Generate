@@ -172,7 +172,6 @@ namespace generate.infrastructure.Services
                     bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(true, maxSubmissionYear.ToString(), maxVersionNumber);
                     if (!checkPrevFSPop) { skipESSPop = true; goto skipESSPopulation; }
 
-                    //string detailUrl = "https://edfacts.ed.gov/generate/DataSetYearVersionDetailsByAllAbbrv?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
                     string detailUrl = _fsWSURL + detailSubdir + "?collectionAbbrv={0}&dataSetAbbrv={1}&versionNum={2}&yearAbbrv={3}";
                     detailUrl = string.Format(detailUrl, collectName, essDSNameAbbrv, maxVersionNumber.ToString(), fqYrName);
 
@@ -2913,7 +2912,7 @@ namespace generate.infrastructure.Services
             }
             catch (Exception ex) {
                 _logger.LogError(ex.Message);
-                throw ex;
+                throw;
             }
 
         }

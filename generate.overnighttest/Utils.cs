@@ -122,10 +122,10 @@ namespace generate.overnighttest
         /// <returns></returns>
         public static Dictionary<string, IList<string>> factTypeDescriptionToReportCodes(IServiceProvider serviceProvider)
         {
-            IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
-            IRDSRepository rDSRepository = serviceProvider.GetService<IRDSRepository>();
+            IAppRepository? appRepository = serviceProvider.GetService<IAppRepository>();
+            IRDSRepository? rDSRepository = serviceProvider.GetService<IRDSRepository>();
 
-            List<DimFactType> factTypes = rDSRepository.GetAll<DimFactType>()
+            List<DimFactType> factTypes = rDSRepository!.GetAll<DimFactType>()
                                             .Where(t => t.DimFactTypeId > 0)
                                             .OrderBy(t => t.FactTypeCode)
                                             .ToList();
@@ -137,7 +137,7 @@ namespace generate.overnighttest
                     .ToDictionary(dimFactType => dimFactType.DimFactTypeId, dimFactType => dimFactType);//new Dictionary<int, DimFactType>();
 
 
-            List<GenerateReport> reportLists = appRepository.GetReports(0, 0).ToList();
+            List<GenerateReport> reportLists = appRepository!.GetReports(0, 0).ToList();
             //Console.WriteLine($"reportLists:{TryToString(reportLists)}");
 
             Dictionary<string, IList<string>> factDescrToReportCodesList = new Dictionary<string, IList<string>>();

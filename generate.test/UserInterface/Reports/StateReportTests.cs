@@ -100,7 +100,7 @@ namespace generate.test.UserInterface.Reports
                 // Test failure explicitly called
                 System.Console.WriteLine("FAILED - " + ex.GetType().ToString());
                 System.Console.WriteLine(ex.Message);
-                Assert.True(false, ex.Message);
+                Assert.Fail(ex.Message);
             }
             catch (WebDriverTimeoutException ex)
             {
@@ -112,13 +112,13 @@ namespace generate.test.UserInterface.Reports
                 {
                     System.Console.WriteLine("FAILED - " + ex.InnerException.GetType().ToString());
                     System.Console.WriteLine(ex.InnerException.Message);
-                    Assert.True(false, ex.InnerException.Message);
+                    Assert.Fail(ex.InnerException.Message);
                 }
                 else
                 {
                     System.Console.WriteLine("FAILED - " + ex.GetType().ToString());
                     System.Console.WriteLine(ex.Message);
-                    Assert.True(false, ex.Message);
+                    Assert.Fail(ex.Message);
                 }
 
 
@@ -134,13 +134,13 @@ namespace generate.test.UserInterface.Reports
                 {
                     System.Console.WriteLine("FAILED - " + ex.InnerException.GetType().ToString());
                     System.Console.WriteLine(ex.InnerException.Message);
-                    Assert.True(false, ex.InnerException.Message);
+                    Assert.Fail(ex.InnerException.Message);
                 }
                 else
                 {
                     System.Console.WriteLine("FAILED - " + ex.GetType().ToString());
                     System.Console.WriteLine(ex.Message);
-                    Assert.True(false, ex.Message);
+                    Assert.Fail(ex.Message);
                 }
 
             }

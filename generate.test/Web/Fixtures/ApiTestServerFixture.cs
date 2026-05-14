@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
 using System.Linq;
@@ -29,18 +30,20 @@ namespace generate.test.Web.Fixtures
             contentRoot = Directory.GetParent(contentRoot).ToString();
             contentRoot = contentRoot + "\\generate.web\\";
 
-            var webHostBuilder = new WebHostBuilder();
+            var hostBuilder = new HostBuilder()
+                .ConfigureWebHost(webHost =>
+                {
+                    webHost.UseEnvironment("CI");
+                    webHost.UseContentRoot(contentRoot);
+                    webHost.UseStartup<ApiTestServerStartup>();
+                    webHost.UseTestServer();
+                });
 
-            webHostBuilder.UseEnvironment("CI");
+            var host = hostBuilder.Start();
+            this.TestServer = host.GetTestServer();
 
-            webHostBuilder.UseContentRoot(contentRoot);
-
-            webHostBuilder.UseStartup<ApiTestServerStartup>();
-
-            this.TestServer = new TestServer(webHostBuilder);
-
-            var appDbContext = this.TestServer.Host.Services.GetService(typeof(AppDbContext)) as AppDbContext;
-            var odsDbContext = this.TestServer.Host.Services.GetService(typeof(IDSDbContext)) as IDSDbContext;
+            var appDbContext = host.Services.GetService(typeof(AppDbContext)) as AppDbContext;
+            var odsDbContext = host.Services.GetService(typeof(IDSDbContext)) as IDSDbContext;
 
             this.AppDbContext = appDbContext;
 
