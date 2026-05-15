@@ -13,7 +13,6 @@ namespace generate.core.Interfaces.Services
         bool useWSforFSMetaUpd { get; set; }
         string fsWSURL { get; set; }
         string metadataApiKey { get; set; }
-        string metadataSY { get; set; }
         string fsMetaFileLoc { get; set; }
         string fsMetaESSDetailFileName { get; set; }
         string fsMetaCHRDetailFileName { get; set; }

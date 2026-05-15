@@ -57,17 +57,12 @@ namespace generate.infrastructure.Contexts
                 entity
                     .Property(x => x.GenerateConfigurationCategory)
                     .IsRequired()
-                    .HasMaxLength(500);
+                    .HasMaxLength(200);
 
                 entity
                     .Property(x => x.GenerateConfigurationKey)
                     .IsRequired()
-                    .HasMaxLength(500);
-
-                entity
-                .Property(x => x.GenerateConfigurationKey)
-                .IsRequired()
-                .HasMaxLength(2000);
+                    .HasMaxLength(200);
 
             });
 

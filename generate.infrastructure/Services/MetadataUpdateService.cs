@@ -48,7 +48,6 @@ namespace generate.infrastructure.Services
         string _fsMetaFileLoc;
         string _fsWSURL;
         string _fsApiKey;
-        string _fs_Meta_SY;
         string _fsMetaESSDetailFileName;
         string _fsMetaCHRDetailFileName;
         string _fsMetaESSLayoutFileName;
@@ -80,7 +79,6 @@ namespace generate.infrastructure.Services
         bool IFSMetadataUpdateService.useWSforFSMetaUpd { get { return _useWSforFSMetaUpd; } set { _useWSforFSMetaUpd = value; } }
         string IFSMetadataUpdateService.fsWSURL { get { return _fsWSURL; } set { _fsWSURL = value; } }
         string IFSMetadataUpdateService.metadataApiKey { get { return _fsApiKey; } set { _fsApiKey = value; } }
-        string IFSMetadataUpdateService.metadataSY { get { return _fs_Meta_SY; } set { _fs_Meta_SY = value; } } 
         string IFSMetadataUpdateService.fsMetaFileLoc { get { return _fsMetaFileLoc; } set { _fsMetaFileLoc = value; } }
         string IFSMetadataUpdateService.fsMetaESSDetailFileName { get { return _fsMetaESSDetailFileName; } set { _fsMetaESSDetailFileName = value; } }
         string IFSMetadataUpdateService.fsMetaCHRDetailFileName { get { return _fsMetaCHRDetailFileName; } set { _fsMetaCHRDetailFileName = value; } }
@@ -117,13 +115,9 @@ namespace generate.infrastructure.Services
 
                 #endregion
 
-                #region Init Web Service call
-
                 UpdateKeyinGenConfig(FSMetalogKey, "The metadata is currently being processed.");
                 UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausProcessing);
                 string downloadUrl = string.Empty;
-
-                #endregion
 
                 #region ESS Population
 
@@ -3001,8 +2995,9 @@ namespace generate.infrastructure.Services
 
         public string GetLatestSYs() 
         {
-            int currentSubmissionYear = DateTime.Now.Year;
-            if (!string.IsNullOrEmpty(this._fs_Meta_SY)) { currentSubmissionYear = Convert.ToInt32(this._fs_Meta_SY); }
+            IQueryable<GenerateConfiguration> syConfig = _appDbContext.GenerateConfigurations
+                                   .Where(q => q.GenerateConfigurationCategory == configurationCategory && q.GenerateConfigurationKey == "SchoolYear");
+            int currentSubmissionYear = Convert.ToInt32(syConfig.Single().GenerateConfigurationValue); 
 
             var ddlstring = "[" + currentSubmissionYear.ToString() + "," + (currentSubmissionYear - 1).ToString() + "," + (currentSubmissionYear - 2).ToString() + "]";
             return ddlstring;
