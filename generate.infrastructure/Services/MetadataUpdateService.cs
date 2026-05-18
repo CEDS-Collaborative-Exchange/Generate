@@ -140,7 +140,6 @@ namespace generate.infrastructure.Services
 
                     var client1 = new RestClient(new RestClientOptions(new Uri(detailUrl)));
                     var request1 = new RestRequest("", Method.Get);
-                    request1.AddHeader("x-origin-verify", this._fsApiKey);
                     var response1 = client1.Execute(request1);
 
                     var detailWrapperResponse = JsonConvert.DeserializeObject<dynamic>(response1.Content);
@@ -237,7 +236,6 @@ namespace generate.infrastructure.Services
 
                     var client1 = new RestClient(new RestClientOptions(new Uri(detailUrl)));
                     var request1 = new RestRequest("", Method.Get);
-                    request1.AddHeader("x-origin-verify", this._fsApiKey); ;
                     var response1 = client1.Execute(request1);
 
                     var detailWrapperResponse = JsonConvert.DeserializeObject<dynamic>(response1.Content);
@@ -2391,7 +2389,6 @@ namespace generate.infrastructure.Services
 
                 var client1 = new RestClient(new RestClientOptions(new Uri(fsLayoutURL)));
                 var request1 = new RestRequest("", Method.Get);
-                request1.AddHeader("x-origin-verify", this._fsApiKey); ;
                 var response1 = client1.Execute(request1);
 
                 var detailWrapperResponse = JsonConvert.DeserializeObject<dynamic>(response1.Content);
