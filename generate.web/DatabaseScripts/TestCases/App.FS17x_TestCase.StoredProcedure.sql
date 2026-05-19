@@ -314,7 +314,7 @@ Use the @FileSpec parameter to pass in one of the
 	cross join RDS.DimAssessmentPerformanceLevels rdapl
 	inner join staging.SourceSystemReferenceData ssrd
 		on ssrd.SchoolYear = @SchoolYear
-		and ssrd.InputCode = rdapl.AssessmentPerformanceLevelIdentifier
+		and ssrd.OutputCode = rdapl.AssessmentPerformanceLevelIdentifier
 		and ssrd.TableName = 'AssessmentPerformanceLevel_Identifier'
 
 		CREATE NONCLUSTERED INDEX IX_ds ON #DimAssessments (AssessmentAcademicSubjectCode,AssessmentTypeAdministeredCode,AssessmentPerformanceLevelIdentifier)
