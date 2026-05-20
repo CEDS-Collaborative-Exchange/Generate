@@ -447,6 +447,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
             this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
             this.tableTypes = this.categorySets[0].tableTypes;
+            console.log(this.tableTypes);
 
             if (this.categorySets !== undefined && this.categorySets.length > 0) {
                 newParameters.reportCategorySet = this.categorySets.filter(t => t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear)[0];
@@ -1354,9 +1355,9 @@ export class ReportComponent implements AfterViewInit, OnInit {
     //Remove Category Set from the School Level report title. Per file spec: "For the school level file, there are no required categories and totals.
     showCategorySet() {
         let isDisplayed: boolean = true;
-        if ((this.reportParameters.reportCode === '059') && this.reportParameters.reportLevel == 'sch') {
-            isDisplayed = false;
-        }
+        // if ((this.reportParameters.reportCode === '059') && this.reportParameters.reportLevel == 'sch') {
+        //     isDisplayed = false;
+        // }
         if (this.reportParameters.reportCode === '190' || this.reportParameters.reportCode === '196' || this.reportParameters.reportCode === '197' || this.reportParameters.reportCode === '198') {
             isDisplayed = false;
         }
@@ -1365,10 +1366,12 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     showTableType() {
         let isDisplayed: boolean = false;
-        const ttCodes = ['175', '178', '179', '185', '188', '189', '116'];
+        const ttCodes = ['175', '178', '179', '185', '188', '189', '116', '059'];
 
         if (ttCodes.includes(this.reportParameters.reportCode)) {
             if (this.reportParameters.reportCode === '116' && this.reportParameters.reportCategorySetCode !== 'CSA') {
+                isDisplayed = false;
+            } if (this.reportParameters.reportCode === '059' && this.reportParameters.reportCategorySetCode !== 'TOT') {
                 isDisplayed = false;
             } else {
                 isDisplayed = true;

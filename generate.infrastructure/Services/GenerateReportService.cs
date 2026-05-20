@@ -342,6 +342,11 @@ namespace generate.infrastructure.Services
                     categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
                         && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel && c.TableType.TableTypeAbbrv == tableTypeAbbrv, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
                 }
+                else if (reportCode == "059" && categorySetCode.ToUpper() == "TOT" && tableTypeAbbrv.Length > 0)
+                {
+                    categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
+                        && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel && c.TableType.TableTypeAbbrv == tableTypeAbbrv, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
+                }
                 else {
                     categorySets = _appRepository.Find<CategorySet>(c => c.GenerateReport.ReportCode == reportCode && c.CategorySetCode == categorySetCode
                         && c.SubmissionYear == reportYear && c.OrganizationLevel.LevelCode == reportLevel, 0, 0, c => c.OrganizationLevel, c => c.GenerateReport, c => c.TableType);
