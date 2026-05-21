@@ -3418,7 +3418,7 @@ BEGIN
 		begin
 			set @sqlCountJoins = @sqlCountJoins + '
 				inner join (
-					select distinct fact.K12SchoolId, p.K12StudentStudentIdentifierState, titleI.DimTitleIStatusId
+					select distinct fact.K12SchoolId, fact.K12Student_CurrentId, p.K12StudentStudentIdentifierState, titleI.DimTitleIStatusId
 					from rds.' + @factTable + ' fact '
 
 			if @reportLevel = 'lea'
