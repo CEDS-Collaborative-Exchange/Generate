@@ -503,22 +503,52 @@ BEGIN
 			end
 
 			--create a temp table to hold Organizations with their grades offered 
+			--create a temp table to hold Organizations with their grades offered 
 			if @reportCode in ('052')
 			begin
 
-				select @sql = @sql + 
-					'if OBJECT_ID(''tempdb..#gradesOffered'') is not null drop table #gradesOffered' + char(10)
+				--LEA
+				if @reportLevel = 'lea'
+				begin
+					select @sql = @sql + 
+						'
+						if OBJECT_ID(''tempdb..#gradesOfferedLea'') is not null drop table #gradesOfferedLea' + char(10)
 
-				select @sql = @sql + 
-					'
-					select distinct OrganizationStateId, GRADELEVEL 
-					into #gradesOffered
-					from rds.ReportEDFactsOrganizationCounts c39 where c39.ReportCode = ''039''
-						and c39.reportLevel = ''sch'' and c39.reportyear = ''' + @reportYear + '''
-					' + char(10)
+					select @sql = @sql + 
+						'
+						select distinct OrganizationStateId, GRADELEVEL 
+						into #gradesOfferedLea
+						from rds.ReportEDFactsOrganizationCounts c39 
+						where c39.ReportCode = ''039''
+							and c39.reportLevel = ''' + @reportLevel + ''' 
+							and c39.reportyear = ''' + @reportYear + '''
+						' + char(10) + char(10)
 
-				select @sql = @sql + 
-					'CREATE INDEX IDX_GradesOffered ON #gradesOffered (OrganizationStateId, Gradelevel)' + char(10) + char(10)
+					select @sql = @sql + 
+						'
+						CREATE INDEX IDX_GradesOfferedLea ON #gradesOfferedLea (OrganizationStateId, Gradelevel)' + char(10) + char(10)
+				end
+				--School
+				if @reportLevel = 'sch'
+				begin
+					select @sql = @sql + 
+						'
+						if OBJECT_ID(''tempdb..#gradesOfferedSch'') is not null drop table #gradesOfferedSch' + char(10)
+
+					select @sql = @sql + 
+						'
+						select distinct OrganizationStateId, GRADELEVEL 
+						into #gradesOfferedSch
+						from rds.ReportEDFactsOrganizationCounts c39 
+						where c39.ReportCode = ''039''
+							and c39.reportLevel = ''' + @reportLevel + ''' 
+							and c39.reportyear = ''' + @reportYear + '''
+						' + char(10) + char(10)
+
+					select @sql = @sql + 
+						'
+						CREATE INDEX IDX_GradesOfferedSch ON #gradesOfferedSch (OrganizationStateId, Gradelevel)' + char(10) + char(10)
+				end
 			end	
 
 		end
@@ -1907,14 +1937,22 @@ BEGIN
 					and @categorySetCode in ('csa','st1','st2','st4')
 					and @reportLevel in ('lea','sch')
 				begin
-
 					set @sqlRemoveMissing = @sqlRemoveMissing + '
 					delete rd
 					from @reportData rd
 					where StudentCount = 0
 					and not exists (
-						select 1
-						from #gradesOffered tg
+						select 1'
+
+					if @reportLevel = 'lea'
+					set @sqlRemoveMissing = @sqlRemoveMissing + '
+						from #gradesOfferedLea tg'
+
+					if @reportLevel = 'sch'
+					set @sqlRemoveMissing = @sqlRemoveMissing + '
+						from #gradesOfferedSch tg'
+
+					set @sqlRemoveMissing = @sqlRemoveMissing + '
 						where tg.OrganizationStateId = rd.OrganizationIdentifierSea
 						and tg.GradeLevel = rd.GRADELEVEL
 					);
