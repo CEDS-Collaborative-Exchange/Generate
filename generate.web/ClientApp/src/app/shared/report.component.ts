@@ -416,26 +416,26 @@ export class ReportComponent implements AfterViewInit, OnInit {
             this.currentReport = data[0];
 
             if (!this.isNullOrUndefined(this.currentReport)) {
-                if (this.currentReport.organizationLevels.filter(t => t.levelCode === newParameters.reportLevel).length < 1) {
+                if (this.currentReport.organizationLevels.filter(t => this.reportLevelEquals(t.levelCode, newParameters.reportLevel)).length < 1) {
                     for (let i = 0; i < this.currentReport.organizationLevels.length; i++) {
                         let level: OrganizationLevelDto = this.currentReport.organizationLevels[i];
                         /*console.log('Level report is : ' + level.levelCode);*/
 
-                        if (level.levelCode === 'sea') {
+                        if (this.reportLevelEquals(level.levelCode, 'sea')) {
                             newParameters.reportLevel = 'sea';
                             break;
-                        } else if (level.levelCode === 'lea') {
+                        } else if (this.reportLevelEquals(level.levelCode, 'lea')) {
                             newParameters.reportLevel = 'lea';
                             break;
-                        } else if (level.levelCode === 'sch') {
+                        } else if (this.reportLevelEquals(level.levelCode, 'sch')) {
                             newParameters.reportLevel = 'sch';
                             break;
                         }
-                        else if (level.levelCode === 'CAO') {
+                        else if (this.reportLevelEquals(level.levelCode, 'CAO')) {
                             newParameters.reportLevel = 'CAO';
                             break;
                         }
-                        else if (level.levelCode === 'CMO') {
+                        else if (this.reportLevelEquals(level.levelCode, 'CMO')) {
                             newParameters.reportLevel = 'CMO';
                             break;
                         }
@@ -446,12 +446,14 @@ export class ReportComponent implements AfterViewInit, OnInit {
             
 
             this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
-            this.tableTypes = this.categorySets[0].tableTypes;
-            console.log(this.tableTypes);
 
             if (this.categorySets !== undefined && this.categorySets.length > 0) {
+                this.tableTypes = this.categorySets[0].tableTypes;
+                console.log(this.tableTypes);
                 newParameters.reportCategorySet = this.categorySets.filter(t => t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear)[0];
                 newParameters.reportCategorySetCode = newParameters.reportCategorySet.categorySetCode;
+            } else {
+                this.tableTypes = [];
             }
 
             if (this.tableTypes !== undefined && this.tableTypes.length > 0) {
@@ -537,21 +539,21 @@ export class ReportComponent implements AfterViewInit, OnInit {
                 for (let i = 0; i < this.currentReport.organizationLevels.length; i++) {
                     let level: OrganizationLevelDto = this.currentReport.organizationLevels[i];
 
-                    if (level.levelCode === 'sea') {
+                    if (this.reportLevelEquals(level.levelCode, 'sea')) {
                         newParameters.reportLevel = 'sea';
                         break;
-                    } else if (level.levelCode === 'lea') {
+                    } else if (this.reportLevelEquals(level.levelCode, 'lea')) {
                         newParameters.reportLevel = 'lea';
                         break;
-                    } else if (level.levelCode === 'sch') {
+                    } else if (this.reportLevelEquals(level.levelCode, 'sch')) {
                         newParameters.reportLevel = 'sch';
                         break;
                     }
-                    else if (level.levelCode === 'CAO') {
+                    else if (this.reportLevelEquals(level.levelCode, 'CAO')) {
                         newParameters.reportLevel = 'CAO';
                         break;
                     }
-                    else if (level.levelCode === 'CMO') {
+                    else if (this.reportLevelEquals(level.levelCode, 'CMO')) {
                         newParameters.reportLevel = 'CMO';
                         break;
                     }
@@ -735,6 +737,19 @@ export class ReportComponent implements AfterViewInit, OnInit {
             newParameters.reportLevel = reportLevel;
             newParameters.reportPage = 1;
             newParameters.reportSort = 1;
+
+            // Update category sets for the new level
+            if (this.currentReport !== undefined) {
+                this.categorySets = this.getCategorySets(this.currentReport.categorySets, newParameters);
+                
+                if (this.categorySets !== undefined && this.categorySets.length > 0) {
+                    this.tableTypes = this.categorySets[0].tableTypes;
+                    newParameters.reportCategorySet = this.categorySets.filter(t => t.organizationLevelCode === newParameters.reportLevel && t.submissionYear === newParameters.reportYear)[0];
+                    newParameters.reportCategorySetCode = newParameters.reportCategorySet.categorySetCode;
+                } else {
+                    this.tableTypes = [];
+                }
+            }
 
             if (this.reportType === 'statereport') {
                 this.setQueryString(newParameters);
@@ -1140,23 +1155,39 @@ export class ReportComponent implements AfterViewInit, OnInit {
         }
     }
 
+    private reportLevelEquals(left: string, right: string): boolean {
+        return (left || '').toLowerCase() === (right || '').toLowerCase();
+    }
+
     showReportLevelButton(reportLevel: string) {
-        let show: boolean = false;
-
-        if (this.currentReport !== undefined) {
-
-            if (this.organizationLevels !== undefined) {
-
-                for (let i = 0; i < this.organizationLevels.length; i++) {
-                    let level: OrganizationLevelDto = this.organizationLevels[i];
-                    if (level.levelCode === reportLevel) {
-                        show = true;
-                    }
-                }
-            }
+        if (this.currentReport === undefined) {
+            return false;
         }
 
-        return show;
+        const hasLevel = (levels: OrganizationLevelDto[]) => {
+            if (levels === undefined || levels === null) {
+                return false;
+            }
+
+            for (let i = 0; i < levels.length; i++) {
+                if (this.reportLevelEquals(levels[i].levelCode, reportLevel)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
+        if (hasLevel(this.organizationLevels)) {
+            return true;
+        }
+
+        // 059 school-level runs do not always expose SCH in category-set scoped level lookups.
+        if (this.reportParameters.reportCode === '059') {
+            return hasLevel(this.currentReport.organizationLevels);
+        }
+
+        return false;
     }
 
     showReportData() {
@@ -1355,7 +1386,7 @@ export class ReportComponent implements AfterViewInit, OnInit {
     //Remove Category Set from the School Level report title. Per file spec: "For the school level file, there are no required categories and totals.
     showCategorySet() {
         let isDisplayed: boolean = true;
-        // if ((this.reportParameters.reportCode === '059') && this.reportParameters.reportLevel == 'sch') {
+        // if ((this.reportParameters.reportCode === '059') && this.reportParameters.reportLevel === 'sch') {
         //     isDisplayed = false;
         // }
         if (this.reportParameters.reportCode === '190' || this.reportParameters.reportCode === '196' || this.reportParameters.reportCode === '197' || this.reportParameters.reportCode === '198') {
@@ -1366,14 +1397,12 @@ export class ReportComponent implements AfterViewInit, OnInit {
 
     showTableType() {
         let isDisplayed: boolean = false;
-        const ttCodes = ['175', '178', '179', '185', '188', '189', '116', '059'];
+        const ttCodes = ['175', '178', '179', '185', '188', '189', '116'];
 
         if (ttCodes.includes(this.reportParameters.reportCode)) {
             if (this.reportParameters.reportCode === '116' && this.reportParameters.reportCategorySetCode !== 'CSA') {
                 isDisplayed = false;
-            } if (this.reportParameters.reportCode === '059' && this.reportParameters.reportCategorySetCode !== 'TOT') {
-                isDisplayed = false;
-            } else {
+            }else {
                 isDisplayed = true;
             }
         }
