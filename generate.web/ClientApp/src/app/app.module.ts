@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MsalModule, MsalService, MSAL_INSTANCE } from '@azure/msal-angular';
 import { IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
 
@@ -70,37 +70,43 @@ export function MSALInstanceFactory(): IPublicClientApplication {
     return clientApp;
 }
 
-@NgModule({ declarations: [
-        HomeComponent,
-        AboutComponent,
-        AppNotFoundComponent,
-        AppComponent,
-        AppHeaderComponent,
-        AppFooterComponent
-    ],
-    bootstrap: [
-        AppComponent
-    ], imports: [BrowserModule,
-        FormsModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        SharedModule,
-        MatPaginatorModule,
-        MsalModule,
-        AppDrawerComponent], providers: [
-        AppConfig,
-        {
-            provide: APP_INITIALIZER,
-            useFactory: initializeApp,
-            deps: [AppConfig], multi: true
-        },
-        { provide: HTTP_INTERCEPTORS, useClass: HttpConfigInterceptor, multi: true },
-        {
-            provide: MSAL_INSTANCE,
-            useFactory: MSALInstanceFactory
-        },
-        MsalService,
-        provideHttpClient(withInterceptorsFromDi())
-    ] })
+@NgModule({
+        imports: [
+            BrowserModule,
+            HttpClientModule,
+            FormsModule,
+            BrowserAnimationsModule,
+            AppRoutingModule,
+            SharedModule,
+            MatPaginatorModule,
+            MsalModule,
+            AppDrawerComponent
+        ],
+        declarations: [
+            HomeComponent,
+            AboutComponent,
+            AppNotFoundComponent,
+            AppComponent,
+            AppHeaderComponent,
+            AppFooterComponent
+        ],
+        providers: [
+            AppConfig,
+            {
+                provide: APP_INITIALIZER,
+                useFactory: initializeApp,
+                deps: [AppConfig], multi: true
+            },
+            { provide: HTTP_INTERCEPTORS, useClass: HttpConfigInterceptor, multi: true },
+            {
+                provide: MSAL_INSTANCE,
+                useFactory: MSALInstanceFactory
+            },
+            MsalService
+        ],
+        bootstrap: [
+            AppComponent
+        ]
+    })
 export class AppModule { }
 
