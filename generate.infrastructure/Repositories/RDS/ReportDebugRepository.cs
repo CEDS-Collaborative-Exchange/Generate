@@ -32,6 +32,7 @@ namespace generate.infrastructure.Repositories.RDS
             int totalRecordCount = 0;
 
             var returnObject = new List<ReportDebug>();
+            _logger.LogInformation($"Getting Report Debug data for reportCode: {reportCode}, reportLevel: {reportLevel}, reportYear: {reportYear}, categorySetCode: {categorySetCode}, parameters: {parameters}, sort: {sort}, skip: {skip}, take: {take}, pageSize: {pageSize}, page: {page}");
 
             try
             {
@@ -69,6 +70,12 @@ namespace generate.infrastructure.Repositories.RDS
                                     {
                                         dto.Fields[reader.GetName(i)] = reader.GetValue(i);
                                     }
+
+                                    if (reportCode == "059")
+                                    {
+                                        AddStaffCategoryAliases(dto.Fields);
+                                    }
+
                                     returnObject.Add(dto);
                                 }
                             }
@@ -93,6 +100,24 @@ namespace generate.infrastructure.Repositories.RDS
             }
             return returnObject;
 
+        }
+
+        private static void AddStaffCategoryAliases(Dictionary<string, object> fields)
+        {
+            const string staffCategoryId = "staffcategoryid";
+            const string staffClassification = "k12staffclassification";
+
+            var staffCategoryKey = fields.Keys.FirstOrDefault(k => string.Equals(k, staffCategoryId, StringComparison.OrdinalIgnoreCase));
+            var staffClassificationKey = fields.Keys.FirstOrDefault(k => string.Equals(k, staffClassification, StringComparison.OrdinalIgnoreCase));
+
+            if (staffCategoryKey != null && staffClassificationKey == null)
+            {
+                fields[staffClassification] = fields[staffCategoryKey];
+            }
+            else if (staffClassificationKey != null && staffCategoryKey == null)
+            {
+                fields[staffCategoryId] = fields[staffClassificationKey];
+            }
         }
     }
 }
