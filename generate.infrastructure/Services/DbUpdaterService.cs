@@ -129,95 +129,95 @@ namespace generate.infrastructure.Services
         }
 
         [SuppressMessage("Microsoft.Design", "EF1000")]
-        private bool UpdateVersion(string basePath, string versionToUpdate, string currentVersion)
-        {
-            bool isUpdateSuccessful = true;
-            bool isPrerelease = false;
+        // private bool UpdateVersion(string basePath, string versionToUpdate, string currentVersion)
+        // {
+        //     bool isUpdateSuccessful = true;
+        //     bool isPrerelease = false;
 
-            if (versionToUpdate.Contains("_prerelease"))
-            {
-                isPrerelease = true;
-            }
+        //     if (versionToUpdate.Contains("_prerelease"))
+        //     {
+        //         isPrerelease = true;
+        //     }
 
-            float versionToUpdateValue = 0;
-            float.TryParse(versionToUpdate.Replace("_prerelease", "").Replace("_hotfix", ""), out versionToUpdateValue);
+        //     float versionToUpdateValue = 0;
+        //     float.TryParse(versionToUpdate.Replace("_prerelease", "").Replace("_hotfix", ""), out versionToUpdateValue);
             
-            float currentVersionValue = 0;
-            float.TryParse(currentVersion.Replace("_prerelease", "").Replace("_hotfix", ""), out currentVersionValue);
+        //     float currentVersionValue = 0;
+        //     float.TryParse(currentVersion.Replace("_prerelease", "").Replace("_hotfix", ""), out currentVersionValue);
 
-            FileInfo fileInfo = null;
+        //     FileInfo fileInfo = null;
             
-            // Get version scripts
-            fileInfo = new FileInfo(basePath + "\\DatabaseScripts\\VersionUpdates\\" + versionToUpdate + "\\VersionScripts.csv");
-            string versionCsv = "";
-            using (StreamReader sr = fileInfo.OpenText())
-            {
-                versionCsv = sr.ReadToEnd();
-            }
+        //     // Get version scripts
+        //     fileInfo = new FileInfo(basePath + "\\DatabaseScripts\\VersionUpdates\\" + versionToUpdate + "\\VersionScripts.csv");
+        //     string versionCsv = "";
+        //     using (StreamReader sr = fileInfo.OpenText())
+        //     {
+        //         versionCsv = sr.ReadToEnd();
+        //     }
             
-            // Execute each script
-            int executionCount = 0;
-            string[] rows = versionCsv.Split('\n');
+        //     // Execute each script
+        //     int executionCount = 0;
+        //     string[] rows = versionCsv.Split('\n');
 
-            foreach (string row in rows)
-            {
-                if (row == "\r")
-                    continue;
+        //     foreach (string row in rows)
+        //     {
+        //         if (row == "\r")
+        //             continue;
 
-                if (!string.IsNullOrEmpty(row))
-                {
-                    var cells = row.Split(',');
+        //         if (!string.IsNullOrEmpty(row))
+        //         {
+        //             var cells = row.Split(',');
 
-                    string forceUpdate = cells[2];
-                    int forceUpdateValue = 0;
-                    int.TryParse(forceUpdate, out forceUpdateValue);
-
-
-                    bool runScript = false;
-
-                    if (versionToUpdateValue > currentVersionValue)
-                    {
-                        runScript = true;
-                    }
-
-                    if (versionToUpdateValue == currentVersionValue && (isPrerelease || forceUpdateValue == 1))
-                    {
-                        runScript = true;
-                    }
+        //             string forceUpdate = cells[2];
+        //             int forceUpdateValue = 0;
+        //             int.TryParse(forceUpdate, out forceUpdateValue);
 
 
-                    if (runScript)
-                    {
+        //             bool runScript = false;
 
-                        bool isScriptSuccessful = ExecuteScript(basePath + "\\DatabaseScripts\\" + cells[0], cells[1]);
+        //             if (versionToUpdateValue > currentVersionValue)
+        //             {
+        //                 runScript = true;
+        //             }
 
-                        if (!isScriptSuccessful)
-                        {
-                            isUpdateSuccessful = false;
-                            break;
-                        }
-                        else
-                        {
-                            executionCount++;
-                        }
-                    }
+        //             if (versionToUpdateValue == currentVersionValue && (isPrerelease || forceUpdateValue == 1))
+        //             {
+        //                 runScript = true;
+        //             }
 
-                }
-            }
 
-            if (executionCount == 0)
-            {
-                _logger.LogInformation("- no updates required");
-                Console.WriteLine("- no updates required");
-            }
-            else
-            {
-                _logger.LogInformation("- " + executionCount + " updates applied");
-                Console.WriteLine("- " + executionCount + " updates applied");
-            }
+        //             if (runScript)
+        //             {
 
-            return isUpdateSuccessful;
-        }
+        //                 bool isScriptSuccessful = ExecuteScript(basePath + "\\DatabaseScripts\\" + cells[0], cells[1]);
+
+        //                 if (!isScriptSuccessful)
+        //                 {
+        //                     isUpdateSuccessful = false;
+        //                     break;
+        //                 }
+        //                 else
+        //                 {
+        //                     executionCount++;
+        //                 }
+        //             }
+
+        //         }
+        //     }
+
+        //     if (executionCount == 0)
+        //     {
+        //         _logger.LogInformation("- no updates required");
+        //         Console.WriteLine("- no updates required");
+        //     }
+        //     else
+        //     {
+        //         _logger.LogInformation("- " + executionCount + " updates applied");
+        //         Console.WriteLine("- " + executionCount + " updates applied");
+        //     }
+
+        //     return isUpdateSuccessful;
+        // }
 
         [SuppressMessage("Microsoft.Design", "EF1000")]
         private bool ExecuteScript(string scriptPath, string scriptFile, List<SqlParameter> parameters = null)

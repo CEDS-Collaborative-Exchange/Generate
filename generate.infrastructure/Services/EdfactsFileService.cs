@@ -150,66 +150,77 @@ namespace generate.infrastructure.Services
             {
                 ++fileRecordNumber;
                 var fileDataRow = new ExpandoObject();
-                fileSubmissioncolumns.ForEach(column =>
+                foreach (var column in fileSubmissioncolumns)
                 {
-                    string field = column.ColumnName;
-                    if (column.ReportColumn != null)
-                    {
-                        field = column.ReportColumn;
-                    }
-
-                    if (column.ColumnName.ToLower().StartsWith("filler"))
-                    {
-                        DynamicClassObject.AddProperty(column.ColumnName, "", fileDataRow);
-                    }
-                    else if (column.ColumnName == "StateAgencyNumber")
-                    {
-                        DynamicClassObject.AddProperty(column.ColumnName, "01", fileDataRow);
-                    }
-                    else if (column.ColumnName == "Explanation")
-                    {
-                        DynamicClassObject.AddProperty(column.ColumnName, "", fileDataRow);
-                    }
-                    else if (column.ColumnName == "FileRecordNumber")
-                    {
-                        DynamicClassObject.AddProperty(column.ColumnName, fileRecordNumber.ToString(), fileDataRow);
-                    }
-                    else if (column.ColumnName == "StateLEAIDNumber" || column.ColumnName == "StateSchoolIDNumber")
-                    {
-                        field = SubmissionFileHelper.GetLeaIdentifier(factTableName, reportLevel, column.ColumnName);
-                    }
-                    else if (column.ColumnName == "NCESLEAIDNumber" || column.ColumnName == "NCESSchoolIDNumber")
-                    {
-                        field = SubmissionFileHelper.GetNCESIdentifier(factTableName, reportLevel, column.ColumnName);
-                    }
-                    else if (column.ColumnName == "Amount")
-                    {
-                        field = SubmissionFileHelper.GetAmount(factFieldName, reportCode);
-                    }
-                    else if (column.ColumnName == "HomelessStatusID")
-                    {
-                        if (reportCode == "037") { field = "HOMELESSNESSSTATUS"; }
-                        else { field = "HOMELESSUNACCOMPANIEDYOUTHSTATUS"; }
-                    }
-
-                    PropertyInfo prop = dataRow.GetType().GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-                    if (prop != null)
-                    {
-                        var val = prop.GetValue(dataRow, null);
-                        if (val == null)
-                        {
-                            val = "";
-                        }
-                        DynamicClassObject.AddProperty(column.ColumnName, val, fileDataRow);
-                    }
-
-                });
+                    AddSubmissionColumn(dataRow, fileDataRow, column, factTableName, reportCode, reportLevel, factFieldName, fileRecordNumber);
+                }
 
                 dynamicRows.Add(fileDataRow);
 
             }
             return dynamicRows;
 
+        }
+
+        private void AddSubmissionColumn(dynamic dataRow, ExpandoObject fileDataRow, FileSubmissionColumnDto column, string factTableName, string reportCode, string reportLevel, string factFieldName, int fileRecordNumber)
+        {
+            string field = GetSubmissionFieldName(column, factTableName, reportCode, reportLevel, factFieldName);
+
+            if (column.ColumnName.ToLower().StartsWith("filler"))
+            {
+                DynamicClassObject.AddProperty(column.ColumnName, "", fileDataRow);
+                return;
+            }
+
+            if (column.ColumnName == "StateAgencyNumber")
+            {
+                DynamicClassObject.AddProperty(column.ColumnName, "01", fileDataRow);
+                return;
+            }
+
+            if (column.ColumnName == "Explanation")
+            {
+                DynamicClassObject.AddProperty(column.ColumnName, "", fileDataRow);
+                return;
+            }
+
+            if (column.ColumnName == "FileRecordNumber")
+            {
+                DynamicClassObject.AddProperty(column.ColumnName, fileRecordNumber.ToString(), fileDataRow);
+                return;
+            }
+
+            PropertyInfo prop = dataRow.GetType().GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            if (prop != null)
+            {
+                var val = prop.GetValue(dataRow, null) ?? "";
+                DynamicClassObject.AddProperty(column.ColumnName, val, fileDataRow);
+            }
+        }
+
+        private string GetSubmissionFieldName(FileSubmissionColumnDto column, string factTableName, string reportCode, string reportLevel, string factFieldName)
+        {
+            if (column.ColumnName == "StateLEAIDNumber" || column.ColumnName == "StateSchoolIDNumber")
+            {
+                return SubmissionFileHelper.GetLeaIdentifier(factTableName, reportLevel, column.ColumnName);
+            }
+
+            if (column.ColumnName == "NCESLEAIDNumber" || column.ColumnName == "NCESSchoolIDNumber")
+            {
+                return SubmissionFileHelper.GetNCESIdentifier(factTableName, reportLevel, column.ColumnName);
+            }
+
+            if (column.ColumnName == "Amount")
+            {
+                return SubmissionFileHelper.GetAmount(factFieldName, reportCode);
+            }
+
+            if (column.ColumnName == "HomelessStatusID")
+            {
+                return reportCode == "037" ? "HOMELESSNESSSTATUS" : "HOMELESSUNACCOMPANIEDYOUTHSTATUS";
+            }
+
+            return column.ReportColumn ?? column.ColumnName;
         }
 
         public (IEnumerable<MembershipReportDto>, int) GetMembershipStudentCountData(string reportCode, string reportTypeCode, string reportLevel, string reportYear, List<FileSubmissionColumnDto> fileSubmissioncolumns, int startRecord, int numberOfRecords)
