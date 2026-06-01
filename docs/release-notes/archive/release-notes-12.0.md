@@ -5,6 +5,27 @@ description: >-
 icon: memo
 cover: ../../.gitbook/assets/Generate 12.0 Release Notes cover.png
 coverY: 0
+layout:
+  width: default
+  cover:
+    visible: true
+    size: hero
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+  actions:
+    visible: true
 ---
 
 # Release Notes 12.0
