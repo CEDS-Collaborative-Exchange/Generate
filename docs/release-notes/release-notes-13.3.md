@@ -63,7 +63,8 @@ It will be added to the table as part of the update and the value will be set as
 #### Non-IDEA Reports
 
 * **Directory (207**)
-  * Added migration and submission file code for this file specification
+  * Added migration and submission file code for this file specification, State Appropriations for Charter Schools
+  * Special thanks to the state of New Mexico for contributing this code!&#x20;
 * **Membership (052)**
   * Corrected the zero count logic so that rows are only created for Grades Offered at the LEA/School
 
@@ -79,7 +80,7 @@ Note: There is a change to appSettings.json required for the new API and there i
 
 * **User Accessibility:** Added more user accessibility updates
 
-#### General Chnages
+#### General Changes
 
 * Updated .NET to version 10
 * Updated Angular to version 20
