@@ -36,7 +36,7 @@ namespace generate.test.UserInterface.Helpers
             chromeOptions.AddArgument("disable-features=VizDisplayCompositor");
             chromeOptions.AddArgument("dns-prefetch-disable");
 
-            var rootDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Replace("file:\\", "");
+            var rootDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             chromeOptions.AddUserProfilePreference("download.default_directory", rootDir);
 
             ChromeDriverService chromeDriverService = ChromeDriverService.CreateDefaultService(AppDomain.CurrentDomain.BaseDirectory);

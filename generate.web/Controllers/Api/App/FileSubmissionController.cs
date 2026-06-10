@@ -74,7 +74,7 @@ namespace generate.web.Controllers.Api.App
                 List<MembershipReportDto> dataTable = null;
 
                 Response.ContentType = _fileSubmissionService.GetContentType(fileFormatType);
-                Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileName}\"");
+                Response.Headers["Content-Disposition"] = $"attachment; filename=\"{fileName}\"";
 
                 bool headerWritten = false;
                 while (tableCount == numberOfRecords)
@@ -133,7 +133,7 @@ namespace generate.web.Controllers.Api.App
                 List<ExpandoObject> dataTable = _edfactsFileService.GetStudentCountData(reportCode, reportTypeCode, reportLevel, reportYear, fileSubmissioncolumns);
 
                 Response.ContentType = _fileSubmissionService.GetContentType(fileFormatType);
-                Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileName}\"");
+                Response.Headers["Content-Disposition"] = $"attachment; filename=\"{fileName}\"";
 
                 byte[] headerBytes = Encoding.UTF8.GetBytes(_fileSubmissionService.GetFileHeader(reportTypeCode, reportCode, reportLevel, reportYear, fileFormatType, fileName, dataTable.Count) + Environment.NewLine);
                 Response.Body.WriteAsync(headerBytes, 0, headerBytes.Length);

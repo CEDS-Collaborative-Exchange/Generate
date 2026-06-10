@@ -101,20 +101,36 @@ namespace generate.infrastructure.Repositories.RDS
             return facts;
         }
 
-        private IQueryable<ReportEDFactsK12StudentCount> AggregateFactStudentCount(IQueryable<FactK12StudentCount> facts, string reportCode, string reportLevel, string reportYear, string categorySetCode, string categories, string tableTypeAbbrv)
+        private string GetOrgName(dynamic x, string reportLevel)
         {
-            // Define grouping key parts based on report level
             var isSEA = reportLevel == "sea";
             var isLEA = reportLevel == "lea";
 
-            Func<dynamic, string> getOrgName = x => isSEA ? x.DimSchool.SeaName :
-                                                      isLEA ? x.DimSchool.LeaName :
-                                                              x.DimSchool.NameOfInstitution;
+            if (isSEA)
+                return x.DimSchool.SeaName;
 
-            Func<dynamic, string?> getParentStateId = x => isSEA ? null :
-                                                         isLEA ? x.DimSchool.SeaIdentifierState :
-                                                                 x.DimSchool.LeaIdentifierState;
+            if (isLEA)
+                return x.DimSchool.LeaName;
 
+            return x.DimSchool.NameOfInstitution;
+        }
+
+        private string? GetParentStateId(dynamic x, string reportLevel)
+        {
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            if (isSEA)
+                return null;
+
+            if (isLEA)
+                return x.DimSchool.SeaIdentifierState;
+
+            return x.DimSchool.LeaIdentifierState;
+        }
+
+        private IQueryable<ReportEDFactsK12StudentCount> AggregateFactStudentCount(IQueryable<FactK12StudentCount> facts, string reportCode, string reportLevel, string reportYear, string categorySetCode, string categories, string tableTypeAbbrv)
+        {
             var groupedFacts = facts
                 .GroupBy(x => new
                 {
@@ -123,8 +139,8 @@ namespace generate.infrastructure.Repositories.RDS
                     x.DimSchool.StateAbbreviationDescription,
                     OrganizationNcesId = GetOrgNcesId(x, reportLevel),
                     OrganizationStateId = GetOrgStateId(x, reportLevel),
-                    OrganizationName = getOrgName(x),
-                    ParentOrganizationStateId = getParentStateId(x),
+                    OrganizationName = GetOrgName(x, reportLevel),
+                    ParentOrganizationStateId = GetParentStateId(x, reportLevel),
                     AGE = categories.Contains("|AGE|") ? x.DimAge.AgeEdFactsCode : null,
                     LEPSTATUS = categories.Contains("|LEPBOTH|") ? x.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
                     LANGUAGE = categories.Contains("|LANGHOME|") ? x.DimLanguage.Iso6392LanguageEdFactsCode : null,
@@ -155,7 +171,6 @@ namespace generate.infrastructure.Repositories.RDS
                 });
 
             return groupedFacts;
-
         }
 
         private string GetOrgStateId(dynamic x, string reportLevel)
@@ -261,6 +276,62 @@ namespace generate.infrastructure.Repositories.RDS
             return facts;
         }
 
+        private string GetDisciplineOrgNcesId(dynamic x, string reportLevel)
+        {
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            if (isSEA)
+                return x.DimLea.StateAnsiCode;
+
+            if (isLEA)
+                return x.DimLea.LeaIdentifierNces ?? "";
+
+            return x.DimSchool.SchoolIdentifierNces ?? "";
+        }
+
+        private string GetDisciplineOrgStateId(dynamic x, string reportLevel)
+        {
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            if (isSEA)
+                return x.DimLea.SeaIdentifierState;
+
+            if (isLEA)
+                return x.DimLea.LeaIdentifierState;
+
+            return x.DimSchool.SchoolIdentifierState;
+        }
+
+        private string GetDisciplineOrgName(dynamic x, string reportLevel)
+        {
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            if (isSEA)
+                return x.DimLea.SeaName;
+
+            if (isLEA)
+                return x.DimLea.LeaName;
+
+            return x.DimSchool.NameOfInstitution;
+        }
+
+        private string? GetDisciplineParentStateId(dynamic x, string reportLevel)
+        {
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            if (isSEA)
+                return null;
+
+            if (isLEA)
+                return x.DimLea.SeaIdentifierState;
+
+            return x.DimSchool.LeaIdentifierState;
+        }
+
         private IQueryable<ReportEDFactsK12StudentDiscipline> AggregateFactStudentDiscipline(IQueryable<FactK12StudentDiscipline> facts, string reportCode, string reportLevel, string reportYear, string categorySetCode, string categories, string tableTypeAbbrv)
         {
             // Category flags
@@ -281,27 +352,6 @@ namespace generate.infrastructure.Repositories.RDS
             if (reportLevel == "sch")
                 facts = facts.Where(x => x.K12SchoolId != -1);
 
-            // Predefine grouping field selectors
-            Func<dynamic, string> getOrgNcesId = x =>
-                reportLevel == "sea" ? x.DimLea.StateAnsiCode :
-                reportLevel == "lea" ? (x.DimLea.LeaIdentifierNces ?? "") :
-                                       (x.DimSchool.SchoolIdentifierNces ?? "");
-
-            Func<dynamic, string> getOrgStateId = x =>
-                reportLevel == "sea" ? x.DimLea.SeaIdentifierState :
-                reportLevel == "lea" ? x.DimLea.LeaIdentifierState :
-                                       x.DimSchool.SchoolIdentifierState;
-
-            Func<dynamic, string> getOrgName = x =>
-                reportLevel == "sea" ? x.DimLea.SeaName :
-                reportLevel == "lea" ? x.DimLea.LeaName :
-                                       x.DimSchool.NameOfInstitution;
-
-            Func<dynamic, string?> getParentOrgStateId = x =>
-                reportLevel == "sea" ? null :
-                reportLevel == "lea" ? x.DimLea.SeaIdentifierState :
-                                       x.DimSchool.LeaIdentifierState;
-
             var groupedFacts = facts
                 .GroupBy(x => new
                 {
@@ -309,10 +359,10 @@ namespace generate.infrastructure.Repositories.RDS
                     x.DimLea.StateAbbreviationCode,
                     x.DimLea.StateAnsiCode,
                     x.DimLea.StateAbbreviationDescription,
-                    OrganizationNcesId = getOrgNcesId(x),
-                    OrganizationStateId = getOrgStateId(x),
-                    OrganizationName = getOrgName(x),
-                    ParentOrganizationStateId = getParentOrgStateId(x),
+                    OrganizationNcesId = GetDisciplineOrgNcesId(x, reportLevel),
+                    OrganizationStateId = GetDisciplineOrgStateId(x, reportLevel),
+                    OrganizationName = GetDisciplineOrgName(x, reportLevel),
+                    ParentOrganizationStateId = GetDisciplineParentStateId(x, reportLevel),
                     AGE = includeAGE ? x.DimAge.AgeEdFactsCode : null,
                     DISABILITY = includeDISABILITY ? x.DimIdeaStatus.PrimaryDisabilityTypeEdFactsCode : null,
                     LEPSTATUS = includeLEPSTATUS ? x.DimDemographic.EnglishLearnerStatusEdFactsCode : null,
@@ -382,7 +432,6 @@ namespace generate.infrastructure.Repositories.RDS
                 });
 
             return groupedFacts;
-
         }
 
         private IQueryable<ReportEDFactsK12StudentDiscipline> RemoveMissingFactStudentDisciplines(IQueryable<ReportEDFactsK12StudentDiscipline> reports)
@@ -427,9 +476,64 @@ namespace generate.infrastructure.Repositories.RDS
         #region FactStudentAssessmentReport
 
 
+        private string GetAssessmentOrgNcesId(dynamic x, string reportLevel)
+        {
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            if (isSEA)
+                return x.DimLea.StateAnsiCode;
+
+            if (isLEA)
+                return x.DimLea.LeaIdentifierNces ?? "";
+
+            return x.DimSchool.SchoolIdentifierNces ?? "";
+        }
+
+        private string GetAssessmentOrgStateId(dynamic x, string reportLevel)
+        {
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            if (isSEA)
+                return x.DimLea.SeaIdentifierState;
+
+            if (isLEA)
+                return x.DimLea.LeaIdentifierState;
+
+            return x.DimSchool.SchoolIdentifierState;
+        }
+
+        private string GetAssessmentOrgName(dynamic x, string reportLevel)
+        {
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            if (isSEA)
+                return x.DimLea.SeaName;
+
+            if (isLEA)
+                return x.DimLea.LeaName;
+
+            return x.DimSchool.NameOfInstitution;
+        }
+
+        private string? GetAssessmentParentStateId(dynamic x, string reportLevel)
+        {
+            var isSEA = reportLevel == "sea";
+            var isLEA = reportLevel == "lea";
+
+            if (isSEA)
+                return null;
+
+            if (isLEA)
+                return x.DimLea.SeaIdentifierState;
+
+            return x.DimSchool.LeaIdentifierState;
+        }
+
         private IQueryable<FactK12StudentAssessmentReport> AggregateFactAssessmentCount(IQueryable<FactK12StudentAssessment> facts, List<ToggleAssessment> toggleAssessments, string reportCode, string reportLevel, string reportYear, string categorySetCode, string categories, string tableTypeAbbrv)
         {
-
             // Category flags
             bool includeSubject = categories.Contains("|ASSESSMENTSUBJECT|");
             bool includeGradeLevel = categories.Contains("|GRADELVLASS|");
@@ -449,27 +553,6 @@ namespace generate.infrastructure.Repositories.RDS
                 facts = facts.Where(x => x.K12SchoolId != -1);
             if (includeRace)
                 facts = facts.Where(x => x.DimRace.DimFactType.FactTypeCode == "submission");
-
-            // Precomputed selectors
-            Func<dynamic, string> getOrgNcesId = x =>
-                reportLevel == "sea" ? x.DimLea.StateAnsiCode :
-                reportLevel == "lea" ? (x.DimLea.LeaIdentifierNces ?? "") :
-                                       (x.DimSchool.SchoolIdentifierNces ?? "");
-
-            Func<dynamic, string> getOrgStateId = x =>
-                reportLevel == "sea" ? x.DimLea.SeaIdentifierState :
-                reportLevel == "lea" ? x.DimLea.LeaIdentifierState :
-                                       x.DimSchool.SchoolIdentifierState;
-
-            Func<dynamic, string> getOrgName = x =>
-                reportLevel == "sea" ? x.DimLea.SeaName :
-                reportLevel == "lea" ? x.DimLea.LeaName :
-                                       x.DimSchool.NameOfInstitution;
-
-            Func<dynamic, string?> getParentStateId = x =>
-                reportLevel == "sea" ? null :
-                reportLevel == "lea" ? x.DimLea.SeaIdentifierState :
-                                       x.DimSchool.LeaIdentifierState;
 
             var joinedFacts = facts
                 .ToList()
@@ -497,10 +580,10 @@ namespace generate.infrastructure.Repositories.RDS
                     StateCode = x.t1.DimLea.StateAbbreviationCode,
                     StateANSICode = x.t1.DimLea.StateAnsiCode,
                     StateName = x.t1.DimLea.StateAbbreviationDescription,
-                    OrganizationNcesId = getOrgNcesId(x.t1),
-                    OrganizationStateId = getOrgStateId(x.t1),
-                    OrganizationName = getOrgName(x.t1),
-                    ParentOrganizationStateId = getParentStateId(x.t1),
+                    OrganizationNcesId = GetAssessmentOrgNcesId(x.t1, reportLevel),
+                    OrganizationStateId = GetAssessmentOrgStateId(x.t1, reportLevel),
+                    OrganizationName = GetAssessmentOrgName(x.t1, reportLevel),
+                    ParentOrganizationStateId = GetAssessmentParentStateId(x.t1, reportLevel),
                     ASSESSMENTSUBJECT = includeSubject ? x.t1.DimAssessment.AssessmentSubjectEdFactsCode : null,
                     GRADELEVEL = includeGradeLevel ? x.t1.DimGradeLevel.GradeLevelEdFactsCode : null,
                     IDEAINDICATOR = includeIdea ? x.t1.DimIdeaStatus.IdeaIndicatorEdFactsCode : null,
@@ -567,7 +650,6 @@ namespace generate.infrastructure.Repositories.RDS
                 .AsQueryable();
 
             return groupedFacts;
-
         }
 
         #endregion

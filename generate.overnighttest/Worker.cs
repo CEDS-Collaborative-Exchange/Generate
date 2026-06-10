@@ -33,7 +33,7 @@ namespace generate.overnighttest
     {
         
         // Directory where this application is running
-        private string appDir;
+        private string? appDir;
         private string[] programArgs;
         /// <summary>
         /// Only run pre dmc once if testing only
@@ -361,7 +361,7 @@ namespace generate.overnighttest
                     return;
 
                 }
-                IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+                IAppRepository appRepository = serviceProvider!.GetRequiredService<IAppRepository>();
                 Action<string> process = (reportCode) =>
                 {
                     string report = reportCode.Equals(ALL_FACT) ? "" : reportCode;
@@ -370,7 +370,7 @@ namespace generate.overnighttest
                    
                 };
 
-                using var scope = serviceProvider.CreateScope();
+                using var scope = serviceProvider!.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 if (!reportCodeArr.Contains(ALL_FACT) && reportCodeArr.Length > 0)
                 {
@@ -404,7 +404,7 @@ namespace generate.overnighttest
                 // all the fact  report codes to array
                 if (migrateFactRecords != null && !migrateFactRecords.Contains(ALL_FACT))
                 {
-                    Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider);
+                    Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider!);
                     factsToMigrate = migrateFactRecords.Split(",");
                     if (factsToMigrate.Length == 1 && factTypeCodeToReportCodes.ContainsKey(factsToMigrate[0])) { 
                           isFactType = true;         
@@ -417,7 +417,7 @@ namespace generate.overnighttest
                 // Only report that came in to be locked or if all report everthing to be locked, GenerateReports.isLocked = 1 
                 toggleReportLock(1, factsToMigrate, isFactType);
                 Console.Out.WriteLine("Inside RunMigration");
-                IMigrationService migrationService = serviceProvider.GetService<IMigrationService>();
+                IMigrationService migrationService = serviceProvider!.GetRequiredService<IMigrationService>();
                 //Console.Out.WriteLine("migrationService is present:" + migrationService);
                 migrationService.MigrateData("report");
                 //BackgroundJob.Enqueue<IMigrationService>(s =>
@@ -429,7 +429,7 @@ namespace generate.overnighttest
                 while (true)
                 {
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
-                    using var pollScope = serviceProvider.CreateScope();
+                    using var pollScope = serviceProvider!.CreateScope();
                     var pollContext = pollScope.ServiceProvider.GetRequiredService<AppDbContext>();
                     var dataMigration = pollContext.Set<generate.core.Models.App.DataMigration>()
                         .Where(m => m.DataMigrationType.DataMigrationTypeCode == "report")
@@ -479,9 +479,9 @@ namespace generate.overnighttest
                     return;
                 }
 
-                using var scope = serviceProvider.CreateScope();
+                using var scope = serviceProvider!.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                IRDSRepository rDSRepository = serviceProvider.GetService<IRDSRepository>();
+                IRDSRepository rDSRepository = serviceProvider!.GetRequiredService<IRDSRepository>();
                 IAppRepository appRepository = new AppRepository(dbContext, rDSRepository);
                 appRepository.RunBeforeTests(schoolyear);
 
@@ -519,14 +519,14 @@ namespace generate.overnighttest
         private void RunTestByFactType(IList<string> factTypeValuesList)
         {
             // Dictionary<string, string> dict = Utils.BuildFactTypeToFileSpec();
-            Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider);
+            Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider!);
             Console.WriteLine("Inside RunTestByFactType factTypeValuesSeperatedByComma:" + TryToString(factTypeValuesList));
             //string[] factTypeArr = factTypeValuesList.
 
             foreach (var item in factTypeValuesList)
             {
                 Console.WriteLine("factType came:" + item);
-                if (factTypeCodeToReportCodes.TryGetValue(item, out IList<string> reportCodes))
+                if (factTypeCodeToReportCodes.TryGetValue(item, out IList<string>? reportCodes))
                 {
                     //string reportCodeCommaSeperated = string.Join(",", reportCodes);
                     RunTestByFileSpecReportCode(reportCodes);
@@ -564,7 +564,7 @@ namespace generate.overnighttest
                         Console.WriteLine($"Test for spec:{item} is not active");
                         continue;
                     }
-                    using var scope = serviceProvider.CreateScope();
+                    using var scope = serviceProvider!.CreateScope();
                     try
                     {
                         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -599,7 +599,7 @@ namespace generate.overnighttest
         private void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)
         {
             Console.WriteLine($"Inside EnableOrDisableTests enable:{enable} fileSpecNumbers:{fileSpecNumbers}, ");
-            IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+            IAppRepository appRepository = serviceProvider!.GetRequiredService<IAppRepository>();
             appRepository.EnableOrDisableTests(fileSpecNumbers, enable);
             
         }

@@ -12,50 +12,30 @@ namespace generate.infrastructure.Utilities
     {
         public static string GetLeaIdentifier(string factTableName, string reportLevel, string columnName)
         {
-            string field = "";
-            if (factTableName == "FactOrganizationCounts")
+            return (factTableName, reportLevel, columnName) switch
             {
-                if (reportLevel == "lea") { field = "OrganizationStateId"; }
-                else if (reportLevel == "sch")
-                {
-                    if (columnName == "StateSchoolIDNumber") { field = "OrganizationStateId"; }
-                    else { field = "ParentOrganizationStateId"; }
-                }
-            }
-            else
-            {
-                if (reportLevel == "lea") { field = "OrganizationIdentifierSea"; }
-                else if (reportLevel == "sch")
-                {
-                    if (columnName == "StateSchoolIDNumber") { field = "OrganizationIdentifierSea"; }
-                    else { field = "ParentOrganizationIdentifierSea"; }
-                }
-            }
-            return field;
+                ("FactOrganizationCounts", "lea", _) => "OrganizationStateId",
+                ("FactOrganizationCounts", "sch", "StateSchoolIDNumber") => "OrganizationStateId",
+                ("FactOrganizationCounts", "sch", _) => "ParentOrganizationStateId",
+                (_, "lea", _) => "OrganizationIdentifierSea",
+                (_, "sch", "StateSchoolIDNumber") => "OrganizationIdentifierSea",
+                (_, "sch", _) => "ParentOrganizationIdentifierSea",
+                _ => ""
+            };
         }
 
         public static string GetNCESIdentifier(string factTableName, string reportLevel, string columnName)
         {
-            string field = "";
-            if (factTableName == "FactOrganizationCounts")
+            return (factTableName, reportLevel, columnName) switch
             {
-                if (reportLevel == "lea") { field = "OrganizationNcesId"; }
-                else if (reportLevel == "sch")
-                {
-                    if (columnName == "NCESSchoolIDNumber") { field = "OrganizationNcesId"; }
-                    else { field = "ParentOrganizationNcesId"; }
-                }
-            }
-            else
-            {
-                if (reportLevel == "lea") { field = "OrganizationIdentifierNces"; }
-                else if (reportLevel == "sch")
-                {
-                    if (columnName == "NCESSchoolIDNumber") { field = "OrganizationIdentifierNces"; }
-                    else { field = "ParentOrganizationIdentifierNces"; }
-                }
-            }
-            return field;
+                ("FactOrganizationCounts", "lea", _) => "OrganizationNcesId",
+                ("FactOrganizationCounts", "sch", "NCESSchoolIDNumber") => "OrganizationNcesId",
+                ("FactOrganizationCounts", "sch", _) => "ParentOrganizationNcesId",
+                (_, "lea", _) => "OrganizationIdentifierNces",
+                (_, "sch", "NCESSchoolIDNumber") => "OrganizationIdentifierNces",
+                (_, "sch", _) => "ParentOrganizationIdentifierNces",
+                _ => ""
+            };
         }
 
         public static string GetStateSchoolIdentifier(string factTableName)
