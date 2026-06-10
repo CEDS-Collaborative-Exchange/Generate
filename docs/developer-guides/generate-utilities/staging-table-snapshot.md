@@ -31,19 +31,16 @@ The Snapshot Utility would be executed **AFTER** running an ETL to populate Stag
 To execute the Snapshot Utility, run the following command in SSMS with the desired parameters:
 
 ```
-Utilities.CreateSnapshotFromStaging
-
-@SchoolYear = 2023,
-@ReportCode = 'C029'
+exec Utilities.CreateSnapshotFromStaging
+@SchoolYear = 2026
+@ReportCode = '029'
 ```
-
-<figure><img src="../../.gitbook/assets/Execute the Snapshot.PNG" alt="Screenshot of SQL Server Management Studio displaying the command line execution of the Create Snapshot From Staging utility"><figcaption><p>How to execute the Create Snapshot From Staging utility from SSMS</p></figcaption></figure>
 
 {% hint style="warning" %}
 The `@SchoolYear` value should correspond to the data that currently exists in Staging tables.
 {% endhint %}
 
-The Snapshot Utility will make backup copies of all staging tables that pertain to the `@ReportCode` and place them in the **Source schema** in the Generate database.  For example, for `@ReportCode = '`**`C029`**`'` these tables are:
+The Snapshot Utility will make backup copies of all staging tables that pertain to the `@ReportCode` and place them in the **Source schema** in the Generate database.  For example, for `@ReportCode = '`**`029`**`'` these tables are:
 
 * `Staging.K12Organization`
 * `Staging.OrganizationAddress`

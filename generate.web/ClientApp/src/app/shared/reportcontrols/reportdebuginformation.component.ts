@@ -70,10 +70,35 @@ export class ReportDebugInformationComponent {
             .pipe(finalize(() => this.isLoading = false))
             .subscribe(
                 data => {
-                    this.repotDebugData = data.map(i => i['fields']);
+                    this.repotDebugData = data.map(i => this.normalizeDebugRow(i['fields']));
 
                 },
                 error => this.errorMessage = <any>error));
+    }
+
+    private normalizeDebugRow(fields: any): any {
+        if (!fields) {
+            return fields;
+        }
+
+        const normalized = { ...fields };
+
+        Object.keys(fields).forEach(key => {
+            const lowerKey = key.toLowerCase();
+            if (normalized[lowerKey] === undefined) {
+                normalized[lowerKey] = fields[key];
+            }
+        });
+
+        if (normalized['k12staffclassification'] === undefined && normalized['staffcategoryid'] !== undefined) {
+            normalized['k12staffclassification'] = normalized['staffcategoryid'];
+        }
+
+        if (normalized['staffcategoryid'] === undefined && normalized['k12staffclassification'] !== undefined) {
+            normalized['staffcategoryid'] = normalized['k12staffclassification'];
+        }
+
+        return normalized;
     }
 
     export() {

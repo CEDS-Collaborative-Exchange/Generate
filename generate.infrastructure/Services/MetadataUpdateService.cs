@@ -532,6 +532,23 @@ namespace generate.infrastructure.Services
             foreach (var catset in exceptList)
             {
                 CategorySet cs = _appDbContext.CategorySets.Where(a => a.CategorySetId == catset).FirstOrDefault();
+                if (cs == null)
+                {
+                    continue;
+                }
+
+                IQueryable<CategoryOption> colist = _appDbContext.CategoryOptions.Where(a => a.CategorySetId == catset);
+                foreach (var co in colist)
+                {
+                    delListCO.Add(co);
+                }
+
+                IQueryable<CategorySet_Category> cscList = _appDbContext.CategorySet_Categories.Where(a => a.CategorySetId == catset);
+                foreach (var csc in cscList)
+                {
+                    delListCSC.Add(csc);
+                }
+
                 delListCS.Add(cs);
             }
 

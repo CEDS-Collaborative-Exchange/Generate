@@ -1,0 +1,10 @@
+CREATE TABLE [App].[FactType_ReportsXREF](
+	[FactTypeId] [smallint] NOT NULL,
+	[GenerateReportId] [smallint] NOT NULL,
+ CONSTRAINT [PK_FactType_ReportsXREF] PRIMARY KEY CLUSTERED 
+(
+	[FactTypeId] ASC,
+	[GenerateReportId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+

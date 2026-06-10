@@ -5,6 +5,27 @@ description: >-
   technical updates made to Generate in version.
 cover: ../../.gitbook/assets/Generate Release 11.3 Gitbook page banner.png
 coverY: -36
+layout:
+  width: default
+  cover:
+    visible: true
+    size: hero
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+  actions:
+    visible: true
 ---
 
 # Release Notes 11.3
