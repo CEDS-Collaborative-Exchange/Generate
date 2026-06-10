@@ -66,10 +66,8 @@ In that file, there is a parameter for the metadata process named "**fsWSURL**â€
 * **Metadata:** Implemented the newly created API so the automated metadata update in Generate is available again
 
 {% hint style="info" %}
-Note: There is a change to appSettings.json required for the new API and there is a new SY variable in app.GenerateConfigurations
+Note: There is a change to appSettings.json required for the new API and there is a new SY variable in app.GenerateConfigurations. (Reference image above)
 {% endhint %}
-
-<figure><img src="../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
 
 * **User Accessibility:** Added more user accessibility updates
 
