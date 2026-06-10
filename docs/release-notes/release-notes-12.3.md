@@ -3,6 +3,27 @@ description: This document describes the technical enhancements to Generate vers
 icon: memo
 cover: ../.gitbook/assets/Release Notes 12.3_Banner.png
 coverY: 0
+layout:
+  width: default
+  cover:
+    visible: true
+    size: hero
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+  actions:
+    visible: true
 ---
 
 # Release Notes 12.3

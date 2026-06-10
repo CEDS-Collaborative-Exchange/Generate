@@ -4,7 +4,7 @@ description: >-
   for the Staff Fact Type.
 ---
 
-# Staff Fact Type
+# Staff
 
 {% hint style="info" %}
 Please note, to take most of these steps you will need an up-to-date version of Generate installed. Please visit the [Installation](../../installation/) or [Upgrade](../../installation/upgrade/) pages for more information.
@@ -22,9 +22,9 @@ Please note, to take most of these steps you will need an up-to-date version of 
 
 The following files have been created in Generate and submitted to E&#x44;_&#x46;acts_:
 
-* [x] 070 - Special Education Teachers
-* [x] 099 - Special Education Related Services Personnel
-* [x] 112 - Special Education Paraprofessionals
+* [x] FS070 - Special Education Teachers
+* [x] FS099 - Special Education Related Services Personnel
+* [x] FS112 - Special Education Paraprofessionals
 
 {% code overflow="wrap" %}
 ```sql
@@ -50,10 +50,10 @@ ORDER BY        agrft.FactTypeId, agr.ReportCode
 
 The following files are in pilot status or are available for piloting in Generate:
 
-* [x] 059 - Staff FTE
-* [x] 065 - Federally Funded Staff
-* [x] 067 - Title III Teachers
-* [x] 203 - Teachers
+* [ ] FS059 - Staff FTE
+* [ ] FS065 - Federally Funded Staff
+* [ ] FS067 - Title III Teachers
+* [ ] FS203 - Teachers
 
 ***
 

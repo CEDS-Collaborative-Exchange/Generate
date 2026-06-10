@@ -22,7 +22,7 @@ To configure metadata updates via the EMDR Web Service API, modify the following
 2.  **fsWSURL**: If the web service is being used for metadata updates, set this to the following URL:
 
     ```json
-    "fsWSURL": "https://edfacts.ed.gov/generate/"
+    "fsWSURL": "https://il96nnsqbe.execute-api.us-east-1.amazonaws.com/api/DataSetYearVersionByAllAbbrvExt?collectionAbbrv=EDFACTS&dataSetAbbrv=CHRTR&yearAbbrv=2025-2026"
     ```
 
 ***
