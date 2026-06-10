@@ -42,16 +42,7 @@ Prior to updating to Generate version 13.3, you will need to update the paramete
 
 In that file, there is a parameter for the metadata process named "**fsWSURL**”.  You will need to update the value for that parameter to the one below:&#x20;
 
-"fsWSURL": "[https://w1st3s2lpd.execute-api.us-east-1.amazonaws.com/api/%22](https://w1st3s2lpd.execute-api.us-east-1.amazonaws.com/api/%22)"&#x20;
-
-There is also a new parameter that supports the metadata process that needs to be added to the file. Paste the line below after the “fsWSURL” parameter:
-
-**"metadataApiKey": "6b5af5c15f74e7d3b4d2a5b564aec7bd9f7c60161e0e0f30"**
-
-{% hint style="info" %}
-NOTE: There is one additional parameter that is used by the updated metadata process and it is located in the table App.GenerateConfigurations.\
-It will be added to the table as part of the update and the value will be set as ‘2026’.
-{% endhint %}
+"fsWSURL": "[https://w1st3s2lpd.execute-api.us-east-1.amazonaws.com/api/](https://w1st3s2lpd.execute-api.us-east-1.amazonaws.com/api/%22)"&#x20;
 
 ### Summary of Changes
 
