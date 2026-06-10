@@ -20,6 +20,7 @@ using System.Text;
 using generate.infrastructure.Helpers;
 using generate.infrastructure.Contexts;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace generate.testdata.DataGenerators
 {
@@ -253,6 +254,7 @@ namespace generate.testdata.DataGenerators
                     StudentsEnrolledAtSeaLevelOnly.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     StudentsEnrolledAtLeaLevelOnly.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
                     CIID5128MulipleRace.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
+                    FS086_CIID8626.AppendTestCaseData(testData, globalRandom, _testDataHelper, SchoolYear);
 
                 }
                 else
@@ -899,11 +901,12 @@ namespace generate.testdata.DataGenerators
                 staff.EdFactsTeacherInexperiencedStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefInexperiencedStatusDistribution);
                 staff.EDFactsTeacherOutOfFieldStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefOutOfFieldStatusDistribution);
                 staff.EdFactsCertificationStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefEdFactsCertificationStatusDistribution);
+                staff.TitleIIILanguageInstructionIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.TitleIIILanguageInstructionIndicatorDistribution);
                 staff.RecordStartDateTime = _testDataHelper.GetSessionStartDate(rnd, schoolYear);
                 staff.RecordEndDateTime = _testDataHelper.GetSessionEndDate(rnd, schoolYear);
                 staff.SchoolYear = schoolYear.ToString();
 
-                staff.SpecialEducationStaffCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSpecialEducationStaffCategoryDistribution);
+                staff.SpecialEducationSupportServicesCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSpecialEducationSupportServicesCategoryDistribution);
                 staff.TitleIProgramStaffCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIProgramStaffCategoryDistribution);
 
 
@@ -980,7 +983,7 @@ namespace generate.testdata.DataGenerators
                 var SeaFedFunds = new OrganizationFederalFunding
                 {
                     OrganizationIdentifier = "39",
-                    OrganizationType = "SEA",
+                    OrganizationType = "SEA_1",
                     FederalProgramCode = programCode,
                     FederalProgramsFundingAllocation = _testDataHelper.GetRandomDecimalInRange(rnd, 10000, 100000),
                     FederalProgramFundingAllocationType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefFederalProgramFundingAllocationTypeDistribution),
@@ -997,12 +1000,17 @@ namespace generate.testdata.DataGenerators
                     var LeaFedFunds = new OrganizationFederalFunding
                     {
                         OrganizationIdentifier = o,
-                        OrganizationType = "LEA",
+                        OrganizationType = "LEA_1",
                         FederalProgramCode = programCode,
                         FederalProgramsFundingAllocation = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000),
                         FederalProgramFundingAllocationType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefFederalProgramFundingAllocationTypeDistribution),
                         SchoolYear = schoolYear.ToString()
                     };
+                    if (LeaFedFunds.FederalProgramCode == "84.010")
+                    {
+                        LeaFedFunds.ParentalInvolvementReservationFunds = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000);
+                        LeaFedFunds.HomelessChildrenandYouthReservation = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000);
+                    }
                     testData.OrganizationFederalFundings.Add(LeaFedFunds);
                 }
             }
@@ -1096,7 +1104,8 @@ namespace generate.testdata.DataGenerators
                 var s = new K12Enrollment();
                 var rnd = ThreadSafeRandom.NewRandom();
 
-                var orgs = _testDataHelper.GetRandomObject(rnd, allOrgs);
+                var filteredOrgs = allOrgs.Where(o => o.LeaIdentifierSea != "00044A" && o.SchoolIdentifierSea != "00044A000").ToList();
+                var orgs = _testDataHelper.GetRandomObject(rnd, filteredOrgs);
                 var birthdate = _testDataHelper.GetBirthDate(rnd, SchoolYear, _testDataProfile.MinimumAgeOfStudent, _testDataProfile.MaximumAgeOfStudent);
                 var entryDate = _testDataHelper.GetEntryDate(rnd, BaseProgramEntryDate);
                 var cohortYear = _testDataHelper.GetEntryDate(rnd, entryDate).Year.ToString();
@@ -1460,7 +1469,9 @@ namespace generate.testdata.DataGenerators
 
                     if (_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
                     {
-                        prog.TitleIIIImmigrantStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIStatusDistribution);
+                        bool titleIIIStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIStatusDistribution);
+                        prog.TitleIIIImmigrantStatus = titleIIIStatus;
+                        prog.TitleIIIImmigrantParticipationStatus = titleIIIStatus == true ? titleIIIStatus: false;
                         prog.TitleIIIImmigrantStatus_StartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
                         if (!_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
                         {
@@ -2186,7 +2197,8 @@ namespace generate.testdata.DataGenerators
                         SchoolYear = schoolYear.ToString(),
                         StateFullAcademicYear = fullYearStatus ? true : false,
                         LEAFullAcademicYear = fullYearStatus ? true : false,
-                        SchoolFullAcademicYear = fullYearStatus ? true : false
+                        SchoolFullAcademicYear = fullYearStatus ? true : false,
+                        AssessedFirstTime = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.AssessedFirstTimeDistribution)
                     };
 
                     if (!assessmentResult.AssessmentRegistrationParticipationIndicator.Value)
@@ -2396,6 +2408,9 @@ namespace generate.testdata.DataGenerators
         {
             testData.K12Organizations.ForEach(o =>
             {
+                //FS222 column
+                o.LEA_TitleIProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIProgramTypeDistribution);
+
                 o.School_TitleISchoolStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIschoolStatusDistribution);
                 o.School_GunFreeSchoolsActReportingStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefGunFreeSchoolsActReportingStatusDistribution);
                 o.School_SchoolDangerousStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSchoolDangerousStatusDistribution);

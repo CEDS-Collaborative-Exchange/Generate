@@ -11,10 +11,10 @@ namespace generate.core.Models.Staging
         public string FederalProgramCode { get; set; }
         public decimal? FederalProgramsFundingAllocation { get; set; }
         public decimal? ParentalInvolvementReservationFunds { get; set; }
+        public decimal? HomelessChildrenandYouthReservation { get; set; }
         public string REAPAlternativeFundingStatusCode { get; set; }
         public string FederalProgramFundingAllocationType { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
-        public DateTime? RunDateTime { get; set; }
     }
 }

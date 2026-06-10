@@ -28,6 +28,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -105,7 +106,7 @@ namespace generate.infrastructure.Services
         public string callInitFSmetaServc()
         {
 
-        startFS_Processing:
+        //startFS_Processing:
 
             //var collectName = "EDFACTS";
             //var charterDSName = "Charter Collections";
@@ -121,7 +122,7 @@ namespace generate.infrastructure.Services
             List<DataSetYearVersionByAllAbbrv> initDSYVr = null;
             int maxSubmissionYear = 0;
             int maxVersionNumber = 0;
-            int nxtYear = 0;
+            int prevYear = 0;
             string fqYrName = string.Empty;
 
             try
@@ -152,27 +153,6 @@ namespace generate.infrastructure.Services
                     initDSYVr = JsonConvert.DeserializeObject<List<DataSetYearVersionByAllAbbrv>>(cont);
 
                 }
-                else
-                {
-                    /*
-                     *      Manual file load not needed here
-
-                    var fileloc = _fsMetaFileLoc + "\\" + _fsMetaParentFileName;
-                    using (StreamReader r = new StreamReader(fileloc))
-                    {
-                        cont = r.ReadToEnd();
-                        cont = cont.Replace("{\"DataSetYearVersions\":", "");
-                        cont = cont.Replace("]}", "]");
-                    }
-
-                    initDSYVr = JsonConvert.DeserializeObject<List<DataSetYearVersionByAllAbbrv>>(cont);
-                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == "Published").Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
-                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == "Published" && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
-                    nxtYear = maxSubmissionYear + 1;
-                    fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
-
-                    */
-                }
 
                 #endregion
 
@@ -184,11 +164,11 @@ namespace generate.infrastructure.Services
                 {
                     UpdateKeyinGenConfig(FSMetalogKey, "The metadata is currently being processed.");
                     UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausProcessing);
-                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
-                    if (!string.IsNullOrEmpty(_selSYr)) { maxSubmissionYear = Convert.ToInt32(_selSYr); } 
-                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
-                    nxtYear = maxSubmissionYear + 1;
-                    fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
+                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
+                    if (!string.IsNullOrEmpty(_selSYr)) { maxSubmissionYear = Convert.ToInt32(_selSYr); }
+                    prevYear = maxSubmissionYear - 1;
+                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + prevYear.ToString())).Max(a => a.VersionNumber);
+                    fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
 
                     bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(true, maxSubmissionYear.ToString(), maxVersionNumber);
                     if (!checkPrevFSPop) { skipESSPop = true; goto skipESSPopulation; }
@@ -222,7 +202,7 @@ namespace generate.infrastructure.Services
                     {
                         if ((int?)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault() != null)
                         {
-                            maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault();
+                            maxSubmissionYear = ((int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault()) + 1;
                         }
                     }
 
@@ -232,13 +212,15 @@ namespace generate.infrastructure.Services
                             maxVersionNumber = (int)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault();
                         }
                     }
-                    nxtYear = maxSubmissionYear + 1;
-                    fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
+                    prevYear = maxSubmissionYear - 1;
+                    fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
 
                     bool checkPrevFSPop = checkPrevPopFSMetaYrandVers(true, maxSubmissionYear.ToString(), maxVersionNumber);
                     if (!checkPrevFSPop) { skipESSPop = true; goto skipESSPopulation; }
 
                 }
+
+                _appRepository.MigrateMetadata("ESS", maxSubmissionYear, true);
 
                 var time1 = DateTime.Now;
                 DeleteExistingCatInfobyYearandDS(collectName, essDSNameAbbrv, maxVersionNumber.ToString(), fqYrName, maxSubmissionYear.ToString(), DSYVrdetail);
@@ -264,7 +246,7 @@ namespace generate.infrastructure.Services
 
                 maxSubmissionYear = 0;
                 maxVersionNumber = 0;
-                nxtYear = 0;
+                prevYear = 0;
                 fqYrName = string.Empty;
                 var chrtr = string.Empty;
                 int year = 0;
@@ -286,13 +268,13 @@ namespace generate.infrastructure.Services
                     var charterQuery4 = from n in initDSYVr
                                         where n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + charterQuery3.Year)
                                         orderby n.VersionNumber descending
-                                        select new { Year = n.YearName.Replace("SY ", "").Substring(0, 4), versNum = n.VersionNumber.ToString() };
+                                        select new { Year = (int.Parse(n.YearName.Replace("SY ", "").Substring(0, 4)) + 1).ToString(), versNum = n.VersionNumber.ToString() };
 
-                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
+                    maxSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
                     if (!string.IsNullOrEmpty(_selSYr)) { maxSubmissionYear = Convert.ToInt32(_selSYr); }
-                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + maxSubmissionYear.ToString())).Max(a => a.VersionNumber);
-                    nxtYear = maxSubmissionYear + 1;
-                    fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
+                    prevYear = maxSubmissionYear - 1;
+                    maxVersionNumber = initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub && n.YearName.Contains("SY " + prevYear.ToString())).Max(a => a.VersionNumber);
+                    fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
                     //year = charterQuery4 is null  ? 0 : int.Parse(charterQuery4.FirstOrDefault().Year);
                     year = maxSubmissionYear;
                     if (charterQuery4.FirstOrDefault() is not null)
@@ -331,7 +313,7 @@ namespace generate.infrastructure.Services
                     //DSYVrdetail = (List<DataSetYearVersionDetailsByAllAbbrv>)DSYVrdetail.Where(a => a.DSAbbrv == essDSNameAbbrv).Select(a => a);
                     if ((int?)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault() != null)
                     {
-                        maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault();
+                        maxSubmissionYear = (int)DSYVrdetail.Select(A => A.YearValue).FirstOrDefault() + 1;
                     }
 
                     if ((int?)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault() != null)
@@ -339,8 +321,8 @@ namespace generate.infrastructure.Services
                         maxVersionNumber = (int)DSYVrdetail.Select(A => A.VersionNum).FirstOrDefault();
                     }
 
-                    nxtYear = maxSubmissionYear + 1;
-                    fqYrName = maxSubmissionYear.ToString() + "-" + nxtYear.ToString();
+                    prevYear = maxSubmissionYear + 1;
+                    fqYrName = prevYear.ToString() + "-" + maxSubmissionYear.ToString();
 
                     // check later if need to removed : SA Check
                     year = maxSubmissionYear;
@@ -352,6 +334,8 @@ namespace generate.infrastructure.Services
                 }
 
                 //DSYVrdetail = JsonConvert.DeserializeObject<List<DataSetYearVersionDetailsByAllAbbrv>>(edfacts);
+
+                _appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, true);
 
                 DeleteExistingCatInfobyYearandDS(collectName, charterDSNameAbbrv, maxVersNum, fqYrName, year.ToString(), DSYVrdetail);
 
@@ -400,15 +384,15 @@ namespace generate.infrastructure.Services
                 else
                 {
 
-                    if (!string.IsNullOrEmpty(_bkfsMetaFileLoc) && _reloadFromBackUp)
-                    {
-                        if (!Directory.Exists(_bkfsMetaFileLoc)) Directory.CreateDirectory(_bkfsMetaFileLoc);
+                    //if (!string.IsNullOrEmpty(_bkfsMetaFileLoc) && _reloadFromBackUp)
+                    //{
+                    //    if (!Directory.Exists(_bkfsMetaFileLoc)) Directory.CreateDirectory(_bkfsMetaFileLoc);
 
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflname, edfacts);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflname, chrtr);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflnameFLay, bkESSFLay);
-                        File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflnameFLay, bkCHRFLay);
-                    }
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflname, edfacts);
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflname, chrtr);
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkESSflnameFLay, bkESSFLay);
+                    //    File.WriteAllText(_bkfsMetaFileLoc + @"\" + bkCHRflnameFLay, bkCHRFLay);
+                    //}
 
                     var time = DateTime.Now;
                     var status = "The metadata was successfully updated on " + time.ToString() + ".";
@@ -422,6 +406,9 @@ namespace generate.infrastructure.Services
             }
             catch (Exception e)
             {
+                _appRepository.MigrateMetadata("ESS", maxSubmissionYear, false);
+                _appRepository.MigrateMetadata("CHARTER", maxSubmissionYear, false);
+
                 var x = e.Message;
                 var y = e.InnerException;
                 var time = DateTime.Now;
@@ -448,24 +435,6 @@ namespace generate.infrastructure.Services
                 UpdateKeyinGenConfig(FSMetalogKey, status);
                 UpdateKeyinGenConfig(FSMetasStaKey, FSMetastausFail);
 
-                if (checkBackupFilesExists() && _reloadFromBackUp)
-                {
-                    _reloadFromBackUp = false; // setting back to false, so reload from back up occurs once.
-                    _useWSforFSMetaUpd = false;
-                    UpdateKeyinGenConfig(essKey, "");
-                    UpdateKeyinGenConfig(chrKey, "");
-                    _fsMetaFileLoc = _bkfsMetaFileLoc;
-                    _fsMetaESSDetailFileName = bkESSflname;
-                    _fsMetaCHRDetailFileName = bkCHRflname;
-                    _fsMetaESSLayoutFileName = bkESSflnameFLay;
-                    _fsMetaCHRLayoutFileName = bkCHRflnameFLay;
-
-                    _logger.LogCritical("");
-                    _logger.LogCritical("----- Restarting FS processing using back up files -----");
-                    _logger.LogCritical("");
-
-                    goto startFS_Processing;
-                }
 
                 return "FS Metadata population FAILED. Log ID: " + logid + ". Please contact your admin.";
             }
@@ -1617,6 +1586,7 @@ namespace generate.infrastructure.Services
                            d.IsDatacollEnabledLEA,
                            d.IsDatacollEnabledSCH,
                            d.IsDatacollEnabledSEA,
+                           d.YearAbbrv,
                            d.YearValue,
                            d.TableName
                        };
@@ -1636,6 +1606,7 @@ namespace generate.infrastructure.Services
                             a.DEName,
                             a.DEAbbr,
                             a.DEOrderNum,
+                            a.YearAbbrv,
                             a.YearValue,
                             a.TableName,
                             a.DGName,
@@ -1724,6 +1695,7 @@ namespace generate.infrastructure.Services
                     _appDbContext.SaveChanges();
                 }
 
+                string submissionYear = csi.YearAbbrv.Split('-')[1].ToString();
 
                 if (csi.IsDatacollEnabledSEA == 1)
                 {
@@ -1732,7 +1704,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = csName;
                     cs.CategorySetSequence = csi.DEOrderNum;
                     cs.OrganizationLevelId = 1;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.GenerateReportId = genReportId;
                     cs.TableTypeId = tableType.TableTypeId;
                     _appDbContext.CategorySets.Add(cs);
@@ -1750,7 +1722,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = csName;
                     cs.CategorySetSequence = csi.DEOrderNum;
                     cs.OrganizationLevelId = 2;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -1768,7 +1740,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = csName;
                     cs.CategorySetSequence = csi.DEOrderNum;
                     cs.OrganizationLevelId = 3;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -1910,6 +1882,7 @@ namespace generate.infrastructure.Services
             {
                 a.FileSpecName,
                 a.FileSpecNum,
+                a.YearAbbrv,
                 a.YearValue,
                 a.IsDatacollEnabledLEA,
                 a.IsDatacollEnabledSCH,
@@ -1919,6 +1892,7 @@ namespace generate.infrastructure.Services
                 a.ElectronicFileDesc
             }).Distinct().ToList();
 
+            
 
             foreach (var csi in qry_noCSFSpecs_dist)
             {
@@ -1931,6 +1905,7 @@ namespace generate.infrastructure.Services
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
 
+                string submissionYear = csi.YearAbbrv.Split('-')[1].ToString();
 
                 /////////
 
@@ -1989,7 +1964,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1112;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2005,7 +1980,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1182;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2021,7 +1996,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2040,7 +2015,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 2;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId; // Defaulted to 21. Check with Team.
                     _appDbContext.CategorySets.Add(cs);
@@ -2059,7 +2034,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 3;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2103,6 +2078,7 @@ namespace generate.infrastructure.Services
             {
                 a.FileSpecName,
                 a.FileSpecNum,
+                a.YearAbbrv,
                 a.YearValue,
                 a.IsDatacollEnabledLEA,
                 a.IsDatacollEnabledSCH,
@@ -2124,7 +2100,7 @@ namespace generate.infrastructure.Services
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
 
-
+                string submissionYear = csi.YearAbbrv.Split('-')[1].ToString();
                 /////////
 
                 if (genReportId == 0)
@@ -2178,7 +2154,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1112;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2194,7 +2170,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1182;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2210,7 +2186,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2229,7 +2205,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 2;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId; // Defaulted to 21. Check with Team.
                     _appDbContext.CategorySets.Add(cs);
@@ -2248,7 +2224,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 3;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     //cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2292,6 +2268,7 @@ namespace generate.infrastructure.Services
             {
                 a.FileSpecName,
                 a.FileSpecNum,
+                a.YearAbbrv,
                 a.YearValue,
                 a.IsDatacollEnabledLEA,
                 a.IsDatacollEnabledSCH,
@@ -2315,7 +2292,7 @@ namespace generate.infrastructure.Services
                 //cscode = genReportId == 0 ? cscode + " - " + csi.FileSpecNum + "-NOgenReportId" : cscode;
                 //genReportId = genReportId == 0 ? 116 : genReportId;
 
-
+                string submissionYear = csi.YearAbbrv.Split('-')[1].ToString();
                 /////////
 
                 if (genReportId == 0)
@@ -2369,7 +2346,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1112;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2385,7 +2362,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1182;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2401,7 +2378,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 1;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2420,7 +2397,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 2;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId; // Defaulted to 21. Check with Team.
                     _appDbContext.CategorySets.Add(cs);
@@ -2439,7 +2416,7 @@ namespace generate.infrastructure.Services
                     cs.CategorySetName = deName;
                     cs.CategorySetSequence = null;
                     cs.OrganizationLevelId = 3;
-                    cs.SubmissionYear = csi.YearValue.ToString();
+                    cs.SubmissionYear = submissionYear;
                     cs.TableTypeId = tableType.TableTypeId;
                     cs.GenerateReportId = genReportId;
                     _appDbContext.CategorySets.Add(cs);
@@ -2497,16 +2474,17 @@ namespace generate.infrastructure.Services
 
 
             /* ****** Basic Year Check ****** */
-            string fsLayYear = DSYVrFSLay.Select(a => a.YearName.Replace("SY ", "").Substring(0, 4)).FirstOrDefault();
-            if (fsLayYear != fqYrName.Substring(0, 4))
+            string fsLayYear = ((int.Parse(DSYVrFSLay.Select(a => a.YearName.Replace("SY ", "").Substring(0, 4)).FirstOrDefault())) + 1).ToString();
+            string submissionYear = fqYrName.Split('-')[1].ToString();
+            if (fsLayYear != submissionYear)
             {
                 var err = " FSLayout Year does not match FS Metadata Year for {0} DataSet. FSLayoutYear : {1} ; FSMetaYear : {2} .";
-                err = string.Format(err, dataSetAbbrv, fsLayYear, fqYrName.Substring(0, 4));
+                err = string.Format(err, dataSetAbbrv, fsLayYear, submissionYear);
                 throw new Exception(err);
             }
 
             // delete FS data in specific Year
-            DeleteFSLayoutInfo(fqYrName.Substring(0, 4), DSYVrFSLay);
+            DeleteFSLayoutInfo(submissionYear, DSYVrFSLay);
             populateFSLayout(DSYVrFSLay);
             // Populate FS data in specific Year
 
@@ -2643,64 +2621,151 @@ namespace generate.infrastructure.Services
         public void populateFSLayout(List<DataSetYearVersionFSLayoutDetailsByAllAbbrv> DSYVrFSLay)
         {
 
-            var fsLay = DSYVrFSLay.Select(a => new {
-                a.IsDatacollEnabledLEA,
-                a.IsDatacollEnabledSCH,
-                a.IsDatacollEnabledSEA,
-                a.FileSpecNum,
-                a.FileType,
-                a.EULevelAbbr,
-                a.YearName,
-                a.ColLen,
-                a.ColName,
-                a.ColDataTypeAbbr,
-                a.ColDisplayName,
-                a.ColTypeAbbr,
-                a.ColEndPos,
-                a.ColOptionalityAbbr,
-                a.ColSeqNum,
-                a.ColStartPos
-            });
-
-            var distFS = DSYVrFSLay.OrderBy(x => x.FileSpecNum).Select(a => a.FileSpecNum).Distinct().ToList();//.Take(10);
-            var year = DSYVrFSLay.Select(a => new { Year = a.YearName.Replace("SY ", "").Substring(0, 4) }).FirstOrDefault();
-
-            IQueryable<GenerateReport> genRep = _appDbContext.GenerateReports;
-
-            OrganizationLevel sea = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "SEA").FirstOrDefault();
-            OrganizationLevel lea = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "LEA").FirstOrDefault();
-            OrganizationLevel sch = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "SCH").FirstOrDefault();
-            OrganizationLevel cao = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "CAO").FirstOrDefault();
-            OrganizationLevel cmo = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "CMO").FirstOrDefault();
-
-            IQueryable<FileColumn> fileCol = _appDbContext.FileColumns;
-
-            foreach (var fs in distFS)
+            try
             {
 
-                var genid = genRep.Where(a => a.ReportCode == fs).Select(a => a.GenerateReportId).FirstOrDefault();
-                var euLevel = fsLay.Where(a => a.FileSpecNum == fs).Select(a => new { a.IsDatacollEnabledLEA, a.IsDatacollEnabledSEA, a.IsDatacollEnabledSCH, a.FileType }).FirstOrDefault();
-
-                FileSubmission _fs;
-                int fs_seaid;
-                int fs_leaid;
-                int fs_schid;
-
-                #region SEA
-
-                if (euLevel.IsDatacollEnabledSEA == 1)
+                var fsLay = DSYVrFSLay.Select(a => new
                 {
-                    _fs = new FileSubmission();
-                    //_fs.OrganizationLevel = sea;
-                    _fs.OrganizationLevel = (fs == "190" ? cao : fs == "196" ? cmo : sea);
-                    _fs.SubmissionYear = year.Year.ToString();
-                    _fs.GenerateReportId = genid;
-                    _fs.FileSubmissionDescription = "SEA " + euLevel.FileType;
-                    _appDbContext.FileSubmissions.Add(_fs);
-                    _appDbContext.SaveChanges();
-                    fs_seaid = _fs.FileSubmissionId;
+                    a.IsDatacollEnabledLEA,
+                    a.IsDatacollEnabledSCH,
+                    a.IsDatacollEnabledSEA,
+                    a.FileSpecNum,
+                    a.FileType,
+                    a.EULevelAbbr,
+                    a.YearName,
+                    a.ColLen,
+                    a.ColName,
+                    a.ColDataTypeAbbr,
+                    a.ColDisplayName,
+                    a.ColTypeAbbr,
+                    a.ColEndPos,
+                    a.ColOptionalityAbbr,
+                    a.ColSeqNum,
+                    a.ColStartPos
+                });
 
-                    var fsLaySEA = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "STA" && a.ColTypeAbbr != "HDR")  //HDR = HEADER
+                var distFS = DSYVrFSLay.OrderBy(x => x.FileSpecNum).Select(a => a.FileSpecNum).Distinct().ToList();//.Take(10);
+                var year = DSYVrFSLay.Select(a => new { Year = (int.Parse(a.YearName.Replace("SY ", "").Substring(0, 4)) + 1).ToString() }).FirstOrDefault();
+
+                IQueryable<GenerateReport> genRep = _appDbContext.GenerateReports;
+
+                OrganizationLevel sea = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "SEA").FirstOrDefault();
+                OrganizationLevel lea = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "LEA").FirstOrDefault();
+                OrganizationLevel sch = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "SCH").FirstOrDefault();
+                OrganizationLevel cao = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "CAO").FirstOrDefault();
+                OrganizationLevel cmo = _appRepository.Find<OrganizationLevel>(f => f.LevelCode == "CMO").FirstOrDefault();
+
+                IQueryable<FileColumn> fileCol = _appDbContext.FileColumns;
+
+                foreach (var fs in distFS)
+                {
+
+                    var genid = genRep.Where(a => a.ReportCode == fs).Select(a => a.GenerateReportId).FirstOrDefault();
+                    var euLevel = fsLay.Where(a => a.FileSpecNum == fs).Select(a => new { a.IsDatacollEnabledLEA, a.IsDatacollEnabledSEA, a.IsDatacollEnabledSCH, a.FileType }).FirstOrDefault();
+
+                    FileSubmission _fs;
+                    int fs_seaid;
+                    int fs_leaid;
+                    int fs_schid;
+
+                    #region SEA
+
+                    string file_description = "";
+
+                    if (euLevel.IsDatacollEnabledSEA == 1)
+                    {
+                        file_description = "SEA " + euLevel.FileType;
+
+                        _fs = new FileSubmission();
+                        //_fs.OrganizationLevel = sea;
+                        _fs.OrganizationLevel = (fs == "190" ? cao : fs == "196" ? cmo : sea);
+                        _fs.SubmissionYear = year.Year;
+                        _fs.GenerateReportId = genid;
+                        _fs.FileSubmissionDescription = file_description.Substring(0, file_description.Length - 1);
+                        _appDbContext.FileSubmissions.Add(_fs);
+                        _appDbContext.SaveChanges();
+                        fs_seaid = _fs.FileSubmissionId;
+
+                        var fsLaySEA = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "STA" && a.ColTypeAbbr != "HDR")  //HDR = HEADER
+                            .Select(x => new
+                            {
+                                x.ColLen,
+                                x.ColName,
+                                x.ColDataTypeAbbr,
+                                x.ColDisplayName,
+                                x.ColEndPos,
+                                x.ColOptionalityAbbr,
+                                x.ColSeqNum,
+                                x.ColStartPos
+                            }).OrderBy(a => a.ColSeqNum);
+
+                        int i = 0;
+                        foreach (var item in fsLaySEA)
+                        {
+
+                            // check if file col exists
+
+                            string colName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                            colName = (colName == "Student Count") ? "Amount" : colName;
+
+                            int filecolid = fileCol.
+                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == colName
+                            && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
+                            && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
+                            ).OrderBy(a => a.FileColumnId).
+                            Select(a => a.FileColumnId).FirstOrDefault();
+
+                            if (filecolid == 0)
+                            {
+
+                                FileColumn _fc = new FileColumn();
+                                _fc.ColumnLength = (int)item.ColLen;
+                                _fc.ColumnName = colName;
+                                _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
+                                _fc.DisplayName = item.ColDisplayName.Length > 100 ? item.ColDisplayName.Substring(0, 99) : item.ColDisplayName;
+                                // _fc.DimensionId =
+
+                                _appDbContext.FileColumns.Add(_fc);
+                                _appDbContext.SaveChanges();
+                                filecolid = _fc.FileColumnId;
+
+                            } 
+
+                            FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
+                            fsfc.FileSubmissionId = fs_seaid;
+                            fsfc.FileColumnId = filecolid;
+                            fsfc.EndPosition = (int)item.ColEndPos;
+                            fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
+                            fsfc.SequenceNumber = (int)item.ColSeqNum;
+                            fsfc.StartPosition = (int)item.ColStartPos;
+
+                            _appDbContext.FileSubmission_FileColumns.Add(fsfc);
+                            _appDbContext.SaveChanges();
+                            //filecolid = fsfc.FileColumnId;
+                            i++;
+                        }
+
+                    }
+
+                    #endregion
+
+                    #region LEA
+
+                    if (euLevel.IsDatacollEnabledLEA == 1)
+                    {
+                        file_description = "LEA " + euLevel.FileType;
+
+                        _fs = new FileSubmission();
+                        _fs.OrganizationLevel = lea;
+                        _fs.SubmissionYear = year.Year.ToString();
+                        _fs.GenerateReportId = genid;
+                        _fs.FileSubmissionDescription = file_description.Substring(0, file_description.Length - 1);
+                        _appDbContext.FileSubmissions.Add(_fs);
+                        _appDbContext.SaveChanges();
+                        fs_leaid = _fs.FileSubmissionId;
+
+
+                        var fsLayLEA = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "LEA" && a.ColTypeAbbr != "HDR")
                         .Select(x => new
                         {
                             x.ColLen,
@@ -2713,202 +2778,140 @@ namespace generate.infrastructure.Services
                             x.ColStartPos
                         }).OrderBy(a => a.ColSeqNum);
 
-                    int i = 0;
-                    foreach (var item in fsLaySEA)
-                    {
 
-                        // check if file col exists
-
-                        int filecolid = fileCol.
-                        Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
-                        && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
-                        && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
-                        ).OrderBy(a => a.FileColumnId).
-                        Select(a => a.FileColumnId).FirstOrDefault();
-
-                        if (filecolid == 0)
+                        foreach (var item in fsLayLEA)
                         {
 
-                            FileColumn _fc = new FileColumn();
-                            _fc.ColumnLength = (int)item.ColLen;
-                            _fc.ColumnName = item.ColName;
-                            _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
-                            _fc.DisplayName = item.ColDisplayName;
-                            // _fc.DimensionId =
+                            // check if file col exists
 
-                            _appDbContext.FileColumns.Add(_fc);
+                            string colName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                            colName = (colName == "Student Count") ? "Amount" : colName;
+
+                            int filecolid = fileCol.
+                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == colName
+                            && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
+                            && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
+                            ).OrderBy(a => a.FileColumnId).
+                            Select(a => a.FileColumnId).FirstOrDefault();
+
+                            if (filecolid == 0)
+                            {
+
+                                FileColumn _fc = new FileColumn();
+                                _fc.ColumnLength = (int)item.ColLen;
+                                _fc.ColumnName = colName;
+                                _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
+                                _fc.DisplayName = item.ColDisplayName.Length > 100 ? item.ColDisplayName.Substring(0, 99) : item.ColDisplayName;
+                                // _fc.DimensionId =
+
+                                _appDbContext.FileColumns.Add(_fc);
+                                _appDbContext.SaveChanges();
+                                filecolid = _fc.FileColumnId;
+
+                            }
+
+                            FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
+                            fsfc.FileSubmissionId = fs_leaid;
+                            fsfc.FileColumnId = filecolid;
+                            fsfc.EndPosition = (int)item.ColEndPos;
+                            fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
+                            fsfc.SequenceNumber = (int)item.ColSeqNum;
+                            fsfc.StartPosition = (int)item.ColStartPos;
+
+
+                            _appDbContext.FileSubmission_FileColumns.Add(fsfc);
                             _appDbContext.SaveChanges();
-                            filecolid = _fc.FileColumnId;
+                            //filecolid = fsfc.FileColumnId;
+
 
                         }
 
-                        FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
-                        fsfc.FileSubmissionId = fs_seaid;
-                        fsfc.FileColumnId = filecolid;
-                        fsfc.EndPosition = (int)item.ColEndPos;
-                        fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
-                        fsfc.SequenceNumber = (int)item.ColSeqNum;
-                        fsfc.StartPosition = (int)item.ColStartPos;
-
-                        _appDbContext.FileSubmission_FileColumns.Add(fsfc);
-                        _appDbContext.SaveChanges();
-                        //filecolid = fsfc.FileColumnId;
-                        i++;
                     }
 
-                }
+                    #endregion
 
-                #endregion
+                    #region SCH
 
-                #region LEA
-
-                if (euLevel.IsDatacollEnabledLEA == 1)
-                {
-                    _fs = new FileSubmission();
-                    _fs.OrganizationLevel = lea;
-                    _fs.SubmissionYear = year.Year.ToString();
-                    _fs.GenerateReportId = genid;
-                    _fs.FileSubmissionDescription = "LEA " + euLevel.FileType;
-                    _appDbContext.FileSubmissions.Add(_fs);
-                    _appDbContext.SaveChanges();
-                    fs_leaid = _fs.FileSubmissionId;
-
-
-                    var fsLayLEA = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "LEA" && a.ColTypeAbbr != "HDR")
-                    .Select(x => new
+                    if (euLevel.IsDatacollEnabledSCH == 1)
                     {
-                        x.ColLen,
-                        x.ColName,
-                        x.ColDataTypeAbbr,
-                        x.ColDisplayName,
-                        x.ColEndPos,
-                        x.ColOptionalityAbbr,
-                        x.ColSeqNum,
-                        x.ColStartPos
-                    }).OrderBy(a => a.ColSeqNum);
+                        file_description = "SCHOOL " + euLevel.FileType;
+
+                        _fs = new FileSubmission();
+                        _fs.OrganizationLevel = sch;
+                        _fs.SubmissionYear = year.Year.ToString();
+                        _fs.GenerateReportId = genid;
+                        _fs.FileSubmissionDescription = file_description.Substring(0, file_description.Length - 1);
+                        _appDbContext.FileSubmissions.Add(_fs);
+                        _appDbContext.SaveChanges();
+                        fs_schid = _fs.FileSubmissionId;
+
+                        var fsLaySCH = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "SCH" && a.ColTypeAbbr != "HDR")
+                        .Select(x => new
+                        {
+                            x.ColLen,
+                            x.ColName,
+                            x.ColDataTypeAbbr,
+                            x.ColDisplayName,
+                            x.ColEndPos,
+                            x.ColOptionalityAbbr,
+                            x.ColSeqNum,
+                            x.ColStartPos
+                        }).OrderBy(a => a.ColSeqNum);
 
 
-                    foreach (var item in fsLayLEA)
-                    {
-
-                        // check if file col exists
-
-                        int filecolid = fileCol.
-                        Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
-                        && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
-                        && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
-                        ).OrderBy(a => a.FileColumnId).
-                        Select(a => a.FileColumnId).FirstOrDefault();
-
-                        if (filecolid == 0)
+                        foreach (var item in fsLaySCH)
                         {
 
-                            FileColumn _fc = new FileColumn();
-                            _fc.ColumnLength = (int)item.ColLen;
-                            _fc.ColumnName = item.ColName;
-                            _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
-                            _fc.DisplayName = item.ColDisplayName;
-                            // _fc.DimensionId =
+                            // check if file col exists
+                            string colName = item.ColName.Length > 50 ? item.ColName.Substring(0, 49) : item.ColName;
+                            colName = (colName == "Student Count") ? "Amount" : colName;
 
-                            _appDbContext.FileColumns.Add(_fc);
+                            int filecolid = fileCol.
+                            Where(a => a.ColumnLength == item.ColLen && a.ColumnName == colName
+                            && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
+                            && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
+                            ).OrderBy(a => a.FileColumnId).
+                            Select(a => a.FileColumnId).FirstOrDefault();
+
+                            if (filecolid == 0)
+                            {
+
+                                FileColumn _fc = new FileColumn();
+                                _fc.ColumnLength = (int)item.ColLen;
+                                _fc.ColumnName = colName;
+                                _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
+                                _fc.DisplayName = item.ColDisplayName.Length > 100 ? item.ColDisplayName.Substring(0, 99) : item.ColDisplayName;
+                                // _fc.DimensionId =
+
+                                _appDbContext.FileColumns.Add(_fc);
+                                _appDbContext.SaveChanges();
+                                filecolid = _fc.FileColumnId;
+
+                            }
+
+                            FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
+                            fsfc.FileSubmissionId = fs_schid;
+                            fsfc.FileColumnId = filecolid;
+                            fsfc.EndPosition = (int)item.ColEndPos;
+                            fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
+                            fsfc.SequenceNumber = (int)item.ColSeqNum;
+                            fsfc.StartPosition = (int)item.ColStartPos;
+
+                            _appDbContext.FileSubmission_FileColumns.Add(fsfc);
                             _appDbContext.SaveChanges();
-                            filecolid = _fc.FileColumnId;
+                            //filecolid = fsfc.FileColumnId;
 
                         }
 
-                        FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
-                        fsfc.FileSubmissionId = fs_leaid;
-                        fsfc.FileColumnId = filecolid;
-                        fsfc.EndPosition = (int)item.ColEndPos;
-                        fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
-                        fsfc.SequenceNumber = (int)item.ColSeqNum;
-                        fsfc.StartPosition = (int)item.ColStartPos;
-
-
-                        _appDbContext.FileSubmission_FileColumns.Add(fsfc);
-                        _appDbContext.SaveChanges();
-                        //filecolid = fsfc.FileColumnId;
-
-
                     }
 
-                }
-
-                #endregion
-
-                #region SCH
-
-                if (euLevel.IsDatacollEnabledSCH == 1)
-                {
-                    _fs = new FileSubmission();
-                    _fs.OrganizationLevel = sch;
-                    _fs.SubmissionYear = year.Year.ToString();
-                    _fs.GenerateReportId = genid;
-                    _fs.FileSubmissionDescription = "SCHOOL " + euLevel.FileType;
-                    _appDbContext.FileSubmissions.Add(_fs);
-                    _appDbContext.SaveChanges();
-                    fs_schid = _fs.FileSubmissionId;
-
-                    var fsLaySCH = fsLay.Where(a => a.FileSpecNum == fs && a.EULevelAbbr == "SCH" && a.ColTypeAbbr != "HDR")
-                    .Select(x => new
-                    {
-                        x.ColLen,
-                        x.ColName,
-                        x.ColDataTypeAbbr,
-                        x.ColDisplayName,
-                        x.ColEndPos,
-                        x.ColOptionalityAbbr,
-                        x.ColSeqNum,
-                        x.ColStartPos
-                    }).OrderBy(a => a.ColSeqNum);
-
-
-                    foreach (var item in fsLaySCH)
-                    {
-
-                        // check if file col exists
-
-                        int filecolid = fileCol.
-                        Where(a => a.ColumnLength == item.ColLen && a.ColumnName == item.ColName
-                        && a.DataType == (item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr)
-                        && a.DisplayName == (string.IsNullOrEmpty(item.ColDisplayName) ? "" : item.ColDisplayName)
-                        ).OrderBy(a => a.FileColumnId).
-                        Select(a => a.FileColumnId).FirstOrDefault();
-
-                        if (filecolid == 0)
-                        {
-
-                            FileColumn _fc = new FileColumn();
-                            _fc.ColumnLength = (int)item.ColLen;
-                            _fc.ColumnName = item.ColName;
-                            _fc.DataType = item.ColDataTypeAbbr == "Decimal - 2 places" ? "Decimal2" : item.ColDataTypeAbbr;
-                            _fc.DisplayName = item.ColDisplayName;
-                            // _fc.DimensionId =
-
-                            _appDbContext.FileColumns.Add(_fc);
-                            _appDbContext.SaveChanges();
-                            filecolid = _fc.FileColumnId;
-
-                        }
-
-                        FileSubmission_FileColumn fsfc = new FileSubmission_FileColumn();
-                        fsfc.FileSubmissionId = fs_schid;
-                        fsfc.FileColumnId = filecolid;
-                        fsfc.EndPosition = (int)item.ColEndPos;
-                        fsfc.IsOptional = item.ColOptionalityAbbr == "M" ? true : false;
-                        fsfc.SequenceNumber = (int)item.ColSeqNum;
-                        fsfc.StartPosition = (int)item.ColStartPos;
-
-                        _appDbContext.FileSubmission_FileColumns.Add(fsfc);
-                        _appDbContext.SaveChanges();
-                        //filecolid = fsfc.FileColumnId;
-
-                    }
+                    #endregion
 
                 }
-
-                #endregion
-
+            }
+            catch (Exception ex) {
+                _logger.LogError(ex.Message);
+                throw ex;
             }
 
         }
@@ -3069,12 +3072,11 @@ namespace generate.infrastructure.Services
             cont = cont.Replace("{\"DataSetYearVersions\":", "").Replace("]}", "]");
 
             initDSYVr = JsonConvert.DeserializeObject<List<DataSetYearVersionByAllAbbrv>>(cont);
-            maxESSSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
-            maxCHRSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4));
+            maxESSSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == essDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
+            maxCHRSubmissionYear = int.Parse(initDSYVr.Where(n => n.DataSetName == charterDSName && n.VersionStatusDesc == pub).Max(d => d.YearName).Replace("SY ", "").Substring(0, 4)) + 1;
             maxSubmissionYear = maxESSSubmissionYear > maxCHRSubmissionYear ? maxESSSubmissionYear : maxCHRSubmissionYear;
 
             var ddlstring = "[" + maxSubmissionYear.ToString() + "," + (maxSubmissionYear - 1).ToString() + "," + (maxSubmissionYear - 2).ToString() + "]";
-            //var ddlstring = "[2025,2024]";
             return ddlstring;
         }
 

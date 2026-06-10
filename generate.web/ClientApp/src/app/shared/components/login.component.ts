@@ -23,6 +23,8 @@ declare let componentHandler: any;
 
 export class LoginComponent implements AfterViewInit, AfterViewChecked {
 
+    @Input() isDrawerOpen: boolean = false;
+    
     isAuthenticating: boolean;
     isOAuth: boolean = false;
 

@@ -185,7 +185,6 @@ export class ReportMigationComponent implements OnDestroy {
             this.reportYears.forEach((item, index) => {
                 if (item.isSelected) {
                     this.selectedyear = item;
-                    this.selectedIndex = index;
                 }
                 this.dimSchoolYearDataMigrationType = {
                     dimSchoolYearId: item.dimSchoolYearId,
@@ -213,7 +212,17 @@ export class ReportMigationComponent implements OnDestroy {
                 this.cvData = this.migrationTasks;
             }
 
-            this.cvDataYear = this.reportYears;
+            // Filter to get distinct school years
+            const distinctYears = this.reportYears.filter((year, index, self) => 
+                self.findIndex(y => y.dimSchoolYearId === year.dimSchoolYearId) === index
+            );
+            
+            // Set selectedIndex to the year where isSelected = true
+            if (this.selectedyear) {
+                this.selectedIndex = distinctYears.findIndex(y => y.dimSchoolYearId === this.selectedyear.dimSchoolYearId);
+            }
+            
+            this.cvDataYear = distinctYears;
             this.cvFactTypes = this.factTypes;
         });
     }
@@ -266,15 +275,20 @@ export class ReportMigationComponent implements OnDestroy {
 
     onReportYearUpdate(ev, control) {
         this.checkedYear = control.selectedItem;
-        this.yearsNew.forEach((item, index) => {
+        
+        // Update yearsNew for data consistency
+        this.yearsNew.forEach((item) => {
             if (item.dimSchoolYearId === this.checkedYear.dimSchoolYearId) {
                 item.isSelected = true;
-                this.selectedIndex = index;
             }
             else {
                 item.isSelected = false;
             }
         });
+        
+        // Set selectedIndex using cvDataYear (the array displayed in dropdown)
+        // cvDataYear contains distinct years, so we must find index in that array
+        this.selectedIndex = this.cvDataYear.findIndex(y => y.dimSchoolYearId === this.checkedYear.dimSchoolYearId);
     }
 
     onFactTypeUpdate(ev, control) {

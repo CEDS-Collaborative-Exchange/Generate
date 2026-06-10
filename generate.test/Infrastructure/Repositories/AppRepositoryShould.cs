@@ -37,13 +37,30 @@ namespace generate.test.Infrastructure.Repositories
             return context;
         }
 
+        private RDSDbContext GetRdsDbContext()
+        {
+
+            var options = new DbContextOptionsBuilder<infrastructure.Contexts.RDSDbContext>()
+                              .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                              .Options;
+
+            var logger = Mock.Of<ILogger<RDSDbContext>>();
+
+            var appSettings = Mock.Of<IOptions<AppSettings>>();
+
+            var context = new RDSDbContext(options, logger);
+
+            return context;
+        }
+
 
         private AppDbContext GetContextWithData()
         {
 
             var context = this.GetContext();
+            var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
 
-            var repository = new AppRepository(context);
+            var repository = new AppRepository(context, rdsRepository);
             this.expected = GenerateReportExample.GetExample(id);
 
             repository.Create(expected);
@@ -92,10 +109,10 @@ namespace generate.test.Infrastructure.Repositories
         [Fact]
         public void Create()
         {
-
+            var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
             using (var context = GetContext())
             {
-                var repository = new AppRepository(context);
+                var repository = new AppRepository(context, rdsRepository);
 
                 // Create
                 this.expected = GenerateReportExample.GetExample(id);
@@ -115,11 +132,11 @@ namespace generate.test.Infrastructure.Repositories
         [Fact]
         public void GetAll()
         {
-
+            var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
             using (var context = GetContextWithData())
             {
 
-                var repository = new AppRepository(context);
+                var repository = new AppRepository(context, rdsRepository);
 
                 // Get
                 var returnValue = repository.GetAll<GenerateReport>(0, 0);
@@ -140,11 +157,11 @@ namespace generate.test.Infrastructure.Repositories
         [Fact]
         public void Delete()
         {
-
+            var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
             using (var context = GetContextWithData())
             {
 
-                var repository = new AppRepository(context);
+                var repository = new AppRepository(context, rdsRepository);
 
                 // Get
                 var existingList = repository.GetAll<GenerateReport>(0, 1);
@@ -171,11 +188,11 @@ namespace generate.test.Infrastructure.Repositories
         [Fact]
         public void Update()
         {
-
+            var rdsRepository = new infrastructure.Repositories.RDS.RDSRepository(GetRdsDbContext());
             using (var context = GetContextWithData())
             {
 
-                var repository = new AppRepository(context);
+                var repository = new AppRepository(context, rdsRepository);
 
                 // Get
                 var existingList = repository.GetAll<GenerateReport>(0, 1);

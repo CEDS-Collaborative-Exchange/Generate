@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
 using generate.infrastructure.Contexts;
 using generate.core.Models.App;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using System.Data;
-using System.Data.SqlClient;
-using System.Dynamic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using generate.core.Config;
 using generate.core.Interfaces.Repositories.App;
+using generate.core.Interfaces.Repositories.RDS;
 using System.Threading;
 using Hangfire;
-using System.IO;
+
 
 namespace generate.infrastructure.Repositories.App
 {
@@ -23,14 +18,17 @@ namespace generate.infrastructure.Repositories.App
     public class AppRepository : RepositoryBase, IAppRepository, IDisposable
     {
         private CancellationTokenSource source;
-        public AppRepository(AppDbContext context)
+        private readonly IRDSRepository _rdsRepository;
+        public AppRepository(AppDbContext context, IRDSRepository rdsRepository)
             : base(context)
         {
             this.source = new CancellationTokenSource();
+            _rdsRepository = rdsRepository;
         }
 
         public void Dispose()
         {
+            //source?.Dispose();
             GC.SuppressFinalize(this);
         }
         
@@ -90,63 +88,63 @@ namespace generate.infrastructure.Repositories.App
         {
             DataMigration dataMigration = _context.Set<DataMigration>().FirstOrDefault(x => x.DataMigrationType.DataMigrationTypeCode == dataMigrationTypeCode);
 
-            if (dataMigration != null) {
-                // Make sure we get latest from database in case data was updated by Hangfire
-                _context.Entry<DataMigration>(dataMigration).Reload();
+            if (dataMigration == null) return;
 
-                var migrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusId == dataMigration.DataMigrationStatusId);
-                var currentStatus = "";
+            // Make sure we get latest from database in case data was updated by Hangfire
+            _context.Entry<DataMigration>(dataMigration).Reload();
 
-                if (migrationStatus != null)
+            var migrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusId == dataMigration.DataMigrationStatusId);
+            var currentStatus = "";
+
+            if (migrationStatus != null)
+            {
+                currentStatus = migrationStatus.DataMigrationStatusCode;
+            }
+
+            if (dataMigration.DataMigrationStatus != null)
+            {
+                currentStatus = dataMigration.DataMigrationStatus.DataMigrationStatusCode;
+            }
+
+            // Do not complete if status is already error
+            if (currentStatus != "error")
+            {
+                // Set duration if not error/canceled
+                if (dataMigrationStatusCode != "error")
                 {
-                    currentStatus = migrationStatus.DataMigrationStatusCode;
+                    var startTime = dataMigration.LastTriggerDate;
+                    var endTime = DateTime.UtcNow;
+                    var duration = endTime.Subtract(startTime.Value);
+                    dataMigration.LastDurationInSeconds = (int)duration.TotalSeconds;
                 }
 
-                if (dataMigration.DataMigrationStatus != null)
+                var dataMigrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusCode == dataMigrationStatusCode);
+                dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
+
+                var lockedReports = this.GetReports().Where(r => r.IsLocked);
+                if (lockedReports.Any())
                 {
-                    currentStatus = dataMigration.DataMigrationStatus.DataMigrationStatusCode;
-                }
-
-                // Do not complete if status is already error
-                if (currentStatus != "error")
-                {
-
-                    // Set duration if not error/canceled
-                    if (dataMigrationStatusCode != "error")
-                    {
-                        var startTime = dataMigration.LastTriggerDate;
-                        var endTime = DateTime.UtcNow;
-                        var duration = endTime.Subtract(startTime.Value);
-                        dataMigration.LastDurationInSeconds = (int)duration.TotalSeconds;
-                    }
-
-                    var dataMigrationStatus = _context.Set<DataMigrationStatus>().FirstOrDefault(x => x.DataMigrationStatusCode == dataMigrationStatusCode);
-                    dataMigration.DataMigrationStatusId = dataMigrationStatus.DataMigrationStatusId;
-
-                    var lockedReports = this.GetReports().Where(r => r.IsLocked);
                     var factTypeId = lockedReports.ToList()[0].GenerateReport_FactTypes[0].FactTypeId;
                     var dataMigrtionTasks = _context.Set<DataMigrationTask>().OrderBy(t => t.TaskSequence).Where(t => t.FactTypeId == factTypeId).Select(t => t.DataMigrationTaskId.ToString()).ToList();
                     dataMigration.DataMigrationTaskList = string.Join(",", dataMigrtionTasks);
                     _context.SaveChanges();
+                }
 
-                    // Log migration complete message
-
-                    if (dataMigrationStatusCode == "error")
-                    {
-                        LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Complete - either due to error or cancellation", true);
-                        this.MarkReportsAsComplete();
-                    }
-                    else
-                    {
-                        LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Complete - successful", true);
-                    }
-
+                // Log migration complete message
+                if (dataMigrationStatusCode == "error")
+                {
+                    LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Complete - either due to error or cancellation", true);
+                    this.MarkReportsAsComplete();
                 }
                 else
                 {
-                    LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Completed after Cancel/Error", true);
-                    this.MarkReportsAsComplete();
+                    LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Complete - successful", true);
                 }
+            }
+            else
+            {
+                LogDataMigrationHistory(dataMigrationTypeCode, dataMigrationTypeCode.ToUpper() + " Migration Completed after Cancel/Error", true);
+                this.MarkReportsAsComplete();
             }
         }
 
@@ -230,37 +228,88 @@ namespace generate.infrastructure.Repositories.App
 
                 // Run migration
 
-                int? oldTimeOut = _context.Database.GetCommandTimeout();
-                _context.Database.SetCommandTimeout(30000);
-
                 // Workaround for the fact that ShutdownCancellationToken is not called when the job is deleted
                 // https://github.com/HangfireIO/Hangfire/issues/211
 
                 //var source = new CancellationTokenSource();
 
-                if (jobCancellationToken != null)
+                var connection = _context.Database.GetDbConnection();
+
+                if (connection.State != ConnectionState.Open)
                 {
-                    Task.Run(() =>
+                    connection.Open();
+                }
+
+                //if (jobCancellationToken != null)
+                //{
+                //    Task.Run(() =>
+                //    {
+                //        try
+                //        {
+                //            while (true)
+                //            {
+                //                Thread.Sleep(1000);
+                //                jobCancellationToken.ThrowIfCancellationRequested();
+                //            }
+                //        }
+                //        catch (Exception)
+                //        {
+                //            this.source.Cancel(); 
+                //            this.source.Dispose();
+                //        }
+                //    }, this.source.Token);
+                //}
+
+                //var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
+                //dbTask.Wait();
+
+                //_context.Database.SetCommandTimeout(oldTimeOut);
+
+                using (var command = connection.CreateCommand())
+                {
+
+                    Action cancelWithGrace = () =>
                     {
                         try
                         {
-                            while (true)
-                            {
-                                Thread.Sleep(1000);
-                                jobCancellationToken.ThrowIfCancellationRequested();
-                            }
+                            command.Cancel();
+                            source.Cancel();
                         }
-                        catch (Exception)
+                        catch (System.Exception ex)
                         {
-                            this.source.Cancel();
+                            Console.Error.WriteLine($"Exception called canceWithGrace:{ex}");
                         }
-                    }, this.source.Token);
+
+                    };
+
+                    if (jobCancellationToken != null)
+                    {
+                        Task.Run(() =>
+                        {
+                            try
+                            {
+                                while (true)
+                                {
+                                    Thread.Sleep(1000);
+                                    jobCancellationToken.ThrowIfCancellationRequested();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.Error.WriteLine($"Cancellation called :{ex}");
+                                // command.Cancel();
+                                // this.source.Cancel();
+                                cancelWithGrace();
+                            }
+                        }, source.Token);
+                    }
+                    command.CommandTimeout = 300000;
+                    command.CommandText = "EXEC app.Migrate_Data";
+                    //Console.WriteLine("Executing Migrate_Data stored proc");
+                    command.ExecuteNonQueryAsync().GetAwaiter().GetResult();
+                    //Console.WriteLine($"Done Executing Migrate_Data stored proc rowsAffected:{rowsAffected}");
+
                 }
-
-                var dbTask = _context.Database.ExecuteSqlRawAsync("app.Migrate_Data", this.source.Token);
-                dbTask.Wait();
-
-                _context.Database.SetCommandTimeout(oldTimeOut);
             }
             catch (Exception ex)
             {
@@ -386,6 +435,64 @@ namespace generate.infrastructure.Repositories.App
 
 
         }
-    }
 
+        public void RunBeforeTests(int submissionYear)
+        {
+
+            int? oldTimeOut = _context.Database.GetCommandTimeout();
+            _context.Database.SetCommandTimeout(11000);
+            _context.Database.ExecuteSqlRaw("app.Run_Before_Tests @submissionYear = {0}", submissionYear);
+            _context.Database.SetCommandTimeout(oldTimeOut);
+
+        }
+
+        public void toggleReportLock(string factTypeCode, string reportCode, bool isLocked)
+        {
+
+            if (reportCode != "")
+            {
+                var report = _context.Set<GenerateReport>().FirstOrDefault(x => x.ReportCode == reportCode);
+                report.IsLocked = isLocked;
+                _context.SaveChanges();
+            }
+            else if (factTypeCode != "")
+            {
+                var factType = _rdsRepository.GetFactType(factTypeCode);
+                var reports = Find<GenerateReport>(t => t.GenerateReport_FactTypes.Any(t => t.FactTypeId == factType.DimFactTypeId)).ToList();
+                foreach (var report in reports)
+                {
+                    report.IsLocked = isLocked;
+                    _context.SaveChanges();
+                }
+            }
+            else
+            {
+                var reportList = "029,002,005,006,007,009,032,033,040,052,088,089,116,118,141,143,144,175,178,179,185,188,189,194";
+                string[] reportCodes = reportList.Split(',');
+                var reports = Find<GenerateReport>(t =>reportCodes.Contains(t.ReportCode) &&  t.IsActive).ToList();
+                foreach (var report in reports)
+                {
+                    report.IsLocked = isLocked;
+                    _context.SaveChanges();
+                }
+            }
+
+        }
+
+        public void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)
+        {
+            int? oldTimeOut = _context.Database.GetCommandTimeout();
+            _context.Database.SetCommandTimeout(11000);
+            _context.Database.ExecuteSqlRaw("app.Enable_Disable_Tests @testScope = {0}, @isActive = {1}", fileSpecNumbers, enable);
+            _context.Database.SetCommandTimeout(oldTimeOut);
+        }
+
+        public void MigrateMetadata(string dataSetType, int submissionYear, bool isTransferAppToMetadata = true)
+        {
+            int? oldTimeOut = _context.Database.GetCommandTimeout();
+            _context.Database.SetCommandTimeout(11000);
+            _context.Database.ExecuteSqlRaw("app.Migrate_Metadata @dataSetType = {0}, @submissionYear = {1}, @isTransferAppToMetadata = {2}", dataSetType, submissionYear, isTransferAppToMetadata);
+            _context.Database.SetCommandTimeout(oldTimeOut);
+        }
+    }
 }

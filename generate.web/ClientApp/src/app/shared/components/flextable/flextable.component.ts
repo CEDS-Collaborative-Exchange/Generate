@@ -289,7 +289,7 @@ export class FlextableComponent {
             fixHeaderStyles(4);
 
             // This sets the column width based on title's length divided by  how many headers column are available
-            if (this.headers && this.headers.length) {
+            if (this.headers && this.headers.length && this.reportTitle && this.reportTitle.length) {
                 ws['!cols'] = this.headers.map(header => ({
                    // eg if title text length is 100 and total 4 headers ,each column length will be (110)/4
                     wch : (this.reportTitle.length + 10) / this.headers.length,

@@ -32,8 +32,7 @@ import { ReportLibraryTableComponent } from './components/report-library-table/r
         DialogComponent,
         AutocompleteComponent,
         FlextableComponent,
-        ReportLibraryTableComponent,
-
+        ReportLibraryTableComponent
     ],
     declarations: [
         BreadcrumbsComponent,
@@ -55,8 +54,7 @@ import { ReportLibraryTableComponent } from './components/report-library-table/r
         DialogComponent,
         AutocompleteComponent,
         FlextableComponent,
-        ReportLibraryTableComponent,
-
+        ReportLibraryTableComponent
     ]
 })
 export class SharedModule { }

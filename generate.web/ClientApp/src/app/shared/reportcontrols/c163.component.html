@@ -60,11 +60,20 @@
 
 
 <div *ngIf="!isLoading || !hasRecords">
-    <generate-app-table #reportGrid [itemsSource]="reportDataDto"
-                        [headers]="['State Code','State Agency Number','LEA Name','LEA Identifier (State)','GFSA Reporting Status']"
-                        [bindings]="['stateCode','stateAgencyNumber','organizationName','organizationStateId','gunFreeStatus']"
-                        class="generate-app-c163_grid">
-    </generate-app-table>
+    <div *ngIf="this.reportParameters.reportLevel === 'lea'">
+        <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                            [headers]="['State Code','State Agency Number','LEA Name','LEA Identifier (State)','GFSA Reporting Status']"
+                            [bindings]="['stateCode','stateAgencyNumber','organizationName','organizationStateId','gunFreeStatus']"
+                            class="generate-app-c163_grid">
+        </generate-app-table>
+    </div>
+    <div *ngIf="this.reportParameters.reportLevel === 'sch'">
+        <generate-app-table #reportGrid [itemsSource]="reportDataDto"
+                            [headers]="['State Code','State Agency Number','LEA Identifier (State)','School Identifier (State)','School Name','GFSA Reporting Status']"
+                            [bindings]="['stateCode','stateAgencyNumber','parentOrganizationStateId','organizationStateId','organizationName','gunFreeStatus']"
+                            class="generate-app-c163_grid">
+        </generate-app-table>
+    </div>
 </div>
 
 <div *ngIf="!isLoading && (reportParameters.connectionLink !== null || reportParameters.connectionLink !== '')" class="generate-app-c029__connectionLink">

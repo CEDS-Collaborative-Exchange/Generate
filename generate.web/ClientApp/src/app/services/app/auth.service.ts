@@ -42,8 +42,6 @@ export class AuthService {
 
 
         })
-
-       
     }
 
     private async initializeMsal(): Promise<void> {

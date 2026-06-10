@@ -264,7 +264,9 @@ var PivottableComponent = function () {
                     },
                     format: function (x) {
                         //format with thousands separators
-                        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        if (x == null || isNaN(x)) { return ''; }
+                        var n = parseFloat(x);
+                        return n.toLocaleString('en-US');
                     },
                     numInputs: 0
                 };

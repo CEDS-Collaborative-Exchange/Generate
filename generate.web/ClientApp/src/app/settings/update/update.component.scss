@@ -1,5 +1,10 @@
 @import '../../variables.scss';
 
+:host {
+    display: block;
+    width: 100%;
+}
+
 .generate-app-update__actions
 {
     padding: 10px;
@@ -33,6 +38,7 @@
 .generate-app-update__available-header {
     font-weight: bold;
     margin-bottom: 5px;
+    text-align: center;
 }
 
 .generate-app-update__available-text {

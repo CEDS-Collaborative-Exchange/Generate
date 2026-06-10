@@ -1,29 +1,32 @@
+using generate.core.Config;
+using generate.core.Interfaces.Repositories.App;
+using generate.core.Interfaces.Repositories.RDS;
+using generate.core.Interfaces.Services;
+using generate.core.Models.RDS;
+using generate.infrastructure.Contexts;
+using generate.infrastructure.Repositories.App;
+using generate.infrastructure.Services;
+using generate.web.Config;
+using Hangfire;
+using Hangfire.Logging;
+using Hangfire.SqlServer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Reflection;
-using generate.core.Config;
-using generate.core.Interfaces.Services;
-using generate.infrastructure.Contexts;
-using generate.infrastructure.Services;
-using generate.web.Config;
-using Hangfire;
-using Hangfire.SqlServer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.PlatformAbstractions;
-using static generate.overnighttest.Utils;
-using System.Collections.Generic;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Logging;
-using System;
-using Hangfire.Logging;
 using System.Web.Services.Description;
-using generate.core.Interfaces.Repositories.App;
-using System.Collections.ObjectModel;
-using System.Collections.Immutable;
+using static generate.overnighttest.Utils;
 namespace generate.overnighttest
 {
     public class Worker
@@ -57,6 +60,7 @@ namespace generate.overnighttest
             services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
             services.Configure<DataSettings>(configuration.GetSection("Data"));
 
+            
             services
                .AddDbContext<AppDbContext>(options =>
                     options.UseSqlServer(configuration["Data:AppDbContextConnection"]))
@@ -238,10 +242,18 @@ namespace generate.overnighttest
             serviceProvider = services.BuildServiceProvider();
 
 
+            GlobalConfiguration.Configuration.UseSqlServerStorage(configuration["Data:AppDbContextConnection"], new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
 
+            //GlobalConfiguration.Configuration.UseSqlServerStorage("Server=(localdb)\\MSSQLLocalDB;Database=Generate;Trusted_Connection=true;MultipleActiveResultSets=true;trustServerCertificate=true;", new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
+            //GlobalConfiguration.Configuration.UseSqlServerStorage("Server=10.0.2.10;Database=generate-test;User ID=generate;Password=78h&LUogZ#qvZ9i;MultipleActiveResultSets=true;trustServerCertificate=true;Connect Timeout=300;", new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
 
-            GlobalConfiguration.Configuration.UseSqlServerStorage("Server=10.0.2.10;Database=generate-test;User ID=generate;Password=78h&LUogZ#qvZ9i;MultipleActiveResultSets=true;trustServerCertificate=true;Connect Timeout=300;", new SqlServerStorageOptions { CommandTimeout = TimeSpan.FromHours(8) });
+            using var server = new BackgroundJobServer(
+            new BackgroundJobServerOptions
+            {
+                WorkerCount = Environment.ProcessorCount
+            });
 
+            Console.WriteLine("Hangfire Server started. Press Ctrl+C to exit.");
 
 
         }
@@ -338,7 +350,7 @@ namespace generate.overnighttest
         /// </summary>
         /// <param name="value">1 means lock, 0 means unlock</param>
         /// <param name="reportCodeArr"> A comma seperated name of reports such as 002,003</param>
-        private void toggleReportLock(int value, string[]? reportCodeArr)
+        private void toggleReportLock(int value, string[]? reportCodeArr, bool isFactType)
         {
             Console.Out.WriteLine($"Inside toggleReportLock with value:{value},and reportCodeArr:{reportCodeArr}");
             try
@@ -349,33 +361,28 @@ namespace generate.overnighttest
                     return;
 
                 }
-                Action<string, DbContext> process = (reportCode, dbContext) =>
+                IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+                Action<string> process = (reportCode) =>
                 {
-                    string whereClause = reportCode.Equals(ALL_FACT) ? "" : $" and ReportCode = '{reportCode}'";
-                    string sqlUpdateStr = $@"
-                            update app.GenerateReports
-                            set IsLocked = {value}
-                            where 1 = 1 {whereClause}
-                        ";
-                    Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
-                    int rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
-                    Console.WriteLine($"Rows Updated for reportCode:{reportCode} toggleReportLock:{rowsUpdated}");
-                }
+                    string report = reportCode.Equals(ALL_FACT) ? "" : reportCode;
+                    if (isFactType) { appRepository.toggleReportLock(report, "", Convert.ToBoolean(value)); }
+                    else { appRepository.toggleReportLock("", report, Convert.ToBoolean(value)); }
+                   
+                };
 
-                ;
                 using var scope = serviceProvider.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 if (!reportCodeArr.Contains(ALL_FACT) && reportCodeArr.Length > 0)
                 {
                     foreach (var reportCode in reportCodeArr)
                     {
-                        process(reportCode, dbContext);
+                        process(reportCode);
                     }
                     return;
                 }
                 else
                 {
-                    process(ALL_FACT, dbContext);
+                    process(ALL_FACT);
                 }
 
             }
@@ -393,21 +400,29 @@ namespace generate.overnighttest
 
                 Console.WriteLine($"Inside RunMigration with migrateFactRecords:{migrateFactRecords}");
                 string[]? factsToMigrate = [ALL_FACT];
+                bool isFactType = false;
                 // all the fact  report codes to array
                 if (migrateFactRecords != null && !migrateFactRecords.Contains(ALL_FACT))
                 {
+                    Dictionary<string, IList<string>> factTypeCodeToReportCodes = factTypeDescriptionToReportCodes(serviceProvider);
                     factsToMigrate = migrateFactRecords.Split(",");
+                    if (factsToMigrate.Length == 1 && factTypeCodeToReportCodes.ContainsKey(factsToMigrate[0])) { 
+                          isFactType = true;         
+                    }
                 }
 
 
                 // unlock all GenerateReports.isLocked to 0 
-                toggleReportLock(0, []);
+                toggleReportLock(0, [], isFactType);
                 // Only report that came in to be locked or if all report everthing to be locked, GenerateReports.isLocked = 1 
-                toggleReportLock(1, factsToMigrate);
+                toggleReportLock(1, factsToMigrate, isFactType);
                 Console.Out.WriteLine("Inside RunMigration");
-                IMigrationService migrationService = serviceProvider.GetService<IMigrationService>();
-                Console.Out.WriteLine("migrationService is present:" + migrationService);
-                migrationService.MigrateData("report");
+                //IMigrationService migrationService = serviceProvider.GetService<IMigrationService>();
+                //Console.Out.WriteLine("migrationService is present:" + migrationService);
+                //migrationService.MigrateData("report");
+                BackgroundJob.Enqueue<IMigrationService>(s =>
+                    s.MigrateData("report")
+                );
             }
             catch (Exception ex)
             {
@@ -417,7 +432,7 @@ namespace generate.overnighttest
             }
             finally
             {
-                Console.WriteLine("Done running migration");
+                Console.WriteLine("Migration Job in Queue");
 
             }
 
@@ -441,63 +456,26 @@ namespace generate.overnighttest
                     Console.WriteLine("PreDmc already ran");
                     return;
                 }
+
                 using var scope = serviceProvider.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-
-                // updates ToggleResponses table.ResponseValue with schoolYear
-                int rowsUpdated = dbContext.Database.ExecuteSql($"update App.ToggleResponses set ResponseValue = '10/01/' + CAST({schoolyear} - 1 AS VARCHAR) where ToggleResponseId = 1");
-
-                Console.WriteLine($"Rows Updated from ToggleResponses:{rowsUpdated}");
-                // updates DimSchoolYearDataMigrationTypes.isSelected to 0 , all migration to selected 0 
-                rowsUpdated = dbContext.Database.ExecuteSqlRaw($"UPDATE [RDS].[DimSchoolYearDataMigrationTypes] SET IsSelected = 0 ");
-                Console.WriteLine($"Rows Updated from DimSchoolYearDataMigrationTypes isselected:{rowsUpdated}");
-
-                // updates DimSchoolYearDataMigrationTypes for current schoolYear IsSelected to 1
-                List<Dictionary<string, object>> results = RunSqlCmdAndReadResult($"select DimSchoolYearId FROM [RDS].[DimSchoolYears] WHERE SchoolYear = {schoolyear}");
-                Console.WriteLine($"Found results from query:{results}");
-                if (results.Count > 0)
-                {
-                    Dictionary<string, object> firstItem = results[0];
-                    var DimSchoolYearId = firstItem.GetValueOrDefault("DimSchoolYearId", -1);
-                    Console.WriteLine($"Found DimSchoolYearId:{DimSchoolYearId}");
-                    rowsUpdated = dbContext.Database.ExecuteSql($@"UPDATE [RDS].[DimSchoolYearDataMigrationTypes]  SET IsSelected = 1 WHERE DimSchoolYearId = {DimSchoolYearId}");
-                    Console.WriteLine($"Rows Updated from DimSchoolYearDataMigrationTypes isselected to 1:{rowsUpdated}");
-
-                }
-
-                string sqlUpdateStr = $@"
-                        update tr
-                        set ResponseValue = '10/21/' + CAST({schoolyear} - 1 AS VARCHAR)
-                        from App.ToggleResponses tr 
-                        inner join app.ToggleQuestions tq
-                        on tr.ToggleQuestionId = tq.ToggleQuestionId	
-                        and tq.EmapsQuestionAbbrv = 'MEMBERDTE'                    
-                    ";
-                //string sqlUpdateStr = $"update a set a.IsActive = {(enable ? 1 : 0)} from App.SqlUnitTest a where a.TestScope='{fileSpecNum}'";
-                Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
-                rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
-                Console.WriteLine($"Rows Updated from predmc:{rowsUpdated}");
-
-                string toggleSqlFilePath = Path.Combine(appDir, "DatabaseScripts", "InsertToggleAssessments.sql");
-                Console.WriteLine($"toggleSqlFilePath:{toggleSqlFilePath}");
-                string script = File.ReadAllText(toggleSqlFilePath);
-                // Console.WriteLine($"toggleScript:{script}");
-                dbContext.Database.ExecuteSqlRaw(script);
+                IRDSRepository rDSRepository = serviceProvider.GetService<IRDSRepository>();
+                IAppRepository appRepository = new AppRepository(dbContext, rDSRepository);
+                appRepository.RunBeforeTests(schoolyear);
 
             }
             catch (Exception ex)
             {
                 Console.Error.Write($"Error Running PreDmc");
                 // Console.Error.WriteLine(ex);
-                ExitWithCode(EXIT_CODES.RunPreDmc,ex);
+                ExitWithCode(EXIT_CODES.RunPreDmc, ex);
             }
             finally
             {
                 runPreDmc = false;
             }
-
         }
+
         private void RunAllTests()
         {
             Console.WriteLine("Inside RullAllTests");
@@ -539,88 +517,7 @@ namespace generate.overnighttest
             }
 
         }
-
-
-
-        /// <summary>
-        /// Executes the given SQL query and returns the result as a list of dictionaries.
-        /// Each dictionary represents a row, mapping column names to their values.
-        /// </summary>
-        /// <param name="sqlQuery">The SQL query to execute.</param>
-        /// <returns>List of rows, each as a Dictionary&lt;string, object&gt;.</returns>
-        private List<Dictionary<string, object>> RunSqlCmdAndReadResult(string sqlQuery)
-        {
-            Console.WriteLine($"Executing RunSqlCmdAndReadResult with sqlQuery:{sqlQuery}");
-            var results = new List<Dictionary<string, object>>();
-            try
-            {
-                using var scope = serviceProvider.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                string connectionString = dbContext.Database.GetDbConnection().ConnectionString;
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        int fieldCount = reader.FieldCount;
-                        while (reader.Read())
-                        {
-                            var row = new Dictionary<string, object>(fieldCount);
-                            for (int i = 0; i < fieldCount; i++)
-                            {
-                                row[reader.GetName(i)] = reader.IsDBNull(i) ? null : reader.GetValue(i);
-                            }
-                            results.Add(row);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine($"Error executing SQL command: {ex.Message}");
-                //Console.Error.WriteLine(ex);
-                ExitWithCode(EXIT_CODES.RunSqlCmdAndReadResult,ex);
-            }
-            return results;
-        }
-
-        private bool IsTestActiveForFileSpec(string fileSpecNum)
-        {
-            Console.WriteLine($"Inside IsTestActiveForFileSpec with:{fileSpecNum}");
-            try
-            {
-                if (!fileSpecNum.StartsWith("FS"))
-                {
-                    fileSpecNum = "FS" + fileSpecNum;
-                }
-                using var scope = serviceProvider.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                string connectionString = dbContext.Database.GetDbConnection().ConnectionString;
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
-
-                    string sql = $"select a.IsActive from App.SqlUnitTest a where a.TestScope='{fileSpecNum}'";
-
-                    using (SqlCommand cmd = new SqlCommand(sql, conn))
-                    {
-                        object isActiveTest = cmd.ExecuteScalar();
-
-                        Console.WriteLine($"isActiveTest : {isActiveTest}");
-                        return true.Equals(isActiveTest);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.Error.Write("Error in IsTestActiveForFileSpect for file spec:" + fileSpecNum);
-                //Console.WriteLine(ex.StackTrace);
-                Console.Error.WriteLine(ex);
-                return false;
-            }
-        }
-        
+              
         /// <summary>
         /// 
         /// Takes a list of reportCodes 002,005 etc and runs test for them
@@ -640,17 +537,16 @@ namespace generate.overnighttest
                 {
                     Console.WriteLine("----------------------------------");
                     Console.WriteLine(">>>Running Test for spec::" + item);
-                    if (!IsTestActiveForFileSpec(item))
-                    {
+                    var storedProc = fileSpecToTestStoredProcWithSchoolYear.GetValueOrDefault(item, Utils.EMPTY_STRING);
+                    if (storedProc.IsNullOrEmpty()) {
                         Console.WriteLine($"Test for spec:{item} is not active");
                         continue;
                     }
-                    var storedProc = fileSpecToTestStoredProcWithSchoolYear.GetValueOrDefault(item, Utils.EMPTY_STRING);
                     using var scope = serviceProvider.CreateScope();
                     try
                     {
                         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                        dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+                        dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(30));
                         Console.WriteLine($"Running storedProc with this command:: {storedProc}");
                         int result = dbContext.Database.ExecuteSqlRaw(
                             storedProc
@@ -676,39 +572,15 @@ namespace generate.overnighttest
             }
 
 
-
         }
 
         private void EnableOrDisableTests(string fileSpecNumbers, bool enable = true)
         {
             Console.WriteLine($"Inside EnableOrDisableTests enable:{enable} fileSpecNumbers:{fileSpecNumbers}, ");
-            string[] fileSpecArr = fileSpecNumbers.Split(",");
-            foreach (string fileSpecNum in fileSpecArr)
-            {
-                try
-                {
-                    string copyFileSpecNum = fileSpecNum;
-                    if (!copyFileSpecNum.StartsWith("FS"))
-                    {
-                        copyFileSpecNum = "FS" + fileSpecNum;
-                    }
-                    using var scope = serviceProvider.CreateScope();
-                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    string sqlUpdateStr = $"update a set a.IsActive = {(enable ? 1 : 0)} from App.SqlUnitTest a where a.TestScope='{copyFileSpecNum}'";
-                    Console.WriteLine($"sqlUpdateStr:{sqlUpdateStr}");
-                    int rowsUpdated = dbContext.Database.ExecuteSqlRaw(sqlUpdateStr);
-                    Console.WriteLine($"fileSpecNum :{copyFileSpecNum} updated rows:{rowsUpdated}");
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.Write($"Error update SqlUnitTest for spec:{fileSpecNum} when enable is :{enable},message:{ex.Message}");
-                    // Console.Error.WriteLine(ex);
-                    ExitWithCode(EXIT_CODES.EnableOrDisableTests,ex);
-                }
-            }
+            IAppRepository appRepository = serviceProvider.GetService<IAppRepository>();
+            appRepository.EnableOrDisableTests(fileSpecNumbers, enable);
+            
         }
-
-
 
 
     }

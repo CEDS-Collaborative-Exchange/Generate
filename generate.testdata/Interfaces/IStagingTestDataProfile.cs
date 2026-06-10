@@ -97,7 +97,6 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<bool>> LeaHasNcesIdDistribution { get; set; }
         List<DataDistribution<string>> RefK12leaTitleIsupportServiceDistribution { get; set; }
         List<DataDistribution<string>> RefTitleIinstructionalServiceDistribution { get; set; }
-        List<DataDistribution<string>> RefTitleIprogramTypeDistribution { get; set; }
         List<DataDistribution<string>> RefMepProjectTypeDistribution { get; set; }
         List<DataDistribution<string>> LeaRefOperationalStatusDistribution { get; set; }
         List<DataDistribution<string>> RefCharterLeaStatusDistribution { get; set; }
@@ -128,6 +127,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<bool>> HasHomelessProgramDistribution { get; set; }
 
 
+        List<DataDistribution<string>> RefTitleIProgramTypeDistribution { get; set; }
         List<DataDistribution<string>> RefTitleIschoolStatusDistribution { get; set; }
         List<DataDistribution<string>> RefMagnetSpecialProgramDistribution { get; set; }
         List<DataDistribution<string>> RefNSLPStatusDistribution { get; set; }
@@ -235,6 +235,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<bool>> GEDPreparationProgramParticipationDistribution { get; set; }
 
         List<DataDistribution<bool>> FullAcademicYearPersonStatusDistribution { get; set; }
+        List<DataDistribution<bool>> AssessedFirstTimeDistribution { get; set; }
         List<DataDistribution<string>> RefAssessmentParticipationIndicatorDistribution { get; set; }
         List<DataDistribution<string>> RefAssessmentRegistrationReasonNotCompleting { get; set; }
         List<DataDistribution<string>> RefAssessmentRegistrationReasonNotTested { get; set; }
@@ -280,7 +281,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<bool>> IsAeStaffDistribution { get; set; }
         List<DataDistribution<string>> RefCredentialTypeDistribution { get; set; }
         List<DataDistribution<string>> RefTeachingCredentialTypeDistribution { get; set; }
-        List<DataDistribution<string>> RefSpecialEducationStaffCategoryDistribution { get; set; }
+        List<DataDistribution<string>> RefSpecialEducationSupportServicesCategoryDistribution { get; set; }
         List<DataDistribution<string>> RefK12StaffClassificationDistribution { get; set; }
         List<DataDistribution<string>> RefTitleIProgramStaffCategoryDistribution { get; set; }
         List<DataDistribution<string>> RefParaprofessionalQualificationDistribution { get; set; }
@@ -290,6 +291,7 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<string>> RefSpecialEducationTeacherQualificationStatusDistribution { get; set; }
         List<DataDistribution<string>> RefSpecialEducationAgeGroupTaughtDistribution { get; set; }
         List<DataDistribution<string>> RefProgramTypeDistribution { get; set; }
+        List<DataDistribution<bool>> TitleIIILanguageInstructionIndicatorDistribution { get; set; }
         #endregion
 
         #region Charter

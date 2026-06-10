@@ -63,10 +63,6 @@ BEGIN
 	-- Clear out last run
 	DELETE FROM App.SqlUnitTestCaseResult WHERE SqlUnitTestId = @SqlUnitTestId
 	
-	--Get the Special Education program code
-	DECLARE @SPEDProgram varchar(5)
-	SELECT @SPEDProgram = [code] from dbo.RefProgramType where [Definition] = 'Special Education Services'
-
 	--Get School Year End Date
 	DECLARE @SYStartDate datetime = staging.GetFiscalYearStartDate(@schoolYear)
 
@@ -83,17 +79,9 @@ BEGIN
 
 	INSERT INTO #excludedLeas 
 	SELECT DISTINCT LEAIdentifierSea
-	FROM Staging.K12Organization sko
-	LEFT JOIN Staging.OrganizationPhone sop
-			ON sko.LEAIdentifierSea = sop.OrganizationIdentifier
-			AND sop.OrganizationType in (	SELECT InputCode
-										FROM Staging.SourceSystemReferenceData 
-										WHERE TableName = 'RefOrganizationType' 
-											AND TableFilter = '001156'
-											AND OutputCode = 'LEA' AND SchoolYear = @SchoolYear)
+	FROM Staging.K12Organization 
 	WHERE LEA_IsReportedFederally = 0
-		OR LEA_OperationalStatus in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
-		OR sop.OrganizationIdentifier IS NULL
+		OR ISNULL(LEA_OperationalStatus, 'Closed') in ('Closed', 'FutureAgency', 'Inactive', 'Closed_1', 'FutureAgency_1', 'Inactive_1', 'MISSING')
 
 	SELECT DISTINCT
 		StaffMemberIdentifierState
@@ -129,7 +117,7 @@ BEGIN
 		ON sksa.LeaIdentifierSea = sko.LeaIdentifierSea
 		AND @ChildCountDate BETWEEN sko.LEA_RecordStartDateTime AND ISNULL(sko.LEA_RecordEndDateTime, GETDATE())
 	WHERE K12StaffClassification in ('SpecialEducationTeachers', 'SpecialEducationTeachers_1') 
-		AND @ChildCountDate BETWEEN sksa.AssignmentStartDate AND ISNULL(sksa.AssignmentEndDate, GETDATE())
+--		AND @ChildCountDate BETWEEN sksa.AssignmentStartDate AND ISNULL(sksa.AssignmentEndDate, GETDATE())
 
 
 	---ST2 SEA Match All - Age Group Taught: 3TO5 Full Time Equivalency: 1493.3700
@@ -176,7 +164,7 @@ Teachers (FTE) by Qualification Status (Special Education Teacher) and Age Group
 		,[TestDateTime]
 	)
 	SELECT 
-			@SqlUnitTestId
+		@SqlUnitTestId
 		,'CSA SEA Match All'
 		,'CSA SEA Match All - Qualification Status: ' + s.SpecialEducationTeacherQualificationStatus +  '
 			; Special Ed Age Group Taught: ' + s.SpecialEducationAgeGroupTaughtEdFactsCode + '
@@ -195,15 +183,6 @@ Teachers (FTE) by Qualification Status (Special Education Teacher) and Age Group
 		AND rreksc.CategorySetCode = 'CSA'
 	
 	DROP TABLE #TC1
-
-	--Query to find the tests that did not match
-	--select * 
-	--from App.SqlUnitTestCaseResult r
-	--	inner join App.SqlUnitTest t
-	--		on r.SqlUnitTestId = t.SqlUnitTestId
-	--WHERE TestCaseName = 'CSA SEA Match All' 
-	--AND t.TestScope = 'FS070'
-	--AND Passed = 0
 
 
 /* Test Case 2:
@@ -230,7 +209,7 @@ Subtotal by Qualification Status (Special Education Teacher)
 		,[TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		,'ST1 SEA Match All'
 		,'ST1 SEA Match All - Qualification Status: ' + s.SpecialEducationTeacherQualificationStatus + '
 			Full Time Equivalency: ' + CAST(s.FullTimeEquivalency as varchar(10))
@@ -248,16 +227,6 @@ Subtotal by Qualification Status (Special Education Teacher)
 
 	DROP TABLE #TC2
 
-	--Query to find the tests that did not match
-	--select * 
-	--from App.SqlUnitTestCaseResult r
-	--	inner join App.SqlUnitTest t
-	--		on r.SqlUnitTestId = t.SqlUnitTestId
-	--WHERE TestCaseName = 'ST1 SEA Match All' 
-	--AND t.TestScope = 'FS070'
-	--AND Passed = 0
-
-		
 /* Test Case 3:
 ST2 at the SEA level
 Subtotal by Age Group Taught (Special Education Teacher)
@@ -282,7 +251,7 @@ Subtotal by Age Group Taught (Special Education Teacher)
 		,[TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		,'ST2 SEA Match All'
 		,'ST2 SEA Match All - Age Group Taught: ' + s.SpecialEducationAgeGroupTaughtEdFactsCode
 			+ ' Full Time Equivalency: ' + CAST(s.FullTimeEquivalency as varchar(10))
@@ -299,16 +268,6 @@ Subtotal by Age Group Taught (Special Education Teacher)
 		AND rreksc.CategorySetCode = 'ST2'
 
 	DROP TABLE #TC3
-
-	--Query to find the tests that did not match
-	--select * 
-	--from App.SqlUnitTestCaseResult r
-	--	inner join App.SqlUnitTest t
-	--		on r.SqlUnitTestId = t.SqlUnitTestId
-	--WHERE TestCaseName = 'ST2 SEA Match All' 
-	--AND t.TestScope = 'FS070'
-	--AND Passed = 0
-
 
 /* Test Case 4:
 TOT at the SEA level
@@ -328,7 +287,7 @@ TOT at the SEA level
 		,[TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		,'TOT SEA Match All'
 		,'TOT SEA Match All'
 		,s.StaffCount
@@ -343,16 +302,6 @@ TOT at the SEA level
 		AND rreksc.CategorySetCode = 'TOT'
 			
 	DROP TABLE #TC4
-
-	--Query to find the tests that did not match
-	--select * 
-	--from App.SqlUnitTestCaseResult r
-	--inner join App.SqlUnitTest t
-	--	on r.SqlUnitTestId = t.SqlUnitTestId
-	--WHERE TestCaseName = 'TOT SEA Match All' 
-	--AND t.TestScope = 'FS070'
-	--AND Passed = 0
-		
 
 	----------------------------------------
 	--- LEA level tests					 ---
@@ -391,7 +340,7 @@ Teachers (FTE) by Qualification Status (Special Education Teacher) and Age Group
 		,[TestDateTime]
 	)
 	SELECT 
-			@SqlUnitTestId
+		@SqlUnitTestId
 		,'CSA LEA Match All'
 		,'CSA LEA Match All - LEA Identifier: ' + s.LeaIdentifierSea
 			+ '; Qualification Status: ' + s.SpecialEducationTeacherQualificationStatus
@@ -412,15 +361,6 @@ Teachers (FTE) by Qualification Status (Special Education Teacher) and Age Group
 		AND rreksc.CategorySetCode = 'CSA'
 
 	DROP TABLE #TC5
-
-	--Query to find the tests that did not match
-	--select * 
-	--from App.SqlUnitTestCaseResult r
-	--	inner join App.SqlUnitTest t
-	--		on r.SqlUnitTestId = t.SqlUnitTestId
-	--WHERE TestCaseName = 'CSA LEA Match All' 
-	--AND t.TestScope = 'FS070'
-	--AND Passed = 0
 
 /* Test Case 6:
 ST1 at the LEA level
@@ -452,7 +392,7 @@ Subtotal by Qualification Status (Special Education Teacher)
 		,[TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		,'ST1 LEA Match All'
 		,'ST1 LEA Match All - LEA Identifier ' + LeaIdentifierSea
 				+ 'Qualification Status: ' + s.SpecialEducationTeacherQualificationStatus
@@ -472,16 +412,6 @@ Subtotal by Qualification Status (Special Education Teacher)
 
 	DROP TABLE #TC6
 
-	--Query to find the tests that did not match
-	--select * 
-	--from App.SqlUnitTestCaseResult r
-	--	inner join App.SqlUnitTest t
-	--		on r.SqlUnitTestId = t.SqlUnitTestId
-	--WHERE TestCaseName = 'ST1 LEA Match All' 
-	--AND t.TestScope = 'FS070'
-	--AND Passed = 0
-
-		
 /* Test Case 3:
 ST2 at the LEA level
 Subtotal by Age Group Taught (Special Education Teacher)
@@ -512,7 +442,7 @@ Subtotal by Age Group Taught (Special Education Teacher)
 		,[TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		,'ST2 LEA Match All'
 		,'ST2 LEA Match All - LEA Identifier ' + LeaIdentifierSea
 			+ ' Age Group Taught: ' + s.SpecialEducationAgeGroupTaughtEdFactsCode
@@ -531,16 +461,6 @@ Subtotal by Age Group Taught (Special Education Teacher)
 		AND rreksc.CategorySetCode = 'ST2'
 
 	DROP TABLE #TC7
-
-	--Query to find the tests that did not match
-	--select * 
-	--from App.SqlUnitTestCaseResult r
-	--	inner join App.SqlUnitTest t
-	--		on r.SqlUnitTestId = t.SqlUnitTestId
-	--WHERE TestCaseName = 'ST2 LEA Match All' 
-	--AND t.TestScope = 'FS070'
-	--AND Passed = 0
-
 
 /* Test Case 8:
 TOT at the LEA level
@@ -566,7 +486,7 @@ TOT at the LEA level
 		,[TestDateTime]
 	)
 	SELECT DISTINCT
-			@SqlUnitTestId
+		@SqlUnitTestId
 		,'TOT LEA Match All'
 		,'TOT LEA Match All - LeaIdentifierSea: ' + s.LeaIdentifierSea
 		,s.StaffCount

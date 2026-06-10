@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewEncapsulation, OnInit } from '@angular/core';
+import { Component, AfterViewInit, ViewEncapsulation, OnInit, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { UserService } from './services/app/user.service';
@@ -13,7 +13,7 @@ declare var componentHandler: any;
     selector: 'app',
     templateUrl: './app.component.html',
     styleUrls: [ './app.component.scss' ],
-    providers: [Title],
+    providers: [Title, UserService],
     encapsulation: ViewEncapsulation.None
 })
 
@@ -21,10 +21,29 @@ declare var componentHandler: any;
 
 export class AppComponent implements AfterViewInit, OnInit {
 
+    isDrawerOpen = false;
+
+    toggleDrawer() {
+        this.isDrawerOpen = !this.isDrawerOpen;
+    }
+
+    closeDrawer() {
+        this.isDrawerOpen = false;
+    }
+
+    // Auto-close the drawer when the viewport is wider than 1100px
+    // (i.e. the user zooms back out below ~175% on a 1920px display)
+    @HostListener('window:resize')
+    onResize() {
+        if (window.innerWidth > 1100) {
+            this.isDrawerOpen = false;
+        }
+    }
+
     constructor(
         private _router: Router,
         private _titleService: Title,
-        private userService: UserService,
+        public userService: UserService,
         private appConfig: AppConfig) { }
 
     ngOnInit() {
@@ -53,7 +72,58 @@ export class AppComponent implements AfterViewInit, OnInit {
     }
 
     ngAfterViewInit() {
-        componentHandler.upgradeAllRegistered();  
+        componentHandler.upgradeDom();
+    }
+
+    gotoSummary() {
+        if (this.userService.isLoggedIn()) {
+            this._router.navigateByUrl('/reports/summary');
+        }
+        else {
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            let data = { message: 'You must be logged in to access this area of Generate.' };
+            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+        }
+        return false;
+    }
+
+    gotoReportsEdFacts() {
+
+        if (this.userService.isLoggedIn()) {
+            this._router.navigate(['/reports/edfacts']);
+        }
+        else {
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            let data = { message: 'You must be logged in to access this area of Generate.' };
+            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+        }
+        return false;
+    }
+
+    gotoReportsSppApr() {
+        if (this.userService.isLoggedIn()) {
+            this._router.navigate(['/reports/sppapr']);
+        }
+        else {
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            let data = { message: 'You must be logged in to access this area of Generate.' };
+            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+        }
+
+        return false;
+    }
+
+    gotoReportsLibrary() {
+        if (this.userService.isLoggedIn()) {
+            this._router.navigate(['/reports/library']);
+        }
+        else {
+            let snackbarContainer = document.querySelector('#generate-app__message');
+            let data = { message: 'You must be logged in to access this area of Generate.' };
+            snackbarContainer['MaterialSnackbar'].showSnackbar(data);
+        }
+
+        return false;
     }
     
 }

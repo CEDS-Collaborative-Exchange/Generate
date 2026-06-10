@@ -195,7 +195,7 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.RunDateTime).HasColumnType("datetime");
+                entity.Property(e => e.AssessedFirstTime);
 
                 entity.Property(e => e.SchoolFullAcademicYear)
                     .HasMaxLength(100)
@@ -473,8 +473,6 @@ namespace generate.infrastructure.Contexts
                 entity.Property(e => e.ProjectedGraduationDate)
                     .HasMaxLength(8)
                     .IsUnicode(false);
-
-                entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.SchoolIdentifierSea)
                     .HasColumnName("SchoolIdentifierSea")
@@ -946,7 +944,7 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.SpecialEducationStaffCategory)
+                entity.Property(e => e.SpecialEducationSupportServicesCategory)
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
@@ -1199,8 +1197,6 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("REAPAlternativeFundingStatusCode")
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.SchoolYear)
                     .HasMaxLength(100)
@@ -1780,8 +1776,6 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("TitleIIIAccountabilityProgressStatus")
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.SchoolIdentifierSea)
                     .HasColumnName("SchoolIdentifierSea")

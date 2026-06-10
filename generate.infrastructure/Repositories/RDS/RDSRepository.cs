@@ -34,7 +34,11 @@ namespace generate.infrastructure.Repositories.RDS
             return recordCount > 0 ? true : false;
         }
 
-
+        public DimFactType GetFactType(string factTypeCode)
+        {
+            var factType = _context.Set<DimFactType>().Where(t => t.FactTypeCode == factTypeCode).ToList()[0];
+            return factType;
+        }
 
     }
 

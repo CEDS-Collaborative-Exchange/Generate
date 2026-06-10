@@ -104,6 +104,16 @@ export class C035Component implements AfterViewInit, OnChanges, OnInit {
                 reportDataDto => {
                     this.reportDataDto = reportDataDto;
                     this.cvData = this.reportDataDto.data;
+
+                    // Replace allocation type codes with descriptions
+                    if (this.cvData && Array.isArray(this.cvData)) {
+                        this.cvData.forEach(row => {
+                            if (row.federalFundAllocationType) {
+                                row.federalFundAllocationType = this.getAllocationTypeDescription(row.federalFundAllocationType) || row.federalFundAllocationType;
+                            }
+                        });
+                    }
+
                     if (this.reportParameters.reportCategorySet === undefined) {
                         if (this.reportDataDto.categorySets !== null && this.reportDataDto.categorySets.length > 0) {
                             this.reportParameters.reportCategorySet = this.getDefaultCategorySet(this.reportDataDto.categorySets);
@@ -223,7 +233,6 @@ export class C035Component implements AfterViewInit, OnChanges, OnInit {
     }
    
     export() {
-        console.log("C35Export"); 
         let self = this;
 
         let sheetName = this.reportParameters.reportCode.toUpperCase();
@@ -441,16 +450,16 @@ export class C035Component implements AfterViewInit, OnChanges, OnInit {
     getAllocationTypeDescription(allocationCode: string) {
         let description: string = '';
 
-        if (allocationCode === 'RETAINED') {
+        if (allocationCode === 'RETAINED' || allocationCode === 'RETAINED_1') {
             description = 'Retained by SEA for program administration, etc';
         }
-        else if (allocationCode === 'TRANSFER') {
+        else if (allocationCode === 'TRANSFER' || allocationCode === 'TRANSFER_1') {
             description = 'Transferred to another state-level agency';
         }
-        else if (allocationCode === 'DISTNONLEA'){
+        else if (allocationCode === 'DISTNONLEA' || allocationCode === 'DISTNONLEA_1'){
             description = 'Distributed to entities other than LEAs';
         }
-        else if (allocationCode === 'UNALLOC') {
+        else if (allocationCode === 'UNALLOC' || allocationCode === 'UNALLOC_1') {
             description = 'Unallocated or returned funds';
         }
 
