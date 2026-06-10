@@ -16,14 +16,14 @@ The Center for the Integration of IDEA Data (CIID) developed the Generate applic
 * Improves consistency across states for IDEA data
 * Supports timely and efficient reporting and submission of E&#x44;_&#x46;acts_ data
 
-{% content-ref url="/broken/pages/kmMSMhZYbVH8oLa7JtSw" %}
-[Broken link](/broken/pages/kmMSMhZYbVH8oLa7JtSw)
+{% content-ref url="https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/user-guide" %}
+[User Guide](https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/user-guide)
 {% endcontent-ref %}
 
-{% content-ref url="/broken/pages/eGsQkyqwvrjdsR1EFCKc" %}
-[Broken link](/broken/pages/eGsQkyqwvrjdsR1EFCKc)
+{% content-ref url="https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/developer-guides" %}
+[Developer Guides](https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/developer-guides)
 {% endcontent-ref %}
 
-{% content-ref url="/broken/pages/1pGTsW0llOcjJKkTOOov" %}
-[Broken link](/broken/pages/1pGTsW0llOcjJKkTOOov)
+{% content-ref url="https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/release-notes" %}
+[Release Notes](https://app.gitbook.com/s/rRyeWMyPKDUxlv4sroOL/release-notes)
 {% endcontent-ref %}

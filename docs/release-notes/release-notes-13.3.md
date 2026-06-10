@@ -42,7 +42,9 @@ Prior to updating to Generate version 13.3, you will need to update the paramete
 
 In that file, there is a parameter for the metadata process named "**fsWSURL**”.  You will need to update the value for that parameter to the one below:&#x20;
 
-"fsWSURL": "[https://w1st3s2lpd.execute-api.us-east-1.amazonaws.com/api/](https://w1st3s2lpd.execute-api.us-east-1.amazonaws.com/api/%22)"&#x20;
+"fsWSURL": "[https://il96nnsqbe.execute-api.us-east-1.amazonaws.com/api/](https://il96nnsqbe.execute-api.us-east-1.amazonaws.com/api/)"&#x20;
+
+<figure><img src="../.gitbook/assets/image (3) (1).png" alt=""><figcaption></figcaption></figure>
 
 ### Summary of Changes
 
