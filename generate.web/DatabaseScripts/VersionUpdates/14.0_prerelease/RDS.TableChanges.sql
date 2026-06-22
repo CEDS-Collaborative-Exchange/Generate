@@ -19,6 +19,18 @@ BEGIN
 	END;
 END;
 
+IF EXISTS (
+	SELECT 1
+	FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+	WHERE CONSTRAINT_NAME = N'FK_FactDirectory_EarlyChildhoodOrganizationStatusId'
+	  AND TABLE_SCHEMA = N'RDS'
+	  AND TABLE_NAME = N'FactDirectory'
+)
+BEGIN
+    ALTER TABLE [RDS].[FactDirectory] DROP CONSTRAINT [FK_FactDirectory_EarlyChildhoodOrganizationStatusId]
+END;
+
+
 IF OBJECT_ID(N'[RDS].[BridgeK12StudentAssessmentAccommodations]', N'U') IS NOT NULL
 BEGIN
 	DROP TABLE [RDS].[BridgeK12StudentAssessmentAccommodations];
@@ -292,6 +304,17 @@ BEGIN
 END;
 
 IF EXISTS (
+    SELECT 1
+	FROM sys.default_constraints dc
+	WHERE dc.name = N'DF_FactK12StudentCounts_CteOutcomeIndicatorId'
+      AND dc.parent_object_id = OBJECT_ID(N'[RDS].[FactK12StudentCounts]')
+)
+BEGIN
+	ALTER TABLE [RDS].[FactK12StudentCounts]
+	DROP CONSTRAINT [DF_FactK12StudentCounts_CteOutcomeIndicatorId];
+END;
+
+IF EXISTS (
 	SELECT 1
 	FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
 	WHERE CONSTRAINT_NAME = N'FK_FactK12StudentCounts_CteOutcomeIndicatorId'
@@ -301,6 +324,17 @@ IF EXISTS (
 BEGIN
 	ALTER TABLE [RDS].[FactK12StudentCounts]
 	DROP CONSTRAINT [FK_FactK12StudentCounts_CteOutcomeIndicatorId];
+END;
+
+IF EXISTS (
+    SELECT 1
+	FROM sys.default_constraints dc
+	WHERE dc.name = N'DF_FactK12StudentCounts_PsEnrollmentStatusId'
+      AND dc.parent_object_id = OBJECT_ID(N'[RDS].[FactK12StudentCounts]')
+)
+BEGIN
+	ALTER TABLE [RDS].[FactK12StudentCounts]
+	DROP CONSTRAINT [DF_FactK12StudentCounts_PsEnrollmentStatusId];
 END;
 
 IF EXISTS (
@@ -332,6 +366,17 @@ BEGIN
 END;
 
 IF EXISTS (
+    SELECT 1
+	FROM sys.default_constraints dc
+	WHERE dc.name = N'DF_FactK12StudentEnrollments_PsEnrollmentStatusId'
+      AND dc.parent_object_id = OBJECT_ID(N'[RDS].[FactK12StudentEnrollments]')
+)
+BEGIN
+	ALTER TABLE [RDS].[FactK12StudentEnrollments]
+	DROP CONSTRAINT [DF_FactK12StudentEnrollments_PsEnrollmentStatusId];
+END;
+
+IF EXISTS (
 	SELECT 1
 	FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
 	WHERE CONSTRAINT_NAME = N'FK_FactK12StudentEnrollments_PSEnrollmentStatusId'
@@ -343,6 +388,16 @@ BEGIN
 	DROP CONSTRAINT [FK_FactK12StudentEnrollments_PSEnrollmentStatusId];
 END;
 
+IF EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = N'IXFX_FactK12StudentEnrollments_PsEnrollmentStatusId'
+      AND object_id = OBJECT_ID(N'[RDS].[FactK12StudentEnrollments]')
+)
+BEGIN
+    DROP INDEX [IXFX_FactK12StudentEnrollments_PsEnrollmentStatusId] ON [RDS].[FactK12StudentEnrollments];
+END;
+
 IF OBJECT_ID(N'[RDS].[FactK12StudentEnrollments]', N'U') IS NOT NULL
 BEGIN
 	IF COL_LENGTH(N'[RDS].[FactK12StudentEnrollments]', N'PsEnrollmentStatusId') IS NOT NULL
@@ -351,6 +406,17 @@ BEGIN
 		DROP COLUMN [PsEnrollmentStatusId];
 	END;
 
+END;
+
+IF EXISTS (
+    SELECT 1
+	FROM sys.default_constraints dc
+	WHERE dc.name = N'DF_FactPsStudentAcademicRecords_PsEnrollmentStatusId'
+      AND dc.parent_object_id = OBJECT_ID(N'[RDS].[FactPsStudentAcademicRecords]')
+)
+BEGIN
+	ALTER TABLE [RDS].[FactPsStudentAcademicRecords]
+	DROP CONSTRAINT [DF_FactPsStudentAcademicRecords_PsEnrollmentStatusId];
 END;
 
 IF EXISTS (
@@ -365,6 +431,16 @@ BEGIN
 	DROP CONSTRAINT [FK_FactPsStudentAcademicRecords_PSEnrollmentStatusId];
 END;
 
+IF EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = N'IXFK_FactPsStudentAcademicRecords_PsEnrollmentStatusId'
+      AND object_id = OBJECT_ID(N'[RDS].[FactPsStudentAcademicRecords]')
+)
+BEGIN
+    DROP INDEX [IXFK_FactPsStudentAcademicRecords_PsEnrollmentStatusId] ON [RDS].[FactPsStudentAcademicRecords];
+END;
+
 IF OBJECT_ID(N'[RDS].[FactPsStudentAcademicRecords]', N'U') IS NOT NULL
 BEGIN
 	IF COL_LENGTH(N'[RDS].[FactPsStudentAcademicRecords]', N'PsEnrollmentStatusId') IS NOT NULL
@@ -373,6 +449,17 @@ BEGIN
 		DROP COLUMN [PsEnrollmentStatusId];
 	END;
 
+END;
+
+IF EXISTS (
+    SELECT 1
+	FROM sys.default_constraints dc
+	WHERE dc.name = N'DF_FactPsStudentEnrollments_PsEnrollmentStatusId'
+      AND dc.parent_object_id = OBJECT_ID(N'[RDS].[FactPsStudentEnrollments]')
+)
+BEGIN
+	ALTER TABLE [RDS].[FactPsStudentEnrollments]
+	DROP CONSTRAINT [DF_FactPsStudentEnrollments_PsEnrollmentStatusId];
 END;
 
 IF EXISTS (
@@ -386,6 +473,17 @@ BEGIN
 	ALTER TABLE [RDS].[FactPsStudentEnrollments]
 	DROP CONSTRAINT [FK_FactPsStudentEnrollments_PSEnrollmentStatusId];
 END;
+
+IF EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = N'IXFK_FactPsStudentEnrollments_PsEnrollmentStatusId'
+      AND object_id = OBJECT_ID(N'[RDS].[FactPsStudentEnrollments]')
+)
+BEGIN
+    DROP INDEX [IXFK_FactPsStudentEnrollments_PsEnrollmentStatusId] ON [RDS].[FactPsStudentEnrollments];
+END;
+
 
 IF OBJECT_ID(N'[RDS].[FactPsStudentEnrollments]', N'U') IS NOT NULL
 BEGIN
@@ -425,6 +523,17 @@ BEGIN
 		N'[RDS].[ReportEDFactsSchoolPerformanceIndicators].[ECONOMICDISADVANTAGESTATUS]',
 		N'ECODISSTATUS',
 		N'COLUMN';
+END;
+
+IF EXISTS (
+    SELECT 1
+	FROM sys.default_constraints dc
+	WHERE dc.name = N'DF_FactOrganizationCounts_HomelessChildrenandYouthReservation'
+      AND dc.parent_object_id = OBJECT_ID(N'[RDS].[FactOrganizationCounts]')
+)
+BEGIN
+	ALTER TABLE [RDS].[FactOrganizationCounts]
+	DROP CONSTRAINT [DF_FactOrganizationCounts_HomelessChildrenandYouthReservation];
 END;
 
 IF OBJECT_ID(N'[RDS].[FactOrganizationCounts]', N'U') IS NOT NULL
