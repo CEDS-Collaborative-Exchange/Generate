@@ -64,9 +64,9 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/30/" + (schoolYear - 1).ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("1/13/" + schoolYear.ToString()),
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/30/" + (schoolYear - 1).ToString()),
+                ProgramParticipationExitDate = DateTime.Parse("1/13/" + schoolYear.ToString()),
                 SpecialEducationExitReason = "HighSchoolDiploma"
             };
 
@@ -76,9 +76,9 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org2.LeaIdentifierSea,
                 SchoolIdentifierSea = org2.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/30/" + (schoolYear - 1).ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("1/13/" + schoolYear.ToString()),
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/30/" + (schoolYear - 1).ToString()),
+                ProgramParticipationExitDate = DateTime.Parse("1/13/" + schoolYear.ToString()),
                 SpecialEducationExitReason = "HighSchoolDiploma"
             };
 

@@ -816,8 +816,8 @@ namespace generate.testdata.DataGenerators
                     {
                         OrganizationIdentifier = o.SchoolIdentifierSea,
                         GradeOffered = gradeLevel.Code,
-                        RecordStartDateTime = o.LEA_RecordStartDateTime,
-                        RecordEndDateTime = o.LEA_RecordEndDateTime,
+                        RecordStartDateTime = o.Lea_RecordStartDateTime,
+                        RecordEndDateTime = o.Lea_RecordEndDateTime,
                         SchoolYear = schoolYear.ToString()
                     };
 
@@ -900,14 +900,14 @@ namespace generate.testdata.DataGenerators
                 staff.FullTimeEquivalency = _testDataHelper.GetRandomDecimalInRange(rnd, 25, 100);
                 staff.K12StaffClassification = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefK12StaffClassificationDistribution);
                 staff.EdFactsTeacherInexperiencedStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefInexperiencedStatusDistribution);
-                staff.EDFactsTeacherOutOfFieldStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefOutOfFieldStatusDistribution);
+                staff.EdFactsTeacherOutOfFieldStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefOutOfFieldStatusDistribution);
                 staff.EdFactsCertificationStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefEdFactsCertificationStatusDistribution);
                 staff.TitleIIILanguageInstructionIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.TitleIIILanguageInstructionIndicatorDistribution);
                 staff.RecordStartDateTime = _testDataHelper.GetSessionStartDate(rnd, schoolYear);
                 staff.RecordEndDateTime = _testDataHelper.GetSessionEndDate(rnd, schoolYear);
                 staff.SchoolYear = schoolYear.ToString();
 
-                staff.SpecialEducationSupportServicesCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSpecialEducationSupportServicesCategoryDistribution);
+                // staff.SpecialEducationSupportServicesCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSpecialEducationSupportServicesCategoryDistribution);
                 staff.TitleIProgramStaffCategory = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIProgramStaffCategoryDistribution);
 
 
@@ -1010,7 +1010,7 @@ namespace generate.testdata.DataGenerators
                     if (LeaFedFunds.FederalProgramCode == "84.010")
                     {
                         LeaFedFunds.ParentalInvolvementReservationFunds = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000);
-                        LeaFedFunds.HomelessChildrenandYouthReservation = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000);
+                        // LeaFedFunds.HomelessChildrenandYouthReservation = _testDataHelper.GetRandomDecimalInRange(rnd, 1000, 10000);
                     }
                     testData.OrganizationFederalFundings.Add(LeaFedFunds);
                 }
@@ -1125,7 +1125,7 @@ namespace generate.testdata.DataGenerators
                 s.ERSRuralUrbanContinuumCode = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ERSRuralUrbanContinuumCodeDistribution);
                 s.RuralResidencyStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RuralResidencyStatusDistribution);
                 s.FoodServiceEligibility = _testDataHelper.GetRandomObject<RefFoodServiceEligibility>(rnd, this.IdsReferenceData.RefFoodServiceEligibilities).Code;
-                s.NumberOfSchoolDays = 180;
+                s.NumberOfDaysInAttendance = 180;
                 s.NumberOfDaysAbsent = absences;
                 s.AttendanceRate = Decimal.Divide(180 - absences, 180);
                 s.EnrollmentEntryDate = entryDate;
@@ -1223,12 +1223,12 @@ namespace generate.testdata.DataGenerators
                 if (personStatus.ProgramType_FosterCare.Value == true)
                 {
                     personStatus.FosterCare_ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.FosterCare_ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, personStatus.FosterCare_ProgramParticipationStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.FosterCare_ProgramParticipationExitDate = _testDataHelper.GetExitDate(rnd, personStatus.FosterCare_ProgramParticipationStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                 }
                 else
                 {
                     personStatus.FosterCare_ProgramParticipationStartDate = BaseProgramExitDate;
-                    personStatus.FosterCare_ProgramParticipationEndDate = BaseProgramExitDate;
+                    personStatus.FosterCare_ProgramParticipationExitDate = BaseProgramExitDate;
                 }
 
                 if (personStatus.HomelessnessStatus.Value == true)
@@ -1254,13 +1254,13 @@ namespace generate.testdata.DataGenerators
                 if (personStatus.ProgramType_Immigrant.Value == true)
                 {
                     personStatus.Immigrant_ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.Immigrant_ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, personStatus.Immigrant_ProgramParticipationStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.Immigrant_ProgramParticipationExitDate = _testDataHelper.GetExitDate(rnd, personStatus.Immigrant_ProgramParticipationStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                     personStatus.ISO_639_2_NativeLanguage = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefLanguageDistribution);
                 }
                 else
                 {
                     personStatus.Immigrant_ProgramParticipationStartDate = BaseProgramExitDate;
-                    personStatus.Immigrant_ProgramParticipationEndDate = BaseProgramExitDate;
+                    personStatus.Immigrant_ProgramParticipationExitDate = BaseProgramExitDate;
                 }
 
                 if (personStatus.ProgramType_Section504.Value == true)
@@ -1271,7 +1271,7 @@ namespace generate.testdata.DataGenerators
                     var section504_endDate = _testDataHelper.GetExitDate(rnd, section504_startDate, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
 
                     personStatus.Section504_ProgramParticipationStartDate = section504_startDate;
-                    personStatus.Section504_ProgramParticipationEndDate = section504_endDate;
+                    personStatus.Section504_ProgramParticipationExitDate = section504_endDate;
 
                     var section504Disability = new core.Models.Staging.Disability()
                     {
@@ -1299,7 +1299,7 @@ namespace generate.testdata.DataGenerators
                 else
                 {
                     personStatus.Section504_ProgramParticipationStartDate = BaseProgramExitDate;
-                    personStatus.Section504_ProgramParticipationEndDate = BaseProgramExitDate;
+                    personStatus.Section504_ProgramParticipationExitDate = BaseProgramExitDate;
                 }
 
                 if (personStatus.MigrantStatus.Value == true)
@@ -1375,19 +1375,19 @@ namespace generate.testdata.DataGenerators
                     // calendar, we must subtract a year here.
                     int age = (new DateTime(1, 1, 1) + span).Year - 1;
 
-                    sped.IDEAEducationalEnvironmentForEarlyChildhood = (age < 5 || (age == 5 && (s.GradeLevel == "MISSING" || s.GradeLevel == "PK"))) ? _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIDEAEducationalEnvironmentForEarlyChildhoodDistribution) : null;
-                    sped.IDEAEducationalEnvironmentForSchoolAge = (age > 5 || (age == 5 && s.GradeLevel != "PK" && s.GradeLevel != "MISSING")) ? _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIDEAEducationalEnvironmentForSchoolAgeDistribution) : null;
+                    sped.IdeaEducationalEnvironmentForEarlyChildhood = (age < 5 || (age == 5 && (s.GradeLevel == "MISSING" || s.GradeLevel == "PK"))) ? _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIDEAEducationalEnvironmentForEarlyChildhoodDistribution) : null;
+                    sped.IdeaEducationalEnvironmentForSchoolAge = (age > 5 || (age == 5 && s.GradeLevel != "PK" && s.GradeLevel != "MISSING")) ? _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIDEAEducationalEnvironmentForSchoolAgeDistribution) : null;
                     sped.SchoolIdentifierSea = s.SchoolIdentifierSea;
                     sped.LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability;
-                    sped.ProgramParticipationBeginDate = disabilityType.RecordStartDateTime;
+                    sped.ProgramParticipationStartDate = disabilityType.RecordStartDateTime;
                     sped.StudentIdentifierState = s.StudentIdentifierState;
                     ideaIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIdeaIndicatorDistribution);
                     sped.SchoolYear = s.SchoolYear;
-                    sped.IDEAIndicator = ideaIndicator;
+                    sped.IdeaIndicator = ideaIndicator;
 
                     if (disabilityType.RecordEndDateTime.HasValue)
                     {
-                        sped.ProgramParticipationEndDate = disabilityType.RecordEndDateTime;
+                        sped.ProgramParticipationExitDate = disabilityType.RecordEndDateTime;
                         sped.SpecialEducationExitReason = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSpecialEducationExitReasonDistribution);
                     }
 
@@ -1397,7 +1397,7 @@ namespace generate.testdata.DataGenerators
 
                 if ((personStatus.ProgramType_Section504.HasValue && personStatus.ProgramType_Section504.Value == true &&
                         rnd.Next(100) >= 50)
-                    || (sped.IDEAIndicator.HasValue && sped.IDEAIndicator.Value == true &&
+                    || (sped.IdeaIndicator.HasValue && sped.IdeaIndicator.Value == true &&
                         rnd.Next(100) >= 80))
                 {
                     var courseSectionStartDate = _testDataHelper.GetSessionStartDate(rnd, SchoolYear);
@@ -1458,14 +1458,14 @@ namespace generate.testdata.DataGenerators
                         LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability,
                         SchoolIdentifierSea = s.SchoolIdentifierSea,
                         StudentIdentifierState = s.StudentIdentifierState,
-                        ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5)),
+                        ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5)),
                         TitleIIIAccountabilityProgressStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIiiAccountability),
                         SchoolYear = s.SchoolYear,
                     };
 
                     if (!_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
                     {
-                        prog.ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, prog.ProgramParticipationBeginDate.Value, BaseProgramExitDate);
+                        prog.ProgramParticipationExitDate = _testDataHelper.GetExitDate(rnd, prog.ProgramParticipationStartDate.Value, BaseProgramExitDate);
                     }
 
                     if (_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
@@ -1494,8 +1494,8 @@ namespace generate.testdata.DataGenerators
 
                 if (titleI.TitleIIndicator != "05") // Anything but "Was Not Served"
                 {
-                    titleI.ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
-                    titleI.ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, titleI.ProgramParticipationBeginDate.Value, BaseProgramExitDate);
+                    titleI.ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
+                    titleI.ProgramParticipationExitDate = _testDataHelper.GetExitDate(rnd, titleI.ProgramParticipationStartDate.Value, BaseProgramExitDate);
 
                 }
 
@@ -1535,14 +1535,14 @@ namespace generate.testdata.DataGenerators
 
                 if (cte.CteParticipant.Value)
                 {
-                    cte.ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
+                    cte.ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
                     cte.CteCompleter = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.CteCompleterDistribution);
                     cte.CteConcentrator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.CteConcentratorDistribution);
 
                     if (!_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.CteProgramParticipantNowDistribution))
                     {
-                        cte.ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, cte.ProgramParticipationBeginDate.Value, BaseProgramExitDate);
-                        cte.DiplomaCredentialAwardDate = _testDataHelper.GetRandomDateInRange(rnd, cte.ProgramParticipationBeginDate.Value, cte.ProgramParticipationEndDate.Value);
+                        cte.ProgramParticipationExitDate = _testDataHelper.GetExitDate(rnd, cte.ProgramParticipationStartDate.Value, BaseProgramExitDate);
+                        cte.DiplomaCredentialAwardDate = _testDataHelper.GetRandomDateInRange(rnd, cte.ProgramParticipationStartDate.Value, cte.ProgramParticipationExitDate.Value);
                         /*cte.DiplomaCredentialType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.HighSchoolDiplomaTypeDistribution);*/
                     }
 
@@ -1580,18 +1580,18 @@ namespace generate.testdata.DataGenerators
 
                     if (nord.NeglectedOrDelinquentStatus.Value == true)
                     {
-                        nord.ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-90));
+                        nord.ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-90));
                         nord.NeglectedOrDelinquentProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefNeglectedOrDelinquentProgramTypeDistribution);
                         nord.NeglectedOrDelinquentProgramEnrollmentSubpart = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDSubpartDistribution);
                         nord.NeglectedOrDelinquentLongTermStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDLongTermStatusDistribution);
                         nord.ProgressLevel_Math = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefProgressLevelDistribution);
                         nord.ProgressLevel_Reading = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefProgressLevelDistribution);
-                        nord.ProgramParticipationEndDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDExitingDistribution) ? BaseProgramExitDate.AddDays(-10) : (DateTime?)null;
+                        nord.ProgramParticipationExitDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDExitingDistribution) ? BaseProgramExitDate.AddDays(-10) : (DateTime?)null;
                         nord.NeglectedProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefNeglectedProgramTypeDistribution);
                         nord.DelinquentProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefDelinquentProgramTypeDistribution);
                     }
 
-                    if (nord.ProgramParticipationEndDate.HasValue)
+                    if (nord.ProgramParticipationExitDate.HasValue)
                     {
                         nord.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDOutcomeExitDistribution);
                     }
@@ -1604,7 +1604,7 @@ namespace generate.testdata.DataGenerators
 
                     //if (_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NeglectedProgramParticipantNowDistribution))
                     //{
-                    //    nord.DiplomaCredentialAwardDate = cte.DiplomaCredentialAwardDate ?? _testDataHelper.GetExitDate(rnd, nord.ProgramParticipationBeginDate.Value, BaseProgramExitDate);
+                    //    nord.DiplomaCredentialAwardDate = cte.DiplomaCredentialAwardDate ?? _testDataHelper.GetExitDate(rnd, nord.ProgramParticipationStartDate.Value, BaseProgramExitDate);
                     //}
 
                     AllProgramParticipationNorD.Add(nord);
@@ -1721,12 +1721,12 @@ namespace generate.testdata.DataGenerators
                 if (personStatus.ProgramType_FosterCare.Value == true)
                 {
                     personStatus.FosterCare_ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.FosterCare_ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, personStatus.FosterCare_ProgramParticipationStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.FosterCare_ProgramParticipationExitDate = _testDataHelper.GetExitDate(rnd, personStatus.FosterCare_ProgramParticipationStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                 }
                 else
                 {
                     personStatus.FosterCare_ProgramParticipationStartDate = BaseProgramExitDate;
-                    personStatus.FosterCare_ProgramParticipationEndDate = BaseProgramExitDate;
+                    personStatus.FosterCare_ProgramParticipationExitDate = BaseProgramExitDate;
                 }
 
                 if (personStatus.HomelessnessStatus.Value == true)
@@ -1752,13 +1752,13 @@ namespace generate.testdata.DataGenerators
                 if (personStatus.ProgramType_Immigrant.Value == true)
                 {
                     personStatus.Immigrant_ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.Immigrant_ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, personStatus.Immigrant_ProgramParticipationStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.Immigrant_ProgramParticipationExitDate = _testDataHelper.GetExitDate(rnd, personStatus.Immigrant_ProgramParticipationStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                     personStatus.ISO_639_2_NativeLanguage = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefLanguageDistribution);
                 }
                 else
                 {
                     personStatus.Immigrant_ProgramParticipationStartDate = BaseProgramExitDate;
-                    personStatus.Immigrant_ProgramParticipationEndDate = BaseProgramExitDate;
+                    personStatus.Immigrant_ProgramParticipationExitDate = BaseProgramExitDate;
                 }
 
                 if (personStatus.ProgramType_Section504.Value == true)
@@ -1769,7 +1769,7 @@ namespace generate.testdata.DataGenerators
                     var section504_endDate = _testDataHelper.GetExitDate(rnd, section504_startDate, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
 
                     personStatus.Section504_ProgramParticipationStartDate = section504_startDate;
-                    personStatus.Section504_ProgramParticipationEndDate = section504_endDate;
+                    personStatus.Section504_ProgramParticipationExitDate = section504_endDate;
 
                     var section504Disability = new core.Models.Staging.Disability()
                     {
@@ -1797,7 +1797,7 @@ namespace generate.testdata.DataGenerators
                 else
                 {
                     personStatus.Section504_ProgramParticipationStartDate = BaseProgramExitDate;
-                    personStatus.Section504_ProgramParticipationEndDate = BaseProgramExitDate;
+                    personStatus.Section504_ProgramParticipationExitDate = BaseProgramExitDate;
                 }
 
                 if (personStatus.MigrantStatus.Value == true)
@@ -1861,19 +1861,19 @@ namespace generate.testdata.DataGenerators
                     // calendar, we must subtract a year here.
                     int age = (new DateTime(1, 1, 1) + span).Year - 1;
 
-                    sped.IDEAEducationalEnvironmentForEarlyChildhood = (age < 5 || (age == 5 && (s.GradeLevel == "MISSING" || s.GradeLevel == "PK"))) ? _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIDEAEducationalEnvironmentForEarlyChildhoodDistribution) : null;
-                    sped.IDEAEducationalEnvironmentForSchoolAge = (age > 5 || (age == 5 && s.GradeLevel != "PK" && s.GradeLevel != "MISSING")) ? _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIDEAEducationalEnvironmentForSchoolAgeDistribution) : null;
+                    sped.IdeaEducationalEnvironmentForEarlyChildhood = (age < 5 || (age == 5 && (s.GradeLevel == "MISSING" || s.GradeLevel == "PK"))) ? _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIDEAEducationalEnvironmentForEarlyChildhoodDistribution) : null;
+                    sped.IdeaEducationalEnvironmentForSchoolAge = (age > 5 || (age == 5 && s.GradeLevel != "PK" && s.GradeLevel != "MISSING")) ? _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefIDEAEducationalEnvironmentForSchoolAgeDistribution) : null;
                     sped.SchoolIdentifierSea = s.SchoolIdentifierSea;
                     sped.LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability;
-                    sped.ProgramParticipationBeginDate = disabilityType.RecordStartDateTime;
+                    sped.ProgramParticipationStartDate = disabilityType.RecordStartDateTime;
                     sped.StudentIdentifierState = s.StudentIdentifierState;
                     ideaIndicator = true;
-                    sped.IDEAIndicator = ideaIndicator;
+                    sped.IdeaIndicator = ideaIndicator;
                     sped.SchoolYear = SchoolYear.ToString();
 
                     if (disabilityType.RecordEndDateTime.HasValue)
                     {
-                        sped.ProgramParticipationEndDate = disabilityType.RecordEndDateTime;
+                        sped.ProgramParticipationExitDate = disabilityType.RecordEndDateTime;
                         sped.SpecialEducationExitReason = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefSpecialEducationExitReasonDistribution);
                     }
 
@@ -1883,7 +1883,7 @@ namespace generate.testdata.DataGenerators
 
                 if ((personStatus.ProgramType_Section504.HasValue && personStatus.ProgramType_Section504.Value == true &&
                         rnd.Next(100) >= 50)
-                    || (sped.IDEAIndicator.HasValue && sped.IDEAIndicator.Value == true &&
+                    || (sped.IdeaIndicator.HasValue && sped.IdeaIndicator.Value == true &&
                         rnd.Next(100) >= 80))
                 {
                     var courseSectionStartDate = _testDataHelper.GetSessionStartDate(rnd, SchoolYear);
@@ -1944,13 +1944,13 @@ namespace generate.testdata.DataGenerators
                         LeaIdentifierSeaAccountability = s.LeaIdentifierSeaAccountability,
                         SchoolIdentifierSea = s.SchoolIdentifierSea,
                         StudentIdentifierState = s.StudentIdentifierState,
-                        ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5)),
+                        ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5)),
                         TitleIIIAccountabilityProgressStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIiiAccountability),
                     };
 
                     if (!_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
                     {
-                        prog.ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, prog.ProgramParticipationBeginDate.Value, BaseProgramExitDate);
+                        prog.ProgramParticipationExitDate = _testDataHelper.GetExitDate(rnd, prog.ProgramParticipationStartDate.Value, BaseProgramExitDate);
                     }
 
                     if (_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.ImmigrantTitleIIIProgramParticipantNowDistribution))
@@ -1976,8 +1976,8 @@ namespace generate.testdata.DataGenerators
 
                 if (titleI.TitleIIndicator != "05") // Anything but "Was Not Served"
                 {
-                    titleI.ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
-                    titleI.ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, titleI.ProgramParticipationBeginDate.Value, BaseProgramExitDate);
+                    titleI.ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
+                    titleI.ProgramParticipationExitDate = _testDataHelper.GetExitDate(rnd, titleI.ProgramParticipationStartDate.Value, BaseProgramExitDate);
 
                 }
 
@@ -2017,14 +2017,14 @@ namespace generate.testdata.DataGenerators
 
                 if (cte.CteParticipant.Value)
                 {
-                    cte.ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
+                    cte.ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
                     cte.CteCompleter = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.CteCompleterDistribution);
                     cte.CteConcentrator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.CteConcentratorDistribution);
 
                     if (!_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.CteProgramParticipantNowDistribution))
                     {
-                        cte.ProgramParticipationEndDate = _testDataHelper.GetExitDate(rnd, cte.ProgramParticipationBeginDate.Value, BaseProgramExitDate);
-                        cte.DiplomaCredentialAwardDate = _testDataHelper.GetRandomDateInRange(rnd, cte.ProgramParticipationBeginDate.Value, cte.ProgramParticipationEndDate.Value);
+                        cte.ProgramParticipationExitDate = _testDataHelper.GetExitDate(rnd, cte.ProgramParticipationStartDate.Value, BaseProgramExitDate);
+                        cte.DiplomaCredentialAwardDate = _testDataHelper.GetRandomDateInRange(rnd, cte.ProgramParticipationStartDate.Value, cte.ProgramParticipationExitDate.Value);
                         /*cte.DiplomaCredentialType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.HighSchoolDiplomaTypeDistribution);*/
                     }
 
@@ -2061,16 +2061,16 @@ namespace generate.testdata.DataGenerators
 
                     if (nord.NeglectedOrDelinquentStatus.Value == true)
                     {
-                        nord.ProgramParticipationBeginDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-90));
+                        nord.ProgramParticipationStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-90));
                         nord.NeglectedOrDelinquentProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefNeglectedOrDelinquentProgramTypeDistribution);
                         nord.NeglectedOrDelinquentProgramEnrollmentSubpart = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDSubpartDistribution);
                         nord.NeglectedOrDelinquentLongTermStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDLongTermStatusDistribution);
                         nord.ProgressLevel_Math = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefProgressLevelDistribution);
                         nord.ProgressLevel_Reading = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefProgressLevelDistribution);
-                        nord.ProgramParticipationEndDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDExitingDistribution) ? BaseProgramExitDate.AddDays(-10) : (DateTime?)null;
+                        nord.ProgramParticipationExitDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDExitingDistribution) ? BaseProgramExitDate.AddDays(-10) : (DateTime?)null;
                     }
 
-                    if (nord.ProgramParticipationEndDate.HasValue)
+                    if (nord.ProgramParticipationExitDate.HasValue)
                     {
                         nord.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NorDOutcomeExitDistribution);
                     }
@@ -2083,7 +2083,7 @@ namespace generate.testdata.DataGenerators
 
                     //if (_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.NeglectedProgramParticipantNowDistribution))
                     //{
-                    //    nord.DiplomaCredentialAwardDate = cte.DiplomaCredentialAwardDate ?? _testDataHelper.GetExitDate(rnd, nord.ProgramParticipationBeginDate.Value, BaseProgramExitDate);
+                    //    nord.DiplomaCredentialAwardDate = cte.DiplomaCredentialAwardDate ?? _testDataHelper.GetExitDate(rnd, nord.ProgramParticipationStartDate.Value, BaseProgramExitDate);
                     //}
 
                     AllProgramParticipationNorD.Add(nord);
@@ -2410,7 +2410,7 @@ namespace generate.testdata.DataGenerators
             testData.K12Organizations.ForEach(o =>
             {
                 //FS222 column
-                o.LEA_TitleIProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIProgramTypeDistribution);
+                o.Lea_TitleIProgramType = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIProgramTypeDistribution);
 
                 o.School_TitleISchoolStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefTitleIschoolStatusDistribution);
                 o.School_GunFreeSchoolsActReportingStatus = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefGunFreeSchoolsActReportingStatusDistribution);

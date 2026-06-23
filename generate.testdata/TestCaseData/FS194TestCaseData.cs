@@ -16,7 +16,7 @@ namespace generate.testdata.TestCaseData
             //Test data for FS194 test
             // Need Homeless student records associated with LEAs that are McKinney Vento subgrant recipients
 
-            var testLEA = testData.K12Organizations.Find(k => k.LEA_McKinneyVentoSubgrantRecipient == true);
+            var testLEA = testData.K12Organizations.Find(k => k.Lea_McKinneyVentoSubgrantRecipient == true);
 
             var firstK12Enrollment = new K12Enrollment()
             {

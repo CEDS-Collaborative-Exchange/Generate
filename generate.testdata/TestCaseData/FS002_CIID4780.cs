@@ -62,9 +62,9 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = "140",
                 SchoolIdentifierSea = "140376",
                 SchoolYear = (schoolYear).ToString(),
-                IDEAIndicator = true,
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaIndicator = true,
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             testData.K12Enrollments.Add(K12Enrollment);

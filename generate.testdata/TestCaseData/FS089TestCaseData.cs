@@ -75,9 +75,9 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = k12org.LeaIdentifierSea,
                 SchoolIdentifierSea = k12org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForEarlyChildhood = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                IDEAIndicator = true
+                IdeaEducationalEnvironmentForEarlyChildhood = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                IdeaIndicator = true
             };
 
             testData.K12Enrollments.Add(k12Enrollment);

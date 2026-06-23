@@ -140,9 +140,9 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                IDEAIndicator = true
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaIndicator = true
             };
 
             var leaOnlyStudentPpse = new core.Models.Staging.ProgramParticipationSpecialEducation()
@@ -150,9 +150,9 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "0050000002",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                IDEAIndicator = true
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaIndicator = true
             };
 
             var refDisciplinaryActionTaken = testDataHelper.GetRandomObject<RefDisciplinaryActionTaken>(rnd, idsReferenceData.RefDisciplinaryActionTakens).Code;
@@ -282,9 +282,9 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                IDEAIndicator = true,
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaIndicator = true,
             };
 
             var aDiscipline = new Discipline()
@@ -444,10 +444,10 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                ProgramParticipationEndDate = DateTime.Parse("8/10/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                IDEAIndicator = true
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                ProgramParticipationExitDate = DateTime.Parse("8/10/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaIndicator = true
             };
 
             var bPpse2 = new core.Models.Staging.ProgramParticipationSpecialEducation()
@@ -456,10 +456,10 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("8/11/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                ProgramParticipationEndDate = DateTime.Parse("12/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                IDEAIndicator = true
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("8/11/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                ProgramParticipationExitDate = DateTime.Parse("12/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaIndicator = true
             };
 
             var bPpse3 = new core.Models.Staging.ProgramParticipationSpecialEducation()
@@ -468,10 +468,10 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("12/2/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                ProgramParticipationEndDate = DateTime.Parse("2/12/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                IDEAIndicator = true
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("12/2/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                ProgramParticipationExitDate = DateTime.Parse("2/12/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaIndicator = true
             };
 
             var bPpse4 = new core.Models.Staging.ProgramParticipationSpecialEducation()
@@ -480,10 +480,10 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("2/13/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                ProgramParticipationEndDate = DateTime.Parse("6/30/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                IDEAIndicator = true
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("2/13/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                ProgramParticipationExitDate = DateTime.Parse("6/30/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaIndicator = true
             };
 
             var bDiscipline1 = new Discipline()

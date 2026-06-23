@@ -40,11 +40,11 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "9990000002",
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/30/" + (schoolYear - 1).ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("3/1/" + schoolYear.ToString()),
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/30/" + (schoolYear - 1).ToString()),
+                ProgramParticipationExitDate = DateTime.Parse("3/1/" + schoolYear.ToString()),
                 SpecialEducationExitReason = "HighSchoolDiploma",
-                IDEAIndicator = true
+                IdeaIndicator = true
             };
 
             var personStatus = new core.Models.Staging.PersonStatus()

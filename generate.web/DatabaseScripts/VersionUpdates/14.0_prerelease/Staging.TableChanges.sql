@@ -16,7 +16,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12StaffAssignment', 'ID') IS NOT NULL
-   AND COL_LENGTH('Staging.K12StaffAssignment', 'Id') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12StaffAssignment.ID',
@@ -46,7 +45,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12StaffAssignment', 'BirthDate') IS NOT NULL
-   AND COL_LENGTH('Staging.K12StaffAssignment', 'Birthdate') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12StaffAssignment.BirthDate',
@@ -55,7 +53,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12StaffAssignment', 'EDFactsTeacherOutOfFieldStatus') IS NOT NULL
-   AND COL_LENGTH('Staging.K12StaffAssignment', 'EdFactsTeacherOutOfFieldStatus') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12StaffAssignment.EDFactsTeacherOutOfFieldStatus',
@@ -109,7 +106,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.PersonStatus', 'RecordStartDatetime') IS NOT NULL
-   AND COL_LENGTH('Staging.PersonStatus', 'RecordStartDateTime') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.PersonStatus.RecordStartDatetime',
@@ -118,7 +114,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.ProgramParticipationCTE', 'ID') IS NOT NULL
-   AND COL_LENGTH('Staging.ProgramParticipationCTE', 'Id') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.ProgramParticipationCTE.ID',
@@ -166,7 +161,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.ProgramParticipationNorD', 'ID') IS NOT NULL
-   AND COL_LENGTH('Staging.ProgramParticipationNorD', 'Id') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.ProgramParticipationNorD.ID',
@@ -214,7 +208,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.ProgramParticipationSpecialEducation', 'ID') IS NOT NULL
-   AND COL_LENGTH('Staging.ProgramParticipationSpecialEducation', 'Id') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.ProgramParticipationSpecialEducation.ID',
@@ -262,7 +255,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.ProgramParticipationSpecialEducation', 'IDEAIndicator') IS NOT NULL
-   AND COL_LENGTH('Staging.ProgramParticipationSpecialEducation', 'IdeaIndicator') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.ProgramParticipationSpecialEducation.IDEAIndicator',
@@ -271,7 +263,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.ProgramParticipationSpecialEducation', 'IDEAEducationalEnvironmentForEarlyChildhood') IS NOT NULL
-   AND COL_LENGTH('Staging.ProgramParticipationSpecialEducation', 'IdeaEducationalEnvironmentForEarlyChildhood') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.ProgramParticipationSpecialEducation.IDEAEducationalEnvironmentForEarlyChildhood',
@@ -280,7 +271,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.ProgramParticipationSpecialEducation', 'IDEAEducationalEnvironmentForSchoolAge') IS NOT NULL
-   AND COL_LENGTH('Staging.ProgramParticipationSpecialEducation', 'IdeaEducationalEnvironmentForSchoolAge') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.ProgramParticipationSpecialEducation.IDEAEducationalEnvironmentForSchoolAge',
@@ -289,7 +279,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.ProgramParticipationTitleI', 'ID') IS NOT NULL
-   AND COL_LENGTH('Staging.ProgramParticipationTitleI', 'Id') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.ProgramParticipationTitleI.ID',
@@ -337,7 +326,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.ProgramParticipationTitleIII', 'ID') IS NOT NULL
-   AND COL_LENGTH('Staging.ProgramParticipationTitleIII', 'Id') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.ProgramParticipationTitleIII.ID',
@@ -759,7 +747,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.OrganizationFederalFunding', 'REAPAlternativeFundingStatusCode') IS NOT NULL
-   AND COL_LENGTH('Staging.OrganizationFederalFunding', 'ReapAlternativeFundingStatusCode') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.OrganizationFederalFunding.REAPAlternativeFundingStatusCode',
@@ -816,7 +803,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'IEU_OrganizationName') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Ieu_OrganizationName') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.IEU_OrganizationName',
@@ -825,7 +811,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'IEU_OperationalStatusEffectiveDate') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Ieu_OperationalStatusEffectiveDate') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.IEU_OperationalStatusEffectiveDate',
@@ -834,7 +819,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'IEU_OrganizationOperationalStatus') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Ieu_OrganizationOperationalStatus') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.IEU_OrganizationOperationalStatus',
@@ -843,7 +827,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'IEU_WebSiteAddress') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Ieu_WebSiteAddress') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.IEU_WebSiteAddress',
@@ -852,8 +835,7 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'IEU_RecordStartDateTime') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Ieu_RecordStartDateTime') IS NULL
-BEGIN
+    BEGIN
     EXEC sp_rename
         'Staging.K12Organization.IEU_RecordStartDateTime',
         'Ieu_RecordStartDateTime',
@@ -861,7 +843,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'IEU_RecordEndDateTime') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Ieu_RecordEndDateTime') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.IEU_RecordEndDateTime',
@@ -870,7 +851,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_SupervisoryUnionIdentificationNumber') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_SupervisoryUnionIdentificationNumber') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_SupervisoryUnionIdentificationNumber',
@@ -879,7 +859,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_WebSiteAddress') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_WebSiteAddress') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_WebSiteAddress',
@@ -888,7 +867,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_OperationalStatus') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_OperationalStatus') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_OperationalStatus',
@@ -897,7 +875,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_OperationalStatusEffectiveDate') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_OperationalStatusEffectiveDate') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_OperationalStatusEffectiveDate',
@@ -906,7 +883,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_CharterLeaStatus') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_CharterLeaStatus') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_CharterLeaStatus',
@@ -915,7 +891,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_CharterSchoolIndicator') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_CharterSchoolIndicator') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_CharterSchoolIndicator',
@@ -924,7 +899,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_Type') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_Type') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_Type',
@@ -933,7 +907,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_McKinneyVentoSubgrantRecipient') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_McKinneyVentoSubgrantRecipient') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_McKinneyVentoSubgrantRecipient',
@@ -942,7 +915,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_GunFreeSchoolsActReportingStatus') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_GunFreeSchoolsActReportingStatus') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_GunFreeSchoolsActReportingStatus',
@@ -951,7 +923,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_TitleIinstructionalService') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_TitleIinstructionalService') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_TitleIinstructionalService',
@@ -960,7 +931,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_TitleIProgramType') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_TitleIProgramType') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_TitleIProgramType',
@@ -969,7 +939,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_K12LeaTitleISupportService') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_K12LeaTitleISupportService') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_K12LeaTitleISupportService',
@@ -978,7 +947,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_MepProjectType') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_MepProjectType') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_MepProjectType',
@@ -987,7 +955,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_IsReportedFederally') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_IsReportedFederally') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_IsReportedFederally',
@@ -996,7 +963,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_RecordStartDateTime') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_RecordStartDateTime') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_RecordStartDateTime',
@@ -1005,7 +971,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12Organization', 'LEA_RecordEndDateTime') IS NOT NULL
-   AND COL_LENGTH('Staging.K12Organization', 'Lea_RecordEndDateTime') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12Organization.LEA_RecordEndDateTime',
@@ -1032,7 +997,6 @@ BEGIN
 END;
 
 IF COL_LENGTH('Staging.K12SchoolComprehensiveSupportIdentificationType', 'LEAIdentifierSea') IS NOT NULL
-   AND COL_LENGTH('Staging.K12SchoolComprehensiveSupportIdentificationType', 'LeaIdentifierSea') IS NULL
 BEGIN
     EXEC sp_rename
         'Staging.K12SchoolComprehensiveSupportIdentificationType.LEAIdentifierSea',

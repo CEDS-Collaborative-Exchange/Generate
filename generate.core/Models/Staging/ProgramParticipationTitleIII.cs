@@ -5,7 +5,7 @@ namespace generate.core.Models.Staging
 {
     public partial class ProgramParticipationTitleIII
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string StudentIdentifierState { get; set; }
         public string LeaIdentifierSeaAccountability { get; set; }
         public string LeaIdentifierSeaAttendance { get; set; }
@@ -20,8 +20,8 @@ namespace generate.core.Models.Staging
         public Boolean ResponsibleSchoolTypeIndividualizedEducationProgram { get; set; }
         public Boolean ResponsibleSchoolTypeTransportation { get; set; }
         public Boolean ResponsibleSchoolTypeIepServiceProvider { get; set; }
-        public DateTime? ProgramParticipationBeginDate { get; set; }
-        public DateTime? ProgramParticipationEndDate { get; set; }
+        public DateTime? ProgramParticipationStartDate { get; set; }
+        public DateTime? ProgramParticipationExitDate { get; set; }
         public Boolean TitleIIIImmigrantParticipationStatus { get; set; }
         public string Proficiency_TitleIII { get; set; }
         public string TitleIIIAccountabilityProgressStatus { get; set; }
@@ -33,5 +33,6 @@ namespace generate.core.Models.Staging
         public Boolean EnglishLearnerExitedStatus { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
+        public DateTime? RunDateTime { get; set; }
     }
 }
