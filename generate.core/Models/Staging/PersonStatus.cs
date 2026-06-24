@@ -41,18 +41,18 @@ namespace generate.core.Models.Staging
         public string MilitaryConnectedStudentIndicator { get; set; }
         public DateTime? MilitaryConnected_StatusStartDate { get; set; }
         public DateTime? MilitaryConnected_StatusEndDate { get; set; }
-        public string MilitaryActiveStudentIndicator { get; set; }
+        public string MilitaryActiveStatusIndicator { get; set; }
         public string MilitaryBranch { get; set; }
-        public string MilitaryVeteranStudentIndicator { get; set; }
+        public string MilitaryVeteranStatusIndicator { get; set; }
         public bool? ProgramType_FosterCare { get; set; }
         public DateTime? FosterCare_ProgramParticipationStartDate { get; set; }
-        public DateTime? FosterCare_ProgramParticipationEndDate { get; set; }
+        public DateTime? FosterCare_ProgramParticipationExitDate { get; set; }
         public bool? ProgramType_Section504 { get; set; }
         public DateTime? Section504_ProgramParticipationStartDate { get; set; }
-        public DateTime? Section504_ProgramParticipationEndDate { get; set; }
+        public DateTime? Section504_ProgramParticipationExitDate { get; set; }
         public bool? ProgramType_Immigrant { get; set; }
         public DateTime? Immigrant_ProgramParticipationStartDate { get; set; }
-        public DateTime? Immigrant_ProgramParticipationEndDate { get; set; }
+        public DateTime? Immigrant_ProgramParticipationExitDate { get; set; }
         public bool? EnglishLearnerStatus { get; set; }
         public DateTime? EnglishLearner_StatusStartDate { get; set; }
         public DateTime? EnglishLearner_StatusEndDate { get; set; }
@@ -63,7 +63,7 @@ namespace generate.core.Models.Staging
         public DateTime? PerkinsEnglishLearnerStatus_StatusEndDate { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
-        public DateTime? RecordStartDatetime { get; set; }
+        public DateTime? RecordStartDateTime { get; set; }
         public DateTime? RecordEndDateTime { get; set; }
 
     }

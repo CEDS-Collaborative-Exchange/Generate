@@ -5,18 +5,17 @@ namespace generate.core.Models.Staging
 {
     public partial class K12StaffAssignment
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string StaffMemberIdentifierState { get; set; }
         public string LeaIdentifierSea { get; set; }
         public string SchoolIdentifierSea { get; set; }
         public string FirstName { get; set; }
         public string LastOrSurname { get; set; }
         public string MiddleName { get; set; }
-        public string BirthDate { get; set; }
+        public string Birthdate { get; set; }
         public string Sex { get; set; }
         public string PositionTitle { get; set; }
         public decimal? FullTimeEquivalency { get; set; }
-        public string SpecialEducationSupportServicesCategory { get; set; }
         public string K12StaffClassification { get; set; }
         public string TitleIProgramStaffCategory { get; set; }
         public string TeachingCredentialType { get; set; }
@@ -29,7 +28,7 @@ namespace generate.core.Models.Staging
         public DateTime? AssignmentStartDate { get; set; }
         public DateTime? AssignmentEndDate { get; set; }
         public string EdFactsTeacherInexperiencedStatus { get; set; }
-        public string EDFactsTeacherOutOfFieldStatus { get; set; }
+        public string EdFactsTeacherOutOfFieldStatus { get; set; }
         public string EdFactsCertificationStatus { get; set; }
         public string ProgramTypeCode { get; set; }
         public bool? TitleIIILanguageInstructionIndicator { get; set; }

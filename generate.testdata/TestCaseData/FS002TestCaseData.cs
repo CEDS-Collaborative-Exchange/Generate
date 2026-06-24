@@ -123,9 +123,9 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = firstOrg.LeaIdentifierSea,
                 SchoolIdentifierSea = firstOrg.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                IDEAIndicator = true,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                IdeaIndicator = true,
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var secondPpse = new core.Models.Staging.ProgramParticipationSpecialEducation()
@@ -134,9 +134,9 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = secondOrg.LeaIdentifierSea,
                 SchoolIdentifierSea = secondOrg.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                IDEAIndicator = true,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                IdeaIndicator = true,
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             testData.K12Enrollments.Add(firstK12Enrollment);

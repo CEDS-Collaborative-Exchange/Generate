@@ -19,11 +19,11 @@ namespace generate.testdata.TestCaseData
 
                 SchoolYear = schoolYear.ToString(),
                 LeaIdentifierSea = "029CID3872",
-                LEA_OperationalStatus = "Open",
-                LEA_OperationalStatusEffectiveDate = DateTime.Parse("7/1/" + (schoolYear - 1)),
+                Lea_OperationalStatus = "Open",
+                Lea_OperationalStatusEffectiveDate = DateTime.Parse("7/1/" + (schoolYear - 1)),
                 LeaOrganizationName = "TestLEA Multiple Op Status",
-                LEA_RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1)),
-                LEA_RecordEndDateTime = DateTime.Parse("2/1/" + (schoolYear)),
+                Lea_RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1)),
+                Lea_RecordEndDateTime = DateTime.Parse("2/1/" + (schoolYear)),
 
             });
 
@@ -32,11 +32,11 @@ namespace generate.testdata.TestCaseData
 
                 SchoolYear = schoolYear.ToString(),
                 LeaIdentifierSea = "029CID3872",
-                LEA_OperationalStatus = "Closed",
-                LEA_OperationalStatusEffectiveDate = DateTime.Parse("2/2/" + (schoolYear)),
+                Lea_OperationalStatus = "Closed",
+                Lea_OperationalStatusEffectiveDate = DateTime.Parse("2/2/" + (schoolYear)),
                 LeaOrganizationName = "TestLEA Multiple Op Status",
-                LEA_RecordStartDateTime = DateTime.Parse("2/2/" + (schoolYear)),
-                LEA_RecordEndDateTime = DateTime.Parse("6/30/" + (schoolYear)),
+                Lea_RecordStartDateTime = DateTime.Parse("2/2/" + (schoolYear)),
+                Lea_RecordEndDateTime = DateTime.Parse("6/30/" + (schoolYear)),
 
             });
 

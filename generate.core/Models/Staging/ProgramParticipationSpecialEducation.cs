@@ -5,7 +5,7 @@ namespace generate.core.Models.Staging
 {
     public partial class ProgramParticipationSpecialEducation
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string StudentIdentifierState { get; set; }
         public string LeaIdentifierSeaAccountability { get; set; }
         public string LeaIdentifierSeaAttendance { get; set; }
@@ -20,12 +20,12 @@ namespace generate.core.Models.Staging
         public Boolean ResponsibleSchoolTypeIndividualizedEducationProgram { get; set; }
         public Boolean ResponsibleSchoolTypeTransportation { get; set; }
         public Boolean ResponsibleSchoolTypeIepServiceProvider { get; set; }
-        public DateTime? ProgramParticipationBeginDate { get; set; }
-        public DateTime? ProgramParticipationEndDate { get; set; }
-        public bool? IDEAIndicator { get; set; }
+        public DateTime? ProgramParticipationStartDate { get; set; }
+        public DateTime? ProgramParticipationExitDate { get; set; }
+        public bool? IdeaIndicator { get; set; }
         public string SpecialEducationExitReason { get; set; }
-        public string IDEAEducationalEnvironmentForEarlyChildhood { get; set; }
-        public string IDEAEducationalEnvironmentForSchoolAge { get; set; }
+        public string IdeaEducationalEnvironmentForEarlyChildhood { get; set; }
+        public string IdeaEducationalEnvironmentForSchoolAge { get; set; }
         public decimal? SpecialEducationFTE { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }

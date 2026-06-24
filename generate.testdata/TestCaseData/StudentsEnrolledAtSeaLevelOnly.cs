@@ -37,12 +37,12 @@ namespace generate.testdata.TestCaseData
             var ppse = new core.Models.Staging.ProgramParticipationSpecialEducation()
             {
                 StudentIdentifierState = "9990000003",
-                IDEAEducationalEnvironmentForSchoolAge = env,
+                IdeaEducationalEnvironmentForSchoolAge = env,
                 SchoolYear = (schoolYear).ToString(),
-                ProgramParticipationBeginDate = DateTime.Parse("7/30/" + (schoolYear - 1).ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("3/1/" + schoolYear.ToString()),
+                ProgramParticipationStartDate = DateTime.Parse("7/30/" + (schoolYear - 1).ToString()),
+                ProgramParticipationExitDate = DateTime.Parse("3/1/" + schoolYear.ToString()),
                 SpecialEducationExitReason = "HighSchoolDiploma",
-                IDEAIndicator = true
+                IdeaIndicator = true
             };
 
             var personStatus = new core.Models.Staging.PersonStatus()

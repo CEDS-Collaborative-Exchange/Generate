@@ -114,11 +114,11 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "0090000001",
                 LeaIdentifierSeaAccountability = firstOrg.LeaIdentifierSea,
                 SchoolIdentifierSea = firstOrg.SchoolIdentifierSea,
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("9/15/" + (schoolYear - 1).ToString()),
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                ProgramParticipationExitDate = DateTime.Parse("9/15/" + (schoolYear - 1).ToString()),
                 SpecialEducationExitReason = "Transferred",
-                IDEAIndicator = true,
+                IdeaIndicator = true,
                 SchoolYear = (schoolYear).ToString(),
             };
 
@@ -127,11 +127,11 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "0090000001",
                 LeaIdentifierSeaAccountability = firstOrg.LeaIdentifierSea,
                 SchoolIdentifierSea = firstOrg.SchoolIdentifierSea,
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("11/1/" + (schoolYear - 1).ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("1/13/" + schoolYear.ToString()),
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("11/1/" + (schoolYear - 1).ToString()),
+                ProgramParticipationExitDate = DateTime.Parse("1/13/" + schoolYear.ToString()),
                 SpecialEducationExitReason = "MovedAndContinuing",
-                IDEAIndicator = true,
+                IdeaIndicator = true,
                 SchoolYear = (schoolYear).ToString(),
             };
 
@@ -140,11 +140,11 @@ namespace generate.testdata.TestCaseData
                 StudentIdentifierState = "0090000001",
                 LeaIdentifierSeaAccountability = secondOrg.LeaIdentifierSea,
                 SchoolIdentifierSea = secondOrg.SchoolIdentifierSea,
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("1/14/" + schoolYear.ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("4/30/" + schoolYear.ToString()),
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("1/14/" + schoolYear.ToString()),
+                ProgramParticipationExitDate = DateTime.Parse("4/30/" + schoolYear.ToString()),
                 SpecialEducationExitReason = "HighSchoolDiploma",
-                IDEAIndicator = true,
+                IdeaIndicator = true,
                 SchoolYear = (schoolYear).ToString(),
             };
 
@@ -203,11 +203,11 @@ namespace generate.testdata.TestCaseData
             {
                 StudentIdentifierState = "0090000002",
                 LeaIdentifierSeaAccountability = firstOrg.LeaIdentifierSea,
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                ProgramParticipationEndDate = DateTime.Parse("9/15/" + (schoolYear - 1).ToString()),
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                ProgramParticipationExitDate = DateTime.Parse("9/15/" + (schoolYear - 1).ToString()),
                 SpecialEducationExitReason = "Transferred",
-                IDEAIndicator = true,
+                IdeaIndicator = true,
                 SchoolYear = (schoolYear).ToString(),
             };
 

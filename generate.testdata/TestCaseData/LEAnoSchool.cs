@@ -18,10 +18,10 @@ namespace generate.testdata.TestCaseData
 
                 SchoolYear = schoolYear.ToString(),
                 LeaIdentifierSea = "ABC",
-                LEA_OperationalStatus="Open",
+                Lea_OperationalStatus="Open",
                 LeaOrganizationName="TestLEA",
-                LEA_RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1)),
-                LEA_RecordEndDateTime = DateTime.Parse("6/30/" + (schoolYear)),
+                Lea_RecordStartDateTime = DateTime.Parse("7/1/" + (schoolYear - 1)),
+                Lea_RecordEndDateTime = DateTime.Parse("6/30/" + (schoolYear)),
                                         });
 
             
