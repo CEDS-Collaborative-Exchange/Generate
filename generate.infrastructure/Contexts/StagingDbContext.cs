@@ -468,7 +468,7 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.NumberOfDaysAbsent).HasColumnType("decimal(9, 2)");
 
-                entity.Property(e => e.NumberOfSchoolDays).HasColumnType("decimal(9, 2)");
+                entity.Property(e => e.NumberOfDaysInAttendance).HasColumnType("decimal(9, 2)");
 
                 entity.Property(e => e.ProjectedGraduationDate)
                     .HasMaxLength(8)
@@ -505,112 +505,112 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("IeuIdentifierSea")
                     .HasMaxLength(100);
 
-                entity.Property(e => e.IEU_OrganizationName)
+                entity.Property(e => e.Ieu_OrganizationName)
                     .HasColumnName("IEU_Name")
                     .HasMaxLength(256);
 
-                entity.Property(e => e.IEU_OrganizationOperationalStatus)
+                entity.Property(e => e.Ieu_OrganizationOperationalStatus)
                     .HasColumnName("IEU_OrganizationOperationalStatus")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
 
-                entity.Property(e => e.IEU_OperationalStatusEffectiveDate)
+                entity.Property(e => e.Ieu_OperationalStatusEffectiveDate)
                     .HasColumnName("IEU_OperationalStatusEffectiveDate")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.IEU_RecordEndDateTime)
+                entity.Property(e => e.Ieu_RecordEndDateTime)
                     .HasColumnName("IEU_RecordEndDateTime")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.IEU_RecordStartDateTime)
+                entity.Property(e => e.Ieu_RecordStartDateTime)
                     .HasColumnName("IEU_RecordStartDateTime")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.IEU_WebSiteAddress)
+                entity.Property(e => e.Ieu_WebSiteAddress)
                     .HasColumnName("IEU_WebSiteAddress")
                     .HasMaxLength(300);
 
-                entity.Property(e => e.LEA_CharterLeaStatus)
-                    .HasColumnName("LEA_CharterLeaStatus")
+                entity.Property(e => e.Lea_CharterLeaStatus)
+                    .HasColumnName("Lea_CharterLeaStatus")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LEA_CharterSchoolIndicator).HasColumnName("LEA_CharterSchoolIndicator");
+                entity.Property(e => e.Lea_CharterSchoolIndicator).HasColumnName("Lea_CharterSchoolIndicator");
 
-                entity.Property(e => e.LEA_GunFreeSchoolsActReportingStatus)
-                    .HasColumnName("LEA_GunFreeSchoolsActReportingStatus")
+                entity.Property(e => e.Lea_GunFreeSchoolsActReportingStatus)
+                    .HasColumnName("Lea_GunFreeSchoolsActReportingStatus")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.LeaIdentifierNCES)
-                    .HasColumnName("LEA_Identifier_NCES")
+                    .HasColumnName("Lea_Identifier_NCES")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.LeaIdentifierSea)
-                    .HasColumnName("LEA_Identifier_State")
+                    .HasColumnName("Lea_Identifier_State")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LEA_IsReportedFederally).HasColumnName("LEA_IsReportedFederally");
+                entity.Property(e => e.Lea_IsReportedFederally).HasColumnName("Lea_IsReportedFederally");
 
-                entity.Property(e => e.LEA_K12LeaTitleISupportService)
-                    .HasColumnName("LEA_K12LeaTitleISupportService")
+                entity.Property(e => e.Lea_K12LeaTitleISupportService)
+                    .HasColumnName("Lea_K12LeaTitleISupportService")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LEA_McKinneyVentoSubgrantRecipient).HasColumnName("LEA_McKinneyVentoSubgrantRecipient");
+                entity.Property(e => e.Lea_McKinneyVentoSubgrantRecipient).HasColumnName("Lea_McKinneyVentoSubgrantRecipient");
 
-                entity.Property(e => e.LEA_MepProjectType)
-                    .HasColumnName("LEA_MepProjectType")
+                entity.Property(e => e.Lea_MepProjectType)
+                    .HasColumnName("Lea _MepProjectType")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.LeaOrganizationName)
-                    .HasColumnName("LEA_Name")
+                    .HasColumnName("Lea_Name")
                     .HasMaxLength(256)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LEA_OperationalStatus)
-                    .HasColumnName("LEA_OperationalStatus")
+                entity.Property(e => e.Lea_OperationalStatus)
+                    .HasColumnName("Lea_OperationalStatus")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LEA_OperationalStatusEffectiveDate)
-                    .HasColumnName("LEA_OperationalStatusEffectiveDate")
+                entity.Property(e => e.Lea_OperationalStatusEffectiveDate)
+                    .HasColumnName("Lea_OperationalStatusEffectiveDate")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.LEA_RecordEndDateTime)
-                    .HasColumnName("LEA_RecordEndDateTime")
+                entity.Property(e => e.Lea_RecordEndDateTime)
+                    .HasColumnName("Lea_RecordEndDateTime")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.LEA_RecordStartDateTime)
-                    .HasColumnName("LEA_RecordStartDateTime")
+                entity.Property(e => e.Lea_RecordStartDateTime)
+                    .HasColumnName("Lea_RecordStartDateTime")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.LEA_SupervisoryUnionIdentificationNumber)
-                    .HasColumnName("LEA_SupervisoryUnionIdentificationNumber")
+                entity.Property(e => e.Lea_SupervisoryUnionIdentificationNumber)
+                    .HasColumnName("Lea_SupervisoryUnionIdentificationNumber")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LEA_TitleIinstructionalService)
-                    .HasColumnName("LEA_TitleIinstructionalService")
+                entity.Property(e => e.Lea_TitleIinstructionalService)
+                    .HasColumnName("Lea_TitleIinstructionalService")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LEA_TitleIProgramType)
-                    .HasColumnName("LEA_TitleIProgramType")
+                entity.Property(e => e.Lea_TitleIProgramType)
+                    .HasColumnName("Lea_TitleIProgramType")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LEA_Type)
-                    .HasColumnName("LEA_Type")
+                entity.Property(e => e.Lea_Type)
+                    .HasColumnName("Lea_Type")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LEA_WebSiteAddress)
-                    .HasColumnName("LEA_WebSiteAddress")
+                entity.Property(e => e.Lea_WebSiteAddress)
+                    .HasColumnName("Lea_WebSiteAddress")
                     .HasMaxLength(300)
                     .IsUnicode(false);
 
@@ -912,7 +912,7 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.EDFactsTeacherOutOfFieldStatus)
+                entity.Property(e => e.EdFactsTeacherOutOfFieldStatus)
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
@@ -944,9 +944,9 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.SpecialEducationSupportServicesCategory)
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
+                // entity.Property(e => e.SpecialEducationSupportServicesCategory)
+                //     .HasMaxLength(100)
+                //     .IsUnicode(false);
 
                 entity.Property(e => e.TitleIProgramStaffCategory)
                     .HasColumnName("TitleIProgramStaffCategory")
@@ -1193,8 +1193,8 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.ParentalInvolvementReservationFunds).HasColumnType("numeric(12, 2)");
 
-                entity.Property(e => e.REAPAlternativeFundingStatusCode)
-                    .HasColumnName("REAPAlternativeFundingStatusCode")
+                entity.Property(e => e.ReapAlternativeFundingStatusCode)
+                    .HasColumnName("ReapAlternativeFundingStatusCode")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
@@ -1413,8 +1413,8 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("EnglishLearner_StatusStartDate")
                     .HasColumnType("date");
 
-                entity.Property(e => e.FosterCare_ProgramParticipationEndDate)
-                    .HasColumnName("FosterCare_ProgramParticipationEndDate")
+                entity.Property(e => e.FosterCare_ProgramParticipationExitDate)
+                    .HasColumnName("FosterCare_ProgramParticipationExitDate")
                     .HasColumnType("date");
 
                 entity.Property(e => e.FosterCare_ProgramParticipationStartDate)
@@ -1441,8 +1441,8 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("Homelessness_StatusStartDate")
                     .HasColumnType("date");
 
-                entity.Property(e => e.Immigrant_ProgramParticipationEndDate)
-                    .HasColumnName("Immigrant_ProgramParticipationEndDate")
+                entity.Property(e => e.Immigrant_ProgramParticipationExitDate)
+                    .HasColumnName("Immigrant_ProgramParticipationExitDate")
                     .HasColumnType("date");
 
                 entity.Property(e => e.Immigrant_ProgramParticipationStartDate)
@@ -1505,8 +1505,8 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Section504_ProgramParticipationEndDate)
-                    .HasColumnName("Section504_ProgramParticipationEndDate")
+                entity.Property(e => e.Section504_ProgramParticipationExitDate)
+                    .HasColumnName("Section504_ProgramParticipationExitDate")
                     .HasColumnType("date");
 
                 entity.Property(e => e.Section504_ProgramParticipationStartDate)
@@ -1554,9 +1554,9 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.ProgramParticipationBeginDate).HasColumnType("date");
+                entity.Property(e => e.ProgramParticipationStartDate).HasColumnType("date");
 
-                entity.Property(e => e.ProgramParticipationEndDate).HasColumnType("date");
+                entity.Property(e => e.ProgramParticipationExitDate).HasColumnType("date");
 
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 
@@ -1600,9 +1600,9 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.ProgramParticipationBeginDate).HasColumnType("date");
+                entity.Property(e => e.ProgramParticipationStartDate).HasColumnType("date");
 
-                entity.Property(e => e.ProgramParticipationEndDate).HasColumnType("date");
+                entity.Property(e => e.ProgramParticipationExitDate).HasColumnType("date");
 
                 entity.Property(e => e.NeglectedOrDelinquentProgramType)
                    .HasColumnName("NeglectedOrDelinquentProgramType")
@@ -1652,15 +1652,15 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.DataCollectionName).HasMaxLength(100);
 
-                entity.Property(e => e.IDEAIndicator).HasColumnName("IDEAIndicator");
+                entity.Property(e => e.IdeaIndicator).HasColumnName("IDEAIndicator");
 
-                entity.Property(e => e.IDEAEducationalEnvironmentForEarlyChildhood)
-                    .HasColumnName("IDEAEducationalEnvironmentForEarlyChildhood")
+                entity.Property(e => e.IdeaEducationalEnvironmentForEarlyChildhood)
+                    .HasColumnName("IdeaEducationalEnvironmentForEarlyChildhood")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.IDEAEducationalEnvironmentForSchoolAge)
-                    .HasColumnName("IDEAEducationalEnvironmentForSchoolAge")
+                entity.Property(e => e.IdeaEducationalEnvironmentForSchoolAge)
+                    .HasColumnName("IdeaEducationalEnvironmentForSchoolAge")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
@@ -1669,9 +1669,9 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.ProgramParticipationBeginDate).HasColumnType("date");
+                entity.Property(e => e.ProgramParticipationStartDate).HasColumnType("date");
 
-                entity.Property(e => e.ProgramParticipationEndDate).HasColumnType("date");
+                entity.Property(e => e.ProgramParticipationExitDate).HasColumnType("date");
 
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 
@@ -1724,9 +1724,9 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.RunDateTime).HasColumnType("datetime");
 
-                entity.Property(e => e.ProgramParticipationBeginDate).HasColumnType("date");
+                entity.Property(e => e.ProgramParticipationStartDate).HasColumnType("date");
 
-                entity.Property(e => e.ProgramParticipationEndDate).HasColumnType("date");
+                entity.Property(e => e.ProgramParticipationExitDate).HasColumnType("date");
 
                 entity.Property(e => e.SchoolIdentifierSea)
                     .HasColumnName("SchoolIdentifierSea")
@@ -1768,9 +1768,9 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.ProgramParticipationBeginDate).HasColumnType("date");
+                entity.Property(e => e.ProgramParticipationStartDate).HasColumnType("date");
 
-                entity.Property(e => e.ProgramParticipationEndDate).HasColumnType("date");
+                entity.Property(e => e.ProgramParticipationExitDate).HasColumnType("date");
 
                 entity.Property(e => e.TitleIIIAccountabilityProgressStatus)
                     .HasColumnName("TitleIIIAccountabilityProgressStatus")

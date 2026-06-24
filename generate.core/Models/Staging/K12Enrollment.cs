@@ -41,7 +41,7 @@ namespace generate.core.Models.Staging
         public string CohortDescription { get; set; }
         public string ProjectedGraduationDate { get; set; }
         public string HighSchoolDiplomaType { get; set; }
-        public decimal? NumberOfSchoolDays { get; set; }
+        public decimal? NumberOfDaysInAttendance { get; set; }
         public decimal? NumberOfDaysAbsent { get; set; }
         public decimal? AttendanceRate { get; set; }
         public bool? PostSecondaryEnrollmentStatus { get; set; }

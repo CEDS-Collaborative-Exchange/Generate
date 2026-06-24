@@ -1,4 +1,4 @@
-using generate.core.Helpers.TestDataHelper;
+﻿using generate.core.Helpers.TestDataHelper;
 using generate.core.Models.IDS;
 using generate.core.Models.Staging;
 using generate.testdata.Interfaces;
@@ -67,9 +67,9 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                IDEAIndicator = true
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaIndicator = true
             };
 
             var refDisciplinaryActionTaken = testDataHelper.GetRandomObject<RefDisciplinaryActionTaken>(rnd, idsReferenceData.RefDisciplinaryActionTakens).Code;
@@ -168,9 +168,9 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = "RC80",
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                IDEAIndicator = true
+                IdeaEducationalEnvironmentForSchoolAge = "RC80",
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                IdeaIndicator = true
             };
 
             var discipline4503 = new Discipline()

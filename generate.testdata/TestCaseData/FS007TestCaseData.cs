@@ -66,9 +66,9 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = org.LeaIdentifierSea,
                 SchoolIdentifierSea = org.SchoolIdentifierSea,
                 SchoolYear = (schoolYear).ToString(),
-                IDEAEducationalEnvironmentForSchoolAge = env,
-                ProgramParticipationBeginDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                IDEAIndicator = true
+                IdeaEducationalEnvironmentForSchoolAge = env,
+                ProgramParticipationStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
+                IdeaIndicator = true
             };
 
             var discipline = new Discipline()

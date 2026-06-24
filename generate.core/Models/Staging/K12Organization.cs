@@ -7,32 +7,32 @@ namespace generate.core.Models.Staging
     {
         public  int Id { get; set; }                                                                              
         public  string IeuIdentifierSea { get; set; }                                                         
-        public  string IEU_OrganizationName { get; set; }                                                                     
-        public  DateTime? IEU_OperationalStatusEffectiveDate { get; set; }
-        public string IEU_OrganizationOperationalStatus { get; set; }
-        public string IEU_WebSiteAddress { get; set; }                                                           
-        public  DateTime? IEU_RecordStartDateTime { get; set; }                                                   
-        public  DateTime? IEU_RecordEndDateTime { get; set; }
+        public  string Ieu_OrganizationName { get; set; }                                                                     
+        public  DateTime? Ieu_OperationalStatusEffectiveDate { get; set; }
+        public string Ieu_OrganizationOperationalStatus { get; set; }
+        public string Ieu_WebSiteAddress { get; set; }                                                           
+        public  DateTime? Ieu_RecordStartDateTime { get; set; }                                                   
+        public  DateTime? Ieu_RecordEndDateTime { get; set; }
         public string LeaIdentifierSea { get; set; }
         public string PriorLeaIdentifierSea { get; set; }
         public string LeaIdentifierNCES { get; set; }                                                          
-        public  string LEA_SupervisoryUnionIdentificationNumber { get; set; }                                     
+        public  string Lea_SupervisoryUnionIdentificationNumber { get; set; }                                     
         public  string LeaOrganizationName { get; set; }                                                                     
-        public  string LEA_WebSiteAddress { get; set; }                                                           
-        public  string LEA_OperationalStatus { get; set; }                                                        
-        public  DateTime? LEA_OperationalStatusEffectiveDate { get; set; }                                        
-        public  string LEA_CharterLeaStatus { get; set; }                                                         
-        public  bool? LEA_CharterSchoolIndicator { get; set; }                                                    
-        public  string LEA_Type { get; set; }                                                                     
-        public  bool? LEA_McKinneyVentoSubgrantRecipient { get; set; }                                            
-        public  string LEA_GunFreeSchoolsActReportingStatus { get; set; }                                         
-        public  string LEA_TitleIinstructionalService { get; set; }                                               
-        public  string LEA_TitleIProgramType { get; set; }                                                        
-        public  string LEA_K12LeaTitleISupportService { get; set; }                                               
-        public  string LEA_MepProjectType { get; set; }                                                           
-        public  bool? LEA_IsReportedFederally { get; set; }                                                       
-        public  DateTime? LEA_RecordStartDateTime { get; set; }                                                   
-        public  DateTime? LEA_RecordEndDateTime { get; set; }
+        public  string Lea_WebSiteAddress { get; set; }                                                           
+        public  string Lea_OperationalStatus { get; set; }                                                        
+        public  DateTime? Lea_OperationalStatusEffectiveDate { get; set; }                                        
+        public  string Lea_CharterLeaStatus { get; set; }                                                         
+        public  bool? Lea_CharterSchoolIndicator { get; set; }                                                    
+        public  string Lea_Type { get; set; }                                                                     
+        public  bool? Lea_McKinneyVentoSubgrantRecipient { get; set; }                                            
+        public  string Lea_GunFreeSchoolsActReportingStatus { get; set; }                                         
+        public  string Lea_TitleIinstructionalService { get; set; }                                               
+        public  string Lea_TitleIProgramType { get; set; }                                                        
+        public  string Lea_K12LeaTitleISupportService { get; set; }                                               
+        public  string Lea_MepProjectType { get; set; }                                                           
+        public  bool? Lea_IsReportedFederally { get; set; }                                                       
+        public  DateTime? Lea_RecordStartDateTime { get; set; }                                                   
+        public  DateTime? Lea_RecordEndDateTime { get; set; }
         public string SchoolIdentifierSea { get; set; }
         public string PriorSchoolIdentifierSea { get; set; }
         public string School_PriorLeaIdentifierSea { get; set; }
