@@ -1,3 +1,4 @@
+--Add changes
 
 
 IF COL_LENGTH('Staging.K12Enrollment', 'NumberOfSchoolDays') IS NOT NULL
