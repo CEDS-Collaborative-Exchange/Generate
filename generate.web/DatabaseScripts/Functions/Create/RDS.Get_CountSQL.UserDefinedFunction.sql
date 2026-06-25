@@ -7865,10 +7865,6 @@ BEGIN
 					FROM RDS.BridgeLeaGradeLevels blgl
 					JOIN RDS.DimLeas dl
 						ON blgl.LeaId = dl.DimLeaID
-					JOIN RDS.FactK12StudentCounts rfsc
-						ON dl.DimLeaId = rfsc.LeaId
-						AND rfsc.FactTypeId = 3
-						AND rfsc.SchoolYearId = @dimSchoolYearId
 					JOIN RDS.DimGradeLevels dgl
 						ON blgl.GradeLevelId = dgl.DimGradeLevelId
 					WHERE GradeLevelCode IN (''PK'')
