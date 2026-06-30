@@ -174,7 +174,7 @@ BEGIN
 			, -1																FosterCareStatusId
 			, -1																ImmigrantStatusId
 			, -1																PrimaryDisabilityTypeId
-			, ISNULL(rds.Get_DimDate(sppse.ProgramParticipationEndDate), -1)	SpecialEducationServicesExitDateId
+			, ISNULL(rds.Get_DimDate(sppse.ProgramParticipationExitDate), -1)	SpecialEducationServicesExitDateId
 			, -1																MigrantStudentQualifyingArrivalDateId
 			, -1																LastQualifyingMoveDateId
 
@@ -185,12 +185,12 @@ BEGIN
 			AND ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
-			AND sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+			AND sppse.ProgramParticipationExitDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 		JOIN RDS.DimSchoolYears rsy
 			ON ske.SchoolYear = rsy.SchoolYear
 	--sea	
 		JOIN RDS.DimSeas rds
-			ON sppse.ProgramParticipationEndDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
+			ON sppse.ProgramParticipationExitDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEndDate)
 	--dimpeople	(rds) - direct join to DimPeople_Current
 		LEFT JOIN RDS.DimPeople_Current rdpc
 			ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
@@ -202,15 +202,15 @@ BEGIN
 			AND ISNULL(ske.Sex, 'MISSING') = ISNULL(rdkd.SexMap, rdkd.SexCode)
 	--age	
 		JOIN RDS.DimAges rda
-			ON RDS.Get_Age(ske.Birthdate, IIF(sppse.ProgramParticipationEndDate < @ChildCountDate, @PreviousChildCountDate, @ChildCountDate)) = rda.AgeValue
+			ON RDS.Get_Age(ske.Birthdate, IIF(sppse.ProgramParticipationExitDate < @ChildCountDate, @PreviousChildCountDate, @ChildCountDate)) = rda.AgeValue
 	--lea	
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND sppse.ProgramParticipationEndDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
+			AND sppse.ProgramParticipationExitDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate)
 	--school
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND sppse.ProgramParticipationEndDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
+			AND sppse.ProgramParticipationExitDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate)
 	--race
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr
 			ON ske.SchoolYear = spr.SchoolYear
@@ -225,11 +225,11 @@ BEGIN
 					ELSE 'Missing'
 				END
 				AND rsy.SchoolYear = rdr.SchoolYear
-		WHERE sppse.ProgramParticipationEndDate IS NOT NULL		
+		WHERE sppse.ProgramParticipationExitDate IS NOT NULL		
 
 --NOTE: The application of this rule is being discussed and will be addressed in a future release.  For now, the rule is being commented out.
 	--Add condition that the student was in SPED at the beginning of the reporting period CIID-4693
---		AND sppse.ProgramParticipationBeginDate <= @SYStartDate
+--		AND sppse.ProgramParticipationStartDate <= @SYStartDate
 
 	--Get a unique set of Lea IDs to match against for Title I and Migrant update
 		IF OBJECT_ID('tempdb..#uniqueLEAs') IS NOT NULL 
@@ -264,7 +264,7 @@ BEGIN
 			AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
 			AND sidt.IsPrimaryDisability = 1
-			AND sppse.ProgramParticipationEndDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
+			AND sppse.ProgramParticipationExitDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEndDate)
 		JOIN RDS.vwDimIdeaStatuses rdis
 			ON  ISNULL(sppse.SpecialEducationExitReason, 'MISSING') = ISNULL(rdis.SpecialEducationExitReasonMap, rdis.SpecialEducationExitReasonCode)
 			AND IdeaIndicatorCode = 'Yes'
@@ -287,7 +287,7 @@ BEGIN
 			AND sppse.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			AND sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
+			AND sppse.ProgramParticipationExitDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEndDate)
 		JOIN RDS.vwDimEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.EnglishLearnerStatusMap, -1)
 			AND PerkinsEnglishLearnerStatusCode = 'MISSING'

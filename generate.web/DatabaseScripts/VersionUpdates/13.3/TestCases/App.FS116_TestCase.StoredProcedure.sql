@@ -94,8 +94,8 @@ BEGIN
 		ON sppt3.StudentIdentifierState = ske.StudentIdentifierState
 		AND sppt3.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
 		AND sppt3.SchoolIdentifierSea = ske.SchoolIdentifierSea
-		and convert(date, sppt3.ProgramParticipationBeginDate) <= @SYEndDate
-		and ISNULL(convert(date, sppt3.ProgramParticipationEndDate), @SYEndDate) >= @SYStartDate
+		and convert(date, sppt3.ProgramParticipationStartDate) <= @SYEndDate
+		and ISNULL(convert(date, sppt3.ProgramParticipationExitDate), @SYEndDate) >= @SYStartDate
 
 	JOIN RDS.DimTitleIIIStatuses rdt3s
 		ON sppt3.TitleIIILanguageInstructionProgramType = rdt3s.TitleIIILanguageInstructionProgramTypeCode
@@ -135,8 +135,8 @@ BEGIN
 		ON sppt3.StudentIdentifierState = ske.StudentIdentifierState
 		AND sppt3.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
 		AND sppt3.SchoolIdentifierSea = ske.SchoolIdentifierSea
-		and convert(date, sppt3.ProgramParticipationBeginDate) <= @SYEndDate
-		and ISNULL(convert(date, sppt3.ProgramParticipationEndDate), @SYEndDate) >= @SYStartDate
+		and convert(date, sppt3.ProgramParticipationStartDate) <= @SYEndDate
+		and ISNULL(convert(date, sppt3.ProgramParticipationExitDate), @SYEndDate) >= @SYStartDate
 
 
 	JOIN RDS.DimGradeLevels rdgl

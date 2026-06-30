@@ -14,8 +14,8 @@ AS
 		, [RDS].[Get_Age] (enrollment.BirthDate, CompareDate) AS CalculatedAge 
 
 		, idea.IdeaIndicator
-		, idea.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
-		, idea.ProgramParticipationEndDate			AS IDEAProgramParticipationEndDate
+		, idea.ProgramParticipationStartDate		AS IDEAProgramParticipationStartDate
+		, idea.ProgramParticipationExitDate			AS IDEAProgramParticipationExitDate
 		
 		, race.RaceType
 		, race.RecordStartDateTime
@@ -23,7 +23,7 @@ AS
 
 		, el.EnglishLearnerStatus
 		, el.EnglishLearner_StatusStartDate
-		, el.EnglishLearner_StatusEndDate
+		, el.EnglishLearner_StatusExitDate
 				
 	FROM Staging.K12Enrollment								enrollment		
 	--Join to get the compare date for the Age calculation
@@ -45,7 +45,7 @@ AS
 		ON		enrollment.StudentIdentifierState						=	idea.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(idea.LEAIdentifierSeaAccountability, '') 
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(idea.SchoolIdentifierSea, '')
-		AND		ISNULL(idea.ProgramParticipationEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		ISNULL(idea.ProgramParticipationExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	LEFT JOIN Staging.K12PersonRace							race
 		ON		enrollment.SchoolYear									=	race.SchoolYear
@@ -58,7 +58,7 @@ AS
 		ON		enrollment.StudentIdentifierState						=	el.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(el.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(el.SchoolIdentifierSea, '')
-		AND		ISNULL(el.EnglishLearner_StatusEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		ISNULL(el.EnglishLearner_StatusExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	WHERE 1 = 1
 	AND migrant.MigrantStatus = 1

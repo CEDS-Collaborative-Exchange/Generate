@@ -17,14 +17,14 @@ AS
 				,ideaDisability.IdeaDisabilityTypeCode
 
 				,programparticipation.IdeaIndicator
-				,programparticipation.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
-				,programparticipation.ProgramParticipationEndDate		AS IDEAProgramParticipationEndDate
+				,programparticipation.ProgramParticipationStartDate		AS IDEAProgramParticipationStartDate
+				,programparticipation.ProgramParticipationExitDate		AS IDEAProgramParticipationExitDate
 				,programparticipation.IDEAEducationalEnvironmentForEarlyChildhood
 				,programparticipation.IDEAEducationalEnvironmentForSchoolAge
 				
 				,el.EnglishLearnerStatus
 				,el.EnglishLearner_StatusStartDate
-				,el.EnglishLearner_StatusEndDate
+				,el.EnglishLearner_StatusExitDate
 
 				,race.RaceType
 				,race.RecordStartDateTime
@@ -50,7 +50,7 @@ AS
 			ON		enrollment.StudentIdentifierState						=	programparticipation.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(programparticipation.LEAIdentifierSeaAccountability, '') 
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(programparticipation.SchoolIdentifierSea, '')
-			AND		toggle.ChildCountDate BETWEEN programparticipation.ProgramParticipationBeginDate AND ISNULL(programparticipation.ProgramParticipationEndDate, GETDATE())
+			AND		toggle.ChildCountDate BETWEEN programparticipation.ProgramParticipationStartDate AND ISNULL(programparticipation.ProgramParticipationExitDate, GETDATE())
 			--AND		programparticipation.ProgramParticipationBeginDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 
 	LEFT JOIN Staging.IdeaDisabilityType					ideaDisability
@@ -73,7 +73,7 @@ AS
 			ON		enrollment.StudentIdentifierState						=	el.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(el.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(el.SchoolIdentifierSea, '')
-			AND		Toggle.ChildCountDate BETWEEN EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
+			AND		Toggle.ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, GETDATE())
 			--AND		el.EnglishLearner_StatusStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 
 	--uncomment/modify the where clause conditions as necessary for validation
@@ -86,13 +86,13 @@ AS
 	--AND enrollment.LastOrSurname = ''
 	--AND enrollment.BirthDate = ''
 	--AND ideaDisability.IdeaDisabilityTypeCode is not null
-	--AND programparticipation.ProgramParticipationBeginDate = ''
-	--AND programparticipation.ProgramParticipationEndDate = ''
+	--AND programparticipation.ProgramParticipationStartDate = ''
+	--AND programparticipation.ProgramParticipationExitDate = ''
 	--AND programparticipation.IDEAEducationalEnvironmentForSchoolAge = ''
 	--AND programparticipation.IDEAEducationalEnvironmentForSchoolAge = ''
 	--AND el.EnglishLearnerStatus = ''	--0 or 1
 	--AND el.EnglishLearner_StatusStartDate = ''
-	--AND el.EnglishLearner_StatusEndDate = ''
+	--AND el.EnglishLearner_StatusExitDate = ''
 	--AND race.RaceType = ''
 	--AND race.RecordStartDateTime = ''
 	--AND race.RecordEndDateTime = ''

@@ -245,8 +245,8 @@ BEGIN
 			AND ske.StudentIdentifierState = sppt3.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppt3.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppt3.SchoolIdentifierSea, '')
-			AND ISNULL(sppt3.ProgramParticipationBeginDate, @SYStartDate) <= @SYEndDate
-			AND ISNULL(sppt3.ProgramParticipationEndDate, @SYEndDate) >= @SYStartDate
+			AND ISNULL(sppt3.ProgramParticipationStartDate, @SYStartDate) <= @SYEndDate
+			AND ISNULL(sppt3.ProgramParticipationExitDate, @SYEndDate) >= @SYStartDate
 	--english learner
 		JOIN Staging.PersonStatus el 
 			ON ske.SchoolYear = el.SchoolYear		
@@ -254,7 +254,7 @@ BEGIN
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND ISNULL(el.EnglishLearner_StatusStartDate, @SYStartDate) <= @SYEndDate
-			AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= @SYStartDate
+			AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEndDate) >= @SYStartDate
 	-- Leas (rds)
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea

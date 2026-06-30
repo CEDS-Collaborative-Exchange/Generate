@@ -26,6 +26,6 @@ AS
 		AND sssrd2.TableName = 'RefPostSecondaryEnrollmentStatus'
 		AND rsy.SchoolYear = sssrd2.SchoolYear
 	LEFT JOIN Staging.SourceSystemReferenceData sssrd3
-		ON rdpes.[PostsecondaryEnrollmentActionCode] = sssrd3.OutputCode
+		ON rdpes.PostsecondaryEnrollmentActionCode = sssrd3.OutputCode
 		AND sssrd3.TableName = 'RefPSEnrollmentAction'
 		AND rsy.SchoolYear = sssrd3.SchoolYear		

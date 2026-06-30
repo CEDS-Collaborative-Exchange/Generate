@@ -150,7 +150,7 @@ BEGIN
 			, MigrantStudentQualifyingArrivalDateId		int null
 			, LastQualifyingMoveDateId					int null
 			, StatusStartDateNeglectedOrDelinquentId	int null
-			, StatusEndDateNeglectedOrDelinquentId		int null
+			, StatusExitDateNeglectedOrDelinquentId		int null
 			, CTEOutcomeIndicatorId						int null
 		)
 
@@ -189,8 +189,8 @@ BEGIN
 			, -1														SpecialEducationServicesExitDateId	
 			, -1														MigrantStudentQualifyingArrivalDateId	
 			, -1														LastQualifyingMoveDateId	
-			, ISNULL(rds.Get_DimDate(sppnord.ProgramParticipationBeginDate), -1)	StatusStartDateNeglectedOrDelinquentId
-			, ISNULL(rds.Get_DimDate(sppnord.ProgramParticipationEndDate), -1)		StatusEndDateNeglectedOrDelinquentId
+			, ISNULL(rds.Get_DimDate(sppnord.ProgramParticipationStartDate), -1)	StatusStartDateNeglectedOrDelinquentId
+			, ISNULL(rds.Get_DimDate(sppnord.ProgramParticipationExitDate), -1)		StatusExitDateNeglectedOrDelinquentId
 			, ISNULL(rdcoi.DimCteOutcomeIndicatorId, -1)				CTEOutcomeIndicatorId
 
 		FROM Staging.K12Enrollment ske
@@ -220,14 +220,14 @@ BEGIN
 			AND ske.StudentIdentifierState = sppnord.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppnord.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppnord.SchoolIdentifierSea, '')
-			AND sppnord.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+			AND sppnord.ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 	--idea disability status
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
 			ON ske.SchoolYear = idea.SchoolYear		
 			AND ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
-			AND sppnord.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+			AND sppnord.ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 	--english learner
 		LEFT JOIN Staging.PersonStatus el 
 			ON ske.SchoolYear = el.SchoolYear		
@@ -332,7 +332,7 @@ BEGIN
 			, [MigrantStudentQualifyingArrivalDateId]
 			, [LastQualifyingMoveDateId]
 			, [StatusStartDateNeglectedOrDelinquentId]
-			, [StatusEndDateNeglectedOrDelinquentId]
+			, [StatusExitDateNeglectedOrDelinquentId]
 			, [CTEOutcomeIndicatorId]
 		)
 		SELECT 
@@ -369,7 +369,7 @@ BEGIN
 			, [MigrantStudentQualifyingArrivalDateId]
 			, [LastQualifyingMoveDateId]
 			, [StatusStartDateNeglectedOrDelinquentId]
-			, [StatusEndDateNeglectedOrDelinquentId]
+			, [StatusExitDateNeglectedOrDelinquentId]
 			, [CTEOutcomeIndicatorId]
 		FROM #Facts
 

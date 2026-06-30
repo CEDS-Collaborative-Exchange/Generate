@@ -16,13 +16,13 @@ AS
 
 				,ideaDisability.IdeaDisabilityTypeCode
 
-				,programparticipation.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
-				,programparticipation.ProgramParticipationEndDate		AS IDEAProgramParticipationEndDate
+				,programparticipation.ProgramParticipationStartDate		AS IDEAProgramParticipationStartDate
+				,programparticipation.ProgramParticipationExitDate		AS IDEAProgramParticipationExitDate
 				,programparticipation.SpecialEducationExitReason
 				
 				,el.EnglishLearnerStatus
 				,el.EnglishLearner_StatusStartDate
-				,el.EnglishLearner_StatusEndDate
+				,el.EnglishLearner_StatusExitDate
 
 				,race.RaceType
 				,race.RecordStartDateTime
@@ -33,27 +33,27 @@ AS
 			ON		enrollment.StudentIdentifierState						=	programparticipation.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(programparticipation.LEAIdentifierSeaAccountability, '') 
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(programparticipation.SchoolIdentifierSea, '')
-			AND		programparticipation.ProgramParticipationEndDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND		programparticipation.ProgramParticipationExitDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 
 	LEFT JOIN Staging.IdeaDisabilityType					ideaDisability
 			ON		enrollment.StudentIdentifierState						=	ideaDisability.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(ideaDisability.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(ideaDisability.SchoolIdentifierSea, '')
 			AND 	ideaDisability.IsPrimaryDisability = 1
-			AND		programparticipation.ProgramParticipationEndDate  BETWEEN ideaDisability.RecordStartDateTime AND ISNULL(ideaDisability.RecordEndDateTime, GETDATE())
+			AND		programparticipation.ProgramParticipationExitDate  BETWEEN ideaDisability.RecordStartDateTime AND ISNULL(ideaDisability.RecordEndDateTime, GETDATE())
 
 	LEFT JOIN Staging.K12PersonRace							race
 			ON		enrollment.SchoolYear									=	race.SchoolYear
 			AND		enrollment.StudentIdentifierState						=	race.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(ideaDisability.LEAIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(ideaDisability.SchoolIdentifierSea, '')
-			AND		programparticipation.ProgramParticipationEndDate  BETWEEN race.RecordStartDateTime AND ISNULL(race.RecordEndDateTime, GETDATE())
+			AND		programparticipation.ProgramParticipationExitDate  BETWEEN race.RecordStartDateTime AND ISNULL(race.RecordEndDateTime, GETDATE())
 
 	LEFT JOIN Staging.PersonStatus							el
 			ON		enrollment.StudentIdentifierState						=	el.StudentIdentifierState
 			AND		ISNULL(enrollment.LeaIdentifierSeaAccountability, '')	=	ISNULL(el.LeaIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(el.SchoolIdentifierSea, '')
-			AND		programparticipation.ProgramParticipationEndDate  BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
+			AND		programparticipation.ProgramParticipationExitDate  BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, GETDATE())
 
 	--Join to get the child count date for the age calculation
 	JOIN App.ToggleQuestions		toggle 		ON		toggle.EmapsQuestionAbbrv	=	'CHDCTDTE'		

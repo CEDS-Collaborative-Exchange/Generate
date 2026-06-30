@@ -52,8 +52,8 @@ AS
 			, sppnord.NeglectedOrDelinquentStatus
 			, sppnord.NeglectedOrDelinquentProgramEnrollmentSubpart
 			--, sssrd3.OutputCode 'NeglectedOrDelingquentProgramskeSubpartEdFactsCode'
-			, sppnord.ProgramParticipationBeginDate
-			, sppnord.ProgramParticipationEndDate
+			, sppnord.ProgramParticipationStartDate
+			, sppnord.ProgramParticipationExitDate
 			, sppnord.NeglectedOrDelinquentProgramType
 			--, sssrd2.OutputCode 'NeglectedOrDelinquentProgramTypeEdFactsCode'
 			, sppnord.NeglectedOrDelinquentAcademicAchievementIndicator
@@ -112,14 +112,14 @@ AS
 			ON ske.StudentIdentifierState = sppnord.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppnord.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppnord.SchoolIdentifierSea, '')
-			AND sppnord.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, staging.GetFiscalYearEndDate(ske.SchoolYear))
+			AND sppnord.ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, staging.GetFiscalYearEndDate(ske.SchoolYear))
 
 	--idea disability status
 		LEFT JOIN Staging.ProgramParticipationSpecialEducation idea
 			ON ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
-			AND sppnord.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, staging.GetFiscalYearEndDate(ske.SchoolYear))
+			AND idea.ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, staging.GetFiscalYearEndDate(ske.SchoolYear))
 
 	--english learner
 		LEFT JOIN Staging.PersonStatus el 
@@ -182,11 +182,11 @@ AS
 			AND rdr.SchoolYear = ske.SchoolYear
 	-- ProgramParticipationEndDate
 		LEFT JOIN RDS.DimDates BeginDate 
-			ON sppnord.ProgramParticipationEndDate = BeginDate.DateValue
+			ON sppnord.ProgramParticipationExitDate = BeginDate.DateValue
 
 	-- ProgramParticipationEndDate
 		LEFT JOIN RDS.DimDates EndDate 
-			ON sppnord.ProgramParticipationEndDate = EndDate.DateValue
+			ON sppnord.ProgramParticipationExitDate = EndDate.DateValue
 
 	--Lea Operational Status	
 		LEFT JOIN Staging.SourceSystemReferenceData sssrd
@@ -228,8 +228,8 @@ AS
 		, nord.NeglectedOrDelinquentStatus
 		, nord.NeglectedOrDelinquentProgramEnrollmentSubpart
 		, sssrd3.OutputCode 'NeglectedOrDelingquentProgramEnrollmentSubpartEdFactsCode'
-		, nord.ProgramParticipationBeginDate
-		, nord.ProgramParticipationEndDate
+		, nord.ProgramParticipationStartDate
+		, nord.ProgramParticipationExitDate
 		, nord.NeglectedOrDelinquentProgramType
 		, sssrd2.OutputCode 'NeglectedOrDelinquentProgramTypeEdFactsCode'
 		, nord.NeglectedOrDelinquentAcademicAchievementIndicator
@@ -271,7 +271,7 @@ AS
 		and sssrd3.tablename = 'RefNeglectedOrDelinquentProgramEnrollmentSubpart'
 		and nord.NeglectedOrDelinquentProgramEnrollmentSubpart = sssrd3.InputCode
 		
-		--AND		ISNULL(nord.ProgramParticipationEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		--AND		ISNULL(nord.ProgramParticipationExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 	--WHERE 1 = 1
 	--AND ISNULL(nord.EdFactsAcademicOrCareerAndTechnicalOutcomeType, '') <> ''
 	--	OR ISNULL(nord.EdFactsAcademicOrCareerAndTechnicalOutcomeExitType, '') <> ''

@@ -198,7 +198,7 @@ BEGIN
 			AND ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			AND @ReportingDate between el.EnglishLearner_StatusStartDate and ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
+			AND @ReportingDate between el.EnglishLearner_StatusStartDate and ISNULL(el.EnglishLearner_StatusExitDate, @SYEndDate)
 			AND ISNULL(el.EnglishLearnerStatus,0) = 1
 	-- Leas (rds)
 		LEFT JOIN RDS.DimLeas rdl
@@ -214,7 +214,7 @@ BEGIN
 			AND ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
-			AND @ReportingDate between sppse.ProgramParticipationBeginDate and ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
+			AND @ReportingDate between sppse.ProgramParticipationStartDate and ISNULL(sppse.ProgramParticipationExitDate, @SYEndDate)
 	--english learner (rds)
 		LEFT JOIN #vwEnglishLearnerStatuses rdels
 			ON ISNULL(CAST(el.EnglishLearnerStatus AS SMALLINT), -1) = ISNULL(CAST(rdels.EnglishLearnerStatusMap AS SMALLINT), -1)

@@ -79,7 +79,7 @@ BEGIN
 			, SchoolIdentifierSea
 			, EnglishLearnerStatus
 			, EnglishLearner_StatusStartDate
-			, EnglishLearner_StatusEndDate
+			, EnglishLearner_StatusExitDate
 			, SchoolYear
 		INTO #tempELStatus
 		FROM Staging.PersonStatus
@@ -87,7 +87,7 @@ BEGIN
 
 	-- Create Index for #tempELStatus 
 		CREATE INDEX IX_tempELStatus 
-			ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusEndDate)
+			ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusExitDate)
 
 	--Pull the Migrant Status into a temp table
 		SELECT DISTINCT 
@@ -96,7 +96,7 @@ BEGIN
 			, SchoolIdentifierSea
 			, MigrantStatus
 			, Migrant_StatusStartDate
-			, Migrant_StatusEndDate
+			, Migrant_StatusExitDate
 			, SchoolYear
 		INTO #tempMigrantStatus
 		FROM Staging.PersonStatus
@@ -104,7 +104,7 @@ BEGIN
 
 	-- Create Index for #tempMigrantStatus 
 		CREATE INDEX IX_tempMigrantStatus 
-			ON #tempMigrantStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Migrant_StatusStartDate, Migrant_StatusEndDate)
+			ON #tempMigrantStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Migrant_StatusStartDate, Migrant_StatusExitDate)
 
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
@@ -222,11 +222,11 @@ BEGIN
 			AND rdpc.IsActiveK12Student = 1
 		LEFT JOIN RDS.DimLeas rdl
 			ON ske.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
-			AND (rdl.RecordStartDateTime BETWEEN hmStatus.Homelessness_StatusStartDate AND ISNULL(hmStatus.Homelessness_StatusEndDate, @SYEndDate)
+			AND (rdl.RecordStartDateTime BETWEEN hmStatus.Homelessness_StatusStartDate AND ISNULL(hmStatus.Homelessness_StatusExitDate, @SYEndDate)
 				OR hmStatus.Homelessness_StatusStartDate BETWEEN rdl.RecordStartDateTime AND ISNULL(rdl.RecordEndDateTime, @SYEndDate))
 		LEFT JOIN RDS.DimK12Schools rdksch
 			ON ske.SchoolIdentifierSea = rdksch.SchoolIdentifierSea
-			AND (rdksch.RecordStartDateTime BETWEEN hmStatus.Homelessness_StatusStartDate AND ISNULL(hmStatus.Homelessness_StatusEndDate, @SYEndDate)
+			AND (rdksch.RecordStartDateTime BETWEEN hmStatus.Homelessness_StatusStartDate AND ISNULL(hmStatus.Homelessness_StatusExitDate, @SYEndDate)
 				OR hmStatus.Homelessness_StatusStartDate BETWEEN rdksch.RecordStartDateTime AND ISNULL(rdksch.RecordEndDateTime, @SYEndDate))
 	--homeless nighttime residence
 		LEFT JOIN Staging.PersonStatus hmNight
@@ -241,7 +241,7 @@ BEGIN
 			AND ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
-			AND hmStatus.Homelessness_StatusStartDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
+			AND hmStatus.Homelessness_StatusStartDate BETWEEN sppse.ProgramParticipationStartDate AND ISNULL(sppse.ProgramParticipationExitDate, @SYEndDate)
 			AND sppse.IDEAIndicator = 1
 	--idea disability type			
 		LEFT JOIN Staging.IdeaDisabilityType sidt	
@@ -257,14 +257,14 @@ BEGIN
 			AND hmStatus.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(hmStatus.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(hmStatus.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			AND hmStatus.Homelessness_StatusStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
+			AND hmStatus.Homelessness_StatusStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEndDate)
 	--migratory status	
 		LEFT JOIN #tempMigrantStatus migrant
 			ON hmStatus.SchoolYear = migrant.SchoolYear
 			AND hmStatus.StudentIdentifierState = migrant.StudentIdentifierState
 			AND ISNULL(hmStatus.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(hmStatus.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
-			AND hmStatus.Homelessness_StatusStartDate BETWEEN migrant.Migrant_StatusStartDate AND ISNULL(migrant.Migrant_StatusEndDate, @SYEndDate)
+			AND hmStatus.Homelessness_StatusStartDate BETWEEN migrant.Migrant_StatusStartDate AND ISNULL(migrant.Migrant_StatusExitDate, @SYEndDate)
 	--race	
 		LEFT JOIN RDS.vwUnduplicatedRaceMap spr 
 			ON ske.SchoolYear = spr.SchoolYear

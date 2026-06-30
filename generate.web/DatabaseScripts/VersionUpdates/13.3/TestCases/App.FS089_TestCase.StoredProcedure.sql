@@ -6,10 +6,10 @@ BEGIN
 	-- Create indexes as needed
 	--create nonclustered index ix_K12Enrollment_SIS_LIS_SchIS ON Staging.K12Enrollment(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea) INCLUDE (EnrollmentEntryDate, EnrollmentExitDate, SchoolYear)
 	--create nonclustered index ix_Discipline_SIS_LIS_SchIS ON Staging.Discipline(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea) INCLUDE (DisciplinaryActionStartDate)
-	--create nonclustered index ix_PersonStatus_SIS_LIS_SchIS ON Staging.PersonStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea) INCLUDE (IDEA_StatusStartDate, IDEA_StatusEndDate)
-	--create nonclustered index ix_ProgramParticipationSpecialEducation_SIS_LIS_SchIS ON Staging.ProgramParticipationSpecialEducation(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea) INCLUDE (ProgramParticipationBeginDate, ProgramParticipationEndDate, IDEAEducationalEnvironmentForSchoolAge)
+	--create nonclustered index ix_PersonStatus_SIS_LIS_SchIS ON Staging.PersonStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea) INCLUDE (IDEA_StatusStartDate, IDEA_StatusExitDate)
+	--create nonclustered index ix_ProgramParticipationSpecialEducation_SIS_LIS_SchIS ON Staging.ProgramParticipationSpecialEducation(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea) INCLUDE (ProgramParticipationStartDate, ProgramParticipationExitDate, IDEAEducationalEnvironmentForSchoolAge)
 	--create nonclustered index ix_PersonRace_SIS_LIS_SchIS ON Staging.PersonRace(StudentIdentifierState) INCLUDE (SchoolYear)
-	--CREATE NONCLUSTERED INDEX ix_PersonStatus_IDEAIndicator ON [Staging].[PersonStatus] ([IDEAIndicator],[IdeaDisabilityTypeCode]) INCLUDE ([StudentIdentifierState],[LeaIdentifierSeaAccountability],[SchoolIdentifierSea],[EnglishLearnerStatus],[EnglishLearner_StatusStartDate],[EnglishLearner_StatusEndDate],[IDEA_StatusStartDate],[IDEA_StatusEndDate])
+	--CREATE NONCLUSTERED INDEX ix_PersonStatus_IDEAIndicator ON [Staging].[PersonStatus] ([IDEAIndicator],[IdeaDisabilityTypeCode]) INCLUDE ([StudentIdentifierState],[LeaIdentifierSeaAccountability],[SchoolIdentifierSea],[EnglishLearnerStatus],[EnglishLearner_StatusStartDate],[EnglishLearner_StatusExitDate],[IDEA_StatusStartDate],[IDEA_StatusExitDate])
 
 	--clear the tables for the next run
 	IF OBJECT_ID('tempdb..#C089Staging') IS NOT NULL
@@ -203,7 +203,7 @@ BEGIN
 			WHEN ISNULL(el.EnglishLearnerStatus, '') <> '' 
 				AND @ChildCountDate
 					BETWEEN ISNULL(EL.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
-					AND ISNULL(EL.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
+					AND ISNULL(EL.EnglishLearner_StatusExitDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
 			THEN EL.EnglishLearnerStatus
 			ELSE -1
 		END AS EnglishLearnerStatus,
@@ -211,7 +211,7 @@ BEGIN
 			WHEN ISNULL(el.EnglishLearnerStatus, '') <> '' 
 				AND @ChildCountDate
 					BETWEEN ISNULL(EL.EnglishLearner_StatusStartDate, CAST('07/01/' + CAST(@SchoolYear - 1 AS VARCHAR(4)) AS DATE))  
-					AND ISNULL(EL.EnglishLearner_StatusEndDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
+					AND ISNULL(EL.EnglishLearner_StatusExitDate, CAST('06/30/' + CAST(@SchoolYear AS VARCHAR(4)) AS DATE)) 
 			THEN 
 				CASE 
 					WHEN EL.EnglishLearnerStatus = 1 THEN 'LEP'
@@ -227,7 +227,7 @@ BEGIN
 			ON ske.StudentIdentifierState = sppse.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(sppse.SchoolIdentifierSea, '')
-			AND @ChildCountDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, GETDATE())
+			AND @ChildCountDate BETWEEN sppse.ProgramParticipationStartDate AND ISNULL(sppse.ProgramParticipationExitDate, GETDATE())
 		
 		LEFT JOIN Staging.IdeaDisabilityType idea
 			ON ske.StudentIdentifierState = idea.StudentIdentifierState
@@ -248,7 +248,7 @@ BEGIN
 			ON ske.StudentIdentifierState = el.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-			AND @ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
+			AND @ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, GETDATE())
 
 		JOIN RDS.DimAges rda
 			ON RDS.Get_Age(ske.Birthdate, @ChildCountDate) = rda.AgeValue

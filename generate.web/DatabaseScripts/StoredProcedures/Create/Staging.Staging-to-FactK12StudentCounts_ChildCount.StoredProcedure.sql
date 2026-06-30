@@ -162,7 +162,7 @@ BEGIN
 			, -1																FosterCareStatusId
 			, -1																ImmigrantStatusId
 			, ISNULL(rdidt.DimIdeaDisabilityTypeId, -1)							PrimaryDisabilityTypeId
-			, ISNULL(rds.Get_DimDate(sppse.ProgramParticipationEndDate), -1)	SpecialEducationServicesExitDateId
+			, ISNULL(rds.Get_DimDate(sppse.ProgramParticipationExitDate), -1)	SpecialEducationServicesExitDateId
 			, -1																MigrantStudentQualifyingArrivalDateId
 			, -1								
 		FROM Staging.K12Enrollment ske
@@ -184,7 +184,7 @@ BEGIN
 				AND ske.StudentIdentifierState = sppse.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sppse.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sppse.SchoolIdentifierSea,'')
-				AND @ChildCountDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
+				AND @ChildCountDate BETWEEN sppse.ProgramParticipationStartDate AND ISNULL(sppse.ProgramParticipationExitDate, @SYEndDate)
 		--dimpeople	(rds) - direct join to DimPeople_Current
 			LEFT JOIN RDS.DimPeople_Current rdpc
 				ON ske.StudentIdentifierState = rdpc.K12StudentStudentIdentifierState
@@ -216,7 +216,7 @@ BEGIN
 				AND ske.StudentIdentifierState = el.StudentIdentifierState
 				AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(el.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(el.SchoolIdentifierSea,'')
-				AND @ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
+				AND @ChildCountDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEndDate)
 		--english learner (rds)
 			LEFT JOIN #vwEnglishLearnerStatuses rdels
 				ON rsy.SchoolYear = rdels.SchoolYear

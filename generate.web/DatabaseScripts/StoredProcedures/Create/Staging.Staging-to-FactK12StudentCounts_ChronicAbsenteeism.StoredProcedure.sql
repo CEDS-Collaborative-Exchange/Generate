@@ -112,13 +112,13 @@ BEGIN
 			, SchoolIdentifierSea
 			, EnglishLearnerStatus
 			, EnglishLearner_StatusStartDate
-			, EnglishLearner_StatusEndDate
+			, EnglishLearner_StatusExitDate
 		INTO #tempELStatus
 		FROM Staging.PersonStatus
 
 	-- Create Index for #tempELStatus 
 		CREATE INDEX IX_tempELStatus 
-			ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusEndDate)
+			ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusExitDate)
 
 	--Pull the Economically Disadvantaged Status into a temp table
 		SELECT DISTINCT 
@@ -127,13 +127,13 @@ BEGIN
 			, SchoolIdentifierSea
 			, EconomicDisadvantageStatus
 			, EconomicDisadvantage_StatusStartDate
-			, EconomicDisadvantage_StatusEndDate
+			, EconomicDisadvantage_StatusExitDate
 		INTO #tempEcoDisStatus
 		FROM Staging.PersonStatus
 
 	-- Create Index for #tempEcoDisStatus 
 		CREATE INDEX IX_tempEcoDisStatus 
-			ON #tempEcoDisStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, EconomicDisadvantage_StatusStartDate, EconomicDisadvantage_StatusEndDate)
+			ON #tempEcoDisStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, EconomicDisadvantage_StatusStartDate, EconomicDisadvantage_StatusExitDate)
 
 	--Pull the Homelessness Status into a temp table
 		SELECT DISTINCT 
@@ -142,13 +142,13 @@ BEGIN
 			, SchoolIdentifierSea
 			, HomelessnessStatus
 			, Homelessness_StatusStartDate
-			, Homelessness_StatusEndDate
+			, Homelessness_StatusExitDate
 		INTO #tempHomelessnessStatus
 		FROM Staging.PersonStatus
 
 	-- Create Index for #tempHomelessnessStatus 
 		CREATE INDEX IX_tempHomelessnessStatus 
-			ON #tempHomelessnessStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Homelessness_StatusStartDate, Homelessness_StatusEndDate)
+			ON #tempHomelessnessStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Homelessness_StatusStartDate, Homelessness_StatusExitDate)
 
 		--Set the correct Fact Type
 		SELECT @FactTypeId = DimFactTypeId 
@@ -271,7 +271,7 @@ BEGIN
 			ON ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
-			AND idea.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
+			AND idea.ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON ske.SchoolYear = rdis.SchoolYear
 			AND ISNULL(CAST(idea.IDEAIndicator AS SMALLINT), -1) = ISNULL(rdis.IdeaIndicatorMap, -1)
@@ -331,11 +331,11 @@ BEGIN
 --Generate can handle this determination in 2 ways
 --	1. populate AttendanceRate in Staging.K12Enrollment and Generate will just use that value
 --		NOTE: This is % of class days attended, not % of days absent
---	2. populate NumberOfSchoolDays and NumberOfDaysAbsent in Staging.K12Enrollment and Generate will calculate the Absentee Rate
+--	2. populate NumberOfDaysInAttendance and NumberOfDaysAbsent in Staging.K12Enrollment and Generate will calculate the Absentee Rate
 		WHERE	
-			CAST((CASE WHEN ske.NumberOfSchoolDays = '0' THEN 0
+			CAST((CASE WHEN ske.NumberOfDaysInAttendance = '0' THEN 0
 					WHEN ske.NumberOfDaysAbsent = '0' THEN 1
-					ELSE CAST(ske.NumberOfSchoolDays - ske.NumberOfDaysAbsent  AS decimal(5,2)) / CAST(ske.NumberOfSchoolDays AS decimal(5,2))
+					ELSE CAST(ske.NumberOfDaysInAttendance  AS decimal(5,2)) / CAST(ske.NumberOfDaysInAttendance + ske.NumberOfDaysAbsent AS decimal(5,2))
 				END) AS decimal(5,4)) <= 0.9
 
 	--Final insert into RDS.FactK12StudentCounts table

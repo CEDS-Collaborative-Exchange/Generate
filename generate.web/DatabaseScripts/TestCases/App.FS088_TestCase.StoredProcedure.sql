@@ -129,21 +129,21 @@ BEGIN
 		, LeaIdentifierSeaAccountability
 		, SchoolIdentifierSea
 		, IDEAIndicator
-		, ProgramParticipationBeginDate
-		, ProgramParticipationEndDate
+		, ProgramParticipationStartDate
+		, ProgramParticipationExitDate
 		, IDEAEducationalEnvironmentForEarlyChildhood
 		, IDEAEducationalEnvironmentForSchoolAge
 	INTO #sppse
 	FROM Staging.ProgramParticipationSpecialEducation
 	WHERE IDEAIndicator = 1
 
-	CREATE INDEX IX_sppse ON #sppse(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea) INCLUDE (ProgramParticipationBeginDate, ProgramParticipationEndDate)
+	CREATE INDEX IX_sppse ON #sppse(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea) INCLUDE (ProgramParticipationStartDate, ProgramParticipationExitDate)
 
 	SELECT  
 		ske.StudentIdentifierState
 		, ske.LeaIdentifierSeaAccountability
 		, ske.SchoolIdentifierSea
-		, sppse.ProgramParticipationEndDate
+		, sppse.ProgramParticipationExitDate
 		, ske.Birthdate
 		, CASE idea.IdeaDisabilityTypeCode
             WHEN 'Autism'						THEN 'AUT'
@@ -203,14 +203,14 @@ BEGIN
 			END AS SexEdFactsCode
 		, CASE
 			WHEN CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE)  
-				BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
+				BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusExitDate, @SYEnd) 
 					THEN EnglishLearnerStatus
 			ELSE 0
 			END AS EnglishLearnerStatus
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
 				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart)  
-					AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
+					AND ISNULL(sps.EnglishLearner_StatusExitDate, @SYEnd) 
 					THEN 
 						CASE 
 							WHEN EnglishLearnerStatus = 1 THEN 'LEP'
@@ -256,14 +256,14 @@ BEGIN
 		AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
 		--Discipline Date within Program Participation range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, @SYStart) AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
+			BETWEEN ISNULL(sppse.ProgramParticipationStartDate, @SYStart) AND ISNULL(sppse.ProgramParticipationExitDate, @SYEnd)
 	LEFT JOIN Staging.PersonStatus sps
 		ON sps.StudentIdentifierState = sd.StudentIdentifierState
 		AND ISNULL(sps.LeaIdentifierSeaAccountability, '') = ISNULL(sd.LeaIdentifierSeaAccountability, '')
 		AND ISNULL(sps.SchoolIdentifierSea, '') = ISNULL(sd.SchoolIdentifierSea, '')
 		--Discipline Date within English Learner range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL (sps.EnglishLearner_StatusEndDate, @SYEnd)
+			BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL (sps.EnglishLearner_StatusExitDate, @SYEnd)
 	LEFT JOIN Staging.IdeaDisabilityType idea
         ON sppse.StudentIdentifierState = idea.StudentIdentifierState
         AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')

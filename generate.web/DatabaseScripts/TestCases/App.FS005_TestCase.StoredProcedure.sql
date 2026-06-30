@@ -120,7 +120,7 @@ BEGIN
 		ske.StudentIdentifierState
 		, ske.LeaIdentifierSeaAccountability
 		, ske.SchoolIdentifierSea
-		, sppse.ProgramParticipationEndDate
+		, sppse.ProgramParticipationExitDate
 		, ske.Birthdate
 		--, idea.IdeaDisabilityTypeCode AS IDEADISABILITYTYPE--update with CASE statement
 		, CASE idea.IdeaDisabilityTypeCode
@@ -180,14 +180,14 @@ BEGIN
 			ELSE 'MISSING'
 			END AS SexEdFactsCode
 		, CASE
-			WHEN sd.DisciplinaryActionStartDate BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
+			WHEN sd.DisciplinaryActionStartDate BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusExitDate, @SYEnd) 
 				THEN EnglishLearnerStatus
 			ELSE 0
 			END AS EnglishLearnerStatus
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
 				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart)  
-					AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
+					AND ISNULL(sps.EnglishLearner_StatusExitDate, @SYEnd) 
 					THEN 
 						CASE 
 							WHEN EnglishLearnerStatus = 1 THEN 'LEP'
@@ -213,7 +213,7 @@ BEGIN
 		AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sd.SchoolIdentifierSea, '')
 		--Discipline Date within Program Participation range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, @SYStart) AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
+			BETWEEN ISNULL(sppse.ProgramParticipationStartDate, @SYStart) AND ISNULL(sppse.ProgramParticipationExitDate, @SYEnd)
 	LEFT JOIN Staging.IdeaDisabilityType idea
         ON sppse.StudentIdentifierState = idea.StudentIdentifierState
         AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
