@@ -24,23 +24,23 @@ namespace generate.core.Models.Staging
         public DateTime? EnrollmentExitDate { get; set; }
         public bool? HomelessnessStatus { get; set; }
         public DateTime? Homelessness_StatusStartDate { get; set; }
-        public DateTime? Homelessness_StatusEndDate { get; set; }
+        public DateTime? Homelessness_StatusExitDate { get; set; }
         public string HomelessNightTimeResidence { get; set; }
         public DateTime? HomelessNightTimeResidence_StartDate { get; set; }
-        public DateTime? HomelessNightTimeResidence_EndDate { get; set; }
+        public DateTime? HomelessNightTimeResidence_ExitDate { get; set; }
         public bool? HomelessUnaccompaniedYouth { get; set; }
         public bool? HomelessServicedIndicator { get; set; }
         public bool? EconomicDisadvantageStatus { get; set; }
         public DateTime? EconomicDisadvantage_StatusStartDate { get; set; }
-        public DateTime? EconomicDisadvantage_StatusEndDate { get; set; }
+        public DateTime? EconomicDisadvantage_StatusExitDate { get; set; }
         public string EligibilityStatusForSchoolFoodServicePrograms { get; set; }
         public bool? NationalSchoolLunchProgramDirectCertificationIndicator { get; set; }
         public bool? MigrantStatus { get; set; }
         public DateTime? Migrant_StatusStartDate { get; set; }
-        public DateTime? Migrant_StatusEndDate { get; set; }
+        public DateTime? Migrant_StatusExitDate { get; set; }
         public string MilitaryConnectedStudentIndicator { get; set; }
         public DateTime? MilitaryConnected_StatusStartDate { get; set; }
-        public DateTime? MilitaryConnected_StatusEndDate { get; set; }
+        public DateTime? MilitaryConnected_StatusExitDate { get; set; }
         public string MilitaryActiveStatusIndicator { get; set; }
         public string MilitaryBranch { get; set; }
         public string MilitaryVeteranStatusIndicator { get; set; }
@@ -55,12 +55,12 @@ namespace generate.core.Models.Staging
         public DateTime? Immigrant_ProgramParticipationExitDate { get; set; }
         public bool? EnglishLearnerStatus { get; set; }
         public DateTime? EnglishLearner_StatusStartDate { get; set; }
-        public DateTime? EnglishLearner_StatusEndDate { get; set; }
+        public DateTime? EnglishLearner_StatusExitDate { get; set; }
         public string ISO_639_2_NativeLanguage { get; set; }
         public string ISO_639_2_HomeLanguage { get; set; }
         public string PerkinsEnglishLearnerStatus { get; set; }
         public DateTime? PerkinsEnglishLearnerStatus_StatusStartDate { get; set; }
-        public DateTime? PerkinsEnglishLearnerStatus_StatusEndDate { get; set; }
+        public DateTime? PerkinsEnglishLearnerStatus_StatusExitDate { get; set; }
         public string SchoolYear { get; set; }
         public string DataCollectionName { get; set; }
         public DateTime? RecordStartDateTime { get; set; }
