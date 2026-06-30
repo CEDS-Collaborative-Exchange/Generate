@@ -14,7 +14,7 @@ AS
 
 		, el.EnglishLearnerStatus
 		, el.EnglishLearner_StatusStartDate
-		, el.EnglishLearner_StatusEndDate
+		, el.EnglishLearner_StatusExitDate
 		, sssrd.OutputCode as TitleIIILanguageInstructionProgramType
 
 		, race.RaceType
@@ -27,13 +27,13 @@ AS
 		ON		enrollment.StudentIdentifierState						=	el.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(el.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(el.SchoolIdentifierSea, '')
-		AND		ISNULL(el.EnglishLearner_StatusEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		ISNULL(el.EnglishLearner_StatusExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	JOIN Staging.ProgramParticipationTitleIII			titleIII
 		ON		enrollment.StudentIdentifierState						=	titleIII.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(titleIII.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(titleIII.SchoolIdentifierSea, '')
-		AND		ISNULL(titleIII.ProgramParticipationEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		ISNULL(titleIII.ProgramParticipationExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	LEFT JOIN Staging.K12PersonRace							race
 		ON		enrollment.SchoolYear									=	race.SchoolYear

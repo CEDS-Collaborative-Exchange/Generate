@@ -118,7 +118,7 @@ BEGIN
 			, SchoolIdentifierSea
 			, EnglishLearnerStatus
 			, EnglishLearner_StatusStartDate
-			, EnglishLearner_StatusEndDate
+			, EnglishLearner_StatusExitDate
 			, SchoolYear
 		INTO #tempELStatus
 		FROM Staging.PersonStatus
@@ -126,7 +126,7 @@ BEGIN
 
 	-- Create Index for #tempELStatus 
 		CREATE INDEX IX_tempELStatus 
-			ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusEndDate)
+			ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusExitDate)
 			-- INCLUDE (IdeaInterimRemovalCode, IdeaInterimRemovalReasonCode, DisciplineELStatusCode)
 
 	--Pull the IDEA Disability into a temp table
@@ -146,8 +146,8 @@ BEGIN
 				AND ISNULL(sidt.LeaIdentifierSeaAccountability, '') = ISNULL(sppse.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sidt.SchoolIdentifierSea, '') 			= ISNULL(sppse.SchoolIdentifierSea, '')
 				AND sidt.IsPrimaryDisability = 1
-				AND ((sidt.RecordStartDateTime <= sppse.ProgramParticipationBeginDate and isnull(sidt.RecordEndDateTime, @SYEndDate) > sppse.ProgramParticipationBeginDate)
-					or (sidt.RecordStartDateTime > sppse.ProgramParticipationBeginDate and sidt.RecordStartDateTime < isnull(sppse.ProgramParticipationEndDate, @SYEndDate)))
+				AND ((sidt.RecordStartDateTime <= sppse.ProgramParticipationStartDate and isnull(sidt.RecordEndDateTime, @SYEndDate) > sppse.ProgramParticipationStartDate)
+					or (sidt.RecordStartDateTime > sppse.ProgramParticipationStartDate and sidt.RecordStartDateTime < isnull(sppse.ProgramParticipationExitDate, @SYEndDate)))
 
 	-- Create Index for #tempIdeaDisability
 		CREATE INDEX IX_ideaDisability 
@@ -158,8 +158,8 @@ BEGIN
 			StudentIdentifierState
 			, LeaIdentifierSeaAccountability
 			, SchoolIdentifierSea
-			, ProgramParticipationBeginDate
-			, ProgramParticipationEndDate
+			, ProgramParticipationStartDate
+			, ProgramParticipationExitDate
 			, IdeaIndicator
 			, IDEAEducationalEnvironmentForEarlyChildhood
 			, IDEAEducationalEnvironmentForSchoolAge
@@ -172,7 +172,7 @@ BEGIN
 	-- Create Index for #tempIdeaStatus 
 	-- 1/1/2024
 		CREATE INDEX IX_ideaStatus 
-			ON #tempIdeaStatus (StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, ProgramParticipationBeginDate, ProgramParticipationEndDate)
+			ON #tempIdeaStatus (StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, ProgramParticipationStartDate, ProgramParticipationExitDate)
 		CREATE INDEX IX_ideaStatus1 
 			ON #tempIdeaStatus (IDEAIndicator, IDEAEducationalEnvironmentForEarlyChildhood, IDEAEducationalEnvironmentForSchoolAge)
 
@@ -299,7 +299,7 @@ BEGIN
 				AND sd.StudentIdentifierState 						= sppse.StudentIdentifierState
 				AND ISNULL(sd.LEAIdentifierSeaAccountability,'') 	= ISNULL(sppse.LeaIdentifierSeaAccountability,'')
 				AND ISNULL(sd.SchoolIdentifierSea,'') 				= ISNULL(sppse.SchoolIdentifierSea,'')
-				AND sd.DisciplinaryActionStartDate BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
+				AND sd.DisciplinaryActionStartDate BETWEEN sppse.ProgramParticipationStartDate AND ISNULL(sppse.ProgramParticipationExitDate, @SYEndDate)
 		--idea disability type
 			LEFT JOIN #tempIdeaDisability sidt
 				ON sidt.SchoolYear 									= sd.SchoolYear
@@ -313,7 +313,7 @@ BEGIN
 				AND sd.StudentIdentifierState 						= el.StudentIdentifierState
 				AND ISNULL(sd.LeaIdentifierSeaAccountability, '') 	= ISNULL(el.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(sd.SchoolIdentifierSea, '') 				= ISNULL(el.SchoolIdentifierSea, '')
-				AND sd.DisciplinaryActionStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
+				AND sd.DisciplinaryActionStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEndDate)
 		--leas (rds)
 			LEFT JOIN RDS.DimLeas rdl
 				ON sd.LeaIdentifierSeaAccountability = rdl.LeaIdentifierSea
@@ -366,7 +366,7 @@ BEGIN
 				AND rdels.PerkinsEnglishLearnerStatusCode = 'MISSING'
 				AND (CASE
 					WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-						BETWEEN ISNULL(el.EnglishLearner_StatusStartDate, @SYStartDate) AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) 
+						BETWEEN ISNULL(el.EnglishLearner_StatusStartDate, @SYStartDate) AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEndDate) 
 							THEN ISNULL(EnglishLearnerStatus, 0)
 					ELSE 0
 					END) = ISNULL(rdels.EnglishLearnerStatusMap, -1)

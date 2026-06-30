@@ -42,7 +42,7 @@ distinct
 		when sps.EnglishLearnerStatus = 0 then 'NLEP'
 		else 'MISSING'
 	end 'EnglishLearnerStatusEdFactsCode',
-	sps.EnglishLearner_StatusStartDate, sps.EnglishLearner_StatusEndDate, 
+	sps.EnglishLearner_StatusStartDate, sps.EnglishLearner_StatusExitDate, 
 	sps.ISO_639_2_NativeLanguage 'Lang_STG', ssrdLANG.Iso6392LanguageCodeCode 'Lang_SSRDOut', rlang.Iso6392LanguageCodeEdFactsCode, rlang.DimLanguageId,
 -- IDEA
 	'[IDEA]' '[IDEA]',
@@ -60,7 +60,7 @@ distinct
 	rIdeaStatus.DimIdeaStatusId,
 
 	sdt.IdeaDisabilityTypeCode,sdt.IsPrimaryDisability,
-	sppse.ProgramParticipationBeginDate, sppse.ProgramParticipationEndDate,
+	sppse.ProgramParticipationStartDate, sppse.ProgramParticipationExitDate,
 -- LEA
 	'[LEA]' '[LEA]',
 	sk12e.LeaIdentifierSeaAccountability, LEA.LEA_OperationalStatus, LEA.LEA_OperationalStatusEffectiveDate, LEA.LEA_IsReportedFederally,

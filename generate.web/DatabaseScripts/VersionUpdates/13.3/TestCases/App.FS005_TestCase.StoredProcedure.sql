@@ -120,7 +120,7 @@ BEGIN
 		ske.StudentIdentifierState
 		, ske.LeaIdentifierSeaAccountability
 		, ske.SchoolIdentifierSea
-		, sppse.ProgramParticipationEndDate
+		, sppse.ProgramParticipationExitDate
 		, ske.Birthdate
 		--, idea.IdeaDisabilityTypeCode AS IDEADISABILITYTYPE--update with CASE statement
 		, CASE idea.IdeaDisabilityTypeCode
@@ -213,7 +213,7 @@ BEGIN
 		AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(sd.SchoolIdentifierSea, '')
 		--Discipline Date within Program Participation range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, @SYStart) AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
+			BETWEEN ISNULL(sppse.ProgramParticipationStartDate, @SYStart) AND ISNULL(sppse.ProgramParticipationExitDate, @SYEnd)
 	LEFT JOIN Staging.IdeaDisabilityType idea
         ON sppse.StudentIdentifierState = idea.StudentIdentifierState
         AND ISNULL(sppse.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')

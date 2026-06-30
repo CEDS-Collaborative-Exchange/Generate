@@ -104,8 +104,8 @@ BEGIN
 			AND ISNULL(sppe.SchoolIdentifierSea, '') = ISNULL(sd.SchoolIdentifierSea, '')
 			--Discipline Date within Program Participation range
 			AND ISNULL(sd.DisciplinaryActionStartDate, @SYStart) 
-				BETWEEN ISNULL(sppe.ProgramParticipationBeginDate, @SYStart) 
-				AND ISNULL(sppe.ProgramParticipationEndDate, @SYEnd)
+				BETWEEN ISNULL(sppe.ProgramParticipationStartDate, @SYStart) 
+				AND ISNULL(sppe.ProgramParticipationExitDate, @SYEnd)
 			GROUP BY ske.StudentIdentifierState 
 			HAVING SUM(CAST(sd.DurationOfDisciplinaryAction AS DECIMAL(6, 3))) >= 0.5
 
@@ -157,7 +157,7 @@ BEGIN
 			WHEN 'Female_1' THEN 'F'
 			ELSE 'MISSING'
 			END AS SexEdFactsCode
-		, sppse.ProgramParticipationEndDate
+		, sppse.ProgramParticipationExitDate
 		, CASE sidt.IdeaDisabilityTypeCode
 			WHEN 'Autism'						THEN 'AUT'
             WHEN 'Deafblindness'				THEN 'DB'
@@ -207,13 +207,13 @@ BEGIN
 		END AS RaceEdFactsCode
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
+				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusExitDate, @SYEnd) 
 					THEN ISNULL(EnglishLearnerStatus, 0)
 			ELSE 0
 			END AS EnglishLearnerStatus
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
+				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusExitDate, @SYEnd) 
 					THEN 
 						CASE 
 							WHEN EnglishLearnerStatus = 1 THEN 'LEP'
@@ -241,7 +241,7 @@ BEGIN
 		AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
 		--Discipline Date within Program Participation range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, @SYStart) AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
+			BETWEEN ISNULL(sppse.ProgramParticipationStartDate, @SYStart) AND ISNULL(sppse.ProgramParticipationExitDate, @SYEnd)
 	JOIN #StudentsWithEnoughDuration swed
 		ON ske.StudentIdentifierState = swed.StudentIdentifierState
 	LEFT JOIN Staging.IdeaDisabilityType sidt
@@ -257,7 +257,7 @@ BEGIN
 		AND ISNULL(sps.SchoolIdentifierSea, '') = ISNULL(sd.SchoolIdentifierSea, '')
 		--Discipline Date within English Learner range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) and ISNULL (sps.EnglishLearner_StatusEndDate, @SYEnd)
+			BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) and ISNULL (sps.EnglishLearner_StatusExitDate, @SYEnd)
 	LEFT JOIN RDS.vwUnduplicatedRaceMap spr --  Using a view that resolves multiple race records by returning the value TwoOrMoreRaces
 		ON spr.SchoolYear = @SchoolYear
 		AND ske.StudentIdentifierState = spr.StudentIdentifierState

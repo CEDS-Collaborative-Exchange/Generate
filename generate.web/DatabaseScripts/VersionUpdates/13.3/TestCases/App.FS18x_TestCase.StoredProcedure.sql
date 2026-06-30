@@ -280,22 +280,22 @@ BEGIN
 		SELECT 
 			EnglishLearnerStatus
 			, EnglishLearner_StatusStartDate
-			, EnglishLearner_StatusEndDate
+			, EnglishLearner_StatusExitDate
 			, EconomicDisadvantageStatus
 			, EconomicDisadvantage_StatusStartDate
-			, EconomicDisadvantage_StatusEndDate
+			, EconomicDisadvantage_StatusExitDate
 			, MigrantStatus
 			, Migrant_StatusStartDate
-			, Migrant_StatusEndDate
+			, Migrant_StatusExitDate
 			, HomelessnessStatus
 			, Homelessness_StatusStartDate
-			, Homelessness_StatusEndDate
+			, Homelessness_StatusExitDate
 			, ProgramType_FosterCare
 			, FosterCare_ProgramParticipationStartDate
-			, FosterCare_ProgramParticipationEndDate
+			, FosterCare_ProgramParticipationExitDate
 			, MilitaryConnectedStudentIndicator
 			, MilitaryConnected_StatusStartDate
-			, MilitaryConnected_StatusEndDate
+			, MilitaryConnected_StatusExitDate
 			, sps.StudentIdentifierState
 			, sps.LeaIdentifierSeaAccountability
 			, sps.SchoolIdentifierSea		
@@ -311,8 +311,8 @@ BEGIN
 	-- #StagingProgramParticipationSpecialEducation ----------------------------------------------------------------
 		SELECT 
 			sppse.IDEAIndicator
-			, sppse.ProgramParticipationBeginDate		[IDEA_StatusStartDate]
-			, sppse.ProgramParticipationEndDate			[IDEA_StatusEndDate] 
+			, sppse.ProgramParticipationStartDate		[IDEA_StatusStartDate]
+			, sppse.ProgramParticipationExitDate			[IDEA_StatusExitDate] 
 			, sppse.StudentIdentifierState
 			, sppse.LeaIdentifierSeaAccountability
 			, sppse.SchoolIdentifierSea		
@@ -420,7 +420,7 @@ BEGIN
 		, ppse.IDEAEducationalEnvironmentForSchoolAge 
 		, asr.AssessmentAdministrationStartDate
 		, idea.IDEA_StatusStartDate
-		, idea.IDEA_StatusEndDate
+		, idea.IDEA_StatusExitDate
 		, spr.RecordStartDateTime
 		, spr.RecordEndDateTime
 		, sy.SessionBeginDate
@@ -463,7 +463,7 @@ BEGIN
 			AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(idea.SchoolIdentifierSea,'')
 				AND ((idea.IDEA_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND idea.IDEA_StatusStartDate <=  asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(idea.IDEA_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(idea.IDEA_StatusExitDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus el
 		ON el.StudentIdentifierState = asr.StudentIdentifierState
 			AND el.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
@@ -471,7 +471,7 @@ BEGIN
 			AND el.EnglishLearnerStatus = 1
 			AND ((el.EnglishLearner_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND el.EnglishLearner_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus eco
 		ON eco.StudentIdentifierState = asr.StudentIdentifierState
 			AND eco.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
@@ -479,7 +479,7 @@ BEGIN
 			and eco.EconomicDisadvantageStatus = 1
 			AND ((eco.EconomicDisadvantage_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND eco.EconomicDisadvantage_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(eco.EconomicDisadvantage_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(eco.EconomicDisadvantage_StatusExitDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus ms
 		ON ms.StudentIdentifierState = asr.StudentIdentifierState
 			AND ms.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
@@ -487,7 +487,7 @@ BEGIN
 			AND ms.MigrantStatus = 1
 			AND ((ms.Migrant_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND ms.Migrant_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(ms.Migrant_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(ms.Migrant_StatusExitDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus hs
 		ON hs.StudentIdentifierState = asr.StudentIdentifierState
 			AND hs.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
@@ -495,7 +495,7 @@ BEGIN
 			AND hs.HomelessnessStatus = 1
 			AND ((hs.Homelessness_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND hs.Homelessness_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(hs.Homelessness_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(hs.Homelessness_StatusExitDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus fc
 		ON fc.StudentIdentifierState = asr.StudentIdentifierState
 			AND fc.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
@@ -503,7 +503,7 @@ BEGIN
 			AND fc.ProgramType_FosterCare = 1
 			AND ((fc.FosterCare_ProgramParticipationStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND fc.FosterCare_ProgramParticipationStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(fc.FosterCare_ProgramParticipationEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(fc.FosterCare_ProgramParticipationExitDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonStatus mcs
 		ON mcs.StudentIdentifierState = asr.StudentIdentifierState
 			AND mcs.LeaIdentifierSeaAccountability = asr.LeaIdentifierSeaAccountability
@@ -511,7 +511,7 @@ BEGIN
 			AND case when mcs.MilitaryConnectedStudentIndicator IS NULL then 0 else 1 end = 1
 			AND ((mcs.MilitaryConnected_StatusStartDate BETWEEN @SYStartDate and @SYEndDate 
 						AND mcs.MilitaryConnected_StatusStartDate <= asr.AssessmentAdministrationStartDate) 
-					AND ISNULL(mcs.MilitaryConnected_StatusEndDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
+					AND ISNULL(mcs.MilitaryConnected_StatusExitDate, @SYEndDate) >= asr.AssessmentAdministrationStartDate)
 	LEFT JOIN #StagingPersonRace spr
 		ON spr.StudentIdentifierState = ske.StudentIdentifierState
 			AND spr.SchoolYear = sy.SchoolYear

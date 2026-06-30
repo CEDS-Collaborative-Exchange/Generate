@@ -37,41 +37,41 @@ AS
 				,race.RecordEndDateTime
 
 				,programparticipation.IDEAIndicator
-				,programparticipation.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
-				,programparticipation.ProgramParticipationEndDate		AS IDEAProgramParticipationEndDate
+				,programparticipation.ProgramParticipationStartDate		AS IDEAProgramParticipationBeginDate
+				,programparticipation.ProgramParticipationExitDate		AS IDEAProgramParticipationEndDate
 				
 				,el.EnglishLearnerStatus
 				,el.EnglishLearner_StatusStartDate
-				,el.EnglishLearner_StatusEndDate
+				,el.EnglishLearner_StatusExitDate
 
 				,econ.EconomicDisadvantageStatus
 				,econ.EconomicDisadvantage_StatusStartDate
-				,econ.EconomicDisadvantage_StatusEndDate
+				,econ.EconomicDisadvantage_StatusExitDate
 
 				,migr.MigrantStatus
 				,migr.Migrant_StatusStartDate
-				,migr.Migrant_StatusEndDate
+				,migr.Migrant_StatusExitDate
 
 				,home.HomelessnessStatus
 				,home.Homelessness_StatusStartDate
-				,home.Homelessness_StatusEndDate
+				,home.Homelessness_StatusExitDate
 
 				,foster.ProgramType_FosterCare
 				,foster.FosterCare_ProgramParticipationStartDate
-				,foster.FosterCare_ProgramParticipationEndDate
+				,foster.FosterCare_ProgramParticipationExitDate
 
 				,mil.MilitaryConnectedStudentIndicator
 				,mil.MilitaryConnected_StatusStartDate
-				,mil.MilitaryConnected_StatusEndDate
+				,mil.MilitaryConnected_StatusExitDate
 
 				, nord.NeglectedOrDelinquentStatus
 				, nord.NeglectedOrDelinquentProgramEnrollmentSubpart
-				, nord.ProgramParticipationBeginDate				AS 'NorDProgramParticipationBeginDate'
-				, nord.ProgramParticipationEndDate					AS 'NorDProgramParticipationEndDate'
+				, nord.ProgramParticipationStartDate				AS 'NorDProgramParticipationBeginDate'
+				, nord.ProgramParticipationExitDate					AS 'NorDProgramParticipationEndDate'
 
 				, titleIII.TitleIIILanguageInstructionProgramType
-				, titleIII.ProgramParticipationBeginDate			AS 'TITLEIIIProgramParticipationBeginDate'
-				, titleIII.ProgramParticipationEndDate				AS 'TITLEIIIProgramParticipationEndDate'
+				, titleIII.ProgramParticipationStartDate			AS 'TITLEIIIProgramParticipationBeginDate'
+				, titleIII.ProgramParticipationExitDate				AS 'TITLEIIIProgramParticipationEndDate'
 
 	FROM Staging.K12Enrollment								enrollment		
 
@@ -90,7 +90,7 @@ AS
 		ON		enrollment.StudentIdentifierState						=	programparticipation.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(programparticipation.LEAIdentifierSeaAccountability, '') 
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(programparticipation.SchoolIdentifierSea, '')
-		AND		programparticipation.ProgramParticipationBeginDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
+		AND		programparticipation.ProgramParticipationStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, '6/30/' + convert(varchar,enrollment.SchoolYear))
 
 	LEFT JOIN Staging.IdeaDisabilityType					ideaDisability
 		ON		enrollment.StudentIdentifierState						=	ideaDisability.StudentIdentifierState
@@ -151,7 +151,7 @@ AS
 		ON		enrollment.StudentIdentifierState						=	titleIII.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(titleIII.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(titleIII.SchoolIdentifierSea, '')
-		AND		ISNULL(titleIII.ProgramParticipationEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		ISNULL(titleIII.ProgramParticipationExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	--uncomment/modify the where clause conditions as necessary for validation
 	WHERE 1 = 1

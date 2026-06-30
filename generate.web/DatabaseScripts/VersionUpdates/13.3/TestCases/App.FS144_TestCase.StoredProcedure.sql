@@ -104,7 +104,7 @@ BEGIN
 		AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
 		--Discipline Date within Program Participation range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, @SYStart) AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
+			BETWEEN ISNULL(sppse.StatusExitProgramParticipationStartDateDate, @SYStart) AND ISNULL(sppse.StatusExitProgramParticipationExitDateDate, @SYEnd)
 	LEFT JOIN Staging.IdeaDisabilityType sidt
         ON ske.StudentIdentifierState = sidt.StudentIdentifierState
         AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sidt.LeaIdentifierSeaAccountability, '')

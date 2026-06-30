@@ -32,12 +32,12 @@ CREATE VIEW [Debug].[vwDiscipline_StagingTables] AS
 				,programparticipation.IDEAIndicator
 				,programparticipation.IDEAEducationalEnvironmentForEarlyChildhood
 				,programparticipation.IDEAEducationalEnvironmentForSchoolAge
-				,programparticipation.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
-				,programparticipation.ProgramParticipationEndDate		AS IDEAProgramParticipationEndDate
+				,programparticipation.ProgramParticipationStartDate		AS IDEAProgramParticipationStartDate
+				,programparticipation.ProgramParticipationExitDate		AS IDEAProgramParticipationExitDate
 				
 				,el.EnglishLearnerStatus
 				,el.EnglishLearner_StatusStartDate
-				,el.EnglishLearner_StatusEndDate
+				,el.EnglishLearner_StatusExitDate
 
 				,race.RaceType
 				,race.RecordStartDateTime
@@ -54,7 +54,7 @@ CREATE VIEW [Debug].[vwDiscipline_StagingTables] AS
 			ON		enrollment.StudentIdentifierState						=	programparticipation.StudentIdentifierState
 			AND		ISNULL(enrollment.LeaIdentifierSeaAccountability, '')	=	ISNULL(programparticipation.LeaIdentifierSeaAccountability, '') 
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(programparticipation.SchoolIdentifierSea, '')
-			AND		discipline.DisciplinaryActionStartDate BETWEEN programparticipation.ProgramParticipationBeginDate AND ISNULL(programparticipation.ProgramParticipationEndDate, GETDATE())
+			AND		discipline.DisciplinaryActionStartDate BETWEEN programparticipation.ProgramParticipationStartDate AND ISNULL(programparticipation.ProgramParticipationExitDate, GETDATE())
 
 	LEFT JOIN Staging.IdeaDisabilityType					ideaDisability
 			ON		enrollment.StudentIdentifierState						=	ideaDisability.StudentIdentifierState
@@ -74,7 +74,7 @@ CREATE VIEW [Debug].[vwDiscipline_StagingTables] AS
 			ON		enrollment.StudentIdentifierState						=	el.StudentIdentifierState
 			AND		ISNULL(enrollment.LeaIdentifierSeaAccountability, '')	=	ISNULL(el.LeaIdentifierSeaAccountability, '')
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(el.SchoolIdentifierSea, '')
-			AND		discipline.DisciplinaryActionStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
+			AND		discipline.DisciplinaryActionStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, GETDATE())
 
 	--Join to get the child count date for the age calculation
 	JOIN App.ToggleQuestions		toggle 		ON		toggle.EmapsQuestionAbbrv	=	'CHDCTDTE'		

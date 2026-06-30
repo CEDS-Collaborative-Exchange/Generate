@@ -90,7 +90,7 @@ BEGIN
 		, ISNULL(rddEnrollmentEntryDate.DimDateId, -1)						EnrollmentEntryDateId
 		, ISNULL(rddEnrollmentExitDate.DimDateId, -1)						EnrollmentExitDateId
 		, ISNULL(rddEconolicallyDisadvantagedStatusStartDateTime.DimDateId, -1)			StatusStartDateEconomicallyDisadvantagedId
-		, ISNULL(rddEconolicallyDisadvantagedStatusEndDateTime.DimDateId, -1)			StatusEndDateEconomicallyDisadvantagedId
+		, ISNULL(rddEconolicallyDisadvantagedStatusExitDateTime.DimDateId, -1)			StatusEndDateEconomicallyDisadvantagedId
 		, -1																StatusStartDateEnglishLearnerId
 		, -1																StatusEndDateEnglishLearnerId
 		, -1																StatusStartDateHomelessnessId
@@ -141,7 +141,7 @@ BEGIN
 		ON ske.StudentIdentifierState = sd.StudentIdentifierState
 		AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sd.LeaIdentifierSeaAccountability,'')
 		AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sd.SchoolIdentifierSea,'')
-		AND ISNULL(saema.LearningResourceIssuedDate, @CountDate) BETWEEN sd.Disability_StatusStartDate AND ISNULL(sd.Disability_StatusEndDate, @SYEndDate)
+		AND ISNULL(saema.LearningResourceIssuedDate, @CountDate) BETWEEN sd.Disability_StatusStartDate AND ISNULL(sd.Disability_StatusExitDate, @SYEndDate)
 	LEFT JOIN RDS.vwDimDisabilityStatuses rdds
 		ON ISNULL(CAST(sd.DisabilityStatus AS INT), -1) = ISNULL(rdds.DisabilityStatusMap, rdds.DisabilityStatusCode)
 		AND ISNULL(CAST(sd.Section504Status AS INT), -1) = ISNULL(rdds.Section504StatusMap, rdds.Section504StatusCode)
@@ -151,7 +151,7 @@ BEGIN
 		ON ske.StudentIdentifierState = sppse.StudentIdentifierState
 		AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(sppse.LeaIdentifierSeaAccountability,'')
 		AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(sppse.SchoolIdentifierSea,'')
-		AND ISNULL(saema.LearningResourceIssuedDate, @CountDate) BETWEEN sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
+		AND ISNULL(saema.LearningResourceIssuedDate, @CountDate) BETWEEN sppse.ProgramParticipationStartDate AND ISNULL(sppse.ProgramParticipationExitDate, @SYEndDate)
 	LEFT JOIN Staging.IdeaDisabilityType sidt	
 		ON ske.SchoolYear = sidt.SchoolYear
 		AND sidt.StudentIdentifierState = sppse.StudentIdentifierState
@@ -193,16 +193,16 @@ BEGIN
 		ON ske.StudentIdentifierState = el.StudentIdentifierState
 		AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(el.LeaIdentifierSeaAccountability,'')
 		AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(el.SchoolIdentifierSea,'')
-		AND ISNULL(saema.LearningResourceIssuedDate, @CountDate) BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate)
+		AND ISNULL(saema.LearningResourceIssuedDate, @CountDate) BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEndDate)
 	LEFT JOIN Staging.PersonStatus ed 
 		ON ske.StudentIdentifierState = ed.StudentIdentifierState
 		AND ISNULL(ske.LEAIdentifierSeaAccountability,'') = ISNULL(ed.LeaIdentifierSeaAccountability,'')
 		AND ISNULL(ske.SchoolIdentifierSea,'') = ISNULL(ed.SchoolIdentifierSea,'')
-		AND ISNULL(saema.LearningResourceIssuedDate, @CountDate) BETWEEN ed.EconomicDisadvantage_StatusStartDate AND ISNULL(ed.EconomicDisadvantage_StatusEndDate, @SYEndDate)
+		AND ISNULL(saema.LearningResourceIssuedDate, @CountDate) BETWEEN ed.EconomicDisadvantage_StatusStartDate AND ISNULL(ed.EconomicDisadvantage_StatusExitDate, @SYEndDate)
 	LEFT JOIN RDS.DimDates rddEconolicallyDisadvantagedStatusStartDateTime
 		ON ed.EconomicDisadvantage_StatusStartDate = rddEconolicallyDisadvantagedStatusStartDateTime.DateValue
-	LEFT JOIN RDS.DimDates rddEconolicallyDisadvantagedStatusEndDateTime
-		ON ed.EconomicDisadvantage_StatusEndDate = rddEconolicallyDisadvantagedStatusEndDateTime.DateValue
+	LEFT JOIN RDS.DimDates rddEconolicallyDisadvantagedStatusExitDateTime
+		ON ed.EconomicDisadvantage_StatusExitDate = rddEconolicallyDisadvantagedStatusExitDateTime.DateValue
 	LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
 		ON rsy.SchoolYear = rdels.SchoolYear
 		AND ISNULL(CAST(el.PerkinsEnglishLearnerStatus AS SMALLINT), -1) = ISNULL(rdels.PerkinsEnglishLearnerStatusMap, rdels.PerkinsEnglishLearnerStatusCode)

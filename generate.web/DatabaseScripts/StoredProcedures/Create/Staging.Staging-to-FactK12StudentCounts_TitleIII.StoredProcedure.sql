@@ -130,7 +130,7 @@ BEGIN
 		JOIN Staging.ProgramParticipationTitleIII ppt3
 			ON ske.SchoolYear = ppt3.SchoolYear		
 			AND ske.Student_Identifier_State = ppt3.Student_Identifier_State	
-			--AND ppt3.ProgramParticipationBeginDate BETWEEN @SessionBeginDate AND ISNULL(@SessionEndDate, GETDATE())  
+			--AND ppt3.ProgramParticipationStartDate BETWEEN @SessionBeginDate AND ISNULL(@SessionEndDate, GETDATE())  
 		JOIN #vwTitleIIIStatuses  title3Statuses
 			ON RTRIM(LTRIM(ppt3.Progress_TitleIII)) = RTRIM(LTRIM(title3Statuses.TitleiiiAccountabilityProgressStatusCode))
 		JOIN RDS.DimLeas rdl
@@ -165,9 +165,9 @@ BEGIN
 			AND ISNULL(ske.Birthdate, '1/1/1900') = ISNULL(rdks.BirthDate, '1/1/1900')
 			AND @SessionBeginDate BETWEEN rdks.RecordStartDateTime AND ISNULL(rdks.RecordEndDateTime, GETDATE())
 	WHERE 
-		(ppt3.ProgramParticipationBeginDate < @SessionEndDate) and (ppt3.ProgramParticipationEndDate > @SessionBeginDate) 
+		(ppt3.ProgramParticipationStartDate < @SessionEndDate) and (ppt3.ProgramParticipationExitDate > @SessionBeginDate) 
 		OR 
-		(ppt3.ProgramParticipationBeginDate < @SessionEndDate)
+		(ppt3.ProgramParticipationStartDate < @SessionEndDate)
 
 DROP TABLE #organizationTypes
 DROP TABLE #vwTitleIIIStatuses

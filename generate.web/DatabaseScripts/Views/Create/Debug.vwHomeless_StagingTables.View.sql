@@ -13,24 +13,24 @@ AS
 
 		, hm.HomelessnessStatus
 		, hm.Homelessness_StatusStartDate
-		, hm.Homelessness_StatusEndDate
+		, hm.Homelessness_StatusExitDate
 		, hm.HomelessUnaccompaniedYouth
 		, hm.HomelessServicedIndicator
 
 		, hmnr.HomelessNightTimeResidence
 		, hmnr.HomelessNightTimeResidence_StartDate
-		, hmnr.HomelessNightTimeResidence_EndDate
+		, hmnr.HomelessNightTimeResidence_ExitDate
 
-		, idea.ProgramParticipationBeginDate		AS IDEAProgramParticipationBeginDate
-		, idea.ProgramParticipationEndDate			AS IDEAProgramParticipationEndDate
+		, idea.ProgramParticipationStartDate		AS IDEAProgramParticipationStartDate
+		, idea.ProgramParticipationExitDate			AS IDEAProgramParticipationExitDate
 		
 		, el.EnglishLearnerStatus
 		, el.EnglishLearner_StatusStartDate
-		, el.EnglishLearner_StatusEndDate
+		, el.EnglishLearner_StatusExitDate
 
 		, mig.MigrantStatus
 		, mig.Migrant_StatusStartDate
-		, mig.Migrant_StatusEndDate
+		, mig.Migrant_StatusExitDate
 
 		, race.RaceType
 		, race.RecordStartDateTime					AS RaceStartDate
@@ -54,7 +54,7 @@ AS
 			ON		enrollment.StudentIdentifierState						=	idea.StudentIdentifierState
 			AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(idea.LEAIdentifierSeaAccountability, '') 
 			AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(idea.SchoolIdentifierSea, '')
-			AND		idea.ProgramParticipationBeginDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
+			AND		idea.ProgramParticipationStartDate  BETWEEN enrollment.EnrollmentEntryDate AND ISNULL(enrollment.EnrollmentExitDate, GETDATE())
 
 	LEFT JOIN Staging.K12PersonRace							race
 			ON		enrollment.SchoolYear									=	race.SchoolYear

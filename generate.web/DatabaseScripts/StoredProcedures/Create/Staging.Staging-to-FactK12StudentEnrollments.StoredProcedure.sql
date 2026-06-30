@@ -50,7 +50,7 @@ AS
 
 	IF OBJECT_ID(N'tempdb..#vwDimMilitaryStatuses') IS NOT NULL DROP TABLE #vwDimMilitaryStatuses
 	SELECT v.* INTO #vwDimMilitaryStatuses FROM RDS.vwDimMilitaryStatuses  v JOIN #SchoolYears t on v.SchoolYear = t.SchoolYear
-	CREATE INDEX IX_vwDimMilitaryStatuses ON #vwDimMilitaryStatuses(SchoolYear, MilitaryConnectedStudentIndicatorMap, MilitaryActiveStudentIndicatorMap, MilitaryBranchMap, MilitaryVeteranStudentIndicatorMap) INCLUDE (MilitaryConnectedStudentIndicatorCode, MilitaryActiveStudentIndicatorCode, MilitaryBranchCode, MilitaryVeteranStudentIndicatorCode)
+	CREATE INDEX IX_vwDimMilitaryStatuses ON #vwDimMilitaryStatuses(SchoolYear, MilitaryConnectedStudentIndicatorMap, MilitaryActiveStatusIndicatorMap, MilitaryBranchMap, MilitaryVeteranStatusIndicatorMap) INCLUDE (MilitaryConnectedStudentIndicatorCode, MilitaryActiveStatusIndicatorCode, MilitaryBranchCode, MilitaryVeteranStatusIndicatorCode)
 
 	IF OBJECT_ID(N'tempdb..#vwDimIdeaDisabilityTypes') IS NOT NULL DROP TABLE #vwDimIdeaDisabilityTypes
 	SELECT v.* INTO #vwDimIdeaDisabilityTypes FROM RDS.vwDimIdeaDisabilityTypes  v JOIN #SchoolYears t on v.SchoolYear = t.SchoolYear
@@ -472,9 +472,9 @@ AS
 		AND ISNULL(sidt.IdeaDisabilityTypeCode, 'MISSING')														= ISNULL(rdidtSecondary.IdeaDisabilityTypeMap, rdidtSecondary.IdeaDisabilityTypeCode)
 		AND sidt.IsSecondaryDisability																			= 1
 	LEFT JOIN RDS.DimDates rddiStart
-		ON sppse.ProgramParticipationBeginDate																	= rddiStart.DateValue
+		ON sppse.ProgramParticipationStartDate																	= rddiStart.DateValue
 	LEFT JOIN RDS.DimDates rddiEnd
-		ON sppse.ProgramParticipationEndDate																	= rddiEnd.DateValue
+		ON sppse.ProgramParticipationExitDate																	= rddiEnd.DateValue
 
 
 	UPDATE #Facts
@@ -583,9 +583,9 @@ AS
 		AND ISNULL(spptiii.TitleIIIAccountabilityProgressStatus, 'MISSING')										= ISNULL(rdtiiis.TitleIIIAccountabilityProgressStatusMap, rdtiiis.TitleIIIAccountabilityProgressStatusCode)
 		AND ISNULL(spptiii.TitleIIILanguageInstructionProgramType, 'MISSING')									= ISNULL(rdtiiis.TitleIIILanguageInstructionProgramTypeMap, rdtiiis.TitleIIILanguageInstructionProgramTypeCode)
 	LEFT JOIN RDS.DimDates rddtiiiStart
-		ON spptiii.ProgramParticipationBeginDate																= rddtiiiStart.DateValue
+		ON spptiii.ProgramParticipationStartDate																= rddtiiiStart.DateValue
 	LEFT JOIN RDS.DimDates rddtiiiEnd
-		ON spptiii.ProgramParticipationEndDate																	= rddtiiiEnd.DateValue
+		ON spptiii.ProgramParticipationExitDate																	= rddtiiiEnd.DateValue
 
 	UPDATE #Facts
 	SET   MilitaryStatusId								= rdmil.DimMilitaryStatusId
@@ -618,9 +618,9 @@ AS
 	JOIN #vwDimMilitaryStatuses rdmil
 		ON ske.SchoolYear = rdmil.SchoolYear
 		AND ISNULL(sps.MilitaryConnectedStudentIndicator, 'MISSING')											= ISNULL(rdmil.MilitaryConnectedStudentIndicatorMap, rdmil.MilitaryConnectedStudentIndicatorCode)
-		AND ISNULL(sm.MilitaryActiveStudentIndicator, 'MISSING')												= ISNULL(rdmil.MilitaryActiveStudentIndicatorMap, rdmil.MilitaryActiveStudentIndicatorCode)
+		AND ISNULL(sm.MilitaryActiveStatusIndicator, 'MISSING')												= ISNULL(rdmil.MilitaryActiveStatusIndicatorMap, rdmil.MilitaryActiveStatusIndicatorCode)
 		AND ISNULL(sm.MilitaryBranch, 'MISSING')																= ISNULL(rdmil.MilitaryBranchMap, rdmil.MilitaryBranchCode)
-		AND ISNULL(sm.MilitaryVeteranStudentIndicator, 'MISSING')												= ISNULL(rdmil.MilitaryVeteranStudentIndicatorMap, rdmil.MilitaryVeteranStudentIndicatorCode)
+		AND ISNULL(sm.MilitaryVeteranStatusIndicator, 'MISSING')												= ISNULL(rdmil.MilitaryVeteranStatusIndicatorMap, rdmil.MilitaryVeteranStatusIndicatorCode)
 
 	
 	UPDATE #Facts

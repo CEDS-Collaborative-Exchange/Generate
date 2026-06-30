@@ -12,12 +12,12 @@ AS
 
 		, el.EnglishLearnerStatus
 		, el.EnglishLearner_StatusStartDate
-		, el.EnglishLearner_StatusEndDate
+		, el.EnglishLearner_StatusExitDate
 		, sssrd.OutputCode as NativeLanguage
 
 		, idea.IDEAIndicator
-		, idea.ProgramParticipationBeginDate
-		, idea.ProgramParticipationEndDate
+		, idea.ProgramParticipationStartDate
+		, idea.ProgramParticipationExitDate
 				
 		, race.RaceType
 		, race.RecordStartDateTime
@@ -37,19 +37,19 @@ AS
 		ON		enrollment.StudentIdentifierState						=	el.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(el.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(el.SchoolIdentifierSea, '')
-		AND		compareDate.CompareDate BETWEEN el.EnglishLearner_StatusStartDate and ISNULL(el.EnglishLearner_StatusEndDate, GETDATE())
+		AND		compareDate.CompareDate BETWEEN el.EnglishLearner_StatusStartDate and ISNULL(el.EnglishLearner_StatusExitDate, GETDATE())
 
 	JOIN Staging.ProgramParticipationTitleIII			titleIII
 		ON		enrollment.StudentIdentifierState						=	titleIII.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(titleIII.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(titleIII.SchoolIdentifierSea, '')
-		AND		ISNULL(titleIII.ProgramParticipationEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		ISNULL(titleIII.ProgramParticipationExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	LEFT JOIN Staging.ProgramParticipationSpecialEducation	idea
 		ON		enrollment.StudentIdentifierState						=	idea.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(idea.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(idea.SchoolIdentifierSea, '')
-		AND		compareDate.CompareDate BETWEEN idea.ProgramParticipationBeginDate and ISNULL(idea.ProgramParticipationEndDate, GETDATE())
+		AND		compareDate.CompareDate BETWEEN idea.ProgramParticipationStartDate and ISNULL(idea.ProgramParticipationExitDate, GETDATE())
 
 	LEFT JOIN Staging.K12PersonRace							race
 		ON		enrollment.SchoolYear									=	race.SchoolYear

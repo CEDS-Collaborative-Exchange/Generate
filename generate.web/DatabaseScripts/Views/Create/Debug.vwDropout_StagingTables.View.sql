@@ -13,23 +13,23 @@ AS
 
 		, el.EnglishLearnerStatus
 		, el.EnglishLearner_StatusStartDate
-		, el.EnglishLearner_StatusEndDate
+		, el.EnglishLearner_StatusExitDate
 
 		, ecoDis.EconomicDisadvantageStatus
 		, ecoDis.EconomicDisadvantage_StatusStartDate
-		, ecoDis.EconomicDisadvantage_StatusEndDate
+		, ecoDis.EconomicDisadvantage_StatusExitDate
 				
 		, homeless.HomelessnessStatus
 		, homeless.Homelessness_StatusStartDate
-		, homeless.Homelessness_StatusEndDate
+		, homeless.Homelessness_StatusExitDate
 				
 		, migrant.MigrantStatus
-		, migrant.ProgramParticipationStartDate
-		, migrant.ProgramParticipationExitDate
+		, migrant.ProgramParticipationStartDate					Migrant_ProgramParticipationStartDate
+		, migrant.ProgramParticipationExitDate					Migrant_ProgramParticipationExitDate
 				
 		, idea.IDEAIndicator
-		, idea.ProgramParticipationBeginDate
-		, idea.ProgramParticipationEndDate
+		, idea.ProgramParticipationStartDate					IDEA_ProgramParticipationStartDate
+		, idea.ProgramParticipationExitDate						IDEA_ProgramParticipationExitDate
 				
 		, race.RaceType
 		, race.RecordStartDateTime
@@ -46,25 +46,25 @@ AS
 		ON		enrollment.StudentIdentifierState						=	el.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(el.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(el.SchoolIdentifierSea, '')
-		AND		ISNULL(el.EnglishLearner_StatusEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		ISNULL(el.EnglishLearner_StatusExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	LEFT JOIN Staging.PersonStatus							ecoDis
 		ON		enrollment.StudentIdentifierState						=	ecoDis.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(ecoDis.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(ecoDis.SchoolIdentifierSea, '')
-		AND		ISNULL(ecoDis.EconomicDisadvantage_StatusEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		ISNULL(ecoDis.EconomicDisadvantage_StatusExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	LEFT JOIN Staging.PersonStatus							homeless
 		ON		enrollment.StudentIdentifierState						=	homeless.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(homeless.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(homeless.SchoolIdentifierSea, '')
-		AND		ISNULL(homeless.Homelessness_StatusEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		ISNULL(homeless.Homelessness_StatusExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	LEFT JOIN Staging.ProgramParticipationSpecialEducation	idea
 		ON		enrollment.StudentIdentifierState						=	idea.StudentIdentifierState
 		AND		ISNULL(enrollment.LEAIdentifierSeaAccountability, '')	=	ISNULL(idea.LEAIdentifierSeaAccountability, '')
 		AND		ISNULL(enrollment.SchoolIdentifierSea, '')				=	ISNULL(idea.SchoolIdentifierSea, '')
-		AND		ISNULL(idea.ProgramParticipationEndDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
+		AND		ISNULL(idea.ProgramParticipationExitDate, enrollment.EnrollmentExitDate) >= enrollment.EnrollmentEntryDate
 
 	LEFT JOIN Staging.K12PersonRace							race
 		ON		enrollment.SchoolYear									=	race.SchoolYear

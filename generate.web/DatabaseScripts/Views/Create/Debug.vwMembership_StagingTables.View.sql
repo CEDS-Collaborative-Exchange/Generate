@@ -17,7 +17,7 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 
 			, ecodis.EconomicDisadvantageStatus 								-- For FS226
 			, ecodis.EconomicDisadvantage_StatusStartDate 						-- For FS226 and FS033
-			, ecodis.EconomicDisadvantage_StatusEndDate 						-- For FS226 and FS033
+			, ecodis.EconomicDisadvantage_StatusExitDate 						-- For FS226 and FS033
 			, ecodis.EligibilityStatusForSchoolFoodServicePrograms 				-- For FS033
 			, ecodis.NationalSchoolLunchProgramDirectCertificationIndicator 	-- For FS033
 
@@ -61,5 +61,4 @@ CREATE VIEW [debug].[vwMembership_StagingTables]
 				AND		ISNULL(ecodis.LEAIdentifierSeaAccountability, '')			    =	ISNULL(enrollment.LEAIdentifierSeaAccountability, '')
 				AND		ISNULL(ecodis.SchoolIdentifierSea, '')						    =	ISNULL(enrollment.SchoolIdentifierSea, '')
 				
-
 		WHERE 1 = 1

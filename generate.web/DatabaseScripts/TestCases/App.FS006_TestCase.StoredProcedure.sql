@@ -128,7 +128,7 @@ BEGIN
 			WHEN 'Female_1'	THEN 'F'
 			ELSE 'MISSING'
 			END AS SexEdFactsCode
-		, sppse.ProgramParticipationEndDate
+		, sppse.ProgramParticipationExitDate
 		, CASE sidt.IdeaDisabilityTypeCode
 			WHEN 'Autism'						THEN 'AUT'
             WHEN 'Deafblindness'				THEN 'DB'
@@ -178,13 +178,13 @@ BEGIN
 		END AS RaceEdFactsCode
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
+				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusExitDate, @SYEnd) 
 					THEN ISNULL(EnglishLearnerStatus, 0)
 			ELSE 0
 			END AS EnglishLearnerStatus
 		, CASE
 			WHEN ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') 
-				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEnd) 
+				BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) AND ISNULL(sps.EnglishLearner_StatusExitDate, @SYEnd) 
 					THEN 
 						CASE 
 							WHEN EnglishLearnerStatus = 1 THEN 'LEP'
@@ -211,14 +211,14 @@ BEGIN
 		AND ISNULL(sppse.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
 		--Discipline Date within Program Participation range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN ISNULL(sppse.ProgramParticipationBeginDate, @SYStart) AND ISNULL(sppse.ProgramParticipationEndDate, @SYEnd)
+			BETWEEN ISNULL(sppse.ProgramParticipationStartDate, @SYStart) AND ISNULL(sppse.ProgramParticipationExitDate, @SYEnd)
 	LEFT JOIN Staging.PersonStatus sps
 		ON sps.StudentIdentifierState = sd.StudentIdentifierState
 		AND ISNULL(sps.LeaIdentifierSeaAccountability, '') = ISNULL(sd.LeaIdentifierSeaAccountability, '')
 		AND ISNULL(sps.SchoolIdentifierSea, '') = ISNULL(sd.SchoolIdentifierSea, '')
 		--Discipline Date within English Learner range
 		AND CAST(ISNULL(sd.DisciplinaryActionStartDate, '1900-01-01') AS DATE) 
-			BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) and ISNULL (sps.EnglishLearner_StatusEndDate, @SYEnd)
+			BETWEEN ISNULL(sps.EnglishLearner_StatusStartDate, @SYStart) and ISNULL (sps.EnglishLearner_StatusExitDate, @SYEnd)
 	LEFT JOIN Staging.IdeaDisabilityType sidt
         ON ske.StudentIdentifierState = sidt.StudentIdentifierState
         AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(sidt.LeaIdentifierSeaAccountability, '')

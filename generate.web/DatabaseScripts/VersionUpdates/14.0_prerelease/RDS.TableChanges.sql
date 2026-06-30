@@ -142,26 +142,26 @@ BEGIN
 		N'COLUMN';
 END;
 
-IF OBJECT_ID(N'[RDS].[DimPsEnrollmentStatuses]', N'U') IS NOT NULL
-BEGIN
-	IF COL_LENGTH(N'[RDS].[DimPsEnrollmentStatuses]', N'PostSecondaryEnrollmentActionCode') IS NOT NULL
-	BEGIN
-		ALTER TABLE [RDS].[DimPsEnrollmentStatuses]
-		DROP COLUMN [PostSecondaryEnrollmentActionCode];
-	END;
+-- IF OBJECT_ID(N'[RDS].[DimPsEnrollmentStatuses]', N'U') IS NOT NULL
+-- BEGIN
+-- 	IF COL_LENGTH(N'[RDS].[DimPsEnrollmentStatuses]', N'PostSecondaryEnrollmentActionCode') IS NOT NULL
+-- 	BEGIN
+-- 		ALTER TABLE [RDS].[DimPsEnrollmentStatuses]
+-- 		DROP COLUMN [PostSecondaryEnrollmentActionCode];
+-- 	END;
 
-	IF COL_LENGTH(N'[RDS].[DimPsEnrollmentStatuses]', N'PostSecondaryEnrollmentActionDescription') IS NOT NULL
-	BEGIN
-		ALTER TABLE [RDS].[DimPsEnrollmentStatuses]
-		DROP COLUMN [PostSecondaryEnrollmentActionDescription];
-	END;
+-- 	IF COL_LENGTH(N'[RDS].[DimPsEnrollmentStatuses]', N'PostSecondaryEnrollmentActionDescription') IS NOT NULL
+-- 	BEGIN
+-- 		ALTER TABLE [RDS].[DimPsEnrollmentStatuses]
+-- 		DROP COLUMN [PostSecondaryEnrollmentActionDescription];
+-- 	END;
 
-	IF COL_LENGTH(N'[RDS].[DimPsEnrollmentStatuses]', N'PostSecondaryEnrollmentActionEdFactsCode') IS NOT NULL
-	BEGIN
-		ALTER TABLE [RDS].[DimPsEnrollmentStatuses]
-		DROP COLUMN [PostSecondaryEnrollmentActionEdFactsCode];
-	END;
-END;
+-- 	IF COL_LENGTH(N'[RDS].[DimPsEnrollmentStatuses]', N'PostSecondaryEnrollmentActionEdFactsCode') IS NOT NULL
+-- 	BEGIN
+-- 		ALTER TABLE [RDS].[DimPsEnrollmentStatuses]
+-- 		DROP COLUMN [PostSecondaryEnrollmentActionEdFactsCode];
+-- 	END;
+-- END;
 
 IF OBJECT_ID(N'[RDS].[FactDirectory]', N'U') IS NOT NULL
    AND COL_LENGTH(N'[RDS].[FactDirectory]', N'ComprehensiveAndTargetedSupportI') IS NOT NULL

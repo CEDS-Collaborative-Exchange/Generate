@@ -199,8 +199,8 @@ BEGIN
 			AND ske.StudentIdentifierState = title1.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(title1.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(title1.SchoolIdentifierSea, '')
-			AND ((title1.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
-				OR title1.ProgramParticipationBeginDate < ske.EnrollmentEntryDate AND ISNULL(title1.ProgramParticipationEndDate, @SYEndDate) = @SYEndDate)
+			AND ((title1.ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
+				OR title1.ProgramParticipationStartDate < ske.EnrollmentEntryDate AND ISNULL(title1.ProgramParticipationExitDate, @SYEndDate) = @SYEndDate)
 	--title I (RDS)
 		JOIN #vwTitleIStatuses rdt1s
 			ON ISNULL(title1.TitleIIndicator, 'MISSING') = ISNULL(rdt1s.TitleIIndicatorMap, rdt1s.TitleIIndicatorCode)
@@ -234,7 +234,7 @@ BEGIN
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(hmStatus.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(hmStatus.SchoolIdentifierSea, '')
 			AND ((hmStatus.Homelessness_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
-				OR hmStatus.Homelessness_StatusStartDate < ske.EnrollmentEntryDate AND ISNULL(title1.ProgramParticipationEndDate, @SYEndDate) = @SYEndDate)
+				OR hmStatus.Homelessness_StatusStartDate < ske.EnrollmentEntryDate AND ISNULL(title1.ProgramParticipationExitDate, @SYEndDate) = @SYEndDate)
 	--homelessness (RDS)
 		LEFT JOIN #vwHomelessnessStatuses rdhs
 			ON ISNULL(CAST(hmStatus.HomelessnessStatus AS SMALLINT), -1) = ISNULL(CAST(rdhs.HomelessnessStatusMap AS SMALLINT), -1)
@@ -248,7 +248,7 @@ BEGIN
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(foster.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(foster.SchoolIdentifierSea, '')
 			AND ((foster.FosterCare_ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
-				OR foster.FosterCare_ProgramParticipationStartDate < ske.EnrollmentEntryDate AND ISNULL(foster.FosterCare_ProgramParticipationEndDate, @SYEndDate) = @SYEndDate)
+				OR foster.FosterCare_ProgramParticipationStartDate < ske.EnrollmentEntryDate AND ISNULL(foster.FosterCare_ProgramParticipationExitDate, @SYEndDate) = @SYEndDate)
 	--foster care (RDS)
 		LEFT JOIN #vwFosterCareStatuses rdvfc
 			ON ISNULL(CAST(foster.ProgramType_FosterCare AS SMALLINT), -1) = ISNULL(CAST(rdvfc.ProgramParticipationFosterCareMap AS SMALLINT), -1)
@@ -258,8 +258,8 @@ BEGIN
 			AND ske.StudentIdentifierState = idea.StudentIdentifierState
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
-			AND ((idea.ProgramParticipationBeginDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
-				OR idea.ProgramParticipationBeginDate < ske.EnrollmentEntryDate AND ISNULL(idea.ProgramParticipationEndDate, @SYEndDate) = @SYEndDate)
+			AND ((idea.ProgramParticipationStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
+				OR idea.ProgramParticipationStartDate < ske.EnrollmentEntryDate AND ISNULL(idea.ProgramParticipationExitDate, @SYEndDate) = @SYEndDate)
 	--idea disability (RDS)
 		LEFT JOIN RDS.vwDimIdeaStatuses rdis
 			ON ske.SchoolYear = rdis.SchoolYear
@@ -274,7 +274,7 @@ BEGIN
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
 			AND ((el.EnglishLearner_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
-				OR el.EnglishLearner_StatusStartDate < ske.EnrollmentEntryDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEndDate) = @SYEndDate)
+				OR el.EnglishLearner_StatusStartDate < ske.EnrollmentEntryDate AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEndDate) = @SYEndDate)
 	--english learner (RDS)
 		LEFT JOIN RDS.vwDimEnglishLearnerStatuses rdels
 			ON rsy.SchoolYear = rdels.SchoolYear
@@ -287,7 +287,7 @@ BEGIN
 			AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
 			AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
 			AND ((migrant.Migrant_StatusStartDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEndDate))
-				OR migrant.Migrant_StatusStartDate < ske.EnrollmentEntryDate AND ISNULL(migrant.Migrant_StatusEndDate, @SYEndDate) = @SYEndDate)
+				OR migrant.Migrant_StatusStartDate < ske.EnrollmentEntryDate AND ISNULL(migrant.Migrant_StatusExitDate, @SYEndDate) = @SYEndDate)
 	--migrant (RDS)
 		LEFT JOIN #vwMigrantStatuses rdms
 			ON ISNULL(CAST(migrant.MigrantStatus AS SMALLINT), -1) = ISNULL(CAST(rdms.MigrantStatusMap AS SMALLINT), -1)

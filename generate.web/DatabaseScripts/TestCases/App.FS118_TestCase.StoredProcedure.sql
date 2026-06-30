@@ -1,4 +1,4 @@
-CREATE PROCEDURE [App].[FS118_TestCase]	
+ALTER PROCEDURE [App].[FS118_TestCase]	
 	@SchoolYear SMALLINT
 AS
 BEGIN
@@ -90,12 +90,12 @@ BEGIN
 			, SchoolIdentifierSea
 			, EnglishLearnerStatus
 			, EnglishLearner_StatusStartDate
-			, EnglishLearner_StatusEndDate
+			, EnglishLearner_StatusExitDate
 		INTO #tempELStatus
 		FROM Staging.PersonStatus
 
 	-- Create Index for #tempELStatus 
-		CREATE INDEX IX_tempELStatus ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusEndDate)
+		CREATE INDEX IX_tempELStatus ON #tempELStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Englishlearner_StatusStartDate, EnglishLearner_StatusExitDate)
 
 	--Pull the Migrant Status into a temp table
 		SELECT DISTINCT 
@@ -104,12 +104,12 @@ BEGIN
 			, SchoolIdentifierSea
 			, MigrantStatus
 			, Migrant_StatusStartDate
-			, Migrant_StatusEndDate
+			, Migrant_StatusExitDate
 		INTO #tempMigrantStatus
 		FROM Staging.PersonStatus
 
 	-- Create Index for #tempMigrantStatus 
-		CREATE INDEX IX_tempMigrantStatus ON #tempMigrantStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Migrant_StatusStartDate, Migrant_StatusEndDate)
+		CREATE INDEX IX_tempMigrantStatus ON #tempMigrantStatus(StudentIdentifierState, LeaIdentifierSeaAccountability, SchoolIdentifierSea, Migrant_StatusStartDate, Migrant_StatusExitDate)
 
 
 	--Get the LEAs that should not be reported against
@@ -148,7 +148,7 @@ BEGIN
 			WHEN 'Female_1'	THEN 'F'
 			ELSE 'MISSING'
 		END AS SexEdFactsCode
-		, idea.ProgramParticipationEndDate
+		, idea.ProgramParticipationExitDate
 		--, spr.RaceMap
 		, rdr.RaceEdFactsCode
 	--English Learner Status
@@ -219,7 +219,7 @@ BEGIN
 		ON ske.StudentIdentifierState = idea.StudentIdentifierState
 		AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(idea.LeaIdentifierSeaAccountability, '')
 		AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(idea.SchoolIdentifierSea, '')
-		AND hmStatus.Homelessness_StatusStartDate BETWEEN idea.ProgramParticipationBeginDate AND ISNULL(idea.ProgramParticipationEndDate, @SYEnd)
+		AND hmStatus.Homelessness_StatusStartDate BETWEEN idea.ProgramParticipationStartDate AND ISNULL(idea.ProgramParticipationExitDate, @SYEnd)
 		AND idea.IDEAIndicator = 1
 	--idea disability type			
 	LEFT JOIN Staging.IdeaDisabilityType sidt	
@@ -234,13 +234,13 @@ BEGIN
 		ON hmStatus.StudentIdentifierState = el.StudentIdentifierState
 		AND ISNULL(hmStatus.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '') 
 		AND ISNULL(hmStatus.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-		AND hmStatus.Homelessness_StatusStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEnd)
+		AND hmStatus.Homelessness_StatusStartDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEnd)
 	--migratory status	
 	LEFT JOIN #tempMigrantStatus migrant
 		ON hmStatus.StudentIdentifierState = migrant.StudentIdentifierState
 		AND ISNULL(hmStatus.LeaIdentifierSeaAccountability, '') = ISNULL(migrant.LeaIdentifierSeaAccountability, '')
 		AND ISNULL(hmStatus.SchoolIdentifierSea, '') = ISNULL(migrant.SchoolIdentifierSea, '')
-		AND hmStatus.Homelessness_StatusStartDate BETWEEN migrant.Migrant_StatusStartDate AND ISNULL(migrant.Migrant_StatusEndDate, @SYEnd)
+		AND hmStatus.Homelessness_StatusStartDate BETWEEN migrant.Migrant_StatusStartDate AND ISNULL(migrant.Migrant_StatusExitDate, @SYEnd)
 	--race	
 	LEFT JOIN Staging.K12PersonRace spr
 		ON spr.StudentIdentifierState = ske.StudentIdentifierState

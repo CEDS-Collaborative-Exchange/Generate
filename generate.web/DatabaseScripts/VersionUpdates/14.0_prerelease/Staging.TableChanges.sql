@@ -1,21 +1,3 @@
---Align the column lengths between staging and the RDS
-IF COL_LENGTH('Staging.K12Enrollment', 'FirstName') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.K12Enrollment ALTER COLUMN FirstName NVARCHAR(75) NULL;
-END
-
-IF COL_LENGTH('Staging.K12Enrollment', 'MiddleName') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.K12Enrollment ALTER COLUMN MiddleName NVARCHAR(75) NULL;
-END
-
-IF COL_LENGTH('Staging.K12Enrollment', 'LastOrSurname') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.K12Enrollment ALTER COLUMN LastOrSurname NVARCHAR(75) NULL;
-END
-
-
-
 IF COL_LENGTH('Staging.K12Enrollment', 'NumberOfSchoolDays') IS NOT NULL
    AND COL_LENGTH('Staging.K12Enrollment', 'NumberOfDaysInAttendance') IS NULL
 BEGIN
@@ -25,11 +7,11 @@ BEGIN
         'COLUMN';
 END;
 
-IF COL_LENGTH('Staging.K12Enrollment', 'PostSecondaryEnrollmentAction') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.K12Enrollment
-    DROP COLUMN PostSecondaryEnrollmentAction;
-END;
+-- IF COL_LENGTH('Staging.K12Enrollment', 'PostSecondaryEnrollmentAction') IS NOT NULL
+-- BEGIN
+--     ALTER TABLE Staging.K12Enrollment
+--     DROP COLUMN PostSecondaryEnrollmentAction;
+-- END;
 
 IF COL_LENGTH('Staging.K12StaffAssignment', 'ID') IS NOT NULL
 BEGIN
@@ -73,6 +55,78 @@ BEGIN
     EXEC sp_rename
         'Staging.K12StaffAssignment.EDFactsTeacherOutOfFieldStatus',
         'EdFactsTeacherOutOfFieldStatus',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.PersonStatus', 'Homelessness_StatusEndDate') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.PersonStatus.Homelessness_StatusEndDate',
+        'Homelessness_StatusExitDate',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.PersonStatus', 'HomelessNightimeResidence_BeginDate') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.PersonStatus.HomelessNightimeResidence_BeginDate',
+        'HomelessNightimeResidence_StartDate',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.PersonStatus', 'HomelessNightTimeResidence_EndDate') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.PersonStatus.HomelessNightTimeResidence_EndDate',
+        'HomelessNightTimeResidence_ExitDate',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.PersonStatus', 'EconomicDisadvantage_StatusEndDate') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.PersonStatus.EconomicDisadvantage_StatusEndDate',
+        'EconomicDisadvantage_StatusExitDate',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.PersonStatus', 'Migrant_StatusEndDate') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.PersonStatus.Migrant_StatusEndDate',
+        'Migrant_StatusExitDate',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.PersonStatus', 'MilitaryConnected_StatusEndDate') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.PersonStatus.MilitaryConnected_StatusEndDate',
+        'MilitaryConnected_StatusExitDate',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.PersonStatus', 'EnglishLearner_StatusEndDate') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.PersonStatus.EnglishLearner_StatusEndDate',
+        'EnglishLearner_StatusExitDate',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.PersonStatus', 'PerkinsEnglishLearnerStatus_StatusEndDate') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.PersonStatus.PerkinsEnglishLearnerStatus_StatusEndDate',
+        'PerkinsEnglishLearnerStatus_StatusExitDate',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.Disability', 'Disability_StatusEndDate') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.Disability.Disability_StatusEndDate',
+        'Disability_StatusExitDate',
         'COLUMN';
 END;
 
@@ -682,53 +736,53 @@ BEGIN
     DROP COLUMN CourseId;
 END;
 
-IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'LeaIdentifierSea') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.SchoolPerformanceIndicators
-    DROP COLUMN LeaIdentifierSea;
-END;
+-- IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'LeaIdentifierSea') IS NOT NULL
+-- BEGIN
+--     ALTER TABLE Staging.SchoolPerformanceIndicators
+--     DROP COLUMN LeaIdentifierSea;
+-- END;
 
-IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'SchoolPerformanceIndicatorStatus') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.SchoolPerformanceIndicators
-    DROP COLUMN SchoolPerformanceIndicatorStatus;
-END;
+-- IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'SchoolPerformanceIndicatorStatus') IS NOT NULL
+-- BEGIN
+--     ALTER TABLE Staging.SchoolPerformanceIndicators
+--     DROP COLUMN SchoolPerformanceIndicatorStatus;
+-- END;
 
-IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'SchoolPerformanceIndicatorStateDefinedStatusDescription') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.SchoolPerformanceIndicators
-    DROP COLUMN SchoolPerformanceIndicatorStateDefinedStatusDescription;
-END;
+-- IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'SchoolPerformanceIndicatorStateDefinedStatusDescription') IS NOT NULL
+-- BEGIN
+--     ALTER TABLE Staging.SchoolPerformanceIndicators
+--     DROP COLUMN SchoolPerformanceIndicatorStateDefinedStatusDescription;
+-- END;
 
-IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'Race') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.SchoolPerformanceIndicators
-    DROP COLUMN Race;
-END;
+-- IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'Race') IS NOT NULL
+-- BEGIN
+--     ALTER TABLE Staging.SchoolPerformanceIndicators
+--     DROP COLUMN Race;
+-- END;
 
-IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'IdeaIndicator') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.SchoolPerformanceIndicators
-    DROP COLUMN IdeaIndicator;
-END;
+-- IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'IdeaIndicator') IS NOT NULL
+-- BEGIN
+--     ALTER TABLE Staging.SchoolPerformanceIndicators
+--     DROP COLUMN IdeaIndicator;
+-- END;
 
-IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'EnglishLearnerStatus') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.SchoolPerformanceIndicators
-    DROP COLUMN EnglishLearnerStatus;
-END;
+-- IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'EnglishLearnerStatus') IS NOT NULL
+-- BEGIN
+--     ALTER TABLE Staging.SchoolPerformanceIndicators
+--     DROP COLUMN EnglishLearnerStatus;
+-- END;
 
-IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'EconomicDisadvantageStatus') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.SchoolPerformanceIndicators
-    DROP COLUMN EconomicDisadvantageStatus;
-END;
+-- IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'EconomicDisadvantageStatus') IS NOT NULL
+-- BEGIN
+--     ALTER TABLE Staging.SchoolPerformanceIndicators
+--     DROP COLUMN EconomicDisadvantageStatus;
+-- END;
 
-IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'SubgroupElementName') IS NULL
-BEGIN
-    ALTER TABLE Staging.SchoolPerformanceIndicators
-    ADD SubgroupElementName VARCHAR (100) NULL;
-END;
+-- IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'SubgroupElementName') IS NULL
+-- BEGIN
+--     ALTER TABLE Staging.SchoolPerformanceIndicators
+--     ADD SubgroupElementName VARCHAR (100) NULL;
+-- END;
 
 IF COL_LENGTH('Staging.SourceSystemReferenceData', 'GlobalId') IS NULL
 BEGIN
@@ -1006,11 +1060,11 @@ BEGIN
     ADD SchoolIdentifierSat NVARCHAR (50) NULL;
 END;
 
-IF COL_LENGTH('Staging.K12Organization', 'School_CharterSchoolStateAppropriationMethod') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.K12Organization
-    DROP COLUMN School_CharterSchoolStateAppropriationMethod;
-END;
+-- IF COL_LENGTH('Staging.K12Organization', 'School_CharterSchoolStateAppropriationMethod') IS NOT NULL
+-- BEGIN
+--     ALTER TABLE Staging.K12Organization
+--     DROP COLUMN School_CharterSchoolStateAppropriationMethod;
+-- END;
 
 IF COL_LENGTH('Staging.K12SchoolComprehensiveSupportIdentificationType', 'LEAIdentifierSea') IS NOT NULL
 BEGIN
@@ -1079,27 +1133,4 @@ END;
 
 CLOSE K12SupportVarcharColumnsCursor;
 DEALLOCATE K12SupportVarcharColumnsCursor;
-
-
------------------------------------------------------
---Modify Staging.K12Enrollment field lengths
------------------------------------------------------
-    --truncate the table so there are no conflicts with existing data
-        TRUNCATE TABLE Staging.K12Enrollment
-
-    --update the field lengths
-        IF COL_LENGTH('Staging.K12Enrollment', 'FirstName') IS NOT NULL
-        BEGIN
-            ALTER TABLE Staging.K12Enrollment ALTER COLUMN FirstName NVARCHAR(75);
-        END
- 
-        IF COL_LENGTH('Staging.K12Enrollment', 'MiddleName') IS NOT NULL
-        BEGIN
-            ALTER TABLE Staging.K12Enrollment ALTER COLUMN MiddleName NVARCHAR(75);
-        END
-
-        IF COL_LENGTH('Staging.K12Enrollment', 'LastOrSurname') IS NOT NULL
-        BEGIN
-            ALTER TABLE Staging.K12Enrollment ALTER COLUMN LastOrSurname NVARCHAR(75);
-        END
 

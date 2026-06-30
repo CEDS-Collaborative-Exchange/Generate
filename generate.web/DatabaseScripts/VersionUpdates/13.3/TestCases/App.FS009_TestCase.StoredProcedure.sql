@@ -258,11 +258,11 @@ BEGIN TRY
 						  sppse.StudentIdentifierState
 						, sppse.LeaIdentifierSeaAccountability
 					FROM Staging.ProgramParticipationSpecialEducation sppse
-					WHERE ProgramParticipationEndDate IS NOT NULL
+					WHERE ProgramParticipationExitDate IS NOT NULL
 					GROUP BY StudentIdentifierState	
 						, sppse.LeaIdentifierSeaAccountability
-						, ProgramParticipationEndDate
-					HAVING ProgramParticipationEndDate  = MIN(ProgramParticipationEndDate)
+						, ProgramParticipationExitDate
+					HAVING ProgramParticipationExitDate  = MIN(ProgramParticipationExitDate)
 			
 				END 
 			ELSE 
@@ -274,8 +274,8 @@ BEGIN TRY
 					FROM Staging.ProgramParticipationSpecialEducation sppse
 					GROUP BY StudentIdentifierState
 						, sppse.LeaIdentifierSeaAccountability
-						, ProgramParticipationEndDate
-					HAVING ProgramParticipationEndDate  = MAX(ProgramParticipationEndDate)
+						, ProgramParticipationExitDate
+					HAVING ProgramParticipationExitDate  = MAX(ProgramParticipationExitDate)
 				END
 			
 			CREATE NONCLUSTERED INDEX [IX_stuLeaTemp] ON #stuLeaTemp(LeaIdentifierSeaAccountability, StudentIdentifierState)
@@ -290,7 +290,7 @@ BEGIN TRY
 			SELECT
 				  sppse.StudentIdentifierState
 				, sppse.LeaIdentifierSeaAccountability
-				, MAX(sppse.ProgramParticipationEndDate)
+				, MAX(sppse.ProgramParticipationExitDate)
 			FROM Staging.ProgramParticipationSpecialEducation sppse
 			JOIN #stuLeaTemp temp	
 				ON sppse.StudentIdentifierState = temp.StudentIdentifierState
@@ -328,7 +328,7 @@ BEGIN TRY
 				, ske.SchoolIdentifierSea
 				, ske.Birthdate
 				, CASE
-					WHEN @ChildCountDate <= sppse.ProgramParticipationEndDate THEN [RDS].[Get_Age](ske.Birthdate, @ChildCountDate)
+					WHEN @ChildCountDate <= sppse.ProgramParticipationExitDate THEN [RDS].[Get_Age](ske.Birthdate, @ChildCountDate)
 					ELSE [RDS].[Get_Age](ske.BirthDate, DATEADD(year, -1, @ChildCountDate))
 				END AS Age
 				, sppse.SpecialEducationExitReason
@@ -437,11 +437,11 @@ BEGIN TRY
 					ELSE 'MISSING'
 				END AS SexEdFactsCode
 				, CASE
-					WHEN sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEnd) THEN EnglishLearnerStatus
+					WHEN sppse.ProgramParticipationExitDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEnd) THEN EnglishLearnerStatus
 					ELSE 0
 				END AS EnglishLearnerStatus
 				, CASE
-					WHEN sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEnd) THEN 
+					WHEN sppse.ProgramParticipationExitDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEnd) THEN 
 						CASE 
 							WHEN EnglishLearnerStatus = 1 THEN 'LEP'
 							WHEN EnglishLearnerStatus = 0 THEN 'NLEP'
@@ -458,15 +458,15 @@ BEGIN TRY
 			JOIN Staging.ProgramParticipationSpecialEducation sppse
 				ON sppse.StudentIdentifierState = latest.StudentIdentifierState
 				AND sppse.LeaIdentifierSeaAccountability = latest.LeaIdentifierSeaAccountability
-				AND sppse.ProgramParticipationEndDate = latest.SpecialEducationServicesExitDate
-				AND sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd) -- JW 4/4/2024
+				AND sppse.ProgramParticipationExitDate = latest.SpecialEducationServicesExitDate
+				AND sppse.ProgramParticipationExitDate BETWEEN ske.EnrollmentEntryDate AND ISNULL(ske.EnrollmentExitDate, @SYEnd) -- JW 4/4/2024
 			JOIN RDS.DimSeas rds
-				ON sppse.ProgramParticipationEndDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEnd)
+				ON sppse.ProgramParticipationExitDate BETWEEN rds.RecordStartDateTime AND ISNULL(rds.RecordEndDateTime, @SYEnd)
 			JOIN Staging.IdeaDisabilityType sidt
 				ON sidt.StudentIdentifierState = ske.StudentIdentifierState
 				AND sidt.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
 				AND ISNULL(sidt.SchoolIdentifierSea, '') = ISNULL(ske.SchoolIdentifierSea, '')
-				AND sppse.ProgramParticipationEndDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEnd)
+				AND sppse.ProgramParticipationExitDate BETWEEN sidt.RecordStartDateTime AND ISNULL(sidt.RecordEndDateTime, @SYEnd)
 				and sidt.IsPrimaryDisability = 1
 			LEFT JOIN Staging.K12PersonRace spr
 				ON ske.StudentIdentifierState = spr.StudentIdentifierState
@@ -479,14 +479,14 @@ BEGIN TRY
 				ON ske.StudentIdentifierState = el.StudentIdentifierState
 				AND ISNULL(ske.LeaIdentifierSeaAccountability, '') = ISNULL(el.LeaIdentifierSeaAccountability, '')
 				AND ISNULL(ske.SchoolIdentifierSea, '') = ISNULL(el.SchoolIdentifierSea, '')
-				AND sppse.ProgramParticipationEndDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusEndDate, @SYEnd)
-			WHERE sppse.ProgramParticipationEndDate is not null
+				AND sppse.ProgramParticipationExitDate BETWEEN el.EnglishLearner_StatusStartDate AND ISNULL(el.EnglishLearner_StatusExitDate, @SYEnd)
+			WHERE sppse.ProgramParticipationExitDate is not null
 				AND sppse.IDEAEducationalEnvironmentForSchoolAge <> 'PPPS' -- JW 4/4/2024 This was commented out, but exists in the actual report migration code
 				AND sppse.SpecialEducationExitReason IS NOT NULL
 				AND ske.SchoolYear = @SchoolYear
-				--and sppse.ProgramParticipationEndDate BETWEEN ske.EnrollmentEntryDate and ISNULL(ske.EnrollmentExitDate, @SYEnd)
+				--and sppse.ProgramParticipationExitDate BETWEEN ske.EnrollmentEntryDate and ISNULL(ske.EnrollmentExitDate, @SYEnd)
 --NOTE: The application of this rule is being discussed and will be addressed in a future release.  For now, the rule is being commented out. CIID-4693
---				AND sppse.ProgramParticipationBeginDate <= @ExitingSpedStartDate
+--				AND sppse.ProgramParticipationStartDate <= @ExitingSpedStartDate
 
 			--Remove invalid Ages
 			DELETE FROM #staging

@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [App].[FS141_TestCase]	
+﻿ALTER PROCEDURE [App].[FS141_TestCase]	
  	@SchoolYear SMALLINT
 AS
 BEGIN
@@ -113,7 +113,7 @@ BEGIN
 		ON sps.StudentIdentifierState = ske.StudentIdentifierState
 		AND sps.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
 		AND sps.SchoolIdentifierSea = ske.SchoolIdentifierSea
-		AND @ReportingDate BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusEndDate, @SYEndDate)
+		AND @ReportingDate BETWEEN sps.EnglishLearner_StatusStartDate AND ISNULL(sps.EnglishLearner_StatusExitDate, @SYEndDate)
 	LEFT JOIN (select min(DimLanguageId) DimLanguageId, SchoolYear, Iso6392LanguageCodeCode, Iso6392LanguageMap 
 				from rds.vwdimlanguages 
 				group by SchoolYear, Iso6392LanguageCodeCode, Iso6392LanguageMap) vwLanguage
@@ -125,7 +125,7 @@ BEGIN
 		ON sppse.StudentIdentifierState = ske.StudentIdentifierState
 		AND sppse.LeaIdentifierSeaAccountability = ske.LeaIdentifierSeaAccountability
 		AND sppse.SchoolIdentifierSea = ske.SchoolIdentifierSea
-		AND @ReportingDate between sppse.ProgramParticipationBeginDate AND ISNULL(sppse.ProgramParticipationEndDate, @SYEndDate)
+		AND @ReportingDate between sppse.ProgramParticipationStartDate AND ISNULL(sppse.ProgramParticipationExitDate, @SYEndDate)
 	LEFT JOIN Staging.K12PersonRace spr
 		ON ske.SchoolYear = spr.SchoolYear
 		AND ske.StudentIdentifierState = spr.StudentIdentifierState
