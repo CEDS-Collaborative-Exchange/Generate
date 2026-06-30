@@ -22,7 +22,7 @@ namespace generate.core.Models.Staging
         public Boolean ResponsibleSchoolTypeIepServiceProvider { get; set; }
         public string DisabilityStatus { get; set; }
         public DateTime? Disability_StatusStartDate { get; set; }
-        public DateTime? Disability_StatusEndDate { get; set; }
+        public DateTime? Disability_StatusExitDate { get; set; }
         public string DisabilityConditionType { get; set; }
         public string DisabilityDeterminationSourceType { get; set; }
         public Boolean Section504Status { get; set; }
