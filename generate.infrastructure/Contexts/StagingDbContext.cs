@@ -1393,8 +1393,8 @@ namespace generate.infrastructure.Contexts
 
                 entity.Property(e => e.DataCollectionName).HasMaxLength(100);
 
-                entity.Property(e => e.EconomicDisadvantage_StatusEndDate)
-                    .HasColumnName("EconomicDisadvantage_StatusEndDate")
+                entity.Property(e => e.EconomicDisadvantage_StatusExitDate)
+                    .HasColumnName("EconomicDisadvantage_StatusExitDate")
                     .HasColumnType("date");
 
                 entity.Property(e => e.EconomicDisadvantage_StatusStartDate)
@@ -1405,8 +1405,8 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.EnglishLearner_StatusEndDate)
-                    .HasColumnName("EnglishLearner_StatusEndDate")
+                entity.Property(e => e.EnglishLearner_StatusExitDate)
+                    .HasColumnName("EnglishLearner_StatusExitDate")
                     .HasColumnType("date");
 
                 entity.Property(e => e.EnglishLearner_StatusStartDate)
@@ -1425,16 +1425,16 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.HomelessNightTimeResidence_EndDate)
-                    .HasColumnName("HomelessNightTimeResidence_EndDate")
+                entity.Property(e => e.HomelessNightTimeResidence_ExitDate)
+                    .HasColumnName("HomelessNightTimeResidence_ExitDate")
                     .HasColumnType("date");
 
                 entity.Property(e => e.HomelessNightTimeResidence_StartDate)
                     .HasColumnName("HomelessNightTimeResidence_StartDate")
                     .HasColumnType("date");
 
-                entity.Property(e => e.Homelessness_StatusEndDate)
-                    .HasColumnName("Homelessness_StatusEndDate")
+                entity.Property(e => e.Homelessness_StatusExitDate)
+                    .HasColumnName("Homelessness_StatusExitDate")
                     .HasColumnType("date");
 
                 entity.Property(e => e.Homelessness_StatusStartDate)
@@ -1459,7 +1459,7 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Migrant_StatusEndDate)
+                entity.Property(e => e.Migrant_StatusExitDate)
                     .HasColumnName("Migrant_StatusEndDate")
                     .HasColumnType("date");
 
@@ -1467,8 +1467,8 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("Migrant_StatusStartDate")
                     .HasColumnType("date");
 
-                entity.Property(e => e.MilitaryConnected_StatusEndDate)
-                    .HasColumnName("MilitaryConnected_StatusEndDate")
+                entity.Property(e => e.MilitaryConnected_StatusExitDate)
+                    .HasColumnName("MilitaryConnected_StatusExitDate")
                     .HasColumnType("date");
 
                 entity.Property(e => e.MilitaryConnected_StatusStartDate)
@@ -1484,8 +1484,8 @@ namespace generate.infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.PerkinsEnglishLearnerStatus_StatusEndDate)
-                    .HasColumnName("PerkinsLEPStatus_StatusEndDate")
+                entity.Property(e => e.PerkinsEnglishLearnerStatus_StatusExitDate)
+                    .HasColumnName("PerkinsLEPStatus_StatusExitDate")
                     .HasColumnType("date");
 
                 entity.Property(e => e.PerkinsEnglishLearnerStatus_StatusStartDate)
