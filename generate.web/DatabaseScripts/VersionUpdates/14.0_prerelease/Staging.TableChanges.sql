@@ -1036,6 +1036,12 @@ BEGIN
         'COLUMN';
 END;
 
+IF COL_LENGTH('Staging.K12Organization', 'School_CharterSchoolStateAppropriationMethod') IS NULL
+BEGIN
+    ALTER TABLE Staging.K12Organization 
+    ADD School_CharterSchoolStateAppropriationMethod NVARCHAR(100) NULL;
+END;
+
 IF COL_LENGTH('Staging.K12Organization', 'SchoolIdentifierAct') IS NULL
 BEGIN
     ALTER TABLE Staging.K12Organization
