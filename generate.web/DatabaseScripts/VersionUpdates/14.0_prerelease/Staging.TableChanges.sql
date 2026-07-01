@@ -7,12 +7,6 @@ BEGIN
         'COLUMN';
 END;
 
--- IF COL_LENGTH('Staging.K12Enrollment', 'PostSecondaryEnrollmentAction') IS NOT NULL
--- BEGIN
---     ALTER TABLE Staging.K12Enrollment
---     DROP COLUMN PostSecondaryEnrollmentAction;
--- END;
-
 IF COL_LENGTH('Staging.K12StaffAssignment', 'ID') IS NOT NULL
 BEGIN
     EXEC sp_rename
