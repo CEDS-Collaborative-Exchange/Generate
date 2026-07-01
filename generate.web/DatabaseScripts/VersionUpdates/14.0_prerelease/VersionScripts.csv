@@ -8,6 +8,8 @@ VersionUpdates\\14.0_prerelease,RDS.TableChanges.sql,0
 VersionUpdates\\14.0_prerelease,RDS.Indexes.sql,0
 VersionUpdates\\14.0_prerelease,RDS.ExtendedProperties.sql,0
 VersionUpdates\\14.0_prerelease,App.Metadata.sql,0
+VersionUpdates\\14.0_prerelease,AddMissingObjects.sql,0
+VersionUpdates\\14.0_prerelease,JunkTablePopulation.sql,0
 Functions\\Drop,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Functions\\Create,RDS.Get_CountSQL.UserDefinedFunction.sql,0
 Views\\Drop,Debug.vwChronicAbsenteeism_StagingTables.View.sql,0
