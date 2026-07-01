@@ -80,7 +80,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = firstOrg.SchoolIdentifierSea,
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                EnglishLearner_StatusEndDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
+                EnglishLearner_StatusExitDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
                 SchoolYear = (schoolYear).ToString(),
             };
 
@@ -91,7 +91,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = firstOrg.SchoolIdentifierSea,
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                EnglishLearner_StatusEndDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
+                EnglishLearner_StatusExitDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
                 SchoolYear = (schoolYear).ToString(),
             };
 
@@ -102,7 +102,7 @@ namespace generate.testdata.TestCaseData
                 SchoolIdentifierSea = secondOrg.SchoolIdentifierSea,
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                EnglishLearner_StatusEndDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
+                EnglishLearner_StatusExitDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
                 SchoolYear = (schoolYear).ToString(),
             };
 
@@ -193,7 +193,7 @@ namespace generate.testdata.TestCaseData
                 LeaIdentifierSeaAccountability = firstOrg.LeaIdentifierSea,
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                EnglishLearner_StatusEndDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
+                EnglishLearner_StatusExitDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
             };
 
 
