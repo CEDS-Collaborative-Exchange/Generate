@@ -142,27 +142,6 @@ BEGIN
 		N'COLUMN';
 END;
 
--- IF OBJECT_ID(N'[RDS].[DimPsEnrollmentStatuses]', N'U') IS NOT NULL
--- BEGIN
--- 	IF COL_LENGTH(N'[RDS].[DimPsEnrollmentStatuses]', N'PostSecondaryEnrollmentActionCode') IS NOT NULL
--- 	BEGIN
--- 		ALTER TABLE [RDS].[DimPsEnrollmentStatuses]
--- 		DROP COLUMN [PostSecondaryEnrollmentActionCode];
--- 	END;
-
--- 	IF COL_LENGTH(N'[RDS].[DimPsEnrollmentStatuses]', N'PostSecondaryEnrollmentActionDescription') IS NOT NULL
--- 	BEGIN
--- 		ALTER TABLE [RDS].[DimPsEnrollmentStatuses]
--- 		DROP COLUMN [PostSecondaryEnrollmentActionDescription];
--- 	END;
-
--- 	IF COL_LENGTH(N'[RDS].[DimPsEnrollmentStatuses]', N'PostSecondaryEnrollmentActionEdFactsCode') IS NOT NULL
--- 	BEGIN
--- 		ALTER TABLE [RDS].[DimPsEnrollmentStatuses]
--- 		DROP COLUMN [PostSecondaryEnrollmentActionEdFactsCode];
--- 	END;
--- END;
-
 IF OBJECT_ID(N'[RDS].[FactDirectory]', N'U') IS NOT NULL
    AND COL_LENGTH(N'[RDS].[FactDirectory]', N'ComprehensiveAndTargetedSupportI') IS NOT NULL
    AND COL_LENGTH(N'[RDS].[FactDirectory]', N'ComprehensiveAndTargetedSupportId') IS NULL
@@ -505,15 +484,15 @@ BEGIN
 		N'COLUMN';
 END;
 
-IF OBJECT_ID(N'[RDS].[ReportEDFactsOrganizationCounts]', N'U') IS NOT NULL
-BEGIN
-	IF COL_LENGTH(N'[RDS].[ReportEDFactsOrganizationCounts]', N'HomelessChildrenandYouthReservation') IS NOT NULL
-	BEGIN
-		ALTER TABLE [RDS].[ReportEDFactsOrganizationCounts]
-		DROP COLUMN [HomelessChildrenandYouthReservation];
-	END;
+-- IF OBJECT_ID(N'[RDS].[ReportEDFactsOrganizationCounts]', N'U') IS NOT NULL
+-- BEGIN
+-- 	IF COL_LENGTH(N'[RDS].[ReportEDFactsOrganizationCounts]', N'HomelessChildrenandYouthReservation') IS NOT NULL
+-- 	BEGIN
+-- 		ALTER TABLE [RDS].[ReportEDFactsOrganizationCounts]
+-- 		DROP COLUMN [HomelessChildrenandYouthReservation];
+-- 	END;
 
-END;
+-- END;
 
 IF OBJECT_ID(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'U') IS NOT NULL
    AND COL_LENGTH(N'[RDS].[ReportEDFactsSchoolPerformanceIndicators]', N'ECONOMICDISADVANTAGESTATUS') IS NOT NULL
