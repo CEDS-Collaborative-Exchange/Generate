@@ -72,7 +72,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = true,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearner_StatusEndDate = DateTime.Parse("11/25/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                EnglishLearner_StatusExitDate = DateTime.Parse("11/25/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var secondPersonStatusCase1 = new core.Models.Staging.PersonStatus()
@@ -83,7 +83,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = true,
                 EnglishLearner_StatusStartDate = DateTime.Parse("11/26/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearner_StatusEndDate = DateTime.Parse("6/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
+                EnglishLearner_StatusExitDate = DateTime.Parse("6/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
             };
 
             var firstPersonRaceSchoolCase1 = new K12PersonRace()
@@ -261,7 +261,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = true,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearner_StatusEndDate = DateTime.Parse("10/12/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
+                EnglishLearner_StatusExitDate = DateTime.Parse("10/12/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
             };
 
             var secondPersonStatusCase2 = new core.Models.Staging.PersonStatus()
@@ -420,7 +420,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = true,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearner_StatusEndDate = DateTime.Parse("2/20/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
+                EnglishLearner_StatusExitDate = DateTime.Parse("2/20/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
             };
 
             var secondPersonStatusCase3 = new core.Models.Staging.PersonStatus()
@@ -431,7 +431,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = true,
                 EnglishLearner_StatusStartDate = DateTime.Parse("2/21/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearner_StatusEndDate = DateTime.Parse("6/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
+                EnglishLearner_StatusExitDate = DateTime.Parse("6/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
             };
 
             var firstIdtCase3 = new core.Models.Staging.IdeaDisabilityType()
@@ -562,7 +562,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = true,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearner_StatusEndDate = DateTime.Parse("6/30/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
+                EnglishLearner_StatusExitDate = DateTime.Parse("6/30/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
             };
 
             var firstIdtCase4 = new core.Models.Staging.IdeaDisabilityType()
@@ -669,7 +669,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = true,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearner_StatusEndDate = DateTime.Parse("4/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
+                EnglishLearner_StatusExitDate = DateTime.Parse("4/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
             };
 
             var firstIdtCase5 = new core.Models.Staging.IdeaDisabilityType()
@@ -779,7 +779,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = true,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearner_StatusEndDate = DateTime.Parse("4/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
+                EnglishLearner_StatusExitDate = DateTime.Parse("4/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
             };
 
             var secondPersonStatusCase6 = new core.Models.Staging.PersonStatus()
@@ -790,7 +790,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = true,
                 EnglishLearner_StatusStartDate = DateTime.Parse("4/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearner_StatusEndDate = DateTime.Parse("6/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
+                EnglishLearner_StatusExitDate = DateTime.Parse("6/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
             };
 
             var firstIdtCase6 = new core.Models.Staging.IdeaDisabilityType()
@@ -923,7 +923,7 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 EnglishLearnerStatus = true,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString(), CultureInfo.InvariantCulture),
-                EnglishLearner_StatusEndDate = DateTime.Parse("6/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
+                EnglishLearner_StatusExitDate = DateTime.Parse("6/1/" + (schoolYear).ToString(), CultureInfo.InvariantCulture),
             };
 
             var firstIdtCase7 = new core.Models.Staging.IdeaDisabilityType()

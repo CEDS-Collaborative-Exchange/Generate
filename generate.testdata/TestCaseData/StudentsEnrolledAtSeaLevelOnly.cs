@@ -53,7 +53,7 @@ namespace generate.testdata.TestCaseData
                 EconomicDisadvantage_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
                 EnglishLearnerStatus = false,
                 EnglishLearner_StatusStartDate = DateTime.Parse("7/1/" + (schoolYear - 1).ToString()),
-                EnglishLearner_StatusEndDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
+                EnglishLearner_StatusExitDate = DateTime.Parse("6/30/" + schoolYear.ToString()),
             };
 
             var idt = new core.Models.Staging.IdeaDisabilityType()

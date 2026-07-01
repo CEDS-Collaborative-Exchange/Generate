@@ -52,10 +52,10 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 HomelessnessStatus = true,
                 Homelessness_StatusStartDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString()),
-                Homelessness_StatusEndDate = DateTime.Parse("6/30/" + (schoolYear).ToString()),
+                Homelessness_StatusExitDate = DateTime.Parse("6/30/" + (schoolYear).ToString()),
                 HomelessNightTimeResidence = "HotelMotel_1",
                 HomelessNightTimeResidence_StartDate = DateTime.Parse("8/25/" + (schoolYear - 1).ToString()),
-                HomelessNightTimeResidence_EndDate = DateTime.Parse("6/30/" + (schoolYear).ToString()),
+                HomelessNightTimeResidence_ExitDate = DateTime.Parse("6/30/" + (schoolYear).ToString()),
                 HomelessUnaccompaniedYouth = true,
                 HomelessServicedIndicator = true
             };

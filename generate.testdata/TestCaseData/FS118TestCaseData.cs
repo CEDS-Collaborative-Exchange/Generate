@@ -79,10 +79,10 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 HomelessnessStatus = true,
                 Homelessness_StatusStartDate = firstK12Enrollment.EnrollmentEntryDate,
-                Homelessness_StatusEndDate = firstK12Enrollment.EnrollmentExitDate,
+                Homelessness_StatusExitDate = firstK12Enrollment.EnrollmentExitDate,
                 HomelessNightTimeResidence = "HotelMotel",
                 HomelessNightTimeResidence_StartDate = firstK12Enrollment.EnrollmentEntryDate,
-                HomelessNightTimeResidence_EndDate = firstK12Enrollment.EnrollmentExitDate,
+                HomelessNightTimeResidence_ExitDate = firstK12Enrollment.EnrollmentExitDate,
                 HomelessUnaccompaniedYouth = true,
                 HomelessServicedIndicator = true
             };
@@ -95,10 +95,10 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 HomelessnessStatus = true,
                 Homelessness_StatusStartDate = secondK12Enrollment.EnrollmentEntryDate,
-                Homelessness_StatusEndDate = secondK12Enrollment.EnrollmentExitDate,
+                Homelessness_StatusExitDate = secondK12Enrollment.EnrollmentExitDate,
                 HomelessNightTimeResidence = "HotelMotel",
                 HomelessNightTimeResidence_StartDate = secondK12Enrollment.EnrollmentEntryDate,
-                HomelessNightTimeResidence_EndDate = secondK12Enrollment.EnrollmentExitDate,
+                HomelessNightTimeResidence_ExitDate = secondK12Enrollment.EnrollmentExitDate,
                 HomelessUnaccompaniedYouth = true,
                 HomelessServicedIndicator = true
             };
@@ -176,10 +176,10 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 HomelessnessStatus = true,
                 Homelessness_StatusStartDate = firstK12Enrollment.EnrollmentEntryDate,
-                Homelessness_StatusEndDate = aK12Enrollment.EnrollmentExitDate,
+                Homelessness_StatusExitDate = aK12Enrollment.EnrollmentExitDate,
                 HomelessNightTimeResidence = "HotelMotel",
                 HomelessNightTimeResidence_StartDate = firstK12Enrollment.EnrollmentEntryDate,
-                HomelessNightTimeResidence_EndDate = aK12Enrollment.EnrollmentExitDate,
+                HomelessNightTimeResidence_ExitDate = aK12Enrollment.EnrollmentExitDate,
                 HomelessUnaccompaniedYouth = true,
                 HomelessServicedIndicator = true
             };
@@ -192,10 +192,10 @@ namespace generate.testdata.TestCaseData
                 SchoolYear = (schoolYear).ToString(),
                 HomelessnessStatus = true,
                 Homelessness_StatusStartDate = bK12Enrollment.EnrollmentEntryDate,
-                Homelessness_StatusEndDate = bK12Enrollment.EnrollmentExitDate,
+                Homelessness_StatusExitDate = bK12Enrollment.EnrollmentExitDate,
                 HomelessNightTimeResidence = "Shelter",
                 HomelessNightTimeResidence_StartDate = bK12Enrollment.EnrollmentEntryDate,
-                HomelessNightTimeResidence_EndDate = bK12Enrollment.EnrollmentExitDate,
+                HomelessNightTimeResidence_ExitDate = bK12Enrollment.EnrollmentExitDate,
                 HomelessUnaccompaniedYouth = true,
                 HomelessServicedIndicator = true
             };

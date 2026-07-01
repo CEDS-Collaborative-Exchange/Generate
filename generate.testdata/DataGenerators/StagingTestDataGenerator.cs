@@ -1196,7 +1196,7 @@ namespace generate.testdata.DataGenerators
                     EligibilityStatusForSchoolFoodServicePrograms = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.EligibilityStatusForSchoolFoodServiceProgramsDistribution),
                     EnglishLearnerStatus = Convert.ToBoolean(_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LepStatusDistribution)),
                     EnglishLearner_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate.AddYears(-6), s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate),
-                    EnglishLearner_StatusEndDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LepExitingDistribution) ? BaseProgramExitDate : (DateTime?)null,
+                    EnglishLearner_StatusExitDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LepExitingDistribution) ? BaseProgramExitDate : (DateTime?)null,
                     HomelessnessStatus = Convert.ToBoolean(_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.HomelessProgramParticipantNowDistribution)),
                     MigrantStatus = Convert.ToBoolean(_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.MigrantProgramParticipationDistribution)),
                     //MilitaryConnectedStudentIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.MilitaryConnectedStudentIndicatorDistribution) ? "1" : "0",
@@ -1211,12 +1211,12 @@ namespace generate.testdata.DataGenerators
                 if (personStatus.EconomicDisadvantageStatus.Value == true)
                 {
                     personStatus.EconomicDisadvantage_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.EconomicDisadvantage_StatusEndDate = _testDataHelper.GetExitDate(rnd, personStatus.EconomicDisadvantage_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.EconomicDisadvantage_StatusExitDate = _testDataHelper.GetExitDate(rnd, personStatus.EconomicDisadvantage_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                 }
                 else
                 {
                     personStatus.EconomicDisadvantage_StatusStartDate = BaseProgramExitDate;
-                    personStatus.EconomicDisadvantage_StatusEndDate = BaseProgramExitDate;
+                    personStatus.EconomicDisadvantage_StatusExitDate = BaseProgramExitDate;
                 }
 
 
@@ -1234,11 +1234,11 @@ namespace generate.testdata.DataGenerators
                 if (personStatus.HomelessnessStatus.Value == true)
                 {
                     personStatus.Homelessness_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.Homelessness_StatusEndDate = _testDataHelper.GetExitDate(rnd, personStatus.Homelessness_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.Homelessness_StatusExitDate = _testDataHelper.GetExitDate(rnd, personStatus.Homelessness_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
 
                     personStatus.HomelessNightTimeResidence = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefHomelessNighttimeResidenceDistribution);
                     personStatus.HomelessNightTimeResidence_StartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
-                    personStatus.HomelessNightTimeResidence_EndDate = _testDataHelper.GetExitDate(rnd, personStatus.HomelessNightTimeResidence_StartDate.Value, BaseProgramExitDate);
+                    personStatus.HomelessNightTimeResidence_ExitDate = _testDataHelper.GetExitDate(rnd, personStatus.HomelessNightTimeResidence_StartDate.Value, BaseProgramExitDate);
 
                     personStatus.HomelessServicedIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.HomelessServicedProgramParticipationDistribution);
 
@@ -1247,7 +1247,7 @@ namespace generate.testdata.DataGenerators
                 else
                 {
                     personStatus.Homelessness_StatusStartDate = BaseProgramExitDate;
-                    personStatus.Homelessness_StatusEndDate = BaseProgramExitDate;
+                    personStatus.Homelessness_StatusExitDate = BaseProgramExitDate;
                 }
 
 
@@ -1291,7 +1291,7 @@ namespace generate.testdata.DataGenerators
                         ResponsibleSchoolTypeTransportation = s.ResponsibleSchoolTypeTransportation,
                         SchoolIdentifierSea = s.SchoolIdentifierSea,
                         Disability_StatusStartDate = section504_startDate,
-                        Disability_StatusEndDate = section504_endDate,
+                        Disability_StatusExitDate = section504_endDate,
                         StudentIdentifierState = s.StudentIdentifierState
                     };
                     AllDisabilities.Add(section504Disability);
@@ -1305,34 +1305,34 @@ namespace generate.testdata.DataGenerators
                 if (personStatus.MigrantStatus.Value == true)
                 {
                     personStatus.Migrant_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.Migrant_StatusEndDate = _testDataHelper.GetExitDate(rnd, personStatus.Migrant_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.Migrant_StatusExitDate = _testDataHelper.GetExitDate(rnd, personStatus.Migrant_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                 }
                 else
                 {
                     personStatus.Migrant_StatusStartDate = BaseProgramExitDate;
-                    personStatus.Migrant_StatusEndDate = BaseProgramExitDate;
+                    personStatus.Migrant_StatusExitDate = BaseProgramExitDate;
                 }
 
                 if (personStatus.MilitaryConnectedStudentIndicator == "ActiveDuty" || personStatus.MilitaryConnectedStudentIndicator == "NationalGuardOrReserve")
                 {
                     personStatus.MilitaryConnected_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.MilitaryConnected_StatusEndDate = _testDataHelper.GetExitDate(rnd, personStatus.MilitaryConnected_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.MilitaryConnected_StatusExitDate = _testDataHelper.GetExitDate(rnd, personStatus.MilitaryConnected_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                 }
                 else
                 {
                     personStatus.MilitaryConnected_StatusStartDate = BaseProgramExitDate;
-                    personStatus.MilitaryConnected_StatusEndDate = BaseProgramExitDate;
+                    personStatus.MilitaryConnected_StatusExitDate = BaseProgramExitDate;
                 }
 
                 if (personStatus.PerkinsEnglishLearnerStatus == "1")
                 {
                     personStatus.PerkinsEnglishLearnerStatus_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.PerkinsEnglishLearnerStatus_StatusEndDate = _testDataHelper.GetExitDate(rnd, personStatus.PerkinsEnglishLearnerStatus_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.PerkinsEnglishLearnerStatus_StatusExitDate = _testDataHelper.GetExitDate(rnd, personStatus.PerkinsEnglishLearnerStatus_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                 }
                 else
                 {
                     personStatus.PerkinsEnglishLearnerStatus_StatusStartDate = BaseProgramExitDate;
-                    personStatus.PerkinsEnglishLearnerStatus_StatusEndDate = BaseProgramExitDate;
+                    personStatus.PerkinsEnglishLearnerStatus_StatusExitDate = BaseProgramExitDate;
                 }
 
                 AllPersonStatuses.Add(personStatus);
@@ -1693,7 +1693,7 @@ namespace generate.testdata.DataGenerators
                     EligibilityStatusForSchoolFoodServicePrograms = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.EligibilityStatusForSchoolFoodServiceProgramsDistribution),
                     EnglishLearnerStatus = Convert.ToBoolean(_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LepStatusDistribution)),
                     EnglishLearner_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate.AddYears(-6), s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate),
-                    EnglishLearner_StatusEndDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LepExitingDistribution) ? BaseProgramExitDate : (DateTime?)null,
+                    EnglishLearner_StatusExitDate = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.LepExitingDistribution) ? BaseProgramExitDate : (DateTime?)null,
                     HomelessnessStatus = Convert.ToBoolean(_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.HomelessProgramParticipantNowDistribution)),
                     MigrantStatus = Convert.ToBoolean(_testDataHelper.GetWeightedSelection(rnd, _testDataProfile.MigrantProgramParticipationDistribution)),
                     //MilitaryConnectedStudentIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.MilitaryConnectedStudentIndicatorDistribution) ? "1" : "0",
@@ -1709,12 +1709,12 @@ namespace generate.testdata.DataGenerators
                 if (personStatus.EconomicDisadvantageStatus.Value == true)
                 {
                     personStatus.EconomicDisadvantage_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.EconomicDisadvantage_StatusEndDate = _testDataHelper.GetExitDate(rnd, personStatus.EconomicDisadvantage_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.EconomicDisadvantage_StatusExitDate = _testDataHelper.GetExitDate(rnd, personStatus.EconomicDisadvantage_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                 }
                 else
                 {
                     personStatus.EconomicDisadvantage_StatusStartDate = BaseProgramExitDate;
-                    personStatus.EconomicDisadvantage_StatusEndDate = BaseProgramExitDate;
+                    personStatus.EconomicDisadvantage_StatusExitDate = BaseProgramExitDate;
                 }
 
 
@@ -1732,11 +1732,11 @@ namespace generate.testdata.DataGenerators
                 if (personStatus.HomelessnessStatus.Value == true)
                 {
                     personStatus.Homelessness_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.Homelessness_StatusEndDate = _testDataHelper.GetExitDate(rnd, personStatus.Homelessness_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.Homelessness_StatusExitDate = _testDataHelper.GetExitDate(rnd, personStatus.Homelessness_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
 
                     personStatus.HomelessNightTimeResidence = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.RefHomelessNighttimeResidenceDistribution);
                     personStatus.HomelessNightTimeResidence_StartDate = _testDataHelper.GetRandomDateInRange(rnd, BaseProgramEntryDate, BaseProgramExitDate.AddDays(-5));
-                    personStatus.HomelessNightTimeResidence_EndDate = _testDataHelper.GetExitDate(rnd, personStatus.HomelessNightTimeResidence_StartDate.Value, BaseProgramExitDate);
+                    personStatus.HomelessNightTimeResidence_ExitDate = _testDataHelper.GetExitDate(rnd, personStatus.HomelessNightTimeResidence_StartDate.Value, BaseProgramExitDate);
 
                     personStatus.HomelessServicedIndicator = _testDataHelper.GetWeightedSelection(rnd, _testDataProfile.HomelessServicedProgramParticipationDistribution);
 
@@ -1745,7 +1745,7 @@ namespace generate.testdata.DataGenerators
                 else
                 {
                     personStatus.Homelessness_StatusStartDate = BaseProgramExitDate;
-                    personStatus.Homelessness_StatusEndDate = BaseProgramExitDate;
+                    personStatus.Homelessness_StatusExitDate = BaseProgramExitDate;
                 }
 
 
@@ -1789,7 +1789,7 @@ namespace generate.testdata.DataGenerators
                         ResponsibleSchoolTypeTransportation = s.ResponsibleSchoolTypeTransportation,
                         SchoolIdentifierSea = s.SchoolIdentifierSea,
                         Disability_StatusStartDate = section504_startDate,
-                        Disability_StatusEndDate = section504_endDate,
+                        Disability_StatusExitDate = section504_endDate,
                         StudentIdentifierState = s.StudentIdentifierState
                     };
                     AllDisabilities.Add(section504Disability);
@@ -1803,34 +1803,34 @@ namespace generate.testdata.DataGenerators
                 if (personStatus.MigrantStatus.Value == true)
                 {
                     personStatus.Migrant_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.Migrant_StatusEndDate = _testDataHelper.GetExitDate(rnd, personStatus.Migrant_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.Migrant_StatusExitDate = _testDataHelper.GetExitDate(rnd, personStatus.Migrant_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                 }
                 else
                 {
                     personStatus.Migrant_StatusStartDate = BaseProgramExitDate;
-                    personStatus.Migrant_StatusEndDate = BaseProgramExitDate;
+                    personStatus.Migrant_StatusExitDate = BaseProgramExitDate;
                 }
 
                 if (personStatus.MilitaryConnectedStudentIndicator == "ActiveDuty" || personStatus.MilitaryConnectedStudentIndicator == "NationalGuardOrReserve")
                 {
                     personStatus.MilitaryConnected_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.MilitaryConnected_StatusEndDate = _testDataHelper.GetExitDate(rnd, personStatus.MilitaryConnected_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.MilitaryConnected_StatusExitDate = _testDataHelper.GetExitDate(rnd, personStatus.MilitaryConnected_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                 }
                 else
                 {
                     personStatus.MilitaryConnected_StatusStartDate = BaseProgramExitDate;
-                    personStatus.MilitaryConnected_StatusEndDate = BaseProgramExitDate;
+                    personStatus.MilitaryConnected_StatusExitDate = BaseProgramExitDate;
                 }
 
                 if (personStatus.PerkinsEnglishLearnerStatus == "1")
                 {
                     personStatus.PerkinsEnglishLearnerStatus_StatusStartDate = _testDataHelper.GetRandomDateInRange(rnd, s.EnrollmentEntryDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
-                    personStatus.PerkinsEnglishLearnerStatus_StatusEndDate = _testDataHelper.GetExitDate(rnd, personStatus.PerkinsEnglishLearnerStatus_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
+                    personStatus.PerkinsEnglishLearnerStatus_StatusExitDate = _testDataHelper.GetExitDate(rnd, personStatus.PerkinsEnglishLearnerStatus_StatusStartDate.Value, s.EnrollmentExitDate.HasValue ? s.EnrollmentExitDate.Value : BaseProgramExitDate);
                 }
                 else
                 {
                     personStatus.PerkinsEnglishLearnerStatus_StatusStartDate = BaseProgramExitDate;
-                    personStatus.PerkinsEnglishLearnerStatus_StatusEndDate = BaseProgramExitDate;
+                    personStatus.PerkinsEnglishLearnerStatus_StatusExitDate = BaseProgramExitDate;
                 }
 
                 AllPersonStatuses.Add(personStatus);
