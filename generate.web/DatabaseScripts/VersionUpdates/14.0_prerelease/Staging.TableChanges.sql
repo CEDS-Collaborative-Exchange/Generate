@@ -796,12 +796,6 @@ BEGIN
     ADD ElementName NVARCHAR (150) NULL;
 END;
 
-IF COL_LENGTH('Staging.StagingValidationResults', 'ReportGroupOrCode') IS NULL
-BEGIN
-    ALTER TABLE Staging.StagingValidationResults
-    ADD ReportGroupOrCode VARCHAR (50) NULL;
-END;
-
 IF COL_LENGTH('Staging.OrganizationAddress', 'AddressApartmentRoomOrSuiteNumber') IS NOT NULL
    AND EXISTS (
        SELECT 1
