@@ -3,9 +3,15 @@ IF COL_LENGTH('RDS.FactK12StudentCounts', 'PsEnrollmentStatusId') IS NULL
 BEGIN
 	ALTER TABLE RDS.FactK12StudentCounts ADD PsEnrollmentStatusId BIGINT NULL;
 END;
-	
-IF COL_LENGTH('RDS.FactK12StudentCounts', 'PsEnrollmentStatusId') IS NOT NULL
-BEGIN
+
+IF NOT EXISTS (
+		SELECT 1 
+		FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
+		WHERE CONSTRAINT_NAME = 'DF_FactK12StudentCounts_PsEnrollmentStatusId' 
+		AND TABLE_SCHEMA = 'RDS' 
+		AND TABLE_NAME = 'FactK12StudentCounts'
+	)
+BEGIN 
 	ALTER TABLE [RDS].[FactK12StudentCounts] ADD CONSTRAINT [DF_FactK12StudentCounts_PsEnrollmentStatusId] DEFAULT ((-1)) FOR [PsEnrollmentStatusId];
 END;
 
