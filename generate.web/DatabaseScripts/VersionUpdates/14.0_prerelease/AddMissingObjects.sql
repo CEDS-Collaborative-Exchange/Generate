@@ -404,23 +404,4 @@
         ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostSecondaryEnrollmentActionEdFactsCode VARCHAR(50) NULL;
     END
 
-	IF NOT EXISTS (
-    SELECT 1
-    FROM sys.foreign_keys fk
-    JOIN sys.tables t ON fk.parent_object_id = t.object_id
-    WHERE t.name = 'FactK12StudentCounts'
-      AND fk.name = 'FK_FactK12StudentCounts_PSEnrollmentStatusId'
-	)
-	BEGIN
-		ALTER TABLE RDS.FactK12StudentCounts
-		ADD CONSTRAINT FK_FactK12StudentCounts_PSEnrollmentStatusId
-		FOREIGN KEY (PSEnrollmentStatusId)
-		REFERENCES RDS.DimPsEnrollmentStatuses(DimPSEnrollmentStatusId);
-	END
-
-    IF COL_LENGTH('RDS.FactK12StudentCounts', 'PsEnrollmentStatusId') IS NOT NULL
-    BEGIN
-    	ALTER TABLE [RDS].[FactK12StudentCounts] ADD CONSTRAINT [DF_FactK12StudentCounts_PsEnrollmentStatusId] DEFAULT ((-1)) FOR [PsEnrollmentStatusId];
-    END
-
 --End of code to add back fields missing from 13.2

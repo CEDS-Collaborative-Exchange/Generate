@@ -1,3 +1,15 @@
+--Add PSEnrollmentStatus to the Fact table
+IF COL_LENGTH('RDS.FactK12StudentCounts', 'PsEnrollmentStatusId') IS NULL
+BEGIN
+	ALTER TABLE RDS.FactK12StudentCounts ADD PsEnrollmentStatusId BIGINT NULL;
+END;
+	
+IF COL_LENGTH('RDS.FactK12StudentCounts', 'PsEnrollmentStatusId') IS NOT NULL
+BEGIN
+	ALTER TABLE [RDS].[FactK12StudentCounts] ADD CONSTRAINT [DF_FactK12StudentCounts_PsEnrollmentStatusId] DEFAULT ((-1)) FOR [PsEnrollmentStatusId];
+END;
+
+
 IF OBJECT_ID(N'[RDS].[BridgeCredentialAwardRelatedCredentialAwards]', N'U') IS NOT NULL
 BEGIN
 	IF COL_LENGTH(N'[RDS].[BridgeCredentialAwardRelatedCredentialAwards]', N'CredentialAwardRelationshipCode') IS NOT NULL
@@ -19,12 +31,6 @@ BEGIN
 	END;
 END;
 
---Add PSEnrollmentStatus to the Fact table
-IF COL_LENGTH('RDS.FactK12StudentCounts', 'PsEnrollmentStatusId') IS NULL
-BEGIN
-	ALTER TABLE RDS.FactK12StudentCounts ADD PsEnrollmentStatusId BIGINT NULL;
-END
-	
 IF EXISTS (
 	SELECT 1
 	FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
