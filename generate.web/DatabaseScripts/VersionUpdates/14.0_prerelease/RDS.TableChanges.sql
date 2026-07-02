@@ -4,13 +4,20 @@ BEGIN
 	ALTER TABLE RDS.FactK12StudentCounts ADD PsEnrollmentStatusId BIGINT NULL;
 END;
 
-IF NOT EXISTS (
-		SELECT 1 
-		FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
-		WHERE CONSTRAINT_NAME = 'DF_FactK12StudentCounts_PsEnrollmentStatusId' 
-		AND TABLE_SCHEMA = 'RDS' 
-		AND TABLE_NAME = 'FactK12StudentCounts'
-	)
+if not exists (
+	select *
+	from sys.all_columns c
+	join sys.tables t 
+		on t.object_id = c.object_id
+	join sys.schemas s 
+		on s.schema_id = t.schema_id
+	join sys.default_constraints d 
+		on c.default_object_id = d.object_id
+	where t.name = 'FactK12StudentCounts'
+	and c.name = 'PsEnrollmentStatusId'
+	and s.name = 'RDS'
+	and d.type = 'D'
+)
 BEGIN 
 	ALTER TABLE [RDS].[FactK12StudentCounts] ADD CONSTRAINT [DF_FactK12StudentCounts_PsEnrollmentStatusId] DEFAULT ((-1)) FOR [PsEnrollmentStatusId];
 END;
