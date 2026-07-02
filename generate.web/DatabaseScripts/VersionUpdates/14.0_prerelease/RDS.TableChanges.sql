@@ -19,6 +19,12 @@ BEGIN
 	END;
 END;
 
+--Add PSEnrollmentStatus to the Fact table
+IF COL_LENGTH('RDS.FactK12StudentCounts', 'PsEnrollmentStatusId') IS NULL
+BEGIN
+	ALTER TABLE RDS.FactK12StudentCounts ADD PsEnrollmentStatusId BIGINT NULL;
+END
+	
 IF EXISTS (
 	SELECT 1
 	FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS

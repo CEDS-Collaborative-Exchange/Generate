@@ -340,9 +340,9 @@
 					and SchoolYear = '2026')
 	begin
 		insert into staging.SourceSystemReferenceData 
-		values ('2026', 'RefCharterSchoolAppropriationMethod', NULL, 'STEAPRDRCT', 'STEAPRDRCT'),
-			('2026', 'RefCharterSchoolAppropriationMethod', NULL, 'STEAPRTHRULEA', 'STEAPRTHRULEA'),
-			('2026', 'RefCharterSchoolAppropriationMethod', NULL, 'STEAPRALLOCLEA', 'STEAPRALLOCLEA')
+		values ('2026', 'RefCharterSchoolAppropriationMethod', NULL, 'STEAPRDRCT', 'STEAPRDRCT', NULL, NULL),
+			('2026', 'RefCharterSchoolAppropriationMethod', NULL, 'STEAPRTHRULEA', 'STEAPRTHRULEA', NULL, NULL),
+			('2026', 'RefCharterSchoolAppropriationMethod', NULL, 'STEAPRALLOCLEA', 'STEAPRALLOCLEA', NULL, NULL)
 	end
 
 -------------------------------------------------------------
@@ -404,12 +404,6 @@
         ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostSecondaryEnrollmentActionEdFactsCode VARCHAR(50) NULL;
     END
 
-	--Add PSEnrollmentStatus to the Fact table
-    IF COL_LENGTH('RDS.FactK12StudentCounts', 'PsEnrollmentStatusId') IS NULL
-    BEGIN
-        ALTER TABLE RDS.FactK12StudentCounts ADD PsEnrollmentStatusId BIGINT NULL;
-    END
-       
 	IF NOT EXISTS (
     SELECT 1
     FROM sys.foreign_keys fk
