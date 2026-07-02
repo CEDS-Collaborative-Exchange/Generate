@@ -359,13 +359,20 @@
     END;
 
     --Add the default constraint for the new column
-    IF NOT EXISTS (
-		SELECT 1 
-		FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
-		WHERE CONSTRAINT_NAME = 'DF_FactOrganizationCounts_HomelessChildrenandYouthReservation' 
-		AND TABLE_SCHEMA = 'RDS' 
-		AND TABLE_NAME = 'FactOrganizationCounts'
-	)
+    if not exists (
+        select *
+        from sys.all_columns c
+        join sys.tables t 
+            on t.object_id = c.object_id
+        join sys.schemas s 
+            on s.schema_id = t.schema_id
+        join sys.default_constraints d 
+            on c.default_object_id = d.object_id
+        where t.name = 'FactOrganizationCounts'
+        and c.name = 'HomelessChildrenandYouthReservation'
+        and s.name = 'RDS'
+        and d.type = 'D'
+    )
     BEGIN 
         ALTER TABLE [RDS].[FactOrganizationCounts] ADD  CONSTRAINT [DF_FactOrganizationCounts_HomelessChildrenandYouthReservation]  DEFAULT ((0)) FOR [HomelessChildrenandYouthReservation]
     END;
