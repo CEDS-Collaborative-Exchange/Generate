@@ -2,11 +2,19 @@
 --Populate DimPsEnrollmentStatuses
 -----------------------------------------------
 	--drop constraints
-	IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentCounts_PSEnrollmentStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentCounts')
-		ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [FK_FactK12StudentCounts_PSEnrollmentStatusId];
+	IF EXISTS (
+		SELECT 1 
+		FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
+		WHERE CONSTRAINT_NAME = 'FK_FactK12StudentCounts_PSEnrollmentStatusId' 
+		AND TABLE_SCHEMA = 'RDS' 
+		AND TABLE_NAME = 'FactK12StudentCounts'
+	)
+	BEGIN
+		ALTER TABLE [RDS].[FactK12StudentCounts] DROP CONSTRAINT [FK_FactK12StudentCounts_PSEnrollmentStatusId]
+	END;
 
 	--Remove the existing dimension values
-	DELETE FROM	RDS.DimPsEnrollmentStatuses WHERE DimPsEnrollmentStatusId <> -1
+	DELETE FROM	RDS.DimPsEnrollmentStatuses WHERE DimPsEnrollmentStatusId <> -1;
 
 	DBCC CHECKIDENT ('RDS.DimPsEnrollmentStatuses', RESEED, 0);
 
@@ -39,7 +47,7 @@
 	)
 
 		SET IDENTITY_INSERT RDS.DimPsEnrollmentStatuses OFF
-	END
+	END;
 
 	--PostsecondaryExitOrWithdrawalType
 	CREATE TABLE #PostsecondaryExitOrWithdrawalType (PostsecondaryExitOrWithdrawalTypeCode VARCHAR(50), PostsecondaryExitOrWithdrawalTypeDescription VARCHAR(200))
@@ -113,17 +121,25 @@
 		REFERENCES [RDS].[DimPsEnrollmentStatuses] ([DimPsEnrollmentStatusId]);
 
 		ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_PSEnrollmentStatusId];
-	END
+	END;
 
 -----------------------------------------------
 --Populate DimK12StaffCategories
 -----------------------------------------------
 	--Drop constraints
-	IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StaffCounts_K12StaffCategoryId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StaffCounts')
+	IF EXISTS (
+		SELECT 1 
+		FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
+		WHERE CONSTRAINT_NAME = 'FK_FactK12StaffCounts_K12StaffCategoryId' 
+		AND TABLE_SCHEMA = 'RDS' 
+		AND TABLE_NAME = 'FactK12StaffCounts'
+	)
+	BEGIN
 		ALTER TABLE [RDS].[FactK12StaffCounts] DROP CONSTRAINT [FK_FactK12StaffCounts_K12StaffCategoryId];	
+	END
 
 	--Remove the old data so we can repopulate after adding the new fields
-	DELETE FROM [RDS].[DimK12StaffCategories] WHERE DimK12StaffCategoryId <> -1
+	DELETE FROM [RDS].[DimK12StaffCategories] WHERE DimK12StaffCategoryId <> -1;
 
 	DBCC CHECKIDENT ('RDS.DimK12StaffCategories', RESEED, 0);
 
@@ -153,100 +169,100 @@
 		   VALUES (-1, 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING', 'MISSING')
 
 			SET IDENTITY_INSERT RDS.DimK12StaffCategories OFF
-	END
+	END;
 
-		IF OBJECT_ID('tempdb..#K12StaffClassification') IS NOT NULL
-			DROP TABLE #K12StaffClassification
+	IF OBJECT_ID('tempdb..#K12StaffClassification') IS NOT NULL
+		DROP TABLE #K12StaffClassification
 
-		CREATE TABLE #K12StaffClassification (K12StaffClassificationCode VARCHAR(50), K12StaffClassificationDescription VARCHAR(200), K12StaffClassificationEdFactsCode VARCHAR(50))
+	CREATE TABLE #K12StaffClassification (K12StaffClassificationCode VARCHAR(50), K12StaffClassificationDescription VARCHAR(200), K12StaffClassificationEdFactsCode VARCHAR(50))
 
-		INSERT INTO #K12StaffClassification VALUES ('MISSING', 'MISSING', 'MISSING')
-		INSERT INTO #K12StaffClassification 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-			, CASE CedsOptionSetCode
-				WHEN 'AdministrativeSupportStaff' THEN 'LEASUP'
-				WHEN 'Administrators' THEN 'LEAADM'
-				WHEN 'AllOtherSupportStaff' THEN 'OTHSUP'
-				WHEN 'ElementaryTeachers' THEN 'ELMTCH'
-				WHEN 'InstructionalCoordinators' THEN 'CORSUP'
-				WHEN 'KindergartenTeachers' THEN 'KGTCH'
-				WHEN 'LibraryMediaSpecialists' THEN 'LIBSPE'
-				WHEN 'LibraryMediaSupportStaff' THEN 'LIBSUP'
-				WHEN 'Paraprofessionals' THEN 'PARA'
-				WHEN 'Pre-KindergartenTeachers'	THEN 'PKTCH'
-				WHEN 'SchoolCounselors' THEN 'ELMGUI'
-				WHEN 'SchoolPsychologist' THEN 'SCHPSYCH'
-				WHEN 'SecondaryTeachers' THEN 'SECTCH'
-				WHEN 'SpecialEducationTeachers' THEN 'MISSING'
-				WHEN 'StudentSupportServicesStaff' THEN 'STUSUP'
-				WHEN 'UngradedTeachers' THEN 'UGTCH'
-				ELSE 'MISSING'
-			  END
-		FROM [CEDS].CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'K12StaffClassification'
+	INSERT INTO #K12StaffClassification VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #K12StaffClassification 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CASE CedsOptionSetCode
+			WHEN 'AdministrativeSupportStaff' THEN 'LEASUP'
+			WHEN 'Administrators' THEN 'LEAADM'
+			WHEN 'AllOtherSupportStaff' THEN 'OTHSUP'
+			WHEN 'ElementaryTeachers' THEN 'ELMTCH'
+			WHEN 'InstructionalCoordinators' THEN 'CORSUP'
+			WHEN 'KindergartenTeachers' THEN 'KGTCH'
+			WHEN 'LibraryMediaSpecialists' THEN 'LIBSPE'
+			WHEN 'LibraryMediaSupportStaff' THEN 'LIBSUP'
+			WHEN 'Paraprofessionals' THEN 'PARA'
+			WHEN 'Pre-KindergartenTeachers'	THEN 'PKTCH'
+			WHEN 'SchoolCounselors' THEN 'ELMGUI'
+			WHEN 'SchoolPsychologist' THEN 'SCHPSYCH'
+			WHEN 'SecondaryTeachers' THEN 'SECTCH'
+			WHEN 'SpecialEducationTeachers' THEN 'MISSING'
+			WHEN 'StudentSupportServicesStaff' THEN 'STUSUP'
+			WHEN 'UngradedTeachers' THEN 'UGTCH'
+			ELSE 'MISSING'
+			END
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'K12StaffClassification'
 
-		IF OBJECT_ID('tempdb..#SpecialEducationSupportServicesCategory') IS NOT NULL
-			DROP TABLE #SpecialEducationSupportServicesCategory
-		CREATE TABLE #SpecialEducationSupportServicesCategory (SpecialEducationSupportServicesCategoryCode VARCHAR(50), SpecialEducationSupportServicesCategoryDescription VARCHAR(200), SpecialEducationSupportServicesCategoryEdFactsCode VARCHAR(50))
+	IF OBJECT_ID('tempdb..#SpecialEducationSupportServicesCategory') IS NOT NULL
+		DROP TABLE #SpecialEducationSupportServicesCategory
+	CREATE TABLE #SpecialEducationSupportServicesCategory (SpecialEducationSupportServicesCategoryCode VARCHAR(50), SpecialEducationSupportServicesCategoryDescription VARCHAR(200), SpecialEducationSupportServicesCategoryEdFactsCode VARCHAR(50))
 
-		INSERT INTO #SpecialEducationSupportServicesCategory VALUES ('MISSING', 'MISSING', 'MISSING')
-		INSERT INTO #SpecialEducationSupportServicesCategory 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-			, CedsOptionSetCode AS EdFactsOptionSetCode
-		FROM [CEDS].CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'SpecialEducationSupportServicesCategory'
+	INSERT INTO #SpecialEducationSupportServicesCategory VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #SpecialEducationSupportServicesCategory 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CedsOptionSetCode AS EdFactsOptionSetCode
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'SpecialEducationSupportServicesCategory'
 
-		IF OBJECT_ID('tempdb..#TitleIProgramStaffCategory') IS NOT NULL
-			DROP TABLE #TitleIProgramStaffCategory
+	IF OBJECT_ID('tempdb..#TitleIProgramStaffCategory') IS NOT NULL
+		DROP TABLE #TitleIProgramStaffCategory
 
-		CREATE TABLE #TitleIProgramStaffCategory (TitleIProgramStaffCategoryCode VARCHAR(50), TitleIProgramStaffCategoryDescription VARCHAR(200), TitleIProgramStaffCategoryEdFactsCode VARCHAR(50))
+	CREATE TABLE #TitleIProgramStaffCategory (TitleIProgramStaffCategoryCode VARCHAR(50), TitleIProgramStaffCategoryDescription VARCHAR(200), TitleIProgramStaffCategoryEdFactsCode VARCHAR(50))
 
-		INSERT INTO #TitleIProgramStaffCategory VALUES ('MISSING', 'MISSING', 'MISSING')
-		INSERT INTO #TitleIProgramStaffCategory 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-			, CASE CedsOptionSetCode
-				WHEN 'TitleISupportStaff' THEN 'TITSUP'
-				WHEN 'TitleIOtherParaprofessional' THEN 'TITO'
-				WHEN 'TitleIParaprofessional' THEN 'TITPARA'
-				WHEN 'TitleITeacher' THEN 'TITTCH'
-				WHEN 'TitleIAdministrator' THEN 'TITADM'
-				ELSE 'MISSING'
-			  END
-		FROM [CEDS].CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'TitleIProgramStaffCategory'
-		
-		IF OBJECT_ID('tempdb..#MigrantEducationProgramStaffCategory') IS NOT NULL
-			DROP TABLE #MigrantEducationProgramStaffCategory
+	INSERT INTO #TitleIProgramStaffCategory VALUES ('MISSING', 'MISSING', 'MISSING')
+	INSERT INTO #TitleIProgramStaffCategory 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+		, CASE CedsOptionSetCode
+			WHEN 'TitleISupportStaff' THEN 'TITSUP'
+			WHEN 'TitleIOtherParaprofessional' THEN 'TITO'
+			WHEN 'TitleIParaprofessional' THEN 'TITPARA'
+			WHEN 'TitleITeacher' THEN 'TITTCH'
+			WHEN 'TitleIAdministrator' THEN 'TITADM'
+			ELSE 'MISSING'
+			END
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'TitleIProgramStaffCategory'
+	
+	IF OBJECT_ID('tempdb..#MigrantEducationProgramStaffCategory') IS NOT NULL
+		DROP TABLE #MigrantEducationProgramStaffCategory;
 
-		CREATE TABLE #MigrantEducationProgramStaffCategory (MigrantEducationProgramStaffCategoryCode VARCHAR(50), MigrantEducationProgramStaffCategoryDescription VARCHAR(200))
+	CREATE TABLE #MigrantEducationProgramStaffCategory (MigrantEducationProgramStaffCategoryCode VARCHAR(50), MigrantEducationProgramStaffCategoryDescription VARCHAR(200));
 
-		INSERT INTO #MigrantEducationProgramStaffCategory VALUES ('MISSING', 'MISSING')
-		INSERT INTO #MigrantEducationProgramStaffCategory 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-		FROM [CEDS].CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'MigrantEducationProgramStaffCategory'
+	INSERT INTO #MigrantEducationProgramStaffCategory VALUES ('MISSING', 'MISSING')
+	INSERT INTO #MigrantEducationProgramStaffCategory 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'MigrantEducationProgramStaffCategory'
 
-		
-		IF OBJECT_ID('tempdb..#ProfessionalEducationalJobClassification') IS NOT NULL
-			DROP TABLE #ProfessionalEducationalJobClassification
+	
+	IF OBJECT_ID('tempdb..#ProfessionalEducationalJobClassification') IS NOT NULL
+		DROP TABLE #ProfessionalEducationalJobClassification;
 
-		CREATE TABLE #ProfessionalEducationalJobClassification (ProfessionalEducationalJobClassificationCode VARCHAR(50), ProfessionalEducationalJobClassificationDescription VARCHAR(200))
+	CREATE TABLE #ProfessionalEducationalJobClassification (ProfessionalEducationalJobClassificationCode VARCHAR(50), ProfessionalEducationalJobClassificationDescription VARCHAR(200));
 
-		INSERT INTO #ProfessionalEducationalJobClassification VALUES ('MISSING', 'MISSING')
-		INSERT INTO #ProfessionalEducationalJobClassification 
-		SELECT 
-			  CedsOptionSetCode
-			, CedsOptionSetDescription
-		FROM [CEDS].CedsOptionSetMapping
-		WHERE CedsElementTechnicalName = 'ProfessionalEducationalJobClassification'
+	INSERT INTO #ProfessionalEducationalJobClassification VALUES ('MISSING', 'MISSING')
+	INSERT INTO #ProfessionalEducationalJobClassification 
+	SELECT 
+			CedsOptionSetCode
+		, CedsOptionSetDescription
+	FROM [CEDS].CedsOptionSetMapping
+	WHERE CedsElementTechnicalName = 'ProfessionalEducationalJobClassification'
 
 	INSERT INTO [RDS].[DimK12StaffCategories]
            ([K12StaffClassificationCode]
@@ -308,6 +324,4 @@
 		REFERENCES [RDS].[DimK12StaffCategories] ([DimK12StaffCategoryId]);
 
 		ALTER TABLE [RDS].[FactK12StaffCounts] CHECK CONSTRAINT [FK_FactK12StaffCounts_K12StaffCategoryId];
-	END
-
-
+	END;

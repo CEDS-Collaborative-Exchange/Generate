@@ -10,7 +10,7 @@
    	IF COL_LENGTH('Staging.K12StaffAssignment', 'SpecialEducationStaffCategory') IS NOT NULL
 	BEGIN
 		exec sp_rename 'Staging.K12StaffAssignment.SpecialEducationStaffCategory', 'SpecialEducationSupportServicesCategory', 'COLUMN';
-	END
+	END;
 
     -----------------------------------------------
     --Staging.K12Enrollment
@@ -37,7 +37,7 @@
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-        END
+        END;
 
         IF EXISTS(SELECT 1
          FROM 
@@ -54,7 +54,7 @@
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'RecordStartDateTime'
-        END
+        END;
 
         IF EXISTS(SELECT 1
          FROM 
@@ -71,99 +71,99 @@
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'RecordEndDateTime'
-        END
+        END;
 
         IF EXISTS(SELECT 1
-         FROM 
-             sys.extended_properties AS ep
-             INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
-             INNER JOIN sys.tables AS t ON c.object_id = t.object_id
-             INNER JOIN sys.schemas s on t.schema_id = s.schema_id
-         WHERE 
-         ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
-         AND t.name = 'K12Enrollment' AND c.name = 'DataCollectionName' )
-         BEGIN
+        FROM 
+            sys.extended_properties AS ep
+            INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+            INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+            INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+        WHERE 
+        ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+        AND t.name = 'K12Enrollment' AND c.name = 'DataCollectionName' )
+        BEGIN
             EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        END
+        END;
 
     --Drop the indexes that exist
         IF EXISTS(SELECT 1 FROM sys.indexes WHERE name = 'IX_Staging_K12Enrollment_DataCollectionName')
         BEGIN
             DROP INDEX IX_Staging_K12Enrollment_DataCollectionName ON Staging.K12Enrollment;
-        END
+        END;
 
         IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Staging_K12Enrollment_StuId_SchId_Hispanic_RecordStartDateTime')
         BEGIN
             DROP INDEX IX_Staging_K12Enrollment_StuId_SchId_Hispanic_RecordStartDateTime ON Staging.K12Enrollment;
-        END
+        END;
 
         IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Staging_K12Enrollment_WithIdentifiers')
         BEGIN
             DROP INDEX IX_Staging_K12Enrollment_WithIdentifiers ON Staging.K12Enrollment;
-        END
+        END;
 
         IF EXISTS(SELECT 1 FROM sys.indexes WHERE name = 'IX_K12Enrollment_DataCollectionName')
         BEGIN
             DROP INDEX IX_K12Enrollment_DataCollectionName ON Staging.K12Enrollment;
-        END
+        END;
 
     --Drop the columns at the bottom of the table temporarily
         IF COL_LENGTH('Staging.K12Enrollment', 'SchoolYear') IS NOT NULL
         BEGIN
             ALTER TABLE Staging.K12Enrollment DROP COLUMN SchoolYear;
-        END
+        END;
  
         IF COL_LENGTH('Staging.K12Enrollment', 'RecordStartDateTime') IS NOT NULL
         BEGIN
             ALTER TABLE Staging.K12Enrollment DROP COLUMN RecordStartDateTime;
-        END
+        END;
 
         IF COL_LENGTH('Staging.K12Enrollment', 'RecordEndDateTime') IS NOT NULL
         BEGIN
             ALTER TABLE Staging.K12Enrollment DROP COLUMN RecordEndDateTime;
-        END
+        END;
 
         IF COL_LENGTH('Staging.K12Enrollment', 'DataCollectionName') IS NOT NULL
         BEGIN
             ALTER TABLE Staging.K12Enrollment DROP COLUMN DataCollectionName;
-        END
+        END;
 
         --Dropping RunDateTime, we don't use that anymore
         IF COL_LENGTH('Staging.K12Enrollment', 'RunDateTime') IS NOT NULL  
         BEGIN
             ALTER TABLE Staging.K12Enrollment DROP COLUMN RunDateTime;
-        END
+        END;
 
     --Add the new column
         IF COL_LENGTH('Staging.K12Enrollment', 'PostSecondaryEnrollmentAction') IS NULL
         BEGIN
             ALTER TABLE Staging.K12Enrollment ADD PostSecondaryEnrollmentAction VARCHAR(50) NULL;
-        END
+        END;
 
     --Add the columns back
         IF COL_LENGTH('Staging.K12Enrollment', 'SchoolYear') IS NULL
         BEGIN
             ALTER TABLE Staging.K12Enrollment ADD SchoolYear SMALLINT NULL;
-        END
+        END;
  
         IF COL_LENGTH('Staging.K12Enrollment', 'RecordStartDateTime') IS NULL
         BEGIN
             ALTER TABLE Staging.K12Enrollment ADD RecordStartDateTime DATETIME2 NULL;
-        END
+        END;
 
         IF COL_LENGTH('Staging.K12Enrollment', 'RecordEndDateTime') IS NULL
         BEGIN
             ALTER TABLE Staging.K12Enrollment ADD RecordEndDateTime DATETIME2 NULL;
-        END
+        END;
 
         IF COL_LENGTH('Staging.K12Enrollment', 'DataCollectionName') IS NULL
         BEGIN
             ALTER TABLE Staging.K12Enrollment ADD DataCollectionName NVARCHAR(100);
-        END
+        END;
 
         --Add the index back
         IF NOT EXISTS (
@@ -175,7 +175,7 @@
         BEGIN
             CREATE NONCLUSTERED INDEX IX_Staging_K12Enrollment_DataCollectionName
             ON Staging.K12Enrollment (DataCollectionName);
-        END
+        END;
 
         --Add the extended proprties for the new column and the re-added columns
          IF EXISTS(SELECT 1
@@ -193,7 +193,7 @@
             EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'PostSecondaryEnrollmentAction'
             EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=00000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'PostSecondaryEnrollmentAction'
             EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'PostSecondaryEnrollmentAction'
-        END
+        END;
         EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The year for a reported school session.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
         EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'School Year' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
         EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000243' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'SchoolYear'
@@ -218,7 +218,7 @@
         EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22923' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
         EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'K12Enrollment', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
 
-    END
+    END;
     -----------------------------------------------
     --Staging.OrganizationFederalFunding
     -----------------------------------------------
@@ -243,7 +243,7 @@
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-        END
+        END;
 
         IF EXISTS(SELECT 1
          FROM 
@@ -260,46 +260,46 @@
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
             EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        END
+        END;
 
     --Drop the columns at the bottom of the table temporarily
         IF COL_LENGTH('Staging.OrganizationFederalFunding', 'SchoolYear') IS NOT NULL
         BEGIN
             ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN SchoolYear;
-        END
+        END;
  
         IF COL_LENGTH('Staging.OrganizationFederalFunding', 'DataCollectionName') IS NOT NULL
         BEGIN
             ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN DataCollectionName;
-        END
+        END;
 
     --Drop the deprecated columns
         IF COL_LENGTH('Staging.OrganizationFederalFunding', 'DataCollectionId') IS NOT NULL
         BEGIN
             ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN DataCollectionId;
-        END
+        END;
  
         IF COL_LENGTH('Staging.OrganizationFederalFunding', 'RunDateTime') IS NOT NULL
         BEGIN
             ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN RunDateTime;
-        END
+        END;
 
     --Add the new column
         IF COL_LENGTH('Staging.OrganizationFederalFunding', 'HomelessChildrenandYouthReservation') IS NULL
         BEGIN
             ALTER TABLE Staging.OrganizationFederalFunding ADD HomelessChildrenandYouthReservation NUMERIC(12,2) NULL;
-        END
+        END;
 
     --Add the columns back
         IF COL_LENGTH('Staging.OrganizationFederalFunding', 'SchoolYear') IS NULL
         BEGIN
             ALTER TABLE Staging.OrganizationFederalFunding ADD SchoolYear SMALLINT NULL;
-        END
+        END;
  
         IF COL_LENGTH('Staging.OrganizationFederalFunding', 'DataCollectionName') IS NULL
         BEGIN
             ALTER TABLE Staging.OrganizationFederalFunding ADD DataCollectionName NVARCHAR(100);
-        END
+        END;
 
         IF EXISTS(SELECT 1
          FROM 
@@ -316,7 +316,7 @@
             EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
             EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=00000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
             EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
-        END
+        END;
         EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The year for a reported school session.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
         EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'School Year' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
         EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000243' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
@@ -329,7 +329,7 @@
         EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22923' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
         EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
 
-    END
+    END;
 
 -----------------------------------------------------
 --Create the default mapping rows in SSRD
@@ -343,7 +343,7 @@
 		values ('2026', 'RefCharterSchoolAppropriationMethod', NULL, 'STEAPRDRCT', 'STEAPRDRCT', NULL, NULL),
 			('2026', 'RefCharterSchoolAppropriationMethod', NULL, 'STEAPRTHRULEA', 'STEAPRTHRULEA', NULL, NULL),
 			('2026', 'RefCharterSchoolAppropriationMethod', NULL, 'STEAPRALLOCLEA', 'STEAPRALLOCLEA', NULL, NULL)
-	end
+	end;
 
 -------------------------------------------------------------
 --RDS Changes
@@ -356,19 +356,25 @@
     IF COL_LENGTH('RDS.FactOrganizationCounts', 'HomelessChildrenandYouthReservation') IS NULL
     BEGIN
         ALTER TABLE RDS.FactOrganizationCounts ADD HomelessChildrenandYouthReservation INT NULL;
-    END
+    END;
 
     --Add the default constraint for the new column
-    IF OBJECT_ID('[DF_FactOrganizationCounts_HomelessChildrenandYouthReservation]') IS NULL 
-    BEGIN
+    IF NOT EXISTS (
+		SELECT 1 
+		FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
+		WHERE CONSTRAINT_NAME = 'DF_FactOrganizationCounts_HomelessChildrenandYouthReservation' 
+		AND TABLE_SCHEMA = 'RDS' 
+		AND TABLE_NAME = 'FactOrganizationCounts'
+	)
+    BEGIN 
         ALTER TABLE [RDS].[FactOrganizationCounts] ADD  CONSTRAINT [DF_FactOrganizationCounts_HomelessChildrenandYouthReservation]  DEFAULT ((0)) FOR [HomelessChildrenandYouthReservation]
-    END
+    END;
 
     --Add the new column to ReportEdFactsOrganizationCounts
     IF COL_LENGTH('RDS.ReportEdFactsOrganizationCounts', 'HomelessChildrenandYouthReservation') IS NULL
     BEGIN
         ALTER TABLE RDS.ReportEdFactsOrganizationCounts ADD HomelessChildrenandYouthReservation INT NULL;
-    END
+    END;
 
 	-----------------------------------------------
 	--File 067 changes	
@@ -377,12 +383,12 @@
     IF COL_LENGTH('RDS.DimK12StaffCategories', 'TitleIIILanguageInstructionIndicatorCode') IS NULL
     BEGIN
         ALTER TABLE RDS.DimK12StaffCategories ADD TitleIIILanguageInstructionIndicatorCode VARCHAR(50) NULL;
-    END
+    END;
 	
     IF COL_LENGTH('RDS.DimK12StaffCategories', 'TitleIIILanguageInstructionIndicatorDescription') IS NULL
     BEGIN
         ALTER TABLE RDS.DimK12StaffCategories ADD TitleIIILanguageInstructionIndicatorDescription VARCHAR(200) NULL;
-    END
+    END;
 
 	-----------------------------------------------
 	--File 160 changes	
@@ -392,16 +398,16 @@
     IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostSecondaryEnrollmentActionCode') IS NULL
     BEGIN
         ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostSecondaryEnrollmentActionCode VARCHAR(50) NULL;
-    END
+    END;
 	
     IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostSecondaryEnrollmentActionDescription') IS NULL
     BEGIN
         ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostSecondaryEnrollmentActionDescription VARCHAR(200) NULL;
-    END
+    END;
 
     IF COL_LENGTH('RDS.DimPsEnrollmentStatuses', 'PostSecondaryEnrollmentActionEdFactsCode') IS NULL
     BEGIN
         ALTER TABLE RDS.DimPsEnrollmentStatuses ADD PostSecondaryEnrollmentActionEdFactsCode VARCHAR(50) NULL;
-    END
+    END;
 
 --End of code to add back fields missing from 13.2
