@@ -355,11 +355,6 @@ END;
 
 IF OBJECT_ID(N'[RDS].[FactK12StudentCounts]', N'U') IS NOT NULL
 BEGIN
-	IF COL_LENGTH(N'[RDS].[FactK12StudentCounts]', N'PsEnrollmentStatusId') IS NOT NULL
-	BEGIN
-		ALTER TABLE [RDS].[FactK12StudentCounts]
-		DROP COLUMN [PsEnrollmentStatusId];
-	END;
 
 	IF COL_LENGTH(N'[RDS].[FactK12StudentCounts]', N'CteOutcomeIndicatorId') IS NOT NULL
 	BEGIN

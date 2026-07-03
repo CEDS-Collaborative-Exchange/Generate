@@ -115,9 +115,15 @@
 	DROP TABLE #PostsecondaryEnrollmentAction
 
 	--add constraints back
-	IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'FK_FactK12StudentCounts_PSEnrollmentStatusId' AND TABLE_SCHEMA = 'RDS' AND TABLE_NAME = 'FactK12StudentCounts')
+	IF NOT EXISTS (
+		SELECT 1 
+		FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
+		WHERE CONSTRAINT_NAME = 'FK_FactK12StudentCounts_PSEnrollmentStatusId' 
+		AND TABLE_SCHEMA = 'RDS' 
+		AND TABLE_NAME = 'FactK12StudentCounts'
+	)
 	BEGIN 
-		ALTER TABLE [RDS].[FactK12StudentCounts]  WITH CHECK ADD  CONSTRAINT [FK_FactK12StudentCounts_PSEnrollmentStatusId] FOREIGN KEY([PsEnrollmentStatusId])
+		ALTER TABLE [RDS].[FactK12StudentCounts]  WITH CHECK ADD CONSTRAINT [FK_FactK12StudentCounts_PSEnrollmentStatusId] FOREIGN KEY([PsEnrollmentStatusId])
 		REFERENCES [RDS].[DimPsEnrollmentStatuses] ([DimPsEnrollmentStatusId]);
 
 		ALTER TABLE [RDS].[FactK12StudentCounts] CHECK CONSTRAINT [FK_FactK12StudentCounts_PSEnrollmentStatusId];
