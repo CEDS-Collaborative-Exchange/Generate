@@ -1122,3 +1122,9 @@ END;
 CLOSE K12SupportVarcharColumnsCursor;
 DEALLOCATE K12SupportVarcharColumnsCursor;
 
+IF COL_LENGTH('Staging.StagingValidationResults', 'ReportGroupOrCode') IS NOT NULL
+BEGIN
+    ALTER TABLE Staging.StagingValidationResults
+    DROP COLUMN ReportGroupOrCode;
+END;
+
