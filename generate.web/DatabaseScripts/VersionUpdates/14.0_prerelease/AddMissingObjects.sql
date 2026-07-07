@@ -225,111 +225,111 @@
     --Drop the extended properties for SchoolYear and DataCollectionName
     --  they are added back after the new columns to keep the structure of the table clean    
 
-    IF COL_LENGTH('Staging.OrganizationFederalFunding', 'HomelessChildrenandYouthReservation') IS NULL
-    BEGIN
+    -- IF COL_LENGTH('Staging.OrganizationFederalFunding', 'HomelessChildrenandYouthReservation') IS NULL
+    -- BEGIN
 
-        IF EXISTS(SELECT 1
-         FROM 
-             sys.extended_properties AS ep
-             INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
-             INNER JOIN sys.tables AS t ON c.object_id = t.object_id
-             INNER JOIN sys.schemas s on t.schema_id = s.schema_id
-         WHERE 
-         ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
-         AND t.name = 'OrganizationFederalFunding' AND c.name = 'SchoolYear' )
-         BEGIN
-            EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-            EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-            EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-        END;
+    --     IF EXISTS(SELECT 1
+    --      FROM 
+    --          sys.extended_properties AS ep
+    --          INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+    --          INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+    --          INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    --      WHERE 
+    --      ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    --      AND t.name = 'OrganizationFederalFunding' AND c.name = 'SchoolYear' )
+    --      BEGIN
+    --         EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    --         EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    --         EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    --         EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    --         EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    --     END;
 
-        IF EXISTS(SELECT 1
-         FROM 
-             sys.extended_properties AS ep
-             INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
-             INNER JOIN sys.tables AS t ON c.object_id = t.object_id
-             INNER JOIN sys.schemas s on t.schema_id = s.schema_id
-         WHERE 
-         ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
-         AND t.name = 'OrganizationFederalFunding' AND c.name = 'DataCollectionName' )
-         BEGIN
-            EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-            EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-            EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-            EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        END;
+    --     IF EXISTS(SELECT 1
+    --      FROM 
+    --          sys.extended_properties AS ep
+    --          INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+    --          INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+    --          INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    --      WHERE 
+    --      ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    --      AND t.name = 'OrganizationFederalFunding' AND c.name = 'DataCollectionName' )
+    --      BEGIN
+    --         EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    --         EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    --         EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    --         EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    --         EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    --     END;
 
-    --Drop the columns at the bottom of the table temporarily
-        IF COL_LENGTH('Staging.OrganizationFederalFunding', 'SchoolYear') IS NOT NULL
-        BEGIN
-            ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN SchoolYear;
-        END;
+    -- --Drop the columns at the bottom of the table temporarily
+    --     IF COL_LENGTH('Staging.OrganizationFederalFunding', 'SchoolYear') IS NOT NULL
+    --     BEGIN
+    --         ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN SchoolYear;
+    --     END;
  
-        IF COL_LENGTH('Staging.OrganizationFederalFunding', 'DataCollectionName') IS NOT NULL
-        BEGIN
-            ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN DataCollectionName;
-        END;
+    --     IF COL_LENGTH('Staging.OrganizationFederalFunding', 'DataCollectionName') IS NOT NULL
+    --     BEGIN
+    --         ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN DataCollectionName;
+    --     END;
 
-    --Drop the deprecated columns
-        IF COL_LENGTH('Staging.OrganizationFederalFunding', 'DataCollectionId') IS NOT NULL
-        BEGIN
-            ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN DataCollectionId;
-        END;
+    -- --Drop the deprecated columns
+    --     IF COL_LENGTH('Staging.OrganizationFederalFunding', 'DataCollectionId') IS NOT NULL
+    --     BEGIN
+    --         ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN DataCollectionId;
+    --     END;
  
-        IF COL_LENGTH('Staging.OrganizationFederalFunding', 'RunDateTime') IS NOT NULL
-        BEGIN
-            ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN RunDateTime;
-        END;
+    --     IF COL_LENGTH('Staging.OrganizationFederalFunding', 'RunDateTime') IS NOT NULL
+    --     BEGIN
+    --         ALTER TABLE Staging.OrganizationFederalFunding DROP COLUMN RunDateTime;
+    --     END;
 
-    --Add the new column
-        IF COL_LENGTH('Staging.OrganizationFederalFunding', 'HomelessChildrenandYouthReservation') IS NULL
-        BEGIN
-            ALTER TABLE Staging.OrganizationFederalFunding ADD HomelessChildrenandYouthReservation NUMERIC(12,2) NULL;
-        END;
+    -- --Add the new column
+    --     IF COL_LENGTH('Staging.OrganizationFederalFunding', 'HomelessChildrenandYouthReservation') IS NULL
+    --     BEGIN
+    --         ALTER TABLE Staging.OrganizationFederalFunding ADD HomelessChildrenandYouthReservation NUMERIC(12,2) NULL;
+    --     END;
 
-    --Add the columns back
-        IF COL_LENGTH('Staging.OrganizationFederalFunding', 'SchoolYear') IS NULL
-        BEGIN
-            ALTER TABLE Staging.OrganizationFederalFunding ADD SchoolYear SMALLINT NULL;
-        END;
+    -- --Add the columns back
+    --     IF COL_LENGTH('Staging.OrganizationFederalFunding', 'SchoolYear') IS NULL
+    --     BEGIN
+    --         ALTER TABLE Staging.OrganizationFederalFunding ADD SchoolYear SMALLINT NULL;
+    --     END;
  
-        IF COL_LENGTH('Staging.OrganizationFederalFunding', 'DataCollectionName') IS NULL
-        BEGIN
-            ALTER TABLE Staging.OrganizationFederalFunding ADD DataCollectionName NVARCHAR(100);
-        END;
+    --     IF COL_LENGTH('Staging.OrganizationFederalFunding', 'DataCollectionName') IS NULL
+    --     BEGIN
+    --         ALTER TABLE Staging.OrganizationFederalFunding ADD DataCollectionName NVARCHAR(100);
+    --     END;
 
-        IF EXISTS(SELECT 1
-         FROM 
-             sys.extended_properties AS ep
-             INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
-             INNER JOIN sys.tables AS t ON c.object_id = t.object_id
-             INNER JOIN sys.schemas s on t.schema_id = s.schema_id
-         WHERE 
-         ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
-         AND t.name = 'OrganizationFederalFunding' AND c.name = 'HomelessChildrenandYouthReservation' )
-         BEGIN
-            EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The initially reserved dollar amount of Title I, Part A allocation reserved by the LEA to serve homeless children and youth.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
-            EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Homeless Children and Youth Reservation' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
-            EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
-            EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=00000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
-            EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
-        END;
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The year for a reported school session.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'School Year' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000243' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=21243' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
-        EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    --     IF EXISTS(SELECT 1
+    --      FROM 
+    --          sys.extended_properties AS ep
+    --          INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+    --          INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+    --          INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    --      WHERE 
+    --      ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    --      AND t.name = 'OrganizationFederalFunding' AND c.name = 'HomelessChildrenandYouthReservation' )
+    --      BEGIN
+    --         EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The initially reserved dollar amount of Title I, Part A allocation reserved by the LEA to serve homeless children and youth.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
+    --         EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Homeless Children and Youth Reservation' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
+    --         EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
+    --         EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=00000' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
+    --         EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'HomelessChildrenandYouthReservation'
+    --     END;
+    --     EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The year for a reported school session.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    --     EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'School Year' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    --     EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'000243' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    --     EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=21243' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    --     EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'SchoolYear'
 
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'A human readable name used to identify the data within the collection.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Data Collection Name' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001966' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22923' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
-        EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    --     EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'A human readable name used to identify the data within the collection.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    --     EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Data Collection Name' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    --     EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'001966' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    --     EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/CEDSElementDetails.aspx?TermId=22923' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    --     EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'OrganizationFederalFunding', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
 
-    END;
+    -- END;
 
 -----------------------------------------------------
 --Create the default mapping rows in SSRD

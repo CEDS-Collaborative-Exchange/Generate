@@ -1,3 +1,6 @@
+--------------------------------------------------
+--Column Renames/Redefines
+--------------------------------------------------
 IF COL_LENGTH('Staging.K12Enrollment', 'NumberOfSchoolDays') IS NOT NULL
    AND COL_LENGTH('Staging.K12Enrollment', 'NumberOfDaysInAttendance') IS NULL
 BEGIN
@@ -436,6 +439,297 @@ BEGIN
         'COLUMN';
 END;
 
+IF COL_LENGTH('Staging.OrganizationAddress', 'AddressApartmentRoomOrSuiteNumber') IS NOT NULL
+   AND EXISTS (
+       SELECT 1
+       FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = 'Staging'
+           AND TABLE_NAME = 'OrganizationAddress'
+           AND COLUMN_NAME = 'AddressApartmentRoomOrSuiteNumber'
+           AND DATA_TYPE <> 'varchar'
+   )
+BEGIN
+    ALTER TABLE Staging.OrganizationAddress
+    ALTER COLUMN AddressApartmentRoomOrSuiteNumber VARCHAR (50) NULL;
+END;
+
+IF COL_LENGTH('Staging.OrganizationFederalFunding', 'REAPAlternativeFundingStatusCode') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.OrganizationFederalFunding.REAPAlternativeFundingStatusCode',
+        'ReapAlternativeFundingStatusCode',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Enrollment', 'RecordStartDateTime') IS NOT NULL
+   AND EXISTS (
+       SELECT 1
+       FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = 'Staging'
+           AND TABLE_NAME = 'K12Enrollment'
+           AND COLUMN_NAME = 'RecordStartDateTime'
+           AND DATA_TYPE <> 'datetime'
+   )
+BEGIN
+    EXEC (
+        'ALTER TABLE Staging.K12Enrollment ALTER COLUMN RecordStartDateTime DATETIME NULL;'
+    );
+END;
+
+IF COL_LENGTH('Staging.K12Enrollment', 'RecordEndDateTime') IS NOT NULL
+   AND EXISTS (
+       SELECT 1
+       FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = 'Staging'
+           AND TABLE_NAME = 'K12Enrollment'
+           AND COLUMN_NAME = 'RecordEndDateTime'
+           AND DATA_TYPE <> 'datetime'
+   )
+BEGIN
+        EXEC (
+        'ALTER TABLE Staging.K12Enrollment ALTER COLUMN RecordEndDateTime DATETIME NULL;'
+    );
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'IEU_OrganizationName') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.IEU_OrganizationName',
+        'Ieu_OrganizationName',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'IEU_OperationalStatusEffectiveDate') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.IEU_OperationalStatusEffectiveDate',
+        'Ieu_OperationalStatusEffectiveDate',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'IEU_OrganizationOperationalStatus') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.IEU_OrganizationOperationalStatus',
+        'Ieu_OrganizationOperationalStatus',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'IEU_WebSiteAddress') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.IEU_WebSiteAddress',
+        'Ieu_WebSiteAddress',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'IEU_RecordStartDateTime') IS NOT NULL
+    BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.IEU_RecordStartDateTime',
+        'Ieu_RecordStartDateTime',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'IEU_RecordEndDateTime') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.IEU_RecordEndDateTime',
+        'Ieu_RecordEndDateTime',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_SupervisoryUnionIdentificationNumber') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_SupervisoryUnionIdentificationNumber',
+        'Lea_SupervisoryUnionIdentificationNumber',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_WebSiteAddress') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_WebSiteAddress',
+        'Lea_WebSiteAddress',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_OperationalStatus') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_OperationalStatus',
+        'Lea_OperationalStatus',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_OperationalStatusEffectiveDate') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_OperationalStatusEffectiveDate',
+        'Lea_OperationalStatusEffectiveDate',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_CharterLeaStatus') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_CharterLeaStatus',
+        'Lea_CharterLeaStatus',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_CharterSchoolIndicator') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_CharterSchoolIndicator',
+        'Lea_CharterSchoolIndicator',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_Type') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_Type',
+        'Lea_Type',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_McKinneyVentoSubgrantRecipient') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_McKinneyVentoSubgrantRecipient',
+        'Lea_McKinneyVentoSubgrantRecipient',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_GunFreeSchoolsActReportingStatus') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_GunFreeSchoolsActReportingStatus',
+        'Lea_GunFreeSchoolsActReportingStatus',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_TitleIinstructionalService') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_TitleIinstructionalService',
+        'Lea_TitleIinstructionalService',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_TitleIProgramType') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_TitleIProgramType',
+        'Lea_TitleIProgramType',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_K12LeaTitleISupportService') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_K12LeaTitleISupportService',
+        'Lea_K12LeaTitleISupportService',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_MepProjectType') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_MepProjectType',
+        'Lea_MepProjectType',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_IsReportedFederally') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_IsReportedFederally',
+        'Lea_IsReportedFederally',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_RecordStartDateTime') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_RecordStartDateTime',
+        'Lea_RecordStartDateTime',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'LEA_RecordEndDateTime') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12Organization.LEA_RecordEndDateTime',
+        'Lea_RecordEndDateTime',
+        'COLUMN';
+END;
+
+IF COL_LENGTH('Staging.K12SchoolComprehensiveSupportIdentificationType', 'LEAIdentifierSea') IS NOT NULL
+BEGIN
+    EXEC sp_rename
+        'Staging.K12SchoolComprehensiveSupportIdentificationType.LEAIdentifierSea',
+        'LeaIdentifierSea',
+        'COLUMN';
+END;
+
+DECLARE @K12SupportColumnName SYSNAME;
+DECLARE @K12SupportMaxLength INT;
+DECLARE @K12SupportIsNullable NVARCHAR(3);
+DECLARE @K12SupportAlterSql NVARCHAR(MAX);
+
+DECLARE K12SupportVarcharColumnsCursor CURSOR LOCAL FAST_FORWARD FOR
+SELECT COLUMN_NAME,
+             CHARACTER_MAXIMUM_LENGTH,
+             IS_NULLABLE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'Staging'
+    AND TABLE_NAME = 'K12SchoolComprehensiveSupportIdentificationType'
+    AND COLUMN_NAME IN (
+            'SchoolYear',
+            'SchoolIdentifierSea',
+            'ComprehensiveSupport',
+            'ComprehensiveSupportReasonApplicability',
+            'LeaIdentifierSea'
+    )
+    AND DATA_TYPE = 'varchar';
+
+OPEN K12SupportVarcharColumnsCursor;
+
+FETCH NEXT FROM K12SupportVarcharColumnsCursor
+INTO @K12SupportColumnName, @K12SupportMaxLength, @K12SupportIsNullable;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+        SET @K12SupportAlterSql =
+                'ALTER TABLE Staging.K12SchoolComprehensiveSupportIdentificationType ALTER COLUMN ['
+                + @K12SupportColumnName
+                + '] NVARCHAR('
+                + CASE
+                        WHEN @K12SupportMaxLength = -1 THEN 'MAX'
+                        ELSE CAST(@K12SupportMaxLength AS NVARCHAR(10))
+                    END
+                + ') '
+                + CASE
+                        WHEN @K12SupportIsNullable = 'YES' THEN 'NULL'
+                        ELSE 'NOT NULL'
+                    END
+                + ';';
+
+        EXEC sp_executesql @K12SupportAlterSql;
+
+        FETCH NEXT FROM K12SupportVarcharColumnsCursor
+        INTO @K12SupportColumnName, @K12SupportMaxLength, @K12SupportIsNullable;
+END;
+
+CLOSE K12SupportVarcharColumnsCursor;
+DEALLOCATE K12SupportVarcharColumnsCursor;
+
+--------------------------------------------------
+--Column Adds
+--------------------------------------------------
 IF COL_LENGTH('Staging.ProgramParticipationTitleIII', 'RunDateTime') IS NULL
 BEGIN
     ALTER TABLE Staging.ProgramParticipationTitleIII
@@ -646,6 +940,186 @@ BEGIN
     ADD PrimaryAssignmentIndicatorCode NVARCHAR (50) NULL;
 END;
 
+IF COL_LENGTH('Staging.K12Organization', 'School_CharterSchoolStateAppropriationMethod') IS NULL
+BEGIN
+    ALTER TABLE Staging.K12Organization 
+    ADD School_CharterSchoolStateAppropriationMethod NVARCHAR(100) NULL;
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'SchoolIdentifierAct') IS NULL
+BEGIN
+    ALTER TABLE Staging.K12Organization
+    ADD SchoolIdentifierAct NVARCHAR (50) NULL;
+END;
+
+IF COL_LENGTH('Staging.K12Organization', 'SchoolIdentifierSat') IS NULL
+BEGIN
+    ALTER TABLE Staging.K12Organization
+    ADD SchoolIdentifierSat NVARCHAR (50) NULL;
+END;
+
+IF COL_LENGTH('Staging.SourceSystemReferenceData', 'GlobalId') IS NULL
+BEGIN
+    ALTER TABLE Staging.SourceSystemReferenceData
+    ADD GlobalId NVARCHAR (20) NULL;
+END;
+
+IF COL_LENGTH('Staging.SourceSystemReferenceData', 'ElementName') IS NULL
+BEGIN
+    ALTER TABLE Staging.SourceSystemReferenceData
+    ADD ElementName NVARCHAR (150) NULL;
+END;
+
+IF COL_LENGTH('Staging.OrganizationFederalFunding', 'RunDateTime') IS NULL
+BEGIN
+    ALTER TABLE Staging.OrganizationFederalFunding
+    ADD RunDateTime DATETIME NULL;
+END;
+
+IF COL_LENGTH('Staging.K12Enrollment', 'RunDateTime') IS NULL
+BEGIN
+    ALTER TABLE Staging.K12Enrollment
+    ADD RunDateTime DATETIME NULL;
+END;
+
+IF COL_LENGTH('Staging.K12SchoolComprehensiveSupportIdentificationType', 'DataCollectionName') IS NULL
+BEGIN
+    ALTER TABLE Staging.K12SchoolComprehensiveSupportIdentificationType
+    ADD DataCollectionName NVARCHAR (100) NULL;
+END;
+
+--Add AccessibilityFeatureType and AccessibilityFeatureApplicationType
+
+IF COL_LENGTH('Staging.AssessmentResult', 'AccessibilityFeatureType') IS NULL
+    AND COL_LENGTH('Staging.AssessmentResult', 'AccessibilityFeatureApplicationType') IS NULL
+BEGIN
+--Drop the extended properties for SchoolYear and DataCollectionName
+--  they are added back after the new column to keep the structure of the table clean    
+
+    IF EXISTS(SELECT 1
+        FROM 
+            sys.extended_properties AS ep
+            INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+            INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+            INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+        WHERE 
+        ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+        AND t.name = 'AssessmentResult' AND c.name = 'SchoolYear' )
+        BEGIN
+        EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+        EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+        EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    END;
+
+    IF EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'AssessmentResult' AND c.name = 'DataCollectionName' )
+    BEGIN
+        EXEC sys.sp_dropextendedproperty @name=N'MS_Description' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+        EXEC sys.sp_dropextendedproperty @name=N'CEDS_URL' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+        EXEC sys.sp_dropextendedproperty @name=N'CEDS_GlobalId' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Element' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+        EXEC sys.sp_dropextendedproperty @name=N'CEDS_Def_Desc' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    END;
+
+--Drop the columns at the bottom of the table temporarily
+    IF COL_LENGTH('Staging.AssessmentResult', 'SchoolYear') IS NOT NULL
+    BEGIN
+        ALTER TABLE Staging.AssessmentResult DROP COLUMN SchoolYear;
+    END;
+
+    IF COL_LENGTH('Staging.AssessmentResult', 'DataCollectionName') IS NOT NULL
+    BEGIN
+        ALTER TABLE Staging.AssessmentResult DROP COLUMN DataCollectionName;
+    END;
+
+--Add the new columns
+    IF COL_LENGTH('Staging.AssessmentResult', 'AccessibilityFeatureType') IS NULL
+    BEGIN
+        ALTER TABLE Staging.AssessmentResult ADD AccessibilityFeatureType VARCHAR(100) NULL;
+    END;
+
+    IF COL_LENGTH('Staging.AssessmentResult', 'AccessibilityFeatureApplicationType') IS NULL
+    BEGIN
+        ALTER TABLE Staging.AssessmentResult ADD AccessibilityFeatureApplicationType VARCHAR(100) NULL;
+    END;
+
+--Add the columns back
+    IF COL_LENGTH('Staging.AssessmentResult', 'SchoolYear') IS NULL
+    BEGIN
+        ALTER TABLE Staging.AssessmentResult ADD SchoolYear SMALLINT NULL;
+    END;
+
+    IF COL_LENGTH('Staging.AssessmentResult', 'DataCollectionName') IS NULL
+    BEGIN
+        ALTER TABLE Staging.AssessmentResult ADD DataCollectionName NVARCHAR(100);
+    END;
+
+    IF COL_LENGTH('Staging.AssessmentResult', 'RunDateTime') IS NULL
+    BEGIN
+        ALTER TABLE Staging.AssessmentResult ADD RunDateTime DATETIME NULL;
+    END;
+
+    --Add the extended proprties for the new columns and the re-added columns
+    IF EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'AssessmentResult' AND c.name = 'AccessibilityFeatureType' )
+    BEGIN
+        EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The type of design elements or functionalities integrated into products, services, or environments to ensure equitable access for all individuals, aiming to eliminate barriers and facilitate ease of use.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'AccessibilityFeatureType'
+        EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Accessibility Feature Type' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'AccessibilityFeatureType'
+        EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'P000385' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'AccessibilityFeatureType'
+        EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/desHome.aspx#/all/elements/A/P000385' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'AccessibilityFeatureType'
+        EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'AccessibilityFeatureType'
+    END;
+
+    IF EXISTS(SELECT 1
+    FROM 
+        sys.extended_properties AS ep
+        INNER JOIN sys.columns AS c ON ep.major_id = c.object_id AND ep.minor_id = c.column_id
+        INNER JOIN sys.tables AS t ON c.object_id = t.object_id
+        INNER JOIN sys.schemas s on t.schema_id = s.schema_id
+    WHERE 
+    ep.class_desc = 'OBJECT_OR_COLUMN'	AND s.name = 'Staging'
+    AND t.name = 'AssessmentResult' AND c.name = 'AccessibilityFeatureApplicationType' )
+    BEGIN
+        EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'An indication of how this accessibility feature can be applied.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'AccessibilityFeatureApplicationType'
+        EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Accessibility Feature Application Type' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'AccessibilityFeatureApplicationType'
+        EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'P002167' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'AccessibilityFeatureApplicationType'
+        EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/desHome.aspx#/all/elements/A/P002167' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'AccessibilityFeatureApplicationType'
+        EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'AccessibilityFeatureApplicationType'
+    END;
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'The year for a reported school session.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'School Year' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'P000243' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/desHome.aspx#/all/elements/S/P000243' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'SchoolYear'
+
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Def_Desc', @value=N'A human readable name used to identify the data within the collection.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_Element', @value=N'Data Collection Name' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_GlobalId', @value=N'P001966' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    EXEC sys.sp_addextendedproperty @name=N'CEDS_URL', @value=N'https://ceds.ed.gov/desHome.aspx#/all/elements/D/P001966' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+    EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'See the CEDS_GlobalId, CEDS_Element, CEDS_URL, and CEDS_Def_Desc extended properties.' , @level0type=N'SCHEMA',@level0name=N'Staging', @level1type=N'TABLE',@level1name=N'AssessmentResult', @level2type=N'COLUMN',@level2name=N'DataCollectionName'
+
+END;
+
+--------------------------------------------------
+--Column Drops
+--------------------------------------------------
 IF COL_LENGTH('Staging.K12StaffAssignment', 'SpecialEducationSupportServicesCategory') IS NOT NULL
 BEGIN
     ALTER TABLE Staging.K12StaffAssignment
@@ -730,6 +1204,18 @@ BEGIN
     DROP COLUMN CourseId;
 END;
 
+IF COL_LENGTH('Staging.StagingValidationResults', 'ReportGroupOrCode') IS NOT NULL
+BEGIN
+    ALTER TABLE Staging.StagingValidationResults
+    DROP COLUMN ReportGroupOrCode;
+END;
+
+IF COL_LENGTH('Staging.AssessmentResult', 'AccommodationType') IS NOT NULL
+BEGIN
+    ALTER TABLE Staging.AssessmentResult
+    DROP COLUMN AccommodationType;
+END;
+
 -- IF COL_LENGTH('Staging.SchoolPerformanceIndicators', 'LeaIdentifierSea') IS NOT NULL
 -- BEGIN
 --     ALTER TABLE Staging.SchoolPerformanceIndicators
@@ -778,353 +1264,8 @@ END;
 --     ADD SubgroupElementName VARCHAR (100) NULL;
 -- END;
 
-IF COL_LENGTH('Staging.SourceSystemReferenceData', 'GlobalId') IS NULL
-BEGIN
-    ALTER TABLE Staging.SourceSystemReferenceData
-    ADD GlobalId NVARCHAR (20) NULL;
-END;
-
-IF COL_LENGTH('Staging.SourceSystemReferenceData', 'ElementName') IS NULL
-BEGIN
-    ALTER TABLE Staging.SourceSystemReferenceData
-    ADD ElementName NVARCHAR (150) NULL;
-END;
-
-IF COL_LENGTH('Staging.OrganizationAddress', 'AddressApartmentRoomOrSuiteNumber') IS NOT NULL
-   AND EXISTS (
-       SELECT 1
-       FROM INFORMATION_SCHEMA.COLUMNS
-       WHERE TABLE_SCHEMA = 'Staging'
-           AND TABLE_NAME = 'OrganizationAddress'
-           AND COLUMN_NAME = 'AddressApartmentRoomOrSuiteNumber'
-           AND DATA_TYPE <> 'varchar'
-   )
-BEGIN
-    ALTER TABLE Staging.OrganizationAddress
-    ALTER COLUMN AddressApartmentRoomOrSuiteNumber VARCHAR (50) NULL;
-END;
-
-IF COL_LENGTH('Staging.OrganizationFederalFunding', 'REAPAlternativeFundingStatusCode') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.OrganizationFederalFunding.REAPAlternativeFundingStatusCode',
-        'ReapAlternativeFundingStatusCode',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.OrganizationFederalFunding', 'HomelessChildrenandYouthReservation') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.OrganizationFederalFunding
-    DROP COLUMN HomelessChildrenandYouthReservation;
-END;
-
-IF COL_LENGTH('Staging.OrganizationFederalFunding', 'RunDateTime') IS NULL
-BEGIN
-    ALTER TABLE Staging.OrganizationFederalFunding
-    ADD RunDateTime DATETIME NULL;
-END;
-
-IF COL_LENGTH('Staging.K12Enrollment', 'RunDateTime') IS NULL
-BEGIN
-    ALTER TABLE Staging.K12Enrollment
-    ADD RunDateTime DATETIME NULL;
-END;
-
-IF COL_LENGTH('Staging.K12Enrollment', 'RecordStartDateTime') IS NOT NULL
-   AND EXISTS (
-       SELECT 1
-       FROM INFORMATION_SCHEMA.COLUMNS
-       WHERE TABLE_SCHEMA = 'Staging'
-           AND TABLE_NAME = 'K12Enrollment'
-           AND COLUMN_NAME = 'RecordStartDateTime'
-           AND DATA_TYPE <> 'datetime'
-   )
-BEGIN
-    EXEC (
-        'ALTER TABLE Staging.K12Enrollment ALTER COLUMN RecordStartDateTime DATETIME NULL;'
-    );
-END;
-
-IF COL_LENGTH('Staging.K12Enrollment', 'RecordEndDateTime') IS NOT NULL
-   AND EXISTS (
-       SELECT 1
-       FROM INFORMATION_SCHEMA.COLUMNS
-       WHERE TABLE_SCHEMA = 'Staging'
-           AND TABLE_NAME = 'K12Enrollment'
-           AND COLUMN_NAME = 'RecordEndDateTime'
-           AND DATA_TYPE <> 'datetime'
-   )
-BEGIN
-        EXEC (
-        'ALTER TABLE Staging.K12Enrollment ALTER COLUMN RecordEndDateTime DATETIME NULL;'
-    );
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'IEU_OrganizationName') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.IEU_OrganizationName',
-        'Ieu_OrganizationName',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'IEU_OperationalStatusEffectiveDate') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.IEU_OperationalStatusEffectiveDate',
-        'Ieu_OperationalStatusEffectiveDate',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'IEU_OrganizationOperationalStatus') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.IEU_OrganizationOperationalStatus',
-        'Ieu_OrganizationOperationalStatus',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'IEU_WebSiteAddress') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.IEU_WebSiteAddress',
-        'Ieu_WebSiteAddress',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'IEU_RecordStartDateTime') IS NOT NULL
-    BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.IEU_RecordStartDateTime',
-        'Ieu_RecordStartDateTime',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'IEU_RecordEndDateTime') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.IEU_RecordEndDateTime',
-        'Ieu_RecordEndDateTime',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_SupervisoryUnionIdentificationNumber') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_SupervisoryUnionIdentificationNumber',
-        'Lea_SupervisoryUnionIdentificationNumber',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_WebSiteAddress') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_WebSiteAddress',
-        'Lea_WebSiteAddress',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_OperationalStatus') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_OperationalStatus',
-        'Lea_OperationalStatus',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_OperationalStatusEffectiveDate') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_OperationalStatusEffectiveDate',
-        'Lea_OperationalStatusEffectiveDate',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_CharterLeaStatus') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_CharterLeaStatus',
-        'Lea_CharterLeaStatus',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_CharterSchoolIndicator') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_CharterSchoolIndicator',
-        'Lea_CharterSchoolIndicator',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_Type') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_Type',
-        'Lea_Type',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_McKinneyVentoSubgrantRecipient') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_McKinneyVentoSubgrantRecipient',
-        'Lea_McKinneyVentoSubgrantRecipient',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_GunFreeSchoolsActReportingStatus') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_GunFreeSchoolsActReportingStatus',
-        'Lea_GunFreeSchoolsActReportingStatus',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_TitleIinstructionalService') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_TitleIinstructionalService',
-        'Lea_TitleIinstructionalService',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_TitleIProgramType') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_TitleIProgramType',
-        'Lea_TitleIProgramType',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_K12LeaTitleISupportService') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_K12LeaTitleISupportService',
-        'Lea_K12LeaTitleISupportService',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_MepProjectType') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_MepProjectType',
-        'Lea_MepProjectType',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_IsReportedFederally') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_IsReportedFederally',
-        'Lea_IsReportedFederally',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_RecordStartDateTime') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_RecordStartDateTime',
-        'Lea_RecordStartDateTime',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'LEA_RecordEndDateTime') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12Organization.LEA_RecordEndDateTime',
-        'Lea_RecordEndDateTime',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'School_CharterSchoolStateAppropriationMethod') IS NULL
-BEGIN
-    ALTER TABLE Staging.K12Organization 
-    ADD School_CharterSchoolStateAppropriationMethod NVARCHAR(100) NULL;
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'SchoolIdentifierAct') IS NULL
-BEGIN
-    ALTER TABLE Staging.K12Organization
-    ADD SchoolIdentifierAct NVARCHAR (50) NULL;
-END;
-
-IF COL_LENGTH('Staging.K12Organization', 'SchoolIdentifierSat') IS NULL
-BEGIN
-    ALTER TABLE Staging.K12Organization
-    ADD SchoolIdentifierSat NVARCHAR (50) NULL;
-END;
-
-IF COL_LENGTH('Staging.K12SchoolComprehensiveSupportIdentificationType', 'LEAIdentifierSea') IS NOT NULL
-BEGIN
-    EXEC sp_rename
-        'Staging.K12SchoolComprehensiveSupportIdentificationType.LEAIdentifierSea',
-        'LeaIdentifierSea',
-        'COLUMN';
-END;
-
-IF COL_LENGTH('Staging.K12SchoolComprehensiveSupportIdentificationType', 'DataCollectionName') IS NULL
-BEGIN
-    ALTER TABLE Staging.K12SchoolComprehensiveSupportIdentificationType
-    ADD DataCollectionName NVARCHAR (100) NULL;
-END;
-
-
-
-DECLARE @K12SupportColumnName SYSNAME;
-DECLARE @K12SupportMaxLength INT;
-DECLARE @K12SupportIsNullable NVARCHAR(3);
-DECLARE @K12SupportAlterSql NVARCHAR(MAX);
-
-DECLARE K12SupportVarcharColumnsCursor CURSOR LOCAL FAST_FORWARD FOR
-SELECT COLUMN_NAME,
-             CHARACTER_MAXIMUM_LENGTH,
-             IS_NULLABLE
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_SCHEMA = 'Staging'
-    AND TABLE_NAME = 'K12SchoolComprehensiveSupportIdentificationType'
-    AND COLUMN_NAME IN (
-            'SchoolYear',
-            'SchoolIdentifierSea',
-            'ComprehensiveSupport',
-            'ComprehensiveSupportReasonApplicability',
-            'LeaIdentifierSea'
-    )
-    AND DATA_TYPE = 'varchar';
-
-OPEN K12SupportVarcharColumnsCursor;
-
-FETCH NEXT FROM K12SupportVarcharColumnsCursor
-INTO @K12SupportColumnName, @K12SupportMaxLength, @K12SupportIsNullable;
-
-WHILE @@FETCH_STATUS = 0
-BEGIN
-        SET @K12SupportAlterSql =
-                'ALTER TABLE Staging.K12SchoolComprehensiveSupportIdentificationType ALTER COLUMN ['
-                + @K12SupportColumnName
-                + '] NVARCHAR('
-                + CASE
-                        WHEN @K12SupportMaxLength = -1 THEN 'MAX'
-                        ELSE CAST(@K12SupportMaxLength AS NVARCHAR(10))
-                    END
-                + ') '
-                + CASE
-                        WHEN @K12SupportIsNullable = 'YES' THEN 'NULL'
-                        ELSE 'NOT NULL'
-                    END
-                + ';';
-
-        EXEC sp_executesql @K12SupportAlterSql;
-
-        FETCH NEXT FROM K12SupportVarcharColumnsCursor
-        INTO @K12SupportColumnName, @K12SupportMaxLength, @K12SupportIsNullable;
-END;
-
-CLOSE K12SupportVarcharColumnsCursor;
-DEALLOCATE K12SupportVarcharColumnsCursor;
-
-IF COL_LENGTH('Staging.StagingValidationResults', 'ReportGroupOrCode') IS NOT NULL
-BEGIN
-    ALTER TABLE Staging.StagingValidationResults
-    DROP COLUMN ReportGroupOrCode;
-END;
-
+-- IF COL_LENGTH('Staging.OrganizationFederalFunding', 'HomelessChildrenandYouthReservation') IS NOT NULL
+-- BEGIN
+--     ALTER TABLE Staging.OrganizationFederalFunding
+--     DROP COLUMN HomelessChildrenandYouthReservation;
+-- END;

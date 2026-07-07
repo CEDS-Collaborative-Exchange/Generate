@@ -241,6 +241,8 @@ namespace generate.testdata.Interfaces
         List<DataDistribution<string>> RefAssessmentRegistrationReasonNotTested { get; set; }
         List<DataDistribution<string>> AssessmentAccommodationTypeDistribution { get; set; }
         List<DataDistribution<string>> AssessmentAccommodationCategoryDistribution { get; set; }
+        List<DataDistribution<string>> AccessibilityFeatureTypeDistribution { get; set; }
+        List<DataDistribution<string>> AccessibilityFeatureApplicationTypeDistribution { get; set; }
 
         List<DataDistribution<bool>> SpecialEdProgramParticipantNowDistribution { get; set; }
         List<DataDistribution<bool>> CteProgramParticipantNowDistribution { get; set; }

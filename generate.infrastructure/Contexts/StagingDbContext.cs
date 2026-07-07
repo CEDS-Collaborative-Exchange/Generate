@@ -222,6 +222,10 @@ namespace generate.infrastructure.Contexts
                     .HasColumnName("StudentIdentifierState")
                     .HasMaxLength(100)
                     .IsUnicode(false);
+
+                entity.Property(e => e.AccessibilityFeatureType).HasMaxLength(100);
+
+                entity.Property(e => e.AccessibilityFeatureApplicationType).HasMaxLength(100);
             });
 
             modelBuilder.Entity<CharterSchoolAuthorizer>(entity =>
