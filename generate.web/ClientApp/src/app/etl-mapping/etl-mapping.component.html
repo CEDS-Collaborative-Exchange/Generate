@@ -10,12 +10,52 @@
       Upload Data Dictionary
       <input type="file" accept=".csv,.xlsx,.xls" (change)="onFileSelected($event)" hidden />
     </label>
+    <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="downloadTemplate()">
+      Download Template (Excel)
+    </button>
+    <button type="button" class="mdl-button mdl-js-button" (click)="toggleRequirements()">
+      {{ showRequirements ? 'Hide' : 'Show' }} File Requirements
+    </button>
     <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="exportChecklist()" [disabled]="mappings.length === 0">
       Export Checklist (CSV)
     </button>
     <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="clearAll()" [disabled]="mappings.length === 0">
       Clear All Mappings
     </button>
+  </div>
+
+  <div *ngIf="showRequirements" class="etl-mapping__requirements">
+    <h3>File Requirements</h3>
+    <ul>
+      <li><strong>File type:</strong> .xlsx, .xls, or .csv. Only the <strong>first worksheet</strong> of an Excel file is read.</li>
+      <li><strong>Header row:</strong> must appear within the first 10 rows of the sheet and contain a column recognized as the element name (see below). Rows above the header row are ignored, so a title row is fine.</li>
+      <li><strong>Column matching is forgiving:</strong> capitalization, spacing, and punctuation in headers are ignored (for example, <em>"Element/Field Name"</em> and <em>"element field name"</em> both match). Column order does not matter, and unrecognized columns are ignored.</li>
+      <li><strong>One row per option set value:</strong> if an element has an option set (enumeration), repeat the element on one row per value and vary only the option set code/description columns. Rows are grouped into a single element by Element Name + Table Name + Column Name.</li>
+      <li><strong>Elements without an option set</strong> use a single row with the option set columns left blank.</li>
+    </ul>
+
+    <table class="etl-mapping__requirements-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Required</th>
+          <th>Also accepted as</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let req of columnRequirements">
+          <td><strong>{{ req.column }}</strong></td>
+          <td>{{ req.required ? 'Yes' : 'No' }}</td>
+          <td>{{ req.aliases || '—' }}</td>
+          <td>{{ req.notes }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="etl-mapping__subtext">
+      Tip: use the <em>Download Template (Excel)</em> button for a preformatted workbook with these columns and example rows.
+    </p>
   </div>
 
   <div *ngIf="isUploading" class="etl-mapping__message">Uploading and automapping&hellip;</div>

@@ -49,6 +49,27 @@ export class EtlMappingComponent implements OnInit {
   uploadFileName = '';
   uploadError = '';
   statusMessage = '';
+  showRequirements = false;
+
+  // Upload requirements shown on the page; aliases mirror COLUMN_ALIASES above
+  readonly columnRequirements = [
+    { column: 'Source Element Name', required: true, aliases: 'Element Name, Element/Field Name, Field Name', notes: 'The name of the element in your data dictionary. Rows without a value are skipped.' },
+    { column: 'Source Element Definition', required: false, aliases: 'Element Definition, Definition', notes: 'Strongly recommended - definitions significantly improve automapping accuracy.' },
+    { column: 'Source Option Set Code', required: false, aliases: 'Option Set Code, Option Set, Valid Values/Option Set, Valid Values', notes: 'One row per option value; repeat the element columns on each row.' },
+    { column: 'Source Option Set Description', required: false, aliases: 'Option Set Description, Option Description', notes: 'The human-readable meaning of the option value.' },
+    { column: 'Source Common Name', required: false, aliases: 'Common Name, System Name', notes: '' },
+    { column: 'Source Technical Name', required: false, aliases: 'Technical Name, System of Record', notes: '' },
+    { column: 'Source Database Name', required: false, aliases: 'Database Name', notes: '' },
+    { column: 'Source Schema Name', required: false, aliases: 'Schema Name', notes: '' },
+    { column: 'Source Table Name', required: false, aliases: 'Table Name', notes: 'Used with Column Name to group option set rows under one element.' },
+    { column: 'Source Column Name', required: false, aliases: 'Column Name', notes: 'Used with Table Name to group option set rows under one element.' },
+    { column: 'Source Data Type', required: false, aliases: 'Data Type', notes: '' },
+    { column: 'Source Data Length', required: false, aliases: 'Data Length, Length', notes: '' },
+    { column: 'Source Data Steward', required: false, aliases: 'Data Steward', notes: '' },
+    { column: 'Selection Criteria', required: false, aliases: '', notes: '' },
+    { column: 'Transformation Rules', required: false, aliases: '', notes: '' },
+    { column: 'Notes', required: false, aliases: 'Comments', notes: '' }
+  ];
 
   expandedElementId: number = null;
   pickerElementId: number = null;
@@ -84,6 +105,52 @@ export class EtlMappingComponent implements OnInit {
   }
 
   // -------------------- Upload --------------------
+
+  toggleRequirements() {
+    this.showRequirements = !this.showRequirements;
+  }
+
+  downloadTemplate() {
+    const headers = [
+      'Source Common Name', 'Source Technical Name', 'Source Database Name', 'Source Schema Name',
+      'Source Table Name', 'Source Column Name', 'Source Element Name', 'Source Element Definition',
+      'Source Data Type', 'Source Data Length', 'Source Option Set Code', 'Source Option Set Description',
+      'Source Data Steward', 'Selection Criteria', 'Transformation Rules', 'Notes'
+    ];
+
+    // Sample rows: one element with two option set values (repeated rows) and one without an option set
+    const sampleRows = [
+      ['Student Information System', 'SIS', 'StateSIS', 'dbo', 'StudentEnrollment', 'EntryGrade',
+        'Entry Grade Level', 'The grade level at which the student enters and receives services during the school year.',
+        'varchar', '2', '08', 'Eighth Grade', 'Jane Doe', '', '', 'One row per option set value - repeat the element columns.'],
+      ['Student Information System', 'SIS', 'StateSIS', 'dbo', 'StudentEnrollment', 'EntryGrade',
+        'Entry Grade Level', 'The grade level at which the student enters and receives services during the school year.',
+        'varchar', '2', '09', 'Ninth Grade', 'Jane Doe', '', '', ''],
+      ['Student Information System', 'SIS', 'StateSIS', 'dbo', 'Student', 'DOB',
+        'Student Birth Date', 'The month, day, and year on which the student was born.',
+        'date', '', '', '', 'Jane Doe', '', '', 'Elements without an option set use a single row with the option columns blank.']
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...sampleRows]);
+
+    // Bold header row (xlsx-js-style cell style support)
+    headers.forEach((header, columnIndex) => {
+      const cellRef = XLSX.utils.encode_cell({ r: 0, c: columnIndex });
+      if (worksheet[cellRef]) {
+        worksheet[cellRef].s = {
+          font: { bold: true, color: { rgb: 'FFFFFF' } },
+          fill: { fgColor: { rgb: '33739E' } }
+        };
+      }
+    });
+
+    worksheet['!cols'] = headers.map(header =>
+      ({ wch: Math.max(header.length + 2, header.indexOf('Definition') >= 0 ? 60 : 18) }));
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Data Dictionary');
+    XLSX.writeFile(workbook, 'Generate Data Dictionary Template.xlsx');
+  }
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
