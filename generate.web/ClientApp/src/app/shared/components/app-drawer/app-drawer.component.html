@@ -48,6 +48,7 @@
             <a *ngIf="userService.isAdmin()" class="mdl-navigation__link generate-app-menu__item-link" href="#" (click)="gotoSettingsDataMigration()">Data Migration</a>
             <a *ngIf="userService.isAdmin()" class="mdl-navigation__link generate-app-menu__item-link" href="#" (click)="gotoSettingsUpdate()">Update</a>
             <a class="mdl-navigation__link generate-app-menu__item-link" href="#" (click)="gotoSettingsMetadata()">Metadata</a>
+            <a class="mdl-navigation__link generate-app-menu__item-link" href="#" [routerLink]="['/etl-mapping']">ETL Mapping</a>
         </div>
 
         <generate-app-login></generate-app-login>

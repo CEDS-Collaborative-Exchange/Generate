@@ -102,6 +102,8 @@ namespace generate.web.Config
             services.AddScoped<IStateDefinedReportService, StateDefinedReportService>();
             services.AddScoped<IFSMetadataUpdateService, MetadataUpdateService>();
             services.AddScoped<IAboutService, AboutService>();
+            services.AddScoped<ICedsAutoMapService, CedsAutoMapService>();
+            services.AddScoped<IEtlSourceMappingService, EtlSourceMappingService>();
         }
 
 

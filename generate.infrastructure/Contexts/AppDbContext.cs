@@ -621,6 +621,83 @@ namespace generate.infrastructure.Contexts
 
             });
 
+            // EtlMetadata (CIID-9029 - right side of the ETL Checklist; table created/seeded via version scripts)
+
+            modelBuilder.Entity<EtlMetadata>(entity =>
+            {
+                entity.ToTable("EtlMetadata");
+
+                entity.HasKey(x => x.EtlMetadataId);
+
+                entity.Property(x => x.EdFactsFileSpecNumber).HasColumnName("EDFacts_File_Spec_Number");
+                entity.Property(x => x.CedsPath).HasColumnName("CEDS_Path");
+                entity.Property(x => x.CedsElementName).HasColumnName("CEDS_Element_Name");
+                entity.Property(x => x.CedsElementDefinition).HasColumnName("CEDS_Element_Definition");
+                entity.Property(x => x.CedsDataType).HasColumnName("CEDS_Data_Type");
+                entity.Property(x => x.CedsDataLength).HasColumnName("CEDS_Data_Length");
+                entity.Property(x => x.CedsOptionSetCode).HasColumnName("CEDS_Option_Set_Code");
+                entity.Property(x => x.CedsOptionSetDescription).HasColumnName("CEDS_Option_Set_Description");
+                entity.Property(x => x.CedsElementGlobalId).HasColumnName("CEDS_Element_Global_ID");
+                entity.Property(x => x.CedsElementDataModelId).HasColumnName("CEDS_Element_Data_Model_ID");
+                entity.Property(x => x.DestinationStagingTableName).HasColumnName("Destination_Staging_Table_Name");
+                entity.Property(x => x.DestinationStagingColumnName).HasColumnName("Destination_Staging_Column_Name");
+                entity.Property(x => x.DestinationStagingColumnDataType).HasColumnName("Destination_Staging_Column_DataType");
+                entity.Property(x => x.DestinationStagingColumnDataLength).HasColumnName("Destination_Staging_Column_DataLength");
+                entity.Property(x => x.DestinationRdsDimensionTableName).HasColumnName("Destination_RDS_Dimension_Table_Name");
+                entity.Property(x => x.DestinationRdsDimensionColumnName).HasColumnName("Destination_RDS_Dimension_Column_Name");
+                entity.Property(x => x.DestinationRdsFactTableName).HasColumnName("Destination_RDS_Fact_Table_Name");
+                entity.Property(x => x.DestinationRdsFactColumnName).HasColumnName("Destination_RDS_Fact_Column_Name");
+                entity.Property(x => x.DestinationRdsReportTableName).HasColumnName("Destination_RDS_Report_Table_Name");
+                entity.Property(x => x.DestinationRdsReportColumnName).HasColumnName("Destination_RDS_Report_Column_Name");
+            });
+
+            // EtlSourceElementMapping (CIID-9031 - left side of the ETL Checklist)
+
+            modelBuilder.Entity<EtlSourceElementMapping>(entity =>
+            {
+                entity.ToTable("EtlSourceElementMapping");
+
+                entity.HasKey(x => x.EtlSourceElementMappingId);
+
+                entity
+                   .Property(x => x.SourceElementName)
+                   .IsRequired()
+                   .HasMaxLength(500);
+
+                entity
+                   .Property(x => x.MappingStatus)
+                   .IsRequired()
+                   .HasMaxLength(20);
+
+                entity
+                   .Property(x => x.MatchConfidence)
+                   .HasColumnType("decimal(5, 4)");
+            });
+
+            // EtlSourceOptionSetMapping (CIID-9031)
+
+            modelBuilder.Entity<EtlSourceOptionSetMapping>(entity =>
+            {
+                entity.ToTable("EtlSourceOptionSetMapping");
+
+                entity.HasKey(x => x.EtlSourceOptionSetMappingId);
+
+                entity
+                   .Property(x => x.MappingStatus)
+                   .IsRequired()
+                   .HasMaxLength(20);
+
+                entity
+                   .Property(x => x.MatchConfidence)
+                   .HasColumnType("decimal(5, 4)");
+
+                entity
+                    .HasOne(pt => pt.EtlSourceElementMapping)
+                    .WithMany(t => t.EtlSourceOptionSetMappings)
+                    .HasForeignKey(pt => pt.EtlSourceElementMappingId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             #endregion
 
             #region DataMigration
@@ -1285,6 +1362,9 @@ namespace generate.infrastructure.Contexts
         public DbSet<CedsConnection> CedsConnections { get; set; }
         public DbSet<CedsElement> CedsElements { get; set; }
         public DbSet<CedsConnection_CedsElement> CedsConnection_CedsElements { get; set; }
+        public DbSet<EtlMetadata> EtlMetadata { get; set; }
+        public DbSet<EtlSourceElementMapping> EtlSourceElementMappings { get; set; }
+        public DbSet<EtlSourceOptionSetMapping> EtlSourceOptionSetMappings { get; set; }
 
         public DbSet<ODSElement> ODSElements { get; set; }
 

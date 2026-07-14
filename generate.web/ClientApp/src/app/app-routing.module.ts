@@ -36,6 +36,12 @@ import { AboutComponent } from './about/about.component';
                 data: { preload: true },
                 canActivate: [LoginGuard]
             },
+            // ETL Mapping (CIID-9029)
+            {
+                path: 'etl-mapping',
+                loadChildren: () => import('./etl-mapping/etl-mapping.module').then(m => m.EtlMappingModule),
+                canActivate: [LoginGuard]
+            },
             { path: '**', component: AppNotFoundComponent }
 
         ])

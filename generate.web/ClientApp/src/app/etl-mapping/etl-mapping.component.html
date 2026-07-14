@@ -1,0 +1,135 @@
+<div class="etl-mapping">
+  <h2 class="etl-mapping__title">ETL Checklist &mdash; CEDS Mapping</h2>
+  <p class="etl-mapping__intro">
+    Upload your data dictionary (.csv or .xlsx) to automatically map its elements and option set values to CEDS.
+    Review each suggestion, accept or override it, then export the completed ETL Checklist.
+  </p>
+
+  <div class="etl-mapping__toolbar">
+    <label class="etl-mapping__upload-button mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+      Upload Data Dictionary
+      <input type="file" accept=".csv,.xlsx,.xls" (change)="onFileSelected($event)" hidden />
+    </label>
+    <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="exportChecklist()" [disabled]="mappings.length === 0">
+      Export Checklist (CSV)
+    </button>
+    <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="clearAll()" [disabled]="mappings.length === 0">
+      Clear All Mappings
+    </button>
+  </div>
+
+  <div *ngIf="isUploading" class="etl-mapping__message">Uploading and automapping&hellip;</div>
+  <div *ngIf="uploadError" class="etl-mapping__message etl-mapping__message--error">{{ uploadError }}</div>
+  <div *ngIf="statusMessage" class="etl-mapping__message">{{ statusMessage }}</div>
+
+  <div *ngIf="!isLoading && mappings.length === 0" class="etl-mapping__empty">
+    No data dictionary has been uploaded yet.
+  </div>
+
+  <table *ngIf="mappings.length > 0" class="etl-mapping__table">
+    <thead>
+      <tr>
+        <th>Source Element</th>
+        <th>Source Definition</th>
+        <th>CEDS Element</th>
+        <th>Confidence</th>
+        <th>Status</th>
+        <th>Actions</th>
+        <th>Option Sets</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let mapping of mappings">
+        <tr>
+          <td>
+            <strong>{{ mapping.sourceElementName }}</strong>
+            <div *ngIf="mapping.sourceTableName || mapping.sourceColumnName" class="etl-mapping__subtext">
+              {{ mapping.sourceTableName }}<span *ngIf="mapping.sourceColumnName">.{{ mapping.sourceColumnName }}</span>
+            </div>
+          </td>
+          <td class="etl-mapping__definition">{{ mapping.sourceElementDefinition }}</td>
+          <td>
+            <div *ngIf="mapping.cedsElementName">
+              <strong>{{ mapping.cedsElementName }}</strong>
+              <div class="etl-mapping__subtext">Global ID: {{ mapping.cedsElementGlobalId }}</div>
+            </div>
+            <div *ngIf="!mapping.cedsElementName" class="etl-mapping__subtext">&mdash;</div>
+
+            <div *ngIf="pickerElementId === mapping.etlSourceElementMappingId" class="etl-mapping__picker">
+              <input type="text" placeholder="Search CEDS elements&hellip;" [(ngModel)]="pickerFilter" />
+              <ul>
+                <li *ngFor="let cedsElement of filteredCedsElements">
+                  <a href="javascript:void(0)" (click)="pickCedsElement(mapping, cedsElement)">
+                    {{ cedsElement.cedsElementName }} ({{ cedsElement.cedsElementGlobalId }})
+                  </a>
+                </li>
+                <li *ngIf="filteredCedsElements.length === 0" class="etl-mapping__subtext">No CEDS elements match.</li>
+              </ul>
+            </div>
+          </td>
+          <td>{{ confidencePercent(mapping.matchConfidence) }}</td>
+          <td><span class="etl-mapping__status" [ngClass]="statusClass(mapping.mappingStatus)">{{ mapping.mappingStatus }}</span></td>
+          <td class="etl-mapping__actions">
+            <button type="button" class="mdl-button mdl-js-button mdl-button--primary" (click)="acceptElement(mapping)"
+                    [disabled]="!mapping.cedsElementGlobalId || mapping.mappingStatus === 'Accepted'">Accept</button>
+            <button type="button" class="mdl-button mdl-js-button" (click)="rejectElement(mapping)"
+                    [disabled]="mapping.mappingStatus === 'Rejected'">Reject</button>
+            <button type="button" class="mdl-button mdl-js-button" (click)="openPicker(mapping)">Change</button>
+            <button type="button" class="mdl-button mdl-js-button" (click)="markNotInCeds(mapping)"
+                    [disabled]="mapping.mappingStatus === 'NotInCeds'">Not in CEDS</button>
+          </td>
+          <td>
+            <button *ngIf="mapping.etlSourceOptionSetMappings && mapping.etlSourceOptionSetMappings.length > 0"
+                    type="button" class="mdl-button mdl-js-button" (click)="toggleOptions(mapping)">
+              {{ expandedElementId === mapping.etlSourceElementMappingId ? 'Hide' : 'Show' }}
+              ({{ mapping.etlSourceOptionSetMappings.length }})
+            </button>
+            <span *ngIf="!mapping.etlSourceOptionSetMappings || mapping.etlSourceOptionSetMappings.length === 0"
+                  class="etl-mapping__subtext">&mdash;</span>
+          </td>
+        </tr>
+
+        <tr *ngIf="expandedElementId === mapping.etlSourceElementMappingId">
+          <td colspan="7" class="etl-mapping__options">
+            <table class="etl-mapping__options-table">
+              <thead>
+                <tr>
+                  <th>Source Value</th>
+                  <th>Source Description</th>
+                  <th>CEDS Option Set Value</th>
+                  <th>Confidence</th>
+                  <th>Match Type</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let optionMapping of mapping.etlSourceOptionSetMappings">
+                  <td>{{ optionMapping.sourceOptionSetCode }}</td>
+                  <td>{{ optionMapping.sourceOptionSetDescription }}</td>
+                  <td>
+                    <select [ngModel]="optionMapping.cedsOptionSetCode"
+                            (ngModelChange)="pickCedsOption(mapping, optionMapping, $event)"
+                            [disabled]="!mapping.cedsElementGlobalId">
+                      <option [ngValue]="null">&mdash; not mapped &mdash;</option>
+                      <option *ngFor="let cedsOption of cedsOptionsFor(mapping)" [ngValue]="cedsOption.cedsOptionSetCode">
+                        {{ cedsOption.cedsOptionSetCode }} &mdash; {{ cedsOption.cedsOptionSetDescription }}
+                      </option>
+                    </select>
+                  </td>
+                  <td>{{ confidencePercent(optionMapping.matchConfidence) }}</td>
+                  <td>{{ optionMapping.matchType }}</td>
+                  <td><span class="etl-mapping__status" [ngClass]="statusClass(optionMapping.mappingStatus)">{{ optionMapping.mappingStatus }}</span></td>
+                  <td>
+                    <button type="button" class="mdl-button mdl-js-button mdl-button--primary" (click)="acceptOption(optionMapping)"
+                            [disabled]="!optionMapping.cedsOptionSetCode || optionMapping.mappingStatus === 'Accepted'">Accept</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
