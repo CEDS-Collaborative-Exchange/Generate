@@ -503,7 +503,6 @@ BEGIN
 			end
 
 			--create a temp table to hold Organizations with their grades offered 
-			--create a temp table to hold Organizations with their grades offered 
 			if @reportCode in ('052')
 			begin
 
@@ -712,7 +711,7 @@ BEGIN
 			begin
 				select @sql = @sql + char(10) + char(10)
 
-				if @ReportLevel in ('LEA', 'SCH')
+				if @ReportLevel in ('lea', 'sch')
 				begin
 					select @sql = @sql + 
 						'if OBJECT_ID(''tempdb..#Grades'') is not null drop table #Grades' + char(10)
@@ -765,6 +764,36 @@ BEGIN
 
 					select @sql = @sql + 
 						'CREATE INDEX IDX_Membership ON #Membership (OrganizationIdentifierSea)' + char(10)
+
+					select @sql = @sql + 
+						'if OBJECT_ID(''tempdb..#includeNSLPSchools'') is not null drop table #includeNSLPSchools' + char(10)
+							
+					select @sql = @sql + 
+						'
+						select distinct sch.SchoolIdentifierSea
+						into #includeNSLPSchools
+						from rds.FactK12StudentCounts stu
+							inner join rds.FactOrganizationCounts org
+								on stu.K12SchoolId = org.K12SchoolId
+								and stu.SchoolYearId = org.SchoolYearId
+							inner join rds.DimK12Schools sch
+								on org.K12SchoolId = sch.DimK12SchoolId
+							inner join rds.DimK12SchoolStatuses rdkss 
+								on org.K12SchoolStatusId = rdkss.DimK12SchoolStatusId ' 
+
+					select @sql = @sql + 
+						'
+						where stu.SchoolYearId = ' + convert(varchar, @dimSchoolYearid) + 
+						' and stu.FactTypeId = ' + convert(varchar, @dimFactTypeId) +
+						' and sch.ReportedFederally = 1 
+						and sch.DimK12SchoolId <> -1 
+						and sch.SchoolOperationalStatus not in (''Closed'', ''FutureSchool'', ''Inactive'', ''MISSING'')
+						and rdkss.NslpStatusEdFactsCode <> ''NSLPNO''
+						' + char(10)
+
+					select @sql = @sql + '
+						CREATE INDEX IDX_includeNSLPSchools ON #includeNSLPSchools (SchoolIdentifierSea)' + char(10)
+
 				end
 			end
 
@@ -4946,7 +4975,9 @@ BEGIN
 						AND org.ReportedFederally = 1
 						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')
 					inner join #Membership membership 
-						on membership.OrganizationIdentifierSea = org.SchoolIdentifierSea' 
+						on membership.OrganizationIdentifierSea = org.SchoolIdentifierSea
+					inner join #includeNSLPSchools nslp 
+						on nslp.SchoolIdentifierSea = org.SchoolIdentifierSea' 
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
@@ -4986,24 +5017,26 @@ BEGIN
 				if @reportLevel = 'sch'
 				begin
 					set @sqlCountJoins = @sqlCountJoins + '
-					inner join RDS.DimK12Schools org 
-						on fact.K12SchoolId = org.DimK12SchoolId
-						AND org.ReportedFederally = 1
-						AND org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')
-					inner join #Membership membership 
-						on membership.OrganizationIdentifierSea = org.SchoolIdentifierSea' 
+						inner join RDS.DimK12Schools org 
+							on fact.K12SchoolId = org.DimK12SchoolId
+							and org.ReportedFederally = 1
+							and org.SchoolOperationalStatus in  (''New'', ''Added'', ''Open'', ''Reopened'', ''ChangedAgency'')
+						inner join #Membership membership 
+							on membership.OrganizationIdentifierSea = org.SchoolIdentifierSea
+						inner join #includeNSLPSchools nslp 
+							on nslp.SchoolIdentifierSea = org.SchoolIdentifierSea' 
 				end
 
 				set @sqlCountJoins = @sqlCountJoins + '
-					inner join rds.DimPeople_Current p
-						on fact.K12Student_CurrentId = p.DimPersonId
-					inner join rds.DimK12Schools s 
-						on fact.K12SchoolId = s.DimK12SchoolId
-						and fact.SchoolYearId = @dimSchoolYearId
-						and fact.FactTypeId = @dimFactTypeId
-						and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
-					inner join rds.DimEconomicallyDisadvantagedStatuses dss 
-						on fact.EconomicallyDisadvantagedStatusId = dss.DimEconomicallyDisadvantagedStatusId
+						inner join rds.DimPeople_Current p
+							on fact.K12Student_CurrentId = p.DimPersonId
+						inner join rds.DimK12Schools s 
+							on fact.K12SchoolId = s.DimK12SchoolId
+							and fact.SchoolYearId = @dimSchoolYearId
+							and fact.FactTypeId = @dimFactTypeId
+							and IIF(fact.K12SchoolId > 0, fact.K12SchoolId, fact.LeaId) <> -1
+						inner join rds.DimEconomicallyDisadvantagedStatuses dss 
+							on fact.EconomicallyDisadvantagedStatusId = dss.DimEconomicallyDisadvantagedStatusId
 					where dss.NationalSchoolLunchProgramDirectCertificationIndicatorCode = ''YES''
 					) rules
 						on fact.K12Student_CurrentId = rules.K12Student_CurrentId 
@@ -7454,14 +7487,16 @@ BEGIN
 
 					if @reportCode = '033'
 					begin
-						set @sql = @sql + '
+						set @sql = @sql + 
+							'
 							where sch.DimK12SchoolId <> -1
 							and ISNULL(sch.ReportedFederally, 1) = 1 -- CIID-1963
 							and cs.TableTypeAbbrv = ''' + @tableTypeAbbrv + ''''
 					end
 					else
 					begin
-						set @sql = @sql + '
+						set @sql = @sql + 
+							'
 							where sch.DimK12SchoolId <> -1
 							and ISNULL(sch.ReportedFederally, 1) = 1 -- CIID-1963
 							'
@@ -7469,19 +7504,20 @@ BEGIN
 				end
 				else
 				begin
-					set @sql = @sql + '
+					set @sql = @sql + 
+						'
 						from #categorySet cs
 						inner join rds.DimK12Schools sch on cs.DimK12SchoolId = sch.DimK12SchoolId'
 
-					set @sql = @sql + '
+					set @sql = @sql + 
+							'
 							where sch.DimK12SchoolId <> -1
 							and ISNULL(sch.ReportedFederally, 1) = 1 -- CIID-1963
 							'
 				end
 
-				
-
-				set @sql = @sql + '
+				set @sql = @sql + 
+					'
 					group by 
 						sch.StateANSICode,
 						sch.StateAbbreviationCode,
