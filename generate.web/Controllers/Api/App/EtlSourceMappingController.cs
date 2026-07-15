@@ -21,10 +21,28 @@ namespace generate.web.Controllers.Api.App
         }
 
         [HttpGet("")]
-        public JsonResult Get()
+        public JsonResult Get([FromQuery] int? mapId = null)
         {
-            var results = _etlSourceMappingService.GetAllMappings();
+            var results = _etlSourceMappingService.GetAllMappings(mapId);
             return Json(results);
+        }
+
+        [HttpGet("maps")]
+        public JsonResult GetMaps()
+        {
+            var results = _etlSourceMappingService.GetMaps();
+            return Json(results);
+        }
+
+        [HttpDelete("maps/{id}")]
+        public IActionResult DeleteMap(int id)
+        {
+            if (!_etlSourceMappingService.DeleteMap(id))
+            {
+                return NotFound();
+            }
+
+            return Ok();
         }
 
         [HttpPost("upload")]
@@ -126,9 +144,9 @@ namespace generate.web.Controllers.Api.App
         }
 
         [HttpGet("export")]
-        public IActionResult Export()
+        public IActionResult Export([FromQuery] int? mapId = null)
         {
-            string csv = _etlSourceMappingService.ExportChecklistCsv();
+            string csv = _etlSourceMappingService.ExportChecklistCsv(mapId);
             string fileName = "EtlChecklist_" + DateTime.UtcNow.ToString("yyyyMMdd_HHmmss") + ".csv";
             return File(System.Text.Encoding.UTF8.GetBytes(csv), "text/csv", fileName);
         }

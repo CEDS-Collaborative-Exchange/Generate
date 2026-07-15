@@ -10,10 +10,26 @@
 ----   App.EtlSourceOptionSetMapping  - one row per option set (enumeration) value of a source element
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+IF OBJECT_ID('App.EtlMap', 'U') IS NULL
+BEGIN
+	CREATE TABLE [App].[EtlMap] (
+		[EtlMapId] [int] IDENTITY(1,1) NOT NULL,
+		[MapName] [nvarchar](200) NOT NULL,
+		[UploadFileName] [nvarchar](260) NULL,
+		[CreatedDate] [datetime] NOT NULL CONSTRAINT [DF_EtlMap_CreatedDate] DEFAULT (GETDATE()),
+		[CreatedBy] [nvarchar](100) NULL,
+		[ModifiedDate] [datetime] NULL,
+		[ModifiedBy] [nvarchar](100) NULL,
+		CONSTRAINT [PK_EtlMap] PRIMARY KEY CLUSTERED ([EtlMapId] ASC)
+			WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
+	) ON [PRIMARY]
+END
+
 IF OBJECT_ID('App.EtlSourceElementMapping', 'U') IS NULL
 BEGIN
 	CREATE TABLE [App].[EtlSourceElementMapping] (
 		[EtlSourceElementMappingId] [int] IDENTITY(1,1) NOT NULL,
+		[EtlMapId] [int] NULL,
 		-- Source System & Element Details (Assessment ETL Documentation Template, "Assessment ETL Detail" tab)
 		[SourceCommonName] [nvarchar](500) NULL,
 		[SourceTechnicalName] [nvarchar](500) NULL,
@@ -50,8 +66,29 @@ BEGIN
 		[ModifiedDate] [datetime] NULL,
 		[ModifiedBy] [nvarchar](100) NULL,
 		CONSTRAINT [PK_EtlSourceElementMapping] PRIMARY KEY CLUSTERED ([EtlSourceElementMappingId] ASC)
-			WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
+			WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY],
+		CONSTRAINT [FK_EtlSourceElementMapping_EtlMap] FOREIGN KEY ([EtlMapId])
+			REFERENCES [App].[EtlMap] ([EtlMapId]) ON DELETE CASCADE
 	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+END
+
+-- Upgrade path for databases where EtlSourceElementMapping was created before EtlMap existed
+IF COL_LENGTH('App.EtlSourceElementMapping', 'EtlMapId') IS NULL
+BEGIN
+	ALTER TABLE [App].[EtlSourceElementMapping] ADD [EtlMapId] [int] NULL
+END
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'FK_EtlSourceElementMapping_EtlMap')
+BEGIN
+	ALTER TABLE [App].[EtlSourceElementMapping] WITH CHECK
+		ADD CONSTRAINT [FK_EtlSourceElementMapping_EtlMap] FOREIGN KEY ([EtlMapId])
+		REFERENCES [App].[EtlMap] ([EtlMapId]) ON DELETE CASCADE
+END
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('App.EtlSourceElementMapping') AND name = 'IX_EtlSourceElementMapping_EtlMapId')
+BEGIN
+	CREATE NONCLUSTERED INDEX [IX_EtlSourceElementMapping_EtlMapId]
+		ON [App].[EtlSourceElementMapping] ([EtlMapId] ASC)
 END
 
 IF OBJECT_ID('App.EtlSourceOptionSetMapping', 'U') IS NULL

@@ -19,6 +19,7 @@ namespace generate.test.Infrastructure.Services
         private readonly Mock<IAppRepository> _appRepository = new Mock<IAppRepository>();
         private readonly List<EtlMetadata> _metadata;
         private readonly List<EtlSourceElementMapping> _mappings = new List<EtlSourceElementMapping>();
+        private readonly List<EtlMap> _maps = new List<EtlMap>();
 
         public EtlSourceMappingServiceShould()
         {
@@ -95,6 +96,36 @@ namespace generate.test.Infrastructure.Services
             _appRepository
                 .Setup(r => r.GetAll<EtlSourceElementMapping>(It.IsAny<int>(), It.IsAny<int>()))
                 .Returns(() => _mappings);
+
+            _appRepository
+                .Setup(r => r.Create(It.IsAny<EtlMap>()))
+                .Returns((EtlMap map) =>
+                {
+                    map.EtlMapId = _maps.Count + 1;
+                    map.EtlSourceElementMappings = map.EtlSourceElementMappings ?? new List<EtlSourceElementMapping>();
+                    _maps.Add(map);
+                    return map;
+                });
+
+            _appRepository
+                .Setup(r => r.GetAllReadOnly(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<EtlMap, object>>[]>()))
+                .Returns(() =>
+                {
+                    foreach (var map in _maps)
+                    {
+                        map.EtlSourceElementMappings = _mappings.Where(m => m.EtlMap == map).ToList();
+                    }
+                    return _maps;
+                });
+
+            _appRepository
+                .Setup(r => r.Find(It.IsAny<Expression<Func<EtlMap, bool>>>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<EtlMap, object>>[]>()))
+                .Returns((Expression<Func<EtlMap, bool>> criteria, int skip, int take, Expression<Func<EtlMap, object>>[] eagerLoad) =>
+                    _maps.Where(criteria.Compile()));
+
+            _appRepository
+                .Setup(r => r.GetAll<EtlMap>(It.IsAny<int>(), It.IsAny<int>()))
+                .Returns(() => _maps);
         }
 
         private EtlSourceMappingService BuildService()
@@ -298,7 +329,45 @@ namespace generate.test.Infrastructure.Services
 
             service.DeleteAllMappings();
 
-            _appRepository.Verify(r => r.DeleteRange(It.IsAny<IEnumerable<EtlSourceElementMapping>>()), Times.Once);
+            _appRepository.Verify(r => r.DeleteRange(It.IsAny<IEnumerable<EtlMap>>()), Times.Once);
+        }
+
+        [Fact]
+        public void CreateNamedMapWithAuditOnUpload()
+        {
+            var service = BuildService();
+            var upload = BuildUpload();
+            upload.MapName = "NJ AllTests";
+
+            service.UploadDataDictionary(upload);
+
+            var maps = service.GetMaps();
+            Assert.Single(maps);
+            Assert.Equal("NJ AllTests", maps[0].MapName);
+            Assert.Equal("StateDataDictionary.xlsx", maps[0].UploadFileName);
+            Assert.Equal("tester", maps[0].CreatedBy);
+            Assert.Equal(2, maps[0].ElementCount);
+            Assert.Equal(1, maps[0].MappedElementCount);
+        }
+
+        [Fact]
+        public void DefaultMapNameToUploadFileName()
+        {
+            var service = BuildService();
+
+            service.UploadDataDictionary(BuildUpload());
+
+            Assert.Equal("StateDataDictionary.xlsx", service.GetMaps()[0].MapName);
+        }
+
+        [Fact]
+        public void DeleteOneMap()
+        {
+            var service = BuildService();
+            service.UploadDataDictionary(BuildUpload());
+
+            Assert.True(service.DeleteMap(1));
+            Assert.False(service.DeleteMap(999));
         }
 
         [Fact]

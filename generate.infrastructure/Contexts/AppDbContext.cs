@@ -651,6 +651,24 @@ namespace generate.infrastructure.Contexts
                 entity.Property(x => x.DestinationRdsReportColumnName).HasColumnName("Destination_RDS_Report_Column_Name");
             });
 
+            // EtlMap (CIID-9029 - a named ETL source mapping set with audit)
+
+            modelBuilder.Entity<EtlMap>(entity =>
+            {
+                entity.ToTable("EtlMap");
+
+                entity.HasKey(x => x.EtlMapId);
+
+                entity
+                   .Property(x => x.MapName)
+                   .IsRequired()
+                   .HasMaxLength(200);
+
+                entity
+                   .Property(x => x.UploadFileName)
+                   .HasMaxLength(260);
+            });
+
             // EtlSourceElementMapping (CIID-9031 - left side of the ETL Checklist)
 
             modelBuilder.Entity<EtlSourceElementMapping>(entity =>
@@ -658,6 +676,12 @@ namespace generate.infrastructure.Contexts
                 entity.ToTable("EtlSourceElementMapping");
 
                 entity.HasKey(x => x.EtlSourceElementMappingId);
+
+                entity
+                    .HasOne(pt => pt.EtlMap)
+                    .WithMany(t => t.EtlSourceElementMappings)
+                    .HasForeignKey(pt => pt.EtlMapId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 entity
                    .Property(x => x.SourceElementName)
@@ -1363,6 +1387,7 @@ namespace generate.infrastructure.Contexts
         public DbSet<CedsElement> CedsElements { get; set; }
         public DbSet<CedsConnection_CedsElement> CedsConnection_CedsElements { get; set; }
         public DbSet<EtlMetadata> EtlMetadata { get; set; }
+        public DbSet<EtlMap> EtlMaps { get; set; }
         public DbSet<EtlSourceElementMapping> EtlSourceElementMappings { get; set; }
         public DbSet<EtlSourceOptionSetMapping> EtlSourceOptionSetMappings { get; set; }
 

@@ -48,10 +48,23 @@ namespace generate.infrastructure.Services
                 .GroupBy(m => m.CedsElementGlobalId.Trim(), StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
 
+            var etlMap = new EtlMap
+            {
+                MapName = !string.IsNullOrWhiteSpace(upload.MapName)
+                    ? upload.MapName.Trim()
+                    : (!string.IsNullOrWhiteSpace(upload.UploadFileName) ? upload.UploadFileName : "Data Dictionary Map"),
+                UploadFileName = upload.UploadFileName,
+                CreatedDate = DateTime.UtcNow,
+                CreatedBy = upload.UploadedBy
+            };
+
+            _appRepository.Create(etlMap);
+
             foreach (var element in upload.Elements.Where(e => e != null && !string.IsNullOrWhiteSpace(e.SourceElementName)))
             {
                 var mapping = new EtlSourceElementMapping
                 {
+                    EtlMap = etlMap,
                     SourceCommonName = element.SourceCommonName,
                     SourceTechnicalName = element.SourceTechnicalName,
                     SourceDatabaseName = element.SourceDatabaseName,
@@ -113,12 +126,53 @@ namespace generate.infrastructure.Services
             return results;
         }
 
-        public List<EtlSourceElementMapping> GetAllMappings()
+        public List<EtlMapDto> GetMaps()
         {
             return _appRepository
-                .GetAllReadOnly<EtlSourceElementMapping>(0, 0, m => m.EtlSourceOptionSetMappings)
+                .GetAllReadOnly<EtlMap>(0, 0, m => m.EtlSourceElementMappings)
+                .Select(m => new EtlMapDto
+                {
+                    EtlMapId = m.EtlMapId,
+                    MapName = m.MapName,
+                    UploadFileName = m.UploadFileName,
+                    CreatedDate = m.CreatedDate,
+                    CreatedBy = m.CreatedBy,
+                    ModifiedDate = m.ModifiedDate,
+                    ModifiedBy = m.ModifiedBy,
+                    ElementCount = m.EtlSourceElementMappings?.Count ?? 0,
+                    MappedElementCount = m.EtlSourceElementMappings?.Count(e =>
+                        e.MappingStatus == EtlMappingStatus.Accepted || e.MappingStatus == EtlMappingStatus.Suggested) ?? 0
+                })
+                .OrderByDescending(m => m.ModifiedDate ?? m.CreatedDate)
+                .ToList();
+        }
+
+        public List<EtlSourceElementMapping> GetAllMappings(int? etlMapId = null)
+        {
+            var mappings = etlMapId.HasValue
+                ? _appRepository.FindReadOnly<EtlSourceElementMapping>(m => m.EtlMapId == etlMapId.Value, 0, 0, m => m.EtlSourceOptionSetMappings)
+                : _appRepository.GetAllReadOnly<EtlSourceElementMapping>(0, 0, m => m.EtlSourceOptionSetMappings);
+
+            return mappings
                 .OrderBy(m => m.EtlSourceElementMappingId)
                 .ToList();
+        }
+
+        public bool DeleteMap(int etlMapId)
+        {
+            var etlMap = _appRepository
+                .Find<EtlMap>(m => m.EtlMapId == etlMapId, 0, 0)
+                .FirstOrDefault();
+
+            if (etlMap == null)
+            {
+                return false;
+            }
+
+            // Element and option set rows are removed by the ON DELETE CASCADE foreign keys.
+            _appRepository.DeleteRange(new[] { etlMap });
+            _appRepository.Save();
+            return true;
         }
 
         public List<CedsElementCatalogDto> GetCedsElementCatalog()
@@ -287,6 +341,8 @@ namespace generate.infrastructure.Services
             mapping.ModifiedDate = DateTime.UtcNow;
             mapping.ModifiedBy = update.ModifiedBy;
 
+            TouchMap(mapping.EtlMapId, update.ModifiedBy);
+
             _appRepository.Save();
 
             return mapping;
@@ -353,22 +409,51 @@ namespace generate.infrastructure.Services
             optionMapping.ModifiedDate = DateTime.UtcNow;
             optionMapping.ModifiedBy = update.ModifiedBy;
 
+            var parentElement = _appRepository
+                .Find<EtlSourceElementMapping>(m => m.EtlSourceElementMappingId == optionMapping.EtlSourceElementMappingId, 0, 0)
+                .FirstOrDefault();
+            TouchMap(parentElement?.EtlMapId, update.ModifiedBy);
+
             _appRepository.Save();
 
             return optionMapping;
         }
 
+        /// <summary>
+        /// Stamps the parent map's last-update audit when any of its mappings change.
+        /// </summary>
+        private void TouchMap(int? etlMapId, string modifiedBy)
+        {
+            if (!etlMapId.HasValue)
+            {
+                return;
+            }
+
+            var etlMap = _appRepository
+                .Find<EtlMap>(m => m.EtlMapId == etlMapId.Value, 0, 0)
+                .FirstOrDefault();
+
+            if (etlMap != null)
+            {
+                etlMap.ModifiedDate = DateTime.UtcNow;
+                etlMap.ModifiedBy = modifiedBy;
+            }
+        }
+
         public void DeleteAllMappings()
         {
-            // Option set rows are removed by the ON DELETE CASCADE foreign key.
-            var mappings = _appRepository.GetAll<EtlSourceElementMapping>(0, 0).ToList();
-            _appRepository.DeleteRange(mappings);
+            // Child rows are removed by the ON DELETE CASCADE foreign keys; mappings without a map
+            // (created before App.EtlMap existed) are deleted explicitly.
+            var maps = _appRepository.GetAll<EtlMap>(0, 0).ToList();
+            _appRepository.DeleteRange(maps);
+            var orphanMappings = _appRepository.Find<EtlSourceElementMapping>(m => m.EtlMapId == null, 0, 0).ToList();
+            _appRepository.DeleteRange(orphanMappings);
             _appRepository.Save();
         }
 
-        public string ExportChecklistCsv()
+        public string ExportChecklistCsv(int? etlMapId = null)
         {
-            var mappings = GetAllMappings();
+            var mappings = GetAllMappings(etlMapId);
             var metadata = _appRepository.GetAllReadOnly<EtlMetadata>(0, 0)
                 .Where(m => !string.IsNullOrWhiteSpace(m.CedsElementGlobalId))
                 .ToList();

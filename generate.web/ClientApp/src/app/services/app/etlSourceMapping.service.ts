@@ -8,6 +8,7 @@ import {
     CedsElementCatalog,
     CedsElementMatch,
     CedsOptionSetValue,
+    EtlMap,
     EtlSourceElementMapping,
     EtlSourceElementMappingResult,
     EtlSourceElementMappingUpdate,
@@ -25,11 +26,29 @@ export class EtlSourceMappingService extends BaseService {
         super();
     }
 
-    getAll(): Observable<EtlSourceElementMapping[]> {
-        return this.http.get<EtlSourceElementMapping[]>(this._apiUrl, { observe: 'response' })
+    getAll(mapId?: number): Observable<EtlSourceElementMapping[]> {
+        const url = mapId ? this._apiUrl + '?mapId=' + mapId : this._apiUrl;
+        return this.http.get<EtlSourceElementMapping[]>(url, { observe: 'response' })
             .pipe(
                 map(resp => resp.body),
-                tap(() => this.log('fetched all etl source mappings')),
+                tap(() => this.log('fetched etl source mappings')),
+                catchError(this.handleError)
+            );
+    }
+
+    getMaps(): Observable<EtlMap[]> {
+        return this.http.get<EtlMap[]>(this._apiUrl + '/maps', { observe: 'response' })
+            .pipe(
+                map(resp => resp.body),
+                tap(() => this.log('fetched etl maps')),
+                catchError(this.handleError)
+            );
+    }
+
+    deleteMap(etlMapId: number): Observable<any> {
+        return this.http.delete(this._apiUrl + '/maps/' + etlMapId, { observe: 'response' })
+            .pipe(
+                tap(() => this.log('deleted etl map')),
                 catchError(this.handleError)
             );
     }
@@ -96,8 +115,9 @@ export class EtlSourceMappingService extends BaseService {
             );
     }
 
-    export(): Observable<Blob> {
-        return this.http.get(this._apiUrl + '/export', { responseType: 'blob' })
+    export(mapId?: number): Observable<Blob> {
+        const url = mapId ? this._apiUrl + '/export?mapId=' + mapId : this._apiUrl + '/export';
+        return this.http.get(url, { responseType: 'blob' })
             .pipe(
                 tap(() => this.log('exported etl checklist')),
                 catchError(this.handleError)

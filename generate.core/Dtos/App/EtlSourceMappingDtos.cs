@@ -8,9 +8,26 @@ namespace generate.core.Dtos.App
     /// </summary>
     public class EtlSourceMappingUploadDto
     {
+        public string MapName { get; set; }
         public string UploadFileName { get; set; }
         public string UploadedBy { get; set; }
         public List<EtlSourceElementUploadDto> Elements { get; set; }
+    }
+
+    /// <summary>
+    /// A named ETL mapping set with audit and progress counts (for the maps list view).
+    /// </summary>
+    public class EtlMapDto
+    {
+        public int EtlMapId { get; set; }
+        public string MapName { get; set; }
+        public string UploadFileName { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public string CreatedBy { get; set; }
+        public System.DateTime? ModifiedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public int ElementCount { get; set; }
+        public int MappedElementCount { get; set; }
     }
 
     /// <summary>

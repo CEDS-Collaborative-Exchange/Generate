@@ -102,7 +102,18 @@ namespace generate.web.Config
             services.AddScoped<IStateDefinedReportService, StateDefinedReportService>();
             services.AddScoped<IFSMetadataUpdateService, MetadataUpdateService>();
             services.AddScoped<IAboutService, AboutService>();
-            services.AddScoped<ICedsAutoMapService, CedsAutoMapService>();
+            // CEDS automapping (CIID-9032): the fine-tuned CEDS Copilot embedding model (ONNX) when
+            // configured and present; otherwise the deterministic lexical matcher.
+            services.AddSingleton<CedsEmbeddingModelProvider>();
+            services.AddScoped<CedsAutoMapService>();
+            services.AddScoped<ICedsAutoMapService>(serviceProvider =>
+            {
+                var modelProvider = serviceProvider.GetRequiredService<CedsEmbeddingModelProvider>();
+
+                return modelProvider.IsAvailable
+                    ? new CedsEmbeddingAutoMapService(modelProvider)
+                    : (ICedsAutoMapService)serviceProvider.GetRequiredService<CedsAutoMapService>();
+            });
             services.AddScoped<IEtlSourceMappingService, EtlSourceMappingService>();
         }
 

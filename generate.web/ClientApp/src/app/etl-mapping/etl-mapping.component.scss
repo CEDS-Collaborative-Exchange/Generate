@@ -14,9 +14,28 @@
     display: flex;
     gap: 12px;
     margin-bottom: 16px;
+    align-items: center;
 
     .etl-mapping__upload-button {
       cursor: pointer;
+    }
+  }
+
+  &__map-name {
+    padding: 6px 10px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    min-width: 280px;
+  }
+
+  &__map-header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 8px 0 12px;
+
+    h3 {
+      margin: 0;
     }
   }
 

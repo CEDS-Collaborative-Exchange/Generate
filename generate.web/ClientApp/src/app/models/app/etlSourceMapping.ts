@@ -14,8 +14,21 @@ export interface EtlSourceOptionSetMapping {
     modifiedBy: string;
 }
 
+export interface EtlMap {
+    etlMapId: number;
+    mapName: string;
+    uploadFileName: string;
+    createdDate: string;
+    createdBy: string;
+    modifiedDate: string;
+    modifiedBy: string;
+    elementCount: number;
+    mappedElementCount: number;
+}
+
 export interface EtlSourceElementMapping {
     etlSourceElementMappingId: number;
+    etlMapId: number;
     sourceCommonName: string;
     sourceTechnicalName: string;
     sourceDatabaseName: string;
@@ -94,6 +107,7 @@ export interface EtlSourceElementUpload {
 }
 
 export interface EtlSourceMappingUpload {
+    mapName: string;
     uploadFileName: string;
     uploadedBy: string;
     elements: Array<EtlSourceElementUpload>;

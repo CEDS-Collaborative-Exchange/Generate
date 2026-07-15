@@ -6,6 +6,8 @@
   </p>
 
   <div class="etl-mapping__toolbar">
+    <input type="text" class="etl-mapping__map-name" placeholder="Map name (defaults to file name)"
+           [(ngModel)]="mapNameInput" [disabled]="isUploading" />
     <label class="etl-mapping__upload-button mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
       Upload Data Dictionary
       <input type="file" accept=".csv,.xlsx,.xls" (change)="onFileSelected($event)" hidden />
@@ -16,12 +18,6 @@
     <button type="button" class="mdl-button mdl-js-button" (click)="toggleRequirements()">
       {{ showRequirements ? 'Hide' : 'Show' }} File Requirements
     </button>
-    <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="exportChecklist()" [disabled]="mappings.length === 0">
-      Export Checklist (CSV)
-    </button>
-    <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="clearAll()" [disabled]="mappings.length === 0">
-      Clear All Mappings
-    </button>
   </div>
 
   <div *ngIf="showRequirements" class="etl-mapping__requirements">
@@ -30,7 +26,7 @@
       <li><strong>File type:</strong> .xlsx, .xls, or .csv. Only the <strong>first worksheet</strong> of an Excel file is read.</li>
       <li><strong>Header row:</strong> must appear within the first 10 rows of the sheet and contain a column recognized as the element name (see below). Rows above the header row are ignored, so a title row is fine.</li>
       <li><strong>Column matching is forgiving:</strong> capitalization, spacing, and punctuation in headers are ignored (for example, <em>"Element/Field Name"</em> and <em>"element field name"</em> both match). Column order does not matter, and unrecognized columns are ignored.</li>
-      <li><strong>One row per option set value:</strong> if an element has an option set (enumeration), repeat the element on one row per value and vary only the option set code/description columns. Rows are grouped into a single element by Element Name + Table Name + Column Name.</li>
+      <li><strong>One row per option set value:</strong> if an element has an option set (enumeration), repeat the element on one row per value and vary only the option set code/description columns. All rows with the same Element Name are listed as a single element (duplicate option values are ignored).</li>
       <li><strong>Elements without an option set</strong> use a single row with the option set columns left blank.</li>
     </ul>
 
@@ -62,11 +58,65 @@
   <div *ngIf="uploadError" class="etl-mapping__message etl-mapping__message--error">{{ uploadError }}</div>
   <div *ngIf="statusMessage" class="etl-mapping__message">{{ statusMessage }}</div>
 
-  <div *ngIf="!isLoading && mappings.length === 0" class="etl-mapping__empty">
-    No data dictionary has been uploaded yet.
+  <!-- Maps list -->
+  <div *ngIf="!selectedMap">
+    <div *ngIf="!isLoading && maps.length === 0" class="etl-mapping__empty">
+      No data dictionary has been uploaded yet.
+    </div>
+
+    <table *ngIf="maps.length > 0" class="etl-mapping__table">
+      <thead>
+        <tr>
+          <th>Map Name</th>
+          <th>Uploaded File</th>
+          <th>Elements</th>
+          <th>Created</th>
+          <th>Last Updated</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let map of maps">
+          <td><a href="javascript:void(0)" (click)="openMap(map)"><strong>{{ map.mapName }}</strong></a></td>
+          <td>{{ map.uploadFileName }}</td>
+          <td>{{ map.mappedElementCount }} of {{ map.elementCount }} mapped</td>
+          <td>
+            {{ map.createdDate | date:'short' }}
+            <div *ngIf="map.createdBy" class="etl-mapping__subtext">by {{ map.createdBy }}</div>
+          </td>
+          <td>
+            <span *ngIf="map.modifiedDate">{{ map.modifiedDate | date:'short' }}</span>
+            <span *ngIf="!map.modifiedDate" class="etl-mapping__subtext">&mdash;</span>
+            <div *ngIf="map.modifiedBy" class="etl-mapping__subtext">by {{ map.modifiedBy }}</div>
+          </td>
+          <td class="etl-mapping__actions">
+            <button type="button" class="mdl-button mdl-js-button mdl-button--primary" (click)="openMap(map)">Open</button>
+            <button type="button" class="mdl-button mdl-js-button" (click)="exportChecklist(map)">Export</button>
+            <button type="button" class="mdl-button mdl-js-button" (click)="deleteMap(map)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <table *ngIf="mappings.length > 0" class="etl-mapping__table">
+  <!-- Selected map review -->
+  <div *ngIf="selectedMap" class="etl-mapping__map-header">
+    <button type="button" class="mdl-button mdl-js-button" (click)="backToMaps()">&larr; All Maps</button>
+    <h3>{{ selectedMap.mapName }}</h3>
+    <span class="etl-mapping__subtext">
+      {{ selectedMap.mappedElementCount }} of {{ selectedMap.elementCount }} elements mapped
+      <span *ngIf="selectedMap.modifiedDate"> &middot; last updated {{ selectedMap.modifiedDate | date:'short' }}<span *ngIf="selectedMap.modifiedBy"> by {{ selectedMap.modifiedBy }}</span></span>
+    </span>
+    <button type="button" class="mdl-button mdl-js-button mdl-button--raised" (click)="exportChecklist()">
+      Export Checklist (CSV)
+    </button>
+  </div>
+
+  <div *ngIf="selectedMap && !isLoading && mappings.length === 0" class="etl-mapping__empty">
+    This map has no elements.
+  </div>
+
+  <table *ngIf="selectedMap && mappings.length > 0" class="etl-mapping__table">
     <thead>
       <tr>
         <th>Source Element</th>

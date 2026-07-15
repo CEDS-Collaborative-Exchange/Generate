@@ -11,15 +11,25 @@ namespace generate.core.Interfaces.Services
     public interface IEtlSourceMappingService
     {
         /// <summary>
-        /// Persists the uploaded data dictionary elements and option set values, runs CEDS
-        /// automapping, and returns the created mappings with their top CEDS element candidates.
+        /// Creates a named map for the upload, persists the data dictionary elements and option set
+        /// values, runs CEDS automapping, and returns the created mappings with their top candidates.
         /// </summary>
         List<EtlSourceElementMappingResultDto> UploadDataDictionary(EtlSourceMappingUploadDto upload);
 
         /// <summary>
-        /// All persisted element mappings including their option set value mappings.
+        /// All maps with audit information and element counts, newest first.
         /// </summary>
-        List<EtlSourceElementMapping> GetAllMappings();
+        List<EtlMapDto> GetMaps();
+
+        /// <summary>
+        /// Element mappings (with option set value mappings), optionally filtered to one map.
+        /// </summary>
+        List<EtlSourceElementMapping> GetAllMappings(int? etlMapId = null);
+
+        /// <summary>
+        /// Deletes one map and all of its element / option set value mappings.
+        /// </summary>
+        bool DeleteMap(int etlMapId);
 
         /// <summary>
         /// Distinct CEDS elements available as mapping targets (from App.EtlMetadata).
@@ -54,9 +64,9 @@ namespace generate.core.Interfaces.Services
         void DeleteAllMappings();
 
         /// <summary>
-        /// Exports the full ETL Checklist as CSV: source columns + mapped CEDS columns + Generate
-        /// destination columns joined from App.EtlMetadata.
+        /// Exports the ETL Checklist as CSV (optionally for one map): source columns + mapped CEDS
+        /// columns + Generate destination columns joined from App.EtlMetadata.
         /// </summary>
-        string ExportChecklistCsv();
+        string ExportChecklistCsv(int? etlMapId = null);
     }
 }

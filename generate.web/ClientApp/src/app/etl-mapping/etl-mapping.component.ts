@@ -6,6 +6,7 @@ import { EtlSourceMappingService } from '../services/app/etlSourceMapping.servic
 import {
   CedsElementCatalog,
   CedsOptionSetValue,
+  EtlMap,
   EtlSourceElementMapping,
   EtlSourceElementUpload,
   EtlSourceMappingUpload,
@@ -41,6 +42,10 @@ const COLUMN_ALIASES: { [property: string]: string[] } = {
 })
 export class EtlMappingComponent implements OnInit {
 
+  maps: EtlMap[] = [];
+  selectedMap: EtlMap = null;
+  mapNameInput = '';
+
   mappings: EtlSourceElementMapping[] = [];
   cedsElements: CedsElementCatalog[] = [];
 
@@ -61,8 +66,8 @@ export class EtlMappingComponent implements OnInit {
     { column: 'Source Technical Name', required: false, aliases: 'Technical Name, System of Record', notes: '' },
     { column: 'Source Database Name', required: false, aliases: 'Database Name', notes: '' },
     { column: 'Source Schema Name', required: false, aliases: 'Schema Name', notes: '' },
-    { column: 'Source Table Name', required: false, aliases: 'Table Name', notes: 'Used with Column Name to group option set rows under one element.' },
-    { column: 'Source Column Name', required: false, aliases: 'Column Name', notes: 'Used with Table Name to group option set rows under one element.' },
+    { column: 'Source Table Name', required: false, aliases: 'Table Name', notes: '' },
+    { column: 'Source Column Name', required: false, aliases: 'Column Name', notes: '' },
     { column: 'Source Data Type', required: false, aliases: 'Data Type', notes: '' },
     { column: 'Source Data Length', required: false, aliases: 'Data Length, Length', notes: '' },
     { column: 'Source Data Steward', required: false, aliases: 'Data Steward', notes: '' },
@@ -79,13 +84,69 @@ export class EtlMappingComponent implements OnInit {
   constructor(private etlSourceMappingService: EtlSourceMappingService) { }
 
   ngOnInit() {
-    this.loadMappings();
+    this.loadMaps();
     this.loadCedsElements();
   }
 
-  loadMappings() {
+  loadMaps() {
     this.isLoading = true;
-    this.etlSourceMappingService.getAll().subscribe({
+    this.etlSourceMappingService.getMaps().subscribe({
+      next: maps => {
+        this.maps = maps || [];
+        this.isLoading = false;
+
+        // Keep the selected map's summary row fresh
+        if (this.selectedMap) {
+          this.selectedMap = this.maps.find(m => m.etlMapId === this.selectedMap.etlMapId) || null;
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.statusMessage = 'Unable to load the mapping list.';
+      }
+    });
+  }
+
+  openMap(etlMap: EtlMap) {
+    this.selectedMap = etlMap;
+    this.expandedElementId = null;
+    this.pickerElementId = null;
+    this.statusMessage = '';
+    this.loadMappings();
+  }
+
+  backToMaps() {
+    this.selectedMap = null;
+    this.mappings = [];
+    this.statusMessage = '';
+    this.loadMaps();
+  }
+
+  deleteMap(etlMap: EtlMap) {
+    if (!window.confirm('Delete the map "' + etlMap.mapName + '" and all of its mappings?')) {
+      return;
+    }
+
+    this.etlSourceMappingService.deleteMap(etlMap.etlMapId).subscribe({
+      next: () => {
+        if (this.selectedMap && this.selectedMap.etlMapId === etlMap.etlMapId) {
+          this.selectedMap = null;
+          this.mappings = [];
+        }
+        this.statusMessage = 'Map "' + etlMap.mapName + '" was deleted.';
+        this.loadMaps();
+      },
+      error: () => this.statusMessage = 'The map could not be deleted.'
+    });
+  }
+
+  loadMappings() {
+    if (!this.selectedMap) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.etlSourceMappingService.getAll(this.selectedMap.etlMapId).subscribe({
       next: mappings => {
         this.mappings = mappings || [];
         this.isLoading = false;
@@ -225,8 +286,9 @@ export class EtlMappingComponent implements OnInit {
         continue;
       }
 
-      // Option set values repeat element rows (one row per value): group by element identity
-      const key = [elementName, value('sourceTableName'), value('sourceColumnName')].join('||').toLowerCase();
+      // Elements repeat across rows (one row per option set value, or per source table);
+      // list each distinct element ONCE, keyed by element name only
+      const key = elementName.toLowerCase();
       let element = elementsByKey[key];
 
       if (!element) {
@@ -249,16 +311,38 @@ export class EtlMappingComponent implements OnInit {
         };
         elementsByKey[key] = element;
         elements.push(element);
+      } else {
+        // Later rows for the same element may carry values the first row left blank
+        element.sourceCommonName = element.sourceCommonName || value('sourceCommonName');
+        element.sourceTechnicalName = element.sourceTechnicalName || value('sourceTechnicalName');
+        element.sourceDatabaseName = element.sourceDatabaseName || value('sourceDatabaseName');
+        element.sourceSchemaName = element.sourceSchemaName || value('sourceSchemaName');
+        element.sourceTableName = element.sourceTableName || value('sourceTableName');
+        element.sourceColumnName = element.sourceColumnName || value('sourceColumnName');
+        element.sourceElementDefinition = element.sourceElementDefinition || value('sourceElementDefinition');
+        element.sourceDataType = element.sourceDataType || value('sourceDataType');
+        element.sourceDataLength = element.sourceDataLength || value('sourceDataLength');
+        element.sourceDataSteward = element.sourceDataSteward || value('sourceDataSteward');
+        element.selectionCriteria = element.selectionCriteria || value('selectionCriteria');
+        element.transformationRules = element.transformationRules || value('transformationRules');
+        element.notes = element.notes || value('notes');
       }
 
       const optionCode = value('sourceOptionSetCode');
       const optionDescription = value('sourceOptionSetDescription');
 
       if (optionCode || optionDescription) {
-        element.optionSetValues.push({
-          sourceOptionSetCode: optionCode,
-          sourceOptionSetDescription: optionDescription
-        });
+        // Skip identical option values repeated across the element's rows
+        const duplicate = element.optionSetValues.some(o =>
+          o.sourceOptionSetCode.toLowerCase() === optionCode.toLowerCase() &&
+          o.sourceOptionSetDescription.toLowerCase() === optionDescription.toLowerCase());
+
+        if (!duplicate) {
+          element.optionSetValues.push({
+            sourceOptionSetCode: optionCode,
+            sourceOptionSetDescription: optionDescription
+          });
+        }
       }
     }
 
@@ -291,6 +375,7 @@ export class EtlMappingComponent implements OnInit {
 
   private uploadElements(elements: EtlSourceElementUpload[]) {
     const upload: EtlSourceMappingUpload = {
+      mapName: (this.mapNameInput || '').trim() || this.uploadFileName,
       uploadFileName: this.uploadFileName,
       uploadedBy: null,
       elements: elements
@@ -302,8 +387,22 @@ export class EtlMappingComponent implements OnInit {
     this.etlSourceMappingService.upload(upload).subscribe({
       next: results => {
         this.isUploading = false;
-        this.statusMessage = (results || []).length + ' element(s) uploaded and automapped to CEDS.';
-        this.loadMappings();
+        this.mapNameInput = '';
+        this.statusMessage = (results || []).length + ' element(s) uploaded to map "' + upload.mapName + '" and automapped to CEDS.';
+
+        // Open the new map for review
+        const firstResult = (results || [])[0];
+        this.etlSourceMappingService.getMaps().subscribe({
+          next: maps => {
+            this.maps = maps || [];
+            const newMap = firstResult && firstResult.mapping
+              ? this.maps.find(m => m.etlMapId === firstResult.mapping.etlMapId)
+              : this.maps[0];
+            if (newMap) {
+              this.openMap(newMap);
+            }
+          }
+        });
       },
       error: () => {
         this.isUploading = false;
@@ -444,31 +543,19 @@ export class EtlMappingComponent implements OnInit {
 
   // -------------------- Export / clear --------------------
 
-  exportChecklist() {
-    this.etlSourceMappingService.export().subscribe({
+  exportChecklist(etlMap?: EtlMap) {
+    const target = etlMap || this.selectedMap;
+
+    this.etlSourceMappingService.export(target ? target.etlMapId : null).subscribe({
       next: blob => {
         const url = window.URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = url;
-        anchor.download = 'EtlChecklist.csv';
+        anchor.download = (target ? target.mapName.replace(/[^\w\- ]/g, '') : 'EtlChecklist') + '.csv';
         anchor.click();
         window.URL.revokeObjectURL(url);
       },
       error: () => this.statusMessage = 'The export failed.'
-    });
-  }
-
-  clearAll() {
-    if (!window.confirm('Remove all uploaded data dictionary elements and their CEDS mappings?')) {
-      return;
-    }
-
-    this.etlSourceMappingService.deleteAll().subscribe({
-      next: () => {
-        this.statusMessage = 'All mappings were removed.';
-        this.loadMappings();
-      },
-      error: () => this.statusMessage = 'The mappings could not be removed.'
     });
   }
 

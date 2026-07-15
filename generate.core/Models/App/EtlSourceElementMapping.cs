@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace generate.core.Models.App
 {
@@ -11,6 +12,7 @@ namespace generate.core.Models.App
     public class EtlSourceElementMapping
     {
         public int EtlSourceElementMappingId { get; set; }
+        public int? EtlMapId { get; set; }
 
         // Source System & Element Details
         public string SourceCommonName { get; set; }
@@ -51,5 +53,9 @@ namespace generate.core.Models.App
         public string ModifiedBy { get; set; }
 
         public List<EtlSourceOptionSetMapping> EtlSourceOptionSetMappings { get; set; }
+
+        // Back-reference excluded from serialization to avoid a JSON cycle
+        [JsonIgnore]
+        public EtlMap EtlMap { get; set; }
     }
 }
