@@ -77,4 +77,4 @@ Teams will use the information documented in the after-action meeting to determi
 
 Resources
 
-[ETL Checklist](https://ciidta.communities.ed.gov/#communities/pdc/documents/17074)
+[ETL Checklist](https://center-for-the-integration-of-id.gitbook.io/generate-documentation/developer-guides/migration/fact-type-table/etl-documentation-templates-overview/etl-documentation-template)
