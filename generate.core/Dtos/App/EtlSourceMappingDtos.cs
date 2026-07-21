@@ -44,6 +44,7 @@ namespace generate.core.Dtos.App
         public int DimFactTypeId { get; set; }
         public string FactTypeCode { get; set; }
         public string FactTypeDescription { get; set; }
+        public string FactTypeLabel { get; set; }
     }
 
     /// <summary>

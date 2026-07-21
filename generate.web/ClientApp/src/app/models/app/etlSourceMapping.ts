@@ -30,6 +30,7 @@ export interface FactType {
     dimFactTypeId: number;
     factTypeCode: string;
     factTypeDescription: string;
+    factTypeLabel: string;
 }
 
 export interface EtlMap {

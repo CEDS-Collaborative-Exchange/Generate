@@ -229,9 +229,10 @@ namespace generate.infrastructure.Services
                 {
                     DimFactTypeId = f.DimFactTypeId,
                     FactTypeCode = f.FactTypeCode,
-                    FactTypeDescription = f.FactTypeDescription
+                    FactTypeDescription = f.FactTypeDescription,
+                    FactTypeLabel = f.FactTypeLabel
                 })
-                .OrderBy(f => f.FactTypeCode, StringComparer.OrdinalIgnoreCase)
+                .OrderBy(f => f.FactTypeLabel ?? f.FactTypeCode, StringComparer.OrdinalIgnoreCase)
                 .ToList();
         }
 

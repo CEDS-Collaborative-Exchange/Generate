@@ -84,7 +84,7 @@
       <label>Add by fact type</label>
       <select [(ngModel)]="editorFactTypeId">
         <option [ngValue]="null">&mdash; select fact type &mdash;</option>
-        <option *ngFor="let factType of factTypes" [ngValue]="factType.dimFactTypeId">{{ factType.factTypeCode }}</option>
+        <option *ngFor="let factType of factTypes" [ngValue]="factType.dimFactTypeId">{{ factTypeDisplay(factType) }}</option>
       </select>
       <button type="button" class="mdl-button mdl-js-button" (click)="addEditorFactType()">Add Fact Type</button>
     </div>

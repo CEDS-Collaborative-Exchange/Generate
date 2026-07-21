@@ -166,6 +166,12 @@ export class EtlMappingComponent implements OnInit {
     return spec.fileSpecNumber || spec.factTypeCode || ('FactType ' + spec.dimFactTypeId);
   }
 
+  factTypeDisplay(factType: FactType): string {
+    return factType.factTypeLabel
+      ? factType.factTypeLabel + ' (' + factType.factTypeCode + ')'
+      : factType.factTypeCode;
+  }
+
   specsSummary(etlMap: EtlMap): string {
     return (etlMap.fileSpecs || []).map(s => this.specLabel(s)).join(', ');
   }
