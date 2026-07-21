@@ -30,13 +30,13 @@
            <div *ngIf="toggleAssessments !== null && toggleAssessments.length > 0">
 
                <div class="mdl-grid generate-app-toggle__assesment">
-                   <div class="mdl-cell mdl-cell--3-col"> Assessment Type </div>
-                   <div class="mdl-cell mdl-cell--2-col"> Assessment Name </div>
-                   <div class="mdl-cell mdl-cell--1-col"> # of Performance Levels </div>
+                   <div class="mdl-cell mdl-cell--3-col" (click)="sortBy('assessmentType')" style="cursor: pointer;"> Assessment Type <i class="fa" [ngClass]="{'fa-sort': sortColumn !== 'assessmentType', 'fa-sort-up': sortColumn === 'assessmentType' && sortDirection === 'asc', 'fa-sort-down': sortColumn === 'assessmentType' && sortDirection === 'desc'}"></i> </div>
+                   <div class="mdl-cell mdl-cell--2-col" (click)="sortBy('assessmentName')" style="cursor: pointer;"> Assessment Name <i class="fa" [ngClass]="{'fa-sort': sortColumn !== 'assessmentName', 'fa-sort-up': sortColumn === 'assessmentName' && sortDirection === 'asc', 'fa-sort-down': sortColumn === 'assessmentName' && sortDirection === 'desc'}"></i> </div>
+                   <div class="mdl-cell mdl-cell--1-col" (click)="sortBy('performanceLevels')" style="cursor: pointer;"> # of Performance Levels <i class="fa" [ngClass]="{'fa-sort': sortColumn !== 'performanceLevels', 'fa-sort-up': sortColumn === 'performanceLevels' && sortDirection === 'asc', 'fa-sort-down': sortColumn === 'performanceLevels' && sortDirection === 'desc'}"></i> </div>
                    <div class="mdl-cell mdl-cell--1-col"> At or Above Proficiency </div>
-                   <div class="mdl-cell mdl-cell--1-col"> Grade </div>
-                   <div class="mdl-cell mdl-cell--1-col"> Subject </div>
-                   <div class="mdl-cell mdl-cell--1-col"> EOG/EOC </div>
+                   <div class="mdl-cell mdl-cell--1-col" (click)="sortBy('grade')" style="cursor: pointer;"> Grade <i class="fa" [ngClass]="{'fa-sort': sortColumn !== 'grade', 'fa-sort-up': sortColumn === 'grade' && sortDirection === 'asc', 'fa-sort-down': sortColumn === 'grade' && sortDirection === 'desc'}"></i> </div>
+                   <div class="mdl-cell mdl-cell--1-col" (click)="sortBy('subject')" style="cursor: pointer;"> Subject <i class="fa" [ngClass]="{'fa-sort': sortColumn !== 'subject', 'fa-sort-up': sortColumn === 'subject' && sortDirection === 'asc', 'fa-sort-down': sortColumn === 'subject' && sortDirection === 'desc'}"></i> </div>
+                   <div class="mdl-cell mdl-cell--1-col" (click)="sortBy('eogEoc')" style="cursor: pointer;"> EOG/EOC <i class="fa" [ngClass]="{'fa-sort': sortColumn !== 'eogEoc', 'fa-sort-up': sortColumn === 'eogEoc' && sortDirection === 'asc', 'fa-sort-down': sortColumn === 'eogEoc' && sortDirection === 'desc'}"></i> </div>
                    <div class="mdl-cell mdl-cell--2-col"></div>
                </div>
 
@@ -101,7 +101,7 @@
 </div>
     <generate-app-dialog #assessmentDialog class="generate-app-toggle-assessment__dialog" [hideTrigger]="'None'">
         <div>
-            <div class="generate-app-toggle-assessment__dialog-title">Add New Assessment</div>
+            <div class="generate-app-toggle-assessment__dialog-title">{{ selectedToggleAssessment !== undefined && selectedToggleAssessment.toggleAssessmentId > 0 ? 'Edit Assessment' : 'Add New Assessment' }}</div>
         </div>
         <div *ngIf="errorMessage != null" class="mdl-typography--text-center">
             <div class="mdl-grid">

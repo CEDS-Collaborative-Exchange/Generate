@@ -36,6 +36,8 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
     private eogTypes: string[];
     public selectedToggleAssessment: ToggleAssessment;
     selectedAssessmentTypeIndex: number;
+    sortColumn: string = '';
+    sortDirection: 'asc' | 'desc' = 'asc';
 
     @ViewChild('comboAssessmentType', { static: false }) comboAssessmentType: any;
     @ViewChild('txtAssessmentName', { static: false }) txtAssessmentName: ElementRef;
@@ -270,6 +272,36 @@ export class SettingsToggleAssessmentComponent implements AfterViewInit, OnInit 
         this._router.navigate(['/settings/toggle']);
 
         return false;
+    }
+
+    sortBy(column: string) {
+        if (this.sortColumn === column) {
+            this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumn = column;
+            this.sortDirection = 'asc';
+        }
+        
+        this.toggleAssessments.sort((a, b) => {
+            let aValue = a[column];
+            let bValue = b[column];
+            
+            // Handle null/undefined values
+            if (aValue == null && bValue == null) return 0;
+            if (aValue == null) return this.sortDirection === 'asc' ? 1 : -1;
+            if (bValue == null) return this.sortDirection === 'asc' ? -1 : 1;
+            
+            // Convert to string and compare
+            const aStr = String(aValue).toLowerCase();
+            const bStr = String(bValue).toLowerCase();
+            
+            if (aStr < bStr) {
+                return this.sortDirection === 'asc' ? -1 : 1;
+            } else if (aStr > bStr) {
+                return this.sortDirection === 'asc' ? 1 : -1;
+            }
+            return 0;
+        });
     }
 
    
